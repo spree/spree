@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import {
+  createInTransitTransfer,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
@@ -45,7 +46,10 @@ test.describe('stock transfers', () => {
 
   test('sends a draft, then counts in a delivery with damage', async ({ page }) => {
     const creds = await login(page)
-    const transfer = await createInTransitTransfer(page, creds.accessToken, 10)
+    const transfer = await createInTransitTransfer(page, creds.accessToken, {
+      sku: FIXTURE_TRANSFER_SKU,
+      quantity: 10,
+    })
 
     await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${transfer.id}`)
 
@@ -92,7 +96,10 @@ test.describe('stock transfers', () => {
 
     // Once it has shipped there is nothing to correct: what is in the box is a
     // matter of record.
-    const shipped = await createInTransitTransfer(page, creds.accessToken, 2)
+    const shipped = await createInTransitTransfer(page, creds.accessToken, {
+      sku: FIXTURE_TRANSFER_SKU,
+      quantity: 2,
+    })
     await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${shipped.id}`)
     await expect(page.getByRole('heading', { name: shipped.number })).toBeVisible({
       timeout: 15_000,
@@ -102,7 +109,10 @@ test.describe('stock transfers', () => {
 
   test('makes the merchant say what happened to units already gone', async ({ page }) => {
     const creds = await login(page)
-    const transfer = await createInTransitTransfer(page, creds.accessToken, 4)
+    const transfer = await createInTransitTransfer(page, creds.accessToken, {
+      sku: FIXTURE_TRANSFER_SKU,
+      quantity: 4,
+    })
 
     await page.goto(`${TRANSFERS_PATH(creds.store_id)}/${transfer.id}`)
     await expect(page.getByRole('heading', { name: transfer.number })).toBeVisible({
@@ -129,60 +139,6 @@ test.describe('stock transfers', () => {
     await expect(page.getByText(/^cancelled$/i).first()).toBeVisible({ timeout: 15_000 })
   })
 })
-
-/**
- * A transfer already on the road, opened through the Admin API.
- *
- * Both warehouses and the product come from the global-setup fixtures, which
- * is also where the source's stock comes from — a transfer cannot ship from an
- * empty shelf.
- */
-async function createInTransitTransfer(
-  page: import('@playwright/test').Page,
-  accessToken: string,
-  quantity: number,
-) {
-  const headers = { Authorization: `Bearer ${accessToken}` }
-
-  const locations = await page.request
-    .get('/api/v3/admin/stock_locations', { headers, params: { limit: 100 } })
-    .then((res) => res.json())
-  const source = locations.data.find((l: { name: string }) => l.name === FIXTURE_TRANSFER_SOURCE)
-  const destination = locations.data.find(
-    (l: { name: string }) => l.name === FIXTURE_TRANSFER_DESTINATION,
-  )
-
-  // By SKU, not by search: the fixture SKU resolves exactly the variant whose
-  // stock global-setup put on the source shelf, and a transfer cannot ship
-  // from an empty one.
-  const variants = await page.request
-    .get('/api/v3/admin/variants', {
-      headers,
-      params: { 'q[sku_eq]': FIXTURE_TRANSFER_SKU },
-    })
-    .then((res) => res.json())
-  expect(variants.data, `no variant with SKU ${FIXTURE_TRANSFER_SKU}`).not.toHaveLength(0)
-
-  const created = await page.request.post('/api/v3/admin/stock_transfers', {
-    headers,
-    data: {
-      source_location_id: source.id,
-      destination_location_id: destination.id,
-      reference: `E2E restock ${Date.now()}`,
-      items: [{ variant_id: variants.data[0].id, quantity_shipped: quantity }],
-    },
-  })
-  expect(created.status(), await created.text()).toBe(201)
-  const transfer = await created.json()
-
-  const shipped = await page.request.patch(
-    `/api/v3/admin/stock_transfers/${transfer.id}/mark_in_transit`,
-    { headers },
-  )
-  expect(shipped.status(), await shipped.text()).toBe(200)
-
-  return transfer
-}
 
 /** The same fixture transfer, left as a draft. */
 async function createDraftTransfer(

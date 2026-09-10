@@ -43,10 +43,7 @@ module Spree
         failure(purchase_order, Spree.t('purchase_order.errors.already_closed'))
       end
 
-      # A draft never counted: nothing was on its way.
       def uncount_awaited_units
-        return if purchase_order.draft?
-
         uncount_incoming(purchase_order)
       end
 

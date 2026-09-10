@@ -23,6 +23,7 @@ module Spree
       }
 
       delegate :name, :sku, to: :variant, prefix: true, allow_nil: true
+      delegate :thumbnail, to: :variant, allow_nil: true
     end
 
     # How many units this line promised.
@@ -30,14 +31,6 @@ module Spree
     # @return [Integer]
     def quantity_expected
       public_send(self.class.expected_quantity_attribute).to_i
-    end
-
-    # The image for this line: the variant's own, or its product's when the
-    # variant has none — the same fallback a line item on an order uses.
-    #
-    # @return [Spree::Media, nil]
-    def thumbnail
-      variant&.primary_media || variant&.product&.primary_media
     end
 
     # Units that count against the promise. A supplier's promise is met by

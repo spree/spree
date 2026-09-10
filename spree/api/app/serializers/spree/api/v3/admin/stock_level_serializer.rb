@@ -16,26 +16,18 @@ module Spree
 
           # Reserved: units held by checkouts in progress. Incoming: units on
           # their way on an open purchase order or a transfer in transit.
-          attributes :metadata, :reserved_count, :incoming_count,
-                     created_at: :iso8601, updated_at: :iso8601
-
           # Which shelf and which SKU, flat, the way a stock movement names
           # them: enough for a list row without expanding the variant, whose
           # own serializer computes availability per row.
+          attributes :metadata, :reserved_count, :incoming_count, :variant_name, :variant_sku,
+                     created_at: :iso8601, updated_at: :iso8601
+
           attribute :stock_location_name do |stock_level|
             stock_level.stock_location&.name
           end
 
           attribute :product_id do |stock_level|
-            stock_level.variant&.product&.prefixed_id
-          end
-
-          attribute :variant_name do |stock_level|
-            stock_level.variant&.product&.name
-          end
-
-          attribute :variant_sku do |stock_level|
-            stock_level.variant&.sku
+            stock_level.product&.prefixed_id
           end
 
           attribute :options_text do |stock_level|

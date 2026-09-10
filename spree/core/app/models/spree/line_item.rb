@@ -88,9 +88,7 @@ module Spree
     # Returns the thumbnail image for this line item
     # Prefers variant primary media, falls back to product primary media
     # @return [Spree::Media, nil]
-    def thumbnail
-      variant.primary_media || product.primary_media
-    end
+    delegate :thumbnail, to: :variant
     delegate :digital?, :can_supply?, to: :variant
     # A line item's store is its owner's — an order's or a cart's, whichever it
     # belongs to.

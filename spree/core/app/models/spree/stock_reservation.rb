@@ -12,7 +12,7 @@ module Spree
     alias_attribute :stock_item_id, :stock_level_id
 
     after_create :hold_units
-    after_update :move_held_units, if: -> { saved_change_to_quantity? || saved_change_to_stock_level_id? }
+    after_update :move_held_units, if: :saved_change_to_quantity?
     after_destroy :release_units
 
     validates :quantity, :expires_at, presence: true
@@ -48,19 +48,23 @@ module Spree
     # @return [Integer] how many reservations were deleted
     def self.withdraw(reservations)
       transaction do
-        level_ids = reservations.distinct.pluck(:stock_level_id)
-        Spree::StockLevel.where(id: level_ids).order(:id).lock.load
-
-        held = reservations.pluck(:stock_level_id, :quantity)
-                           .each_with_object(Hash.new(0)) { |(level_id, quantity), totals| totals[level_id] += quantity }
+        levels = Spree::StockLevel.where(id: reservations.select(:stock_level_id)).order(:id).lock.to_a
+        held = reservations.group(:stock_level_id).sum(:quantity)
         deleted = reservations.delete_all
 
-        Spree::StockLevel.where(id: held.keys).find_each do |stock_level|
-          stock_level.adjust_reserved_count(-held[stock_level.id])
-        end
+        levels.each { |stock_level| stock_level.adjust_reserved_count(-held.fetch(stock_level.id, 0)) }
 
         deleted
       end
+    end
+
+    # Removes every hold whose time is up, giving the units back to their
+    # levels. Run by {Spree::StockReservations::ExpireJob} on a schedule and
+    # by the stock recount before it measures anything.
+    #
+    # @return [void]
+    def self.sweep_expired
+      expired.in_batches(of: 1_000) { |batch| withdraw(batch) }
     end
 
     # @return [Spree::Cart, Spree::Order, nil]
@@ -113,14 +117,8 @@ module Spree
     end
 
     def move_held_units
-      if saved_change_to_stock_level_id?
-        previous_level_id = saved_change_to_stock_level_id.first
-        Spree::StockLevel.find_by(id: previous_level_id)&.adjust_reserved_count(-quantity_before_last_save.to_i)
-        stock_level.adjust_reserved_count(quantity)
-      else
-        before, after = saved_change_to_quantity
-        stock_level.adjust_reserved_count(after - before.to_i)
-      end
+      before, after = saved_change_to_quantity
+      stock_level.adjust_reserved_count(after - before.to_i)
     end
 
     def release_units

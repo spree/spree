@@ -163,13 +163,6 @@ nav.add({
   position: 350,
   children: [
     {
-      key: 'inventory.levels',
-      labelKey: 'admin.nav.inventory',
-      path: '/inventory',
-      subject: Subject.StockLevel,
-      position: 50,
-    },
-    {
       key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',
       path: '/transfers',

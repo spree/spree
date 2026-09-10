@@ -12,9 +12,6 @@ module Spree
     class Recount
       prepend Spree::ServiceModule::Base
 
-      OPEN_PURCHASE_ORDER_STATUSES = %w[ordered partially_received].freeze
-      IN_FLIGHT_TRANSFER_STATUSES = %w[in_transit partially_received].freeze
-
       # @return [Spree::ServiceModule::Result] value is the list of corrected
       #   rows: `{ stock_level:, reserved: [was, now], incoming: [was, now] }`
       def call
@@ -30,7 +27,7 @@ module Spree
       # means — are the same thing. Assuming the sweep job has already run
       # would make the task unsafe to run at any time.
       def sweep_expired_reservations
-        Spree::StockReservation.expired.in_batches(of: 1_000) { |batch| Spree::StockReservation.withdraw(batch) }
+        Spree::StockReservation.sweep_expired
       end
 
       # Measured and written under the level's lock: a checkout or a receipt
@@ -58,21 +55,19 @@ module Spree
       # Summed in Ruby so the recount shares `ReceivableItem#incoming` with the
       # writers rather than restating it in SQL.
       def incoming_for(stock_level)
-        lines = open_purchase_order_lines.where(variant_id: stock_level.variant_id,
-                                                Spree::PurchaseOrder.table_name => { destination_location_id: stock_level.stock_location_id }) +
-                in_flight_transfer_lines.where(variant_id: stock_level.variant_id,
-                                               Spree::StockTransfer.table_name => { destination_location_id: stock_level.stock_location_id })
+        lines = incoming_purchase_order_lines.where(variant_id: stock_level.variant_id,
+                                                    Spree::PurchaseOrder.table_name => { destination_location_id: stock_level.stock_location_id }) +
+                incoming_transfer_lines.where(variant_id: stock_level.variant_id,
+                                              Spree::StockTransfer.table_name => { destination_location_id: stock_level.stock_location_id })
         lines.sum(&:incoming)
       end
 
-      def open_purchase_order_lines
-        Spree::PurchaseOrderItem.joins(:purchase_order)
-                                .where(Spree::PurchaseOrder.table_name => { status: OPEN_PURCHASE_ORDER_STATUSES })
+      def incoming_purchase_order_lines
+        Spree::PurchaseOrderItem.joins(:purchase_order).merge(Spree::PurchaseOrder.incoming)
       end
 
-      def in_flight_transfer_lines
-        Spree::StockTransferItem.joins(:stock_transfer)
-                                .where(Spree::StockTransfer.table_name => { status: IN_FLIGHT_TRANSFER_STATUSES })
+      def incoming_transfer_lines
+        Spree::StockTransferItem.joins(:stock_transfer).merge(Spree::StockTransfer.incoming)
       end
 
       # Every level that holds a figure or a reservation, plus every level a
@@ -82,24 +77,26 @@ module Spree
         levels = Spree::StockLevel.where.not(reserved_count: 0)
                                   .or(Spree::StockLevel.where.not(incoming_count: 0))
                                   .or(Spree::StockLevel.where(id: Spree::StockReservation.select(:stock_level_id)))
-                                  .to_a
+                                  .index_by { |level| [level.variant_id, level.stock_location_id] }
 
-        awaited_pairs.each do |variant_id, stock_location_id|
-          next if levels.any? { |level| level.variant_id == variant_id && level.stock_location_id == stock_location_id }
+        missing = awaited_pairs.reject { |pair| levels.key?(pair) }
+        locations = Spree::StockLocation.where(id: missing.map(&:last)).index_by(&:id)
+        variants = Spree::Variant.with_deleted.where(id: missing.map(&:first)).index_by(&:id)
 
-          location = Spree::StockLocation.find_by(id: stock_location_id)
-          variant = Spree::Variant.with_deleted.find_by(id: variant_id)
+        missing.each do |variant_id, stock_location_id|
+          location = locations[stock_location_id]
+          variant = variants[variant_id]
           next if location.nil? || variant.nil?
 
-          levels << location.stock_level_or_create(variant)
+          levels[[variant_id, stock_location_id]] = location.stock_level_or_create(variant)
         end
 
-        levels.uniq(&:id)
+        levels.values
       end
 
       def awaited_pairs
-        open_purchase_order_lines.distinct.pluck(:variant_id, "#{Spree::PurchaseOrder.table_name}.destination_location_id") |
-          in_flight_transfer_lines.distinct.pluck(:variant_id, "#{Spree::StockTransfer.table_name}.destination_location_id")
+        incoming_purchase_order_lines.distinct.pluck(:variant_id, "#{Spree::PurchaseOrder.table_name}.destination_location_id") |
+          incoming_transfer_lines.distinct.pluck(:variant_id, "#{Spree::StockTransfer.table_name}.destination_location_id")
       end
     end
   end

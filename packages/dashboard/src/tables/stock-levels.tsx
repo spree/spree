@@ -3,7 +3,7 @@ import { defineTable } from '@spree/dashboard-core'
 import { Badge, ResourceNameCell, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
-import { CountCell, IncomingCell, OnHandCell } from '../components/spree/inventory-cells'
+import { IncomingCell, OnHandCell } from '../components/spree/inventory-cells'
 import { stockLocationAutocompleteProps } from '../hooks/use-stock-levels'
 
 // Every figure is a column on the row: on hand and committed were always
@@ -62,26 +62,26 @@ defineTable<StockLevel>('stock-levels', {
       label: i18n.t('admin.stock_levels.columns.committed'),
       sortable: true,
       default: true,
-      className: 'text-right',
-      render: (level) => <CountCell value={level.allocated_count} />,
+      className: 'text-right tabular-nums',
+      render: (level) => level.allocated_count,
     },
     {
       key: 'reserved_count',
       label: i18n.t('admin.stock_levels.columns.reserved'),
       sortable: true,
       default: true,
-      className: 'text-right',
-      render: (level) => <CountCell value={level.reserved_count} />,
+      className: 'text-right tabular-nums',
+      render: (level) => level.reserved_count,
     },
     {
       key: 'available',
       label: i18n.t('admin.stock_levels.columns.available'),
       default: true,
-      className: 'text-right',
+      className: 'text-right tabular-nums',
       // On hand minus committed minus reserved — what a customer can still
       // buy from this shelf. Negative when it is oversold, which is worth
       // seeing rather than hiding.
-      render: (level) => <CountCell value={level.available_count - level.reserved_count} />,
+      render: (level) => level.available_count - level.reserved_count,
     },
     {
       key: 'count_on_hand',
@@ -90,7 +90,7 @@ defineTable<StockLevel>('stock-levels', {
       filterable: true,
       filterType: 'number',
       default: true,
-      className: 'text-right',
+      className: 'text-right tabular-nums',
       render: (level) => <OnHandCell level={level} />,
     },
     {
@@ -98,7 +98,7 @@ defineTable<StockLevel>('stock-levels', {
       label: i18n.t('admin.stock_levels.columns.incoming'),
       sortable: true,
       default: true,
-      className: 'text-right',
+      className: 'text-right tabular-nums',
       render: (level) => <IncomingCell level={level} />,
     },
   ],

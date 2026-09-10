@@ -42,7 +42,6 @@ module Spree
       # The missing units are not going to turn up, so the destination stops
       # expecting them; each line's outstanding count keeps the record.
       def uncount_awaited_units
-        stock_transfer.items.reload
         uncount_incoming(stock_transfer)
       end
 

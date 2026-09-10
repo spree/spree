@@ -14,7 +14,7 @@ import {
 } from '@spree/dashboard-ui'
 import { CheckIcon, ChevronDownIcon } from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
-import { useState } from 'react'
+import { type ComponentProps, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUpdateStockLevel } from '../../hooks/use-stock-levels'
 
@@ -36,9 +36,27 @@ export const STOCK_ADJUSTMENT_REASONS = [
 const QUICK_EDIT_MODES = ['set', 'adjust'] as const
 type QuickEditMode = (typeof QUICK_EDIT_MODES)[number]
 
-/** Right-aligned figure, the way every number on the page reads. */
-export function CountCell({ value }: { value: number }) {
-  return <span className="block w-full text-right tabular-nums">{value}</span>
+/**
+ * A figure that opens something when clicked, styled like the plain ones.
+ * Spreads whatever the popover trigger hands it, since it is rendered as the
+ * trigger itself.
+ */
+function CountTrigger({
+  value,
+  label,
+  ...props
+}: { value: number; label: string } & ComponentProps<'button'>) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      className="flex w-full cursor-pointer items-center justify-end gap-1 rounded px-1 tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      {...props}
+    >
+      {value}
+      <ChevronDownIcon className="size-3 text-muted-foreground" />
+    </button>
+  )
 }
 
 /**
@@ -50,14 +68,35 @@ export function OnHandCell({ level }: { level: StockLevel }) {
   const { t } = useTranslation()
   const { permissions } = usePermissions()
   const [open, setOpen] = useState(false)
+
+  if (!permissions.can('update', Subject.StockLevel)) return level.count_on_hand
+
+  const name = [level.variant_name, level.options_text].filter(Boolean).join(' · ')
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <CountTrigger
+          value={level.count_on_hand}
+          label={t('admin.stock_levels.quick_edit.open_aria', { name })}
+        />
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-auto p-2">
+        {open && <OnHandEditor level={level} onSaved={() => setOpen(false)} />}
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+// Mounted only while its popover is open, so a hundred-row page carries one
+// mutation and one set of options instead of a hundred.
+function OnHandEditor({ level, onSaved }: { level: StockLevel; onSaved: () => void }) {
+  const { t } = useTranslation()
   const [mode, setMode] = useState<QuickEditMode>('set')
   const [amount, setAmount] = useState(String(level.count_on_hand))
   const [reason, setReason] = useState<string>(STOCK_ADJUSTMENT_REASONS[0])
   const update = useUpdateStockLevel(level.id)
-
-  if (!permissions.can('update', Subject.StockLevel)) {
-    return <CountCell value={level.count_on_hand} />
-  }
+  const parsed = Number.parseInt(amount, 10)
 
   const modeOptions = QUICK_EDIT_MODES.map((value) => ({
     value,
@@ -68,17 +107,7 @@ export function OnHandCell({ level }: { level: StockLevel }) {
     label: t(`admin.stock_levels.reasons.${value}`),
   }))
 
-  function openWith(nextOpen: boolean) {
-    if (nextOpen) {
-      setMode('set')
-      setAmount(String(level.count_on_hand))
-      setReason(STOCK_ADJUSTMENT_REASONS[0])
-    }
-    setOpen(nextOpen)
-  }
-
   async function submit() {
-    const parsed = Number.parseInt(amount, 10)
     if (Number.isNaN(parsed)) return
     // Stored on the movement as free text and shown raw in every admin's
     // stock history, so it is written in English whatever this admin's
@@ -90,96 +119,73 @@ export function OnHandCell({ level }: { level: StockLevel }) {
         : { adjustment: parsed, reason: reasonLabel }
     try {
       await update.mutateAsync(params)
-      setOpen(false)
+      onSaved()
     } catch {
       // The mutation hook has already shown the error.
     }
   }
 
-  const name = [level.variant_name, level.options_text].filter(Boolean).join(' · ')
-
   return (
-    <Popover open={open} onOpenChange={openWith}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          data-testid="on-hand-cell"
-          aria-label={t('admin.stock_levels.quick_edit.open_aria', { name })}
-          className="flex w-full cursor-pointer items-center justify-end gap-1 rounded px-1 tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {level.count_on_hand}
-          <ChevronDownIcon className="size-3 text-muted-foreground" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-auto p-2">
-        <form
-          className="flex items-center gap-2"
-          onSubmit={(event) => {
-            event.preventDefault()
-            event.stopPropagation()
-            void submit()
-          }}
-        >
-          <Select
-            items={modeOptions}
-            value={mode}
-            onValueChange={(value) => setMode(value as QuickEditMode)}
-          >
-            <SelectTrigger
-              className="w-32"
-              aria-label={t('admin.stock_levels.quick_edit.mode_aria')}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {modeOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            type="number"
-            step={1}
-            min={mode === 'set' ? 0 : undefined}
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-            aria-label={t('admin.stock_levels.quick_edit.amount_aria')}
-            className="w-24 text-right tabular-nums"
-            autoFocus
-          />
-          <Select
-            items={reasonOptions}
-            value={reason}
-            onValueChange={(value) => setReason(String(value))}
-          >
-            <SelectTrigger
-              className="w-44"
-              aria-label={t('admin.stock_levels.quick_edit.reason_aria')}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {reasonOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            type="submit"
-            size="icon"
-            variant="outline"
-            disabled={update.isPending || Number.isNaN(Number.parseInt(amount, 10))}
-            aria-label={t('admin.stock_levels.quick_edit.confirm')}
-          >
-            <CheckIcon className="size-4" />
-          </Button>
-        </form>
-      </PopoverContent>
-    </Popover>
+    <form
+      className="flex items-center gap-2"
+      onSubmit={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        void submit()
+      }}
+    >
+      <Select
+        items={modeOptions}
+        value={mode}
+        onValueChange={(value) => setMode(value as QuickEditMode)}
+      >
+        <SelectTrigger className="w-32" aria-label={t('admin.stock_levels.quick_edit.mode_aria')}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {modeOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Input
+        type="number"
+        step={1}
+        min={mode === 'set' ? 0 : undefined}
+        value={amount}
+        onChange={(event) => setAmount(event.target.value)}
+        aria-label={t('admin.stock_levels.quick_edit.amount_aria')}
+        className="w-24 text-right tabular-nums"
+        autoFocus
+      />
+      <Select
+        items={reasonOptions}
+        value={reason}
+        onValueChange={(value) => setReason(String(value))}
+      >
+        <SelectTrigger className="w-44" aria-label={t('admin.stock_levels.quick_edit.reason_aria')}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {reasonOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button
+        type="submit"
+        size="icon"
+        variant="outline"
+        disabled={update.isPending || Number.isNaN(parsed)}
+        aria-label={t('admin.stock_levels.quick_edit.confirm')}
+      >
+        <CheckIcon className="size-4" />
+      </Button>
+    </form>
   )
 }
 
@@ -195,21 +201,15 @@ export function IncomingCell({ level }: { level: StockLevel }) {
   const canTransfer = permissions.can('create', Subject.StockTransfer)
   const canOrder = permissions.can('create', Subject.PurchaseOrder)
 
-  if (!canTransfer && !canOrder) {
-    return <CountCell value={level.incoming_count} />
-  }
+  if (!canTransfer && !canOrder) return level.incoming_count
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={t('admin.stock_levels.incoming.open_aria')}
-          className="flex w-full cursor-pointer items-center justify-end gap-1 rounded px-1 tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {level.incoming_count}
-          <ChevronDownIcon className="size-3 text-muted-foreground" />
-        </button>
+        <CountTrigger
+          value={level.incoming_count}
+          label={t('admin.stock_levels.incoming.open_aria')}
+        />
       </PopoverTrigger>
       <PopoverContent align="end" className="flex w-auto flex-col gap-1 p-2">
         {canTransfer && (

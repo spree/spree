@@ -57,12 +57,8 @@ module Spree
       end
 
       # Whether the units come back or are written off, the destination is no
-      # longer expecting them. Read under the lock, for the reason given on
-      # the next step.
+      # longer expecting them.
       def uncount_in_flight_units
-        return unless stock_transfer.in_flight?
-
-        stock_transfer.items.reload
         uncount_incoming(stock_transfer)
       end
 
@@ -76,7 +72,7 @@ module Spree
         # since committed, and those are what `outstanding` subtracts from.
         return write_off if on_in_transit == 'write_off'
 
-        stock_transfer.items.each do |item|
+        stock_transfer.items.reload.each do |item|
           next unless item.outstanding.positive?
 
           restock(item)
