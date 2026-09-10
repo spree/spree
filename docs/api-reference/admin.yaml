@@ -37627,6 +37627,11 @@ paths:
                   stock_transfer_id:
                   stock_receipt_id:
                   purchase_order_id:
+                  order_number:
+                  return_number:
+                  exchange_number:
+                  stock_transfer_number:
+                  purchase_order_number:
                   unit_cost:
                   display_unit_cost:
                 meta:
@@ -37738,6 +37743,11 @@ paths:
                 stock_transfer_id:
                 stock_receipt_id:
                 purchase_order_id:
+                order_number:
+                return_number:
+                exchange_number:
+                stock_transfer_number:
+                purchase_order_number:
                 unit_cost:
                 display_unit_cost:
               schema:
@@ -46647,6 +46657,21 @@ components:
         purchase_order_id:
           type: string
           nullable: true
+        order_number:
+          type: string
+          nullable: true
+        return_number:
+          type: string
+          nullable: true
+        exchange_number:
+          type: string
+          nullable: true
+        stock_transfer_number:
+          type: string
+          nullable: true
+        purchase_order_number:
+          type: string
+          nullable: true
         unit_cost:
           type: string
           nullable: true
@@ -46673,6 +46698,11 @@ components:
       - stock_transfer_id
       - stock_receipt_id
       - purchase_order_id
+      - order_number
+      - return_number
+      - exchange_number
+      - stock_transfer_number
+      - purchase_order_number
       - unit_cost
       - display_unit_cost
       x-typelizer: true
