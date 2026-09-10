@@ -386,6 +386,42 @@ module Spree
       end
     end
 
+    # An order placed in a split checkout owns no payments — the customer paid
+    # once, against the group — so its own payment_total is zero and the guard
+    # refused to dispatch anything a marketplace ever sold.
+    describe 'an order sharing its payment with siblings' do
+      let(:group) { create(:order_group, store: store) }
+      let(:payment) { create(:payment, amount: order.total * 2, status: 'completed') }
+
+      before do
+        order.payments.delete_all
+        order.update_columns(order_group_id: group.id, payment_total: 0)
+        create(:payment_split, payment: payment, order: order,
+                               authorized_amount: order.total, captured_amount: order.total)
+      end
+
+      it 'hands over when its share of the payment covers what it owed' do
+        expect(subject.call(fulfillment: fulfillment)).to be_success
+      end
+
+      it 'refuses when its share was never captured' do
+        order.payment_splits.update_all(captured_amount: 0)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_failure
+        expect(result.error.value).to include(Spree.t('fulfillments.errors.order_not_paid'))
+      end
+
+      # Gross capture is not the measure: a share given back is money the
+      # order no longer holds.
+      it 'refuses when its share was captured and then refunded' do
+        order.payment_splits.update_all(refunded_amount: order.total)
+
+        expect(subject.call(fulfillment: fulfillment)).to be_failure
+      end
+    end
+
     describe 'capturing payment on dispatch' do
       # The factory captures at checkout; undo that so the payment is merely
       # authorized, which is the state this setting exists to resolve.
