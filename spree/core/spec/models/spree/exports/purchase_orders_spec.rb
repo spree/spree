@@ -27,9 +27,7 @@ RSpec.describe Spree::Exports::PurchaseOrders, type: :model do
 
       rows = CSV.parse(export.attachment.download, headers: true)
       expect(rows.headers).to eq(Spree::CSV::PurchaseOrderItemPresenter::HEADERS)
-      expect(rows.headers.first(Spree::ImportSchemas::PurchaseOrders.new.headers.size)).to eq(
-        Spree::ImportSchemas::PurchaseOrders.new.headers
-      )
+      expect(rows.headers).to include(*Spree::ImportSchemas::PurchaseOrders.new.headers)
 
       row = rows.sole.to_h
       expect(row).to include(
@@ -38,6 +36,21 @@ RSpec.describe Spree::Exports::PurchaseOrders, type: :model do
         'expected_at' => '2026-10-01', 'cancel_by' => '2026-10-15',
         'number' => purchase_order.number, 'status' => 'draft', 'product_name' => 'Denim Shirt',
         'received' => '20', 'rejected' => '2'
+      )
+    end
+
+    it 'writes every line of an order as its own row, under the same number' do
+      other_variant = create(:variant, product: product, sku: 'DENIM-L')
+      purchase_order.items.create!(variant: other_variant, quantity_ordered: 6, unit_cost: 13)
+
+      export = build_export
+      export.save!
+      export.generate
+
+      rows = CSV.parse(export.attachment.download, headers: true)
+      expect(rows.map { |row| row.values_at('number', 'sku', 'quantity') }).to contain_exactly(
+        [purchase_order.number, 'DENIM-M', '24'],
+        [purchase_order.number, 'DENIM-L', '6']
       )
     end
 

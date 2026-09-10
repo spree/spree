@@ -1,11 +1,13 @@
 module Spree
   module CSV
-    # One purchase order line as a CSV row, with its order's header alongside.
-    # The first columns match the import schema, so an exported file re-imports.
+    # One purchase order line as a CSV row: the order it belongs to, then the
+    # line, then what has happened to it. Every import-schema column is here
+    # under its own name, so an exported file re-imports as it stands.
     class PurchaseOrderItemPresenter
       HEADERS = %w[
-        reference supplier destination sku quantity unit_cost currency expected_at cancel_by notes
-        number status product_name received rejected
+        number status reference supplier destination
+        sku product_name quantity received rejected unit_cost currency
+        expected_at cancel_by notes
       ].freeze
 
       def initialize(item)
@@ -18,21 +20,21 @@ module Spree
         order = item.purchase_order
 
         [
+          order.number,
+          order.status,
           order.reference,
           order.supplier&.name,
           order.destination_location&.name,
           item.variant&.sku,
+          item.variant&.product&.name,
           item.quantity_ordered,
+          item.quantity_received,
+          item.quantity_rejected,
           amount_string(item.unit_cost, order.currency),
           order.currency,
           order.expected_at&.iso8601,
           order.cancel_by&.iso8601,
-          order.notes,
-          order.number,
-          order.status,
-          item.variant&.product&.name,
-          item.quantity_received,
-          item.quantity_rejected
+          order.notes
         ]
       end
 
