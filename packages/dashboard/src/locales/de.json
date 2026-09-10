@@ -4989,6 +4989,51 @@
       "messages": {
         "stock_level_deleted": "Lagerbestand gelöscht",
         "stock_updated": "Bestand aktualisiert"
+      },
+      "title": "Bestand",
+      "no_sku": "Keine SKU",
+      "table": {
+        "search_placeholder": "SKU oder Produkt suchen…",
+        "empty": "Noch keine Lagerbestände. Bestand erscheint hier, sobald eine Variante an einem Lagerort geführt wird."
+      },
+      "columns": {
+        "product": "Produkt",
+        "sku": "SKU",
+        "location": "Lagerort",
+        "committed": "Zugesagt",
+        "reserved": "Reserviert",
+        "available": "Verfügbar",
+        "on_hand": "Vorrätig",
+        "incoming": "Eingehend"
+      },
+      "location_filter": {
+        "placeholder": "Lagerorte suchen…",
+        "empty": "Keine Lagerorte gefunden"
+      },
+      "quick_edit": {
+        "modes": {
+          "set": "Setzen auf",
+          "adjust": "Anpassen um"
+        },
+        "open_aria": "Vorrätigen Bestand für {{name}} bearbeiten",
+        "mode_aria": "Art der Änderung",
+        "amount_aria": "Menge",
+        "reason_aria": "Grund",
+        "confirm": "Übernehmen"
+      },
+      "reasons": {
+        "correction": "Korrektur",
+        "count": "Zählung",
+        "received": "Erhalten",
+        "return_restock": "Retoure eingelagert",
+        "damaged": "Beschädigt",
+        "theft_or_loss": "Diebstahl oder Verlust",
+        "promotion_or_donation": "Aktion oder Spende"
+      },
+      "incoming": {
+        "open_aria": "Eingehenden Bestand hinzufügen",
+        "create_transfer": "Transfer erstellen",
+        "create_purchase_order": "Bestellung erstellen"
       }
     },
     "stock_locations": {
@@ -5184,7 +5229,8 @@
       "product_types": "Vorlagen, die neuen Produkten ihre Felder und Optionen geben.",
       "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist.",
       "purchase_orders": "Ware, die Sie bei Lieferanten bestellt haben, und was eingetroffen ist",
-      "suppliers": "Ihr Lieferanten-Adressbuch"
+      "suppliers": "Ihr Lieferanten-Adressbuch",
+      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, für Bestellungen reserviert, durch Kassen gehalten, verkäuflich und unterwegs."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

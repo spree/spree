@@ -5047,6 +5047,51 @@
       "messages": {
         "stock_level_deleted": "Usunięto stan magazynowy",
         "stock_updated": "Zaktualizowano stan magazynowy"
+      },
+      "title": "Zapasy",
+      "no_sku": "Brak SKU",
+      "table": {
+        "search_placeholder": "Szukaj SKU lub produktu…",
+        "empty": "Brak poziomów zapasów. Zapasy pojawią się tutaj, gdy wariant zostanie przypisany do lokalizacji."
+      },
+      "columns": {
+        "product": "Produkt",
+        "sku": "SKU",
+        "location": "Lokalizacja",
+        "committed": "Zarezerwowane",
+        "reserved": "Wstrzymane",
+        "available": "Dostępne",
+        "on_hand": "Na stanie",
+        "incoming": "W drodze"
+      },
+      "location_filter": {
+        "placeholder": "Szukaj lokalizacji…",
+        "empty": "Nie znaleziono lokalizacji"
+      },
+      "quick_edit": {
+        "modes": {
+          "set": "Ustaw na",
+          "adjust": "Zmień o"
+        },
+        "open_aria": "Edytuj stan magazynowy {{name}}",
+        "mode_aria": "Sposób zmiany",
+        "amount_aria": "Ilość",
+        "reason_aria": "Powód",
+        "confirm": "Zastosuj"
+      },
+      "reasons": {
+        "correction": "Korekta",
+        "count": "Inwentaryzacja",
+        "received": "Przyjęto",
+        "return_restock": "Zwrot na stan",
+        "damaged": "Uszkodzone",
+        "theft_or_loss": "Kradzież lub utrata",
+        "promotion_or_donation": "Promocja lub darowizna"
+      },
+      "incoming": {
+        "open_aria": "Dodaj zapasy w drodze",
+        "create_transfer": "Utwórz transfer",
+        "create_purchase_order": "Utwórz zamówienie zakupu"
       }
     },
     "stock_locations": {
@@ -5244,7 +5289,8 @@
       "product_types": "Szablony nadające nowym produktom pola i opcje.",
       "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło.",
       "purchase_orders": "Towar zamówiony u dostawców i to, co już dotarło",
-      "suppliers": "Twoja książka adresowa dostawców"
+      "suppliers": "Twoja książka adresowa dostawców",
+      "stock_levels": "Co masz w każdej lokalizacji: na stanie, zarezerwowane dla zamówień, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",

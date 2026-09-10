@@ -5011,6 +5011,51 @@
       "messages": {
         "stock_level_deleted": "تم حذف مستوى المخزون",
         "stock_updated": "تم تحديث المخزون"
+      },
+      "title": "المخزون",
+      "no_sku": "بدون SKU",
+      "table": {
+        "search_placeholder": "ابحث برمز SKU أو المنتج…",
+        "empty": "لا توجد مستويات مخزون بعد. يظهر المخزون هنا عندما يُخزَّن متغير في موقع."
+      },
+      "columns": {
+        "product": "المنتج",
+        "sku": "SKU",
+        "location": "الموقع",
+        "committed": "مخصص",
+        "reserved": "محجوز",
+        "available": "متاح",
+        "on_hand": "متوفر",
+        "incoming": "وارد"
+      },
+      "location_filter": {
+        "placeholder": "ابحث عن المواقع…",
+        "empty": "لم يتم العثور على مواقع"
+      },
+      "quick_edit": {
+        "modes": {
+          "set": "تعيين إلى",
+          "adjust": "تعديل بمقدار"
+        },
+        "open_aria": "تعديل الكمية المتوفرة لـ {{name}}",
+        "mode_aria": "طريقة التغيير",
+        "amount_aria": "الكمية",
+        "reason_aria": "السبب",
+        "confirm": "تطبيق"
+      },
+      "reasons": {
+        "correction": "تصحيح",
+        "count": "جرد",
+        "received": "مستلم",
+        "return_restock": "إعادة تخزين مرتجع",
+        "damaged": "تالف",
+        "theft_or_loss": "سرقة أو فقدان",
+        "promotion_or_donation": "ترويج أو تبرع"
+      },
+      "incoming": {
+        "open_aria": "إضافة مخزون وارد",
+        "create_transfer": "إنشاء تحويل",
+        "create_purchase_order": "إنشاء أمر شراء"
       }
     },
     "stock_locations": {
@@ -5210,7 +5255,8 @@
       "product_types": "قوالب تمنح المنتجات الجديدة حقولها وخياراتها.",
       "stock_transfers": "المخزون المنقول بين مواقعك، وما وصل منه.",
       "purchase_orders": "المخزون الذي طلبته من الموردين، وما وصل منه",
-      "suppliers": "دفتر عناوين الموردين"
+      "suppliers": "دفتر عناوين الموردين",
+      "stock_levels": "ما لديك في كل موقع: المتوفر، والمخصص للطلبات، والمحجوز من عمليات الدفع، والمتاح للبيع، والوارد."
     },
     "tax_categories": {
       "add_cta": "إضافة فئة الضريبة",

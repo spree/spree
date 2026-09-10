@@ -4989,6 +4989,51 @@
       "messages": {
         "stock_level_deleted": "Stock level deleted",
         "stock_updated": "Stock updated"
+      },
+      "title": "Inventory",
+      "no_sku": "No SKU",
+      "table": {
+        "search_placeholder": "Search SKU or product…",
+        "empty": "No stock levels yet. Stock appears here once a variant is stocked at a location."
+      },
+      "columns": {
+        "product": "Product",
+        "sku": "SKU",
+        "location": "Location",
+        "committed": "Committed",
+        "reserved": "Reserved",
+        "available": "Available",
+        "on_hand": "On hand",
+        "incoming": "Incoming"
+      },
+      "location_filter": {
+        "placeholder": "Search locations…",
+        "empty": "No locations found"
+      },
+      "quick_edit": {
+        "modes": {
+          "set": "Set to",
+          "adjust": "Adjust by"
+        },
+        "open_aria": "Edit on-hand count for {{name}}",
+        "mode_aria": "How to change the count",
+        "amount_aria": "Amount",
+        "reason_aria": "Reason",
+        "confirm": "Apply"
+      },
+      "reasons": {
+        "correction": "Correction",
+        "count": "Count",
+        "received": "Received",
+        "return_restock": "Return restock",
+        "damaged": "Damaged",
+        "theft_or_loss": "Theft or loss",
+        "promotion_or_donation": "Promotion or donation"
+      },
+      "incoming": {
+        "open_aria": "Add incoming stock",
+        "create_transfer": "Create transfer",
+        "create_purchase_order": "Create purchase order"
       }
     },
     "stock_locations": {
@@ -5184,7 +5229,8 @@
       "product_types": "Templates that give new products their fields and options.",
       "stock_transfers": "Stock moving between your locations, and what has arrived.",
       "purchase_orders": "Stock you have ordered from suppliers, and what has arrived",
-      "suppliers": "Your supplier address book"
+      "suppliers": "Your supplier address book",
+      "stock_levels": "What you have at each location: on hand, committed to orders, held by checkouts, available to sell, and on its way."
     },
     "tax_categories": {
       "add_cta": "Add tax category",

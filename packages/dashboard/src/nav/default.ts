@@ -157,11 +157,18 @@ nav.add({
 nav.add({
   key: 'inventory',
   labelKey: 'admin.nav.inventory',
-  path: '/transfers',
+  path: '/inventory',
   icon: WarehouseIcon,
-  subject: Subject.StockTransfer,
+  subject: Subject.StockLevel,
   position: 350,
   children: [
+    {
+      key: 'inventory.levels',
+      labelKey: 'admin.nav.inventory',
+      path: '/inventory',
+      subject: Subject.StockLevel,
+      position: 50,
+    },
     {
       key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',

@@ -157,6 +157,12 @@ export const FIXTURE_TRANSFER_PRODUCT = 'E2E Transfer Product'
 /** Unique so the transfer specs can resolve exactly the stocked variant. */
 export const FIXTURE_TRANSFER_SKU = 'E2E-TRANSFER-SKU'
 export const FIXTURE_SUPPLIER = 'E2E Supplier'
+// The Inventory page: a SKU of its own so the figures it asserts are not
+// moved by the transfer specs, stocked at the source and held by one
+// checkout at the destination.
+export const FIXTURE_INVENTORY_PRODUCT = 'E2E Inventory Product'
+export const FIXTURE_INVENTORY_SKU = 'E2E-INVENTORY-SKU'
+export const FIXTURE_INVENTORY_RESERVED = 3
 export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
 /**
  * A seller with one settled sale and one payout still owed, so the ledger

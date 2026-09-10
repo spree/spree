@@ -1,4 +1,4 @@
-import type { StockLevel, StockLevelUpdateParams } from '@spree/admin-sdk'
+import type { StockLevel, StockLevelUpdateParams, StockLocation } from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -60,4 +60,17 @@ export function useDeleteStockLevel() {
       queryClient.removeQueries({ queryKey: buildKey('stock-levels', id) })
     },
   })
+}
+
+/** Location picker for the Inventory page's filter panel. */
+export function stockLocationAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (query: string) =>
+      adminClient.stockLocations.list({ name_cont: query, limit: 100, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.stockLocations.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (location: StockLocation) => location.name ?? location.id,
+    placeholder: i18n.t('admin.stock_levels.location_filter.placeholder'),
+    emptyText: i18n.t('admin.stock_levels.location_filter.empty'),
+  }
 }

@@ -4989,6 +4989,51 @@
       "messages": {
         "stock_level_deleted": "Niveau de stock supprimé",
         "stock_updated": "Stock mis à jour"
+      },
+      "title": "Inventaire",
+      "no_sku": "Sans SKU",
+      "table": {
+        "search_placeholder": "Rechercher un SKU ou un produit…",
+        "empty": "Aucun niveau de stock pour l'instant. Le stock apparaît ici dès qu'une variante est stockée à un emplacement."
+      },
+      "columns": {
+        "product": "Produit",
+        "sku": "SKU",
+        "location": "Emplacement",
+        "committed": "Engagé",
+        "reserved": "Réservé",
+        "available": "Disponible",
+        "on_hand": "En stock",
+        "incoming": "En route"
+      },
+      "location_filter": {
+        "placeholder": "Rechercher des emplacements…",
+        "empty": "Aucun emplacement trouvé"
+      },
+      "quick_edit": {
+        "modes": {
+          "set": "Définir à",
+          "adjust": "Ajuster de"
+        },
+        "open_aria": "Modifier le stock en main de {{name}}",
+        "mode_aria": "Type de modification",
+        "amount_aria": "Quantité",
+        "reason_aria": "Motif",
+        "confirm": "Appliquer"
+      },
+      "reasons": {
+        "correction": "Correction",
+        "count": "Comptage",
+        "received": "Reçu",
+        "return_restock": "Retour remis en stock",
+        "damaged": "Endommagé",
+        "theft_or_loss": "Vol ou perte",
+        "promotion_or_donation": "Promotion ou don"
+      },
+      "incoming": {
+        "open_aria": "Ajouter du stock en route",
+        "create_transfer": "Créer un transfert",
+        "create_purchase_order": "Créer un bon de commande"
       }
     },
     "stock_locations": {
@@ -5184,7 +5229,8 @@
       "product_types": "Des modèles qui donnent aux nouveaux produits leurs champs et leurs options.",
       "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé.",
       "purchase_orders": "Le stock commandé à vos fournisseurs, et ce qui est arrivé",
-      "suppliers": "Votre carnet d'adresses fournisseurs"
+      "suppliers": "Votre carnet d'adresses fournisseurs",
+      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, engagé sur des commandes, retenu par des paiements en cours, disponible à la vente et en route."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",
