@@ -11,6 +11,14 @@ module SpreeStripe
     preference :publishable_key, :password
     preference :secret_key, :password
 
+    # Written by CreateGatewayWebhooks, never by an operator.
+    WEBHOOK_REGISTRATION_PREFERENCES = %i[
+      webhook_endpoint_id
+      webhook_signing_secret
+      connect_webhook_endpoint_id
+      connect_webhook_signing_secret
+    ].freeze
+
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
 
@@ -32,6 +40,37 @@ module SpreeStripe
 
     def payment_profiles_supported?
       true
+    end
+
+    # Whether this save changed the registration preferences and nothing else,
+    # meaning it was registration storing its own result — which would
+    # otherwise re-trigger it and enqueue a duplicate job. Read from the
+    # change rather than a flag around the write: the job's row lock defers
+    # this callback past the point any flag would be cleared.
+    #
+    # @return [Boolean]
+    def only_webhook_registration_changed?
+      before, after = saved_change_to_preferences
+      return false unless before.is_a?(Hash) && after.is_a?(Hash)
+
+      changed = (before.keys | after.keys).reject { |key| before[key] == after[key] }
+
+      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key.to_sym) }
+    end
+
+    # Endpoints are registered per Stripe account, so a rotated key leaves the
+    # stored ids and secrets pointing at endpoints the new account lacks.
+    #
+    # @return [Boolean]
+    def stripe_secret_key_changed?
+      # Preferences change from an empty hash on create, which would otherwise
+      # read as every key having changed.
+      return false if previously_new_record?
+
+      before, after = saved_change_to_preferences
+      return false unless before.is_a?(Hash) && after.is_a?(Hash)
+
+      before[:secret_key] != after[:secret_key]
     end
 
     def gateway_dashboard_payment_url(payment)
