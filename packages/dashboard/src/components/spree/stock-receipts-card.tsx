@@ -75,8 +75,8 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
   const items = receipt.items ?? []
 
   return (
-    <Card variant="nested">
-      <CardHeader>
+    <Card variant="nested" className="px-0 rounded-xl">
+      <CardHeader className="px-3!">
         <CardTitle className="min-w-0 font-normal text-sm">
           <span className="font-medium tabular-nums">{receipt.number}</span>
           <span className="text-muted-foreground text-xs">
@@ -88,7 +88,7 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
+      <CardContent className="flex items-center justify-between border-b border-border-subtle p-3! text-sm">
         <span className="text-muted-foreground">
           {t('admin.stock_receipts.summary', {
             accepted: receipt.quantity_accepted_total,
@@ -98,44 +98,51 @@ function StockReceiptPanel({ receipt }: { receipt: StockReceipt }) {
         {receipt.notes && <span className="truncate text-muted-foreground">{receipt.notes}</span>}
       </CardContent>
 
-      {items.length > 0 && (
-        <Table scrollX roundedBottom>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_receipts.columns.accepted')}
-              </TableHead>
-              <TableHead className="text-right">
-                {t('admin.stock_receipts.columns.rejected')}
-              </TableHead>
-              <TableHead>{t('admin.stock_receipts.columns.reason')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <VariantLink
-                    name={item.variant_name}
-                    sku={item.variant_sku}
-                    thumbnailUrl={item.thumbnail_url}
-                  />
-                </TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_accepted}</TableCell>
-                <TableCell className="text-right tabular-nums">{item.quantity_rejected}</TableCell>
-                <TableCell>
-                  {item.rejection_reason
-                    ? t(`admin.stock_receipts.rejection_reasons.${item.rejection_reason}`, {
-                        defaultValue: item.rejection_reason,
-                      })
-                    : '—'}
-                </TableCell>
+      <CardContent className="p-0">
+        {items.length > 0 && (
+          <Table scrollX roundedBottom>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('admin.inventory_lines.columns.variant')}</TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_receipts.columns.accepted')}
+                </TableHead>
+                <TableHead className="text-right">
+                  {t('admin.stock_receipts.columns.rejected')}
+                </TableHead>
+                <TableHead>{t('admin.stock_receipts.columns.reason')}</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+            </TableHeader>
+            <TableBody>
+              {items.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <VariantLink
+                      productId={item.product_id}
+                      name={item.variant_name}
+                      sku={item.variant_sku}
+                      thumbnailUrl={item.thumbnail_url}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_accepted}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {item.quantity_rejected}
+                  </TableCell>
+                  <TableCell>
+                    {item.rejection_reason
+                      ? t(`admin.stock_receipts.rejection_reasons.${item.rejection_reason}`, {
+                          defaultValue: item.rejection_reason,
+                        })
+                      : '—'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
     </Card>
   )
 }

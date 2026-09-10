@@ -4,8 +4,9 @@ import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 
 /**
- * A document line's variant — its image, its name linked to the product that
- * owns it, and optionally its SKU underneath.
+ * A document line's variant — its image, its name and optionally its SKU —
+ * the whole of it linked to the product that owns it, so a merchant can aim
+ * at the picture as readily as the name.
  *
  * Renders plain text when the line names no product. A line outlives the
  * variant it names — the same way the movement ledger outlives the level it
@@ -24,25 +25,26 @@ export function VariantLink({
   thumbnailUrl?: string | null
 }) {
   const { storeId } = useStore()
-  const label = name ?? '—'
 
-  return (
-    <div className="flex items-center gap-3">
+  const body = (
+    <>
       <Thumbnail src={thumbnailUrl} fallback={<PackageIcon />} />
       <div className="min-w-0">
-        {productId ? (
-          <Link
-            to="/$storeId/products/$productId"
-            params={{ storeId, productId }}
-            className="font-medium hover:underline"
-          >
-            {label}
-          </Link>
-        ) : (
-          <span className="font-medium">{label}</span>
-        )}
+        <span className="font-medium group-hover:underline">{name ?? '—'}</span>
         {sku && <span className="block text-muted-foreground text-xs">{sku}</span>}
       </div>
-    </div>
+    </>
+  )
+
+  if (!productId) return <div className="flex items-center gap-3">{body}</div>
+
+  return (
+    <Link
+      to="/$storeId/products/$productId"
+      params={{ storeId, productId }}
+      className="group flex items-center gap-3"
+    >
+      {body}
+    </Link>
   )
 }

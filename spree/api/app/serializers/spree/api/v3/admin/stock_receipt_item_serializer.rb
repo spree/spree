@@ -11,6 +11,7 @@ module Spree
                    notes: 'string | null',
                    line_type: [:string, enum: %w[purchase_order_item stock_transfer_item]],
                    line_id: 'string | null',
+                   product_id: 'string | null',
                    variant_id: 'string | null',
                    variant_name: 'string | null',
                    variant_sku: 'string | null',
@@ -30,6 +31,12 @@ module Spree
 
           attribute :variant_id do |item|
             item.variant&.prefixed_id
+          end
+
+          # The product the line's variant belongs to, so a delivery's line
+          # can link to the screen where that SKU's stock lives.
+          attribute :product_id do |item|
+            item.variant&.product&.prefixed_id
           end
 
           attribute :variant_name do |item|
