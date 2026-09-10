@@ -17,6 +17,13 @@ erDiagram
     StockLevel ||--o{ StockReservation : "held by checkouts"
     Order ||--o{ Fulfillment : "ships as"
     Fulfillment ||--o{ FulfillmentItem : "contains"
+    Supplier ||--o{ PurchaseOrder : "supplies"
+    PurchaseOrder ||--o{ PurchaseOrderItem : "orders"
+    StockTransfer ||--o{ StockTransferItem : "moves"
+    PurchaseOrder ||--o{ StockReceipt : "received as"
+    StockTransfer ||--o{ StockReceipt : "received as"
+    StockReceipt ||--o{ StockReceiptItem : "counts"
+    StockReceipt ||--o{ StockMovement : "lands"
 
     StockLevel {
         integer count_on_hand
@@ -55,10 +62,11 @@ A stock location is somewhere stock physically sits: a warehouse, a shop, a thir
 | `name` | What staff call it |
 | `active` | Whether it can be used for new orders |
 | `default` | Used first when nothing else decides |
+| `kind` | What sort of place it is — `warehouse`, `store` or `fulfillment_center` |
 | `country_code`, `state_code`, `city`, `postal_code` | Where it is — used for shipping rates and for finding the nearest one |
 | `backorderable_default` | Whether new stock levels here allow backorders |
-| `fulfillable` | Whether orders can ship from here, or it's display-only stock |
-| `pickup` | Whether customers can collect here |
+| `pickup_enabled` | Whether customers can collect here |
+| `returns_enabled` | Whether customers can bring returns here |
 
 ```typescript Admin SDK
 const { data: locations } = await adminClient.stockLocations.list()
@@ -80,11 +88,11 @@ A stock level is the intersection of a variant and a location. They're created f
 ```typescript Admin SDK
 // Stock for one location
 const { data: levels } = await adminClient.stockLevels.list({
-  filter: { stock_location_id_eq: 'sl_xxx' },
+  stock_location_id_eq: 'sloc_xxx',
 })
 
 // Correct a single count
-await adminClient.stockLevels.update('slv_xxx', {
+await adminClient.stockLevels.update('sl_xxx', {
   count_on_hand: 150,
   backorderable: true,
 })
@@ -92,15 +100,15 @@ await adminClient.stockLevels.update('slv_xxx', {
 // Set many at once — the right call for a nightly sync
 await adminClient.stockLevels.bulkUpsert({
   stock_levels: [
-    { variant_id: 'var_xxx', stock_location_id: 'sl_xxx', count_on_hand: 40 },
-    { variant_id: 'var_yyy', stock_location_id: 'sl_xxx', count_on_hand: 12 },
+    { variant_id: 'variant_xxx', stock_location_id: 'sloc_xxx', count_on_hand: 40 },
+    { variant_id: 'variant_yyy', stock_location_id: 'sloc_xxx', count_on_hand: 12 },
   ],
 })
 ```
 
 ```bash CLI
-spree api get '/stock_levels?q[stock_location_id_eq]=sl_xxx'
-spree api patch /stock_levels/slv_xxx -d '{"count_on_hand": 150}'
+spree api get '/stock_levels?q[stock_location_id_eq]=sloc_xxx'
+spree api patch /stock_levels/sl_xxx -d '{"count_on_hand": 150}'
 ```
 
 </CodeGroup>
@@ -122,12 +130,13 @@ Every change to stock is recorded as a movement, so "why is this number what it 
 | `adjusted` | A manual correction, such as after a stock count |
 
 ```typescript Admin SDK
+// Everything that happened to one SKU, across every location
 const { data: movements } = await adminClient.stockMovements.list({
-  filter: { variant_id_eq: 'var_xxx' },
+  stock_level_variant_id_eq: 'variant_xxx',
 })
 ```
 
-Each movement points at what caused it — the order, the fulfillment, the transfer, the purchase order — so an audit trail reads as a sequence of business events rather than a list of numbers that changed.
+Each movement points at what caused it — the order, the fulfillment, the transfer, the purchase order, and for stock that arrived, the delivery it came in on — so an audit trail reads as a sequence of business events rather than a list of numbers that changed.
 
 A movement that arrived through a purchase order also carries what the units cost, so "what did this stock cost us" is answerable from the ledger rather than reconstructed from the orders that bought it.
 
@@ -175,7 +184,7 @@ When new stock arrives, backorders are filled first, and only the remainder beco
 
 ## Moving stock between locations
 
-A stock transfer moves inventory from one location to another, and reflects that this takes time: stock is booked out of the source, is in transit, and is received at the destination — where a partial receipt is a normal outcome, because sometimes not everything arrives.
+A stock transfer moves inventory from one location to another, and reflects that this takes time: stock is booked out of the source, is in transit, and is counted in at the destination — where a partial delivery is a normal outcome, because sometimes not everything arrives at once.
 
 That is four steps, not one. A transfer is planned as a draft, packed, sent, and finally counted in:
 
@@ -183,28 +192,29 @@ That is four steps, not one. A transfer is planned as a draft, packed, sent, and
 const transfer = await adminClient.stockTransfers.create({
   source_location_id: 'sloc_xxx',
   destination_location_id: 'sloc_yyy',
-  items: [{ variant_id: 'var_xxx', quantity_shipped: 10 }],
+  items: [{ variant_id: 'variant_xxx', quantity_shipped: 10 }],
 })
 
 // The units leave the source here — and are on no shelf until they arrive.
 await adminClient.stockTransfers.markInTransit(transfer.id)
 
-// Eight of the ten made it intact and two were crushed. Each delivery is a
-// stock receipt: this delivery's counts, not a running total.
+// Eight arrived intact and two were crushed. See "Counting a delivery in".
 await adminClient.stockTransfers.stockReceipts.create(transfer.id, {
   items: [{ id: 'sti_xxx', quantity_accepted: 8, quantity_rejected: 2, rejection_reason: 'damaged' }],
 })
 ```
 
+| Status | What it means |
+|---|---|
+| `draft` | A plan. Lines can still change; nothing has moved |
+| `ready_to_ship` | Packed. Lines are frozen, nothing has left yet — `markDraft` unfreezes it |
+| `in_transit` | The units have left the source and are on no shelf |
+| `partially_received` | Some units have been counted in; the rest are still on the road |
+| `received` | Everything that left has arrived — or the balance was closed short |
+| `over_received` | More arrived than was sent |
+| `canceled` | Called off. Once units have left, the merchant says whether they come back or are written off |
+
 Two things follow from the middle step. Availability at the destination does not rise until somebody counts the goods in, which is what makes the number trustworthy. And cancelling a transfer whose units have already left is a decision rather than an undo: either they come back to the source, or they are written off as lost.
-
-Every delivery is a **stock receipt** — numbered, dated, carrying the packing-slip reference — with what it accepted and what it refused per line. Refused units are recorded but never stocked. A transfer is `received` once everything that left has arrived, in whatever state; `over_received` if more arrived than was sent; and it can be **closed short** when the missing units are not going to turn up:
-
-```typescript Admin SDK
-await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the van' })
-```
-
-A transfer that is packed but not yet sent can go back to draft (`markDraft`) if the plan changes.
 
 ## Buying stock in
 
@@ -215,7 +225,8 @@ const order = await adminClient.purchaseOrders.create({
   supplier_id: 'sup_xxx',
   destination_location_id: 'sloc_xxx',
   expected_at: '2026-10-01',
-  items: [{ variant_id: 'var_xxx', quantity_ordered: 100, unit_cost: '12.50' }],
+  cancel_by: '2026-10-15',
+  items: [{ variant_id: 'variant_xxx', quantity_ordered: 100, unit_cost: '12.50' }],
 })
 
 await adminClient.purchaseOrders.markOrdered(order.id)
@@ -227,14 +238,48 @@ await adminClient.purchaseOrders.stockReceipts.create(order.id, {
 })
 ```
 
-Ordered stock is never available stock. Nothing reaches `count_on_hand` until a delivery is received, because a merchant who has ordered goods does not have them — and suppliers under-ship often enough that receiving in parts is the ordinary case. Unlike a transfer, a supplier's refused units are still owed: the order stays `partially_received` until they are replaced, or the merchant closes it short (`close`, with a reason) because the balance is not coming. A supplier that sends more than was ordered leaves the order `over_received`. An order that was placed but has had no delivery can go back to draft (`markDraft`).
+| Status | What it means |
+|---|---|
+| `draft` | Being put together. Lines and costs can still change |
+| `ordered` | Sent to the supplier. Lines are frozen — `markDraft` reopens it while nothing has arrived |
+| `partially_received` | Some units have been counted in; the supplier still owes the rest |
+| `received` | Every line has what it expected — or the balance was closed short |
+| `over_received` | The supplier sent more than was ordered |
+| `canceled` | Called off. Units already received stay on the shelf |
 
-Orders carry an optional `cancel_by` date — the day after which the goods are no longer wanted — and the dashboard lists filter on *Overdue* (expected date passed) and *Past cancel-by*. Nothing cancels automatically. Purchase orders can be exported to CSV, one row per line, and imported from one: rows sharing a `reference` become one draft order, naming the supplier, warehouse and SKU by name.
+Ordered stock is never available stock. Nothing reaches `count_on_hand` until a delivery is counted in, because a merchant who has ordered goods does not have them — and suppliers under-ship often enough that receiving in parts is the ordinary case.
+
+An order carries the day the supplier promised (`expected_at`) and, optionally, the day after which the goods are no longer wanted (`cancel_by`). Both are calendar dates. The dashboard lists filter on *Overdue* and *Past cancel-by*; nothing cancels automatically, because that is a call to confirm with the supplier.
+
+Purchase orders export to CSV, one row per line, which is the file a merchant sends a supplier. They import from one too: rows sharing a `reference` become one draft order, naming the supplier, warehouse and SKU by name — a name that does not exist fails the row rather than creating anything.
 
 Suppliers themselves are an address book, kept per store:
 
 ```typescript Admin SDK
 const { data: suppliers } = await adminClient.suppliers.list()
+```
+
+## Counting a delivery in
+
+Transfers and purchase orders are received the same way: each delivery is a **stock receipt**, numbered and dated, carrying the packing-slip reference and — per line — what was accepted and what was refused, with a reason.
+
+```typescript Admin SDK
+const { data: deliveries } = await adminClient.purchaseOrders.stockReceipts.list(order.id, {
+  expand: ['items'],
+})
+```
+
+A receipt records *this delivery's* counts, not running totals: a second box adds to the first rather than restating it. Accepted units land on the destination's shelf, each as a `received` movement that names the receipt. Refused units are recorded and never stocked; the reason is one of `damaged`, `wrong_item`, `expired` or `other`. Omit `items` to count in everything still outstanding, intact.
+
+<Note>
+**Refused units count differently on the two documents.** A supplier's refused units are still owed — the goods go back, and the order stays `partially_received` until they are replaced. A transfer's refused units have *arrived*, in whatever state: a crushed unit is not still in the van, so it counts toward the trip being over.
+</Note>
+
+When the balance is not coming — the supplier is out of stock, the missing units fell off the van — the document is **closed short**: it settles in `received` with `closed_short_at` and the reason recorded, and the outstanding count stays on each line as the record of the gap. Nothing moves.
+
+```typescript Admin SDK
+await adminClient.purchaseOrders.close(order.id, { reason: 'Supplier out of stock' })
+await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the van' })
 ```
 
 ## Turning tracking off
