@@ -46707,6 +46707,9 @@ components:
         variant_id:
           type: string
           nullable: true
+        product_id:
+          type: string
+          nullable: true
         variant_name:
           type: string
           nullable: true
@@ -46725,6 +46728,7 @@ components:
       - line_type
       - line_id
       - variant_id
+      - product_id
       - variant_name
       - variant_sku
       - thumbnail_url
