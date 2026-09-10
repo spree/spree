@@ -1,53 +1,43 @@
 ---
-title: "Stock Levels"
-description: "Learn how to manage stock levels in Spree Commerce."
+title: "Inventory"
+description: "See what you have at each location, what is promised, held and on its way, and correct a count in place."
 ---
 
-Maintaining accurate stock levels is critical for delivering a smooth customer experience, avoiding overselling, and ensuring clean operational and financial reporting.
+The Inventory page answers the question every merchant asks first: what do I have, where, and how much of it can I still sell? It lists one row per variant per stock location, with five figures on each row.
 
-There are two main ways to manage inventory, depending on your workflow:
+| Column | What it means |
+|---|---|
+| **On hand** | Units physically on the shelf at that location |
+| **Committed** | Units promised to orders that have been placed but not yet shipped |
+| **Reserved** | Units held by customers who are in checkout right now |
+| **Available** | On hand minus committed minus reserved: what a new customer can still buy |
+| **Incoming** | Units on their way to this location, on a purchase order placed with a supplier or a transfer already in transit |
 
-- Edit stock levels individually via the product editor
-- Manage inventory directly from the **Stock Items** tab (covered in this article)
+<Note>Placing an order does not lower **On hand**. The units stay on the shelf, counted under **Committed**, until the parcel actually ships. A warehouse worker counting boxes should always find the number Spree shows.</Note>
 
-<Note>When a customer places an order, stock quantities are automatically reduced based on the quantity purchased. Similarly, when items are returned and marked as resellable, the stock quantities will automatically increase.</Note>
+## Finding a product
 
-## How to Manage Stock Levels
+Open **Inventory** in the sidebar. The list opens on every location; use the **Location** filter to narrow it to one warehouse, and the search box to find a product by name or SKU. Click a row to open the product.
 
-To manage stock levels across your catalog, navigate to **Products → Stock → Stock Items.**
+A product that has never been stocked at a warehouse still appears there once a purchase order or transfer is on its way to it, so **Incoming** is visible before the first delivery lands.
 
-![](/docs/images/user/products/stock-levels/1.stock_tab.png)
+## Correcting a count
 
-Here you’ll see a list of all product variants, separated by stock location (i.e., if you have two stock locations, each variant will have two rows in the table).
+Click the **On hand** figure on any row to correct it in place:
 
-You can use the search bar to filter by product name, SKU (partial or full), or stock location.
+1. Choose **Set to** to enter the count you found on the shelf, or **Adjust by** to add or remove a number of units.
+2. Enter the amount.
+3. Pick a reason — correction, count, received, return restock, damaged, theft or loss, promotion or donation.
+4. Confirm.
 
-![](/docs/images/user/products/stock-levels/2.search_filters.png)
+The change is recorded in the product's stock history with the reason you picked, beside every other movement on that shelf.
 
-This makes it easier to manage stock updates when, for example, receiving a new shipment to a specific warehouse or restocking a particular product line.
+<Warning>A correction is for what you have counted. Stock that arrives from a supplier belongs on a purchase order, and stock moving between your own warehouses belongs on a [stock transfer](/user/manage-products/stock-transfers), so that the delivery is recorded and the **Incoming** figure stays right.</Warning>
 
-## Updating Stock Levels
+## Adding incoming stock
 
-![](/docs/images/user/products/stock-levels/3.update_stock_levels.png)
+Click the **Incoming** figure on a row for shortcuts to create a transfer or a purchase order. The figure itself only changes when a document is placed, received, closed or cancelled.
 
-To adjust stock levels:
+## Enabling backorders
 
-1. Locate the variant you want to update
-2. Enter the new quantity in the **Count On Hand** column
-3. Click **Update** at the end of the row
-
-You’ll see a green confirmation popup at the top of the screen once the update is saved.
-
-<Note>Each variant/location combination must be updated independently.</Note>
-
-## Enabling Backorders
-
-![](/docs/images/user/products/stock-levels/4.backorderability.png)
-
-You can allow a product to be sold even when its inventory reaches zero by marking it as **Backorderable**.
-
-To do so, simply **check** or **uncheck the box** in the **Backorderable** column in the associated row.
-
-This setting saves automatically, so there’s **no need to click Update**.
-
-<Warning>Only mark products as backorderable if you plan to restock them. Enabling backorders for discontinued or limited-stock items may result in customer service issues.</Warning>
+Backorders are set per variant and location on the product's inventory panel. A backorderable variant can be sold past zero; only enable it for stock you plan to replenish.

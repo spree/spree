@@ -134,6 +134,14 @@ bundle exec rake spree:backfill_order_markets
 
 Orders missing a market get the store default — `market` is required on carts and orders in 6.0.
 
+### Fill in the stock level counters
+
+```bash
+bundle exec rake spree:stock:recount_levels
+```
+
+`spree_stock_levels` gains `reserved_count` (units held by checkouts in progress) and `incoming_count` (units on their way on a purchase order placed with a supplier or a transfer in transit). Both are kept by the workflows that change them and start at zero on an existing install; this recomputes them from active reservations and open documents and prints every level it corrected. Until it runs, the dashboard's Inventory page shows zero reserved and incoming for stock that predates the upgrade. Safe to re-run at any time.
+
 ## The Cart/Order split
 
 The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:

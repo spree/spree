@@ -12,7 +12,7 @@ import { stockLocationAutocompleteProps } from '../hooks/use-stock-levels'
 defineTable<StockLevel>('stock-levels', {
   title: i18n.t('admin.stock_levels.title'),
   description: i18n.t('admin.table_descriptions.stock_levels'),
-  docsPath: 'manage-products/inventory',
+  docsPath: 'manage-products/stock-levels',
   searchParam: 'variant_sku_or_variant_product_name_cont',
   searchPlaceholder: i18n.t('admin.stock_levels.table.search_placeholder'),
   emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground" />,
