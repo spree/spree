@@ -171,7 +171,7 @@ function StatusDot({ status, className }: { status: string; className?: string }
   return (
     <span
       aria-hidden
-      className={cn('inline-block size-1.5 shrink-0 rounded-full', dotToneClasses[tone], className)}
+      className={cn('inline-block size-2 shrink-0 rounded-full', dotToneClasses[tone], className)}
     />
   )
 }
