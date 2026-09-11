@@ -43,16 +43,19 @@ module Spree
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
 
-    # What a customer could still buy from this shelf, as SQL: the same
-    # subtraction {#purchasable_count} makes in Ruby. A list filters on it, so
-    # it cannot be a Ruby method — and it is written once here rather than in
-    # each scope below.
-    PURCHASABLE_SQL = Arel.sql(
-      "#{table_name}.count_on_hand - #{table_name}.allocated_count - #{table_name}.reserved_count"
-    ).freeze
+    # What a customer could still buy from this shelf, as an Arel expression:
+    # the same subtraction {#purchasable_count} makes in Ruby. A list filters
+    # on it, so it cannot be a Ruby method. Built through Arel rather than
+    # interpolated into a string so the column names are quoted by the adapter
+    # and nothing here can carry a fragment.
+    #
+    # @return [Arel::Nodes::Node]
+    def self.purchasable_arel
+      arel_table[:count_on_hand] - arel_table[:allocated_count] - arel_table[:reserved_count]
+    end
 
-    scope :in_stock, -> { where(Arel.sql("#{PURCHASABLE_SQL} > 0")) }
-    scope :out_of_stock, -> { where(Arel.sql("#{PURCHASABLE_SQL} <= 0")) }
+    scope :in_stock, -> { where(purchasable_arel.gt(0)) }
+    scope :out_of_stock, -> { where(purchasable_arel.lteq(0)) }
     scope :with_incoming, -> { where.not(incoming_count: 0) }
     scope :with_reserved, -> { where.not(reserved_count: 0) }
 
@@ -162,7 +165,7 @@ module Spree
     # Units a customer could still buy from this shelf: what is here, minus
     # what placed orders have taken, minus what checkouts in progress are
     # holding. The figure the Inventory page calls *Available*, and the Ruby
-    # twin of {PURCHASABLE_SQL}, which the `in_stock` scopes filter on.
+    # twin of {.purchasable_arel}, which the `in_stock` scopes filter on.
     #
     # @return [Integer]
     def purchasable_count
