@@ -524,7 +524,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                       await confirm({
                         message: t('admin.orders.detail.confirm.cancel_shipment_message'),
                         variant: 'destructive',
-                        confirmLabel: t('admin.actions.cancel'),
+                        confirmLabel: t('admin.orders.detail.confirm.cancel_shipment_confirm'),
+                        cancelLabel: t('admin.orders.detail.confirm.cancel_shipment_dismiss'),
                       })
                     ) {
                       cancel.mutate(fulfillment.id)

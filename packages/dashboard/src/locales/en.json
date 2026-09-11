@@ -2720,6 +2720,8 @@
         "confirm": {
           "approve_message": "Approve this order?",
           "cancel_message": "Are you sure you want to cancel this order?",
+          "cancel_shipment_confirm": "Cancel fulfillment",
+          "cancel_shipment_dismiss": "Keep fulfillment",
           "cancel_shipment_message": "Cancel this fulfillment?",
           "capture_message": "Capture this payment?",
           "complete_message": "Complete this draft order now?",
@@ -3186,6 +3188,8 @@
               "resolve_replacement": "Resolve with replacement"
             },
             "confirm": {
+              "cancel_confirm": "Cancel claim",
+              "cancel_dismiss": "Keep claim",
               "deny": "Deny this claim? The customer will not receive a refund or replacement."
             },
             "create_title": "New claim",
@@ -3213,6 +3217,10 @@
               "create": "New exchange",
               "fulfill": "Ship replacement"
             },
+            "confirm": {
+              "cancel_confirm": "Cancel exchange",
+              "cancel_dismiss": "Keep exchange"
+            },
             "create_title": "New exchange",
             "empty": "No exchanges for this order.",
             "price_difference": "Price difference",
@@ -3229,7 +3237,9 @@
             "buy_label": "Buy return label",
             "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
             "confirm": {
-              "cancel": "Cancel this return? Nothing will be restocked and no money will move."
+              "cancel": "Cancel this return? Nothing will be restocked and no money will move.",
+              "cancel_confirm": "Cancel return",
+              "cancel_dismiss": "Keep return"
             },
             "create_title": "New return",
             "empty": "No returns for this order.",
