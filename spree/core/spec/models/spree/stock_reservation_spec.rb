@@ -27,6 +27,16 @@ describe Spree::StockReservation, type: :model do
       expect(duplicate).to be_invalid
       expect(duplicate.errors[:line_item_id]).to be_present
     end
+
+    # Only a quantity change moves units between counters, so a hold that
+    # changed levels would leave its units on the old one.
+    it 'refuses to move a saved hold to another stock level' do
+      reservation.save!
+      reservation.stock_level = create(:stock_level)
+
+      expect(reservation).to be_invalid
+      expect(reservation.errors[:stock_level_id]).to be_present
+    end
   end
 
   describe 'scopes' do

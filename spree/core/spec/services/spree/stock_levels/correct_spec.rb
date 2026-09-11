@@ -47,6 +47,12 @@ describe Spree::StockLevels::Correct do
     expect(stock_level.stock_movements.adjusted).to be_empty
   end
 
+  # A zero-padded figure from a feed is decimal, never octal.
+  it 'reads a leading zero as decimal' do
+    expect(correct(count_on_hand: '010')).to be_success
+    expect(stock_level.reload.count_on_hand).to eq(10)
+  end
+
   it 'writes nothing when the shelf is already at the figure' do
     expect(correct(count_on_hand: 10)).to be_success
     expect(stock_level.stock_movements.adjusted).to be_empty

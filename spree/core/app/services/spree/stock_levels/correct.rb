@@ -54,14 +54,15 @@ module Spree
 
       # Strictly, because `to_i` reads anything unparseable as zero — and a
       # zero here is not a no-op but an instruction to write the whole shelf
-      # off. A typo must be refused, never obeyed.
+      # off. A typo must be refused, never obeyed. Base ten explicitly, or a
+      # feed's zero-padded "010" would be read as octal and land as eight.
       #
       # @return [Integer, nil] nil when the value is not a whole number
       def parse(value)
         return nil if value.nil?
         return value if value.is_a?(Integer)
 
-        Integer(value.to_s.strip, exception: false)
+        Integer(value.to_s.strip, 10, exception: false)
       end
     end
   end
