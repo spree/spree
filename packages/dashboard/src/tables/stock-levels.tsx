@@ -30,6 +30,12 @@ defineTable<StockLevel>('stock-levels', {
   docsPath: 'manage-products/stock-levels',
   searchParam: 'variant_sku_or_variant_product_name_cont',
   searchPlaceholder: i18n.t('admin.stock_levels.table.search_placeholder'),
+  // A shelf list has to hold still. Without this the table falls back to
+  // `updated_at desc`, and correcting a count — which touches `updated_at` —
+  // throws that row to the top, so the next row a merchant meant to edit is
+  // no longer where they were looking. `id` is not ransackable, so the server
+  // keeps its own stable id-ascending order.
+  defaultSort: { field: 'id', direction: 'asc' },
   emptyIcon: <WarehouseIcon className="size-8 text-muted-foreground" />,
   emptyMessage: i18n.t('admin.stock_levels.table.empty'),
   columns: [

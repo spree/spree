@@ -168,4 +168,49 @@ test.describe('inventory', () => {
 
     await expect(onHand).toHaveText(String(before), { timeout: 15_000 })
   })
+
+  // A shelf list has to hold still: the rows a merchant is working through
+  // must not rearrange under the pointer, and correcting one figure is no
+  // reason to refetch the other twenty-four.
+  test('leaves the rest of the list alone when one count is corrected', async ({ page }) => {
+    const listRequests: string[] = []
+    page.on('request', (request) => {
+      if (/\/stock_levels\?/.test(request.url())) listRequests.push(request.url())
+    })
+
+    const creds = await login(page)
+    await page.goto(INVENTORY_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^inventory$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const productNames = () => page.getByRole('row').locator('td:first-child').allInnerTexts()
+
+    // Snapshot only once real rows have replaced the loading skeletons,
+    // otherwise "before" is a list of empty cells and the comparison is
+    // meaningless.
+    const onHand = page.getByRole('button', { name: /edit on-hand count/i }).first()
+    await expect(onHand).toBeVisible({ timeout: 15_000 })
+    await expect
+      .poll(async () => (await productNames()).filter(Boolean).length, { timeout: 15_000 })
+      .toBeGreaterThan(0)
+
+    const orderBefore = await productNames()
+    const fetchesBefore = listRequests.length
+
+    const before = Number.parseInt((await onHand.innerText()).trim(), 10)
+    await onHand.click()
+    await page.getByLabel(/^amount$/i).fill(String(before + 1))
+    await page.getByRole('button', { name: /^apply$/i }).click()
+    await expect(onHand).toHaveText(String(before + 1), { timeout: 15_000 })
+
+    expect(await productNames()).toEqual(orderBefore)
+    expect(listRequests.length).toBe(fetchesBefore)
+
+    // Leave the fixture as it was found.
+    await onHand.click()
+    await page.getByLabel(/^amount$/i).fill(String(before))
+    await page.getByRole('button', { name: /^apply$/i }).click()
+    await expect(onHand).toHaveText(String(before), { timeout: 15_000 })
+  })
 })
