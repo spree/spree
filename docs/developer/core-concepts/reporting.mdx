@@ -191,6 +191,12 @@ the sidebar renders it without knowing which counters exist:
 { "key": "open_returns", "label": "Open returns", "value": 3, "nav": "returns" }
 ```
 
+A parent nav entry sums its own counter and its children's, because the
+sidebar only shows the children of the section you are in — a count nobody
+sees until they have already navigated there tells them nothing. Orders
+carries the total of what is waiting to ship plus the open returns, exchanges
+and claims; expanding the section breaks it down.
+
 Three things follow from counters living in the registry:
 
 - **Labels come from the server**, the same way metric labels do, so a
@@ -205,8 +211,10 @@ Three things follow from counters living in the registry:
   counted carries no link.
 
 Core ships seven: orders to fulfill, payments to collect, open returns, open
-exchanges, open claims, low stock variants and out of stock variants. The
-three post-sale ones badge their sidebar entries. The low stock counter reads the
+exchanges, open claims, low stock variants and out of stock variants. Orders
+to fulfill and the three post-sale counters badge the sidebar; payments to
+collect deliberately does not, since a badge that is lit on almost every store
+stops carrying information. The low stock counter reads the
 store's `low_stock_threshold` preference (default five units; zero turns it
 off), which merchants set under store settings → Inventory.
 

@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       )
 
       fulfill = json_response['counters'].first
-      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0, 'nav' => nil)
+      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0, 'nav' => 'orders')
       expect(fulfill['link']).to eq(
         'resource' => 'orders',
         'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]

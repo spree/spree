@@ -47,6 +47,9 @@ nav.add({
   icon: InboxIcon,
   subject: Subject.Order,
   position: 200,
+  // The section's own work plus its children's, so the total survives the
+  // submenu being collapsed on every page outside Orders.
+  badge: navCounterBadge('orders', 'returns', 'exchanges', 'claims'),
   children: [
     {
       key: 'orders.drafts',

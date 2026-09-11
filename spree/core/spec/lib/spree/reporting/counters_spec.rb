@@ -14,7 +14,7 @@ RSpec.describe Spree::Reporting::Counters do
       %w[orders_to_fulfill payments_to_collect open_returns open_exchanges open_claims low_stock_items out_of_stock_items]
     )
     expect(results['orders_to_fulfill'].label).to eq('Orders to fulfill')
-    expect(results['orders_to_fulfill'].nav).to be_nil
+    expect(results['orders_to_fulfill'].nav).to eq('orders')
     expect(results['orders_to_fulfill'].link).to eq(
       'resource' => 'orders',
       'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
@@ -86,6 +86,10 @@ RSpec.describe Spree::Reporting::Counters do
     it 'counts exchanges and claims on their own nav entries' do
       expect(evaluate['open_exchanges'].nav).to eq('exchanges')
       expect(evaluate['open_claims'].nav).to eq('claims')
+    end
+
+    it 'leaves money owed off the sidebar, where a near-permanent badge would stop informing' do
+      expect(evaluate['payments_to_collect'].nav).to be_nil
     end
   end
 

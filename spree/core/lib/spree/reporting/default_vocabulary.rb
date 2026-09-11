@@ -420,7 +420,7 @@ module Spree
           # "at or below n on hand" (docs/plans/6.0-inventory-operations.md).
 
           counter :orders_to_fulfill,
-                  subject: -> { Spree::Order }, key_scope: 'read_orders',
+                  subject: -> { Spree::Order }, key_scope: 'read_orders', nav: 'orders',
                   count: ->(store, channel:) { PLACED_ORDERS.call(store, channel).ready_to_ship.count },
                   link: { resource: 'orders',
                           filters: [{ field: 'fulfillment_status', operator: 'eq', value: 'unfulfilled' }] }

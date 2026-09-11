@@ -16,6 +16,7 @@ import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
+import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 import { getAvailableUiLocales } from '../../i18n-setup'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
@@ -62,6 +63,11 @@ function StoreLayout() {
  */
 function StoreShell({ inSettings }: { inSettings: boolean }) {
   useAutoCollapseSidebar(inSettings)
+  // Loaded by the shell rather than by whichever badge happens to be on screen:
+  // the sidebar only mounts the children of the section you are in, so leaving
+  // the request to a badge means no counts at all on every other page. One
+  // query key, so the badges and the home screen's card share this one request.
+  useDashboardCounters()
   // The profile is edited in a dialog rather than a page, so the shell owns its
   // open state — the trigger sits in the TopBar's user menu, which is mounted
   // here and stays put across route changes.
