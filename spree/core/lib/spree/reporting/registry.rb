@@ -124,7 +124,12 @@ module Spree
     # @!attribute description
     #   ->(store) returning a sentence, for counters whose meaning depends on
     #   a store setting (a threshold). Omitted = the locale's static text.
-    Counter = Struct.new(:name, :count, :subject, :key_scope, :link, :description, keyword_init: true)
+    # @!attribute nav
+    #   Key of the sidebar entry this count badges, when it badges one. The
+    #   dashboard reads it rather than mapping counter names to nav entries
+    #   itself, so an extension's counter can badge its own nav entry without
+    #   a dashboard release.
+    Counter = Struct.new(:name, :count, :subject, :key_scope, :link, :description, :nav, keyword_init: true)
 
     # Allowlist of queryable metrics, dimensions and counters. One global
     # instance lives at `Spree.reporting`; core seeds the starter vocabulary in
@@ -188,14 +193,15 @@ module Spree
       # @param count [Proc] ->(store, channel:) → Integer
       # @param link [Hash, nil] `{ resource:, filters: [{ field:, operator:, value: }] }`
       # @param description [Proc, nil] ->(store) → String
-      def counter(name, replace: false, count:, subject: nil, key_scope: nil, link: nil, description: nil)
+      # @param nav [String, nil] sidebar entry key this count badges
+      def counter(name, replace: false, count:, subject: nil, key_scope: nil, link: nil, description: nil, nav: nil)
         name = name.to_sym
         raise ArgumentError, "counter #{name} already registered (pass replace: true to override)" if @counters.key?(name) && !replace
         raise ArgumentError, "counter #{name} declares a subject and must also declare its key_scope" if subject && key_scope.blank?
         raise ArgumentError, "counter #{name} needs a callable count" unless count.respond_to?(:call)
 
         @counters[name] = Counter.new(name: name, count: count, subject: subject, key_scope: key_scope,
-                                      link: link, description: description)
+                                      link: link, description: description, nav: nav)
       end
 
       def metric!(name)

@@ -2,21 +2,22 @@ module Spree
   module Api
     module V3
       module Admin
-        # Point-in-time operational counts for the dashboard home, evaluated
-        # from the counters registered on Spree.reporting. Time-series
-        # analytics live in the semantic reporting endpoint (ReportingController).
+        # Point-in-time counts registered on Spree.reporting: what needs the
+        # merchant's attention right now, for the home screen's card and the
+        # sidebar's badges. Time-series analytics live in the semantic
+        # reporting endpoint (ReportingController).
         class DashboardController < Admin::BaseController
           include ReportingAuthorization
 
           scoped_resource :dashboard
 
-          # GET /api/v3/admin/dashboard/operations
+          # GET /api/v3/admin/dashboard/counters
           #
           # Filtered to the counters this caller may read, so a limited role
           # gets a shorter list rather than a refused card.
-          def operations
+          def counters
             channel = requested_channel
-            counters = Spree::Reporting::Counters.new(
+            evaluated = Spree::Reporting::Counters.new(
               store: current_store,
               channel: channel,
               allowed: ->(counter) { member_allowed?(counter) }
@@ -24,7 +25,7 @@ module Spree
 
             render json: {
               channel_id: channel&.prefixed_id,
-              counters: DashboardCounterSerializer.new(counters.to_a).serializable_hash
+              counters: DashboardCounterSerializer.new(evaluated.to_a).serializable_hash
             }
           end
 

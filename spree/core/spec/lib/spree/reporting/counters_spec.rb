@@ -10,8 +10,11 @@ RSpec.describe Spree::Reporting::Counters do
   it 'evaluates every registered counter with a localized label and its link' do
     results = evaluate
 
-    expect(results.keys).to eq(%w[orders_to_fulfill payments_to_collect open_returns low_stock_items out_of_stock_items])
+    expect(results.keys).to eq(
+      %w[orders_to_fulfill payments_to_collect open_returns open_exchanges open_claims low_stock_items out_of_stock_items]
+    )
     expect(results['orders_to_fulfill'].label).to eq('Orders to fulfill')
+    expect(results['orders_to_fulfill'].nav).to be_nil
     expect(results['orders_to_fulfill'].link).to eq(
       'resource' => 'orders',
       'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
@@ -58,11 +61,31 @@ RSpec.describe Spree::Reporting::Counters do
     end
   end
 
-  context 'with an open return' do
+  context 'with post-sale records' do
     let!(:open_return) { create(:return) }
 
-    it 'counts requested and approved returns' do
+    it 'counts everything still in flight, and names the nav entry it badges' do
+      result = evaluate['open_returns']
+
+      expect(result.value).to eq(1)
+      expect(result.nav).to eq('returns')
+    end
+
+    it 'counts a received return, which still needs refunding' do
+      open_return.update!(status: 'received')
+
       expect(evaluate['open_returns'].value).to eq(1)
+    end
+
+    it 'ignores a refunded return' do
+      open_return.update!(status: 'refunded')
+
+      expect(evaluate['open_returns'].value).to eq(0)
+    end
+
+    it 'counts exchanges and claims on their own nav entries' do
+      expect(evaluate['open_exchanges'].nav).to eq('exchanges')
+      expect(evaluate['open_claims'].nav).to eq('claims')
     end
   end
 

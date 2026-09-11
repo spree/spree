@@ -98,20 +98,19 @@ describe('reporting', () => {
 })
 
 describe('dashboard', () => {
-  describe('operations', () => {
-    it('GETs /dashboard/operations and forwards optional params', async () => {
+  describe('counters', () => {
+    it('GETs /dashboard/counters and forwards the channel', async () => {
       let url: URL | null = null
       server.use(
-        http.get(`${API_PREFIX}/dashboard/operations`, ({ request }) => {
+        http.get(`${API_PREFIX}/dashboard/counters`, ({ request }) => {
           url = new URL(request.url)
-          return HttpResponse.json({ orders_to_fulfill: 0 })
+          return HttpResponse.json({ channel_id: 'ch_1', counters: [] })
         }),
       )
 
-      await createTestClient().dashboard.operations({ channel_id: 'ch_1', low_stock_threshold: 3 })
+      await createTestClient().dashboard.counters({ channel_id: 'ch_1' })
 
       expect(url!.searchParams.get('channel_id')).toBe('ch_1')
-      expect(url!.searchParams.get('low_stock_threshold')).toBe('3')
     })
   })
 })

@@ -10,9 +10,10 @@ module Spree
 
           typelize key: :string, label: :string, description: [:string, nullable: true], value: :number,
                    link: ['{ resource: string; filters: Array<{ field: string; operator: string; value: string }> } | null',
-                          comment: 'The list filter that shows exactly the rows counted, or null when no list can.']
+                          comment: 'The list filter that shows exactly the rows counted, or null when no list can.'],
+                   nav: [:string, nullable: true, comment: 'Sidebar entry key this count badges, or null.']
 
-          attributes :key, :label, :description, :value, :link
+          attributes :key, :label, :description, :value, :link, :nav
         end
       end
     end

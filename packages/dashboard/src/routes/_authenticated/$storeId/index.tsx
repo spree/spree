@@ -1,14 +1,6 @@
-import type { DashboardCounter, DashboardOperations, ReportingQuery } from '@spree/admin-sdk'
+import type { DashboardCounter, DashboardCounters, ReportingQuery } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import {
-  adminClient,
-  Can,
-  resolveDatePreset,
-  Subject,
-  usePermissions,
-  useResourceKey,
-  useStore,
-} from '@spree/dashboard-core'
+import { Can, resolveDatePreset, Subject, usePermissions, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -50,7 +42,6 @@ import {
   TriangleAlertIcon,
   TruckIcon,
 } from '@spree/dashboard-ui/icons'
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, type LinkProps } from '@tanstack/react-router'
 import { format, parseISO } from 'date-fns'
 import type { CSSProperties } from 'react'
@@ -65,6 +56,7 @@ import {
   sharePercent,
   TimeSeriesChart,
 } from '../../../components/spree/reporting/report-view'
+import { useDashboardCounters } from '../../../hooks/use-dashboard-counters'
 import {
   entityDimension,
   metaString,
@@ -133,14 +125,7 @@ function DashboardPage() {
     ? resolveMetrics(CHART_METRICS, schema)
     : CHART_METRICS.map((name) => ({ name, label: name, format: 'decimal', derived: false }))
 
-  // No `placeholderData`: it belongs to the channel that was selected before,
-  // and showing another channel's counts under this one's name is worse than
-  // showing the skeleton for a moment.
-  const { data: operations, error: operationsError } = useQuery({
-    queryKey: useResourceKey('dashboard', 'operations', channelId),
-    queryFn: () => adminClient.dashboard.operations({ channel_id: channelParam }),
-    staleTime: 5 * 60 * 1000,
-  })
+  const { data: operations, error: operationsError } = useDashboardCounters(channelParam)
 
   // A role without `read_reports` (or order data) gets a 403 here — say so
   // rather than leaving the skeleton up forever. Any other failure is a plain
@@ -276,7 +261,7 @@ function OperationsCard({
   channelId,
   failed,
 }: {
-  data: DashboardOperations | undefined
+  data: DashboardCounters | undefined
   className: string
   /** The screen's channel, or undefined for all channels. */
   channelId: string | undefined

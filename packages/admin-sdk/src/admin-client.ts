@@ -120,13 +120,14 @@ export interface ReportingSchema {
   limits: { default: number; max: number }
 }
 
-export interface DashboardOperations {
+export interface DashboardCounters {
   /** Prefixed channel id the order-based counts are scoped to; null means all channels. Stock counts are always store-wide. */
   channel_id: string | null
   /**
    * The counters registered on `Spree.reporting` that this caller may read,
-   * in registration order. Labels and links come from the server, so a
-   * counter an extension registers renders without a dashboard change.
+   * in registration order. Labels, links and the sidebar entry each one
+   * badges all come from the server, so a counter an extension registers
+   * renders without a dashboard change.
    */
   counters: DashboardCounter[]
 }
@@ -913,11 +914,11 @@ export class AdminClient {
   }
 
   readonly dashboard = {
-    operations: (
+    counters: (
       params?: { channel_id?: string },
       options?: RequestOptions,
-    ): Promise<DashboardOperations> =>
-      this.request<DashboardOperations>('GET', '/dashboard/operations', { ...options, params }),
+    ): Promise<DashboardCounters> =>
+      this.request<DashboardCounters>('GET', '/dashboard/counters', { ...options, params }),
   }
 
   // ============================================

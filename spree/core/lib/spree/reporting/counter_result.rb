@@ -13,6 +13,8 @@ module Spree
       attribute :value, :integer
       # `{ resource:, filters: [...] }` as registered, or nil.
       attribute :link
+      # Sidebar entry key this count badges, or nil.
+      attribute :nav, :string
     end
   end
 end

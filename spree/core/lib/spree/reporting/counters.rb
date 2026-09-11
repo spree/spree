@@ -25,7 +25,8 @@ module Spree
             label: translate(counter.name, :label) || counter.name.to_s.humanize,
             description: description_for(counter),
             value: counter.count.call(@store, channel: @channel),
-            link: counter.link&.deep_stringify_keys
+            link: counter.link&.deep_stringify_keys,
+            nav: counter.nav
           )
         end
       end

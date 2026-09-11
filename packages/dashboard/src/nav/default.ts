@@ -15,11 +15,7 @@ import {
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
-import {
-  ClaimsNavBadge,
-  ExchangesNavBadge,
-  ReturnsNavBadge,
-} from '../components/spree/post-sale-nav-badges'
+import { navCounterBadge } from '../components/spree/nav-counter-badge'
 
 nav.add({
   key: 'getting-started',
@@ -68,7 +64,7 @@ nav.add({
       path: '/returns',
       subject: Subject.Order,
       position: 200,
-      badge: ReturnsNavBadge,
+      badge: navCounterBadge('returns'),
     },
     {
       key: 'exchanges',
@@ -76,7 +72,7 @@ nav.add({
       path: '/exchanges',
       subject: Subject.Order,
       position: 300,
-      badge: ExchangesNavBadge,
+      badge: navCounterBadge('exchanges'),
     },
     {
       key: 'claims',
@@ -84,7 +80,7 @@ nav.add({
       path: '/claims',
       subject: Subject.Order,
       position: 400,
-      badge: ClaimsNavBadge,
+      badge: navCounterBadge('claims'),
     },
   ],
 })

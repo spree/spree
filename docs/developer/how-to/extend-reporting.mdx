@@ -165,7 +165,8 @@ Spree.reporting.counter :orders_on_hold,
 ```
 
 Add `reporting.counters.orders_on_hold.label` (and optionally `.description`)
-to your locale file; without an entry the name is humanized. Declare `link`
+to your locale file; without an entry the name is humanized. Pass `nav:` with
+a sidebar entry's key to badge that entry with this count. Declare `link`
 only when the list filter shows exactly the rows counted — the dashboard
 resolves `resource` to one of its lists (`orders`, `returns`, `products`) and
 appends the channel filter itself for order lists. A counter whose meaning

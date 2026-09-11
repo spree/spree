@@ -1692,8 +1692,14 @@ en:
             other: "%{count} units or fewer on hand at an active location."
             zero: Turned off. Set a low stock threshold in store settings to use this.
           label: Low stock variants
+        open_claims:
+          description: Claims still open or approved and not yet resolved.
+          label: Open claims
+        open_exchanges:
+          description: Exchanges not yet fulfilled.
+          label: Open exchanges
         open_returns:
-          description: Returns requested or approved and not yet received.
+          description: Returns not yet refunded.
           label: Open returns
         orders_to_fulfill:
           description: Placed orders with nothing shipped yet.

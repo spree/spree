@@ -252,9 +252,9 @@ Spree::Core::Engine.add_routes do
           resources :saved_reports, only: %i[index show create update destroy]
         end
 
-        # Dashboard (point-in-time operational counts)
+        # Dashboard (point-in-time counts registered on Spree.reporting)
         namespace :dashboard do
-          get :operations
+          get :counters
         end
 
         # Current admin user + permissions (for UI permission checks)

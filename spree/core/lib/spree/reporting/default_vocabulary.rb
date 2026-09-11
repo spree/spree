@@ -88,11 +88,23 @@ module Spree
       end
 
       PAYMENTS_OWED = %w[none authorized partially_paid].freeze
-      OPEN_RETURN_STATUSES = %w[requested approved].freeze
+
+      # Everything still in flight, not just the first step: an approved return
+      # still needs receiving and refunding, so it is as much outstanding work
+      # as one nobody has looked at. Terminal statuses drop out.
+      OPEN_RETURN_STATUSES = %w[requested approved received].freeze
+      OPEN_EXCHANGE_STATUSES = %w[requested approved received].freeze
+      OPEN_CLAIM_STATUSES = %w[open approved].freeze
 
       # Placed orders a merchant still acts on, narrowed to a channel when one
       # is being looked at.
       PLACED_ORDERS = ->(store, channel) { store.orders.complete.not_canceled.for_channel(channel) }
+
+      # Post-sale records still owed work. All three hang off an order, which
+      # is how a channel narrows them.
+      OPEN_POST_SALE = lambda { |relation, channel, statuses|
+        relation.joins(:order).where(status: statuses).merge(Spree::Order.for_channel(channel)).count
+      }
 
       # Stock a merchant is actually counting: tracked variants at active
       # locations. `store.stock_levels` walks products → variants, so paranoia
@@ -424,13 +436,22 @@ module Spree
                           filters: [{ field: 'payment_status', operator: 'in', value: PAYMENTS_OWED.join(',') }] }
 
           counter :open_returns,
-                  subject: -> { Spree::Return }, key_scope: 'read_orders',
-                  count: lambda { |store, channel:|
-                    store.returns.joins(:order).where(status: OPEN_RETURN_STATUSES).
-                      merge(Spree::Order.for_channel(channel)).count
-                  },
+                  subject: -> { Spree::Return }, key_scope: 'read_orders', nav: 'returns',
+                  count: ->(store, channel:) { OPEN_POST_SALE.call(store.returns, channel, OPEN_RETURN_STATUSES) },
                   link: { resource: 'returns',
                           filters: [{ field: 'status', operator: 'in', value: OPEN_RETURN_STATUSES.join(',') }] }
+
+          counter :open_exchanges,
+                  subject: -> { Spree::Exchange }, key_scope: 'read_orders', nav: 'exchanges',
+                  count: ->(store, channel:) { OPEN_POST_SALE.call(store.exchanges, channel, OPEN_EXCHANGE_STATUSES) },
+                  link: { resource: 'exchanges',
+                          filters: [{ field: 'status', operator: 'in', value: OPEN_EXCHANGE_STATUSES.join(',') }] }
+
+          counter :open_claims,
+                  subject: -> { Spree::Claim }, key_scope: 'read_orders', nav: 'claims',
+                  count: ->(store, channel:) { OPEN_POST_SALE.call(store.claims, channel, OPEN_CLAIM_STATUSES) },
+                  link: { resource: 'claims',
+                          filters: [{ field: 'status', operator: 'in', value: OPEN_CLAIM_STATUSES.join(',') }] }
 
           counter :low_stock_items,
                   subject: -> { Spree::StockLevel }, key_scope: 'read_stock',

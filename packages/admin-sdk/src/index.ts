@@ -7,7 +7,7 @@ export type {
   AuthProvider,
   AuthProvidersResponse,
   AuthTokens,
-  DashboardOperations,
+  DashboardCounters,
   LoginCredentials,
   MeResponse,
   PermissionRule,

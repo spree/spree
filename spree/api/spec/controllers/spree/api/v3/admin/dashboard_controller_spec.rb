@@ -7,8 +7,8 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
 
   before { request.headers.merge!(headers) }
 
-  describe 'GET #operations' do
-    subject { get :operations, as: :json }
+  describe 'GET #counters' do
+    subject { get :counters, as: :json }
 
     let(:counter_keys) { json_response['counters'].map { |counter| counter['key'] } }
 
@@ -17,10 +17,12 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['channel_id']).to be_nil
-      expect(counter_keys).to eq(%w[orders_to_fulfill payments_to_collect open_returns low_stock_items out_of_stock_items])
+      expect(counter_keys).to eq(
+        %w[orders_to_fulfill payments_to_collect open_returns open_exchanges open_claims low_stock_items out_of_stock_items]
+      )
 
       fulfill = json_response['counters'].first
-      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0)
+      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0, 'nav' => nil)
       expect(fulfill['link']).to eq(
         'resource' => 'orders',
         'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
@@ -32,16 +34,23 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       create(:order_ready_to_ship, store: store)
       create(:order_ready_to_ship, store: store, channel: channel)
 
-      get :operations, params: { channel_id: channel.prefixed_id }, as: :json
+      get :counters, params: { channel_id: channel.prefixed_id }, as: :json
 
       expect(json_response['channel_id']).to eq(channel.prefixed_id)
       expect(json_response['counters'].find { |c| c['key'] == 'orders_to_fulfill' }['value']).to eq(1)
     end
 
+    it 'names the sidebar entry a post-sale counter badges' do
+      subject
+
+      returns = json_response['counters'].find { |counter| counter['key'] == 'open_returns' }
+      expect(returns['nav']).to eq('returns')
+    end
+
     it 'refuses a channel from another store' do
       other_channel = create(:channel, store: create(:store))
 
-      get :operations, params: { channel_id: other_channel.prefixed_id }, as: :json
+      get :counters, params: { channel_id: other_channel.prefixed_id }, as: :json
       expect(response).to have_http_status(:not_found)
     end
 

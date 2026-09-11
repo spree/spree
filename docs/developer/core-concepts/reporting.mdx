@@ -162,7 +162,7 @@ rule, so a picker never offers a dimension whose query would be refused.
 Not everything on the home screen is a report over a period. "Orders to
 fulfill", "Open returns" and "Low stock variants" are the state of the store
 right now, with no time range and no currency. The registry holds these as
-**counters** beside metrics and dimensions, and `GET /dashboard/operations`
+**counters** beside metrics and dimensions, and `GET /dashboard/counters`
 evaluates them:
 
 ```json
@@ -183,6 +183,14 @@ evaluates them:
 }
 ```
 
+One request serves both surfaces that show these numbers: the home screen's
+card and the sidebar's badges. A counter that badges a nav entry names it, so
+the sidebar renders it without knowing which counters exist:
+
+```json
+{ "key": "open_returns", "label": "Open returns", "value": 3, "nav": "returns" }
+```
+
 Three things follow from counters living in the registry:
 
 - **Labels come from the server**, the same way metric labels do, so a
@@ -196,8 +204,9 @@ Three things follow from counters living in the registry:
   registered together. A counter with no list that can honestly show what it
   counted carries no link.
 
-Core ships five: orders to fulfill, payments to collect, open returns, low
-stock variants and out of stock variants. The low stock counter reads the
+Core ships seven: orders to fulfill, payments to collect, open returns, open
+exchanges, open claims, low stock variants and out of stock variants. The
+three post-sale ones badge their sidebar entries. The low stock counter reads the
 store's `low_stock_threshold` preference (default five units; zero turns it
 off), which merchants set under store settings → Inventory.
 
