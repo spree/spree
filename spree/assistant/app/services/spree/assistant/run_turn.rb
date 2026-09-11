@@ -181,9 +181,10 @@ module Spree
         end
       end
 
-      # `reply` is the library's return value and is polymorphic: a message when
-      # the turn ran to completion, a halt marker when a mutation stopped it.
-      # Both are unwrapped here so nothing downstream ever sees a library type.
+      # `reply` is the library's last message. When a mutation is held the loop
+      # stops before answering, so the proposal — not the return value — is what
+      # says the turn ended waiting on a human. Either way the library type is
+      # unwrapped here, and nothing downstream ever sees one.
       def finish(turn, reply)
         # Before anything else, so the reads that informed this turn are stored
         # in the order they happened — ahead of the reply that used them, and

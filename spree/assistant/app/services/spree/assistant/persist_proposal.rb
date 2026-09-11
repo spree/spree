@@ -28,7 +28,9 @@ module Spree
           )
 
           tool_call = call_message.tool_calls.create!(
-            tool_call_id: "call_#{SecureRandom.hex(8)}",
+            # The library's own id for the held call when it gave us one, so the
+            # replayed conversation answers the exact call the model made.
+            tool_call_id: proposal[:tool_call_id].presence || "call_#{SecureRandom.hex(8)}",
             name: tool.tool_name,
             arguments: arguments,
             summary: tool.summary(arguments),

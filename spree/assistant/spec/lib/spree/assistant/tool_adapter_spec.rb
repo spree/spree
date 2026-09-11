@@ -51,24 +51,54 @@ RSpec.describe Spree::Assistant::ToolAdapter do
   end
 
   describe 'a mutating tool' do
-    it 'halts rather than executing' do
-      result = adapter_for('update_product_status').execute(id: product.slug, status: 'draft')
-
-      expect(result).to be_a(RubyLLM::Tool::Halt)
-      expect(product.reload.status).to eq('active')
-      expect(turn.proposal).to be_present
+    # The gate is the library's own: a tool declaring `requires_approval` whose
+    # resolver answers "pending" is never executed, so the assertions here are
+    # about the declaration and the resolver rather than about `execute` — the
+    # adapter no longer has a way to hold a call itself.
+    def resolve(adapter, call_id: 'toolu_1', **arguments)
+      tool_call = RubyLLM::ToolCall.new(id: call_id, name: adapter.name, arguments: arguments.stringify_keys)
+      adapter.approval_resolver.call(tool_call)
     end
 
-    it 'refuses a second change in the same turn' do
+    it 'is declared to the library as needing approval' do
+      expect(adapter_for('update_product_status').requires_approval?).to be(true)
+      expect(adapter_for('search_resources').requires_approval?).to be(false)
+    end
+
+    it 'holds the change and leaves the store alone' do
       adapter = adapter_for('update_product_status')
-      adapter.execute(id: product.slug, status: 'draft')
 
-      second = adapter.execute(id: product.slug, status: 'archived')
+      # nil is the library's "still pending", which is what stops the loop.
+      expect(resolve(adapter, id: product.slug, status: 'draft')).to be_nil
+      expect(product.reload.status).to eq('active')
+      expect(turn.proposal).to be_present
+      expect(turn.proposal[:arguments]).to include(id: product.slug, status: 'draft')
+    end
 
-      # Every call in a response runs before the halt takes effect, so without
-      # this the merchant approves one change believing they approved both.
-      expect(second).to be_a(Hash)
-      expect(second[:error]).to include('already waiting')
+    # The library documents a resolver as an idempotent read and may consult it
+    # more than once for the same call, so re-reading must not be mistaken for
+    # a second change.
+    it 'records one proposal however often the same call is resolved' do
+      adapter = adapter_for('update_product_status')
+
+      3.times { resolve(adapter, id: product.slug, status: 'draft') }
+
+      expect(turn.proposal[:tool_call_id]).to eq('toolu_1')
+      expect(turn.proposal[:arguments]).to include(status: 'draft')
+    end
+
+    # A model can ask for several changes in one response. Keeping only the
+    # first is what stops a merchant approving one card believing they approved
+    # both.
+    it 'keeps only the first of several changes in one response' do
+      adapter = adapter_for('update_product_status')
+
+      resolve(adapter, call_id: 'toolu_1', id: product.slug, status: 'draft')
+      resolve(adapter, call_id: 'toolu_2', id: product.slug, status: 'archived')
+
+      expect(turn.proposal[:tool_call_id]).to eq('toolu_1')
+      expect(turn.proposal[:arguments]).to include(status: 'draft')
+      expect(product.reload.status).to eq('active')
     end
   end
 

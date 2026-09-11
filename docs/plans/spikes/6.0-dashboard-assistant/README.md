@@ -7,6 +7,11 @@ resume correctly afterwards?
 **Verdict: GO** — see `FINDINGS.md` for results, the mechanism, and the two
 traps that bind phase 1.
 
+> Historical record, deliberately pinned to ruby_llm 1.16.0 — the version
+> this spike tested. The shipped gem moved to 2.0 on 2026-09-11 and gates
+> mutations with `requires_approval` instead of the `Tool::Halt` return
+> described below; the plan's phase 0 section records what changed.
+
 ```bash
 bundle install
 bundle exec ruby spike.rb

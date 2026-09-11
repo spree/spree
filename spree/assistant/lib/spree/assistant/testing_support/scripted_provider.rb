@@ -3,7 +3,7 @@ module Spree
     module TestingSupport
       # Scripts the AI vendor so specs are deterministic and need no API key.
       #
-      # The stub sits at the provider's HTTP round trip, which is BELOW payload
+      # The stub sits at the protocol's HTTP round trip, which is BELOW payload
       # rendering — so the real messages the model would receive are still
       # built, and {#last_provider_payload} can be asserted on. That matters
       # more than it sounds: the approval flow's one silent failure mode is
@@ -70,6 +70,22 @@ module Spree
           }
         end
 
+        # One response asking for several tools at once, which is how a model
+        # says "look this up and change that" in a single breath.
+        #
+        # @param calls [Array<Array>] pairs of [name, input]
+        # @return [Hash]
+        def provider_tool_uses(*calls)
+          {
+            'id' => 'msg_tools', 'type' => 'message', 'role' => 'assistant', 'model' => 'scripted',
+            'content' => calls.map.with_index do |(name, input), index|
+              { 'type' => 'tool_use', 'id' => "toolu_#{index}", 'name' => name.to_s,
+                'input' => (input || {}).deep_stringify_keys }
+            end,
+            'stop_reason' => 'tool_use', 'usage' => { 'input_tokens' => 5, 'output_tokens' => 5 }
+          }
+        end
+
         def scripted_provider_state
           ScriptedProvider.state
         end
@@ -79,20 +95,24 @@ module Spree
             @state ||= { queue: [], payload: nil }
           end
 
-          # Patches the provider once, at load. Idempotent.
+          # Patches the protocol once, at load. Idempotent.
+          #
+          # The round trip lives on `RubyLLM::Protocol`, the wire-format base
+          # every vendor protocol subclasses — `Provider` now knows only where
+          # to talk and who it is.
           #
           # @return [void]
           def install!
             return if @installed
 
-            ::RubyLLM::Provider.prepend(Interceptor)
+            ::RubyLLM::Protocol.prepend(Interceptor)
             @installed = true
           end
         end
 
         # Replaces the network call, recording what would have been sent.
         module Interceptor
-          def sync_response(_connection, payload, _headers = {})
+          def sync_response(payload, _headers = {})
             state = ScriptedProvider.state
             state[:payload] = payload
 

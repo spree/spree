@@ -58,6 +58,26 @@ RSpec.describe Spree::Assistant::RunTurn do
     end
   end
 
+  describe 'the tools it offers the model' do
+    it 'sends real schemas, and keeps the approval gate out of the vendor payload' do
+      script_provider(provider_text('hi'))
+      run(message: 'hello')
+
+      tools = last_provider_payload[:tools]
+      by_name = tools.index_by { |tool| (tool[:name] || tool['name']).to_s }
+      expect(by_name.keys).to include('search_resources', 'update_product_status')
+
+      schema = by_name['search_resources'][:input_schema].deep_stringify_keys
+      expect(schema['properties'].keys).to include('resource', 'filters', 'limit')
+      expect(schema['required']).to eq(['resource'])
+
+      # The gate is ours and is enforced in this process. Nothing in the
+      # payload tells the vendor a tool is privileged, so a confused or
+      # compromised provider has nothing to bypass.
+      expect(tools.to_s).not_to include('requires_approval')
+    end
+  end
+
   describe 'a change' do
     let(:proposal) { chat.pending_tool_call }
 
@@ -74,10 +94,54 @@ RSpec.describe Spree::Assistant::RunTurn do
       expect(proposal.arguments['status']).to eq('draft')
     end
 
+    # The gate's whole promise, asserted at the only level that proves it: run
+    # a real turn through the library's own loop and watch whether the tool is
+    # reached at all. Under 1.x the tool ran and refused itself; now the
+    # library never calls it, so a regression here is silent unless counted.
+    it 'never reaches the tool while the change is held, and reaches it once on approval' do
+      calls = 0
+      allow_any_instance_of(Spree::Assistant::Tools::UpdateProductStatus)
+        .to receive(:call).and_wrap_original { |original, *args, **kwargs| calls += 1; original.call(*args, **kwargs) }
+
+      run(message: 'set Blue Shirt to draft')
+
+      expect(calls).to eq(0)
+      expect(product.reload.status).to eq('active')
+
+      Spree::Assistant::ResolveToolCall.new(tool_call: proposal, context: context, approve: true).call
+
+      expect(calls).to eq(1)
+      expect(product.reload.status).to eq('draft')
+    end
+
     it 'writes a placeholder result so the conversation stays valid' do
       run(message: 'set Blue Shirt to draft')
 
       expect(proposal.result_message.content).to eq(Spree::Assistant::AWAITING_APPROVAL_MARKER)
+    end
+
+    # A model can ask to look something up and change something in one breath.
+    # The read is not what the merchant is being asked to approve, so it runs;
+    # only the change waits. Getting this wrong in the other direction would
+    # strand the read with no result and leave the conversation invalid.
+    context 'asked for alongside a read' do
+      before do
+        reset_scripted_provider!
+        script_provider(
+          provider_tool_uses(
+            ['search_resources', { resource: 'products', limit: 1 }],
+            ['update_product_status', { id: product.slug, status: 'draft' }]
+          )
+        )
+      end
+
+      it 'runs the read and still holds the change' do
+        turn = run(message: 'how many products do I have, and set Blue Shirt to draft')
+
+        expect(turn).to be_awaiting_approval
+        expect(product.reload.status).to eq('active')
+        expect(turn.activity.map { |entry| entry[:name] }).to include('search_resources')
+      end
     end
 
     context 'once approved' do

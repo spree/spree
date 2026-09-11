@@ -32,5 +32,5 @@ Gem::Specification.new do |s|
   # approval gate stands on, replacing it with a first-class `requires_approval`.
   # The upgrade is wanted, but it must stay a one-file change — see
   # docs/plans/6.0-dashboard-assistant.md.
-  s.add_dependency 'ruby_llm', '~> 1.16.0'
+  s.add_dependency 'ruby_llm', '~> 2.0.0.rc2'
 end

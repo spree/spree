@@ -2,11 +2,11 @@ module Spree
   module Assistant
     # The outcome of one assistant turn, in Spree's own vocabulary.
     #
-    # This is the boundary the LLM library stops at: no RubyLLM type — not
-    # `Tool::Halt`, not the polymorphic `ask` return, not `RubyLLM::Message` —
-    # travels past here into controllers, serializers or the registry. That is
-    # what keeps the eventual RubyLLM 2.0 upgrade (which deletes the halt
-    # mechanism) a one-file change.
+    # This is the boundary the LLM library stops at: no RubyLLM type — not a
+    # `ToolCall`, not a `Message` — travels past here into controllers,
+    # serializers or the registry. That is what kept the 2.0 upgrade, which
+    # deleted the halt mechanism the gate was first built on, a change to the
+    # adapter and this file rather than to the whole gem.
     class Turn
       include ActiveModel::Model
       include ActiveModel::Attributes
@@ -35,20 +35,21 @@ module Spree
       #
       # Records a change the model wants approved.
       #
-      # Only the first is kept. Every tool call in a response runs before the
-      # halt takes effect, so a request like "archive both of these" would
-      # otherwise overwrite the first proposal and show one card — and the
-      # merchant would approve one change believing they had approved both.
-      # The rest are refused, and the model is told to ask again once this one
-      # is decided.
+      # Only the first is kept. A model can ask for several changes in one
+      # response, and showing one card for two held calls would let a merchant
+      # approve one change believing they had approved both. Re-recording the
+      # same call is a no-op, because the library treats an approval resolver
+      # as an idempotent read and may consult it more than once per turn.
       #
       # @param tool [Spree::Assistant::Tool]
       # @param arguments [Hash]
+      # @param tool_call_id [String] the library's id for this call
       # @return [Boolean] whether this proposal was the one recorded
-      def propose!(tool:, arguments:)
+      def propose!(tool:, arguments:, tool_call_id: nil)
+        return true if @proposal.present? && @proposal[:tool_call_id] == tool_call_id
         return false if @proposal.present?
 
-        @proposal = { tool: tool, arguments: arguments }
+        @proposal = { tool: tool, arguments: arguments, tool_call_id: tool_call_id }
         true
       end
 

@@ -3,14 +3,16 @@ module Spree
     # Turns a {Spree::Assistant::Tool} into the class shape RubyLLM expects.
     #
     # This is the ONLY place that knows how the LLM library models tools, which
-    # is what keeps the registry reusable and the eventual RubyLLM 2.0 upgrade a
-    # one-file change: 2.0 removes `Tool::Halt` in favour of a first-class
-    # `requires_approval`, and nothing outside this file may hold either.
+    # is what keeps the registry reusable and a library upgrade a one-file
+    # change — the promise this file made under 1.x and kept at 2.0.
     #
-    # A mutating tool never executes here. It records the proposal on the turn
-    # and halts, so the loop stops with the store untouched and the merchant
-    # gets an approval card. Approval executes the tool through
-    # {Spree::Assistant::ExecuteToolCall} instead.
+    # A mutating tool never executes during a turn. It declares
+    # `requires_approval`, so the library stops the loop with the call pending
+    # and the store untouched, and the merchant gets an approval card. Approval
+    # runs the tool through {Spree::Assistant::ResolveToolCall} in a later
+    # request, against a context built fresh from that request's signed-in
+    # admin — which is why the resolver here always answers "still pending"
+    # rather than consulting a decision recorded elsewhere.
     class ToolAdapter
       TYPE_MAP = {
         string: 'string',
@@ -23,7 +25,7 @@ module Spree
 
       class << self
         # @param tool [Spree::Assistant::Tool]
-        # @param turn [Spree::Assistant::Turn] collects the halted proposal
+        # @param turn [Spree::Assistant::Turn] collects the held proposal
         # @return [RubyLLM::Tool]
         def build(tool, turn)
           type_map = TYPE_MAP
@@ -32,13 +34,29 @@ module Spree
             description tool.description
 
             tool.params.each do |param_name, options|
-              param param_name,
-                    type: type_map.fetch(options[:type], 'string'),
-                    desc: options[:description],
-                    required: options[:required]
+              parameter param_name,
+                        type: type_map.fetch(options[:type], 'string'),
+                        description: options[:description],
+                        required: options[:required]
             end
 
             define_method(:name) { tool.tool_name }
+
+            if tool.mutating?
+              # No decision is ever recorded on this chat: the turn that
+              # proposes a change and the request that approves it are
+              # different HTTP requests with different chat objects. Answering
+              # `nil` keeps the call pending, which is what stops the loop.
+              #
+              # The library documents resolvers as idempotent reads and may call
+              # this more than once per turn, so recording the proposal is
+              # guarded to keep the first one only.
+              requires_approval do |tool_call|
+                turn.propose!(tool: tool, arguments: (tool_call.arguments || {}).symbolize_keys,
+                              tool_call_id: tool_call.id)
+                nil
+              end
+            end
 
             define_method(:execute) do |**arguments|
               # Every problem below is returned as a result, never raised: the
@@ -60,18 +78,7 @@ module Spree
               unknown = arguments.keys - tool.params.keys
               next { error: "Unknown argument(s): #{unknown.join(', ')}" } if unknown.any?
 
-              if tool.mutating?
-                unless turn.propose!(tool: tool, arguments: arguments)
-                  next { error: 'Another change is already waiting for the merchant to approve. ' \
-                                'Ask again once they have decided on it.' }
-                end
-
-                # Persisted as this call's tool result, so the conversation stays
-                # valid; approval overwrites it with the real outcome.
-                halt(Spree::Assistant::AWAITING_APPROVAL_MARKER)
-              else
-                tool.call(**arguments)
-              end
+              tool.call(**arguments)
             end
           end.new
         end
