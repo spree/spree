@@ -323,9 +323,33 @@ RSpec.describe SpreeStripe::Gateway::Connect do
       onboard
     end
 
-    # Which service agreement a seller abroad needs depends on which payouts
-    # product the marketplace is on, which a country code cannot tell us — so
-    # core sends none and lets Stripe apply its own default.
+    # Stripe grants `transfers` alone only under the recipient agreement, and
+    # refuses that agreement for a seller in the platform's own country — so
+    # the capability is asked for wherever the seller trades, even though the
+    # marketplace charges on its own account and never uses it.
+    it 'asks for card payments alongside transfers' do
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params[:capabilities]).to eq(transfers: { requested: true }, card_payments: { requested: true })
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
+
+      onboard
+    end
+
+    it 'asks for it for a seller abroad too' do
+      new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
+
+      expect(Stripe::Account).to receive(:create) do |params, _options|
+        expect(params[:capabilities]).to eq(transfers: { requested: true }, card_payments: { requested: true })
+        Stripe::StripeObject.construct_from(id: 'acct_new')
+      end
+
+      onboard
+    end
+
+    # Requesting `card_payments` settles it: that capability exists only under
+    # the full agreement, which is also the only one that can receive the
+    # cross-border payouts this gem makes. Naming it would add nothing.
     it 'states no service agreement' do
       new_seller.update!(billing_address: create(:address, country_code: 'FR', state_code: nil))
 

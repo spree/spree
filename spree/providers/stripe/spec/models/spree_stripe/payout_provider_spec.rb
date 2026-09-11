@@ -31,6 +31,55 @@ RSpec.describe SpreeStripe::PayoutProvider do
       described_class.new.transfer!(seller_transfer)
     end
 
+    # "You cannot use `transfer_group` if the `source_transaction` already has
+    # one set" — which refused every split checkout's transfers.
+    context 'when the customer\'s own charge funds it' do
+      let(:payment) do
+        create(:payment, order: order, payment_method: gateway, amount: order.total,
+                         status: 'completed', metadata: { 'stripe_charge_id' => 'ch_1' })
+      end
+
+      before { payment }
+
+      it 'draws on the charge and leaves its group alone' do
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload[:source_transaction]).to eq('ch_1')
+          expect(payload).not_to have_key(:transfer_group)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+    end
+
+    # Nothing else ties these together, so the group is worth naming.
+    context 'when it is paid out of the platform balance' do
+      it 'names the order it settles' do
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload).not_to have_key(:source_transaction)
+          expect(payload[:transfer_group]).to eq(order.number)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+
+      # A split checkout's sellers each get their own transfer, and the group's
+      # number is what reads them back as one basket.
+      it 'names the whole checkout when the order was placed alongside others' do
+        group = create(:order_group, store: store)
+        order.update!(order_group: group)
+
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload[:transfer_group]).to eq(group.number)
+          expect(payload[:transfer_group]).not_to eq(order.number)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+    end
+
     # A retry after a timeout must find the movement it already made rather
     # than making a second one.
     it 'carries an idempotency key derived from the ledger row' do

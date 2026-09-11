@@ -651,7 +651,6 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
-      refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
   number:
     currency:
       format:
@@ -1079,6 +1078,7 @@ en:
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
+        not_cancellable: cannot be canceled once its goods have been dispatched
         oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
         oidc_authentication_failed: We could not sign you in with this provider. Please try again.
         oidc_missing_code: The identity provider did not return an authorization code.
@@ -1090,6 +1090,7 @@ en:
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
         received_exceeds_expected: cannot be more than the %{expected} expected
+        refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
         same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
         seller_delivery_method_provider: a seller's delivery method prices its own rates and is fulfilled by hand — carrier accounts belong to the marketplace

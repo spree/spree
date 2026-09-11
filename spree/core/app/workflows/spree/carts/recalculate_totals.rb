@@ -166,8 +166,6 @@ module Spree
           updated_at: Time.current
         }
         if cart.is_a?(Spree::Order)
-          columns[:payment_status] = cart.payment_status
-          columns[:fulfillment_status] = cart.fulfillment_status
           columns[:commission_amount_total] = cart.commission_amount_total
           columns[:commission_tax_total] = cart.commission_tax_total
           columns[:commission_total] = cart.commission_total

@@ -82,12 +82,22 @@ export function useOrderFees(orderId: string) {
   })
 }
 
-async function listAllCommissionLines(orderId: string) {
-  const params = {
-    q: { order_id_eq: orderId },
+/**
+ * Ransack predicates go in flat: the SDK wraps them into `q[...]` itself, so a
+ * nested `q` becomes `q[q]=[object Object]`, which Ransack ignores — and an
+ * unfiltered list is every commission line in the store, rendered against
+ * whichever order happens to be open.
+ */
+export function commissionLinesParams(orderId: string) {
+  return {
+    order_id_eq: orderId,
     limit: 100,
     expand: ['commission_rate'],
   }
+}
+
+async function listAllCommissionLines(orderId: string) {
+  const params = commissionLinesParams(orderId)
   const first = await adminClient.commissionLines.list({ ...params, page: 1 })
   const rest = await Promise.all(
     Array.from({ length: (first.meta?.pages ?? 1) - 1 }, (_, index) =>

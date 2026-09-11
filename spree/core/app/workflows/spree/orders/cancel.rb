@@ -71,7 +71,10 @@ module Spree
       private
 
       def ensure_cancellable
-        failure(order) unless order.allow_cancel?
+        return if order.allow_cancel?
+
+        order.errors.add(:base, :not_cancellable, message: Spree.t('errors.messages.not_cancellable'))
+        failure(order)
       end
 
       # An ordinary order settles at the gateway, which returns the whole

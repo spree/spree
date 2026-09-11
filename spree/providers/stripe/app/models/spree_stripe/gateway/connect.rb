@@ -138,7 +138,13 @@ module SpreeStripe
             losses: { payments: 'application' },
             stripe_dashboard: { type: 'express' }
           },
-          capabilities: { transfers: { requested: true } },
+          # `card_payments` is never exercised — the marketplace charges on its
+          # own account and only transfers onwards — but Stripe will not grant
+          # `transfers` alone outside the recipient agreement, and refuses
+          # that agreement for a seller in the platform's own country. Abroad
+          # it would be allowed, and is still wrong: a recipient account
+          # cannot receive the cross-border payouts this gem then makes.
+          capabilities: { transfers: { requested: true }, card_payments: { requested: true } },
           # Spree decides when a seller is settled, so Stripe must not also be
           # paying their balance out on a schedule of its own — two clocks on
           # one relationship, and the seller's own setting would be the one
@@ -303,7 +309,8 @@ module SpreeStripe
       end
 
       def create_connect_webhook_endpoint_async
-        return if preferred_connect_webhook_signing_secret.present?
+        return if only_webhook_registration_changed?
+        return if preferred_connect_webhook_signing_secret.present? && !stripe_secret_key_changed?
 
         SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: true)
       end

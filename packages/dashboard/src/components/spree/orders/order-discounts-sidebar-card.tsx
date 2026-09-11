@@ -161,7 +161,7 @@ function CouponCodeDialog({
 
   const promotionsQuery = useQuery({
     queryKey: useResourceKey('promotions', 'coupon-options'),
-    queryFn: () => adminClient.promotions.list({ q: { kind_eq: 'coupon_code' }, per_page: 100 }),
+    queryFn: () => adminClient.promotions.list({ kind_eq: 'coupon_code', limit: 100 }),
     enabled: open,
   })
   const couponPromotions = (promotionsQuery.data?.data ?? []).filter((promotion) => promotion.code)

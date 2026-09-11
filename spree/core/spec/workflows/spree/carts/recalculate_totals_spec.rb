@@ -28,6 +28,19 @@ module Spree
 
         expect(order.reload.payment_total).to eq(payment.amount - 5)
       end
+
+      it 'leaves the derived statuses alone, so a stale instance cannot undo them' do
+        order = create(:completed_order_with_totals, store: store)
+        Spree::Order.where(id: order.id).update_all(payment_status: 'refunded', fulfillment_status: 'fulfilled')
+        order.send(:write_attribute, :payment_status, 'paid')
+        order.send(:write_attribute, :fulfillment_status, 'pending')
+
+        described_class.call(cart: order)
+
+        order.reload
+        expect(order.payment_status).to eq('refunded')
+        expect(order.fulfillment_status).to eq('fulfilled')
+      end
     end
 
     describe 'the completed-order money freeze' do
