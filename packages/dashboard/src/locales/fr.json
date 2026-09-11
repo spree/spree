@@ -4986,10 +4986,69 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "Unités promises à des commandes déjà passées mais pas encore expédiées. Elles sont toujours en rayon.",
+        "available": "Ce qu'un nouveau client peut encore acheter : en stock, moins alloué, moins réservé.",
+        "incoming": "Unités en route, sur un bon de commande fournisseur ou un transfert en cours.",
+        "on_hand": "Unités physiquement présentes à cet emplacement. Cliquez pour corriger le compte.",
+        "reserved": "Unités retenues par des clients actuellement en cours de paiement."
+      },
+      "columns": {
+        "allocated": "Alloué",
+        "available": "Disponible",
+        "incoming": "En route",
+        "location": "Emplacement",
+        "on_hand": "En stock",
+        "product": "Produit",
+        "reserved": "Réservé",
+        "sku": "SKU",
+        "stock_status": "État du stock"
+      },
+      "filters": {
+        "has_incoming": "En route",
+        "has_reserved": "Réservé",
+        "in_stock": "En stock",
+        "out_of_stock": "En rupture"
+      },
+      "incoming": {
+        "open_aria": "Ajouter du stock en route",
+        "create_transfer": "Créer un transfert",
+        "create_purchase_order": "Créer un bon de commande"
+      },
+      "location_filter": {
+        "placeholder": "Rechercher des emplacements…",
+        "empty": "Aucun emplacement trouvé"
+      },
       "messages": {
         "stock_level_deleted": "Niveau de stock supprimé",
         "stock_updated": "Stock mis à jour"
-      }
+      },
+      "no_sku": "Sans SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "Définir à",
+          "adjust": "Ajuster de"
+        },
+        "open_aria": "Modifier le stock en main de {{name}}",
+        "mode_aria": "Type de modification",
+        "amount_aria": "Quantité",
+        "reason_aria": "Motif",
+        "confirm": "Appliquer"
+      },
+      "reasons": {
+        "correction": "Correction",
+        "count": "Comptage",
+        "received": "Reçu",
+        "return_restock": "Retour remis en stock",
+        "damaged": "Endommagé",
+        "theft_or_loss": "Vol ou perte",
+        "promotion_or_donation": "Promotion ou don"
+      },
+      "table": {
+        "search_placeholder": "Rechercher un SKU ou un produit…",
+        "empty": "Aucun niveau de stock pour l'instant. Le stock apparaît ici dès qu'une variante est stockée à un emplacement."
+      },
+      "title": "Inventaire"
     },
     "stock_locations": {
       "add_cta": "Ajouter un emplacement de stock",
@@ -5184,7 +5243,8 @@
       "product_types": "Des modèles qui donnent aux nouveaux produits leurs champs et leurs options.",
       "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé.",
       "purchase_orders": "Le stock commandé à vos fournisseurs, et ce qui est arrivé",
-      "suppliers": "Votre carnet d'adresses fournisseurs"
+      "suppliers": "Votre carnet d'adresses fournisseurs",
+      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, alloué à des commandes, retenu par des paiements en cours, disponible à la vente et en route."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",

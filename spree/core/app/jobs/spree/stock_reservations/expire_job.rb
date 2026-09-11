@@ -4,7 +4,7 @@ module Spree
       queue_as Spree.queues.stock_reservations
 
       def perform
-        Spree::StockReservation.expired.in_batches(of: 1_000).delete_all
+        Spree::StockReservation.sweep_expired
       end
     end
   end

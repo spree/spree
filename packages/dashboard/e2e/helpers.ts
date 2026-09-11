@@ -157,6 +157,12 @@ export const FIXTURE_TRANSFER_PRODUCT = 'E2E Transfer Product'
 /** Unique so the transfer specs can resolve exactly the stocked variant. */
 export const FIXTURE_TRANSFER_SKU = 'E2E-TRANSFER-SKU'
 export const FIXTURE_SUPPLIER = 'E2E Supplier'
+// The Inventory page: a SKU of its own so the figures it asserts are not
+// moved by the transfer specs, stocked at the source and held by one
+// checkout at the destination.
+export const FIXTURE_INVENTORY_PRODUCT = 'E2E Inventory Product'
+export const FIXTURE_INVENTORY_SKU = 'E2E-INVENTORY-SKU'
+export const FIXTURE_INVENTORY_RESERVED = 3
 export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
 /**
  * A seller with one settled sale and one payout still owed, so the ledger
@@ -352,4 +358,52 @@ export async function fillAddressForm(page: Page, address: AddressInput) {
     await page.getByPlaceholder(/^search states/i).fill(address.state)
     await page.getByRole('option', { name: address.state }).first().click()
   }
+}
+
+/**
+ * Opens a transfer of `quantity` units of `sku` from the fixture source
+ * warehouse to the fixture destination and marks it in transit, through the
+ * API: the trip's middle is what these specs test, not the two warehouse
+ * selects on the form. By SKU, not by search, so it resolves exactly the
+ * variant whose stock global-setup put on the source shelf.
+ */
+export async function createInTransitTransfer(
+  page: Page,
+  accessToken: string,
+  { sku, quantity }: { sku: string; quantity: number },
+) {
+  const headers = { Authorization: `Bearer ${accessToken}` }
+
+  const locations = await page.request
+    .get('/api/v3/admin/stock_locations', { headers, params: { limit: 100 } })
+    .then((res) => res.json())
+  const source = locations.data.find((l: { name: string }) => l.name === FIXTURE_TRANSFER_SOURCE)
+  const destination = locations.data.find(
+    (l: { name: string }) => l.name === FIXTURE_TRANSFER_DESTINATION,
+  )
+
+  const variants = await page.request
+    .get('/api/v3/admin/variants', { headers, params: { 'q[sku_eq]': sku } })
+    .then((res) => res.json())
+  expect(variants.data, `no variant with SKU ${sku}`).not.toHaveLength(0)
+
+  const created = await page.request.post('/api/v3/admin/stock_transfers', {
+    headers,
+    data: {
+      source_location_id: source.id,
+      destination_location_id: destination.id,
+      reference: `E2E ${sku} ${Date.now()}`,
+      items: [{ variant_id: variants.data[0].id, quantity_shipped: quantity }],
+    },
+  })
+  expect(created.status(), await created.text()).toBe(201)
+  const transfer = await created.json()
+
+  const shipped = await page.request.patch(
+    `/api/v3/admin/stock_transfers/${transfer.id}/mark_in_transit`,
+    { headers },
+  )
+  expect(shipped.status(), await shipped.text()).toBe(200)
+
+  return transfer
 }

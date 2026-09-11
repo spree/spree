@@ -84,6 +84,15 @@ module Spree
         expect(item.display_unit_cost.to_s).to eq('$12.50')
       end
 
+      # Two of forty refused at the dock are still owed by the supplier, but
+      # they are not on their way: outstanding keeps them, incoming does not.
+      it 'stops expecting units the dock refused' do
+        item.assign_attributes(quantity_ordered: 40, quantity_received: 38, quantity_rejected: 2)
+
+        expect(item.outstanding).to eq(2)
+        expect(item.incoming).to eq(0)
+      end
+
       # Twelve against ten ordered is what the supplier sent, so the line
       # reports it rather than refusing it.
       it 'reports units above the order as over-received, and owes nothing' do

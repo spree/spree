@@ -4986,10 +4986,69 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "Einheiten, die bereits aufgegebenen Bestellungen zugesagt sind und noch nicht versandt wurden. Sie liegen weiterhin im Lager.",
+        "available": "Was ein neuer Kunde noch kaufen kann: vorrätig, abzüglich zugewiesener und reservierter Einheiten.",
+        "incoming": "Einheiten auf dem Weg hierher, über eine Lieferantenbestellung oder einen laufenden Transfer.",
+        "on_hand": "Einheiten, die an diesem Lagerort physisch vorhanden sind. Zum Korrigieren anklicken.",
+        "reserved": "Einheiten, die von Kunden im laufenden Checkout gehalten werden."
+      },
+      "columns": {
+        "allocated": "Zugewiesen",
+        "available": "Verfügbar",
+        "incoming": "Eingehend",
+        "location": "Lagerort",
+        "on_hand": "Vorrätig",
+        "product": "Produkt",
+        "reserved": "Reserviert",
+        "sku": "SKU",
+        "stock_status": "Bestandsstatus"
+      },
+      "filters": {
+        "has_incoming": "Eingehend",
+        "has_reserved": "Reserviert",
+        "in_stock": "Auf Lager",
+        "out_of_stock": "Nicht auf Lager"
+      },
+      "incoming": {
+        "open_aria": "Eingehenden Bestand hinzufügen",
+        "create_transfer": "Transfer erstellen",
+        "create_purchase_order": "Bestellung erstellen"
+      },
+      "location_filter": {
+        "placeholder": "Lagerorte suchen…",
+        "empty": "Keine Lagerorte gefunden"
+      },
       "messages": {
         "stock_level_deleted": "Lagerbestand gelöscht",
         "stock_updated": "Bestand aktualisiert"
-      }
+      },
+      "no_sku": "Keine SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "Setzen auf",
+          "adjust": "Anpassen um"
+        },
+        "open_aria": "Vorrätigen Bestand für {{name}} bearbeiten",
+        "mode_aria": "Art der Änderung",
+        "amount_aria": "Menge",
+        "reason_aria": "Grund",
+        "confirm": "Übernehmen"
+      },
+      "reasons": {
+        "correction": "Korrektur",
+        "count": "Zählung",
+        "received": "Erhalten",
+        "return_restock": "Retoure eingelagert",
+        "damaged": "Beschädigt",
+        "theft_or_loss": "Diebstahl oder Verlust",
+        "promotion_or_donation": "Aktion oder Spende"
+      },
+      "table": {
+        "search_placeholder": "SKU oder Produkt suchen…",
+        "empty": "Noch keine Lagerbestände. Bestand erscheint hier, sobald eine Variante an einem Lagerort geführt wird."
+      },
+      "title": "Bestand"
     },
     "stock_locations": {
       "add_cta": "Lagerort hinzufügen",
@@ -5184,7 +5243,8 @@
       "product_types": "Vorlagen, die neuen Produkten ihre Felder und Optionen geben.",
       "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist.",
       "purchase_orders": "Ware, die Sie bei Lieferanten bestellt haben, und was eingetroffen ist",
-      "suppliers": "Ihr Lieferanten-Adressbuch"
+      "suppliers": "Ihr Lieferanten-Adressbuch",
+      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, Bestellungen zugewiesen, durch Kassen gehalten, verkäuflich und unterwegs."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

@@ -7,6 +7,10 @@ module Spree
 
     OPEN_STATUSES = %w[draft ready_to_ship ordered in_transit partially_received].freeze
     CLOSED_STATUSES = %w[received over_received canceled].freeze
+    # The statuses in which a document's awaited units are on their way — and
+    # so count toward the destination's `incoming_count`. A draft or a packed
+    # box is not moving yet.
+    INCOMING_STATUSES = %w[ordered in_transit partially_received].freeze
 
     included do
       has_many :stock_receipts, as: :receivable, class_name: 'Spree::StockReceipt',
@@ -14,6 +18,7 @@ module Spree
 
       scope :open, -> { where(status: OPEN_STATUSES & statuses) }
       scope :closed, -> { where(status: CLOSED_STATUSES & statuses) }
+      scope :incoming, -> { where(status: INCOMING_STATUSES & statuses) }
 
       validate :items_name_distinct_variants
     end
@@ -65,6 +70,14 @@ module Spree
 
     def open?
       OPEN_STATUSES.include?(status)
+    end
+
+    # Whether the units still awaited are on their way, and so counted as
+    # incoming at the destination.
+    #
+    # @return [Boolean]
+    def incoming?
+      INCOMING_STATUSES.include?(status)
     end
 
     def closed?

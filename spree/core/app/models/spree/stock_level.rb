@@ -28,18 +28,56 @@ module Spree
       only_integer: true
     }, if: :verify_count_on_hand?
 
-    delegate :weight, :should_track_inventory?, to: :variant
-    delegate :name, to: :variant, prefix: true
+    delegate :weight, :should_track_inventory?, :thumbnail, to: :variant
+    delegate :name, :sku, to: :variant, prefix: true
     delegate :product, to: :variant
 
     after_save(if: :saved_changes?) { variant.touch }
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
-    self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count stock_location_id variant_id]
+    self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count reserved_count incoming_count
+                                                 stock_location_id variant_id]
+    self.whitelisted_ransackable_scopes = %w[with_stock_status]
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
+
+    # What a customer could still buy from this shelf, as an Arel expression:
+    # the same subtraction {#purchasable_count} makes in Ruby. A list filters
+    # on it, so it cannot be a Ruby method. Built through Arel rather than
+    # interpolated into a string so the column names are quoted by the adapter
+    # and nothing here can carry a fragment.
+    #
+    # @return [Arel::Nodes::Node]
+    def self.purchasable_arel
+      arel_table[:count_on_hand] - arel_table[:allocated_count] - arel_table[:reserved_count]
+    end
+
+    scope :in_stock, -> { where(purchasable_arel.gt(0)) }
+    scope :out_of_stock, -> { where(purchasable_arel.lteq(0)) }
+    scope :with_incoming, -> { where(arel_table[:incoming_count].gt(0)) }
+    scope :with_reserved, -> { where(arel_table[:reserved_count].gt(0)) }
+
+    # What the Inventory page's stock-status filter can ask for. Each names a
+    # scope above; `STOCK_STATUS_SCOPES` is the allowlist that keeps a request
+    # from naming any other method.
+    STOCK_STATUS_SCOPES = %w[in_stock out_of_stock with_incoming with_reserved].freeze
+
+    # Rows in any of the named states — "out of stock, or with units on the
+    # way" is one question a merchant asks, not two filters they combine.
+    #
+    # Splatted rather than taking one array: Ransack passes a multi-value
+    # `q[with_stock_status][]` as one argument per value, so a single-parameter
+    # lambda raises on the second. Unknown names are ignored rather than
+    # refused — a stale bookmark should show a list, not an error — and the
+    # allowlist is what keeps a request from naming any other method.
+    scope :with_stock_status, ->(*statuses) {
+      wanted = statuses.flatten.map(&:to_s) & STOCK_STATUS_SCOPES
+      next all if wanted.empty?
+
+      wanted.map { |status| public_send(status) }.reduce(:or)
+    }
 
     # Stock levels for products assigned to `store`, walking
     # `variant → product → store`.
@@ -144,11 +182,71 @@ module Spree
       count_on_hand - allocated_count
     end
 
+    # Units a customer could still buy from this shelf: what is here, minus
+    # what placed orders have taken, minus what checkouts in progress are
+    # holding. The figure the Inventory page calls *Available*, and the Ruby
+    # twin of {.purchasable_arel}, which the `in_stock` scopes filter on.
+    #
+    # @return [Integer]
+    def purchasable_count
+      available_count - reserved_count
+    end
+
+    # Units held by checkouts in progress. The counter follows the
+    # reservation rows: each row adds itself on create, moves the figure on
+    # a quantity change and gives it back on destroy, and
+    # {Spree::StockReservation.withdraw} does the same for a batch delete.
+    # Nothing else writes it; the `spree:stock:recount_levels` task repairs
+    # drift, but another writer is the bug.
+    #
+    # @param value [Integer] signed change
+    # @return [void]
+    def adjust_reserved_count(value)
+      adjust_clamped_counter(:reserved_count, value)
+    end
+
+    # Units on their way here on an open purchase order or an in-flight
+    # transfer. Written only by the workflows that move those documents in
+    # and out of that state and by the receipt recorder that lands the units.
+    #
+    # @param value [Integer] signed change
+    # @return [void]
+    def adjust_incoming_count(value)
+      adjust_clamped_counter(:incoming_count, value)
+    end
+
     def reduce_count_on_hand_to_zero
       set_count_on_hand(0) if count_on_hand > 0
     end
 
     private
+
+    # One atomic UPDATE, clamped at zero in the statement itself so a
+    # withdrawal larger than the counter — a level whose figure was already
+    # repaired underneath a writer — stops at zero instead of eating into
+    # what something else holds. No row lock is needed: the database
+    # applies the arithmetic to the value it holds at that moment, and the
+    # same statement stamps `updated_at`.
+    #
+    # The variant is touched for the reason {#adjust_allocated_count} gives:
+    # a bare UPDATE runs no callbacks, and both figures change what the
+    # variant's cache keys and search index say about it.
+    def adjust_clamped_counter(column, value)
+      return if value.zero?
+
+      counter = self.class.arel_table[column]
+      next_value =
+        if value.positive?
+          counter + value
+        else
+          Arel::Nodes::Case.new.when(counter.gt(value.abs)).then(counter - value.abs).else(0)
+        end
+      now = Time.current
+      self.class.where(id: id).update_all(column => next_value, updated_at: now)
+      self[column] = [self[column] + value, 0].max
+      self.updated_at = now
+      variant.touch
+    end
 
     # A shelf can only be driven below zero by a write that asked to, and then
     # it means Spree never saw those goods arrive — a receiving gap that heals

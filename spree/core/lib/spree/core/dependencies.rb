@@ -97,6 +97,9 @@ module Spree
         return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
         # inventory operations
+        stock_level_correct_service: 'Spree::StockLevels::Correct',
+        stock_level_bulk_upsert_service: 'Spree::StockLevels::BulkUpsert',
+        stock_level_recount_service: 'Spree::StockLevels::Recount',
         stock_transfer_create_workflow: 'Spree::StockTransfers::Create',
         stock_transfer_update_workflow: 'Spree::StockTransfers::Update',
         stock_transfer_mark_ready_workflow: 'Spree::StockTransfers::MarkReady',

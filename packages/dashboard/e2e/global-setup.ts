@@ -20,6 +20,9 @@ import {
   FIXTURE_BULK_PRODUCT_L,
   FIXTURE_BULK_PRODUCT_M,
   FIXTURE_BULK_PRODUCT_N,
+  FIXTURE_INVENTORY_PRODUCT,
+  FIXTURE_INVENTORY_RESERVED,
+  FIXTURE_INVENTORY_SKU,
   FIXTURE_LEDGER_OWED_AMOUNT,
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
   FIXTURE_LEDGER_SELLER,
@@ -138,6 +141,17 @@ const BOOTSTRAP_RUBY = [
   // Deep enough that the serial suite can ship from it repeatedly.
   'transfer_source.stock_levels.where(variant: transfer_product.default_variant).first_or_create!.update!(count_on_hand: 5000)',
   `s.suppliers.where(name: '${FIXTURE_SUPPLIER}').first_or_create!(email: 'e2e@supplier.test')`,
+  // The Inventory page: its own SKU, stocked at the source so a transfer can
+  // leave, and held by one checkout at the destination. The hold is a
+  // reservation row written directly — the row keeps the level's counter
+  // itself — because a real checkout needs reservations switched on
+  // store-wide, which the order specs must not inherit.
+  `inventory_product = Spree::Product.where(name: '${FIXTURE_INVENTORY_PRODUCT}').first_or_create!(store: s, status: 'active')`,
+  `inventory_product.default_variant.update!(sku: '${FIXTURE_INVENTORY_SKU}')`,
+  `inventory_product.default_variant.set_price(s.default_currency, 19.99)`,
+  'transfer_source.stock_levels.where(variant: inventory_product.default_variant).first_or_create!.update!(count_on_hand: 500)',
+  'inventory_level = transfer_destination.stock_levels.where(variant: inventory_product.default_variant).first_or_create!',
+  `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_product.default_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
 ].join('; ')

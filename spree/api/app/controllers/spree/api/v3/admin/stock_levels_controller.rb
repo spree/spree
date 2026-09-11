@@ -35,67 +35,37 @@ module Spree
               )
             end
 
-            result = Spree::StockLevels::BulkUpsert.call(rows: rows)
+            result = Spree.stock_level_bulk_upsert_service.call(rows: rows)
             render json: result.value
           end
 
           # PATCH /api/v3/admin/stock_levels/:id
           #
-          # A count edit is a correction, so it is written as an `adjusted`
-          # movement rather than straight onto the column — that is what puts
-          # it in the stock history beside every other change. The rest of the
-          # payload updates normally.
+          # A count edit is a correction written as an `adjusted` movement
+          # rather than straight onto the column, which is what puts it in the
+          # stock history beside every other change — see
+          # {Spree::StockLevels::Correct}. The rest of the payload updates
+          # normally.
           def update
             attributes = permitted_params.to_h
-            new_count = attributes.delete('count_on_hand')
-            reason = attributes.delete('reason').presence || Spree::StockMovement.default_adjustment_reason
+            correction = attributes.extract!('count_on_hand', 'adjustment', 'reason')
 
-            unless new_count.nil?
-              new_count = parse_count(new_count)
-              return render_validation_error(count_on_hand_errors) if new_count.nil?
-            end
+            @resource.update!(attributes) if attributes.any?
 
-            # Locked around the read: the delta is worked out from the count
-            # this request first saw, so two admins correcting the same level at
-            # once would otherwise each apply a delta measured against a shelf
-            # the other had already moved, and both edits would land.
-            @resource.with_lock do
-              @resource.update!(attributes) if attributes.any?
-              adjust_count_on_hand(new_count, reason) unless new_count.nil?
-            end
+            result = Spree.stock_level_correct_service.call(
+              stock_level: @resource,
+              count_on_hand: correction['count_on_hand'],
+              adjustment: correction['adjustment'],
+              reason: correction['reason']
+            )
+            return render_validation_error(result.error.to_s) if result.failure?
 
-            render json: serialize_resource(@resource.reload)
+            render json: serialize_resource(result.value)
           rescue ActiveRecord::RecordInvalid => e
             render_errors(e.record.errors)
           end
 
           protected
-
-          # The movement carries the delta, not the new count — it records what
-          # changed, and the column follows from it.
-          def adjust_count_on_hand(new_count, reason)
-            delta = new_count - @resource.count_on_hand
-            return if delta.zero?
-
-            @resource.stock_location.adjust(@resource.variant, delta, reason: reason)
-          end
-
-          # Strictly, because `to_i` reads anything unparseable as zero — and a
-          # zero here is not a no-op but an instruction to write the whole shelf
-          # off. A typo must be refused, never obeyed.
-          #
-          # @return [Integer, nil] nil when the value is not a whole number
-          def parse_count(value)
-            return value if value.is_a?(Integer)
-
-            Integer(value.to_s.strip, exception: false)
-          end
-
-          def count_on_hand_errors
-            Spree::StockLevel.new.errors.tap do |errors|
-              errors.add(:count_on_hand, :not_an_integer)
-            end
-          end
 
           def model_class
             Spree::StockLevel
@@ -105,8 +75,10 @@ module Spree
             Spree.api.admin_stock_level_serializer
           end
 
+          # What the flat row attributes read, so a page of levels is a fixed
+          # number of queries however long it is.
           def collection_includes
-            [:stock_location, :variant]
+            [:stock_location, { variant: [:primary_media, { option_values: :option_type }, { product: :primary_media }] }]
           end
 
           # `StockLevel.for_store` already applies its own `distinct`, and
@@ -124,7 +96,8 @@ module Spree
           # optional so an audit requirement never turns an existing endpoint
           # into a 422; omitting it falls back to a translated default.
           def permitted_params
-            params.permit(*model_additional_permitted_attributes, :count_on_hand, :backorderable, :reason, metadata: {})
+            params.permit(*model_additional_permitted_attributes, :count_on_hand, :adjustment, :backorderable, :reason,
+                          metadata: {})
           end
 
           private

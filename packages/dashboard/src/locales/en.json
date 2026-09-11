@@ -4986,10 +4986,69 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "Units promised to orders that have been placed but not yet shipped. They are still on the shelf.",
+        "available": "What a new customer can still buy: on hand, minus allocated, minus reserved.",
+        "incoming": "Units on their way here on a purchase order placed with a supplier, or a transfer in transit.",
+        "on_hand": "Units physically on the shelf at this location. Click to correct the count.",
+        "reserved": "Units held by customers who are in checkout right now."
+      },
+      "columns": {
+        "allocated": "Allocated",
+        "available": "Available",
+        "incoming": "Incoming",
+        "location": "Location",
+        "on_hand": "On hand",
+        "product": "Product",
+        "reserved": "Reserved",
+        "sku": "SKU",
+        "stock_status": "Stock status"
+      },
+      "filters": {
+        "has_incoming": "Incoming",
+        "has_reserved": "Reserved",
+        "in_stock": "In stock",
+        "out_of_stock": "Out of stock"
+      },
+      "incoming": {
+        "open_aria": "Add incoming stock",
+        "create_transfer": "Create transfer",
+        "create_purchase_order": "Create purchase order"
+      },
+      "location_filter": {
+        "placeholder": "Search locations…",
+        "empty": "No locations found"
+      },
       "messages": {
         "stock_level_deleted": "Stock level deleted",
         "stock_updated": "Stock updated"
-      }
+      },
+      "no_sku": "No SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "Set to",
+          "adjust": "Adjust by"
+        },
+        "open_aria": "Edit on-hand count for {{name}}",
+        "mode_aria": "How to change the count",
+        "amount_aria": "Amount",
+        "reason_aria": "Reason",
+        "confirm": "Apply"
+      },
+      "reasons": {
+        "correction": "Correction",
+        "count": "Count",
+        "received": "Received",
+        "return_restock": "Return restock",
+        "damaged": "Damaged",
+        "theft_or_loss": "Theft or loss",
+        "promotion_or_donation": "Promotion or donation"
+      },
+      "table": {
+        "search_placeholder": "Search SKU or product…",
+        "empty": "No stock levels yet. Stock appears here once a variant is stocked at a location."
+      },
+      "title": "Inventory"
     },
     "stock_locations": {
       "add_cta": "Add stock location",
@@ -5184,7 +5243,8 @@
       "product_types": "Templates that give new products their fields and options.",
       "stock_transfers": "Stock moving between your locations, and what has arrived.",
       "purchase_orders": "Stock you have ordered from suppliers, and what has arrived",
-      "suppliers": "Your supplier address book"
+      "suppliers": "Your supplier address book",
+      "stock_levels": "What you have at each location: on hand, allocated to orders, held by checkouts, available to sell, and on its way."
     },
     "tax_categories": {
       "add_cta": "Add tax category",

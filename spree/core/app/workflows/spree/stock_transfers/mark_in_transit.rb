@@ -9,6 +9,8 @@ module Spree
     # destination unchanged — that is what the 5.x one-shot transfer could not
     # express, and why availability was wrong for the whole journey.
     class MarkInTransit < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :before_unstock, :after_mark_in_transit
 
       # @param stock_transfer [Spree::StockTransfer]
@@ -31,6 +33,7 @@ module Spree
 
           run_hooks :before_unstock
           step :write_shipped_movements
+          step :count_units_in_flight
           step :mark_in_transit
         end
 
@@ -71,6 +74,13 @@ module Spree
         stock_transfer.items.each do |item|
           source.unstock(item.variant, item.quantity_shipped, stock_transfer, force: force)
         end
+      end
+
+      # The destination's shelf stays untouched, but its incoming figure now
+      # shows the box on its way — from here, not from `ready_to_ship`, since
+      # until now nothing was moving.
+      def count_units_in_flight
+        count_incoming(stock_transfer)
       end
 
       def mark_in_transit

@@ -6,16 +6,27 @@ import {
   type StockTransferFormValues,
 } from '../../../../components/spree/stock-transfer-form'
 import { useCreateStockTransfer } from '../../../../hooks/use-stock-transfers'
+import { prefilledLines, prefilledVariantSchema } from '../../../../lib/prefilled-variant'
 
 export const Route = createFileRoute('/_authenticated/$storeId/transfers/new')({
+  validateSearch: prefilledVariantSchema,
   component: NewStockTransferPage,
 })
 
 function NewStockTransferPage() {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const createMutation = useCreateStockTransfer()
+
+  // Arriving from an Inventory row: that SKU is on the transfer, and the
+  // warehouse it is short at is where it is going.
+  const initial: StockTransferFormValues = {
+    ...EMPTY_STOCK_TRANSFER,
+    destinationId: search.stock_location_id ?? '',
+    lines: prefilledLines(search, false),
+  }
 
   async function handleSubmit(values: StockTransferFormValues) {
     // The hook toasts the refusal; there is nowhere inline to put it on a
@@ -42,7 +53,7 @@ function NewStockTransferPage() {
 
   return (
     <StockTransferForm
-      initial={EMPTY_STOCK_TRANSFER}
+      initial={initial}
       title={t('admin.stock_transfers.new_title')}
       backTo="transfers"
       submitLabel={t('admin.stock_transfers.actions.create_draft')}

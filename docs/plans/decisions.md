@@ -1,3 +1,11 @@
+## 2026-09-10: Close-short writes the incoming counter, the Inventory page opens on every location, and the recount is an upgrade step
+
+**Context:** Implementing Phase 7 of `6.0-inventory-operations.md` turned up three things the plan left open. The incoming writer table listed `Update` (which refuses anything past `draft`, so it never changes an incoming figure) and omitted the `Close` workflows, whose whole job is to take a document out of the open set the recount reads. The page had no stated default before a location is picked. And the backfill was described as "run it once" without saying who runs it.
+
+**Decision:** (1) `PurchaseOrders::Close` and `StockTransfers::Close` decrement `incoming_count` by each line's `incoming`; `Update` leaves the table. (2) The Inventory page lists one row per stock level across every location, with a *Location* column, and the location switcher narrows the list. (3) `spree:stock:recount_levels` is a step of the `5_6_to_6_0` upgrade manifest.
+
+**Consequences:** The writer set and the recount source now agree at every status: a document counts toward incoming exactly while it is `ordered`, `in_transit` or `partially_received`, whichever workflow moved it there or out. Nothing on the page is summed across locations — a merchant reading a variant's total on-hand across warehouses reads it on the variant, not here. Existing installs get their counters filled by the same `spree:upgrade` that runs the other 6.0 backfills; the task stays runnable by hand to repair drift.
+
 ## 2026-09-10: Stock levels carry reserved and incoming as counters, and the Inventory page reads them
 
 **Context:** The dashboard's Inventory section (transfers, purchase orders, suppliers) had no view of the stock itself — no page answering "what do I have, where, and what is committed, held or on its way". The columns a merchant expects are Shopify's: on hand, committed, available, incoming. Spree already persists on hand (`count_on_hand`) and committed (`allocated_count`) but computed reserved at read time in `Stock::Quantifier` and had no notion of incoming at all, even though every purchase order and transfer now carries a `destination_location_id`.

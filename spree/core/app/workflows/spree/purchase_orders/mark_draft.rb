@@ -7,6 +7,8 @@ module Spree
     # rewritten. The order's `ordered_at` is cleared, because it is no longer
     # ordered.
     class MarkDraft < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :after_mark_draft
 
       attr_reader :purchase_order
@@ -18,6 +20,7 @@ module Spree
         purchase_order.with_lock do
           step :ensure_returnable
           run_hooks :validate
+          step :uncount_ordered_units
           step :return_to_draft
         end
 
@@ -31,6 +34,11 @@ module Spree
       def ensure_returnable
         failure(purchase_order, Spree.t('purchase_order.errors.already_receiving')) if purchase_order.stock_receipts.exists?
         failure(purchase_order, Spree.t('purchase_order.errors.not_ordered_for_draft')) unless purchase_order.ordered?
+      end
+
+      # Nothing has been received, so this is every unit the order placed.
+      def uncount_ordered_units
+        uncount_incoming(purchase_order)
       end
 
       def return_to_draft

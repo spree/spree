@@ -7,6 +7,8 @@ module Spree
     # them. Cancelling closes what is still outstanding, which is a message to
     # accounts payable rather than a stock correction.
     class Cancel < Spree::Workflow
+      include Spree::Receivables::IncomingCounter
+
       hooks :validate, :after_cancel
 
       # @param purchase_order [Spree::PurchaseOrder]
@@ -16,10 +18,15 @@ module Spree
       def perform(purchase_order:, reason: nil, canceler: nil)
         super
 
-        step :ensure_cancelable
-        run_hooks :validate
+        # One change at a time per document: the units still awaited are read
+        # from each line and then withdrawn from the counter, so a delivery
+        # committing in between would leave its units counted twice — once
+        # landed, once withdrawn as never coming.
+        purchase_order.with_lock do
+          step :ensure_cancelable
+          run_hooks :validate
 
-        ApplicationRecord.transaction do
+          step :uncount_awaited_units
           step :mark_canceled
         end
 
@@ -34,6 +41,10 @@ module Spree
         return unless purchase_order.closed?
 
         failure(purchase_order, Spree.t('purchase_order.errors.already_closed'))
+      end
+
+      def uncount_awaited_units
+        uncount_incoming(purchase_order)
       end
 
       def mark_canceled

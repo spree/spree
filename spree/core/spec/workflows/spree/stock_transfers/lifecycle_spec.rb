@@ -26,6 +26,10 @@ describe 'stock transfer lifecycle', type: :model do
     destination.stock_level(variant.id)&.count_on_hand.to_i
   end
 
+  def destination_incoming
+    destination.stock_level(variant.id)&.incoming_count.to_i
+  end
+
   before { source.restock(variant, 10) }
 
   describe 'creating' do
@@ -95,6 +99,17 @@ describe 'stock transfer lifecycle', type: :model do
 
       expect(source_on_hand).to eq(0)
       expect(destination_on_hand).to eq(0)
+    end
+
+    # From the moment the van leaves, not before: a packed box is not moving.
+    it 'shows the units as incoming at the destination once they have left' do
+      Spree::StockTransfers::MarkReady.call(stock_transfer: transfer)
+      expect(destination_incoming).to eq(0)
+
+      Spree::StockTransfers::MarkInTransit.call(stock_transfer: transfer.reload)
+
+      expect(destination_incoming).to eq(10)
+      expect(source.stock_level(variant.id).incoming_count).to eq(0)
     end
 
     it 'writes a shipped movement naming the transfer' do
@@ -169,6 +184,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(transfer.reload).to be_partially_received
       expect(transfer.received_at).to be_nil
       expect(destination_on_hand).to eq(8)
+      expect(destination_incoming).to eq(2)
       expect(line).to have_attributes(quantity_received: 8, outstanding: 2)
     end
 
@@ -183,6 +199,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(transfer.reload).to be_received
       expect(transfer.received_at).to be_present
       expect(destination_on_hand).to eq(8)
+      expect(destination_incoming).to eq(0)
       expect(line).to have_attributes(quantity_received: 8, quantity_rejected: 2, outstanding: 0)
     end
 
@@ -277,6 +294,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result.value.items.sole.outstanding).to eq(2)
       expect(source_on_hand).to eq(0)
       expect(destination_on_hand).to eq(8)
+      expect(destination_incoming).to eq(0)
     end
 
     it 'refuses a trip nothing has arrived on' do
@@ -351,6 +369,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result).to be_success
       expect(source_on_hand).to eq(10)
       expect(destination_on_hand).to eq(0)
+      expect(destination_incoming).to eq(0)
       expect(transfer.reload.stock_movements.received.sum(:quantity)).to eq(10)
     end
 
@@ -365,6 +384,7 @@ describe 'stock transfer lifecycle', type: :model do
       expect(result).to be_success
       expect(source_on_hand).to eq(0)
       expect(destination_on_hand).to eq(0)
+      expect(destination_incoming).to eq(0)
       expect(transfer.reload.close_reason).to eq('stolen')
       expect(transfer.stock_movements.received).to be_empty
     end

@@ -4977,10 +4977,69 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "已被下单但尚未发货占用的数量，仍在货架上。",
+        "available": "新顾客还能买到的数量：现有减去已分配再减去预留。",
+        "incoming": "正在运往此地的数量：供应商采购单或运输中的调拨。",
+        "on_hand": "该地点实际在库的数量。点击可更正。",
+        "reserved": "正在结账的顾客暂时占用的数量。"
+      },
+      "columns": {
+        "allocated": "已分配",
+        "available": "可售",
+        "incoming": "在途",
+        "location": "地点",
+        "on_hand": "现有",
+        "product": "商品",
+        "reserved": "已预留",
+        "sku": "SKU",
+        "stock_status": "库存状态"
+      },
+      "filters": {
+        "has_incoming": "有在途",
+        "has_reserved": "有预留",
+        "in_stock": "有货",
+        "out_of_stock": "缺货"
+      },
+      "incoming": {
+        "open_aria": "添加在途库存",
+        "create_transfer": "创建调拨",
+        "create_purchase_order": "创建采购单"
+      },
+      "location_filter": {
+        "placeholder": "搜索地点…",
+        "empty": "未找到地点"
+      },
       "messages": {
         "stock_level_deleted": "库存水平已删除",
         "stock_updated": "库存已更新"
-      }
+      },
+      "no_sku": "无 SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "设为",
+          "adjust": "调整"
+        },
+        "open_aria": "编辑 {{name}} 的现有数量",
+        "mode_aria": "更改方式",
+        "amount_aria": "数量",
+        "reason_aria": "原因",
+        "confirm": "应用"
+      },
+      "reasons": {
+        "correction": "更正",
+        "count": "盘点",
+        "received": "已收货",
+        "return_restock": "退货入库",
+        "damaged": "损坏",
+        "theft_or_loss": "被盗或丢失",
+        "promotion_or_donation": "促销或捐赠"
+      },
+      "table": {
+        "search_placeholder": "搜索 SKU 或商品…",
+        "empty": "暂无库存记录。变体在某地点入库后会显示在这里。"
+      },
+      "title": "库存"
     },
     "stock_locations": {
       "add_cta": "添加库存地点",
@@ -5174,7 +5233,8 @@
       "product_types": "为新商品预设字段和选项的模板。",
       "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。",
       "purchase_orders": "已向供应商订购的库存，以及已到货的部分",
-      "suppliers": "你的供应商通讯簿"
+      "suppliers": "你的供应商通讯簿",
+      "stock_levels": "各地点的库存情况：现有、已分配给订单、结账中暂扣、可售以及在途。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",

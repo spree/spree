@@ -209,7 +209,10 @@ export function TableToolbar({
       filterableColumns.filter(
         (c) =>
           c.quickFilter &&
-          (c.filterType === 'enum' || c.filterType === 'boolean' || c.filterType === 'date'),
+          (c.filterType === 'enum' ||
+            c.filterType === 'boolean' ||
+            c.filterType === 'date' ||
+            (c.filterType === 'resource' && !!c.filterResource?.listAll)),
       ),
     [filterableColumns],
   )
@@ -363,6 +366,14 @@ export function TableToolbar({
                 <QuickDateFilter
                   key={col.key}
                   column={col}
+                  filters={filters}
+                  onFiltersChange={onFiltersChange}
+                />
+              ) : col.filterType === 'resource' && col.filterResource ? (
+                <QuickResourceFilter
+                  key={col.key}
+                  column={col}
+                  config={col.filterResource}
                   filters={filters}
                   onFiltersChange={onFiltersChange}
                 />
@@ -739,6 +750,107 @@ function QuickEnumFilter({
             }
           >
             <StatusDot status={option.value} />
+            {option.label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+/**
+ * Picks records for one `resource` column — a warehouse, a supplier — without
+ * opening the filter panel.
+ *
+ * Where the config can list the resource whole (`listAll`), this is the same
+ * checkbox menu the enum quick filter uses: for a store's four warehouses, a
+ * list to tick is faster than a box to type into, and it matches the control
+ * next to it. Without `listAll` the column stays in the filter panel, where
+ * the search-driven picker belongs.
+ *
+ * Like the enum control it applies on change: a single pick is cheap to undo.
+ */
+function QuickResourceFilter({
+  column,
+  config,
+  filters,
+  onFiltersChange,
+}: {
+  column: ColumnDef
+  config: NonNullable<ColumnDef['filterResource']>
+  filters: FilterRule[]
+  onFiltersChange: (filters: FilterRule[]) => void
+}) {
+  const { t } = useTranslation()
+  const tenantId = useTenantId()
+  const existing = filters.find((f) => f.field === column.key && f.operator === 'in')
+  const existingValue = existing?.value
+  const selected = useMemo(
+    () => (existingValue ? parseFilterIds(existingValue) : []),
+    [existingValue],
+  )
+
+  const { data } = useQuery({
+    queryKey: ['quick-filter-all', config.queryKey, tenantId],
+    queryFn: () => config.listAll?.() ?? Promise.resolve({ data: [] }),
+    enabled: !!config.listAll,
+    staleTime: 60_000,
+  })
+  const options = useMemo(
+    () =>
+      (data?.data ?? []).map((item) => ({ value: item.id, label: config.getOptionLabel(item) })),
+    [data, config.getOptionLabel],
+  )
+
+  const apply = useCallback(
+    (values: string[]) => {
+      const others = filters.filter((f) => !(f.field === column.key && f.operator === 'in'))
+      // Everything selected is the same as no constraint, so drop the rule
+      // rather than listing every id in the URL.
+      if (values.length === 0 || values.length === options.length) {
+        onFiltersChange(others)
+        return
+      }
+      onFiltersChange([
+        ...others,
+        {
+          id: existing?.id ?? crypto.randomUUID(),
+          field: column.key,
+          operator: 'in',
+          value: values.join(','),
+        },
+      ])
+    },
+    [filters, column.key, options.length, existing?.id, onFiltersChange],
+  )
+
+  // No rule means no constraint, which is every option — not none.
+  const active = selected.length > 0 ? selected : options.map((o) => o.value)
+  const summary =
+    selected.length === 0
+      ? t('admin.common.all')
+      : selected.length === 1
+        ? (options.find((o) => o.value === selected[0])?.label ?? '1')
+        : `${selected.length}/${options.length}`
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+          <span className="text-muted-foreground">{column.label}</span>
+          <span className="max-w-40 truncate">{summary}</span>
+          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="min-w-52">
+        {options.map((option) => (
+          <DropdownMenuCheckboxItem
+            key={option.value}
+            checked={active.includes(option.value)}
+            onCheckedChange={(checked) =>
+              apply(checked ? [...active, option.value] : active.filter((v) => v !== option.value))
+            }
+          >
             {option.label}
           </DropdownMenuCheckboxItem>
         ))}

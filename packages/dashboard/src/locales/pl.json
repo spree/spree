@@ -5044,10 +5044,69 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "Jednostki przypisane do złożonych zamówień, które jeszcze nie zostały wysłane. Nadal są na półce.",
+        "available": "Ile nowy klient może jeszcze kupić: na stanie, minus przydzielone, minus wstrzymane.",
+        "incoming": "Jednostki w drodze: na zamówieniu zakupu u dostawcy lub w trwającym transferze.",
+        "on_hand": "Jednostki fizycznie obecne w tej lokalizacji. Kliknij, aby poprawić stan.",
+        "reserved": "Jednostki wstrzymane przez klientów będących obecnie w trakcie płatności."
+      },
+      "columns": {
+        "allocated": "Przydzielone",
+        "available": "Dostępne",
+        "incoming": "W drodze",
+        "location": "Lokalizacja",
+        "on_hand": "Na stanie",
+        "product": "Produkt",
+        "reserved": "Wstrzymane",
+        "sku": "SKU",
+        "stock_status": "Stan zapasów"
+      },
+      "filters": {
+        "has_incoming": "W drodze",
+        "has_reserved": "Wstrzymane",
+        "in_stock": "Dostępne",
+        "out_of_stock": "Niedostępne"
+      },
+      "incoming": {
+        "open_aria": "Dodaj zapasy w drodze",
+        "create_transfer": "Utwórz transfer",
+        "create_purchase_order": "Utwórz zamówienie zakupu"
+      },
+      "location_filter": {
+        "placeholder": "Szukaj lokalizacji…",
+        "empty": "Nie znaleziono lokalizacji"
+      },
       "messages": {
         "stock_level_deleted": "Usunięto stan magazynowy",
         "stock_updated": "Zaktualizowano stan magazynowy"
-      }
+      },
+      "no_sku": "Brak SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "Ustaw na",
+          "adjust": "Zmień o"
+        },
+        "open_aria": "Edytuj stan magazynowy {{name}}",
+        "mode_aria": "Sposób zmiany",
+        "amount_aria": "Ilość",
+        "reason_aria": "Powód",
+        "confirm": "Zastosuj"
+      },
+      "reasons": {
+        "correction": "Korekta",
+        "count": "Inwentaryzacja",
+        "received": "Przyjęto",
+        "return_restock": "Zwrot na stan",
+        "damaged": "Uszkodzone",
+        "theft_or_loss": "Kradzież lub utrata",
+        "promotion_or_donation": "Promocja lub darowizna"
+      },
+      "table": {
+        "search_placeholder": "Szukaj SKU lub produktu…",
+        "empty": "Brak poziomów zapasów. Zapasy pojawią się tutaj, gdy wariant zostanie przypisany do lokalizacji."
+      },
+      "title": "Zapasy"
     },
     "stock_locations": {
       "add_cta": "Dodaj lokalizację magazynową",
@@ -5244,7 +5303,8 @@
       "product_types": "Szablony nadające nowym produktom pola i opcje.",
       "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło.",
       "purchase_orders": "Towar zamówiony u dostawców i to, co już dotarło",
-      "suppliers": "Twoja książka adresowa dostawców"
+      "suppliers": "Twoja książka adresowa dostawców",
+      "stock_levels": "Co masz w każdej lokalizacji: na stanie, przydzielone do zamówień, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",

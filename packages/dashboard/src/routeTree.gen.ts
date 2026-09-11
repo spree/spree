@@ -32,6 +32,7 @@ import { Route as PurchaseOrdersIndexRouteImport } from './routes/_authenticated
 import { Route as PromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
 import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
 import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$storeId/orders/index'
+import { Route as InventoryIndexRouteImport } from './routes/_authenticated/$storeId/inventory/index'
 import { Route as CustomersIndexRouteImport } from './routes/_authenticated/$storeId/customers/index'
 import { Route as CompaniesIndexRouteImport } from './routes/_authenticated/$storeId/companies/index'
 import { Route as TransfersNewRouteImport } from './routes/_authenticated/$storeId/transfers/new'
@@ -212,6 +213,11 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const InventoryIndexRoute = InventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const CustomersIndexRoute = CustomersIndexRouteImport.update({
@@ -616,6 +622,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies/': typeof CompaniesIndexRoute
   '/$storeId/customers/': typeof CustomersIndexRoute
+  '/$storeId/inventory/': typeof InventoryIndexRoute
   '/$storeId/orders/': typeof OrdersIndexRoute
   '/$storeId/products/': typeof ProductsIndexRoute
   '/$storeId/promotions/': typeof PromotionsIndexRoute
@@ -704,6 +711,7 @@ export interface FileRoutesByTo {
   '/$storeId/transfers/new': typeof TransfersNewRoute
   '/$storeId/companies': typeof CompaniesIndexRoute
   '/$storeId/customers': typeof CustomersIndexRoute
+  '/$storeId/inventory': typeof InventoryIndexRoute
   '/$storeId/orders': typeof OrdersIndexRoute
   '/$storeId/products': typeof ProductsIndexRoute
   '/$storeId/promotions': typeof PromotionsIndexRoute
@@ -796,6 +804,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/transfers/new': typeof TransfersNewRoute
   '/_authenticated/$storeId/companies/': typeof CompaniesIndexRoute
   '/_authenticated/$storeId/customers/': typeof CustomersIndexRoute
+  '/_authenticated/$storeId/inventory/': typeof InventoryIndexRoute
   '/_authenticated/$storeId/orders/': typeof OrdersIndexRoute
   '/_authenticated/$storeId/products/': typeof ProductsIndexRoute
   '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
@@ -888,6 +897,7 @@ export interface FileRouteTypes {
     | '/$storeId/transfers/new'
     | '/$storeId/companies/'
     | '/$storeId/customers/'
+    | '/$storeId/inventory/'
     | '/$storeId/orders/'
     | '/$storeId/products/'
     | '/$storeId/promotions/'
@@ -976,6 +986,7 @@ export interface FileRouteTypes {
     | '/$storeId/transfers/new'
     | '/$storeId/companies'
     | '/$storeId/customers'
+    | '/$storeId/inventory'
     | '/$storeId/orders'
     | '/$storeId/products'
     | '/$storeId/promotions'
@@ -1067,6 +1078,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/transfers/new'
     | '/_authenticated/$storeId/companies/'
     | '/_authenticated/$storeId/customers/'
+    | '/_authenticated/$storeId/inventory/'
     | '/_authenticated/$storeId/orders/'
     | '/_authenticated/$storeId/products/'
     | '/_authenticated/$storeId/promotions/'
@@ -1272,6 +1284,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/$storeId/orders/'
       preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/inventory/': {
+      id: '/_authenticated/$storeId/inventory/'
+      path: '/inventory'
+      fullPath: '/$storeId/inventory/'
+      preLoaderRoute: typeof InventoryIndexRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/customers/': {
@@ -1839,6 +1858,7 @@ interface authenticatedStoreIdRouteChildren {
   TransfersNewRoute: typeof TransfersNewRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
+  InventoryIndexRoute: typeof InventoryIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
   PromotionsIndexRoute: typeof PromotionsIndexRoute
@@ -1894,6 +1914,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   TransfersNewRoute: TransfersNewRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
   CustomersIndexRoute: CustomersIndexRoute,
+  InventoryIndexRoute: InventoryIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
   PromotionsIndexRoute: PromotionsIndexRoute,
