@@ -11,6 +11,10 @@ module Spree
       # push ORDER BY/LIMIT into SQL, and their comparison period only
       # aggregates the surviving keys.
       class Live < Base
+        # Roughly a century — long enough for any report a merchant would read,
+        # short enough that the widest one still fits in memory at day grain.
+        MAX_RANGE_DAYS = 36_600
+
         def execute(query)
           @query = query
 
@@ -357,9 +361,19 @@ module Spree
           expected_buckets(query.time_range, time_dim[:grain]).map { |bucket| [bucket] }
         end
 
+        # Every bucket in the range becomes a row, so an absurd range is an
+        # absurd allocation: `last_500000_days`, or a `since` in the year one,
+        # would build millions of rows here and take the process down long
+        # before any of them reached a chart. Refused rather than trimmed —
+        # silently charting a different range than was asked for is worse.
         def expected_buckets(range, grain)
           from = range.first.in_time_zone(query.time_zone).to_date
           to = range.last.in_time_zone(query.time_zone).to_date
+          span = (to - from).to_i + 1
+          if span > MAX_RANGE_DAYS
+            raise InvalidQuery,
+                  "time_range covers #{span} days, more than the #{MAX_RANGE_DAYS} a single report may chart"
+          end
 
           case grain
           when :day then (from..to).map(&:to_s)

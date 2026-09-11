@@ -18,10 +18,14 @@ export function useDashboardCounters(channelId?: string) {
   return useQuery({
     queryKey: useResourceKey('dashboard', 'counters', channelId),
     queryFn: () => adminClient.dashboard.counters({ channel_id: channelId }),
-    // No `placeholderData`: it would belong to the channel selected before,
-    // and showing another channel's counts under this one's name is worse
-    // than showing the skeleton for a moment.
-    staleTime: 5 * 60 * 1000,
+    // Deliberately no `staleTime`: these count work still waiting on the
+    // merchant, and acting on a record invalidates this key — a stale window
+    // would hold the old number past that invalidation, so a return they just
+    // refunded would keep its badge.
+    //
+    // No `placeholderData` either: it would belong to the channel selected
+    // before, and showing another channel's counts under this one's name is
+    // worse than showing the skeleton for a moment.
   })
 }
 

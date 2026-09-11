@@ -260,7 +260,10 @@ function counterLink(
   // Order counts are channel-scoped, so their lists must be too; stock and
   // returns are store-wide and take no channel filter.
   if (channelId && link.resource === 'orders') {
-    filters.push({ id: 'home-channel', field: 'channel_id', operator: 'eq', value: channelId })
+    // The orders table's column key, not its ransack attribute — the filter
+    // chip looks the column up by key to render "Channel is Web" rather than
+    // the raw id.
+    filters.push({ id: 'home-channel', field: 'channel', operator: 'eq', value: channelId })
   }
   return { to, filters }
 }

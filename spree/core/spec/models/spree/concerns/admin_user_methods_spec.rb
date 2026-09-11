@@ -142,6 +142,13 @@ describe Spree::AdminUserMethods do
           expect(created_order.reload.created_by_id).to be_nil
         end
 
+        it 'nullifies the author on saved reports, which are store-wide and outlive them' do
+          report = create(:saved_report, store: current_store, user: admin_user)
+
+          admin_user.destroy
+          expect(report.reload.user_id).to be_nil
+        end
+
         it 'nullifies created_by_id on gift cards' do
           admin_user.destroy
           expect(gift_card.reload.created_by_id).to be_nil

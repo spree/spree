@@ -136,10 +136,18 @@ module Spree
           # A payment carries no completion timestamp, so it is anchored on
           # when the row was created — near enough to when the money moved, and
           # the only honest answer the schema can publish.
+          #
+          # The currency lives on the order, not the payment, but the money
+          # metrics here are formatted in one currency — so a store selling in
+          # several must filter by it, or a EUR payment and a USD payment are
+          # added together and the total labelled with whichever currency was
+          # asked for. `store.payments` is already `through: :orders`, so the
+          # join this reads is the association's own.
           base :payments, family: :payments, table: '%{payments}',
                time_column: '%{payments}.created_at',
-               relation: lambda { |store, range, _currency|
-                 store.payments.where(created_at: range)
+               relation: lambda { |store, range, currency|
+                 store.payments.where(Spree::Order.table_name => { currency: currency }).
+                   where(Spree::Payment.table_name => { created_at: range })
                }
 
           # The movement table carries no store of its own; tenancy is the walk

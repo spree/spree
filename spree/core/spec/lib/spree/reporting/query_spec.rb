@@ -260,6 +260,26 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe 'time range bounds' do
+    it 'refuses a range too wide to chart, however it was asked for' do
+      expect do
+        run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'day' }],
+            time_range: { preset: 'last_500000_days' })
+      end.to raise_error(Spree::Reporting::InvalidQuery, /more than the/)
+
+      expect do
+        run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'day' }],
+            time_range: { since: '0001-01-01', until: '2026-01-01' })
+      end.to raise_error(Spree::Reporting::InvalidQuery, /more than the/)
+    end
+
+    it 'still allows a range a merchant would plausibly read' do
+      result = run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'month' }],
+                   time_range: { preset: 'last_36_months' })
+      expect(result.rows.size).to eq(37)
+    end
+  end
+
   describe 'the payments family' do
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
     let!(:payment) { create(:payment, order: order, amount: 30, status: 'completed') }
@@ -275,6 +295,17 @@ RSpec.describe Spree::Reporting::Query do
       after = run(metrics: %w[payments_received payments_refunded net_payments])
       expect(after.totals[:payments_refunded][:value]).to eq(12.0)
       expect(after.totals[:net_payments][:value]).to eq(18.0)
+    end
+
+    # The currency lives on the order, and the totals are formatted in one
+    # currency — so a payment taken in another must not be added into them.
+    it 'counts only payments taken in the currency asked for' do
+      other = create(:completed_order_with_totals, store: store, currency: 'EUR', completed_at: 3.days.ago)
+      create(:payment, order: other, amount: 99, status: 'completed')
+
+      result = run(metrics: %w[payments_received payments_count])
+      expect(result.totals[:payments_received][:value]).to eq(30.0)
+      expect(result.totals[:payments_count][:value]).to eq(1)
     end
 
     it 'breaks payments down by the instrument that took them' do
