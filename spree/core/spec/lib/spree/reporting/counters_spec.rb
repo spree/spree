@@ -7,13 +7,12 @@ RSpec.describe Spree::Reporting::Counters do
     described_class.new(store: store, **options).to_a.index_by(&:key)
   end
 
-  it 'evaluates every registered counter with a localized label and its link' do
+  it 'evaluates every registered counter, carrying its key and link but no copy' do
     results = evaluate
 
     expect(results.keys).to eq(
       %w[orders_to_fulfill payments_to_collect open_returns open_exchanges open_claims low_stock_items out_of_stock_items]
     )
-    expect(results['orders_to_fulfill'].label).to eq('Orders to fulfill')
     expect(results['out_of_stock_items'].link).to eq(
       'resource' => 'inventory',
       'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'out_of_stock' }]
@@ -32,14 +31,18 @@ RSpec.describe Spree::Reporting::Counters do
     expect(results.keys).to eq(%w[low_stock_items out_of_stock_items])
   end
 
-  it 'humanizes the name of a counter with no locale entry' do
+  # The dashboard owns every string it shows, so a counter travels as a key
+  # and a number — never as text the interface would have to render in
+  # whatever locale the request happened to carry.
+  it 'sends no copy for the client to have to override' do
     registry = Spree::Reporting::Registry.new
     registry.counter :flagged_orders, count: ->(_store, channel:) { 7 }
 
     result = described_class.new(store: store, registry: registry).to_a.first
-    expect(result.label).to eq('Flagged orders')
-    expect(result.description).to be_nil
+    expect(result.key).to eq('flagged_orders')
     expect(result.value).to eq(7)
+    expect(result).not_to respond_to(:label)
+    expect(result).not_to respond_to(:description)
   end
 
   context 'with orders' do
@@ -119,20 +122,16 @@ RSpec.describe Spree::Reporting::Counters do
       expect(results['out_of_stock_items'].value).to eq(2)
     end
 
-    it 'reads the low stock threshold from the store and says so in the description' do
+    it 'reads the low stock threshold from the store' do
       stub_store_preferences(store, low_stock_threshold: 2)
 
-      result = evaluate['low_stock_items']
-      expect(result.value).to eq(0)
-      expect(result.description).to eq('2 units or fewer left to sell at a location.')
+      expect(evaluate['low_stock_items'].value).to eq(0)
     end
 
     it 'turns the low stock warning off at a threshold of zero' do
       stub_store_preferences(store, low_stock_threshold: 0)
 
-      result = evaluate['low_stock_items']
-      expect(result.value).to eq(0)
-      expect(result.description).to start_with('Turned off')
+      expect(evaluate['low_stock_items'].value).to eq(0)
     end
 
     it 'links each count to the Inventory page filtered to exactly those rows' do

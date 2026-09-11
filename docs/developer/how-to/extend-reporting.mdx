@@ -157,14 +157,17 @@ Spree.reporting.counter :orders_on_hold,
   link: { resource: 'orders', filters: [{ field: 'on_hold', operator: 'eq', value: 'true' }] }
 ```
 
-Add `reporting.counters.orders_on_hold.label` (and optionally `.description`)
-to your locale file; without an entry the name is humanized. Pass `nav:` with
-a sidebar entry's key to badge that entry with this count. Declare `link`
-only when the list filter shows exactly the rows counted — the dashboard
-resolves `resource` to one of its lists (`orders`, `returns`, `products`) and
-appends the channel filter itself for order lists. A counter whose meaning
-depends on a store setting can pass `description:` as a lambda receiving the
-store, which is how the built-in low stock counter names its threshold.
+The endpoint sends the key and the number, never any text — the dashboard
+owns every string it shows. Add
+`admin.pages.home.operations.counters.orders_on_hold.label`, and optionally
+`.description`, to your dashboard locale files; a counter with no entry falls
+back to its humanized key, so it reads sensibly before you translate it.
+
+Pass `nav:` with a sidebar entry's key to badge that entry with this count.
+Declare `link` only when the list filter shows exactly the rows counted — the
+dashboard resolves `resource` to one of its lists (`orders`, `returns`,
+`exchanges`, `claims`, `products`, `inventory`) and appends the channel filter
+itself for order lists.
 
 ## Overriding a built-in member
 

@@ -3222,7 +3222,39 @@
           "title": "Operacje",
           "subtitle": "Co teraz wymaga Twojej uwagi.",
           "failed": "Nie udało się wczytać tych liczników.",
-          "empty": "Twoja rola nie ma tu nic do wyświetlenia."
+          "empty": "Twoja rola nie ma tu nic do wyświetlenia.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Niski stan",
+              "description_zero": "Wyłączone. Ustaw próg niskiego stanu w ustawieniach sklepu.",
+              "description_one": "Najwyżej 1 sztuka na sprzedaż w lokalizacji.",
+              "description_other": "Najwyżej {{count}} szt. na sprzedaż w lokalizacji."
+            },
+            "open_claims": {
+              "label": "Otwarte reklamacje",
+              "description": "Reklamacje, których jeszcze nie rozpatrzono."
+            },
+            "open_exchanges": {
+              "label": "Otwarte wymiany",
+              "description": "Wymiany, których jeszcze nie zrealizowano."
+            },
+            "open_returns": {
+              "label": "Otwarte zwroty",
+              "description": "Zwroty, za które nie zwrócono jeszcze pieniędzy."
+            },
+            "orders_to_fulfill": {
+              "label": "Zamówienia do wysłania",
+              "description": "Złożone zamówienia, z których nic jeszcze nie wysłano."
+            },
+            "out_of_stock_items": {
+              "label": "Brak w magazynie",
+              "description": "W tej lokalizacji nie ma już nic na sprzedaż."
+            },
+            "payments_to_collect": {
+              "label": "Płatności do pobrania",
+              "description": "Złożone zamówienia, za które wciąż brakuje zapłaty."
+            }
+          }
         },
         "rankings": {
           "title": "Rankingi",

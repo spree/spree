@@ -456,10 +456,6 @@ module Spree
                   count: lambda { |store, channel:|
                     STORE_STOCK.call(store).low_stock(store.preferred_low_stock_threshold).count
                   },
-                  description: lambda { |store|
-                    Spree.t('reporting.counters.low_stock_items.description',
-                            count: store.preferred_low_stock_threshold)
-                  },
                   link: { resource: 'inventory',
                           filters: [{ field: 'stock_status', operator: 'in', value: 'low_stock' }] }
 

@@ -3190,7 +3190,39 @@
           "title": "Aufgaben",
           "subtitle": "Was gerade Ihre Aufmerksamkeit braucht.",
           "failed": "Diese Zahlen konnten nicht geladen werden.",
-          "empty": "Für Ihre Rolle gibt es hier nichts zu sehen."
+          "empty": "Für Ihre Rolle gibt es hier nichts zu sehen.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Niedriger Bestand",
+              "description_zero": "Deaktiviert. Legen Sie in den Shop-Einstellungen eine Schwelle fest.",
+              "description_one": "Höchstens 1 Einheit an einem Standort verkäuflich.",
+              "description_other": "Höchstens {{count}} Einheiten an einem Standort verkäuflich."
+            },
+            "open_claims": {
+              "label": "Offene Reklamationen",
+              "description": "Reklamationen, die noch nicht abgeschlossen sind."
+            },
+            "open_exchanges": {
+              "label": "Offener Umtausch",
+              "description": "Umtausch, der noch nicht abgewickelt wurde."
+            },
+            "open_returns": {
+              "label": "Offene Retouren",
+              "description": "Retouren, die noch nicht erstattet wurden."
+            },
+            "orders_to_fulfill": {
+              "label": "Zu versendende Bestellungen",
+              "description": "Aufgegebene Bestellungen, von denen noch nichts versandt wurde."
+            },
+            "out_of_stock_items": {
+              "label": "Nicht vorrätig",
+              "description": "An diesem Standort ist nichts mehr verkäuflich."
+            },
+            "payments_to_collect": {
+              "label": "Ausstehende Zahlungen",
+              "description": "Aufgegebene Bestellungen, die noch nicht bezahlt sind."
+            }
+          }
         },
         "rankings": {
           "title": "Rangliste",

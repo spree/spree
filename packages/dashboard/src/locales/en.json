@@ -3190,7 +3190,39 @@
           "title": "Operations",
           "subtitle": "What needs your attention right now.",
           "failed": "Could not load these counts.",
-          "empty": "Nothing here is visible to your role."
+          "empty": "Nothing here is visible to your role.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Low stock",
+              "description_zero": "Turned off. Set a low stock threshold in store settings to use this.",
+              "description_one": "1 unit or fewer left to sell at a location.",
+              "description_other": "{{count}} units or fewer left to sell at a location."
+            },
+            "open_claims": {
+              "label": "Open claims",
+              "description": "Claims still open or approved and not yet resolved."
+            },
+            "open_exchanges": {
+              "label": "Open exchanges",
+              "description": "Exchanges not yet fulfilled."
+            },
+            "open_returns": {
+              "label": "Open returns",
+              "description": "Returns not yet refunded."
+            },
+            "orders_to_fulfill": {
+              "label": "Orders to fulfill",
+              "description": "Placed orders with nothing shipped yet."
+            },
+            "out_of_stock_items": {
+              "label": "Out of stock",
+              "description": "Nothing left to sell at a location."
+            },
+            "payments_to_collect": {
+              "label": "Payments to collect",
+              "description": "Placed orders still owed money."
+            }
+          }
         },
         "rankings": {
           "title": "Rankings",

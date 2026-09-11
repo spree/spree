@@ -1679,31 +1679,6 @@ en:
       products_performance: Products performance
       sales_total: Sales total
     reporting:
-      counters:
-        low_stock_items:
-          description:
-            one: 1 unit or fewer left to sell at a location.
-            other: "%{count} units or fewer left to sell at a location."
-            zero: Turned off. Set a low stock threshold in store settings to use this.
-          label: Low stock
-        open_claims:
-          description: Claims still open or approved and not yet resolved.
-          label: Open claims
-        open_exchanges:
-          description: Exchanges not yet fulfilled.
-          label: Open exchanges
-        open_returns:
-          description: Returns not yet refunded.
-          label: Open returns
-        orders_to_fulfill:
-          description: Placed orders with nothing shipped yet.
-          label: Orders to fulfill
-        out_of_stock_items:
-          description: Nothing left to sell at a location.
-          label: Out of stock
-        payments_to_collect:
-          description: Placed orders still owed money.
-          label: Payments to collect
       dimensions:
         category:
           description: The category the sold product belongs to.

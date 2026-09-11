@@ -3182,7 +3182,39 @@
           "title": "运营事项",
           "subtitle": "当前需要您处理的事项。",
           "failed": "无法加载这些统计。",
-          "empty": "您的角色在此没有可查看的内容。"
+          "empty": "您的角色在此没有可查看的内容。",
+          "counters": {
+            "low_stock_items": {
+              "label": "低库存",
+              "description_zero": "已关闭。请在店铺设置中设定低库存阈值。",
+              "description_one": "该地点仅剩 1 件或更少可售。",
+              "description_other": "该地点仅剩 {{count}} 件或更少可售。"
+            },
+            "open_claims": {
+              "label": "未处理理赔",
+              "description": "尚未解决的理赔。"
+            },
+            "open_exchanges": {
+              "label": "未处理换货",
+              "description": "尚未完成的换货。"
+            },
+            "open_returns": {
+              "label": "未处理退货",
+              "description": "尚未退款的退货。"
+            },
+            "orders_to_fulfill": {
+              "label": "待发货订单",
+              "description": "已下单但尚未发出任何商品。"
+            },
+            "out_of_stock_items": {
+              "label": "缺货",
+              "description": "此地点已无可售库存。"
+            },
+            "payments_to_collect": {
+              "label": "待收款订单",
+              "description": "已下单但仍有款项未付。"
+            }
+          }
         },
         "rankings": {
           "title": "排行榜",

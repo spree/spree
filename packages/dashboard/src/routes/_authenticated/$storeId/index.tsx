@@ -209,6 +209,13 @@ function DashboardPage() {
 const OPERATIONS_ROW_CLASS =
   'flex items-center gap-3 border-b border-border-subtle px-4 py-3 last:border-0'
 
+/** `orders_to_fulfill` reads as "Orders to fulfill" when nobody has translated
+ *  it — better than a raw key for an extension's own counter. */
+function humanizeKey(key: string) {
+  const words = key.replace(/_/g, ' ')
+  return words.charAt(0).toUpperCase() + words.slice(1)
+}
+
 /** Icons for the counters core ships. A counter an extension registers
  *  arrives with a label and a link but no icon, so it takes the fallback. */
 const COUNTER_ICONS: Record<string, typeof TruckIcon> = {
@@ -326,16 +333,31 @@ function CounterRow({
   link: CounterLink | undefined
   storeId: string
 }) {
+  const { t } = useTranslation()
+  const { store } = useStore()
   const Icon = COUNTER_ICONS[counter.key] ?? CircleDotIcon
+  // The server sends a key, never copy, so the interface language always wins.
+  // A counter an extension registers without translations reads as its own
+  // humanized key rather than a raw slug.
+  const label = t(`admin.pages.home.operations.counters.${counter.key}.label`, {
+    defaultValue: humanizeKey(counter.key),
+  })
+  // The low stock sentence names the store's threshold, which the shell
+  // already holds — so the count stays a number on the wire and the sentence
+  // stays a translation.
+  const description = t(`admin.pages.home.operations.counters.${counter.key}.description`, {
+    defaultValue: '',
+    count: store?.preferred_low_stock_threshold ?? 0,
+  })
   const content = (
     <>
       <span className="flex size-8 shrink-0 items-center justify-center rounded-md border">
         <Icon className="size-4 text-muted-foreground" />
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-sm">{counter.label}</span>
-        {counter.description && (
-          <span className="truncate text-xs text-muted-foreground">{counter.description}</span>
+        <span className="text-sm">{label}</span>
+        {description && (
+          <span className="truncate text-xs text-muted-foreground">{description}</span>
         )}
       </span>
       <span

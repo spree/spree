@@ -32422,7 +32422,7 @@ paths:
                   content_type: image/jpeg
                   byte_size: 18090
                   embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bbb892043e87c1dde645ee45304c4daf06f8b414
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7be4a18befddec62ffe86ecea370b52c1a1c3f1d
                   viewable_id: prod_UkLWZg9DAJ
                   download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/thinking-cat.jpg?disposition=attachment
                   metadata: {}
@@ -32510,7 +32510,7 @@ paths:
                 content_type: image/jpeg
                 byte_size: 18090
                 embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77f34d7ce7c40a2777507ada03857b5af9bcbb74/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--45e42e160c433f9f6c5e8d1e22665fc839fd20a8
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--217d24dbfb7357183d78135ec5abedddf2196011
                 viewable_id:
                 download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77f34d7ce7c40a2777507ada03857b5af9bcbb74/library-upload.jpg?disposition=attachment
                 metadata: {}
@@ -32684,7 +32684,7 @@ paths:
                 content_type: image/jpeg
                 byte_size: 18090
                 embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--bbb892043e87c1dde645ee45304c4daf06f8b414
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7be4a18befddec62ffe86ecea370b52c1a1c3f1d
                 viewable_id: prod_gbHJdmfrXB
                 download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/thinking-cat.jpg?disposition=attachment
                 metadata: {}
@@ -41908,11 +41908,9 @@ components:
       properties:
         key:
           type: string
-        label:
-          type: string
-        description:
-          type: string
-          nullable: true
+          description: 'Registered counter name. The dashboard translates it; built-in:
+            orders_to_fulfill, payments_to_collect, open_returns, open_exchanges,
+            open_claims, low_stock_items, out_of_stock_items.'
         value:
           type: number
         link:
@@ -41926,8 +41924,6 @@ components:
           description: Sidebar entry key this count badges, or null.
       required:
       - key
-      - label
-      - description
       - value
       - link
       - nav

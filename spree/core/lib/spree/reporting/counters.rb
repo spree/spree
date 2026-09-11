@@ -1,9 +1,9 @@
 module Spree
   module Reporting
     # Evaluates the registered counters for one store, filtered to those the
-    # caller may read. Labels resolve through the locale the way the schema
-    # resolves metric labels, so an extension's counter needs no dashboard
-    # release to show up with a name.
+    # caller may read. Carries no copy: a counter is identified by its key and
+    # the client owns every string it shows, so an interface in one language
+    # never renders a number labelled in another.
     class Counters
       # @param store [Spree::Store]
       # @param channel [Spree::Channel, nil] narrows order-derived counts; nil means all channels
@@ -22,25 +22,11 @@ module Spree
         @registry.counters.values.select { |counter| @allowed.call(counter) }.map do |counter|
           CounterResult.new(
             key: counter.name,
-            label: translate(counter.name, :label) || counter.name.to_s.humanize,
-            description: description_for(counter),
             value: counter.count.call(@store, channel: @channel),
             link: counter.link&.deep_stringify_keys,
             nav: counter.nav
           )
         end
-      end
-
-      private
-
-      def description_for(counter)
-        return counter.description.call(@store) if counter.description.respond_to?(:call)
-
-        translate(counter.name, :description)
-      end
-
-      def translate(name, facet)
-        Spree.t("reporting.counters.#{name}.#{facet}", default: nil)
       end
     end
   end

@@ -3190,7 +3190,39 @@
           "title": "Opérations",
           "subtitle": "Ce qui demande votre attention en ce moment.",
           "failed": "Impossible de charger ces compteurs.",
-          "empty": "Rien ici n’est visible pour votre rôle."
+          "empty": "Rien ici n’est visible pour votre rôle.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Stock faible",
+              "description_zero": "Désactivé. Définissez un seuil de stock faible dans les paramètres.",
+              "description_one": "1 unité ou moins encore vendable à un emplacement.",
+              "description_other": "{{count}} unités ou moins encore vendables à un emplacement."
+            },
+            "open_claims": {
+              "label": "Réclamations ouvertes",
+              "description": "Réclamations pas encore résolues."
+            },
+            "open_exchanges": {
+              "label": "Échanges ouverts",
+              "description": "Échanges pas encore traités."
+            },
+            "open_returns": {
+              "label": "Retours ouverts",
+              "description": "Retours pas encore remboursés."
+            },
+            "orders_to_fulfill": {
+              "label": "Commandes à expédier",
+              "description": "Commandes passées dont rien n’a encore été expédié."
+            },
+            "out_of_stock_items": {
+              "label": "En rupture de stock",
+              "description": "Plus rien à vendre à cet emplacement."
+            },
+            "payments_to_collect": {
+              "label": "Paiements à encaisser",
+              "description": "Commandes passées dont le paiement reste dû."
+            }
+          }
         },
         "rankings": {
           "title": "Classements",

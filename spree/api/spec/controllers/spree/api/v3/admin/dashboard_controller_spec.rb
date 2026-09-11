@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
 
     let(:counter_keys) { json_response['counters'].map { |counter| counter['key'] } }
 
-    it 'returns every registered counter with its label, value and link' do
+    it 'returns every registered counter as a key, a number and where it leads' do
       subject
 
       expect(response).to have_http_status(:ok)
@@ -22,7 +22,9 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       )
 
       fulfill = json_response['counters'].first
-      expect(fulfill).to include('label' => 'Orders to fulfill', 'value' => 0, 'nav' => 'orders')
+      expect(fulfill).to include('value' => 0, 'nav' => 'orders')
+      # The dashboard translates the key in its own locale, so no copy ships.
+      expect(fulfill.keys).to match_array(%w[key value link nav])
       expect(fulfill['link']).to eq(
         'resource' => 'orders',
         'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]

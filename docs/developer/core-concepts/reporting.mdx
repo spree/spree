@@ -160,10 +160,9 @@ rule, so a picker never offers a dimension whose query would be refused.
 ## Counters
 
 Not everything on the home screen is a report over a period. "Orders to
-fulfill", "Open returns" and "Low stock variants" are the state of the store
-right now, with no time range and no currency. The registry holds these as
-**counters** beside metrics and dimensions, and `GET /dashboard/counters`
-evaluates them:
+fulfill", "Open returns" and "Low stock" are the state of the store right now,
+with no time range and no currency. The registry holds these as **counters**
+beside metrics and dimensions, and `GET /dashboard/counters` evaluates them:
 
 ```json
 {
@@ -171,9 +170,8 @@ evaluates them:
   "counters": [
     {
       "key": "orders_to_fulfill",
-      "label": "Orders to fulfill",
-      "description": "Placed orders with nothing shipped yet.",
       "value": 12,
+      "nav": "orders",
       "link": {
         "resource": "orders",
         "filters": [{ "field": "fulfillment_status", "operator": "eq", "value": "unfulfilled" }]
@@ -184,24 +182,17 @@ evaluates them:
 ```
 
 One request serves both surfaces that show these numbers: the home screen's
-card and the sidebar's badges. A counter that badges a nav entry names it, so
-the sidebar renders it without knowing which counters exist:
-
-```json
-{ "key": "open_returns", "label": "Open returns", "value": 3, "nav": "returns" }
-```
-
-A parent nav entry sums its own counter and its children's, because the
-sidebar only shows the children of the section you are in — a count nobody
-sees until they have already navigated there tells them nothing. Orders
-carries the total of what is waiting to ship plus the open returns, exchanges
-and claims; expanding the section breaks it down.
+card and the sidebar's badges. A parent nav entry sums its own counter and its
+children's, because the sidebar only shows the children of the section you are
+in — a count nobody sees until they have already navigated there tells them
+nothing. Orders carries the total of what is waiting to ship plus the open
+returns, exchanges and claims; expanding the section breaks it down.
 
 Three things follow from counters living in the registry:
 
-- **Labels come from the server**, the same way metric labels do, so a
-  counter an extension registers appears on every merchant's home screen
-  without a dashboard release.
+- **No copy crosses the wire.** A counter is a key and a number; the client
+  translates the key in its own language. An interface in one language can
+  never end up labelling a number in another.
 - **Each counter carries its own `subject` and `key_scope`**, filtered by the
   same rule as the rest of the vocabulary. A role without stock access gets
   a shorter list, not a refused card.
@@ -221,9 +212,7 @@ The two stock counters read the shelves exactly as the Inventory page does —
 what a customer could still buy, counted per location — so the number and the
 filtered list it opens always agree. The low stock one reads the store's
 `low_stock_threshold` preference (default five units; zero turns it off),
-which merchants set under store settings. The low stock counter reads the
-store's `low_stock_threshold` preference (default five units; zero turns it
-off), which merchants set under store settings → Inventory.
+which merchants set under store settings → Inventory.
 
 ## What a report counts
 
