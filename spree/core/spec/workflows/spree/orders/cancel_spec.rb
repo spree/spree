@@ -68,6 +68,19 @@ module Spree
         end
       end
 
+      context 'an order whose goods have gone out' do
+        let(:order) { create(:completed_order_with_totals) }
+
+        before { order.update_columns(fulfillment_status: 'fulfilled') }
+
+        it { expect(result).to be_failure }
+
+        it 'says why it refused' do
+          expect(result.error.value.full_messages.join).
+            to include(Spree.t('errors.messages.not_cancellable'))
+        end
+      end
+
       context 'incomplete order' do
         let(:order) { create(:order_with_totals) }
 
