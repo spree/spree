@@ -6,16 +6,27 @@ import {
   type PurchaseOrderFormValues,
 } from '../../../../components/spree/purchase-order-form'
 import { useCreatePurchaseOrder } from '../../../../hooks/use-purchase-orders'
+import { prefilledLines, prefilledVariantSchema } from '../../../../lib/prefilled-variant'
 
 export const Route = createFileRoute('/_authenticated/$storeId/purchase-orders/new')({
+  validateSearch: prefilledVariantSchema,
   component: NewPurchaseOrderPage,
 })
 
 function NewPurchaseOrderPage() {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
+  const search = Route.useSearch()
   const navigate = useNavigate()
   const createMutation = useCreatePurchaseOrder()
+
+  // Arriving from an Inventory row: that SKU is on the order, delivered to
+  // the warehouse the merchant was looking at.
+  const initial: PurchaseOrderFormValues = {
+    ...EMPTY_PURCHASE_ORDER,
+    destinationId: search.stock_location_id ?? '',
+    lines: prefilledLines(search, true),
+  }
 
   async function handleSubmit(values: PurchaseOrderFormValues) {
     // The hook toasts the refusal; navigating would hide it.
@@ -45,7 +56,7 @@ function NewPurchaseOrderPage() {
 
   return (
     <PurchaseOrderForm
-      initial={EMPTY_PURCHASE_ORDER}
+      initial={initial}
       title={t('admin.purchase_orders.new_title')}
       backTo="purchase-orders"
       submitLabel={t('admin.purchase_orders.actions.create_draft')}

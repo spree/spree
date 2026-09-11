@@ -179,7 +179,7 @@ function OnHandEditor({ level, onSaved }: { level: StockLevel; onSaved: () => vo
       <Button
         type="submit"
         size="icon"
-        variant="outline"
+        variant="default"
         disabled={update.isPending || Number.isNaN(parsed)}
         aria-label={t('admin.stock_levels.quick_edit.confirm')}
       >
@@ -203,6 +203,17 @@ export function IncomingCell({ level }: { level: StockLevel }) {
 
   if (!canTransfer && !canOrder) return level.incoming_count
 
+  // The new document opens with this row already on it — the SKU the merchant
+  // was looking at, arriving where they were looking at it — so the shortcut
+  // is one click rather than a form and two pickers.
+  const seed = {
+    variant_id: level.variant_id ?? undefined,
+    variant_sku: level.variant_sku ?? undefined,
+    variant_name: level.variant_name ?? undefined,
+    thumbnail_url: level.thumbnail_url ?? undefined,
+    stock_location_id: level.stock_location_id ?? undefined,
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -211,11 +222,12 @@ export function IncomingCell({ level }: { level: StockLevel }) {
           label={t('admin.stock_levels.incoming.open_aria')}
         />
       </PopoverTrigger>
-      <PopoverContent align="end" className="flex w-auto flex-col gap-1 p-2">
+      <PopoverContent align="end" className="flex w-auto flex-col gap-1 p-1">
         {canTransfer && (
           <Link
             to="/$storeId/transfers/new"
             params={{ storeId }}
+            search={seed}
             className="rounded px-2 py-1 text-sm hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_transfer')}
@@ -225,6 +237,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
           <Link
             to="/$storeId/purchase-orders/new"
             params={{ storeId }}
+            search={seed}
             className="rounded px-2 py-1 text-sm hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_purchase_order')}

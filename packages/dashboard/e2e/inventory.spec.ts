@@ -54,6 +54,29 @@ test.describe('inventory', () => {
     await expect(sourceRow.getByRole('button', { name: /add incoming stock/i })).toHaveText('0')
   })
 
+  test('opens a purchase order with the row already on it', async ({ page }) => {
+    const creds = await login(page)
+
+    await page.goto(INVENTORY_PATH(creds.store_id))
+    await page.getByPlaceholder(/search sku or product/i).fill(FIXTURE_INVENTORY_SKU)
+
+    const row = page
+      .getByRole('row')
+      .filter({ hasText: FIXTURE_INVENTORY_SKU })
+      .filter({ hasText: FIXTURE_TRANSFER_DESTINATION })
+    await expect(row).toBeVisible({ timeout: 15_000 })
+
+    await row.getByRole('button', { name: /add incoming stock/i }).click()
+    await page.getByRole('link', { name: /create purchase order/i }).click()
+
+    // The form opens with that SKU on it and the warehouse it was short at.
+    await expect(page.getByRole('heading', { name: /new purchase order/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(page.getByText(FIXTURE_INVENTORY_SKU)).toBeVisible()
+    await expect(page.getByText(FIXTURE_TRANSFER_DESTINATION)).toBeVisible()
+  })
+
   test('corrects the on-hand count in place', async ({ page }) => {
     const creds = await login(page)
 

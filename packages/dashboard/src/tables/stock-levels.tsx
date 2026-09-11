@@ -1,10 +1,25 @@
 import type { StockLevel } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, ResourceNameCell, Thumbnail } from '@spree/dashboard-ui'
+import { Badge, Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon, WarehouseIcon } from '@spree/dashboard-ui/icons'
+import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { IncomingCell, OnHandCell } from '../components/spree/inventory-cells'
 import { stockLocationAutocompleteProps } from '../hooks/use-stock-levels'
+
+/** The product name, with the variant's options under it when it has any. */
+function ProductLabel({ level }: { level: StockLevel }) {
+  return (
+    <div className="min-w-0">
+      <div className="truncate font-medium text-foreground">{level.variant_name ?? '—'}</div>
+      {level.options_text && (
+        <Badge variant="secondary" className="font-normal">
+          {level.options_text}
+        </Badge>
+      )}
+    </div>
+  )
+}
 
 // Every figure is a column on the row: on hand and committed were always
 // stored, reserved and incoming are counters kept by the workflows that
@@ -22,23 +37,25 @@ defineTable<StockLevel>('stock-levels', {
       key: 'product',
       label: i18n.t('admin.stock_levels.columns.product'),
       default: true,
-      render: (level) => (
-        <div className="flex items-center gap-3">
-          <Thumbnail src={level.thumbnail_url} fallback={<PackageIcon />} />
-          <ResourceNameCell
-            id={level.product_id ?? ''}
-            dataAttr={level.product_id ? 'data-stock-level-product-id' : undefined}
-            name={level.variant_name ?? '—'}
-            secondary={
-              level.options_text ? (
-                <Badge variant="secondary" className="font-normal">
-                  {level.options_text}
-                </Badge>
-              ) : null
-            }
-          />
-        </div>
-      ),
+      // Image and text are one target: a merchant aiming at the picture of the
+      // thing they want means the thing they want. `Link` rather than the row
+      // bridge so the whole cell also middle-clicks and copies as a URL.
+      render: (level) =>
+        level.product_id ? (
+          <Link
+            to={'/$storeId/products/$productId' as string}
+            params={{ productId: level.product_id }}
+            className="flex items-center gap-3 no-underline"
+          >
+            <Thumbnail src={level.thumbnail_url} fallback={<PackageIcon />} />
+            <ProductLabel level={level} />
+          </Link>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Thumbnail src={level.thumbnail_url} fallback={<PackageIcon />} />
+            <ProductLabel level={level} />
+          </div>
+        ),
     },
     {
       key: 'sku',
