@@ -42,6 +42,9 @@ const payment = await client.carts.payments.create(cartId, {
 <Note>
   `payments.create()` only works with non-session payment methods (where `session_required` is `false`).
   For session-based gateways like Stripe or Adyen, use `paymentSessions.create()` instead.
+  Store credit is the one non-session method it does not handle — apply that with
+  [`carts.storeCredits.apply()`](/developer/sdk/store/cart-checkout#store-credits), since a balance
+  spread over several credits takes more than one payment to draw.
 </Note>
 
 ## Payment Sessions

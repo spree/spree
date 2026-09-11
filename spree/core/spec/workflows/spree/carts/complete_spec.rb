@@ -180,6 +180,37 @@ module Spree
       end
     end
 
+    describe 'store credit' do
+      let(:customer) { create(:user) }
+      let(:cart) { create(:cart_ready_for_delivery, store: store, line_items_count: 1, customer: customer) }
+
+      before do
+        create(:store_credit_payment_method, store: store) unless Spree::PaymentMethod::StoreCredit.exists?
+        cart.recalculate_totals!
+      end
+
+      context 'when the balance is spread over several credits' do
+        let!(:credits) do
+          first_half = (cart.total / 2).ceil
+          [first_half, cart.total - first_half].map do |amount|
+            create(:store_credit, store: store, customer: customer, amount: amount, currency: cart.currency)
+          end
+        end
+        let(:ready_cart) do
+          cart.add_store_credit_payments
+          cart.reload
+        end
+
+        it 'draws from every credit and completes the order' do
+          order = described_class.call(cart: ready_cart).value
+
+          expect(order.total_applied_store_credit).to eq(order.total)
+          expect(order.amount_due).to be_zero
+          expect(credits.map { |credit| credit.reload.amount_used }).to eq(credits.map(&:amount))
+        end
+      end
+    end
+
     describe 'tax lifecycle' do
       it 'tells the tax engine the sale is final' do
         provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)

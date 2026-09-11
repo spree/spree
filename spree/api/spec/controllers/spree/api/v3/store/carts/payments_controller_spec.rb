@@ -52,6 +52,17 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
       expect(json_response['error']['code']).to eq('payment_session_required')
     end
 
+    it 'points store credit at the store credits endpoint' do
+      store_credit_method = create(:store_credit_payment_method, store: store)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: store_credit_method.prefixed_id }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('store_credits_endpoint_required')
+      expect(json_response['error']['message']).to include('store_credits')
+      expect(order.reload.payments).to be_empty
+    end
+
     it 'rejects unavailable payment methods' do
       unavailable_method = create(:check_payment_method)
       allow_any_instance_of(Spree::PaymentMethod::Check).to receive(:available_for_order?).and_return(false)
