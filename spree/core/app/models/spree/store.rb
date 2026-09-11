@@ -282,7 +282,6 @@ module Spree
       self[:default_country_code] = value&.iso
     end
 
-    has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
     has_many :integrations, class_name: 'Spree::Integration'

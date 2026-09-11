@@ -122,7 +122,6 @@ module Spree
       images: :default,
       imports: :default,
       products: :default,
-      reports: :default,
       variants: :default,
       categories: :default,
       collections: :default,
@@ -626,13 +625,6 @@ module Spree
     Rails.application.config.spree.taggable_types = value
   end
 
-  def self.reports
-    Rails.application.config.spree.reports
-  end
-
-  def self.reports=(value)
-    Rails.application.config.spree.reports = value
-  end
 
   # Registry of the Getting Started onboarding tasks shown on the admin
   # dashboard. See {Spree::SetupTasks} for the extension API.

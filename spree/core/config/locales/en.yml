@@ -1675,12 +1675,6 @@ en:
     remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     rename: Rename
     report: Report
-    report_mailer:
-      greeting: Hi %{user_name},
-      report_done:
-        message: Please use the link below to download it.
-        subject: Your report %{report_name} is ready
-      thanks: Thank you,
     report_names:
       products_performance: Products performance
       sales_total: Sales total

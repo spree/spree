@@ -13,13 +13,6 @@ schema endpoint.
 Read [how reporting works](/developer/core-concepts/reporting) first — this
 guide assumes the query contract and the metric/dimension split.
 
-<Note>
-Upgrading from the `Spree::Report` / `ReportLineItem` pattern? That API still
-works for row-level CSV exports and is documented under
-[Build a Custom Report](/v5/developer/how-to/custom-report). For aggregate
-questions, register vocabulary instead.
-</Note>
-
 ## Add a metric
 
 A metric is an aggregate over one registered base — `:orders`, `:line_items`,
@@ -216,4 +209,4 @@ the same clock, as an existing one.
 
 - [Reporting](/developer/core-concepts/reporting) — the concepts
 - [Permissions](/developer/dashboard/customization/permissions) — scopes and subjects
-- [Build a Custom Report](/v5/developer/how-to/custom-report) — the row-level CSV exporter
+- [Imports and exports](/developer/core-concepts/imports-exports) — row-level CSV

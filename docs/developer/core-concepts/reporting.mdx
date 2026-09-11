@@ -259,22 +259,6 @@ as `Spree::Exports::Report`, so it inherits the background job, attachment and
 email. The export re-authorizes its members against the requesting user, which
 is why it requires a user and API keys cannot queue one.
 
-## Relationship to `Spree::Report`
-
-`Spree::Report` still exists and still works. It is a **row-level CSV
-exporter** — one line per record, with attachment and mailer plumbing.
-
-The two answer different questions:
-
-| Question | Use |
-|----------|-----|
-| "Revenue by channel last quarter" | Reporting layer (aggregates, composable) |
-| "Every order line in March, as a spreadsheet" | `Spree::Report` (row-level export) |
-
-New report *types* for analytics are no longer accepted into core: register
-metrics and dimensions instead. See
-[Extend reporting](/developer/how-to/extend-reporting).
-
 ## Current limits
 
 Worth knowing before you design an extension:

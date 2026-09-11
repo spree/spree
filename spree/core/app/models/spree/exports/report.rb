@@ -16,8 +16,7 @@ module Spree
         :reports
       end
 
-      # Not a bulk export of a model — the derived `Spree::Report` (legacy CSV
-      # reports) would be wrong, so anchor on the saved-report model instead.
+      # Not a bulk export of a model, so anchor on the saved-report model.
       def self.model_class
         Spree::SavedReport
       end

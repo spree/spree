@@ -1,3 +1,11 @@
+## 2026-09-11: The legacy Spree::Report system is removed, its tables left alone
+
+**Context:** `6.0-analytics-semantic-layer.md` Decision 10 kept `Spree::Report` alongside the new reporting layer, on the grounds that it is a row-level CSV exporter and so answers a different question. Reviewing it once the layer shipped, that separation does not survive contact: `Spree::Report` has no v3 route and no dashboard screen, so a merchant cannot run one at all; both subclasses core ships are aggregate questions the new layer now answers as seeded reports; and row-level CSV is already `Spree::Export`'s job, with the Admin API and dashboard page `Spree::Report` never had.
+
+**Decision:** Remove the subsystem — the STI base and its two subclasses, `ReportLineItem` and its two subclasses, the generate job, the mailer and its view, the subscriber, the v3 serializer and its dependency key, the `Spree.reports` registry, the `reports` queue entry, the mailer preview, the factory, and the `Store` and admin-user associations. **Leave the tables.** The creating migration is deleted so a fresh install never makes them, while existing stores keep every row, inert. No drop migration is scheduled — there is no data-loss moment to time, and a merchant who wants the history can still read it.
+
+**Consequences:** Aggregate questions are registry members (`Spree.reporting`); row-level CSV is a `Spree::Export` subclass. Nothing may reference `Spree::Report`, `Spree::ReportLineItem` or `Spree.reports` again. A host app that subclassed `Spree::Report` breaks on upgrade and has to move to one of the two replacements — accepted, since the class was unreachable from any shipped surface. Supersedes Decision 10 in `6.0-analytics-semantic-layer.md`.
+
 ## 2026-09-11: Counters are reporting registry members, and one request serves the home card and the sidebar
 
 **Context:** `dashboard/operations` served five counts as private methods on a serializer in the API gem, the dashboard hardcoded the matching rows (icons, labels, deep-link filters), one permission covered all five, and the out-of-stock deep link pointed at a products filter the server silently dropped. The low stock threshold was a request parameter with a hardcoded default that nothing sent.

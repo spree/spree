@@ -584,6 +584,18 @@ to `Spree::Base`.
 
 The `spree_state_changes` and `spree_log_entries` tables are **not dropped until 6.1**, so your existing rows survive the upgrade. If you want the history long-term, export it before upgrading to 6.1.
 
+### `Spree::Report` is gone
+
+`Spree::Report`, its `Reports::SalesTotal` and `Reports::ProductsPerformance` subclasses, `Spree::ReportLineItem` and its subclasses, `Spree::ReportMailer`, `Spree::ReportSubscriber`, `Spree::Reports::GenerateJob`, the `Spree.reports` registry and the `reports` queue entry are all removed, along with the `reports` associations on `Spree::Store` and the admin user.
+
+Nothing in 5.6 could reach it: there was no API endpoint and no admin screen, so a report could only be created from Ruby.
+
+**Where each question goes now.** Aggregates — revenue by channel, product performance, anything you would have written a report class for — are [reporting](/developer/core-concepts/reporting) queries, composed from registered metrics and dimensions rather than a class per question. Row-level CSV of records is a `Spree::Export` subclass, which is what [imports and exports](/developer/core-concepts/imports-exports) covers, and unlike `Spree::Report` it has both an Admin API and a dashboard page.
+
+**Your rows are safe.** The `spree_reports` and `spree_report_line_items` tables are left exactly as they are — nothing reads them, and no migration drops them. A store installing 6.0 fresh never creates them. If you want the old report history, export it whenever suits you; there is no deadline.
+
+If you subclassed `Spree::Report` in your own application, that class no longer has a superclass and will raise on boot. Move the question to one of the two replacements above.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:

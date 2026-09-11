@@ -43,7 +43,6 @@ module Spree
       has_many :created_exchanges, class_name: 'Spree::Exchange', foreign_key: :created_by_id
       has_many :created_claims, class_name: 'Spree::Claim', foreign_key: :created_by_id
       has_many :created_store_credits, class_name: 'Spree::StoreCredit', foreign_key: :created_by_id
-      has_many :reports, class_name: 'Spree::Report', foreign_key: :user_id
       has_many :exports, class_name: 'Spree::Export', foreign_key: :user_id
 
       # Callbacks
@@ -99,7 +98,6 @@ module Spree
       created_store_credits.update_all(created_by_id: nil, updated_at: Time.current)
 
       # resources to destroy
-      reports.destroy_all
       exports.destroy_all
     end
   end

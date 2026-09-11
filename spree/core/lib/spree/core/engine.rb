@@ -501,11 +501,6 @@ module Spree
           Spree::CollectionRules::AvailableOn,
         ]
 
-        Rails.application.config.spree.reports = [
-          Spree::Reports::ProductsPerformance,
-          Spree::Reports::SalesTotal
-        ]
-
         Rails.application.config.spree.translatable_resources = [
           Spree::OptionType,
           Spree::OptionValue,
@@ -618,7 +613,6 @@ module Spree
           Spree::SellerTransferSubscriber,
           Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
-          Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,

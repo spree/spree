@@ -90,7 +90,6 @@ module Spree
         newsletter_subscriber_serializer: 'Spree::Api::V3::NewsletterSubscriberSerializer',
         promotion_serializer: 'Spree::Api::V3::PromotionSerializer',
         refund_serializer: 'Spree::Api::V3::RefundSerializer',
-        report_serializer: 'Spree::Api::V3::ReportSerializer',
         stock_level_serializer: 'Spree::Api::V3::StockLevelSerializer',
         stock_movement_serializer: 'Spree::Api::V3::StockMovementSerializer',
         stock_reservation_serializer: 'Spree::Api::V3::StockReservationSerializer',

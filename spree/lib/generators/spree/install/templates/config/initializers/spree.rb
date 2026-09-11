@@ -77,9 +77,8 @@ Rails.application.config.after_initialize do
   # Taxon rules
   # Spree.taxon_rules << Spree::TaxonRules::ProductsWithColor
 
-  # Exports and reports
+  # Exports
   # Spree.export_types << Spree::Exports::Payments
-  # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
   # Role-based permissions
   # Staff roles and their permissions are managed as data — in the dashboard
@@ -104,7 +103,6 @@ end
 # Spree.queues.images = :default
 # Spree.queues.imports = :default
 # Spree.queues.products = :default
-# Spree.queues.reports = :default
 # Spree.queues.variants = :default
 # Spree.queues.taxons = :default
 # Spree.queues.stock_location_stock_levels = :default
