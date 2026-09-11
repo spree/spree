@@ -46618,6 +46618,8 @@ components:
           type: number
         incoming_count:
           type: number
+        purchasable_count:
+          type: number
         stock_location_name:
           type: string
           nullable: true
@@ -46654,6 +46656,7 @@ components:
       - available_count
       - reserved_count
       - incoming_count
+      - purchasable_count
       - stock_location_name
       - product_id
       - variant_name
