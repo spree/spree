@@ -73,14 +73,18 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       empty = create(:stock_level, adjust_count_on_hand: false)
       empty.update_columns(count_on_hand: 0, allocated_count: 0, reserved_count: 0, incoming_count: 0)
 
-      get :index, params: { q: { in_stock: true } }, as: :json
+      get :index, params: { q: { with_stock_status: ['in_stock'] } }, as: :json
       expect(response).to have_http_status(:ok)
       ids = json_response['data'].map { |level| level['id'] }
       expect(ids).to include(stock_level.prefixed_id)
       expect(ids).not_to include(empty.prefixed_id)
 
-      get :index, params: { q: { with_incoming: true } }, as: :json
-      expect(json_response['data'].map { |level| level['id'] }).to eq([stock_level.prefixed_id])
+      # Several states read as "any of these", which is what the page's
+      # multi-select means.
+      get :index, params: { q: { with_stock_status: %w[out_of_stock with_incoming] } }, as: :json
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |level| level['id'] }).to include(empty.prefixed_id)
+      expect(json_response['data'].map { |level| level['id'] }).to include(stock_level.prefixed_id)
     end
 
     it 'filters by stock_location_id' do

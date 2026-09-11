@@ -38,7 +38,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count reserved_count incoming_count
                                                  stock_location_id variant_id]
-    self.whitelisted_ransackable_scopes = %w[in_stock out_of_stock with_incoming with_reserved]
+    self.whitelisted_ransackable_scopes = %w[with_stock_status]
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
@@ -56,8 +56,28 @@ module Spree
 
     scope :in_stock, -> { where(purchasable_arel.gt(0)) }
     scope :out_of_stock, -> { where(purchasable_arel.lteq(0)) }
-    scope :with_incoming, -> { where.not(incoming_count: 0) }
-    scope :with_reserved, -> { where.not(reserved_count: 0) }
+    scope :with_incoming, -> { where(arel_table[:incoming_count].gt(0)) }
+    scope :with_reserved, -> { where(arel_table[:reserved_count].gt(0)) }
+
+    # What the Inventory page's stock-status filter can ask for. Each names a
+    # scope above; `STOCK_STATUS_SCOPES` is the allowlist that keeps a request
+    # from naming any other method.
+    STOCK_STATUS_SCOPES = %w[in_stock out_of_stock with_incoming with_reserved].freeze
+
+    # Rows in any of the named states — "out of stock, or with units on the
+    # way" is one question a merchant asks, not two filters they combine.
+    #
+    # Splatted rather than taking one array: Ransack passes a multi-value
+    # `q[with_stock_status][]` as one argument per value, so a single-parameter
+    # lambda raises on the second. Unknown names are ignored rather than
+    # refused — a stale bookmark should show a list, not an error — and the
+    # allowlist is what keeps a request from naming any other method.
+    scope :with_stock_status, ->(*statuses) {
+      wanted = statuses.flatten.map(&:to_s) & STOCK_STATUS_SCOPES
+      next all if wanted.empty?
+
+      wanted.map { |status| public_send(status) }.reduce(:or)
+    }
 
     # Stock levels for products assigned to `store`, walking
     # `variant → product → store`.

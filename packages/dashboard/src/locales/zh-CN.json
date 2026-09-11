@@ -4978,7 +4978,6 @@
     },
     "stock_levels": {
       "columns": {
-        "availability": "可售状态",
         "available": "可售",
         "committed": "已承诺",
         "incoming": "在途",
@@ -4986,15 +4985,14 @@
         "on_hand": "现有",
         "product": "商品",
         "reserved": "已预留",
-        "sku": "SKU"
+        "sku": "SKU",
+        "stock_status": "库存状态"
       },
       "filters": {
-        "in_stock": "有货",
-        "out_of_stock": "缺货",
         "has_incoming": "有在途",
-        "no_incoming": "无在途",
         "has_reserved": "有预留",
-        "no_reserved": "无预留"
+        "in_stock": "有货",
+        "out_of_stock": "缺货"
       },
       "incoming": {
         "open_aria": "添加在途库存",

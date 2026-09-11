@@ -586,6 +586,34 @@ describe Spree::StockLevel, type: :model do
       end
     end
 
+    # The Inventory page asks one question with several answers — "out of
+    # stock, or already on its way?" — so the states are OR-ed rather than
+    # combined into an impossible AND.
+    describe '.with_stock_status' do
+      let!(:sellable) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 5) }
+      end
+      let!(:awaited) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 0, incoming_count: 9) }
+      end
+
+      it 'matches any of the states named' do
+        expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).to include(awaited)
+        expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).not_to include(sellable)
+        expect(Spree::StockLevel.with_stock_status(%w[in_stock with_incoming])).to include(sellable, awaited)
+      end
+
+      it 'constrains nothing when nothing is named' do
+        expect(Spree::StockLevel.with_stock_status([])).to include(sellable, awaited)
+      end
+
+      # A stale bookmark should show a list, not an error — and nothing a
+      # request names may reach a method that is not on the allowlist.
+      it 'ignores a name it does not know' do
+        expect(Spree::StockLevel.with_stock_status(%w[destroy_all])).to include(sellable, awaited)
+      end
+    end
+
     describe '#available_count' do
       it 'is the shelf minus the promise' do
         subject.update_columns(count_on_hand: 10, allocated_count: 4)

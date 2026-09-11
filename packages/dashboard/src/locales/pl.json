@@ -5045,7 +5045,6 @@
     },
     "stock_levels": {
       "columns": {
-        "availability": "Dostępność",
         "available": "Dostępne",
         "committed": "Zarezerwowane",
         "incoming": "W drodze",
@@ -5053,15 +5052,14 @@
         "on_hand": "Na stanie",
         "product": "Produkt",
         "reserved": "Wstrzymane",
-        "sku": "SKU"
+        "sku": "SKU",
+        "stock_status": "Stan zapasów"
       },
       "filters": {
-        "in_stock": "Dostępne",
-        "out_of_stock": "Niedostępne",
         "has_incoming": "W drodze",
-        "no_incoming": "Nic w drodze",
         "has_reserved": "Wstrzymane",
-        "no_reserved": "Nic wstrzymanego"
+        "in_stock": "Dostępne",
+        "out_of_stock": "Niedostępne"
       },
       "incoming": {
         "open_aria": "Dodaj zapasy w drodze",

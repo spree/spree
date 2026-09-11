@@ -54,6 +54,7 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
+import { ResourceMultiAutocomplete } from './resource-multi-autocomplete'
 import { SectionHeading } from './section-heading'
 import { StoreDatePicker } from './store-date-picker'
 
@@ -209,7 +210,10 @@ export function TableToolbar({
       filterableColumns.filter(
         (c) =>
           c.quickFilter &&
-          (c.filterType === 'enum' || c.filterType === 'boolean' || c.filterType === 'date'),
+          (c.filterType === 'enum' ||
+            c.filterType === 'boolean' ||
+            c.filterType === 'date' ||
+            (c.filterType === 'resource' && !!c.filterResource)),
       ),
     [filterableColumns],
   )
@@ -363,6 +367,14 @@ export function TableToolbar({
                 <QuickDateFilter
                   key={col.key}
                   column={col}
+                  filters={filters}
+                  onFiltersChange={onFiltersChange}
+                />
+              ) : col.filterType === 'resource' && col.filterResource ? (
+                <QuickResourceFilter
+                  key={col.key}
+                  column={col}
+                  config={col.filterResource}
                   filters={filters}
                   onFiltersChange={onFiltersChange}
                 />
@@ -744,6 +756,96 @@ function QuickEnumFilter({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+
+/**
+ * Picks records for one `resource` column — a warehouse, a supplier — without
+ * opening the filter panel.
+ *
+ * The panel's own picker is a full autocomplete inside a form; this is the
+ * same picker behind a button that states the current selection, so the
+ * filters an operator reaches for constantly cost one click. Like the enum
+ * control it applies on change: a single pick is cheap to undo.
+ */
+function QuickResourceFilter({
+  column,
+  config,
+  filters,
+  onFiltersChange,
+}: {
+  column: ColumnDef
+  config: NonNullable<ColumnDef['filterResource']>
+  filters: FilterRule[]
+  onFiltersChange: (filters: FilterRule[]) => void
+}) {
+  const { t } = useTranslation()
+  const existing = filters.find((f) => f.field === column.key && f.operator === 'in')
+  const existingValue = existing?.value
+  const selected = useMemo(
+    () => (existingValue ? parseFilterIds(existingValue) : []),
+    [existingValue],
+  )
+  const [labels, setLabels] = useState<Record<string, string>>({})
+
+  const apply = useCallback(
+    (values: string[]) => {
+      const others = filters.filter((f) => !(f.field === column.key && f.operator === 'in'))
+      if (values.length === 0) {
+        onFiltersChange(others)
+        return
+      }
+      onFiltersChange([
+        ...others,
+        {
+          id: existing?.id ?? crypto.randomUUID(),
+          field: column.key,
+          operator: 'in',
+          value: values.join(','),
+        },
+      ])
+    },
+    [filters, column.key, existing?.id, onFiltersChange],
+  )
+
+  // One pick reads as its name; several read as a count, because a row of
+  // warehouse names would push every other control off the toolbar.
+  const summary =
+    selected.length === 0
+      ? t('admin.common.all')
+      : selected.length === 1
+        ? (labels[selected[0]] ?? '1')
+        : String(selected.length)
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+          <span className="text-muted-foreground">{column.label}</span>
+          <span className="max-w-40 truncate">{summary}</span>
+          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-72 p-2">
+        <ResourceMultiAutocomplete
+          queryKey={`quick-${config.queryKey}`}
+          value={selected}
+          onChange={apply}
+          onResolvedOptionsChange={(options) =>
+            setLabels(
+              Object.fromEntries(
+                options.map((option) => [option.id, config.getOptionLabel(option)]),
+              ),
+            )
+          }
+          search={config.search}
+          hydrate={config.hydrate}
+          getOptionLabel={config.getOptionLabel}
+          placeholder={config.placeholder}
+          emptyText={config.emptyText}
+        />
+      </PopoverContent>
+    </Popover>
   )
 }
 

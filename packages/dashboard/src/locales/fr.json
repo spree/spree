@@ -4987,7 +4987,6 @@
     },
     "stock_levels": {
       "columns": {
-        "availability": "Disponibilité",
         "available": "Disponible",
         "committed": "Engagé",
         "incoming": "En route",
@@ -4995,15 +4994,14 @@
         "on_hand": "En stock",
         "product": "Produit",
         "reserved": "Réservé",
-        "sku": "SKU"
+        "sku": "SKU",
+        "stock_status": "État du stock"
       },
       "filters": {
-        "in_stock": "En stock",
-        "out_of_stock": "En rupture",
         "has_incoming": "En route",
-        "no_incoming": "Rien en route",
         "has_reserved": "Réservé",
-        "no_reserved": "Rien de réservé"
+        "in_stock": "En stock",
+        "out_of_stock": "En rupture"
       },
       "incoming": {
         "open_aria": "Ajouter du stock en route",

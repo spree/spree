@@ -71,6 +71,9 @@ defineTable<StockLevel>('stock-levels', {
       filterType: 'resource',
       filterResource: stockLocationAutocompleteProps('stock-levels-table-location-filter'),
       ransackAttribute: 'stock_location_id',
+      // The filter a merchant reaches for first on a multi-warehouse store:
+      // "what do I have here?" comes before any question about the figures.
+      quickFilter: true,
       default: true,
       render: (level) => level.stock_location_name ?? '—',
     },
@@ -116,50 +119,28 @@ defineTable<StockLevel>('stock-levels', {
       className: 'text-right tabular-nums',
       render: (level) => <IncomingCell level={level} />,
     },
-    // The three questions a merchant brings to this list. Each is a scope,
-    // not a predicate on a column: "can I sell it?" is on hand minus
+    // One filter for the questions a merchant brings to this list, because
+    // they are usually asked together: "what is out of stock or already on
+    // its way?" is one glance, not three toggles. Picking several means any
+    // of them — the scope ORs the states server-side.
+    //
+    // A scope, not a column predicate: "can I sell it?" is on hand minus
     // committed minus reserved, which no single column answers. Filter-only —
-    // the figures they read are already columns of their own.
+    // every figure it reads is already a column of its own.
     {
-      key: 'in_stock',
-      label: i18n.t('admin.stock_levels.columns.availability'),
-      ransackAttribute: 'in_stock',
+      key: 'stock_status',
+      label: i18n.t('admin.stock_levels.columns.stock_status'),
+      ransackAttribute: 'with_stock_status',
       ransackScope: true,
       displayable: false,
       filterable: true,
-      filterType: 'boolean',
-      booleanLabels: {
-        true: i18n.t('admin.stock_levels.filters.in_stock'),
-        false: i18n.t('admin.stock_levels.filters.out_of_stock'),
-      },
-      quickFilter: true,
-    },
-    {
-      key: 'with_incoming',
-      label: i18n.t('admin.stock_levels.columns.incoming'),
-      ransackAttribute: 'with_incoming',
-      ransackScope: true,
-      displayable: false,
-      filterable: true,
-      filterType: 'boolean',
-      booleanLabels: {
-        true: i18n.t('admin.stock_levels.filters.has_incoming'),
-        false: i18n.t('admin.stock_levels.filters.no_incoming'),
-      },
-      quickFilter: true,
-    },
-    {
-      key: 'with_reserved',
-      label: i18n.t('admin.stock_levels.columns.reserved'),
-      ransackAttribute: 'with_reserved',
-      ransackScope: true,
-      displayable: false,
-      filterable: true,
-      filterType: 'boolean',
-      booleanLabels: {
-        true: i18n.t('admin.stock_levels.filters.has_reserved'),
-        false: i18n.t('admin.stock_levels.filters.no_reserved'),
-      },
+      filterType: 'enum',
+      filterOptions: [
+        { value: 'in_stock', label: i18n.t('admin.stock_levels.filters.in_stock') },
+        { value: 'out_of_stock', label: i18n.t('admin.stock_levels.filters.out_of_stock') },
+        { value: 'with_reserved', label: i18n.t('admin.stock_levels.filters.has_reserved') },
+        { value: 'with_incoming', label: i18n.t('admin.stock_levels.filters.has_incoming') },
+      ],
       quickFilter: true,
     },
   ],

@@ -5009,7 +5009,6 @@
     },
     "stock_levels": {
       "columns": {
-        "availability": "التوفر",
         "available": "متاح",
         "committed": "مخصص",
         "incoming": "وارد",
@@ -5017,15 +5016,14 @@
         "on_hand": "متوفر",
         "product": "المنتج",
         "reserved": "محجوز",
-        "sku": "SKU"
+        "sku": "SKU",
+        "stock_status": "حالة المخزون"
       },
       "filters": {
-        "in_stock": "متوفر",
-        "out_of_stock": "غير متوفر",
         "has_incoming": "وارد",
-        "no_incoming": "لا يوجد وارد",
         "has_reserved": "محجوز",
-        "no_reserved": "لا يوجد محجوز"
+        "in_stock": "متوفر",
+        "out_of_stock": "غير متوفر"
       },
       "incoming": {
         "open_aria": "إضافة مخزون وارد",

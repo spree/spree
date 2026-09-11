@@ -77,6 +77,46 @@ test.describe('inventory', () => {
     await expect(page.getByText(FIXTURE_TRANSFER_DESTINATION)).toBeVisible()
   })
 
+  // Both controls live in the toolbar rather than behind Add filter. The
+  // stock status is a multi-select scope, which sends one query parameter per
+  // value — the shape that first came back a 400.
+  test('narrows the list by stock status and location', async ({ page }) => {
+    const creds = await login(page)
+
+    await page.goto(INVENTORY_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^inventory$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByPlaceholder(/search sku or product/i).fill(FIXTURE_INVENTORY_SKU)
+
+    // The fixture SKU is held at the destination, so a checkout is holding
+    // units there and the row survives a "reserved" filter.
+    const destinationRow = page
+      .getByRole('row')
+      .filter({ hasText: FIXTURE_INVENTORY_SKU })
+      .filter({ hasText: FIXTURE_TRANSFER_DESTINATION })
+    await expect(destinationRow).toBeVisible({ timeout: 15_000 })
+
+    // Every state starts selected, so narrowing means unchecking the rest.
+    const statusFilter = page.getByRole('button', { name: /stock status/i })
+    await statusFilter.click()
+    for (const name of [/^in stock$/i, /^out of stock$/i, /^incoming$/i]) {
+      await page.getByRole('menuitemcheckbox', { name }).click()
+    }
+    await page.keyboard.press('Escape')
+
+    await expect(statusFilter).toContainText('1/4')
+    await expect(destinationRow).toBeVisible({ timeout: 15_000 })
+
+    // The location picker narrows to the warehouse that holds none of it.
+    await page.getByRole('button', { name: /^location/i }).click()
+    await page.getByPlaceholder(/search locations/i).fill(FIXTURE_TRANSFER_SOURCE)
+    await page.getByRole('option', { name: FIXTURE_TRANSFER_SOURCE }).click()
+    await page.keyboard.press('Escape')
+
+    await expect(destinationRow).toBeHidden({ timeout: 15_000 })
+  })
+
   test('corrects the on-hand count in place', async ({ page }) => {
     const creds = await login(page)
 
