@@ -586,6 +586,40 @@ describe Spree::StockLevel, type: :model do
       end
     end
 
+    describe '.low_stock' do
+      let!(:running_low) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 3) }
+      end
+      let!(:plenty) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 50) }
+      end
+      let!(:gone) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 0) }
+      end
+
+      it 'matches what is nearly gone, and excludes what is already gone' do
+        expect(Spree::StockLevel.low_stock(5)).to include(running_low)
+        expect(Spree::StockLevel.low_stock(5)).not_to include(plenty, gone)
+      end
+
+      # Same reading as the rest of the page: allocated units are spoken for.
+      it 'measures what is left to sell, not what is on the shelf' do
+        plenty.update_columns(allocated_count: 48)
+
+        expect(Spree::StockLevel.low_stock(5)).to include(plenty)
+      end
+
+      it 'matches nothing when the threshold turns the warning off' do
+        expect(Spree::StockLevel.low_stock(0)).to be_empty
+      end
+
+      it 'falls back to the current store threshold when none is given' do
+        stub_store_preferences(Spree::Current.store, low_stock_threshold: 2)
+
+        expect(Spree::StockLevel.low_stock).not_to include(running_low)
+      end
+    end
+
     # The Inventory page asks one question with several answers — "out of
     # stock, or already on its way?" — so the states are OR-ed rather than
     # combined into an impossible AND.
@@ -601,6 +635,14 @@ describe Spree::StockLevel, type: :model do
         expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).to include(awaited)
         expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).not_to include(sellable)
         expect(Spree::StockLevel.with_stock_status(%w[in_stock with_incoming])).to include(sellable, awaited)
+      end
+
+      # The home screen's low stock counter links to this filter, and the two
+      # states never overlap: five units against the default threshold is low,
+      # nothing left is out.
+      it 'answers low stock, separately from out of stock' do
+        expect(Spree::StockLevel.with_stock_status(%w[low_stock])).to include(sellable)
+        expect(Spree::StockLevel.with_stock_status(%w[low_stock])).not_to include(awaited)
       end
 
       it 'constrains nothing when nothing is named' do

@@ -5068,6 +5068,7 @@
         "has_incoming": "En route",
         "has_reserved": "Réservé",
         "in_stock": "En stock",
+        "low_stock": "Stock faible",
         "out_of_stock": "En rupture"
       },
       "incoming": {

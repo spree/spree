@@ -224,7 +224,10 @@ const COUNTER_ICONS: Record<string, typeof TruckIcon> = {
 const COUNTER_ROUTES = {
   orders: '/$storeId/orders',
   returns: '/$storeId/returns',
+  exchanges: '/$storeId/exchanges',
+  claims: '/$storeId/claims',
   products: '/$storeId/products',
+  inventory: '/$storeId/inventory',
 } as const
 
 /** The counters core registers, so the skeleton holds the card's height

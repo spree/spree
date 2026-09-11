@@ -1688,10 +1688,10 @@ en:
       counters:
         low_stock_items:
           description:
-            one: 1 unit or fewer on hand at an active location.
-            other: "%{count} units or fewer on hand at an active location."
+            one: 1 unit or fewer left to sell at a location.
+            other: "%{count} units or fewer left to sell at a location."
             zero: Turned off. Set a low stock threshold in store settings to use this.
-          label: Low stock variants
+          label: Low stock
         open_claims:
           description: Claims still open or approved and not yet resolved.
           label: Open claims
@@ -1705,8 +1705,8 @@ en:
           description: Placed orders with nothing shipped yet.
           label: Orders to fulfill
         out_of_stock_items:
-          description: Tracked variants with nothing on hand at any active location.
-          label: Out of stock variants
+          description: Nothing left to sell at a location.
+          label: Out of stock
         payments_to_collect:
           description: Placed orders still owed money.
           label: Payments to collect

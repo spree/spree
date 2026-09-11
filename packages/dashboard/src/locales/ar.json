@@ -5098,6 +5098,7 @@
         "has_incoming": "وارد",
         "has_reserved": "محجوز",
         "in_stock": "متوفر",
+        "low_stock": "مخزون منخفض",
         "out_of_stock": "غير متوفر"
       },
       "incoming": {

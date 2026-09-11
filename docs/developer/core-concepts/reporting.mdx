@@ -207,14 +207,21 @@ Three things follow from counters living in the registry:
   a shorter list, not a refused card.
 - **The link is declared beside the count.** The list a number opens shows
   exactly the rows that were counted, because the filter and the query are
-  registered together. A counter with no list that can honestly show what it
-  counted carries no link.
+  registered together — the counter and the list share one scope rather than
+  each expressing the question their own way. A counter with no list that can
+  honestly show what it counted carries no link.
 
 Core ships seven: orders to fulfill, payments to collect, open returns, open
-exchanges, open claims, low stock variants and out of stock variants. Orders
-to fulfill and the three post-sale counters badge the sidebar; payments to
-collect deliberately does not, since a badge that is lit on almost every store
-stops carrying information. The low stock counter reads the
+exchanges, open claims, low stock and out of stock. Orders to fulfill and the
+three post-sale counters badge the sidebar; payments to collect deliberately
+does not, since a badge that is lit on almost every store stops carrying
+information.
+
+The two stock counters read the shelves exactly as the Inventory page does —
+what a customer could still buy, counted per location — so the number and the
+filtered list it opens always agree. The low stock one reads the store's
+`low_stock_threshold` preference (default five units; zero turns it off),
+which merchants set under store settings. The low stock counter reads the
 store's `low_stock_threshold` preference (default five units; zero turns it
 off), which merchants set under store settings → Inventory.
 

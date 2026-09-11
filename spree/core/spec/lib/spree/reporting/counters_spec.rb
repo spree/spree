@@ -14,12 +14,15 @@ RSpec.describe Spree::Reporting::Counters do
       %w[orders_to_fulfill payments_to_collect open_returns open_exchanges open_claims low_stock_items out_of_stock_items]
     )
     expect(results['orders_to_fulfill'].label).to eq('Orders to fulfill')
+    expect(results['out_of_stock_items'].link).to eq(
+      'resource' => 'inventory',
+      'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'out_of_stock' }]
+    )
     expect(results['orders_to_fulfill'].nav).to eq('orders')
     expect(results['orders_to_fulfill'].link).to eq(
       'resource' => 'orders',
       'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
     )
-    expect(results['out_of_stock_items'].link).to be_nil
     expect(results.values.map(&:value)).to all(be_a(Integer))
   end
 
@@ -96,13 +99,24 @@ RSpec.describe Spree::Reporting::Counters do
   context 'with stock levels' do
     let!(:low_stock_product) { create(:product, store: store) }
     let!(:out_of_stock_product) { create(:product, store: store) }
+    let(:low_stock_level) { low_stock_product.default_variant.stock_levels.first }
 
-    before { low_stock_product.default_variant.stock_levels.first.update!(count_on_hand: 3) }
+    before { low_stock_level.update!(count_on_hand: 3) }
 
-    it 'counts low stock and out of stock variants' do
+    it 'counts what is running low and what has run out' do
       results = evaluate
       expect(results['low_stock_items'].value).to eq(1)
       expect(results['out_of_stock_items'].value).to eq(1)
+    end
+
+    # The Inventory page reads what a customer could still buy, so the counter
+    # has to as well — otherwise the number and the list it opens disagree.
+    it 'counts allocated stock as gone, the way the Inventory page does' do
+      low_stock_level.update!(count_on_hand: 50, allocated_count: 50)
+
+      results = evaluate
+      expect(results['low_stock_items'].value).to eq(0)
+      expect(results['out_of_stock_items'].value).to eq(2)
     end
 
     it 'reads the low stock threshold from the store and says so in the description' do
@@ -110,7 +124,7 @@ RSpec.describe Spree::Reporting::Counters do
 
       result = evaluate['low_stock_items']
       expect(result.value).to eq(0)
-      expect(result.description).to eq('2 units or fewer on hand at an active location.')
+      expect(result.description).to eq('2 units or fewer left to sell at a location.')
     end
 
     it 'turns the low stock warning off at a threshold of zero' do
@@ -121,13 +135,24 @@ RSpec.describe Spree::Reporting::Counters do
       expect(result.description).to start_with('Turned off')
     end
 
-    it 'ignores variants that do not track inventory' do
-      low_stock_product.default_variant.update!(track_inventory: false)
-      out_of_stock_product.default_variant.update!(track_inventory: false)
+    it 'links each count to the Inventory page filtered to exactly those rows' do
+      expect(evaluate['low_stock_items'].link).to eq(
+        'resource' => 'inventory',
+        'filters' => [{ 'field' => 'stock_status', 'operator' => 'in', 'value' => 'low_stock' }]
+      )
+    end
 
+    # The filter the link carries and the counter must return the same rows.
+    it 'agrees with the Inventory page filter it links to' do
+      Spree::Current.store = store
       results = evaluate
-      expect(results['low_stock_items'].value).to eq(0)
-      expect(results['out_of_stock_items'].value).to eq(0)
+
+      expect(Spree::StockLevel.for_store(store).with_stock_status('low_stock').count).
+        to eq(results['low_stock_items'].value)
+      expect(Spree::StockLevel.for_store(store).with_stock_status('out_of_stock').count).
+        to eq(results['out_of_stock_items'].value)
+    ensure
+      Spree::Current.store = nil
     end
   end
 end

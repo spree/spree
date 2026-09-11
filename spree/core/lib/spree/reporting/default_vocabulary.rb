@@ -106,12 +106,10 @@ module Spree
         relation.joins(:order).where(status: statuses).merge(Spree::Order.for_channel(channel)).count
       }
 
-      # Stock a merchant is actually counting: tracked variants at active
-      # locations. `store.stock_levels` walks products → variants, so paranoia
-      # default scopes already exclude deleted products and variants.
-      TRACKED_STOCK = lambda { |store|
-        store.stock_levels.with_active_stock_location.where(Spree::Variant.table_name => { track_inventory: true })
-      }
+      # The Inventory page's own view of the shelves, so a counter and the list
+      # it links to cannot disagree: the same rows, one per variant and
+      # location, read through the same scopes the page filters on.
+      STORE_STOCK = ->(store) { Spree::StockLevel.for_store(store) }
 
       def self.install(registry)
         registry.instance_eval do
@@ -456,17 +454,20 @@ module Spree
           counter :low_stock_items,
                   subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
                   count: lambda { |store, channel:|
-                    TRACKED_STOCK.call(store).where(count_on_hand: 1..store.preferred_low_stock_threshold).
-                      distinct.count(:variant_id)
+                    STORE_STOCK.call(store).low_stock(store.preferred_low_stock_threshold).count
                   },
                   description: lambda { |store|
                     Spree.t('reporting.counters.low_stock_items.description',
                             count: store.preferred_low_stock_threshold)
-                  }
+                  },
+                  link: { resource: 'inventory',
+                          filters: [{ field: 'stock_status', operator: 'in', value: 'low_stock' }] }
 
           counter :out_of_stock_items,
                   subject: -> { Spree::StockLevel }, key_scope: 'read_stock',
-                  count: ->(store, channel:) { TRACKED_STOCK.call(store).where(count_on_hand: ..0).distinct.count(:variant_id) }
+                  count: ->(store, channel:) { STORE_STOCK.call(store).out_of_stock.count },
+                  link: { resource: 'inventory',
+                          filters: [{ field: 'stock_status', operator: 'in', value: 'out_of_stock' }] }
         end
       end
     end

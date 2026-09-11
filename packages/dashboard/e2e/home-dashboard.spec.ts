@@ -39,8 +39,8 @@ test.describe('home dashboard', () => {
     await expect(page.getByText(/orders to fulfill/i)).toBeVisible()
     await expect(page.getByText(/payments to collect/i)).toBeVisible()
     await expect(page.getByText(/open returns/i)).toBeVisible()
-    await expect(page.getByText(/low stock variants/i)).toBeVisible()
-    await expect(page.getByText(/out of stock variants/i)).toBeVisible()
+    await expect(page.getByText(/^low stock$/i)).toBeVisible()
+    await expect(page.getByText(/^out of stock$/i)).toBeVisible()
 
     // Rankings card with customer/category tabs
     await expect(page.getByText('Rankings', { exact: true })).toBeVisible()
