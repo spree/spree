@@ -3239,6 +3239,9 @@
         "unavailable": {
           "title": "您的角色无法查看报表",
           "description": "请管理员授予“报表”权限（并可访问订单），以在此查看销售数据。"
+        },
+        "currency": {
+          "search": "搜索货币"
         }
       },
       "orders": {

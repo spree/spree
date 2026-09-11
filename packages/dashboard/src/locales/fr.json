@@ -3249,6 +3249,9 @@
         "unavailable": {
           "title": "Les rapports ne sont pas disponibles pour votre rôle",
           "description": "Demandez à un administrateur la permission « Rapports » (avec accès aux commandes) pour voir les chiffres de vente ici."
+        },
+        "currency": {
+          "search": "Rechercher une devise"
         }
       },
       "orders": {

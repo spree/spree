@@ -3249,6 +3249,9 @@
         "unavailable": {
           "title": "Reports are unavailable for your role",
           "description": "Ask an administrator for the “Reports” permission (with access to orders) to see sales figures here."
+        },
+        "currency": {
+          "search": "Search currencies"
         }
       },
       "orders": {

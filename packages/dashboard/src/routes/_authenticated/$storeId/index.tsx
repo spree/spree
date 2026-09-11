@@ -1,6 +1,13 @@
 import type { DashboardCounter, DashboardCounters, ReportingQuery } from '@spree/admin-sdk'
 import { SpreeError } from '@spree/admin-sdk'
-import { Can, resolveDatePreset, Subject, usePermissions, useStore } from '@spree/dashboard-core'
+import {
+  Can,
+  CurrencySelect,
+  resolveDatePreset,
+  Subject,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -75,7 +82,7 @@ const CHART_METRICS = ['total_sales', 'orders', 'average_order_value', 'units_so
 function DashboardPage() {
   const { t } = useTranslation()
   const { permissions } = usePermissions()
-  const { timezone } = useStore()
+  const { timezone, currencies, defaultCurrency } = useStore()
   // Seeded on the store's calendar, not the browser's, and sent as bare dates
   // so the server widens both edges to the store's whole day.
   const [dateRange, setDateRange] = useState<DateRange>(() => {
@@ -83,6 +90,10 @@ function DashboardPage() {
     return { from: parseISO(preset.from as string), to: parseISO(preset.to as string) }
   })
   const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
+  // Undefined until the merchant picks one, so the store's default applies as
+  // soon as it loads rather than being frozen at the empty first render.
+  const [pickedCurrency, setPickedCurrency] = useState<string>()
+  const currency = pickedCurrency ?? defaultCurrency
 
   // Mirror the server's member-level authorization (Query#required_subjects):
   // widgets whose dimensions the role cannot read are hidden instead of
@@ -96,11 +107,15 @@ function DashboardPage() {
 
   const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
   // Shared by every widget query — the switcher and date range scope the whole screen.
-  const scope: Pick<ReportingQuery, 'time_range' | 'filters'> = {
+  const scope: Pick<ReportingQuery, 'time_range' | 'filters' | 'currency'> = {
     time_range: {
       since: format(dateRange.from, 'yyyy-MM-dd'),
       until: format(dateRange.to, 'yyyy-MM-dd'),
     },
+    // Money metrics are summed in one currency, never converted — a store
+    // selling in several would otherwise read only its default one, with
+    // nothing on screen saying so.
+    ...(currency ? { currency } : {}),
     ...(channelParam
       ? { filters: [{ dimension: 'channel', op: 'eq' as const, value: channelParam }] }
       : {}),
@@ -180,6 +195,16 @@ function DashboardPage() {
             value={channelId}
             onChange={setChannelId}
           />
+          {/* Only worth a control when there is a choice to make — a
+              single-currency store gets no extra chrome. */}
+          {currencies.length > 1 && (
+            <CurrencySelect
+              id="home-currency"
+              value={currency}
+              onChange={setPickedCurrency}
+              searchPlaceholder={t('admin.pages.home.currency.search')}
+            />
+          )}
           <DateRangePicker value={dateRange} onChange={setDateRange} />
         </div>
       </div>

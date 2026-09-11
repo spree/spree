@@ -89,6 +89,13 @@ Spree.reporting.metric :total_sales,
   forces a single-currency scope and arrives with a formatted `display` string;
   a `:percent` metric arrives as the number a merchant reads (`42.5`), not the
   fraction.
+
+  Amounts are **never converted**. A query answers in one currency — the one
+  it names, or the store's default — and every base a money metric reads must
+  filter by it, or two currencies end up added together under one symbol. A
+  store selling in several therefore has as many answers as it has
+  currencies, which is why the home screen offers a currency alongside its
+  channel and date range.
 - `ratio: [:numerator, :denominator]` defines a **derived** metric, computed
   after aggregation so it is correct for both rows and totals. Average order
   value is `ratio: %i[total_sales orders]`, never `AVG()`.

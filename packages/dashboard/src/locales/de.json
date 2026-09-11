@@ -3249,6 +3249,9 @@
         "unavailable": {
           "title": "Berichte sind für Ihre Rolle nicht verfügbar",
           "description": "Bitten Sie einen Administrator um die Berechtigung „Berichte“ (mit Zugriff auf Bestellungen), um hier Verkaufszahlen zu sehen."
+        },
+        "currency": {
+          "search": "Währungen suchen"
         }
       },
       "orders": {

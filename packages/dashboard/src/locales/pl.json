@@ -3285,6 +3285,9 @@
         "unavailable": {
           "title": "Raporty są niedostępne dla Twojej roli",
           "description": "Poproś administratora o uprawnienie „Raporty” (z dostępem do zamówień), aby zobaczyć tutaj dane sprzedaży."
+        },
+        "currency": {
+          "search": "Szukaj walut"
         }
       },
       "orders": {

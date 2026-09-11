@@ -27,6 +27,23 @@ test.describe('home dashboard', () => {
     await expect(page.getByText(/^this period$/i)).toBeVisible()
   })
 
+  // A store selling in several currencies sums each one separately — the
+  // figures are never converted — so the screen has to say which one it is
+  // showing and let the merchant change it.
+  test('scopes the figures to a currency the store sells in', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(HOME_PATH(creds.store_id))
+
+    const totalSales = page.getByRole('button', { name: /total sales/i })
+    await expect(totalSales).toContainText('$', { timeout: 15_000 })
+
+    await page.locator('#home-currency').click()
+    await page.getByRole('option', { name: /EUR/ }).click()
+
+    await expect(totalSales).toContainText('€', { timeout: 15_000 })
+    await expect(totalSales).not.toContainText('$')
+  })
+
   test('renders the operations and rankings widgets', async ({ page }) => {
     const creds = await login(page)
     await page.goto(HOME_PATH(creds.store_id))
