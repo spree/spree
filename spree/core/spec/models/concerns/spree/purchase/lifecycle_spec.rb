@@ -63,6 +63,16 @@ RSpec.shared_examples 'a purchase lifecycle host' do
 
       expect(record.guest_checkout_disallowed?).to be(true)
     end
+
+    it 'blocks guests on an approval_required channel even when guest checkout is on' do
+      record = new_record
+      record.valid? # resolve the default channel
+
+      record.channel.preferred_guest_checkout = true
+      record.channel.preferred_storefront_access = 'approval_required'
+
+      expect(record.guest_checkout_disallowed?).to be(true)
+    end
   end
 end
 

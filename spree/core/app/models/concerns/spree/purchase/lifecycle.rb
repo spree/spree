@@ -36,15 +36,17 @@ module Spree
         fulfillment_items.any?(&:backordered?)
       end
 
-      # A +prices_hidden+ channel also disallows guest completion regardless
-      # of the +guest_checkout+ flag — prices are withheld from guests, and a
-      # buyer who cannot see prices cannot meaningfully place an order.
+      # A +prices_hidden+ or +approval_required+ channel also disallows
+      # guest completion regardless of the +guest_checkout+ flag — prices
+      # are withheld from guests, and a buyer who cannot see prices cannot
+      # meaningfully place an order.
       #
       # @return [Boolean]
       def guest_checkout_disallowed?
         return false if customer.present?
         return false if channel.blank?
         return true if channel.storefront_prices_hidden?
+        return true if channel.storefront_approval_required?
 
         !channel.resolved_guest_checkout
       end

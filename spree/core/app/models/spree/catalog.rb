@@ -98,6 +98,10 @@ module Spree
     # @return [Array<Spree::Catalog>]
     def self.for_company(company)
       return [] if company.nil?
+      # An inactive company has no agreements: its assignments neither price
+      # nor narrow. Asked about the node — subtree semantics are the policy's
+      # job (docs/plans/6.0-b2b-company-self-registration.md).
+      return [] unless Spree.company_activation_policy.active?(company)
 
       nodes = company.self_and_ancestors
       # Constrained to the receiving relation as well as the company's nodes:

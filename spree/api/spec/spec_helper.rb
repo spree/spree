@@ -50,6 +50,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/company_activation_policy'
 require 'spree/testing_support/tax_identifier_validators'
 require 'spree/testing_support/image_helpers'
 
@@ -80,6 +81,7 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::CompanyActivationPolicy
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before(:suite) do

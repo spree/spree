@@ -9,6 +9,7 @@ module Spree
         # (docs/plans/6.0-b2b-companies-and-catalogs.md).
         class CompaniesController < ResourceController
           prepend_before_action :require_authentication!
+          rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
 
           # PATCH /api/v3/store/companies/:id
           def update
@@ -39,6 +40,30 @@ module Spree
 
           def permitted_params
             params.permit(:name)
+          end
+
+          # POST founds a root company plus the caller's membership — the
+          # B2B front door, open to an existing retail customer and
+          # rate-limited like customer registration
+          # (docs/plans/6.0-b2b-company-self-registration.md).
+          def create_workflow
+            Spree.company_register_workflow
+          end
+
+          def create_workflow_arguments
+            {
+              store: current_store,
+              customer: current_user,
+              name: create_params[:name],
+              registration: create_params[:registration]&.to_h
+            }
+          end
+
+          # `registration` is the free-form answers block the merchant's
+          # registration form collects — arbitrary keys by design, stored
+          # under the company's `metadata['registration']`.
+          def create_params
+            params.permit(:name, registration: {})
           end
         end
       end

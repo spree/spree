@@ -13559,8 +13559,9 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1733250
-                  slug: product-1733250
+                  pricing_access:
+                  name: Product 2033250
+                  slug: product-2033250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13661,6 +13662,7 @@ paths:
             application/json:
               example:
                 id: prod_gbHJdmfrXB
+                pricing_access:
                 name: Hand-thrown mug
                 slug: hand-thrown-mug
                 meta_title:
@@ -13803,8 +13805,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1766710
-                slug: product-1766710
+                pricing_access:
+                name: Product 2066710
+                slug: product-2066710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13882,8 +13885,9 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
+                pricing_access:
                 name: Hand-thrown mug, large
-                slug: product-1798212
+                slug: product-2098212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14818,10 +14822,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--e320f1a336514798d1e57d0362bc67237e84513e
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--39d9c982a2eb03ec02723b6f78e2af63598b37f5
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--377c47145af5a23d3225febce44306b35adcb794
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -15673,8 +15677,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1549315
-                    sku: SKU-190
+                    name: Product 1849315
+                    sku: SKU-249
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -15780,8 +15784,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 155961
-                  sku: SKU-191
+                  name: Product 185961
+                  sku: SKU-250
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -15894,8 +15898,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1563170
-                  sku: SKU-192
+                  name: Product 1863170
+                  sku: SKU-251
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -15988,8 +15992,8 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1577276
-                  sku: SKU-193
+                  name: Product 1877276
+                  sku: SKU-252
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
@@ -16183,7 +16187,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 15995
+                    name: Product 18995
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16192,7 +16196,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-195
+                    sku: SKU-254
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16213,8 +16217,8 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 15995
-                      sku: SKU-195
+                      name: Product 18995
+                      sku: SKU-254
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
@@ -16248,7 +16252,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 163 Lovely Street
+                    address1: 165 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16270,7 +16274,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 162 Lovely Street
+                    address1: 164 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16384,7 +16388,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1609755
+                  name: Product 1909755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16393,7 +16397,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-196
+                  sku: SKU-255
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16414,8 +16418,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1609755
-                    sku: SKU-196
+                    name: Product 1909755
+                    sku: SKU-255
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -16449,7 +16453,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 165 Lovely Street
+                  address1: 167 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16471,7 +16475,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 164 Lovely Street
+                  address1: 166 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16581,7 +16585,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1636554
+                  name: Product 1936554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16590,7 +16594,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-199
+                  sku: SKU-258
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16611,8 +16615,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1636554
-                    sku: SKU-199
+                    name: Product 1936554
+                    sku: SKU-258
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -16646,7 +16650,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 171 Lovely Street
+                  address1: 173 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16668,7 +16672,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 170 Lovely Street
+                  address1: 172 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16785,7 +16789,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1645038
+                  name: Product 1945038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16794,7 +16798,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-200
+                  sku: SKU-259
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16815,8 +16819,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1645038
-                    sku: SKU-200
+                    name: Product 1945038
+                    sku: SKU-259
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -16872,7 +16876,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 174 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17052,7 +17056,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1663962
+                  name: Product 1963962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17061,7 +17065,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-202
+                  sku: SKU-261
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17082,8 +17086,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1663962
-                    sku: SKU-202
+                    name: Product 1963962
+                    sku: SKU-261
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -17117,7 +17121,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 177 Lovely Street
+                  address1: 179 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17139,7 +17143,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 176 Lovely Street
+                  address1: 178 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17225,7 +17229,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1675749
+                  name: Product 1975749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17234,7 +17238,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-203
+                  sku: SKU-262
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17255,8 +17259,8 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1675749
-                    sku: SKU-203
+                    name: Product 1975749
+                    sku: SKU-262
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
@@ -17290,7 +17294,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 179 Lovely Street
+                  address1: 181 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17312,7 +17316,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 178 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -18027,7 +18031,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1837120 can be returned
+                  message: Only 1 of Product 2137120 can be returned
       requestBody:
         content:
           application/json:
@@ -20971,6 +20975,9 @@ components:
       properties:
         id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         name:
           type: string
         slug:
@@ -21093,6 +21100,7 @@ components:
           nullable: true
       required:
       - id
+      - pricing_access
       - name
       - slug
       - meta_title
@@ -21900,6 +21908,9 @@ components:
           type: string
         product_id:
           type: string
+        pricing_access:
+          type: string
+          nullable: true
         sku:
           type: string
           nullable: true
@@ -22041,6 +22052,7 @@ components:
       required:
       - id
       - product_id
+      - pricing_access
       - sku
       - options_text
       - track_inventory

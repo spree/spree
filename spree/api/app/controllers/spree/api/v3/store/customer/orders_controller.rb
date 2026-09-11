@@ -6,6 +6,9 @@ module Spree
           class OrdersController < ResourceController
             prepend_before_action :require_authentication!
 
+            # Order history is a receipt surface.
+            renders_receipts!
+
             protected
 
             def model_class

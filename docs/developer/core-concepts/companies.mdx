@@ -222,6 +222,33 @@ The same storefront endpoints — the company directory, address book, member ma
 
 Payment terms and net invoicing, quotes, and a packaged buyer portal are on the Enterprise roadmap — [talk to the team](https://spreecommerce.org/enterprise/) if those matter to your timeline.
 
+## Self-registration and activation
+
+A business doesn't have to be created by staff. Any signed-in customer — an existing retail customer included — can found a company from the storefront in one call, becoming its first member:
+
+```typescript Store SDK
+const company = await client.companies.create({
+  name: 'Nowak Tools sp. z o.o.',
+  registration: { vat_number: 'PL1234567890', employees: '50' },
+})
+```
+
+`registration` takes whatever the merchant's registration form asks — free-form answers, stored on the company for staff to review. A customer can self-register at most one company per store; a second business is created by staff. The endpoint publishes a `company.registered` event and sends no mail — welcome or review emails are the host app's call.
+
+Out of the box, **companies are born active**: registration is instant and the new company can immediately buy, see its catalogs, and be priced by its agreements. Whether a company counts as active is answered by a single swappable policy:
+
+```ruby
+# The default — every company is active
+Spree::Dependencies.company_activation_policy_class = 'Spree::Companies::ActivationPolicy'
+```
+
+Every place a company's commercial standing matters consults it — catalog visibility, price resolution, naming a company on a cart, and checkout on an `approval_required` channel. A host app (or the Enterprise onboarding product) replaces the policy to hold new registrations in a pending state; nothing else changes. Two things the policy never touches:
+
+- **Self-service standing.** Members of an inactive company keep their company pages, address book, members and invitations — the workspace exists while they wait.
+- **Screening.** The `companies.register.validate` workflow hook is the veto point for domain rules or fraud checks at registration time; it doesn't fire when someone joins an existing company through an invitation.
+
+Pair registration with the [`approval_required` storefront posture](/developer/core-concepts/channels#storefront-access-gating) and you have the classic trade-store front door: anyone browses the range, prices come back `null` with a `pricing_access` reason code (`login_required` or `company_required`) telling the storefront which prompt to render, and checkout refuses completion (`company_activation_required`) until the cart resolves to an active company.
+
 ## Managing companies as staff
 
 ```typescript Admin SDK

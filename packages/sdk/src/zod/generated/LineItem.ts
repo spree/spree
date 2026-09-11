@@ -11,6 +11,7 @@ export const LineItemSchema = z.object({
   seller_id: z.string().nullable(),
   preorder: z.boolean(),
   preorder_ships_at: z.string().nullable(),
+  pricing_access: z.string().nullable(),
   quantity: z.number(),
   currency: z.string(),
   name: z.string(),

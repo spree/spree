@@ -15,7 +15,15 @@ export const ORDER_ROUTING_STRATEGY_VALUES = [
 export type OrderRoutingStrategyValue = (typeof ORDER_ROUTING_STRATEGY_VALUES)[number]
 
 // Empty string clears the channel-level override → falls back to store.
-export const STOREFRONT_ACCESS_VALUES = ['', 'public', 'prices_hidden', 'login_required'] as const
+// `approval_required`: anyone browses, but prices come back null and
+// checkout is refused unless the customer belongs to an active company.
+export const STOREFRONT_ACCESS_VALUES = [
+  '',
+  'public',
+  'prices_hidden',
+  'login_required',
+  'approval_required',
+] as const
 
 // Tri-state form representation of the channel's boolean guest_checkout
 // override: '' inherits the store value, 'true'/'false' set an explicit value.
