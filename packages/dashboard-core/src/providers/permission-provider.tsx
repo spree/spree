@@ -1,17 +1,11 @@
 import type { PermissionRule } from '@spree/admin-sdk'
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createContext, type ReactNode, useCallback, useContext, useMemo } from 'react'
 import { getApiClient } from '../api-client'
 import { useAuth } from '../hooks/use-auth'
 import type { ActionName, SubjectName } from '../lib/permissions'
+import { useResourceKey } from '../lib/query-keys'
+import { useTenantId } from './tenant-provider'
 
 /**
  * Matcher that mirrors CanCanCan semantics:
@@ -82,6 +76,17 @@ export function buildPermissions(rules: PermissionRule[]): Permissions {
   }
 }
 
+/**
+ * Query resource name for the permission fetch. Exported so anything else
+ * reading the same `/me` response can share this cache entry rather than
+ * issuing a second identical request.
+ */
+export const PERMISSIONS_RESOURCE = 'permissions'
+
+/** Stable identities, so `data ?? []` doesn't produce a new array each render. */
+const EMPTY_RULES: PermissionRule[] = []
+const EMPTY_KEYS: string[] = []
+
 /** Empty permissions that deny everything — used before rules are loaded. */
 const EMPTY_PERMISSIONS: Permissions = {
   can: () => false,
@@ -91,42 +96,33 @@ const EMPTY_PERMISSIONS: Permissions = {
 
 export function PermissionProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
-  const [rules, setRules] = useState<PermissionRule[]>([])
-  const [permissionKeys, setPermissionKeys] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  // Guards against out-of-order `/me` responses: a rapid store switch (or a
-  // logout) bumps the generation, and any response from a superseded request
-  // is dropped instead of overwriting the current store's permissions.
-  const requestGeneration = useRef(0)
+  const queryClient = useQueryClient()
+  // Store-scoped by construction: `useResourceKey` folds the tenant id in, so
+  // switching store changes the key and TanStack refetches on its own — no
+  // manual reload, and no chance of one store's rules being shown for another.
+  const queryKey = useResourceKey(PERMISSIONS_RESOURCE)
 
+  const query = useQuery({
+    queryKey,
+    queryFn: () => getApiClient().fetchPermissions(),
+    enabled: isAuthenticated,
+    // Permissions change when an admin's role does, which is rare and happens
+    // elsewhere. Refetching them on every window focus costs a request on the
+    // shell's critical path and almost never returns anything new.
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const rules = query.data?.rules ?? EMPTY_RULES
+  const permissionKeys = query.data?.keys ?? EMPTY_KEYS
+
+  // `useResourceKey` returns a fresh array each render, so depending on it
+  // directly would give `refresh` a new identity every render — and a consumer
+  // holding it in an effect's dependencies would then re-run that effect
+  // forever. Depend on the tenant id (a string) and rebuild the key inside.
+  const tenantId = useTenantId()
   const refresh = useCallback(async () => {
-    const generation = ++requestGeneration.current
-    setIsLoading(true)
-    try {
-      const res = await getApiClient().fetchPermissions()
-      if (generation !== requestGeneration.current) return
-      setRules(res.rules)
-      setPermissionKeys(res.keys)
-    } catch {
-      if (generation !== requestGeneration.current) return
-      setRules([])
-      setPermissionKeys([])
-    } finally {
-      if (generation === requestGeneration.current) setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      requestGeneration.current += 1
-      setRules([])
-      setPermissionKeys([])
-      setIsLoading(false)
-      return
-    }
-
-    void refresh()
-  }, [isAuthenticated, refresh])
+    await queryClient.invalidateQueries({ queryKey: [PERMISSIONS_RESOURCE, tenantId] })
+  }, [queryClient, tenantId])
 
   const permissions = useMemo(
     () => (rules.length > 0 ? buildPermissions(rules) : EMPTY_PERMISSIONS),
@@ -134,7 +130,22 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   )
 
   return (
-    <PermissionContext.Provider value={{ permissions, rules, permissionKeys, isLoading, refresh }}>
+    <PermissionContext.Provider
+      value={{
+        permissions,
+        rules,
+        permissionKeys,
+        // The first load only, which is what the nav's skeleton is for. Not
+        // `isFetching` alone: that is also true while a stale query refetches
+        // in the background, so an already-rendered nav would drop back to
+        // placeholders on every refresh — the flicker the skeleton exists to
+        // remove. Not `isPending` alone either: it stays true for a disabled
+        // query, leaving the sign-in screen loading forever. Both together
+        // mean "signed in, nothing cached yet, a request in flight".
+        isLoading: isAuthenticated && query.isPending && query.isFetching,
+        refresh,
+      }}
+    >
       {children}
     </PermissionContext.Provider>
   )

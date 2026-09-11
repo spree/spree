@@ -220,6 +220,38 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
+  describe 'seller_earnings' do
+    let(:store) { @default_store }
+    let(:seller) { create(:seller, store: store) }
+    let(:user) { create(:admin_user) }
+
+    def ability_with(*permissions)
+      role = create(:role, name: 'seller', resource: seller, permissions: permissions)
+      create(:role_user, role: role, user: user)
+
+      Spree::Ability.new(user, resource: seller)
+    end
+
+    it 'is read-only and grantable to a seller' do
+      expect(Spree.permissions.grantable_keys(:seller)).to include('read_seller_earnings')
+      expect(Spree.permissions.grantable_keys(:seller)).not_to include('write_seller_earnings')
+    end
+
+    it 'grants a real ability rule' do
+      expect(ability_with('read_seller_earnings')).to be_can(:read, :seller_earnings)
+    end
+
+    # The ledger classes stay the operator's: holding the seller key must not
+    # open `Spree::SellerTransfer` generally.
+    it 'does not let a seller manage the ledger classes' do
+      expect(ability_with('read_seller_earnings')).not_to be_can(:read, Spree::SellerTransfer)
+    end
+
+    it 'is not implied by the profile key' do
+      expect(ability_with('write_seller_profile')).not_to be_can(:read, :seller_earnings)
+    end
+  end
+
   describe 'seller_profile' do
     let(:store) { @default_store }
     let(:seller) { create(:seller, store: store) }

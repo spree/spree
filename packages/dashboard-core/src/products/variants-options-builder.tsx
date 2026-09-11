@@ -106,7 +106,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
             const isEditing = expandedIndex === i
             if (isEditing && optionType) {
               return (
-                <li key={ot.id} className="rounded-lg border border-border p-3">
+                <li key={ot.id} className="rounded-lg border border-border-subtle p-3">
                   <OptionPicker
                     optionType={optionType}
                     initialValues={ot.values}
@@ -132,7 +132,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
             return (
               <li
                 key={ot.id}
-                className="flex items-center gap-3 rounded-lg border border-border px-3 py-2"
+                className="flex items-center gap-3 rounded-lg border border-border-subtle px-3 py-2"
               >
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium">{ot.label}</div>
@@ -169,7 +169,7 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
       )}
 
       {isAdding ? (
-        <div className="rounded-lg border border-border p-3">
+        <div className="rounded-lg border border-border-subtle p-3">
           <AddOptionForm
             availableTypes={availableTypes}
             allOptionTypes={allOptionTypes}
@@ -384,7 +384,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
               className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors ${
                 isPicked
                   ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-background hover:bg-muted'
+                  : 'border-border bg-background hover:bg-accent'
               }`}
             >
               {isPicked && <CheckIcon className="size-3" />}
@@ -396,7 +396,7 @@ function OptionPicker({ optionType, initialValues, onSave, onCancel }: OptionPic
           <button
             type="button"
             onClick={() => setCreatingValue(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-muted"
+            className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border bg-background px-3 py-1 text-xs hover:bg-accent"
           >
             <PlusIcon className="size-3" />
             {t('admin.products.variants.create_value')}

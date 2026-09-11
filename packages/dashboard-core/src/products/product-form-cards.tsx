@@ -26,6 +26,7 @@ import {
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -219,11 +220,14 @@ export function PricesCard({
           </Select>
         )}
       </CardHeader>
-      <CardContent>
+      {/* `p-0` like every other card holding a table: the grid draws its own
+          cell borders to the card's edges, and padding here insets it into a
+          floating block with a gutter on all four sides. */}
+      <CardContent className="p-0">
         {currencyResolved ? (
           <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
         ) : (
-          <div className="h-24 w-full animate-pulse rounded-md bg-muted" />
+          <div className="m-3 h-24 animate-pulse rounded-md bg-muted" />
         )}
       </CardContent>
     </Card>
@@ -761,14 +765,16 @@ function SortableMediaThumbnail({
 export function InventoryCard({
   form,
   stockLocationHref,
-}: FormCardProps & { stockLocationHref?: (id: string) => string }) {
+  actions,
+}: FormCardProps & { stockLocationHref?: (id: string) => string; actions?: React.ReactNode }) {
   const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
+        {actions && <CardAction>{actions}</CardAction>}
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0">
         <InventorySection form={form} stockLocationHref={stockLocationHref} />
       </CardContent>
     </Card>

@@ -11,7 +11,8 @@ module Spree
         typelize number: :string, email: [:string, nullable: true], currency: :string,
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
-                 fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
+                 fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
+                 payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
                  completed_at: [:string, nullable: true],
                  billing_address: { nullable: true }, shipping_address: { nullable: true }
 

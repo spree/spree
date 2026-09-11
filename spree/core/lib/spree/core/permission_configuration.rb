@@ -364,7 +364,17 @@ module Spree
       })
       register_resource(:stock, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::StockLevel, Spree::StockLocation, Spree::StockMovement,
-         Spree::StockTransfer, Spree::StockReservation]
+         Spree::StockTransfer, Spree::StockTransferItem, Spree::StockReservation,
+         Spree::StockReceipt, Spree::StockReceiptItem]
+      })
+      # Buying goods in, which is a different job from moving the goods you
+      # already have: `write_stock` must not also mean "may place orders with
+      # suppliers" (docs/plans/6.0-inventory-operations.md). Closed to the
+      # seller audience — a marketplace seller does not purchase on the
+      # operator's account.
+      register_resource(:purchasing, group: :catalog, subjects: -> {
+        [Spree::Supplier, Spree::PurchaseOrder, Spree::PurchaseOrderItem,
+         Spree::StockReceipt, Spree::StockReceiptItem]
       })
 
       register_resource(:promotions, group: :marketing, subjects: -> {
@@ -462,6 +472,16 @@ module Spree
       # scope-fetching, never an ability rule.
       register_resource(:seller_profile, group: :access, subjects: -> { [:seller_profile] },
                                          audiences: %i[seller])
+
+      # A seller reading their own books: balance, earnings, settlements.
+      #
+      # Its own key rather than part of `seller_profile`, so an owner can hand
+      # a packing teammate the orders without the money. Read-only, and a
+      # symbol for the reason `seller_profile` is one: the ledger classes
+      # belong to `payouts`, the operator's key. Which rows a seller reads is
+      # `current_seller` scope-fetching on their own branch.
+      register_resource(:seller_earnings, group: :access, subjects: -> { [:seller_earnings] },
+                                          write: false, audiences: %i[seller])
 
       register_resource(:dashboard, group: :analytics, subjects: -> { [:dashboard] },
                                     write: false, audiences: %i[seller])

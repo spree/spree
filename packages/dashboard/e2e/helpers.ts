@@ -145,7 +145,33 @@ export const FIXTURE_BULK_CATEGORY_PERMALINK = 'e2e-bulk-category'
 // Second channel beyond the seeded default `online`. Used by the
 // channels bulk-action and filter specs.
 export const FIXTURE_BULK_CHANNEL_CODE = 'e2e-bulk'
+
+/**
+ * Inventory-operations fixtures. A transfer needs two warehouses and stock at
+ * the source before it can ship, and neither is creatable from the transfer
+ * screens themselves.
+ */
+export const FIXTURE_TRANSFER_SOURCE = 'E2E Source Warehouse'
+export const FIXTURE_TRANSFER_DESTINATION = 'E2E Destination Warehouse'
+export const FIXTURE_TRANSFER_PRODUCT = 'E2E Transfer Product'
+/** Unique so the transfer specs can resolve exactly the stocked variant. */
+export const FIXTURE_TRANSFER_SKU = 'E2E-TRANSFER-SKU'
+export const FIXTURE_SUPPLIER = 'E2E Supplier'
 export const FIXTURE_BULK_CHANNEL_NAME = 'E2E Bulk Channel'
+/**
+ * A seller with one settled sale and one payout still owed, so the ledger
+ * screens have rows without a spec having to place and fulfil an order first.
+ */
+export const FIXTURE_LEDGER_SELLER = 'E2E Ledger Seller'
+/** The settled payout the read-only specs assert against. */
+export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
+/**
+ * A second payout, owed, for the mark-as-paid spec to consume. Separate from
+ * the one above so completing it cannot change what another spec reads —
+ * the suite is serial, and CI splits it across shards.
+ */
+export const FIXTURE_LEDGER_OWED_AMOUNT = '75.0'
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'

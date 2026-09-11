@@ -1,6 +1,8 @@
 import { hasVisibleSettingsEntries, i18n, nav } from '@spree/dashboard-core'
 import {
+  BanknoteIcon,
   ClipboardCheckIcon,
+  HandCoinsIcon,
   HomeIcon,
   PackageIcon,
   SettingsIcon,
@@ -58,6 +60,28 @@ nav.add({
   icon: PackageIcon,
   position: 120,
   subject: 'Spree::Order',
+})
+
+// The seller's own books. Two entries rather than one because they answer
+// different questions: what an order earned, and whether last week's
+// settlement went out. Both gated on the ledger key, so a teammate given
+// orders but not money sees neither.
+nav.add({
+  key: 'earnings',
+  label: i18n.t('nav.earnings'),
+  path: '/earnings',
+  icon: BanknoteIcon,
+  position: 130,
+  subject: 'seller_earnings',
+})
+
+nav.add({
+  key: 'payouts',
+  label: i18n.t('nav.payouts'),
+  path: '/payouts',
+  icon: HandCoinsIcon,
+  position: 140,
+  subject: 'seller_earnings',
 })
 
 nav.add({

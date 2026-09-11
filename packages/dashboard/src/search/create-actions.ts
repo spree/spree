@@ -162,7 +162,7 @@ createActionRegistry.add({
   icon: BoxesIcon,
   subject: Subject.StockTransfer,
   position: 510,
-  getRoute: (storeId) => ({ to: `/${storeId}/products/transfers`, search: { new: true } }),
+  getRoute: (storeId) => ({ to: `/${storeId}/transfers`, search: { new: true } }),
 })
 
 createActionRegistry.add({

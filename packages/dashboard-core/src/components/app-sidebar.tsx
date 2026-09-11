@@ -1,4 +1,12 @@
-import { Sidebar, SidebarContent, SidebarHeader } from '@spree/dashboard-ui'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  Skeleton,
+} from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
 import type { ComponentProps, ReactNode } from 'react'
@@ -54,9 +62,14 @@ function filterByPermissions(items: NavItem[], permissions: Permissions): NavIte
  * than re-deriving the prefixing and permission filtering, which is what a
  * second sidebar would otherwise copy.
  */
-export function useNavItems(tenantId: string): { navItems: NavItem[]; bottomItems: NavItem[] } {
+export function useNavItems(tenantId: string): {
+  navItems: NavItem[]
+  bottomItems: NavItem[]
+  /** True while permissions are still loading, so the nav is not yet knowable. */
+  isLoading: boolean
+} {
   const { t } = useTranslation()
-  const { permissions } = usePermissions()
+  const { permissions, isLoading } = usePermissions()
   const store = useOptionalStore()?.store ?? null
   const { user } = useAuth()
   const { main, bottom } = useNavEntries()
@@ -73,7 +86,7 @@ export function useNavItems(tenantId: string): { navItems: NavItem[]; bottomItem
     permissions,
   )
 
-  return { navItems, bottomItems }
+  return { navItems, bottomItems, isLoading }
 }
 
 /**
@@ -101,14 +114,49 @@ export function AppSidebar({
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
-  const { navItems, bottomItems } = useNavItems(tenantId ?? storeId ?? 'default')
+  const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
 
   return (
     <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>
       <SidebarHeader>{header ?? <StoreSwitcher />}</SidebarHeader>
       <SidebarContent>
-        <NavMain items={navItems} bottomItems={bottomItems} />
+        {/* Permissions decide which links exist, and until they arrive every
+            `can()` answers false — so the real nav is not "empty", it is not
+            yet known. Rendering the filtered list during that window shows a
+            near-empty rail that then pops to a full one; skeleton rows keep the
+            shell's shape steady and say the difference honestly.
+
+            Keyed on `isLoading` alone, not on an empty list: entries without a
+            `subject` (Home, Getting Started) skip the permission filter, so the
+            list is never actually empty and a length check would never fire. */}
+        {isLoading ? <NavSkeleton /> : <NavMain items={navItems} bottomItems={bottomItems} />}
       </SidebarContent>
     </Sidebar>
+  )
+}
+
+/**
+ * Placeholder rows for the primary nav while permissions load.
+ *
+ * The count is deliberate rather than arbitrary: it approximates a typical
+ * operator's nav so the rail does not visibly resize when the real list
+ * replaces it. Marked `aria-hidden` — a screen reader gains nothing from
+ * placeholder rows, and the shell announces the page itself.
+ */
+function NavSkeleton() {
+  return (
+    <SidebarGroup aria-hidden>
+      <SidebarMenu>
+        {Array.from({ length: 8 }, (_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length placeholder list
+          <SidebarMenuItem key={i}>
+            <div className="flex h-8 items-center gap-2 px-2">
+              <Skeleton className="size-4 shrink-0 rounded" />
+              <Skeleton className="h-3 w-24 group-data-[collapsible=icon]:hidden" />
+            </div>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+    </SidebarGroup>
   )
 }

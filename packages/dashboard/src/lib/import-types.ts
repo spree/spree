@@ -17,6 +17,8 @@ export function importTypeDestination(
   switch (importTypeKey(type)) {
     case 'customers':
       return { to: '/$storeId/customers' }
+    case 'purchase_orders':
+      return { to: '/$storeId/purchase-orders' }
     case 'price_list_prices':
       return imp?.price_list_id
         ? {

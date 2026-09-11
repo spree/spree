@@ -468,4 +468,116 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       end
     end
   end
+
+  path '/api/v3/admin/sellers/{seller_id}/balances' do
+    parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    get "List a seller's balances" do
+      tags 'Sellers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Where one seller stands with the marketplace, one row per currency:
+        what they have earned (completed transfers, refund reversals
+        included), what has been paid to them, what is still owed, and
+        earnings the payout provider has not yet confirmed.
+
+        Computed from the ledger rather than stored, so the rows carry no id.
+      DESC
+      admin_scope :read, :payouts
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'balances listed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_id) { seller.prefixed_id }
+
+        before do
+          create(:seller_transfer, :completed, seller: seller, amount: 40,
+                                               order: create(:completed_order_with_totals, store: store, seller: seller))
+        end
+
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/SellerBalance' } }
+               },
+               required: %w[data]
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.first).to include('seller_id' => seller.prefixed_id, 'currency' => 'USD', 'balance' => '40.0')
+        end
+      end
+
+      response '404', 'seller not found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_id) { 'sel_nonexistent' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/sellers/{seller_id}/payouts' do
+    parameter name: :seller_id, in: :path, type: :string, required: true, description: 'Seller prefixed ID'
+
+    post 'Settle a seller' do
+      tags 'Sellers'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Sweeps everything this seller is owed into a payout — one per currency,
+        since nothing is ever converted between them.
+
+        This is what the `manual` payout interval means: the scheduled sweep
+        runs on each seller's own interval and skips anyone set to `manual`,
+        leaving the operator to decide when. It also settles any other seller
+        early.
+
+        It records the settlement rather than sending money: the built-in
+        provider waits to be told the bank transfer went out, which is
+        `PATCH /api/v3/admin/seller_payouts/{id}/complete`.
+
+        Answers `422` when there is nothing to settle — no payout account,
+        nothing unsettled, or a balance below the seller's minimum.
+      DESC
+      admin_scope :write, :payouts
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '201', 'seller settled' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_id) { seller.prefixed_id }
+
+        before do
+          create(:seller_transfer, :completed, seller: seller, amount: 40, currency: 'USD',
+                                               order: create(:completed_order_with_totals, store: store, seller: seller))
+        end
+
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/SellerPayout' } }
+               },
+               required: %w[data]
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.first['display_amount']).to eq('$40.00')
+        end
+      end
+
+      response '422', 'nothing to settle' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_id) { seller.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
 end

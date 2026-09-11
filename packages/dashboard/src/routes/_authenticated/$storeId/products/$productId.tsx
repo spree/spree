@@ -44,6 +44,7 @@ import { ProductCustomFieldsProvider } from '../../../../components/spree/produc
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { StockHistoryDialog } from '../../../../components/spree/stock-history-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
@@ -288,6 +289,14 @@ function ProductForm({ product }: { product: Product }) {
                 form={form}
                 stockLocationHref={(id) =>
                   `/${storeId}/settings/stock-locations?edit=${encodeURIComponent(id)}`
+                }
+                // Why the on-hand numbers are what they are. Across every
+                // variant, because that is the question a merchant asks on a
+                // product page (docs/plans/6.0-inventory-operations.md).
+                actions={
+                  <StockHistoryDialog
+                    variantIds={assignableVariants.map((variant) => variant.id)}
+                  />
                 }
               />
               <DigitalAssetsCard productId={productId} variants={assignableVariants} />

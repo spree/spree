@@ -1,8 +1,21 @@
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable, formatStoreDateTime } from '@spree/dashboard-core'
 import { ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import type { Order } from '@spree/seller-sdk'
 import i18n from 'i18next'
+import { useStoreTimezone } from '../hooks/use-store-timezone'
+
+/**
+ * An order date in the marketplace's timezone.
+ *
+ * Its own component because a table definition is module-level and has no
+ * access to hooks, while `render` is called inside the table's JSX.
+ */
+function OrderDate({ iso }: { iso: string }) {
+  const timezone = useStoreTimezone()
+
+  return <>{formatStoreDateTime(iso, timezone)}</>
+}
 
 /** Mirrors the operator dashboard's order status vocabularies. */
 const FULFILLMENT_STATUSES = [
@@ -49,8 +62,7 @@ defineTable<Order>('seller-orders', {
       filterType: 'date',
       quickFilter: true,
       default: true,
-      render: (order) =>
-        order.completed_at ? new Date(order.completed_at).toLocaleDateString() : '—',
+      render: (order) => (order.completed_at ? <OrderDate iso={order.completed_at} /> : '—'),
     },
     {
       key: 'fulfillment_status',

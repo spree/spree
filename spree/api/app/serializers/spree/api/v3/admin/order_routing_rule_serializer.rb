@@ -8,7 +8,7 @@ module Spree
         # per-channel routing-rules editor. Same shape as PromotionRule so the
         # frontend renders both with the same schema-driven preference form.
         class OrderRoutingRuleSerializer < BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Rule type. Built-in: preferred_location, default_location, minimize_splits. Extensions may register more.'],
                    channel_id: :string,
                    position: :number,
                    active: :boolean,

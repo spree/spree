@@ -4,7 +4,7 @@ module Spree
       # Store API Data Request Serializer
       # A customer's own GDPR access or erasure request.
       class DataRequestSerializer < BaseSerializer
-        typelize number: :string, kind: :string, status: :string,
+        typelize number: :string, kind: [:string, enum: Spree::DataRequest::KINDS], status: [:string, enum: Spree::DataRequest.statuses, enum_type_name: 'DataRequestStatus'],
                  requested_at: [:string, nullable: true],
                  completed_at: [:string, nullable: true],
                  expires_at: [:string, nullable: true],

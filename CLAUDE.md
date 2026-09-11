@@ -12,6 +12,8 @@ When proposing significant architectural changes:
 
 Use `/project:create-plan` and `/project:update-plan` for plan management, and `/project:implement-plan <plan>` to deliver a plan end to end (open questions → implementation → reviews → running QA environment → pull request).
 
+Every plan is tracked as one Linear issue (Spree project, milestone = the plan's target version) and one GitHub issue (milestone `vX.Y`, on the org Roadmap project), both named in the plan's `**Tracking:**` header. The skills open and update them; a pull request that implements a plan carries the Linear id in its title, `Title (V-1234)`.
+
 ## Monorepo Structure
 
 | Directory | Description |
@@ -100,12 +102,12 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 ## Git Policy
 
 - Commit message body: max 3-4 sentences, DON'T include implementation detail, focus on the "what" and "why", not the "how"
-- Commits fixing bugs should start with "Fix" prefix, branch name should start with "fix/"
+- Commits fixing bugs should start with "Fix: " prefix, branch name should start with "fix/"
 - Use plain phrases like "Added/Removed/Fixed/Changed" in commit messages/titles 
-- If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
 - NEVER commit anything to main branch, always use feat/fix/chore branches for development
 - Pull Request descriptions are public, never disclose any credentials, PII, sensitive data or local dev environment URLs
 - Pull Request descriptions should follow same guidelines as git commits - short, cohesive and short, use bullets to list changes / new features if it's a big PR
+- NEVER add yourself as a co-author of the commit
 
 ## Backend (Ruby)
 
@@ -123,6 +125,7 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 - ALWAYS use Yard comments for classes and public methods, with `@param` and `@return` types
 - DO NOT generate too much comment noise, be very strict and selective about what gets a comment — only non-obvious public methods, never private methods or internal helpers
 - DO NOT use shorthand variable names, readibility by humans is the core principle
+- Always use `ActiveJob::Continuable` when a Background Job iterates over records and perform operations on them
 
 ### Code Organization
 
@@ -146,7 +149,7 @@ Per-request context available in models, controllers, jobs, and services:
 - We're on Rails 8.1 so use all the new and available methods from this release
 - New models carrying store-specific data (configuration, catalog, commerce records) ALWAYS `belongs_to :store` via `Spree::SingleStoreResource` — only genuinely global reference data (countries, states, roles) goes unscoped. Cross-store sharing is gone (`spree_multi_store` is legacy and unsupported)
 - ALWAYS pass `class_name` and `dependent` on associations; use `dependent: :destroy_async` for high-fanout associations to offload deletion to a background job
-- Include `Spree::CustomFields` for custom fields support
+- Include `Spree::HasCustomFields` for custom fields support
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
 - NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
@@ -162,13 +165,18 @@ Per-request context available in models, controllers, jobs, and services:
 - ALWAYS put callbacks in private group
 - ALWAYS use existing vocabulary and naming patterns, avoid slang terms
 - DO NOT override Rails core API methods, eg. `update```
+- All new models should have `store_id` and belong to `Store` unless they are sub-children of another Parent (eg. `Variant` under `Product`)
+- All new tier-1 models (eg. Product) should publish events via `publishes_lifecycle_events`
 
 ```ruby
 class Spree::Product < Spree.base_class
-  include Spree::Metafields
+  include Spree::SingleStoreResource
+  include Spree::HasCustomFields
   include Spree::Metadata
 
   acts_as_paranoid
+
+  publishes_lifecycle_events
 
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   scope :available, -> { where(available_on: ..Time.current) }
@@ -364,6 +372,7 @@ end
 ```
 
 - `typelize attr: :type` for computed/delegated attribute types
+- Closed value lists use `typelize kind: [:string, enum: Model::KINDS]` (a closed TS union); lists an extension may extend — `has_status` values, `Spree::Fee::KINDS` — add `enum_type_name: 'ModelStatus'`, which emits a named, exported, open union (`'a' | 'b' | (string & {})`). Registry-driven `type` fields stay `:string` with a `comment:` naming the built-ins. OpenAPI lists the values in all three cases; for the open ones it emits `anyOf` (the known values, or any string) so generated clients accept extension values too
 - Never use `typelize_from` — it connects to the database
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer

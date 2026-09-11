@@ -10,7 +10,8 @@ module Spree
         # a seller may use are preference-only (see the seller delivery
         # methods controller), so no rule here carries an association.
         class DeliveryMethodRuleSerializer < BaseSerializer
-          typelize type: :string, active: :boolean,
+          typelize type: [:string, comment: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule, channel_rule, volume_rule, company_rule. Extensions may register more.'],
+                   active: :boolean,
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
 

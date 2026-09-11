@@ -5,15 +5,15 @@ import {
   MobileBreadcrumbBar,
   SettingsNavSheet,
   SettingsSidebar,
+  SkipLink,
   StickyHeaderProvider,
   StoreProvider,
   TopBar,
   useAutoCollapseSidebar,
-  usePermissions,
 } from '@spree/dashboard-core'
 import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { getAvailableUiLocales } from '../../i18n-setup'
@@ -36,21 +36,10 @@ function StoreLayout() {
   const { storeId } = Route.useParams()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const inSettings = pathname.startsWith(`/${storeId}/settings`)
-  const { refresh: refreshPermissions } = usePermissions()
-  const isFirstStore = useRef(true)
-
-  // Permissions are store-scoped (roles are held per store). The provider
-  // already loaded them for the initial store on login; reload only when the
-  // admin switches to a different store — `storeId` is in the deps for
-  // exactly that re-run, even though the body doesn't read it.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: storeId drives the store-switch re-run
-  useEffect(() => {
-    if (isFirstStore.current) {
-      isFirstStore.current = false
-      return
-    }
-    void refreshPermissions()
-  }, [storeId, refreshPermissions])
+  // Permissions are store-scoped (roles are held per store), and the provider
+  // now keys its query by the active store — so switching store refetches them
+  // on its own. The manual reload this used to run here is not just redundant
+  // but harmful: it re-ran whenever its callback changed identity.
 
   return (
     <StoreProvider storeId={storeId}>
@@ -83,6 +72,9 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
 
   return (
     <>
+      {/* First in the tab order by construction — it has to precede the
+          sidebar's thirty-odd links to be able to skip them. */}
+      <SkipLink />
       <AppSidebar />
       {/* `flex-row` so the secondary sidebar can sit flush against the
           primary and span full height. The TopBar moves into the content

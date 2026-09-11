@@ -9,7 +9,7 @@ module Spree
                    key: :string,
                    label: :string,
                    field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
-                   resource_type: :string,
+                   resource_type: [:string, comment: 'Class name of the resource the field attaches to, for example Spree::Product, Spree::Order or Spree::Customer. Extensions may register more.'],
                    storefront_visible: :boolean,
                    searchable: :boolean,
                    sortable: :boolean,

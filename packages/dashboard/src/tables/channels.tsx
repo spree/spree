@@ -41,7 +41,13 @@ defineTable<Channel>('channels', {
       filterable: true,
       filterType: 'boolean',
       default: true,
-      render: (channel) => <ActiveBadge active={channel.active} />,
+      render: (channel) => (
+        <ActiveBadge
+          active={channel.active}
+          activeLabel={i18n.t('admin.common.active')}
+          inactiveLabel={i18n.t('admin.common.inactive')}
+        />
+      ),
     },
     {
       key: 'default',

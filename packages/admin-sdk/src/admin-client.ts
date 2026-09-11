@@ -212,8 +212,11 @@ import type {
   PromotionRuleCreateParams,
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
+  PurchaseOrderCreateParams,
+  PurchaseOrderUpdateParams,
   ReasonCreateParams,
   ReasonUpdateParams,
+  ReceivableCloseParams,
   ResourceTypeDefinition,
   ReturnCreateParams,
   ReturnReceiveParams,
@@ -242,11 +245,16 @@ import type {
   StockLevelUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
+  StockReceiptCreateParams,
+  StockTransferCancelParams,
   StockTransferCreateParams,
+  StockTransferUpdateParams,
   StoreCreditApplyParams,
   StoreDataSources,
   StorePayoutProvider,
   StoreUpdateParams,
+  SupplierCreateParams,
+  SupplierUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
   TaxExemptionCertificateParams,
@@ -313,6 +321,7 @@ import type {
   OptionType,
   Order,
   OrderCancellationReason,
+  OrderGroup,
   OrderRoutingRule,
   PackageType,
   Payment,
@@ -327,6 +336,7 @@ import type {
   Promotion,
   PromotionAction,
   PromotionRule,
+  PurchaseOrder,
   Refund,
   RefundReason,
   ResourceTranslations,
@@ -335,6 +345,7 @@ import type {
   ReturnReason,
   Role,
   Seller,
+  SellerBalance,
   SellerPayout,
   SellerRequirement,
   SellerRequirementSubmission,
@@ -344,9 +355,11 @@ import type {
   StockLevel,
   StockLocation,
   StockMovement,
+  StockReceipt,
   StockTransfer,
   Store,
   StoreCredit,
+  Supplier,
   TaxCategory,
   TaxExemptionCertificate,
   TaxIdentifier,
@@ -3038,6 +3051,24 @@ export class AdminClient {
 
     reject: (id: string, params?: SellerRejectParams, options?: RequestOptions): Promise<Seller> =>
       this.request<Seller>('PATCH', `/sellers/${id}/reject`, { ...options, body: params }),
+
+    /**
+     * Where this seller stands, one row per currency: earned, paid, still
+     * owed, and earnings the payout provider has not yet confirmed.
+     */
+    balances: (id: string, options?: RequestOptions): Promise<{ data: SellerBalance[] }> =>
+      this.request<{ data: SellerBalance[] }>('GET', `/sellers/${id}/balances`, options),
+
+    /**
+     * Settles this seller now, sweeping everything they are owed into a
+     * payout per currency.
+     *
+     * What the `manual` payout interval means — the scheduled sweep skips
+     * those sellers, leaving the operator to decide when. Also the way to pay
+     * any seller early. Answers 422 when there is nothing to settle.
+     */
+    settle: (id: string, options?: RequestOptions): Promise<{ data: SellerPayout[] }> =>
+      this.request<{ data: SellerPayout[] }>('POST', `/sellers/${id}/payouts`, options),
   }
 
   // ============================================
@@ -3165,6 +3196,32 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<CommissionLine> =>
       this.request<CommissionLine>('GET', `/commission_lines/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  /**
+   * `Spree::OrderGroup` — the checkout a split basket produced, and the
+   * payments made against it. An order placed in one has no payments of its
+   * own: its share of each of these is in its `payment_splits`.
+   */
+  readonly orderGroups = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<OrderGroup>> =>
+      this.request<PaginatedResponse<OrderGroup>>('GET', '/order_groups', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[]; fields?: string[] },
+      options?: RequestOptions,
+    ): Promise<OrderGroup> =>
+      this.request<OrderGroup>('GET', `/order_groups/${id}`, {
         ...options,
         params: getParams(params),
       }),
@@ -4965,9 +5022,11 @@ export class AdminClient {
   // ============================================
 
   /**
-   * Inventory movement between stock locations, or external → location for
-   * receives. Pass `source_location_id` for transfers; omit it to record a
-   * seller receive (external stock arriving at the destination).
+   * Stock moving between two of the merchant's own warehouses. A transfer is a
+   * trip: `create` records a plan, `markInTransit` takes the units off the
+   * source shelf, and each delivery the destination counts in is a stock
+   * receipt (`stockReceipts.create`). Receiving from a supplier is a purchase
+   * order, not a transfer.
    */
   readonly stockTransfers = {
     list: (
@@ -4989,11 +5048,252 @@ export class AdminClient {
         params: getParams(params),
       }),
 
+    /** Persists a draft. Nothing moves until `markInTransit`. */
     create: (params: StockTransferCreateParams, options?: RequestOptions): Promise<StockTransfer> =>
       this.request<StockTransfer>('POST', '/stock_transfers', { ...options, body: params }),
 
+    /** Drafts only: past that, what is in the box is a matter of record. */
+    update: (
+      id: string,
+      params: StockTransferUpdateParams,
+      options?: RequestOptions,
+    ): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}`, { ...options, body: params }),
+
+    /** Drafts only: anything that has shipped is cancelled, not deleted. */
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/stock_transfers/${id}`, options),
+
+    /** Freezes the lines without taking anything off the shelf. */
+    markReady: (id: string, options?: RequestOptions): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/mark_ready`, options),
+
+    /**
+     * The van has left: writes the source's `shipped` movements. Pass
+     * `force` to ship anyway when the shelf cannot cover it.
+     */
+    markInTransit: (
+      id: string,
+      params?: { force?: boolean },
+      options?: RequestOptions,
+    ): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/mark_in_transit`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Unfreezes a ready-to-ship transfer; nothing has left the source yet. */
+    markDraft: (id: string, options?: RequestOptions): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/mark_draft`, options),
+    /**
+     * Ends a partially received transfer whose missing units are not going to
+     * turn up. Nothing moves; the outstanding count stays on each line.
+     */
+    close: (
+      id: string,
+      params?: ReceivableCloseParams,
+      options?: RequestOptions,
+    ): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/close`, {
+        ...options,
+        body: params,
+      }),
+    /**
+     * The deliveries the destination counted in. Creating one is how a
+     * transfer is received: this delivery's counts, accepted and refused,
+     * per line — a second box adds to the first.
+     */
+    stockReceipts: {
+      list: (
+        stockTransferId: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<StockReceipt>> =>
+        this.request<PaginatedResponse<StockReceipt>>(
+          'GET',
+          `/stock_transfers/${stockTransferId}/stock_receipts`,
+          { ...options, params: getParams(params) },
+        ),
+      get: (
+        stockTransferId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<StockReceipt> =>
+        this.request<StockReceipt>(
+          'GET',
+          `/stock_transfers/${stockTransferId}/stock_receipts/${id}`,
+          { ...options, params: getParams(params) },
+        ),
+      create: (
+        stockTransferId: string,
+        params?: StockReceiptCreateParams,
+        options?: RequestOptions,
+      ): Promise<StockReceipt> =>
+        this.request<StockReceipt>('POST', `/stock_transfers/${stockTransferId}/stock_receipts`, {
+          ...options,
+          body: params,
+        }),
+    },
+    cancel: (
+      id: string,
+      params?: StockTransferCancelParams,
+      options?: RequestOptions,
+    ): Promise<StockTransfer> =>
+      this.request<StockTransfer>('PATCH', `/stock_transfers/${id}/cancel`, {
+        ...options,
+        body: params,
+      }),
+  }
+
+  // ============================================
+  // Suppliers
+  // ============================================
+
+  /** The merchant's supplier address book. */
+  readonly suppliers = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Supplier>> =>
+      this.request<PaginatedResponse<Supplier>>('GET', '/suppliers', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<Supplier> =>
+      this.request<Supplier>('GET', `/suppliers/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: SupplierCreateParams, options?: RequestOptions): Promise<Supplier> =>
+      this.request<Supplier>('POST', '/suppliers', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: SupplierUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Supplier> =>
+      this.request<Supplier>('PATCH', `/suppliers/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/suppliers/${id}`, options),
+  }
+
+  // ============================================
+  // Purchase Orders
+  // ============================================
+
+  /**
+   * Goods bought from a supplier. Ordered units never count toward
+   * availability: nothing reaches the shelf until a delivery is booked in as
+   * a stock receipt (`stockReceipts.create`).
+   */
+  readonly purchaseOrders = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<PurchaseOrder>> =>
+      this.request<PaginatedResponse<PurchaseOrder>>('GET', '/purchase_orders', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('GET', `/purchase_orders/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: PurchaseOrderCreateParams, options?: RequestOptions): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('POST', '/purchase_orders', { ...options, body: params }),
+
+    /** Drafts only: a placed order is a matter of record with the supplier. */
+    update: (
+      id: string,
+      params: PurchaseOrderUpdateParams,
+      options?: RequestOptions,
+    ): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/purchase_orders/${id}`, options),
+
+    /** Sends the order: freezes the lines and starts the expected-date clock. */
+    markOrdered: (id: string, options?: RequestOptions): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/mark_ordered`, options),
+
+    /** Reopens a placed order for editing, while no delivery has been booked. */
+    markDraft: (id: string, options?: RequestOptions): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/mark_draft`, options),
+    /**
+     * Ends a partially received order whose balance the supplier will not
+     * deliver. What arrived stays; the outstanding count stays on each line.
+     */
+    close: (
+      id: string,
+      params?: ReceivableCloseParams,
+      options?: RequestOptions,
+    ): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/close`, {
+        ...options,
+        body: params,
+      }),
+    /**
+     * The deliveries booked against an order. Creating one is how an order is
+     * received: this delivery's counts, accepted and refused, per line, at
+     * the line's cost — a second delivery adds to the first.
+     */
+    stockReceipts: {
+      list: (
+        purchaseOrderId: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<StockReceipt>> =>
+        this.request<PaginatedResponse<StockReceipt>>(
+          'GET',
+          `/purchase_orders/${purchaseOrderId}/stock_receipts`,
+          { ...options, params: getParams(params) },
+        ),
+      get: (
+        purchaseOrderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<StockReceipt> =>
+        this.request<StockReceipt>(
+          'GET',
+          `/purchase_orders/${purchaseOrderId}/stock_receipts/${id}`,
+          { ...options, params: getParams(params) },
+        ),
+      create: (
+        purchaseOrderId: string,
+        params?: StockReceiptCreateParams,
+        options?: RequestOptions,
+      ): Promise<StockReceipt> =>
+        this.request<StockReceipt>('POST', `/purchase_orders/${purchaseOrderId}/stock_receipts`, {
+          ...options,
+          body: params,
+        }),
+    },
+    cancel: (
+      id: string,
+      params?: { reason?: string },
+      options?: RequestOptions,
+    ): Promise<PurchaseOrder> =>
+      this.request<PurchaseOrder>('PATCH', `/purchase_orders/${id}/cancel`, {
+        ...options,
+        body: params,
+      }),
   }
 
   // ============================================

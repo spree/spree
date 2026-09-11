@@ -177,7 +177,7 @@ export function RichTextEditor({
       ref={wrapperRef}
       data-slot="rich-text-editor"
       className={cn(
-        'rounded-lg border border-border bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'rounded-lg border border-border-field bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         disabled && 'pointer-events-none bg-muted border-border',
         className,
       )}
@@ -348,7 +348,7 @@ function ToolbarButton({
       aria-pressed={active}
       className={cn(
         'inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors disabled:opacity-40 disabled:pointer-events-none',
-        active && 'bg-accent text-foreground',
+        active && 'bg-accent-strong text-foreground',
       )}
     >
       {children}

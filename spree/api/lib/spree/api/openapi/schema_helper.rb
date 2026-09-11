@@ -584,13 +584,14 @@ module Spree
 
         # Typelizer adds nil to enum arrays for nullable fields.
         # OpenAPI 3.0 handles nullability via `nullable: true`, so the nil entry is redundant
-        # and causes issues with code generators.
+        # and causes issues with code generators. The array is often a model's
+        # frozen constant (`Spree::Fee::KINDS`), so it is replaced, never mutated.
         def strip_null_from_enums(schema)
           properties = schema[:properties] || {}
           properties.each_value do |prop|
             next unless prop.is_a?(Hash) && prop[:enum].is_a?(Array)
 
-            prop[:enum].reject!(&:nil?)
+            prop[:enum] = prop[:enum].compact
           end
         end
 

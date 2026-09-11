@@ -47,6 +47,15 @@
  * focus signal, which it stops being once every page renders a saturated
  * blue button. */
 :root {
+  /* Neutrals are Tailwind's **stone** scale — a warm grey. Every neutral here
+     is either an exact stone step (labelled with it) or, where a step could not
+     meet a contrast requirement, a value on stone's own hue so it belongs to
+     the same family. Never introduce a zero-chroma grey or another neutral
+     ramp (zinc, slate, neutral): mixed families read as a colour cast on
+     whichever surface is the odd one out.
+
+     Tokens that must equal another token point at it with var() rather than
+     repeating its value, so the two cannot drift. */
   --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
   --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
   /* Links in body copy. The plain accent measures 4.13:1 on white and 4.21:1
@@ -55,36 +64,61 @@
   --link: oklch(0.5106 0.1868 257.7);
   --link-hover: oklch(0.44 0.16 257.7);
 
-  --background: oklch(0.9851 0 0); /* #fafafa — chrome sits one step below white */
-  --foreground: oklch(0.145 0.0039 49.25); /* stone-950 */
+  --background: oklch(98.5% 0.001 106.423); /* stone-50 — chrome one step below white */
+  --foreground: oklch(14.7% 0.004 49.25); /* stone-950 */
   --card: oklch(1 0 0); /* #ffffff — cards and inputs read as raised */
-  --card-foreground: oklch(0.145 0.0039 49.25);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0.0039 49.25);
-  --primary: oklch(0.145 0.0039 49.25); /* stone-950 — near-black primary CTAs */
-  --primary-foreground: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: var(--foreground); /* stone-950 — near-black primary CTAs */
+  --primary-foreground: var(--card);
   /* Filled surfaces (table headers, badges, secondary buttons) read as a
      whisper against the white card rather than a distinct band. */
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.145 0.0039 49.25);
-  --muted: oklch(0.9851 0 0);
-  /* Between stone-500 and -600. Clears 4.5:1 against every surface this text
-     actually lands on — including --accent, the darkest of them — where the
-     stone-500 step measured 4.15:1. Dark mode keeps its own value: it already
-     passes on all four grounds. */
+  --secondary: oklch(97% 0.001 106.424); /* stone-100 */
+  --secondary-foreground: var(--foreground);
+  --muted: var(--background);
+  /* Between stone-500 and -600, on stone's hue. Clears 4.5:1 against every
+     surface this text lands on — white card 5.19:1, page 4.97:1, secondary and
+     accent 4.75:1 — where the stone-500 step itself measures 4.41:1 on
+     secondary and fails. Dark mode takes stone-400 for the same reason. */
   --muted-foreground: oklch(0.535 0.0127 58.071);
-  /* Hover/highlight for menu items and table rows. A lighter step than
-     stone-200: these sit on white surfaces, where that value reads as a
-     pressed state rather than a hover. The sidebar shares this value via
-     --sidebar-accent so a highlighted row looks the same wherever it is. */
-  --accent: oklch(0.9491 0 0);
-  --accent-foreground: oklch(0.145 0.0039 49.25);
+  /* Hover/highlight for menu items and table rows, and the same stone-100 as
+     --secondary: a hover and a filled surface are the same weight of "one step
+     off the card", so they are one value rather than two that drift apart.
+     stone-200 was tried and reads as a pressed state on a white surface.
+
+     It is also the lightest step that keeps --muted-foreground legible on it:
+     the previous bespoke grey measured 4.47:1, just under the 4.5 this file
+     claims everywhere else. The sidebar shares it via --sidebar-accent. */
+  --accent: var(--secondary);
+  --accent-foreground: var(--foreground);
+  /* The *selected* state, and any control that must read as raised while
+     sitting on an already-accented surface: the sidebar's active nav item, a
+     ghost button hovered inside a hovered table row.
+
+     --accent cannot do this job. It is the hover/fill surface, so it has to
+     stay light enough for --muted-foreground to clear 4.5:1 on it — which
+     leaves it at 1.04:1 against the page, invisible as a selection. Two
+     different jobs, two tokens. Nothing but near-black text lands on this
+     one (15.7:1), so it is free to be darker. */
+  --accent-strong: oklch(92.3% 0.003 48.717); /* stone-200 */
+  /* Hover, one step under --accent-strong so a nav item has somewhere to go
+     on hover *and* somewhere further to go when it is the active one. Stone
+     has no step between 100 and 200, so this is interpolated on stone's hue
+     rather than snapped — deliberate, like --border-control.
+
+     --accent is too light to be a hover here: on the sidebar's ground (the
+     page colour, not a card) it measures 1.04:1, which is invisible. */
+  --accent-hover: oklch(94.7% 0.002 56);
+  /* The active item hovered. It darkens rather than lightening: a selected
+     row that goes paler under the pointer reads as being deselected. */
+  --accent-strong-hover: oklch(86.9% 0.005 56.366); /* stone-300 */
   --destructive: oklch(0.58 0.22 27); /* red-600 */
-  --destructive-foreground: oklch(1 0 0); /* #ffffff */
+  --destructive-foreground: var(--card);
   /* The full-strength rule colour. Nothing styles with it directly — the two
      tokens below are both a share of it, so neither compounds the other's
      reduction. */
-  --border-base: oklch(0.922 0 0);
+  --border-base: oklch(92.3% 0.003 48.717); /* stone-200 */
   /* A container's own edge. Legible but receding, so a dense table reads as
      rows of content rather than a grid. Carries its strength in the token, so
      call sites never restate it — an `/80` utility would compound to 64%. */
@@ -96,6 +130,48 @@
      values such as the sticky table header's inset shadow, where `/50` has no
      effect. */
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  /* Controls carry two different problems, so they take two different tokens.
+     WCAG 1.4.11 asks 3:1 only of what is needed to *identify* a control — so
+     what matters is whether the border is the only thing doing that job.
+
+     --border-control: for a control with nothing else to identify it. A
+     checkbox and a radio are a transparent 16px box; erase the outline and
+     there is nothing on the page. 3.25:1 on the white card, 3.11:1 on the page
+     ground — the lightest step that clears the minimum on both.
+
+     --border-field: for a text field, select or combobox. These sit on a card
+     of the same colour, so the border is what draws them — but a form of ten
+     fields outlined at the control value reads as a wall of boxes. This lands
+     between the two: firmer than the old rule, quiet enough to disappear into
+     a dense form.
+
+     A tinted fill was tried here and reverted. Disabled fields are `--muted`,
+     so any resting tint either collides with that meaning or (as happened)
+     lands darker than it and inverts the signal outright. On this palette the
+     enabled state has to stay on the card colour. */
+  --border-control: oklch(65% 0.01 56.259);
+  --border-field: oklch(86.9% 0.005 56.366); /* stone-300 */
+  /* A card that *holds* other records — an order's fulfillments, its returns,
+     its claims — rather than holding content directly.
+
+     It takes the page's own colour, so the card contributes a border and a
+     title strip and nothing else: the white records inside are the only thing
+     with a surface, and they carry all the weight. Points at --background
+     rather than repeating its value, so the two cannot drift apart.
+
+     Giving the container a fill of its own was tried and reads worse — it
+     tints a large area to say something the border already says, and the
+     records lose contrast against it. Sitting at the page colour is safe
+     because the card still draws its 1px border at 1.21:1; the fill was never
+     carrying that boundary.
+
+     Records inside stay on `--card`, so what a merchant reads is the raised,
+     white thing. Pushing them into a grey well instead reads as content that
+     has been demoted, which is backwards — the fulfillment is the point of
+     the card, not its chrome. */
+  --card-container: var(--background);
+  /* Light mode's raised record is simply the card surface. */
+  --nested-raised: var(--card);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
@@ -114,6 +190,9 @@
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-accent-strong: var(--accent-strong);
+  --sidebar-accent-hover: var(--accent-hover);
+  --sidebar-accent-strong-hover: var(--accent-strong-hover);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -160,31 +239,47 @@
 
 .dark {
   /* Vercel-style "true black" base, with surfaces stepping up in lightness. */
-  --background: oklch(0.1913 0 0);
-  --foreground: oklch(0.95 0.0019 106.424); /* stone-100-ish */
-  --card: oklch(0.209 0 0);
-  --card-foreground: oklch(0.95 0.0019 106.424);
-  --popover: oklch(0.209 0 0);
-  --popover-foreground: oklch(0.95 0.0019 106.424);
+  --background: oklch(19.13% 0.005 56.043);
+  --foreground: oklch(95% 0.002 106.424);
+  --card: oklch(21.6% 0.006 56.043); /* stone-900 */
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
   /* Mirrors the light theme's primary: there a navy fill carries white text,
      so here the two swap rather than the button taking on its own colour. */
-  --primary: oklch(0.95 0.0019 106.424);
-  --primary-foreground: oklch(0.145 0.0039 49.25); /* stone-950 — light theme's primary */
+  --primary: var(--foreground);
+  --primary-foreground: oklch(14.7% 0.004 49.25); /* stone-950 — light theme's primary */
   /* Above --card, but only just. These fill elements that sit *on* a card
      (combobox chips, badges, secondary buttons, table header rows), so a value
      at or under the card's lightness erases them — while too big a step reads
      as a bright band across a full-width table header. Dark mode raises where
      light mode lowers, since a surface reads as raised by getting lighter. */
-  --secondary: oklch(0.225 0.0062 56.043);
-  --secondary-foreground: oklch(0.95 0.0019 106.424);
-  --muted: oklch(0.185 0.0051 56.043);
-  --muted-foreground: oklch(0.62 0.0117 58.071); /* stone-500-ish */
-  --accent: oklch(0.2645 0 0);
-  --accent-foreground: oklch(0.95 0.0019 106.424);
+  --secondary: oklch(22.5% 0.006 56.043);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(18.5% 0.005 56.043);
+  /* stone-400. The old value failed 4.5:1 on --accent (4.20:1); this clears
+     every dark ground, the accent included, at 5.87:1. */
+  --muted-foreground: oklch(70.9% 0.01 56.259);
+  --accent: oklch(26.8% 0.007 34.298); /* stone-800 */
+  --accent-foreground: var(--foreground);
+  --accent-strong: oklch(37.4% 0.01 67.558); /* stone-700 */
+  --accent-hover: oklch(31% 0.008 34.298);
+  --accent-strong-hover: oklch(44.4% 0.011 73.639); /* stone-600 */
   --destructive: oklch(0.704 0.191 22.216);
   --border-base: oklch(1 0 0 / 12%);
   --border: color-mix(in srgb, var(--border-base) 80%, transparent);
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
+  /* Light mode darkens the control edge away from the card; dark mode lightens
+     it. Not the light value inverted — measured on this theme's own surfaces:
+     3.22:1 on the card, 3.34:1 on the page ground. */
+  --border-control: oklch(52% 0.01 56.259);
+  --border-field: oklch(32% 0.007 34.298);
+  /* Same arrangement as light — container at the page colour, records raised
+     above it. 1.118:1 between them here. Records take `--nested-raised` rather
+     than `--card`: the card token is a step above the page, which is where the
+     container would sit if it had a fill of its own. */
+  --card-container: var(--background);
+  --nested-raised: oklch(23.5% 0.006 56.043);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --link: oklch(0.7 0.16 258);
@@ -200,6 +295,9 @@
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-accent-strong: var(--accent-strong);
+  --sidebar-accent-hover: var(--accent-hover);
+  --sidebar-accent-strong-hover: var(--accent-strong-hover);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
   --sidebar-border: color-mix(in srgb, var(--border) 75%, transparent);
@@ -288,6 +386,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent-strong: var(--sidebar-accent-strong);
+  --color-sidebar-accent-hover: var(--sidebar-accent-hover);
+  --color-sidebar-accent-strong-hover: var(--sidebar-accent-strong-hover);
   --color-sidebar-accent: var(--sidebar-accent);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -302,9 +403,16 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
+  --color-border-control: var(--border-control);
+  --color-border-field: var(--border-field);
+  --color-card-container: var(--card-container);
+  --color-nested-raised: var(--nested-raised);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-strong-hover: var(--accent-strong-hover);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
@@ -441,12 +549,12 @@
 
 @layer base {
   :root {
-    --scrollbar-thumb: oklch(0.78 0.0078 56.259); /* stone-300-ish */
-    --scrollbar-thumb-hover: oklch(0.62 0.0117 58.071);
+    --scrollbar-thumb: oklch(86.9% 0.005 56.366); /* stone-300 */
+    --scrollbar-thumb-hover: oklch(70.9% 0.01 56.259); /* stone-400 */
   }
   .dark {
-    --scrollbar-thumb: oklch(0.35 0.0093 67.558); /* stone-700-ish */
-    --scrollbar-thumb-hover: oklch(0.45 0.0111 73.639);
+    --scrollbar-thumb: oklch(37.4% 0.01 67.558); /* stone-700 */
+    --scrollbar-thumb-hover: oklch(44.4% 0.011 73.639); /* stone-600 */
   }
 
   /* Themed scrollbar inside floating surfaces only — page scrollbar stays
@@ -539,6 +647,24 @@
        deliberately to opt into the same touch sizing. */
     [data-slot='filter-panel-item'] {
       min-height: 2.75rem !important;
+    }
+
+    /* The rules above size what is *inside* an open menu; these size the
+     * control that opens it. A row's "⋮" is 24px, the sidebar toggle 28px and
+     * a table's sort/columns buttons 34px — each clears the 24px web minimum
+     * but sits well under what a finger wants, and the row action is both the
+     * smallest and the most repeated target on a list.
+     *
+     * Restricted to `button` because these slots wrap arbitrary children:
+     * `tooltip-trigger` in particular renders whatever it is given, including
+     * plain text, which must not be inflated to 44px. Width as well as height,
+     * since these are square icon buttons rather than full-width rows. */
+    button[data-slot='dropdown-menu-trigger'],
+    button[data-slot='sidebar-trigger'],
+    button[data-slot='popover-trigger'],
+    button[data-slot='tooltip-trigger'] {
+      min-height: 2.75rem !important;
+      min-width: 2.75rem !important;
     }
 
     /* The controls inside the filter panel's value step — the operator select,

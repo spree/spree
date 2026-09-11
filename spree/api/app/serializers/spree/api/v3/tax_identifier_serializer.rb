@@ -6,7 +6,7 @@ module Spree
       # a customer that their number came back unverified invites support
       # tickets about a check they cannot influence.
       class TaxIdentifierSerializer < BaseSerializer
-        typelize kind: :string, value: :string
+        typelize kind: [:string, comment: 'Tax identifier kind, keyed to a registered validator. Built-in: eu_vat. Extensions may register more.'], value: :string
 
         attributes :kind, :value
       end

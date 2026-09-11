@@ -12,6 +12,7 @@ import {
   StoreIcon,
   TagIcon,
   UsersIcon,
+  WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 import {
@@ -147,12 +148,40 @@ nav.add({
       subject: Subject.Product,
       position: 475,
     },
+  ],
+})
+
+// Moving stock in and around is its own job, done by different people than the
+// ones who write the catalog — so it gets its own section rather than crowding
+// the end of Products.
+nav.add({
+  key: 'inventory',
+  labelKey: 'admin.nav.inventory',
+  path: '/transfers',
+  icon: WarehouseIcon,
+  subject: Subject.StockTransfer,
+  position: 350,
+  children: [
     {
-      key: 'products.transfers',
+      key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',
-      path: '/products/transfers',
+      path: '/transfers',
       subject: Subject.StockTransfer,
-      position: 500,
+      position: 100,
+    },
+    {
+      key: 'inventory.purchase-orders',
+      labelKey: 'admin.nav.purchase_orders',
+      path: '/purchase-orders',
+      subject: Subject.PurchaseOrder,
+      position: 200,
+    },
+    {
+      key: 'inventory.suppliers',
+      labelKey: 'admin.nav.suppliers',
+      path: '/suppliers',
+      subject: Subject.Supplier,
+      position: 300,
     },
   ],
 })
@@ -191,6 +220,25 @@ nav.add({
   icon: StoreIcon,
   subject: Subject.Seller,
   position: 450,
+  children: [
+    // The fund ledger. Under Sellers because that is what it is about, the
+    // way returns sit under Orders — and gated on the ledger subjects, so a
+    // staff member who manages sellers without seeing the money gets neither.
+    {
+      key: 'sellers.transfers',
+      labelKey: 'admin.nav.seller_transfers',
+      path: '/sellers/transfers',
+      subject: Subject.SellerTransfer,
+      position: 100,
+    },
+    {
+      key: 'sellers.payouts',
+      labelKey: 'admin.nav.seller_payouts',
+      path: '/sellers/payouts',
+      subject: Subject.SellerPayout,
+      position: 200,
+    },
+  ],
 })
 
 nav.add({

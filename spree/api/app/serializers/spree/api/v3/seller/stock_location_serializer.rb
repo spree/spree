@@ -5,7 +5,7 @@ module Spree
         class StockLocationSerializer < V3::StockLocationSerializer
           typelize address2: [:string, nullable: true], state_name: [:string, nullable: true],
                    phone: [:string, nullable: true], company: [:string, nullable: true],
-                   active: :boolean, default: :boolean, kind: :string,
+                   active: :boolean, default: :boolean, kind: [:string, enum: Spree::StockLocation::KINDS, enum_type_name: 'StockLocationKind'],
                    returns_enabled: :boolean
 
           attributes :address2, :state_name, :phone, :company, :active, :default, :kind,

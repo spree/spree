@@ -1,3 +1,130 @@
+## 2026-09-10: Stock levels carry reserved and incoming as counters, and the Inventory page reads them
+
+**Context:** The dashboard's Inventory section (transfers, purchase orders, suppliers) had no view of the stock itself — no page answering "what do I have, where, and what is committed, held or on its way". The columns a merchant expects are Shopify's: on hand, committed, available, incoming. Spree already persists on hand (`count_on_hand`) and committed (`allocated_count`) but computed reserved at read time in `Stock::Quantifier` and had no notion of incoming at all, even though every purchase order and transfer now carries a `destination_location_id`.
+
+**Decision:** Two new counter-cache columns on `spree_stock_levels` — `reserved_count` and `incoming_count` — and a new phase in `6.0-inventory-operations.md` for the page that reads them. Counters, not computes: the page is a paginated list read many times a day, the inputs change through a small number of workflows, and the repo already trusts `allocated_count`, `fee_total` and `commission_total` the same way. **Each counter has exactly one writer path** — `Reserve`/`Release`/`ExpireJob` for reserved; `MarkOrdered`/`MarkDraft`/`Cancel`/`Update` on purchase orders, `MarkInTransit`/`Cancel` on transfers, and `StockReceipts::Recording` for both, for incoming — mirroring the movement-callback discipline that keeps `allocated_count` honest. A `spree:stock:recount_levels` task recomputes both from their sources, reports drift, and is the backfill. `Available` on the page is `count_on_hand − allocated_count − reserved_count`, the same figure the Quantifier already produces.
+
+**Consequences:** *Incoming* is `[expected − received − rejected, 0].max` per line, added to `Spree::ReceivableItem` as `#incoming` so the counter and the recount share one definition — `outstanding` alone still counts rejected units as awaited, and they are not coming. A transfer counts as incoming from **`in_transit`**, when `quantity_shipped` is written, not from `ready_to_ship`; that diverges from Shopify, which counts from creation, and is deliberate: nothing is moving yet. The receipt recorder already runs inside `receivable.with_lock`, so the incoming decrement is atomic with the on-hand increment. **Unavailable is out of scope.** Rejected delivery units are not it — they "exist only on the receipt" (the 2026-09-10 dock decision) and were never in the building, whereas Shopify's Unavailable is on-site stock held back; a true bucket would be a fourth counter with its own adjust action and reason vocabulary, and no reference validates it yet. The page is dashboard-only; the seller panel gets the same table under a forced seller scope as a follow-up, per the dashboard-is-the-reference rule. The earlier note that "rejected receipt units have no backing" was half right: the *count* is recorded, the *stock* is not.
+
+## 2026-09-10: A delivery is a stock receipt — discrepancies get quantities, over-receipt gets a status, and a short order can be closed
+
+**Context:** Comparing the shipped inventory operations against a multi-location omnichannel
+merchant's own purchasing code showed what a warehouse dock records that ours could not: a
+delivery with two damaged units out of ten, a delivery of twelve against ten ordered, and a
+supplier confirming the last two will never come. Ours held one running total per line, a
+single free-text discrepancy on transfer lines only, refused any receive above the expected
+quantity, and left a short order in `partially_received` forever. The same review found no way
+back from `ready_to_ship`, no cancel-by date, and no CSV in either direction.
+
+**Decision:** One new model and five additions, recorded in `6.0-inventory-operations.md`
+under "Receipts, discrepancies and the rest of the dock". `Spree::StockReceipt` is one
+delivery against a purchase order or a transfer — numbered `SR-…`, carrying the packing-slip
+reference and date — and `Spree::StockReceiptItem` is one line of it with `quantity_accepted`,
+`quantity_rejected` and a `rejection_reason`. Named *stock* receipt because a customer-facing
+sales receipt will want the plain word. A receive payload now carries this delivery's counts
+rather than running totals, and `PATCH …/receive` becomes `POST …/stock_receipts`. Rejected
+units are never stocked. Over-receipt is allowed and is a terminal `over_received` status of
+its own (chosen over a badge: a list should say it at a glance). `Close` takes
+`partially_received → received` with `closed_short_at` and a `close_reason`, which also
+records why a cancelled transfer's in-flight units were written off. `cancel_by` is a date
+on the order with *Overdue* and *Past cancel-by* filters and no automatic cancelling.
+`MarkDraft` returns a `ready_to_ship` transfer, or an `ordered` order with no receipt, to
+`draft`. CSV export and import ride the existing `Spree::Export` / `Spree::Import` frameworks
+under the `purchasing` scope; the import groups rows by reference into drafts and requires
+the SKU to exist.
+
+**Consequences:** Every `received` movement against these documents now also names its
+`stock_receipt_id`, so a delivery can be reconciled, and the upgrade task mints one receipt
+per migrated 5.x receive so history reads the same way. `discrepancy_reason` leaves
+`spree_stock_transfer_items`. Out of scope on purpose: purchase-order lines for products not
+yet in the catalog, dropship, consignment, and a quarantine location for rejected units —
+the first is a buying feature that drags product creation into purchasing, and the rest are
+their own plans.
+
+## 2026-09-07: Inventory operations grooming — transfers get a status and workflows, supplier receives become purchase orders, and a receive records what the units cost
+
+**Context:** `6.0-inventory-operations.md` was written before three things
+landed that its own code samples assume away: `state_machines-activerecord`
+left the dependency list, permission sets became a registered catalog of
+grant keys, and the `public_metadata`/`private_metadata` pair became one
+`metadata` column. `decisions.md` 2026-08-30 also left one call explicitly to
+this grooming — whether removing the one-shot `StockTransfer.transfer` API
+uses the 6.0 breaking window or ships behind a deprecation bridge. Grooming it
+for implementation surfaced a tenancy hole as well: `spree_stock_transfers`
+has no `store_id`, `Spree::Store` has no `stock_transfers` association, and so
+`Spree::Base.for_store` falls through to `self` — the admin transfers endpoint
+has never been store-scoped.
+
+**Decision:** Seven rulings, all inside the plan's existing design.
+
+**Statuses are declared, transitions are workflows.** `Spree::StockTransfer`
+(`draft | ready_to_ship | in_transit | partially_received | received |
+canceled`) and `Spree::PurchaseOrder` (`draft | ordered | partially_received |
+received | canceled`) both `include Spree::HasStatus`; every move between
+statuses is a workflow under `Spree::StockTransfers::` /
+`Spree::PurchaseOrders::`, registered on `Spree::Dependencies`. This is not
+merely conformance with `6.0-normalize-state-to-status.md`: a receive has to
+carry the quantities the warehouse actually counted and a cancellation has to
+carry the merchant's restock-or-write-off choice, and a transition callback
+takes no arguments. The guards a state machine expressed as `from:` become
+each workflow's own status check.
+
+**The one-shot `StockTransfer.transfer` / `.receive` methods are removed
+outright.** A shim would keep a second write path into `count_on_hand` alive
+through 6.0, which is the exact thing typed movements exist to prevent. The
+admin `POST /stock_transfers` now persists a draft rather than moving stock.
+
+**`spree_stock_transfers` gains its own `store_id`**, closing the scoping hole
+above and giving transfers the same tenancy rule as purchase orders instead of
+a second one derived from `destination_location`. `source_location_id` stays
+nullable in the database with presence enforced on the model — a
+`change_column_null` would fail on any install still holding external-receive
+rows, and emptying that column is the upgrade task's job.
+
+**Legacy source-less transfers are soft-deleted, not dropped.**
+`spree:upgrade:migrate_external_receives_to_purchase_orders` mints the `PO-…`,
+points the existing movements at it and stamps the `T-…` transfer
+`deleted_at`, so the old number stays findable without the same receive
+appearing twice in the admin;
+`spree:upgrade:purge_migrated_external_receives` removes them later.
+
+**Suppliers and purchase orders are one new catalog resource, `:purchasing`**
+(`read_purchasing` / `write_purchasing`), registered beside `:stock` in
+`PermissionConfiguration#register_default_resources`. The plan's earlier
+`read_inventory` / `write_inventory` would have put "Stock" and "Inventory"
+side by side on the roles screen with nothing to tell a merchant which covers
+what. `Spree::StockTransferItem` joins the existing `:stock` subject list.
+
+**Suppliers are per store** — `store_id`, `Spree::SingleStoreResource`, unique
+on `(store_id, name)`. Promoting them to installation-wide later means a join
+table and a one-row-per-supplier backfill; nothing is built against that.
+
+**A receive records what the units cost.**
+`spree_stock_movements.unit_cost` (nullable `decimal(10, 2)`) carries the price
+each unit landed at, so the rolling average-cost feature the plan defers has a
+ledger to read rather than a reconstruction to attempt — including across two
+partial receives at different prices. Transfers and returns leave it null:
+moving stock a merchant already owns is not a purchase. Money is a
+`decimal(10, 2)` column throughout, following `Spree::Variant#cost_price` —
+Spree has no money-rails dependency, so the plan's `_cents` + `monetize` shape
+does not exist.
+
+**Consequences:** `StockTransfer.transfer` and `.receive` are gone at 6.0 and
+need an upgrade note. Never write `status` on a transfer or a purchase order
+directly — it passes the inclusion validation, writes no movement, and
+desynchronizes the ledger from the shelf; call the workflow. Never reach
+`Spree::StockTransfer` unscoped now that it carries `store_id`. Status columns
+ship with no database default (the creating workflow sets them; `has_status`
+supplies the attribute default), and both new metadata-carrying tables have
+one `metadata` column. `StockLocation#restock` and `#move` take an optional
+`unit_cost:`. Statuses spell `canceled` with one `l`, matching the other 87
+occurrences in core. Status transitions are `PATCH` member routes, matching
+`orders/:id/cancel` and `returns/:id/receive` — the plan's claim that they are
+POSTs described no existing endpoint. Lot tracking stays 6.1 and the 6.0 half
+builds no lot rows, so open questions 5 and 6 keep their reasons; open
+question 4 (ship-to-store transfers) stays open pending the fulfillment plan's
+call on what a pickup date range promises when stock has to travel.
+
 ## 2026-09-07: Deposits are not a shipping concern — how a buyer pays gets its own plan
 
 **Context:** `6.0-b2b-wholesale-shipping.md` originally specified deposits as part of wholesale freight: a delivery method would carry a `deposit_percentage`, checkout would collect it, and the order would complete part-paid. Building it raised two questions that had to be answered before it could ship. Is a shipping method the right thing to hang a payment arrangement on? And does merchant-configurable deposit collection belong in open source at all? Researching the second answered the first.
@@ -5,6 +132,14 @@
 **Decision:** This plan covers how goods **ship**; how the buyer **pays** is a separate subject with its own plan. Three findings drove it. **Deposits and net terms are two halves of one arrangement** — merchants combine them ("40% deposit, balance Net 30"), and the only native implementation in the market models the deposit as an attribute *on* a payment term. Shipping half the subject inside a shipping plan leaves a vocabulary with no way to set it and no home for the other half. **The arrangement belongs to the buyer, not the shipment** — a deposit is negotiated with a company; no comparable platform configures one per shipping method, and every one that offers deposits scopes them per product, per customer, or per order. **Two OSS plans already defer net terms** to a payment-terms plan that does not exist (`6.0-payment-method-rules.md`, `6.0-6.1-b2b-payment-terms.md`), so the destination was already named — it just had not been written.
 
 **Consequences:** No delivery method carries a `deposit_percentage`, and freight must not become a second place payment arrangements are configured. One piece is deliberately kept so the payment-terms plan starts from a hook rather than from patching: `Purchase#amount_due_at_checkout`, answering the full total through `Spree::Purchases::AmountDueAtCheckout` (registered in `Spree::Dependencies`), read by the four decisions that gate on money arriving — checkout requirements, both completion guards, and dispatch. Without it, an arrangement collecting part of the total up front has to patch those four independently. It ships with a spec proving the open-source answer is the total, and a spec registering a half-up-front replacement and proving checkout, completion and dispatch all follow it. What a new payment or gateway session *defaults* to, and the capture loop, still read `total`: those are amounts rather than decisions. Partial payments are untouched — they predate this work. A related fix rides along because it holds independently: dispatch now guards on `payment_total >= amount_due_at_checkout` rather than `paid?`, which required a positive total and so refused to ship a fully discounted or store-credit-paid order.
+
+## 2026-09-04: Catalog audiences are alternatives, not layers — a company buyer is never also priced by their customer group (V-3570)
+
+**Context:** `Catalog.for_context` consults a buyer's customer groups only when the company axis came back empty, so a merchant who put a shared range on a dealer group's company node and each trade tier on a customer group got tier prices that never applied — every dealer paid retail, with the catalog active, the audience assigned and the percentage saved. The code said two things about whether that was intended: the plan and the resolver describe a fallback chain, while `Spree::Catalog`'s class comment said visibility across applicable catalogs is their union, which reads as both audiences being consulted. The reading had to be ruled before either could be documented.
+
+**Decision:** The fallback chain is the intended behaviour and stays: the company subtree if any of its nodes carry a catalog, otherwise the customer's groups, otherwise the channel's default catalog. A buyer is on one agreement, resolved from the nearest party to them — layering a personal segment's prices on top of a company's negotiated ones would price one purchase under two agreements at once, and which won would depend on catalog position rather than on anything a merchant chose. Trade tiers over a company tree are expressed as company assignments: the shared range on the root, each tier's catalog on the member companies or divisions in that tier (one tier catalog carries as many assignments as the tier has members). That route already works and is what the union-within-an-audience plus nearest-node-first pricing was built for. Customer group assignments remain for buyers not purchasing for a company at all — a retail loyalty tier, a staff discount.
+
+**Consequences:** No behaviour change; the fix is that the code and the dashboard now say so. The class comment is corrected (it was the only place claiming the two audiences combine), the `for_context` and pricing-resolver comments read "or failing that" rather than "then", and the fallback carries an inline note. The dashboard states the precedence where a merchant can act on it: help text under the audience picker when a customer group is chosen, and a standing note on the audience card and wizard step whenever a group assignment is present, pointing at the company route for tier pricing. The developer docs stop framing the three ways of reaching a buyer as combining and carry the tier recipe as a warning. Three examples in `catalog_spec.rb` lock the ruling — the group dropping out once a company catalog exists, the group still applying when none does, and the subtree union when the tier is a company assignment. What is *not* solved: nothing detects a catalog assigned only to groups whose members are all company buyers, so such a catalog is still silently unreachable; a reachability warning needs the buyer population and is a separate piece of work.
 
 ## 2026-09-03: A return label buys the cheapest rate; the fulfillment's tracking becomes a read-through summary
 
@@ -5133,3 +5268,45 @@ parcel.
 `Stock::Package#default_package_type`, never `store.default_package_type`;
 seller-facing reads go through `available_to_seller(seller)`, seller writes
 through `seller.package_types`.
+
+## 2026-09-09 — A seller's own books get their own permission key, and a grouped order's payments are read where they were taken
+
+Making the marketplace fund ledger visible (`docs/plans/6.0-seller-ledger-ui.md`)
+forced two questions that outlive the screens themselves.
+
+**The seller ledger is `seller_earnings`, not `seller_profile`.** The obvious
+move was to reuse the profile key, the way `PoliciesController` does for a
+class the operator's `settings` owns. It was rejected: settlement
+*configuration* is the seller's profile, but what they have earned is their
+books, and a seller's owner must be able to hand a packing teammate the orders
+without also handing them the money. So a new read-only, seller-audience
+catalog resource with a symbol subject — the ledger classes stay subjects of
+the operator's `payouts` key, and claiming them twice would make
+`resource_for_subject` answer by registration order. The cost is real and was
+accepted knowingly: **a role holds the keys it was created with and is never
+re-read**, so a key added to the catalog reaches new roles only. That is
+harmless here because sellers are new in 6.0 and no older role exists — but a
+seller-audience key added after 6.0 ships needs a backfill task, and the
+question to ask before adding one is always "which existing roles does this
+silently not reach?"
+
+**A grouped child order's payments are the group's, read-only, with the
+child's share beside them.** `order.payments` is empty on an order from a
+split checkout, so the operator's payments card rendered "no payments" on an
+order that was paid in full — wrong, not merely incomplete. The fix reads the
+group's payments and the order's `payment_splits` and shows both, and it
+deliberately **does not** re-point `Admin::OrderSerializer#payments` at
+`settlement_payments`: that would change what `order.payments` means for every
+consumer, and capture/void through `orders/:id/payments` would then act on
+every sibling's money without saying so. Capture, void and add are hidden on a
+grouped child for the same reason — they belong on a surface that names every
+order they touch.
+
+**Constraints now:** a seller-facing money serializer carries amounts, never
+provenance (no payment id, method, gateway status or source — `Seller::
+PaymentSplitSerializer` and `Seller::TransferSerializer` are the reference);
+seller ledger endpoints authorize `:seller_earnings` and root in
+`current_seller`, never by opening `payouts` or `payments` to the seller
+audience; and a new `q[<column>_eq]` filter on either ledger model needs that
+column in `whitelisted_ransackable_attributes` — a whitelisted association
+name does not make its foreign key filterable.

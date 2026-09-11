@@ -2118,6 +2118,17 @@
         },
         "digital_asset_authorized_days": {
           "label": "可用天数"
+        },
+        "preferred_default_package_dimensions": {
+          "height": "高",
+          "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
+          "label": "默认包裹尺寸",
+          "length": "长",
+          "width": "宽"
+        },
+        "preferred_default_package_weight": {
+          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
+          "label": "默认包裹重量"
         }
       },
       "store_credit": {
@@ -2560,10 +2571,15 @@
       "promotions": "促销",
       "reports": "报表",
       "returns": "退货",
+      "seller_payouts": "打款",
+      "seller_transfers": "卖家收入转账",
       "sellers": "卖家",
       "settings": "设置",
       "transfers": "调拨",
-      "translations": "翻译"
+      "translations": "翻译",
+      "purchase_orders": "采购订单",
+      "inventory": "库存",
+      "suppliers": "供应商"
     },
     "option_types": {
       "columns": {
@@ -2849,7 +2865,10 @@
         "payments_table": {
           "method": "方式",
           "number": "编号",
-          "state": "州/省"
+          "state": "状态",
+          "this_order": "本订单",
+          "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
+          "load_error": "无法加载此订单的付款信息。"
         },
         "purchase_order": {
           "document": "采购订单文件",
@@ -3687,7 +3706,9 @@
           "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置",
           "tab_downloads": "数字下载",
-          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。"
+          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。",
+          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
+          "tab_default_package": "默认包裹"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",
@@ -3934,6 +3955,7 @@
         "products": "商品、变体、选项、价格与媒体",
         "promotions": "促销、规则与优惠码",
         "publishing": "店面中可见的内容及其时间",
+        "purchasing": "供应商与采购订单",
         "refunds": "发起和查看退款",
         "seller_profile": "卖家自身的信息、地址和政策",
         "sellers": "卖家账户、入驻与审核",
@@ -3982,6 +4004,7 @@
         "products": "商品",
         "promotions": "优惠",
         "publishing": "发布",
+        "purchasing": "采购",
         "refunds": "退款",
         "seller_profile": "卖家资料",
         "sellers": "卖家",
@@ -4858,7 +4881,8 @@
         "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
         "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额",
-        "package_types": "纸箱、外箱、托盘与集装箱"
+        "package_types": "纸箱、外箱、托盘与集装箱",
+        "suppliers": "你从谁那里采购库存，以及如何联系他们"
       },
       "groups": {
         "audit": "审计",
@@ -4895,7 +4919,8 @@
         "tax_rates": "税率",
         "webhooks": "Webhooks",
         "payouts": "付款",
-        "package_types": "包装类型"
+        "package_types": "包装类型",
+        "suppliers": "供应商"
       }
     },
     "setup": {
@@ -5013,25 +5038,116 @@
       "columns": {
         "direction": "方向",
         "number": "编号",
-        "reference": "参考信息"
+        "reference": "参考信息",
+        "units": "已收 / 已发",
+        "shipped": "发出时间",
+        "quantity_shipped": "已发出",
+        "quantity_to_ship": "待发出",
+        "quantity_received": "已收到",
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量"
       },
       "direction": {
         "external_receive": "外部收货",
         "internal": "在库存地点之间调拨"
       },
       "errors": {
-        "failed_to_delete": "删除库存调拨失败",
-        "failed_to_record": "记录库存调拨失败"
+        "failed_to_delete": "删除调拨失败",
+        "failed_to_record": "记录库存调拨失败",
+        "same_location": "两个仓库必须不同。",
+        "failed_to_create": "创建调拨失败",
+        "failed_to_save": "保存调拨失败",
+        "failed_to_mark_ready": "标记调拨为待发出失败",
+        "failed_to_mark_in_transit": "标记调拨为在途失败",
+        "failed_to_receive": "调拨收货失败",
+        "failed_to_cancel": "取消调拨失败",
+        "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。",
+        "failed_to_load": "无法加载该调拨。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
       },
       "messages": {
-        "deleted": "库存调拨已删除",
-        "recorded": "库存调拨已记录"
+        "deleted": "调拨已删除",
+        "recorded": "库存调拨已记录",
+        "created": "调拨已创建",
+        "saved": "调拨已保存",
+        "marked_ready": "调拨已待发出",
+        "marked_in_transit": "调拨已在途 — 货物已离开来源仓库",
+        "received": "调拨已收货",
+        "canceled": "调拨已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
       },
       "table": {
         "empty": "暂无库存调拨",
         "search_placeholder": "按编号或参考信息搜索…"
       },
-      "title": "库存调拨"
+      "title": "库存调拨",
+      "new_cta": "新建调拨",
+      "new_title": "新建库存调拨",
+      "details_title": "详情",
+      "items_title": "明细",
+      "items_empty": "暂无明细 — 请添加要发出的商品。",
+      "receive_title": "收货",
+      "history_title": "此调拨的库存变动",
+      "units_summary": "已发出 {{shipped}} 件，已收到 {{received}} 件",
+      "statuses": {
+        "draft": "草稿",
+        "ready_to_ship": "待发出",
+        "in_transit": "在途",
+        "partially_received": "部分收货",
+        "received": "已收货",
+        "canceled": "已取消",
+        "over_received": "超量收货"
+      },
+      "in_transit_resolutions": {
+        "restock": "将数量退回来源仓库",
+        "write_off": "将数量按丢失核销"
+      },
+      "fields": {
+        "source": "从",
+        "source_placeholder": "选择发出仓库",
+        "destination": "到",
+        "destination_placeholder": "选择接收仓库",
+        "reference": "参考号",
+        "reference_placeholder": "你为此次运输自定的标识",
+        "notes": "备注",
+        "units": "数量",
+        "shipped_at": "发出时间",
+        "received_at": "收货时间",
+        "in_transit_resolution": "货物已经离库。它们怎么了？",
+        "source_locked": "有商品行时不可更改：这些商品是为该仓库挑选的。移除后才能更改。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因"
+      },
+      "actions": {
+        "create_draft": "创建草稿",
+        "mark_ready": "标记为待发出",
+        "mark_in_transit": "标记为在途",
+        "receive": "收货",
+        "cancel_transfer": "取消调拨",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
+      },
+      "delete_confirm": {
+        "title": "删除此调拨？",
+        "message": "调拨 {{number}} 仍是草稿，库存未发生变动。此操作无法撤销。"
+      },
+      "ship_confirm": {
+        "title": "发出此调拨？",
+        "message_other": "{{count}} 件将立即离开来源仓库，在到货前不可在该仓库使用。"
+      },
+      "cancel_confirm": {
+        "title": "取消此调拨？",
+        "message": "库存尚未变动，因此无需回退。",
+        "in_flight_restock": "数量将回到来源仓库的货架，如同从未发出。",
+        "in_flight_write_off": "数量保持核销为丢失，任何仓库都不会补回。"
+      },
+      "edit_title": "编辑调拨 {{number}}",
+      "close_confirm": {
+        "title": "将此调拨短缺结单？",
+        "message": "目的地已清点的部分保留。仍在途的 {{outstanding}} 件将按丢失核销，调拨标记为已收货。"
+      }
     },
     "store": {
       "load_failed_title": "加载店铺设置失败",
@@ -5056,7 +5172,9 @@
       "options": "尺码、颜色等选项，用于生成商品的多个款式。",
       "price_lists": "规则匹配时生效的备选价格。",
       "product_types": "为新商品预设字段和选项的模板。",
-      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。"
+      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。",
+      "purchase_orders": "已向供应商订购的库存，以及已到货的部分",
+      "suppliers": "你的供应商通讯簿"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",
@@ -5240,6 +5358,300 @@
       "owner": {
         "marketplace": "市场平台"
       }
+    },
+    "payouts": {
+      "transfers_description": "每笔已发货订单为卖家带来的收入，已扣除您的佣金。",
+      "transfers_empty": "暂无卖家收入。",
+      "payouts_description": "向卖家的打款——待付金额与已发出金额。",
+      "payouts_empty": "暂无打款记录。",
+      "load_error": "无法加载此打款记录",
+      "marked_paid": "打款已标记为已支付",
+      "columns": {
+        "date": "日期",
+        "order": "订单",
+        "kind": "类型",
+        "reference": "参考号",
+        "provider": "服务商",
+        "earnings": "收入"
+      },
+      "kinds": {
+        "earning": "销售",
+        "refund_reversal": "退款"
+      },
+      "statuses": {
+        "pending": "待处理",
+        "processing": "处理中",
+        "completed": "已完成",
+        "failed": "失败",
+        "unresolved": "需核查"
+      },
+      "balance": {
+        "title": "余额",
+        "owed": "应付（{{currency}}）",
+        "earned": "已赚取",
+        "paid": "已打款",
+        "pending": "在途"
+      },
+      "complete": {
+        "title": "将此打款标记为已支付",
+        "description": "记录 {{amount}} 已到账 {{seller}}。此操作不会转移任何资金。",
+        "reference_placeholder": "例如 BACS-9912",
+        "reference_help": "这笔转账的银行参考号，便于日后追溯。",
+        "action": "标记为已支付"
+      },
+      "detail": {
+        "covers_other": "包含 {{count}} 笔收入",
+        "covers_empty": "此打款不包含任何收入。",
+        "settlement": "打款",
+        "period": "周期",
+        "covers_error": "无法加载此打款涵盖的收入。"
+      },
+      "order_card": {
+        "title": "卖家收入转账",
+        "view_payout": "查看打款",
+        "not_settled": "尚未打款"
+      },
+      "search_placeholder": "按参考号搜索",
+      "settle": "立即结算",
+      "settled": "已创建打款",
+      "settle_confirm": {
+        "title": "现在结算此卖家？",
+        "message": "将 {{name}} 应得的款项按币种汇总为一笔打款。此操作不会转账——转账完成后请将打款标记为已支付。"
+      },
+      "settle_failed": "无法结算此卖家。"
+    },
+    "inventory_lines": {
+      "add_label": "添加商品",
+      "search_placeholder": "按名称或 SKU 搜索商品…",
+      "pick_source_first": "请先选择发出仓库 — 列表只显示该仓库可以发出的商品。",
+      "columns": {
+        "variant": "商品",
+        "sku": "SKU",
+        "unit_cost": "单位成本"
+      },
+      "picker_title": "添加商品",
+      "empty_title": "暂无商品",
+      "empty_description": "添加此单据涉及的商品。"
+    },
+    "stock_history": {
+      "title": "库存记录",
+      "empty": "此库存尚无变动",
+      "columns": {
+        "date": "日期",
+        "product": "商品",
+        "change": "变动",
+        "where": "位置",
+        "kind": "发生了什么",
+        "cause": "原因"
+      },
+      "kinds": {
+        "received": "已入库",
+        "allocated": "已分配",
+        "shipped": "已出库",
+        "released": "已释放",
+        "adjusted": "已调整"
+      },
+      "causes": {
+        "purchase_order": "采购订单",
+        "stock_transfer": "库存调拨",
+        "return": "退货",
+        "exchange": "换货",
+        "fulfillment": "履约",
+        "order": "订单",
+        "manual": "手动调整"
+      },
+      "description": "此库存的每一次变动（最新优先）及其原因。"
+    },
+    "purchase_orders": {
+      "title": "采购订单",
+      "new_cta": "新建采购订单",
+      "new_title": "新建采购订单",
+      "details_title": "详情",
+      "items_title": "明细",
+      "items_empty": "暂无明细 — 请添加要订购的商品。",
+      "receive_title": "收货",
+      "history_title": "此采购订单的库存变动",
+      "units_summary": "已订购 {{ordered}} 件，已收到 {{received}} 件",
+      "table": {
+        "empty": "暂无采购订单",
+        "search_placeholder": "按编号或参考号搜索…"
+      },
+      "columns": {
+        "number": "编号",
+        "supplier": "供应商",
+        "units": "已收 / 已订",
+        "subtotal": "合计",
+        "expected": "预计到货",
+        "quantity_ordered": "已订购",
+        "quantity_received": "已收到",
+        "line_total": "行合计",
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量",
+        "cancel_by": "取消截止日",
+        "overdue": "逾期",
+        "past_cancel_by": "已过取消截止日"
+      },
+      "statuses": {
+        "draft": "草稿",
+        "ordered": "已下单",
+        "partially_received": "部分收货",
+        "received": "已收货",
+        "canceled": "已取消",
+        "over_received": "超量收货"
+      },
+      "fields": {
+        "supplier": "供应商",
+        "supplier_placeholder": "选择供应商",
+        "destination": "送达",
+        "destination_placeholder": "选择接收仓库",
+        "currency": "货币",
+        "expected_at": "预计到货",
+        "expected_at_placeholder": "供应商承诺的日期",
+        "reference": "供应商参考号",
+        "reference_placeholder": "供应商自己的订单号",
+        "notes": "备注",
+        "units": "数量",
+        "subtotal": "合计",
+        "ordered_at": "下单时间",
+        "received_at": "收货时间",
+        "currency_locked": "创建后固定：每一行的成本都以该货币计价。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因",
+        "cancel_by": "取消截止日",
+        "cancel_by_placeholder": "此日之后不再需要该货物"
+      },
+      "actions": {
+        "create_draft": "创建草稿",
+        "mark_ordered": "标记为已下单",
+        "receive": "收货",
+        "cancel_order": "取消订单",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
+      },
+      "messages": {
+        "created": "采购订单已创建",
+        "saved": "采购订单已保存",
+        "deleted": "采购订单已删除",
+        "ordered": "采购订单已下单",
+        "received": "到货已入库",
+        "canceled": "采购订单已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
+      },
+      "errors": {
+        "failed_to_create": "创建采购订单失败",
+        "failed_to_save": "保存采购订单失败",
+        "failed_to_delete": "删除采购订单失败",
+        "failed_to_order": "下单失败",
+        "failed_to_receive": "到货入库失败",
+        "failed_to_cancel": "取消采购订单失败",
+        "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。",
+        "failed_to_load": "无法加载该采购订单。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
+      },
+      "delete_confirm": {
+        "title": "删除此采购订单？",
+        "message": "订单 {{number}} 仍是草稿，尚未订购任何商品。此操作无法撤销。"
+      },
+      "order_confirm": {
+        "title": "提交此订单？",
+        "message": "订单发往 {{supplier}} 后明细将被锁定。已订购的库存要到货后才计入可用。"
+      },
+      "cancel_confirm": {
+        "title": "取消此采购订单？",
+        "message": "尚未到货的部分将被取消。已收到的数量仍留在库存中。"
+      },
+      "edit_title": "编辑采购订单 {{number}}",
+      "close_confirm": {
+        "title": "将此采购订单短缺结单？",
+        "message": "已到货部分保留在库。仍欠的 {{outstanding}} 件将被核销，订单标记为已收货。"
+      },
+      "filters": {
+        "overdue": "逾期",
+        "not_overdue": "准时",
+        "past_cancel_by": "已过取消截止日",
+        "not_past_cancel_by": "未过取消截止日"
+      }
+    },
+    "suppliers": {
+      "title": "供应商",
+      "new_cta": "新建供应商",
+      "new_title": "新建供应商",
+      "edit_title": "编辑供应商",
+      "sheet_description": "你从谁那里采购库存，以及如何联系他们。",
+      "table": {
+        "empty": "暂无供应商",
+        "search_placeholder": "按名称、联系人或邮箱搜索…"
+      },
+      "autocomplete": {
+        "placeholder": "按名称、联系人或邮箱搜索…",
+        "empty": "没有匹配的供应商"
+      },
+      "columns": {
+        "contact": "联系人",
+        "orders": "采购订单"
+      },
+      "fields": {
+        "contact_name": "联系人姓名",
+        "address1": "地址",
+        "address2": "地址第二行",
+        "city": "城市",
+        "postal_code": "邮政编码",
+        "notes": "备注"
+      },
+      "messages": {
+        "created": "供应商已创建",
+        "saved": "供应商已保存",
+        "deleted": "供应商已删除"
+      },
+      "errors": {
+        "name_blank": "供应商需要一个名称。",
+        "failed_to_create": "创建供应商失败",
+        "failed_to_save": "保存供应商失败",
+        "failed_to_delete": "删除供应商失败"
+      },
+      "delete_confirm": {
+        "title": "删除此供应商？",
+        "message": "{{name}} 将从您的供应商列表中移除。"
+      }
+    },
+    "stock_receipts": {
+      "title": "到货记录",
+      "receive_title": "收货",
+      "empty": "暂无到货记录",
+      "columns": {
+        "accepted": "接收",
+        "rejected": "拒收",
+        "reason": "原因",
+        "received_so_far": "累计已收"
+      },
+      "fields": {
+        "reference": "送货单",
+        "reference_placeholder": "送货单或装箱单号",
+        "received_at": "收货时间",
+        "received_at_placeholder": "现在",
+        "notes": "备注"
+      },
+      "delivery_total": "本次到货：接收 {{accepted}}，拒收 {{rejected}}",
+      "rejected_so_far": "（拒收 {{count}}）",
+      "summary": "接收 {{accepted}} · 拒收 {{rejected}}",
+      "reason_placeholder": "拒收原因",
+      "rejection_reasons": {
+        "damaged": "损坏",
+        "wrong_item": "货品错误",
+        "expired": "已过期",
+        "other": "其他"
+      },
+      "actions": {
+        "receive": "收货"
+      },
+      "close_short": {
+        "reason_label": "原因",
+        "reason_placeholder": "其余货物的情况",
+        "confirm": "短缺结单"
+      },
+      "load_failed": "无法加载到货记录。"
     }
   }
 }

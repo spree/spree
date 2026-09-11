@@ -20,6 +20,10 @@ module Spree
     include Spree::HasStatus
     has_status :active, :partially_redeemed, :redeemed, :canceled, default: :active
 
+    # What the API reports as `status`: the stored statuses plus `expired`,
+    # which is a date fact rather than a stored transition (see #display_status).
+    DISPLAY_STATUSES = (statuses + %w[expired]).freeze
+
     #
     # Validations
     #

@@ -207,6 +207,20 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['cart']['completed_at']).to be_present
     end
 
+    it "expands a grouped order's shares of the group's payments" do
+      group = create(:order_group, store: store)
+      child = create(:completed_order_with_totals, store: store, order_group_id: group.id)
+      payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 100)
+      split = create(:payment_split, payment: payment, order: child, authorized_amount: 100, captured_amount: 100)
+
+      get :show, params: { id: child.prefixed_id, expand: 'payment_splits' }, as: :json
+
+      row = json_response['payment_splits'].first
+      expect(row['id']).to eq(split.prefixed_id)
+      expect(row).to include('payment_id' => payment.prefixed_id, 'payment_number' => payment.number,
+                             'order_id' => child.prefixed_id, 'captured_amount' => '100.0')
+    end
+
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
 
     before { request.headers.merge!(headers) }

@@ -35,7 +35,7 @@ export function ThemeMenuItems() {
               onClick={() => setMode(value)}
               className={cn(
                 'flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground hover:bg-accent cursor-pointer',
-                active && 'bg-accent text-foreground shadow-sm',
+                active && 'bg-accent-strong text-foreground shadow-sm',
               )}
             >
               <Icon className="size-4" />

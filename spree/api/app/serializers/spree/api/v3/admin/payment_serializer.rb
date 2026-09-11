@@ -50,6 +50,12 @@ module Spree
           many :refunds,
                resource: proc { Spree.api.admin_refund_serializer },
                if: proc { expand?('refunds') }
+
+          # How a payment made against an order group is shared between the
+          # orders in it; empty on a payment made against a single order.
+          many :payment_splits,
+               resource: proc { Spree.api.admin_payment_split_serializer },
+               if: proc { expand?('payment_splits') }
         end
       end
     end

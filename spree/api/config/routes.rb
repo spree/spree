@@ -429,7 +429,28 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :stock_movements, only: [:index, :show]
-        resources :stock_transfers, only: [:index, :show, :create, :destroy]
+        resources :stock_transfers do
+          member do
+            patch :mark_ready
+            patch :mark_in_transit
+            patch :mark_draft
+            patch :close
+            patch :cancel
+          end
+          resources :stock_receipts, only: [:index, :show, :create], module: :stock_transfers
+        end
+
+        # Purchasing
+        resources :suppliers
+        resources :purchase_orders do
+          member do
+            patch :mark_ordered
+            patch :mark_draft
+            patch :close
+            patch :cancel
+          end
+          resources :stock_receipts, only: [:index, :show, :create], module: :purchase_orders
+        end
 
         # Payment Methods
         resources :delivery_methods do
@@ -546,6 +567,13 @@ Spree::Core::Engine.add_routes do
             get :onboarding
             patch :reopen_onboarding
           end
+
+          # Where the seller stands on the ledger, one row per currency.
+          resources :balances, only: [:index], controller: 'sellers/balances'
+
+          # Settling this seller by hand. The scheduled sweep skips anyone on
+          # the `manual` interval — this is where the operator decides.
+          resources :payouts, only: [:create], controller: 'sellers/payouts'
 
           # Who runs this seller, and the offers nobody has accepted yet.
           # The operator is the only one who can repair a seller whose team
@@ -1025,6 +1053,13 @@ Spree::Core::Engine.add_routes do
 
         # The seller's own policy documents.
         resources :policies
+
+        # The seller's own books, read-only: where they stand, what each
+        # order earned them, and what has been sent. Written by fulfilment
+        # and the sweep, never by the seller.
+        resources :balances, only: [:index]
+        resources :transfers, only: [:index, :show]
+        resources :payouts, only: [:index, :show]
 
         # Singular: the checklist is always `current_seller`'s.
         resource :onboarding, only: [:show], controller: 'onboarding' do

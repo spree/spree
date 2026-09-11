@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
       "breadcrumb_more": "Mehr",
@@ -156,6 +157,7 @@
       "empty_value": "—",
       "inactive": "Inaktiv",
       "learn_more": "Mehr erfahren",
+      "skip_to_content": "Zum Inhalt springen",
       "loading": "Wird geladen…",
       "next": "Weiter",
       "no": "Nein",
@@ -975,7 +977,8 @@
         "customers": "Kunden",
         "price_list_prices": "Preislistenpreise",
         "product_translations": "Produktübersetzungen",
-        "products": "Produkte"
+        "products": "Produkte",
+        "purchase_orders": "Bestellungen"
       },
       "wizard_title": "Import"
     },

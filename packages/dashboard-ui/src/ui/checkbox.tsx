@@ -25,7 +25,15 @@ function Checkbox({
       disabled={disabled}
       name={name}
       className={cn(
-        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border align-[-3px] outline-none transition-shadow',
+        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border-control align-[-3px] outline-none transition-shadow',
+        // The 16px box is the right *visual* size in a dense table, but on its
+        // own it is a 16px target — under the 24px WCAG 2.2 asks for, on the
+        // control every bulk action starts from. A pseudo-element extends the
+        // pressable area to 34px without taking layout space, so column widths
+        // and row height are unchanged. `z-1` keeps it above the row-click
+        // bridge, which would otherwise swallow presses in the padded margin
+        // and navigate instead of selecting.
+        "before:absolute before:inset-[-9px] before:z-1 before:content-['']",
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'aria-invalid:border-destructive aria-invalid:ring-destructive/20',

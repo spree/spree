@@ -28,8 +28,15 @@ stack per worktree is what exhausts the machine when several runs are active.
   finished before it.
 - Do every stage in order and do not skip one because it looks unnecessary.
   Each stage has a clear "done" condition; move on only when it is met.
-- Work happens in a git worktree (`wt switch -c <branch>`), never on `main`,
-  on a `feature/`, `fix/` or `chore/` branch named after the plan.
+- Work happens in a git worktree (`wt switch -c <branch>`), never on `main`.
+  The branch name is the one Linear generates for the plan's issue
+  (`gitBranchName` on the issue, shaped like
+  `feature/v-1234-b2b-order-documents`), so Linear attaches the branch and
+  the pull request to the issue on its own. Without a Linear issue, fall back
+  to a `feature/`, `fix/` or `chore/` branch named after the plan.
+- The plan's trackers move with the run: the Linear issue goes to
+  **In Progress** when implementation starts and to **In Review** when the
+  pull request is open; the pull request carries the Linear id in its title.
 - Keep servers running at the end. The user opens the URLs from the report;
   shutting the environment down is their call, not yours.
 
@@ -47,6 +54,14 @@ stack per worktree is what exhausts the machine when several runs are active.
 - Write down, in your own words, the list of deliverables before touching code.
   If the plan has phases, say which ones this run covers. The default is
   everything the plan targets for the current release.
+- Read the plan's `**Tracking:**` header and note the Linear issue id
+  (`V-NNNN`) and the GitHub issue number: every later stage refers to them.
+  If the line is missing or says `Linear —` / `GitHub —`, open the missing
+  tracker now following "Tracking the plan in Linear and GitHub" in
+  `/project:create-plan` and write it into the header — the branch name in
+  stage 3 comes from the Linear issue. If the Linear MCP tools are not
+  available in this session, carry on without the Linear steps and list
+  them in the final report as work left for the user.
 
 ## 2. Settle open questions interactively
 
@@ -70,6 +85,11 @@ reason.
 
 ## 3. Implement
 
+- Before the first commit, set the Linear issue's status to **In Progress**
+  (`save_issue` with `state: "In Progress"`) and set the plan's own status
+  line to `In Progress` naming what this run builds, so the plan, the
+  tracker and the branch agree about what is underway. Create the worktree
+  on the issue's `gitBranchName` (read it with `get_issue`).
 - Start with `/goal` so the run has a stated goal to check itself against:
   the deliverables from stage 1 plus green changed specs and green CI.
 - Follow the plan's phase order and every convention in `CLAUDE.md` (models,
@@ -170,10 +190,23 @@ Print, in one block the user can act on directly:
 ## 10. Open the pull request and monitor it
 
 - Squash fixups, make sure the branch is pushed to `spree/spree`, then open the
-  PR with `gh pr create --repo spree/spree --base main`. The body: what the
+  PR with `gh pr create --repo spree/spree --base main`. The title ends with
+  the Linear id in parentheses, the way the repository already does it:
+  `Add order stages to the dashboard (V-1234)`. The body: what the
   change does and why, which plan it implements and which phases, the
   decisions settled in stage 2, how it was tested, and the QA walkthrough from
-  stage 9. Link the plan file. Keep implementation detail out of it.
+  stage 9. Link the plan file. Reference the trackers on their own lines:
+  `Linear: V-1234` and `Closes #NNNN` when this PR completes everything the
+  plan targets for the release, or `Part of #NNNN` when later phases remain,
+  so GitHub does not close the issue early. Keep implementation detail out
+  of it.
+- With the PR open, move the Linear issue to **In Review** and attach the PR
+  URL to it through `save_issue` `links` (Linear usually picks the PR up
+  from the branch name, so check the issue first and add the link only if
+  it is not already there). Comment the PR URL on the GitHub issue so a
+  reader coming from the Roadmap finds the code. When the PR merges, the
+  plan's status becomes `Implemented` through `/project:update-plan`, which
+  moves the trackers to Done and closes the GitHub issue.
 - Run `/autofix-pr` to watch review comments (humans, Bugbot, CodeRabbit) and
   CI, fix what comes back, and push. Stop and report clearly if something
   needs the user — a required review, a failing check you cannot reproduce
@@ -181,7 +214,8 @@ Print, in one block the user can act on directly:
 
 ## Final report
 
-End with a summary that stands on its own: the PR URL, what was built (by
-deliverable), the decisions recorded, the review findings acted on and the
-ones deliberately skipped, the QA block from stage 9, and anything left for a
-follow-up with the reason.
+End with a summary that stands on its own: the PR URL, the Linear and GitHub
+issue links with the status each is in, what was built (by deliverable), the
+decisions recorded, the review findings acted on and the ones deliberately
+skipped, the QA block from stage 9, and anything left for a follow-up with
+the reason.
