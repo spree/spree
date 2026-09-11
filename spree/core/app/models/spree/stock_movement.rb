@@ -84,13 +84,37 @@ module Spree
                                                  stock_receipt_id unit_cost]
     self.whitelisted_ransackable_associations = %w[stock_level]
 
-    # Stored audit text for a correction nobody labelled. Deliberately
-    # resolved in English: the column is read by every admin afterwards, not
-    # only by whoever happened to type the correction.
+    # The corrections a merchant reaches for, as codes a client can send
+    # instead of typing the text itself. Free text is still accepted — an
+    # integration's own wording is not Spree's to police — but a dashboard
+    # that sends `damaged` gets one stored string whatever language its
+    # operator works in.
+    ADJUSTMENT_REASONS = %w[
+      manual_adjustment correction count received return_restock damaged theft_or_loss
+      promotion_or_donation inventory_feed
+    ].freeze
+
+    # Stored audit text for a correction nobody labelled.
     #
     # @return [String]
     def self.default_adjustment_reason
-      Spree.t('stock_movement.reasons.manual_adjustment', locale: :en)
+      adjustment_reason_text(:manual_adjustment)
+    end
+
+    # What to store against a correction. A known code becomes its English
+    # text; anything else is the caller's own wording, kept as sent.
+    #
+    # Deliberately resolved in English rather than the operator's locale: the
+    # column is read by every admin afterwards and filtered across the whole
+    # history, so one cause has to be one string.
+    #
+    # @param reason [String, Symbol, nil]
+    # @return [String]
+    def self.adjustment_reason_text(reason)
+      return default_adjustment_reason if reason.blank?
+      return reason.to_s unless ADJUSTMENT_REASONS.include?(reason.to_s)
+
+      Spree.t("stock_movement.reasons.#{reason}", locale: :en)
     end
 
     # A movement is an immutable audit row: once written, nothing may rewrite

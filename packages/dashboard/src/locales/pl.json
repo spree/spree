@@ -5044,30 +5044,39 @@
       }
     },
     "stock_levels": {
-      "messages": {
-        "stock_level_deleted": "Usunięto stan magazynowy",
-        "stock_updated": "Zaktualizowano stan magazynowy"
-      },
-      "title": "Zapasy",
-      "no_sku": "Brak SKU",
-      "table": {
-        "search_placeholder": "Szukaj SKU lub produktu…",
-        "empty": "Brak poziomów zapasów. Zapasy pojawią się tutaj, gdy wariant zostanie przypisany do lokalizacji."
-      },
       "columns": {
-        "product": "Produkt",
-        "sku": "SKU",
-        "location": "Lokalizacja",
-        "committed": "Zarezerwowane",
-        "reserved": "Wstrzymane",
+        "availability": "Dostępność",
         "available": "Dostępne",
+        "committed": "Zarezerwowane",
+        "incoming": "W drodze",
+        "location": "Lokalizacja",
         "on_hand": "Na stanie",
-        "incoming": "W drodze"
+        "product": "Produkt",
+        "reserved": "Wstrzymane",
+        "sku": "SKU"
+      },
+      "filters": {
+        "in_stock": "Dostępne",
+        "out_of_stock": "Niedostępne",
+        "has_incoming": "W drodze",
+        "no_incoming": "Nic w drodze",
+        "has_reserved": "Wstrzymane",
+        "no_reserved": "Nic wstrzymanego"
+      },
+      "incoming": {
+        "open_aria": "Dodaj zapasy w drodze",
+        "create_transfer": "Utwórz transfer",
+        "create_purchase_order": "Utwórz zamówienie zakupu"
       },
       "location_filter": {
         "placeholder": "Szukaj lokalizacji…",
         "empty": "Nie znaleziono lokalizacji"
       },
+      "messages": {
+        "stock_level_deleted": "Usunięto stan magazynowy",
+        "stock_updated": "Zaktualizowano stan magazynowy"
+      },
+      "no_sku": "Brak SKU",
       "quick_edit": {
         "modes": {
           "set": "Ustaw na",
@@ -5088,11 +5097,11 @@
         "theft_or_loss": "Kradzież lub utrata",
         "promotion_or_donation": "Promocja lub darowizna"
       },
-      "incoming": {
-        "open_aria": "Dodaj zapasy w drodze",
-        "create_transfer": "Utwórz transfer",
-        "create_purchase_order": "Utwórz zamówienie zakupu"
-      }
+      "table": {
+        "search_placeholder": "Szukaj SKU lub produktu…",
+        "empty": "Brak poziomów zapasów. Zapasy pojawią się tutaj, gdy wariant zostanie przypisany do lokalizacji."
+      },
+      "title": "Zapasy"
     },
     "stock_locations": {
       "add_cta": "Dodaj lokalizację magazynową",

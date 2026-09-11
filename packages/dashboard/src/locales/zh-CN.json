@@ -4977,30 +4977,39 @@
       }
     },
     "stock_levels": {
-      "messages": {
-        "stock_level_deleted": "库存水平已删除",
-        "stock_updated": "库存已更新"
-      },
-      "title": "库存",
-      "no_sku": "无 SKU",
-      "table": {
-        "search_placeholder": "搜索 SKU 或商品…",
-        "empty": "暂无库存记录。变体在某地点入库后会显示在这里。"
-      },
       "columns": {
-        "product": "商品",
-        "sku": "SKU",
-        "location": "地点",
-        "committed": "已承诺",
-        "reserved": "已预留",
+        "availability": "可售状态",
         "available": "可售",
+        "committed": "已承诺",
+        "incoming": "在途",
+        "location": "地点",
         "on_hand": "现有",
-        "incoming": "在途"
+        "product": "商品",
+        "reserved": "已预留",
+        "sku": "SKU"
+      },
+      "filters": {
+        "in_stock": "有货",
+        "out_of_stock": "缺货",
+        "has_incoming": "有在途",
+        "no_incoming": "无在途",
+        "has_reserved": "有预留",
+        "no_reserved": "无预留"
+      },
+      "incoming": {
+        "open_aria": "添加在途库存",
+        "create_transfer": "创建调拨",
+        "create_purchase_order": "创建采购单"
       },
       "location_filter": {
         "placeholder": "搜索地点…",
         "empty": "未找到地点"
       },
+      "messages": {
+        "stock_level_deleted": "库存水平已删除",
+        "stock_updated": "库存已更新"
+      },
+      "no_sku": "无 SKU",
       "quick_edit": {
         "modes": {
           "set": "设为",
@@ -5021,11 +5030,11 @@
         "theft_or_loss": "被盗或丢失",
         "promotion_or_donation": "促销或捐赠"
       },
-      "incoming": {
-        "open_aria": "添加在途库存",
-        "create_transfer": "创建调拨",
-        "create_purchase_order": "创建采购单"
-      }
+      "table": {
+        "search_placeholder": "搜索 SKU 或商品…",
+        "empty": "暂无库存记录。变体在某地点入库后会显示在这里。"
+      },
+      "title": "库存"
     },
     "stock_locations": {
       "add_cta": "添加库存地点",

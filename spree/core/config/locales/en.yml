@@ -1900,12 +1900,21 @@ en:
       errors:
         adjustment_exclusive_with_count_on_hand: Send either a count on hand or an adjustment, not both
         adjustment_not_an_integer: The adjustment must be a whole number
+        count_on_hand_not_an_integer: The count on hand must be a whole number
     stock_levels: Stock Levels
     stock_location: Stock Location
     stock_locations: Stock Locations
     stock_movement:
       reasons:
+        correction: Correction
+        count: Count
+        damaged: Damaged
+        inventory_feed: Inventory feed
         manual_adjustment: Manual adjustment
+        promotion_or_donation: Promotion or donation
+        received: Received
+        return_restock: Return restock
+        theft_or_loss: Theft or loss
     stock_movements: Stock Movements
     stock_receipt:
       errors:

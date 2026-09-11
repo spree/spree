@@ -740,11 +740,15 @@ export function ResourceTable<T extends Record<string, any>>({
                         // Selected rows carry the hover tint so the selection is
                         // visible at rest; hovering one goes a step deeper so the
                         // row still answers the pointer.
-                        className={
-                          isSelected
-                            ? 'bg-accent-strong/75 hover:bg-accent-strong-hover'
-                            : undefined
-                        }
+                        //
+                        // A row holding an open popover is shaded the same way:
+                        // the panel floats over its neighbours, and without this
+                        // a merchant editing a figure has to count rows to see
+                        // which record they are editing.
+                        className={cn(
+                          'has-data-[popup-open]:bg-accent-strong/40',
+                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
+                        )}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">

@@ -559,6 +559,33 @@ describe Spree::StockLevel, type: :model do
       end
     end
 
+    describe '#purchasable_count and the filters built on it' do
+      # The Inventory page's Available column and its In stock filter read the
+      # same subtraction, one in Ruby and one in SQL. They have to agree.
+      it 'is the shelf minus the promise minus the holds' do
+        subject.update_columns(count_on_hand: 10, allocated_count: 4, reserved_count: 3)
+
+        expect(subject.purchasable_count).to eq(3)
+        expect(Spree::StockLevel.in_stock).to include(subject)
+        expect(Spree::StockLevel.out_of_stock).not_to include(subject)
+      end
+
+      it 'counts a fully held shelf as out of stock' do
+        subject.update_columns(count_on_hand: 5, allocated_count: 2, reserved_count: 3)
+
+        expect(subject.purchasable_count).to eq(0)
+        expect(Spree::StockLevel.out_of_stock).to include(subject)
+        expect(Spree::StockLevel.in_stock).not_to include(subject)
+      end
+
+      it 'finds the levels with units on the way or held' do
+        subject.update_columns(incoming_count: 4, reserved_count: 0)
+
+        expect(Spree::StockLevel.with_incoming).to include(subject)
+        expect(Spree::StockLevel.with_reserved).not_to include(subject)
+      end
+    end
+
     describe '#available_count' do
       it 'is the shelf minus the promise' do
         subject.update_columns(count_on_hand: 10, allocated_count: 4)

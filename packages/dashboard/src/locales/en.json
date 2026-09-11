@@ -4986,30 +4986,39 @@
       }
     },
     "stock_levels": {
-      "messages": {
-        "stock_level_deleted": "Stock level deleted",
-        "stock_updated": "Stock updated"
-      },
-      "title": "Inventory",
-      "no_sku": "No SKU",
-      "table": {
-        "search_placeholder": "Search SKU or product…",
-        "empty": "No stock levels yet. Stock appears here once a variant is stocked at a location."
-      },
       "columns": {
-        "product": "Product",
-        "sku": "SKU",
-        "location": "Location",
-        "committed": "Committed",
-        "reserved": "Reserved",
+        "availability": "Availability",
         "available": "Available",
+        "committed": "Committed",
+        "incoming": "Incoming",
+        "location": "Location",
         "on_hand": "On hand",
-        "incoming": "Incoming"
+        "product": "Product",
+        "reserved": "Reserved",
+        "sku": "SKU"
+      },
+      "filters": {
+        "in_stock": "In stock",
+        "out_of_stock": "Out of stock",
+        "has_incoming": "Incoming",
+        "no_incoming": "None incoming",
+        "has_reserved": "Reserved",
+        "no_reserved": "None reserved"
+      },
+      "incoming": {
+        "open_aria": "Add incoming stock",
+        "create_transfer": "Create transfer",
+        "create_purchase_order": "Create purchase order"
       },
       "location_filter": {
         "placeholder": "Search locations…",
         "empty": "No locations found"
       },
+      "messages": {
+        "stock_level_deleted": "Stock level deleted",
+        "stock_updated": "Stock updated"
+      },
+      "no_sku": "No SKU",
       "quick_edit": {
         "modes": {
           "set": "Set to",
@@ -5030,11 +5039,11 @@
         "theft_or_loss": "Theft or loss",
         "promotion_or_donation": "Promotion or donation"
       },
-      "incoming": {
-        "open_aria": "Add incoming stock",
-        "create_transfer": "Create transfer",
-        "create_purchase_order": "Create purchase order"
-      }
+      "table": {
+        "search_placeholder": "Search SKU or product…",
+        "empty": "No stock levels yet. Stock appears here once a variant is stocked at a location."
+      },
+      "title": "Inventory"
     },
     "stock_locations": {
       "add_cta": "Add stock location",

@@ -38,9 +38,23 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[count_on_hand allocated_count reserved_count incoming_count
                                                  stock_location_id variant_id]
+    self.whitelisted_ransackable_scopes = %w[in_stock out_of_stock with_incoming with_reserved]
     self.whitelisted_ransackable_associations = %w[variant stock_location]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
+
+    # What a customer could still buy from this shelf, as SQL: the same
+    # subtraction {#purchasable_count} makes in Ruby. A list filters on it, so
+    # it cannot be a Ruby method — and it is written once here rather than in
+    # each scope below.
+    PURCHASABLE_SQL = Arel.sql(
+      "#{table_name}.count_on_hand - #{table_name}.allocated_count - #{table_name}.reserved_count"
+    ).freeze
+
+    scope :in_stock, -> { where(Arel.sql("#{PURCHASABLE_SQL} > 0")) }
+    scope :out_of_stock, -> { where(Arel.sql("#{PURCHASABLE_SQL} <= 0")) }
+    scope :with_incoming, -> { where.not(incoming_count: 0) }
+    scope :with_reserved, -> { where.not(reserved_count: 0) }
 
     # Stock levels for products assigned to `store`, walking
     # `variant → product → store`.
@@ -143,6 +157,16 @@ module Spree
     # @return [Integer]
     def available_count
       count_on_hand - allocated_count
+    end
+
+    # Units a customer could still buy from this shelf: what is here, minus
+    # what placed orders have taken, minus what checkouts in progress are
+    # holding. The figure the Inventory page calls *Available*, and the Ruby
+    # twin of {PURCHASABLE_SQL}, which the `in_stock` scopes filter on.
+    #
+    # @return [Integer]
+    def purchasable_count
+      available_count - reserved_count
     end
 
     # Units held by checkouts in progress. The counter follows the

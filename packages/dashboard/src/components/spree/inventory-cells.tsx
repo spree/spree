@@ -19,9 +19,10 @@ import { useTranslation } from 'react-i18next'
 import { useUpdateStockLevel } from '../../hooks/use-stock-levels'
 
 /**
- * The corrections a merchant reaches for on the Inventory page, sent as the
- * `reason` the stock history shows beside the movement. Canonical values
- * here; the labels are built at render time from the locale.
+ * The corrections a merchant reaches for on the Inventory page. These are
+ * codes the API knows (`Spree::StockMovement::ADJUSTMENT_REASONS`), not text:
+ * the server resolves each to one stored string, so a cause reads the same in
+ * the stock history whatever language the admin who recorded it works in.
  */
 export const STOCK_ADJUSTMENT_REASONS = [
   'correction',
@@ -40,6 +41,14 @@ type QuickEditMode = (typeof QUICK_EDIT_MODES)[number]
  * A figure that opens something when clicked, styled like the plain ones.
  * Spreads whatever the popover trigger hands it, since it is rendered as the
  * trigger itself.
+ *
+ * While its popover is open the figure stays filled — Base UI stamps
+ * `data-popup-open` on the trigger — so a merchant reading a form that floats
+ * over the next row can still see which cell it is editing. The fill comes
+ * from the same scale the table's own hover uses, and the row is shaded with
+ * it (see the rule in styles.css), for the same reason: a form covering two
+ * rows should not leave you counting upwards to work out which SKU you are
+ * correcting.
  */
 function CountTrigger({
   value,
@@ -50,7 +59,7 @@ function CountTrigger({
     <button
       type="button"
       aria-label={label}
-      className="flex w-full cursor-pointer items-center justify-end gap-1 rounded px-1 tabular-nums hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="-mr-1.5 flex w-full cursor-pointer items-center justify-end gap-1 rounded-sm px-1.5 py-1 tabular-nums hover:bg-accent-strong/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring data-[popup-open]:bg-accent-strong"
       {...props}
     >
       {value}
@@ -81,7 +90,7 @@ export function OnHandCell({ level }: { level: StockLevel }) {
           label={t('admin.stock_levels.quick_edit.open_aria', { name })}
         />
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-auto p-2">
+      <PopoverContent align="end" className="w-auto">
         {open && <OnHandEditor level={level} onSaved={() => setOpen(false)} />}
       </PopoverContent>
     </Popover>
@@ -109,14 +118,8 @@ function OnHandEditor({ level, onSaved }: { level: StockLevel; onSaved: () => vo
 
   async function submit() {
     if (Number.isNaN(parsed)) return
-    // Stored on the movement as free text and shown raw in every admin's
-    // stock history, so it is written in English whatever this admin's
-    // locale — the same language the API's own default reason uses.
-    const reasonLabel = t(`admin.stock_levels.reasons.${reason}`, { lng: 'en' })
     const params =
-      mode === 'set'
-        ? { count_on_hand: parsed, reason: reasonLabel }
-        : { adjustment: parsed, reason: reasonLabel }
+      mode === 'set' ? { count_on_hand: parsed, reason } : { adjustment: parsed, reason }
     try {
       await update.mutateAsync(params)
       onSaved()
@@ -228,7 +231,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/transfers/new"
             params={{ storeId }}
             search={seed}
-            className="rounded px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_transfer')}
           </Link>
@@ -238,7 +241,7 @@ export function IncomingCell({ level }: { level: StockLevel }) {
             to="/$storeId/purchase-orders/new"
             params={{ storeId }}
             search={seed}
-            className="rounded px-2 py-1 text-sm hover:bg-accent"
+            className="rounded-md px-2 py-1 text-sm hover:bg-accent"
           >
             {t('admin.stock_levels.incoming.create_purchase_order')}
           </Link>

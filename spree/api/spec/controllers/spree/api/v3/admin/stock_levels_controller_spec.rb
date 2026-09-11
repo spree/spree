@@ -66,6 +66,23 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       ActiveSupport::Notifications.unsubscribe(subscriber)
     end
 
+    # The Inventory page's quick filters are scopes, not column predicates, so
+    # they only work if the model's scope allowlist lets a request reach them.
+    it 'filters by the availability scopes the Inventory page sends' do
+      stock_level.update_columns(count_on_hand: 10, allocated_count: 2, reserved_count: 3, incoming_count: 4)
+      empty = create(:stock_level, adjust_count_on_hand: false)
+      empty.update_columns(count_on_hand: 0, allocated_count: 0, reserved_count: 0, incoming_count: 0)
+
+      get :index, params: { q: { in_stock: true } }, as: :json
+      expect(response).to have_http_status(:ok)
+      ids = json_response['data'].map { |level| level['id'] }
+      expect(ids).to include(stock_level.prefixed_id)
+      expect(ids).not_to include(empty.prefixed_id)
+
+      get :index, params: { q: { with_incoming: true } }, as: :json
+      expect(json_response['data'].map { |level| level['id'] }).to eq([stock_level.prefixed_id])
+    end
+
     it 'filters by stock_location_id' do
       other_location = create(:stock_location)
       _other_item = create(:stock_level, stock_location: other_location)
@@ -116,12 +133,14 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
     it 'moves the shelf by an adjustment and records it as the movement' do
       stock_level.set_count_on_hand(10)
 
-      patch :update, params: { id: stock_level.prefixed_id, adjustment: -3, reason: 'Damaged' }, as: :json
+      patch :update, params: { id: stock_level.prefixed_id, adjustment: -3, reason: 'damaged' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['count_on_hand']).to eq(7)
       movement = stock_level.stock_movements.adjusted.last
       expect(movement.quantity).to eq(-3)
+      # A known code is stored as its English text, so one cause is one string
+      # however the admin who recorded it had their dashboard set.
       expect(movement.reason).to eq('Damaged')
     end
 
@@ -136,11 +155,11 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 5, adjustment: 1 }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['details']['adjustment'].first['code']).to eq('exclusive_with_count_on_hand')
+      expect(json_response['error']['message']).to include('not both')
       expect(stock_level.stock_movements.adjusted).to be_empty
     end
 
-    it 'stores a client-supplied reason on the movement' do
+    it 'stores an integration\'s own wording as sent' do
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42, reason: 'Damaged in transit' }, as: :json
 
       expect(response).to have_http_status(:ok)

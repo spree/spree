@@ -95,17 +95,15 @@ defineTable<StockLevel>('stock-levels', {
       label: i18n.t('admin.stock_levels.columns.available'),
       default: true,
       className: 'text-right tabular-nums',
-      // On hand minus committed minus reserved — what a customer can still
-      // buy from this shelf. Negative when it is oversold, which is worth
-      // seeing rather than hiding.
-      render: (level) => level.available_count - level.reserved_count,
+      // On hand minus committed minus reserved, computed by the API so the
+      // page and the `in_stock` filter agree on one definition. Negative when
+      // it is oversold, which is worth seeing rather than hiding.
+      render: (level) => level.purchasable_count,
     },
     {
       key: 'count_on_hand',
       label: i18n.t('admin.stock_levels.columns.on_hand'),
       sortable: true,
-      filterable: true,
-      filterType: 'number',
       default: true,
       className: 'text-right tabular-nums',
       render: (level) => <OnHandCell level={level} />,
@@ -117,6 +115,52 @@ defineTable<StockLevel>('stock-levels', {
       default: true,
       className: 'text-right tabular-nums',
       render: (level) => <IncomingCell level={level} />,
+    },
+    // The three questions a merchant brings to this list. Each is a scope,
+    // not a predicate on a column: "can I sell it?" is on hand minus
+    // committed minus reserved, which no single column answers. Filter-only —
+    // the figures they read are already columns of their own.
+    {
+      key: 'in_stock',
+      label: i18n.t('admin.stock_levels.columns.availability'),
+      ransackAttribute: 'in_stock',
+      ransackScope: true,
+      displayable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.stock_levels.filters.in_stock'),
+        false: i18n.t('admin.stock_levels.filters.out_of_stock'),
+      },
+      quickFilter: true,
+    },
+    {
+      key: 'with_incoming',
+      label: i18n.t('admin.stock_levels.columns.incoming'),
+      ransackAttribute: 'with_incoming',
+      ransackScope: true,
+      displayable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.stock_levels.filters.has_incoming'),
+        false: i18n.t('admin.stock_levels.filters.no_incoming'),
+      },
+      quickFilter: true,
+    },
+    {
+      key: 'with_reserved',
+      label: i18n.t('admin.stock_levels.columns.reserved'),
+      ransackAttribute: 'with_reserved',
+      ransackScope: true,
+      displayable: false,
+      filterable: true,
+      filterType: 'boolean',
+      booleanLabels: {
+        true: i18n.t('admin.stock_levels.filters.has_reserved'),
+        false: i18n.t('admin.stock_levels.filters.no_reserved'),
+      },
+      quickFilter: true,
     },
   ],
 })

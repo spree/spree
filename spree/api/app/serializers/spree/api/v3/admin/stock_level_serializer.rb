@@ -7,7 +7,7 @@ module Spree
 
           typelize metadata: 'Record<string, unknown>',
                    allocated_count: :number, available_count: :number,
-                   reserved_count: :number, incoming_count: :number,
+                   reserved_count: :number, incoming_count: :number, purchasable_count: :number,
                    stock_location_name: [:string, nullable: true],
                    product_id: [:string, nullable: true],
                    variant_name: [:string, nullable: true], variant_sku: [:string, nullable: true],
@@ -19,7 +19,8 @@ module Spree
           # Which shelf and which SKU, flat, the way a stock movement names
           # them: enough for a list row without expanding the variant, whose
           # own serializer computes availability per row.
-          attributes :metadata, :reserved_count, :incoming_count, :variant_name, :variant_sku,
+          attributes :metadata, :reserved_count, :incoming_count, :purchasable_count,
+                     :variant_name, :variant_sku,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :stock_location_name do |stock_level|

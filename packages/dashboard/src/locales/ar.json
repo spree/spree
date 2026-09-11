@@ -5008,30 +5008,39 @@
       }
     },
     "stock_levels": {
-      "messages": {
-        "stock_level_deleted": "تم حذف مستوى المخزون",
-        "stock_updated": "تم تحديث المخزون"
-      },
-      "title": "المخزون",
-      "no_sku": "بدون SKU",
-      "table": {
-        "search_placeholder": "ابحث برمز SKU أو المنتج…",
-        "empty": "لا توجد مستويات مخزون بعد. يظهر المخزون هنا عندما يُخزَّن متغير في موقع."
-      },
       "columns": {
-        "product": "المنتج",
-        "sku": "SKU",
-        "location": "الموقع",
-        "committed": "مخصص",
-        "reserved": "محجوز",
+        "availability": "التوفر",
         "available": "متاح",
+        "committed": "مخصص",
+        "incoming": "وارد",
+        "location": "الموقع",
         "on_hand": "متوفر",
-        "incoming": "وارد"
+        "product": "المنتج",
+        "reserved": "محجوز",
+        "sku": "SKU"
+      },
+      "filters": {
+        "in_stock": "متوفر",
+        "out_of_stock": "غير متوفر",
+        "has_incoming": "وارد",
+        "no_incoming": "لا يوجد وارد",
+        "has_reserved": "محجوز",
+        "no_reserved": "لا يوجد محجوز"
+      },
+      "incoming": {
+        "open_aria": "إضافة مخزون وارد",
+        "create_transfer": "إنشاء تحويل",
+        "create_purchase_order": "إنشاء أمر شراء"
       },
       "location_filter": {
         "placeholder": "ابحث عن المواقع…",
         "empty": "لم يتم العثور على مواقع"
       },
+      "messages": {
+        "stock_level_deleted": "تم حذف مستوى المخزون",
+        "stock_updated": "تم تحديث المخزون"
+      },
+      "no_sku": "بدون SKU",
       "quick_edit": {
         "modes": {
           "set": "تعيين إلى",
@@ -5052,11 +5061,11 @@
         "theft_or_loss": "سرقة أو فقدان",
         "promotion_or_donation": "ترويج أو تبرع"
       },
-      "incoming": {
-        "open_aria": "إضافة مخزون وارد",
-        "create_transfer": "إنشاء تحويل",
-        "create_purchase_order": "إنشاء أمر شراء"
-      }
+      "table": {
+        "search_placeholder": "ابحث برمز SKU أو المنتج…",
+        "empty": "لا توجد مستويات مخزون بعد. يظهر المخزون هنا عندما يُخزَّن متغير في موقع."
+      },
+      "title": "المخزون"
     },
     "stock_locations": {
       "add_cta": "إضافة موقع المخزون",

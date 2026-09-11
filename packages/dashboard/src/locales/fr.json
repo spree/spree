@@ -4986,30 +4986,39 @@
       }
     },
     "stock_levels": {
-      "messages": {
-        "stock_level_deleted": "Niveau de stock supprimé",
-        "stock_updated": "Stock mis à jour"
-      },
-      "title": "Inventaire",
-      "no_sku": "Sans SKU",
-      "table": {
-        "search_placeholder": "Rechercher un SKU ou un produit…",
-        "empty": "Aucun niveau de stock pour l'instant. Le stock apparaît ici dès qu'une variante est stockée à un emplacement."
-      },
       "columns": {
-        "product": "Produit",
-        "sku": "SKU",
-        "location": "Emplacement",
-        "committed": "Engagé",
-        "reserved": "Réservé",
+        "availability": "Disponibilité",
         "available": "Disponible",
+        "committed": "Engagé",
+        "incoming": "En route",
+        "location": "Emplacement",
         "on_hand": "En stock",
-        "incoming": "En route"
+        "product": "Produit",
+        "reserved": "Réservé",
+        "sku": "SKU"
+      },
+      "filters": {
+        "in_stock": "En stock",
+        "out_of_stock": "En rupture",
+        "has_incoming": "En route",
+        "no_incoming": "Rien en route",
+        "has_reserved": "Réservé",
+        "no_reserved": "Rien de réservé"
+      },
+      "incoming": {
+        "open_aria": "Ajouter du stock en route",
+        "create_transfer": "Créer un transfert",
+        "create_purchase_order": "Créer un bon de commande"
       },
       "location_filter": {
         "placeholder": "Rechercher des emplacements…",
         "empty": "Aucun emplacement trouvé"
       },
+      "messages": {
+        "stock_level_deleted": "Niveau de stock supprimé",
+        "stock_updated": "Stock mis à jour"
+      },
+      "no_sku": "Sans SKU",
       "quick_edit": {
         "modes": {
           "set": "Définir à",
@@ -5030,11 +5039,11 @@
         "theft_or_loss": "Vol ou perte",
         "promotion_or_donation": "Promotion ou don"
       },
-      "incoming": {
-        "open_aria": "Ajouter du stock en route",
-        "create_transfer": "Créer un transfert",
-        "create_purchase_order": "Créer un bon de commande"
-      }
+      "table": {
+        "search_placeholder": "Rechercher un SKU ou un produit…",
+        "empty": "Aucun niveau de stock pour l'instant. Le stock apparaît ici dès qu'une variante est stockée à un emplacement."
+      },
+      "title": "Inventaire"
     },
     "stock_locations": {
       "add_cta": "Ajouter un emplacement de stock",
