@@ -2744,6 +2744,8 @@
         "confirm": {
           "approve_message": "Zatwierdzić to zamówienie?",
           "cancel_message": "Czy na pewno chcesz anulować to zamówienie?",
+          "cancel_shipment_confirm": "Anuluj realizację",
+          "cancel_shipment_dismiss": "Zachowaj realizację",
           "cancel_shipment_message": "Anulować tę realizację?",
           "capture_message": "Pobrać tę płatność?",
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
@@ -3218,6 +3220,8 @@
               "resolve_replacement": "Rozwiąż zamiennikiem"
             },
             "confirm": {
+              "cancel_confirm": "Anuluj reklamację",
+              "cancel_dismiss": "Zachowaj reklamację",
               "deny": "Odrzucić to zgłoszenie? Klient nie otrzyma zwrotu pieniędzy ani wymiany."
             },
             "create_title": "Nowa reklamacja",
@@ -3245,6 +3249,10 @@
               "create": "Nowa wymiana",
               "fulfill": "Wyślij zamiennik"
             },
+            "confirm": {
+              "cancel_confirm": "Anuluj wymianę",
+              "cancel_dismiss": "Zachowaj wymianę"
+            },
             "create_title": "Nowa wymiana",
             "empty": "Brak wymian dla tego zamówienia.",
             "price_difference": "Różnica w cenie",
@@ -3261,7 +3269,9 @@
             "buy_label": "Kup etykietę zwrotną",
             "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
             "confirm": {
-              "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone."
+              "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone.",
+              "cancel_confirm": "Anuluj zwrot",
+              "cancel_dismiss": "Zachowaj zwrot"
             },
             "create_title": "Nowy zwrot",
             "empty": "Brak zwrotów dla tego zamówienia.",

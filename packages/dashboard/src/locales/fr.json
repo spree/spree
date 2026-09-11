@@ -2720,6 +2720,8 @@
         "confirm": {
           "approve_message": "Approuver cette commande ?",
           "cancel_message": "Voulez-vous vraiment annuler cette commande ?",
+          "cancel_shipment_confirm": "Annuler l'envoi",
+          "cancel_shipment_dismiss": "Conserver l'envoi",
           "cancel_shipment_message": "Annuler cet envoi ?",
           "capture_message": "Capturer ce paiement ?",
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
@@ -3186,6 +3188,8 @@
               "resolve_replacement": "Résoudre par remplacement"
             },
             "confirm": {
+              "cancel_confirm": "Annuler la réclamation",
+              "cancel_dismiss": "Conserver la réclamation",
               "deny": "Refuser cette réclamation ? Le client ne recevra ni remboursement ni remplacement."
             },
             "create_title": "Nouvelle réclamation",
@@ -3213,6 +3217,10 @@
               "create": "Nouvel échange",
               "fulfill": "Expédier le remplacement"
             },
+            "confirm": {
+              "cancel_confirm": "Annuler l'échange",
+              "cancel_dismiss": "Conserver l'échange"
+            },
             "create_title": "Nouvel échange",
             "empty": "Aucun échange pour cette commande.",
             "price_difference": "Différence de prix",
@@ -3229,7 +3237,9 @@
             "buy_label": "Acheter une étiquette de retour",
             "buy_label_confirm": "Acheter une étiquette de retour prépayée ? Votre compte transporteur est débité dès son émission.",
             "confirm": {
-              "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé."
+              "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé.",
+              "cancel_confirm": "Annuler le retour",
+              "cancel_dismiss": "Conserver le retour"
             },
             "create_title": "Nouveau retour",
             "empty": "Aucun retour pour cette commande.",

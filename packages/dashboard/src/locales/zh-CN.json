@@ -2713,6 +2713,8 @@
         "confirm": {
           "approve_message": "批准此订单吗？",
           "cancel_message": "确定要取消此订单吗？",
+          "cancel_shipment_confirm": "取消履约单",
+          "cancel_shipment_dismiss": "保留履约单",
           "cancel_shipment_message": "取消此履约单吗？",
           "capture_message": "捕获此付款吗？",
           "complete_message": "现在完成此草稿订单吗？",
@@ -3178,6 +3180,8 @@
               "resolve_replacement": "以换货解决"
             },
             "confirm": {
+              "cancel_confirm": "取消索赔",
+              "cancel_dismiss": "保留索赔",
               "deny": "拒绝此索赔？客户将不会收到退款或补发商品。"
             },
             "create_title": "新建索赔",
@@ -3205,6 +3209,10 @@
               "create": "新建换货",
               "fulfill": "寄出替换商品"
             },
+            "confirm": {
+              "cancel_confirm": "取消换货",
+              "cancel_dismiss": "保留换货"
+            },
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
             "price_difference": "差价",
@@ -3221,7 +3229,9 @@
             "buy_label": "购买退货面单",
             "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
             "confirm": {
-              "cancel": "取消此退货？不会恢复库存，也不会退款。"
+              "cancel": "取消此退货？不会恢复库存，也不会退款。",
+              "cancel_confirm": "取消退货",
+              "cancel_dismiss": "保留退货"
             },
             "create_title": "新建退货",
             "empty": "此订单暂无退货。",

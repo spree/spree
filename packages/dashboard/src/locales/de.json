@@ -2720,6 +2720,8 @@
         "confirm": {
           "approve_message": "Diesen Auftrag genehmigen?",
           "cancel_message": "Möchten Sie diesen Auftrag wirklich stornieren?",
+          "cancel_shipment_confirm": "Lieferung stornieren",
+          "cancel_shipment_dismiss": "Lieferung behalten",
           "cancel_shipment_message": "Diese Lieferung stornieren?",
           "capture_message": "Diese Zahlung einziehen?",
           "complete_message": "Diesen Auftragsentwurf jetzt abschließen?",
@@ -3186,6 +3188,8 @@
               "resolve_replacement": "Mit Ersatz lösen"
             },
             "confirm": {
+              "cancel_confirm": "Reklamation stornieren",
+              "cancel_dismiss": "Reklamation behalten",
               "deny": "Diese Reklamation ablehnen? Die Kundin oder der Kunde erhält weder eine Rückerstattung noch Ersatz."
             },
             "create_title": "Neue Reklamation",
@@ -3213,6 +3217,10 @@
               "create": "Neuer Umtausch",
               "fulfill": "Ersatz versenden"
             },
+            "confirm": {
+              "cancel_confirm": "Umtausch stornieren",
+              "cancel_dismiss": "Umtausch behalten"
+            },
             "create_title": "Neuer Umtausch",
             "empty": "Kein Umtausch für diese Bestellung.",
             "price_difference": "Preisdifferenz",
@@ -3229,7 +3237,9 @@
             "buy_label": "Rücksendeetikett kaufen",
             "buy_label_confirm": "Ein vorfrankiertes Rücksendeetikett kaufen? Ihr Konto wird belastet, sobald das Etikett ausgestellt ist.",
             "confirm": {
-              "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
+              "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt.",
+              "cancel_confirm": "Retoure stornieren",
+              "cancel_dismiss": "Retoure behalten"
             },
             "create_title": "Neue Retoure",
             "empty": "Keine Retouren für diese Bestellung.",
