@@ -1465,8 +1465,8 @@ export interface StockLevelUpdateParams {
   /**
    * A signed change to the shelf instead of a target count — "three more",
    * "two fewer" — applied by the API to the count it holds at that moment.
-   * Recorded as an `adjusted` movement the same way. Cannot be sent together
-   * with `count_on_hand`.
+   * Recorded as an `adjusted` movement the same way. Must be a whole number;
+   * a fraction is refused. Cannot be sent together with `count_on_hand`.
    */
   adjustment?: number
   /** Whether this location sells the variant beyond what it holds. */

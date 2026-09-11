@@ -42,6 +42,11 @@ module Spree
       end
 
       # Nothing named means the whole outstanding balance arrived intact.
+      #
+      # Sorted by variant once, here, because every later step walks this list
+      # while holding the document's transaction open and each stock-level
+      # write keeps its row lock to the end of it. Two deliveries naming the
+      # same variants in opposite order would otherwise wait on each other.
       def normalize_items
         @normalized_items =
           if items.nil?
@@ -52,6 +57,7 @@ module Spree
             reject_repeated_lines
             Array(items).filter_map { |item| normalize_item(item) }
           end
+        @normalized_items = @normalized_items.sort_by { |entry| entry[:line].variant_id }
 
         return if @normalized_items.any?
 

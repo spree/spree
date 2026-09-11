@@ -46,19 +46,32 @@ module Spree
           # stock history beside every other change — see
           # {Spree::StockLevels::Correct}. The rest of the payload updates
           # normally.
+          #
+          # Both halves share one transaction: a refused correction — a
+          # non-integer count, or a count and an adjustment together — must
+          # not leave the backorder flag or the metadata from the same request
+          # committed behind a 422.
           def update
             attributes = permitted_params.to_h
             correction = attributes.extract!('count_on_hand', 'adjustment', 'reason')
+            result = nil
 
-            @resource.update!(attributes) if attributes.any?
+            model_class.transaction do
+              @resource.update!(attributes) if attributes.any?
 
-            result = Spree.stock_level_correct_service.call(
-              stock_level: @resource,
-              count_on_hand: correction['count_on_hand'],
-              adjustment: correction['adjustment'],
-              reason: correction['reason']
-            )
-            return render_validation_error(result.error.to_s) if result.failure?
+              result = Spree.stock_level_correct_service.call(
+                stock_level: @resource,
+                count_on_hand: correction['count_on_hand'],
+                adjustment: correction['adjustment'],
+                reason: correction['reason']
+              )
+              raise ActiveRecord::Rollback if result.failure?
+            end
+
+            if result.failure?
+              @resource.reload
+              return render_validation_error(result.error.to_s)
+            end
 
             render json: serialize_resource(result.value)
           rescue ActiveRecord::RecordInvalid => e

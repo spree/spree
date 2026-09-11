@@ -26,9 +26,15 @@ module Spree
       # between changes what is still awaited. The destination level is
       # created when the warehouse has never held the SKU: a merchant who has
       # ordered twenty of something new should see them on their way.
+      #
+      # Worked in variant order, not document order: these writes hold their
+      # row locks until the surrounding transaction ends, so two documents
+      # listing the same two variants the other way round would each wait on
+      # the row the other holds. Every path that touches several levels in one
+      # transaction takes them in this order.
       def move_incoming(receivable, sign)
         destination = receivable.destination_location
-        lines = receivable.items.includes(:variant).to_a
+        lines = receivable.items.includes(:variant).sort_by(&:variant_id)
         levels = destination.stock_levels.where(variant_id: lines.map(&:variant_id)).index_by(&:variant_id)
 
         lines.each do |item|

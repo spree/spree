@@ -140,7 +140,15 @@ function OnHandEditor({ level, onSaved }: { level: StockLevel; onSaved: () => vo
       <Select
         items={modeOptions}
         value={mode}
-        onValueChange={(value) => setMode(value as QuickEditMode)}
+        onValueChange={(value) => {
+          // The amount means something different in each mode — a target
+          // count against the shelf, or a difference from it. Carrying the
+          // on-hand figure into "adjust" would double the level for anyone
+          // who switched mode and confirmed without retyping.
+          const next = value as QuickEditMode
+          setMode(next)
+          setAmount(next === 'set' ? String(level.count_on_hand) : '0')
+        }}
       >
         <SelectTrigger className="w-32" aria-label={t('admin.stock_levels.quick_edit.mode_aria')}>
           <SelectValue />

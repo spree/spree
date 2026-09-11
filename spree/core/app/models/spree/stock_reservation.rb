@@ -17,6 +17,7 @@ module Spree
 
     validates :quantity, :expires_at, presence: true
     validate :exactly_one_owner
+    validate :stock_level_unchanged, on: :update
     validates :quantity, numericality: { greater_than: 0, only_integer: true }, presence: true
     validates :line_item_id, uniqueness: { scope: :stock_level_id }, presence: true
 
@@ -127,6 +128,14 @@ module Spree
 
     def exactly_one_owner
       errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+    end
+
+    # Only a quantity change moves units between counters, so re-pointing a
+    # hold at another level would leave its units counted on the old one and
+    # missing from the new. A hold that belongs elsewhere is released and
+    # taken again, never moved.
+    def stock_level_unchanged
+      errors.add(:stock_level_id, :immutable, message: Spree.t('errors.messages.stock_level_immutable')) if stock_level_id_changed?
     end
   end
 end

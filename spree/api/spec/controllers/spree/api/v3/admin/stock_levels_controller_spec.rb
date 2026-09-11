@@ -163,6 +163,17 @@ RSpec.describe Spree::Api::V3::Admin::StockLevelsController, type: :controller d
       expect(stock_level.stock_movements.adjusted).to be_empty
     end
 
+    # One request, one outcome: a 422 must not leave half of it written.
+    it 'leaves the rest of the payload unwritten when the correction is refused' do
+      stock_level.update!(backorderable: false)
+
+      expect {
+        patch :update, params: { id: stock_level.prefixed_id, backorderable: true, count_on_hand: 'invalid' }, as: :json
+      }.not_to change { stock_level.reload.backorderable }.from(false)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'stores an integration\'s own wording as sent' do
       patch :update, params: { id: stock_level.prefixed_id, count_on_hand: 42, reason: 'Damaged in transit' }, as: :json
 
