@@ -9,6 +9,13 @@ import { ensureTimestampColumns } from './timestamp-columns'
 interface ColumnDefBase<T = any> {
   key: string
   label: string
+  /**
+   * One sentence explaining what the column means, shown from an info icon
+   * beside the header. For a figure whose name is not self-evident — what
+   * counts as "available", which units are "reserved" — where the alternative
+   * is a merchant guessing. Leave it off a column that explains itself.
+   */
+  labelHint?: string
   sortable?: boolean
   filterable?: boolean
   default?: boolean

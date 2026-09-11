@@ -8,12 +8,12 @@ The Inventory page answers the question every merchant asks first: what do I hav
 | Column | What it means |
 |---|---|
 | **On hand** | Units physically on the shelf at that location |
-| **Committed** | Units promised to orders that have been placed but not yet shipped |
+| **On orders** | Units promised to orders that have been placed but not yet shipped |
 | **Reserved** | Units held by customers who are in checkout right now |
-| **Available** | On hand minus committed minus reserved: what a new customer can still buy |
+| **Available** | On hand minus units on orders minus reserved: what a new customer can still buy |
 | **Incoming** | Units on their way to this location, on a purchase order placed with a supplier or a transfer already in transit |
 
-<Note>Placing an order does not lower **On hand**. The units stay on the shelf, counted under **Committed**, until the parcel actually ships. A warehouse worker counting boxes should always find the number Spree shows.</Note>
+<Note>Placing an order does not lower **On hand**. The units stay on the shelf, counted under **On orders**, until the parcel actually ships. A warehouse worker counting boxes should always find the number Spree shows.</Note>
 
 ## Finding a product
 

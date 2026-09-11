@@ -79,7 +79,8 @@ defineTable<StockLevel>('stock-levels', {
     },
     {
       key: 'allocated_count',
-      label: i18n.t('admin.stock_levels.columns.committed'),
+      label: i18n.t('admin.stock_levels.columns.on_orders'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.on_orders'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
@@ -88,6 +89,7 @@ defineTable<StockLevel>('stock-levels', {
     {
       key: 'reserved_count',
       label: i18n.t('admin.stock_levels.columns.reserved'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.reserved'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
@@ -96,6 +98,7 @@ defineTable<StockLevel>('stock-levels', {
     {
       key: 'available',
       label: i18n.t('admin.stock_levels.columns.available'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.available'),
       default: true,
       className: 'text-right tabular-nums',
       // On hand minus committed minus reserved, computed by the API so the
@@ -106,6 +109,7 @@ defineTable<StockLevel>('stock-levels', {
     {
       key: 'count_on_hand',
       label: i18n.t('admin.stock_levels.columns.on_hand'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.on_hand'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',
@@ -114,6 +118,7 @@ defineTable<StockLevel>('stock-levels', {
     {
       key: 'incoming_count',
       label: i18n.t('admin.stock_levels.columns.incoming'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.incoming'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',

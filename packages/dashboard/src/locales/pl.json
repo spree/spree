@@ -5044,12 +5044,19 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "available": "Ile nowy klient może jeszcze kupić: na stanie, minus w zamówieniach, minus wstrzymane.",
+        "incoming": "Jednostki w drodze: na zamówieniu zakupu u dostawcy lub w trwającym transferze.",
+        "on_hand": "Jednostki fizycznie obecne w tej lokalizacji. Kliknij, aby poprawić stan.",
+        "on_orders": "Jednostki przypisane do złożonych zamówień, które jeszcze nie zostały wysłane. Nadal są na półce.",
+        "reserved": "Jednostki wstrzymane przez klientów będących obecnie w trakcie płatności."
+      },
       "columns": {
         "available": "Dostępne",
-        "committed": "Zarezerwowane",
         "incoming": "W drodze",
         "location": "Lokalizacja",
         "on_hand": "Na stanie",
+        "on_orders": "W zamówieniach",
         "product": "Produkt",
         "reserved": "Wstrzymane",
         "sku": "SKU",
@@ -5297,7 +5304,7 @@
       "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło.",
       "purchase_orders": "Towar zamówiony u dostawców i to, co już dotarło",
       "suppliers": "Twoja książka adresowa dostawców",
-      "stock_levels": "Co masz w każdej lokalizacji: na stanie, zarezerwowane dla zamówień, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze."
+      "stock_levels": "Co masz w każdej lokalizacji: na stanie, w zamówieniach, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",

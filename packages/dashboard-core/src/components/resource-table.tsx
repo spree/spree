@@ -37,8 +37,12 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   useIsMobile,
 } from '@spree/dashboard-ui'
+import { InfoIcon } from '@spree/dashboard-ui/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -79,6 +83,39 @@ const filterSchema = z.object({
   operator: z.string(),
   value: z.string(),
 })
+
+/**
+ * A column header, with its explanation behind an info icon when it has one.
+ *
+ * Figures whose meaning is a definition rather than a word — available,
+ * reserved, incoming — need somewhere to say what they count. A tooltip keeps
+ * that out of the header row until it is asked for.
+ */
+function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boolean }) {
+  if (!column.labelHint || hideHint) return column.label
+
+  return (
+    <span className="inline-flex items-center gap-1">
+      {column.label}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* Focusable and named, so the explanation opens on focus as well as
+              hover and reaches a screen reader the same way. */}
+          <button
+            type="button"
+            className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            aria-label={column.labelHint}
+          >
+            <InfoIcon className="size-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs font-normal normal-case">
+          {column.labelHint}
+        </TooltipContent>
+      </Tooltip>
+    </span>
+  )
+}
 
 export const resourceSearchSchema = z.object({
   page: z.coerce.number().optional().default(1),
@@ -540,7 +577,7 @@ export function ResourceTable<T extends Record<string, any>>({
                     <TableHead className="w-8" />
                     {headerColumns.map((col) => (
                       <TableHead key={col.key} className={col.headerClassName}>
-                        {col.label}
+                        <ColumnLabel column={col} />
                       </TableHead>
                     ))}
                     {rowActionsEnabled && (
@@ -687,7 +724,10 @@ export function ResourceTable<T extends Record<string, any>>({
                         bulkActive && !isMobile && 'text-transparent select-none',
                       )}
                     >
-                      {col.label}
+                      {/* The hint hides with the label: an info icon floating
+                          over the bulk-actions band would be the only thing
+                          left in the row. */}
+                      <ColumnLabel column={col} hideHint={bulkActive && !isMobile} />
                     </TableHead>
                   ))}
                   {rowActionsEnabled && (

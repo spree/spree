@@ -95,6 +95,14 @@ const statusToneMap: Record<string, StatusTone> = {
   expired: 'destructive',
   ready: 'warning',
   available: 'success',
+  // Stock states, as the Inventory page's filter names them: sellable is
+  // good, nothing to sell is the problem, and the two middle states are units
+  // that exist but cannot be sold today — held by a checkout, or still on the
+  // road.
+  in_stock: 'success',
+  out_of_stock: 'destructive',
+  with_reserved: 'warning',
+  with_incoming: 'info',
   draft: 'neutral',
   pending: 'warning',
   processing: 'warning',

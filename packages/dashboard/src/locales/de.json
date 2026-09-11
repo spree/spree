@@ -4986,12 +4986,19 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "available": "Was ein neuer Kunde noch kaufen kann: vorrätig, abzüglich zugesagter und reservierter Einheiten.",
+        "incoming": "Einheiten auf dem Weg hierher, über eine Lieferantenbestellung oder einen laufenden Transfer.",
+        "on_hand": "Einheiten, die an diesem Lagerort physisch vorhanden sind. Zum Korrigieren anklicken.",
+        "on_orders": "Einheiten, die bereits aufgegebenen Bestellungen zugesagt sind und noch nicht versandt wurden. Sie liegen weiterhin im Lager.",
+        "reserved": "Einheiten, die von Kunden im laufenden Checkout gehalten werden."
+      },
       "columns": {
         "available": "Verfügbar",
-        "committed": "Zugesagt",
         "incoming": "Eingehend",
         "location": "Lagerort",
         "on_hand": "Vorrätig",
+        "on_orders": "In Bestellungen",
         "product": "Produkt",
         "reserved": "Reserviert",
         "sku": "SKU",
@@ -5237,7 +5244,7 @@
       "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist.",
       "purchase_orders": "Ware, die Sie bei Lieferanten bestellt haben, und was eingetroffen ist",
       "suppliers": "Ihr Lieferanten-Adressbuch",
-      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, für Bestellungen reserviert, durch Kassen gehalten, verkäuflich und unterwegs."
+      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, in Bestellungen, durch Kassen gehalten, verkäuflich und unterwegs."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

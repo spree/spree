@@ -117,6 +117,23 @@ test.describe('inventory', () => {
     await expect(destinationRow).toBeHidden({ timeout: 15_000 })
   })
 
+  // The five figures are definitions, not words: a merchant who cannot tell
+  // reserved from on orders is the reason the hints exist.
+  test('explains what each figure counts', async ({ page }) => {
+    const creds = await login(page)
+
+    await page.goto(INVENTORY_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: /^inventory$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('button', { name: /units held by customers who are in checkout/i }).hover()
+
+    await expect(
+      page.getByText(/units held by customers who are in checkout right now/i).last(),
+    ).toBeVisible({ timeout: 15_000 })
+  })
+
   test('corrects the on-hand count in place', async ({ page }) => {
     const creds = await login(page)
 
