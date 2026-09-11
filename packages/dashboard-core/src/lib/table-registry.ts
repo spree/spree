@@ -73,6 +73,14 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
   getOptionLabel: (option: R) => string
   placeholder?: string
   emptyText?: string
+  /**
+   * Fetches the whole list, for a resource small enough to show in full —
+   * a store's warehouses, its channels. The control then opens as a plain
+   * list of options instead of an empty box waiting to be typed into, and
+   * still searches once the operator types. Leave it off for anything that
+   * could run to hundreds of rows.
+   */
+  listAll?: () => Promise<{ data: R[] }>
 }
 
 /**

@@ -108,10 +108,12 @@ test.describe('inventory', () => {
     await expect(statusFilter).toContainText('1/4')
     await expect(destinationRow).toBeVisible({ timeout: 15_000 })
 
-    // The location picker narrows to the warehouse that holds none of it.
+    // The location filter lists every warehouse rather than asking the
+    // operator to type one; narrow it to the one holding none of this SKU.
     await page.getByRole('button', { name: /^location/i }).click()
-    await page.getByPlaceholder(/search locations/i).fill(FIXTURE_TRANSFER_SOURCE)
-    await page.getByRole('option', { name: FIXTURE_TRANSFER_SOURCE }).click()
+    for (const name of [FIXTURE_TRANSFER_DESTINATION, 'Shop location']) {
+      await page.getByRole('menuitemcheckbox', { name }).click()
+    }
     await page.keyboard.press('Escape')
 
     await expect(destinationRow).toBeHidden({ timeout: 15_000 })

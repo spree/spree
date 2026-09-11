@@ -54,7 +54,6 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
-import { ResourceMultiAutocomplete } from './resource-multi-autocomplete'
 import { SectionHeading } from './section-heading'
 import { StoreDatePicker } from './store-date-picker'
 
@@ -213,7 +212,7 @@ export function TableToolbar({
           (c.filterType === 'enum' ||
             c.filterType === 'boolean' ||
             c.filterType === 'date' ||
-            (c.filterType === 'resource' && !!c.filterResource)),
+            (c.filterType === 'resource' && !!c.filterResource?.listAll)),
       ),
     [filterableColumns],
   )
@@ -763,10 +762,13 @@ function QuickEnumFilter({
  * Picks records for one `resource` column — a warehouse, a supplier — without
  * opening the filter panel.
  *
- * The panel's own picker is a full autocomplete inside a form; this is the
- * same picker behind a button that states the current selection, so the
- * filters an operator reaches for constantly cost one click. Like the enum
- * control it applies on change: a single pick is cheap to undo.
+ * Where the config can list the resource whole (`listAll`), this is the same
+ * checkbox menu the enum quick filter uses: for a store's four warehouses, a
+ * list to tick is faster than a box to type into, and it matches the control
+ * next to it. Without `listAll` the column stays in the filter panel, where
+ * the search-driven picker belongs.
+ *
+ * Like the enum control it applies on change: a single pick is cheap to undo.
  */
 function QuickResourceFilter({
   column,
@@ -780,18 +782,32 @@ function QuickResourceFilter({
   onFiltersChange: (filters: FilterRule[]) => void
 }) {
   const { t } = useTranslation()
+  const tenantId = useTenantId()
   const existing = filters.find((f) => f.field === column.key && f.operator === 'in')
   const existingValue = existing?.value
   const selected = useMemo(
     () => (existingValue ? parseFilterIds(existingValue) : []),
     [existingValue],
   )
-  const [labels, setLabels] = useState<Record<string, string>>({})
+
+  const { data } = useQuery({
+    queryKey: ['quick-filter-all', config.queryKey, tenantId],
+    queryFn: () => config.listAll?.() ?? Promise.resolve({ data: [] }),
+    enabled: !!config.listAll,
+    staleTime: 60_000,
+  })
+  const options = useMemo(
+    () =>
+      (data?.data ?? []).map((item) => ({ value: item.id, label: config.getOptionLabel(item) })),
+    [data, config.getOptionLabel],
+  )
 
   const apply = useCallback(
     (values: string[]) => {
       const others = filters.filter((f) => !(f.field === column.key && f.operator === 'in'))
-      if (values.length === 0) {
+      // Everything selected is the same as no constraint, so drop the rule
+      // rather than listing every id in the URL.
+      if (values.length === 0 || values.length === options.length) {
         onFiltersChange(others)
         return
       }
@@ -805,47 +821,41 @@ function QuickResourceFilter({
         },
       ])
     },
-    [filters, column.key, existing?.id, onFiltersChange],
+    [filters, column.key, options.length, existing?.id, onFiltersChange],
   )
 
-  // One pick reads as its name; several read as a count, because a row of
-  // warehouse names would push every other control off the toolbar.
+  // No rule means no constraint, which is every option — not none.
+  const active = selected.length > 0 ? selected : options.map((o) => o.value)
   const summary =
     selected.length === 0
       ? t('admin.common.all')
       : selected.length === 1
-        ? (labels[selected[0]] ?? '1')
-        : String(selected.length)
+        ? (options.find((o) => o.value === selected[0])?.label ?? '1')
+        : `${selected.length}/${options.length}`
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
           <span className="text-muted-foreground">{column.label}</span>
           <span className="max-w-40 truncate">{summary}</span>
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-72 p-2">
-        <ResourceMultiAutocomplete
-          queryKey={`quick-${config.queryKey}`}
-          value={selected}
-          onChange={apply}
-          onResolvedOptionsChange={(options) =>
-            setLabels(
-              Object.fromEntries(
-                options.map((option) => [option.id, config.getOptionLabel(option)]),
-              ),
-            )
-          }
-          search={config.search}
-          hydrate={config.hydrate}
-          getOptionLabel={config.getOptionLabel}
-          placeholder={config.placeholder}
-          emptyText={config.emptyText}
-        />
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="min-w-52">
+        {options.map((option) => (
+          <DropdownMenuCheckboxItem
+            key={option.value}
+            checked={active.includes(option.value)}
+            onCheckedChange={(checked) =>
+              apply(checked ? [...active, option.value] : active.filter((v) => v !== option.value))
+            }
+          >
+            {option.label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
