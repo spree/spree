@@ -4978,18 +4978,18 @@
     },
     "stock_levels": {
       "column_hints": {
-        "available": "新顾客还能买到的数量：现有减去订单占用再减去预留。",
+        "allocated": "已被下单但尚未发货占用的数量，仍在货架上。",
+        "available": "新顾客还能买到的数量：现有减去已分配再减去预留。",
         "incoming": "正在运往此地的数量：供应商采购单或运输中的调拨。",
         "on_hand": "该地点实际在库的数量。点击可更正。",
-        "on_orders": "已被下单但尚未发货占用的数量，仍在货架上。",
         "reserved": "正在结账的顾客暂时占用的数量。"
       },
       "columns": {
+        "allocated": "已分配",
         "available": "可售",
         "incoming": "在途",
         "location": "地点",
         "on_hand": "现有",
-        "on_orders": "订单占用",
         "product": "商品",
         "reserved": "已预留",
         "sku": "SKU",
@@ -5234,7 +5234,7 @@
       "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。",
       "purchase_orders": "已向供应商订购的库存，以及已到货的部分",
       "suppliers": "你的供应商通讯簿",
-      "stock_levels": "各地点的库存情况：现有、订单占用、结账中暂扣、可售以及在途。"
+      "stock_levels": "各地点的库存情况：现有、已分配给订单、结账中暂扣、可售以及在途。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",

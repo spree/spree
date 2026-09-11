@@ -4987,18 +4987,18 @@
     },
     "stock_levels": {
       "column_hints": {
-        "available": "Ce qu'un nouveau client peut encore acheter : en stock, moins les unités sur commandes, moins les réservées.",
+        "allocated": "Unités promises à des commandes déjà passées mais pas encore expédiées. Elles sont toujours en rayon.",
+        "available": "Ce qu'un nouveau client peut encore acheter : en stock, moins alloué, moins réservé.",
         "incoming": "Unités en route, sur un bon de commande fournisseur ou un transfert en cours.",
         "on_hand": "Unités physiquement présentes à cet emplacement. Cliquez pour corriger le compte.",
-        "on_orders": "Unités promises à des commandes déjà passées mais pas encore expédiées. Elles sont toujours en rayon.",
         "reserved": "Unités retenues par des clients actuellement en cours de paiement."
       },
       "columns": {
+        "allocated": "Alloué",
         "available": "Disponible",
         "incoming": "En route",
         "location": "Emplacement",
         "on_hand": "En stock",
-        "on_orders": "Sur commandes",
         "product": "Produit",
         "reserved": "Réservé",
         "sku": "SKU",
@@ -5244,7 +5244,7 @@
       "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé.",
       "purchase_orders": "Le stock commandé à vos fournisseurs, et ce qui est arrivé",
       "suppliers": "Votre carnet d'adresses fournisseurs",
-      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, sur commandes, retenu par des paiements en cours, disponible à la vente et en route."
+      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, alloué à des commandes, retenu par des paiements en cours, disponible à la vente et en route."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",

@@ -79,8 +79,8 @@ defineTable<StockLevel>('stock-levels', {
     },
     {
       key: 'allocated_count',
-      label: i18n.t('admin.stock_levels.columns.on_orders'),
-      labelHint: i18n.t('admin.stock_levels.column_hints.on_orders'),
+      label: i18n.t('admin.stock_levels.columns.allocated'),
+      labelHint: i18n.t('admin.stock_levels.column_hints.allocated'),
       sortable: true,
       default: true,
       className: 'text-right tabular-nums',

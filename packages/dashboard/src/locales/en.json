@@ -4987,18 +4987,18 @@
     },
     "stock_levels": {
       "column_hints": {
-        "available": "What a new customer can still buy: on hand, minus units on orders, minus reserved.",
+        "allocated": "Units promised to orders that have been placed but not yet shipped. They are still on the shelf.",
+        "available": "What a new customer can still buy: on hand, minus allocated, minus reserved.",
         "incoming": "Units on their way here on a purchase order placed with a supplier, or a transfer in transit.",
         "on_hand": "Units physically on the shelf at this location. Click to correct the count.",
-        "on_orders": "Units promised to orders that have been placed but not yet shipped. They are still on the shelf.",
         "reserved": "Units held by customers who are in checkout right now."
       },
       "columns": {
+        "allocated": "Allocated",
         "available": "Available",
         "incoming": "Incoming",
         "location": "Location",
         "on_hand": "On hand",
-        "on_orders": "On orders",
         "product": "Product",
         "reserved": "Reserved",
         "sku": "SKU",
@@ -5244,7 +5244,7 @@
       "stock_transfers": "Stock moving between your locations, and what has arrived.",
       "purchase_orders": "Stock you have ordered from suppliers, and what has arrived",
       "suppliers": "Your supplier address book",
-      "stock_levels": "What you have at each location: on hand, on orders, held by checkouts, available to sell, and on its way."
+      "stock_levels": "What you have at each location: on hand, allocated to orders, held by checkouts, available to sell, and on its way."
     },
     "tax_categories": {
       "add_cta": "Add tax category",

@@ -292,7 +292,7 @@ await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the 
 
 ## The Inventory page
 
-The dashboard's Inventory section opens on a list with one row per variant per location: on hand, committed (`allocated_count`), reserved, available and incoming, with the location as a filter and SKU or product name as the search. Every figure on it is a column read off the stock level.
+The dashboard's Inventory section opens on a list with one row per variant per location: on hand, allocated, reserved, available and incoming — the page uses the column names, with the location as a filter and SKU or product name as the search. Every figure on it is a column read off the stock level.
 
 The on-hand figure is corrected in place — set it to a count, or adjust it by a delta, and say why — and the change lands in the stock history like any other adjustment. The incoming figure links to the two ways of making it grow: a transfer from another warehouse, or a purchase order from a supplier.
 
