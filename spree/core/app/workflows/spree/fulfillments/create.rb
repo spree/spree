@@ -134,13 +134,17 @@ module Spree
       # Moved here from the old updater completed-order branch: pending/ready
       # fulfillments re-price from backoffice-visible delivery methods;
       # fulfilled ones keep their frozen cost.
+      #
+      # A caller that priced this parcel itself is honoured rather than
+      # re-quoted.
       def reprice_pending_fulfillments(order)
-        order.fulfillments.each do |fulfillment|
-          next unless fulfillment.persisted?
-          next if fulfillment.fulfilled?
+        order.fulfillments.each do |candidate|
+          next unless candidate.persisted?
+          next if candidate.fulfilled?
+          next if @requested_cost && candidate.id == fulfillment.id
 
-          fulfillment.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
-          fulfillment.update_amounts
+          candidate.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
+          candidate.update_amounts
         end
       end
 

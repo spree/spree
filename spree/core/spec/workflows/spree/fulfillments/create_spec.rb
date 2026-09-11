@@ -217,6 +217,36 @@ module Spree
         expect(fulfillment.cost).to eq(original_cost)
       end
 
+      # The specs above register the parcel as shipped, which freezes its cost.
+      # A pending one goes through the rate machinery, and the caller's price
+      # has to survive that — otherwise stating a cost does nothing.
+      context 'on a pending fulfillment' do
+        let(:params) do
+          { order: order, stock_location: stock_location, cost: '7.42' }
+        end
+
+        it 'keeps the given cost instead of re-quoting the carrier' do
+          expect(execute.success?).to eq(true)
+          expect(fulfillment.reload.cost).to eq(BigDecimal('7.42'))
+        end
+
+        # What a split shipping part of an order passes: delivery was bought
+        # once at checkout, so the second parcel carries nothing.
+        it 'keeps a zero cost, so a split parcel is free' do
+          params[:cost] = 0
+
+          expect(execute.success?).to eq(true)
+          expect(fulfillment.reload.cost).to eq(0)
+        end
+
+        it 'still prices a parcel the caller did not price' do
+          params.delete(:cost)
+
+          expect(execute.success?).to eq(true)
+          expect(fulfillment.reload.cost).to eq(fulfillment.selected_shipping_rate.cost)
+        end
+      end
+
       it 'rejects a negative cost' do
         params[:cost] = -5
 

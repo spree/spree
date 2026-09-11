@@ -244,7 +244,10 @@ module Spree
           order: @source.order,
           stock_location: @source.stock_location,
           items: @requested,
-          delivery_method: @source.delivery_method
+          delivery_method: @source.delivery_method,
+          # Delivery was bought once, at checkout. Charging the rate again
+          # would bill the customer for the warehouse's decision.
+          cost: 0
         )
 
         failure(@source, result.error) unless result.success?
