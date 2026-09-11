@@ -68,6 +68,23 @@ module Spree
         expect(source.fulfillment_items.sum(:quantity)).to eq(3)
       end
 
+      # A second parcel charged the method's rate again, which also dropped
+      # the order to partially_paid.
+      it 'ships the split parcel without charging delivery again' do
+        partial_order.recalculate_totals!
+        before_delivery = partial_order.reload.delivery_total
+
+        execute
+
+        expect(partial_order.reload.delivery_total).not_to be > before_delivery
+      end
+
+      it 'gives the new parcel no delivery cost of its own' do
+        shipped = execute.value
+
+        expect(shipped.cost).to eq(0)
+      end
+
       it 'reports the order as partially fulfilled' do
         execute
         expect(partial_order.reload.fulfillment_status).to eq('partial')
