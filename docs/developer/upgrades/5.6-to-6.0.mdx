@@ -134,6 +134,23 @@ bundle exec rake spree:backfill_order_markets
 
 Orders missing a market get the store default — `market` is required on carts and orders in 6.0.
 
+### Variant statuses
+
+```bash
+bundle exec rake spree:upgrade:backfill_variant_statuses
+```
+
+Variants have their own status in 6.0, so a marketplace seller's offer on a
+shared product can be submitted, reviewed and sent back. Every variant that
+existed before the upgrade was on sale, so this sets them all to `active`.
+
+<Warning>
+Run this before serving traffic on the new code. `active` now gates
+availability, and a variant whose status is still empty reads as unavailable —
+which would take your entire catalog off sale at once: nothing purchasable, no
+buy box, and products dropping out of filters and search.
+</Warning>
+
 ## The Cart/Order split
 
 The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:

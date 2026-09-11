@@ -341,7 +341,77 @@
     "delivery_methods": "Delivery methods",
     "package_types": "Package types",
     "earnings": "Earnings",
-    "payouts": "Payouts"
+    "payouts": "Payouts",
+    "offers": "Offers"
+  },
+  "offers": {
+    "add": "List an offer",
+    "archive": "Archive",
+    "restore": "Restore",
+    "archive_confirm_description": "This offer comes off sale. You can restore it to a draft later.",
+    "archive_confirm_title": "Archive this offer?",
+    "bulk": {
+      "submit_confirm_description": "The marketplace will review each of these offers before it goes on sale.",
+      "submit_confirm_title": "Submit these offers for review?",
+      "submit_failed": "Could not submit these offers",
+      "submitted": "{{count}} offer submitted for review",
+      "submitted_plural": "{{count}} offers submitted for review"
+    },
+    "columns": {
+      "options": "Variation",
+      "price": "Your price",
+      "product": "Product",
+      "sku": "SKU",
+      "status": "Status",
+      "stock": "In stock"
+    },
+    "delivery_help": "Leave this blank to ship the way the marketplace ships this product.",
+    "delivery_title": "Delivery",
+    "description": "Sell the same product the marketplace already lists. You set your own price, stock and condition, and the marketplace reviews each offer before it goes on sale.",
+    "details_title": "Offer details",
+    "empty": "You have no offers yet. Find a product the marketplace sells and list yours against it.",
+    "fields": {
+      "delivery_profile": "Delivery profile",
+      "status": "Status"
+    },
+    "marketplace_price": "Marketplace price: {{price}}",
+    "new": "List an offer",
+    "new_title": "New offer",
+    "not_found": "This offer no longer exists.",
+    "options_title": "Which version you sell",
+    "pick_a_product_first": "Choose a product to list your offer against first.",
+    "picker": {
+      "confirm": "List an offer",
+      "description": "Search the products this marketplace has opened to sellers.",
+      "search_placeholder": "Search by product name",
+      "title": "Which product do you sell?"
+    },
+    "pricing_title": "Your price",
+    "product_title": "Marketplace listing",
+    "rejection_reason": "The marketplace sent this back: {{reason}}",
+    "saved": "Offer saved",
+    "search_placeholder": "Search by SKU",
+    "status_help": {
+      "active": "This offer is on sale.",
+      "archived": "This offer has been taken off sale for good.",
+      "draft": "Only you can see this. Submit it when you are ready for the marketplace to review it.",
+      "proposed": "The marketplace is reviewing this offer.",
+      "rejected": "The marketplace sent this back. Make the changes it asked for and submit it again."
+    },
+    "status_updated": "Offer updated",
+    "statuses": {
+      "active": "On sale",
+      "archived": "Archived",
+      "draft": "Draft",
+      "proposed": "In review",
+      "rejected": "Needs changes"
+    },
+    "stock_title": "What you have in stock",
+    "submit_for_review": "Submit for review",
+    "take_down": "Take down",
+    "take_down_confirm_description": "This offer will stop being on sale until you submit it again.",
+    "take_down_confirm_title": "Take this offer down?",
+    "title": "Offers"
   },
   "onboarding": {
     "accept_terms": "Accept the terms",
@@ -544,6 +614,7 @@
       "total": "Total"
     },
     "title": "Orders",
+    "description": "What customers have bought from you, and the parcels you owe them.",
     "tracking_label": "Tracking number"
   },
   "payouts": {
@@ -697,6 +768,7 @@
     "take_down_confirm_description": "Shoppers will no longer see it. You can submit it again later.",
     "take_down_confirm_title": "Take this listing down?",
     "title": "Products",
+    "description": "Products you list yourself. The marketplace reviews each one before it goes on sale.",
     "uploading": "Uploading {{count}} file…",
     "uploading_plural": "Uploading {{count}} files…",
     "variant_remove_confirm_description": "It comes off the product when you save.",

@@ -8,7 +8,6 @@ import {
   ExportButton,
   ImportButton,
   ImportWizardDialog,
-  PageHeader,
   ResourceTable,
   Subject,
 } from '@spree/dashboard-core'
@@ -148,8 +147,6 @@ export function ProductsPage({ search }: { search: ResourceSearch & { import?: s
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={t('products.title')} />
-
       <ResourceTable<Product>
         tableKey="seller-products"
         queryKey="seller-products"

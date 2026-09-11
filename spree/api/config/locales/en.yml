@@ -9,6 +9,11 @@ en:
       invalid_resource: Invalid resource. Please fix errors and try again.
       invalid_taxonomy_id: Invalid taxonomy id.
       must_specify_api_key: You must specify an API key.
+      offers:
+        duplicate_offer: You already sell this product in this combination. Edit that offer instead of listing a second one.
+        missing_option_value: Choose a %{option_type} for this offer.
+        unknown_option_type: This product is not sold by %{option_type}.
+        unknown_option_value: "%{value} is not one of the %{option_type} options this product is sold in."
       errors:
         automatic_collection_curation: Products of an automatic collection are managed by its rules and can't be curated manually
         channel_inactive: The channel this API key is bound to is not active.

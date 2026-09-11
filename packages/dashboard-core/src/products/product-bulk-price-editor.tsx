@@ -1,4 +1,8 @@
-import type { ProductFormValues, VariantPriceFormValues } from '@spree/dashboard-core'
+import type {
+  VariantFormValues,
+  VariantPriceFormValues,
+  VariantsFormShape,
+} from '@spree/dashboard-core'
 import { type BulkPriceRow, BulkPriceTable } from '@spree/dashboard-ui'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
@@ -11,9 +15,9 @@ import {
   useFormOptionTypes as useOptionTypes,
 } from './use-product-form-data'
 
-interface Props {
+interface Props<TFieldValues extends VariantsFormShape> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<ProductFormValues, any, any>
+  form: UseFormReturn<TFieldValues, any, any>
   /** ISO currency code (e.g. "USD", "EUR"). */
   currency: string
   /** Display label for the product, used as the table's section header. */
@@ -34,9 +38,18 @@ interface Props {
  * would silently mangle inputs like `"1.234,56"` into `NaN` and drop the
  * price entirely.
  */
-export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
+export function ProductBulkPriceEditor<TFieldValues extends VariantsFormShape>({
+  form,
+  currency,
+  productName,
+}: Props<TFieldValues>) {
   const { t } = useTranslation()
-  const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  // Cast at this one boundary: the component is generic over any form that
+  // carries `variants`, and `useWatch`'s path types cannot express that.
+  // Everything below reads the array through the concrete row types.
+  const variants =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (useWatch({ control: form.control, name: 'variants' as any }) ?? []) as VariantFormValues[]
   const { data: optionTypesData } = useOptionTypes()
   const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const localeForCurrency = useCurrencyLocale()
@@ -87,7 +100,12 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
       const idx = Number.parseInt(rowId.slice('variant:'.length), 10)
       if (Number.isNaN(idx)) return
 
-      const current = form.getValues(`variants.${idx}.prices`) ?? []
+      // Same generic boundary as the watch above: the path is well-formed for
+      // any form carrying `variants`, which RHF's `Path<T>` cannot express.
+      const current = (form.getValues(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        `variants.${idx}.prices` as any,
+      ) ?? []) as VariantPriceFormValues[]
       const existingIdx = current.findIndex((p) => p.currency === currency)
       // Normalize the merchant's localized input to canonical `"1234.56"` here,
       // on commit — so form state is always canonical (matching the API values
@@ -128,7 +146,8 @@ export function ProductBulkPriceEditor({ form, currency, productName }: Props) {
         }
       }
 
-      form.setValue(`variants.${idx}.prices`, nextPrices, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      form.setValue(`variants.${idx}.prices` as any, nextPrices as any, {
         shouldDirty: true,
       })
     },
