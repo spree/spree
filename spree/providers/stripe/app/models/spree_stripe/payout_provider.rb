@@ -160,6 +160,7 @@ module SpreeStripe
 
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
+      source_charge = source_charge_for(seller_transfer, gateway)
 
       transfer = Stripe::Transfer.create(
         {
@@ -168,8 +169,10 @@ module SpreeStripe
           destination: seller.payout_account_reference(self.class),
           # Funds the transfer from the customer's own charge, so it settles
           # with that charge rather than out of the platform's balance.
-          source_transaction: source_charge_for(seller_transfer, gateway),
-          transfer_group: seller_transfer.order.order_group&.number || seller_transfer.order.number,
+          source_transaction: source_charge,
+          # Stripe refuses a second group on a transfer drawn from a charge
+          # that already carries one, and the intent is grouped at checkout.
+          transfer_group: (transfer_group_for(seller_transfer) if source_charge.blank?),
           metadata: {
             spree_seller_transfer_id: seller_transfer.id,
             spree_order_number: seller_transfer.order.number
@@ -268,6 +271,12 @@ module SpreeStripe
 
     def minor_units(record)
       Spree::Money::Rounding.to_minor_units(record.amount.abs, record.currency)
+    end
+
+    # Ties transfers paid from the platform balance to the checkout they
+    # settle — a split checkout's sellers share their group's number.
+    def transfer_group_for(seller_transfer)
+      seller_transfer.order.order_group&.number || seller_transfer.order.number
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from
