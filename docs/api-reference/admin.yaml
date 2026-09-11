@@ -37483,6 +37483,92 @@ paths:
                   message: This seller has nothing to settle right now.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/seller_payouts/{id}/complete":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Seller payout prefixed ID
+      schema:
+        type: string
+    patch:
+      summary: Mark a payout paid
+      tags:
+      - Sellers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Records that the money reached the seller, which is what debits their
+        balance — a balance is earnings less *completed* settlements.
+
+        This is the step the built-in provider waits for: it files the
+        settlement when the payout is created and expects an operator to say
+        the bank transfer went out. A connected provider marks its own payouts
+        paid when its webhook reports the money landed.
+
+        Send the provider's own id for the transfer as `reference` when there
+        is one. Completing a payout that is already complete answers `200`
+        without recording it twice, so a redelivered webhook or a double click
+        is safe.
+
+
+        **Required scope:** `write_payouts` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payout completed
+          content:
+            application/json:
+              example:
+                id: vpo_UkLWZg9DAJ
+                status: completed
+                currency: USD
+                provider: Spree::PayoutProvider::System
+                reference: TRF-8842
+                metadata: {}
+                period_start:
+                period_end:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                amount: '40.0'
+                display_amount: "$40.00"
+                seller_id: sel_UkLWZg9DAJ
+                seller_name: Sparks Audio
+                transfers_count: 0
+              schema:
+                "$ref": "#/components/schemas/SellerPayout"
+        '404':
+          description: payout not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Seller payout not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reference:
+                  type: string
+                  description: The provider's own id for the settlement, when one
+                    made it
+                  example: TRF-8842
   "/api/v3/admin/stock_levels":
     get:
       summary: List stock levels

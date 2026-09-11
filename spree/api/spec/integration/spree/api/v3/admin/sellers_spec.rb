@@ -580,4 +580,67 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
       end
     end
   end
+
+  path '/api/v3/admin/seller_payouts/{id}/complete' do
+    parameter name: :id, in: :path, type: :string, required: true, description: 'Seller payout prefixed ID'
+
+    patch 'Mark a payout paid' do
+      tags 'Sellers'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Records that the money reached the seller, which is what debits their
+        balance — a balance is earnings less *completed* settlements.
+
+        This is the step the built-in provider waits for: it files the
+        settlement when the payout is created and expects an operator to say
+        the bank transfer went out. A connected provider marks its own payouts
+        paid when its webhook reports the money landed.
+
+        Send the provider's own id for the transfer as `reference` when there
+        is one. Completing a payout that is already complete answers `200`
+        without recording it twice, so a redelivered webhook or a double click
+        is safe.
+      DESC
+      admin_scope :write, :payouts
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          reference: {
+            type: :string,
+            description: "The provider's own id for the settlement, when one made it",
+            example: 'TRF-8842'
+          }
+        }
+      }
+
+      response '200', 'payout completed' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:seller_payout) { create(:seller_payout, seller: seller, store: store, amount: 40, currency: 'USD') }
+        let(:id) { seller_payout.prefixed_id }
+        let(:body) { { reference: 'TRF-8842' } }
+
+        schema '$ref' => '#/components/schemas/SellerPayout'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('completed')
+          expect(data['reference']).to eq('TRF-8842')
+        end
+      end
+
+      response '404', 'payout not found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:id) { 'payout_missing' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
 end
