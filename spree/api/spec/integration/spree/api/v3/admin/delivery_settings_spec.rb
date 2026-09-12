@@ -56,7 +56,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           estimated_transit_business_days_min: { type: :integer, nullable: true },
           estimated_transit_business_days_max: { type: :integer, nullable: true },
           tax_category_id: { type: :string, nullable: true },
-          calculator_type: { type: :string, example: 'Spree::Calculator::Shipping::FlatRate' },
+          calculator_type: { type: :string, example: 'flat_rate' },
           calculator_preferences: { type: :object, example: { amount: 12.5 } },
           delivery_zone_id: { type: :string, nullable: true }
         },
@@ -68,7 +68,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           {
             name: 'Express',
             storefront_visible: true,
-            calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+            calculator_type: 'flat_rate',
             calculator_preferences: { amount: 12.5 }
           }
         end
@@ -76,7 +76,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Express')
-          expect(data['calculator_type']).to eq('Spree::Calculator::Shipping::FlatRate')
+          expect(data['calculator_type']).to eq('flat_rate')
         end
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       response '200', 'calculators found' do
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['data'].map { |row| row['type'] }).to include('Spree::Calculator::Shipping::FlatRate')
+          expect(data['data'].map { |row| row['type'] }).to include('flat_rate')
         end
       end
     end

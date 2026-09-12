@@ -31690,7 +31690,7 @@ paths:
                   delivery_origin_group_id: og_UkLWZg9DAJ
                   delivery_zone_id:
                   stock_location_ids: []
-                  calculator_type: Spree::Calculator::Shipping::FlatRate
+                  calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
                     amount: '10.0'
@@ -31782,7 +31782,7 @@ paths:
                 delivery_origin_group_id: og_UkLWZg9DAJ
                 delivery_zone_id:
                 stock_location_ids: []
-                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
                   amount: '12.5'
@@ -31827,7 +31827,7 @@ paths:
                   nullable: true
                 calculator_type:
                   type: string
-                  example: Spree::Calculator::Shipping::FlatRate
+                  example: flat_rate
                 calculator_preferences:
                   type: object
                   example:
@@ -31882,13 +31882,13 @@ paths:
             application/json:
               example:
                 data:
-                - type: Spree::Calculator::Shipping::FlatPercentItemTotal
+                - type: flat_percent_item_total
                   name: Flat Percent
                   preference_schema:
                   - key: flat_percent
                     type: decimal
                     default: 0
-                - type: Spree::Calculator::Shipping::FlatRate
+                - type: flat_rate
                   name: Flat rate
                   preference_schema:
                   - key: amounts
@@ -31900,7 +31900,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::FlexiRate
+                - type: flexi_rate
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
@@ -31915,7 +31915,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::PerItem
+                - type: per_item
                   name: Flat rate per package item
                   preference_schema:
                   - key: amounts
@@ -31927,7 +31927,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::PriceSack
+                - type: price_sack
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
@@ -31942,7 +31942,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::DigitalDelivery
+                - type: digital_delivery
                   name: Digital Delivery
                   preference_schema:
                   - key: amounts
@@ -41109,8 +41109,8 @@ components:
           - does_not_contain
         type:
           type: string
-          description: 'Rule kind shorthand. Built-in: tag, available_on, sale. Extensions
-            may register more.'
+          description: 'Rule type. Built-in: tag, available_on, sale. Extensions may
+            register more.'
       required:
       - id
       - value

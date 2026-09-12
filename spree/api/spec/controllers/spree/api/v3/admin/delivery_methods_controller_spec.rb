@@ -27,8 +27,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       expect(response).to have_http_status(:ok)
       types = json_response['data'].map { |row| row['type'] }
-      expect(types).to include('Spree::Calculator::Shipping::FlatRate')
-      flat_rate = json_response['data'].find { |row| row['type'] == 'Spree::Calculator::Shipping::FlatRate' }
+      expect(types).to include('flat_rate')
+      flat_rate = json_response['data'].find { |row| row['type'] == 'flat_rate' }
       expect(flat_rate['preference_schema']).to be_an(Array)
     end
   end
@@ -162,7 +162,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       expect(response).to have_http_status(:created)
       expect(json_response['name']).to eq('Express')
-      expect(json_response['calculator_type']).to eq('Spree::Calculator::Shipping::FlatRate')
+      expect(json_response['calculator_type']).to eq('flat_rate')
       expect(json_response['delivery_zone_id']).to eq(zone.prefixed_id)
       expect(json_response['delivery_profile_id']).to be_present
 

@@ -263,7 +263,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
       get :calculators, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].pluck('type')).to include('Spree::Calculator::Shipping::FlatRate')
+      expect(json_response['data'].pluck('type')).to include('flat_rate')
     end
   end
 end

@@ -18,7 +18,7 @@ module Spree
             data = Spree.delivery_profile_types.map do |profile_class|
               {
                 type: profile_class.to_s,
-                kind: profile_class.name.demodulize.underscore
+                kind: profile_class.api_type
               }
             end
 
@@ -97,7 +97,7 @@ module Spree
           # The wire kind (`shipping`, `digital`) resolves against the
           # registry; an unknown kind is a client error, not a constantize.
           def resolve_kind(kind)
-            Spree.delivery_profile_types.find { |klass| klass.name.demodulize.underscore == kind.to_s } ||
+            Spree.delivery_profile_types.find { |klass| klass.api_type == kind.to_s } ||
               raise(ActiveRecord::RecordNotFound)
           end
         end
