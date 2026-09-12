@@ -17431,12 +17431,12 @@ paths:
       - name: owner
         in: query
         required: false
-        enum:
-        - mine
         description: "Narrows the list to the seller's own packaging, leaving out
           the marketplace's shared rows:\n * `mine` \n "
         schema:
           type: string
+          enum:
+          - mine
       - name: page
         in: query
         required: false
@@ -17806,14 +17806,14 @@ paths:
       - name: q[status_eq]
         in: query
         required: false
-        enum:
-        - pending
-        - processing
-        - completed
-        - failed
-        - unresolved
         schema:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
         description: ":\n * `pending` \n * `processing` \n * `completed` \n * `failed`
           \n * `unresolved` \n "
       responses:
@@ -18594,24 +18594,24 @@ paths:
       - name: q[status_eq]
         in: query
         required: false
-        enum:
-        - pending
-        - processing
-        - completed
-        - failed
-        - unresolved
         schema:
           type: string
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
         description: ":\n * `pending` \n * `processing` \n * `completed` \n * `failed`
           \n * `unresolved` \n "
       - name: q[kind_eq]
         in: query
         required: false
-        enum:
-        - earning
-        - refund_reversal
         schema:
           type: string
+          enum:
+          - earning
+          - refund_reversal
       responses:
         '200':
           description: transfers listed
