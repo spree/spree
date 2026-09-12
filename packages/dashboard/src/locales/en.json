@@ -5860,6 +5860,7 @@
         "title": "Report settings"
       },
       "grains": {
+        "hour": "Hourly",
         "day": "Daily",
         "week": "Weekly",
         "month": "Monthly"

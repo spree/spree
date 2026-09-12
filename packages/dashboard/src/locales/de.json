@@ -5860,6 +5860,7 @@
         "title": "Berichtseinstellungen"
       },
       "grains": {
+        "hour": "Stündlich",
         "day": "Täglich",
         "week": "Wöchentlich",
         "month": "Monatlich"

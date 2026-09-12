@@ -92,10 +92,36 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     ...groupableDimensions.map((d) => ({ value: d.name, label: d.label })),
   ]
 
-  const grainOptions = (dimension?.grains ?? []).map((grain) => ({
-    value: grain,
-    label: t(`admin.reports.grains.${grain}`),
-  }))
+  // Whether an hourly series fits inside the server's bucket ceiling. A
+  // custom range is measured; a preset is matched against the day count in
+  // its own name, since the server's preset vocabulary is wider than the
+  // client's date helper knows. Anything unrecognised is treated as too wide,
+  // so the option is withheld rather than offered and then refused.
+  const maxBuckets = schema.limits.max_buckets ?? 2000
+  const hourGrainFits = (() => {
+    if ('since' in draft.timeRange) {
+      const hours =
+        (parseISO(draft.timeRange.until).getTime() - parseISO(draft.timeRange.since).getTime()) /
+          3_600_000 +
+        24
+      return hours <= maxBuckets
+    }
+    const preset = draft.timeRange.preset
+    if (preset === 'today' || preset === 'yesterday') return true
+    const days = preset.match(/^last_(\d+)_days$/)
+    if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
+    return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
+  })()
+
+  const grainOptions = (dimension?.grains ?? [])
+    // The server refuses an hourly series wider than its bucket ceiling, so
+    // the option is withheld for a range it cannot serve rather than letting
+    // a merchant pick it and meet a 422.
+    .filter((grain) => grain !== 'hour' || hourGrainFits)
+    .map((grain) => ({
+      value: grain,
+      label: t(`admin.reports.grains.${grain}`),
+    }))
 
   // Presets come from the schema (named + common relative ranges); whatever a
   // saved report carries stays selectable even if it is not among them.

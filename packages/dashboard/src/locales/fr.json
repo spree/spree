@@ -5860,6 +5860,7 @@
         "title": "Paramètres du rapport"
       },
       "grains": {
+        "hour": "Par heure",
         "day": "Quotidien",
         "week": "Hebdomadaire",
         "month": "Mensuel"
