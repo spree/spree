@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       rules = json_response['rules']
       expect(rules.length).to eq(1)
       expect(rules.first).to include(
-        'type' => 'Spree::CollectionRules::Tag', 'value' => 'summer', 'match_policy' => 'contains'
+        'type' => 'tag', 'value' => 'summer', 'match_policy' => 'contains'
       )
       expect(rules.first['id']).to start_with('crule_')
     end

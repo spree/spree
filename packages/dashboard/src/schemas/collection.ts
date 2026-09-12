@@ -43,11 +43,6 @@ function isKnownSortOrder(value: string | null | undefined): value is Collection
 const DEFAULT_RULE_TYPE = 'tag'
 
 /**
- * `Spree::CollectionRules::AvailableOn` -> `available_on`. The API serializes
- * rules with their STI class name but accepts (and advertises) the shorthand,
- * so normalize on the way in.
- */
-/**
  * Narrows a server-supplied match policy to one this build knows. The rule
  * registry is server-driven, so an unrecognized policy falls back to the
  * default rather than rendering an empty Select and failing validation on save.
@@ -59,6 +54,11 @@ function knownMatchPolicy(value: string | null): CollectionRuleFormValues['match
     : 'is_equal_to'
 }
 
+/**
+ * The API serializes a rule's kind as the wire shorthand (`tag`). Older
+ * servers sent the STI class name, so fold that shape in too:
+ * `Spree::CollectionRules::AvailableOn` -> `available_on`.
+ */
 function ruleTypeShorthand(type: string) {
   const leaf = type.split('::').pop() ?? type
   return leaf.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()

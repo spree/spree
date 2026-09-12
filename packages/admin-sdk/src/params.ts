@@ -1039,11 +1039,13 @@ export type CollectionSortOrder =
   | 'name asc'
   | 'name desc'
 
-export type CollectionRuleType =
-  | 'Spree::CollectionRules::Tag'
-  | 'Spree::CollectionRules::Sale'
-  | 'Spree::CollectionRules::AvailableOn'
-  | (string & {})
+/**
+ * Wire shorthand (`api_type`) for an automatic-collection rule. The
+ * fully-qualified Ruby class name is also accepted for backwards
+ * compatibility, but the shorthand is the public format — it is what
+ * `collectionRules.types()` returns.
+ */
+export type CollectionRuleType = 'tag' | 'sale' | 'available_on' | (string & {})
 
 export type CollectionRuleMatchPolicy =
   | 'is_equal_to'
@@ -2333,7 +2335,11 @@ export interface PriceBulkUpsertRow {
 }
 
 export interface PaymentMethodCreateParams {
-  /** Fully-qualified STI subclass name, e.g. 'Spree::PaymentMethod::Check'. */
+  /**
+   * Wire shorthand (`Spree::PaymentMethod.api_type`), not the Ruby class
+   * name — e.g. `'check'`, not `'Spree::PaymentMethod::Check'`. Discover the
+   * available values from `paymentMethods.types()`.
+   */
   type: string
   name: string
   description?: string | null
