@@ -59,9 +59,17 @@ module Spree
     #   Enumerable raw values for status-like dimensions (an Array, or a lambda
     #   returning one so model constants load lazily). Published in the schema
     #   as the filter value list.
+    # @!attribute population
+    #   Lambda (store) -> relation enumerating every record the dimension can
+    #   group by. Declared rather than inferred from `lookup`, because it is
+    #   what `include_empty` reads to produce rows for members with no
+    #   matching facts ("which products never sold"); a dimension without one
+    #   refuses `include_empty` instead of quietly returning only what sold.
     Dimension = Struct.new(:name, :base, :column, :expression, :joins, :type, :grains, :lookup,
-                           :resolve, :hydrate, :subject, :key_scope, :values, keyword_init: true) do
+                           :resolve, :hydrate, :subject, :key_scope, :values, :population, keyword_init: true) do
       def time? = type == :time
+
+      def population? = population.present?
 
       # A dimension whose key is computed rather than read from a column. The
       # compiler validates `column` down to `table.column` so registration

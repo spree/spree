@@ -1680,6 +1680,12 @@ en:
       sales_total: Sales total
     reporting:
       dimensions:
+        cart_channel:
+          description: The channel the cart was started in.
+          label: Sales channel
+        cart_status:
+          description: Whether the cart converted into an order, was abandoned, or is still active.
+          label: Cart status
         category:
           description: The category the sold product belongs to.
           label: Category
@@ -1695,12 +1701,18 @@ en:
         country:
           description: Country of the shipping address (ISO code).
           label: Shipping country
+        coupon_code:
+          description: The discount code redeemed, as recorded on the order.
+          label: Coupon code
         customer:
           description: The customer who placed the order, by email.
           label: Customer
         customer_type:
           description: Whether the buyer had placed an earlier order at the time of this one.
           label: Customer type
+        discount_kind:
+          description: Whether the discount came from a promotion or was applied by hand.
+          label: Discount type
         fulfillment_status:
           description: Fulfillment state of the order.
           label: Fulfillment status
@@ -1731,9 +1743,15 @@ en:
         product:
           description: The product sold.
           label: Product
+        promotion:
+          description: The promotion the discount came from.
+          label: Promotion
         seller:
           description: The seller who sold the item.
           label: Seller
+        started_at:
+          description: When the cart was started, bucketed by hour, day, week or month in the store timezone.
+          label: Cart started
         stock_location:
           description: The location the stock moved in or out of.
           label: Stock location
@@ -1743,6 +1761,9 @@ en:
       export:
         total: Total
       families:
+        carts:
+          description: Baskets started, converted and abandoned.
+          label: Carts
         inventory:
           label: Inventory
         payments:
@@ -1750,15 +1771,33 @@ en:
         sales:
           label: Sales
       metrics:
+        abandoned_value:
+          description: What the abandoned carts were worth. Carts are deleted once they expire, so a range longer than the cart expiry window under-reports.
+          label: Abandoned cart value
         average_order_value:
           description: Total sales divided by the number of orders.
           label: Average order value
+        cart_conversion_rate:
+          description: Share of carts started in the period that became orders. This counts baskets, not visits — it is not a storefront conversion rate.
+          label: Cart conversion rate
+        carts_abandoned:
+          description: Carts that never completed and have been untouched for longer than the store abandoned-cart window.
+          label: Abandoned carts
+        carts_converted:
+          description: Carts that became an order. A basket split across sellers counts once.
+          label: Converted carts
+        carts_started:
+          description: Carts created in the period.
+          label: Carts started
         commission:
           description: What the marketplace earned on these sales, including its tax.
           label: Commission
         cost_of_goods:
           description: What the goods sold cost you. Variants with no cost price count as zero.
           label: Cost of goods
+        customer_lifetime_value:
+          description: 'Everything a customer has ever spent, net of refunds. Ignores the report date range: the range selects which customers appear, not which of their orders count.'
+          label: Customer lifetime value
         customers:
           description: Distinct customer emails that placed orders.
           label: Customers
@@ -1789,6 +1828,9 @@ en:
         orders:
           description: Number of placed orders.
           label: Orders
+        orders_lifetime:
+          description: How many orders a customer has ever placed. Ignores the report date range, like customer lifetime value.
+          label: Lifetime orders
         payments_count:
           description: Number of successful charges.
           label: Payments
@@ -1801,6 +1843,12 @@ en:
         payments_refunded:
           description: Money refunded through these payments.
           label: Payments refunded
+        promotion_discounts:
+          description: Money discounted by promotions, shown as a positive amount.
+          label: Promotion discounts
+        promotion_redemptions:
+          description: How many checkouts used a promotion. A basket split across sellers counts once.
+          label: Promotion redemptions
         returns:
           description: Money refunded, counted in the period the refund was issued.
           label: Returns

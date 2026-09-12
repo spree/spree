@@ -14,6 +14,7 @@ module Spree
         # Roughly a century — long enough for any report a merchant would read,
         # short enough that the widest one still fits in memory at day grain.
         MAX_RANGE_DAYS = 36_600
+        COMPARISON_OPERATORS = { eq: '=', gt: '>', gte: '>=', lt: '<', lte: '<=' }.freeze
 
         def execute(query)
           @query = query
@@ -61,6 +62,7 @@ module Spree
               end
               scope = scope.group(query.dimensions.map { |d| Arel.sql(group_by_term(d)) })
               scope = apply_key_filter(scope, key_filter) if key_filter
+              scope = apply_metric_filters(scope, metrics)
               scope = apply_sql_sort(scope, metrics) if push_sort
               selects = dimension_selects + selects
             end
@@ -106,6 +108,36 @@ module Spree
             scope = join_for(scope, d[:dimension], base)
           end
           scope
+        end
+
+        # Metric filters compile to HAVING and so apply to the grouped query
+        # only — the Total row stays the period's real figure rather than the
+        # sum of the rows that happened to survive the filter (Decision 13:
+        # rows need not sum to the total).
+        #
+        # Only filters whose metric this base aggregates are applied; a query
+        # spanning two bases runs one SQL statement per base, and a HAVING
+        # naming another base's column would not compile.
+        def apply_metric_filters(scope, metrics)
+          names = metrics.map(&:name)
+
+          query.metric_filters.each do |filter|
+            metric = filter[:metric]
+            next unless names.include?(metric.name)
+
+            scope = scope.having(
+              Arel.sql("#{resolve_sql(metric.sql)} #{COMPARISON_OPERATORS.fetch(filter[:op])} #{sql_number(filter[:value])}")
+            )
+          end
+
+          scope
+        end
+
+        # The value arrives as a BigDecimal the contract already validated, so
+        # it interpolates as a numeric literal — quoting it would compare a
+        # string against a numeric aggregate.
+        def sql_number(value)
+          value.to_s('F')
         end
 
         # A filter on a joined dimension narrows through an id subquery rather
@@ -226,7 +258,21 @@ module Spree
                  commission_lines: Spree::CommissionLine.table_name,
                  payments: Spree::Payment.table_name,
                  stock_movements: Spree::StockMovement.table_name,
-                 stock_levels: Spree::StockLevel.table_name)
+                 stock_levels: Spree::StockLevel.table_name,
+                 carts: Spree::Cart.table_name,
+                 discounts: Spree::Discount.table_name,
+                 promotions: Spree::Promotion.table_name,
+                 abandoned_cutoff: abandoned_cutoff)
+        end
+
+        # The instant a cart must have been quiet since to count as abandoned,
+        # from the store's own preference. Resolved once per query so every
+        # cart metric in one report reads the same cutoff — computing it per
+        # metric would let two numbers in the same row disagree.
+        def abandoned_cutoff
+          @abandoned_cutoff ||= connection.quote(
+            query.store.preferred_abandoned_cart_after_hours.to_i.hours.ago.utc
+          )
         end
 
         def dimension_alias(dim)
@@ -276,36 +322,53 @@ module Spree
 
         # Time buckets come back as Date on PostgreSQL and String elsewhere —
         # normalize to ISO strings so keys merge and zero-fill consistently.
+        # Time keys are normalized to the string form #expected_buckets emits,
+        # because each database returns a different Ruby type for a bucket
+        # (Postgres a Time for date_trunc, SQLite a String) and the zero-fill
+        # has to match the aggregated rows exactly or every bucket duplicates.
         def dimension_key(dim, raw)
-          dim[:dimension].time? ? raw.to_s : raw
+          return raw unless dim[:dimension].time?
+          return raw.to_s unless dim[:grain] == :hour
+
+          raw.respond_to?(:strftime) ? raw.strftime('%Y-%m-%d %H:00:00') : raw.to_s.sub(/\A(\d{4}-\d{2}-\d{2})[ T](\d{2}).*\z/, '\1 \2:00:00')
         end
 
         # Store-timezone day/month buckets, per database. PostgreSQL converts
         # properly (DST-aware); SQLite/MySQL shift by the timezone's current
         # UTC offset — a documented approximation near DST boundaries.
+        # A grain this method does not know would return nil and silently
+        # group every row under one NULL bucket, so an unhandled grain raises
+        # here rather than producing a plausible-looking wrong series. Adding a
+        # grain means teaching this method and #expected_buckets together.
         def time_bucket_sql(column, grain)
-          case connection.adapter_name
-          when /postgres/i
-            local = "#{column} AT TIME ZONE 'UTC' AT TIME ZONE '#{query.time_zone.tzinfo.identifier}'"
-            case grain
-            when :day then "(#{local})::date"
-            when :week then "date_trunc('week', #{local})::date"
-            when :month then "date_trunc('month', #{local})::date"
+          sql =
+            case connection.adapter_name
+            when /postgres/i
+              local = "#{column} AT TIME ZONE 'UTC' AT TIME ZONE '#{query.time_zone.tzinfo.identifier}'"
+              case grain
+              when :hour then "date_trunc('hour', #{local})"
+              when :day then "(#{local})::date"
+              when :week then "date_trunc('week', #{local})::date"
+              when :month then "date_trunc('month', #{local})::date"
+              end
+            when /mysql/i
+              local = "CONVERT_TZ(#{column}, '+00:00', '#{format_offset(utc_offset)}')"
+              case grain
+              when :hour then "DATE_FORMAT(#{local}, '%Y-%m-%d %H:00:00')"
+              when :day then "DATE(#{local})"
+              when :week then "DATE(DATE_SUB(#{local}, INTERVAL WEEKDAY(#{local}) DAY))"
+              when :month then "DATE_FORMAT(#{local}, '%Y-%m-01')"
+              end
+            else # SQLite — weeks start on Monday (ISO), matching the other adapters
+              case grain
+              when :hour then "strftime('%Y-%m-%d %H:00:00', #{column}, '#{utc_offset} seconds')"
+              when :day then "DATE(#{column}, '#{utc_offset} seconds')"
+              when :week then "DATE(#{column}, '#{utc_offset} seconds', '+1 day', 'weekday 1', '-7 days')"
+              when :month then "strftime('%Y-%m-01', #{column}, '#{utc_offset} seconds')"
+              end
             end
-          when /mysql/i
-            local = "CONVERT_TZ(#{column}, '+00:00', '#{format_offset(utc_offset)}')"
-            case grain
-            when :day then "DATE(#{local})"
-            when :week then "DATE(DATE_SUB(#{local}, INTERVAL WEEKDAY(#{local}) DAY))"
-            when :month then "DATE_FORMAT(#{local}, '%Y-%m-01')"
-            end
-          else # SQLite — weeks start on Monday (ISO), matching the other adapters
-            case grain
-            when :day then "DATE(#{column}, '#{utc_offset} seconds')"
-            when :week then "DATE(#{column}, '#{utc_offset} seconds', '+1 day', 'weekday 1', '-7 days')"
-            when :month then "strftime('%Y-%m-01', #{column}, '#{utc_offset} seconds')"
-            end
-          end
+
+          sql || raise(ArgumentError, "reporting adapter has no SQL for the #{grain} grain")
         end
 
 
@@ -356,9 +419,29 @@ module Spree
         def row_keys(current)
           keys = current[:groups].keys
           time_dim = query.time_dimension
-          return keys unless time_dim && query.dimensions.size == 1
 
-          expected_buckets(query.time_range, time_dim[:grain]).map { |bucket| [bucket] }
+          if time_dim && query.dimensions.size == 1
+            return expected_buckets(query.time_range, time_dim[:grain]).map { |bucket| [bucket] }
+          end
+
+          empty_dim = query.dimensions.find { |d| d[:include_empty] }
+          return keys unless empty_dim
+
+          # The dimension's whole population leads, so members with no rows in
+          # the period still appear (and read zero through build_rows' own
+          # `|| zero_for`). This is what answers "which products never sold" —
+          # a HAVING alone cannot, because a product that never sold has no
+          # row to filter.
+          (empty_member_keys(empty_dim) | keys)
+        end
+
+        # Ids of every record the dimension can group by, store-scoped through
+        # its own lookup relation.
+        def empty_member_keys(dim)
+          relation = dim[:dimension].population&.call(query.store)
+          return [] if relation.nil?
+
+          relation.pluck(:id).map { |id| [id] }
         end
 
         # Every bucket in the range becomes a row, so an absurd range is an
@@ -376,10 +459,25 @@ module Spree
           end
 
           case grain
+          when :hour then hour_buckets(range)
           when :day then (from..to).map(&:to_s)
           when :week then step_buckets(from.beginning_of_week(:monday), to) { |d| d + 7 }
           when :month then step_buckets(from.beginning_of_month, to, &:next_month)
           end
+        end
+
+        # Hour buckets are datetimes rather than dates, so they zero-fill from
+        # the range's own edges. Query::MAX_BUCKETS has already refused a range
+        # too wide to chart at this grain.
+        def hour_buckets(range)
+          cursor = range.first.in_time_zone(query.time_zone).change(min: 0, sec: 0)
+          last = range.last.in_time_zone(query.time_zone)
+          buckets = []
+          while cursor <= last
+            buckets << cursor.strftime('%Y-%m-%d %H:00:00')
+            cursor += 1.hour
+          end
+          buckets
         end
 
         def step_buckets(cursor, to)

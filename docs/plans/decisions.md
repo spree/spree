@@ -5415,3 +5415,44 @@ seller ledger endpoints authorize `:seller_earnings` and root in
 audience; and a new `q[<column>_eq]` filter on either ledger model needs that
 column in `whitelisted_ransackable_attributes` — a whitelisted association
 name does not make its foreign key filterable.
+
+## 2026-09-12 — Reporting: the carts family, and abandonment is not the reaper's population
+
+The reporting vocabulary gains a fourth family. A cart is its own table in 6.0,
+so **abandoned carts and cart conversion are a `:carts` base anchored on
+`created_at`**, never a filter on orders: the population being measured is the
+carts that were *started*, and anchoring on completion drops every cart that
+never converted — the exact rows the report is about. The one-family rule
+refuses to mix carts with sales for the same reason it refuses sales with
+inventory; the two clocks mean different things.
+
+**Abandonment is incomplete + untouched for the store's
+`abandoned_cart_after_hours` window, and nothing else.**
+`Carts::ReapExpiredJob` additionally excludes carts carrying a live payment
+session or a valid payment, and reporting deliberately **does not** inherit
+that: the exclusion is there so the reaper cannot destroy rows with money
+attached, not because such a cart is un-abandoned. A cart stalled mid-payment
+is the most recoverable kind there is, and dropping it would hide the rows the
+report exists to surface. The report and the reaper therefore disagree about
+which carts they mean, which is recorded because they otherwise look like they
+should match. Consequence worth knowing: the reaper destroys abandoned carts at
+30 days (guest) / 90 days (customer), so an abandoned-cart report over a longer
+range under-reports because the rows are gone.
+
+**Promotion attribution reads `spree_discounts`**, which carries
+`promotion_id`, `promotion_action_id` and a snapshot of the redeemed `code` on
+every money row. Three rules bind anyone adding to it: `amount` is non-positive
+by DB constraint so metrics sum `-amount`; `promotion_id` is nullified rather
+than cascaded on deletion so the dimension must group NULL as "Unassigned"; and
+rows are `order_id` XOR `cart_id`, so a sales-family join that omits the owner
+filter mixes unpurchased cart discounts into revenue. Redemptions count
+checkouts (`COALESCE(order_group_id, id)`), not orders — a multi-seller basket
+is one redemption.
+
+**Constraints now:** a metric filter (`HAVING`) never touches the ungrouped
+totals query — the Total stays the period's real figure; a new grain is taught
+to `time_bucket_sql` and `expected_buckets` together, because an unhandled
+grain falls through to `nil` and silently groups by NULL rather than raising;
+and `cart_conversion_rate` is never renamed to `conversion_rate` — storefront
+conversion needs session data that never reaches Spree, and the two numbers
+must not be confusable.

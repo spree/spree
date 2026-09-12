@@ -38,7 +38,12 @@ module Spree
           },
           # Ranking defaults the compiler applies, published so a client never
           # has to mirror them.
-          limits: { default: Query::DEFAULT_VALUE_LIMIT, max: Query::MAX_LIMIT }
+          limits: { default: Query::DEFAULT_VALUE_LIMIT, max: Query::MAX_LIMIT,
+                    max_buckets: Query::MAX_BUCKETS },
+          # Filtering on an aggregate (HAVING) is a separate contract key from
+          # `filters`, which narrow on dimensions before aggregation.
+          metric_filter_ops: Query::METRIC_FILTER_OPS,
+          compare_modes: Query::COMPARE_MODES
         }
       end
 
@@ -72,7 +77,11 @@ module Spree
           description: translate('metrics', metric.name, :description),
           format: metric.format,
           currency: (metric.money? ? @store.default_currency : nil),
-          derived: metric.derived?
+          derived: metric.derived?,
+          # A ratio is divided after aggregation, so it can be neither sorted
+          # nor filtered in SQL. Published so a builder disables those controls
+          # rather than letting a merchant discover it through a 422.
+          filterable: !metric.derived?
         }.compact
       end
 
@@ -85,6 +94,9 @@ module Spree
           grains: dimension.grains,
           lookup: dimension.lookup,
           filter_ops: Query::FILTER_OPS,
+          # Whether this dimension can lead a query with include_empty, which
+          # is what answers "which of these never had any activity".
+          supports_include_empty: dimension.population?,
           values: dimension.enumerated_values&.map { |value| { name: value, label: self.class.value_label(dimension, value) } },
           # Order-level metrics cannot be broken down by line-item dimensions
           # (they would double count) — the compiler enforces the same rule.

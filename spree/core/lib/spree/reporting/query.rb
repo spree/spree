@@ -11,7 +11,27 @@ module Spree
       DEFAULT_VALUE_LIMIT = 50
       MAX_DIMENSIONS = 2
       FILTER_OPS = %w[eq in].freeze
-      COMPARE_MODES = %w[previous_period].freeze
+      # Comparison ops for metric filters. A metric filter compiles to HAVING,
+      # so it takes scalar comparisons rather than the set membership a
+      # dimension filter uses.
+      METRIC_FILTER_OPS = %w[eq gt gte lt lte].freeze
+      COMPARE_MODES = %w[previous_period previous_year].freeze
+      # Hourly buckets over a wide range produce a series nothing can read
+      # (a year is 8,760 points), so the grain is refused rather than
+      # silently coarsened (Decision 4).
+      MAX_BUCKETS = 2_000
+      # Metrics whose window is the customer's whole history rather than the
+      # query's time range, so they are only meaningful grouped by customer.
+      LIFETIME_METRICS = %i[customer_lifetime_value orders_lifetime].freeze
+      # What a refused order-level metric should be read as per line instead.
+      PER_LINE_ALTERNATIVES = { total_sales: 'net_sales', shipping: 'net_sales',
+                                taxes: 'net_sales', duties: 'net_sales', fees: 'net_sales' }.freeze
+      # What anchors each family's clock, named in the cross-family refusal so
+      # a caller can see why two metrics cannot share a row.
+      FAMILY_CLOCKS = { sales: 'anchored on when the order completed',
+                        payments: 'anchored on when the payment was taken',
+                        inventory: 'anchored on when stock moved',
+                        carts: 'anchored on when the cart was started' }.freeze
       LAST_N_RANGE = /\Alast_(\d+)_(days|weeks|months)\z/
       # Named presets, resolved in the store's timezone (see #time_zone).
       PRESETS = %w[today yesterday week_to_date month_to_date quarter_to_date year_to_date
@@ -21,7 +41,7 @@ module Spree
       RELATIVE_PRESETS = %w[last_7_days last_30_days last_4_weeks last_90_days last_12_months].freeze
 
       attr_reader :store, :registry, :currency, :metrics, :dimensions, :filters,
-                  :time_range, :compare, :sort, :limit
+                  :metric_filters, :time_range, :compare, :sort, :limit
 
       def initialize(store:, params:, registry: Spree.reporting)
         @store = store
@@ -34,11 +54,14 @@ module Spree
         @metrics = normalize_metrics(params[:metrics])
         @dimensions = normalize_dimensions(params[:dimensions])
         @filters = normalize_filters(params[:filters])
+        @metric_filters = normalize_metric_filters(params[:metric_filters])
         @time_range = normalize_time_range(params[:time_range])
         @compare = normalize_compare(params[:compare])
         @sort = normalize_sort(params[:sort])
         @limit = normalize_limit(params[:limit])
         validate_bases!
+        validate_bucket_count!
+        validate_lifetime_metrics!
       end
 
       def execute(adapter: Spree::Dependencies.reporting_adapter.constantize.new)
@@ -106,14 +129,23 @@ module Spree
         (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] }).uniq
       end
 
-      # The immediately preceding period of equal length, shifted by calendar
-      # days in the store zone so a range that spans a DST change keeps its
-      # midnight edges instead of drifting by an hour.
+      # The period this query compares against.
+      #
+      # `previous_period` shifts by an equal number of calendar days in the
+      # store zone, so a range spanning a DST change keeps its midnight edges.
+      # `previous_year` shifts by a calendar year instead: "the same month last
+      # year" means February to February, and an equal-day-count shift off a
+      # 28-day February would land in January.
       def previous_time_range
         first = time_range.first.in_time_zone(time_zone)
         last = time_range.last.in_time_zone(time_zone)
-        days = (last.to_date - first.to_date).to_i + 1
-        (first - days.days)..(last - days.days)
+
+        if compare == 'previous_year'
+          (shift_a_year(first))..(shift_a_year(last))
+        else
+          days = (last.to_date - first.to_date).to_i + 1
+          (first - days.days)..(last - days.days)
+        end
       end
 
       def compare?
@@ -160,7 +192,8 @@ module Spree
         raise InvalidQuery, 'dimensions must be an array' unless list.nil? || list.is_a?(Array)
 
         dims = Array(list).map do |entry|
-          name, grain = entry.is_a?(Hash) ? [entry[:name], entry[:grain]] : [entry, nil]
+          hash = entry.is_a?(Hash)
+          name, grain = hash ? [entry[:name], entry[:grain]] : [entry, nil]
           dimension = registry.dimension!(member_name(name, 'dimension'))
 
           if dimension.time?
@@ -172,13 +205,78 @@ module Spree
             raise InvalidQuery, "dimension #{dimension.name} does not support grains"
           end
 
-          { dimension: dimension, grain: grain }
+          { dimension: dimension, grain: grain, include_empty: hash && ActiveModel::Type::Boolean.new.cast(entry[:include_empty]).present? }
         end
 
         raise InvalidQuery, "at most #{MAX_DIMENSIONS} dimensions per query" if dims.size > MAX_DIMENSIONS
         raise InvalidQuery, 'at most one time dimension per query' if dims.count { |d| d[:dimension].time? } > 1
 
+        validate_include_empty!(dims)
         dims
+      end
+
+      # `include_empty` roots the query in the dimension's own population so
+      # members with no matching rows still appear (the "which products never
+      # sold" question). It needs a relation to enumerate, and it only makes
+      # sense as the sole grouping — a second dimension would multiply the
+      # empty side into rows that never existed.
+      def validate_include_empty!(dims)
+        empty = dims.select { |d| d[:include_empty] }
+        return if empty.empty?
+
+        if dims.size > 1
+          raise InvalidQuery, 'include_empty supports exactly one dimension'
+        end
+
+        dimension = empty.first[:dimension]
+        return if dimension.population?
+
+        raise InvalidQuery,
+              "dimension #{dimension.name} does not support include_empty — it has no record list to draw empty rows from"
+      end
+
+      # Metric filters are a separate contract key rather than an op inside
+      # `filters` because they compile to HAVING: they run after aggregation,
+      # cannot use the id-subquery path a joined dimension filter needs, and
+      # never narrow the ungrouped totals.
+      def normalize_metric_filters(list)
+        raise InvalidQuery, 'metric_filters must be an array' unless list.nil? || list.is_a?(Array)
+
+        Array(list).map do |filter|
+          raise InvalidQuery, 'each metric filter must be an object with metric, op and value' unless filter.is_a?(Hash)
+
+          metric = registry.metric!(member_name(filter[:metric], 'metric'))
+          op = filter[:op].to_s
+          unless METRIC_FILTER_OPS.include?(op)
+            raise InvalidQuery, "invalid metric filter op #{op}. Valid ops: #{METRIC_FILTER_OPS.join(', ')}"
+          end
+
+          unless metrics.any? { |requested| requested.name == metric.name }
+            raise InvalidQuery,
+                  "metric_filters may only reference a requested metric; add #{metric.name} to metrics or filter on one of #{metrics.map(&:name).join(', ')}"
+          end
+
+          # A ratio is divided in Ruby after aggregation, so its value never
+          # exists in SQL for HAVING to compare against.
+          if metric.derived?
+            raise InvalidQuery,
+                  "#{metric.name} is a derived metric and cannot be filtered. Filter on one of its components instead: #{registry.components(metric).map(&:name).join(', ')}"
+          end
+
+          value = filter[:value]
+          raise InvalidQuery, "metric filter on #{metric.name} requires a numeric value" unless numeric?(value)
+
+          { metric: metric, op: op.to_sym, value: BigDecimal(value.to_s) }
+        end
+      end
+
+      def numeric?(value)
+        return false if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+        BigDecimal(value.to_s)
+        true
+      rescue ArgumentError, TypeError
+        false
       end
 
       def normalize_filters(list)
@@ -283,6 +381,11 @@ module Spree
 
       # :orders-based metrics cannot be grouped or filtered by :line_items
       # dimensions (order totals per product/category would double count).
+      #
+      # The refusal names the reason and the way through: a caller who asked
+      # for total sales per product wants net_sales, and learning that from
+      # the error is the difference between a usable API and a wall. The agent
+      # surface has nothing else to learn the vocabulary from.
       def validate_bases!
         validate_one_family!
 
@@ -290,20 +393,80 @@ module Spree
         return if incompatible.empty?
 
         offenders = metrics.reject { |m| incompatible.all? { |d| registry.compatible?(m, d) } }
-        raise InvalidQuery,
-              "metrics #{offenders.map(&:name).join(', ')} cannot be grouped by #{incompatible.map(&:name).join(', ')}"
+        raise InvalidQuery, incompatible_base_message(offenders, incompatible)
+      end
+
+      def incompatible_base_message(offenders, dimensions)
+        names = offenders.map(&:name)
+        message = "#{names.join(', ')} cannot be grouped by #{dimensions.map(&:name).join(', ')}: " \
+                  'they measure money that belongs to the whole order (shipping, duties and tax included), ' \
+                  'so splitting them per line would count the same money under several rows.'
+
+        alternatives = names.map { |name| PER_LINE_ALTERNATIVES[name] }.compact.uniq
+        return message if alternatives.empty?
+
+        "#{message} Use #{alternatives.join(' or ')} for a per-line breakdown."
       end
 
       # Sales, payments and inventory answer different questions on different
       # clocks — a payment total beside a units-received count is two reports
-      # wearing one table. The refusal names the families so a caller can split
-      # the query rather than guess why it was rejected.
+      # wearing one table. The refusal names each metric's clock so a caller
+      # can see why the two cannot share a row, and split the query.
       def validate_one_family!
-        families = aggregated_metrics.map { |metric| registry.family_of(metric) }.uniq
-        return if families.size <= 1
+        by_family = aggregated_metrics.group_by { |metric| registry.family_of(metric) }
+        return if by_family.size <= 1
+
+        described = by_family.sort_by { |family, _| family.to_s }.map do |family, family_metrics|
+          "#{family_metrics.map(&:name).join(', ')} measures #{family} (#{FAMILY_CLOCKS.fetch(family, 'its own timeline')})"
+        end
 
         raise InvalidQuery,
-              "metrics from different families cannot be combined in one query: #{families.sort.join(', ')}"
+              "#{described.join(', while ')}. One query cannot report both — run them as separate queries."
+      end
+
+      def validate_bucket_count!
+        entry = time_dimension
+        return if entry.nil?
+
+        buckets = estimated_buckets(entry[:grain])
+        return if buckets.nil? || buckets <= MAX_BUCKETS
+
+        raise InvalidQuery,
+              "#{entry[:grain]} grain over this range produces #{buckets} points (the limit is #{MAX_BUCKETS}). " \
+              "Shorten the range or use a coarser grain: #{coarser_grains(entry).join(', ')}."
+      end
+
+      # Only the hour grain is capped here. Day and coarser grains are bounded
+      # by the adapter's own MAX_RANGE_DAYS, and checking them here too would
+      # answer "this range is absurdly long" with a message about grains.
+      def estimated_buckets(grain)
+        return unless grain == :hour
+
+        ((time_range.last - time_range.first) / 1.hour).ceil
+      end
+
+      def coarser_grains(entry)
+        available = entry[:dimension].grains
+        available[(available.index(entry[:grain]).to_i + 1)..].presence || [available.last]
+      end
+
+      # A lifetime metric deliberately ignores the query's time range, so
+      # ungrouped it would add every customer's whole history into a single
+      # figure that answers no question. Grouped by customer it is the number
+      # merchants mean.
+      def validate_lifetime_metrics!
+        lifetime = aggregated_metrics.select { |metric| LIFETIME_METRICS.include?(metric.name) }
+        return if lifetime.empty?
+        return if dimensions.any? { |d| d[:dimension].name == :customer }
+
+        raise InvalidQuery,
+              "#{lifetime.map(&:name).join(', ')} covers a customer's whole history rather than the report's " \
+              'date range, so it must be grouped by customer.'
+      end
+
+      # ActiveSupport maps February 29 to February 28 in a non-leap year.
+      def shift_a_year(time)
+        time - 1.year
       end
     end
   end

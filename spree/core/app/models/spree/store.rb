@@ -119,6 +119,11 @@ module Spree
     # On-hand quantity at or below which a tracked variant counts as running
     # low on the home screen. 0 turns the warning off.
     preference :low_stock_threshold, :integer, default: 5
+    # How long a cart must sit untouched before reporting counts it abandoned.
+    # Deliberately shorter than the cart-expiry reaper's windows: that job
+    # decides when a cart is deleted, this decides when a merchant should
+    # chase it.
+    preference :abandoned_cart_after_hours, :integer, default: 24
     preference :show_products_without_price, :boolean, default: false
     preference :disable_sku_validation, :boolean, default: false
     # Records price changes so the storefront can show the lowest price of the
@@ -319,6 +324,7 @@ module Spree
               numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1.hour.to_i }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_low_stock_threshold, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :preferred_abandoned_cart_after_hours, numericality: { only_integer: true, greater_than: 0 }
     # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
     # multiplied straight into what a seller is charged, so a negative would
     # credit them and a figure above 1 would bill more tax than fee.
