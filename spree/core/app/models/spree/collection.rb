@@ -180,7 +180,7 @@ module Spree
       return nil if type.blank?
 
       Rails.application.config.spree.collection_rules.
-        find { |klass| klass.to_s == type.to_s || klass.api_type == type.to_s }&.to_s
+        find { |klass| klass.api_type == type.to_s }&.to_s
     end
 
     # Syncs automatic rules from an array of attribute hashes by mutating the

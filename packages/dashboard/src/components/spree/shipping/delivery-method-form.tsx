@@ -78,11 +78,7 @@ import { StockLocationScopeField } from './stock-location-scope-field'
  * calculator (percent, tiered) is currency-neutral and keeps the generic
  * preference rendering.
  */
-const AMOUNT_BASED_CALCULATORS = [
-  'Spree::Calculator::Shipping::FlatRate',
-  'Spree::Calculator::Shipping::PerItem',
-  'Spree::Calculator::Shipping::DigitalDelivery',
-]
+const AMOUNT_BASED_CALCULATORS = ['flat_rate', 'per_item', 'digital_delivery']
 
 /**
  * Preference keys the per-currency editor owns on those calculators. `amount`
@@ -1034,9 +1030,6 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
 
   const calculatorOptions = (calculators?.data ?? []).map((calculator) => ({
     value: calculator.type,
-    // Delivery-method calculators are identified by their Ruby class name on
-    // both sides of this API, not the `api_type` the shared keys use, so this
-    // resolves through the fallback until that surface adopts the code.
     label: typeLabel('calculator', calculator.type, calculator.name),
   }))
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
@@ -1060,7 +1053,9 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
       {usesCalculator ? (
         <>
           <Field>
-            <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>
+            <FieldLabel htmlFor="calculator-type">
+              {t('admin.fields.delivery_method.calculator.label')}
+            </FieldLabel>
             <Controller
               name="calculator_type"
               control={form.control}
@@ -1070,7 +1065,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                   value={field.value ?? ''}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="calculator-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

@@ -18,7 +18,7 @@ module Spree
           # The STI class in wire form (`shipping`, `digital`, extension
           # kinds), so clients never parse Ruby class names.
           attribute :kind do |record|
-            record.class.name.demodulize.underscore
+            record.class.api_type
           end
 
           attribute :digital, &:digital?

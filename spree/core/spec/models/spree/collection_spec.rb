@@ -260,7 +260,7 @@ RSpec.describe Spree::Collection, type: :model do
     subject(:reloaded_collection) { Spree::Collection.find(collection.id) }
 
     it 'builds new rules from attribute hashes, selecting the STI subclass by type' do
-      reloaded_collection.rules = [{ type: 'Spree::CollectionRules::Tag', value: 'sale', match_policy: 'is_equal_to' }]
+      reloaded_collection.rules = [{ type: 'tag', value: 'sale', match_policy: 'is_equal_to' }]
       reloaded_collection.save!
 
       rule = reloaded_collection.reload.rules.first

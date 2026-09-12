@@ -10,7 +10,7 @@ module Spree
 
             def create
               rule_class = Spree.delivery_method_rules.detect do |klass|
-                klass.api_type == params[:type].to_s || klass.to_s == params[:type].to_s
+                klass.api_type == params[:type].to_s
               end
 
               if rule_class.nil?
