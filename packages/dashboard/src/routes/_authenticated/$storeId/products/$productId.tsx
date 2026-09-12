@@ -30,7 +30,6 @@ import {
   Skeleton,
   StatusBadge,
   toastManager,
-  useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
@@ -87,7 +86,6 @@ function ProductDetailPage() {
 
 function ProductForm({ product }: { product: Product }) {
   const { t } = useTranslation()
-  const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
   const router = useRouter()
   const updateProduct = useUpdateProduct()
@@ -231,12 +229,6 @@ function ProductForm({ product }: { product: Product }) {
   useFormSubmitShortcut(form, onSubmit)
 
   const handleDelete = async () => {
-    const confirmed = await confirm({
-      message: t('admin.products.delete_confirm'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!confirmed) return
     try {
       await deleteProduct.mutateAsync(productId)
       toastManager.add({ type: 'success', title: t('admin.messages.product_deleted') })
@@ -270,6 +262,7 @@ function ProductForm({ product }: { product: Product }) {
               actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
               resource={{ id: product.id }}
               onDelete={handleDelete}
+              deleteConfirmMessage={t('admin.products.delete_confirm')}
               deleteLabel={t('admin.products.delete_label')}
               jsonPreview={{
                 title: `Product ${product.name}`,
