@@ -77,13 +77,17 @@ module Spree
         MIN((SELECT COUNT(*) FROM %{orders} h WHERE #{LIFETIME_HISTORY_CONDITION}))
       SQL
 
-      # Discount money is a correlated subquery rather than a read through the
-      # `promotion` dimension's join, for two reasons: the ungrouped totals
-      # query carries no dimension joins at all (Decision 13), so a metric
-      # reading a joined column has nothing to read; and a line item with two
-      # discounts would otherwise be counted twice by every other metric in
-      # the same query. Stored non-positive, so it is negated to read as an
-      # amount discounted.
+      # Discount money summed from the joined discount rows themselves.
+      #
+      # Read through the join rather than a per-line subquery because a line
+      # carrying two promotions must credit each with what it actually took
+      # off: a subquery over the line gives both rows the combined figure, and
+      # the breakdown then adds up to double what the store discounted.
+      #
+      # The grouped query is the only one that carries the join (Decision 13),
+      # so the dimensionless total uses the subquery form below instead.
+      PROMOTION_DISCOUNTS_JOINED = 'SUM(-COALESCE(%{discounts}.amount, 0))'.freeze
+
       PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
         SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
                       WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
@@ -388,6 +392,7 @@ module Spree
           # these negate it: a merchant reads "4,210 discounted", not "-4,210".
 
           metric :promotion_discounts, sql: PROMOTION_DISCOUNTS_SUBQUERY,
+                                       grouped_sql: PROMOTION_DISCOUNTS_JOINED,
                                        base: :line_items, format: :money,
                                        subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
           # Counted in checkouts, not orders: a basket spanning several sellers
@@ -588,9 +593,6 @@ module Spree
           # so it survives the promotion being deleted.
           dimension :coupon_code, base: :line_items, column: '%{discounts}.code', joins: [:promotion_discounts],
                     subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
-
-          dimension :discount_kind, base: :line_items, column: '%{discounts}.kind', joins: [:discounts],
-                    values: -> { Spree::Discount::KINDS }
 
           # ---- payment axes ----
 

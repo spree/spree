@@ -861,6 +861,19 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.rows.size).to eq(4)
     end
 
+    # The filter narrows what sold, not which products exist, so answering
+    # would list every unsold product in the store rather than every unsold
+    # product in that category.
+    it 'refuses a filter on another dimension' do
+      category = create(:category, store: store)
+
+      expect do
+        run(metrics: %w[units_sold],
+            dimensions: [{ name: 'product', include_empty: true }],
+            filters: [{ dimension: 'category', op: 'eq', value: category.prefixed_id }])
+      end.to raise_error(Spree::Reporting::InvalidQuery, /cannot be combined with a filter on category/)
+    end
+
     it 'refuses a dimension with no population to draw from' do
       expect { run(metrics: %w[orders], dimensions: [{ name: 'payment_status', include_empty: true }]) }
         .to raise_error(Spree::Reporting::InvalidQuery, /does not support include_empty/)
@@ -1025,6 +1038,21 @@ RSpec.describe Spree::Reporting::Query do
       result = run(metrics: %w[net_sales], dimensions: %w[promotion])
 
       expect(result.rows.first[:metrics][:net_sales][:value]).to be > 0
+    end
+
+    # A per-line subquery would credit each promotion with the line's combined
+    # discount, so the two rows would sum to double what was taken off.
+    it 'splits a line carrying two promotions between them' do
+      second = create(:promotion, store: store, name: 'Summer Sale')
+      Spree::Discount.create!(order: order, line_item: order.line_items.first, promotion: second,
+                              kind: 'promotion', label: 'Summer Sale', amount: -2)
+
+      result = run(metrics: %w[promotion_discounts], dimensions: %w[promotion])
+
+      by_promotion = result.rows.to_h { |row| [row[:dimensions][:promotion], row[:metrics][:promotion_discounts][:value]] }
+      expect(by_promotion[promotion.id]).to eq(5.0)
+      expect(by_promotion[second.id]).to eq(2.0)
+      expect(result.totals[:promotion_discounts][:value]).to eq(7.0)
     end
 
     it 'counts only checkouts that actually used a promotion' do

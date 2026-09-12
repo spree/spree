@@ -1710,9 +1710,6 @@ en:
         customer_type:
           description: Whether the buyer had placed an earlier order at the time of this one.
           label: Customer type
-        discount_kind:
-          description: Whether the discount came from a promotion or was applied by hand.
-          label: Discount type
         fulfillment_status:
           description: Fulfillment state of the order.
           label: Fulfillment status

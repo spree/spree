@@ -39,30 +39,16 @@ import { channelAutocompleteProps, useChannels } from '../../../hooks/use-channe
 import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import { useAllMarkets } from '../../../hooks/use-markets'
 import { productAutocompleteProps } from '../../../hooks/use-products'
-import { findDimension, isTimeDimension, type ReportDraft, type ReportFilter } from './report-draft'
+import {
+  findDimension,
+  hourGrainFitsRange,
+  isTimeDimension,
+  type ReportDraft,
+  type ReportFilter,
+} from './report-draft'
 
 const NONE = '__none__'
 const CUSTOM_RANGE = '__custom__'
-
-/**
- * Whether an hourly series over this range fits inside the server's bucket
- * ceiling. A custom range is measured; a preset is matched against the day
- * count in its own name, since the server's preset vocabulary is wider than
- * the client's date helper knows. Anything unrecognised counts as too wide, so
- * the grain is withheld rather than offered and then refused.
- */
-function hourGrainFitsRange(timeRange: ReportDraft['timeRange'], maxBuckets: number): boolean {
-  if ('since' in timeRange) {
-    const hours =
-      (parseISO(timeRange.until).getTime() - parseISO(timeRange.since).getTime()) / 3_600_000 + 24
-    return hours <= maxBuckets
-  }
-  const preset = timeRange.preset
-  if (preset === 'today' || preset === 'yesterday') return true
-  const days = preset.match(/^last_(\d+)_days$/)
-  if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
-  return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
-}
 
 interface ReportBuilderProps {
   draft: ReportDraft
@@ -175,9 +161,9 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     const definition = findDimension(schema, next)
     update({
       dimension: next,
-      grain: definition?.grains?.includes(draft.grain)
-        ? draft.grain
-        : (definition?.grains?.[0] ?? 'day'),
+      // Falls back to day, not grains[0]: hour leads the list, and silently
+      // switching a merchant to an hourly series is never what they meant.
+      grain: definition?.grains?.includes(draft.grain) ? draft.grain : 'day',
     })
   }
 

@@ -90,6 +90,46 @@ export function draftFromQuery(query: ReportingQuery, schema?: ReportingSchema):
   }
 }
 
+/**
+ * Whether an hourly series over this range fits inside the server's bucket
+ * ceiling. A custom range is measured; a preset is matched against the day
+ * count in its own name, since the server's preset vocabulary is wider than
+ * the client's date helper knows. Anything unrecognised counts as too wide, so
+ * the grain is withheld rather than offered and then refused.
+ */
+export function hourGrainFitsRange(timeRange: ReportTimeRange, maxBuckets: number): boolean {
+  if ('since' in timeRange) {
+    const hours = (Date.parse(timeRange.until) - Date.parse(timeRange.since)) / 3_600_000 + 24
+    return hours <= maxBuckets
+  }
+  const preset = timeRange.preset
+  if (preset === 'today' || preset === 'yesterday') return true
+  const days = preset.match(/^last_(\d+)_days$/)
+  if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
+  return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
+}
+
+/**
+ * The draft's grain, stepped down when it is no longer servable — because the
+ * dimension stopped offering it, or because the range grew too wide to chart
+ * hourly. A saved report carrying a stale hourly grain would otherwise fire a
+ * query the server refuses, with nothing in the picker the merchant could
+ * change to clear it.
+ */
+export function servableGrain(
+  draft: ReportDraft,
+  dimension: ReportingSchemaDimension | undefined,
+  maxBuckets: number,
+): ReportingGrain {
+  if (!dimension?.grains?.includes(draft.grain)) return 'day'
+  if (draft.grain === 'hour' && !hourGrainFitsRange(draft.timeRange, maxBuckets)) return 'day'
+  return draft.grain
+}
+
+function maxBuckets(schema?: ReportingSchema): number {
+  return schema?.limits?.max_buckets ?? 2000
+}
+
 export function queryFromDraft(draft: ReportDraft, schema?: ReportingSchema): ReportingQuery {
   const dimension = findDimension(schema, draft.dimension)
   const timeDimension = isTimeDimension(dimension)
@@ -97,7 +137,7 @@ export function queryFromDraft(draft: ReportDraft, schema?: ReportingSchema): Re
 
   if (draft.dimension) {
     query.dimensions = timeDimension
-      ? [{ name: draft.dimension, grain: draft.grain }]
+      ? [{ name: draft.dimension, grain: servableGrain(draft, dimension, maxBuckets(schema)) }]
       : [draft.dimension]
   }
 
