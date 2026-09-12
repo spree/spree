@@ -12,7 +12,7 @@ module Spree
 
           rescue_from Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery, with: :render_invalid_query
 
-          QUERY_KEYS = %w[metrics dimensions filters time_range compare sort limit currency].freeze
+          QUERY_KEYS = %w[metrics dimensions filters metric_filters time_range compare sort limit currency].freeze
 
           # POST /api/v3/admin/reporting/query
           def query
