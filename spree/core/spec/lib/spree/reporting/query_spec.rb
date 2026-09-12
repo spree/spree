@@ -7,6 +7,10 @@ RSpec.describe Spree::Reporting::Query do
     described_class.new(store: store, params: params).execute
   end
 
+  def query_for(metrics)
+    described_class.new(store: store, params: { metrics: metrics })
+  end
+
   describe 'validation' do
     it 'rejects unknown metrics naming the valid ones' do
       expect { run(metrics: %w[nope]) }.to raise_error(Spree::Reporting::UnknownMember, /net_sales/)
@@ -257,6 +261,38 @@ RSpec.describe Spree::Reporting::Query do
       expect(row[:dimensions][:seller]).to eq(seller.id)
       expect(row[:metrics][:commission][:value]).to eq(2.0)
       expect(row[:metrics][:seller_payout][:value]).to eq(row[:metrics][:net_sales][:value] - 2)
+    end
+  end
+
+  # Money in different currencies is never converted or added, so a money
+  # metric answers in one currency. A count is not money — scoping it would
+  # answer "how many orders did we take" with only part of the trade.
+  describe 'currency scope' do
+    let!(:usd_order) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
+    let!(:eur_order) do
+      create(:completed_order_with_totals, store: store, currency: 'EUR', completed_at: 2.days.ago)
+    end
+
+    it 'counts every currency when nothing in the question is money' do
+      result = run(metrics: %w[orders])
+      expect(result.totals[:orders][:value]).to eq(2)
+    end
+
+    it 'still answers money in one currency' do
+      result = run(metrics: %w[total_sales])
+      expect(result.totals[:total_sales][:value]).to eq(usd_order.total)
+    end
+
+    # The pair in one query: the money figure narrows, the count does not, so
+    # asking for both must not silently narrow the count too.
+    it 'narrows the whole query once any part of it is money' do
+      result = run(metrics: %w[orders total_sales])
+      expect(result.totals[:orders][:value]).to eq(1)
+    end
+
+    it 'treats a ratio as money when either side is' do
+      expect(query_for(%w[average_order_value]).scope_currency).to eq(store.default_currency)
+      expect(query_for(%w[orders customers]).scope_currency).to be_nil
     end
   end
 

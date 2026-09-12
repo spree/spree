@@ -198,6 +198,18 @@ These are limits of the compiler, not of registration:
 Registering a base is otherwise ordinary: declare its family, its table, a
 store-scoped relation, its time column and which bases its dimensions reach.
 
+The relation's `currency` argument **is nil when the query contains no money
+metric**, and a base must then not filter by it — a count restricted to one
+currency is a wrong answer, not a narrower one. Guard the filter rather than
+passing nil into `where`, which would match nothing:
+
+```ruby
+relation: lambda { |store, range, currency|
+  scope = store.subscriptions.where(created_at: range)
+  currency ? scope.where(currency: currency) : scope
+}
+```
+
 ```ruby
 Spree.reporting.base :subscriptions, family: :subscriptions,
   table: '%{subscriptions}',

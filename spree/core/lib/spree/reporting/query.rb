@@ -126,6 +126,20 @@ module Spree
         metrics.flat_map { |metric| registry.components(metric) }.uniq(&:name)
       end
 
+      # The currency a base should filter by, or nil when the question does not
+      # involve money.
+      #
+      # Amounts in different currencies are never converted or added, so a
+      # money metric has to be scoped to one. A count or a quantity is not
+      # money and carries no such constraint — restricting it anyway would
+      # answer "how many orders did we take" with only the share that happened
+      # to be priced in one currency, which is wrong rather than partial. A
+      # ratio counts as money when either side is (average order value), and
+      # not when neither is (sell-through).
+      def scope_currency
+        currency if aggregated_metrics.any?(&:money?)
+      end
+
       private
 
       def normalize_metrics(names)

@@ -90,12 +90,20 @@ Spree.reporting.metric :total_sales,
   a `:percent` metric arrives as the number a merchant reads (`42.5`), not the
   fraction.
 
-  Amounts are **never converted**. A query answers in one currency — the one
-  it names, or the store's default — and every base a money metric reads must
-  filter by it, or two currencies end up added together under one symbol. A
-  store selling in several therefore has as many answers as it has
-  currencies, which is why the home screen offers a currency alongside its
+  Amounts are **never converted**. A query containing money answers in one
+  currency — the one it names, or the store's default — and every base a money
+  metric reads filters by it, or two currencies end up added together under one
+  symbol. A store selling in several therefore has as many money answers as it
+  has currencies, which is why the home screen offers a currency alongside its
   channel and date range.
+
+  **A query with no money in it is not scoped to a currency at all.** Counts
+  and quantities — orders, customers, units sold, payments taken — are not
+  amounts, so narrowing them would answer "how many orders did we take" with
+  only the share that happened to be priced in one currency. Ask for `orders`
+  alone and you get every order; ask for `orders` beside `total_sales` and the
+  whole query narrows, because the money figure has to. A ratio counts as
+  money when either side is: average order value does, sell-through does not.
 - `ratio: [:numerator, :denominator]` defines a **derived** metric, computed
   after aggregation so it is correct for both rows and totals. Average order
   value is `ratio: %i[total_sales orders]`, never `AVG()`.
