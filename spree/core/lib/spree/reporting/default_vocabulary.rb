@@ -120,17 +120,22 @@ module Spree
           # when it was taken, and inventory on when stock moved. Mixing them
           # in one row would put three different clocks in one table.
 
+          # `currency` is nil when the question does not involve money — see
+          # Query#scope_currency. Counting orders in one currency and calling
+          # it "orders" would understate a multi-currency store's trade.
           base :orders, family: :sales, table: '%{orders}',
                time_column: '%{orders}.completed_at',
                relation: lambda { |store, range, currency|
-                 store.orders.not_canceled.where(currency: currency, completed_at: range)
+                 scope = store.orders.not_canceled.where(completed_at: range)
+                 currency ? scope.where(currency: currency) : scope
                }
 
           base :line_items, family: :sales, table: '%{line_items}', reaches: %i[line_items orders],
                time_column: '%{orders}.completed_at',
                relation: lambda { |store, range, currency|
-                 store.line_items.merge(Spree::Order.not_canceled).
-                   where(Spree::Order.table_name => { currency: currency, completed_at: range })
+                 scope = store.line_items.merge(Spree::Order.not_canceled).
+                         where(Spree::Order.table_name => { completed_at: range })
+                 currency ? scope.where(Spree::Order.table_name => { currency: currency }) : scope
                }
 
           # A payment carries no completion timestamp, so it is anchored on
@@ -146,8 +151,8 @@ module Spree
           base :payments, family: :payments, table: '%{payments}',
                time_column: '%{payments}.created_at',
                relation: lambda { |store, range, currency|
-                 store.payments.where(Spree::Order.table_name => { currency: currency }).
-                   where(Spree::Payment.table_name => { created_at: range })
+                 scope = store.payments.where(Spree::Payment.table_name => { created_at: range })
+                 currency ? scope.where(Spree::Order.table_name => { currency: currency }) : scope
                }
 
           # The movement table carries no store of its own; tenancy is the walk

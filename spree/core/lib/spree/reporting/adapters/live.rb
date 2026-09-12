@@ -92,7 +92,7 @@ module Spree
         # merge overwrites same-column wheres), and exclude canceled orders
         # explicitly: sales figures count what stayed sold.
         def base_relation(base, range)
-          scope = query.registry.base!(base).relation.call(query.store, range, query.currency)
+          scope = query.registry.base!(base).relation.call(query.store, range, query.scope_currency)
 
           # Association default orderings break grouped selects on PostgreSQL.
           scope.reorder(nil)
