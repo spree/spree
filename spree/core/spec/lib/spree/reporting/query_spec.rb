@@ -813,18 +813,32 @@ RSpec.describe Spree::Reporting::Query do
       expect { run(metrics: %w[orders], metric_filters: [{ metric: 'orders', op: 'like', value: 1 }]) }
         .to raise_error(Spree::Reporting::InvalidQuery, /invalid metric filter op/)
     end
+
+    # The value is the one piece of request data interpolated into the
+    # statement as a number, so a non-finite one must be refused rather than
+    # rendered as the bare token `Infinity`.
+    it 'rejects a non-finite value' do
+      expect { run(metrics: %w[orders], metric_filters: [{ metric: 'orders', op: 'gt', value: 'Infinity' }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /numeric/)
+    end
   end
 
   describe 'include_empty' do
     let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
     let!(:never_sold) { create(:product, store: store, name: 'Never Sold') }
 
+    # The bestseller must be absent, not merely present-and-zero: HAVING drops
+    # it from the grouped SQL, and merging the population back in would
+    # otherwise reintroduce it as a zero and call it unsold.
     it 'answers which products never sold' do
+      sold = order.line_items.first.variant.product
       result = run(metrics: %w[units_sold],
                    dimensions: [{ name: 'product', include_empty: true }],
                    metric_filters: [{ metric: 'units_sold', op: 'eq', value: 0 }])
 
-      expect(result.rows.map { |row| row[:dimensions][:product] }).to include(never_sold.id)
+      ids = result.rows.map { |row| row[:dimensions][:product] }
+      expect(ids).to include(never_sold.id)
+      expect(ids).not_to include(sold.id)
       expect(result.rows.map { |row| row[:metrics][:units_sold][:value] }).to all(eq(0))
     end
 
@@ -832,6 +846,19 @@ RSpec.describe Spree::Reporting::Query do
       result = run(metrics: %w[units_sold], dimensions: %w[product])
 
       expect(result.rows.map { |row| row[:dimensions][:product] }).not_to include(never_sold.id)
+    end
+
+    it 'lists every unsold product, not just the first page' do
+      create_list(:product, 3, store: store)
+
+      result = run(metrics: %w[units_sold],
+                   dimensions: [{ name: 'product', include_empty: true }],
+                   sort: '-units_sold',
+                   metric_filters: [{ metric: 'units_sold', op: 'eq', value: 0 }])
+
+      # Four unsold products exist; a pushed-down LIMIT would have cut the
+      # population merge before they were all in.
+      expect(result.rows.size).to eq(4)
     end
 
     it 'refuses a dimension with no population to draw from' do
@@ -901,6 +928,15 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.rows.map { |r| r[:metrics][:orders_lifetime][:value] }).to include(2)
     end
 
+    # MIN() over the period would report one arbitrary customer's history as
+    # though it were the store's.
+    it 'reports no dimensionless total for a lifetime metric' do
+      result = run(metrics: %w[orders_lifetime], dimensions: %w[customer],
+                   time_range: { preset: 'last_7_days' })
+
+      expect(result.totals[:orders_lifetime][:value]).to be_nil
+    end
+
     it 'refuses to report a lifetime figure ungrouped' do
       expect { run(metrics: %w[customer_lifetime_value]) }
         .to raise_error(Spree::Reporting::InvalidQuery, /grouped by customer/)
@@ -937,6 +973,16 @@ RSpec.describe Spree::Reporting::Query do
 
       expect(statuses['abandoned']).to eq(1)
       expect(statuses['active']).to eq(1)
+    end
+
+    # Measuring the cutoff from now rather than from each period's own end
+    # would make every unconverted cart in the comparison window abandoned.
+    it 'judges the comparison period by its own clock' do
+      result = run(metrics: %w[carts_abandoned], time_range: { preset: 'last_7_days' },
+                   compare: 'previous_period')
+
+      expect(result.totals[:carts_abandoned][:value]).to eq(1)
+      expect(result.totals[:carts_abandoned][:previous]).to eq(0)
     end
 
     it 'refuses to report carts beside sales' do

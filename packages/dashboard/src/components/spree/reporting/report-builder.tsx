@@ -44,6 +44,26 @@ import { findDimension, isTimeDimension, type ReportDraft, type ReportFilter } f
 const NONE = '__none__'
 const CUSTOM_RANGE = '__custom__'
 
+/**
+ * Whether an hourly series over this range fits inside the server's bucket
+ * ceiling. A custom range is measured; a preset is matched against the day
+ * count in its own name, since the server's preset vocabulary is wider than
+ * the client's date helper knows. Anything unrecognised counts as too wide, so
+ * the grain is withheld rather than offered and then refused.
+ */
+function hourGrainFitsRange(timeRange: ReportDraft['timeRange'], maxBuckets: number): boolean {
+  if ('since' in timeRange) {
+    const hours =
+      (parseISO(timeRange.until).getTime() - parseISO(timeRange.since).getTime()) / 3_600_000 + 24
+    return hours <= maxBuckets
+  }
+  const preset = timeRange.preset
+  if (preset === 'today' || preset === 'yesterday') return true
+  const days = preset.match(/^last_(\d+)_days$/)
+  if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
+  return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
+}
+
 interface ReportBuilderProps {
   draft: ReportDraft
   onChange: (draft: ReportDraft) => void
@@ -98,20 +118,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
   // client's date helper knows. Anything unrecognised is treated as too wide,
   // so the option is withheld rather than offered and then refused.
   const maxBuckets = schema.limits.max_buckets ?? 2000
-  const hourGrainFits = (() => {
-    if ('since' in draft.timeRange) {
-      const hours =
-        (parseISO(draft.timeRange.until).getTime() - parseISO(draft.timeRange.since).getTime()) /
-          3_600_000 +
-        24
-      return hours <= maxBuckets
-    }
-    const preset = draft.timeRange.preset
-    if (preset === 'today' || preset === 'yesterday') return true
-    const days = preset.match(/^last_(\d+)_days$/)
-    if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
-    return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
-  })()
+  const hourGrainFits = hourGrainFitsRange(draft.timeRange, maxBuckets)
 
   const grainOptions = (dimension?.grains ?? [])
     // The server refuses an hourly series wider than its bucket ceiling, so
@@ -182,12 +189,19 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     })
   }
 
-  function setPreset(value: string) {
-    if (value === CUSTOM_RANGE) {
-      update({ timeRange: dateRangeValue(customRange) })
-    } else {
-      update({ timeRange: { preset: value } })
+  // Widening the range can put the hour grain out of reach. The draft keeps
+  // whatever it had, so the grain is stepped down here rather than left to
+  // send a query the picker no longer offers an option for.
+  function setTimeRange(timeRange: ReportDraft['timeRange']) {
+    const patch: Partial<ReportDraft> = { timeRange }
+    if (draft.grain === 'hour' && !hourGrainFitsRange(timeRange, maxBuckets)) {
+      patch.grain = 'day'
     }
+    update(patch)
+  }
+
+  function setPreset(value: string) {
+    setTimeRange(value === CUSTOM_RANGE ? dateRangeValue(customRange) : { preset: value })
   }
 
   function addFilter(name: string) {
@@ -286,7 +300,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
           {presetValue === CUSTOM_RANGE && (
             <DateRangePicker
               value={customRange}
-              onChange={(range) => update({ timeRange: dateRangeValue(range) })}
+              onChange={(range) => setTimeRange(dateRangeValue(range))}
             />
           )}
         </Field>

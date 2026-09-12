@@ -15,6 +15,7 @@ module Spree
         # short enough that the widest one still fits in memory at day grain.
         MAX_RANGE_DAYS = 36_600
         COMPARISON_OPERATORS = { eq: '=', gt: '>', gte: '>=', lt: '<', lte: '<=' }.freeze
+        COMPARISON_METHODS = { eq: :==, gt: :>, gte: :>=, lt: :<, lte: :<= }.freeze
 
         def execute(query)
           @query = query
@@ -51,6 +52,8 @@ module Spree
         # Ungrouped aggregates use the single [] key.
         def aggregate(range, grouped:, push_sort: false, key_filter: nil)
           rows = Hash.new { |h, k| h[k] = {} }
+          # Read by #abandoned_cutoff so a period is judged by its own clock.
+          @current_range = range
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
@@ -62,7 +65,7 @@ module Spree
               end
               scope = scope.group(query.dimensions.map { |d| Arel.sql(group_by_term(d)) })
               scope = apply_key_filter(scope, key_filter) if key_filter
-              scope = apply_metric_filters(scope, metrics)
+              scope = apply_metric_filters(scope, metrics) unless query.include_empty?
               scope = apply_sql_sort(scope, metrics) if push_sort
               selects = dimension_selects + selects
             end
@@ -114,6 +117,11 @@ module Spree
         # only — the Total row stays the period's real figure rather than the
         # sum of the rows that happened to survive the filter (Decision 13:
         # rows need not sum to the total).
+        #
+        # Skipped entirely under include_empty: HAVING would drop the rows that
+        # do not match, and the population merge would then reintroduce them as
+        # zeros — so a bestseller would come back looking like it never sold.
+        # Those queries filter once, in Ruby, over the merged values.
         #
         # Only filters whose metric this base aggregates are applied; a query
         # spanning two bases runs one SQL statement per base, and a HAVING
@@ -197,11 +205,16 @@ module Spree
         # ORDER BY + LIMIT can move into SQL when one base group carries every
         # aggregated metric (so the sort metric and the limit apply to the
         # same query) and the grouping is by value, not time buckets.
+        # include_empty is excluded: pushing LIMIT into the grouped SQL would
+        # cut the result before the dimension's full population is merged in,
+        # so the members with no rows — the ones being asked about — would be
+        # the first to fall off.
         def sql_sortable?
           return @sql_sortable unless @sql_sortable.nil?
 
           @sql_sortable = query.sort && query.limit && query.time_dimension.nil? && query.dimensions.any? &&
-            !sort_metric.derived? && query.aggregated_metrics.map(&:base).uniq.one? || false
+            !query.include_empty? && !sort_metric.derived? &&
+            query.aggregated_metrics.map(&:base).uniq.one? || false
         end
 
         def sort_metric
@@ -265,14 +278,19 @@ module Spree
                  abandoned_cutoff: abandoned_cutoff)
         end
 
-        # The instant a cart must have been quiet since to count as abandoned,
-        # from the store's own preference. Resolved once per query so every
-        # cart metric in one report reads the same cutoff — computing it per
-        # metric would let two numbers in the same row disagree.
+        # The instant a cart must have been quiet since to count as abandoned:
+        # the store's window measured back from the end of the period being
+        # aggregated, not from now.
+        #
+        # Measuring from now would make every unconverted cart in a comparison
+        # period abandoned — that whole window lies further in the past than
+        # any cutoff — so a year-on-year abandonment chart would show a
+        # fabricated collapse. A period's carts are judged by the clock at the
+        # end of that period.
         def abandoned_cutoff
-          @abandoned_cutoff ||= connection.quote(
-            query.store.preferred_abandoned_cart_after_hours.to_i.hours.ago.utc
-          )
+          hours = query.store.preferred_abandoned_cart_after_hours.to_i.hours
+          edge = [@current_range&.last, Time.current].compact.min
+          connection.quote((edge - hours).utc)
         end
 
         def dimension_alias(dim)
@@ -383,8 +401,13 @@ module Spree
 
         # ---- result assembly ----
 
+        # A per-group metric has no dimensionless figure: MIN() of every
+        # customer's lifetime value is one arbitrary customer's, not the
+        # store's, so it is reported as nil rather than rendered as a tile.
         def build_totals(current, previous)
           query.metrics.to_h do |metric|
+            next [metric.name, { value: nil }] if metric.per_group?
+
             value = current[:totals].fetch([], {})[metric.name] || zero_for(metric)
             prev = previous && (previous[:totals].fetch([], {})[metric.name] || zero_for(metric))
             [metric.name, metric_payload(value, prev)]
@@ -411,7 +434,7 @@ module Spree
             { dimensions: dimensions, metrics: metrics }
           end
 
-          sort_rows(rows)
+          sort_rows(filter_merged_rows(rows))
         end
 
         # Grouped keys observed in the data, plus zero-filled time buckets
@@ -433,6 +456,27 @@ module Spree
           # a HAVING alone cannot, because a product that never sold has no
           # row to filter.
           (empty_member_keys(empty_dim) | keys)
+        end
+
+        # Members merged in by `include_empty` never went through the grouped
+        # SQL, so HAVING never saw them and they arrive zero-filled. Without
+        # re-applying the filters here, "which products never sold" would list
+        # every product: the bestsellers HAVING removed come back as zeros.
+        #
+        # Only needed for the include_empty path — everything else was already
+        # filtered in SQL, and re-testing it would be a second implementation
+        # of the same predicate.
+        def filter_merged_rows(rows)
+          return rows if query.metric_filters.empty? || !query.include_empty?
+
+          rows.select do |row|
+            query.metric_filters.all? do |filter|
+              value = row[:metrics].dig(filter[:metric].name, :value)
+              next true if value.nil?
+
+              value.to_d.public_send(COMPARISON_METHODS.fetch(filter[:op]), filter[:value])
+            end
+          end
         end
 
         # Ids of every record the dimension can group by, store-scoped through
@@ -469,6 +513,10 @@ module Spree
         # Hour buckets are datetimes rather than dates, so they zero-fill from
         # the range's own edges. Query::MAX_BUCKETS has already refused a range
         # too wide to chart at this grain.
+        # Stepping by an hour crosses the repeated local hour on a DST
+        # fall-back, where two distinct instants render as the same wall-clock
+        # string — so the labels are de-duplicated. Keeping both would render
+        # that hour twice and collide the comparison-period keys.
         def hour_buckets(range)
           cursor = range.first.in_time_zone(query.time_zone).change(min: 0, sec: 0)
           last = range.last.in_time_zone(query.time_zone)
@@ -477,7 +525,7 @@ module Spree
             buckets << cursor.strftime('%Y-%m-%d %H:00:00')
             cursor += 1.hour
           end
-          buckets
+          buckets.uniq
         end
 
         def step_buckets(cursor, to)

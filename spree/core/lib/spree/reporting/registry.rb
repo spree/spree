@@ -19,8 +19,13 @@ module Spree
     #   like the marketplace's commission. Declared with key_scope.
     # @!attribute key_scope
     #   API-key scope the same number requires.
-    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope, keyword_init: true) do
+    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope, :per_group, keyword_init: true) do
       def derived? = ratio.present?
+
+      # A metric that only means something inside a group (a customer's
+      # lifetime value is not a figure the whole store has), so the
+      # dimensionless total is suppressed rather than rendered as a headline.
+      def per_group? = per_group.present?
       def money? = format == :money
     end
 

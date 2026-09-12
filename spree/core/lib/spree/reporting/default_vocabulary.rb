@@ -396,8 +396,10 @@ module Spree
           # customer's history into one meaningless total.
 
           metric :customer_lifetime_value, sql: LIFETIME_VALUE_SUBQUERY, base: :orders, format: :money,
+                                           per_group: true,
                                            subject: -> { Spree.customer_class }, key_scope: 'read_customers'
           metric :orders_lifetime, sql: LIFETIME_ORDERS_SUBQUERY, base: :orders, format: :integer,
+                                   per_group: true,
                                    subject: -> { Spree.customer_class }, key_scope: 'read_customers'
 
           dimension :completed_at, base: :orders, column: :completed_at, type: :time,
@@ -550,12 +552,19 @@ module Spree
           # The join table carries no amount and would need a subquery to
           # produce one.
           #
-          # The join is filtered to order-owned rows. Discount rows are
-          # order_id XOR cart_id, and a sales report that swept in cart-owned
-          # rows would count money nobody ever paid.
+          # The join runs from the line item, and the :line_items base already
+          # restricts to completed orders, so cart-owned discount rows cannot
+          # reach a sales report. A discount dimension registered on a base
+          # that does include carts would need an explicit owner predicate:
+          # discount rows are order_id XOR cart_id.
+          #
+          # It joins only promotion discounts, not every discount. Including
+          # the manual ones would give a hand-discounted line a second group
+          # under "no promotion" beside its real promotion row, and the two
+          # rows would then count the same line twice.
 
           dimension :promotion, base: :line_items, column: '%{discounts}.promotion_id',
-                    joins: [:discounts], lookup: :promotion,
+                    joins: [:promotion_discounts], lookup: :promotion,
                     subject: -> { Spree::Promotion }, key_scope: 'read_promotions',
                     population: ->(store) { store.promotions },
                     resolve: ->(store, value) { store.promotions.find_by_prefix_id!(value).id },
@@ -567,7 +576,7 @@ module Spree
 
           # The code is its own label, and it is snapshotted on the money row,
           # so it survives the promotion being deleted.
-          dimension :coupon_code, base: :line_items, column: '%{discounts}.code', joins: [:discounts],
+          dimension :coupon_code, base: :line_items, column: '%{discounts}.code', joins: [:promotion_discounts],
                     subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
 
           dimension :discount_kind, base: :line_items, column: '%{discounts}.kind', joins: [:discounts],

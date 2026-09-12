@@ -152,6 +152,12 @@ module Spree
         compare.present?
       end
 
+      # Whether a dimension's whole population leads the query, so members with
+      # no matching rows still produce a row.
+      def include_empty?
+        dimensions.any? { |d| d[:include_empty] }
+      end
+
       # All metrics the adapter must aggregate: requested non-derived metrics
       # plus the hidden components of requested ratios.
       def aggregated_metrics
@@ -270,11 +276,15 @@ module Spree
         end
       end
 
+      # The filter value is the one piece of request data that reaches the
+      # statement as a number rather than a bound parameter, so anything that
+      # is not finite is refused here: BigDecimal('Infinity') parses happily
+      # and would render as the bare token `Infinity` in the HAVING clause.
       def numeric?(value)
         return false if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+        return false if value.is_a?(Float) && !value.finite?
 
-        BigDecimal(value.to_s)
-        true
+        BigDecimal(value.to_s).finite?
       rescue ArgumentError, TypeError
         false
       end
