@@ -944,4 +944,47 @@ RSpec.describe Spree::Reporting::Query do
         .to raise_error(Spree::Reporting::InvalidQuery, /carts.*sales.*separate queries/m)
     end
   end
+
+  describe 'promotion attribution' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+    let!(:promotion) { create(:promotion, store: store, name: 'Spring Sale') }
+    let!(:discount) do
+      Spree::Discount.create!(order: order, line_item: order.line_items.first, promotion: promotion,
+                              kind: 'promotion', label: 'Spring Sale', amount: -5, code: 'SPRING')
+    end
+
+    it 'reports discount money per promotion as a positive amount' do
+      result = run(metrics: %w[promotion_discounts], dimensions: %w[promotion])
+
+      expect(result.rows.first[:dimensions][:promotion]).to eq(promotion.id)
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    # The ungrouped totals query carries no dimension joins (Decision 13), so a
+    # metric reading a joined column would fail to compile there.
+    it 'totals discount money without the grouping join' do
+      result = run(metrics: %w[promotion_discounts])
+
+      expect(result.totals[:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    it 'breaks discounts down by the redeemed code' do
+      result = run(metrics: %w[promotion_discounts], dimensions: %w[coupon_code])
+
+      expect(result.rows.first[:dimensions][:coupon_code]).to eq('SPRING')
+      expect(result.rows.first[:metrics][:promotion_discounts][:value]).to eq(5.0)
+    end
+
+    it 'attributes revenue to the promotion that discounted it' do
+      result = run(metrics: %w[net_sales], dimensions: %w[promotion])
+
+      expect(result.rows.first[:metrics][:net_sales][:value]).to be > 0
+    end
+
+    it 'counts only checkouts that actually used a promotion' do
+      create(:completed_order_with_totals, store: store, completed_at: 2.days.ago)
+
+      expect(run(metrics: %w[promotion_redemptions]).totals[:promotion_redemptions][:value]).to eq(1)
+    end
+  end
 end
