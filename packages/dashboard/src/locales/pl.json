@@ -5926,6 +5926,7 @@
         "title": "Ustawienia raportu"
       },
       "grains": {
+        "hour": "Godzinowo",
         "day": "Dziennie",
         "week": "Tygodniowo",
         "month": "Miesięcznie"

@@ -170,7 +170,9 @@ export function formatMetric(
   metric: ReportingSchemaMetric,
   locale: string,
 ): string {
-  if (!value) return '—'
+  // A metric that only means something per group (a lifetime figure) reports
+  // a null total rather than a misleading store-wide one.
+  if (!value || value.value == null) return '—'
   if (value.display) return value.display
   const formatted = value.value.toLocaleString(locale, {
     maximumFractionDigits: metric.format === 'integer' ? 0 : 2,
@@ -238,22 +240,30 @@ function StatTiles({
 }
 
 const BUCKET_FORMATS: Record<ReportingGrain, Intl.DateTimeFormatOptions> = {
+  hour: { hour: 'numeric' },
   day: { month: 'short', day: 'numeric' },
   week: { month: 'short', day: 'numeric' },
   month: { month: 'short', year: 'numeric' },
 }
 
 export function formatBucket(value: string, grain: ReportingGrain, locale: string, long = false) {
-  // Buckets arrive as store-local dates (`yyyy-MM-dd`); parsing them as UTC
-  // midnight keeps the day stable whatever the browser's zone.
-  const date = new Date(value.length === 10 ? `${value}T00:00:00Z` : value)
+  // Buckets arrive as store-local wall-clock times — a date (`yyyy-MM-dd`) or
+  // a datetime (`yyyy-MM-dd HH:00:00`). Both are read as UTC so the label
+  // shows what the merchant's clock said, whatever zone the browser is in.
+  const normalized = value.length === 10 ? `${value}T00:00:00Z` : `${value.replace(' ', 'T')}Z`
+  const date = new Date(normalized)
   if (Number.isNaN(date.getTime())) return value
   const options: Intl.DateTimeFormatOptions = {
     ...BUCKET_FORMATS[grain],
     ...(long && grain !== 'month' ? { year: 'numeric' } : {}),
+    // An hour bucket needs its date alongside the time to be readable on its
+    // own (a tooltip, a table row), but not on a dense axis.
+    ...(grain === 'hour' && long ? { month: 'short', day: 'numeric' } : {}),
     timeZone: 'UTC',
   }
-  return date.toLocaleDateString(locale, options)
+  return grain === 'hour'
+    ? date.toLocaleString(locale, options)
+    : date.toLocaleDateString(locale, options)
 }
 
 function BucketLabel({ value, grain }: { value: string; grain: ReportingGrain }) {

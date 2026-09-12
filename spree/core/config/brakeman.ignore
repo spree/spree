@@ -1,97 +1,120 @@
 {
+  "brakeman_version": "8.0.5",
   "ignored_warnings": [
     {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "5ea89a73bb4996140bbba012ae1b3112199826c65f3d699e4d5a49b8dc5b98cf",
       "check_name": "SQL",
-      "message": "Possible SQL injection",
+      "code": "scope.joins(:default_variant).select(\"#{(\"\" or \"#{Spree::Product.table_name}.*, \")}#{Spree::Variant.table_name}.sku\").order(\"#{Spree::Variant.table_name}.sku #{sort_by?(\"sku\")[1]}\")",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
       "file": "app/sorters/spree/products/sort.rb",
+      "fingerprint": "5ea89a73bb4996140bbba012ae1b3112199826c65f3d699e4d5a49b8dc5b98cf",
       "line": 44,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "scope.joins(:default_variant).select(\"#{(\"\" or \"#{Spree::Product.table_name}.*, \")}#{Spree::Variant.table_name}.sku\").order(\"#{Spree::Variant.table_name}.sku #{sort_by?(\"sku\")[1]}\")",
-      "render_path": null,
       "location": {
-        "type": "method",
         "class": "Spree::Products::Sort",
-        "method": "by_sku"
+        "method": "by_sku",
+        "type": "method"
       },
+      "message": "Possible SQL injection",
+      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x.",
+      "render_path": null,
       "user_input": "sort_by?(\"sku\")[1]",
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
+    },
+    {
+      "check_name": "SQL",
+      "code": "scope.joins(:variants => :prices).select(\"#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount\").distinct.where(:\"#{Spree::Price.table_name}.currency\" => currency).order(\"#{Spree::Price.table_name}.amount #{sort_by?(\"price\")[1]}\")",
       "confidence": "Weak",
       "cwe_id": [
         89
       ],
-      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x."
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "72eaf56a0fb1ac0ecd3e6a78f4d85c1b17cc199cd5c2c502d9f8abb3066bc6b4",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
       "file": "app/sorters/spree/products/sort.rb",
+      "fingerprint": "72eaf56a0fb1ac0ecd3e6a78f4d85c1b17cc199cd5c2c502d9f8abb3066bc6b4",
       "line": 30,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "scope.joins(:variants => :prices).select(\"#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount\").distinct.where(:\"#{Spree::Price.table_name}.currency\" => currency).order(\"#{Spree::Price.table_name}.amount #{sort_by?(\"price\")[1]}\")",
-      "render_path": null,
       "location": {
-        "type": "method",
         "class": "Spree::Products::Sort",
-        "method": "by_price"
+        "method": "by_price",
+        "type": "method"
       },
+      "message": "Possible SQL injection",
+      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x.",
+      "render_path": null,
       "user_input": "sort_by?(\"price\")[1]",
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
+    },
+    {
+      "check_name": "SQL",
+      "code": "scope.joins(:variants => :prices).select(\"#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)\").where(Spree::Price.table_name => ({ :currency => currency })).where.not(Spree::Price.table_name => ({ :amount => nil })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_order}\")",
       "confidence": "Weak",
       "cwe_id": [
         89
       ],
-      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x."
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "b29c921d4c4aab845ee22266e80e5a295edb67b6bf3e5d40361a9f91753daaff",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
       "file": "app/finders/spree/products/find.rb",
+      "fingerprint": "b29c921d4c4aab845ee22266e80e5a295edb67b6bf3e5d40361a9f91753daaff",
       "line": 309,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "scope.joins(:variants => :prices).select(\"#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)\").where(Spree::Price.table_name => ({ :currency => currency })).where.not(Spree::Price.table_name => ({ :amount => nil })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_order}\")",
-      "render_path": null,
       "location": {
-        "type": "method",
         "class": "Spree::Products::Find",
-        "method": "order_by_price"
+        "method": "order_by_price",
+        "type": "method"
       },
+      "message": "Possible SQL injection",
+      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x.",
+      "render_path": null,
       "user_input": "sort_order",
-      "confidence": "Weak",
-      "cwe_id": [
-        89
-      ],
-      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x."
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
     },
     {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "ee3a8b8b2f5f3c94db405aa73fec5cf247392037b3e61804771a41e2a5d07702",
       "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/sorters/spree/classifications/sort.rb",
-      "line": 59,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "scope.joins(:product => ({ :variants => :prices })).select(\"#{Spree::Classification.table_name}.*, min(#{Spree::Price.table_name}.amount)\").distinct.where(:spree_prices => ({ :currency => currency })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_by?(\"price\")[1]}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Spree::Classifications::Sort",
-        "method": "by_price"
-      },
-      "user_input": "sort_by?(\"price\")[1]",
       "confidence": "Weak",
       "cwe_id": [
         89
       ],
-      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x."
+      "file": "app/sorters/spree/classifications/sort.rb",
+      "fingerprint": "ee3a8b8b2f5f3c94db405aa73fec5cf247392037b3e61804771a41e2a5d07702",
+      "line": 59,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "location": {
+        "class": "Spree::Classifications::Sort",
+        "method": "by_price",
+        "type": "method"
+      },
+      "message": "Possible SQL injection",
+      "note": "False positive: interpolates only Model.table_name constants and a normalized :asc/:desc direction (Spree::BaseSorter#order_direction); no user input reaches the SQL. CI Brakeman flags it only because it cannot detect the engine Rails version (no Gemfile.lock under core/) and assumes Rails 4.x.",
+      "render_path": null,
+      "user_input": "sort_by?(\"price\")[1]",
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
+    },
+    {
+      "check_name": "SQL",
+      "code": "scope.having(Arel.sql(\"#{resolve_sql(filter[:metric].sql_for(:grouped => true))} #{COMPARISON_OPERATORS.fetch(filter[:op])} ?\"), filter[:value])",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "file": "lib/spree/reporting/adapters/live.rb",
+      "fingerprint": "12cb6caf980c27d67e8a91b6fabfa1cc6194a759b02b290b9ce74234a7d88c57",
+      "line": 141,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "location": {
+        "class": "Spree::Reporting::Adapters::Live",
+        "method": "apply_metric_filters",
+        "type": "method"
+      },
+      "message": "Possible SQL injection",
+      "note": "False positive: the interpolated aggregate is developer-registered SQL from Spree.reporting, reached only after Registry#metric! matched the requested name against that allowlist, and the operator comes from COMPARISON_OPERATORS.fetch. The caller's own value is a bind parameter, not interpolated.",
+      "render_path": null,
+      "user_input": "resolve_sql(filter[:metric].sql_for(:grouped => true))",
+      "warning_code": 0,
+      "warning_type": "SQL Injection"
     }
-  ],
-  "brakeman_version": "8.0.5"
+  ]
 }

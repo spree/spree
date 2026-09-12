@@ -19,8 +19,31 @@ module Spree
     #   like the marketplace's commission. Declared with key_scope.
     # @!attribute key_scope
     #   API-key scope the same number requires.
-    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope, keyword_init: true) do
+    # @!attribute requires_grouping
+    #   Dimension name this metric is only meaningful grouped by (e.g.
+    #   :customer for a lifetime figure). Ungrouped it is refused, and it
+    #   publishes no dimensionless total.
+    # @!attribute grouped_sql
+    #   Optional aggregate used only for the grouped query, where dimension
+    #   joins are present. See #sql_for.
+    # @!attribute suggests
+    #   Metric to reach for instead when this one is refused for a breakdown
+    #   it cannot answer — named in the error so a caller learns the
+    #   vocabulary from the refusal rather than by trial.
+    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope,
+                        :requires_grouping, :suggests, :grouped_sql, keyword_init: true) do
+      # The aggregate to use when the query carries its dimension joins. A
+      # metric whose money lives on a joined row reads it directly there, and
+      # falls back to `sql` for the dimensionless total, which has no joins.
+      def sql_for(grouped:) = (grouped && grouped_sql.presence) || sql
+
       def derived? = ratio.present?
+
+      # The dimension this metric only means anything inside of. A customer's
+      # lifetime value is not a figure the whole store has, so a query that
+      # does not group by that dimension is refused and the dimensionless
+      # total is suppressed rather than rendered as a headline.
+      def per_group? = requires_grouping.present?
       def money? = format == :money
     end
 
@@ -59,9 +82,17 @@ module Spree
     #   Enumerable raw values for status-like dimensions (an Array, or a lambda
     #   returning one so model constants load lazily). Published in the schema
     #   as the filter value list.
+    # @!attribute population
+    #   Lambda (store) -> relation enumerating every record the dimension can
+    #   group by. Declared rather than inferred from `lookup`, because it is
+    #   what `include_empty` reads to produce rows for members with no
+    #   matching facts ("which products never sold"); a dimension without one
+    #   refuses `include_empty` instead of quietly returning only what sold.
     Dimension = Struct.new(:name, :base, :column, :expression, :joins, :type, :grains, :lookup,
-                           :resolve, :hydrate, :subject, :key_scope, :values, keyword_init: true) do
+                           :resolve, :hydrate, :subject, :key_scope, :values, :population, keyword_init: true) do
       def time? = type == :time
+
+      def population? = population.present?
 
       # A dimension whose key is computed rather than read from a column. The
       # compiler validates `column` down to `table.column` so registration
@@ -101,7 +132,11 @@ module Spree
     #   Bases whose dimensions this one can group by, itself included. An
     #   :orders dimension is reachable from :line_items through the order join;
     #   not the reverse.
-    Base = Struct.new(:name, :family, :table, :relation, :time_column, :reaches, keyword_init: true) do
+    # @!attribute clock
+    #   What this base's time column means, in a merchant's words ("anchored
+    #   on when the order completed"). Named in the cross-family refusal so a
+    #   caller can see why two metrics cannot share a row.
+    Base = Struct.new(:name, :family, :table, :relation, :time_column, :reaches, :clock, keyword_init: true) do
       def reaches?(dimension_base) = Array(reaches).include?(dimension_base)
     end
 
@@ -148,12 +183,12 @@ module Spree
       # @param relation [Proc] ->(store, range, currency) → store-scoped relation
       # @param time_column [String] table-qualified column the range filters on
       # @param reaches [Array<Symbol>] bases whose dimensions this one can group by
-      def base(name, replace: false, family:, table:, relation:, time_column:, reaches: nil)
+      def base(name, replace: false, family:, table:, relation:, time_column:, reaches: nil, clock: nil)
         name = name.to_sym
         raise ArgumentError, "base #{name} already registered (pass replace: true to override)" if @bases.key?(name) && !replace
 
         @bases[name] = Base.new(name: name, family: family, table: table, relation: relation,
-                                time_column: time_column, reaches: reaches || [name])
+                                time_column: time_column, reaches: reaches || [name], clock: clock)
       end
 
       def base!(name)
@@ -180,6 +215,10 @@ module Spree
 
         if opts[:column].blank? && opts[:expression].blank?
           raise ArgumentError, "dimension #{name} needs a column or an expression"
+        end
+
+        if opts[:population] && !opts[:population].respond_to?(:call)
+          raise ArgumentError, "dimension #{name} needs a callable population"
         end
 
         opts[:type] ||= :value

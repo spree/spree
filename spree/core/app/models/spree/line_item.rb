@@ -26,6 +26,11 @@ module Spree
 
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :line_item
+    # Promotion attribution reads this rather than every discount: joining the
+    # manual ones too would group a hand-discounted line under "no promotion"
+    # alongside its real promotion row, counting the same line twice.
+    has_many :promotion_discounts, -> { promotion },
+             class_name: 'Spree::Discount', inverse_of: :line_item
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :line_item
     has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, dependent: :destroy
     has_many :fulfillments, through: :fulfillment_items, source: :fulfillment

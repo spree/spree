@@ -39,7 +39,14 @@ import { channelAutocompleteProps, useChannels } from '../../../hooks/use-channe
 import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import { useAllMarkets } from '../../../hooks/use-markets'
 import { productAutocompleteProps } from '../../../hooks/use-products'
-import { findDimension, isTimeDimension, type ReportDraft, type ReportFilter } from './report-draft'
+import {
+  findDimension,
+  hourGrainFitsRange,
+  isTimeDimension,
+  type ReportDraft,
+  type ReportFilter,
+  servableGrain,
+} from './report-draft'
 
 const NONE = '__none__'
 const CUSTOM_RANGE = '__custom__'
@@ -92,10 +99,15 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     ...groupableDimensions.map((d) => ({ value: d.name, label: d.label })),
   ]
 
-  const grainOptions = (dimension?.grains ?? []).map((grain) => ({
-    value: grain,
-    label: t(`admin.reports.grains.${grain}`),
-  }))
+  const maxBuckets = schema.limits.max_buckets ?? 2000
+  const hourGrainFits = hourGrainFitsRange(draft.timeRange, maxBuckets)
+
+  const grainOptions = (dimension?.grains ?? [])
+    .filter((grain) => grain !== 'hour' || hourGrainFits)
+    .map((grain) => ({
+      value: grain,
+      label: t(`admin.reports.grains.${grain}`),
+    }))
 
   // Presets come from the schema (named + common relative ranges); whatever a
   // saved report carries stays selectable even if it is not among them.
@@ -150,18 +162,27 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     const definition = findDimension(schema, next)
     update({
       dimension: next,
-      grain: definition?.grains?.includes(draft.grain)
-        ? draft.grain
-        : (definition?.grains?.[0] ?? 'day'),
+      // Falls back to day, not grains[0]: hour leads the list, and silently
+      // switching a merchant to an hourly series is never what they meant.
+      // The range matters too — a dimension that offers hour cannot keep it
+      // over a range the server would refuse.
+      grain: servableGrain(draft, definition, maxBuckets),
     })
   }
 
-  function setPreset(value: string) {
-    if (value === CUSTOM_RANGE) {
-      update({ timeRange: dateRangeValue(customRange) })
-    } else {
-      update({ timeRange: { preset: value } })
+  // Widening the range can put the hour grain out of reach. The draft keeps
+  // whatever it had, so the grain is stepped down here rather than left to
+  // send a query the picker no longer offers an option for.
+  function setTimeRange(timeRange: ReportDraft['timeRange']) {
+    const patch: Partial<ReportDraft> = { timeRange }
+    if (draft.grain === 'hour' && !hourGrainFitsRange(timeRange, maxBuckets)) {
+      patch.grain = 'day'
     }
+    update(patch)
+  }
+
+  function setPreset(value: string) {
+    setTimeRange(value === CUSTOM_RANGE ? dateRangeValue(customRange) : { preset: value })
   }
 
   function addFilter(name: string) {
@@ -260,7 +281,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
           {presetValue === CUSTOM_RANGE && (
             <DateRangePicker
               value={customRange}
-              onChange={(range) => update({ timeRange: dateRangeValue(range) })}
+              onChange={(range) => setTimeRange(dateRangeValue(range))}
             />
           )}
         </Field>

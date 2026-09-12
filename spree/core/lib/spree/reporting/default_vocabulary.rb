@@ -8,6 +8,103 @@ module Spree
     # Model classes appear only inside lambdas and %{table} placeholders —
     # nothing here may autoload during initialization.
     module DefaultVocabulary
+      # A cart converts when an order was completed from it. Counted as
+      # checkouts rather than orders: a basket spanning several sellers becomes
+      # several orders from one cart, and that is one conversion.
+      CART_CONVERTED_CONDITION = <<~SQL.squish.freeze
+        EXISTS (SELECT 1 FROM %{orders} o WHERE o.cart_id = %{carts}.id
+                  AND o.completed_at IS NOT NULL AND o.status <> 'canceled')
+      SQL
+
+      CARTS_CONVERTED_SUM = "SUM(CASE WHEN #{CART_CONVERTED_CONDITION} THEN 1 ELSE 0 END)".freeze
+
+      # A cart is abandoned when it never completed and has gone quiet for
+      # longer than the store's window. `updated_at` is the codebase's own
+      # measure of a cart going quiet — Carts::ReapExpiredJob reads the same
+      # column, and it is indexed.
+      #
+      # Deliberately NOT the reaper's population: that job additionally skips
+      # carts carrying a live payment session, because it must not destroy
+      # rows with money attached. A cart stalled mid-payment is abandoned by
+      # any merchant's reading, and it is the most recoverable kind there is.
+      #
+      # `%{abandoned_cutoff}` is filled in per query from the store's
+      # preference, so every cart metric in one report reads one cutoff.
+      ABANDONED_CONDITION = <<~SQL.squish.freeze
+        %{carts}.completed_at IS NULL AND %{carts}.updated_at < %{abandoned_cutoff}
+      SQL
+
+      ABANDONED_CARTS_SUM = "SUM(CASE WHEN #{ABANDONED_CONDITION} THEN 1 ELSE 0 END)".freeze
+      ABANDONED_VALUE_SUM = "SUM(CASE WHEN #{ABANDONED_CONDITION} THEN %{carts}.total ELSE 0 END)".freeze
+
+      # 'converted' wins over 'abandoned' so the three states stay exclusive:
+      # a cart that completed is never abandoned, however long it sat first.
+      CART_STATUS_SQL = <<~SQL.squish.freeze
+        CASE WHEN #{CART_CONVERTED_CONDITION} THEN 'converted'
+             WHEN #{ABANDONED_CONDITION} THEN 'abandoned'
+             ELSE 'active' END
+      SQL
+
+      # What counts as a real sale, in SQL. Spelled once because six copies of
+      # it would silently diverge the first time an order gains a status.
+      COMPLETED_ORDER = "%{alias}.completed_at IS NOT NULL AND %{alias}.status <> 'canceled'".freeze
+
+      # One customer's whole order history, correlated on the email the
+      # `customer` dimension groups by and scoped to the same store.
+      LIFETIME_HISTORY_CONDITION = <<~SQL.squish.freeze
+        h.email = %{orders}.email AND h.store_id = %{orders}.store_id
+          AND #{format(COMPLETED_ORDER, alias: 'h')}
+      SQL
+
+      # A customer's whole history, correlated on the email the `customer`
+      # dimension groups by and scoped to the same store. MIN() rather than
+      # SUM(): the subquery already covers every one of that customer's
+      # orders, so summing it once per order in the period would multiply the
+      # figure by how often they bought — and every row in a customer group
+      # carries the identical value, so the minimum is that value.
+      #
+      # Net of refunds, consistent with net_sales: a customer who returned most
+      # of what they bought is not a high-value customer. The consequence is
+      # that a refund restates the figure after the fact.
+      LIFETIME_VALUE_SUBQUERY = <<~SQL.squish.freeze
+        MIN((SELECT COALESCE(SUM(h.total), 0) - COALESCE(SUM(
+                      (SELECT SUM(hr.amount) FROM %{refunds} hr WHERE hr.order_id = h.id)), 0)
+             FROM %{orders} h
+             WHERE #{LIFETIME_HISTORY_CONDITION}))
+      SQL
+
+      LIFETIME_ORDERS_SUBQUERY = <<~SQL.squish.freeze
+        MIN((SELECT COUNT(*) FROM %{orders} h WHERE #{LIFETIME_HISTORY_CONDITION}))
+      SQL
+
+      # Discount money summed from the joined discount rows themselves.
+      #
+      # Read through the join rather than a per-line subquery because a line
+      # carrying two promotions must credit each with what it actually took
+      # off: a subquery over the line gives both rows the combined figure, and
+      # the breakdown then adds up to double what the store discounted.
+      #
+      # The grouped query is the only one that carries the join (Decision 13),
+      # so the dimensionless total uses the subquery form below instead.
+      PROMOTION_DISCOUNTS_JOINED = 'SUM(-COALESCE(%{discounts}.amount, 0))'.freeze
+
+      PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
+        SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
+                      WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
+      SQL
+
+      # Checkouts that used a promotion. Counted in checkouts rather than
+      # orders (a basket split across sellers is one redemption), and narrowed
+      # to lines actually carrying a promotion discount — without the EXISTS
+      # the ungrouped total would count every order in the period, promoted or
+      # not, since the totals query carries no dimension join to narrow it.
+      PROMOTION_REDEMPTIONS_SQL = <<~SQL.squish.freeze
+        COUNT(DISTINCT CASE WHEN EXISTS (
+          SELECT 1 FROM %{discounts} d
+          WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'
+        ) THEN COALESCE(%{orders}.order_group_id, %{orders}.id) END)
+      SQL
+
       # Order-level money that lives on another table. Correlated on the
       # order's own id so the aggregate stays one value per order — joining
       # would multiply the base row and inflate every other metric in the
@@ -115,16 +212,18 @@ module Spree
         registry.instance_eval do
           # ---- bases ----
           #
-          # Two families, because they answer different questions. Sales money
+          # Four families, because they answer different questions. Sales money
           # is anchored on when an order completed; a payment is anchored on
-          # when it was taken, and inventory on when stock moved. Mixing them
-          # in one row would put three different clocks in one table.
+          # when it was taken, inventory on when stock moved, and a cart on
+          # when it was started. Mixing them in one row would put four
+          # different clocks in one table.
 
           # `currency` is nil when the question does not involve money — see
           # Query#scope_currency. Counting orders in one currency and calling
           # it "orders" would understate a multi-currency store's trade.
           base :orders, family: :sales, table: '%{orders}',
                time_column: '%{orders}.completed_at',
+               clock: 'anchored on when the order completed',
                relation: lambda { |store, range, currency|
                  scope = store.orders.not_canceled.where(completed_at: range)
                  currency ? scope.where(currency: currency) : scope
@@ -132,6 +231,7 @@ module Spree
 
           base :line_items, family: :sales, table: '%{line_items}', reaches: %i[line_items orders],
                time_column: '%{orders}.completed_at',
+               clock: 'anchored on when the order completed',
                relation: lambda { |store, range, currency|
                  scope = store.line_items.merge(Spree::Order.not_canceled).
                          where(Spree::Order.table_name => { completed_at: range })
@@ -150,6 +250,7 @@ module Spree
           # join this reads is the association's own.
           base :payments, family: :payments, table: '%{payments}',
                time_column: '%{payments}.created_at',
+               clock: 'anchored on when the payment was taken',
                relation: lambda { |store, range, currency|
                  scope = store.payments.where(Spree::Payment.table_name => { created_at: range })
                  currency ? scope.where(Spree::Order.table_name => { currency: currency }) : scope
@@ -159,9 +260,22 @@ module Spree
           # through stock level → variant → product, which `for_store` owns.
           base :stock_movements, family: :inventory, table: '%{stock_movements}', reaches: %i[stock_movements],
                time_column: '%{stock_movements}.created_at',
+               clock: 'anchored on when stock moved',
                relation: lambda { |store, range, _currency|
                  Spree::StockMovement.for_store(store).
                    where(Spree::StockMovement.table_name => { created_at: range })
+               }
+
+          # A cart is anchored on when it was started, not when it completed:
+          # the population being measured is the carts that were *started* in
+          # the period, and anchoring on completion would drop every cart that
+          # never converted — exactly the rows an abandonment report is about.
+          base :carts, family: :carts, table: '%{carts}', reaches: %i[carts],
+               time_column: '%{carts}.created_at',
+               clock: 'anchored on when the cart was started',
+               relation: lambda { |store, range, currency|
+                 scope = store.carts.where(Spree::Cart.table_name => { created_at: range })
+                 currency ? scope.where(Spree::Cart.table_name => { currency: currency }) : scope
                }
 
           # ---- the sales chain ----
@@ -183,16 +297,16 @@ module Spree
           # merchant recognises as "what we actually sold".
           metric :net_sales, sql: "SUM(%{line_items}.pre_tax_amount) - #{LINE_ITEM_REFUNDS_SUBQUERY}",
                              base: :line_items, format: :money
-          metric :shipping, sql: 'SUM(%{orders}.delivery_total)', base: :orders, format: :money
-          metric :duties, sql: DUTIES_SUBQUERY, base: :orders, format: :money
+          metric :shipping, sql: 'SUM(%{orders}.delivery_total)', base: :orders, format: :money, suggests: 'net_sales'
+          metric :duties, sql: DUTIES_SUBQUERY, base: :orders, format: :money, suggests: 'net_sales'
           # Every shopper-visible fee except duties, which the chain counts separately.
           metric :fees, sql: "SUM(COALESCE(%{orders}.fee_total, 0)) - #{DUTIES_SUBQUERY}",
-                        base: :orders, format: :money
+                        base: :orders, format: :money, suggests: 'net_sales'
           metric :taxes, sql: 'SUM(%{orders}.additional_tax_total + %{orders}.included_tax_total)',
-                         base: :orders, format: :money
+                         base: :orders, format: :money, suggests: 'net_sales'
           # The order grand total, net of what came back.
           metric :total_sales, sql: "SUM(%{orders}.total) - #{REFUNDS_SUBQUERY}",
-                               base: :orders, format: :money
+                               base: :orders, format: :money, suggests: 'net_sales'
 
           # ---- volume ----
 
@@ -257,7 +371,54 @@ module Spree
           # the same unit, so this reads as a percentage.
           metric :sell_through, ratio: %i[units_shipped units_received], format: :percent
 
-          dimension :completed_at, base: :orders, column: :completed_at, type: :time, grains: %i[day week month]
+          # ---- carts ----
+          #
+          # What happened to the baskets that were started. Anchored on the
+          # cart's own clock, which is why these never share a query with sales.
+
+          metric :carts_started, sql: 'COUNT(*)', base: :carts, format: :integer
+          metric :carts_converted, sql: CARTS_CONVERTED_SUM, base: :carts, format: :integer
+          metric :carts_abandoned, sql: ABANDONED_CARTS_SUM, base: :carts, format: :integer
+          # What the abandoned baskets were worth — the recoverable figure.
+          metric :abandoned_value, sql: ABANDONED_VALUE_SUM, base: :carts, format: :money
+          # Of the carts started, the share that became orders. NOT the
+          # storefront conversion rate: sessions never reach Spree, so this
+          # counts baskets, not visits, and the two numbers differ.
+          metric :cart_conversion_rate, ratio: %i[carts_converted carts_started], format: :percent
+
+          # ---- promotions ----
+          #
+          # Discount money is stored non-positive (a DB check constraint), so
+          # these negate it: a merchant reads "4,210 discounted", not "-4,210".
+
+          metric :promotion_discounts, sql: PROMOTION_DISCOUNTS_SUBQUERY,
+                                       grouped_sql: PROMOTION_DISCOUNTS_JOINED,
+                                       base: :line_items, format: :money,
+                                       subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
+          # Counted in checkouts, not orders: a basket spanning several sellers
+          # becomes several orders, and charging one customer's single
+          # redemption three times would spend a limited promotion too fast.
+          metric :promotion_redemptions, sql: PROMOTION_REDEMPTIONS_SQL,
+                                         base: :line_items, format: :integer,
+                                         subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
+
+          # ---- lifetime ----
+          #
+          # A customer's whole history, deliberately ignoring the query's time
+          # range: the range picks *which* customers appear, their figure
+          # covers everything they have ever bought. Query#validate_lifetime_
+          # metrics! refuses these ungrouped, where they would add every
+          # customer's history into one meaningless total.
+
+          metric :customer_lifetime_value, sql: LIFETIME_VALUE_SUBQUERY, base: :orders, format: :money,
+                                           requires_grouping: :customer,
+                                           subject: -> { Spree.customer_class }, key_scope: 'read_customers'
+          metric :orders_lifetime, sql: LIFETIME_ORDERS_SUBQUERY, base: :orders, format: :integer,
+                                   requires_grouping: :customer,
+                                   subject: -> { Spree.customer_class }, key_scope: 'read_customers'
+
+          dimension :completed_at, base: :orders, column: :completed_at, type: :time,
+                    grains: %i[hour day week month]
           dimension :payment_status, base: :orders, column: :payment_status,
                     values: -> { Spree::Order::PAYMENT_STATUSES }
           # The rollup values Orders::UpdateStatuses writes today; the model
@@ -357,6 +518,10 @@ module Spree
           dimension :product, base: :line_items, column: '%{variants}.product_id', joins: [:variant],
                     lookup: :product,
                     subject: -> { Spree::Product }, key_scope: 'read_products',
+                    # Live products only: a deleted product that never sold is
+                    # not a merchandising gap worth reporting, though a deleted
+                    # one that did sell still hydrates through the resolve path.
+                    population: ->(store) { store.products },
                     resolve: ->(store, value) { store.products.with_deleted.find_by_prefix_id!(value).id },
                     # Four display fields, read directly: the product serializer
                     # would resolve buy-box variants, price lists, seller, type
@@ -378,6 +543,57 @@ module Spree
                       end
                     }
 
+          # ---- cart axes ----
+
+          dimension :started_at, base: :carts, column: :created_at, type: :time,
+                    grains: %i[hour day week month]
+
+          dimension :cart_status, base: :carts, expression: CART_STATUS_SQL,
+                    values: -> { %w[active abandoned converted] }
+
+          dimension :cart_channel, base: :carts, column: :channel_id, lookup: :channel,
+                    resolve: ->(store, value) { store.channels.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.channels.where(id: ids).to_h do |channel|
+                        [channel.id, { id: channel.prefixed_id, label: channel.name, meta: {} }]
+                      end
+                    }
+
+          # ---- promotion axes ----
+          #
+          # Attribution reads the money rows themselves: every discount row
+          # carries promotion_id, promotion_action_id and a snapshot of the
+          # redeemed code, all indexed, so a breakdown is a plain GROUP BY.
+          # The join table carries no amount and would need a subquery to
+          # produce one.
+          #
+          # The join runs from the line item, and the :line_items base already
+          # restricts to completed orders, so cart-owned discount rows cannot
+          # reach a sales report. A discount dimension registered on a base
+          # that does include carts would need an explicit owner predicate:
+          # discount rows are order_id XOR cart_id.
+          #
+          # It joins only promotion discounts, not every discount. Including
+          # the manual ones would give a hand-discounted line a second group
+          # under "no promotion" beside its real promotion row, and the two
+          # rows would then count the same line twice.
+
+          dimension :promotion, base: :line_items, column: '%{discounts}.promotion_id',
+                    joins: [:promotion_discounts], lookup: :promotion,
+                    subject: -> { Spree::Promotion }, key_scope: 'read_promotions',
+                    population: ->(store) { store.promotions },
+                    resolve: ->(store, value) { store.promotions.find_by_prefix_id!(value).id },
+                    hydrate: lambda { |store, ids, _params|
+                      store.promotions.where(id: ids).to_h do |promotion|
+                        [promotion.id, { id: promotion.prefixed_id, label: promotion.name, meta: {} }]
+                      end
+                    }
+
+          # The code is its own label, and it is snapshotted on the money row,
+          # so it survives the promotion being deleted.
+          dimension :coupon_code, base: :line_items, column: '%{discounts}.code', joins: [:promotion_discounts],
+                    subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
+
           # ---- payment axes ----
 
           dimension :payment_method, base: :payments, column: :payment_method_id, lookup: :payment_method,
@@ -395,12 +611,12 @@ module Spree
                     values: -> { Spree::Payment.statuses }
 
           dimension :paid_at, base: :payments, column: :created_at, type: :time,
-                    grains: %i[day week month]
+                    grains: %i[hour day week month]
 
           # ---- inventory axes ----
 
           dimension :moved_at, base: :stock_movements, column: :created_at, type: :time,
-                    grains: %i[day week month]
+                    grains: %i[hour day week month]
 
           dimension :movement_kind, base: :stock_movements, column: :kind,
                     values: -> { Spree::StockMovement::KINDS }
