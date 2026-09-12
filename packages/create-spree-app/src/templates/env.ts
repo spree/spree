@@ -1,5 +1,5 @@
 /**
- * The project root `.env`: Rails secret, backend port, image tag, and the
+ * The project root `.env`: Rails secret, server port, image tag, and the
  * persisted sample-data choice (`SPREE_SAMPLE_DATA`) that first-run setup
  * reads back when it runs deferred (through `spree dev`).
  */

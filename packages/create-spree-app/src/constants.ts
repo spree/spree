@@ -10,4 +10,4 @@ export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'
  * storefront's package.json, so this only steers corepack at the wrapper root.
  */
 export const PNPM_VERSION = '10.33.4'
-export const BACKEND_REPO = 'https://github.com/spree/spree-starter.git'
+export const SERVER_REPO = 'https://github.com/spree/spree-starter.git'
