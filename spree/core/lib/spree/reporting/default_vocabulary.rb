@@ -72,6 +72,30 @@ module Spree
                AND h.completed_at IS NOT NULL AND h.status <> 'canceled'))
       SQL
 
+      # Discount money is a correlated subquery rather than a read through the
+      # `promotion` dimension's join, for two reasons: the ungrouped totals
+      # query carries no dimension joins at all (Decision 13), so a metric
+      # reading a joined column has nothing to read; and a line item with two
+      # discounts would otherwise be counted twice by every other metric in
+      # the same query. Stored non-positive, so it is negated to read as an
+      # amount discounted.
+      PROMOTION_DISCOUNTS_SUBQUERY = <<~SQL.squish.freeze
+        SUM(COALESCE((SELECT -SUM(d.amount) FROM %{discounts} d
+                      WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'), 0))
+      SQL
+
+      # Checkouts that used a promotion. Counted in checkouts rather than
+      # orders (a basket split across sellers is one redemption), and narrowed
+      # to lines actually carrying a promotion discount — without the EXISTS
+      # the ungrouped total would count every order in the period, promoted or
+      # not, since the totals query carries no dimension join to narrow it.
+      PROMOTION_REDEMPTIONS_SQL = <<~SQL.squish.freeze
+        COUNT(DISTINCT CASE WHEN EXISTS (
+          SELECT 1 FROM %{discounts} d
+          WHERE d.line_item_id = %{line_items}.id AND d.kind = 'promotion'
+        ) THEN COALESCE(%{orders}.order_group_id, %{orders}.id) END)
+      SQL
+
       # Order-level money that lives on another table. Correlated on the
       # order's own id so the aggregate stays one value per order — joining
       # would multiply the base row and inflate every other metric in the
@@ -353,16 +377,15 @@ module Spree
           # Discount money is stored non-positive (a DB check constraint), so
           # these negate it: a merchant reads "4,210 discounted", not "-4,210".
 
-          metric :promotion_discounts, sql: 'SUM(-COALESCE(%{discounts}.amount, 0))',
+          metric :promotion_discounts, sql: PROMOTION_DISCOUNTS_SUBQUERY,
                                        base: :line_items, format: :money,
                                        subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
           # Counted in checkouts, not orders: a basket spanning several sellers
           # becomes several orders, and charging one customer's single
           # redemption three times would spend a limited promotion too fast.
-          metric :promotion_redemptions,
-                 sql: 'COUNT(DISTINCT COALESCE(%{orders}.order_group_id, %{orders}.id))',
-                 base: :line_items, format: :integer,
-                 subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
+          metric :promotion_redemptions, sql: PROMOTION_REDEMPTIONS_SQL,
+                                         base: :line_items, format: :integer,
+                                         subject: -> { Spree::Promotion }, key_scope: 'read_promotions'
 
           # ---- lifetime ----
           #
