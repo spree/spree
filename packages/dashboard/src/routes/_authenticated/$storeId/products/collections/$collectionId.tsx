@@ -15,7 +15,6 @@ import {
   ResourceLayout,
   Skeleton,
   toastManager,
-  useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
@@ -75,7 +74,6 @@ function CollectionDetailPage() {
 function CollectionDetail({ collectionId, storeId }: { collectionId: string; storeId: string }) {
   const { t } = useTranslation()
   const router = useRouter()
-  const confirm = useConfirm()
   const { data: collection } = useCollection(collectionId)
   const updateCollection = useUpdateCollection(collectionId)
   const deleteCollection = useDeleteCollection()
@@ -145,12 +143,6 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
   useFormSubmitShortcut(form, onSubmit)
 
   const handleDelete = async () => {
-    const confirmed = await confirm({
-      message: t('admin.collections.delete_confirm.message', { name: collection?.name ?? '' }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!confirmed) return
     try {
       await deleteCollection.mutateAsync(collectionId)
       await router.navigate({ to: '/$storeId/products/collections', params: { storeId } })
@@ -176,6 +168,9 @@ function CollectionDetail({ collectionId, storeId }: { collectionId: string; sto
                 actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
                 resource={collection ? { id: collection.id } : undefined}
                 onDelete={handleDelete}
+                deleteConfirmMessage={t('admin.collections.delete_confirm.message', {
+                  name: collection?.name ?? '',
+                })}
                 deleteLabel={t('admin.collections.delete_label')}
                 jsonPreview={{
                   title: `Collection ${collection?.name ?? ''}`,

@@ -85,14 +85,22 @@ interface PageHeaderProps {
   /** Slot context name. Defaults to inferring from `resource` keys. Optional. */
   slotContext?: Record<string, unknown>
   /**
-   * Called after the user confirms the auto-rendered Delete action.
-   * When provided, the Delete item is enabled. The confirmation prompt is
-   * fixed ("Are you sure? This action cannot be undone.") — pass `dropdownItems`
-   * directly if you need a custom delete flow.
+   * Called after the user confirms the auto-rendered Delete action. When
+   * provided, the Delete item is enabled. PageHeader owns the confirmation,
+   * so the handler must not prompt again — pass `dropdownItems` directly if
+   * you need a delete flow this cannot express.
    */
   onDelete?: () => void | Promise<void>
   /** Override the destructive label ("Delete order", "Delete product", etc.). */
   deleteLabel?: string
+  /**
+   * Replaces the generic "Are you sure?" prompt. Say what goes with the
+   * record — "Its zones and delivery methods go with it" — since that is what
+   * the reader cannot see from the button.
+   */
+  deleteConfirmMessage?: string
+  /** Heading for the delete prompt. Defaults to none, as the message carries it. */
+  deleteConfirmTitle?: string
   /**
    * When supplied, the more-actions dropdown gains a "View as JSON" item that
    * opens a developer-style drawer with the resource payload.
@@ -121,6 +129,8 @@ export function PageHeader({
   slotContext,
   onDelete,
   deleteLabel,
+  deleteConfirmMessage,
+  deleteConfirmTitle,
   jsonPreview,
 }: PageHeaderProps) {
   const { t } = useTranslation()
@@ -234,6 +244,8 @@ export function PageHeader({
             destructiveItems={destructiveItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel ?? t('admin.actions.delete')}
+            deleteConfirmMessage={deleteConfirmMessage}
+            deleteConfirmTitle={deleteConfirmTitle}
             onOpenJson={jsonPreview ? openJson : undefined}
           />
         )}
@@ -259,6 +271,8 @@ interface PageActionsDropdownProps {
   destructiveItems?: ReactNode
   onDelete?: () => void | Promise<void>
   deleteLabel: string
+  deleteConfirmMessage?: string
+  deleteConfirmTitle?: string
   onOpenJson?: () => void
 }
 
@@ -269,6 +283,8 @@ function PageActionsDropdown({
   destructiveItems,
   onDelete,
   deleteLabel,
+  deleteConfirmMessage,
+  deleteConfirmTitle,
   onOpenJson,
 }: PageActionsDropdownProps) {
   const { t } = useTranslation()
@@ -329,7 +345,8 @@ function PageActionsDropdown({
               onClick={async () => {
                 if (
                   await confirm({
-                    message: t('admin.common.delete_confirm_message'),
+                    title: deleteConfirmTitle,
+                    message: deleteConfirmMessage ?? t('admin.common.delete_confirm_message'),
                     variant: 'destructive',
                     confirmLabel: deleteLabel,
                   })

@@ -33,7 +33,6 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
-  useConfirm,
   useFormSubmitShortcut,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
@@ -111,7 +110,6 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
   const { storeId, webhookEndpointId } = Route.useParams()
   const search = Route.useSearch() as z.infer<typeof detailSearchSchema>
   const navigate = useNavigate()
-  const confirm = useConfirm()
 
   const updateMutation = useUpdateWebhookEndpoint(webhookEndpointId)
   const deleteMutation = useDeleteWebhookEndpoint()
@@ -150,15 +148,6 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
 
   // ---- Header actions ---------------------------------------------------
   async function handleDelete() {
-    const ok = await confirm({
-      title: t('admin.pages.settings.webhooks.delete_confirm.title'),
-      message: t('admin.pages.settings.webhooks.delete_confirm.message', {
-        name: endpoint.name || endpoint.url,
-      }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
     await deleteMutation.mutateAsync(endpoint.id)
     navigate({ to: '/$storeId/settings/webhooks', params: { storeId } })
   }
@@ -239,6 +228,10 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
               resolveLink: spreeJsonLinkResolver(storeId),
             }}
             onDelete={handleDelete}
+            deleteConfirmTitle={t('admin.pages.settings.webhooks.delete_confirm.title')}
+            deleteConfirmMessage={t('admin.pages.settings.webhooks.delete_confirm.message', {
+              name: endpoint.name || endpoint.url,
+            })}
             deleteLabel={t('admin.pages.settings.webhooks.detail.delete_label')}
             actions={
               <Can I="update" a={Subject.WebhookEndpoint}>

@@ -15,7 +15,6 @@ import {
   ResourceLayout,
   Skeleton,
   toastManager,
-  useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
@@ -72,7 +71,6 @@ function CategoryDetailPage() {
 function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: string }) {
   const { t } = useTranslation()
   const router = useRouter()
-  const confirm = useConfirm()
   const { data: category } = useCategory(categoryId)
   const updateCategory = useUpdateCategory(categoryId)
   const deleteCategory = useDeleteCategory()
@@ -131,12 +129,6 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
   useFormSubmitShortcut(form, onSubmit)
 
   const handleDelete = async () => {
-    const confirmed = await confirm({
-      message: t('admin.categories.delete_confirm', { name: category?.name ?? '' }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!confirmed) return
     try {
       await deleteCategory.mutateAsync(categoryId)
       await router.navigate({ to: '/$storeId/products/categories', params: { storeId } })
@@ -162,6 +154,9 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
                 actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
                 resource={category ? { id: category.id } : undefined}
                 onDelete={handleDelete}
+                deleteConfirmMessage={t('admin.categories.delete_confirm', {
+                  name: category?.name ?? '',
+                })}
                 deleteLabel={t('admin.categories.delete_label')}
                 jsonPreview={{
                   title: `Category ${category?.name ?? ''}`,
