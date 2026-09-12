@@ -44,7 +44,7 @@ RSpec.describe 'Admin Promotion Rules API', type: :request, swagger_doc: 'api-re
       produces 'application/json'
       consumes 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Adds a new rule to a promotion. The `type` is the wire shorthand from `GET /promotion_rules/types` (e.g. `currency`, `item_total`, `product`). Fully-qualified Ruby class names are also accepted for backward compatibility.'
+      description 'Adds a new rule to a promotion. The `type` is the wire shorthand from `GET /promotion_rules/types` (e.g. `currency`, `item_total`, `product`).'
       admin_scope :write, :promotions
 
       admin_sdk_example 'promotion-rules/create'

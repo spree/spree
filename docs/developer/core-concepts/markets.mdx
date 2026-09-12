@@ -14,8 +14,8 @@ Markets let you segment a single [Store](/developer/core-concepts/stores) into d
 ```mermaid
 erDiagram
     Store ||--o{ Market : "has many"
-    Market ||--o{ MarketCountry : "has many"
-    MarketCountry }o--|| Country : "belongs to"
+    Market ||--o{ MarketCountry : "covers"
+    Market ||--o{ Order : "records"
 
     Store {
         string name
@@ -31,9 +31,8 @@ erDiagram
         boolean default
     }
 
-    Country {
-        string iso
-        string name
+    MarketCountry {
+        string country_code
     }
 ```
 
@@ -53,7 +52,7 @@ erDiagram
 
 When a customer visits your store, their country determines which market applies. The market then sets the currency, locale, and tax behavior for that session.
 
-```
+```text
 Customer's Country → Market → Currency + Locale + Tax treatment
 ```
 

@@ -54,11 +54,63 @@ stateDiagram-v2
 
 Only an **approved** seller can sell, and even then not while they're on holiday — sellers can pause their own listings without the marketplace suspending them.
 
+## What a seller owns
+
+A seller is a tenant inside the marketplace: their own catalogue, their own
+stock, their own shipping setup and their own money trail. Delivery profiles and
+zones stay with the operator — a seller picks from them rather than defining
+them.
+
+```mermaid
+erDiagram
+    Store ||--o{ Seller : "hosts"
+    Seller ||--o{ Product : "lists"
+    Seller ||--o{ StockLocation : "ships from"
+    Seller ||--o{ DeliveryMethod : "own rates"
+    Seller ||--o{ PackageType : "own packaging"
+    Seller ||--o{ Order : "fulfils"
+    Seller ||--o{ CommissionLine : "charged"
+    Seller ||--o{ SellerTransfer : "earns"
+    Seller ||--o{ SellerPayout : "paid out"
+    Seller ||--o{ SellerRequirementSubmission : "onboarding"
+    Seller ||--o{ Policy : "publishes"
+
+    Seller {
+        string name
+        string slug
+        string status
+        string contact_email
+    }
+```
+
+A seller's delivery methods are their own — internal rates and manual
+fulfillment, since carrier accounts stay with the operator. Their package types
+sit alongside the marketplace's shared ones, so they can pack into the
+operator's standard cartons or record their own.
+
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.sellers.invite('sel_xxx')
 await adminClient.sellers.approve('sel_xxx')
 await adminClient.sellers.suspend('sel_xxx', { reason: 'Unresolved delivery complaints' })
 ```
+
+```bash cURL
+# Invite, approve, suspend
+curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/invite' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/suspend' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "reason": "Unresolved delivery complaints" }'
+```
+
+</CodeGroup>
 
 Status is never set by writing to the field — each move is its own action, so approving a seller can run the checks that belong to approving.
 
@@ -68,16 +120,36 @@ What a vendor must do before selling differs by marketplace. A hardware marketpl
 
 So the checklist is **configured, not hardcoded**. Each store defines its own:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: types } = await adminClient.sellerRequirements.types()
 
 await adminClient.sellerRequirements.create({
-  type: 'Spree::SellerRequirements::MinimumProducts',
+  type: 'minimum_products',
   name: 'List at least three products',
   required: true,
   preferences: { minimum_count: 3 },
 })
 ```
+
+```bash cURL
+# Requirement kinds this marketplace offers
+curl 'https://api.mystore.com/api/v3/admin/seller_requirements/types' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Add one to the checklist
+curl -X POST 'https://api.mystore.com/api/v3/admin/seller_requirements' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "type": "minimum_products",
+    "name": "List at least three products",
+    "required": true
+  }'
+```
+
+</CodeGroup>
 
 Requirements come in three flavours, which is what lets one mechanism cover very different demands:
 
@@ -91,6 +163,8 @@ Shipped out of the box: accepting terms, completing the profile, a billing addre
 
 A seller sees their checklist and its progress:
 
+<CodeGroup>
+
 ```typescript Seller SDK
 const onboarding = await sellerClient.onboarding.get()
 
@@ -103,6 +177,14 @@ onboarding.requirements.forEach((r) => {
 
 await sellerClient.onboarding.submitForReview()
 ```
+
+```bash cURL
+curl 'https://marketplace.example.com/api/v3/seller/onboarding' \
+  -H 'Authorization: Bearer $SELLER_JWT' \
+  -H 'X-Spree-Seller-Id: sel_xxx'
+```
+
+</CodeGroup>
 
 The checklist is **worked out when read**, never stored on the seller. So a requirement added next month applies immediately to everyone, and nothing has to be backfilled.
 
@@ -118,10 +200,27 @@ A product can name a seller. No seller means it's the marketplace's own stock �
 
 Sellers don't publish; they **submit**, and the marketplace decides. That review flow, and the statuses behind it, are covered in [Products](/developer/core-concepts/products#seller-submissions).
 
+<CodeGroup>
+
 ```typescript Seller SDK
 const product = await sellerClient.products.create({ name: 'Handmade Vase' })
 await sellerClient.products.submit(product.id)
 ```
+
+```bash cURL
+# Create a product, then submit it for review
+curl -X POST 'https://marketplace.example.com/api/v3/seller/products' \
+  -H 'Authorization: Bearer $SELLER_JWT' \
+  -H 'X-Spree-Seller-Id: sel_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Handmade Vase" }'
+
+curl -X POST 'https://marketplace.example.com/api/v3/seller/products/prod_xxx/submit' \
+  -H 'Authorization: Bearer $SELLER_JWT' \
+  -H 'X-Spree-Seller-Id: sel_xxx'
+```
+
+</CodeGroup>
 
 Stores that trust their vendors can turn auto-approval on and skip the queue.
 
@@ -162,11 +261,20 @@ A storefront must handle the possibility of an order group. Completing a cart ma
 
 Commission is what the marketplace charges for the sale — configured as **rates**, and recorded per sale as immutable **commission lines**.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: lines } = await adminClient.commissionLines.list({
-  filter: { seller_id_eq: 'sel_xxx' },
+  seller_id_eq: 'sel_xxx',
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/commission_lines?q[seller_id_eq]=sel_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Three things are worth knowing here; the rest is on its own page.
 
@@ -192,6 +300,8 @@ Sellers get their own application — not access to the marketplace's dashboard.
 
 That last point is the security property worth relying on: a seller cannot ask for another seller's data, because there's nowhere in the request to name one.
 
+<CodeGroup>
+
 ```typescript Seller SDK
 import { createSellerClient } from '@spree/seller-sdk'
 
@@ -204,6 +314,15 @@ await sellerClient.orders.fulfillments.fulfill(orderId, fulfillmentId, {
   tracking: '1Z999AA10123456784',
 })
 ```
+
+```bash cURL
+# Sign in, then use the returned JWT on every seller call
+curl -X POST 'https://marketplace.example.com/api/v3/seller/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{ "email": "vendor@example.com", "password": "…" }'
+```
+
+</CodeGroup>
 
 Sellers can manage their profile, invite their own team, list and submit products, see and fulfil their orders, manage their stock locations, delivery methods and packaging, and work through onboarding. They cannot see other sellers, the marketplace's own catalog, or anything belonging to the store at large.
 

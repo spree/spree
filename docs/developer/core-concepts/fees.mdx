@@ -83,6 +83,8 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fees' \
 
 Fees are visible to the storefront on the cart and the order, so a customer sees what they're being charged before they pay:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const cart = await client.carts.get(cartId)
 
@@ -93,6 +95,13 @@ cart.fees.forEach((fee) => {
 
 cart.display_fee_total // "$7.50"
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
 
 ## Fees and tax
 
@@ -126,6 +135,8 @@ For any of this to work, the goods have to be described in the language customs 
 | `country_of_origin` | Where it was made, as an ISO country code — not where it ships from | `PT` |
 | `customs_description` | A plain description for the declaration, when the product name isn't clear enough | `Cotton t-shirt` |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.products.variants.update('prod_xxx', 'var_xxx', {
   hs_code: '6109.10',
@@ -133,6 +144,19 @@ await adminClient.products.variants.update('prod_xxx', 'var_xxx', {
   customs_description: 'Cotton t-shirt',
 })
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx/variants/var_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "hs_code": "6109.10",
+    "country_of_origin": "PT",
+    "customs_description": "Cotton t-shirt"
+  }'
+```
+
+</CodeGroup>
 
 <Warning>
 `country_of_origin` is where the item was **manufactured**, not the warehouse it leaves from. Duty rates and trade agreements turn on origin, so getting this wrong produces the wrong charge — and can hold a parcel at the border.

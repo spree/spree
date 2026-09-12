@@ -57,14 +57,14 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 ```text
 my-store/
 ├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Meilisearch
-├── docker-compose.dev.yml    # Alternative: build from local backend/
+├── docker-compose.dev.yml    # Alternative: build from local server/
 ├── render.yaml               # Render Blueprint — one Docker service built from this repo
 ├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
 ├── .dockerignore             # Keeps the production build context to sources
 ├── .gitignore
 ├── package.json              # Convenience scripts
 ├── README.md
-├── backend/                  # Full Rails app — the Spree API (from spree/spree-starter)
+├── server/                  # Full Rails app — the Spree API (from spree/spree-starter)
 │   ├── Gemfile
 │   ├── Dockerfile            # Also builds the production image (API + dashboard)
 │   ├── config/
@@ -88,18 +88,18 @@ my-store/
 
 ## Customizing the Spree API
 
-The `backend/` directory is the Spree API — a full Rails application with Spree installed (cloned from [spree-starter](https://github.com/spree/spree-starter)) serving the Store and Admin APIs your storefront and dashboard talk to, plus background jobs and transactional emails. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
+The `server/` directory is the Spree API — a full Rails application with Spree installed (cloned from [spree-starter](https://github.com/spree/spree-starter)) serving the Store and Admin APIs your storefront and dashboard talk to, plus background jobs and transactional emails. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
 
 ```bash
 npx spree eject
 ```
 
-This replaces `docker-compose.yml` with a version that builds from `backend/`, rebuilds the image, and restarts services. You can then:
+This replaces `docker-compose.yml` with a version that builds from `server/`, rebuilds the image, and restarts services. You can then:
 
-- **Add gems** to `backend/Gemfile`
-- **Override models** with decorators in `backend/app/models/`
-- **Add controllers** in `backend/app/controllers/`
-- **Configure Spree** in `backend/config/initializers/spree.rb`
+- **Add gems** to `server/Gemfile`
+- **Override models** with decorators in `server/app/models/`
+- **Add controllers** in `server/app/controllers/`
+- **Configure Spree** in `server/config/initializers/spree.rb`
 - **Add migrations** with `spree generate migration AddFooToSpreeBars foo:string` (runs inside the container)
 
 See the [Customization Guide](/developer/customization) for more details.
@@ -113,7 +113,7 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 | `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the React Dashboard dev server when `apps/dashboard` exists |
 | `spree stop` | Stop backend services |
 | `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
-| `spree eject` | Switch from prebuilt image to building from `backend/` |
+| `spree eject` | Switch from prebuilt image to building from `server/` |
 | `spree add dashboard` | Add the React Dashboard to an existing project |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree logs` | View backend logs |
@@ -166,7 +166,7 @@ SPREE_VERSION_TAG=5.4
 
 ## Deployment
 
-The project deploys as **one image**: `backend/Dockerfile` builds the Spree API together with your React Dashboard (when `apps/dashboard` exists), served same-origin at `/dashboard` — no CORS, no cookie configuration, no second service.
+The project deploys as **one image**: `server/Dockerfile` builds the Spree API together with your React Dashboard (when `apps/dashboard` exists), served same-origin at `/dashboard` — no CORS, no cookie configuration, no second service.
 
 - **Render** — the `render.yaml` at the project root is a ready Blueprint: one Docker service built straight from your repo, migrations run on boot.
 - **Anywhere else** — `spree build --production` builds the same image locally; push it to a registry and run it on any Docker host.

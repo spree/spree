@@ -117,7 +117,8 @@ Back-office work happens through the Admin API.
 ```typescript Admin SDK
 // Find orders needing attention
 const orders = await adminClient.orders.list({
-  filter: { payment_status_eq: 'paid', fulfillment_status_eq: 'unfulfilled' },
+  payment_status_eq: 'paid',
+  fulfillment_status_eq: 'unfulfilled',
 })
 
 // Cancel an order, recording why from your own list of reasons

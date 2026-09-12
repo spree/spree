@@ -57,7 +57,7 @@ The distinction matters when choosing what to listen for. `order.updated` fires 
 
 An event carries the record it's about, serialized:
 
-```json
+```json Event payload
 {
   "id": "or_86Rf07xd4z",
   "number": "R123456789",
@@ -78,13 +78,21 @@ Point a webhook at your endpoint and subscribe it to the events you care about. 
 
 A subscriber is a small class that names the events it wants and does something when one arrives.
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree generate subscriber OrderPlaced order.placed
+```
+
+```bash Without Spree CLI
 bin/rails g spree:subscriber OrderPlaced order.placed
 ```
 
+</CodeGroup>
+
 The generator writes the class, a test, and — the step that's easy to forget — registers it.
 
-```ruby app/subscribers/order_placed_subscriber.rb
+```ruby server/app/subscribers/order_placed_subscriber.rb
 class OrderPlacedSubscriber < Spree::Subscriber
   subscribes_to 'order.placed'
 
@@ -99,14 +107,14 @@ end
 
 A subscriber can listen to several events, or to a whole family:
 
-```ruby
+```ruby server/app/subscribers/order_placed_subscriber.rb
 subscribes_to 'order.placed', 'order.canceled'
 subscribes_to 'order.*'
 ```
 
 Subscribers must be registered — they aren't discovered automatically, because a subscriber that starts running because of where its file sits is hard to reason about:
 
-```ruby config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.subscribers << OrderPlacedSubscriber
 end
@@ -118,7 +126,7 @@ By default a subscriber runs as a background job, so a slow API call in your cod
 
 That's almost always what you want. If you genuinely need to run inside the same transaction, you can ask to:
 
-```ruby
+```ruby server/app/subscribers/order_placed_subscriber.rb
 subscribes_to 'order.placed', async: false
 ```
 
@@ -130,7 +138,7 @@ A synchronous subscriber runs while the customer waits, and an exception in it c
 
 Anything in your own code can announce something, and subscribers and webhooks treat it like any built-in event:
 
-```ruby
+```ruby server/app/services/fraud_check.rb
 order.publish_event('order.flagged_for_review')
 ```
 

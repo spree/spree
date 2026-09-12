@@ -59,6 +59,8 @@ So a buyer attached to "Acme Europe" can act for Sales and Operations beneath it
 
 This is why authorization always asks "does this person have standing on this node *or any of its ancestors*", never "is this person a member of exactly this node".
 
+<CodeGroup>
+
 ```typescript Store SDK
 // Which companies can this customer act for?
 const { data: memberships } = await client.account.companies()
@@ -68,6 +70,14 @@ memberships.forEach((m) => {
   m.company.ancestors // [{ name: "Acme Group", … }] — the path above it
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/account/companies' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
 
 <Note>
 **In open source, every member can do everything within their standing** — buy, see the subtree's orders, and manage addresses and members. There are no company roles; the `role` label on a membership is cosmetic.
@@ -79,11 +89,23 @@ To restrict what individual people may do, see [company governance](#company-gov
 
 Both the dashboard and the storefront add members the same way — by email:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const result = await client.companies.members.create('comp_xxx', {
   customer_email: 'buyer@acme.com',
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/companies/comp_xxx/members' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{ "customer_email": "buyer@acme.com" }'
+```
+
+</CodeGroup>
 
 What comes back depends on whether that email is already a customer:
 
@@ -93,6 +115,8 @@ What comes back depends on whether that email is already a customer:
 You can tell which by the ID prefix — `cmem_` for a membership, `cinv_` for an invitation.
 
 Accepting an invitation either signs an existing customer in, or registers a new account with the invited email. Either way it ends as a membership:
+
+<CodeGroup>
 
 ```typescript Store SDK
 // The token comes from the invitation email — no sign-in needed to read it
@@ -106,30 +130,65 @@ await client.companyInvitations.accept(token, {
 })
 ```
 
+```bash cURL
+# Reading an invitation needs no sign-in — just the emailed token
+curl 'https://api.mystore.com/api/v3/store/company_invitations/TOKEN' \
+  -H 'X-Spree-API-Key: pk_xxx'
+
+curl -X POST 'https://api.mystore.com/api/v3/store/company_invitations/TOKEN/accept' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
+
 Memberships are always active and always backed by a real customer. Anything still waiting lives on the invitation, so there's no such thing as a half-active member.
 
 ## Buying for a company
 
 A cart and an order can name a company. That's what turns a personal purchase into a company one — it decides which addresses are on offer, whose tax registration applies, and who else will see the order.
 
+<CodeGroup>
+
 ```typescript Store SDK
 await client.carts.update(cartId, { company_id: 'comp_xxx' })
 ```
 
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{ "company_id": "comp_xxx" }'
+```
+
+</CodeGroup>
+
 A buyer with exactly one membership doesn't need to choose; it resolves on its own. A buyer who belongs to several names the node — and it must be one they have standing on.
 
 The company is **frozen onto the order** at completion, like the addresses and prices. Reorganize the tree next year and last year's order still explains itself.
+
+<CodeGroup>
 
 ```typescript Store SDK
 // Everything anyone in the subtree has bought
 const { data: orders } = await client.companies.orders.list('comp_xxx')
 ```
 
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/companies/comp_xxx/orders' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
+
 That subtree rollup is the feature a finance team actually asks for: one place showing what the whole organization spent, without chasing individual accounts.
 
 ## The shared address book
 
 A company keeps its own addresses — ship-to sites, a billing address — separate from any individual's. They're labelled, and one of each kind can be the default.
+
+<CodeGroup>
 
 ```typescript Store SDK
 await client.companies.addresses.create('comp_xxx', {
@@ -144,11 +203,23 @@ await client.companies.addresses.create('comp_xxx', {
 })
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/companies/comp_xxx/addresses' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{ "label": "Northern Warehouse", "first_name": "Goods", "last_name": "Inwards" }'
+```
+
+</CodeGroup>
+
 Note that a delivery site is just an address. Ten warehouses do not mean ten company nodes — nodes exist for organizational and legal structure, addresses for where things go.
 
 ## Tax
 
 Tax registrations and exemption certificates live **only on legal entities**, and a purchase resolves tax through the node's nearest `company` ancestor.
+
+<CodeGroup>
 
 ```typescript Admin SDK
 await adminClient.companies.taxIdentifiers.create('comp_xxx', {
@@ -159,6 +230,15 @@ await adminClient.companies.taxIdentifiers.create('comp_xxx', {
 // Validation runs against the official registry, in the background
 await adminClient.companies.taxIdentifiers.validate('comp_xxx', 'txid_xxx')
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/tax_identifiers' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "kind": "eu_vat", "value": "NL123456789B01" }'
+```
+
+</CodeGroup>
 
 <Warning>
 The walk stops at the first `company` node, **whether or not it holds a registration**. A subsidiary with no VAT number of its own therefore has none — it never quietly borrows its parent's, because in most jurisdictions that would be a false declaration.
@@ -224,6 +304,8 @@ Payment terms and net invoicing, quotes, and a packaged buyer portal are on the 
 
 ## Managing companies as staff
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Roots only
 const { data: roots } = await adminClient.companies.list({ parent_id_null: 1 })
@@ -237,6 +319,14 @@ const division = await adminClient.companies.create({
   parent_id: 'comp_xxx',
 })
 ```
+
+```bash cURL
+# Roots only
+curl 'https://api.mystore.com/api/v3/admin/companies?q[parent_id_null]=1' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Moving a branch is an update with a new `parent_id`. Deleting a node removes its whole subtree, and is refused outright once any order exists beneath it — history doesn't get deleted to tidy up an org chart.
 

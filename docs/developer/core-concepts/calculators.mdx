@@ -83,7 +83,7 @@ const calculators = await adminClient.deliveryMethods.calculators()
 await adminClient.deliveryMethods.create({
   name: 'Standard shipping',
   delivery_zone_id: 'dz_xxx',
-  calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+  calculator_type: 'flat_rate',
   calculator_attributes: {
     preferences: { amount: '7.00', currency: 'USD' },
   },
@@ -92,6 +92,11 @@ await adminClient.deliveryMethods.create({
 
 ```bash CLI
 spree api get /delivery_methods/calculators
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/delivery_methods/calculators' \
+  -H 'X-Spree-API-Key: sk_xxx'
 ```
 
 </CodeGroup>

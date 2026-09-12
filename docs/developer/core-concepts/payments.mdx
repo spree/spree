@@ -9,7 +9,7 @@ Spree has a highly flexible payments model which allows multiple payment methods
 
 Payment methods typically represent a payment gateway. Gateways will process card payments, online bank transfers, buy-now-pay-later, wallet payments, and other types of payments. Spree also comes with a Check option for offline processing.
 
-The `Payment` model in Spree tracks payments against [Orders](orders). Payments relate to a `source` which indicates how the payment was made, and a `PaymentMethod`, indicating the processor used for this payment.
+The `Payment` model in Spree tracks payments against [Orders](/developer/core-concepts/orders). Payments relate to a `source` which indicates how the payment was made, and a `PaymentMethod`, indicating the processor used for this payment.
 
 When a payment is created, it is given a unique, 8-character identifier. This is used when sending the payment details to the payment processor. Without this identifier, some payment gateways mistakenly reported duplicate payments.
 
@@ -155,7 +155,9 @@ Payment methods where `session_required?` returns `false` don't need a payment s
 
 For these methods, the Store API allows creating a payment directly without going through the payment session flow:
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const options = { spreeToken: cart.token }
 
 // Create a payment for a non-session payment method
@@ -167,6 +169,20 @@ const payment = await client.carts.payments.create(cart.id, {
   },
 }, options)
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/payments' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: CART_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "payment_method_id": "pm_xyz789",
+    "amount": "99.99",
+    "metadata": { "purchase_order_number": "PO-12345" }
+  }'
+```
+
+</CodeGroup>
 
 The payment is created in `checkout` state. When the order transitions to `complete`, Spree calls `process_payments!` which runs the payment method's `authorize` (or `purchase` if auto-capture is enabled). For manual payment methods like Check, this is a no-op that succeeds immediately — the payment moves to `pending` (or `completed` with auto-capture), allowing the order to complete.
 
@@ -350,7 +366,9 @@ stateDiagram-v2
 
 **Create a Payment Session:**
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const options = { spreeToken: cart.token }
 
 // Create a payment session for the selected payment method
@@ -365,9 +383,19 @@ console.log(session.external_id)              // e.g. 'pi_3ABC123' (Stripe Payme
 console.log(session.external_data.client_secret) // Use with Stripe.js or Adyen Drop-in
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/payment_sessions' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: CART_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{ "payment_method_id": "pm_xyz789", "amount": "99.99", "external_data": {} }'
+```
+
+</CodeGroup>
+
 **Response shape (`StorePaymentSession`):**
 
-```json
+```json Response
 {
   "id": "ps_abc123",
   "status": "pending",
@@ -387,7 +415,9 @@ console.log(session.external_data.client_secret) // Use with Stripe.js or Adyen 
 
 **Update a Payment Session** (e.g., after order total changes):
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const updated = await client.carts.paymentSessions.update(
   cart.id, session.id,
   { amount: '149.99' },
@@ -395,9 +425,21 @@ const updated = await client.carts.paymentSessions.update(
 )
 ```
 
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/payment_sessions/ps_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: CART_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{ "amount": "149.99" }'
+```
+
+</CodeGroup>
+
 **Complete a Payment Session** (after customer confirms payment on the frontend):
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const completed = await client.carts.paymentSessions.complete(
   cart.id, session.id,
   { session_result: '...', external_data: {} },
@@ -406,15 +448,35 @@ const completed = await client.carts.paymentSessions.complete(
 console.log(completed.status) // 'completed'
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/payment_sessions/ps_xxx/complete' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: CART_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{ "session_result": "...", "external_data": {} }'
+```
+
+</CodeGroup>
+
 <Warning>
 Completing a payment session does **not** complete the order. You must call `POST /carts/:id/complete` separately after the session is completed. This separation prevents race conditions between the frontend and payment webhooks.
 </Warning>
 
 **Complete the Order** (after the payment session is completed):
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const order = await client.carts.complete(cart.id, options)
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/complete' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: CART_TOKEN'
+```
+
+</CodeGroup>
 
 ### Payment Webhooks
 
@@ -430,7 +492,7 @@ The background job creates/updates the Payment record, marks the session as comp
 
 Gateway extensions implement `parse_webhook_event` to normalize provider-specific payloads:
 
-```ruby
+```ruby server/app/models/my_gateway.rb
 class MyGateway < Spree::Gateway
   def parse_webhook_event(raw_body, headers)
     # Verify signature — raise WebhookSignatureError if invalid
@@ -600,7 +662,9 @@ Payment Setup Sessions require [customer authentication](/api-reference/store-ap
 
 **Create a Payment Setup Session:**
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const options = { token: jwtToken }
 
 // Create a setup session for saving a payment method
@@ -613,9 +677,19 @@ const setupSession = await client.customer.paymentSetupSessions.create({
 console.log(setupSession.external_client_secret) // e.g. 'seti_ABC123_secret_xyz'
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/payment_setup_sessions' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{ "payment_method_id": "pm_xyz789", "external_data": {} }'
+```
+
+</CodeGroup>
+
 **Response shape (`StorePaymentSetupSession`):**
 
-```json
+```json Response
 {
   "id": "pss_abc123",
   "status": "pending",
@@ -631,13 +705,25 @@ console.log(setupSession.external_client_secret) // e.g. 'seti_ABC123_secret_xyz
 
 **Get a Payment Setup Session:**
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const session = await client.customer.paymentSetupSessions.get('pss_abc123', options)
 ```
 
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/customers/me/payment_setup_sessions/pss_abc123' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
+
 **Complete a Payment Setup Session** (after the customer completes setup on the frontend using the gateway SDK and `external_client_secret`):
 
-```typescript
+<CodeGroup>
+
+```typescript Store SDK
 const completed = await client.customer.paymentSetupSessions.complete(
   'pss_abc123',
   { external_data: {} },
@@ -646,6 +732,16 @@ const completed = await client.customer.paymentSetupSessions.complete(
 console.log(completed.status)             // 'completed'
 console.log(completed.payment_source_id)  // e.g. 'card_xyz789' - the saved payment method
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/payment_setup_sessions/pss_abc123/complete' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{ "external_data": {} }'
+```
+
+</CodeGroup>
 
 Spree will verify the result with the provider and create a saved payment source (e.g., `Spree::CreditCard`) that can be used for future payments.
 
@@ -693,14 +789,6 @@ Spree publishes events throughout the payment lifecycle that you can subscribe t
 
 See [Events](/developer/core-concepts/events) for more details on subscribing to events.
 
-## Related Documentation
-
-- [Payments (Store SDK)](/developer/sdk/store/payments) - SDK how-to for payment sessions, payments, and setup sessions
-- [Build a Custom Payment Method](/developer/how-to/custom-payment-method) - Step-by-step guide to creating your own payment gateway integration
-- [Orders](/developer/core-concepts/orders) - Order lifecycle, payment and fulfillment status
-- [Checkout Customization](/developer/core-concepts/carts) - Customizing the checkout flow
-- [Events](/developer/core-concepts/events) - Subscribe to payment events
-
 ## Two paths to a completed order
 
 A payment can finish in two places, and both have to end at the same result.
@@ -714,3 +802,11 @@ Never treat the browser returning from a redirect as proof of payment. The provi
 </Warning>
 
 Both paths can be replaced if your integration needs different behaviour — see [Dependencies](/developer/customization/dependencies).
+
+## Related Documentation
+
+- [Payments (Store SDK)](/developer/sdk/store/payments) - SDK how-to for payment sessions, payments, and setup sessions
+- [Build a Custom Payment Method](/developer/how-to/custom-payment-method) - Step-by-step guide to creating your own payment gateway integration
+- [Orders](/developer/core-concepts/orders) - Order lifecycle, payment and fulfillment status
+- [Checkout Customization](/developer/core-concepts/carts) - Customizing the checkout flow
+- [Events](/developer/core-concepts/events) - Subscribe to payment events

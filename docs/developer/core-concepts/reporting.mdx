@@ -28,7 +28,7 @@ flowchart LR
 
 A query names what to measure and how to slice it. This is the whole surface:
 
-```json
+```json Query
 {
   "metrics": ["total_sales", "orders"],
   "dimensions": [{ "name": "completed_at", "grain": "week" }],
@@ -78,7 +78,7 @@ different clocks, so a payment total beside a units-received count is two
 reports wearing one table — the query refuses the mix rather than inventing a
 join between grains that have no honest relationship.
 
-```ruby
+```ruby server/config/initializers/spree.rb
 Spree.reporting.metric :total_sales,
   sql: 'SUM(%{orders}.total)', base: :orders, format: :money
 ```
@@ -120,7 +120,7 @@ row and inflate every other metric in the same query.
 Core's sales metrics follow the sequence merchants and accountants already use,
 so a Spree figure means what the same word means everywhere else:
 
-```
+```text
 gross_sales − discounts − returns = net_sales
 net_sales + shipping + duties + fees + taxes = total_sales
 ```
@@ -139,7 +139,7 @@ zero and margin over an incompletely-costed catalogue reads high.
 A dimension groups and filters. Its definition owns every behaviour keyed off
 it, which is what lets an extension-registered dimension work end to end:
 
-```ruby
+```ruby server/config/initializers/spree.rb
 Spree.reporting.dimension :channel, base: :orders, column: :channel_id,
   lookup: :channel,
   subject: -> { Spree::Channel }, key_scope: 'read_channels',
@@ -181,7 +181,7 @@ fulfill", "Open returns" and "Low stock" are the state of the store right now,
 with no time range and no currency. The registry holds these as **counters**
 beside metrics and dimensions, and `GET /dashboard/counters` evaluates them:
 
-```json
+```json Response
 {
   "channel_id": null,
   "counters": [

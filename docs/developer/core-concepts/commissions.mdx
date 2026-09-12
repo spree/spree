@@ -33,6 +33,8 @@ flowchart LR
 
 A rate says what to charge. It's either a percentage of the sale or a flat amount.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.commissionRates.create({
   name: 'Electronics',
@@ -42,6 +44,21 @@ await adminClient.commissionRates.create({
   enabled: true,
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/commission_rates' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Electronics",
+    "code": "electronics",
+    "kind": "percentage",
+    "value": "12.5",
+    "enabled": true
+  }'
+```
+
+</CodeGroup>
 
 | Attribute | Description |
 |---|---|
@@ -88,6 +105,8 @@ Rules narrow when a rate applies. A rate can hold several, and **all of them mus
 
 So "electronics **and** these three sellers" is two rules on one rate.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Every rule kind, with the schema describing its settings — so an editor
 // is built from what this marketplace actually has, not a hardcoded list
@@ -100,6 +119,24 @@ await adminClient.commissionRates.update('crate_xxx', {
   ],
 })
 ```
+
+```bash cURL
+# Discover the rule kinds this marketplace has
+curl 'https://api.mystore.com/api/v3/admin/commission_rates/rule_types' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Attach rules to a rate
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/commission_rates/crate_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "rules": [
+      { "type": "category_rule", "preferences": { "category_ids": ["ctg_xxx"] } }
+    ]
+  }'
+```
+
+</CodeGroup>
 
 Rules are replaced wholesale on update — send the full set you want.
 
@@ -156,6 +193,8 @@ A **flat** rate cannot commission delivery. A flat fee is charged per sale, so c
 
 Money is stated per currency, never converted:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // A percentage, with a floor and a cap in each currency
 await adminClient.commissionRates.create({
@@ -176,6 +215,35 @@ await adminClient.commissionRates.create({
   amounts: { USD: '5.00', GBP: '4.00' },
 })
 ```
+
+```bash cURL
+# A percentage, with a floor and a cap in each currency
+curl -X POST 'https://api.mystore.com/api/v3/admin/commission_rates' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Standard",
+    "kind": "percentage",
+    "value": 10,
+    "bounds": {
+      "USD": { "min_amount": 1, "max_amount": 50 },
+      "EUR": { "min_amount": 1, "max_amount": 45 }
+    }
+  }'
+
+# A flat fee, stated per currency
+curl -X POST 'https://api.mystore.com/api/v3/admin/commission_rates' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Listing fee",
+    "kind": "fixed",
+    "value": 0,
+    "amounts": { "USD": "5.00", "GBP": "4.00" }
+  }'
+```
+
+</CodeGroup>
 
 - **`amounts`** — what a flat fee charges, per currency
 - **`bounds`** — the floor and cap a percentage charges within, per currency
@@ -223,11 +291,20 @@ When an order is placed, the resolved rate is applied and the result frozen as a
 | `line_item_id` / `fulfillment_id` | What was commissioned — exactly one |
 | `commission_rate_id` | The rate, if it still exists |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: lines } = await adminClient.commissionLines.list({
-  filter: { seller_id_eq: 'sel_xxx' },
+  seller_id_eq: 'sel_xxx',
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/commission_lines?q[seller_id_eq]=sel_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 **Every field is a snapshot.** Editing the rate afterwards changes nothing here, and neither does deleting it — a retired rate is soft-deleted precisely so "which rate charged this" stays answerable.
 

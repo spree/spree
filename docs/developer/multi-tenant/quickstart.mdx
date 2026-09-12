@@ -50,7 +50,7 @@ spree eject
 
 ### Adding gems
 
-1. Add the following code to your `backend/Gemfile`:
+1. Add the following code to your `server/Gemfile`:
 
     ```ruby
     source "https://license:#{ENV['KEYGEN_LICENSE_KEY']}@rubygems.pkg.keygen.sh/#{ENV['KEYGEN_ACCOUNT_ID']}" do
@@ -74,10 +74,10 @@ spree eject
       your shell environment.
     </Info>
 
-    Wrap **every** `bundle install` in your `backend/Dockerfile` with the secret mounts. There
+    Wrap **every** `bundle install` in your `server/Dockerfile` with the secret mounts. There
     are usually two — one in the build stage and one in the dev stage:
 
-    ```dockerfile backend/Dockerfile
+    ```dockerfile server/Dockerfile
     COPY .ruby-version Gemfile Gemfile.lock ./
     RUN bundle install # [!code --]
     RUN --mount=type=secret,id=keygen_license_key,env=KEYGEN_LICENSE_KEY,required=false \ # [!code ++]
@@ -199,7 +199,7 @@ development by default, but `.lvh.me` (and your production domain) are not — r
 `app.lvh.me` are rejected with a "Blocked hosts" error until you allow them. Add your root
 domain to `config/environments/development.rb`:
 
-```ruby backend/config/environments/development.rb
+```ruby server/config/environments/development.rb
 if (root_domain = ENV['SPREE_ROOT_DOMAIN']).present?
   config.hosts << ".#{root_domain}"
 end
@@ -214,7 +214,7 @@ to your customer user model automatically. You then need to **remove the `:valid
 manually. `:validatable` validates the user's email uniqueness globally; the concern re-validates
 it in the scope of the tenant instead, so the same email can exist across different tenants.
 
-```ruby backend/app/models/spree/user.rb
+```ruby server/app/models/spree/user.rb
 class Spree::User < Spree.base_class
   include Spree::UserAddress
   include Spree::UserMethods
@@ -238,7 +238,7 @@ The generator also changes your admin user model's base class from `Spree.base_c
 `Spree::Base`. If your `admin_user.rb` exists, this is applied automatically; otherwise make the
 change yourself:
 
-```ruby backend/app/models/spree/admin_user.rb
+```ruby server/app/models/spree/admin_user.rb
 class Spree::AdminUser < Spree.base_class # [!code --]
 class Spree::AdminUser < Spree::Base # [!code ++]
   include Spree::AdminUserMethods

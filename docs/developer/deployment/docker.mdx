@@ -13,7 +13,7 @@ If you haven't ejected yet, do that first:
 spree eject
 ```
 
-This generates the app source — including its production `Dockerfile` — in `backend/`. Make your customizations, then build:
+This generates the app source — including its production `Dockerfile` — in `server/`. Make your customizations, then build:
 
 ```bash
 spree build --production                                  # → <project>-spree:latest
@@ -23,7 +23,7 @@ spree build --production --tag registry.example.com/my-store:v42
 Or with plain Docker, from the project root:
 
 ```bash
-docker build . -f backend/Dockerfile -t my-store
+docker build . -f server/Dockerfile -t my-store
 ```
 
 Both produce the same image — and it's exactly what Render and Railway build from your repository. Migrations run automatically on boot.

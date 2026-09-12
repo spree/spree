@@ -51,7 +51,19 @@ A stock level carries four counts, and a fifth is derived from them. Keeping the
 | `incoming_count` | How much is on its way here — on a purchase order placed with a supplier, or a transfer already in transit |
 | **`available_count`** | `count_on_hand − allocated_count` — what's actually sellable, before checkout holds |
 
-Reserved and incoming are kept as counters rather than worked out on every read, because the Inventory page in the dashboard reads them for every row, many times a day, and only a handful of things change them: entering or leaving checkout moves reserved; marking a purchase order ordered or a transfer in transit adds to incoming, and receiving, closing, cancelling or reopening the document takes the remainder back off. Nothing else writes them. If a figure ever looks wrong, `rake spree:stock:recount_levels` recomputes both from their sources and reports every row it corrected — the same task the 6.0 upgrade runs to fill them in for existing stock.
+Reserved and incoming are kept as counters rather than worked out on every read, because the Inventory page in the dashboard reads them for every row, many times a day, and only a handful of things change them: entering or leaving checkout moves reserved; marking a purchase order ordered or a transfer in transit adds to incoming, and receiving, closing, cancelling or reopening the document takes the remainder back off. Nothing else writes them. If a figure ever looks wrong, one task recomputes both from their sources and reports every row it corrected — the same task the 6.0 upgrade runs to fill them in for existing stock.
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:stock:recount_levels
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:stock:recount_levels
+```
+
+</CodeGroup>
 
 A transfer counts as incoming from the moment it is marked in transit, not when it is drafted: until the van leaves, nothing is moving. Units a delivery rejects at the dock leave incoming too — they are recorded on the receipt, but they are not coming.
 
@@ -76,6 +88,8 @@ A stock location is somewhere stock physically sits: a warehouse, a shop, a thir
 | `pickup_enabled` | Whether customers can collect here |
 | `returns_enabled` | Whether customers can bring returns here |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: locations } = await adminClient.stockLocations.list()
 
@@ -86,6 +100,13 @@ await adminClient.stockLocations.create({
   active: true,
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/stock_locations' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 ## Reading and adjusting stock
 
@@ -137,12 +158,21 @@ Every change to stock is recorded as a movement, so "why is this number what it 
 | `released` | An allocation is given back, because an order was cancelled |
 | `adjusted` | A manual correction, such as after a stock count |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Everything that happened to one SKU, across every location
 const { data: movements } = await adminClient.stockMovements.list({
   stock_level_variant_id_eq: 'variant_xxx',
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/stock_movements?q[stock_level_variant_id_eq]=variant_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Each movement points at what caused it — the order, the fulfillment, the transfer, the purchase order, and for stock that arrived, the delivery it came in on — so an audit trail reads as a sequence of business events rather than a list of numbers that changed.
 
@@ -152,6 +182,8 @@ A movement that arrived through a purchase order also carries what the units cos
 
 For a storefront, all of the above collapses into one question, and the answer is already computed:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const product = await client.products.get('spree-tote')
 
@@ -160,6 +192,13 @@ product.variants.forEach((variant) => {
   variant.purchasable  // in stock, or backorderable
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
 
 `in_stock` already accounts for what's allocated and what other shoppers are holding in checkout. There is nothing to compute client-side, and no separate inventory request to make.
 
@@ -196,6 +235,8 @@ A stock transfer moves inventory from one location to another, and reflects that
 
 That is four steps, not one. A transfer is planned as a draft, packed, sent, and finally counted in:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const transfer = await adminClient.stockTransfers.create({
   source_location_id: 'sloc_xxx',
@@ -212,6 +253,15 @@ await adminClient.stockTransfers.stockReceipts.create(transfer.id, {
 })
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/stock_transfers' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "source_location_id": "sl_a", "destination_location_id": "sl_b" }'
+```
+
+</CodeGroup>
+
 | Status | What it means |
 |---|---|
 | `draft` | A plan. Lines can still change; nothing has moved |
@@ -227,6 +277,8 @@ Two things follow from the middle step. Availability at the destination does not
 ## Buying stock in
 
 Stock that comes from a supplier is a purchase order, not a transfer — it has a supplier, a cost per unit and a date it was promised for, none of which apply to moving goods you already own.
+
+<CodeGroup>
 
 ```typescript Admin SDK
 const order = await adminClient.purchaseOrders.create({
@@ -246,6 +298,15 @@ await adminClient.purchaseOrders.stockReceipts.create(order.id, {
 })
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/purchase_orders' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "supplier_id": "sup_xxx", "stock_location_id": "sl_xxx" }'
+```
+
+</CodeGroup>
+
 | Status | What it means |
 |---|---|
 | `draft` | Being put together. Lines and costs can still change |
@@ -263,19 +324,37 @@ Purchase orders export to CSV, one row per line, which is the file a merchant se
 
 Suppliers themselves are an address book, kept per store:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: suppliers } = await adminClient.suppliers.list()
 ```
 
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/suppliers' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
 ## Counting a delivery in
 
 Transfers and purchase orders are received the same way: each delivery is a **stock receipt**, numbered and dated, carrying the packing-slip reference and — per line — what was accepted and what was refused, with a reason.
+
+<CodeGroup>
 
 ```typescript Admin SDK
 const { data: deliveries } = await adminClient.purchaseOrders.stockReceipts.list(order.id, {
   expand: ['items'],
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/purchase_orders/po_xxx/stock_receipts' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 A receipt records *this delivery's* counts, not running totals: a second box adds to the first rather than restating it. Accepted units land on the destination's shelf, each as a `received` movement that names the receipt. Refused units are recorded and never stocked; the reason is one of `damaged`, `wrong_item`, `expired` or `other`. Omit `items` to count in everything still outstanding, intact.
 
@@ -285,10 +364,21 @@ A receipt records *this delivery's* counts, not running totals: a second box add
 
 When the balance is not coming — the supplier is out of stock, the missing units fell off the van — the document is **closed short**: it settles in `received` with `closed_short_at` and the reason recorded, and the outstanding count stays on each line as the record of the gap. Nothing moves.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.purchaseOrders.close(order.id, { reason: 'Supplier out of stock' })
 await adminClient.stockTransfers.close(transfer.id, { reason: 'Two fell off the van' })
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/purchase_orders/po_xxx/close' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "reason": "Supplier out of stock" }'
+```
+
+</CodeGroup>
 
 ## The Inventory page
 

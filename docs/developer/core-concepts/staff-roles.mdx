@@ -44,6 +44,8 @@ Because roles are scoped to their owner, two stores can each define a "Manager" 
 
 A permission key is a verb and a resource — `read_orders`, `write_products`. Roles hold a list of them:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const role = await adminClient.roles.create({
   name: 'Fulfillment staff',
@@ -52,11 +54,33 @@ const role = await adminClient.roles.create({
 })
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/roles' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Fulfillment staff",
+    "description": "Can see orders and ship them, nothing else",
+    "permissions": ["read_orders", "write_fulfillments", "read_products"]
+  }'
+```
+
+</CodeGroup>
+
 Every grantable key is discoverable, so a permission picker never needs a hardcoded list:
+
+<CodeGroup>
 
 ```typescript Admin SDK
 const { data: permissions } = await adminClient.permissions.list()
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/permissions' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Keys are grouped so they can be presented sensibly — orders, catalog, marketing, customers, settings, access and analytics.
 
@@ -88,13 +112,13 @@ Roles are pure data. They're created through the dashboard, the Admin API, or se
 
 Use the Spree CLI to create admin users:
 
-```bash
+```bash Spree CLI
 spree user create
 ```
 
 The CLI will prompt you for the email and password. You can also pass them directly:
 
-```bash
+```bash Spree CLI
 spree user create --email admin@example.com --password secret123
 ```
 
@@ -144,7 +168,7 @@ You can invite new admins through the Admin Panel or programmatically.
 
 Using the [Admin SDK](/developer/sdk/admin/quickstart), call `client.invitations.create`:
 
-```typescript
+```typescript Admin SDK
 import { createAdminClient } from '@spree/admin-sdk'
 
 const client = createAdminClient({

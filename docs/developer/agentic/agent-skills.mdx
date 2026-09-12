@@ -52,7 +52,7 @@ The plugin delivers everything the skills CLI does **plus** `/spree:doctor`, `/s
 
 The skills detect your project flavor before running commands:
 
-- **create-spree-app projects** (Docker, Rails app in `backend/`) — commands route through the [Spree CLI](/developer/cli/quickstart) (`spree migrate`, `spree console`, …).
+- **create-spree-app projects** (Docker, Rails app in `server/`) — commands route through the [Spree CLI](/developer/cli/quickstart) (`spree migrate`, `spree console`, …).
 - **Classic Rails apps** (Spree gems in a plain Rails app, no Docker — typical for apps created before Spree 5.4) — the skills fall back to native commands (`bin/rails`, `bundle exec rake`) from the app root.
 
 ## Updating

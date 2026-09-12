@@ -114,13 +114,13 @@ Production upgrades only need the third stage — `bundle install` and `db:migra
 
 ### `spree eject`
 
-Switch from the prebuilt Docker image to building from your local `backend/` directory. This lets you customize the Rails app — add gems, override models, add migrations, etc.
+Switch from the prebuilt Docker image to building from your local `server/` directory. This lets you customize the Rails app — add gems, override models, add migrations, etc.
 
 ```bash
 spree eject
 ```
 
-After ejecting, the Docker image is built from `backend/Dockerfile`. Edit files in `backend/` and run `spree dev` to rebuild and restart with your changes.
+After ejecting, the Docker image is built from `server/Dockerfile`. Edit files in `server/` and run `spree dev` to rebuild and restart with your changes.
 
 See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
 

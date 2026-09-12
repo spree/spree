@@ -36,12 +36,23 @@ Every product carries one. If you don't choose, the default is used.
 | `is_default` | Used by products that don't pick one | `true` |
 | `tax_code` | The code your tax service knows it by | `1257L` |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const reduced = await adminClient.taxCategories.create({
   name: 'Reduced rate',
   tax_code: '1257L',
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/tax_categories' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Reduced rate", "tax_code": "1257L" }'
+```
+
+</CodeGroup>
 
 `tax_code` matters once you connect an external service — it is how you tell that service what kind of thing this is, in the vocabulary it already uses.
 
@@ -57,6 +68,8 @@ A tax rate is the number itself, plus where it applies and whether it's already 
 | `country_code` / `state_code` | Where it applies | `DE`, or `US` + `CA` |
 | `tax_category` | What it applies to | `Standard` |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: rates } = await adminClient.taxRates.list()
 
@@ -68,6 +81,26 @@ await adminClient.taxRates.create({
   tax_category_id: 'taxcat_xxx',
 })
 ```
+
+```bash cURL
+# List tax rates
+curl 'https://api.mystore.com/api/v3/admin/tax_rates' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Create one
+curl -X POST 'https://api.mystore.com/api/v3/admin/tax_rates' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "VAT 20%",
+    "amount": "0.2",
+    "included_in_price": true,
+    "country_code": "GB",
+    "tax_category_id": "taxcat_xxx"
+  }'
+```
+
+</CodeGroup>
 
 Rates name their country and state by **ISO code**, not by an ID — `DE`, `US` + `CA`. There's no separate region record to create first.
 
@@ -122,9 +155,18 @@ Whatever works out the tax, the record is the same: a tax line per charge, sayin
 | `amount` / `display_amount` | The tax charged |
 | `line_item_id` / `fulfillment_id` / `fee_id` | What was taxed — exactly one is set |
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: taxLines } = await adminClient.orders.taxLines.list('or_xxx')
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/orders/or_xxx/tax_lines' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Tax lines attach to a line item, a [fulfillment](/developer/core-concepts/fulfillments), or a [fee](/developer/core-concepts/fees) — so tax on goods and tax on delivery stay separately visible, which is what a tax return needs.
 
@@ -154,9 +196,18 @@ Spree's built-in rate tables are fine when the rules are simple — one country,
 
 For those, connect a real tax service. **The provider is chosen per [Market](/developer/core-concepts/markets)**, which means one store can use its own rates in a simple market and an external service in a complicated one.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: providers } = await adminClient.taxProviders.list()
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/tax_providers' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 A provider declares up front what it cannot do — no US local tax, no reverse charge — so the dashboard can warn a merchant who pairs it with a market that needs it, rather than quietly under-collecting.
 

@@ -21,7 +21,7 @@ Rules determine whether a promotion is eligible for a given order. Each rule imp
 
 Create a new class inheriting from `Spree::PromotionRule`:
 
-```ruby app/models/spree/promotion/rules/minimum_quantity.rb
+```ruby server/app/models/spree/promotion/rules/minimum_quantity.rb
 module Spree
   class Promotion
     module Rules
@@ -69,7 +69,7 @@ Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions ar
 
 Rules use Spree's preference system for configuration. Each preference creates getter/setter methods automatically:
 
-```ruby
+```ruby server/app/models/spree/promotion/rules/minimum_quantity.rb
 preference :amount, :decimal, default: 100.00
 preference :operator, :string, default: 'gte'
 preference :category_ids, :array, default: []
@@ -84,7 +84,7 @@ Available types: `:string`, `:integer`, `:decimal`, `:boolean`, `:array`.
 
 ### Step 2: Register the Rule
 
-```ruby config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.promotions.rules << Spree::Promotion::Rules::MinimumQuantity
 end
@@ -92,11 +92,33 @@ end
 
 Registered rules are discoverable at `/api/v3/admin/promotion_rules/types` together with their preference schema, and the dashboard's promotion editor is built on that endpoint — your rule appears there with a generated preferences form, no UI work needed.
 
+The API names your rule by its **shorthand** — the class name demodulized and underscored, so `Spree::Promotion::Rules::MinimumQuantity` is `minimum_quantity`. That is what `/types` returns, what a promotion payload sends, and what the locale key below is named after. The Ruby class name is never accepted on the wire:
+
+<CodeGroup>
+
+```typescript Admin SDK
+await adminClient.promotions.rules.create('promo_xxx', {
+  type: 'minimum_quantity',
+  preferences: { amount: 3 },
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/promotions/promo_xxx/promotion_rules' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "type": "minimum_quantity", "preferences": { "amount": 3 } }'
+```
+
+</CodeGroup>
+
+Override `self.api_type` on the class when you need the wire value to stay put across a rename.
+
 ### Step 3: Add Translations
 
 The rule's display name and description in the dashboard come from your locale file:
 
-```yaml config/locales/en.yml
+```yaml server/config/locales/en.yml
 en:
   spree:
     promotion_rule_types:
@@ -109,7 +131,7 @@ en:
 
 When your rule targets specific line items (not the whole order), implement `actionable?` so that item-level actions only discount matching items:
 
-```ruby app/models/spree/promotion/rules/brand.rb
+```ruby server/app/models/spree/promotion/rules/brand.rb
 module Spree
   class Promotion
     module Rules
@@ -155,7 +177,7 @@ Three declarations make a discount action:
 | `compute_amount(adjustable)` | The discount for one adjustable — a line item, fulfillment, or the order, matching your scope. Return a **negative** amount, or zero for "no discount". |
 | `perform(options = {})` | Called when the promotion is activated. For discount actions, delegate to `apply_via_adjuster(options)`. |
 
-```ruby app/models/spree/promotion/actions/tiered_discount.rb
+```ruby server/app/models/spree/promotion/actions/tiered_discount.rb
 module Spree
   class Promotion
     module Actions
@@ -199,7 +221,7 @@ There is nothing to clean up either. If the promotion stops being eligible — t
 
 For actions that don't create discounts (awarding points, sending notifications), implement `perform` alone:
 
-```ruby app/models/spree/promotion/actions/add_loyalty_points.rb
+```ruby server/app/models/spree/promotion/actions/add_loyalty_points.rb
 module Spree
   class Promotion
     module Actions
@@ -223,13 +245,13 @@ end
 
 ### Register and Translate
 
-```ruby config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.promotions.actions << Spree::Promotion::Actions::TieredDiscount
 end
 ```
 
-```yaml config/locales/en.yml
+```yaml server/config/locales/en.yml
 en:
   spree:
     promotion_action_types:
@@ -244,7 +266,7 @@ Like rules, registered actions surface automatically in the dashboard's promotio
 
 Not every charge or reduction is a promotion. A gift wrap fee, a payment surcharge, or loyalty pricing has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee](/developer/core-concepts/fees) or [Discount](/developer/core-concepts/discounts) rows.
 
-```ruby app/models/my_app/adjusters/gift_wrap.rb
+```ruby server/app/models/my_app/adjusters/gift_wrap.rb
 module MyApp
   module Adjusters
     class GiftWrap < Spree::Adjusters::Base
@@ -262,7 +284,7 @@ module MyApp
 end
 ```
 
-```ruby config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Rails.application.config.after_initialize do
   Spree.adjusters << MyApp::Adjusters::GiftWrap
 end
@@ -276,7 +298,7 @@ Custom discounts work the same way, writing `order.discounts` rows with your own
 
 ## Testing
 
-```ruby spec/models/spree/promotion/rules/minimum_quantity_spec.rb
+```ruby server/spec/models/spree/promotion/rules/minimum_quantity_spec.rb
 require 'spec_helper'
 
 RSpec.describe Spree::Promotion::Rules::MinimumQuantity do
@@ -304,7 +326,7 @@ RSpec.describe Spree::Promotion::Rules::MinimumQuantity do
 end
 ```
 
-```ruby spec/models/spree/promotion/actions/tiered_discount_spec.rb
+```ruby server/spec/models/spree/promotion/actions/tiered_discount_spec.rb
 require 'spec_helper'
 
 RSpec.describe Spree::Promotion::Actions::TieredDiscount do

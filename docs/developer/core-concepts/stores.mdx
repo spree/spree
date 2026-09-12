@@ -7,6 +7,27 @@ description: Understand Spree Stores — the top-level tenant boundary that scop
 
 The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies — belongs to exactly one store. A store owns its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its [product catalog](/developer/core-concepts/products).
 
+```mermaid
+erDiagram
+    Store ||--o{ Channel : "sells through"
+    Store ||--o{ Market : "trades in"
+    Store ||--o{ Product : "catalogs"
+    Store ||--o{ Order : "records"
+    Store ||--o{ PaymentMethod : "accepts"
+    Store ||--o{ StockLocation : "ships from"
+    Store ||--o{ Policy : "publishes"
+    Store ||--o{ Seller : "hosts"
+
+    Store {
+        string name
+        string code
+        string url
+        string default_currency
+        string default_locale
+        boolean default
+    }
+```
+
 ## Store Attributes
 
 | Attribute | Description |
