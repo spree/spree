@@ -112,18 +112,10 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     ...groupableDimensions.map((d) => ({ value: d.name, label: d.label })),
   ]
 
-  // Whether an hourly series fits inside the server's bucket ceiling. A
-  // custom range is measured; a preset is matched against the day count in
-  // its own name, since the server's preset vocabulary is wider than the
-  // client's date helper knows. Anything unrecognised is treated as too wide,
-  // so the option is withheld rather than offered and then refused.
   const maxBuckets = schema.limits.max_buckets ?? 2000
   const hourGrainFits = hourGrainFitsRange(draft.timeRange, maxBuckets)
 
   const grainOptions = (dimension?.grains ?? [])
-    // The server refuses an hourly series wider than its bucket ceiling, so
-    // the option is withheld for a range it cannot serve rather than letting
-    // a merchant pick it and meet a 422.
     .filter((grain) => grain !== 'hour' || hourGrainFits)
     .map((grain) => ({
       value: grain,
