@@ -78,11 +78,7 @@ import { StockLocationScopeField } from './stock-location-scope-field'
  * calculator (percent, tiered) is currency-neutral and keeps the generic
  * preference rendering.
  */
-const AMOUNT_BASED_CALCULATORS = [
-  'Spree::Calculator::Shipping::FlatRate',
-  'Spree::Calculator::Shipping::PerItem',
-  'Spree::Calculator::Shipping::DigitalDelivery',
-]
+const AMOUNT_BASED_CALCULATORS = ['flat_rate', 'per_item', 'digital_delivery']
 
 /**
  * Preference keys the per-currency editor owns on those calculators. `amount`
@@ -1057,7 +1053,9 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
       {usesCalculator ? (
         <>
           <Field>
-            <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>
+            <FieldLabel htmlFor="calculator-type">
+              {t('admin.fields.delivery_method.calculator.label')}
+            </FieldLabel>
             <Controller
               name="calculator_type"
               control={form.control}
@@ -1067,7 +1065,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
                   value={field.value ?? ''}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="calculator-type">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

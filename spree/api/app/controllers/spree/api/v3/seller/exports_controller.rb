@@ -157,7 +157,7 @@ module Spree
             name = name.to_s
             return nil unless ALLOWED_TYPES.include?(name)
 
-            Spree::Export.available_types.find { |type| type.api_type == name || type.to_s == name }
+            Spree::Export.available_types.find { |type| type.api_type == name }
           end
 
           private

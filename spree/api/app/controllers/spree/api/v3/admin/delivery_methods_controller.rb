@@ -207,11 +207,9 @@ module Spree
             calculator_type = permitted_params[:calculator_type]
             preferences = permitted_params[:calculator_preferences]
 
-            if calculator_type.present? && calculator_type_changed?(delivery_method, calculator_type)
-              # The wire format is the `api_type` shorthand; the class name is
-              # still accepted so an older client keeps working.
+            if calculator_type.present? && delivery_method.calculator&.class&.api_type != calculator_type
               selected_calculator_class = Spree::DeliveryMethod.calculators.find do |klass|
-                klass.api_type == calculator_type || klass.to_s == calculator_type
+                klass.api_type == calculator_type
               end
               unless selected_calculator_class
                 delivery_method.errors.add(:calculator_type, :invalid)
@@ -237,16 +235,6 @@ module Spree
 
               delivery_method.calculator.set_preference(key, value)
             end
-          end
-
-          # True when the payload names a different calculator than the one
-          # already attached. Compares on both spellings, since the wire value
-          # is the `api_type` shorthand while the record stores the class name.
-          def calculator_type_changed?(delivery_method, calculator_type)
-            current = delivery_method.calculator&.class
-            return true if current.nil?
-
-            current.api_type != calculator_type && current.to_s != calculator_type
           end
         end
       end

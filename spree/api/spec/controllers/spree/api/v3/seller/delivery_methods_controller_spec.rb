@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Seller::DeliveryMethodsController, type: :control
       {
         name: 'Next day',
         delivery_profile_id: profile.prefixed_id,
-        calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+        calculator_type: 'flat_rate',
         calculator_preferences: { amount: '9.99', currency: 'USD' }
       }
     end

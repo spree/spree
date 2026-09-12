@@ -1040,10 +1040,8 @@ export type CollectionSortOrder =
   | 'name desc'
 
 /**
- * Wire shorthand (`api_type`) for an automatic-collection rule. The
- * fully-qualified Ruby class name is also accepted for backwards
- * compatibility, but the shorthand is the public format — it is what
- * `collectionRules.types()` returns.
+ * Wire shorthand (`api_type`) for an automatic-collection rule — what
+ * `collectionRules.types()` returns. Ruby class names are not accepted.
  */
 export type CollectionRuleType = 'tag' | 'sale' | 'available_on' | (string & {})
 
@@ -2426,10 +2424,8 @@ export interface IntegrationUpdateParams {
  * (`Spree::Export.available_types`); a plugin can register additional types,
  * which arrive here as the trailing `string & {}` arm.
  *
- * Creating an export still accepts the fully-qualified class name for
- * backwards compatibility, but responses always use the shorthand. Note that
- * Ransack filters (`type_eq`) match the database column, so those still take
- * the class name.
+ * Note that Ransack filters (`type_eq`) match the database column, so those
+ * still take the class name.
  */
 export type ExportType =
   | 'products'
@@ -2467,8 +2463,7 @@ export interface ExportCreateParams {
 
 /**
  * API shorthand for an import type (`Spree::Import.api_type`), not the Ruby
- * class name. Creating an import still accepts the fully-qualified class name
- * for backwards compatibility, but responses always use the shorthand.
+ * class name.
  */
 export type ImportType =
   | 'products'
@@ -2761,7 +2756,7 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
+  /** Wire shorthand for the calculator, e.g. `'flat_rate'` (see `deliveryMethods.calculators()`). */
   calculator_type?: string
   calculator_preferences?: Record<string, unknown>
   /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */

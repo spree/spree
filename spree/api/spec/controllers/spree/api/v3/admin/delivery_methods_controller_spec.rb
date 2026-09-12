@@ -155,7 +155,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       post :create, params: {
         name: 'Express',
         storefront_visible: true,
-        calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+        calculator_type: 'flat_rate',
         calculator_preferences: { amount: 12.5 },
         delivery_zone_id: zone.prefixed_id
       }, as: :json
@@ -189,7 +189,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       post :create, params: {
         name: 'Store pickup',
         fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
-        calculator_type: 'Spree::Calculator::Shipping::FlatRate'
+        calculator_type: 'flat_rate'
       }, as: :json
 
       expect(response).to have_http_status(:created)

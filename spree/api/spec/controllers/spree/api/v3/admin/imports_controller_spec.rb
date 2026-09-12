@@ -97,27 +97,10 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       expect(created.owner).to eq(store)
     end
 
-    # A `type` read back from the API round-trips, and so does the underlying
-    # class name.
-    it 'also accepts the fully-qualified class name' do
-      expect {
-        post :create,
-             params: {
-               type: 'Spree::Imports::Products',
-               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
-             },
-             as: :json
-      }.to change(Spree::Import, :count).by(1)
-
-      expect(response).to have_http_status(:created)
-      expect(json_response['type']).to eq('products')
-      expect(Spree::Import.last).to be_a(Spree::Imports::Products)
-    end
-
     it 'accepts a preferred delimiter' do
       post :create,
            params: {
-             type: 'Spree::Imports::Products',
+             type: 'products',
              preferred_delimiter: ';',
              attachment: csv_signed_id("slug;sku;name;price\nwidget;W-1;Widget;10.00\n")
            },
@@ -174,7 +157,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
         post :create,
              params: {
-               type: 'Spree::Imports::Products',
+               type: 'products',
                attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
                results_url: 'https://admin.example.com/store_abc/settings/imports'
              },
@@ -188,7 +171,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       it 'silently drops it when it does not match an allowed origin' do
         post :create,
              params: {
-               type: 'Spree::Imports::Products',
+               type: 'products',
                attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
                results_url: 'https://evil.example.com/phish'
              },
@@ -207,7 +190,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     end
 
     it 'rejects an invalid attachment signed id' do
-      post :create, params: { type: 'Spree::Imports::Products', attachment: 'not-a-signed-id' }, as: :json
+      post :create, params: { type: 'products', attachment: 'not-a-signed-id' }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -217,7 +200,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         io: StringIO.new('{}'), filename: 'import.json', content_type: 'application/json'
       )
 
-      post :create, params: { type: 'Spree::Imports::Products', attachment: blob.signed_id }, as: :json
+      post :create, params: { type: 'products', attachment: blob.signed_id }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -225,7 +208,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     it 'marks the import failed when the CSV is unparseable' do
       post :create,
            params: {
-             type: 'Spree::Imports::Products',
+             type: 'products',
              attachment: csv_signed_id("slug,\"sku\nbroken")
            },
            as: :json
@@ -395,7 +378,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
   describe 'GET #template' do
     it 'returns a CSV header row for the type schema' do
-      get :template, params: { type: 'Spree::Imports::Products' }
+      get :template, params: { type: 'products' }
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to include('text/csv')
@@ -419,12 +402,6 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       expect(response).to have_http_status(:found)
       expect(response.location).to eq(Spree::Imports::Products.sample_csv_url)
       expect(response.location).to include("v#{Spree.version}")
-    end
-
-    it 'accepts the fully-qualified class name' do
-      get :example, params: { type: 'Spree::Imports::Products' }
-
-      expect(response).to redirect_to(Spree::Imports::Products.sample_csv_url)
     end
 
     it 'returns 404 for a type with no example file' do
@@ -480,7 +457,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       it 'allows creating a Products import with write_products, attributed to the key creator' do
         post :create,
              params: {
-               type: 'Spree::Imports::Products',
+               type: 'products',
                attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
              },
              as: :json
@@ -490,7 +467,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       end
 
       it 'rejects creating a Customers import without write_customers' do
-        post :create, params: { type: 'Spree::Imports::Customers', attachment: csv_signed_id("email\nx@y.com\n") }, as: :json
+        post :create, params: { type: 'customers', attachment: csv_signed_id("email\nx@y.com\n") }, as: :json
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scope']).to eq('write_customers')
@@ -532,7 +509,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
         it 'rejects create with a user presence error' do
           post :create,
                params: {
-                 type: 'Spree::Imports::Products',
+                 type: 'products',
                  attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
                },
                as: :json

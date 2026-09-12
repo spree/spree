@@ -14,26 +14,20 @@ module Spree
         spree_calculators.send model_name_without_spree_namespace
       end
 
+      # The public API shorthand (`'flat_rate'`), never the Ruby class name.
       def calculator_type
-        calculator.class.to_s if calculator
+        calculator.class.api_type if calculator
       end
 
-      # Accepts a fully-qualified class name (`'Spree::Calculator::FlatRate'`)
-      # or the public API shorthand (`'flat_rate'`). Shorthand is resolved
-      # against this parent's registered calculators so a CreateAdjustment
-      # can't be assigned a shipping-only calculator just by knowing its
-      # name.
+      # Takes the public API shorthand (`'flat_rate'`), resolved against this
+      # parent's registered calculators — so a CreateAdjustment can't be
+      # assigned a shipping-only calculator just by knowing its name, and
+      # nothing user-supplied ever reaches `constantize`.
       def calculator_type=(calculator_type)
         return if calculator_type.blank?
 
-        str = calculator_type.to_s
-        klass =
-          if str.include?('::')
-            str.safe_constantize
-          else
-            registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
-            registry.find { |k| k.api_type == str }
-          end
+        registry = self.class.respond_to?(:calculators) ? self.class.calculators : []
+        klass = registry.find { |k| k.api_type == calculator_type.to_s }
         self.calculator = klass.new if klass && !calculator.instance_of?(klass)
       end
 

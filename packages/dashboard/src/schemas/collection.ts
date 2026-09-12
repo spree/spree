@@ -54,16 +54,6 @@ function knownMatchPolicy(value: string | null): CollectionRuleFormValues['match
     : 'is_equal_to'
 }
 
-/**
- * The API serializes a rule's kind as the wire shorthand (`tag`). Older
- * servers sent the STI class name, so fold that shape in too:
- * `Spree::CollectionRules::AvailableOn` -> `available_on`.
- */
-function ruleTypeShorthand(type: string) {
-  const leaf = type.split('::').pop() ?? type
-  return leaf.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()
-}
-
 export const COLLECTION_RULE_MATCH_POLICIES = [
   'is_equal_to',
   'is_not_equal_to',
@@ -165,7 +155,7 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
     rules:
       collection.rules?.map((rule) => ({
         id: rule.id,
-        type: ruleTypeShorthand(rule.type),
+        type: rule.type,
         value: rule.value ?? '',
         match_policy: knownMatchPolicy(rule.match_policy),
       })) ?? [],

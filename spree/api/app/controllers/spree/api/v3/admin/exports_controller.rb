@@ -118,7 +118,7 @@ module Spree
             return nil if name.blank?
 
             name = name.to_s
-            Spree::Export.available_types.find { |type| type.api_type == name || type.to_s == name }
+            Spree::Export.available_types.find { |type| type.api_type == name }
           end
 
           private

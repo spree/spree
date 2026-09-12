@@ -77,6 +77,65 @@ test.describe('delivery profiles', () => {
     await expect(page.getByText(methodName)).toBeVisible({ timeout: 15_000 })
   })
 
+  // The calculator is named on the wire by its `api_type` shorthand
+  // (`flat_rate`), and that same value selects the per-currency amount editor.
+  // A mismatch between the two would leave the picker blank and quietly create
+  // the method free, so drive both through the UI.
+  test('prices a method with a flat rate, in the store currency', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const stamp = Date.now()
+    const profileName = `E2E Priced ${stamp}`
+    const methodName = `E2E Flat ${stamp}`
+
+    await page.getByRole('button', { name: PROFILE_CTA }).click()
+    await expect(page.getByRole('heading', { name: /new delivery profile/i })).toBeVisible()
+    await page.locator('#name').fill(profileName)
+    await page.getByRole('button', { name: /create profile/i }).click()
+    await expect(page.getByRole('heading', { name: profileName })).toBeVisible({ timeout: 15_000 })
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const sheet = page.getByRole('dialog')
+    await sheet.locator('#name').fill(methodName)
+
+    // The picker is built from `GET /delivery_methods/calculators`, so a
+    // readable "Flat rate" option proves the catalog resolved.
+    const calculator = sheet.locator('#calculator-type')
+    await expect(calculator).toBeEnabled({ timeout: 15_000 })
+    await calculator.click()
+    await page.getByRole('option', { name: /flat rate/i }).click()
+    await expect(calculator).toContainText(/flat rate/i)
+
+    // Flat rate is amount-based, so the per-currency editor replaces the
+    // generic preference rendering.
+    const amount = sheet.locator('[id^="calculator-amount-"]').first()
+    await expect(amount).toBeVisible({ timeout: 10_000 })
+    await amount.fill('7.50')
+
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(methodName)).toBeVisible({ timeout: 15_000 })
+
+    // Reopening hydrates from the persisted row: the calculator and its amount
+    // both round-tripped rather than saving as a free method.
+    await page.getByText(methodName).click()
+    const reopened = page.getByRole('dialog')
+    await expect(reopened.locator('#calculator-type')).toContainText(/flat rate/i, {
+      timeout: 15_000,
+    })
+    await expect(reopened.locator('[id^="calculator-amount-"]').first()).toHaveValue(/7\.50|7\.5/)
+  })
+
   // Opening a method is a search-param change, so the sheet must survive a
   // reload and a direct link — that is what keeps bookmarked methods working.
   test('opens the method sheet straight from a URL', async ({ page }) => {
