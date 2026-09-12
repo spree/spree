@@ -23,12 +23,20 @@ module Spree
     #   Dimension name this metric is only meaningful grouped by (e.g.
     #   :customer for a lifetime figure). Ungrouped it is refused, and it
     #   publishes no dimensionless total.
+    # @!attribute grouped_sql
+    #   Optional aggregate used only for the grouped query, where dimension
+    #   joins are present. See #sql_for.
     # @!attribute suggests
     #   Metric to reach for instead when this one is refused for a breakdown
     #   it cannot answer — named in the error so a caller learns the
     #   vocabulary from the refusal rather than by trial.
     Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, :key_scope,
-                        :requires_grouping, :suggests, keyword_init: true) do
+                        :requires_grouping, :suggests, :grouped_sql, keyword_init: true) do
+      # The aggregate to use when the query carries its dimension joins. A
+      # metric whose money lives on a joined row reads it directly there, and
+      # falls back to `sql` for the dimensionless total, which has no joins.
+      def sql_for(grouped:) = (grouped && grouped_sql.presence) || sql
+
       def derived? = ratio.present?
 
       # The dimension this metric only means anything inside of. A customer's

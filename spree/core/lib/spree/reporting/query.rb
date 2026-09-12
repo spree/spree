@@ -48,6 +48,7 @@ module Spree
         @sort = normalize_sort(params[:sort])
         @limit = normalize_limit(params[:limit])
         validate_bases!
+        validate_include_empty_filters!
         validate_bucket_count!
         validate_lifetime_metrics!
       end
@@ -224,10 +225,11 @@ module Spree
         end
 
         dimension = empty.first[:dimension]
-        return if dimension.population?
+        unless dimension.population?
+          raise InvalidQuery,
+                "dimension #{dimension.name} does not support include_empty — it has no record list to draw empty rows from"
+        end
 
-        raise InvalidQuery,
-              "dimension #{dimension.name} does not support include_empty — it has no record list to draw empty rows from"
       end
 
       # Metric filters are a separate contract key rather than an op inside
@@ -422,6 +424,24 @@ module Spree
               "#{described.join(', while ')}. One query cannot report both — run them as separate queries."
       end
 
+      # A filter on another dimension describes the facts, not the members, so
+      # it cannot narrow the population "include_empty" draws from: "which
+      # shoes never sold" filtered by category would list every unsold product
+      # in the store. Refused rather than answered wrongly.
+      def validate_include_empty_filters!
+        entry = dimensions.find { |d| d[:include_empty] }
+        return if entry.nil?
+
+        name = entry[:dimension].name
+        foreign = filters.map { |f| f[:dimension] }.reject { |d| d.name == name }.uniq
+        return if foreign.empty?
+
+        raise InvalidQuery,
+              "include_empty on #{name} cannot be combined with a filter on " \
+              "#{foreign.map(&:name).join(', ')} — that filter narrows what sold, not which " \
+              "#{name}s exist. Filter on #{name} instead."
+      end
+
       def validate_bucket_count!
         entry = time_dimension
         return if entry.nil?
@@ -463,10 +483,6 @@ module Spree
         end
       end
 
-      # ActiveSupport maps February 29 to February 28 in a non-leap year.
-      def shift_a_year(time)
-        time - 1.year
-      end
     end
   end
 end

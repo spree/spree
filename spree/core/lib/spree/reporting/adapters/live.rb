@@ -58,7 +58,7 @@ module Spree
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
-            selects = metrics.map { |m| "#{resolve_sql(m.sql)} AS #{metric_alias(m)}" }
+            selects = metrics.map { |m| "#{resolve_sql(m.sql_for(grouped: grouped))} AS #{metric_alias(m)}" }
 
             if grouped
               dimension_selects = query.dimensions.map do |d|
@@ -134,19 +134,17 @@ module Spree
             metric = filter[:metric]
             next unless names.include?(metric.name)
 
+            # The value rides as a bind rather than an interpolation: it is
+            # the only piece of request data that reaches the statement, and
+            # the aggregate beside it is registered SQL.
             scope = scope.having(
-              Arel.sql("#{resolve_sql(metric.sql)} #{COMPARISON_OPERATORS.fetch(filter[:op])} #{sql_number(filter[:value])}")
+              Arel.sql("#{resolve_sql(metric.sql_for(grouped: true))} " \
+                       "#{COMPARISON_OPERATORS.fetch(filter[:op])} ?"),
+              filter[:value]
             )
           end
 
           scope
-        end
-
-        # The value arrives as a BigDecimal the contract already validated, so
-        # it interpolates as a numeric literal — quoting it would compare a
-        # string against a numeric aggregate.
-        def sql_number(value)
-          value.to_s('F')
         end
 
         # A filter on a joined dimension narrows through an id subquery rather
@@ -225,7 +223,8 @@ module Spree
         def apply_sql_sort(scope, metrics)
           return scope unless metrics.any? { |m| m.name == sort_metric.name }
 
-          scope.order(Arel.sql("#{resolve_sql(sort_metric.sql)} #{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
+          scope.order(Arel.sql("#{resolve_sql(sort_metric.sql_for(grouped: true))} " \
+                               "#{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
             .limit(query.limit)
         end
 
@@ -500,6 +499,20 @@ module Spree
           end
         end
 
+        # Applies any filter on the dimension itself to its own population. A
+        # filter on a *different* dimension cannot narrow this list — it
+        # describes the facts, not the members — so a query filtered by
+        # something else refuses rather than silently listing members the
+        # filter never applied to.
+        def narrow_population(relation, dimension)
+          query.filters.each do |filter|
+            next unless filter[:dimension].name == dimension.name
+
+            relation = relation.where(id: filter[:values])
+          end
+          relation
+        end
+
         # Ids of every record the dimension can group by, store-scoped through
         # its own lookup relation.
         # Bounded by the query's own limit: these rows all read zero, so beyond
@@ -509,6 +522,10 @@ module Spree
           relation = dim[:dimension].population&.call(query.store)
           return [] if relation.nil?
 
+          # The aggregating scope is filtered, so the population must be too:
+          # asking "which of these shoes never sold" must not answer with every
+          # unsold product in the catalogue.
+          relation = narrow_population(relation, dim[:dimension])
           relation = relation.where.not(id: observed.flatten) if observed.any?
           relation = relation.limit(query.limit) if query.limit
           relation.pluck(:id).map { |id| [id] }

@@ -170,7 +170,9 @@ export function formatMetric(
   metric: ReportingSchemaMetric,
   locale: string,
 ): string {
-  if (!value) return '—'
+  // A metric that only means something per group (a lifetime figure) reports
+  // a null total rather than a misleading store-wide one.
+  if (!value || value.value == null) return '—'
   if (value.display) return value.display
   const formatted = value.value.toLocaleString(locale, {
     maximumFractionDigits: metric.format === 'integer' ? 0 : 2,
