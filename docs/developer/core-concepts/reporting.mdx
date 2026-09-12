@@ -35,6 +35,7 @@ A query names what to measure and how to slice it. This is the whole surface:
   "filters": [{ "dimension": "channel", "op": "eq", "value": "ch_86Rf07xd4z" }],
   "time_range": { "preset": "last_4_weeks" },
   "compare": "previous_period",
+  "currency": "EUR",
   "sort": "-total_sales",
   "limit": 50
 }
@@ -47,6 +48,7 @@ A query names what to measure and how to slice it. This is the whole surface:
 | `filters` | `eq` or `in` against a dimension. Values are prefixed IDs where the dimension identifies a record. |
 | `time_range` | A named preset, or `since`/`until` as ISO 8601. A bare date covers the store's whole day. |
 | `compare` | `previous_period` adds `previous` and `growth` to every metric. |
+| `currency` | ISO 4217 code, e.g. `"EUR"`. Defaults to the store's own. Applies only to a query containing money — see [Metrics](#metrics). The values a store accepts are in the schema's `supported_currencies`. |
 | `sort` / `limit` | Ranking controls; ignored for time series, which are always chronological and complete. |
 
 Unknown members are rejected, never dropped. A malformed query answers 422,
