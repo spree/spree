@@ -357,9 +357,10 @@ RSpec.describe Spree::Reporting::Query do
       expect(result.totals[:payments_failed][:value]).to eq(1)
     end
 
-    it 'refuses to answer a payments question and a sales question at once' do
+    it 'refuses to answer a payments question and a sales question at once, naming each clock' do
       expect { run(metrics: %w[net_payments total_sales]) }
-        .to raise_error(Spree::Reporting::InvalidQuery, /different families/)
+        .to raise_error(Spree::Reporting::InvalidQuery,
+                        /net_payments measures payments.*total_sales measures sales.*separate queries/m)
     end
 
     it 'refuses a payments metric grouped by a sales axis' do
@@ -760,6 +761,187 @@ RSpec.describe Spree::Reporting::Query do
         expect(result.totals[:orders][:value]).to eq(1)
         expect(result.meta[:currency]).to eq('EUR')
       end
+    end
+  end
+
+  describe 'metric filters' do
+    let!(:sold) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+
+    it 'filters grouped rows on an aggregate value' do
+      result = run(metrics: %w[units_sold], dimensions: %w[product],
+                   metric_filters: [{ metric: 'units_sold', op: 'gte', value: 1 }])
+
+      expect(result.rows).to be_present
+      expect(result.rows.map { |row| row[:metrics][:units_sold][:value] }).to all(be >= 1)
+    end
+
+    it 'excludes rows below the threshold' do
+      result = run(metrics: %w[units_sold], dimensions: %w[product],
+                   metric_filters: [{ metric: 'units_sold', op: 'gt', value: 10_000 }])
+
+      expect(result.rows).to be_empty
+    end
+
+    it 'leaves the ungrouped total as the period figure' do
+      filtered = run(metrics: %w[units_sold], dimensions: %w[product],
+                     metric_filters: [{ metric: 'units_sold', op: 'gt', value: 10_000 }])
+      unfiltered = run(metrics: %w[units_sold], dimensions: %w[product])
+
+      expect(filtered.rows).to be_empty
+      expect(filtered.totals[:units_sold][:value]).to eq(unfiltered.totals[:units_sold][:value])
+      expect(filtered.totals[:units_sold][:value]).to be > 0
+    end
+
+    it 'rejects a metric the query does not request' do
+      expect { run(metrics: %w[orders], metric_filters: [{ metric: 'units_sold', op: 'eq', value: 0 }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /only reference a requested metric/)
+    end
+
+    it 'rejects a derived metric, naming its components' do
+      expect do
+        run(metrics: %w[average_order_value],
+            metric_filters: [{ metric: 'average_order_value', op: 'gt', value: 1 }])
+      end.to raise_error(Spree::Reporting::InvalidQuery, /derived metric.*total_sales/m)
+    end
+
+    it 'rejects a non-numeric value' do
+      expect { run(metrics: %w[orders], metric_filters: [{ metric: 'orders', op: 'gt', value: 'lots' }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /numeric/)
+    end
+
+    it 'rejects an unknown op' do
+      expect { run(metrics: %w[orders], metric_filters: [{ metric: 'orders', op: 'like', value: 1 }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /invalid metric filter op/)
+    end
+  end
+
+  describe 'include_empty' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.days.ago) }
+    let!(:never_sold) { create(:product, store: store, name: 'Never Sold') }
+
+    it 'answers which products never sold' do
+      result = run(metrics: %w[units_sold],
+                   dimensions: [{ name: 'product', include_empty: true }],
+                   metric_filters: [{ metric: 'units_sold', op: 'eq', value: 0 }])
+
+      expect(result.rows.map { |row| row[:dimensions][:product] }).to include(never_sold.id)
+      expect(result.rows.map { |row| row[:metrics][:units_sold][:value] }).to all(eq(0))
+    end
+
+    it 'omits the unsold product without it' do
+      result = run(metrics: %w[units_sold], dimensions: %w[product])
+
+      expect(result.rows.map { |row| row[:dimensions][:product] }).not_to include(never_sold.id)
+    end
+
+    it 'refuses a dimension with no population to draw from' do
+      expect { run(metrics: %w[orders], dimensions: [{ name: 'payment_status', include_empty: true }]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /does not support include_empty/)
+    end
+
+    it 'refuses more than one dimension' do
+      expect do
+        run(metrics: %w[units_sold], dimensions: [{ name: 'product', include_empty: true }, 'category'])
+      end.to raise_error(Spree::Reporting::InvalidQuery, /exactly one dimension/)
+    end
+  end
+
+  describe 'the hour grain' do
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.hours.ago) }
+
+    it 'buckets sales by hour in the store timezone' do
+      result = run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
+                   time_range: { preset: 'today' })
+
+      expect(result.rows).to be_present
+      expect(result.rows.first[:dimensions][:completed_at]).to match(/\A\d{4}-\d{2}-\d{2} \d{2}:00:00\z/)
+      expect(result.rows.sum { |row| row[:metrics][:orders][:value] }).to eq(1)
+    end
+
+    it 'refuses a range too wide to chart hourly, naming a coarser grain' do
+      expect do
+        run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
+            time_range: { preset: 'last_12_months' })
+      end.to raise_error(Spree::Reporting::InvalidQuery, /hour grain.*coarser grain.*day/m)
+    end
+  end
+
+  describe 'year-over-year comparison' do
+    let!(:this_year) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
+    let!(:last_year) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago - 1.year) }
+
+    it 'compares against the same range a calendar year earlier' do
+      result = run(metrics: %w[orders], time_range: { preset: 'last_7_days' }, compare: 'previous_year')
+
+      expect(result.totals[:orders][:value]).to eq(1)
+      expect(result.totals[:orders][:previous]).to eq(1)
+      expect(result.meta[:previous_time_range].first.year).to eq(result.meta[:time_range].first.year - 1)
+    end
+
+    it 'rejects an unknown compare mode' do
+      expect { run(metrics: %w[orders], compare: 'previous_decade') }
+        .to raise_error(Spree::Reporting::InvalidQuery, /invalid compare mode/)
+    end
+  end
+
+  describe 'lifetime metrics' do
+    let(:customer) { create(:user, email: 'repeat@example.com') }
+    let!(:old_order) do
+      create(:completed_order_with_totals, store: store, customer: customer, completed_at: 300.days.ago)
+    end
+    let!(:recent_order) do
+      create(:completed_order_with_totals, store: store, customer: customer, completed_at: 2.days.ago)
+    end
+
+    it 'counts history outside the report range' do
+      result = run(metrics: %w[orders_lifetime], dimensions: %w[customer],
+                   time_range: { preset: 'last_7_days' })
+
+      expect(result.rows).to be_present
+      expect(result.rows.map { |r| r[:metrics][:orders_lifetime][:value] }).to include(2)
+    end
+
+    it 'refuses to report a lifetime figure ungrouped' do
+      expect { run(metrics: %w[customer_lifetime_value]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /grouped by customer/)
+    end
+  end
+
+  describe 'the carts family' do
+    let!(:abandoned) do
+      create(:cart, store: store).tap do |cart|
+        cart.update_columns(created_at: 3.days.ago, updated_at: 3.days.ago, total: 50)
+      end
+    end
+    let!(:active) do
+      create(:cart, store: store).tap { |cart| cart.update_columns(created_at: 2.days.ago, total: 20) }
+    end
+
+    it 'counts started and abandoned carts, and what the abandoned ones were worth' do
+      result = run(metrics: %w[carts_started carts_abandoned abandoned_value])
+
+      expect(result.totals[:carts_started][:value]).to eq(2)
+      expect(result.totals[:carts_abandoned][:value]).to eq(1)
+      expect(result.totals[:abandoned_value][:value]).to eq(50.0)
+    end
+
+    it 'reads the store preference for the quiet window' do
+      allow(store).to receive(:preferred_abandoned_cart_after_hours).and_return(24 * 10)
+
+      expect(run(metrics: %w[carts_abandoned]).totals[:carts_abandoned][:value]).to eq(0)
+    end
+
+    it 'breaks carts down by status' do
+      rows = run(metrics: %w[carts_started], dimensions: %w[cart_status]).rows
+      statuses = rows.to_h { |row| [row[:dimensions][:cart_status], row[:metrics][:carts_started][:value]] }
+
+      expect(statuses['abandoned']).to eq(1)
+      expect(statuses['active']).to eq(1)
+    end
+
+    it 'refuses to report carts beside sales' do
+      expect { run(metrics: %w[carts_started total_sales]) }
+        .to raise_error(Spree::Reporting::InvalidQuery, /carts.*sales.*separate queries/m)
     end
   end
 end
