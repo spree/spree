@@ -5456,3 +5456,21 @@ grain falls through to `nil` and silently groups by NULL rather than raising;
 and `cart_conversion_rate` is never renamed to `conversion_rate` — storefront
 conversion needs session data that never reaches Spree, and the two numbers
 must not be confusable.
+
+**Reporting refusal data is registry data, not compiler data.** The compiler
+briefly held three hardcoded lists — which metrics need grouping, what to
+suggest when an order-level metric is refused for a per-line breakdown, and
+what each family's clock means. All three are now fields on the definitions
+(`requires_grouping:` and `suggests:` on a metric, `clock:` on a base), for the
+same reason a base is registered rather than hardcoded: an extension's own
+metric must get the same refusals and the same advice without editing core.
+`per_group` as a boolean was the wrong shape — it could say a metric needed
+grouping but not *by what*, so the dimension was hardcoded in the validator
+beside it.
+
+**Customer lifetime value needs `spree_orders (store_id, email)`.** The metric
+correlates a customer's whole history on email, which had no index at all, so
+each customer group drove a full scan; and it walked that history twice, once
+for totals and again for refunds. One pass over the new index. Anything else
+correlating on order email needs the same index to be viable.
+
