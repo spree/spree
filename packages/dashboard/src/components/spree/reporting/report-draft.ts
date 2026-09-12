@@ -104,8 +104,16 @@ export function hourGrainFitsRange(timeRange: ReportTimeRange, maxBuckets: numbe
   }
   const preset = timeRange.preset
   if (preset === 'today' || preset === 'yesterday') return true
-  const days = preset.match(/^last_(\d+)_days$/)
-  if (days) return (Number(days[1]) + 1) * 24 <= maxBuckets
+  // The server's relative grammar is `last_<n>_<days|weeks|months>`; each unit
+  // is converted at its longest so the estimate never claims a range fits when
+  // the server would refuse it.
+  const relative = preset.match(/^last_(\d+)_(days|weeks|months)$/)
+  if (relative) {
+    const perUnit = { days: 1, weeks: 7, months: 31 }[relative[2] as 'days' | 'weeks' | 'months']
+    return (Number(relative[1]) * perUnit + 1) * 24 <= maxBuckets
+  }
+  // Named presets bounded by a month or less; a quarter is 2,208 hours, over
+  // the ceiling, so it and everything longer fall through to false.
   return ['week_to_date', 'last_week', 'month_to_date', 'last_month'].includes(preset)
 }
 
