@@ -45,6 +45,7 @@ import {
   isTimeDimension,
   type ReportDraft,
   type ReportFilter,
+  servableGrain,
 } from './report-draft'
 
 const NONE = '__none__'
@@ -163,7 +164,9 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
       dimension: next,
       // Falls back to day, not grains[0]: hour leads the list, and silently
       // switching a merchant to an hourly series is never what they meant.
-      grain: definition?.grains?.includes(draft.grain) ? draft.grain : 'day',
+      // The range matters too — a dimension that offers hour cannot keep it
+      // over a range the server would refuse.
+      grain: servableGrain(draft, definition, maxBuckets),
     })
   }
 

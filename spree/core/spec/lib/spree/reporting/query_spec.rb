@@ -887,11 +887,16 @@ RSpec.describe Spree::Reporting::Query do
   end
 
   describe 'the hour grain' do
-    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: 3.hours.ago) }
+    # Pinned to midday: `3.hours.ago` run between midnight and 03:00 falls on
+    # the previous day, which the `today` preset would then exclude.
+    let(:midday) { Time.current.in_time_zone(store.preferred_timezone).change(hour: 12) }
+    let!(:order) { create(:completed_order_with_totals, store: store, completed_at: midday) }
 
     it 'buckets sales by hour in the store timezone' do
-      result = run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
-                   time_range: { preset: 'today' })
+      result = Timecop.freeze(midday + 1.hour) do
+        run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'hour' }],
+            time_range: { preset: 'today' })
+      end
 
       expect(result.rows).to be_present
       expect(result.rows.first[:dimensions][:completed_at]).to match(/\A\d{4}-\d{2}-\d{2} \d{2}:00:00\z/)

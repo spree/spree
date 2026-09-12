@@ -527,7 +527,9 @@ module Spree
           # unsold product in the catalogue.
           relation = narrow_population(relation, dim[:dimension])
           relation = relation.where.not(id: observed.flatten) if observed.any?
-          relation = relation.limit(query.limit) if query.limit
+          # Ordered before limiting: without it two identical "which products
+          # never sold" requests can come back with different products.
+          relation = relation.reorder(:id).limit(query.limit) if query.limit
           relation.pluck(:id).map { |id| [id] }
         end
 

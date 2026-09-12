@@ -217,6 +217,10 @@ module Spree
           raise ArgumentError, "dimension #{name} needs a column or an expression"
         end
 
+        if opts[:population] && !opts[:population].respond_to?(:call)
+          raise ArgumentError, "dimension #{name} needs a callable population"
+        end
+
         opts[:type] ||= :value
         @dimensions[name] = Dimension.new(name: name, **opts)
       end
