@@ -45,6 +45,17 @@ module Spree
              ELSE 'active' END
       SQL
 
+      # What counts as a real sale, in SQL. Spelled once because six copies of
+      # it would silently diverge the first time an order gains a status.
+      COMPLETED_ORDER = "%{alias}.completed_at IS NOT NULL AND %{alias}.status <> 'canceled'".freeze
+
+      # One customer's whole order history, correlated on the email the
+      # `customer` dimension groups by and scoped to the same store.
+      LIFETIME_HISTORY_CONDITION = <<~SQL.squish.freeze
+        h.email = %{orders}.email AND h.store_id = %{orders}.store_id
+          AND #{format(COMPLETED_ORDER, alias: 'h')}
+      SQL
+
       # A customer's whole history, correlated on the email the `customer`
       # dimension groups by and scoped to the same store. MIN() rather than
       # SUM(): the subquery already covers every one of that customer's
@@ -56,20 +67,14 @@ module Spree
       # of what they bought is not a high-value customer. The consequence is
       # that a refund restates the figure after the fact.
       LIFETIME_VALUE_SUBQUERY = <<~SQL.squish.freeze
-        MIN((SELECT COALESCE(SUM(h.total), 0)
-               - COALESCE((SELECT SUM(hr.amount) FROM %{refunds} hr
-                           INNER JOIN %{orders} ho ON ho.id = hr.order_id
-                           WHERE ho.email = %{orders}.email AND ho.store_id = %{orders}.store_id
-                             AND ho.completed_at IS NOT NULL AND ho.status <> 'canceled'), 0)
+        MIN((SELECT COALESCE(SUM(h.total), 0) - COALESCE(SUM(
+                      (SELECT SUM(hr.amount) FROM %{refunds} hr WHERE hr.order_id = h.id)), 0)
              FROM %{orders} h
-             WHERE h.email = %{orders}.email AND h.store_id = %{orders}.store_id
-               AND h.completed_at IS NOT NULL AND h.status <> 'canceled'))
+             WHERE #{LIFETIME_HISTORY_CONDITION}))
       SQL
 
       LIFETIME_ORDERS_SUBQUERY = <<~SQL.squish.freeze
-        MIN((SELECT COUNT(*) FROM %{orders} h
-             WHERE h.email = %{orders}.email AND h.store_id = %{orders}.store_id
-               AND h.completed_at IS NOT NULL AND h.status <> 'canceled'))
+        MIN((SELECT COUNT(*) FROM %{orders} h WHERE #{LIFETIME_HISTORY_CONDITION}))
       SQL
 
       # Discount money is a correlated subquery rather than a read through the
@@ -214,6 +219,7 @@ module Spree
           # it "orders" would understate a multi-currency store's trade.
           base :orders, family: :sales, table: '%{orders}',
                time_column: '%{orders}.completed_at',
+               clock: 'anchored on when the order completed',
                relation: lambda { |store, range, currency|
                  scope = store.orders.not_canceled.where(completed_at: range)
                  currency ? scope.where(currency: currency) : scope
@@ -221,6 +227,7 @@ module Spree
 
           base :line_items, family: :sales, table: '%{line_items}', reaches: %i[line_items orders],
                time_column: '%{orders}.completed_at',
+               clock: 'anchored on when the order completed',
                relation: lambda { |store, range, currency|
                  scope = store.line_items.merge(Spree::Order.not_canceled).
                          where(Spree::Order.table_name => { completed_at: range })
@@ -239,6 +246,7 @@ module Spree
           # join this reads is the association's own.
           base :payments, family: :payments, table: '%{payments}',
                time_column: '%{payments}.created_at',
+               clock: 'anchored on when the payment was taken',
                relation: lambda { |store, range, currency|
                  scope = store.payments.where(Spree::Payment.table_name => { created_at: range })
                  currency ? scope.where(Spree::Order.table_name => { currency: currency }) : scope
@@ -248,6 +256,7 @@ module Spree
           # through stock level → variant → product, which `for_store` owns.
           base :stock_movements, family: :inventory, table: '%{stock_movements}', reaches: %i[stock_movements],
                time_column: '%{stock_movements}.created_at',
+               clock: 'anchored on when stock moved',
                relation: lambda { |store, range, _currency|
                  Spree::StockMovement.for_store(store).
                    where(Spree::StockMovement.table_name => { created_at: range })
@@ -259,6 +268,7 @@ module Spree
           # never converted — exactly the rows an abandonment report is about.
           base :carts, family: :carts, table: '%{carts}', reaches: %i[carts],
                time_column: '%{carts}.created_at',
+               clock: 'anchored on when the cart was started',
                relation: lambda { |store, range, currency|
                  scope = store.carts.where(Spree::Cart.table_name => { created_at: range })
                  currency ? scope.where(Spree::Cart.table_name => { currency: currency }) : scope
@@ -283,16 +293,16 @@ module Spree
           # merchant recognises as "what we actually sold".
           metric :net_sales, sql: "SUM(%{line_items}.pre_tax_amount) - #{LINE_ITEM_REFUNDS_SUBQUERY}",
                              base: :line_items, format: :money
-          metric :shipping, sql: 'SUM(%{orders}.delivery_total)', base: :orders, format: :money
-          metric :duties, sql: DUTIES_SUBQUERY, base: :orders, format: :money
+          metric :shipping, sql: 'SUM(%{orders}.delivery_total)', base: :orders, format: :money, suggests: 'net_sales'
+          metric :duties, sql: DUTIES_SUBQUERY, base: :orders, format: :money, suggests: 'net_sales'
           # Every shopper-visible fee except duties, which the chain counts separately.
           metric :fees, sql: "SUM(COALESCE(%{orders}.fee_total, 0)) - #{DUTIES_SUBQUERY}",
-                        base: :orders, format: :money
+                        base: :orders, format: :money, suggests: 'net_sales'
           metric :taxes, sql: 'SUM(%{orders}.additional_tax_total + %{orders}.included_tax_total)',
-                         base: :orders, format: :money
+                         base: :orders, format: :money, suggests: 'net_sales'
           # The order grand total, net of what came back.
           metric :total_sales, sql: "SUM(%{orders}.total) - #{REFUNDS_SUBQUERY}",
-                               base: :orders, format: :money
+                               base: :orders, format: :money, suggests: 'net_sales'
 
           # ---- volume ----
 
@@ -396,10 +406,10 @@ module Spree
           # customer's history into one meaningless total.
 
           metric :customer_lifetime_value, sql: LIFETIME_VALUE_SUBQUERY, base: :orders, format: :money,
-                                           per_group: true,
+                                           requires_grouping: :customer,
                                            subject: -> { Spree.customer_class }, key_scope: 'read_customers'
           metric :orders_lifetime, sql: LIFETIME_ORDERS_SUBQUERY, base: :orders, format: :integer,
-                                   per_group: true,
+                                   requires_grouping: :customer,
                                    subject: -> { Spree.customer_class }, key_scope: 'read_customers'
 
           dimension :completed_at, base: :orders, column: :completed_at, type: :time,

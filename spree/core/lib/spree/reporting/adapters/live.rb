@@ -52,8 +52,9 @@ module Spree
         # Ungrouped aggregates use the single [] key.
         def aggregate(range, grouped:, push_sort: false, key_filter: nil)
           rows = Hash.new { |h, k| h[k] = {} }
-          # Read by #abandoned_cutoff so a period is judged by its own clock.
-          @current_range = range
+          # Cart metrics are judged by the clock at the end of the period being
+          # aggregated, so the memoized placeholders are rebuilt per period.
+          self.aggregating_range = range
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
             scope = base_scope(base, range, grouped: grouped)
@@ -258,24 +259,30 @@ module Spree
 
         # Registered fragments defer table names as %{placeholders} because
         # model classes cannot load while initializers register the vocabulary.
+        # The cutoff rides along because it is the one value a fragment needs
+        # that is not a table name — see #abandoned_cutoff.
         def resolve_sql(fragment)
-          format(fragment,
-                 orders: Spree::Order.table_name,
-                 line_items: Spree::LineItem.table_name,
-                 variants: Spree::Variant.table_name,
-                 products: Spree::Product.table_name,
-                 addresses: Spree::Address.table_name,
-                 product_categories: Spree::ProductCategory.table_name,
-                 refunds: Spree::Refund.table_name,
-                 fees: Spree::Fee.table_name,
-                 commission_lines: Spree::CommissionLine.table_name,
-                 payments: Spree::Payment.table_name,
-                 stock_movements: Spree::StockMovement.table_name,
-                 stock_levels: Spree::StockLevel.table_name,
-                 carts: Spree::Cart.table_name,
-                 discounts: Spree::Discount.table_name,
-                 promotions: Spree::Promotion.table_name,
-                 abandoned_cutoff: abandoned_cutoff)
+          format(fragment, placeholders)
+        end
+
+        def placeholders
+          @placeholders ||= {
+            orders: Spree::Order.table_name,
+            line_items: Spree::LineItem.table_name,
+            variants: Spree::Variant.table_name,
+            products: Spree::Product.table_name,
+            addresses: Spree::Address.table_name,
+            product_categories: Spree::ProductCategory.table_name,
+            refunds: Spree::Refund.table_name,
+            fees: Spree::Fee.table_name,
+            commission_lines: Spree::CommissionLine.table_name,
+            payments: Spree::Payment.table_name,
+            stock_movements: Spree::StockMovement.table_name,
+            stock_levels: Spree::StockLevel.table_name,
+            carts: Spree::Cart.table_name,
+            discounts: Spree::Discount.table_name,
+            promotions: Spree::Promotion.table_name
+          }.merge(abandoned_cutoff: abandoned_cutoff)
         end
 
         # The instant a cart must have been quiet since to count as abandoned:
@@ -289,8 +296,19 @@ module Spree
         # end of that period.
         def abandoned_cutoff
           hours = query.store.preferred_abandoned_cart_after_hours.to_i.hours
-          edge = [@current_range&.last, Time.current].compact.min
-          connection.quote((edge - hours).utc)
+          connection.quote((aggregating_range.last - hours).utc)
+        end
+
+        # The period currently being aggregated. Defaults to the query's own
+        # range so anything reading placeholders before #aggregate runs (a sort
+        # term, a dimension expression) still resolves.
+        def aggregating_range
+          @aggregating_range || query.time_range
+        end
+
+        def aggregating_range=(range)
+          @aggregating_range = range
+          @placeholders = nil
         end
 
         def dimension_alias(dim)
@@ -348,7 +366,9 @@ module Spree
           return raw unless dim[:dimension].time?
           return raw.to_s unless dim[:grain] == :hour
 
-          raw.respond_to?(:strftime) ? raw.strftime('%Y-%m-%d %H:00:00') : raw.to_s.sub(/\A(\d{4}-\d{2}-\d{2})[ T](\d{2}).*\z/, '\1 \2:00:00')
+          # MySQL and SQLite format the bucket themselves; only PostgreSQL's
+          # date_trunc hands back a Time.
+          raw.respond_to?(:strftime) ? raw.strftime('%Y-%m-%d %H:00:00') : raw.to_s
         end
 
         # Store-timezone day/month buckets, per database. PostgreSQL converts
@@ -419,9 +439,10 @@ module Spree
 
           keys = row_keys(current)
           prev_key_map = previous ? previous_key_map(keys) : {}
+          metrics_by_name = query.metrics.index_by(&:name)
 
           rows = keys.map do |key|
-            metrics = query.metrics.index_by(&:name).transform_values do |metric|
+            metrics = metrics_by_name.transform_values do |metric|
               value = current[:groups].fetch(key, {})[metric.name] || zero_for(metric)
               prev = previous && (previous[:groups].fetch(prev_key_map.fetch(key, key), {})[metric.name] || zero_for(metric))
               metric_payload(value, prev)
@@ -455,7 +476,7 @@ module Spree
           # `|| zero_for`). This is what answers "which products never sold" —
           # a HAVING alone cannot, because a product that never sold has no
           # row to filter.
-          (empty_member_keys(empty_dim) | keys)
+          (empty_member_keys(empty_dim, keys) | keys)
         end
 
         # Members merged in by `include_empty` never went through the grouped
@@ -481,10 +502,15 @@ module Spree
 
         # Ids of every record the dimension can group by, store-scoped through
         # its own lookup relation.
-        def empty_member_keys(dim)
+        # Bounded by the query's own limit: these rows all read zero, so beyond
+        # a page of them there is nothing more to say, and an unbounded pluck
+        # would load a whole catalogue to render fifty rows.
+        def empty_member_keys(dim, observed)
           relation = dim[:dimension].population&.call(query.store)
           return [] if relation.nil?
 
+          relation = relation.where.not(id: observed.flatten) if observed.any?
+          relation = relation.limit(query.limit) if query.limit
           relation.pluck(:id).map { |id| [id] }
         end
 

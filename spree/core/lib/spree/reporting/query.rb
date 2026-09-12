@@ -20,18 +20,6 @@ module Spree
       # (a year is 8,760 points), so the grain is refused rather than
       # silently coarsened (Decision 4).
       MAX_BUCKETS = 2_000
-      # Metrics whose window is the customer's whole history rather than the
-      # query's time range, so they are only meaningful grouped by customer.
-      LIFETIME_METRICS = %i[customer_lifetime_value orders_lifetime].freeze
-      # What a refused order-level metric should be read as per line instead.
-      PER_LINE_ALTERNATIVES = { total_sales: 'net_sales', shipping: 'net_sales',
-                                taxes: 'net_sales', duties: 'net_sales', fees: 'net_sales' }.freeze
-      # What anchors each family's clock, named in the cross-family refusal so
-      # a caller can see why two metrics cannot share a row.
-      FAMILY_CLOCKS = { sales: 'anchored on when the order completed',
-                        payments: 'anchored on when the payment was taken',
-                        inventory: 'anchored on when stock moved',
-                        carts: 'anchored on when the cart was started' }.freeze
       LAST_N_RANGE = /\Alast_(\d+)_(days|weeks|months)\z/
       # Named presets, resolved in the store's timezone (see #time_zone).
       PRESETS = %w[today yesterday week_to_date month_to_date quarter_to_date year_to_date
@@ -135,13 +123,14 @@ module Spree
       # store zone, so a range spanning a DST change keeps its midnight edges.
       # `previous_year` shifts by a calendar year instead: "the same month last
       # year" means February to February, and an equal-day-count shift off a
-      # 28-day February would land in January.
+      # 28-day February would land in January. ActiveSupport maps February 29
+      # to February 28 in a non-leap year.
       def previous_time_range
         first = time_range.first.in_time_zone(time_zone)
         last = time_range.last.in_time_zone(time_zone)
 
         if compare == 'previous_year'
-          (shift_a_year(first))..(shift_a_year(last))
+          (first - 1.year)..(last - 1.year)
         else
           days = (last.to_date - first.to_date).to_i + 1
           (first - days.days)..(last - days.days)
@@ -281,9 +270,6 @@ module Spree
       # is not finite is refused here: BigDecimal('Infinity') parses happily
       # and would render as the bare token `Infinity` in the HAVING clause.
       def numeric?(value)
-        return false if value.nil? || (value.respond_to?(:empty?) && value.empty?)
-        return false if value.is_a?(Float) && !value.finite?
-
         BigDecimal(value.to_s).finite?
       rescue ArgumentError, TypeError
         false
@@ -412,7 +398,7 @@ module Spree
                   'they measure money that belongs to the whole order (shipping, duties and tax included), ' \
                   'so splitting them per line would count the same money under several rows.'
 
-        alternatives = names.map { |name| PER_LINE_ALTERNATIVES[name] }.compact.uniq
+        alternatives = offenders.filter_map(&:suggests).uniq
         return message if alternatives.empty?
 
         "#{message} Use #{alternatives.join(' or ')} for a per-line breakdown."
@@ -427,7 +413,9 @@ module Spree
         return if by_family.size <= 1
 
         described = by_family.sort_by { |family, _| family.to_s }.map do |family, family_metrics|
-          "#{family_metrics.map(&:name).join(', ')} measures #{family} (#{FAMILY_CLOCKS.fetch(family, 'its own timeline')})"
+          clock = registry.base!(family_metrics.first.base).clock
+          "#{family_metrics.map(&:name).join(', ')} measures #{family}" \
+            "#{" (#{clock})" if clock.present?}"
         end
 
         raise InvalidQuery,
@@ -460,18 +448,19 @@ module Spree
         available[(available.index(entry[:grain]).to_i + 1)..].presence || [available.last]
       end
 
-      # A lifetime metric deliberately ignores the query's time range, so
-      # ungrouped it would add every customer's whole history into a single
-      # figure that answers no question. Grouped by customer it is the number
-      # merchants mean.
+      # A metric declaring `requires_grouping` covers more than the query's
+      # time range (a customer's whole history), so ungrouped it would collapse
+      # every group's figure into one number that answers no question. Which
+      # dimension it needs is registry data, so an extension's own metric gets
+      # the same refusal without touching the compiler.
       def validate_lifetime_metrics!
-        lifetime = aggregated_metrics.select { |metric| LIFETIME_METRICS.include?(metric.name) }
-        return if lifetime.empty?
-        return if dimensions.any? { |d| d[:dimension].name == :customer }
+        aggregated_metrics.select(&:per_group?).group_by(&:requires_grouping).each do |needed, group|
+          next if dimensions.any? { |d| d[:dimension].name == needed }
 
-        raise InvalidQuery,
-              "#{lifetime.map(&:name).join(', ')} covers a customer's whole history rather than the report's " \
-              'date range, so it must be grouped by customer.'
+          raise InvalidQuery,
+                "#{group.map(&:name).join(', ')} covers more than the report's date range, " \
+                "so it must be grouped by #{needed}."
+        end
       end
 
       # ActiveSupport maps February 29 to February 28 in a non-leap year.
