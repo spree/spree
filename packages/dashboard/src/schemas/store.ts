@@ -57,6 +57,10 @@ export const storeSettingsFormSchema = z.object({
   preferred_tax_using_ship_address: z.boolean(),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
+  preferred_low_stock_threshold: z.coerce
+    .number()
+    .int()
+    .min(0, { error: requiredMessage('store.preferred_low_stock_threshold') }),
   preferred_track_price_history: z.boolean(),
   preferred_show_products_without_price: z.boolean(),
   preferred_disable_sku_validation: z.boolean(),

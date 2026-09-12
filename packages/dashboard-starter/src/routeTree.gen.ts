@@ -28,6 +28,7 @@ import { Route as SplatRouteImport } from './../../dashboard/src/routes/_authent
 import { Route as TransfersIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/transfers/index'
 import { Route as SettingsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/index'
 import { Route as SellersIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/index'
+import { Route as ReportsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/reports/index'
 import { Route as PurchaseOrdersIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/purchase-orders/index'
 import { Route as PromotionsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/index'
 import { Route as ProductsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/products/index'
@@ -60,6 +61,8 @@ import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/route
 import { Route as SettingsAllowedOriginsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/allowed-origins'
 import { Route as SellersTransfersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/transfers'
 import { Route as SellersSellerIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/$sellerId'
+import { Route as ReportsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/reports/new'
+import { Route as ReportsReportIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/reports/$reportId'
 import { Route as PurchaseOrdersNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/purchase-orders/new'
 import { Route as PromotionsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/new'
 import { Route as PromotionsGiftCardsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/gift-cards'
@@ -195,6 +198,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
 const SellersIndexRoute = SellersIndexRouteImport.update({
   id: '/sellers/',
   path: '/sellers/',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ReportsIndexRoute = ReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const PurchaseOrdersIndexRoute = PurchaseOrdersIndexRouteImport.update({
@@ -357,6 +365,16 @@ const SellersTransfersRoute = SellersTransfersRouteImport.update({
 const SellersSellerIdRoute = SellersSellerIdRouteImport.update({
   id: '/sellers/$sellerId',
   path: '/sellers/$sellerId',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ReportsNewRoute = ReportsNewRouteImport.update({
+  id: '/reports/new',
+  path: '/reports/new',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ReportsReportIdRoute = ReportsReportIdRouteImport.update({
+  id: '/reports/$reportId',
+  path: '/reports/$reportId',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const PurchaseOrdersNewRoute = PurchaseOrdersNewRouteImport.update({
@@ -609,6 +627,8 @@ export interface FileRoutesByFullPath {
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
   '/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
+  '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
+  '/$storeId/reports/new': typeof ReportsNewRoute
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
@@ -641,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/': typeof ProductsIndexRoute
   '/$storeId/promotions/': typeof PromotionsIndexRoute
   '/$storeId/purchase-orders/': typeof PurchaseOrdersIndexRoute
+  '/$storeId/reports/': typeof ReportsIndexRoute
   '/$storeId/sellers/': typeof SellersIndexRoute
   '/$storeId/settings/': typeof SettingsIndexRoute
   '/$storeId/transfers/': typeof TransfersIndexRoute
@@ -700,6 +721,8 @@ export interface FileRoutesByTo {
   '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
   '/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
+  '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
+  '/$storeId/reports/new': typeof ReportsNewRoute
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
@@ -732,6 +755,7 @@ export interface FileRoutesByTo {
   '/$storeId/products': typeof ProductsIndexRoute
   '/$storeId/promotions': typeof PromotionsIndexRoute
   '/$storeId/purchase-orders': typeof PurchaseOrdersIndexRoute
+  '/$storeId/reports': typeof ReportsIndexRoute
   '/$storeId/sellers': typeof SellersIndexRoute
   '/$storeId/settings': typeof SettingsIndexRoute
   '/$storeId/transfers': typeof TransfersIndexRoute
@@ -795,6 +819,8 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof PromotionsNewRoute
   '/_authenticated/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
+  '/_authenticated/$storeId/reports/$reportId': typeof ReportsReportIdRoute
+  '/_authenticated/$storeId/reports/new': typeof ReportsNewRoute
   '/_authenticated/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
   '/_authenticated/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
@@ -827,6 +853,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/': typeof ProductsIndexRoute
   '/_authenticated/$storeId/promotions/': typeof PromotionsIndexRoute
   '/_authenticated/$storeId/purchase-orders/': typeof PurchaseOrdersIndexRoute
+  '/_authenticated/$storeId/reports/': typeof ReportsIndexRoute
   '/_authenticated/$storeId/sellers/': typeof SellersIndexRoute
   '/_authenticated/$storeId/settings/': typeof SettingsIndexRoute
   '/_authenticated/$storeId/transfers/': typeof TransfersIndexRoute
@@ -890,6 +917,8 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/purchase-orders/new'
+    | '/$storeId/reports/$reportId'
+    | '/$storeId/reports/new'
     | '/$storeId/sellers/$sellerId'
     | '/$storeId/sellers/transfers'
     | '/$storeId/settings/allowed-origins'
@@ -922,6 +951,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/'
     | '/$storeId/promotions/'
     | '/$storeId/purchase-orders/'
+    | '/$storeId/reports/'
     | '/$storeId/sellers/'
     | '/$storeId/settings/'
     | '/$storeId/transfers/'
@@ -981,6 +1011,8 @@ export interface FileRouteTypes {
     | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/purchase-orders/new'
+    | '/$storeId/reports/$reportId'
+    | '/$storeId/reports/new'
     | '/$storeId/sellers/$sellerId'
     | '/$storeId/sellers/transfers'
     | '/$storeId/settings/allowed-origins'
@@ -1013,6 +1045,7 @@ export interface FileRouteTypes {
     | '/$storeId/products'
     | '/$storeId/promotions'
     | '/$storeId/purchase-orders'
+    | '/$storeId/reports'
     | '/$storeId/sellers'
     | '/$storeId/settings'
     | '/$storeId/transfers'
@@ -1075,6 +1108,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
     | '/_authenticated/$storeId/purchase-orders/new'
+    | '/_authenticated/$storeId/reports/$reportId'
+    | '/_authenticated/$storeId/reports/new'
     | '/_authenticated/$storeId/sellers/$sellerId'
     | '/_authenticated/$storeId/sellers/transfers'
     | '/_authenticated/$storeId/settings/allowed-origins'
@@ -1107,6 +1142,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/'
     | '/_authenticated/$storeId/promotions/'
     | '/_authenticated/$storeId/purchase-orders/'
+    | '/_authenticated/$storeId/reports/'
     | '/_authenticated/$storeId/sellers/'
     | '/_authenticated/$storeId/settings/'
     | '/_authenticated/$storeId/transfers/'
@@ -1280,6 +1316,13 @@ declare module '@tanstack/react-router' {
       path: '/sellers'
       fullPath: '/$storeId/sellers/'
       preLoaderRoute: typeof SellersIndexRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/reports/': {
+      id: '/_authenticated/$storeId/reports/'
+      path: '/reports'
+      fullPath: '/$storeId/reports/'
+      preLoaderRoute: typeof ReportsIndexRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/purchase-orders/': {
@@ -1504,6 +1547,20 @@ declare module '@tanstack/react-router' {
       path: '/sellers/$sellerId'
       fullPath: '/$storeId/sellers/$sellerId'
       preLoaderRoute: typeof SellersSellerIdRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/reports/new': {
+      id: '/_authenticated/$storeId/reports/new'
+      path: '/reports/new'
+      fullPath: '/$storeId/reports/new'
+      preLoaderRoute: typeof ReportsNewRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/reports/$reportId': {
+      id: '/_authenticated/$storeId/reports/$reportId'
+      path: '/reports/$reportId'
+      fullPath: '/$storeId/reports/$reportId'
+      preLoaderRoute: typeof ReportsReportIdRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/purchase-orders/new': {
@@ -1892,6 +1949,8 @@ interface authenticatedStoreIdRouteChildren {
   PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
   PromotionsNewRoute: typeof PromotionsNewRoute
   PurchaseOrdersNewRoute: typeof PurchaseOrdersNewRoute
+  ReportsReportIdRoute: typeof ReportsReportIdRoute
+  ReportsNewRoute: typeof ReportsNewRoute
   SellersSellerIdRoute: typeof SellersSellerIdRoute
   SellersTransfersRoute: typeof SellersTransfersRoute
   TransfersNewRoute: typeof TransfersNewRoute
@@ -1903,6 +1962,7 @@ interface authenticatedStoreIdRouteChildren {
   ProductsIndexRoute: typeof ProductsIndexRoute
   PromotionsIndexRoute: typeof PromotionsIndexRoute
   PurchaseOrdersIndexRoute: typeof PurchaseOrdersIndexRoute
+  ReportsIndexRoute: typeof ReportsIndexRoute
   SellersIndexRoute: typeof SellersIndexRoute
   TransfersIndexRoute: typeof TransfersIndexRoute
   OrdersOrderIdEditRoute: typeof OrdersOrderIdEditRoute
@@ -1950,6 +2010,8 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
   PromotionsNewRoute: PromotionsNewRoute,
   PurchaseOrdersNewRoute: PurchaseOrdersNewRoute,
+  ReportsReportIdRoute: ReportsReportIdRoute,
+  ReportsNewRoute: ReportsNewRoute,
   SellersSellerIdRoute: SellersSellerIdRoute,
   SellersTransfersRoute: SellersTransfersRoute,
   TransfersNewRoute: TransfersNewRoute,
@@ -1961,6 +2023,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ProductsIndexRoute: ProductsIndexRoute,
   PromotionsIndexRoute: PromotionsIndexRoute,
   PurchaseOrdersIndexRoute: PurchaseOrdersIndexRoute,
+  ReportsIndexRoute: ReportsIndexRoute,
   SellersIndexRoute: SellersIndexRoute,
   TransfersIndexRoute: TransfersIndexRoute,
   OrdersOrderIdEditRoute: OrdersOrderIdEditRoute,

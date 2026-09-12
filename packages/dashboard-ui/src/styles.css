@@ -172,6 +172,11 @@
   --card-container: var(--background);
   /* Light mode's raised record is simply the card surface. */
   --nested-raised: var(--card);
+  /* The recessed well a raised thing sits in — a tab strip's track, a
+     segmented control. Paired with --nested-raised: the track always sits one
+     step under it, which is why the two themes name different tokens rather
+     than sharing one. Light steps down from white to stone-100. */
+  --track-recessed: var(--accent);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
@@ -280,6 +285,10 @@
      container would sit if it had a fill of its own. */
   --card-container: var(--background);
   --nested-raised: oklch(23.5% 0.006 56.043);
+  /* Not --accent here: dark mode's accent (stone-800) is lighter than every
+     raised surface, so a shared token would put the selected tab below its own
+     track. --muted is the step under --nested-raised. */
+  --track-recessed: var(--muted);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
   --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
   --link: oklch(0.7 0.16 258);
@@ -407,6 +416,7 @@
   --color-border-field: var(--border-field);
   --color-card-container: var(--card-container);
   --color-nested-raised: var(--nested-raised);
+  --color-track-recessed: var(--track-recessed);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);

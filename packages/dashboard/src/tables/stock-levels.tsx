@@ -148,6 +148,7 @@ defineTable<StockLevel>('stock-levels', {
       filterType: 'enum',
       filterOptions: [
         { value: 'in_stock', label: i18n.t('admin.stock_levels.filters.in_stock') },
+        { value: 'low_stock', label: i18n.t('admin.stock_levels.filters.low_stock') },
         { value: 'out_of_stock', label: i18n.t('admin.stock_levels.filters.out_of_stock') },
         { value: 'with_reserved', label: i18n.t('admin.stock_levels.filters.has_reserved') },
         { value: 'with_incoming', label: i18n.t('admin.stock_levels.filters.has_incoming') },

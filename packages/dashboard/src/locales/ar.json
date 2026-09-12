@@ -2094,6 +2094,11 @@
           "help": "احتساب الضريبة من عنوان شحن العميل. أوقف هذا الخيار لاحتساب الضريبة حسب عنوان الفوترة بدلاً من ذلك.",
           "label": "احتساب الضريبة حسب عنوان الشحن"
         },
+        "low_stock_threshold": {
+          "help": "يُعدّ المتغير المتتبَّع الذي يتوفر منه هذا العدد من الوحدات أو أقل مخزونًا منخفضًا في الصفحة الرئيسية. القيمة 0 توقف التنبيه.",
+          "label": "حدّ المخزون المنخفض",
+          "suffix": "وحدة"
+        },
         "track_inventory_levels": {
           "help": "احتساب الكميات المتوفرة. أوقفه لمعاملة كل منتج على أنه متاح دائمًا.",
           "label": "تتبع مستويات المخزون"
@@ -3169,22 +3174,110 @@
         "columns": {
           "price": "سعر",
           "product": "منتج",
-          "sold": "مُباع"
+          "sold": "مُباع",
+          "trend": "الاتجاه"
         },
         "metric_short": {
           "avg_order_value": "AOV",
           "orders": "طلبات",
-          "sales": "مبيعات"
+          "sales": "مبيعات",
+          "units": "وحدات",
+          "customers": "عملاء"
         },
         "metrics": {
           "avg_order_value": "متوسط ​​قيمة الطلب",
           "orders": "إجمالي الطلبات",
-          "sales": "إجمالي المبيعات"
+          "sales": "إجمالي المبيعات",
+          "units": "الوحدات المباعة",
+          "customers": "العملاء"
         },
         "subtitle": "نظرة عامة على أداء متجرك",
         "title": "Dashboard",
         "top_products": "Top Products",
-        "top_products_description": "المنتجات الأكثر مبيعا في متجرك."
+        "top_products_description": "المنتجات الأكثر مبيعا في متجرك.",
+        "legend": {
+          "current": "الفترة الحالية",
+          "previous": "الفترة السابقة"
+        },
+        "growth": {
+          "new": "جديد",
+          "vs_previous": "مقارنة بالفترة السابقة"
+        },
+        "operations": {
+          "title": "العمليات",
+          "subtitle": "ما يتطلب انتباهك الآن.",
+          "failed": "تعذّر تحميل هذه الأعداد.",
+          "empty": "لا يوجد هنا ما يمكن لدورك رؤيته.",
+          "counters": {
+            "low_stock_items": {
+              "label": "مخزون منخفض",
+              "description_zero": "مُعطَّل. حدِّد حدّ المخزون المنخفض في إعدادات المتجر.",
+              "description_one": "وحدة واحدة أو أقل متاحة للبيع في الموقع.",
+              "description_other": "{{count}} وحدة أو أقل متاحة للبيع في الموقع."
+            },
+            "open_claims": {
+              "label": "مطالبات مفتوحة",
+              "description": "مطالبات لم تُحسم بعد."
+            },
+            "open_exchanges": {
+              "label": "عمليات استبدال مفتوحة",
+              "description": "عمليات استبدال لم تُنفّذ بعد."
+            },
+            "open_returns": {
+              "label": "مرتجعات مفتوحة",
+              "description": "مرتجعات لم تُسترد قيمتها بعد."
+            },
+            "orders_to_fulfill": {
+              "label": "طلبات بانتظار الشحن",
+              "description": "طلبات مؤكدة لم يُشحن منها شيء بعد."
+            },
+            "out_of_stock_items": {
+              "label": "نفد المخزون",
+              "description": "لم يعد هناك ما يُباع في هذا الموقع."
+            },
+            "payments_to_collect": {
+              "label": "مدفوعات مستحقة التحصيل",
+              "description": "طلبات مؤكدة لا يزال عليها مبلغ مستحق."
+            }
+          }
+        },
+        "rankings": {
+          "title": "التصنيفات",
+          "subtitle": "الأفضل أداءً في الفترة المحددة.",
+          "tabs": {
+            "customers": "العملاء",
+            "categories": "الفئات",
+            "companies": "الشركات",
+            "sellers": "البائعون"
+          },
+          "orders_count_zero": "لا طلبات",
+          "orders_count_one": "طلب واحد",
+          "orders_count_two": "طلبان",
+          "orders_count_few": "{{count}} طلبات",
+          "orders_count_many": "{{count}} طلبًا",
+          "orders_count_other": "{{count}} طلب",
+          "units_count_zero": "لا وحدات",
+          "units_count_one": "وحدة واحدة",
+          "units_count_two": "وحدتان",
+          "units_count_few": "{{count}} وحدات",
+          "units_count_many": "{{count}} وحدة",
+          "units_count_other": "{{count}} وحدة",
+          "empty": "لا توجد بيانات لهذه الفترة بعد.",
+          "view_report": "عرض التقرير",
+          "report_names": {
+            "seller_payouts": "مدفوعات البائعين",
+            "top_categories": "أفضل الفئات",
+            "top_companies": "أفضل الشركات",
+            "top_customers": "أفضل العملاء"
+          }
+        },
+        "unavailable": {
+          "title": "التقارير غير متاحة لدورك",
+          "description": "اطلب من المسؤول صلاحية «التقارير» (مع الوصول إلى الطلبات) لعرض أرقام المبيعات هنا."
+        },
+        "currency": {
+          "search": "ابحث عن العملات"
+        }
       },
       "orders": {
         "detail": {
@@ -5040,6 +5133,7 @@
         "has_incoming": "وارد",
         "has_reserved": "محجوز",
         "in_stock": "متوفر",
+        "low_stock": "مخزون منخفض",
         "out_of_stock": "غير متوفر"
       },
       "incoming": {
@@ -5762,6 +5856,80 @@
         "confirm": "إغلاق بالنقص"
       },
       "load_failed": "تعذّر تحميل التسليمات."
+    },
+    "reports": {
+      "title": "التقارير",
+      "subtitle": "تقارير محفوظة عن مبيعاتك ومنتجاتك وعملائك.",
+      "new_cta": "تقرير جديد",
+      "new_title": "تقرير جديد",
+      "copy_name": "نسخة من {{name}}",
+      "table": {
+        "search_placeholder": "البحث في التقارير…",
+        "empty": "لا توجد تقارير بعد. أنشئ تقريرًا للبدء.",
+        "columns": {
+          "name": "الاسم",
+          "kind": "النوع",
+          "author": "أنشأه"
+        }
+      },
+      "kind": {
+        "built_in": "مدمج",
+        "custom": "مخصص"
+      },
+      "builder": {
+        "metrics": "المقاييس",
+        "no_metrics": "اختر مقياسًا واحدًا على الأقل.",
+        "group_by": "تجميع حسب",
+        "none": "بدون (الإجماليات فقط)",
+        "grain": "الفاصل الزمني",
+        "time_range": "النطاق الزمني",
+        "custom_range": "نطاق مخصص",
+        "compare": "مقارنة بالفترة السابقة",
+        "filters": "عوامل التصفية",
+        "add_filter": "إضافة عامل تصفية",
+        "remove_filter": "إزالة عامل التصفية",
+        "sort": "ترتيب حسب",
+        "direction": "الترتيب",
+        "sort_desc": "الأعلى أولاً",
+        "sort_asc": "الأدنى أولاً",
+        "limit": "الصفوف",
+        "ids_placeholder": "معرّفات مفصولة بفواصل",
+        "title": "إعدادات التقرير"
+      },
+      "grains": {
+        "day": "يومي",
+        "week": "أسبوعي",
+        "month": "شهري"
+      },
+      "view": {
+        "empty": "لا توجد بيانات لهذه الفترة.",
+        "total": "الإجمالي",
+        "change": "التغير",
+        "error": "تعذر تحميل هذا التقرير"
+      },
+      "actions": {
+        "save": "حفظ",
+        "save_copy": "حفظ نسخة",
+        "export_csv": "تصدير CSV",
+        "rename": "إعادة تسمية"
+      },
+      "save_dialog": {
+        "title_create": "حفظ التقرير",
+        "title_copy": "حفظ نسخة",
+        "title_rename": "إعادة تسمية التقرير",
+        "name_label": "الاسم",
+        "description_label": "الوصف"
+      },
+      "seeded_hint": "لا يمكن تعديل التقارير المدمجة. عدّل الإعدادات واحفظ نسخة للاحتفاظ بنسختك.",
+      "delete_confirm": "حذف التقرير \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "messages": {
+        "created": "تم حفظ التقرير",
+        "create_failed": "تعذر حفظ التقرير",
+        "updated": "تم تحديث التقرير",
+        "update_failed": "تعذر تحديث التقرير",
+        "deleted": "تم حذف التقرير",
+        "delete_failed": "تعذر حذف التقرير"
+      }
     }
   }
 }

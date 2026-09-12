@@ -398,6 +398,8 @@ paths:
                 - write_seller_profile
                 - read_seller_earnings
                 - read_dashboard
+                - read_reports
+                - write_reports
               schema:
                 "$ref": "#/components/schemas/MeResponse"
         '401':
@@ -536,6 +538,8 @@ paths:
                 - write_seller_profile
                 - read_seller_earnings
                 - read_dashboard
+                - read_reports
+                - write_reports
               schema:
                 "$ref": "#/components/schemas/MeResponse"
       requestBody:
@@ -22628,6 +22632,7 @@ paths:
                 preferred_capture_method: checkout
                 preferred_track_inventory_levels: true
                 preferred_stock_reservations_enabled: true
+                preferred_low_stock_threshold: 5
                 preferred_tax_using_ship_address: true
                 preferred_track_price_history: true
                 preferred_show_products_without_price: false
@@ -22955,6 +22960,7 @@ paths:
                 preferred_capture_method: checkout
                 preferred_track_inventory_levels: true
                 preferred_stock_reservations_enabled: true
+                preferred_low_stock_threshold: 5
                 preferred_tax_using_ship_address: true
                 preferred_track_price_history: true
                 preferred_show_products_without_price: false
@@ -24822,8 +24828,22 @@ paths:
                   group_label: Analytics
                   label: Analytics dashboard
                   description: Sales and performance analytics
+                - key: read_reports
+                  resource: reports
+                  kind: read
+                  group: analytics
+                  group_label: Analytics
+                  label: Reports
+                  description: ''
+                - key: write_reports
+                  resource: reports
+                  kind: write
+                  group: analytics
+                  group_label: Analytics
+                  label: Reports
+                  description: ''
                 meta:
-                  count: 56
+                  count: 58
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -24931,6 +24951,8 @@ paths:
                   - write_seller_profile
                   - read_seller_earnings
                   - read_dashboard
+                  - read_reports
+                  - write_reports
                   mutable: false
                   users_count: 1
                 meta:
@@ -32400,7 +32422,7 @@ paths:
                   content_type: image/jpeg
                   byte_size: 18090
                   embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7be4a18befddec62ffe86ecea370b52c1a1c3f1d
                   viewable_id: prod_UkLWZg9DAJ
                   download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/thinking-cat.jpg?disposition=attachment
                   metadata: {}
@@ -32488,7 +32510,7 @@ paths:
                 content_type: image/jpeg
                 byte_size: 18090
                 embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77f34d7ce7c40a2777507ada03857b5af9bcbb74/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77f34d7ce7c40a2777507ada03857b5af9bcbb74
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--217d24dbfb7357183d78135ec5abedddf2196011
                 viewable_id:
                 download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77f34d7ce7c40a2777507ada03857b5af9bcbb74/library-upload.jpg?disposition=attachment
                 metadata: {}
@@ -32662,7 +32684,7 @@ paths:
                 content_type: image/jpeg
                 byte_size: 18090
                 embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--bc982820ddc762c8750b7f2e0f28662bae70a7fb/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7be4a18befddec62ffe86ecea370b52c1a1c3f1d
                 viewable_id: prod_gbHJdmfrXB
                 download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7a48b706b5671697d5592fa5a49746fd1f6a9e8a/thinking-cat.jpg?disposition=attachment
                 metadata: {}
@@ -41881,6 +41903,31 @@ components:
       - last_order_completed_at
       - customer_group_ids
       x-typelizer: true
+    DashboardCounter:
+      type: object
+      properties:
+        key:
+          type: string
+          description: 'Registered counter name. The dashboard translates it; built-in:
+            orders_to_fulfill, payments_to_collect, open_returns, open_exchanges,
+            open_claims, low_stock_items, out_of_stock_items.'
+        value:
+          type: number
+        link:
+          type: object
+          nullable: true
+          description: The list filter that shows exactly the rows counted, or null
+            when no list can.
+        nav:
+          type: string
+          nullable: true
+          description: Sidebar entry key this count badges, or null.
+      required:
+      - key
+      - value
+      - link
+      - nav
+      x-typelizer: true
     DataRequest:
       type: object
       properties:
@@ -46149,6 +46196,41 @@ components:
       - mutable
       - users_count
       x-typelizer: true
+    SavedReport:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        query:
+          type: object
+        seeded:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+        author_name:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - description
+      - query
+      - seeded
+      - created_at
+      - updated_at
+      - user_id
+      - author_name
+      x-typelizer: true
     SellerBalance:
       type: object
       properties:
@@ -47492,6 +47574,8 @@ components:
           type: boolean
         preferred_stock_reservations_enabled:
           type: boolean
+        preferred_low_stock_threshold:
+          type: number
         preferred_tax_using_ship_address:
           type: boolean
         preferred_track_price_history:
@@ -47590,6 +47674,7 @@ components:
       - preferred_capture_method
       - preferred_track_inventory_levels
       - preferred_stock_reservations_enabled
+      - preferred_low_stock_threshold
       - preferred_tax_using_ship_address
       - preferred_track_price_history
       - preferred_show_products_without_price

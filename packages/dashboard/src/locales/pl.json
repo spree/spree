@@ -2094,6 +2094,11 @@
           "help": "Oblicz podatek na podstawie adresu dostawy klienta. Wyłącz tę opcję, aby zamiast tego użyć adresu rozliczeniowego.",
           "label": "Podatek według adresu dostawy"
         },
+        "low_stock_threshold": {
+          "help": "Śledzony wariant z co najwyżej taką liczbą sztuk jest oznaczany na stronie głównej jako niski stan. 0 wyłącza ostrzeżenie.",
+          "label": "Próg niskiego stanu",
+          "suffix": "szt."
+        },
         "track_inventory_levels": {
           "help": "Licz dostępne ilości. Wyłącz, aby traktować każdy produkt jako zawsze dostępny.",
           "label": "Śledź stany magazynowe"
@@ -3184,22 +3189,106 @@
         "columns": {
           "price": "Cena",
           "product": "Produkt",
-          "sold": "Sprzedano"
+          "sold": "Sprzedano",
+          "trend": "Trend"
         },
         "metric_short": {
           "avg_order_value": "Śr. wart.",
           "orders": "Zamówienia",
-          "sales": "Sprzedaż"
+          "sales": "Sprzedaż",
+          "units": "Sztuki",
+          "customers": "Klienci"
         },
         "metrics": {
           "avg_order_value": "Śr. wartość zamówienia",
           "orders": "Łączna liczba zamówień",
-          "sales": "Łączna sprzedaż"
+          "sales": "Łączna sprzedaż",
+          "units": "Sprzedane sztuki",
+          "customers": "Klienci"
         },
         "subtitle": "Przegląd wyników Twojego sklepu",
         "title": "Pulpit",
         "top_products": "Najlepsze produkty",
-        "top_products_description": "Najlepiej sprzedające się produkty w Twoim sklepie."
+        "top_products_description": "Najlepiej sprzedające się produkty w Twoim sklepie.",
+        "legend": {
+          "current": "Bieżący okres",
+          "previous": "Poprzedni okres"
+        },
+        "growth": {
+          "new": "Nowość",
+          "vs_previous": "względem poprzedniego okresu"
+        },
+        "operations": {
+          "title": "Operacje",
+          "subtitle": "Co teraz wymaga Twojej uwagi.",
+          "failed": "Nie udało się wczytać tych liczników.",
+          "empty": "Twoja rola nie ma tu nic do wyświetlenia.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Niski stan",
+              "description_zero": "Wyłączone. Ustaw próg niskiego stanu w ustawieniach sklepu.",
+              "description_one": "Najwyżej 1 sztuka na sprzedaż w lokalizacji.",
+              "description_other": "Najwyżej {{count}} szt. na sprzedaż w lokalizacji."
+            },
+            "open_claims": {
+              "label": "Otwarte reklamacje",
+              "description": "Reklamacje, których jeszcze nie rozpatrzono."
+            },
+            "open_exchanges": {
+              "label": "Otwarte wymiany",
+              "description": "Wymiany, których jeszcze nie zrealizowano."
+            },
+            "open_returns": {
+              "label": "Otwarte zwroty",
+              "description": "Zwroty, za które nie zwrócono jeszcze pieniędzy."
+            },
+            "orders_to_fulfill": {
+              "label": "Zamówienia do wysłania",
+              "description": "Złożone zamówienia, z których nic jeszcze nie wysłano."
+            },
+            "out_of_stock_items": {
+              "label": "Brak w magazynie",
+              "description": "W tej lokalizacji nie ma już nic na sprzedaż."
+            },
+            "payments_to_collect": {
+              "label": "Płatności do pobrania",
+              "description": "Złożone zamówienia, za które wciąż brakuje zapłaty."
+            }
+          }
+        },
+        "rankings": {
+          "title": "Rankingi",
+          "subtitle": "Najlepsze wyniki w wybranym okresie.",
+          "tabs": {
+            "customers": "Klienci",
+            "categories": "Kategorie",
+            "companies": "Firmy",
+            "sellers": "Sprzedawcy"
+          },
+          "orders_count_one": "{{count}} zamówienie",
+          "orders_count_few": "{{count}} zamówienia",
+          "orders_count_many": "{{count}} zamówień",
+          "orders_count_other": "{{count}} zamówienia",
+          "units_count_one": "{{count}} sztuka",
+          "units_count_few": "{{count}} sztuki",
+          "units_count_many": "{{count}} sztuk",
+          "units_count_other": "{{count}} sztuki",
+          "empty": "Brak danych dla tego okresu.",
+          "view_report": "Zobacz raport",
+          "report_names": {
+            "seller_payouts": "Wypłaty dla sprzedawców",
+            "top_categories": "Najlepsze kategorie",
+            "top_companies": "Najlepsze firmy",
+            "top_customers": "Najlepsi klienci"
+          }
+        },
+        "unavailable": {
+          "title": "Raporty są niedostępne dla Twojej roli",
+          "description": "Poproś administratora o uprawnienie „Raporty” (z dostępem do zamówień), aby zobaczyć tutaj dane sprzedaży."
+        },
+        "currency": {
+          "search": "Szukaj walut"
+        }
       },
       "orders": {
         "detail": {
@@ -5076,6 +5165,7 @@
         "has_incoming": "W drodze",
         "has_reserved": "Wstrzymane",
         "in_stock": "Dostępne",
+        "low_stock": "Niski stan",
         "out_of_stock": "Niedostępne"
       },
       "incoming": {
@@ -5795,6 +5885,80 @@
         "confirm": "Zamknij z brakami"
       },
       "load_failed": "Nie udało się wczytać dostaw."
+    },
+    "reports": {
+      "title": "Raporty",
+      "subtitle": "Zapisane raporty dotyczące sprzedaży, produktów i klientów.",
+      "new_cta": "Nowy raport",
+      "new_title": "Nowy raport",
+      "copy_name": "Kopia {{name}}",
+      "table": {
+        "search_placeholder": "Szukaj raportów…",
+        "empty": "Brak raportów. Utwórz pierwszy, aby zacząć.",
+        "columns": {
+          "name": "Nazwa",
+          "kind": "Typ",
+          "author": "Autor"
+        }
+      },
+      "kind": {
+        "built_in": "Wbudowany",
+        "custom": "Własny"
+      },
+      "builder": {
+        "metrics": "Metryki",
+        "no_metrics": "Wybierz co najmniej jedną metrykę.",
+        "group_by": "Grupuj według",
+        "none": "Brak (tylko sumy)",
+        "grain": "Interwał",
+        "time_range": "Zakres czasu",
+        "custom_range": "Własny zakres",
+        "compare": "Porównaj z poprzednim okresem",
+        "filters": "Filtry",
+        "add_filter": "Dodaj filtr",
+        "remove_filter": "Usuń filtr",
+        "sort": "Sortuj według",
+        "direction": "Kolejność",
+        "sort_desc": "Od najwyższych",
+        "sort_asc": "Od najniższych",
+        "limit": "Wiersze",
+        "ids_placeholder": "Identyfikatory rozdzielone przecinkami",
+        "title": "Ustawienia raportu"
+      },
+      "grains": {
+        "day": "Dziennie",
+        "week": "Tygodniowo",
+        "month": "Miesięcznie"
+      },
+      "view": {
+        "empty": "Brak danych dla tego okresu.",
+        "total": "Razem",
+        "change": "Zmiana",
+        "error": "Nie udało się wczytać tego raportu"
+      },
+      "actions": {
+        "save": "Zapisz",
+        "save_copy": "Zapisz kopię",
+        "export_csv": "Eksportuj CSV",
+        "rename": "Zmień nazwę"
+      },
+      "save_dialog": {
+        "title_create": "Zapisz raport",
+        "title_copy": "Zapisz kopię",
+        "title_rename": "Zmień nazwę raportu",
+        "name_label": "Nazwa",
+        "description_label": "Opis"
+      },
+      "seeded_hint": "Wbudowanych raportów nie można zmieniać. Dostosuj ustawienia i zapisz kopię, aby zachować swoją wersję.",
+      "delete_confirm": "Usunąć raport „{{name}}”? Tej operacji nie można cofnąć.",
+      "messages": {
+        "created": "Raport zapisany",
+        "create_failed": "Nie udało się zapisać raportu",
+        "updated": "Raport zaktualizowany",
+        "update_failed": "Nie udało się zaktualizować raportu",
+        "deleted": "Raport usunięty",
+        "delete_failed": "Nie udało się usunąć raportu"
+      }
     }
   }
 }

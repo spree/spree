@@ -25,6 +25,10 @@ import {
   FieldLabel,
   FormActions,
   Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
   ResourceLayout,
   Select,
   SelectContent,
@@ -133,6 +137,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_tax_using_ship_address: store.preferred_tax_using_ship_address ?? true,
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
+    preferred_low_stock_threshold: store.preferred_low_stock_threshold ?? 5,
     preferred_track_price_history: store.preferred_track_price_history ?? true,
     preferred_show_products_without_price: store.preferred_show_products_without_price ?? false,
     preferred_disable_sku_validation: store.preferred_disable_sku_validation ?? false,
@@ -257,6 +262,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_tax_using_ship_address: values.preferred_tax_using_ship_address,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
+        preferred_low_stock_threshold: values.preferred_low_stock_threshold,
         preferred_track_price_history: values.preferred_track_price_history,
         preferred_show_products_without_price: values.preferred_show_products_without_price,
         preferred_disable_sku_validation: values.preferred_disable_sku_validation,
@@ -647,6 +653,30 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       name="preferred_stock_reservations_enabled"
                       control={form.control}
                     />
+                    <Field>
+                      <FieldLabel htmlFor="store-low-stock-threshold">
+                        {t('admin.fields.store.low_stock_threshold.label')}
+                      </FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          id="store-low-stock-threshold"
+                          type="number"
+                          min={0}
+                          step={1}
+                          aria-invalid={!!errors.preferred_low_stock_threshold || undefined}
+                          {...form.register('preferred_low_stock_threshold')}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>
+                            {t('admin.fields.store.low_stock_threshold.suffix')}
+                          </InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                      <FieldDescription>
+                        {t('admin.fields.store.low_stock_threshold.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.preferred_low_stock_threshold]} />
+                    </Field>
                   </FieldGroup>
                 </CardContent>
               </Card>

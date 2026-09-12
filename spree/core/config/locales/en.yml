@@ -642,6 +642,7 @@ en:
   errors:
     messages:
       already_confirmed: was already confirmed
+      forbidden_reporting_member: references data you are not allowed to read
       invalid_document_number_affix: 'can only contain uppercase letters, digits, dashes and #'
       invalid_system_key: can only contain lowercase letters, digits and underscores
       locked_after_first_number: cannot change once numbering has started
@@ -652,6 +653,7 @@ en:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
       refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
+      seeded_report_read_only: is a built-in report and cannot be changed — save a copy instead
   number:
     currency:
       format:
@@ -1673,15 +1675,270 @@ en:
     remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     rename: Rename
     report: Report
-    report_mailer:
-      greeting: Hi %{user_name},
-      report_done:
-        message: Please use the link below to download it.
-        subject: Your report %{report_name} is ready
-      thanks: Thank you,
     report_names:
       products_performance: Products performance
       sales_total: Sales total
+    reporting:
+      dimensions:
+        category:
+          description: The category the sold product belongs to.
+          label: Category
+        channel:
+          description: The channel the order came through.
+          label: Sales channel
+        company:
+          description: The organisation the purchase was made for.
+          label: Company
+        completed_at:
+          description: When the order was placed, bucketed by day, week or month in the store timezone.
+          label: Date
+        country:
+          description: Country of the shipping address (ISO code).
+          label: Shipping country
+        customer:
+          description: The customer who placed the order, by email.
+          label: Customer
+        customer_type:
+          description: Whether the buyer had placed an earlier order at the time of this one.
+          label: Customer type
+        fulfillment_status:
+          description: Fulfillment state of the order.
+          label: Fulfillment status
+        market:
+          description: The market the order was placed in.
+          label: Market
+        moved_at:
+          description: When stock moved, bucketed by day, week or month in the store timezone.
+          label: Movement date
+        moved_variant:
+          description: The variant whose stock moved.
+          label: Variant moved
+        movement_kind:
+          description: What happened to the stock.
+          label: Movement type
+        paid_at:
+          description: When the payment was taken, bucketed by day, week or month in the store timezone.
+          label: Payment date
+        payment_method:
+          description: The instrument the payment was taken through.
+          label: Payment method
+        payment_result:
+          description: Whether an individual charge succeeded.
+          label: Payment result
+        payment_status:
+          description: Payment state of the order.
+          label: Payment status
+        product:
+          description: The product sold.
+          label: Product
+        seller:
+          description: The seller who sold the item.
+          label: Seller
+        stock_location:
+          description: The location the stock moved in or out of.
+          label: Stock location
+        variant:
+          description: The product variant (SKU) sold.
+          label: Variant
+      export:
+        total: Total
+      families:
+        inventory:
+          label: Inventory
+        payments:
+          label: Payments
+        sales:
+          label: Sales
+      metrics:
+        average_order_value:
+          description: Total sales divided by the number of orders.
+          label: Average order value
+        commission:
+          description: What the marketplace earned on these sales, including its tax.
+          label: Commission
+        cost_of_goods:
+          description: What the goods sold cost you. Variants with no cost price count as zero.
+          label: Cost of goods
+        customers:
+          description: Distinct customer emails that placed orders.
+          label: Customers
+        discounts:
+          description: Discounts applied to the items sold.
+          label: Discounts
+        duties:
+          description: Customs duties charged on the order.
+          label: Duties
+        fees:
+          description: Shopper-visible fees other than duties.
+          label: Fees
+        gross_margin:
+          description: Gross profit as a share of net sales.
+          label: Gross margin
+        gross_profit:
+          description: Net sales less the cost of the goods sold.
+          label: Gross profit
+        gross_sales:
+          description: Item prices multiplied by quantity, before discounts, returns and tax.
+          label: Gross sales
+        net_payments:
+          description: Money taken less money refunded, by the instrument that moved it.
+          label: Net payments
+        net_sales:
+          description: Gross sales less discounts and returns. What you actually sold.
+          label: Net sales
+        orders:
+          description: Number of placed orders.
+          label: Orders
+        payments_count:
+          description: Number of successful charges.
+          label: Payments
+        payments_failed:
+          description: Number of charges that failed.
+          label: Failed payments
+        payments_received:
+          description: Money successfully taken, counted when the payment was made.
+          label: Payments received
+        payments_refunded:
+          description: Money refunded through these payments.
+          label: Payments refunded
+        returns:
+          description: Money refunded, counted in the period the refund was issued.
+          label: Returns
+        sell_through:
+          description: Units shipped as a share of units received.
+          label: Sell-through
+        seller_payout:
+          description: What the sellers are owed on these sales, after commission.
+          label: Seller payout
+        shipping:
+          description: Delivery charged to the customer.
+          label: Shipping
+        taxes:
+          description: Sum of additional and included taxes.
+          label: Taxes
+        total_sales:
+          description: Net sales plus shipping, duties, fees and taxes. The money taken.
+          label: Total sales
+        units_adjusted:
+          description: Units added or removed by stock corrections.
+          label: Units adjusted
+        units_received:
+          description: Units booked into stock.
+          label: Units received
+        units_shipped:
+          description: Units dispatched from stock.
+          label: Units shipped
+        units_sold:
+          description: Sum of line item quantities.
+          label: Units sold
+      presets:
+        last_12_months:
+          label: Last 12 months
+        last_30_days:
+          label: Last 30 days
+        last_4_weeks:
+          label: Last 4 weeks
+        last_7_days:
+          label: Last 7 days
+        last_90_days:
+          label: Last 90 days
+        last_month:
+          label: Last month
+        last_quarter:
+          label: Last quarter
+        last_week:
+          label: Last week
+        month_to_date:
+          label: Month to date
+        quarter_to_date:
+          label: Quarter to date
+        today:
+          label: Today
+        week_to_date:
+          label: Week to date
+        year_to_date:
+          label: Year to date
+        yesterday:
+          label: Yesterday
+      seeds:
+        failed_payments:
+          description: Charges that failed over the last four weeks, by payment method.
+          name: Failed payments
+        first_time_vs_returning:
+          description: Sales split between first-time and returning buyers over the last four weeks.
+          name: First-time vs returning
+        net_sales_over_time:
+          description: Weekly gross sales, discounts, returns and net sales over the last twelve months.
+          name: Net sales over time
+        orders_by_fulfillment_status:
+          description: Order counts and sales grouped by fulfillment status over the last four weeks.
+          name: Orders by fulfillment status
+        orders_by_payment_status:
+          description: Order counts and sales grouped by payment status over the last four weeks.
+          name: Orders by payment status
+        payments_by_method:
+          description: What each payment method took, net of refunds, over the last four weeks.
+          name: Payments by method
+        payments_over_time:
+          description: Daily payments taken and refunded over the last four weeks, compared with the previous period.
+          name: Payments over time
+        product_margin:
+          description: Products ranked by gross profit over the last four weeks, with cost and margin.
+          name: Product margin
+        returns_over_time:
+          description: Monthly refunds over the last twelve months, compared with the previous period.
+          name: Returns over time
+        sales_by_channel:
+          description: Sales and orders per sales channel over the last four weeks.
+          name: Sales by channel
+        sales_by_country:
+          description: Sales and orders by shipping country over the last four weeks.
+          name: Sales by country
+        sales_by_market:
+          description: Sales and orders per market over the last four weeks.
+          name: Sales by market
+        sales_over_time:
+          description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
+          name: Sales over time
+        sell_through_by_variant:
+          description: Units shipped against units received per variant over the last four weeks.
+          name: Sell-through by variant
+        seller_payouts:
+          description: What each seller earned last month, after the marketplace commission.
+          name: Seller payouts
+        stock_movement_over_time:
+          description: Weekly units received and shipped over the last twelve months.
+          name: Stock movement over time
+        top_categories:
+          description: Best-selling categories by net sales over the last four weeks.
+          name: Top categories
+        top_companies:
+          description: Organisations ranked by spend over the last four weeks.
+          name: Top companies
+        top_customers:
+          description: Customers ranked by spend over the last four weeks.
+          name: Top customers
+        top_products:
+          description: Best-selling products by net sales over the last four weeks.
+          name: Top products
+      unassigned: Unassigned
+      values:
+        fulfillment_status:
+          backorder: Backordered
+          canceled: Canceled
+          delivered: Delivered
+          fulfilled: Fulfilled
+          partial: Partially fulfilled
+          unfulfilled: Unfulfilled
+        payment_status:
+          authorized: Authorized
+          none: Unpaid
+          overcharged: Overcharged
+          paid: Paid
+          partially_paid: Partially paid
+          partially_refunded: Partially refunded
+          refunded: Refunded
+          voided: Voided
     reports: Reports
     required: "*"
     required_fields: required fields

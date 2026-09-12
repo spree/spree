@@ -56,13 +56,22 @@ module Spree
 
     scope :in_stock, -> { where(purchasable_arel.gt(0)) }
     scope :out_of_stock, -> { where(purchasable_arel.lteq(0)) }
+
+    # Running low but not yet out. Reads the store's `low_stock_threshold`
+    # when none is passed, so the Inventory page's filter and the home
+    # screen's counter ask the same question. A threshold of 0 turns the
+    # warning off, which falls out of the bounds rather than needing a branch.
+    scope :low_stock, ->(threshold = nil) {
+      ceiling = threshold || Spree::Current.store&.preferred_low_stock_threshold || 0
+      where(purchasable_arel.gt(0)).where(purchasable_arel.lteq(ceiling))
+    }
     scope :with_incoming, -> { where(arel_table[:incoming_count].gt(0)) }
     scope :with_reserved, -> { where(arel_table[:reserved_count].gt(0)) }
 
     # What the Inventory page's stock-status filter can ask for. Each names a
     # scope above; `STOCK_STATUS_SCOPES` is the allowlist that keeps a request
     # from naming any other method.
-    STOCK_STATUS_SCOPES = %w[in_stock out_of_stock with_incoming with_reserved].freeze
+    STOCK_STATUS_SCOPES = %w[in_stock low_stock out_of_stock with_incoming with_reserved].freeze
 
     # Rows in any of the named states — "out of stock, or with units on the
     # way" is one question a merchant asks, not two filters they combine.

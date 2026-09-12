@@ -2076,6 +2076,11 @@
           "help": "Die Steuer anhand der Lieferadresse des Kunden berechnen. Deaktivieren Sie diese Option, um stattdessen die Rechnungsadresse zu verwenden.",
           "label": "Steuer nach Lieferadresse"
         },
+        "low_stock_threshold": {
+          "help": "Eine bestandsgeführte Variante mit höchstens so vielen Einheiten gilt auf der Startseite als niedriger Bestand. 0 schaltet den Hinweis aus.",
+          "label": "Schwelle für niedrigen Bestand",
+          "suffix": "Stück"
+        },
         "track_inventory_levels": {
           "help": "Bestände zählen. Ausschalten, um jedes Produkt als immer verfügbar zu behandeln.",
           "label": "Lagerbestand verfolgen"
@@ -3152,22 +3157,102 @@
         "columns": {
           "price": "Preis",
           "product": "Produkt",
-          "sold": "Verkauft"
+          "sold": "Verkauft",
+          "trend": "Trend"
         },
         "metric_short": {
           "avg_order_value": "Ø-Wert",
           "orders": "Bestellungen",
-          "sales": "Umsatz"
+          "sales": "Umsatz",
+          "units": "Stück",
+          "customers": "Kunden"
         },
         "metrics": {
           "avg_order_value": "Ø Bestellwert",
           "orders": "Bestellungen gesamt",
-          "sales": "Gesamtumsatz"
+          "sales": "Gesamtumsatz",
+          "units": "Verkaufte Stück",
+          "customers": "Kunden"
         },
         "subtitle": "Überblick über die Leistung Ihres Shops",
         "title": "Dashboard",
         "top_products": "Top-Produkte",
-        "top_products_description": "Meistverkaufte Produkte in Ihrem Shop."
+        "top_products_description": "Meistverkaufte Produkte in Ihrem Shop.",
+        "legend": {
+          "current": "Dieser Zeitraum",
+          "previous": "Vorheriger Zeitraum"
+        },
+        "growth": {
+          "new": "Neu",
+          "vs_previous": "vs. vorheriger Zeitraum"
+        },
+        "operations": {
+          "title": "Aufgaben",
+          "subtitle": "Was gerade Ihre Aufmerksamkeit braucht.",
+          "failed": "Diese Zahlen konnten nicht geladen werden.",
+          "empty": "Für Ihre Rolle gibt es hier nichts zu sehen.",
+          "counters": {
+            "low_stock_items": {
+              "label": "Niedriger Bestand",
+              "description_zero": "Deaktiviert. Legen Sie in den Shop-Einstellungen eine Schwelle fest.",
+              "description_one": "Höchstens 1 Einheit an einem Standort verkäuflich.",
+              "description_other": "Höchstens {{count}} Einheiten an einem Standort verkäuflich."
+            },
+            "open_claims": {
+              "label": "Offene Reklamationen",
+              "description": "Reklamationen, die noch nicht abgeschlossen sind."
+            },
+            "open_exchanges": {
+              "label": "Offener Umtausch",
+              "description": "Umtausch, der noch nicht abgewickelt wurde."
+            },
+            "open_returns": {
+              "label": "Offene Retouren",
+              "description": "Retouren, die noch nicht erstattet wurden."
+            },
+            "orders_to_fulfill": {
+              "label": "Zu versendende Bestellungen",
+              "description": "Aufgegebene Bestellungen, von denen noch nichts versandt wurde."
+            },
+            "out_of_stock_items": {
+              "label": "Nicht vorrätig",
+              "description": "An diesem Standort ist nichts mehr verkäuflich."
+            },
+            "payments_to_collect": {
+              "label": "Ausstehende Zahlungen",
+              "description": "Aufgegebene Bestellungen, die noch nicht bezahlt sind."
+            }
+          }
+        },
+        "rankings": {
+          "title": "Rangliste",
+          "subtitle": "Top-Performer im ausgewählten Zeitraum.",
+          "tabs": {
+            "customers": "Kunden",
+            "categories": "Kategorien",
+            "companies": "Firmen",
+            "sellers": "Verkäufer"
+          },
+          "orders_count_one": "{{count}} Bestellung",
+          "orders_count_other": "{{count}} Bestellungen",
+          "units_count_one": "{{count}} Stück",
+          "units_count_other": "{{count}} Stück",
+          "empty": "Noch keine Daten für diesen Zeitraum.",
+          "view_report": "Bericht ansehen",
+          "report_names": {
+            "seller_payouts": "Verkäuferauszahlungen",
+            "top_categories": "Top-Kategorien",
+            "top_companies": "Top-Firmen",
+            "top_customers": "Top-Kunden"
+          }
+        },
+        "unavailable": {
+          "title": "Berichte sind für Ihre Rolle nicht verfügbar",
+          "description": "Bitten Sie einen Administrator um die Berechtigung „Berichte“ (mit Zugriff auf Bestellungen), um hier Verkaufszahlen zu sehen."
+        },
+        "currency": {
+          "search": "Währungen suchen"
+        }
       },
       "orders": {
         "detail": {
@@ -5018,6 +5103,7 @@
         "has_incoming": "Eingehend",
         "has_reserved": "Reserviert",
         "in_stock": "Auf Lager",
+        "low_stock": "Niedriger Bestand",
         "out_of_stock": "Nicht auf Lager"
       },
       "incoming": {
@@ -5733,6 +5819,80 @@
         "confirm": "Vorzeitig abschließen"
       },
       "load_failed": "Die Lieferungen konnten nicht geladen werden."
+    },
+    "reports": {
+      "title": "Berichte",
+      "subtitle": "Gespeicherte Berichte zu Umsatz, Produkten und Kunden.",
+      "new_cta": "Neuer Bericht",
+      "new_title": "Neuer Bericht",
+      "copy_name": "Kopie von {{name}}",
+      "table": {
+        "search_placeholder": "Berichte durchsuchen…",
+        "empty": "Noch keine Berichte. Erstellen Sie einen, um loszulegen.",
+        "columns": {
+          "name": "Name",
+          "kind": "Typ",
+          "author": "Erstellt von"
+        }
+      },
+      "kind": {
+        "built_in": "Integriert",
+        "custom": "Benutzerdefiniert"
+      },
+      "builder": {
+        "metrics": "Kennzahlen",
+        "no_metrics": "Wählen Sie mindestens eine Kennzahl.",
+        "group_by": "Gruppieren nach",
+        "none": "Keine (nur Summen)",
+        "grain": "Intervall",
+        "time_range": "Zeitraum",
+        "custom_range": "Benutzerdefinierter Zeitraum",
+        "compare": "Mit Vorperiode vergleichen",
+        "filters": "Filter",
+        "add_filter": "Filter hinzufügen",
+        "remove_filter": "Filter entfernen",
+        "sort": "Sortieren nach",
+        "direction": "Reihenfolge",
+        "sort_desc": "Höchste zuerst",
+        "sort_asc": "Niedrigste zuerst",
+        "limit": "Zeilen",
+        "ids_placeholder": "Kommagetrennte IDs",
+        "title": "Berichtseinstellungen"
+      },
+      "grains": {
+        "day": "Täglich",
+        "week": "Wöchentlich",
+        "month": "Monatlich"
+      },
+      "view": {
+        "empty": "Keine Daten für diesen Zeitraum.",
+        "total": "Gesamt",
+        "change": "Veränderung",
+        "error": "Dieser Bericht konnte nicht geladen werden"
+      },
+      "actions": {
+        "save": "Speichern",
+        "save_copy": "Kopie speichern",
+        "export_csv": "CSV exportieren",
+        "rename": "Umbenennen"
+      },
+      "save_dialog": {
+        "title_create": "Bericht speichern",
+        "title_copy": "Kopie speichern",
+        "title_rename": "Bericht umbenennen",
+        "name_label": "Name",
+        "description_label": "Beschreibung"
+      },
+      "seeded_hint": "Integrierte Berichte können nicht geändert werden. Passen Sie die Einstellungen an und speichern Sie eine Kopie.",
+      "delete_confirm": "Bericht „{{name}}“ löschen? Dies kann nicht rückgängig gemacht werden.",
+      "messages": {
+        "created": "Bericht gespeichert",
+        "create_failed": "Bericht konnte nicht gespeichert werden",
+        "updated": "Bericht aktualisiert",
+        "update_failed": "Bericht konnte nicht aktualisiert werden",
+        "deleted": "Bericht gelöscht",
+        "delete_failed": "Bericht konnte nicht gelöscht werden"
+      }
     }
   }
 }

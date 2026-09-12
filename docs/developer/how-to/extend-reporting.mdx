@@ -1,0 +1,215 @@
+---
+title: Extend Reporting
+description: Register your own metrics and dimensions so merchants can compose them in the Reports builder, saved reports and CSV exports.
+---
+
+## Overview
+
+Reporting is extended by adding *vocabulary*, not by writing report classes.
+Register a metric or a dimension in an initializer and it becomes available
+everywhere at once: the Reports builder, saved reports, CSV export and the
+schema endpoint.
+
+Read [how reporting works](/developer/core-concepts/reporting) first — this
+guide assumes the query contract and the metric/dimension split.
+
+## Add a metric
+
+A metric is an aggregate over one registered base — `:orders`, `:line_items`,
+`:payments` or `:stock_movements`:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.reporting.metric :items_per_order,
+    sql: 'SUM(%{line_items}.quantity)',
+    base: :line_items,
+    format: :integer
+end
+```
+
+That is the whole change. The metric appears in `GET /reporting/schema`, in
+the builder's metric list, and can be saved into a report.
+
+Give it a label so merchants do not read the raw name:
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    reporting:
+      metrics:
+        items_per_order:
+          label: Items per order
+          description: Units sold divided across orders in the period.
+```
+
+### Derived metrics
+
+A ratio is computed after aggregation, so it stays correct for both rows and
+totals — which a plain `AVG()` would not:
+
+```ruby
+Spree.reporting.metric :average_units_per_order,
+  ratio: %i[units_sold orders], format: :decimal
+```
+
+## Add a dimension
+
+A dimension groups and filters. The simplest kind is a column on the base
+table:
+
+```ruby
+Spree.reporting.dimension :order_locale, base: :orders, column: :locale
+```
+
+### A dimension that identifies records
+
+When the keys are IDs rather than plain values, declare four things together:
+how to reach the table, how to resolve a filter value, how to render the key,
+and who may see it.
+
+```ruby
+Spree.reporting.dimension :seller, base: :line_items,
+  column: '%{variants}.seller_id',
+  joins: [:variant],
+  lookup: :seller,
+  subject: -> { Spree::Seller },
+  key_scope: 'read_sellers',
+  resolve: ->(store, value) { store.sellers.find_by_prefix_id!(value).id },
+  hydrate: lambda { |store, ids, _params|
+    store.sellers.where(id: ids).to_h do |seller|
+      [seller.id, { id: seller.prefixed_id, label: seller.name, meta: {} }]
+    end
+  }
+```
+
+What each part buys you:
+
+- `joins` is applied only to the grouped query, so the Total row stays the
+  store's real figure even when the join fans out.
+- `resolve` lets a filter accept the prefixed IDs clients already hold.
+  Scope it through the store, so an ID from another store is a 404.
+- `hydrate` is batched once per dimension per response, not per row.
+- `subject` and `key_scope` are mandatory together. Staff need `:read` on the
+  subject; API keys need the scope. Omitting `key_scope` raises at
+  registration rather than shipping a member that only guards one axis.
+
+### Status-like dimensions
+
+Publish the values so the builder can offer checkboxes instead of a text box:
+
+```ruby
+Spree.reporting.dimension :subscription_state, base: :orders,
+  column: :subscription_state,
+  values: -> { MyExtension::SUBSCRIPTION_STATES }
+```
+
+Use a lambda so model constants load lazily. Label the values under
+`spree.reporting.values.<dimension>.<value>`; they are translated server-side,
+so a plugin needs no dashboard locale edit.
+
+## Verify it
+
+Query the contract directly:
+
+```ruby
+Spree::Reporting::Query.new(
+  store: Spree::Store.default,
+  params: { metrics: %w[items_per_order], dimensions: %w[order_locale] }
+).execute
+```
+
+Or over HTTP:
+
+```bash
+curl -X POST https://example.com/api/v3/admin/reporting/query \
+  -H "X-Spree-API-Key: $SECRET_KEY" -H 'Content-Type: application/json' \
+  -d '{"metrics":["items_per_order"],"dimensions":["order_locale"]}'
+```
+
+A spec is worth writing for the parts that are easy to get wrong — the
+authorization declaration and the hydration payload:
+
+```ruby spec/lib/my_extension/reporting_spec.rb
+RSpec.describe 'seller reporting vocabulary' do
+  let(:store) { @default_store }
+
+  it 'requires the seller subject and scope' do
+    query = Spree::Reporting::Query.new(
+      store: store, params: { metrics: %w[units_sold], dimensions: %w[seller] }
+    )
+
+    expect(query.required_subjects).to include(Spree::Seller)
+    expect(query.required_key_scopes).to include('read_sellers')
+  end
+end
+```
+
+## Add a counter
+
+A counter is a point-in-time number for the home screen's Operations card:
+no time range, no currency, no base. It takes the store and the channel the
+merchant is looking at and returns an integer.
+
+```ruby
+Spree.reporting.counter :orders_on_hold,
+  subject: -> { Spree::Order }, key_scope: 'read_orders',
+  count: ->(store, channel:) { store.orders.complete.for_channel(channel).where(on_hold: true).count },
+  link: { resource: 'orders', filters: [{ field: 'on_hold', operator: 'eq', value: 'true' }] }
+```
+
+The endpoint sends the key and the number, never any text — the dashboard
+owns every string it shows. Add
+`admin.pages.home.operations.counters.orders_on_hold.label`, and optionally
+`.description`, to your dashboard locale files; a counter with no entry falls
+back to its humanized key, so it reads sensibly before you translate it.
+
+Pass `nav:` with a sidebar entry's key to badge that entry with this count.
+Declare `link` only when the list filter shows exactly the rows counted — the
+dashboard resolves `resource` to one of its lists (`orders`, `returns`,
+`exchanges`, `claims`, `products`, `inventory`) and appends the channel filter
+itself for order lists.
+
+## Overriding a built-in member
+
+Registration refuses a duplicate name unless you say so explicitly:
+
+```ruby
+Spree.reporting.metric :total_sales, replace: true,
+  sql: 'SUM(%{orders}.total - %{orders}.delivery_total)',
+  base: :orders, format: :money
+```
+
+Redefining what a built-in number means changes every saved report using it,
+including the seeded ones. Prefer a new name unless you intend exactly that.
+
+## What you cannot do yet
+
+These are limits of the compiler, not of registration:
+
+- **The `%{table}` map is fixed.** Registering a base over your own table
+  needs an entry added to the adapter's interpolation map — the one place a
+  new table still has to be named in core.
+- **A dimension's column must be a plain identifier.** Computed groupings
+  such as `SUBSTR(email, ...)` are refused; add a real column, or a database
+  view, if you need one.
+- **Custom `lookup` values fall back to an ID input** in the builder, since
+  the dashboard maps known lookups to pickers.
+
+Registering a base is otherwise ordinary: declare its family, its table, a
+store-scoped relation, its time column and which bases its dimensions reach.
+
+```ruby
+Spree.reporting.base :subscriptions, family: :subscriptions,
+  table: '%{subscriptions}',
+  time_column: '%{subscriptions}.created_at',
+  relation: ->(store, range, _currency) { store.subscriptions.where(created_at: range) }
+```
+
+Give it its own family unless its rows genuinely answer the same question, on
+the same clock, as an existing one.
+
+## Related
+
+- [Reporting](/developer/core-concepts/reporting) — the concepts
+- [Permissions](/developer/dashboard/customization/permissions) — scopes and subjects
+- [Imports and exports](/developer/core-concepts/imports-exports) — row-level CSV

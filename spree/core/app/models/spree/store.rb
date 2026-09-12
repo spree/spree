@@ -116,6 +116,9 @@ module Spree
                default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
+    # On-hand quantity at or below which a tracked variant counts as running
+    # low on the home screen. 0 turns the warning off.
+    preference :low_stock_threshold, :integer, default: 5
     preference :show_products_without_price, :boolean, default: false
     preference :disable_sku_validation, :boolean, default: false
     # Records price changes so the storefront can show the lowest price of the
@@ -156,6 +159,8 @@ module Spree
     has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :orders, class_name: 'Spree::Order'
     has_many :order_groups, class_name: 'Spree::OrderGroup'
+    has_many :customers, through: :orders, source: :customer, class_name: "::#{Spree.customer_class}"
+    has_many :saved_reports, class_name: 'Spree::SavedReport', dependent: :destroy
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
     has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment'
@@ -277,7 +282,6 @@ module Spree
       self[:default_country_code] = value&.iso
     end
 
-    has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
     has_many :integrations, class_name: 'Spree::Integration'
@@ -314,6 +318,7 @@ module Spree
     validates :preferred_digital_asset_link_expire_time,
               numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1.hour.to_i }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_low_stock_threshold, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
     # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
     # multiplied straight into what a seller is charged, so a negative would
     # credit them and a figure above 1 would bill more tax than fee.

@@ -1,6 +1,7 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
+import type { ReportingQuery } from './admin-client'
 import type { SellerRequirementStatus } from './types'
 
 /** One pricing or inventory engine a store can choose between. */
@@ -70,6 +71,8 @@ export interface StoreUpdateParams {
   preferred_track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
   preferred_stock_reservations_enabled?: boolean
+  /** On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off. */
+  preferred_low_stock_threshold?: number
   /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
   preferred_track_price_history?: boolean
   /** Whether products with no price in the shopper's currency still appear in listings. */
@@ -3044,3 +3047,16 @@ export interface TaxRateParams {
   show_rate_in_label?: boolean
   calculator_type?: string
 }
+
+// ============================================
+// Saved reports (semantic reporting layer)
+// ============================================
+
+export interface SavedReportCreateParams {
+  name: string
+  description?: string | null
+  /** A reporting contract query — validated against the registry on save. */
+  query: ReportingQuery
+}
+
+export type SavedReportUpdateParams = Partial<SavedReportCreateParams>

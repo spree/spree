@@ -100,12 +100,12 @@ test.describe('inventory', () => {
     // Every state starts selected, so narrowing means unchecking the rest.
     const statusFilter = page.getByRole('button', { name: /stock status/i })
     await statusFilter.click()
-    for (const name of [/^in stock$/i, /^out of stock$/i, /^incoming$/i]) {
+    for (const name of [/^in stock$/i, /^low stock$/i, /^out of stock$/i, /^incoming$/i]) {
       await page.getByRole('menuitemcheckbox', { name }).click()
     }
     await page.keyboard.press('Escape')
 
-    await expect(statusFilter).toContainText('1/4')
+    await expect(statusFilter).toContainText('1/5')
     await expect(destinationRow).toBeVisible({ timeout: 15_000 })
 
     // The location filter lists every warehouse rather than asking the
