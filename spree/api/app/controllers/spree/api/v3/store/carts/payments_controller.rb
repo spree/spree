@@ -9,7 +9,8 @@ module Spree
             before_action :find_cart!
 
             # POST /api/v3/store/carts/:cart_id/payments
-            # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer)
+            # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer).
+            # Not for store credit — apply that with POST /carts/:cart_id/store_credits.
             def create
               payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
 
@@ -17,6 +18,14 @@ module Spree
                 return render_error(
                   code: 'payment_session_required',
                   message: Spree.t('api.v3.payments.session_required'),
+                  status: :unprocessable_content
+                )
+              end
+
+              if payment_method.store_credit?
+                return render_error(
+                  code: 'store_credits_endpoint_required',
+                  message: Spree.t('api.v3.payments.store_credits_endpoint_required'),
                   status: :unprocessable_content
                 )
               end

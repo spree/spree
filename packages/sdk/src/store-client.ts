@@ -631,6 +631,10 @@ export class StoreClient {
       /**
        * Create a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer).
        * For session-based payment methods (e.g. Stripe, PayPal), use carts.paymentSessions.create() instead.
+       *
+       * Store credit is the one non-session method this does not accept — apply it with
+       * carts.storeCredits.apply(), since a balance spread over several credits takes more
+       * than one payment to draw. Posting it here returns a `store_credits_endpoint_required` error.
        * @param cartId - Cart prefixed ID
        */
       create: (

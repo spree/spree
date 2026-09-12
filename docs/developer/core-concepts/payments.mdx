@@ -168,6 +168,8 @@ const payment = await client.carts.payments.create(cart.id, {
 }, options)
 ```
 
+Store credit is the exception. It is also a non-session method, but it is applied through `POST /carts/:id/store_credits` rather than created here — a customer's balance can be spread over several credits, and no credit can pay more than its own remaining amount, so covering an order may take more than one payment. Posting it to the payments endpoint returns a `store_credits_endpoint_required` error.
+
 The payment is created in `checkout` state. When the order transitions to `complete`, Spree calls `process_payments!` which runs the payment method's `authorize` (or `purchase` if auto-capture is enabled). For manual payment methods like Check, this is a no-op that succeeds immediately — the payment moves to `pending` (or `completed` with auto-capture), allowing the order to complete.
 
 The merchant can later capture or void the payment from the Admin Panel once the actual payment is received (e.g., check arrives, bank transfer clears, cash is collected on delivery).
