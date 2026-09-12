@@ -4,7 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import { detectProject, findApiDir, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import { appServices, dockerCompose } from '../docker.js'
 
 export function registerBuildCommand(program: Command): void {
@@ -50,7 +50,7 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
 
   // Always build against the active docker-compose.yml — the same file
   // `spree dev` runs. After `spree eject` that contains a `build:` section
-  // pointing at ./backend; before eject, it's a prebuilt-image stack and
+  // pointing at the API directory; before eject, it's a prebuilt-image stack and
   // there's nothing to rebuild.
   if (!isEjectedProject(ctx.projectDir)) {
     console.error(
@@ -119,12 +119,12 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
 /**
  * What `spree build --production` will run, computed without touching Docker
  * — exported for tests. The starter Dockerfile normalizes its own build
- * context (backend/Gemfile marks the project layout; apps/dashboard marks a
+ * context (server/Gemfile marks the project layout; apps/dashboard marks a
  * customized dashboard), so the plan is a plain `docker build` from the
- * project root — the ejected backend and your dashboard ship in one image
+ * project root — the ejected Rails app and your dashboard ship in one image
  * with zero flags, exactly what Render/Railway run from the repo. A
- * Dockerfile predating the normalization builds from backend/ as before,
- * with a warning when a dashboard would be silently left out.
+ * Dockerfile predating the normalization builds from the API directory as
+ * before, with a warning when a dashboard would be silently left out.
  */
 export function planProductionBuild(
   projectDir: string,
@@ -132,12 +132,14 @@ export function planProductionBuild(
 ): {
   args: string[]
   imageTag: string
+  apiDir: string
   dashboard: 'custom' | 'stock-or-none' | 'unsupported-dockerfile'
 } {
-  const backendDir = path.join(projectDir, 'backend')
-  const dockerfile = path.join(backendDir, 'Dockerfile')
+  const apiDir = findApiDir(projectDir)
+  const apiPath = path.join(projectDir, apiDir)
+  const dockerfile = path.join(apiPath, 'Dockerfile')
   if (!fs.existsSync(dockerfile)) {
-    throw new Error('No backend/Dockerfile found. Is this a create-spree-app project?')
+    throw new Error(`No ${apiDir}/Dockerfile found. Is this a create-spree-app project?`)
   }
 
   const imageTag =
@@ -151,11 +153,12 @@ export function planProductionBuild(
 
   // The layout-normalizing Dockerfile leaves a distinctive marker; without
   // it, root context would break the build (the old file expects the Rails
-  // app at the context root), so fall back to the old backend/ context.
+  // app at the context root), so fall back to the old API-directory context.
   if (!fs.readFileSync(dockerfile, 'utf-8').includes('.spree-custom-dashboard')) {
     return {
-      args: ['build', backendDir, '-f', dockerfile, '-t', imageTag],
+      args: ['build', apiPath, '-f', dockerfile, '-t', imageTag],
       imageTag,
+      apiDir,
       dashboard: hasDashboard ? 'unsupported-dockerfile' : 'stock-or-none',
     }
   }
@@ -164,6 +167,7 @@ export function planProductionBuild(
   return {
     args: ['build', projectDir, '-f', dockerfile, '-t', imageTag],
     imageTag,
+    apiDir,
     dashboard: hasDashboard ? 'custom' : 'stock-or-none',
   }
 }
@@ -179,13 +183,18 @@ export function ensureRootDockerignore(projectDir: string): void {
   fs.writeFileSync(target, ROOT_DOCKERIGNORE)
 }
 
-export const ROOT_DOCKERIGNORE = `# Build context for backend/Dockerfile (repo root): keep it to sources.
+export const ROOT_DOCKERIGNORE = `# Build context for server/Dockerfile (repo root): keep it to sources.
 **/node_modules
 **/.git
 .spree
 apps/storefront
 apps/dashboard/dist
 apps/dashboard/.tanstack
+server/log
+server/tmp
+server/storage
+server/.env*
+# Legacy layout (projects scaffolded before the server/ rename)
 backend/log
 backend/tmp
 backend/storage
@@ -210,7 +219,7 @@ async function buildProductionImage(projectDir: string, tag?: string): Promise<v
     p.log.info(`Including your dashboard from ${pc.bold('apps/dashboard/')} (built in-image).`)
   } else if (plan.dashboard === 'unsupported-dockerfile') {
     p.log.warn(
-      `${pc.bold('apps/dashboard/')} exists, but ${pc.bold('backend/Dockerfile')} predates ` +
+      `${pc.bold('apps/dashboard/')} exists, but ${pc.bold(`${plan.apiDir}/Dockerfile`)} predates ` +
         `dashboard support — the image will NOT include your dashboard. Update the ` +
         `Dockerfile from the spree-starter template to bake it in.`,
     )

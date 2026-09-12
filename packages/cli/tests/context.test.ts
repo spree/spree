@@ -75,6 +75,23 @@ describe('detectProject', () => {
     expect(ctx.port).toBe(4001) // port read from the ROOT .env, not backend/
   })
 
+  it('re-roots to the wrapper parent when run from server/ of a create-spree-app wrapper', () => {
+    const root = makeTempDir()
+    const server = path.join(root, 'server')
+    fs.mkdirSync(server)
+    fs.writeFileSync(path.join(root, 'docker-compose.yml'), 'services:\n  web:\n')
+    fs.writeFileSync(
+      path.join(root, 'docker-compose.dev.yml'),
+      'services:\n  web:\n    volumes:\n      - ./server:/rails\n',
+    )
+    fs.writeFileSync(path.join(root, '.env'), 'SECRET_KEY_BASE=abc\nSPREE_PORT=4002\n')
+    fs.writeFileSync(path.join(server, 'docker-compose.yml'), 'services:\n  web:\n')
+
+    const ctx = detectProject(server)
+    expect(ctx.projectDir).toBe(root)
+    expect(ctx.port).toBe(4002)
+  })
+
   it('does NOT re-root when the parent compose lacks the ./backend:/rails marker', () => {
     const root = makeTempDir()
     const backend = path.join(root, 'backend')

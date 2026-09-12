@@ -61,7 +61,7 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
   } catch (err) {
     // `compose ps` itself failed: broken/stale compose, daemon down, unknown
     // service. Point home instead of dumping the raw env-file error. (Backstop
-    // for a stale backend/ that slipped past detectProject re-rooting.)
+    // for a stale API directory that slipped past detectProject re-rooting.)
     refuse([
       'Could not inspect the Docker stack from this directory.',
       `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
@@ -157,7 +157,7 @@ async function runRakeUpgrade(
   await dockerComposeExecOrRun(['bin/rake', 'spree:upgrade'], projectDir, { env })
 }
 
-// The backend upgrade never touches frontend source — SDK bumps go through
+// The server upgrade never touches frontend source — SDK bumps go through
 // the consumer's own PR/CI cycle. But we can detect the conventional
 // create-spree-app storefront and tell the operator exactly what to bump.
 export function sdkAdvisory(projectDir: string): string {

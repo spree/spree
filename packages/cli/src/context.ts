@@ -23,30 +23,45 @@ export function detectProject(cwd: string = process.cwd()): ProjectContext {
   }
 }
 
-// create-spree-app clones spree-starter into <root>/backend/ and copies its
+// The Rails API directory a scaffolded project keeps its app in. `server` is
+// what create-spree-app writes now; `backend` is what it wrote before the
+// Rails app became API-only, and is still accepted so existing projects keep
+// working.
+export const API_DIRS = ['server', 'backend'] as const
+
+// The API directory an existing project actually uses: whichever of API_DIRS
+// is present, preferring `server`. Falls back to `server` so error messages
+// name the current layout when neither exists.
+export function findApiDir(projectDir: string): string {
+  return API_DIRS.find((dir) => fs.existsSync(path.join(projectDir, dir))) ?? 'server'
+}
+
+// create-spree-app clones spree-starter into <root>/server/ and copies its
 // compose files UP to the wrapper root, rewriting the dev bind-mount to
-// `./backend:/rails` and writing the only real `.env` at the root. The cloned
-// `backend/docker-compose.yml` is left behind as a stale leftover (mounts
+// `./server:/rails` and writing the only real `.env` at the root. The cloned
+// `server/docker-compose.yml` is left behind as a stale leftover (mounts
 // `.:/rails`, expects a sibling `.env` that does not exist). Running the CLI
-// from `backend/` would target that broken file. When we can prove `cwd` is
-// the wrapper's `backend/` and the parent is the real (adjusted) root, re-root
-// there so every command runs against the runnable compose + root `.env`.
+// from `server/` would target that broken file. When we can prove `cwd` is
+// the wrapper's API directory and the parent is the real (adjusted) root,
+// re-root there so every command runs against the runnable compose + root `.env`.
 function resolveProjectDir(cwd: string): string {
-  if (path.basename(cwd) !== 'backend') return cwd
+  const dirName = path.basename(cwd)
+  if (!API_DIRS.includes(dirName as (typeof API_DIRS)[number])) return cwd
 
   const parent = path.dirname(cwd)
 
   // The parent is the real wrapper root only if its compose was adjusted by the
-  // scaffold to mount THIS dir (`./backend:/rails`). The rewrite lands in the
+  // scaffold to mount THIS dir (`./server:/rails`). The rewrite lands in the
   // dev overlay (the base file is copied verbatim), so scan both. A coincidental
-  // nested layout — a `backend/` dir under an unrelated compose project — won't
+  // nested layout — a `server/` dir under an unrelated compose project — won't
   // contain this exact marker, so re-root stays a no-op there.
+  const mountMarker = new RegExp(`\\./${dirName}:/rails(:\\w+)?(\\s|$)`, 'm')
   for (const name of ['docker-compose.yml', 'docker-compose.dev.yml']) {
     const file = path.join(parent, name)
     if (!fs.existsSync(file)) continue
     try {
-      // matches "- ./backend:/rails" and "- ./backend:/rails:cached" etc.
-      if (/\.\/backend:\/rails(:\w+)?(\s|$)/m.test(fs.readFileSync(file, 'utf-8'))) {
+      // matches "- ./server:/rails" and "- ./server:/rails:cached" etc.
+      if (mountMarker.test(fs.readFileSync(file, 'utf-8'))) {
         return parent
       }
     } catch {
@@ -75,7 +90,7 @@ export function hasMonorepoSpreePath(projectDir: string): boolean {
 }
 
 // A project is "ejected" once `spree eject` swaps in the dev compose, whose
-// service carries a `build:` section pointing at ./backend — the prebuilt-image
+// service carries a `build:` section pointing at the API directory — the prebuilt-image
 // compose has none. Gates steps that only apply to the bind-mounted,
 // build-from-source dev stack (e.g. compiling admin assets the image would have
 // baked in but the bind-mount now masks).

@@ -28,6 +28,8 @@ let projectDir: string
 
 vi.mock('../src/context', () => ({
   detectProject: () => ({ mode: 'project', projectDir, port: 3000 }),
+  findApiDir: (dir: string) =>
+    ['server', 'backend'].find((name) => fs.existsSync(path.join(dir, name))) ?? 'server',
 }))
 
 vi.mock('../src/docker', () => ({
@@ -36,9 +38,9 @@ vi.mock('../src/docker', () => ({
   primeBundleVolume: vi.fn().mockResolvedValue(undefined),
 }))
 
-function makeProject(devComposeContent: string): string {
+function makeProject(devComposeContent: string, apiDir = 'server'): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-eject-test-'))
-  fs.mkdirSync(path.join(dir, 'backend'))
+  fs.mkdirSync(path.join(dir, apiDir))
   fs.writeFileSync(path.join(dir, 'docker-compose.yml'), 'services: {} # prebuilt-image compose\n')
   fs.writeFileSync(path.join(dir, 'docker-compose.dev.yml'), devComposeContent)
   return dir
@@ -69,12 +71,22 @@ describe('spree eject', () => {
 
     const active = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
     const dev = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
-    expect(active).toContain('- ./backend:/rails')
+    expect(active).toContain('- ./server:/rails')
     expect(active).not.toContain('- .:/rails')
-    expect(dev).toContain('- ./backend:/rails')
+    expect(dev).toContain('- ./server:/rails')
     expect(dev).not.toContain('- .:/rails')
     // Named volumes are left untouched
     expect(active).toContain('- bundle_cache:/usr/local/bundle')
+  })
+
+  it('repairs the bind-mount against a legacy backend/ layout', async () => {
+    projectDir = makeProject(COMPOSE_DEV_STALE, 'backend')
+
+    await runEject()
+
+    const active = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
+    expect(active).toContain('- ./backend:/rails')
+    expect(active).not.toContain('- .:/rails')
   })
 
   it('copies an already-correct dev compose verbatim', async () => {

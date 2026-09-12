@@ -3,9 +3,9 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { downloadBackend } from './backend.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldDashboard } from './dashboard.js'
+import { downloadServer } from './server.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -54,36 +54,36 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.mkdirSync(projectDir, { recursive: true })
 
-  // Phase 1: Download backend (always included)
-  s.start('Downloading backend template...')
-  await downloadBackend(projectDir)
-  s.stop('Backend template downloaded.')
+  // Phase 1: Download server (always included)
+  s.start('Downloading server template...')
+  await downloadServer(projectDir)
+  s.stop('Server template downloaded.')
 
   // Phase 2: Generate project files
   s.start('Creating project structure...')
 
-  // Copy compose files from backend template and adjust paths for project root
-  const backendDir = path.join(projectDir, 'backend')
-  const compose = fs.readFileSync(path.join(backendDir, 'docker-compose.yml'), 'utf-8')
-  const composeDev = fs.readFileSync(path.join(backendDir, 'docker-compose.dev.yml'), 'utf-8')
+  // Copy compose files from server template and adjust paths for project root
+  const serverDir = path.join(projectDir, 'server')
+  const compose = fs.readFileSync(path.join(serverDir, 'docker-compose.yml'), 'utf-8')
+  const composeDev = fs.readFileSync(path.join(serverDir, 'docker-compose.dev.yml'), 'utf-8')
 
   fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), compose)
-  // Adjust build context and source bind-mount from current dir to ./backend
+  // Adjust build context and source bind-mount from current dir to ./server
   // for the wrapper project (in the starter repo the compose file lives in
-  // the Rails app root; here the app lives under backend/)
+  // the Rails app root; here the app lives under server/)
   fs.writeFileSync(
     path.join(projectDir, 'docker-compose.dev.yml'),
     composeDev
-      .replace('context: .', 'context: ./backend')
-      .replace('- .:/rails', '- ./backend:/rails'),
+      .replace('context: .', 'context: ./server')
+      .replace('- .:/rails', '- ./server:/rails'),
   )
 
   // The compose files now live (adjusted) at the wrapper root referencing
-  // ./backend + the root .env. The originals cloned into backend/ are stale
+  // ./server + the root .env. The originals cloned into server/ are stale
   // leftovers (mount .:/rails, expect a sibling .env) — remove them so the CLI
-  // never accidentally targets them when run from backend/.
-  fs.rmSync(path.join(backendDir, 'docker-compose.yml'), { force: true })
-  fs.rmSync(path.join(backendDir, 'docker-compose.dev.yml'), { force: true })
+  // never accidentally targets them when run from server/.
+  fs.rmSync(path.join(serverDir, 'docker-compose.yml'), { force: true })
+  fs.rmSync(path.join(serverDir, 'docker-compose.dev.yml'), { force: true })
 
   fs.writeFileSync(
     path.join(projectDir, '.env'),
@@ -107,7 +107,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   // Phases 3/3b are optional apps — their failures warn and continue. They
   // must never abort the scaffold before Phase 4: `spree init` is what
   // guarantees a fresh Spree image (skipping it leaves a stale local `latest`
-  // to boot) and a seeded, credentialed backend.
+  // to boot) and a seeded, credentialed server.
 
   // Phase 3: Storefront (optional)
   let storefrontReady = storefront
@@ -275,7 +275,7 @@ function printSuccessWithoutDocker(
   lines.push(
     `${pc.bold('Customize the Spree API')}`,
     `  ${run} spree eject`,
-    `  ${pc.dim('# Then edit backend/ — the Rails API app (Gemfile, app/, config/)')}`,
+    `  ${pc.dim('# Then edit server/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
     `  ${dlxCommand(pm)} skills add spree/agent-skills`,

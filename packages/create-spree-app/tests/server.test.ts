@@ -2,11 +2,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { adaptWorkflowForNestedBackend, prepareBackendTemplate } from '../src/backend'
+import { adaptWorkflowForNestedServer, prepareServerTemplate } from '../src/server'
 
-// Mirrors spree-starter's .github/workflows/backend-ci.yml (the workflow that
+// Mirrors spree-starter's .github/workflows/server-ci.yml (the workflow that
 // create-spree-app relocates to the generated project root).
-const BACKEND_CI = `name: CI
+const SERVER_CI = `name: CI
 
 on:
   push:
@@ -73,57 +73,57 @@ const RENDER_YAML = `services:
     plan: free
 `
 
-describe('adaptWorkflowForNestedBackend', () => {
-  it('points ruby/setup-ruby at the backend/ subdirectory', () => {
-    const result = adaptWorkflowForNestedBackend(BACKEND_CI)
+describe('adaptWorkflowForNestedServer', () => {
+  it('points ruby/setup-ruby at the server/ subdirectory', () => {
+    const result = adaptWorkflowForNestedServer(SERVER_CI)
     expect(result).toContain(
       '      - uses: ruby/setup-ruby@v1\n' +
         '        with:\n' +
-        '          working-directory: backend\n' +
+        '          working-directory: server\n' +
         '          bundler-cache: true',
     )
   })
 
-  it('runs job steps from backend/ via a job-level default', () => {
-    const result = adaptWorkflowForNestedBackend(BACKEND_CI)
+  it('runs job steps from server/ via a job-level default', () => {
+    const result = adaptWorkflowForNestedServer(SERVER_CI)
     expect(result).toContain(
       '    runs-on: ubuntu-latest\n' +
         '\n' +
         '    defaults:\n' +
         '      run:\n' +
-        '        working-directory: backend',
+        '        working-directory: server',
     )
   })
 
   it('inserts the defaults block exactly once', () => {
-    const result = adaptWorkflowForNestedBackend(BACKEND_CI)
+    const result = adaptWorkflowForNestedServer(SERVER_CI)
     expect(result.match(/defaults:/g)).toHaveLength(1)
   })
 
   it('leaves the run-step commands unchanged', () => {
-    const result = adaptWorkflowForNestedBackend(BACKEND_CI)
+    const result = adaptWorkflowForNestedServer(SERVER_CI)
     expect(result).toContain('run: bin/rails db:prepare')
     expect(result).toContain('run: bundle exec rspec')
   })
 
   it('leaves non-Ruby workflows untouched', () => {
-    expect(adaptWorkflowForNestedBackend(RELEASE)).toBe(RELEASE)
+    expect(adaptWorkflowForNestedServer(RELEASE)).toBe(RELEASE)
   })
 })
 
-describe('prepareBackendTemplate', () => {
+describe('prepareServerTemplate', () => {
   const tempDirs: string[] = []
 
-  function seedClonedBackend(): string {
-    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-backend-'))
+  function seedClonedServer(): string {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-server-'))
     tempDirs.push(projectDir)
 
-    const workflows = path.join(projectDir, 'backend', '.github', 'workflows')
+    const workflows = path.join(projectDir, 'server', '.github', 'workflows')
     fs.mkdirSync(workflows, { recursive: true })
-    fs.writeFileSync(path.join(workflows, 'backend-ci.yml'), BACKEND_CI)
+    fs.writeFileSync(path.join(workflows, 'server-ci.yml'), SERVER_CI)
     fs.writeFileSync(path.join(workflows, 'release.yml'), RELEASE)
-    fs.writeFileSync(path.join(projectDir, 'backend', 'README.md'), '# Spree starter')
-    fs.writeFileSync(path.join(projectDir, 'backend', 'render.yaml'), RENDER_YAML)
+    fs.writeFileSync(path.join(projectDir, 'server', 'README.md'), '# Spree starter')
+    fs.writeFileSync(path.join(projectDir, 'server', 'render.yaml'), RENDER_YAML)
 
     return projectDir
   }
@@ -133,39 +133,39 @@ describe('prepareBackendTemplate', () => {
     tempDirs.length = 0
   })
 
-  it('relocates the CI workflow to the project root, adapted for backend/', () => {
-    const projectDir = seedClonedBackend()
-    prepareBackendTemplate(projectDir)
+  it('relocates the CI workflow to the project root, adapted for server/', () => {
+    const projectDir = seedClonedServer()
+    prepareServerTemplate(projectDir)
 
-    const moved = path.join(projectDir, '.github', 'workflows', 'backend-ci.yml')
+    const moved = path.join(projectDir, '.github', 'workflows', 'server-ci.yml')
     expect(fs.existsSync(moved)).toBe(true)
-    expect(fs.readFileSync(moved, 'utf-8')).toContain('working-directory: backend')
+    expect(fs.readFileSync(moved, 'utf-8')).toContain('working-directory: server')
   })
 
   it('drops the release workflow instead of copying it', () => {
-    const projectDir = seedClonedBackend()
-    prepareBackendTemplate(projectDir)
+    const projectDir = seedClonedServer()
+    prepareServerTemplate(projectDir)
 
     expect(fs.existsSync(path.join(projectDir, '.github', 'workflows', 'release.yml'))).toBe(false)
-    expect(fs.existsSync(path.join(projectDir, 'backend', '.github'))).toBe(false)
+    expect(fs.existsSync(path.join(projectDir, 'server', '.github'))).toBe(false)
   })
 
   it("drops the starter's README", () => {
-    const projectDir = seedClonedBackend()
-    prepareBackendTemplate(projectDir)
+    const projectDir = seedClonedServer()
+    prepareServerTemplate(projectDir)
 
-    expect(fs.existsSync(path.join(projectDir, 'backend', 'README.md'))).toBe(false)
+    expect(fs.existsSync(path.join(projectDir, 'server', 'README.md'))).toBe(false)
   })
 
   it('relocates render.yaml to the project root verbatim', () => {
-    const projectDir = seedClonedBackend()
-    prepareBackendTemplate(projectDir)
+    const projectDir = seedClonedServer()
+    prepareServerTemplate(projectDir)
 
     const moved = path.join(projectDir, 'render.yaml')
     expect(fs.existsSync(moved)).toBe(true)
     // Authored by the starter for exactly this layout — no rewriting.
     expect(fs.readFileSync(moved, 'utf-8')).toBe(RENDER_YAML)
-    // The original in backend/ is removed so Render never reads a stale copy.
-    expect(fs.existsSync(path.join(projectDir, 'backend', 'render.yaml'))).toBe(false)
+    // The original in server/ is removed so Render never reads a stale copy.
+    expect(fs.existsSync(path.join(projectDir, 'server', 'render.yaml'))).toBe(false)
   })
 })

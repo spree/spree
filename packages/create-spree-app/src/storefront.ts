@@ -14,13 +14,13 @@ export async function downloadStorefront(projectDir: string): Promise<void> {
   prepareStorefrontTemplate(projectDir)
 }
 
-/** Local image tag the generated E2E workflow builds `backend/` into. */
+/** Local image tag the generated E2E workflow builds `server/` into. */
 const PROJECT_SPREE_IMAGE = 'project-spree:e2e'
 
 /**
  * Tidy the freshly-cloned storefront for the nested `apps/storefront/` layout:
  * relocate its CI workflow to the project root (adapted to run from
- * apps/storefront, and to build the project's own `backend/` image for the E2E
+ * apps/storefront, and to build the project's own `server/` image for the E2E
  * suite instead of stock Spree), and drop the storefront's now-empty `.github`.
  *
  * The clone is otherwise left as-is: its `pnpm-lock.yaml` and `packageManager`
@@ -40,7 +40,7 @@ export function prepareStorefrontTemplate(projectDir: string): void {
     const destWorkflows = path.join(projectDir, '.github', 'workflows')
     fs.mkdirSync(destWorkflows, { recursive: true })
     const content = fs.readFileSync(ci, 'utf-8')
-    // Renamed so it doesn't collide with the backend's relocated `ci.yml`.
+    // Renamed so it doesn't collide with the server's relocated `ci.yml`.
     fs.writeFileSync(
       path.join(destWorkflows, 'storefront-ci.yml'),
       adaptStorefrontWorkflow(content),
@@ -56,20 +56,20 @@ export function prepareStorefrontTemplate(projectDir: string): void {
 /**
  * Rewrite the storefront CI workflow for the wrapper project's nested layout:
  *
- * - rename it (`CI` → `Storefront CI`) so it doesn't shadow the backend's check;
+ * - rename it (`CI` → `Storefront CI`) so it doesn't shadow the server's check;
  * - run every job from `apps/storefront/` via a per-job default;
  * - point `pnpm/action-setup` and setup-node's dependency cache at
  *   `apps/storefront/` — both resolve from the repo root by default, where the
  *   storefront's package.json and lockfile don't exist in this layout;
- * - in the E2E job, build the project's own `backend/Dockerfile` into a local
+ * - in the E2E job, build the project's own `server/Dockerfile` into a local
  *   image and boot the E2E stack against it (`SPREE_IMAGE`), so the storefront
- *   is tested against the customized backend the project deploys — not stock
+ *   is tested against the customized server the project deploys — not stock
  *   Spree.
  */
 export function adaptStorefrontWorkflow(content: string): string {
   let result = content
 
-  // Disambiguate the workflow name from the backend's "CI".
+  // Disambiguate the workflow name from the server's "CI".
   result = result.replace(/^name:\s*CI\s*$/m, 'name: Storefront CI')
 
   // Run every job's `run:` steps from apps/storefront. Anchored on each
@@ -101,20 +101,20 @@ export function adaptStorefrontWorkflow(content: string): string {
       }`,
   )
 
-  // The E2E "Boot Spree backend" step must run against the project's own
-  // backend image. Insert a build step just before it (building the repo-root
-  // `backend/` — checkout clones the whole project, so it's a sibling of
+  // The E2E "Boot Spree server" step must run against the project's own
+  // server image. Insert a build step just before it (building the repo-root
+  // `server/` — checkout clones the whole project, so it's a sibling of
   // apps/storefront), and set SPREE_IMAGE on the boot step's env.
   result = result.replace(
-    /^([ \t]*)- name: Boot Spree backend[^\n]*\n([ \t]*)run: (.*)$/m,
+    /^([ \t]*)- name: Boot Spree server[^\n]*\n([ \t]*)run: (.*)$/m,
     (_match, stepIndent, runIndent, runCmd) => {
       const build =
-        `${stepIndent}- name: Build project backend image\n` +
+        `${stepIndent}- name: Build project server image\n` +
         // working-directory default targets apps/storefront, so reach the
-        // sibling backend/ via the workspace root.
-        `${runIndent}run: docker build -t ${PROJECT_SPREE_IMAGE} "$GITHUB_WORKSPACE/backend"\n`
+        // sibling server/ via the workspace root.
+        `${runIndent}run: docker build -t ${PROJECT_SPREE_IMAGE} "$GITHUB_WORKSPACE/server"\n`
       const boot =
-        `${stepIndent}- name: Boot Spree backend (project backend image)\n` +
+        `${stepIndent}- name: Boot Spree server (project server image)\n` +
         `${runIndent}env:\n` +
         `${runIndent}  SPREE_IMAGE: ${PROJECT_SPREE_IMAGE}\n` +
         `${runIndent}run: ${runCmd}`

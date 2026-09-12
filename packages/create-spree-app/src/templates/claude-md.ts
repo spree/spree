@@ -39,7 +39,7 @@ export function rootClaudeMdContent(
     '',
     '| Directory | Description |',
     '|-----------|-------------|',
-    '| `backend/` | Rails API application (Spree Commerce) |',
+    '| `server/` | Rails API application (Spree Commerce) |',
   ]
 
   if (hasStorefront) {
@@ -54,7 +54,7 @@ export function rootClaudeMdContent(
     '',
     '## Agent Instructions',
     '',
-    '- **Backend work** (Ruby/Rails, Spree models, API, database): See `backend/CLAUDE.md`',
+    '- **Server work** (Ruby/Rails, Spree models, API, database): See `server/CLAUDE.md`',
   )
 
   if (hasStorefront) {
@@ -118,9 +118,9 @@ export function rootClaudeMdContent(
     `${pm} run dev              # Start the Spree API (Docker)`,
     `${pm} run stop             # Stop services`,
     `${pm} run console          # Rails console`,
-    `${pm} run logs             # Backend logs`,
+    `${pm} run logs             # Server logs`,
     `${run} spree api get products  # Query the Admin API (read-only key preconfigured)`,
-    `${run} spree eject          # Build the API locally from backend/`,
+    `${run} spree eject          # Build the API locally from server/`,
     '```',
     '',
   )
