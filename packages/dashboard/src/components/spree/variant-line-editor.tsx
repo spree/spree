@@ -47,6 +47,37 @@ export interface VariantLine {
 }
 
 /**
+ * Folds a whole picked batch into the existing lines, in one pass.
+ *
+ * Adding a batch one variant at a time reads the same `lines` for every call,
+ * so only the last pick of a multi-select survives. Taking the batch whole is
+ * what makes picking several products at once add several lines.
+ */
+export function addVariantsToLines(
+  lines: VariantLine[],
+  variants: VariantLineVariant[],
+  withCost: boolean,
+): VariantLine[] {
+  if (variants.length === 0) return lines
+  const next = [...lines]
+  // Indexed rather than scanned per variant: "select all matching" pages
+  // through the whole catalogue, so a batch can be thousands of variants long
+  // and a scan inside the loop would stall the page.
+  const indexByVariantId = new Map(next.map((line, index) => [line.variant.id, index]))
+
+  for (const variant of variants) {
+    const index = indexByVariantId.get(variant.id)
+    if (index === undefined) {
+      next.push({ variant, quantity: 1, unitCost: withCost ? '0.00' : undefined })
+      indexByVariantId.set(variant.id, next.length - 1)
+    } else {
+      next[index] = { ...next[index], quantity: next[index].quantity + 1 }
+    }
+  }
+  return next
+}
+
+/**
  * Picks SKUs and their quantities for a draft inventory document.
  *
  * Shared by the new-transfer and new-purchase-order screens: both pick a
@@ -91,19 +122,6 @@ export function VariantLineEditor({
   // refused later, per line, when the transfer is marked in transit.
   const locked = !!requireStockLocation && !stockLocationId
 
-  function addVariant(variant: Variant) {
-    const existing = lines.find((line) => line.variant.id === variant.id)
-    if (existing) {
-      onChange(
-        lines.map((line) =>
-          line.variant.id === variant.id ? { ...line, quantity: line.quantity + 1 } : line,
-        ),
-      )
-      return
-    }
-    onChange([...lines, { variant, quantity: 1, unitCost: withCost ? '0.00' : undefined }])
-  }
-
   function update(variantId: string, patch: Partial<VariantLine>) {
     onChange(lines.map((line) => (line.variant.id === variantId ? { ...line, ...patch } : line)))
   }
@@ -124,9 +142,7 @@ export function VariantLineEditor({
         // sources, and a cached result would offer the wrong shelf's SKUs.
         queryKey={`inventory-line-variant-picker:${stockLocationId ?? 'any'}`}
         selectedIds={lines.map((line) => line.variant.id)}
-        onConfirm={(_ids, variants) => {
-          for (const variant of variants) addVariant(variant)
-        }}
+        onConfirm={(_ids, variants) => onChange(addVariantsToLines(lines, variants, withCost))}
         search={async (query, page) =>
           adminClient.variants.list({
             ...(query ? { search: query } : {}),

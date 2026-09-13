@@ -12,8 +12,8 @@ import {
   Thumbnail,
 } from '@spree/dashboard-ui'
 import { Loader2Icon } from '@spree/dashboard-ui/icons'
-import { useQuery } from '@tanstack/react-query'
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useDeferredValue, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export interface PickerOption {
@@ -84,10 +84,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
   const deferredInput = useDeferredValue(input)
   const trimmedQuery = deferredInput.trim()
 
-  const [page, setPage] = useState(1)
-  const [loadedResults, setLoadedResults] = useState<T[]>([])
-  const [currentPageResults, setCurrentPageResults] = useState<T[]>([])
-  const [meta, setMeta] = useState<PaginationMeta | undefined>()
+  const [selectAllMeta, setSelectAllMeta] = useState<PaginationMeta | undefined>()
   const selectAllGenerationRef = useRef(0)
   const selectAllSessionRef = useRef({ query: trimmedQuery, open })
 
@@ -106,28 +103,39 @@ export function ResourcePickerSheet<T extends PickerOption>({
   const [submitting, setSubmitting] = useState(false)
   const [selectingAll, setSelectingAll] = useState(false)
 
-  const { data, isFetching } = useQuery({
-    queryKey: [queryKey, 'picker-search', trimmedQuery, page],
-    queryFn: () => search(trimmedQuery, page),
+  // The accumulated pages live in the query cache rather than in local state.
+  // Mirroring them into state via an effect broke reopening the sheet: the
+  // cached page came back reference-identical, so the effect that filled the
+  // local list never re-ran and the sheet rendered "no results" over a cache
+  // that held plenty.
+  const { data, isFetching, isFetchingNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: [queryKey, 'picker-search', trimmedQuery],
+    queryFn: ({ pageParam }) => search(trimmedQuery, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.meta?.next != null ? allPages.length + 1 : undefined,
     enabled: open,
     staleTime: 30_000,
   })
 
-  useEffect(() => {
-    if (!data) return
-    setMeta(data.meta)
-    setCurrentPageResults(data.data)
-    setLoadedResults((previous) => {
-      if (page === 1) return data.data
-      const seen = new Set(previous.map((option) => option.id))
-      const appended = data.data.filter((option) => !seen.has(option.id))
-      return appended.length === 0 ? previous : [...previous, ...appended]
-    })
-  }, [data, page])
+  const results = useMemo(() => {
+    const seen = new Set<string>()
+    const flattened: T[] = []
+    for (const loadedPage of data?.pages ?? []) {
+      for (const option of loadedPage.data) {
+        if (seen.has(option.id)) continue
+        seen.add(option.id)
+        flattened.push(option)
+      }
+    }
+    return flattened
+  }, [data])
 
-  const results = loadedResults
-  const hasMore = meta?.next != null
+  const lastPage = data?.pages.at(-1)
+  const meta = selectAllMeta ?? lastPage?.meta
+  const hasMore = lastPage?.meta?.next != null
   const matchCount = meta?.count ?? results.length
+  const currentPageResults = lastPage?.data ?? []
   const selectableOnPage = currentPageResults.filter((option) => !alreadyIn.has(option.id))
   const allOnPageSelected =
     selectableOnPage.length > 0 && selectableOnPage.every((option) => staged.has(option.id))
@@ -181,7 +189,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
         for (const [id, option] of collected) next.set(id, option)
         return next
       })
-      if (lastMeta) setMeta(lastMeta)
+      if (lastMeta) setSelectAllMeta(lastMeta)
     } catch (error) {
       onConfirmError?.(error)
     } finally {
@@ -196,10 +204,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
       await onConfirm(Array.from(staged.keys()), Array.from(staged.values()))
       setStaged(new Map())
       setInput('')
-      setPage(1)
-      setLoadedResults([])
-      setCurrentPageResults([])
-      setMeta(undefined)
+      setSelectAllMeta(undefined)
       onOpenChange(false)
     } catch (error) {
       // The mutation reports its own error toast; swallow so the click handler
@@ -216,16 +221,13 @@ export function ResourcePickerSheet<T extends PickerOption>({
       selectAllGenerationRef.current += 1
       setStaged(new Map())
       setInput('')
-      setPage(1)
-      setLoadedResults([])
-      setCurrentPageResults([])
-      setMeta(undefined)
+      setSelectAllMeta(undefined)
     }
     onOpenChange(next)
   }
 
   const initialLoading = isFetching && results.length === 0
-  const loadingMore = isFetching && page > 1
+  const loadingMore = isFetchingNextPage
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -240,10 +242,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
             value={input}
             onValueChange={(value) => {
               setInput(value)
-              setPage(1)
-              setLoadedResults([])
-              setCurrentPageResults([])
-              setMeta(undefined)
+              setSelectAllMeta(undefined)
             }}
             // Enter has no action here; swallow it so it can't submit a host form.
             onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
@@ -346,7 +345,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                     variant="outline"
                     className="w-full"
                     disabled={loadingMore}
-                    onClick={() => setPage((current) => current + 1)}
+                    onClick={() => fetchNextPage()}
                   >
                     {loadingMore && <Loader2Icon className="size-4 animate-spin" />}
                     {t('admin.resource_picker.load_more')}
