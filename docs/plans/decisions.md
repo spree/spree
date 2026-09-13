@@ -5415,3 +5415,38 @@ seller ledger endpoints authorize `:seller_earnings` and root in
 audience; and a new `q[<column>_eq]` filter on either ledger model needs that
 column in `whitelisted_ransackable_attributes` — a whitelisted association
 name does not make its foreign key filterable.
+
+## 2026-09-13 — Stored value is not a promotion: gift cards and store credits live under Loyalty
+
+Plan: `6.0-6.1-loyalty-gift-cards-store-credits.md`.
+
+Gift cards sat under Promotions in the dashboard nav and in the user docs
+because both reduce an order total at checkout. That is where the likeness
+ends. A promotion is marketing: margin given up to change behaviour. A gift
+card or a store credit is prepaid money the store owes, a liability with a
+balance, redemption statuses and a ledger, and no rules or actions. Every
+platform in the comparison keeps the two apart; so does our model.
+
+**Decision.** A top-level **Loyalty** group holds Gift Cards and a new
+cross-customer Store Credits list, and is the home for any rewards or points
+programme later. Promotions keeps only the discount machinery. The
+`gift_cards` and `store_credits` permission keys move to a `loyalty` group;
+the key names do not change, so existing roles keep working.
+
+**Store credits are edited per customer and listed across customers.**
+`GET /admin/store_credits` (index, show) is read-only; create, update and
+destroy stay nested under `/customers/:id/store_credits`. The list carries
+`meta.totals`, one grouped sum per currency over the filtered scope, so the
+same list answers "this customer's balance" and "the store's liability"
+depending on the filter. A separate balances resource was rejected because it
+could not follow the filters; waiting for Reports was rejected because the
+list would then answer "who" but not "how much".
+
+**Consequences for other work.** Anything that should not apply to prepaid
+money (tax, promotions, inventory, shipping, paying a balance with a balance)
+must check one predicate on the product, `gift_card?`, which phase 2 adds as
+a boolean on `spree_products`. Do not introduce a second "non-physical" flag
+that would need reconciling with it. Gift card codes never appear in events,
+logs or the buyer's order payload; only the recipient email carries the code.
+Recipient details get their own table rather than columns on
+`spree_line_items` or keys in `metadata`.

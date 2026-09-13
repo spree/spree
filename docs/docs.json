@@ -921,27 +921,6 @@
                     ]
                   },
                   {
-                    "group": "Migration",
-                    "pages": [
-                      "user/migration/migrate-from-shopify"
-                    ],
-                    "icon": "arrow-right-left"
-                  },
-                  {
-                    "group": "How-to Guides",
-                    "pages": [
-                      "user/how-to/multi-currency-pricing",
-                      "user/how-to/multiple-languages",
-                      "user/how-to/multi-region-pricing",
-                      "user/how-to/wholesale-pricing",
-                      "user/how-to/volume-pricing",
-                      "user/how-to/regional-wholesale",
-                      "user/how-to/regional-volume",
-                      "user/how-to/schedule-sale-pricing"
-                    ],
-                    "icon": "compass"
-                  },
-                  {
                     "group": "Products",
                     "pages": [
                       {
@@ -1053,6 +1032,27 @@
                       "user/settings/metafields"
                     ],
                     "icon": "settings"
+                  },
+                  {
+                    "group": "How-to Guides",
+                    "pages": [
+                      "user/how-to/multi-currency-pricing",
+                      "user/how-to/multiple-languages",
+                      "user/how-to/multi-region-pricing",
+                      "user/how-to/wholesale-pricing",
+                      "user/how-to/volume-pricing",
+                      "user/how-to/regional-wholesale",
+                      "user/how-to/regional-volume",
+                      "user/how-to/schedule-sale-pricing"
+                    ],
+                    "icon": "compass"
+                  },
+                  {
+                    "group": "Migration",
+                    "pages": [
+                      "user/migration/migrate-from-shopify"
+                    ],
+                    "icon": "arrow-right-left"
                   },
                   {
                     "group": "Security",
