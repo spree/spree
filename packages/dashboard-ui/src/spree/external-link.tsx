@@ -14,13 +14,14 @@ import { ExternalLinkIcon } from './icons'
  *
  * `rel="noopener noreferrer"` is not optional on a `_blank` link: without
  * `noopener` the opened page can reach back through `window.opener` and
- * navigate this one.
+ * navigate this one. `target` and `rel` are therefore not part of the public
+ * props — a caller cannot spread them back in and undo the isolation.
  */
 export function ExternalLink({
   className,
   children,
   ...props
-}: React.ComponentProps<'a'> & { href: string }) {
+}: Omit<React.ComponentProps<'a'>, 'target' | 'rel'> & { href: string }) {
   return (
     <a
       data-slot="external-link"

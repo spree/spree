@@ -119,7 +119,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} />
+      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} sticky={false} />
 
       {outstanding.length > 0 && (
         <Card>

@@ -619,10 +619,13 @@
    outrank that — layer order decides before specificity does — and has to
    match the same children the utilities do.
 
-   `:where()` on the parent keeps specificity low enough that naming a colour
-   at the call site (`divide-border`) still wins. */
+   The WHOLE selector goes inside `:where()`, not just the parent: `:not()`
+   carries the specificity of its argument, so leaving `:not(:last-child)`
+   outside gave this rule a pseudo-class's weight and let it beat an explicit
+   `divide-border` at the call site — the opposite of the intent. Inside
+   `:where()` the rule has zero specificity and any named colour wins. */
 @layer utilities {
-  :where(.divide-y, .divide-x) > :not(:last-child) {
+  :where(.divide-y > :not(:last-child), .divide-x > :not(:last-child)) {
     border-color: var(--border-subtle);
   }
 }

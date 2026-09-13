@@ -134,15 +134,18 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
       <SidebarHeader>
-        {/* The switcher and the account row are hidden on a phone: the top bar
-            already names the store and carries the account menu, so repeating
-            both inside the drawer spends two rows of a small screen saying
-            what is visible behind it. The drawer is for navigating. */}
+        {/* The switcher, search and the account row are all hidden on a phone:
+            the top bar already names the store and carries both search and the
+            account menu, so repeating them inside the drawer spends rows of a
+            small screen saying what is visible behind it. The drawer is for
+            navigating. */}
         <div className="hidden items-center gap-1 md:flex">
           <div className="min-w-0 flex-1">{header ?? <StoreSwitcher />}</div>
           <CollapseTrigger />
         </div>
-        <SidebarSearch />
+        <div className="hidden md:block">
+          <SidebarSearch />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {/* Permissions decide which links exist, and until they arrive every

@@ -578,6 +578,13 @@ export function ResourceTable<T extends Record<string, any>>({
           actions={resolvedActions}
         />
       )}
+      {/* A page that owns its header still passes `actions` here, and they
+          would otherwise vanish with the suppressed `PageHeader` — taking the
+          orders export and the policies Add button with them. Render them
+          above the toolbar so the control keeps a home either way. */}
+      {pageOwnsHeader && resolvedActions && (
+        <div className="flex flex-wrap items-center justify-end gap-2">{resolvedActions}</div>
+      )}
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}

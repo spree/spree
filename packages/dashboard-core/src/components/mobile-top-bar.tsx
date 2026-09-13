@@ -2,7 +2,7 @@ import { SidebarTrigger, Skeleton } from '@spree/dashboard-ui'
 import { SearchIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useOptionalCommandPalette } from '../hooks/use-command-palette'
-import { useStore } from '../providers/store-provider'
+import { useOptionalStore } from '../providers/store-provider'
 import { SidebarUser } from './sidebar-user'
 
 /**
@@ -22,15 +22,27 @@ import { SidebarUser } from './sidebar-user'
 export function MobileTopBar({
   uiLocales = [],
   onEditProfile,
+  title,
 }: {
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
   onEditProfile?: () => void
+  /** Name shown beside the controls. Defaults to the store's, for panels that have one. */
+  title?: string
 } = {}) {
   const { t } = useTranslation()
-  const { store, isLoading } = useStore()
+  // `useOptionalStore` rather than `useStore`: the seller panel mounts this
+  // under a `TenantProvider` with no store at all, and a hard `useStore`
+  // throws there — taking every seller page down at phone width. A panel
+  // without a store passes its own `title` instead.
+  const storeContext = useOptionalStore()
   // Absent in panels that mount no palette (the seller panel), where the
   // search button would open nothing.
   const palette = useOptionalCommandPalette()
+
+  const label = title ?? storeContext?.store?.name
+  // Only a store-backed panel has a name still loading; one that passes its
+  // own title has nothing to wait for.
+  const isLoading = title === undefined && (storeContext?.isLoading ?? false)
 
   return (
     // `h-14` (56px) is the phone top-bar height on Android, and comfortably
@@ -43,7 +55,7 @@ export function MobileTopBar({
       {isLoading ? (
         <Skeleton className="h-4 w-28" />
       ) : (
-        <span className="min-w-0 flex-1 truncate font-medium text-sm">{store?.name}</span>
+        <span className="min-w-0 flex-1 truncate font-medium text-sm">{label}</span>
       )}
 
       {palette && (

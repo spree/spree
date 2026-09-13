@@ -110,6 +110,7 @@ export function DeliveryMethodsPage({ search }: { search: ResourceSearch }) {
       <PageHeader
         title={t('delivery_methods.title')}
         subtitle={t('delivery_methods.description')}
+        sticky={false}
       />
 
       <ResourceTable<DeliveryMethod>
