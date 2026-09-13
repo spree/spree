@@ -77,20 +77,23 @@ defineTable<StoreCredit>('store-credits', {
       render: (credit) => credit.display_amount_remaining,
     },
     {
-      // Money still owed versus money already spent. A scope with two named
-      // states, so the control offers a choice rather than a checkbox whose
-      // unticked state would silently mean "no filter".
+      // Money still owed versus money already spent. The two states are
+      // mutually exclusive and each is one argument to the `outstanding`
+      // scope, so this is an enum of scope values rather than a `boolean`
+      // column: a boolean renders a two-item multi-select, and a scope takes
+      // a single argument, so a multi-value selection has no call that
+      // expresses it.
       key: 'outstanding',
       label: i18n.t('admin.store_credits.columns.standing'),
       ransackAttribute: 'outstanding',
       ransackScope: true,
       sortable: false,
       filterable: true,
-      filterType: 'boolean',
-      booleanLabels: {
-        true: i18n.t('admin.store_credits.filters.outstanding'),
-        false: i18n.t('admin.store_credits.filters.spent'),
-      },
+      filterType: 'enum',
+      filterOptions: [
+        { value: 'true', label: i18n.t('admin.store_credits.filters.outstanding') },
+        { value: 'false', label: i18n.t('admin.store_credits.filters.spent') },
+      ],
       quickFilter: true,
       default: false,
       render: (credit) =>

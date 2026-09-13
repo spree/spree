@@ -1,5 +1,5 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
+import { PageHeader, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -48,6 +48,7 @@ const LIST_EXPAND = ['customer', 'created_by']
  * whom, and why.
  */
 function StoreCreditsPage() {
+  const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
   const [totals, setTotals] = useState<StoreCreditCurrencyTotal[]>([])
@@ -67,7 +68,13 @@ function StoreCreditsPage() {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title={t('admin.nav.store_credits')}
+          subtitle={t('admin.store_credits.page.subtitle')}
+          sticky={false}
+        />
+
         <OutstandingTotals totals={totals} />
 
         <ResourceTable<StoreCredit>
@@ -82,6 +89,9 @@ function StoreCreditsPage() {
           }}
           searchParams={search}
           defaultParams={{ expand: LIST_EXPAND }}
+          // The page mounts its own header so the totals can sit between the
+          // title and the list; without this the table renders a second one.
+          hideHeader
         />
       </div>
 

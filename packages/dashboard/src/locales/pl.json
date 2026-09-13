@@ -6001,7 +6001,10 @@
         "search_placeholder": "Szukaj w notatkach…",
         "empty": "Brak środków. Wystaw je z profilu klienta."
       },
-      "no_customer": "Brak klienta"
+      "no_customer": "Brak klienta",
+      "page": {
+        "subtitle": "Ile sklep jest winien w środkach, w rozbiciu na wszystkich klientów."
+      }
     }
   }
 }

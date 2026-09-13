@@ -5935,7 +5935,10 @@
         "search_placeholder": "Notizen durchsuchen…",
         "empty": "Noch kein Guthaben. Stellen Sie eines im Kundenprofil aus."
       },
-      "no_customer": "Kein Kunde"
+      "no_customer": "Kein Kunde",
+      "page": {
+        "subtitle": "Was der Shop an Guthaben schuldet, über alle Kunden hinweg."
+      }
     }
   }
 }

@@ -90,6 +90,18 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
 
         expect(json_response['meta']['totals']).to eq([])
       end
+
+      # The totals are a grouped SUM over the ransacked scope. A filter that
+      # reaches through an association adds a join, and a join that matched a
+      # credit twice would inflate the store's stated liability.
+      it 'does not double-count when the filter joins an association' do
+        get :index, params: { q: { customer_email_cont: 'holder@' } }, as: :json
+
+        usd = json_response['meta']['totals'].find { |row| row['currency'] == 'USD' }
+        expected = Spree::StoreCredit.where(store: store, customer: customer, currency: 'USD').sum(:amount)
+
+        expect(usd['amount'].to_d).to eq(expected)
+      end
     end
 
     describe 'filters' do

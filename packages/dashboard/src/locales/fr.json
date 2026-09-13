@@ -5935,7 +5935,10 @@
         "search_placeholder": "Rechercher dans les notes…",
         "empty": "Aucun avoir. Émettez-en un depuis une fiche client."
       },
-      "no_customer": "Aucun client"
+      "no_customer": "Aucun client",
+      "page": {
+        "subtitle": "Ce que la boutique doit en avoirs, tous clients confondus."
+      }
     }
   }
 }

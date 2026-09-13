@@ -5935,7 +5935,10 @@
         "search_placeholder": "Search memos…",
         "empty": "No store credits yet. Issue one from a customer profile."
       },
-      "no_customer": "No customer"
+      "no_customer": "No customer",
+      "page": {
+        "subtitle": "What the store owes in prepaid balances, across every customer."
+      }
     }
   }
 }

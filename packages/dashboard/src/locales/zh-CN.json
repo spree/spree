@@ -5922,7 +5922,10 @@
         "search_placeholder": "搜索备注…",
         "empty": "暂无店铺信用。可从客户资料中发放。"
       },
-      "no_customer": "无客户"
+      "no_customer": "无客户",
+      "page": {
+        "subtitle": "店铺在所有客户中欠下的预付余额总额。"
+      }
     }
   }
 }
