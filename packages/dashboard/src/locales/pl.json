@@ -2108,8 +2108,6 @@
           "label": "Zapisuj historię cen"
         },
         "payouts": {
-          "title": "Wypłaty dla sprzedawców",
-          "description": "Jak ten marketplace płaci sprzedawcom, którzy na nim handlują.",
           "provider": {
             "label": "Wypłacane przez",
             "help": "Kto przenosi pieniądze. Przy własnej księgowości sam wykonujesz przelewy i oznaczasz każdy jako zapłacony.",

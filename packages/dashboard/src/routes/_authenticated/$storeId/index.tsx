@@ -189,12 +189,13 @@ function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
-          {/* `h-8` to match the date picker's trigger beside it: the select's
-              own minimum grows with its padding to 35px, which left the two
-              controls on this row visibly different heights. */}
+          {/* `sm` is the toolbar size the date picker's trigger also uses, so
+              the three controls on this row match in height, padding, text and
+              chevron rather than being aligned by hand. */}
           <ChannelSelect
             allOption
-            triggerClassName="h-8 min-h-8 min-w-40"
+            triggerSize="sm"
+            triggerClassName="min-w-40"
             value={channelId}
             onChange={setChannelId}
           />
@@ -203,7 +204,7 @@ function DashboardPage() {
           {currencies.length > 1 && (
             <CurrencySelect
               id="home-currency"
-              triggerClassName="h-8 min-h-8"
+              triggerSize="sm"
               value={currency}
               onChange={setPickedCurrency}
               searchPlaceholder={t('admin.pages.home.currency.search')}

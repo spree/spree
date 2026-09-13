@@ -21,6 +21,7 @@ export function OrdersPage({ search }: { search: ResourceSearch }) {
       <PageHeader title={t('orders.title')} />
 
       <ResourceTable<Order>
+        hideHeader
         tableKey="seller-orders"
         queryKey="seller-orders"
         queryFn={(params) => sellerClient().orders.list(params)}

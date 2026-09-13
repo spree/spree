@@ -146,6 +146,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
       )}
 
       <ResourceTable<Policy>
+        hideHeader
         tableKey="seller-policies"
         queryKey="seller-policies"
         queryFn={(params) => sellerClient().policies.list(params)}

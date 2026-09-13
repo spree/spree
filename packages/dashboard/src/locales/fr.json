@@ -2090,8 +2090,6 @@
           "label": "Enregistrer l’historique des prix"
         },
         "payouts": {
-          "title": "Paiements aux vendeurs",
-          "description": "Comment cette marketplace paie les vendeurs qui y vendent.",
           "provider": {
             "label": "Payé via",
             "help": "Qui déplace l’argent. Avec vos propres comptes, vous effectuez les virements et marquez chacun comme payé.",

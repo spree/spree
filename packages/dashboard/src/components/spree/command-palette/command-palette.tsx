@@ -127,7 +127,7 @@ function CommandPaletteContent({ setOpen }: { setOpen: (open: boolean) => void }
   // here rather than duplicated in both branches of the list below.
   const gotoGroup =
     gotoItems.length > 0 ? (
-      <CommandGroup heading={t('admin.components.command_palette.goto')}>
+      <CommandGroup>
         {gotoItems.map(({ key, label, icon: Icon, url }) => (
           <CommandItem
             key={key}

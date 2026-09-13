@@ -18,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
   ErrorState,
+  ExternalLink,
   Field,
   FieldDescription,
   FieldError,
@@ -40,9 +41,8 @@ import {
   toastManager,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
-import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import {
   type Control,
   Controller,
@@ -77,20 +77,6 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/store')(
 
 const PRICING_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/pim'
 const INVENTORY_PROVIDER_DOCS_URL = 'https://spreecommerce.org/docs/developer/providers/erp'
-
-function DocsLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
-    >
-      {children}
-      <ExternalLinkIcon className="size-3.5" />
-    </a>
-  )
-}
 
 const TIMEZONES: string[] = (() => {
   try {
@@ -712,9 +698,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     )}
                   </FieldGroup>
                   <div className="mt-6 border-t pt-4">
-                    <DocsLink href={PRICING_PROVIDER_DOCS_URL}>
+                    <ExternalLink href={PRICING_PROVIDER_DOCS_URL}>
                       {t('admin.fields.store.data_sources.pricing_provider.docs_link')}
-                    </DocsLink>
+                    </ExternalLink>
                   </div>
                 </CardContent>
               </Card>
@@ -747,9 +733,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     )}
                   </FieldGroup>
                   <div className="mt-6 border-t pt-4">
-                    <DocsLink href={INVENTORY_PROVIDER_DOCS_URL}>
+                    <ExternalLink href={INVENTORY_PROVIDER_DOCS_URL}>
                       {t('admin.fields.store.data_sources.inventory_provider.docs_link')}
-                    </DocsLink>
+                    </ExternalLink>
                   </div>
                 </CardContent>
               </Card>

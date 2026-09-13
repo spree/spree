@@ -33,6 +33,7 @@ export function EarningsPage({ search }: { search: ResourceSearch }) {
       )}
 
       <ResourceTable<Transfer>
+        hideHeader
         tableKey="seller-transfers"
         queryKey="seller-transfers-list"
         queryFn={(params) => sellerClient().transfers.list(params)}

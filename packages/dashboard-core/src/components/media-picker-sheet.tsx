@@ -183,7 +183,7 @@ export function MediaPickerSheet<T extends MediaPickerOption>({
           <SheetDescription>{description ?? t('admin.media_picker.description')}</SheetDescription>
         </SheetHeader>
 
-        <div className="flex items-center gap-2 border-b border-border p-4">
+        <div className="flex items-center gap-2 border-b border-border-subtle p-4">
           <SearchInput
             value={input}
             onValueChange={setInput}

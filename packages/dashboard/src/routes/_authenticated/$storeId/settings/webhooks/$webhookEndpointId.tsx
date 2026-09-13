@@ -424,6 +424,7 @@ function DeliveriesCard({
 
   return (
     <ResourceTable<WebhookDelivery>
+      hideHeader
       tableKey="webhook-deliveries"
       // Mutation hooks invalidate +['webhook-deliveries', endpointId]+ —
       // ResourceTable auto-injects storeId between the two slots, so the

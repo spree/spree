@@ -2090,8 +2090,6 @@
           "label": "Preisverlauf aufzeichnen"
         },
         "payouts": {
-          "title": "Auszahlungen an Verkäufer",
-          "description": "Wie dieser Marktplatz die Verkäufer bezahlt, die auf ihm handeln.",
           "provider": {
             "label": "Bezahlt über",
             "help": "Wer das Geld bewegt. Bei eigener Buchführung überweisen Sie selbst und markieren jede Zahlung als erledigt.",

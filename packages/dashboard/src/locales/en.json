@@ -2090,8 +2090,6 @@
           "label": "Record price history"
         },
         "payouts": {
-          "title": "Seller payouts",
-          "description": "How this marketplace pays the sellers who trade on it.",
           "provider": {
             "label": "Paid through",
             "help": "Who moves the money. Keeping your own books means you send the transfers yourself and mark each one paid.",

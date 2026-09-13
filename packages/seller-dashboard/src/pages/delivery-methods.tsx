@@ -113,6 +113,7 @@ export function DeliveryMethodsPage({ search }: { search: ResourceSearch }) {
       />
 
       <ResourceTable<DeliveryMethod>
+        hideHeader
         tableKey="seller-delivery-methods"
         queryKey="seller-delivery-methods"
         queryFn={(params) => sellerClient().deliveryMethods.list(params)}

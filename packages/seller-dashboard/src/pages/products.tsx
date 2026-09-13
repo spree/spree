@@ -151,6 +151,7 @@ export function ProductsPage({ search }: { search: ResourceSearch & { import?: s
       <PageHeader title={t('products.title')} />
 
       <ResourceTable<Product>
+        hideHeader
         tableKey="seller-products"
         queryKey="seller-products"
         queryFn={(params) => sellerClient().products.list(params)}

@@ -502,7 +502,7 @@ export function MediaCard({
 
   return (
     <>
-      <Card className="scroll-mt-[calc(var(--spacing-header-height)*2+1.5rem)]">
+      <Card className="scroll-mt-[calc(var(--spacing-header-height)+1.5rem)]">
         <CardHeader>
           <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
         </CardHeader>
