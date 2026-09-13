@@ -38,9 +38,9 @@ export function TopBarBreadcrumbs({ tenantId }: { tenantId?: string } = {}) {
 }
 
 /**
- * Breadcrumbs for a narrow screen, as a row beneath the TopBar rather than
- * inside it — the bar has no width to spare on a phone, so the trail lives on
- * its own line and scrolls sideways instead of wrapping.
+ * Breadcrumbs for a narrow screen, as a row beneath `MobileTopBar` rather
+ * than inside it — that bar has no width to spare on a phone, so the trail
+ * lives on its own line and scrolls sideways instead of wrapping.
  *
  * Only rendered where it earns the vertical space: inside settings, and on
  * record pages. A top-level list page would only repeat its own heading.

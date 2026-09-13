@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useAutoCollapseSidebar } from '../hooks/use-auto-collapse-sidebar'
 import { StickyHeaderProvider } from '../providers/sticky-header-provider'
 import { AppSidebar } from './app-sidebar'
+import { MobileTopBar } from './mobile-top-bar'
 import { SettingsNavSheet, SettingsSidebar } from './settings-sidebar'
 import { SheetTopBar } from './sheet-top-bar'
 import { SkipLink } from './skip-link'
@@ -128,6 +129,7 @@ export function AppShell({
           tabIndex={-1}
           className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto me-[5px] outline-none"
         >
+          <MobileTopBar />
           <SheetTopBar tenantId={tenantId} inSettings={inSettings} />
           <MobileBreadcrumbBar
             tenantId={tenantId}
