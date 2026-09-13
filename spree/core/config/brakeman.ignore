@@ -95,14 +95,14 @@
     },
     {
       "check_name": "SQL",
-      "code": "scope.having(Arel.sql(\"#{resolve_sql(filter[:metric].sql_for(:grouped => true))} #{COMPARISON_OPERATORS.fetch(filter[:op])} ?\"), filter[:value])",
+      "code": "scope.having(Arel.sql(\"#{resolve_sql(filter[:metric].sql_for(:grouped => true))} #{COMPARISONS.fetch(filter[:op]).first} ?\"), filter[:value])",
       "confidence": "Medium",
       "cwe_id": [
         89
       ],
       "file": "lib/spree/reporting/adapters/live.rb",
-      "fingerprint": "12cb6caf980c27d67e8a91b6fabfa1cc6194a759b02b290b9ce74234a7d88c57",
-      "line": 141,
+      "fingerprint": "9370b80276052cef88afe7154cc83064b1c6e503be8fde70c911959d05a95ac1",
+      "line": 148,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "location": {
         "class": "Spree::Reporting::Adapters::Live",
