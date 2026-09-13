@@ -137,6 +137,10 @@ export async function clickMediaThumbnailAction(
   // The header publishes its own measured height into this variable, so read
   // it rather than assuming one: it is the whole of the sticky chrome now that
   // there is no top bar above it.
+  //
+  // Scroll the sheet, not the window. The inset shell is exactly viewport
+  // height and scrolls inside itself, so the document cannot scroll at all and
+  // `window.scrollBy` moves nothing — the tile would stay under the header.
   await media.evaluate((el) => {
     const headerHeight =
       Number.parseFloat(
@@ -144,7 +148,22 @@ export async function clickMediaThumbnailAction(
       ) || 0
     const stickyOffset = headerHeight + 24
     const top = el.getBoundingClientRect().top
-    if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
+    if (top >= stickyOffset) return
+
+    const delta = top - stickyOffset
+    // Nearest scrollable ancestor: the shell's sheet in the new layout, and
+    // the document in any context that still scrolls that way.
+    let node: HTMLElement | null = el.parentElement
+    while (node) {
+      const style = getComputedStyle(node)
+      const scrolls = /auto|scroll/.test(style.overflowY)
+      if (scrolls && node.scrollHeight > node.clientHeight) {
+        node.scrollTop += delta
+        return
+      }
+      node = node.parentElement
+    }
+    window.scrollBy(0, delta)
   })
 
   if (action === 'edit') {
