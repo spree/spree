@@ -37,7 +37,7 @@ export function Pagination({
   if (meta.pages <= 1 && !onPageSizeChange) return null
 
   return (
-    <div className="flex items-center justify-between border-t border-border-subtle pr-3 pl-4 py-2">
+    <div className="flex items-center justify-between ps-2 py-2">
       <div className="whitespace-nowrap text-sm text-muted-foreground">
         {t('admin.components.pagination.range', {
           from: meta.from,

@@ -37,7 +37,7 @@ export function CategoryList({
   const { permissions } = usePermissions()
 
   return (
-    <Table>
+    <Table roundedTop roundedBottom>
       <TableHeader>
         <TableRow>
           <TableHead>{t('admin.categories.columns.name')}</TableHead>

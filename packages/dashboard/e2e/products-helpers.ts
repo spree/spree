@@ -117,9 +117,9 @@ export const mediaCard = (page: Page) => card(page, /^Media$/)
  * Act on the first media thumbnail: clicking a tile opens its edit sheet, and
  * every other action lives in the tile's right-click menu.
  *
- * Scrolls the Media card below the sticky TopBar + PageHeader stack first —
- * restoring sticky headers (PR #14218) made Playwright's default
- * scroll-into-view land the tile under the header chrome.
+ * Scrolls the Media card clear of the sticky PageHeader first — restoring
+ * sticky headers (PR #14218) made Playwright's default scroll-into-view land
+ * the tile under the header chrome.
  */
 export async function clickMediaThumbnailAction(
   media: Locator,
@@ -130,15 +130,19 @@ export async function clickMediaThumbnailAction(
   const thumb = media.locator('[data-slot="media-thumbnail"]').first()
 
   await thumb.scrollIntoViewIfNeeded()
-  // Keep the card below the stacked sticky TopBar + PageHeader. Playwright's
-  // default click scrolls the target back into view, so we force-click after
-  // positioning — otherwise the header chrome intercepts pointer events.
+  // Keep the card below the sticky PageHeader. Playwright's default click
+  // scrolls the target back into view, so we force-click after positioning —
+  // otherwise the header chrome intercepts pointer events.
+  //
+  // The header publishes its own measured height into this variable, so read
+  // it rather than assuming one: it is the whole of the sticky chrome now that
+  // there is no top bar above it.
   await media.evaluate((el) => {
     const headerHeight =
       Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height'),
-      ) || 58
-    const stickyOffset = headerHeight * 2 + 24
+      ) || 0
+    const stickyOffset = headerHeight + 24
     const top = el.getBoundingClientRect().top
     if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
   })
