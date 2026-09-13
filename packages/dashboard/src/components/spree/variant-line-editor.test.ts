@@ -31,6 +31,13 @@ describe('addVariantsToLines', () => {
     expect(lines[0].quantity).toBe(3)
   })
 
+  it('counts a variant repeated inside one batch onto a single line', () => {
+    const lines = addVariantsToLines([], [variant('a'), variant('b'), variant('a')], false)
+
+    expect(lines.map((line) => line.variant.id)).toEqual(['a', 'b'])
+    expect(lines[0].quantity).toBe(2)
+  })
+
   it('seeds a cost only where the document has one', () => {
     expect(addVariantsToLines([], [variant('a')], true)[0].unitCost).toBe('0.00')
     expect(addVariantsToLines([], [variant('a')], false)[0].unitCost).toBeUndefined()

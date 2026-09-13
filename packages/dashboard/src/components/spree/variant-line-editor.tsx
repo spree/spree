@@ -60,10 +60,16 @@ export function addVariantsToLines(
 ): VariantLine[] {
   if (variants.length === 0) return lines
   const next = [...lines]
+  // Indexed rather than scanned per variant: "select all matching" pages
+  // through the whole catalogue, so a batch can be thousands of variants long
+  // and a scan inside the loop would stall the page.
+  const indexByVariantId = new Map(next.map((line, index) => [line.variant.id, index]))
+
   for (const variant of variants) {
-    const index = next.findIndex((line) => line.variant.id === variant.id)
-    if (index === -1) {
+    const index = indexByVariantId.get(variant.id)
+    if (index === undefined) {
       next.push({ variant, quantity: 1, unitCost: withCost ? '0.00' : undefined })
+      indexByVariantId.set(variant.id, next.length - 1)
     } else {
       next[index] = { ...next[index], quantity: next[index].quantity + 1 }
     }
