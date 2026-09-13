@@ -4,6 +4,7 @@ import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
+import { translatedLabel } from '../lib/translated-label'
 
 /**
  * The record's own number, linking to the order it belongs to — that page is
@@ -24,10 +25,7 @@ function numberCell(record: { number: string; order_id?: string | null }) {
 }
 
 function statusLabel(value: string): string {
-  const key = `admin.post_sale.statuses.${value}`
-  return i18n.exists(key)
-    ? i18n.t(key)
-    : value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  return translatedLabel('admin.post_sale.statuses', value)
 }
 
 function statusColumn(values: string[]) {

@@ -21,35 +21,36 @@ module Spree
             Spree.api.admin_store_credit_serializer
           end
 
+          # Not `:originator`: the serializer encodes its id from the columns
+          # rather than loading the record, so preloading a polymorphic
+          # association would fire one query per originator kind on the page
+          # and discard every row it returned.
           def collection_includes
-            [:customer, :created_by, :originator]
+            [:customer, :created_by]
           end
 
           # Pagination metadata plus the outstanding balance, one row per
           # currency, summed over the same filtered scope the page came from —
           # so a customer filter answers "this customer's balance" and no
           # filter answers "the store's liability".
-          def collection_meta(collection)
+          def collection_meta(_collection)
             super.merge(totals: currency_totals)
           end
 
           private
 
           # @return [Array<Hash>] one entry per currency present in the
-          #   filtered scope, ordered by currency for a stable render.
+          #   filtered scope, ordered by currency.
           def currency_totals
+            base = scope
             table = Spree::StoreCredit.arel_table
-            # Ransacked afresh off the bare scope: the collection carries
-            # `includes(:originator)` for the rows it renders, and a polymorphic
-            # association cannot be eager-loaded under an aggregate.
-            # Summed over DISTINCT ids, not over the joined rows: a filter that
-            # reaches through a `has_many` would otherwise match a credit once
-            # per joined row and count its amount that many times, overstating
-            # what the store owes. Today's allowlist only exposes `belongs_to`
-            # associations, so nothing duplicates — but the liability figure
-            # must not depend on that staying true.
-            rows = scope.where(id: scope.ransack(ransack_params).result.select(:id)).
+            # Summed over the matching ids rather than over the joined rows: a
+            # filter reaching through a `has_many` would match a credit once per
+            # joined row and count its amount that many times, overstating what
+            # the store owes.
+            rows = base.where(id: base.ransack(ransack_params).result.select(:id)).
                    reorder(nil).
+                   order(:currency).
                    group(:currency).
                    pluck(
                      :currency,
@@ -58,25 +59,22 @@ module Spree
                      table[:amount_authorized].sum
                    )
 
-            rows.sort_by(&:first).map do |currency, amount, used, authorized|
-              # `SUM` answers an Integer on a whole-number total, so cast:
-              # the row serializer emits decimal strings and a totals row the
-              # client renders beside them must not read "50" against "50.0".
-              amount = amount.to_d
-              used = used.to_d
-              authorized = authorized.to_d
-
-              {
-                currency: currency,
-                amount: amount.to_s,
-                amount_used: used.to_s,
-                amount_authorized: authorized.to_s,
-                amount_remaining: (amount - used - authorized).to_s,
-                display_amount: Spree::Money.new(amount, currency: currency).to_s,
-                display_amount_used: Spree::Money.new(used, currency: currency).to_s,
-                display_amount_authorized: Spree::Money.new(authorized, currency: currency).to_s,
-                display_amount_remaining: Spree::Money.new(amount - used - authorized, currency: currency).to_s
+            rows.map do |currency, amount, used, authorized|
+              # `SUM` answers an Integer on a whole-number total, and these
+              # totals render beside rows that serialize decimal strings — so
+              # "50" must not appear against their "50.0".
+              figures = {
+                amount: amount.to_d,
+                amount_used: used.to_d,
+                amount_authorized: authorized.to_d
               }
+              figures[:amount_remaining] =
+                figures[:amount] - figures[:amount_used] - figures[:amount_authorized]
+
+              displays = figures.transform_keys { |name| :"display_#{name}" }.
+                         transform_values { |value| Spree::Money.new(value, currency: currency).to_s }
+
+              { currency: currency }.merge(figures.transform_values(&:to_s)).merge(displays)
             end
           end
         end

@@ -204,6 +204,30 @@ describe Spree.customer_class, type: :model do
     end
   end
 
+  # The dashboard's "erased / not erased" filter reaches this scope through
+  # Ransack, which passes an `_in` predicate as an array — and casting an
+  # array answers true for any non-empty value, so the "not erased" half
+  # silently returned erased accounts instead.
+  describe '.anonymized' do
+    let!(:erased) { create(:user).tap { |user| user.update_columns(anonymized_at: Time.current) } }
+    let!(:intact) { create(:user) }
+
+    it 'answers the erased accounts when true' do
+      expect(described_class.anonymized(true)).to include(erased)
+      expect(described_class.anonymized(true)).not_to include(intact)
+    end
+
+    it 'answers the intact accounts when false' do
+      expect(described_class.anonymized('false')).to include(intact)
+      expect(described_class.anonymized('false')).not_to include(erased)
+    end
+
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.anonymized(['false'])).to include(intact)
+      expect(described_class.anonymized(['false'])).not_to include(erased)
+    end
+  end
+
   describe '#total_available_store_credit' do
     context 'user does not have any associated store credits' do
       subject { create(:user) }

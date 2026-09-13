@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardContent,
+  cn,
   Pagination,
   Sheet,
   SheetContent,
@@ -26,7 +27,6 @@ import {
 } from '../../../../hooks/use-store-credits'
 import { erasedFieldValue } from '../../../../lib/erased-customer'
 import { originLabel } from '../../../../tables/store-credits'
-import '../../../../tables/store-credits'
 
 const storeCreditsSearchSchema = resourceSearchSchema.extend({
   credit: z.string().optional(),
@@ -178,43 +178,43 @@ function StoreCreditSheet({
           ) : (
             <>
               <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                <dt className="text-muted-foreground">
-                  {t('admin.fields.store_credit.amount.label')}
-                </dt>
-                <dd className="text-right tabular-nums">{credit.display_amount}</dd>
-
-                <dt className="text-muted-foreground">{t('admin.store_credits.columns.used')}</dt>
-                <dd className="text-right tabular-nums">{credit.display_amount_used}</dd>
-
-                <dt className="text-muted-foreground">
-                  {t('admin.store_credits.columns.authorized')}
-                </dt>
-                <dd className="text-right tabular-nums">{credit.display_amount_authorized}</dd>
-
-                <dt className="text-muted-foreground">
-                  {t('admin.store_credits.columns.remaining')}
-                </dt>
-                <dd className="text-right font-medium tabular-nums">
-                  {credit.display_amount_remaining}
-                </dd>
-
-                <dt className="text-muted-foreground">
-                  {t('admin.fields.store_credit.currency.label')}
-                </dt>
-                <dd className="text-right">{credit.currency}</dd>
-
-                <dt className="text-muted-foreground">{t('admin.store_credits.columns.origin')}</dt>
-                <dd className="text-right">{originLabel(credit.originator_type)}</dd>
-
-                <dt className="text-muted-foreground">
-                  {t('admin.store_credits.columns.issued_by')}
-                </dt>
-                <dd className="text-right">{credit.created_by?.email ?? '—'}</dd>
-
-                <dt className="text-muted-foreground">
-                  {t('admin.fields.store_credit.memo.label')}
-                </dt>
-                <dd className="text-right">{credit.memo ?? '—'}</dd>
+                <DetailRow
+                  label={t('admin.fields.store_credit.amount.label')}
+                  value={credit.display_amount}
+                  numeric
+                />
+                <DetailRow
+                  label={t('admin.store_credits.columns.used')}
+                  value={credit.display_amount_used}
+                  numeric
+                />
+                <DetailRow
+                  label={t('admin.store_credits.columns.authorized')}
+                  value={credit.display_amount_authorized}
+                  numeric
+                />
+                <DetailRow
+                  label={t('admin.store_credits.columns.remaining')}
+                  value={credit.display_amount_remaining}
+                  numeric
+                  emphasis
+                />
+                <DetailRow
+                  label={t('admin.fields.store_credit.currency.label')}
+                  value={credit.currency}
+                />
+                <DetailRow
+                  label={t('admin.store_credits.columns.origin')}
+                  value={originLabel(credit.originator_type)}
+                />
+                <DetailRow
+                  label={t('admin.store_credits.columns.issued_by')}
+                  value={credit.created_by?.email ?? '—'}
+                />
+                <DetailRow
+                  label={t('admin.fields.store_credit.memo.label')}
+                  value={credit.memo ?? '—'}
+                />
               </dl>
 
               <div className="flex flex-col gap-2">
@@ -268,5 +268,33 @@ function StoreCreditSheet({
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  )
+}
+
+/** One label/value pair in the credit's detail list. */
+function DetailRow({
+  label,
+  value,
+  numeric = false,
+  emphasis = false,
+}: {
+  label: string
+  value: string
+  numeric?: boolean
+  emphasis?: boolean
+}) {
+  return (
+    <>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd
+        className={cn(
+          'text-right',
+          numeric && 'tabular-nums',
+          emphasis && 'font-medium text-foreground',
+        )}
+      >
+        {value}
+      </dd>
+    </>
   )
 }

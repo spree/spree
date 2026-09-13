@@ -8,6 +8,7 @@ module Spree
                    memo: [:string, nullable: true],
                    amount_authorized: :string,
                    display_amount_authorized: :string,
+                   outstanding: :boolean,
                    originator_type: [:string, nullable: true],
                    originator_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -17,6 +18,12 @@ module Spree
 
           attribute :amount_authorized do |store_credit|
             store_credit.amount_authorized.to_s
+          end
+
+          # Answers the same question as the `outstanding` filter, so the row
+          # and the filter cannot disagree.
+          attribute :outstanding do |store_credit|
+            store_credit.outstanding?
           end
 
           attribute :display_amount_authorized do |store_credit|

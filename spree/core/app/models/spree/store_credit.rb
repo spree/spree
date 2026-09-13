@@ -64,24 +64,14 @@ module Spree
     # two bare scopes, so the filter control offers a choice instead of a
     # checkbox whose unticked state means "no filter".
     scope :outstanding, ->(value = true) {
-      flag_true?(value) ? available : exhausted
+      ransack_flag?(value) ? available : exhausted
     }
 
     # Whether the credit came from redeeming a gift card, as opposed to a
     # return, an exchange, a claim or an admin issuing it by hand.
     scope :from_gift_card, ->(value = true) {
-      flag_true?(value) ? with_gift_card : without_gift_card
+      ransack_flag?(value) ? with_gift_card : without_gift_card
     }
-
-    # Reads a two-state filter argument. Unwraps an array first: a Ransack
-    # `_in`-style predicate arrives as `["false"]`, and casting that whole
-    # array answers `true` — silently inverting the filter the merchant chose.
-    #
-    # @param value [Object] the raw scope argument
-    # @return [Boolean]
-    def self.flag_true?(value)
-      ActiveModel::Type::Boolean.new.cast(Array.wrap(value).first)
-    end
 
     after_save :store_event
     before_destroy :validate_no_amount_used
@@ -95,16 +85,12 @@ module Spree
       self[:amount] = Spree::LocalizedNumber.parse(amount)
     end
 
-    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo
-                                                 originator_id originator_type]
+    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
     self.whitelisted_ransackable_associations = %w[customer created_by]
-    self.whitelisted_ransackable_scopes = %w[available exhausted with_gift_card without_gift_card
-                                             outstanding from_gift_card]
+    self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
 
-    # Ransack casts a scope's argument before calling it and then declines to
-    # apply the scope at all when the cast yields `false` — which is exactly
-    # the "already spent" / "not from a gift card" half of each filter.
-    # Keeping the value a string lets the scope decide for itself.
+    # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
+    # opted out of here and done inside each scope instead.
     def self.ransackable_scopes_skip_sanitize_args
       %i[outstanding from_gift_card]
     end
@@ -225,6 +211,16 @@ module Spree
 
     def can_credit?(payment)
       payment.completed? && payment.credit_allowed > 0
+    end
+
+    # Whether any of this credit is still spendable. The record-level twin of
+    # the `available` scope, and the two must agree: the list filters on the
+    # scope and the row renders this, so a client deriving one from the money
+    # columns itself would drift from the filter that hides it.
+    #
+    # @return [Boolean]
+    def outstanding?
+      amount_authorized.zero? && amount_used < amount
     end
 
     def editable?

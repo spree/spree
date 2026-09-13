@@ -6305,6 +6305,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount_authorized: '0.0'
+                  outstanding: true
                   display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
@@ -6386,6 +6387,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.0'
+                outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_gbHJdmfrXB
@@ -6478,6 +6480,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.0'
+                outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
@@ -25990,6 +25993,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount_authorized: '0.0'
+                  outstanding: true
                   display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
@@ -26093,6 +26097,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount_authorized: '0.0'
+                outstanding: true
                 display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
@@ -47891,6 +47896,8 @@ components:
           type: string
         amount_authorized:
           type: string
+        outstanding:
+          type: boolean
         display_amount_authorized:
           type: string
         customer_id:
@@ -47923,6 +47930,7 @@ components:
       - created_at
       - updated_at
       - amount_authorized
+      - outstanding
       - display_amount_authorized
       - customer_id
       - created_by_id

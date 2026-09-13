@@ -6,18 +6,16 @@ import i18n from 'i18next'
 import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { erasedFieldValue } from '../lib/erased-customer'
+import { translatedLabel } from '../lib/translated-label'
 
 /**
  * Why the credit exists, read off the polymorphic originator. A credit an
  * admin issued by hand has none, which is itself the answer.
  */
-function originLabel(originatorType: string | null | undefined): string {
+export function originLabel(originatorType: string | null | undefined): string {
   if (!originatorType) return i18n.t('admin.store_credits.origins.manual')
 
-  const key = `admin.store_credits.origins.${originatorType}`
-  return i18n.exists(key)
-    ? i18n.t(key)
-    : originatorType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  return translatedLabel('admin.store_credits.origins', originatorType)
 }
 
 const ORIGIN_OPTIONS = [
@@ -96,14 +94,11 @@ defineTable<StoreCredit>('store-credits', {
       ],
       quickFilter: true,
       default: false,
-      // Read from the same three columns the `outstanding` scope uses, not
-      // from `amount_remaining`: a credit with an in-flight authorization
-      // still has a remaining balance but is not available to spend, so a
-      // badge driven by `amount_remaining` would label a row "Outstanding"
-      // that filtering by Outstanding hides.
+      // Server-computed, so the badge and the filter behind it answer the
+      // same question — deriving it here from the money columns would drift
+      // the moment "spendable" changes meaning.
       render: (credit) =>
-        Number(credit.amount_authorized) === 0 &&
-        Number(credit.amount_used) < Number(credit.amount) ? (
+        credit.outstanding ? (
           <Badge variant="secondary">{i18n.t('admin.store_credits.filters.outstanding')}</Badge>
         ) : (
           <Badge variant="outline">{i18n.t('admin.store_credits.filters.spent')}</Badge>
@@ -157,5 +152,3 @@ defineTable<StoreCredit>('store-credits', {
     },
   ],
 })
-
-export { originLabel }

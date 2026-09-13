@@ -143,6 +143,23 @@ class Spree::Base < ApplicationRecord
     type.to_s.demodulize.underscore
   end
 
+  # Reads the argument of a two-state ransackable scope — one that answers a
+  # question with two named sides ("erased" / "not erased", "outstanding" /
+  # "spent") rather than narrowing to a value.
+  #
+  # Unwraps an array before casting. Ransack hands a scope whatever the caller
+  # sent, and an `_in`-style predicate arrives as `["false"]`; casting that
+  # array answers `true` for any non-empty value, silently inverting the
+  # filter. Such a scope must also be listed in the model's
+  # `ransackable_scopes_skip_sanitize_args`, or Ransack casts `false` itself
+  # and then declines to apply the scope at all.
+  #
+  # @param value [Object] the raw scope argument
+  # @return [Boolean]
+  def self.ransack_flag?(value)
+    ActiveModel::Type::Boolean.new.cast(Array.wrap(value).first)
+  end
+
   # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.
   def self.to_tom_select_json
     Spree::Deprecation.warn('Spree::Base.to_tom_select_json is deprecated and will be removed in Spree 6.1.')

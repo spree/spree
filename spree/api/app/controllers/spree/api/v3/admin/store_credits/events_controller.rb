@@ -38,8 +38,7 @@ module Spree
             # so a credit belonging to another store 404s rather than leaking
             # its ledger.
             def set_parent
-              @parent = Spree::StoreCredit.
-                        for_store(current_store).
+              @parent = current_store.store_credits.
                         accessible_by(current_ability, parent_ability_action).
                         find_by_prefix_id!(params[:store_credit_id])
               authorize_parent!(@parent)

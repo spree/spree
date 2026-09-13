@@ -118,6 +118,21 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe '#outstanding?' do
+    # The row-level twin of the `available` scope; if these disagree the list
+    # shows a badge that its own filter contradicts.
+    it 'agrees with the outstanding scope for every state' do
+      available = create(:store_credit, amount: 20)
+      spent = create(:store_credit, amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+      committed = create(:store_credit, amount: 20).tap { |c| c.update_columns(amount_authorized: 20) }
+
+      [available, spent, committed].each do |credit|
+        expect(credit.outstanding?).to eq(described_class.outstanding(true).exists?(credit.id)),
+                                      "expected ##{credit.id} predicate and scope to agree"
+      end
+    end
+  end
+
   describe '.outstanding' do
     let!(:available) { create(:store_credit, amount: 20) }
     let!(:spent) { create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_used: 20) } }
