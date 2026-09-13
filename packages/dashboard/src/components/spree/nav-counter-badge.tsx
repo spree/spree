@@ -1,4 +1,4 @@
-import { Badge } from '@spree/dashboard-ui'
+import { SidebarMenuBadge } from '@spree/dashboard-ui'
 import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 
 /**
@@ -23,10 +23,6 @@ export function navCounterBadge(...navKeys: string[]) {
 
     if (total === 0) return null
 
-    return (
-      <Badge variant="outline" className="rounded-lg mr-1">
-        {total}
-      </Badge>
-    )
+    return <SidebarMenuBadge>{total}</SidebarMenuBadge>
   }
 }

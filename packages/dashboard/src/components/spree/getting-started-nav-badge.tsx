@@ -1,5 +1,5 @@
 import { useStore } from '@spree/dashboard-core'
-import { Badge } from '@spree/dashboard-ui'
+import { SidebarMenuBadge } from '@spree/dashboard-ui'
 
 // Progress counter next to the Getting Started nav entry, mirroring the
 // legacy admin's "n/m" badge. Hidden once every task is done.
@@ -11,9 +11,9 @@ export function GettingStartedNavBadge() {
   if (tasks.length === 0 || done === tasks.length) return null
 
   return (
-    <Badge variant="outline" className="rounded-lg mr-1 flex items-center gap-0">
+    <SidebarMenuBadge>
       <span>{done}</span>
       <span className="opacity-50">/{tasks.length}</span>
-    </Badge>
+    </SidebarMenuBadge>
   )
 }
