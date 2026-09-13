@@ -110,7 +110,7 @@ module Spree
     # `write: false`, `write_<name>`) keys. Re-registering a name replaces it.
     #
     # @param name [Symbol, String]
-    # @param group [Symbol] UI group (`:orders`, `:catalog`, `:marketing`,
+    # @param group [Symbol] UI group (`:orders`, `:catalog`, `:marketing`, `:loyalty`,
     #   `:customers`, `:settings`, `:access`, `:analytics` — or your own)
     # @param subjects [Proc, Array] CanCanCan subjects the keys grant
     # @param write [Boolean]
@@ -301,10 +301,16 @@ module Spree
         [Spree::Fulfillment, Spree::ShippingLabel, Spree::Delivery]
       })
       register_resource(:refunds, group: :orders, subjects: -> { [Spree::Refund] })
-      register_resource(:gift_cards, group: :orders, subjects: -> {
+      # Stored value is not a promotion and not an order: a gift card or a
+      # store credit is prepaid money the store owes. Its own group, mirroring
+      # the dashboard's Loyalty nav. The KEY names are unchanged, so roles
+      # created before the move keep working.
+      register_resource(:gift_cards, group: :loyalty, subjects: -> {
         [Spree::GiftCard, Spree::GiftCardBatch]
       })
-      register_resource(:store_credits, group: :orders, subjects: -> { [Spree::StoreCredit] })
+      register_resource(:store_credits, group: :loyalty, subjects: -> {
+        [Spree::StoreCredit, Spree::StoreCreditEvent]
+      })
 
       # `Spree::Import` and its rows are subjects here because a CSV import is
       # a bulk product write and nothing else — which is the same reasoning

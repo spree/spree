@@ -5450,3 +5450,12 @@ that would need reconciling with it. Gift card codes never appear in events,
 logs or the buyer's order payload; only the recipient email carries the code.
 Recipient details get their own table rather than columns on
 `spree_line_items` or keys in `metadata`.
+
+**Two implementation calls settled when phase 1 was built (2026-09-13).** The
+cross-customer store credit list opens a **read-only** detail sheet carrying the
+credit's amounts, origin, issuer, memo and its `StoreCreditEvent` ledger, and
+links out to the customer profile for edits — the list never writes, so the
+"writes stay nested under the customer" constraint holds without exception. The
+per-currency `meta.totals` render as **one summary card per currency above the
+table**, showing outstanding, issued and used; a single line or a footer row
+cannot carry three figures per currency once a store trades in more than one.

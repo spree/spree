@@ -49,8 +49,29 @@ module Spree
     scope :not_authorized, -> { where(amount_authorized: 0) }
     scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
     scope :available, -> { not_authorized.not_used }
+    # Nothing left to spend: every unit is used or committed to an in-flight
+    # authorization. Expressed directly rather than as `where.not(available)`,
+    # so it stays one predicate the caller's own scoping composes with.
+    scope :exhausted, lambda {
+      table = arel_table
+      where(table[:amount_authorized].gt(0).or(table[:amount_used].gteq(table[:amount])))
+    }
     scope :with_gift_card, -> { where(originator_type: 'Spree::GiftCard') }
     scope :without_gift_card, -> { where(originator_type: [nil, '']).or(where.not(originator_type: 'Spree::GiftCard')) }
+
+    # What a merchant filters the credit list by: money still owed, or money
+    # already spent. One ransackable scope with two named states rather than
+    # two bare scopes, so the filter control offers a choice instead of a
+    # checkbox whose unticked state means "no filter".
+    scope :outstanding, ->(value = true) {
+      ActiveModel::Type::Boolean.new.cast(value) ? available : exhausted
+    }
+
+    # Whether the credit came from redeeming a gift card, as opposed to a
+    # return, an exchange, a claim or an admin issuing it by hand.
+    scope :from_gift_card, ->(value = true) {
+      ActiveModel::Type::Boolean.new.cast(value) ? with_gift_card : without_gift_card
+    }
 
     after_save :store_event
     before_destroy :validate_no_amount_used
@@ -64,8 +85,19 @@ module Spree
       self[:amount] = Spree::LocalizedNumber.parse(amount)
     end
 
-    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency]
+    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo
+                                                 originator_id originator_type]
     self.whitelisted_ransackable_associations = %w[customer created_by]
+    self.whitelisted_ransackable_scopes = %w[available exhausted with_gift_card without_gift_card
+                                             outstanding from_gift_card]
+
+    # Ransack casts a scope's argument before calling it and then declines to
+    # apply the scope at all when the cast yields `false` — which is exactly
+    # the "already spent" / "not from a gift card" half of each filter.
+    # Keeping the value a string lets the scope decide for itself.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[outstanding from_gift_card]
+    end
 
     def amount_remaining
       amount - amount_used - amount_authorized

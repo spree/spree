@@ -343,6 +343,7 @@ import type {
   StockTransferCreateParams,
   StockTransferUpdateParams,
   StoreCreditApplyParams,
+  StoreCreditListResponse,
   StoreDataSources,
   StorePayoutProvider,
   StoreUpdateParams,
@@ -454,6 +455,7 @@ import type {
   StockTransfer,
   Store,
   StoreCredit,
+  StoreCreditEvent,
   Supplier,
   TaxCategory,
   TaxExemptionCertificate,
@@ -3469,6 +3471,58 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/gift_cards/${id}`, options),
+  }
+
+  // ============================================
+  // Store credits, across all customers
+  // ============================================
+
+  /**
+   * Read-only view of what the store owes in prepaid balances. Issuing,
+   * editing and deleting a credit stays nested under the customer that holds
+   * it (`client.customers.storeCredits`).
+   *
+   * The list's `meta.totals` carries the outstanding balance as one row per
+   * currency, summed over the same filter the page used — so filtering by a
+   * customer answers that customer's balance and no filter answers the
+   * store's liability.
+   */
+  readonly storeCredits = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<StoreCreditListResponse> =>
+      this.request<StoreCreditListResponse>('GET', '/store_credits', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<StoreCredit> =>
+      this.request<StoreCredit>('GET', `/store_credits/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    /** The credit's ledger — how its balance got to where it is. */
+    events: {
+      list: (
+        storeCreditId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<StoreCreditEvent>> =>
+        this.request<PaginatedResponse<StoreCreditEvent>>(
+          'GET',
+          `/store_credits/${storeCreditId}/events`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+    },
   }
 
   // ============================================

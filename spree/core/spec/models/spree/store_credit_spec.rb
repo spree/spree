@@ -96,6 +96,58 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe '.exhausted' do
+    it 'is every credit with nothing left to spend' do
+      spent = create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_used: 20) }
+      committed = create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_authorized: 20) }
+      available = create(:store_credit, amount: 20)
+
+      result = described_class.exhausted
+      expect(result).to include(spent, committed)
+      expect(result).not_to include(available)
+    end
+
+    it 'composes with the caller\'s own scoping rather than replacing it' do
+      store = create(:store)
+      mine = create(:store_credit, store: store, amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+      theirs = create(:store_credit, store: create(:store), amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+
+      result = store.store_credits.exhausted
+      expect(result).to include(mine)
+      expect(result).not_to include(theirs)
+    end
+  end
+
+  describe '.outstanding' do
+    let!(:available) { create(:store_credit, amount: 20) }
+    let!(:spent) { create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_used: 20) } }
+
+    it 'answers what is still owed when true' do
+      expect(described_class.outstanding(true)).to contain_exactly(available)
+    end
+
+    it 'answers what has been spent when false' do
+      expect(described_class.outstanding(false)).to contain_exactly(spent)
+    end
+
+    it 'reads a string the way Ransack passes it' do
+      expect(described_class.outstanding('false')).to contain_exactly(spent)
+    end
+  end
+
+  describe '.from_gift_card' do
+    let!(:from_card) { create(:store_credit, amount: 20, originator: create(:gift_card)) }
+    let!(:by_hand) { create(:store_credit, amount: 20) }
+
+    it 'answers the gift card redemptions when true' do
+      expect(described_class.from_gift_card('true')).to contain_exactly(from_card)
+    end
+
+    it 'answers everything else when false' do
+      expect(described_class.from_gift_card('false')).to contain_exactly(by_hand)
+    end
+  end
+
   describe '#display_amount' do
     it 'returns a Spree::Money instance' do
       expect(store_credit.display_amount).to be_instance_of(Spree::Money)

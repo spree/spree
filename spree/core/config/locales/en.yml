@@ -1450,6 +1450,7 @@ en:
         analytics: Analytics
         catalog: Catalog
         customers: Customers
+        loyalty: Loyalty
         marketing: Marketing
         orders: Orders
         settings: Settings
