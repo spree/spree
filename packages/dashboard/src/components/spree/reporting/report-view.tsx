@@ -194,17 +194,29 @@ function MetricTile({
   const { i18n } = useTranslation()
   return (
     <>
-      <span className="text-xs text-muted-foreground">{metric.label}</span>
-      <span className="flex items-center gap-2">
+      {/* One line, always. A label that wraps makes its tile taller than the
+          ones beside it, so a row of tiles stops sharing a baseline — and
+          `title` keeps the full text reachable on the narrow widths where a
+          long label is the one that gets cut. */}
+      <span className="truncate text-xs text-muted-foreground" title={metric.label}>
+        {metric.label}
+      </span>
+      {/* `min-w-0` so the figure can shrink rather than pushing the badge out
+          of the tile and over its neighbour. */}
+      <span className="flex min-w-0 items-center gap-2">
         <span
           className={cn(
-            'font-bold leading-none tabular-nums',
+            'truncate font-bold leading-none tabular-nums',
             size === 'lg' ? 'text-2xl' : 'text-lg',
           )}
         >
           {formatMetric(total, metric, i18n.language)}
         </span>
-        {compare && <GrowthBadge growth={total?.growth} />}
+        {compare && (
+          <span className="shrink-0">
+            <GrowthBadge growth={total?.growth} />
+          </span>
+        )}
       </span>
     </>
   )
@@ -348,7 +360,10 @@ export function TimeSeriesChart({
             type="button"
             onClick={() => setActiveName(metric.name)}
             className={cn(
-              'relative flex flex-col justify-center gap-1 border-l px-6 py-4 text-left first:border-l-0',
+              // `min-w-0`: a grid item defaults to `min-width: auto`, which
+              // refuses to shrink below its content and defeats the truncation
+              // on the label and figure inside.
+              'relative flex min-w-0 flex-col justify-center gap-1 border-l px-6 py-4 text-left first:border-l-0',
               active.name === metric.name ? 'bg-muted/50' : 'hover:bg-muted/25',
             )}
           >
