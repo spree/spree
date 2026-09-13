@@ -8,8 +8,12 @@ class IndexReportingLifetimeAndPromotionColumns < ActiveRecord::Migration[8.1]
   # The promotion breakdown probes discounts per line item, filtered to
   # promotion rows; carrying `kind` in the index keeps those probes from
   # visiting the row itself.
+  # Cart reporting anchors on when a basket was started, and `spree_carts` had
+  # no index pairing the store with that column — so every cart report scanned
+  # the store's whole cart history to find one period's rows.
   def change
     add_index :spree_orders, %i[store_id email]
     add_index :spree_discounts, %i[line_item_id kind]
+    add_index :spree_carts, %i[store_id created_at]
   end
 end

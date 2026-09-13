@@ -14,8 +14,15 @@ module Spree
         # Roughly a century — long enough for any report a merchant would read,
         # short enough that the widest one still fits in memory at day grain.
         MAX_RANGE_DAYS = 36_600
-        COMPARISON_OPERATORS = { eq: '=', gt: '>', gte: '>=', lt: '<', lte: '<=' }.freeze
-        COMPARISON_METHODS = { eq: :==, gt: :>, gte: :>=, lt: :<, lte: :<= }.freeze
+        # SQL operator and Ruby message for each metric-filter op, paired so the
+        # HAVING path and the Ruby path for include_empty cannot drift apart.
+        COMPARISONS = { eq: ['=', :==], gt: ['>', :>], gte: ['>=', :>=],
+                        lt: ['<', :<], lte: ['<=', :<=] }.freeze
+        # Every hour bucket label, from the three adapters' SQL and the Ruby
+        # zero-fill alike, has to render identically or each bucket duplicates.
+        HOUR_BUCKET_FORMAT = '%Y-%m-%d %H:00:00'.freeze
+        # Upper bound on one population batch when filling empty rows.
+        MEMBER_BATCH_SIZE = 1_000
 
         def execute(query)
           @query = query
@@ -52,8 +59,8 @@ module Spree
         # Ungrouped aggregates use the single [] key.
         def aggregate(range, grouped:, push_sort: false, key_filter: nil)
           rows = Hash.new { |h, k| h[k] = {} }
-          # Cart metrics are judged by the clock at the end of the period being
-          # aggregated, so the memoized placeholders are rebuilt per period.
+          # Read by #abandoned_cutoff: a cart is judged by the clock at the end
+          # of the period being aggregated, not by today's.
           self.aggregating_range = range
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
@@ -139,7 +146,7 @@ module Spree
             # the aggregate beside it is registered SQL.
             scope = scope.having(
               Arel.sql("#{resolve_sql(metric.sql_for(grouped: true))} " \
-                       "#{COMPARISON_OPERATORS.fetch(filter[:op])} ?"),
+                       "#{COMPARISONS.fetch(filter[:op]).first} ?"),
               filter[:value]
             )
           end
@@ -191,12 +198,18 @@ module Spree
         # while the ungrouped Total still counts them, so the rows quietly fail
         # to add up. Left-joining produces a NULL key instead, which is a real
         # group the hydration already renders as "Unassigned".
+        # How a dimension's joins are reached from the executing base is
+        # registry data (`reaches`), so nothing here branches on a base name:
+        # a dimension on this base joins directly, one on a reachable base
+        # joins through the association that base declared.
         def join_for(scope, dimension, base)
           return scope if dimension.joins.blank?
-          return scope.left_joins(dimension.joins) if dimension.base == base
-          return scope.left_joins(order: dimension.joins) if base == :line_items && dimension.base == :orders
 
-          scope
+          definition = query.registry.base!(base)
+          return scope unless definition.reaches?(dimension.base)
+
+          path = definition.path_to(dimension.base)
+          scope.left_joins(path ? { path => dimension.joins } : dimension.joins)
         end
 
         # ---- sorted/limited rankings ----
@@ -264,8 +277,14 @@ module Spree
           format(fragment, placeholders)
         end
 
+        # Table names never vary, so they are built once; the cutoff is the one
+        # placeholder that depends on which period is being aggregated.
         def placeholders
-          @placeholders ||= {
+          table_placeholders.merge(abandoned_cutoff: abandoned_cutoff)
+        end
+
+        def table_placeholders
+          @table_placeholders ||= {
             orders: Spree::Order.table_name,
             line_items: Spree::LineItem.table_name,
             variants: Spree::Variant.table_name,
@@ -281,7 +300,7 @@ module Spree
             carts: Spree::Cart.table_name,
             discounts: Spree::Discount.table_name,
             promotions: Spree::Promotion.table_name
-          }.merge(abandoned_cutoff: abandoned_cutoff)
+          }
         end
 
         # The instant a cart must have been quiet since to count as abandoned:
@@ -367,7 +386,7 @@ module Spree
 
           # MySQL and SQLite format the bucket themselves; only PostgreSQL's
           # date_trunc hands back a Time.
-          raw.respond_to?(:strftime) ? raw.strftime('%Y-%m-%d %H:00:00') : raw.to_s
+          raw.respond_to?(:strftime) ? raw.strftime(HOUR_BUCKET_FORMAT) : raw.to_s
         end
 
         # Store-timezone day/month buckets, per database. PostgreSQL converts
@@ -391,14 +410,14 @@ module Spree
             when /mysql/i
               local = "CONVERT_TZ(#{column}, '+00:00', '#{format_offset(utc_offset)}')"
               case grain
-              when :hour then "DATE_FORMAT(#{local}, '%Y-%m-%d %H:00:00')"
+              when :hour then "DATE_FORMAT(#{local}, '#{HOUR_BUCKET_FORMAT}')"
               when :day then "DATE(#{local})"
               when :week then "DATE(DATE_SUB(#{local}, INTERVAL WEEKDAY(#{local}) DAY))"
               when :month then "DATE_FORMAT(#{local}, '%Y-%m-01')"
               end
             else # SQLite — weeks start on Monday (ISO), matching the other adapters
               case grain
-              when :hour then "strftime('%Y-%m-%d %H:00:00', #{column}, '#{utc_offset} seconds')"
+              when :hour then "strftime('#{HOUR_BUCKET_FORMAT}', #{column}, '#{utc_offset} seconds')"
               when :day then "DATE(#{column}, '#{utc_offset} seconds')"
               when :week then "DATE(#{column}, '#{utc_offset} seconds', '+1 day', 'weekday 1', '-7 days')"
               when :month then "strftime('%Y-%m-01', #{column}, '#{utc_offset} seconds')"
@@ -494,7 +513,7 @@ module Spree
               value = row[:metrics].dig(filter[:metric].name, :value)
               next true if value.nil?
 
-              value.to_d.public_send(COMPARISON_METHODS.fetch(filter[:op]), filter[:value])
+              value.to_d.public_send(COMPARISONS.fetch(filter[:op]).last, filter[:value])
             end
           end
         end
@@ -526,11 +545,28 @@ module Spree
           # asking "which of these shoes never sold" must not answer with every
           # unsold product in the catalogue.
           relation = narrow_population(relation, dim[:dimension])
-          relation = relation.where.not(id: observed.flatten) if observed.any?
           # Ordered before limiting: without it two identical "which products
           # never sold" requests can come back with different products.
-          relation = relation.reorder(:id).limit(query.limit) if query.limit
-          relation.pluck(:id).map { |id| [id] }
+          relation = relation.reorder(:id)
+          # Only as many rows as the page can show, plus room to drop the ones
+          # that already have facts. Excluding `observed` through a NOT IN list
+          # instead would send one bind per observed key — tens of thousands on
+          # a large catalogue, past what PostgreSQL accepts at all — so the
+          # rows are fetched and filtered here.
+          wanted = query.limit
+          return fetch_member_keys(relation, observed) if wanted.nil?
+
+          keys = []
+          relation.in_batches(of: [wanted * 4, MEMBER_BATCH_SIZE].min) do |batch|
+            keys.concat(fetch_member_keys(batch, observed))
+            break if keys.size >= wanted
+          end
+          keys.first(wanted)
+        end
+
+        def fetch_member_keys(relation, observed)
+          seen = observed.to_set { |key| key.first }
+          relation.pluck(:id).reject { |id| seen.include?(id) }.map { |id| [id] }
         end
 
         # Every bucket in the range becomes a row, so an absurd range is an
@@ -567,7 +603,7 @@ module Spree
           last = range.last.in_time_zone(query.time_zone)
           buckets = []
           while cursor <= last
-            buckets << cursor.strftime('%Y-%m-%d %H:00:00')
+            buckets << cursor.strftime(HOUR_BUCKET_FORMAT)
             cursor += 1.hour
           end
           buckets.uniq

@@ -134,7 +134,8 @@ export function servableGrain(
   return draft.grain
 }
 
-function maxBuckets(schema?: ReportingSchema): number {
+/** The server's bucket ceiling, or its published default until the schema loads. */
+export function maxBuckets(schema?: ReportingSchema): number {
   return schema?.limits?.max_buckets ?? 2000
 }
 

@@ -40,6 +40,7 @@ import { customerAutocompleteProps } from '../../../hooks/use-customers'
 import { useAllMarkets } from '../../../hooks/use-markets'
 import { productAutocompleteProps } from '../../../hooks/use-products'
 import {
+  maxBuckets as bucketCeiling,
   findDimension,
   hourGrainFitsRange,
   isTimeDimension,
@@ -99,7 +100,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
     ...groupableDimensions.map((d) => ({ value: d.name, label: d.label })),
   ]
 
-  const maxBuckets = schema.limits.max_buckets ?? 2000
+  const maxBuckets = bucketCeiling(schema)
   const hourGrainFits = hourGrainFitsRange(draft.timeRange, maxBuckets)
 
   const grainOptions = (dimension?.grains ?? [])

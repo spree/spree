@@ -11,9 +11,13 @@ module Spree
       # A cart converts when an order was completed from it. Counted as
       # checkouts rather than orders: a basket spanning several sellers becomes
       # several orders from one cart, and that is one conversion.
+      # What counts as a real sale, in SQL. Spelled once because copies of it
+      # would silently diverge the first time an order gains a status.
+      COMPLETED_ORDER = "%{alias}.completed_at IS NOT NULL AND %{alias}.status <> 'canceled'".freeze
+
       CART_CONVERTED_CONDITION = <<~SQL.squish.freeze
         EXISTS (SELECT 1 FROM %{orders} o WHERE o.cart_id = %{carts}.id
-                  AND o.completed_at IS NOT NULL AND o.status <> 'canceled')
+                  AND #{format(COMPLETED_ORDER, alias: 'o')})
       SQL
 
       CARTS_CONVERTED_SUM = "SUM(CASE WHEN #{CART_CONVERTED_CONDITION} THEN 1 ELSE 0 END)".freeze
@@ -44,10 +48,6 @@ module Spree
              WHEN #{ABANDONED_CONDITION} THEN 'abandoned'
              ELSE 'active' END
       SQL
-
-      # What counts as a real sale, in SQL. Spelled once because six copies of
-      # it would silently diverge the first time an order gains a status.
-      COMPLETED_ORDER = "%{alias}.completed_at IS NOT NULL AND %{alias}.status <> 'canceled'".freeze
 
       # One customer's whole order history, correlated on the email the
       # `customer` dimension groups by and scoped to the same store.
@@ -229,7 +229,8 @@ module Spree
                  currency ? scope.where(currency: currency) : scope
                }
 
-          base :line_items, family: :sales, table: '%{line_items}', reaches: %i[line_items orders],
+          base :line_items, family: :sales, table: '%{line_items}',
+               reaches: { line_items: nil, orders: :order },
                time_column: '%{orders}.completed_at',
                clock: 'anchored on when the order completed',
                relation: lambda { |store, range, currency|

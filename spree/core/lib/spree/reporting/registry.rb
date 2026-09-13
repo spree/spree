@@ -137,7 +137,11 @@ module Spree
     #   on when the order completed"). Named in the cross-family refusal so a
     #   caller can see why two metrics cannot share a row.
     Base = Struct.new(:name, :family, :table, :relation, :time_column, :reaches, :clock, keyword_init: true) do
-      def reaches?(dimension_base) = Array(reaches).include?(dimension_base)
+      def reaches?(dimension_base) = reaches.key?(dimension_base)
+
+      # The association a dimension on `dimension_base` is joined through from
+      # here — nil when it is this base's own, so the join needs no hop.
+      def path_to(dimension_base) = reaches[dimension_base]
     end
 
     # A point-in-time count of things that need attention right now: orders
@@ -183,12 +187,23 @@ module Spree
       # @param relation [Proc] ->(store, range, currency) → store-scoped relation
       # @param time_column [String] table-qualified column the range filters on
       # @param reaches [Array<Symbol>] bases whose dimensions this one can group by
+      # @param reaches [Hash, Array, nil] bases whose dimensions this one can
+      #   group by, mapped to the association they are reached through (nil for
+      #   its own). An Array is read as "reachable, on this base's own table".
       def base(name, replace: false, family:, table:, relation:, time_column:, reaches: nil, clock: nil)
         name = name.to_sym
         raise ArgumentError, "base #{name} already registered (pass replace: true to override)" if @bases.key?(name) && !replace
 
         @bases[name] = Base.new(name: name, family: family, table: table, relation: relation,
-                                time_column: time_column, reaches: reaches || [name], clock: clock)
+                                time_column: time_column, reaches: normalize_reaches(name, reaches),
+                                clock: clock)
+      end
+
+      def normalize_reaches(name, reaches)
+        return { name => nil } if reaches.nil?
+        return reaches.to_h { |base_name| [base_name, nil] } if reaches.is_a?(Array)
+
+        reaches
       end
 
       def base!(name)

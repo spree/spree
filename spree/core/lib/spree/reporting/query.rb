@@ -229,7 +229,6 @@ module Spree
           raise InvalidQuery,
                 "dimension #{dimension.name} does not support include_empty — it has no record list to draw empty rows from"
         end
-
       end
 
       # Metric filters are a separate contract key rather than an op inside
@@ -465,7 +464,7 @@ module Spree
 
       def coarser_grains(entry)
         available = entry[:dimension].grains
-        available[(available.index(entry[:grain]).to_i + 1)..].presence || [available.last]
+        available.drop(available.index(entry[:grain]) + 1)
       end
 
       # A metric declaring `requires_grouping` covers more than the query's
