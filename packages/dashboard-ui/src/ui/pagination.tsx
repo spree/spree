@@ -33,8 +33,10 @@ export function Pagination({
   pageSizeOptions = [10, 20, 25, 30, 50],
 }: PaginationProps) {
   const { t } = useTranslation()
+  const showPageSize = Boolean(onPageSizeChange) && meta.count > 0
+  const showPageNav = meta.pages > 1
 
-  if (meta.pages <= 1 && !onPageSizeChange) return null
+  if (!showPageSize && !showPageNav) return null
 
   return (
     <div className="flex items-center justify-between border-t border-border-subtle pr-3 pl-4 py-2">
@@ -46,14 +48,14 @@ export function Pagination({
         })}
       </div>
       <div className="flex items-center gap-2 sm:gap-6">
-        {onPageSizeChange && (
+        {showPageSize && (
           <div className="hidden items-center gap-2 sm:flex">
             <span className="text-sm text-muted-foreground">
               {t('admin.components.pagination.rows_per_page')}
             </span>
             <Select
               value={`${meta.limit}`}
-              onValueChange={(value) => onPageSizeChange(Number(value))}
+              onValueChange={(value) => onPageSizeChange?.(Number(value))}
             >
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue />
@@ -68,7 +70,7 @@ export function Pagination({
             </Select>
           </div>
         )}
-        {meta.pages > 1 && (
+        {showPageNav && (
           <>
             <span className="hidden whitespace-nowrap text-sm text-muted-foreground sm:inline">
               {t('admin.common.page_of', { page: meta.page, total: meta.pages })}
