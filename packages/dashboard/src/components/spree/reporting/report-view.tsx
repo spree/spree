@@ -329,9 +329,18 @@ export function TimeSeriesChart({
 
   return (
     <Card>
+      {/* Five equal columns only once there is room for them. Forced at phone
+          width each tile is about seventy pixels wide, which breaks "Average
+          order value" across three lines and pushes the figure out of the
+          tile — so below `sm` the strip scrolls sideways at a legible width
+          instead. */}
       <CardHeader
-        className="grid h-auto gap-0 border-b p-0"
-        style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+        className="grid h-auto auto-cols-[minmax(9rem,1fr)] grid-flow-col gap-0 overflow-x-auto border-b p-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          // Applied at every width; below `sm` the auto-column minimum above
+          // wins and the strip overflows into a scroll instead of squeezing.
+          gridTemplateColumns: columns > 0 ? `repeat(${columns}, minmax(9rem, 1fr))` : undefined,
+        }}
       >
         {metrics.map((metric) => (
           <button

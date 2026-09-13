@@ -3,6 +3,7 @@ import { SearchIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useOptionalCommandPalette } from '../hooks/use-command-palette'
 import { useStore } from '../providers/store-provider'
+import { SidebarUser } from './sidebar-user'
 
 /**
  * The bar a phone gets in place of the nav rail.
@@ -18,7 +19,13 @@ import { useStore } from '../providers/store-provider'
  * titles and actions stay with `PageHeader` below, so this never becomes a
  * second place to look for them.
  */
-export function MobileTopBar() {
+export function MobileTopBar({
+  uiLocales = [],
+  onEditProfile,
+}: {
+  uiLocales?: ReadonlyArray<{ code: string; name: string }>
+  onEditProfile?: () => void
+} = {}) {
   const { t } = useTranslation()
   const { store, isLoading } = useStore()
   // Absent in panels that mount no palette (the seller panel), where the
@@ -45,6 +52,8 @@ export function MobileTopBar() {
           <SearchIcon className="size-5" />
         </button>
       )}
+
+      <SidebarUser variant="bar" uiLocales={uiLocales} onEditProfile={onEditProfile} />
     </div>
   )
 }

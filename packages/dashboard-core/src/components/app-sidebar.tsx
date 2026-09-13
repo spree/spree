@@ -134,7 +134,11 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-1">
+        {/* The switcher and the account row are hidden on a phone: the top bar
+            already names the store and carries the account menu, so repeating
+            both inside the drawer spends two rows of a small screen saying
+            what is visible behind it. The drawer is for navigating. */}
+        <div className="hidden items-center gap-1 md:flex">
           <div className="min-w-0 flex-1">{header ?? <StoreSwitcher />}</div>
           <CollapseTrigger />
         </div>
@@ -152,7 +156,7 @@ export function AppSidebar({
             list is never actually empty and a length check would never fire. */}
         {isLoading ? <NavSkeleton /> : <NavMain items={navItems} bottomItems={bottomItems} />}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="hidden md:flex">
         <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
       </SidebarFooter>
     </Sidebar>

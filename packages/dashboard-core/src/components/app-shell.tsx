@@ -129,7 +129,7 @@ export function AppShell({
           tabIndex={-1}
           className="themed-scrollbar flex min-w-0 flex-1 flex-col overflow-y-auto me-[5px] outline-none"
         >
-          <MobileTopBar />
+          <MobileTopBar uiLocales={uiLocales} onEditProfile={onEditProfile} />
           <SheetTopBar tenantId={tenantId} inSettings={inSettings} />
           <MobileBreadcrumbBar
             tenantId={tenantId}
