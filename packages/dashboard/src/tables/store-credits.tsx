@@ -96,8 +96,14 @@ defineTable<StoreCredit>('store-credits', {
       ],
       quickFilter: true,
       default: false,
+      // Read from the same three columns the `outstanding` scope uses, not
+      // from `amount_remaining`: a credit with an in-flight authorization
+      // still has a remaining balance but is not available to spend, so a
+      // badge driven by `amount_remaining` would label a row "Outstanding"
+      // that filtering by Outstanding hides.
       render: (credit) =>
-        Number(credit.amount_remaining) > 0 ? (
+        Number(credit.amount_authorized) === 0 &&
+        Number(credit.amount_used) < Number(credit.amount) ? (
           <Badge variant="secondary">{i18n.t('admin.store_credits.filters.outstanding')}</Badge>
         ) : (
           <Badge variant="outline">{i18n.t('admin.store_credits.filters.spent')}</Badge>

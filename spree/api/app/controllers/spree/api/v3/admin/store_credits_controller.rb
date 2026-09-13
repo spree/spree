@@ -42,8 +42,13 @@ module Spree
             # Ransacked afresh off the bare scope: the collection carries
             # `includes(:originator)` for the rows it renders, and a polymorphic
             # association cannot be eager-loaded under an aggregate.
-            rows = scope.ransack(ransack_params).
-                   result(distinct: collection_distinct?).
+            # Summed over DISTINCT ids, not over the joined rows: a filter that
+            # reaches through a `has_many` would otherwise match a credit once
+            # per joined row and count its amount that many times, overstating
+            # what the store owes. Today's allowlist only exposes `belongs_to`
+            # associations, so nothing duplicates — but the liability figure
+            # must not depend on that staying true.
+            rows = scope.where(id: scope.ransack(ransack_params).result.select(:id)).
                    reorder(nil).
                    group(:currency).
                    pluck(

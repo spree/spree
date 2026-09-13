@@ -16,6 +16,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'
+import type { ActionName, SubjectName } from '../lib/permissions'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { useOptionalStore } from '../providers/store-provider'
 import { type NavItem, NavMain } from './nav-main'
@@ -48,14 +49,21 @@ function entryToNavItem(entry: NavEntry, tenantId: string, t: (key: string) => s
 
 /** Hide items the user can't act on — `read` unless the entry says otherwise. */
 function filterByPermissions(items: NavItem[], permissions: Permissions): NavItem[] {
-  return items
-    .filter((item) => !item.subject || permissions.can(item.action ?? 'read', item.subject))
-    .map((item) => ({
-      ...item,
-      items: item.items?.filter(
-        (sub) => !sub.subject || permissions.can(sub.action ?? 'read', sub.subject),
-      ),
-    }))
+  const allowed = (entry: { subject?: SubjectName; action?: ActionName }) =>
+    !entry.subject || permissions.can(entry.action ?? 'read', entry.subject)
+
+  return (
+    items
+      .filter(allowed)
+      .map((item) => ({
+        ...item,
+        items: item.items?.filter(allowed),
+      }))
+      // A group that declares no subject of its own is gated by its children —
+      // it has no page to land on, so once every child is filtered out the
+      // group would link somewhere the role cannot open.
+      .filter((item) => item.subject || !item.items || item.items.length > 0)
+  )
 }
 
 /**

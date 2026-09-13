@@ -35,12 +35,21 @@ module Spree
           # that issued it, or null when an admin issued it by hand. The type
           # is the polymorphic shorthand (`return`, `gift_card`), never a Ruby
           # class name.
+          #
+          # Both read the columns rather than the association: returns, claims
+          # and exchanges are paranoid, so loading the record answers nil once
+          # it is soft-deleted — which would leave a type naming an originator
+          # beside a null id, and a client rendering "Return" for something it
+          # cannot link to.
           attribute :originator_type do |store_credit|
             Spree::Base.polymorphic_api_type(store_credit.originator_type)
           end
 
           attribute :originator_id do |store_credit|
-            store_credit.originator&.prefixed_id
+            next nil if store_credit.originator_id.blank? || store_credit.originator_type.blank?
+
+            store_credit.originator_type.safe_constantize&.
+              prefixed_id_for(store_credit.originator_id)
           end
 
           one :customer,

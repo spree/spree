@@ -249,7 +249,10 @@ nav.add({
   labelKey: 'admin.nav.loyalty',
   path: '/loyalty/gift-cards',
   icon: GiftIcon,
-  subject: Subject.GiftCard,
+  // No subject of its own: the group has no landing page, so gating it on
+  // gift cards would hide Store Credits from a role that may read credits but
+  // not cards. The children declare their own subjects and the sidebar drops
+  // the ones a role cannot open.
   position: 475,
   children: [
     {

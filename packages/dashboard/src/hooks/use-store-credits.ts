@@ -15,12 +15,19 @@ export function useStoreCredit(id: string | undefined, expand?: string[]) {
   })
 }
 
-/** The credit's ledger — every movement of its balance, newest first. */
-export function useStoreCreditEvents(storeCreditId: string | undefined) {
-  const queryKey = useResourceKey('store-credits', storeCreditId ?? 'noop', 'events')
+/**
+ * The credit's ledger — every movement of its balance, newest first.
+ *
+ * Paged rather than capped: a credit authorized and voided across many
+ * checkouts accumulates entries without limit, and this panel is the audit
+ * view, so silently dropping the older half is the one thing it must not do.
+ */
+export function useStoreCreditEvents(storeCreditId: string | undefined, page = 1) {
+  const queryKey = useResourceKey('store-credits', storeCreditId ?? 'noop', 'events', page)
   return useQuery({
     queryKey,
-    queryFn: () => adminClient.storeCredits.events.list(storeCreditId as string, { limit: 100 }),
+    queryFn: () => adminClient.storeCredits.events.list(storeCreditId as string, { page }),
     enabled: !!storeCreditId,
+    placeholderData: (previous) => previous,
   })
 }

@@ -133,6 +133,15 @@ describe Spree::StoreCredit, type: :model do
     it 'reads a string the way Ransack passes it' do
       expect(described_class.outstanding('false')).to contain_exactly(spent)
     end
+
+    # An `_in`-style predicate arrives as an array, and casting the array
+    # itself answers `true` for any non-empty value — which would silently
+    # invert the filter and show money owed when the merchant asked what had
+    # been spent.
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.outstanding(['false'])).to contain_exactly(spent)
+      expect(described_class.outstanding(['true'])).to contain_exactly(available)
+    end
   end
 
   describe '.from_gift_card' do
@@ -145,6 +154,11 @@ describe Spree::StoreCredit, type: :model do
 
     it 'answers everything else when false' do
       expect(described_class.from_gift_card('false')).to contain_exactly(by_hand)
+    end
+
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.from_gift_card(['false'])).to contain_exactly(by_hand)
+      expect(described_class.from_gift_card(['true'])).to contain_exactly(from_card)
     end
   end
 

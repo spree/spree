@@ -45,6 +45,19 @@ RSpec.describe Spree::Api::V3::Admin::StoreCreditsController, type: :controller 
       expect(entry['originator_id']).to eq(gift_card.prefixed_id)
     end
 
+    # The id is encoded from the column rather than loaded through the
+    # association, so a type and an id are always reported together — and the
+    # list does not fetch one originator per row to re-encode an id it holds.
+    it 'reports the originator id without loading the originator' do
+      returned = create(:return, store: store)
+      store_credit.update!(originator: returned)
+
+      subject
+      entry = json_response['data'].find { |c| c['id'] == store_credit.prefixed_id }
+      expect(entry['originator_type']).to eq('return')
+      expect(entry['originator_id']).to eq(returned.prefixed_id)
+    end
+
     it 'leaves the originator null for a credit an admin issued by hand' do
       subject
       entry = json_response['data'].find { |c| c['id'] == store_credit.prefixed_id }

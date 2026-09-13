@@ -64,14 +64,24 @@ module Spree
     # two bare scopes, so the filter control offers a choice instead of a
     # checkbox whose unticked state means "no filter".
     scope :outstanding, ->(value = true) {
-      ActiveModel::Type::Boolean.new.cast(value) ? available : exhausted
+      flag_true?(value) ? available : exhausted
     }
 
     # Whether the credit came from redeeming a gift card, as opposed to a
     # return, an exchange, a claim or an admin issuing it by hand.
     scope :from_gift_card, ->(value = true) {
-      ActiveModel::Type::Boolean.new.cast(value) ? with_gift_card : without_gift_card
+      flag_true?(value) ? with_gift_card : without_gift_card
     }
+
+    # Reads a two-state filter argument. Unwraps an array first: a Ransack
+    # `_in`-style predicate arrives as `["false"]`, and casting that whole
+    # array answers `true` — silently inverting the filter the merchant chose.
+    #
+    # @param value [Object] the raw scope argument
+    # @return [Boolean]
+    def self.flag_true?(value)
+      ActiveModel::Type::Boolean.new.cast(Array.wrap(value).first)
+    end
 
     after_save :store_event
     before_destroy :validate_no_amount_used

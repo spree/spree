@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardContent,
+  Pagination,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -51,6 +52,10 @@ function StoreCreditsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
+  // Mirrored from the list response rather than fetched separately, so the
+  // cards always describe the same filtered set as the rows. `queryFn` only
+  // runs on an actual fetch, so the last totals are kept across a cached
+  // render instead of blanking the cards until a refetch lands.
   const [totals, setTotals] = useState<StoreCreditCurrencyTotal[]>([])
 
   const openCredit = (id: string) =>
@@ -82,8 +87,6 @@ function StoreCreditsPage() {
           queryKey="store-credits"
           queryFn={async (params) => {
             const response = await listStoreCredits(params)
-            // The same request the table renders also carries the outstanding
-            // balance, so the cards always agree with the rows beneath them.
             setTotals(response.meta.totals ?? [])
             return response
           }}
@@ -153,8 +156,9 @@ function StoreCreditSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
+  const [ledgerPage, setLedgerPage] = useState(1)
   const { data: credit, isLoading } = useStoreCredit(id, ['customer', 'created_by'])
-  const { data: events, isLoading: eventsLoading } = useStoreCreditEvents(id)
+  const { data: events, isLoading: eventsLoading } = useStoreCreditEvents(id, ledgerPage)
 
   const customerLabel = credit?.customer
     ? erasedFieldValue(credit.customer.email, credit.customer.anonymized)
@@ -218,22 +222,28 @@ function StoreCreditSheet({
                 {eventsLoading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : events?.data.length ? (
-                  <ul className="flex flex-col divide-y rounded-md border">
-                    {events.data.map((event) => (
-                      <li key={event.id} className="flex items-baseline justify-between gap-3 p-3">
-                        <span className="text-sm">{event.display_action ?? event.action}</span>
-                        <span className="flex items-baseline gap-3">
-                          <span className="text-sm tabular-nums">{event.display_amount}</span>
-                          <time
-                            className="whitespace-nowrap text-muted-foreground text-xs"
-                            dateTime={event.created_at}
-                          >
-                            {new Date(event.created_at).toLocaleDateString()}
-                          </time>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <ul className="flex flex-col divide-y rounded-md border">
+                      {events.data.map((event) => (
+                        <li
+                          key={event.id}
+                          className="flex items-baseline justify-between gap-3 p-3"
+                        >
+                          <span className="text-sm">{event.display_action ?? event.action}</span>
+                          <span className="flex items-baseline gap-3">
+                            <span className="text-sm tabular-nums">{event.display_amount}</span>
+                            <time
+                              className="whitespace-nowrap text-muted-foreground text-xs"
+                              dateTime={event.created_at}
+                            >
+                              {new Date(event.created_at).toLocaleDateString()}
+                            </time>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {events.meta && <Pagination meta={events.meta} onPageChange={setLedgerPage} />}
+                  </>
                 ) : (
                   <p className="text-muted-foreground text-sm">
                     {t('admin.store_credits.ledger.empty')}

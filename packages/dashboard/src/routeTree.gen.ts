@@ -64,6 +64,7 @@ import { Route as ReportsNewRouteImport } from './routes/_authenticated/$storeId
 import { Route as ReportsReportIdRouteImport } from './routes/_authenticated/$storeId/reports/$reportId'
 import { Route as PurchaseOrdersNewRouteImport } from './routes/_authenticated/$storeId/purchase-orders/new'
 import { Route as PromotionsNewRouteImport } from './routes/_authenticated/$storeId/promotions/new'
+import { Route as PromotionsGiftCardsRouteImport } from './routes/_authenticated/$storeId/promotions/gift-cards'
 import { Route as PromotionsPromotionIdRouteImport } from './routes/_authenticated/$storeId/promotions/$promotionId'
 import { Route as ProductsTranslationsRouteImport } from './routes/_authenticated/$storeId/products/translations'
 import { Route as ProductsOptionsRouteImport } from './routes/_authenticated/$storeId/products/options'
@@ -381,6 +382,11 @@ const PromotionsNewRoute = PromotionsNewRouteImport.update({
   path: '/promotions/new',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const PromotionsGiftCardsRoute = PromotionsGiftCardsRouteImport.update({
+  id: '/promotions/gift-cards',
+  path: '/promotions/gift-cards',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const PromotionsPromotionIdRoute = PromotionsPromotionIdRouteImport.update({
   id: '/promotions/$promotionId',
   path: '/promotions/$promotionId',
@@ -619,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
   '/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
   '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
@@ -712,6 +719,7 @@ export interface FileRoutesByTo {
   '/$storeId/products/options': typeof ProductsOptionsRoute
   '/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/$storeId/promotions/new': typeof PromotionsNewRoute
   '/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
   '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
@@ -809,6 +817,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/products/options': typeof ProductsOptionsRoute
   '/_authenticated/$storeId/products/translations': typeof ProductsTranslationsRoute
   '/_authenticated/$storeId/promotions/$promotionId': typeof PromotionsPromotionIdRoute
+  '/_authenticated/$storeId/promotions/gift-cards': typeof PromotionsGiftCardsRoute
   '/_authenticated/$storeId/promotions/new': typeof PromotionsNewRoute
   '/_authenticated/$storeId/purchase-orders/new': typeof PurchaseOrdersNewRoute
   '/_authenticated/$storeId/reports/$reportId': typeof ReportsReportIdRoute
@@ -906,6 +915,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/options'
     | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
+    | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/purchase-orders/new'
     | '/$storeId/reports/$reportId'
@@ -999,6 +1009,7 @@ export interface FileRouteTypes {
     | '/$storeId/products/options'
     | '/$storeId/products/translations'
     | '/$storeId/promotions/$promotionId'
+    | '/$storeId/promotions/gift-cards'
     | '/$storeId/promotions/new'
     | '/$storeId/purchase-orders/new'
     | '/$storeId/reports/$reportId'
@@ -1095,6 +1106,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/products/options'
     | '/_authenticated/$storeId/products/translations'
     | '/_authenticated/$storeId/promotions/$promotionId'
+    | '/_authenticated/$storeId/promotions/gift-cards'
     | '/_authenticated/$storeId/promotions/new'
     | '/_authenticated/$storeId/purchase-orders/new'
     | '/_authenticated/$storeId/reports/$reportId'
@@ -1558,6 +1570,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PromotionsNewRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/promotions/gift-cards': {
+      id: '/_authenticated/$storeId/promotions/gift-cards'
+      path: '/promotions/gift-cards'
+      fullPath: '/$storeId/promotions/gift-cards'
+      preLoaderRoute: typeof PromotionsGiftCardsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/promotions/$promotionId': {
       id: '/_authenticated/$storeId/promotions/$promotionId'
       path: '/promotions/$promotionId'
@@ -1928,6 +1947,7 @@ interface authenticatedStoreIdRouteChildren {
   ProductsOptionsRoute: typeof ProductsOptionsRoute
   ProductsTranslationsRoute: typeof ProductsTranslationsRoute
   PromotionsPromotionIdRoute: typeof PromotionsPromotionIdRoute
+  PromotionsGiftCardsRoute: typeof PromotionsGiftCardsRoute
   PromotionsNewRoute: typeof PromotionsNewRoute
   PurchaseOrdersNewRoute: typeof PurchaseOrdersNewRoute
   ReportsReportIdRoute: typeof ReportsReportIdRoute
@@ -1988,6 +2008,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ProductsOptionsRoute: ProductsOptionsRoute,
   ProductsTranslationsRoute: ProductsTranslationsRoute,
   PromotionsPromotionIdRoute: PromotionsPromotionIdRoute,
+  PromotionsGiftCardsRoute: PromotionsGiftCardsRoute,
   PromotionsNewRoute: PromotionsNewRoute,
   PurchaseOrdersNewRoute: PurchaseOrdersNewRoute,
   ReportsReportIdRoute: ReportsReportIdRoute,
