@@ -38,7 +38,7 @@ export function DragHandle({ attributes, listeners, className, ...props }: DragH
       type="button"
       aria-label={t('admin.a11y.drag_to_reorder')}
       className={cn(
-        'flex h-full w-full items-center justify-center rounded-lg p-2 text-muted-foreground cursor-grab active:cursor-grabbing hover:bg-accent',
+        'flex h-full w-full items-center justify-center rounded-lg p-2 text-muted-foreground cursor-grab active:cursor-grabbing hover:bg-accent-strong hover:text-accent-foreground',
         className,
       )}
       {...attributes}

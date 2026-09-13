@@ -33,7 +33,7 @@ export function QuantityPicker({
       {units.map((unit) => (
         <div
           key={unit.id}
-          className="flex items-center justify-between gap-4 rounded-lg border p-3"
+          className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
         >
           <span className="min-w-0 truncate text-sm">{unit.label}</span>
           <Input

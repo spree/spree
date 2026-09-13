@@ -100,19 +100,27 @@
      stay light enough for --muted-foreground to clear 4.5:1 on it — which
      leaves it at 1.04:1 against the page, invisible as a selection. Two
      different jobs, two tokens. Nothing but near-black text lands on this
-     one (15.7:1), so it is free to be darker. */
-  --accent-strong: oklch(92.3% 0.003 48.717); /* stone-200 */
-  /* Hover, one step under --accent-strong so a nav item has somewhere to go
-     on hover *and* somewhere further to go when it is the active one. Stone
-     has no step between 100 and 200, so this is interpolated on stone's hue
-     rather than snapped — deliberate, like --border-control.
+     one, so it is free to be darker.
+
+     Interpolated on stone's hue rather than snapped to a step (like
+     --accent-hover and --border-control): stone-200 read heavier than a
+     selection needs to, and stone-100 is --accent itself, which would collapse
+     the two tokens into one and leave a hovered item darker than a selected
+     one. This sits between them. */
+  --accent-strong: oklch(94.7% 0.002 56);
+  /* Hover, between --accent and --accent-strong so a nav item has somewhere to
+     go on hover *and* somewhere further to go when it is the active one.
+     Interpolated on stone's hue rather than snapped — deliberate, like
+     --border-control.
 
      --accent is too light to be a hover here: on the sidebar's ground (the
      page colour, not a card) it measures 1.04:1, which is invisible. */
-  --accent-hover: oklch(94.7% 0.002 56);
+  --accent-hover: oklch(95.9% 0.002 56);
   /* The active item hovered. It darkens rather than lightening: a selected
-     row that goes paler under the pointer reads as being deselected. */
-  --accent-strong-hover: oklch(86.9% 0.005 56.366); /* stone-300 */
+     row that goes paler under the pointer reads as being deselected. Stays one
+     step under --accent-strong, or the two land on the same value and a
+     selected item stops responding to the pointer. */
+  --accent-strong-hover: oklch(92.3% 0.003 48.717); /* stone-200 */
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: var(--card);
   /* The full-strength rule colour. Nothing styles with it directly — the two
@@ -271,8 +279,12 @@
   --accent-hover: oklch(31% 0.008 34.298);
   --accent-strong-hover: oklch(44.4% 0.011 73.639); /* stone-600 */
   --destructive: oklch(0.704 0.191 22.216);
-  --border-base: oklch(1 0 0 / 12%);
-  --border: color-mix(in srgb, var(--border-base) 80%, transparent);
+  /* A white veil over whatever surface it crosses, so one value works on the
+     page ground and the raised sheet alike. Both shares below are half of it,
+     as in light mode, so a container's edge and the rules inside it are one
+     hairline weight. */
+  --border-base: oklch(1 0 0 / 16%);
+  --border: var(--border-base);
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* Light mode darkens the control edge away from the card; dark mode lightens
      it. Not the light value inverted — measured on this theme's own surfaces:
@@ -290,7 +302,11 @@
      track. --muted is the step under --nested-raised. */
   --track-recessed: var(--muted);
   --input: color-mix(in srgb, var(--border-base) 80%, transparent);
-  --ring: oklch(0.552 0.016 285); /* same blue ring as light, for focus parity */
+  /* The same blue as light mode, lifted for a dark ground. The previous value
+     was a near-grey (chroma 0.016) despite claiming parity, so a focused field
+     in dark mode drew a grey halo and lost the one signal that says "this is
+     where typing goes". */
+  --ring: oklch(0.68 0.19 258);
   --link: oklch(0.7 0.16 258);
   --link-hover: oklch(0.78 0.14 258);
   --chart-1: oklch(0.809 0.105 251.813);
@@ -554,6 +570,24 @@
   }
   &::-webkit-scrollbar-corner {
     background: transparent;
+  }
+}
+
+/* A bare `divide-y`/`divide-x` is a rule *inside* a container — a list's row
+   splits, a stacked set of fields — which is exactly what --border-subtle is
+   for.
+
+   Tailwind v4's divide utilities set only the border WIDTH on the children;
+   their colour comes from `border-color`, which the universal `*` rule in the
+   base layer sets to --border. This has to live in the `utilities` layer to
+   outrank that — layer order decides before specificity does — and has to
+   match the same children the utilities do.
+
+   `:where()` on the parent keeps specificity low enough that naming a colour
+   at the call site (`divide-border`) still wins. */
+@layer utilities {
+  :where(.divide-y, .divide-x) > :not(:last-child) {
+    border-color: var(--border-subtle);
   }
 }
 

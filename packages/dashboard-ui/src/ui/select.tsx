@@ -54,12 +54,13 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        // `min-h-9.5` (default) and `data-[size=sm]:min-h-[1.9375rem]` lock
-        // the trigger to the same natural height as `<Input>` so the field
-        // doesn't collapse to chevron-height when the SelectValue render-prop
-        // returns an empty string (e.g., when value is unset and the
-        // placeholder isn't surfaced through the render-prop).
-        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border-field bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:py-1 data-[size=sm]:px-2 data-[size=sm]:text-sm data-[size=sm]:min-h-[1.9375rem] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        // `min-h-8` matches `<Input>`'s own minimum, so a select and a text
+        // field on the same row are the same height. It also stops the trigger
+        // collapsing to chevron-height when the SelectValue render-prop returns
+        // an empty string (value unset and the placeholder not surfaced through
+        // the render-prop); `data-[size=sm]` keeps its own floor for the same
+        // reason.
+        "flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border bg-card shadow-xs py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:py-1 data-[size=sm]:px-2 data-[size=sm]:text-sm data-[size=sm]:min-h-[1.9375rem] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
