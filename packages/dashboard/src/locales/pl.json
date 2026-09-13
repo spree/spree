@@ -2611,7 +2611,9 @@
       "translations": "Tłumaczenia",
       "purchase_orders": "Zamówienia zakupu",
       "inventory": "Magazyn",
-      "suppliers": "Dostawcy"
+      "suppliers": "Dostawcy",
+      "loyalty": "Lojalność",
+      "store_credits": "Środki w sklepie"
     },
     "option_types": {
       "columns": {
@@ -4132,7 +4134,8 @@
         "customers": "Klienci",
         "marketing": "Marketing",
         "orders": "Zamówienia",
-        "settings": "Ustawienia"
+        "settings": "Ustawienia",
+        "loyalty": "Lojalność"
       },
       "labels": {
         "read": "Podgląd: {{resource}}",
@@ -5957,6 +5960,48 @@
         "deleted": "Raport usunięty",
         "delete_failed": "Nie udało się usunąć raportu"
       }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "Klient",
+        "used": "Wykorzystane",
+        "remaining": "Pozostało",
+        "authorized": "Zablokowane",
+        "standing": "Stan",
+        "origin": "Pochodzenie",
+        "issued_by": "Wystawione przez"
+      },
+      "origins": {
+        "manual": "Wystawione ręcznie",
+        "gift_card": "Karta podarunkowa",
+        "return": "Zwrot",
+        "exchange": "Wymiana",
+        "claim": "Reklamacja",
+        "refund": "Zwrot płatności"
+      },
+      "filters": {
+        "outstanding": "Do wykorzystania",
+        "spent": "Wykorzystane",
+        "not_from_gift_card": "Pozostałe"
+      },
+      "totals": {
+        "outstanding": "Do wykorzystania",
+        "issued": "Wystawione",
+        "used": "Wykorzystane"
+      },
+      "ledger": {
+        "title": "Historia",
+        "empty": "Brak zarejestrowanych operacji."
+      },
+      "sheet": {
+        "description": "Jak te środki powstały i jak zostały wykorzystane.",
+        "open_customer": "Otwórz profil klienta"
+      },
+      "table": {
+        "search_placeholder": "Szukaj w notatkach…",
+        "empty": "Brak środków. Wystaw je z profilu klienta."
+      },
+      "no_customer": "Brak klienta"
     }
   }
 }

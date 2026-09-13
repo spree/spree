@@ -142,7 +142,7 @@ createActionRegistry.add({
   icon: GiftIcon,
   subject: Subject.GiftCard,
   position: 410,
-  getRoute: (storeId) => ({ to: `/${storeId}/promotions/gift-cards`, search: { new: true } }),
+  getRoute: (storeId) => ({ to: `/${storeId}/loyalty/gift-cards`, search: { new: true } }),
 })
 
 createActionRegistry.add({

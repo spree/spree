@@ -2589,7 +2589,9 @@
       "translations": "Übersetzungen",
       "purchase_orders": "Bestellungen",
       "inventory": "Lagerbestand",
-      "suppliers": "Lieferanten"
+      "suppliers": "Lieferanten",
+      "loyalty": "Treue",
+      "store_credits": "Guthaben"
     },
     "option_types": {
       "columns": {
@@ -4080,7 +4082,8 @@
         "customers": "Kunden",
         "marketing": "Marketing",
         "orders": "Bestellungen",
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "loyalty": "Treue"
       },
       "labels": {
         "read": "{{resource}} ansehen",
@@ -5891,6 +5894,48 @@
         "deleted": "Bericht gelöscht",
         "delete_failed": "Bericht konnte nicht gelöscht werden"
       }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "Kunde",
+        "used": "Verbraucht",
+        "remaining": "Verbleibend",
+        "authorized": "Reserviert",
+        "standing": "Stand",
+        "origin": "Herkunft",
+        "issued_by": "Ausgestellt von"
+      },
+      "origins": {
+        "manual": "Manuell ausgestellt",
+        "gift_card": "Geschenkkarte",
+        "return": "Rückgabe",
+        "exchange": "Umtausch",
+        "claim": "Reklamation",
+        "refund": "Rückerstattung"
+      },
+      "filters": {
+        "outstanding": "Offen",
+        "spent": "Verbraucht",
+        "not_from_gift_card": "Alles andere"
+      },
+      "totals": {
+        "outstanding": "Offen",
+        "issued": "Ausgestellt",
+        "used": "Verbraucht"
+      },
+      "ledger": {
+        "title": "Buchungen",
+        "empty": "Noch keine Bewegungen erfasst."
+      },
+      "sheet": {
+        "description": "Wie dieses Guthaben entstanden ist und wie es verwendet wurde.",
+        "open_customer": "Kundenprofil öffnen"
+      },
+      "table": {
+        "search_placeholder": "Notizen durchsuchen…",
+        "empty": "Noch kein Guthaben. Stellen Sie eines im Kundenprofil aus."
+      },
+      "no_customer": "Kein Kunde"
     }
   }
 }

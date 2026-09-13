@@ -67,7 +67,7 @@ const giftCardsSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/$storeId/promotions/gift-cards')({
+export const Route = createFileRoute('/_authenticated/$storeId/loyalty/gift-cards')({
   validateSearch: giftCardsSearchSchema,
   component: GiftCardsPage,
 })

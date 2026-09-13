@@ -423,6 +423,18 @@
     {
       "source": "/developer/multi-vendor",
       "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/user/promotions/gift-cards",
+      "destination": "/user/loyalty/gift-cards"
+    },
+    {
+      "source": "/user/customers/issue-gift-card",
+      "destination": "/user/loyalty/issue-gift-card"
+    },
+    {
+      "source": "/user/customers/assign-store-credits",
+      "destination": "/user/loyalty/store-credits"
     }
   ],
   "contextual": {
@@ -983,8 +995,6 @@
                       "user/customers/create-customer",
                       "user/customers/customer-profile",
                       "user/customers/edit-customer",
-                      "user/customers/issue-gift-card",
-                      "user/customers/assign-store-credits",
                       "user/customers/searching-customers",
                       "user/customers/exporting-customers",
                       "user/customers/customer-groups"
@@ -992,12 +1002,21 @@
                     "icon": "users"
                   },
                   {
+                    "group": "Loyalty",
+                    "pages": [
+                      "user/loyalty/gift-cards",
+                      "user/loyalty/issue-gift-card",
+                      "user/loyalty/store-credits",
+                      "user/loyalty/store-credits-list"
+                    ],
+                    "icon": "gift"
+                  },
+                  {
                     "group": "Promotions",
                     "pages": [
                       "user/promotions/create-a-promotion",
                       "user/promotions/promotion-rules",
-                      "user/promotions/promotion-actions",
-                      "user/promotions/gift-cards"
+                      "user/promotions/promotion-actions"
                     ],
                     "icon": "ticket-percent"
                   },
@@ -2606,11 +2625,18 @@
               "user/customers/create-customer",
               "user/customers/customer-profile",
               "user/customers/edit-customer",
-              "user/customers/issue-gift-card",
-              "user/customers/assign-store-credits",
               "user/customers/searching-customers",
               "user/customers/exporting-customers",
               "user/customers/customer-groups"
+            ]
+          },
+          {
+            "group": "Loyalty",
+            "pages": [
+              "user/loyalty/gift-cards",
+              "user/loyalty/issue-gift-card",
+              "user/loyalty/store-credits",
+              "user/loyalty/store-credits-list"
             ]
           },
           {
@@ -2618,8 +2644,7 @@
             "pages": [
               "user/promotions/create-a-promotion",
               "user/promotions/promotion-rules",
-              "user/promotions/promotion-actions",
-              "user/promotions/gift-cards"
+              "user/promotions/promotion-actions"
             ]
           },
           {

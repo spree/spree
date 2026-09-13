@@ -2589,7 +2589,9 @@
       "translations": "Traductions",
       "purchase_orders": "Bons de commande",
       "inventory": "Inventaire",
-      "suppliers": "Fournisseurs"
+      "suppliers": "Fournisseurs",
+      "loyalty": "Fidélité",
+      "store_credits": "Avoirs"
     },
     "option_types": {
       "columns": {
@@ -4080,7 +4082,8 @@
         "customers": "Clients",
         "marketing": "Marketing",
         "orders": "Commandes",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "loyalty": "Fidélité"
       },
       "labels": {
         "read": "Voir {{resource}}",
@@ -5891,6 +5894,48 @@
         "deleted": "Rapport supprimé",
         "delete_failed": "Impossible de supprimer le rapport"
       }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "Client",
+        "used": "Utilisé",
+        "remaining": "Restant",
+        "authorized": "Réservé",
+        "standing": "État",
+        "origin": "Origine",
+        "issued_by": "Émis par"
+      },
+      "origins": {
+        "manual": "Émis manuellement",
+        "gift_card": "Carte cadeau",
+        "return": "Retour",
+        "exchange": "Échange",
+        "claim": "Réclamation",
+        "refund": "Remboursement"
+      },
+      "filters": {
+        "outstanding": "En cours",
+        "spent": "Utilisé",
+        "not_from_gift_card": "Tout le reste"
+      },
+      "totals": {
+        "outstanding": "En cours",
+        "issued": "Émis",
+        "used": "Utilisé"
+      },
+      "ledger": {
+        "title": "Journal",
+        "empty": "Aucun mouvement enregistré."
+      },
+      "sheet": {
+        "description": "Comment cet avoir a été émis et comment il a été utilisé.",
+        "open_customer": "Ouvrir la fiche client"
+      },
+      "table": {
+        "search_placeholder": "Rechercher dans les notes…",
+        "empty": "Aucun avoir. Émettez-en un depuis une fiche client."
+      },
+      "no_customer": "Aucun client"
     }
   }
 }

@@ -117,7 +117,7 @@ Store credits are managed in the Admin Panel:
 2. Select a customer
 3. Go to the **Store Credits** tab
 4. Click **Add Store Credit**
-5. Enter the amount, category, and optional memo
+5. Enter the amount, currency, and optional memo
 6. Click **Create**
 
 Store credits can also be created via the [Admin API](/api-reference/admin-api/introduction), as a nested resource under the customer:
@@ -135,7 +135,6 @@ const client = createAdminClient({
 const credit = await client.customers.storeCredits.create('cus_xxx', {
   amount: '25.00',
   currency: 'USD',
-  category_id: 'sccat_xxx',
   memo: 'Goodwill credit for delayed shipment',
 })
 ```
@@ -144,12 +143,59 @@ const credit = await client.customers.storeCredits.create('cus_xxx', {
 spree api post /customers/cus_xxx/store_credits -d '{
   "amount": "25.00",
   "currency": "USD",
-  "category_id": "sccat_xxx",
   "memo": "Goodwill credit"
 }'
 ```
 
 </CodeGroup>
+
+### Listing Store Credits Across Customers
+
+Credits are written per customer, but read across them. The Admin API exposes a
+read-only list so an integration can answer what the store owes without walking
+every customer:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: credits, meta } = await client.storeCredits.list({
+  outstanding: true,
+  expand: ['customer', 'created_by'],
+})
+
+// One row per currency, summed over the same filter as the page.
+meta.totals.forEach((total) => {
+  console.log(total.currency, total.display_amount_remaining)
+})
+```
+
+```bash CLI
+spree api get /store_credits -q 'outstanding=true'
+```
+
+</CodeGroup>
+
+Filters mirror the questions a merchant asks: `customer_id`,
+`customer_email_cont`, `currency`, `created_by_id`, `memo_cont`, a
+`created_at` range, and two scopes — `outstanding` (money still owed versus
+money spent) and `from_gift_card` (whether a gift card redemption created it).
+
+Each credit's ledger is its own endpoint:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: events } = await client.storeCredits.events.list('credit_xxx')
+```
+
+```bash CLI
+spree api get /store_credits/credit_xxx/events
+```
+
+</CodeGroup>
+
+Creating, updating and deleting a credit remain nested under the customer that
+holds it — a credit without an owner has nobody to pay.
 
 ### Store Credit Events
 
@@ -403,10 +449,9 @@ flowchart TB
 
 ### Store Credit Priority
 
-When a registered customer has multiple store credits, they are applied in order of priority:
-
-1. **Expiring credits** - Applied first to ensure they're used before expiration
-2. **Non-expiring credits** - Applied after expiring credits
+When a registered customer holds several store credits, the oldest is spent
+first (`Spree::StoreCredit.oldest_first`). Store credits do not expire — only
+gift cards carry an expiry, on their own record.
 
 ## Related Documentation
 

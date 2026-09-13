@@ -15251,6 +15251,34 @@ components:
       required:
       - id
       x-typelizer: true
+    StoreCreditEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        authorization_code:
+          type: string
+          nullable: true
+        display_action:
+          type: string
+          nullable: true
+        amount:
+          type: string
+        display_amount:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - action
+      - authorization_code
+      - display_action
+      - amount
+      - display_amount
+      - created_at
+      x-typelizer: true
     StoreCredit:
       type: object
       properties:

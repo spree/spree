@@ -6304,8 +6304,12 @@ paths:
                   metadata: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
+                  amount_authorized: '0.0'
+                  display_amount_authorized: "$0.00"
                   customer_id: cust_UkLWZg9DAJ
                   created_by_id: adm_UkLWZg9DAJ
+                  originator_type:
+                  originator_id:
                 meta:
                   page: 1
                   limit: 25
@@ -6381,8 +6385,12 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                amount_authorized: '0.0'
+                display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_gbHJdmfrXB
+                originator_type:
+                originator_id:
       requestBody:
         content:
           application/json:
@@ -6469,8 +6477,12 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                amount_authorized: '0.0'
+                display_amount_authorized: "$0.00"
                 customer_id: cust_UkLWZg9DAJ
                 created_by_id: adm_UkLWZg9DAJ
+                originator_type:
+                originator_id:
       requestBody:
         content:
           application/json:
@@ -24496,29 +24508,29 @@ paths:
                 - key: read_gift_cards
                   resource: gift_cards
                   kind: read
-                  group: orders
-                  group_label: Orders
+                  group: loyalty
+                  group_label: Loyalty
                   label: Gift cards
                   description: Gift cards and gift card batches
                 - key: write_gift_cards
                   resource: gift_cards
                   kind: write
-                  group: orders
-                  group_label: Orders
+                  group: loyalty
+                  group_label: Loyalty
                   label: Gift cards
                   description: Gift cards and gift card batches
                 - key: read_store_credits
                   resource: store_credits
                   kind: read
-                  group: orders
-                  group_label: Orders
+                  group: loyalty
+                  group_label: Loyalty
                   label: Store credits
                   description: Customer store credit balances
                 - key: write_store_credits
                   resource: store_credits
                   kind: write
-                  group: orders
-                  group_label: Orders
+                  group: loyalty
+                  group_label: Loyalty
                   label: Store credits
                   description: Customer store credit balances
                 - key: read_products
@@ -25842,6 +25854,347 @@ paths:
       responses:
         '204':
           description: stock location deleted
+  "/api/v3/admin/store_credits":
+    get:
+      summary: List store credits
+      tags:
+      - Store Credits
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns every store credit in the current store, across all customers.
+        Read-only: issuing, editing and deleting a credit stays nested under
+        the customer that holds it.
+
+        `meta.totals` carries the outstanding balance as one row per currency,
+        summed over the same filter this request used — so filtering by a
+        customer answers that customer's balance and no filter answers the
+        store's liability.
+
+
+        **Required scope:** `read_store_credits` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: storeCredits, meta } = await client.storeCredits.list({
+            page: 1,
+            limit: 25,
+            outstanding: true,
+            expand: ['customer', 'created_by'],
+          })
+
+          // What the store still owes, one row per currency, over the same filter.
+          const outstanding = meta.totals
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credits -d '{"page":1,"limit":25,"outstanding":true,"expand":["customer","created_by"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[customer_id_eq]
+        in: query
+        required: false
+        description: Filter by the customer holding the credit
+        schema:
+          type: string
+      - name: q[customer_email_cont]
+        in: query
+        required: false
+        description: Filter by customer email (contains)
+        schema:
+          type: string
+      - name: q[currency_eq]
+        in: query
+        required: false
+        description: Filter by currency
+        schema:
+          type: string
+      - name: q[memo_cont]
+        in: query
+        required: false
+        description: Filter by the free-text reason (contains)
+        schema:
+          type: string
+      - name: q[outstanding]
+        in: query
+        required: false
+        description: True for credits with money left, false for credits already spent
+        schema:
+          type: boolean
+      - name: q[from_gift_card]
+        in: query
+        required: false
+        description: True for credits a gift card redemption created, false for every
+          other origin
+        schema:
+          type: boolean
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (customer, created_by).
+        schema:
+          type: string
+      - name: sort
+        in: query
+        required: false
+        description: Sort by field. Prefix with `-` for descending (e.g., `-created_at`).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credits found
+          content:
+            application/json:
+              example:
+                data:
+                - id: credit_UkLWZg9DAJ
+                  amount: '50.0'
+                  amount_used: '0.0'
+                  amount_remaining: '50.0'
+                  display_amount: "$50.00"
+                  display_amount_used: "$0.00"
+                  display_amount_remaining: "$50.00"
+                  currency: USD
+                  memo:
+                  metadata: {}
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  amount_authorized: '0.0'
+                  display_amount_authorized: "$0.00"
+                  customer_id: cust_UkLWZg9DAJ
+                  created_by_id: adm_UkLWZg9DAJ
+                  originator_type:
+                  originator_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+                  totals:
+                  - currency: USD
+                    amount: '50.0'
+                    amount_used: '0.0'
+                    amount_authorized: '0.0'
+                    amount_remaining: '50.0'
+                    display_amount: "$50.00"
+                    display_amount_used: "$0.00"
+                    display_amount_authorized: "$0.00"
+                    display_amount_remaining: "$50.00"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/store_credits/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Retrieve a store credit
+      tags:
+      - Store Credits
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `read_store_credits` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const storeCredit = await client.storeCredits.get('credit_abc123', {
+            expand: ['customer', 'created_by'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credits/{id} -d '{"expand":["customer","created_by"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (customer, created_by).
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credit found
+          content:
+            application/json:
+              example:
+                id: credit_UkLWZg9DAJ
+                amount: '50.0'
+                amount_used: '0.0'
+                amount_remaining: '50.0'
+                display_amount: "$50.00"
+                display_amount_used: "$0.00"
+                display_amount_remaining: "$50.00"
+                currency: USD
+                memo:
+                metadata: {}
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                amount_authorized: '0.0'
+                display_amount_authorized: "$0.00"
+                customer_id: cust_UkLWZg9DAJ
+                created_by_id: adm_UkLWZg9DAJ
+                originator_type:
+                originator_id:
+        '404':
+          description: not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Store credit not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/admin/store_credits/{store_credit_id}/events":
+    parameters:
+    - name: store_credit_id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: List a store credit's ledger
+      tags:
+      - Store Credits
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Every movement of the credit's balance, newest first: allocated when
+        issued, authorized when a checkout starts against it, captured when
+        that order is paid, and voided or credited back if it is cancelled.
+
+
+        **Required scope:** `read_store_credits` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: events } = await client.storeCredits.events.list('credit_abc123')
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /store_credits/{store_credit_id}/events
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: events found
+          content:
+            application/json:
+              example:
+                data:
+                - id: scevt_UkLWZg9DAJ
+                  action: allocation
+                  authorization_code: 1-SC-20260115120000000000
+                  display_action: Added
+                  amount: '50.0'
+                  display_amount: "$50.00"
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  store_credit_id: credit_UkLWZg9DAJ
+                  originator_type:
+                  originator_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
   "/api/v3/admin/products/{product_id}/variants":
     get:
       summary: List product variants
@@ -39690,11 +40043,14 @@ tags:
 - name: Refunds
   description: Order refunds
 - name: Settings
-  description: Store-level settings — store profile, tags, store credit categories
+  description: Store-level settings — store profile, tags, and configuration
 - name: Staff
   description: Admin users, roles, and invitations to the store
 - name: Stock Locations
   description: Warehouses and physical fulfillment locations
+- name: Store Credits
+  description: Prepaid customer balances across all customers, and each balance's
+    ledger
 - name: Variants
   description: Product variants — the individual SKUs (size/color combinations) sold
     under a product
@@ -47463,6 +47819,48 @@ components:
       - quantity_shipped_total
       - editable
       x-typelizer: true
+    StoreCreditEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        authorization_code:
+          type: string
+          nullable: true
+        display_action:
+          type: string
+          nullable: true
+        amount:
+          type: string
+        display_amount:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        store_credit_id:
+          type: string
+        originator_type:
+          type: string
+          nullable: true
+        originator_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - action
+      - authorization_code
+      - display_action
+      - amount
+      - display_amount
+      - created_at
+      - updated_at
+      - store_credit_id
+      - originator_type
+      - originator_id
+      x-typelizer: true
     StoreCredit:
       type: object
       properties:
@@ -47491,12 +47889,26 @@ components:
           type: string
         updated_at:
           type: string
+        amount_authorized:
+          type: string
+        display_amount_authorized:
+          type: string
         customer_id:
           type: string
           nullable: true
         created_by_id:
           type: string
           nullable: true
+        originator_type:
+          type: string
+          nullable: true
+        originator_id:
+          type: string
+          nullable: true
+        customer:
+          "$ref": "#/components/schemas/Customer"
+        created_by:
+          "$ref": "#/components/schemas/AdminUser"
       required:
       - id
       - amount
@@ -47510,8 +47922,12 @@ components:
       - metadata
       - created_at
       - updated_at
+      - amount_authorized
+      - display_amount_authorized
       - customer_id
       - created_by_id
+      - originator_type
+      - originator_id
       x-typelizer: true
     Store:
       type: object

@@ -2589,7 +2589,9 @@
       "translations": "Translations",
       "purchase_orders": "Purchase orders",
       "inventory": "Inventory",
-      "suppliers": "Suppliers"
+      "suppliers": "Suppliers",
+      "loyalty": "Loyalty",
+      "store_credits": "Store Credits"
     },
     "option_types": {
       "columns": {
@@ -4080,7 +4082,8 @@
         "customers": "Customers",
         "marketing": "Marketing",
         "orders": "Orders",
-        "settings": "Settings"
+        "settings": "Settings",
+        "loyalty": "Loyalty"
       },
       "labels": {
         "read": "View {{resource}}",
@@ -5891,6 +5894,48 @@
         "deleted": "Report deleted",
         "delete_failed": "Could not delete the report"
       }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "Customer",
+        "used": "Used",
+        "remaining": "Remaining",
+        "authorized": "On hold",
+        "standing": "Standing",
+        "origin": "Origin",
+        "issued_by": "Issued by"
+      },
+      "origins": {
+        "manual": "Issued by hand",
+        "gift_card": "Gift card",
+        "return": "Return",
+        "exchange": "Exchange",
+        "claim": "Claim",
+        "refund": "Refund"
+      },
+      "filters": {
+        "outstanding": "Outstanding",
+        "spent": "Spent",
+        "not_from_gift_card": "Everything else"
+      },
+      "totals": {
+        "outstanding": "Outstanding",
+        "issued": "Issued",
+        "used": "Used"
+      },
+      "ledger": {
+        "title": "Ledger",
+        "empty": "No movements recorded yet."
+      },
+      "sheet": {
+        "description": "How this balance was issued and how it has been spent.",
+        "open_customer": "Open customer profile"
+      },
+      "table": {
+        "search_placeholder": "Search memos…",
+        "empty": "No store credits yet. Issue one from a customer profile."
+      },
+      "no_customer": "No customer"
     }
   }
 }
