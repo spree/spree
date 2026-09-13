@@ -87,7 +87,7 @@ export function SidebarUser({
         aria-label={t('admin.a11y.user_menu')}
         className={
           inBar
-            ? 'inline-flex size-10 shrink-0 items-center justify-center rounded-lg outline-hidden transition-colors duration-100 hover:bg-accent data-[state=open]:bg-accent'
+            ? 'inline-flex size-11 shrink-0 items-center justify-center rounded-lg outline-hidden transition-colors duration-100 hover:bg-accent data-[state=open]:bg-accent'
             : 'flex w-full items-center gap-2 rounded-xl p-1.5 outline-hidden transition-colors duration-100 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent'
         }
       >

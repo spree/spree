@@ -33,8 +33,12 @@ export function MobileTopBar({
   const palette = useOptionalCommandPalette()
 
   return (
-    <div className="sticky top-0 z-30 flex h-12 shrink-0 items-center gap-1 border-b border-border bg-card px-2 md:hidden">
-      <SidebarTrigger className="size-10 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground" />
+    // `h-14` (56px) is the phone top-bar height on Android, and comfortably
+    // clears the 44pt iOS navigation bar; the controls inside are `size-11`
+    // (44px), the touch target both platforms ask for and the size this
+    // codebase already uses for mobile controls in the table toolbar.
+    <div className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-1 border-b border-border bg-card px-2 md:hidden">
+      <SidebarTrigger className="size-11 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground" />
 
       {isLoading ? (
         <Skeleton className="h-4 w-28" />
@@ -47,7 +51,7 @@ export function MobileTopBar({
           type="button"
           onClick={() => palette.setOpen(true)}
           aria-label={t('admin.components.command_palette.search_label')}
-          className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-100 hover:bg-accent hover:text-foreground"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-100 hover:bg-accent hover:text-foreground"
         >
           <SearchIcon className="size-5" />
         </button>
