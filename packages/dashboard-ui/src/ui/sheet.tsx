@@ -3,6 +3,7 @@
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog'
 import i18n from 'i18next'
 import * as React from 'react'
+import { useScrolled } from '../hooks/use-scrolled'
 import { cn } from '../lib/utils'
 import { XIcon } from '../spree/icons'
 import { Button } from './button'
@@ -162,6 +163,11 @@ function SheetContent({
   )
 }
 
+/**
+ * A sheet's title bar. It keeps its separating rule at all times and gains a
+ * soft lift once the body scrolls under it, on the same trigger and curve as
+ * `PageHeader`.
+ */
 function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   // A caller passing `sr-only` wants the title announced but not drawn. Merging
   // it with the visible chrome does not achieve that: `cn` keeps `flex` (a
@@ -169,13 +175,26 @@ function SheetHeader({ className, ...props }: React.ComponentProps<'div'>) {
   // a laid-out box — a 33px bar with a border, above the nav. Detect the intent
   // and render the bare utility instead.
   const srOnly = className?.split(' ').includes('sr-only')
+  // Hooks cannot be called conditionally, so this reads the flag before the
+  // early return even though the bare variant never uses it.
+  const scrolled = useScrolled()
   if (srOnly) return <div data-slot="sheet-header" className={className} {...props} />
 
   return (
     <div
       data-slot="sheet-header"
       className={cn(
-        'relative flex flex-col gap-1.5 border-b border-border-subtle p-4 pr-12',
+        // No `z-index` here: the close button is a sibling rendered BEFORE this,
+        // so any stacking context on the header paints over it and swallows the
+        // clicks. The header needs no lift anyway — it is a flex sibling of the
+        // body rather than an overlay, so nothing scrolls under it.
+        'flex shrink-0 flex-col gap-1.5 border-b border-border-subtle p-4 pr-12',
+        // The rule stays: a sheet header is a fixed band over its own scroller,
+        // so it is divided from the body whether or not anything has moved. The
+        // lift is what scrolling adds, on the same trigger and curve as
+        // `PageHeader`.
+        'transition-shadow duration-200 ease-out motion-reduce:transition-none',
+        scrolled && 'shadow-xs',
         className,
       )}
       {...props}

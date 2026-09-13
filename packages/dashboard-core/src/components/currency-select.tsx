@@ -32,6 +32,8 @@ export const ALL_CURRENCY_CODES: string[] = (() => {
 interface CurrencySelectProps {
   /** Classes for the trigger — used to match a neighbouring control's height. */
   triggerClassName?: string
+  /** `sm` matches the toolbar controls beside it — see `SelectTrigger`. */
+  triggerSize?: 'sm' | 'default'
   /** ID for the trigger — paired with the parent `<FieldLabel htmlFor>`. */
   id?: string
   /** Submit name — a hidden input mirrors the value so plain `FormData` works. */
@@ -90,6 +92,7 @@ export function CurrencySelect({
   invalid,
   onBlur,
   triggerClassName,
+  triggerSize,
 }: CurrencySelectProps) {
   const { t } = useTranslation()
   // Optional: the operator's dashboard always has a store, the seller panel
@@ -157,6 +160,7 @@ export function CurrencySelect({
       >
         <ComboboxButtonTrigger
           id={id}
+          size={triggerSize}
           className={triggerClassName}
           onBlur={onBlur}
           disabled={disabled}

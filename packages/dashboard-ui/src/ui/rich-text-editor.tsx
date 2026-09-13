@@ -182,7 +182,7 @@ export function RichTextEditor({
         // in a form beside them without reading as a different kind of control.
         // `focus-within` rather than `focus`: the element that takes the caret
         // is Tiptap's inner contenteditable, not this wrapper.
-        'rounded-md border border-border bg-card text-foreground shadow-xs transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'rounded-md border border-border bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         disabled && 'pointer-events-none bg-muted text-muted-foreground shadow-none',
         className,
       )}

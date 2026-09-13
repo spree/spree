@@ -60,14 +60,20 @@ function SelectTrigger({
         // an empty string (value unset and the placeholder not surfaced through
         // the render-prop); `data-[size=sm]` keeps its own floor for the same
         // reason.
-        "flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border bg-card shadow-xs py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:py-1 data-[size=sm]:px-2 data-[size=sm]:text-sm data-[size=sm]:min-h-[1.9375rem] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        //
+        // `sm` is the toolbar size, matching `Button size="sm" variant="outline"`
+        // exactly — height, gap, padding, text, icon size and the resting lift.
+        // A row mixing a select with a popover trigger (the dashboard's channel
+        // picker beside its date range) then reads as one set of controls
+        // rather than two. The default size is a form field and stays flat.
+        "group/select-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[placeholder]:text-muted-foreground data-[size=sm]:shadow-xs data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm data-[size=sm]:[&_svg:not([class*='size-'])]:size-3.5 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon>
-        <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground" />
+        <ChevronDownIcon className="pointer-events-none size-4 text-muted-foreground group-data-[size=sm]/select-trigger:size-3.5" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
