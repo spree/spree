@@ -18,6 +18,11 @@ export * from './hooks/use-scrolled'
 // ---------------------------------------------------------------------------
 // Helpers + hooks
 // ---------------------------------------------------------------------------
+export {
+  type DateRangePresetKey,
+  matchDateRangePreset,
+  resolveDateRangePreset,
+} from './lib/date-range-presets'
 export { sameRichText } from './lib/same-rich-text'
 export { cn } from './lib/utils'
 export { requiredMessage } from './lib/validation-messages'
