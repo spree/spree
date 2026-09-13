@@ -23,10 +23,6 @@ module Spree
               :store_credit_events
             end
 
-            def collection_includes
-              [:originator]
-            end
-
             # A ledger reads newest first unless the caller asks otherwise.
             def apply_collection_sort(collection)
               return super if sort_param.present?

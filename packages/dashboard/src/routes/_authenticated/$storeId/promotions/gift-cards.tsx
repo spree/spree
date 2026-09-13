@@ -6,6 +6,10 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
  * the bookmarks and pasted links that still point at it.
  */
 export const Route = createFileRoute('/_authenticated/$storeId/promotions/gift-cards')({
+  // Passed through as-is: no ancestor validates search here, so without this
+  // the `search` handed to `beforeLoad` is empty and the redirect would drop
+  // whatever the bookmark carried.
+  validateSearch: (search: Record<string, unknown>) => search,
   beforeLoad: ({ params, search }) => {
     throw redirect({
       to: '/$storeId/loyalty/gift-cards',

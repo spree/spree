@@ -19,8 +19,11 @@ module Spree
             Spree::Base.polymorphic_api_type(event.originator_type)
           end
 
+          # From the columns, like the credit's own originator: a type read from
+          # the column beside an id read from the association would name an
+          # originator the client has no id to link to.
           attribute :originator_id do |event|
-            event.originator&.prefixed_id
+            Spree::Base.polymorphic_prefixed_id(event.originator_type, event.originator_id)
           end
         end
       end

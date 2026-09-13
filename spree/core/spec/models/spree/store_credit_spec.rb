@@ -170,6 +170,14 @@ describe Spree::StoreCredit, type: :model do
       expect(described_class.ransack('outstanding' => 'false').result).to contain_exactly(spent)
       expect(described_class.ransack('outstanding' => 'true').result).to contain_exactly(available)
     end
+
+    # Ransack invokes a scope with NO arguments when the predicate is a literal
+    # boolean `true`, which is what a JSON client sends. Reading that as "no
+    # side chosen" would answer an unfiltered list to a caller who asked for
+    # one side of the filter.
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('outstanding' => true).result).to contain_exactly(available)
+    end
   end
 
   describe '.from_gift_card' do
@@ -192,6 +200,10 @@ describe Spree::StoreCredit, type: :model do
     it 'treats every side selected as no constraint rather than raising' do
       expect { described_class.ransack('from_gift_card' => %w[true false]).result.to_sql }.not_to raise_error
       expect(described_class.ransack('from_gift_card' => %w[true false]).result).to include(from_card, by_hand)
+    end
+
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('from_gift_card' => true).result).to contain_exactly(from_card)
     end
   end
 

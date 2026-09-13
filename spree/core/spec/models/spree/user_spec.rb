@@ -238,6 +238,14 @@ describe Spree.customer_class, type: :model do
       expect(described_class.ransack('anonymized' => 'false').result).to include(intact)
       expect(described_class.ransack('anonymized' => 'false').result).not_to include(erased)
     end
+
+    # Ransack invokes a scope with NO arguments for a literal boolean `true`,
+    # which is what a JSON client sends. Reading that as "no side chosen" hands
+    # back the whole customer list to a caller asking only for erased accounts.
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('anonymized' => true).result).to include(erased)
+      expect(described_class.ransack('anonymized' => true).result).not_to include(intact)
+    end
   end
 
   describe '#total_available_store_credit' do

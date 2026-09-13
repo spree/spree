@@ -16,6 +16,7 @@ import {
   Skeleton,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -57,6 +58,10 @@ function StoreCreditsPage() {
   // runs on an actual fetch, so the last totals are kept across a cached
   // render instead of blanking the cards until a refetch lands.
   const [totals, setTotals] = useState<StoreCreditCurrencyTotal[]>([])
+  // The cards trail the rows: `queryFn` sets them, so during a refetch they
+  // still describe the previous filter. Dimming them says "these are being
+  // recalculated" rather than passing stale figures off as the current ones.
+  const refetching = useIsFetching({ queryKey: ['store-credits'] }) > 0
 
   const openCredit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, credit: id }) as never })
@@ -80,7 +85,7 @@ function StoreCreditsPage() {
           sticky={false}
         />
 
-        <OutstandingTotals totals={totals} />
+        <OutstandingTotals totals={totals} stale={refetching} />
 
         <ResourceTable<StoreCredit>
           tableKey="store-credits"
@@ -116,13 +121,25 @@ function StoreCreditsPage() {
  * returned, so filtering by a customer turns these into that customer's
  * balance.
  */
-function OutstandingTotals({ totals }: { totals: StoreCreditCurrencyTotal[] }) {
+function OutstandingTotals({
+  totals,
+  stale = false,
+}: {
+  totals: StoreCreditCurrencyTotal[]
+  stale?: boolean
+}) {
   const { t } = useTranslation()
 
   if (totals.length === 0) return null
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      className={cn(
+        'grid gap-4 transition-opacity sm:grid-cols-2 lg:grid-cols-3',
+        stale && 'opacity-50',
+      )}
+      aria-busy={stale || undefined}
+    >
       {totals.map((total) => (
         <Card key={total.currency}>
           <CardContent className="flex flex-col gap-1 p-4">

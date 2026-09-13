@@ -53,10 +53,7 @@ module Spree
           end
 
           attribute :originator_id do |store_credit|
-            next nil if store_credit.originator_id.blank? || store_credit.originator_type.blank?
-
-            store_credit.originator_type.safe_constantize&.
-              prefixed_id_for(store_credit.originator_id)
+            Spree::Base.polymorphic_prefixed_id(store_credit.originator_type, store_credit.originator_id)
           end
 
           one :customer,
