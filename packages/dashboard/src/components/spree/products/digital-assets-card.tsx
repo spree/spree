@@ -265,7 +265,7 @@ export function DigitalAssetsCard({
                           <a
                             href={asset.download_url}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="hover:underline"
                           >
                             {asset.filename ?? t('admin.digital_assets.untitled')}

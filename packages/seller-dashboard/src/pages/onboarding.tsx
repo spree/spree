@@ -313,7 +313,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
               Accepting something a seller cannot read is not consent. */}
           {requirement.action_url && (
             <Button variant="outline" asChild>
-              <a href={requirement.action_url} target="_blank" rel="noreferrer">
+              <a href={requirement.action_url} target="_blank" rel="noopener noreferrer">
                 {t('onboarding.read_terms')}
                 <ExternalLinkIcon className="size-4" />
               </a>
@@ -459,7 +459,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         requirement.kind !== 'payout_account' && (
           <div className="flex justify-start">
             <Button variant="outline" asChild>
-              <a href={requirement.action_url} target="_blank" rel="noreferrer">
+              <a href={requirement.action_url} target="_blank" rel="noopener noreferrer">
                 {t('onboarding.go')}
                 <ExternalLinkIcon className="size-4" />
               </a>

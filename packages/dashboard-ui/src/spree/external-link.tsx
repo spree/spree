@@ -20,8 +20,19 @@ import { ExternalLinkIcon } from './icons'
 export function ExternalLink({
   className,
   children,
+  // Pulled out of `props` so they cannot be spread back in below, and typed
+  // `never` so a caller is told at compile time too. Types alone would not be
+  // enough: they vanish at runtime, so an untyped caller or a plain-JS
+  // consumer of this source-shipped package could still land its own
+  // `target`/`rel` after ours and undo the isolation.
+  target: _target,
+  rel: _rel,
   ...props
-}: Omit<React.ComponentProps<'a'>, 'target' | 'rel'> & { href: string }) {
+}: Omit<React.ComponentProps<'a'>, 'target' | 'rel'> & {
+  href: string
+  target?: never
+  rel?: never
+}) {
   return (
     <a
       data-slot="external-link"

@@ -26,6 +26,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
+import { COMMUNITY_URL, CONTACT_URL, DOCS_BASE_URL } from '../lib/docs'
 import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
 import { storefrontHref } from '../lib/storefront'
@@ -164,23 +165,32 @@ export function SidebarUser({
                 competing with the nav. */}
         {viewStoreHref && (
           <DropdownMenuItem asChild>
-            <a href={viewStoreHref} target="_blank" rel="noreferrer">
+            <a href={viewStoreHref} target="_blank" rel="noopener noreferrer">
               <ExternalLinkIcon className="size-4" />
               {t('admin.account.view_store')}
             </a>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem>
-          <BookOpenIcon className="size-4" />
-          {t('admin.account.documentation')}
+        {/* All three carried over from the old top bar as inert rows — they
+            looked like links and did nothing. Destinations live in `lib/docs`
+            beside the docs base so a domain move is one edit. */}
+        <DropdownMenuItem asChild>
+          <a href={DOCS_BASE_URL} target="_blank" rel="noopener noreferrer">
+            <BookOpenIcon className="size-4" />
+            {t('admin.account.documentation')}
+          </a>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <MessageCircleIcon className="size-4" />
-          {t('admin.account.community')}
+        <DropdownMenuItem asChild>
+          <a href={COMMUNITY_URL} target="_blank" rel="noopener noreferrer">
+            <MessageCircleIcon className="size-4" />
+            {t('admin.account.community')}
+          </a>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <MailIcon className="size-4" />
-          {t('admin.account.contact_support')}
+        <DropdownMenuItem asChild>
+          <a href={CONTACT_URL} target="_blank" rel="noopener noreferrer">
+            <MailIcon className="size-4" />
+            {t('admin.account.contact_support')}
+          </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout}>

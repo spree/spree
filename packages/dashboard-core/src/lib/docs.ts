@@ -7,6 +7,13 @@
 export const DOCS_BASE_URL = 'https://spreecommerce.org/docs'
 
 /**
+ * The other two destinations the account menu offers, kept here for the same
+ * reason as the docs base: one edit if a domain moves.
+ */
+export const COMMUNITY_URL = 'https://discord.spreecommerce.org'
+export const CONTACT_URL = 'https://spreecommerce.org/contact'
+
+/**
  * Resolves a documentation path to a full URL.
  *
  * A bare path is taken as relative to the user guide, which is where the
