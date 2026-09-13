@@ -201,8 +201,12 @@ module Spree
       # value it was given is simply `true`, and passes the value through only
       # when it is something else — so both `anonymized: true` and
       # `anonymized: 'false'` have to land here.
-      scope :anonymized, ->(value = true) {
-        ransack_flag?(value) ? where.not(anonymized_at: nil) : where(anonymized_at: nil)
+      scope :anonymized, ->(*values) {
+        case Spree::Base.ransack_flag(*values)
+        when true then where.not(anonymized_at: nil)
+        when false then where(anonymized_at: nil)
+        else all
+        end
       }
 
       scope :with_min_total_spent, ->(amount) {

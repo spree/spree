@@ -99,7 +99,13 @@ function StoreCreditsPage() {
       </div>
 
       {search.credit && (
-        <StoreCreditSheet id={search.credit} onOpenChange={(open) => !open && closeSheet()} />
+        // Keyed by the credit so a deep link from one credit to another
+        // remounts the sheet rather than showing the previous ledger page.
+        <StoreCreditSheet
+          key={search.credit}
+          id={search.credit}
+          onOpenChange={(open) => !open && closeSheet()}
+        />
       )}
     </>
   )

@@ -48,7 +48,10 @@ module Spree
             # filter reaching through a `has_many` would match a credit once per
             # joined row and count its amount that many times, overstating what
             # the store owes.
-            rows = base.where(id: base.ransack(ransack_params).result.select(:id)).
+            # Without the sort key: the subquery only supplies ids, so carrying
+            # the page's ORDER BY (and any join it needs) buys nothing.
+            filtered = base.ransack(ransack_params.except('s')).result.select(:id)
+            rows = base.where(id: filtered).
                    reorder(nil).
                    order(:currency).
                    group(:currency).

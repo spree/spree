@@ -157,6 +157,19 @@ describe Spree::StoreCredit, type: :model do
       expect(described_class.outstanding(['false'])).to contain_exactly(spent)
       expect(described_class.outstanding(['true'])).to contain_exactly(available)
     end
+
+    # Ransack splats an array predicate, so a filter panel offering both sides
+    # calls the scope with two arguments. A fixed-arity lambda raises there,
+    # 500ing a request the merchant is entitled to make.
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('outstanding' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('outstanding' => %w[true false]).result).to include(available, spent)
+    end
+
+    it 'applies the chosen side through Ransack' do
+      expect(described_class.ransack('outstanding' => 'false').result).to contain_exactly(spent)
+      expect(described_class.ransack('outstanding' => 'true').result).to contain_exactly(available)
+    end
   end
 
   describe '.from_gift_card' do
@@ -174,6 +187,11 @@ describe Spree::StoreCredit, type: :model do
     it 'unwraps an array argument rather than casting the array' do
       expect(described_class.from_gift_card(['false'])).to contain_exactly(by_hand)
       expect(described_class.from_gift_card(['true'])).to contain_exactly(from_card)
+    end
+
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('from_gift_card' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('from_gift_card' => %w[true false]).result).to include(from_card, by_hand)
     end
   end
 

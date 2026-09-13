@@ -63,14 +63,25 @@ module Spree
     # already spent. One ransackable scope with two named states rather than
     # two bare scopes, so the filter control offers a choice instead of a
     # checkbox whose unticked state means "no filter".
-    scope :outstanding, ->(value = true) {
-      ransack_flag?(value) ? available : exhausted
+    #
+    # Splat, not a defaulted argument: Ransack splats an array predicate, and
+    # asking for both sides is no constraint at all. See Spree::Base.ransack_flag.
+    scope :outstanding, ->(*values) {
+      case Spree::Base.ransack_flag(*values)
+      when true then available
+      when false then exhausted
+      else all
+      end
     }
 
     # Whether the credit came from redeeming a gift card, as opposed to a
     # return, an exchange, a claim or an admin issuing it by hand.
-    scope :from_gift_card, ->(value = true) {
-      ransack_flag?(value) ? with_gift_card : without_gift_card
+    scope :from_gift_card, ->(*values) {
+      case Spree::Base.ransack_flag(*values)
+      when true then with_gift_card
+      when false then without_gift_card
+      else all
+      end
     }
 
     after_save :store_event

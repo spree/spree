@@ -226,6 +226,18 @@ describe Spree.customer_class, type: :model do
       expect(described_class.anonymized(['false'])).to include(intact)
       expect(described_class.anonymized(['false'])).not_to include(erased)
     end
+
+    # Ransack splats an array predicate, so selecting both sides in the filter
+    # panel calls the scope with two arguments rather than one.
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('anonymized' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('anonymized' => %w[true false]).result).to include(erased, intact)
+    end
+
+    it 'applies the chosen side through Ransack' do
+      expect(described_class.ransack('anonymized' => 'false').result).to include(intact)
+      expect(described_class.ransack('anonymized' => 'false').result).not_to include(erased)
+    end
   end
 
   describe '#total_available_store_credit' do

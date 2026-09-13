@@ -143,21 +143,30 @@ class Spree::Base < ApplicationRecord
     type.to_s.demodulize.underscore
   end
 
-  # Reads the argument of a two-state ransackable scope — one that answers a
+  # Reads the arguments of a two-state ransackable scope — one that answers a
   # question with two named sides ("erased" / "not erased", "outstanding" /
   # "spent") rather than narrowing to a value.
   #
-  # Unwraps an array before casting. Ransack hands a scope whatever the caller
-  # sent, and an `_in`-style predicate arrives as `["false"]`; casting that
-  # array answers `true` for any non-empty value, silently inverting the
-  # filter. Such a scope must also be listed in the model's
+  # Declare such a scope as `->(*values)`, never `->(value = true)`. Ransack
+  # *splats* an array predicate, so a filter panel offering both sides calls
+  # the scope with two arguments and a fixed-arity lambda raises ArgumentError
+  # — a 500 on a request the merchant is entitled to make. Selecting every
+  # side is also no constraint at all, which is what the mixed reading below
+  # answers.
+  #
+  # The scope must also be listed in the model's
   # `ransackable_scopes_skip_sanitize_args`, or Ransack casts `false` itself
   # and then declines to apply the scope at all.
   #
-  # @param value [Object] the raw scope argument
-  # @return [Boolean]
-  def self.ransack_flag?(value)
-    ActiveModel::Type::Boolean.new.cast(Array.wrap(value).first)
+  # @param values [Array<Object>] whatever Ransack passed through
+  # @return [Boolean, nil] the side asked for, or nil when both or neither were
+  def self.ransack_flag(*values)
+    flags = Array(values).flatten.map { |value| ActiveModel::Type::Boolean.new.cast(value) }.uniq
+    # `size == 1`, not `one?`: the latter counts truthy elements, so a lone
+    # `false` would read as "no side chosen" and drop the filter.
+    return nil unless flags.size == 1
+
+    flags.first
   end
 
   # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.
