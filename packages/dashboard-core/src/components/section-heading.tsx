@@ -1,5 +1,4 @@
-import { CardTitle, cn } from '@spree/dashboard-ui'
-import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
+import { CardTitle, cn, ExternalLink } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
 import { docsUrl } from '../lib/docs'
 
@@ -55,15 +54,9 @@ export function SectionHeading({
           {docsPath && (
             <>
               {' '}
-              <a
-                href={docsUrl(docsPath)}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-0.5 text-link hover:text-link-hover"
-              >
+              <ExternalLink href={docsUrl(docsPath)} className="text-sm">
                 {t('admin.common.learn_more')}
-                <ExternalLinkIcon className="size-3" />
-              </a>
+              </ExternalLink>
             </>
           )}
         </p>

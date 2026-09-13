@@ -250,6 +250,7 @@
         },
         "no_results": "Brak wyników dla „{{query}}”.",
         "placeholder": "Szukaj produktów, zamówień, klientów…",
+        "search_label": "Szukaj wszędzie…",
         "title": "Wyszukiwanie i polecenia"
       },
       "confirm_dialog": {

@@ -249,6 +249,7 @@
         },
         "no_results": "Aucun résultat pour « {{query}} ».",
         "placeholder": "Rechercher des produits, des commandes, des clients…",
+        "search_label": "Rechercher…",
         "title": "Recherche et commandes"
       },
       "confirm_dialog": {

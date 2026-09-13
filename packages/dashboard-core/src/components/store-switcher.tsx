@@ -15,6 +15,7 @@ import { CheckIcon, ChevronsUpDownIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
+import { getInitials } from '../lib/formatters'
 import { useStore } from '../providers/store-provider'
 
 /**
@@ -34,14 +35,14 @@ export function StoreSwitcher() {
   const { store, isLoading } = useStore()
   const { user } = useAuth()
 
-  if (isLoading) return <Skeleton className="h-header-height w-full rounded-xl" />
+  if (isLoading) return <Skeleton className="h-rail-header-height w-full rounded-xl" />
 
   const stores = user?.stores ?? []
 
-  const storeInitials = store?.name
-    .split(' ')
-    .map((name) => name[0])
-    .join('')
+  // `getInitials` rather than one letter per word: a store called "Shop With a
+  // Very Long Name" produced six characters and burst the avatar. This caps at
+  // two — first word and last — and is what the account avatar already uses.
+  const storeInitials = getInitials(store?.name, '?')
 
   const header = (
     <>
@@ -60,7 +61,7 @@ export function StoreSwitcher() {
   if (stores.length < 2) {
     return (
       <SidebarMenu>
-        <SidebarMenuItem className="h-header-height flex items-center">
+        <SidebarMenuItem className="h-rail-header-height flex items-center">
           <div className="flex w-full items-center gap-2 p-1.5">{header}</div>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -69,7 +70,7 @@ export function StoreSwitcher() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem className="h-header-height flex items-center">
+      <SidebarMenuItem className="h-rail-header-height flex items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="flex w-full items-center">
             <button
