@@ -775,7 +775,12 @@
   html {
     @apply font-sans antialiased;
     text-rendering: optimizeLegibility;
-    overflow-y: scroll;
+    /* No `overflow-y: scroll` here. It used to reserve the scrollbar gutter so
+     * the page would not jump sideways between a short route and a tall one,
+     * back when the document was what scrolled. The inset shell ended that:
+     * it is exactly viewport-height and scrolls inside itself, so the document
+     * can never overflow — and the reserved gutter became a permanently
+     * disabled second scrollbar sitting beside the sheet's real one. */
     /* Clip horizontal overflow at the document root so wide tables on mobile
      * can't widen the page. Must live on <html>, not <body>: `overflow-x:
      * hidden` on body makes `overflow-y` compute to `auto`, turning body into
