@@ -189,8 +189,12 @@ function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
+          {/* `sm` is the toolbar size the date picker's trigger also uses, so
+              the three controls on this row match in height, padding, text and
+              chevron rather than being aligned by hand. */}
           <ChannelSelect
             allOption
+            triggerSize="sm"
             triggerClassName="min-w-40"
             value={channelId}
             onChange={setChannelId}
@@ -200,6 +204,7 @@ function DashboardPage() {
           {currencies.length > 1 && (
             <CurrencySelect
               id="home-currency"
+              triggerSize="sm"
               value={currency}
               onChange={setPickedCurrency}
               searchPlaceholder={t('admin.pages.home.currency.search')}
@@ -549,15 +554,25 @@ function RankingsCard({
 
   return (
     <Card className="lg:col-span-3">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+      {/* Stacked on a phone, side by side once there is width for both. Put
+          beside a four-tab strip on a narrow screen the heading gets a column
+          of its own barely wider than one word, and every line wraps. */}
+      <CardHeader className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="flex flex-col gap-1.5">
           <CardTitle>{t('admin.pages.home.rankings.title')}</CardTitle>
           <CardDescription>{t('admin.pages.home.rankings.subtitle')}</CardDescription>
         </div>
-        <Tabs value={tab} onValueChange={(value) => setTab(value as RankingTab)}>
-          <TabsList>
+        {/* The strip scrolls sideways rather than wrapping: a wrapped tab list
+            reads as two rows of unrelated buttons, and the labels are names
+            that must not be broken mid-word. */}
+        <Tabs
+          value={tab}
+          onValueChange={(value) => setTab(value as RankingTab)}
+          className="min-w-0 max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <TabsList className="w-max">
             {tabs.map((value) => (
-              <TabsTrigger key={value} value={value}>
+              <TabsTrigger key={value} value={value} className="whitespace-nowrap">
                 {t(`admin.pages.home.rankings.tabs.${value}`)}
               </TabsTrigger>
             ))}

@@ -79,7 +79,7 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <div className="flex flex-col gap-4 border-t p-4">
+          <div className="flex flex-col gap-4 border-t border-border-subtle p-4">
             <Progress value={progressPercentage(progress)} />
 
             {data ? (

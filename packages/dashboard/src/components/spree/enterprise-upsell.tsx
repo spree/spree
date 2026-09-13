@@ -1,5 +1,5 @@
-import { Alert, AlertDescription, AlertTitle } from '@spree/dashboard-ui'
-import { ExternalLinkIcon, SparklesIcon } from '@spree/dashboard-ui/icons'
+import { Alert, AlertDescription, AlertTitle, ExternalLink } from '@spree/dashboard-ui'
+import { SparklesIcon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 
 export const SPREE_ENTERPRISE_URL = 'https://spreecommerce.org/enterprise/'
@@ -26,15 +26,14 @@ export function EnterpriseUpsell({
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription className="flex flex-col items-start gap-1.5">
         {description}
-        <a
+        {/* `text-current`: inside an Alert the link inherits the alert's own
+            tone rather than the link blue, which would fight it. */}
+        <ExternalLink
           href={SPREE_ENTERPRISE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 font-medium text-current underline underline-offset-3"
+          className="font-medium text-current underline underline-offset-3"
         >
           {t('admin.enterprise.learn_more')}
-          <ExternalLinkIcon className="size-3.5" />
-        </a>
+        </ExternalLink>
       </AlertDescription>
     </Alert>
   )

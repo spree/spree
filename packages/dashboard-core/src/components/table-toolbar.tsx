@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  cn,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -54,7 +53,6 @@ import {
 } from '../lib/table-registry'
 import { useOptionalStore } from '../providers/store-provider'
 import { useTenantId } from '../providers/tenant-provider'
-import { SectionHeading } from './section-heading'
 import { StoreDatePicker } from './store-date-picker'
 
 interface TableToolbarProps {
@@ -71,19 +69,6 @@ interface TableToolbarProps {
   onFiltersChange: (filters: FilterRule[]) => void
   /** All columns including filter-only ones (for the filter drawer). Falls back to `columns` if not provided. */
   allColumns?: ColumnDef[]
-  /** Title displayed in the toolbar header */
-  title?: string
-  /**
-   * Heading level for the title. Defaults to `h1` because a list page is this
-   * table and nothing else. Pass a lower level when the table is a panel
-   * inside a page that already owns the `h1`.
-   */
-  titleAs?: 'h1' | 'h2' | 'h3'
-  /** One line under the title saying what the list is for. */
-  description?: string
-  /** Documentation for the feature, linked at the end of the description. */
-  docsPath?: string
-  actions?: React.ReactNode
   /** Hide the sort dropdown — used when the table is drag-reorderable, where free sorting would defeat the drag. */
   hideSort?: boolean
 }
@@ -186,11 +171,6 @@ export function TableToolbar({
   filters,
   onFiltersChange,
   allColumns,
-  title,
-  titleAs = 'h1',
-  description,
-  docsPath,
-  actions,
   hideSort = false,
 }: TableToolbarProps) {
   const { t } = useTranslation()
@@ -267,34 +247,6 @@ export function TableToolbar({
 
   return (
     <>
-      {/* Title and page actions only. Every control that acts on the list —
-          search, filters, sort, columns — lives on the row below, so the two
-          rows split by what they are for rather than by how they are built. */}
-      <div
-        className={cn(
-          'flex flex-row gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between',
-          description ? 'items-start' : 'items-center',
-        )}
-      >
-        {(title || description) && (
-          // `h1`: a list page is a `ResourceTable` and nothing else, so this
-          // title is the page's only heading. Rendered as a div it left those
-          // pages with no heading at all — no document outline, and nothing
-          // for the heading-navigation a screen reader user relies on.
-          <SectionHeading
-            // Only a real title becomes a heading. `title` and `description`
-            // are independent, and a description-only caller would otherwise
-            // emit an empty `<h1>` — which a screen reader still lists in
-            // heading navigation, as a blank entry.
-            as={title ? titleAs : undefined}
-            title={title}
-            description={description}
-            docsPath={docsPath}
-          />
-        )}
-        <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
-      </div>
-
       {/* One filter row: the quick controls and any filters set the long way
           sit together, because to the operator they are the same thing — a
           constraint currently on the list. Splitting them into a "controls"
@@ -308,17 +260,17 @@ export function TableToolbar({
         search ||
         (!hideSort && sortableColumns.length > 0) ||
         columns.some((c) => c.default !== undefined)) && (
-        <div className="flex items-start gap-2 border-b border-border-subtle px-3 py-2">
+        <div className="flex items-start gap-2">
           {/* Only the filters wrap. They grow with what the operator has set,
               where sort and columns are a fixed pair — letting the whole row
               wrap dropped those two onto a line of their own the moment the
               filters filled the width. */}
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {/* Search leads: it is the widest net, and the filters beside it
-              narrow what it finds. Hidden on a phone, where the TopBar already
-              carries a search field — two search boxes stacked in one column is
-              the more confusing cost. A term set on desktop still shows as a
-              chip there, so it never filters a list invisibly. */}
+              narrow what it finds. Hidden on a phone, where the sidebar drawer
+              already carries a search field — two search boxes stacked in one
+              column is the more confusing cost. A term set on desktop still
+              shows as a chip there, so it never filters a list invisibly. */}
             <SearchInput
               value={search}
               onValueChange={onSearchChange}

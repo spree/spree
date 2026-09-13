@@ -1,5 +1,5 @@
 import type { Category } from '@spree/admin-sdk'
-import { Can, SectionHeading, Subject } from '@spree/dashboard-core'
+import { Can, PageHeader, Subject } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -71,28 +71,17 @@ function CategoriesPage() {
 
   return (
     <>
-      <Card className="overflow-hidden rounded-xl">
-        <div className="flex flex-col items-start justify-between gap-2 border-b border-border-subtle p-3 lg:flex-row lg:items-start">
-          <SectionHeading
-            title={t('admin.categories.title')}
-            description={t('admin.table_descriptions.categories')}
-            docsPath="manage-products/product-taxonomies"
-          />
-          <div className="flex items-center gap-2">
-            <InputGroup className="lg:w-[300px]">
-              <InputGroupAddon>
-                <SearchIcon className="size-4 text-muted-foreground" />
-              </InputGroupAddon>
-              <InputGroupInput
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t('admin.categories.search_placeholder')}
-              />
-            </InputGroup>
+      {/* The same shell `ResourceTable` builds: the page's own header on the
+          sheet, the search under it, and the card holding only the tree. */}
+      <div className="flex flex-col gap-3">
+        <PageHeader
+          sticky={false}
+          title={t('admin.categories.title')}
+          description={t('admin.table_descriptions.categories')}
+          docsPath="manage-products/product-taxonomies"
+          actions={
             <Can I="create" a={Subject.Category}>
               <Button
-                size="sm"
-                className="h-[2.125rem]"
                 onClick={() =>
                   navigate({ to: '/$storeId/products/categories/new', params: { storeId } })
                 }
@@ -101,30 +90,44 @@ function CategoriesPage() {
                 {t('admin.categories.add_cta')}
               </Button>
             </Can>
-          </div>
-        </div>
-        <CardContent className="p-0">
-          {activeError ? (
-            <p className="p-6 text-destructive" role="alert">
-              {t('admin.categories.load_failed')}
-            </p>
-          ) : searching ? (
-            searchLoading ? (
+          }
+        />
+
+        <InputGroup className="lg:w-[300px]">
+          <InputGroupAddon>
+            <SearchIcon className="size-4 text-muted-foreground" />
+          </InputGroupAddon>
+          <InputGroupInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('admin.categories.search_placeholder')}
+          />
+        </InputGroup>
+
+        <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
+          <CardContent className="p-0">
+            {activeError ? (
+              <p className="p-6 text-destructive" role="alert">
+                {t('admin.categories.load_failed')}
+              </p>
+            ) : searching ? (
+              searchLoading ? (
+                <p className="p-6 text-muted-foreground">{t('admin.common.loading')}</p>
+              ) : (
+                <CategoryList categories={searchData?.data ?? []} {...rowHandlers} />
+              )
+            ) : isLoading ? (
               <p className="p-6 text-muted-foreground">{t('admin.common.loading')}</p>
             ) : (
-              <CategoryList categories={searchData?.data ?? []} {...rowHandlers} />
-            )
-          ) : isLoading ? (
-            <p className="p-6 text-muted-foreground">{t('admin.common.loading')}</p>
-          ) : (
-            <CategoryTree
-              categories={data?.data ?? []}
-              {...rowHandlers}
-              onReorder={handleReorder}
-            />
-          )}
-        </CardContent>
-      </Card>
+              <CategoryTree
+                categories={data?.data ?? []}
+                {...rowHandlers}
+                onReorder={handleReorder}
+              />
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {translateId && (
         <ResourceTranslationsDialog

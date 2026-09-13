@@ -62,6 +62,7 @@ export * from './spree/return-dialogs'
 // `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
 // way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
 
+export * from './spree/external-link'
 export * from './spree/language-menu-items'
 export * from './spree/metadata/metadata-card'
 export * from './spree/product-membership-list'

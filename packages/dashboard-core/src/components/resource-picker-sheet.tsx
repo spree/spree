@@ -237,7 +237,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
           {description && <SheetDescription>{description}</SheetDescription>}
         </SheetHeader>
 
-        <div className="border-b border-border p-4">
+        <div className="border-b border-border-subtle p-4">
           <SearchInput
             value={input}
             onValueChange={(value) => {
@@ -268,7 +268,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
           ) : (
             <>
               {matchCount > 0 && (
-                <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2">
+                <div className="flex items-center justify-between gap-3 border-b border-border-subtle px-4 py-2">
                   <button
                     type="button"
                     disabled={selectableOnPage.length === 0 || selectingAll}

@@ -1,11 +1,14 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarTrigger,
   Skeleton,
+  useSidebar,
 } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
@@ -16,6 +19,8 @@ import { type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-regist
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { useOptionalStore } from '../providers/store-provider'
 import { type NavItem, NavMain } from './nav-main'
+import { SidebarSearch } from './sidebar-search'
+import { SidebarUser } from './sidebar-user'
 import { StoreSwitcher } from './store-switcher'
 
 /**
@@ -98,10 +103,16 @@ export function useNavItems(tenantId: string): {
  * both are props. Everything else (side-by-language, collapsible rail,
  * permission filtering) is the same in either, and a panel that copied this to
  * change the header would silently miss every later fix to the rest.
+ *
+ * The rail carries the whole of the app's chrome: the tenant switcher and
+ * search above the nav, the account menu at its foot. There is no top bar —
+ * the page's own header is the only thing above the content.
  */
 export function AppSidebar({
   tenantId,
   header,
+  uiLocales,
+  onEditProfile,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -111,14 +122,31 @@ export function AppSidebar({
   tenantId?: string
   /** Rendered in the header. Defaults to the store switcher. */
   header?: ReactNode
+  /** Admin UI languages offered by the account menu's language switcher. */
+  uiLocales?: ReadonlyArray<{ code: string; name: string }>
+  /** Opens the app's edit-profile dialog from the account menu. */
+  onEditProfile?: () => void
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
 
   return (
-    <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>
-      <SidebarHeader>{header ?? <StoreSwitcher />}</SidebarHeader>
+    <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
+      <SidebarHeader>
+        {/* The switcher, search and the account row are all hidden on a phone:
+            the top bar already names the store and carries both search and the
+            account menu, so repeating them inside the drawer spends rows of a
+            small screen saying what is visible behind it. The drawer is for
+            navigating. */}
+        <div className="hidden items-center gap-1 md:flex">
+          <div className="min-w-0 flex-1">{header ?? <StoreSwitcher />}</div>
+          <CollapseTrigger />
+        </div>
+        <div className="hidden md:block">
+          <SidebarSearch />
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         {/* Permissions decide which links exist, and until they arrive every
             `can()` answers false — so the real nav is not "empty", it is not
@@ -131,6 +159,9 @@ export function AppSidebar({
             list is never actually empty and a length check would never fire. */}
         {isLoading ? <NavSkeleton /> : <NavMain items={navItems} bottomItems={bottomItems} />}
       </SidebarContent>
+      <SidebarFooter className="hidden md:flex">
+        <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+      </SidebarFooter>
     </Sidebar>
   )
 }
@@ -158,5 +189,23 @@ function NavSkeleton() {
         ))}
       </SidebarMenu>
     </SidebarGroup>
+  )
+}
+
+/**
+ * Collapses the rail to its icon width, beside the tenant switcher.
+ *
+ * It lives here because the rail is now the app's only chrome — the top bar
+ * that used to carry this control is gone, and without it the rail could be
+ * collapsed by keyboard alone. Hidden once collapsed: at icon width there is
+ * no room beside the avatar, and the rail's own edge handle (`SidebarRail`)
+ * expands it again.
+ */
+function CollapseTrigger() {
+  const { isMobile, state } = useSidebar()
+  if (isMobile || state === 'collapsed') return null
+
+  return (
+    <SidebarTrigger className="shrink-0 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground" />
   )
 }

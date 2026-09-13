@@ -366,7 +366,7 @@ function CreateFulfillmentDialog({
                 {units.map((unit) => (
                   <div
                     key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border p-3"
+                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
                   >
                     <span className="text-sm truncate">{unit.label}</span>
                     <Input

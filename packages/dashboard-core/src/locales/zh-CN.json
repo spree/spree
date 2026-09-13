@@ -249,6 +249,7 @@
         },
         "no_results": "未找到与“{{query}}”相关的结果。",
         "placeholder": "搜索商品、订单、客户…",
+        "search_label": "搜索任何内容…",
         "title": "搜索与命令"
       },
       "confirm_dialog": {

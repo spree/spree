@@ -2,11 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   ErrorState,
   Field,
   FieldDescription,
@@ -148,105 +143,101 @@ function PayoutSettingsPage({ store }: { store: Store }) {
                 </p>
               )}
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('admin.fields.store.payouts.title')}</CardTitle>
-                  <CardDescription>{t('admin.fields.store.payouts.description')}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <FieldGroup>
-                    <Controller
-                      control={form.control}
-                      name="preferred_payout_provider"
-                      render={({ field }) => (
-                        <Field>
-                          <FieldLabel htmlFor="payout-provider">
-                            {t('admin.fields.store.payouts.provider.label')}
-                          </FieldLabel>
-                          <Select
-                            items={providerOptions}
-                            value={field.value}
-                            onValueChange={(value) => field.onChange(value as string)}
-                          >
-                            <SelectTrigger id="payout-provider">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {providerOptions.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                  disabled={option.disabled}
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FieldDescription>
-                            {selected?.requires_payout_account
-                              ? t('admin.fields.store.payouts.provider.requires_account')
-                              : t('admin.fields.store.payouts.provider.help')}
-                          </FieldDescription>
-                          <FieldError errors={[errors.preferred_payout_provider]} />
-                        </Field>
-                      )}
-                    />
-
-                    <Controller
-                      control={form.control}
-                      name="preferred_default_payouts_schedule_interval"
-                      render={({ field }) => (
-                        <Field>
-                          <FieldLabel htmlFor="payout-schedule">
-                            {t('admin.fields.store.payouts.schedule.label')}
-                          </FieldLabel>
-                          <Select
-                            items={scheduleOptions}
-                            value={field.value}
-                            onValueChange={(value) => field.onChange(value as string)}
-                          >
-                            <SelectTrigger id="payout-schedule">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {scheduleOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FieldDescription>
-                            {t('admin.fields.store.payouts.schedule.help')}
-                          </FieldDescription>
-                          <FieldError
-                            errors={[errors.preferred_default_payouts_schedule_interval]}
-                          />
-                        </Field>
-                      )}
-                    />
-
+              {/* No Card and no CardHeader: this page has one group of fields,
+                  and the PageHeader above already names it. A card here would
+                  draw a frame around the whole page content, and its header
+                  restated the page title and subtitle a few pixels below
+                  themselves. The other single-group settings pages read the
+                  same way. */}
+              <FieldGroup>
+                <Controller
+                  control={form.control}
+                  name="preferred_payout_provider"
+                  render={({ field }) => (
                     <Field>
-                      <FieldLabel htmlFor="payout-minimum">
-                        {t('admin.fields.store.payouts.minimum.label')}
+                      <FieldLabel htmlFor="payout-provider">
+                        {t('admin.fields.store.payouts.provider.label')}
                       </FieldLabel>
-                      <Input
-                        id="payout-minimum"
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        aria-invalid={!!errors.preferred_default_minimum_payout_amount || undefined}
-                        {...form.register('preferred_default_minimum_payout_amount')}
-                      />
+                      <Select
+                        items={providerOptions}
+                        value={field.value}
+                        onValueChange={(value) => field.onChange(value as string)}
+                      >
+                        <SelectTrigger id="payout-provider">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {providerOptions.map((option) => (
+                            <SelectItem
+                              key={option.value}
+                              value={option.value}
+                              disabled={option.disabled}
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FieldDescription>
-                        {t('admin.fields.store.payouts.minimum.help')}
+                        {selected?.requires_payout_account
+                          ? t('admin.fields.store.payouts.provider.requires_account')
+                          : t('admin.fields.store.payouts.provider.help')}
                       </FieldDescription>
-                      <FieldError errors={[errors.preferred_default_minimum_payout_amount]} />
+                      <FieldError errors={[errors.preferred_payout_provider]} />
                     </Field>
-                  </FieldGroup>
-                </CardContent>
-              </Card>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="preferred_default_payouts_schedule_interval"
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel htmlFor="payout-schedule">
+                        {t('admin.fields.store.payouts.schedule.label')}
+                      </FieldLabel>
+                      <Select
+                        items={scheduleOptions}
+                        value={field.value}
+                        onValueChange={(value) => field.onChange(value as string)}
+                      >
+                        <SelectTrigger id="payout-schedule">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {scheduleOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FieldDescription>
+                        {t('admin.fields.store.payouts.schedule.help')}
+                      </FieldDescription>
+                      <FieldError errors={[errors.preferred_default_payouts_schedule_interval]} />
+                    </Field>
+                  )}
+                />
+
+                <Field>
+                  <FieldLabel htmlFor="payout-minimum">
+                    {t('admin.fields.store.payouts.minimum.label')}
+                  </FieldLabel>
+                  <Input
+                    id="payout-minimum"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    aria-invalid={!!errors.preferred_default_minimum_payout_amount || undefined}
+                    {...form.register('preferred_default_minimum_payout_amount')}
+                  />
+                  <FieldDescription>
+                    {t('admin.fields.store.payouts.minimum.help')}
+                  </FieldDescription>
+                  <FieldError errors={[errors.preferred_default_minimum_payout_amount]} />
+                </Field>
+              </FieldGroup>
             </>
           }
         />

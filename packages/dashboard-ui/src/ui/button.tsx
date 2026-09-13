@@ -8,7 +8,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/85',
+        // `shadow-xs` like the outline and destructive variants: the primary
+        // action is the one thing on a page that should sit slightly above it,
+        // and it was the only variant with no lift at all.
+        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
         outline:
           'border-border bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
         // `group-hover/row:` — inside a hovered table row the row already wears

@@ -249,6 +249,7 @@
         },
         "no_results": "No results for \"{{query}}\".",
         "placeholder": "Search products, orders, customers…",
+        "search_label": "Search anything…",
         "title": "Search and commands"
       },
       "confirm_dialog": {

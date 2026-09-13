@@ -21,6 +21,7 @@ export function PayoutsPage({ search }: { search: ResourceSearch }) {
       <PageHeader title={t('payouts.title')} subtitle={t('payouts.subtitle')} />
 
       <ResourceTable<Payout>
+        hideHeader
         tableKey="seller-payouts"
         queryKey="seller-payouts-list"
         queryFn={(params) => sellerClient().payouts.list(params)}

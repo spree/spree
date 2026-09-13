@@ -20,6 +20,8 @@ interface ChannelSelectProps {
   allOption?: boolean
   /** Extra classes for the trigger (e.g. a width constraint in toolbars). */
   triggerClassName?: string
+  /** `sm` matches the toolbar controls beside it — see `SelectTrigger`. */
+  triggerSize?: 'sm' | 'default'
   disabled?: boolean
 }
 
@@ -39,6 +41,7 @@ export function ChannelSelect({
   placeholder,
   allOption,
   triggerClassName,
+  triggerSize,
   disabled,
 }: ChannelSelectProps) {
   const { t } = useTranslation()
@@ -54,7 +57,7 @@ export function ChannelSelect({
     <>
       {name && <input type="hidden" name={name} value={value ?? ''} />}
       <Select value={value ?? ''} onValueChange={(v) => onChange?.(v)} disabled={disabled}>
-        <SelectTrigger id={id} className={triggerClassName}>
+        <SelectTrigger id={id} size={triggerSize} className={triggerClassName}>
           {/* Base UI's `<SelectValue>` defaults to rendering the raw `value`
               (the prefixed ID). Use the children render-prop to look up the
               name from our cached list so the trigger matches the items. */}

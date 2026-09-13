@@ -194,6 +194,7 @@ export function PurchaseOrderForm({
               value={expectedAt}
               onChange={(value) => setExpectedAt(value ?? undefined)}
               placeholder={t('admin.purchase_orders.fields.expected_at_placeholder')}
+              className="shadow-none"
             />
           </Field>
 
@@ -205,6 +206,7 @@ export function PurchaseOrderForm({
               value={cancelBy}
               onChange={(value) => setCancelBy(value ?? undefined)}
               placeholder={t('admin.purchase_orders.fields.cancel_by_placeholder')}
+              className="shadow-none"
             />
           </Field>
 

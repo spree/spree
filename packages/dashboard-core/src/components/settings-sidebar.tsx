@@ -1,5 +1,4 @@
 import {
-  Badge,
   cn,
   mobileDrawerClassName,
   SearchInput,
@@ -11,6 +10,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@spree/dashboard-ui'
@@ -30,8 +30,8 @@ import { NavIcon } from './nav-main'
 
 /**
  * Secondary settings sidebar. Always mounted as a sibling to the primary
- * sidebar so it can extend full-height (top of viewport to bottom, beside
- * the TopBar rather than below it). Width animates between `0` and
+ * sidebar so it can extend the full height of the content sheet. Width
+ * animates between `0` and
  * `--spacing-sidebar-width` driven by the `open` prop, so entering and
  * leaving the settings area gets a slide-in/slide-out transition.
  *
@@ -59,18 +59,26 @@ export function SettingsSidebar({
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
 
-  // `sticky top-0 h-svh` keeps the nav at full viewport height as the page
-  // scrolls. `overflow-hidden` clips the inner fixed-width content while the
-  // outer `width` animates between 0 and `--spacing-sidebar-width`. `aria-hidden`
-  // while closed prevents screen-reader and keyboard access to hidden links.
+  // `h-full` fills the content sheet, which is itself exactly viewport-height
+  // and scrolls internally — so the nav stays put as the page scrolls without
+  // needing to be sticky. `overflow-hidden` clips the inner fixed-width content
+  // while the outer `width` animates between 0 and `--spacing-sidebar-width`.
+  // `aria-hidden` while closed prevents screen-reader and keyboard access to
+  // hidden links.
   return (
     <aside
       aria-label={t('admin.a11y.settings_navigation')}
       aria-hidden={!open}
       data-state={open ? 'open' : 'closed'}
       className={cn(
-        'sticky top-0 z-30 hidden h-svh shrink-0 self-start overflow-hidden bg-sidebar text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
-        open ? 'lg:w-(--spacing-sidebar-width) border-e' : 'lg:w-0 border-e-0 border-transparent',
+        // `bg-card`, the content sheet's own colour: this rail is a column OF
+        // the sheet rather than an extension of the nav rail beside it, so it
+        // reads as part of the page it is navigating rather than as a second
+        // band of chrome.
+        'z-30 hidden h-full shrink-0 overflow-hidden bg-muted text-sidebar-foreground transition-[width,border-color] duration-200 ease-out lg:block',
+        open
+          ? 'lg:w-(--spacing-sidebar-width) border-e border-border-subtle'
+          : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
       {/* `quiet-scrollbar` rather than the browser default: this nav is an
@@ -85,9 +93,9 @@ export function SettingsSidebar({
         {/* Names the area and offers the way out. Without it this panel is
             visually identical to the primary sidebar, so nothing says the
             merchant has entered a different part of the app — and the only
-            exit is the icon rail beside it. `h-header-height` matches the
+            exit is the icon rail beside it. `h-rail-header-height` matches the
             store switcher opposite, so the two line up. */}
-        <div className="flex h-header-height items-center gap-1 px-2">
+        <div className="flex h-rail-header-height items-center gap-1 px-2">
           <Link
             to={`/${tenantId ?? storeId}` as never}
             tabIndex={open ? 0 : -1}
@@ -167,10 +175,10 @@ export function SettingsNavSheet({
         className={cn(mobileDrawerClassName, 'gap-0')}
         style={{ width: SIDEBAR_WIDTH_MOBILE }}
       >
-        {/* `h-header-height` matches the store header in the primary drawer, so
+        {/* `h-rail-header-height` matches the store header in the primary drawer, so
             the two nav sheets open to the same silhouette — and it gives the
             close button a full-height touch target rather than a 42px band. */}
-        <SheetHeader className="h-header-height justify-center border-b border-sidebar-border px-4 py-0">
+        <SheetHeader className="h-rail-header-height justify-center border-b border-sidebar-border px-4 py-0">
           {/* Held at the default body size rather than the larger sheet
               title: this is a nav band matched to the store header, not a
               dialog heading. */}
@@ -235,7 +243,7 @@ function SettingsNavBody({
           aria-label={t('admin.settings_page.search_placeholder')}
           clearLabel={t('admin.common.clear')}
           tabIndex={tabIndex}
-          className="h-8 bg-sidebar text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
+          className="h-8 text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
         />
       </div>
 
@@ -291,11 +299,7 @@ function SettingsItem({
         <Link to={url} tabIndex={tabIndex}>
           <NavIcon icon={Icon} isActive={isActive} />
           <span>{label}</span>
-          {entry.comingSoon && (
-            <Badge className="ms-auto h-5 bg-sidebar-accent px-1.5 py-0 text-[10px] font-normal text-sidebar-foreground/70">
-              Soon
-            </Badge>
-          )}
+          {entry.comingSoon && <SidebarMenuBadge className="ms-auto">Soon</SidebarMenuBadge>}
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
