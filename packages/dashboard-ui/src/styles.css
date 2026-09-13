@@ -125,40 +125,51 @@
   --destructive-foreground: var(--card);
   /* The full-strength rule colour. Nothing styles with it directly — the two
      tokens below are both a share of it, so neither compounds the other's
-     reduction. */
+     reduction.
+
+     stone-200. This is the floor for a hairline: anything lighter stops
+     holding a container's edge on a white sheet, and the row rules of a long
+     table start to disappear before the frame around them does. */
   --border-base: oklch(92.3% 0.003 48.717); /* stone-200 */
-  /* A container's own edge. Legible but receding, so a dense table reads as
-     rows of content rather than a grid. Carries its strength in the token, so
-     call sites never restate it — an `/80` utility would compound to 64%. */
-  --border: color-mix(in srgb, var(--border-base) 90%, transparent);
-  /* Half-strength rule for dividers *inside* a container — card header/footer
-     splits, dialog and sheet separators, table chrome. Half of the base, not
-     of --border, so it is a true 50% rather than 40%. Resolved to a real
-     colour rather than an opacity utility so it also works inside arbitrary
-     values such as the sticky table header's inset shadow, where `/50` has no
-     effect. */
+  /* A structural edge — the content sheet, a dialog, a dropdown, a popover, a
+     table's frame. These are surfaces that float above the page or divide it,
+     and their edge is what says where one ends and the next begins, so it
+     carries the base at full strength. Cards take --border-card instead.
+
+     Carries its strength in the token, so call sites never restate it — an
+     `/80` utility would compound on top of this. */
+  --border: var(--border-base);
+  /* A card's own edge. Softer than a structural one: a card is a region OF the
+     sheet rather than a surface floating above it, so its edge only has to
+     suggest where the region ends. Used by `CardContent`'s frame; a dialog or
+     the sheet itself must keep --border, or the shell loses its outline. */
+  --border-card: color-mix(in srgb, var(--border-base) 50%, transparent);
+  /* Dividers *inside* a container — card header/footer splits, dialog and
+     sheet separators, table row rules.
+
+     Half of the BASE, not of --border, so it is a true 50% rather than one
+     token compounding the other. The same value as --border-card, so a card's
+     edge and the rules dividing its contents are one hairline weight.
+
+     Resolved to a real colour rather than an opacity utility so it also works
+     inside arbitrary values such as the sticky table header's inset shadow,
+     where `/50` has no effect. */
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
-  /* Controls carry two different problems, so they take two different tokens.
-     WCAG 1.4.11 asks 3:1 only of what is needed to *identify* a control — so
-     what matters is whether the border is the only thing doing that job.
+  /* A mark that has to hold its own against the surface with nothing else
+     drawing it — the bar of a scrollbar, the focus ring the skip link draws.
+     WCAG 1.4.11 asks 3:1 of exactly that case: 3.25:1 on the white card,
+     3.11:1 on the page ground, the lightest step that clears the minimum on
+     both.
 
-     --border-control: for a control with nothing else to identify it. A
-     checkbox and a radio are a transparent 16px box; erase the outline and
-     there is nothing on the page. 3.25:1 on the white card, 3.11:1 on the page
-     ground — the lightest step that clears the minimum on both.
+     No form control uses this. Fields, selects, comboboxes, checkboxes and
+     radios all take `--border` with `--shadow-xs`, the same pair the outline
+     button wears, so every bordered control on a card reads as one family.
 
-     --border-field: for a text field, select or combobox. These sit on a card
-     of the same colour, so the border is what draws them — but a form of ten
-     fields outlined at the control value reads as a wall of boxes. This lands
-     between the two: firmer than the old rule, quiet enough to disappear into
-     a dense form.
-
-     A tinted fill was tried here and reverted. Disabled fields are `--muted`,
-     so any resting tint either collides with that meaning or (as happened)
-     lands darker than it and inverts the signal outright. On this palette the
-     enabled state has to stay on the card colour. */
-  --border-control: oklch(65% 0.01 56.259);
-  --border-field: oklch(86.9% 0.005 56.366); /* stone-300 */
+     A tinted fill on fields was tried and reverted. Disabled fields are
+     `--muted`, so any resting tint either collides with that meaning or (as
+     happened) lands darker than it and inverts the signal outright. On this
+     palette the enabled state has to stay on the card colour. */
+  --border-control: oklch(86.9% 0.005 56.366);
   /* A card that *holds* other records — an order's fulfillments, its returns,
      its claims — rather than holding content directly.
 
@@ -194,17 +205,19 @@
   --chart-5: oklch(0.3358 0.118 257.1);
   --radius: 0.75rem;
 
-  /* Sidebar — the same surface as the page, not a band beside it. Every value
-     points at the page token it matches rather than repeating it, so the two
-     cannot drift apart. */
-  --sidebar: var(--background);
+  /* Sidebar — the ground the content sheet is inset into, so it sits one step
+     back from the page rather than level with it. That difference is what
+     makes the sheet's rounded edge and shadow read at all: when the two were
+     the same colour the inset was invisible. Everything else still points at
+     the page token it matches, so the rest cannot drift. */
+  --sidebar: oklch(97% 0.001 106.424); /* stone-100 */
   --sidebar-foreground: oklch(26.8% 0.007 34.298);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
   --sidebar-accent: var(--accent);
   --sidebar-accent-foreground: var(--accent-foreground);
   --sidebar-accent-strong: var(--accent-strong);
-  --sidebar-accent-hover: var(--accent-hover);
+  --sidebar-accent-hover: var(--accent-strong);
   --sidebar-accent-strong-hover: var(--accent-strong-hover);
   /* Matches the rule the top bar draws, so every edge framing the shell —
      the sidebar's, the top bar's, the settings header's — is one weight. */
@@ -285,12 +298,12 @@
      hairline weight. */
   --border-base: oklch(1 0 0 / 16%);
   --border: var(--border-base);
+  --border-card: color-mix(in srgb, var(--border-base) 50%, transparent);
   --border-subtle: color-mix(in srgb, var(--border-base) 50%, transparent);
   /* Light mode darkens the control edge away from the card; dark mode lightens
      it. Not the light value inverted — measured on this theme's own surfaces:
      3.22:1 on the card, 3.34:1 on the page ground. */
   --border-control: oklch(52% 0.01 56.259);
-  --border-field: oklch(32% 0.007 34.298);
   /* Same arrangement as light — container at the page colour, records raised
      above it. 1.118:1 between them here. Records take `--nested-raised` rather
      than `--card`: the card token is a step above the page, which is where the
@@ -314,7 +327,10 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: var(--background);
+  /* One step back from the page, as in light mode — see the note there. Darker
+     rather than lighter: the sheet is the raised surface, so the ground behind
+     it recedes. */
+  --sidebar: oklch(14.7% 0.004 49.25); /* stone-950 */
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
@@ -370,8 +386,14 @@
   --text-3xl: 1.75rem;
   --text-4xl: 2rem;
 
-  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  /* The resting lift on a control that sits ON a surface — a field, a button,
+     a card. Measured off a reference: the ground under a field's bottom edge
+     recovers over about 2px and nothing spreads above it or to the sides, so
+     this is purely directional, with no ambient layer. */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  /* The same lift, under its Tailwind-conventional name. Points at the token
+     above rather than repeating the value, so the two cannot drift. */
+  --shadow-sm: var(--shadow-xs);
   --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
   /* Floating surfaces — menus, popovers, dialogs, sheets. Wide and faint
@@ -394,8 +416,19 @@
   --radius-2xl: 1.125rem;
 
   /* Sidebar + header tokens */
-  --spacing-sidebar-width: 220px;
-  --spacing-header-height: 58px;
+  --spacing-sidebar-width: 240px;
+  /* The offset pinned bands (a table's column row, the bulk-action bar) sit
+     below. There is no top bar, so the only chrome above the scrolling content
+     is a page's own `PageHeader` — which measures itself and overwrites this
+     at runtime. `0px` is therefore the honest default: it is what a page with
+     no header should use, and a non-zero constant here would strand the column
+     row that far down on every one of them. */
+  --spacing-header-height: 0px;
+  /* The height of a rail header row — the store/seller switcher, the settings
+     rail's title. A fixed constant, deliberately NOT the sticky offset above:
+     that one is measured and can legitimately be zero, which would collapse
+     these rows to nothing. */
+  --spacing-rail-header-height: 42px;
 
   /* Easing. Overrides Tailwind's built-in `ease-out`, so every `ease-out`
      utility in the app picks this up: the stock curve is too weak to read as
@@ -427,9 +460,9 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-card: var(--border-card);
   --color-border-subtle: var(--border-subtle);
   --color-border-control: var(--border-control);
-  --color-border-field: var(--border-field);
   --color-card-container: var(--card-container);
   --color-nested-raised: var(--nested-raised);
   --color-track-recessed: var(--track-recessed);
@@ -492,7 +525,10 @@
   /* Unified focus treatment — matches the form-input focus (soft blue glow,
      no hard outline). Apply to buttons, links, menu triggers, and any other
      interactive control so every focusable element looks the same on
-     keyboard focus. Inputs/textarea/select keep their inline equivalent. */
+     keyboard focus. Text fields spell the same treatment out inline with a
+     `focus:` variant rather than `focus-visible:` — clicking into a field puts
+     the caret there, so it must show it owns the keyboard even when the focus
+     came from a pointer. */
   outline: none;
   &:focus-visible {
     border-color: var(--ring);

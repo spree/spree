@@ -37,11 +37,15 @@ function Card({
         // rather than `hidden` so `overflow-y` stays `visible` and sticky
         // descendants keep resolving against the page.
         'group/card flex flex-col min-w-0 overflow-x-clip break-words text-card-foreground shadow-xs',
-        variant === 'nested' && 'rounded-lg border border-border-subtle bg-nested-raised px-3',
+        variant === 'nested' &&
+          'rounded-lg border border-border-subtle bg-nested-raised px-3 shadow-none',
         // Holds nested records rather than content, so it recedes and lets
         // them be the raised, readable thing.
-        variant === 'container' && 'rounded-xl border border-border bg-card-container',
-        variant === 'default' && 'rounded-xl border border-border bg-card',
+        variant === 'container' && 'rounded-xl border border-border-card bg-card-container',
+        // `--border-card`, not `--border`: a card is a region of the sheet
+        // rather than a surface floating above it, so its edge is softer than
+        // the structural one the sheet, dialogs and dropdowns draw.
+        variant === 'default' && 'rounded-xl border border-border-card bg-card',
         className,
       )}
       {...props}
@@ -68,7 +72,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="card-title"
       // Same size and weight as SheetTitle and DialogTitle: a card, a sheet
       // and a dialog heading are the same rank of thing.
-      className={cn('text-base font-medium flex items-center gap-2', className)}
+      className={cn('text-base font-semibold flex items-center gap-2', className)}
       {...props}
     />
   )
