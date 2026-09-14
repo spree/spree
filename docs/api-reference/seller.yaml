@@ -424,7 +424,7 @@ paths:
                   selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 79
+                  name: Seller 80
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -756,6 +756,21 @@ paths:
                 permission_keys: []
               schema:
                 "$ref": "#/components/schemas/SellerMeResponse"
+        '422':
+          description: the photo is not a web image
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Avatar has an invalid content type (authorized content
+                    types are PNG, JPG, GIF, WEBP)
+                  details:
+                    avatar:
+                    - has an invalid content type (authorized content types are PNG,
+                      JPG, GIF, WEBP)
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
         '401':
           description: missing or invalid token
           content:
@@ -14074,8 +14089,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 99
-                slug: seller-99
+                name: Seller 100
+                slug: seller-100
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14148,7 +14163,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-101
+                slug: seller-102
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14896,10 +14911,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--50cf8068dfd780da42f1ebb8720eb3d64ed60f2e
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--c4356252a8e8b42d02103307859f89ccfe667c33
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--3cdd4ad51eb026331d200c4fb843b9d4cf497042
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--9e48997fcdabd1c0447f1e44b9eaee4178011b91
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:

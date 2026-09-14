@@ -77,6 +77,23 @@ RSpec.describe Spree::Api::V3::Seller::MeController, type: :controller do
       end
     end
 
+    # An emptied field is how a person removes a name they once gave: the
+    # model normalizes blank to nil, so the panel sends the empty string
+    # rather than omitting the field.
+    context 'with a blank name' do
+      before { seller_user.update!(first_name: 'Ada', last_name: 'Lovelace') }
+
+      let(:params) { { first_name: '', last_name: '' } }
+
+      it 'clears it' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(seller_user.reload.first_name).to be_nil
+        expect(json_response['user']['full_name']).to be_nil
+      end
+    end
+
     # The panel language is a client concern — the seller panel ships its own
     # locale bundles — so the API stores whatever code it is sent.
     context 'with a locale code' do

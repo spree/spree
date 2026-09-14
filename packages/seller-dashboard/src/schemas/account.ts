@@ -40,8 +40,14 @@ export function accountToForm(me: MeResponse, fallbackLocale: string): AccountFo
 /** Map the form to the PATCH /me params (drops the frontend-only fields). */
 export function accountToParams(values: AccountFormValues): AccountUpdateParams {
   return {
-    first_name: values.first_name || undefined,
-    last_name: values.last_name || undefined,
+    // Sent as typed, empty string included: the backend normalizes a blank
+    // name to null, so an emptied field is how a person removes a name they
+    // once gave. Coercing blank to `undefined` would drop the field from the
+    // PATCH, leaving the old name in place while the dialog reported success.
+    first_name: values.first_name ?? undefined,
+    last_name: values.last_name ?? undefined,
+    // `||` rather than `??`, unlike the names above: an empty locale means no
+    // language was chosen, never "clear the one I have".
     selected_locale: values.selected_locale || undefined,
     ...avatarParam(values.avatar_signed_id, values.avatar_cleared),
   }
