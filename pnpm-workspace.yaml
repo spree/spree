@@ -46,7 +46,7 @@ allowBuilds:
 overrides:
   esbuild: ^0.28.1
   vite: ^8.0.16
-  js-yaml: ^4.3.1
+  js-yaml: ^4.3.2
   # js-yaml ^4 drops the safeLoad API that read-yaml-file@1 calls; bump
   # read-yaml-file (transitive via changesets) to its js-yaml-4 line so
   # the js-yaml pin above doesn't break the release tooling.
@@ -58,8 +58,8 @@ overrides:
   #   qs             — DoS in qs.stringify (transitive via shadcn's MCP SDK -> express)
   #   brace-expansion — ReDoS bypassing the documented max guard (transitive via shadcn -> ts-morph)
   rollup: ^4.59.0
-  hono: ^4.12.34
-  qs: ^6.15.2
+  hono: ^4.13.5
+  qs: ^6.16.0
   brace-expansion: ^5.0.9
   # Third wave. Each of these resolves to a single version line in the tree,
   # so a plain caret pin is enough — no per-advisory range keys needed.
@@ -71,25 +71,29 @@ overrides:
   #   @hono/node-server — serve-static path traversal on Windows via %5C
   nanoid: ^3.3.18
   postcss: ^8.5.23
-  fast-uri: ^3.1.5
+  fast-uri: ^3.1.6
   ip-address: ^10.3.1
   body-parser: ^2.3.0
   '@hono/node-server': ^1.19.15
-  '@tiptap/core@>=2.0.0-alpha.0 <3.30.4': ^3.30.4
-  '@tiptap/core@>=3.7.0 <3.30.5': ^3.30.5
-  '@vitest/mocker@>=2.1.0 <4.1.11': ^4.1.11
-  baseline-browser-mapping@>=2.0.0 <2.11.0: ^2.11.0
-  browserslist@<=4.28.6: ^4.28.7
-  fast-uri@>=3.0.0 <3.1.6: ^3.1.6
-  fast-uri@>=3.1.2 <3.1.6: ^3.1.6
-  fast-uri@>=3.1.3 <3.1.6: ^3.1.6
-  hono@<4.13.5: ^4.13.5
-  js-yaml@>=4.0.0 <4.3.2: ^4.3.2
-  maplibre-gl@<=6.4.0: ^6.4.1
-  postcss-selector-parser@>=7.1.0 <7.1.3: ^7.1.3
-  qs@>=2.2.5 <6.16.0: ^6.16.0
-  qs@>=6.14.2 <=6.15.3: ^6.15.4
-  vitest@>=2.1.0 <4.1.11: ^4.1.11
+  # Fourth wave. A caret on @tiptap/core alone floated to 3.31.x while
+  # @tiptap/react stayed on 3.22, which still imports cancelPositionCheck
+  # and schedulePositionCheck — exports 3.31 removed. Pin the family
+  # together on the patched line (prototype pollution <3.30.4, Markdown
+  # ReDoS <3.30.5). maplibre-gl is exact: ^6.4.1 resolved to 6.9.
+  '@tiptap/core': 3.31.3
+  '@tiptap/pm': 3.31.3
+  '@tiptap/react': 3.31.3
+  '@tiptap/starter-kit': 3.31.3
+  '@tiptap/extensions': 3.31.3
+  '@tiptap/extension-image': 3.31.3
+  '@tiptap/extension-link': 3.31.3
+  '@tiptap/extension-placeholder': 3.31.3
+  maplibre-gl: 6.4.1
+  '@vitest/mocker': ^4.1.11
+  baseline-browser-mapping: ^2.11.0
+  browserslist: ^4.28.7
+  postcss-selector-parser: ^7.1.3
+  vitest: ^4.1.11
 
 # auditConfig: advisories we have reviewed and decided not to fix. The weekly
 # security-audit workflow honors this list, so an entry here also stops the job
@@ -111,14 +115,19 @@ auditConfig:
 minimumReleaseAgeExclude:
   - postcss-selector-parser@7.1.3
   - browserslist@4.28.7
-  - qs@6.15.4
   - qs@6.16.0
-  - '@tiptap/core@3.30.4'
   - fast-uri@3.1.6
   - maplibre-gl@6.4.1
   - vitest@4.1.11
   - '@vitest/mocker@4.1.11'
   - baseline-browser-mapping@2.11.0
   - js-yaml@4.3.2
-  - '@tiptap/core@3.30.5'
   - hono@4.13.5
+  - '@tiptap/core@3.31.3'
+  - '@tiptap/pm@3.31.3'
+  - '@tiptap/react@3.31.3'
+  - '@tiptap/starter-kit@3.31.3'
+  - '@tiptap/extensions@3.31.3'
+  - '@tiptap/extension-image@3.31.3'
+  - '@tiptap/extension-link@3.31.3'
+  - '@tiptap/extension-placeholder@3.31.3'
