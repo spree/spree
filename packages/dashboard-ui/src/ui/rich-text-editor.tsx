@@ -6,7 +6,6 @@ import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { toggleOrWrapBlock } from '../lib/rich-text-block'
 import { sameRichText, shouldEmitRichTextChange } from '../lib/same-rich-text'
 import { cn } from '../lib/utils'
 import {
@@ -305,21 +304,21 @@ function EditorToolbar({
 
       <ToolbarButton
         active={toolbar.isBulletList}
-        onClick={() => runToolbarCommand(() => toggleOrWrapBlock(editor, 'bulletList'))}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBulletList().run())}
         title={t('admin.components.rich_text_editor.bullet_list')}
       >
         <ListIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isOrderedList}
-        onClick={() => runToolbarCommand(() => toggleOrWrapBlock(editor, 'orderedList'))}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleOrderedList().run())}
         title={t('admin.components.rich_text_editor.ordered_list')}
       >
         <ListOrderedIcon className="size-4" />
       </ToolbarButton>
       <ToolbarButton
         active={toolbar.isBlockquote}
-        onClick={() => runToolbarCommand(() => toggleOrWrapBlock(editor, 'blockquote'))}
+        onClick={() => runToolbarCommand(() => editor.chain().focus().toggleBlockquote().run())}
         title={t('admin.components.rich_text_editor.blockquote')}
       >
         <QuoteIcon className="size-4" />
