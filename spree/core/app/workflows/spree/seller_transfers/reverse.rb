@@ -75,16 +75,76 @@ module Spree
       # A refund is the customer's gross figure — it carries the tax and the
       # marketplace's commission, while the seller only ever received their net
       # cut. Taking the gross back would charge them the commission on goods
-      # that came back, so it is scaled by what the order earned them against
-      # what the customer paid. A full refund still nets to the whole earning.
+      # that came back, so what comes back is always the seller's share of it.
+      #
+      # Which share depends on what the refund can say about itself. A return or
+      # a claim names the lines it paid for, and those lines earned a knowable
+      # amount. Anything else — a manual refund, a cancellation — is only an
+      # amount against an order, and the order's own ratio is the best available
+      # answer.
       def seller_share_of(refunded)
+        attributed_share(refunded) || blended_share(refunded)
+      end
+
+      # What the named lines actually earned, scaled to what this refund paid.
+      #
+      # The scaling is not a refinement: one return is refunded once per payment
+      # it draws on, and every one of those refunds names the same lines. Taking
+      # them at face value would claw the same units back once per payment.
+      # Scaling also absorbs an operator who refunded a different amount than the
+      # lines are worth — a restocking fee, or goodwill on top.
+      #
+      # Nil when the refund names nothing, which sends the caller to the blend.
+      def attributed_share(refunded)
+        amounts = refund&.refunded_line_amounts
+        return if amounts.blank?
+
+        gross = amounts.values.sum.to_d
+        return if gross <= 0
+
+        earned = amounts.sum { |line_item_id, amount| line_earning(line_item_id, amount.to_d) }
+        quantize(earned * (refunded.to_d.abs / gross))
+      end
+
+      def blended_share(refunded)
         paid = order.total.to_d
         return refunded.to_d.abs if paid.zero?
 
-        Spree::Money::Rounding.quantize(
-          refunded.to_d.abs * (@earning.amount / paid),
-          Spree::Money::Rounding.precision(@earning.currency)
-        )
+        quantize(refunded.to_d.abs * (@earning.amount / paid))
+      end
+
+      # What one line's refunded value earned the seller: their money less the
+      # commission charged on it, and less the consumer tax when the marketplace
+      # remits it — mirroring how the earning itself was worked out.
+      #
+      # The commission comes from the row written against that line at
+      # placement, not from today's rate: rates change, a clamped fee is not the
+      # rate times the base, and a fixed rate is charged per unit.
+      def line_earning(line_item_id, amount)
+        line_item = order_line_items[line_item_id]
+        paid = line_item&.amount.to_d
+        return amount if paid.zero?
+
+        # Only ever a fraction of the line, so a clamped commission is divided
+        # rather than reasoned about — the best available attribution.
+        share = amount / paid
+        earned = amount - (commission_totals[line_item_id].to_d * share)
+        earned -= line_item.tax_total.to_d * share if order.seller&.tax_remittance == 'platform'
+        earned
+      end
+
+      def order_line_items
+        @order_line_items ||= order.line_items.index_by(&:id)
+      end
+
+      def commission_totals
+        @commission_totals ||= Spree::CommissionLine.for_line_items.
+                               where(line_item_id: order_line_items.keys).
+                               pluck(:line_item_id, :total).to_h
+      end
+
+      def quantize(amount)
+        Spree::Money::Rounding.quantize(amount, Spree::Money::Rounding.precision(@earning.currency))
       end
 
       # Nil when there is nothing left to take back, which the caller turns
