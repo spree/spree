@@ -38,6 +38,22 @@ RSpec.describe Spree::SellerBalance, type: :model do
       expect(described_class.for(seller, 'USD').balance).to eq(seller.balance('USD'))
     end
 
+    # Two sale currencies can settle into one account currency. That is two
+    # positions and one deposit — the figures reconcile, but neither row is
+    # the payout on its own.
+    it 'reconciles with the payout when two sale currencies settle into one' do
+      earn(100)
+      earn(50, currency: 'EUR')
+      Spree::SellerTransfer.where(currency: 'USD').update_all(settled_amount: 75, settled_currency: 'GBP')
+      Spree::SellerTransfer.where(currency: 'EUR').update_all(settled_amount: 42, settled_currency: 'GBP')
+
+      payable = seller.balances.select { |balance| balance.settlement_currency == 'GBP' }
+
+      expect(payable.map(&:balance)).to contain_exactly(75, 42)
+      expect(payable.sum(&:balance)).to eq(seller.balance('GBP'))
+      expect(seller.balance('GBP')).to eq(117)
+    end
+
     it 'keeps another currency out' do
       earn(40)
       earn(30, currency: 'EUR')

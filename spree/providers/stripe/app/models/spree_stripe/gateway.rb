@@ -67,10 +67,10 @@ module SpreeStripe
       # read as every key having changed.
       return false if previously_new_record?
 
-      before, after = saved_change_to_preferences
-      return false unless before.is_a?(Hash) && after.is_a?(Hash)
-
-      before[:secret_key] != after[:secret_key]
+      # The preference macro's own reader rather than a hand-rolled diff: it
+      # reads the change through indifferent access, so it answers the same
+      # whether the serialized hash came back with symbol or string keys.
+      preferred_secret_key_previously_changed?
     end
 
     def gateway_dashboard_payment_url(payment)

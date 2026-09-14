@@ -62,8 +62,11 @@ module Spree
       def resolve_available_payout
         @available = provider.available_payout(seller, currency)
       rescue StandardError => e
+        # A refusal rather than a halt: halting reads as "nothing to settle",
+        # which is what an operator pressing Settle would be told while the
+        # provider was simply unreachable.
         Rails.error.report(e, handled: true, context: { seller_id: seller.id, currency: currency }, source: 'spree.core')
-        halt!(seller)
+        failure(seller, e.message)
       end
 
       # Selected and summed on what the seller's account holds, not on what the

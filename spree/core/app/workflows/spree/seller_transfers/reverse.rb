@@ -102,8 +102,12 @@ module Spree
         gross = amounts.values.sum.to_d
         return if gross <= 0
 
-        earned = amounts.sum { |line_item_id, amount| line_earning(line_item_id, amount.to_d) }
-        quantize(earned * (refunded.to_d.abs / gross))
+        # Nil from any line means the attribution cannot be trusted whole, so
+        # the blend answers for the refund rather than part of it.
+        earnings = amounts.map { |line_item_id, amount| line_earning(line_item_id, amount.to_d) }
+        return if earnings.any?(&:nil?)
+
+        quantize(earnings.sum * (refunded.to_d.abs / gross))
       end
 
       def blended_share(refunded)
@@ -123,7 +127,11 @@ module Spree
       def line_earning(line_item_id, amount)
         line_item = order_line_items[line_item_id]
         paid = line_item&.amount.to_d
-        return amount if paid.zero?
+        # A line this order does not carry, or one worth nothing, says nothing
+        # about what the seller earned. Answering the gross would claw back the
+        # commission and the tax they never received, which is the whole thing
+        # this is here to avoid, so the caller falls back to the order's ratio.
+        return if paid.zero?
 
         # Only ever a fraction of the line, so a clamped commission is divided
         # rather than reasoned about — the best available attribution.

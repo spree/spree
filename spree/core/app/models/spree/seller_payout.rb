@@ -68,7 +68,7 @@ module Spree
     # Summed on what the seller's account actually received, since that is
     # what this payout moves.
     def transfers_total
-      transfers.sum(&:settlement_amount)
+      transfers.settlement_total
     end
 
     # Gives up on this settlement and puts its earnings back.

@@ -41,7 +41,6 @@ module Spree
     # @return [Spree::SellerBalance]
     def self.for(seller, currency, settlement_currency = currency)
       transfers = seller.seller_transfers.where(currency: currency).settling_in(settlement_currency)
-      settled = Spree::SellerTransfer.arel_settlement_amount
 
       new(
         seller: seller,
@@ -49,17 +48,22 @@ module Spree
         settlement_currency: settlement_currency,
         earned: transfers.completed.sum(:amount),
         pending: transfers.with_status('pending', 'processing', 'unresolved').sum(:amount),
-        payable: transfers.completed.sum(settled),
+        payable: transfers.completed.settlement_total,
         # Read through the transfers a settlement claimed rather than off the
         # settlement's own total: two sale currencies can settle into one, and
         # the payout's figure would then count against both of them.
         paid: transfers.completed.joins(:payout).
-              merge(Spree::SellerPayout.completed).sum(settled)
+              merge(Spree::SellerPayout.completed).settlement_total
       )
     end
 
     # What the marketplace still owes, in the currency it can actually be sent
-    # in — which is what the payout sweep settles.
+    # in.
+    #
+    # A payout settles every position sharing that currency, so a seller who
+    # sells in two currencies that settle into one is paid the sum of both
+    # rather than either. The figures reconcile — both sides read the same
+    # transfer rows — but one position is not one deposit.
     #
     # @return [BigDecimal]
     def balance

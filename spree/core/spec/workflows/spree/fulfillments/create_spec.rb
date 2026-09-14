@@ -231,12 +231,27 @@ module Spree
         end
 
         # What a split shipping part of an order passes: delivery was bought
-        # once at checkout, so the second parcel carries nothing.
-        it 'keeps a zero cost, so a split parcel is free' do
+        # once at checkout, so the parcel that breaks off carries nothing. The
+        # source survives here, holding the units that did not move.
+        it 'keeps a zero cost when the parcel it came from survives' do
           params[:cost] = 0
+          params[:items] = [{ line_item: line_items.first, quantity: 1 }]
 
           expect(execute.success?).to eq(true)
           expect(fulfillment.reload.cost).to eq(0)
+        end
+
+        # A zero says "do not price this parcel", not "this parcel is free". A
+        # shipment emptied of its units is destroyed, and its cost is money the
+        # order already carried — dropped here, the order's delivery total
+        # falls below what the customer paid for it.
+        it 'still carries the cost of a shipment it emptied' do
+          original = source_shipment.cost
+          params[:cost] = 0
+
+          expect(execute.success?).to eq(true)
+          expect(fulfillment.reload.cost).to eq(original)
+          expect(order.reload.delivery_total).to eq(original)
         end
 
         it 'still prices a parcel the caller did not price' do

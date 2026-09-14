@@ -57,6 +57,24 @@ RSpec.describe Spree::SellerTransfer, type: :model do
       expect(transfer(settled_amount: 69.80, settled_currency: 'USD')).not_to be_converted
     end
 
+    # An aggregate over an expression carries no column type, so the adapter
+    # decides what comes back — a Float on SQLite and MySQL. Money is not kept
+    # in one.
+    it 'sums settlement in decimal, whatever the adapter' do
+      transfer(settled_amount: 51.60, settled_currency: 'GBP')
+
+      expect(Spree::SellerTransfer.settling_in('GBP').settlement_total).to be_a(BigDecimal)
+      expect(seller.balance('GBP')).to be_a(BigDecimal)
+    end
+
+    it 'sums the sale figure for rows no provider has settled' do
+      transfer
+      transfer(settled_amount: 51.60, settled_currency: 'GBP')
+
+      expect(Spree::SellerTransfer.settling_in('USD').settlement_total).to eq(69.80)
+      expect(Spree::SellerTransfer.settling_in('GBP').settlement_total).to eq(51.60)
+    end
+
     it 'groups by the currency a payout could send' do
       converted = transfer(settled_amount: 51.60, settled_currency: 'GBP')
       plain = transfer

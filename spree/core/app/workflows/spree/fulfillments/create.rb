@@ -303,7 +303,12 @@ module Spree
       # docs for pending-path re-pricing. The carrier rides along as a
       # selected rate.
       def attach_cost_and_rate(fulfillment, delivery_method, cost, inherited)
-        effective_cost = cost || inherited[:cost]
+        # A stated price replaces the inherited one — except a zero, which says
+        # "do not price this parcel" rather than "this parcel is free". A
+        # drained shipment's cost is money the order already carried and whose
+        # row has just been destroyed, so discarding it would drop the delivery
+        # total below what the customer paid.
+        effective_cost = cost.to_d.zero? ? inherited[:cost] : cost
         method = delivery_method || inherited[:delivery_method]
 
         fulfillment.update_columns(cost: effective_cost) if effective_cost.positive?

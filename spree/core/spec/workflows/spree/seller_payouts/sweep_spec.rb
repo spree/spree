@@ -188,6 +188,19 @@ RSpec.describe Spree::SellerPayouts::Sweep do
         not_to change { Spree::SellerPayout.count }
       expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
     end
+
+    # Reported rather than halted, so an operator pressing Settle is not told
+    # the seller is owed nothing while the provider is merely unreachable.
+    it 'says so rather than reading as nothing to settle' do
+      earn(40)
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:available_payout).
+        and_raise(Spree::Core::AmbiguousGatewayError, 'timed out')
+
+      result = described_class.call(seller: seller, currency: 'USD')
+
+      expect(result).to be_failure
+      expect(result.error.to_s).to include('timed out')
+    end
   end
 
   # A cross-border account settles in its own currency, so what a payout can

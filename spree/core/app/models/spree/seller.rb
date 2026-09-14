@@ -276,10 +276,17 @@ module Spree
     # @return [BigDecimal]
     def balance(currency)
       earnings = seller_transfers.completed.settling_in(currency)
-      settled = Spree::SellerTransfer.arel_settlement_amount
 
-      earnings.sum(settled) -
-        earnings.joins(:payout).merge(Spree::SellerPayout.completed).sum(settled)
+      earnings.settlement_total -
+        earnings.joins(:payout).merge(Spree::SellerPayout.completed).settlement_total
+    end
+
+    # The currencies this seller can actually be paid in — the ones their
+    # account settles in, which is not the same as the ones they sold in.
+    #
+    # @return [Array<String>]
+    def payable_currencies
+      seller_transfers.unsettled.settlement_currencies
     end
 
     # The seller's position in every currency they have earned or been paid
@@ -296,7 +303,7 @@ module Spree
     # @return [Array<Spree::SellerBalance>]
     def balances
       pairs = seller_transfers.where.not(status: 'failed').
-              distinct.pluck(:currency, Spree::SellerTransfer.arel_settlement_currency)
+              distinct.pluck(:currency, :settled_currency)
 
       pairs.sort.map { |currency, settlement| Spree::SellerBalance.for(self, currency, settlement) }
     end

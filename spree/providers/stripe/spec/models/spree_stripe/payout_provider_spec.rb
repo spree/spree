@@ -202,14 +202,15 @@ RSpec.describe SpreeStripe::PayoutProvider do
       expect(seller_transfer).not_to be_converted
     end
 
-    # Better to read the earned figure than to invent a settlement.
-    it 'leaves it unrecorded when Stripe did not say' do
+    # Better to leave the sale's own figures standing than to invent a
+    # settlement Stripe never reported.
+    it 'leaves the sale figures standing when Stripe did not say' do
       allow(Stripe::Transfer).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'tr_1'))
 
       described_class.new.transfer!(seller_transfer)
 
-      expect(seller_transfer.reload.settled_amount).to be_nil
-      expect(seller_transfer.settlement_currency).to eq('USD')
+      expect(seller_transfer.reload.settled_amount).to eq(seller_transfer.amount)
+      expect(seller_transfer.settled_currency).to eq('USD')
     end
   end
 

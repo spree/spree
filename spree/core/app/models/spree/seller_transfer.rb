@@ -53,6 +53,15 @@ module Spree
     validates :kind, presence: true, inclusion: { in: KINDS }
     validates :provider, presence: true
 
+    # A row settles in the currency it was sold in until a provider says
+    # otherwise — which is the truth outright for the built-in provider, since
+    # it converts nothing and moves no money. One that does convert overwrites
+    # both when it reports what actually arrived.
+    #
+    # Written rather than worked out on read, so every query that groups or
+    # sums by settlement is a plain one against a column.
+    before_validation :assume_settled_as_sold, on: :create
+
     #
     # Statuses. No state machine: a transfer moves through the payout
     # workflows, which can explain a refusal, rather than through a transition
@@ -84,25 +93,20 @@ module Spree
     # Rows whose money can be paid out in this currency. A seller's account
     # settles in its own currency, so what a payout can move is the settled
     # currency, not the one the sale was priced in.
-    scope :settling_in, ->(currency) { where(arel_settlement_currency.eq(currency)) }
+    scope :settling_in, ->(currency) { where(settled_currency: currency) }
 
-    # COALESCE rather than two queries, so a row that predates its provider
-    # reporting a settlement still groups under the currency it was earned in.
-    def self.arel_settlement_currency
-      Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[:settled_currency], arel_table[:currency]])
-    end
-
-    # The settled figure as a summable column, so a balance over a long ledger
-    # stays one aggregate rather than loading every row to add them up.
-    def self.arel_settlement_amount
-      Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[:settled_amount], arel_table[:amount]])
+    # What these rows are worth in the currency they settle in.
+    #
+    # @return [BigDecimal]
+    def self.settlement_total
+      sum(:settled_amount)
     end
 
     # The currencies this seller can actually be paid in.
     #
     # @return [Array<String>]
     def self.settlement_currencies
-      distinct.pluck(arel_settlement_currency)
+      distinct.pluck(:settled_currency)
     end
 
     self.whitelisted_ransackable_attributes = %w[amount currency kind status provider reference created_at seller_id order_id payout_id]
@@ -132,9 +136,9 @@ module Spree
     # What the seller's account actually holds for this row, and in what.
     #
     # A sale is priced in the customer's currency; an account settles in its
-    # own, and the provider converts on the way in. Both figures are recorded
-    # facts — Spree holds no exchange rates and converts nothing — and these
-    # answer the earned side whenever no settlement was reported.
+    # own, and the provider converts on the way in. Both are recorded facts —
+    # Spree holds no exchange rates and converts nothing. The fallback is for
+    # rows written before the columns existed; everything since carries them.
     #
     # @return [BigDecimal]
     def settlement_amount
@@ -149,6 +153,13 @@ module Spree
     # @return [Boolean] whether the provider converted this on the way in
     def converted?
       settled_currency.present? && settled_currency != currency
+    end
+
+    private
+
+    def assume_settled_as_sold
+      self.settled_amount = amount if settled_amount.nil?
+      self.settled_currency = currency if settled_currency.blank?
     end
   end
 end

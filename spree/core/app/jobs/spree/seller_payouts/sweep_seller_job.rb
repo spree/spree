@@ -62,11 +62,8 @@ module Spree
       # Only the currencies this seller actually has earnings waiting in — a
       # marketplace trading in three currencies should not run three sweeps for
       # a seller who sold in one.
-      # The currencies the seller's account can be paid in, which is not the
-      # same as the currencies they sold in — a cross-border account settles
-      # in its own.
       def currencies_owed(seller)
-        seller.seller_transfers.unsettled.settlement_currencies
+        seller.payable_currencies
       end
     end
   end

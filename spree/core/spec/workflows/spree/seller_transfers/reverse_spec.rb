@@ -165,10 +165,17 @@ RSpec.describe Spree::SellerTransfers::Reverse do
       expect(described_class.call(order: order, amount: 30).value.settled_amount).to eq(-18)
     end
 
-    it 'records no settlement when the earning had none' do
+    # Nothing converted, so the clawback settles as it was sold — the same
+    # figure, in the same currency, which is what the built-in provider always
+    # produces.
+    it 'settles as it was sold when nothing was converted' do
       earn(80)
 
-      expect(described_class.call(order: order, amount: 30).value.settled_amount).to be_nil
+      reversal = described_class.call(order: order, amount: 30).value
+
+      expect(reversal.settled_amount).to eq(-24)
+      expect(reversal.settled_currency).to eq('USD')
+      expect(reversal).not_to be_converted
     end
   end
 

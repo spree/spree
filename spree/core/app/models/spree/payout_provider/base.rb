@@ -181,8 +181,10 @@ module Spree
       # only payable once the customer's payment settles. A provider that knows
       # the difference answers it here, and the sweep settles what fits.
       #
-      # Nil means the provider does not know or does not care — the built-in
-      # one moves no money, so everything owed is payable.
+      # Nil means there is no limit — the built-in provider moves no money, so
+      # everything owed is payable. A provider that cannot find out must raise
+      # rather than answer nil: the sweep settles the whole balance on nil, and
+      # asking for more than an account holds is what this exists to prevent.
       #
       # @param seller [Spree::Seller]
       # @param currency [String]
