@@ -220,11 +220,19 @@ module SpreeStripe
         return if seller.nil?
 
         payout = find_payout(seller, object)
-        return if payout.nil? || payout.completed?
+        return if payout.nil?
 
         if status == 'paid'
+          # A redelivery of a settlement already completed changes nothing.
+          return if payout.completed?
+
           Spree.seller_payout_complete_workflow.call(seller_payout: payout, reference: object.id)
         else
+          # Answered even on a completed settlement. A bank can return a payout
+          # days after it was paid, and the money is back in the seller's
+          # balance whether or not our books had moved on — left alone, the
+          # ledger reports a seller settled while Stripe still holds their
+          # earnings. Failing it releases them for the next sweep to send again.
           payout.fail!
         end
       end

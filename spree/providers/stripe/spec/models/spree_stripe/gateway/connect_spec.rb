@@ -161,6 +161,32 @@ RSpec.describe SpreeStripe::Gateway::Connect do
         expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
       end
 
+      # A bank can return a payout days after paying it — a closed account, a
+      # rejected transfer — and Stripe says so with payout.failed. Ignoring it
+      # because our books had already moved on leaves the ledger reporting a
+      # seller settled while Stripe holds their earnings.
+      context 'for a settlement already marked paid' do
+        let!(:payout) do
+          create(:seller_payout, seller: seller, currency: 'USD', reference: 'po_1', status: 'completed')
+        end
+
+        it 'takes the settlement back' do
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(payout.reload).to be_failed
+        end
+
+        it 'owes the seller again, since the money is back in their balance' do
+          create(:seller_transfer, :completed, seller: seller, payout: payout, amount: 40,
+                                               order: create(:order, store: store, seller: seller))
+
+          gateway.handle_payout_webhook(raw_body, headers)
+
+          expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+          expect(seller.balance('USD')).to eq(40)
+        end
+      end
+
       # The settlement whose outcome was never known has been holding its
       # earnings precisely so nothing could send them twice. Stripe saying the
       # money did not move is the definite answer that frees them.
