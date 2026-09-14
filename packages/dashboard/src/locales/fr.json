@@ -5564,8 +5564,8 @@
         "earned": "Gagné",
         "paid": "Versé",
         "pending": "En route",
-        "earned_in": "Earned ({{currency}})",
-        "payable": "Payable"
+        "earned_in": "Gagné ({{currency}})",
+        "payable": "À verser"
       },
       "complete": {
         "title": "Marquer ce versement comme payé",

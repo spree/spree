@@ -5628,8 +5628,8 @@
         "earned": "Zarobione",
         "paid": "Wypłacone",
         "pending": "W drodze",
-        "earned_in": "Earned ({{currency}})",
-        "payable": "Payable"
+        "earned_in": "Zarobione ({{currency}})",
+        "payable": "Do wypłaty"
       },
       "complete": {
         "title": "Oznacz wypłatę jako zapłaconą",

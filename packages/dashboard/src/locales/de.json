@@ -5564,8 +5564,8 @@
         "earned": "Verdient",
         "paid": "Ausgezahlt",
         "pending": "Unterwegs",
-        "earned_in": "Earned ({{currency}})",
-        "payable": "Payable"
+        "earned_in": "Verdient ({{currency}})",
+        "payable": "Auszahlbar"
       },
       "complete": {
         "title": "Auszahlung als bezahlt markieren",

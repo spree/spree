@@ -5598,8 +5598,8 @@
         "earned": "المكتسب",
         "paid": "المدفوع",
         "pending": "في الطريق",
-        "earned_in": "Earned ({{currency}})",
-        "payable": "Payable"
+        "earned_in": "المكتسب ({{currency}})",
+        "payable": "قابل للدفع"
       },
       "complete": {
         "title": "وضع علامة مدفوعة على هذه الدفعة",
