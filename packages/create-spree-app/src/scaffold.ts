@@ -18,6 +18,7 @@ import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
+import { spreeConfigContent } from './templates/spree-config.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
   dlxCommand,
@@ -93,6 +94,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     path.join(projectDir, 'package.json'),
     rootPackageJsonContent(projectName, options.packageManager),
   )
+  fs.writeFileSync(path.join(projectDir, 'spree.config.yml'), spreeConfigContent())
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
@@ -273,6 +275,10 @@ function printSuccessWithoutDocker(
   }
 
   lines.push(
+    `${pc.bold('Configure the store from a file')}`,
+    `  ${run} spree config diff`,
+    `  ${pc.dim('# spree.config.yml describes channels, zones, catalog… — deploy it anywhere with `spree config deploy`')}`,
+    '',
     `${pc.bold('Customize the Spree API')}`,
     `  ${run} spree eject`,
     `  ${pc.dim('# Then edit server/ — the Rails API app (Gemfile, app/, config/)')}`,

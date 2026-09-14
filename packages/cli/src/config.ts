@@ -226,6 +226,8 @@ export interface MintKeyOptions {
   name: string
   keyType: 'secret' | 'publishable'
   scopes?: string[]
+  /** Revoke active keys of the same name first — for keys the CLI mints under a fixed name on every run. */
+  replace?: boolean
 }
 
 /**
@@ -239,6 +241,7 @@ export async function mintApiKey(projectDir: string, options: MintKeyOptions): P
       NAME: options.name,
       KEY_TYPE: options.keyType,
       ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),
+      ...(options.replace ? { REPLACE: 'true' } : {}),
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
@@ -281,10 +284,14 @@ export async function mintProjectCredentials(
     )
   }
 
+  // The name is fixed and names are unique among a store's active keys, so a
+  // re-run (an interrupted init, a deleted credentials file) supersedes the
+  // previous key instead of colliding with it.
   const token = await mintApiKey(projectDir, {
     name: '@spree/cli (auto)',
     keyType: 'secret',
     scopes: ['read_all'],
+    replace: true,
   })
 
   const credentials: ProjectCredentials = {

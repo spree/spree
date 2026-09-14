@@ -96,6 +96,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
+    "@spree/cli": "workspace:^",
     "@spree/dashboard-plugin-example": "workspace:^",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",

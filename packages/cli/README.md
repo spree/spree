@@ -26,6 +26,7 @@ Run from your Spree project directory:
 | `spree generate …` | Spree generators (models, API resources, subscribers, migrations) |
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
 | `spree api get/post/patch/delete <path>` | Call the Admin API directly (`spree api endpoints` lists routes + scopes) |
+| `spree config validate/diff/deploy/introspect` | Declarative store configuration: reconcile `spree.config.yml` against any instance through the Admin API |
 | `spree rspec` | Run the backend test suite inside the container |
 
 ## Documentation

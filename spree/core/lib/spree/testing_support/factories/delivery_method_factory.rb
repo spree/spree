@@ -2,8 +2,8 @@ FactoryBot.define do
   # Delivery methods are worldwide by default — geographic restriction is
   # opt-in via an explicit :delivery_zone (empty zone list = no restriction).
   factory :base_delivery_method, aliases: [:base_shipping_method], class: Spree::DeliveryMethod do
-    name  { 'UPS Ground' }
-    code  { 'UPS_GROUND' }
+    sequence(:name) { |n| "UPS Ground #{n}" }
+    sequence(:code) { |n| "UPS_GROUND_#{n}" }
     store { Spree::Store.find_by(default: true) || association(:store) }
     delivery_profile { store.default_delivery_profile || association(:delivery_profile, store: store) }
 
@@ -25,15 +25,15 @@ FactoryBot.define do
     end
 
     factory :pickup_delivery_method, class: Spree::DeliveryMethod do
-      name { 'Store pickup' }
-      code { 'PICKUP' }
+      sequence(:name) { |n| "Store pickup #{n}" }
+      sequence(:code) { |n| "PICKUP_#{n}" }
       fulfillment_provider { 'Spree::FulfillmentProvider::Pickup' }
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end
 
     factory :pickup_point_delivery_method, class: Spree::DeliveryMethod do
-      name { 'Parcel locker' }
-      code { 'PICKUP_POINT' }
+      sequence(:name) { |n| "Parcel locker #{n}" }
+      sequence(:code) { |n| "PICKUP_POINT_#{n}" }
       fulfillment_provider { 'Spree::FulfillmentProvider::PickupPoint' }
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end

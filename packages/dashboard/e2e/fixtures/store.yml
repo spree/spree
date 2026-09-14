@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-config/1.json
+#
+# Everything the dashboard e2e suite needs on the test store, deployed through
+# the Admin API by global-setup.ts before any spec runs. Records are matched
+# on natural keys, so the file is safe to reapply. The names here are the
+# ones `helpers.ts` exports; global-setup fails if the two drift apart.
+version: 1
+
+# The store already has a US/USD market from first-run setup. A second market
+# makes the money-entry forms offer EUR; Germany anchors it because
+# MarketCountry forbids reusing a country across markets and the markets specs
+# draw from other EU countries.
+markets:
+  - name: Europe
+    currency: EUR
+    default_locale: de
+    countries: [DE]
+
+# The store's own warehouse (first-run setup provisions it on a real install;
+# the e2e bootstrap skips setup), plus a second warehouse to transfer into and
+# a source deep enough that the serial suite can ship from it repeatedly. A
+# transfer cannot be created from its own screens without two warehouses.
+stock_locations:
+  - name: Shop location
+    default: true
+  - name: E2E Source Warehouse
+  - name: E2E Destination Warehouse
+
+# Beyond the seeded default channel, so the channels bulk-action and filter
+# specs have a non-default channel to add and remove against.
+channels:
+  - code: e2e-bulk
+    name: E2E Bulk Channel
+
+customer_groups:
+  - name: E2E Promo Group
+
+# Looked up by permalink, never by name: category names are not unique.
+categories:
+  - permalink: e2e-promo-category
+    name: E2E Promo Category
+  - permalink: e2e-bulk-category
+    name: E2E Bulk Category
+
+suppliers:
+  - name: E2E Supplier
+    email: e2e@supplier.test
+
+customers:
+  - email: e2e-promo-customer@example.com
+    first_name: Promo
+    last_name: Customer
+    password: customer123
+
+# A seller with one settled earning and one payout still owed. The payouts
+# are transaction data and stay in the Ruby block of global-setup, which also
+# marks the seller approved: the API only approves a seller who has started
+# onboarding, and this one never will.
+sellers:
+  - slug: e2e-ledger-seller
+    name: E2E Ledger Seller
+
+products:
+  # Promotion rule/action editor specs pick this product; it is stocked at
+  # the default warehouse so draft orders can add it without the
+  # "Quantity not available" validation kicking in.
+  - slug: e2e-promo-product
+    name: E2E Promo Product
+    status: active
+    categories: [e2e-promo-category]
+    sku: E2E-PROMO
+    prices: { USD: 19.99 }
+    stock: { Shop location: 100 }
+
+  # Disjoint fixtures for products-bulk.spec.ts. Each test owns its own pair
+  # (A/B status, C/D categories, E/F tags, G/H delete, I row actions, K/L add
+  # to channels, M/N remove from channels) so the serial suite can mutate them
+  # in any order without poisoning siblings. All start active so the status
+  # spec sees a clean transition; M and N are pre-listed on the bulk channel
+  # so the remove flow has something to undo.
+  - { slug: e2e-bulk-product-a, name: E2E Bulk Product A, status: active, sku: E2E-BULK-A, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-b, name: E2E Bulk Product B, status: active, sku: E2E-BULK-B, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-c, name: E2E Bulk Product C, status: active, sku: E2E-BULK-C, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-d, name: E2E Bulk Product D, status: active, sku: E2E-BULK-D, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-e, name: E2E Bulk Product E, status: active, sku: E2E-BULK-E, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-f, name: E2E Bulk Product F, status: active, sku: E2E-BULK-F, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-g, name: E2E Bulk Product G, status: active, sku: E2E-BULK-G, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-h, name: E2E Bulk Product H, status: active, sku: E2E-BULK-H, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-i, name: E2E Bulk Product I, status: active, sku: E2E-BULK-I, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-j, name: E2E Bulk Product J, status: active, sku: E2E-BULK-J, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-k, name: E2E Bulk Product K, status: active, sku: E2E-BULK-K, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-l, name: E2E Bulk Product L, status: active, sku: E2E-BULK-L, prices: { USD: 9.99 } }
+  - { slug: e2e-bulk-product-m, name: E2E Bulk Product M, status: active, sku: E2E-BULK-M, prices: { USD: 9.99 }, channels: [e2e-bulk] }
+  - { slug: e2e-bulk-product-n, name: E2E Bulk Product N, status: active, sku: E2E-BULK-N, prices: { USD: 9.99 }, channels: [e2e-bulk] }
+
+  # Inventory operations: a stocked product to send between the warehouses.
+  - slug: e2e-transfer-product
+    name: E2E Transfer Product
+    status: active
+    sku: E2E-TRANSFER-SKU
+    prices: { USD: 24.99 }
+    stock: { E2E Source Warehouse: 5000 }
+
+  # The Inventory page: a SKU of its own so the figures it asserts are not
+  # moved by the transfer specs. Its reservation at the destination is a
+  # checkout hold, written in Ruby after this file is deployed.
+  - slug: e2e-inventory-product
+    name: E2E Inventory Product
+    status: active
+    sku: E2E-INVENTORY-SKU
+    prices: { USD: 19.99 }
+    stock: { E2E Source Warehouse: 500 }

@@ -125,6 +125,9 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, 'package.json'))).toBe(true)
     expect(fs.existsSync(path.join(projectDir, 'README.md'))).toBe(true)
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
+    expect(fs.readFileSync(path.join(projectDir, 'spree.config.yml'), 'utf-8')).toContain(
+      'version: 1',
+    )
   })
 
   it('enables the wholesale portal in the storefront env only with sample data', async () => {

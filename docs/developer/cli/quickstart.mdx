@@ -42,12 +42,13 @@ npx @spree/cli dev
 
 ### `spree init`
 
-First-run setup. Starts Docker services, seeds the database, generates an API key, and optionally loads sample data.
+First-run setup. Starts Docker services, seeds the database, generates API keys, deploys the project's `spree.config.yml` (see [`spree config`](#spree-config)), and prints the one-time setup link where you create the admin account and can load sample data.
 
 ```bash
 spree init
-spree init --no-sample-data   # Skip sample data
-spree init --no-open           # Skip opening browser
+spree init --no-open                                   # Skip opening browser
+spree init --admin-email ops@example.com \
+           --admin-password '********' --no-sample-data  # Scripted install: seed the admin, skip sample data
 ```
 
 ### `spree dev`
@@ -205,6 +206,17 @@ spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","
 spree api endpoints --resource orders    # endpoints + required scopes, offline
 spree api schema "POST /orders"          # request/response schema, offline
 spree api status
+```
+
+### `spree config`
+
+Describe the store in `spree.config.yml` (every new project ships one) and deploy it anywhere through the Admin API: channels, markets, tax, delivery zones and methods, warehouses, categories, products, customers. Records match on natural keys, so one file works against local, staging and production. See [Store Configuration as Code](/developer/cli/configurator).
+
+```bash
+spree config validate                    # schema check, offline
+spree config diff                        # what deploy would change
+spree config deploy --fail-on-delete     # apply; refuse any delete (CI guard)
+spree config introspect --out store.yml  # capture the live store into a file
 ```
 
 ### `spree auth`
