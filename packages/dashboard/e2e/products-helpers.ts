@@ -8,12 +8,16 @@ export const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
 /**
  * Focus the product form's description field and type `text`. The field is a
  * tiptap `RichTextEditor` (contenteditable), not a textarea, so `.fill()` is
- * wrong; we click to focus and `keyboard.type` instead, which presses Enter
- * for each `\n` — splitting the text into separate paragraphs.
+ * wrong. Click the editable surface and press Enter for each `\n` so each
+ * line becomes its own paragraph.
  */
 export async function typeDescription(page: Page, text: string): Promise<void> {
-  await page.getByLabel(/^description$/i).click()
-  await page.keyboard.type(text)
+  await page.locator('#product-description').click()
+  const paragraphs = text.split('\n')
+  for (const [index, paragraph] of paragraphs.entries()) {
+    if (index > 0) await page.keyboard.press('Enter')
+    if (paragraph.length > 0) await page.keyboard.type(paragraph)
+  }
 }
 
 /**

@@ -82,7 +82,12 @@ export function RichTextEditor({
     valueRef.current = value
   })
 
+  const editorRef = useRef<Editor | null>(null)
   const editor = useEditor({
+    // React 19 + Tiptap 3 render the editor on the client only. Creating it
+    // during the first SSR-shaped render leaves the view without a selection
+    // and toolbar commands then no-op.
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({ link: false }),
       Placeholder.configure({ placeholder: resolvedPlaceholder }),
@@ -97,6 +102,30 @@ export function RichTextEditor({
       attributes: {
         ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
         ...(id ? { id } : {}),
+      },
+      // Tiptap 3.3+ runs input rules on Enter (so ``` can become a code
+      // block). Those plugins sit in front of the default keymap and, on
+      // 3.31, can consume the key without splitting the paragraph — the
+      // next typed line then lands in the same block. Handle Enter here
+      // first (view props run before plugins) and split the list item or
+      // paragraph ourselves.
+      handleKeyDown: (_view, event) => {
+        if (
+          event.key !== 'Enter' ||
+          event.shiftKey ||
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey
+        ) {
+          return false
+        }
+        const current = editorRef.current
+        if (!current) return false
+        return current.commands.first(({ commands }) => [
+          () => commands.splitListItem('listItem'),
+          () => commands.newlineInCode(),
+          () => commands.splitBlock(),
+        ])
       },
     },
     onUpdate: ({ editor }) => {
@@ -132,6 +161,7 @@ export function RichTextEditor({
       })
     },
   })
+  editorRef.current = editor
 
   // Sync external value changes (e.g. form reset)
   useEffect(() => {
@@ -346,6 +376,11 @@ function ToolbarButton({
   return (
     <button
       type="button"
+      onMouseDown={(event) => {
+        // Keep the editor selection. A toolbar click otherwise blurs the
+        // contenteditable and list/quote commands apply to nothing.
+        event.preventDefault()
+      }}
       onClick={onClick}
       disabled={disabled}
       title={title}
