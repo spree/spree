@@ -7,7 +7,6 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
-    include Spree::UniqueWithinStore
 
     MATCH_POLICIES = %w[all any].freeze
 
@@ -76,7 +75,7 @@ module Spree
     end
 
     validates :name, presence: true
-    unique_within_store :name
+    validates_store_uniqueness :name
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     # One live list per catalog; soft-deleted lists release the slot. Backed
     # by a unique index on every adapter — partial on PostgreSQL and SQLite,

@@ -10,7 +10,6 @@ module Spree
     acts_as_paranoid
 
     include Spree::SingleStoreResource
-    include Spree::UniqueWithinStore
 
     encrypts :secret_key, deterministic: true if Rails.configuration.active_record.encryption.include?(:primary_key)
 
@@ -18,7 +17,7 @@ module Spree
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
     validates :url, presence: true
-    unique_within_store :url
+    validates_store_uniqueness :url
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
     validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }
