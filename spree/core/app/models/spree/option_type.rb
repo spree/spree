@@ -30,7 +30,7 @@ module Spree
 
     validates :name, presence: true
     unique_per_store :name, live: nil
-    acts_as_list
+    acts_as_list scope: :store_id
 
     #
     # Associations
