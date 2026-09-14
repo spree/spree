@@ -82,7 +82,6 @@ export function RichTextEditor({
     valueRef.current = value
   })
 
-  const editorRef = useRef<Editor | null>(null)
   const extensions = useMemo(
     () => [
       // TrailingNode is on by default in StarterKit 3.x and keeps an extra
@@ -105,29 +104,6 @@ export function RichTextEditor({
       attributes: {
         ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
         ...(id ? { id } : {}),
-      },
-      handleKeyDown: (_view, event) => {
-        if (
-          event.key !== 'Enter' ||
-          event.shiftKey ||
-          event.altKey ||
-          event.ctrlKey ||
-          event.metaKey
-        ) {
-          return false
-        }
-        const current = editorRef.current
-        if (!current) return false
-        const before = current.getHTML()
-        current.commands.first(({ commands }) => [
-          () => commands.splitListItem('listItem'),
-          () => commands.newlineInCode(),
-          () => commands.createParagraphNear(),
-          () => commands.splitBlock(),
-        ])
-        // Only swallow Enter when a split actually landed. Otherwise the
-        // default keymap and input rules still get a chance.
-        return current.getHTML() !== before
       },
     },
     onUpdate: ({ editor }) => {
@@ -161,7 +137,6 @@ export function RichTextEditor({
       })
     },
   })
-  editorRef.current = editor
 
   // Sync external value changes (e.g. form reset)
   useEffect(() => {
@@ -265,12 +240,13 @@ function EditorToolbar({
     }),
   })
 
-  const runToolbarCommand = (command: () => boolean) => {
-    const selection = editor.state.selection.toJSON() as { type?: string }
-    if (selection.type === 'all' || editor.state.selection.from === 0) {
+  const runToolbarCommand = (command: () => void) => {
+    command()
+    // Ctrl/Cmd+A is an AllSelection. Collapse it so the button the
+    // merchant just used lights up against the formatted text.
+    if (editor.state.selection.toJSON().type === 'all') {
       editor.commands.setTextSelection(1)
     }
-    command()
   }
 
   return (
@@ -328,12 +304,7 @@ function EditorToolbar({
 
       <ToolbarButton
         active={toolbar.isLink}
-        onClick={() =>
-          runToolbarCommand(() => {
-            onSetLink()
-            return true
-          })
-        }
+        onClick={() => runToolbarCommand(onSetLink)}
         title={t('admin.components.rich_text_editor.link')}
       >
         <LinkIcon className="size-4" />
