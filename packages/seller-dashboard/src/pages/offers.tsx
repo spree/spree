@@ -1,5 +1,5 @@
 import type { BulkAction, BulkActionOutcome, ResourceSearch } from '@spree/dashboard-core'
-import { ResourcePickerSheet, ResourceTable, Subject } from '@spree/dashboard-core'
+import { PageHeader, ResourcePickerSheet, ResourceTable, Subject } from '@spree/dashboard-core'
 import { Button, useRowClickBridge } from '@spree/dashboard-ui'
 import { PlusIcon, SendIcon } from '@spree/dashboard-ui/icons'
 import type { Product, Variant } from '@spree/seller-sdk'
@@ -60,7 +60,10 @@ export function OffersPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-4">
+      <PageHeader title={t('offers.title')} subtitle={t('offers.description')} sticky={false} />
+
       <ResourceTable<Variant>
+        hideHeader
         tableKey="seller-offers"
         queryKey="seller-offers"
         // `product` names what each offer sits on; without it the list can
