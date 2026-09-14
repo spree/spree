@@ -11,14 +11,19 @@ module Spree
     # Convenience aliases expanded at check time (never stored expanded).
     ALIAS_SCOPES = %w[read_all write_all].freeze
 
-    # Admin API authorization scopes — the permission catalog keys plus the
-    # aliases. Derived from the catalog so an extension registering a resource
-    # (`Spree.permissions.register_resource`) makes its keys mintable on secret
+    # Admin API authorization scopes — the permission catalog keys a store's
+    # own back office may hold, plus the aliases. Derived from the catalog so
+    # an extension registering a resource
+    # (`Spree.permissions.register_scope`) makes its keys mintable on secret
     # keys with no further wiring. See docs/plans/6.0-admin-rbac.md.
+    #
+    # Staff-grantable only: a secret key is issued against a store, so keys
+    # that exist for another audience (a seller's own profile or books) are
+    # not mintable on one.
     #
     # @return [Array<String>]
     def self.known_scopes
-      Spree.permissions.catalog_keys + ALIAS_SCOPES
+      Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE) + ALIAS_SCOPES
     end
 
     # Scopes are stored in a JSON column (jsonb on PostgreSQL, json elsewhere).

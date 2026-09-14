@@ -1453,6 +1453,8 @@ en:
         loyalty: Loyalty
         marketing: Marketing
         orders: Orders
+        seller: Seller
+        sellers: Sellers
         settings: Settings
       kinds:
         read: View

@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
 
       admin = json_response['data'].find { |r| r['name'] == 'admin' }
       expect(admin['mutable']).to be false
-      expect(admin['permissions']).to eq(Spree.permissions.catalog_keys)
+      expect(admin['permissions']).to eq(Spree.permissions.grantable_keys(:store))
     end
   end
 
@@ -89,8 +89,8 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
       # A role owned by another resource (a marketplace seller) confers nothing
       # in the store admin, so it must not widen what the caller may grant.
       it 'ignores keys the caller holds only on a non-store resource' do
-        Spree.permissions.register_resource(
-          :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
+        Spree.permissions.register_scope(
+          :products, group: :catalog, audiences: %i[dummy_model], resources: -> { [Spree::Product] }
         )
         create(:role_user, user: staffer,
                role: create(:role, name: 'seller_catalog', permissions: %w[write_products],

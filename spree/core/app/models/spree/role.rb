@@ -153,11 +153,12 @@ module Spree
       errors.add(:permissions, :role_permissions_unknown, message: Spree.t(:role_permissions_unknown, keys: unknown.join(', '))) if unknown.any?
     end
 
-    # A role outside the store's back office is bounded by the catalog: only
-    # resources registered as grantable to its kind may appear on it, so
-    # settings/staff/api_keys can never reach a seller, even from a seed.
+    # Every role is bounded by the catalog: only resources registered as
+    # grantable to its kind may appear on it, so settings/staff/api_keys can
+    # never reach a seller, and a seller's own keys can never reach a store
+    # role — even from a seed.
     def permissions_must_be_grantable_for_resource
-      return if staff? || resource_type.blank?
+      return if resource_type.blank?
 
       ungrantable = permissions - Spree.permissions.grantable_keys(audience)
       return if ungrantable.none?

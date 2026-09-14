@@ -4140,10 +4140,11 @@
         "analytics": "Analityka",
         "catalog": "Katalog",
         "customers": "Klienci",
+        "loyalty": "Lojalność",
         "marketing": "Marketing",
         "orders": "Zamówienia",
-        "settings": "Ustawienia",
-        "loyalty": "Lojalność"
+        "sellers": "Sprzedawcy",
+        "settings": "Ustawienia"
       },
       "labels": {
         "read": "Podgląd: {{resource}}",

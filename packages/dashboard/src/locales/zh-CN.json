@@ -4078,10 +4078,11 @@
         "analytics": "分析",
         "catalog": "商品目录",
         "customers": "客户",
+        "loyalty": "会员权益",
         "marketing": "营销",
         "orders": "订单",
-        "settings": "设置",
-        "loyalty": "会员权益"
+        "sellers": "卖家",
+        "settings": "设置"
       },
       "labels": {
         "read": "查看{{resource}}",

@@ -780,8 +780,8 @@ module Spree
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
   # code only registers the vocabulary.
   #
-  # @example Registering a resource from an extension
-  #   Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  # @example Registering a scope from an extension
+  #   Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
   #     [SpreeReviews::Review]
   #   })
   #

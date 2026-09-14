@@ -102,14 +102,15 @@ module Spree
     # catalog that changes after the role was saved would leave stale keys
     # behind — the write-time check is a UX affordance, this is the boundary.
     #
+    # The bound applies to staff too: the catalog holds resources only another
+    # audience can use, and a store role carrying one would otherwise be
+    # granted it here.
+    #
     # @param roles [Array<Spree::Role>]
     # @return [Array<String>]
     def grantable_keys_for(roles)
       roles.flat_map do |role|
-        keys = Spree.permissions.expand_keys(role.permissions)
-        next keys if role.staff?
-
-        keys & Spree.permissions.grantable_keys(role.audience)
+        Spree.permissions.expand_keys(role.permissions) & Spree.permissions.grantable_keys(role.audience)
       end.uniq
     end
 
@@ -158,7 +159,10 @@ module Spree
     # ability rules — see the Axis A/B split in docs/plans/decisions.md.
     def activate_full_access
       can :manage, :all
-      @permission_keys = Spree.permissions.catalog_keys
+      # Everything a store's back office may hold — not the whole catalog,
+      # which also carries the keys that only mean something on another
+      # audience's panel.
+      @permission_keys = Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE)
     end
 
     # Reference data every staff member can read regardless of keys — address

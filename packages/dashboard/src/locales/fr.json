@@ -4088,10 +4088,11 @@
         "analytics": "Analyses",
         "catalog": "Catalogue",
         "customers": "Clients",
+        "loyalty": "Fidélité",
         "marketing": "Marketing",
         "orders": "Commandes",
-        "settings": "Paramètres",
-        "loyalty": "Fidélité"
+        "sellers": "Vendeurs",
+        "settings": "Paramètres"
       },
       "labels": {
         "read": "Voir {{resource}}",

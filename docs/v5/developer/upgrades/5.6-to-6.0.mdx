@@ -614,7 +614,7 @@ Spree::Role.find_or_create_by!(name: 'support')
 Storefront customers are not part of this system: the old `:default` role and `DefaultCustomer` set are gone, customers never resolve roles, and the Store API no longer consults CanCanCan at all — customer authorization is ownership-scoped queries plus `Spree::Storefront::AccessPolicy` (swappable via `Spree::Dependencies.storefront_access_policy_class`). If an extension added storefront `can` rules, move them into an access-policy subclass or a checkout workflow `validate` hook. Extensions register their resources into the catalog once, which makes them grantable to roles **and** mintable as API-key scopes:
 
 ```ruby
-Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [SpreeReviews::Review] })
+Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> { [SpreeReviews::Review] })
 ```
 
 Two enforcement changes on the Admin API:

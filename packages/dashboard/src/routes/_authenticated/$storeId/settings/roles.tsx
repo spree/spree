@@ -18,6 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -237,14 +240,36 @@ function PermissionSummary({ role }: { role: Role }) {
   return (
     <div className="flex flex-wrap items-center gap-1">
       {preview.map((key) => (
-        <Badge key={key} variant="secondary">
+        <Badge key={key} variant="outline">
           {permissionKeyLabel(t, catalog?.data, key)}
         </Badge>
       ))}
       {overflow > 0 && (
-        <span className="text-xs text-muted-foreground">
-          {t('admin.roles.badges.more', { count: overflow })}
-        </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {/* Focusable and named: the rest of the list opens on focus as
+                well as hover, so it is not pointer-only. The row itself opens
+                the editor on click, so reading what is hidden must not count
+                as clicking the row — by pointer or by keyboard. */}
+            <button
+              type="button"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') event.stopPropagation()
+              }}
+              className="cursor-help rounded-sm text-xs text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            >
+              {t('admin.roles.badges.more', { count: overflow })}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <ul>
+              {role.permissions.slice(PERMISSION_PREVIEW_COUNT).map((key) => (
+                <li key={key}>{permissionKeyLabel(t, catalog?.data, key)}</li>
+              ))}
+            </ul>
+          </TooltipContent>
+        </Tooltip>
       )}
     </div>
   )
