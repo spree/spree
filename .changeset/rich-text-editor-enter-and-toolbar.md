@@ -3,4 +3,4 @@
 "@spree/dashboard": patch
 ---
 
-Keep list and quote toolbar buttons working after the TipTap 3.31 pin, and make Enter split description paragraphs again.
+Keep list and quote toolbar buttons working after the TipTap 3.31 pin, and persist an Enter-split empty paragraph so the next line does not join the previous one.

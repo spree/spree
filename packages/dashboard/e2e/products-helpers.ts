@@ -12,11 +12,12 @@ export const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
  * line becomes its own paragraph.
  */
 export async function typeDescription(page: Page, text: string): Promise<void> {
-  await page.locator('#product-description').click()
+  const editor = page.locator('#product-description')
+  await editor.click()
   const paragraphs = text.split('\n')
   for (const [index, paragraph] of paragraphs.entries()) {
-    if (index > 0) await page.keyboard.press('Enter')
-    if (paragraph.length > 0) await page.keyboard.type(paragraph)
+    if (index > 0) await editor.press('Enter')
+    if (paragraph.length > 0) await editor.pressSequentially(paragraph)
   }
 }
 

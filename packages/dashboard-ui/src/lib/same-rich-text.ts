@@ -11,6 +11,21 @@ export function sameRichText(left: string, right: string): boolean {
   return canonicalizeRichText(left) === canonicalizeRichText(right)
 }
 
+/**
+ * Whether the editor should call `onChange` for `next` given the last stored
+ * `previous` value. Mount wrapping (`''` → `<p></p>`, bare text → `<p>…</p>`)
+ * is ignored. A user pressing Enter is not: that adds an empty paragraph
+ * `sameRichText` would otherwise treat as noise.
+ */
+export function shouldEmitRichTextChange(next: string, previous: string): boolean {
+  if (next === previous) return false
+  if (!sameRichText(next, previous)) return true
+  if (!visibleText(previous) && !hasImage(previous)) return false
+
+  const previousHtml = looksLikeHtml(previous.trim()) ? previous : `<p>${previous}</p>`
+  return countParagraphs(next) !== countParagraphs(previousHtml)
+}
+
 function canonicalizeRichText(html: string): string {
   const withoutTrailingEmpty = stripTrailingEmptyParagraphs((html ?? '').trim())
   if (!visibleText(withoutTrailingEmpty) && !hasImage(withoutTrailingEmpty)) return ''
@@ -80,6 +95,29 @@ function hasImage(html: string): boolean {
     index = open + 4
   }
   return false
+}
+
+function countParagraphs(html: string): number {
+  const lower = (html ?? '').toLowerCase()
+  let count = 0
+  let index = 0
+  while (index < lower.length) {
+    const open = lower.indexOf('<p', index)
+    if (open === -1) return count
+    const after = lower.charCodeAt(open + 2)
+    if (
+      Number.isNaN(after) ||
+      after === 32 ||
+      after === 9 ||
+      after === 10 ||
+      after === 13 ||
+      after === 62
+    ) {
+      count += 1
+    }
+    index = open + 2
+  }
+  return count
 }
 
 function visibleText(html: string): string {
