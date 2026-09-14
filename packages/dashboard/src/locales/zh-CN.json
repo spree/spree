@@ -3016,7 +3016,11 @@
         "partially_refunded": "部分退款",
         "refunded": "已退款",
         "overcharged": "多付款",
-        "voided": "已作废"
+        "voided": "已作废",
+        "balance_due": "待付款",
+        "credit_owed": "应退款",
+        "failed": "失败",
+        "void": "已作废"
       },
       "statuses": {
         "canceled": "已取消",

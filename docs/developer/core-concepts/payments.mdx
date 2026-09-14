@@ -559,19 +559,23 @@ stateDiagram-v2
 
 With **auto-capture** enabled (default for most gateways), the Payment goes directly from `checkout` → `processing` → `completed`. With **manual capture**, it stops at `pending` until an admin captures it.
 
-#### Order Payment States
+#### Order Payment Status
 
-Each payment update also recalculates the order's `payment_state`:
+Each payment update also recalculates the order's `payment_status`, derived from its payments and refunds against the order total:
 
-| Payment State | Description |
+| Payment status | Description |
 |---------------|-------------|
-| `balance_due` | Payment is required for this order |
-| `failed` | The last payment for the order failed |
-| `credit_owed` | This order has been paid for in excess of its total |
-| `paid` | This order has been paid for in full |
+| `none` | Nothing has been authorized or captured |
+| `authorized` | Approved by the gateway, not yet captured |
+| `partially_paid` | Captured less than the order total |
+| `paid` | Captured payments cover the order total |
+| `partially_refunded` | Refunded in part; the customer has paid something net |
+| `refunded` | Refunds returned everything captured |
+| `overcharged` | Captured more than the order total — the customer is owed the difference |
+| `voided` | The order was canceled and its authorization released |
 
 <Warning>
-You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase could indicate a problem with your payment gateway and most likely a serious problem affecting customer satisfaction. Check your payment gateway's dashboard for the most recent transactions if this is happening.
+Keep an eye on orders sitting at `authorized` or `partially_paid` long after placement — a sudden increase can indicate a problem with your payment gateway that is affecting customers. Check the gateway's own dashboard for recent transactions.
 </Warning>
 
 ## Payment Sources

@@ -3041,7 +3041,11 @@
         "partially_refunded": "مسترد جزئيًا",
         "refunded": "مسترد",
         "overcharged": "مدفوع بالزيادة",
-        "voided": "ملغى"
+        "voided": "ملغى",
+        "balance_due": "الرصيد المستحق",
+        "credit_owed": "الائتمان المستحق",
+        "failed": "فشل",
+        "void": "ملغى"
       },
       "statuses": {
         "canceled": "تم الإلغاء",
