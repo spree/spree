@@ -52,6 +52,8 @@ module Spree
     validates :currency, presence: true
     validates :kind, presence: true, inclusion: { in: KINDS }
     validates :provider, presence: true
+    validates :settled_amount, numericality: true
+    validates :settled_currency, presence: true
 
     # A row settles in the currency it was sold in until a provider says
     # otherwise — which is the truth outright for the built-in provider, since
@@ -137,22 +139,21 @@ module Spree
     #
     # A sale is priced in the customer's currency; an account settles in its
     # own, and the provider converts on the way in. Both are recorded facts —
-    # Spree holds no exchange rates and converts nothing. The fallback is for
-    # rows written before the columns existed; everything since carries them.
+    # Spree holds no exchange rates and converts nothing.
     #
     # @return [BigDecimal]
     def settlement_amount
-      settled_amount || amount
+      settled_amount
     end
 
     # @return [String]
     def settlement_currency
-      settled_currency.presence || currency
+      settled_currency
     end
 
     # @return [Boolean] whether the provider converted this on the way in
     def converted?
-      settled_currency.present? && settled_currency != currency
+      settled_currency != currency
     end
 
     private
