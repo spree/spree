@@ -14,22 +14,19 @@
   },
   "account": {
     "avatar": "Photo",
-    "avatar_help": "PNG, JPEG ou WebP.",
+    "avatar_help": "Affichée à côté de votre nom dans tout le panneau. Les images carrées sont recommandées.",
     "email": "E-mail",
     "first_name": "Prénom",
     "language": "Langue",
     "last_name": "Nom",
-    "load_failed_title": "Impossible de charger votre compte",
-    "save_failed": "Impossible d’enregistrer votre compte.",
-    "saved": "Compte mis à jour",
+    "load_failed_title": "Impossible de charger votre profil",
+    "save_failed": "Impossible d’enregistrer votre profil",
+    "saved": "Profil mis à jour",
     "saving": "Enregistrement…",
-    "subtitle": "Votre nom, votre photo et votre langue. Vous seul pouvez les modifier.",
-    "title": "Votre compte"
+    "subtitle": "Gérez vos informations personnelles et la langue du panneau.",
+    "title": "Profil"
   },
   "admin": {
-    "account": {
-      "edit_profile": "Votre compte"
-    },
     "actions": {
       "actions_menu": "Actions",
       "cancel": "Annuler",

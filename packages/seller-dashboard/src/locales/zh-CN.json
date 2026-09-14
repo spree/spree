@@ -14,22 +14,19 @@
   },
   "account": {
     "avatar": "照片",
-    "avatar_help": "PNG、JPEG 或 WebP。",
+    "avatar_help": "在面板中显示在您的姓名旁边。方形图片效果最佳。",
     "email": "邮箱",
     "first_name": "名字",
     "language": "语言",
     "last_name": "姓氏",
-    "load_failed_title": "无法加载你的账户",
-    "save_failed": "无法保存你的账户。",
-    "saved": "账户已更新",
-    "saving": "正在保存…",
-    "subtitle": "你的姓名、照片和语言。只有你可以更改这些内容。",
-    "title": "你的账户"
+    "load_failed_title": "无法加载您的个人资料",
+    "save_failed": "无法保存您的个人资料",
+    "saved": "个人资料已更新",
+    "saving": "保存中…",
+    "subtitle": "管理您的个人详细信息和面板语言。",
+    "title": "个人资料"
   },
   "admin": {
-    "account": {
-      "edit_profile": "你的账户"
-    },
     "actions": {
       "actions_menu": "操作",
       "cancel": "取消",

@@ -14,22 +14,19 @@
   },
   "account": {
     "avatar": "Foto",
-    "avatar_help": "PNG, JPEG oder WebP.",
+    "avatar_help": "Wird im gesamten Panel neben Ihrem Namen angezeigt. Quadratische Bilder sehen am besten aus.",
     "email": "E-Mail",
     "first_name": "Vorname",
     "language": "Sprache",
     "last_name": "Nachname",
-    "load_failed_title": "Ihr Konto konnte nicht geladen werden",
-    "save_failed": "Ihr Konto konnte nicht gespeichert werden.",
-    "saved": "Konto aktualisiert",
+    "load_failed_title": "Ihr Profil konnte nicht geladen werden",
+    "save_failed": "Ihr Profil konnte nicht gespeichert werden",
+    "saved": "Profil aktualisiert",
     "saving": "Wird gespeichert…",
-    "subtitle": "Ihr Name, Foto und Ihre Sprache. Nur Sie können diese ändern.",
-    "title": "Ihr Konto"
+    "subtitle": "Verwalten Sie Ihre persönlichen Daten und Ihre Panel-Sprache.",
+    "title": "Profil"
   },
   "admin": {
-    "account": {
-      "edit_profile": "Ihr Konto"
-    },
     "actions": {
       "actions_menu": "Aktionen",
       "cancel": "Abbrechen",
