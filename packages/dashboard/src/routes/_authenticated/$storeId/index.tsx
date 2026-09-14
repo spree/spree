@@ -50,7 +50,7 @@ import {
   TruckIcon,
 } from '@spree/dashboard-ui/icons'
 import { createFileRoute, Link, type LinkProps } from '@tanstack/react-router'
-import { format, parseISO } from 'date-fns'
+import { format, parse } from 'date-fns'
 import type { CSSProperties } from 'react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -87,7 +87,10 @@ function DashboardPage() {
   // so the server widens both edges to the store's whole day.
   const [dateRange, setDateRange] = useState<DateRange>(() => {
     const preset = resolveDatePreset('last_30_days', timezone)
-    return { from: parseISO(preset.from as string), to: parseISO(preset.to as string) }
+    return {
+      from: parse(preset.from as string, 'yyyy-MM-dd', new Date()),
+      to: parse(preset.to as string, 'yyyy-MM-dd', new Date()),
+    }
   })
   const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
   // Undefined until the merchant picks one, so the store's default applies as
@@ -176,10 +179,9 @@ function DashboardPage() {
     )
   }
 
-  if (!overview) {
-    return <DashboardSkeleton />
-  }
-
+  // The toolbar stays mounted while a new range loads. Swapping the whole
+  // page for a skeleton remounted the picker and reset its trigger to
+  // "Last 30 days" even though the query had already moved.
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -210,28 +212,34 @@ function DashboardPage() {
               searchPlaceholder={t('admin.pages.home.currency.search')}
             />
           )}
-          <DateRangePicker value={dateRange} onChange={setDateRange} />
+          <DateRangePicker value={dateRange} onChange={setDateRange} timezone={timezone} />
         </div>
       </div>
-      <TimeSeriesChart
-        metrics={chartMetrics}
-        result={overview}
-        dimension="completed_at"
-        grain="day"
-        compare
-      />
-      <div className="grid gap-6 lg:grid-cols-5">
-        <OperationsCard
-          data={operations}
-          failed={!!operationsError}
-          channelId={channelParam}
-          className={rankingTabs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-5'}
-        />
-        {rankingTabs.length > 0 && <RankingsCard scope={scope} tabs={rankingTabs} />}
-      </div>
-      <Can I="read" a={Subject.Product}>
-        <TopProducts scope={scope} />
-      </Can>
+      {!overview ? (
+        <DashboardWidgetsSkeleton />
+      ) : (
+        <>
+          <TimeSeriesChart
+            metrics={chartMetrics}
+            result={overview}
+            dimension="completed_at"
+            grain="day"
+            compare
+          />
+          <div className="grid gap-6 lg:grid-cols-5">
+            <OperationsCard
+              data={operations}
+              failed={!!operationsError}
+              channelId={channelParam}
+              className={rankingTabs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-5'}
+            />
+            {rankingTabs.length > 0 && <RankingsCard scope={scope} tabs={rankingTabs} />}
+          </div>
+          <Can I="read" a={Subject.Product}>
+            <TopProducts scope={scope} />
+          </Can>
+        </>
+      )}
     </div>
   )
 }
@@ -777,14 +785,9 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
   )
 }
 
-function DashboardSkeleton() {
-  const { t } = useTranslation()
+function DashboardWidgetsSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
-        <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
-      </div>
+    <>
       <ReportSkeleton />
       <div className="grid gap-6 lg:grid-cols-5">
         <Card className="lg:col-span-2">
@@ -817,6 +820,6 @@ function DashboardSkeleton() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   )
 }

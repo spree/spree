@@ -32,7 +32,7 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import { PlusIcon, XIcon } from '@spree/dashboard-ui/icons'
-import { format, parseISO } from 'date-fns'
+import { format, parse } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 import { categoryAutocompleteProps } from '../../../hooks/use-categories'
 import { channelAutocompleteProps, useChannels } from '../../../hooks/use-channels'
@@ -113,8 +113,14 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
   const defaultRange = resolveDatePreset('last_30_days', timezone)
   const customRange: DateRange =
     'since' in draft.timeRange
-      ? { from: parseISO(draft.timeRange.since), to: parseISO(draft.timeRange.until) }
-      : { from: parseISO(defaultRange.from as string), to: parseISO(defaultRange.to as string) }
+      ? {
+          from: parse(draft.timeRange.since, 'yyyy-MM-dd', new Date()),
+          to: parse(draft.timeRange.until, 'yyyy-MM-dd', new Date()),
+        }
+      : {
+          from: parse(defaultRange.from as string, 'yyyy-MM-dd', new Date()),
+          to: parse(defaultRange.to as string, 'yyyy-MM-dd', new Date()),
+        }
   const dateRangeValue = (range: DateRange) => ({
     since: format(range.from, 'yyyy-MM-dd'),
     until: format(range.to, 'yyyy-MM-dd'),
@@ -261,6 +267,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
             <DateRangePicker
               value={customRange}
               onChange={(range) => update({ timeRange: dateRangeValue(range) })}
+              timezone={timezone}
             />
           )}
         </Field>
