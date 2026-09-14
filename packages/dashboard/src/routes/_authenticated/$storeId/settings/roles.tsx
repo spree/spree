@@ -18,6 +18,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -237,14 +240,30 @@ function PermissionSummary({ role }: { role: Role }) {
   return (
     <div className="flex flex-wrap items-center gap-1">
       {preview.map((key) => (
-        <Badge key={key} variant="secondary">
+        <Badge key={key} variant="outline">
           {permissionKeyLabel(t, catalog?.data, key)}
         </Badge>
       ))}
       {overflow > 0 && (
-        <span className="text-xs text-muted-foreground">
-          {t('admin.roles.badges.more', { count: overflow })}
-        </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {/* Focusable and named: the rest of the list opens on focus as
+                well as hover, so it is not pointer-only. */}
+            <button
+              type="button"
+              className="cursor-help rounded-sm text-xs text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            >
+              {t('admin.roles.badges.more', { count: overflow })}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <ul>
+              {role.permissions.slice(PERMISSION_PREVIEW_COUNT).map((key) => (
+                <li key={key}>{permissionKeyLabel(t, catalog?.data, key)}</li>
+              ))}
+            </ul>
+          </TooltipContent>
+        </Tooltip>
       )}
     </div>
   )
