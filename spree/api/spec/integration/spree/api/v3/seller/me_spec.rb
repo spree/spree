@@ -89,6 +89,24 @@ RSpec.describe 'Seller Account API', type: :request, swagger_doc: 'api-reference
         end
       end
 
+      # The only way this endpoint refuses a well-formed request: the photo
+      # must be a web image, since a seller's avatar is rendered in a browser.
+      response '422', 'the photo is not a web image' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:blob) do
+          ActiveStorage::Blob.create_and_upload!(
+            io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg"></svg>'),
+            filename: 'avatar.svg',
+            content_type: 'image/svg+xml'
+          )
+        end
+        let(:body) { { avatar: blob.signed_id } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
       response '401', 'missing or invalid token' do
         let(:Authorization) { nil }
         let(:body) { { first_name: 'Ada' } }
