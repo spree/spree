@@ -21370,6 +21370,9 @@ components:
         required_policy_name:
           type: string
           nullable: true
+        terms_html:
+          type: string
+          nullable: true
         submission:
           "$ref": "#/components/schemas/RequirementSubmission"
         custom_fields:
@@ -21391,6 +21394,7 @@ components:
       - requires_file
       - accepted_content_types
       - required_policy_name
+      - terms_html
       x-typelizer: true
     RequirementSubmission:
       type: object
