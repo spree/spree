@@ -33,7 +33,9 @@ export function BalanceSummary({ balances }: { balances: Balance[] }) {
       {balances.map((balance) => (
         <Card key={`${balance.currency}-${balance.settlement_currency}`}>
           <CardHeader>
-            <CardTitle>{t('earnings.balance.owed', { currency: balance.settlement_currency })}</CardTitle>
+            <CardTitle>
+              {t('earnings.balance.owed', { currency: balance.settlement_currency })}
+            </CardTitle>
             {balance.converted && (
               <CardDescription>
                 {t('earnings.balance.converted', { currency: balance.currency })}

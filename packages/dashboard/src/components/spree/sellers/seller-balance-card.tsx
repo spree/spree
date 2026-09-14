@@ -64,9 +64,14 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {balances.map((balance, index) => (
-          <div key={`${balance.currency}-${balance.settlement_currency}`} className="flex flex-col gap-3">
+          <div
+            key={`${balance.currency}-${balance.settlement_currency}`}
+            className="flex flex-col gap-3"
+          >
             {index > 0 && <Separator />}
-            <ReadRow label={t('admin.payouts.balance.owed', { currency: balance.settlement_currency })}>
+            <ReadRow
+              label={t('admin.payouts.balance.owed', { currency: balance.settlement_currency })}
+            >
               <span className="font-medium">{balance.display_balance}</span>
             </ReadRow>
             <ReadRow
@@ -79,7 +84,9 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
               {balance.display_earned}
             </ReadRow>
             {balance.converted && (
-              <ReadRow label={t('admin.payouts.balance.payable')}>{balance.display_payable}</ReadRow>
+              <ReadRow label={t('admin.payouts.balance.payable')}>
+                {balance.display_payable}
+              </ReadRow>
             )}
             <ReadRow label={t('admin.payouts.balance.paid')}>{balance.display_paid}</ReadRow>
             <ReadRow label={t('admin.payouts.balance.pending')}>{balance.display_pending}</ReadRow>
