@@ -1869,6 +1869,10 @@
         "password_confirmation": {
           "label": "Confirm password"
         },
+        "sample_data": {
+          "help": "Adds demo products, categories, customers and orders in the background so you can explore the dashboard. Takes a few minutes and downloads product images.",
+          "label": "Load sample data"
+        },
         "store_name": {
           "label": "Store name"
         }

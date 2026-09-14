@@ -1869,6 +1869,10 @@
         "password_confirmation": {
           "label": "Passwort bestätigen"
         },
+        "sample_data": {
+          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
+          "label": "Beispieldaten laden"
+        },
         "store_name": {
           "label": "Shopname"
         }
