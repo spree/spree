@@ -3024,11 +3024,7 @@
         "partially_refunded": "Teilweise erstattet",
         "refunded": "Erstattet",
         "overcharged": "Überzahlt",
-        "voided": "Storniert",
-        "balance_due": "Offener Betrag",
-        "credit_owed": "Guthaben",
-        "failed": "Fehlgeschlagen",
-        "void": "Storniert"
+        "voided": "Storniert"
       },
       "statuses": {
         "canceled": "Storniert",
