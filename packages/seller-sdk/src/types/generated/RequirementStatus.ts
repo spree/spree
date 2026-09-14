@@ -19,6 +19,7 @@ type RequirementStatus = {
   requires_file: boolean;
   accepted_content_types: Array<string>;
   required_policy_name: string | null;
+  terms_html: string | null;
   submission?: RequirementSubmission;
   custom_fields?: Array<RequirementCustomField>;
 }

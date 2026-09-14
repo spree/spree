@@ -4229,6 +4229,12 @@
       "percent": "نسبة مئوية",
       "preferred_amount": "كمية",
       "preferred_percent": "نسبة مئوية",
+      "terms_body": "الشروط",
+      "terms_body_description": "ما يقرأه البائع قبل الموافقة. يظهر في قائمة إعداداته.",
+      "terms_effective_from": "الشروط سارية من",
+      "terms_effective_from_description": "يُطلب من البائعين الذين وافقوا قبل هذا التاريخ الموافقة مرة أخرى.",
+      "terms_url": "رابط الشروط",
+      "terms_url_description": "نسخة منشورة اختيارية من الشروط نفسها، تُفتح في علامة تبويب جديدة.",
       "webhook_secret": "مفتاح توقيع الويب هوك",
       "webhook_secret_description": "السر الذي ضبطته على ويب هوك EasyPost. بدونه تُرفض تحديثات شركة الشحن."
     },

@@ -4204,6 +4204,12 @@
       "percent": "Prozent",
       "preferred_amount": "Betrag",
       "preferred_percent": "Prozent",
+      "terms_body": "Bedingungen",
+      "terms_body_description": "Was der Verkäufer vor der Zustimmung liest. Wird in seiner Einrichtungscheckliste angezeigt.",
+      "terms_effective_from": "Bedingungen gültig ab",
+      "terms_effective_from_description": "Verkäufer, die davor zugestimmt haben, werden erneut gefragt.",
+      "terms_url": "URL der Bedingungen",
+      "terms_url_description": "Optionale veröffentlichte Fassung derselben Bedingungen, öffnet in einem neuen Tab.",
       "webhook_secret": "Webhook-Signaturschlüssel",
       "webhook_secret_description": "Das Geheimnis, das Sie im EasyPost-Webhook festgelegt haben. Ohne es werden Carrier-Updates abgelehnt."
     },

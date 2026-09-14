@@ -4194,6 +4194,12 @@
       "percent": "百分比",
       "preferred_amount": "金额",
       "preferred_percent": "百分比",
+      "terms_body": "条款",
+      "terms_body_description": "卖家在同意前阅读的内容。显示在其设置清单中。",
+      "terms_effective_from": "条款生效日期",
+      "terms_effective_from_description": "在此日期之前已同意的卖家需要再次同意。",
+      "terms_url": "条款链接",
+      "terms_url_description": "同一条款的可选已发布副本，在新标签页中打开。",
       "webhook_secret": "Webhook 签名密钥",
       "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。"
     },

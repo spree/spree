@@ -95,6 +95,17 @@ module Spree
       requirement.required_policy_name.presence
     end
 
+    # The marketplace terms this line asks the seller to accept, as
+    # sanitized markup. Nil for every other kind, and nil while the
+    # marketplace has not written any.
+    #
+    # @return [String, nil]
+    def terms_html
+      return nil unless requirement.respond_to?(:terms_html)
+
+      requirement.terms_html
+    end
+
     # The policy the seller actually published against this line, when they
     # have — nil for every other kind, and nil while the document is still
     # owed.

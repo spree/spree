@@ -4256,6 +4256,12 @@
       "percent": "Procent",
       "preferred_amount": "Kwota",
       "preferred_percent": "Procent",
+      "terms_body": "Regulamin",
+      "terms_body_description": "Tekst, który sprzedawca czyta przed akceptacją. Widoczny na liście wymagań.",
+      "terms_effective_from": "Regulamin obowiązuje od",
+      "terms_effective_from_description": "Sprzedawcy, którzy zaakceptowali przed tą datą, zostaną poproszeni ponownie.",
+      "terms_url": "Adres URL regulaminu",
+      "terms_url_description": "Opcjonalna opublikowana kopia tego samego regulaminu, otwierana w nowej karcie.",
       "webhook_secret": "Sekret podpisu webhooka",
       "webhook_secret_description": "Sekret ustawiony na webhooku EasyPost. Bez niego aktualizacje od przewoźnika są odrzucane."
     },

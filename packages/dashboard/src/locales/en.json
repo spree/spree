@@ -4204,6 +4204,12 @@
       "percent": "Percent",
       "preferred_amount": "Amount",
       "preferred_percent": "Percent",
+      "terms_body": "Terms",
+      "terms_body_description": "What the seller reads before they accept. Shown in their setup checklist.",
+      "terms_effective_from": "Terms effective from",
+      "terms_effective_from_description": "Sellers who accepted before this date are asked again.",
+      "terms_url": "Terms URL",
+      "terms_url_description": "Optional published copy of the same terms, opened in a new tab.",
       "webhook_secret": "Webhook signing secret",
       "webhook_secret_description": "The secret you set on the EasyPost webhook. Carrier updates are refused without it."
     },

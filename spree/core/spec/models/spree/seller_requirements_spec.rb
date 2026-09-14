@@ -6,6 +6,10 @@ RSpec.describe 'seller requirement kinds', type: :model do
 
   describe Spree::SellerRequirements::AcceptTerms do
     let(:requirement) { create(:accept_terms_requirement, store: store) }
+    let(:terms_policy) do
+      store.policies.with_matching_name(Spree.t(:terms_of_service)).first ||
+        store.policies.create!(name: Spree.t(:terms_of_service))
+    end
 
     it 'is unmet until the seller accepts' do
       expect(requirement.satisfied?(seller)).to be false
@@ -21,6 +25,39 @@ RSpec.describe 'seller requirement kinds', type: :model do
 
     it 'has no link when none is configured' do
       expect(requirement.action_url(seller)).to be_nil
+    end
+
+    # Accepting something they cannot read is not consent — the panel
+    # renders this markup in the checklist.
+    it 'exposes the terms the marketplace wrote on the requirement' do
+      requirement.update!(preferred_terms_body: '<p>Be excellent to each other.</p>')
+
+      expect(requirement.terms_html).to include('Be excellent to each other')
+    end
+
+    it 'falls back to the store Terms of Service when none were written here' do
+      terms_policy.update!(body: '<p>Shop fairly.</p>')
+
+      expect(requirement.terms_html).to include('Shop fairly')
+    end
+
+    it 'prefers the requirement body over the store policy' do
+      terms_policy.update!(body: '<p>Shop fairly.</p>')
+      requirement.update!(preferred_terms_body: '<p>Seller agreement.</p>')
+
+      expect(requirement.terms_html).to include('Seller agreement')
+      expect(requirement.terms_html).not_to include('Shop fairly')
+    end
+
+    it 'strips markup a seller must not be served' do
+      requirement.update!(preferred_terms_body: '<p>Fine</p><script>alert(1)</script>')
+
+      expect(requirement.terms_html).to include('Fine')
+      expect(requirement.terms_html).not_to include('<script>')
+    end
+
+    it 'has no terms when neither the requirement nor the store wrote any' do
+      expect(requirement.terms_html).to be_nil
     end
 
     it 'is met once they have' do
