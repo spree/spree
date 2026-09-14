@@ -50,21 +50,10 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
   // it's ready for prime time.
   const dashboard = flags.reactDashboard ?? false
 
-  let sampleData: boolean
-  if (flags.noSampleData !== undefined) {
-    sampleData = !flags.noSampleData
-  } else {
-    const sampleResult = await p.confirm({
-      message: 'Include sample data? (products, categories, images)',
-      initialValue: true,
-    })
-
-    if (p.isCancel(sampleResult)) {
-      p.cancel('Setup cancelled.')
-      process.exit(0)
-    }
-    sampleData = sampleResult
-  }
+  // Not prompted: sample data needs an admin to own it, and the admin is
+  // created on the setup screen, which offers the load right there. The flag
+  // only matters to scripted installs that seed an admin through `spree init`.
+  const sampleData = !flags.noSampleData
 
   let start: boolean
   if (flags.noStart !== undefined) {

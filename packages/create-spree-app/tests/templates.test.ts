@@ -5,6 +5,7 @@ import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
 import { rootPackageJsonContent } from '../src/templates/package-json'
 import { readmeContent } from '../src/templates/readme'
+import { spreeConfigContent } from '../src/templates/spree-config.js'
 
 describe('envContent', () => {
   it('includes the provided secret key', () => {
@@ -279,5 +280,17 @@ describe('dependabotContent', () => {
     expect(content).toContain('root-security:')
     expect(content).toContain('server-version:')
     expect(content).toContain('storefront-security:')
+  })
+})
+
+describe('spreeConfigContent', () => {
+  it('is a skeleton that pre-fills nothing first-run setup owns', () => {
+    const content = spreeConfigContent()
+    expect(content).toContain('yaml-language-server: $schema=')
+    expect(content).toContain('version: 1')
+    // Every section is a commented example; the store, its markets and its
+    // admin come from the setup screen.
+    expect(content).not.toMatch(/^(store|markets|channels|products):/m)
+    expect(content).toContain('spree config introspect')
   })
 })
