@@ -22,7 +22,8 @@ test.describe('product edit', () => {
     const description = page.locator('#product-description')
     await typeDescription(page, 'Formatted line')
 
-    const bulletBtn = page.getByRole('button', { name: /^bullet list$/i })
+    const toolbar = page.locator('[data-slot="rich-text-editor-toolbar"]')
+    const bulletBtn = toolbar.getByRole('button', { name: /^bullet list$/i })
     await bulletBtn.click()
     const bulletList = description.locator('ul')
     await expect(bulletList).toBeVisible()
@@ -30,7 +31,7 @@ test.describe('product edit', () => {
     await expect(bulletBtn).toHaveAttribute('aria-pressed', 'true')
     await bulletBtn.click()
 
-    const orderedBtn = page.getByRole('button', { name: /^ordered list$/i })
+    const orderedBtn = toolbar.getByRole('button', { name: /^ordered list$/i })
     await orderedBtn.click()
     const orderedList = description.locator('ol')
     await expect(orderedList).toBeVisible()
@@ -38,7 +39,7 @@ test.describe('product edit', () => {
     await expect(orderedBtn).toHaveAttribute('aria-pressed', 'true')
     await orderedBtn.click()
 
-    const quoteBtn = page.getByRole('button', { name: /^blockquote$/i })
+    const quoteBtn = toolbar.getByRole('button', { name: /^blockquote$/i })
     await quoteBtn.click()
     const quote = description.locator('blockquote')
     await expect(quote).toBeVisible()
@@ -47,7 +48,7 @@ test.describe('product edit', () => {
 
     await quote.click({ clickCount: 3 })
     page.once('dialog', (dialog) => dialog.accept('https://example.com'))
-    await page.getByRole('button', { name: /^link$/i }).click()
+    await toolbar.getByRole('button', { name: /^link$/i }).click()
     const link = description.locator('a[href="https://example.com"]')
     await expect(link).toBeVisible()
     await expect(link).toHaveCSS('text-decoration-line', 'underline')
