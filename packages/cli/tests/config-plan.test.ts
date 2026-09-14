@@ -14,6 +14,8 @@ import {
 } from '../src/config/index'
 import { FakeApi } from './config-fake-api'
 
+type Payload = Record<string, unknown>
+
 function kinds(plan: {
   sections: { section: string; operations: { key: string; kind: string }[] }[]
 }) {
@@ -490,5 +492,120 @@ describe('edge cases', () => {
     const { config } = parseConfig('version: 1\nstock_locations:\n  - name: Warehouse\n')
     await planConfig(config, api)
     expect(api.calls[0].params).toMatchObject({ 'q[seller_id_null]': 1 })
+  })
+})
+
+describe('products', () => {
+  it('shows a price and a stock level the file omits as removals, since the write replaces both sets', async () => {
+    const api = new FakeApi()
+    api.seed('/stock_locations', [{ name: 'Warehouse' }, { name: 'Overflow' }])
+    const [warehouse, overflow] = api.all('/stock_locations')
+    api.seed('/products', [
+      {
+        slug: 'tee',
+        name: 'Tee',
+        categories: [],
+        variants: [
+          {
+            id: 'variant_1',
+            sku: 'TEE',
+            option_values: [],
+            prices: [
+              {
+                currency: 'USD',
+                amount: '10.0',
+                compare_at_amount: null,
+                price_list_id: null,
+                min_quantity: 1,
+              },
+              {
+                currency: 'EUR',
+                amount: '9.0',
+                compare_at_amount: null,
+                price_list_id: null,
+                min_quantity: 1,
+              },
+            ],
+            stock_levels: [
+              { stock_location_id: warehouse.id, count_on_hand: 5 },
+              { stock_location_id: overflow.id, count_on_hand: 7 },
+            ],
+          },
+        ],
+      },
+    ])
+    const { config } = parseConfig(`
+version: 1
+products:
+  - slug: tee
+    name: Tee
+    sku: TEE
+    prices: { USD: 10 }
+    stock: { Warehouse: 5 }
+`)
+    const plan = await planConfig(config, api)
+    expect(kinds(plan)).toEqual({ 'products/tee': 'update' })
+    const change = planOperations(plan)[0].changes?.find((entry) => entry.attribute === 'variants')
+    // The live side still carries EUR and the second warehouse, so the diff
+    // shows what the deploy is about to drop.
+    expect(JSON.stringify(change?.from)).toMatch(/EUR/)
+    expect(JSON.stringify(change?.to)).not.toMatch(/EUR/)
+  })
+
+  it('declares a variant for a product that sets only compare-at prices', async () => {
+    const api = new FakeApi()
+    api.seed('/products', [])
+    const { config } = parseConfig(
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    compare_at_prices: { USD: 40 }\n',
+    )
+    await deployConfig(config, api)
+    const create = api.calls.find((call) => call.method === 'POST' && call.path === '/products')
+    expect((create?.body as { variants: Payload[] }).variants).toEqual([
+      { sku: 'TEE', prices: [{ currency: 'USD', compare_at_amount: 40 }] },
+    ])
+  })
+
+  it('compares a description the way the API renders it, and writes the markup the file holds', async () => {
+    const api = new FakeApi()
+    api.seed('/products', [
+      { slug: 'tee', name: 'Tee', description: 'Soft cotton', categories: [], variants: [] },
+    ])
+    const { config } = parseConfig(
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    description: "<p>Soft cotton</p>"\n',
+    )
+    expect(kinds(await planConfig(config, api))).toEqual({ 'products/tee': 'unchanged' })
+
+    const changed = parseConfig(
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    description: "<p>Heavy cotton</p>"\n',
+    ).config
+    const plan = await planConfig(changed, api)
+    expect(kinds(plan)).toEqual({ 'products/tee': 'update' })
+    await applyPlan(plan)
+    const patch = api.calls.find(
+      (call) => call.method === 'PATCH' && call.path.startsWith('/products/'),
+    )
+    expect((patch?.body as { description: string }).description).toBe('<p>Heavy cotton</p>')
+  })
+
+  it('refuses to approve a seller that has not started onboarding, naming why', async () => {
+    const api = new FakeApi()
+    api.seed('/sellers', [])
+    const { config } = parseConfig(
+      'version: 1\nsellers:\n  - slug: acme\n    name: Acme\n    status: approved\n',
+    )
+    // The fake API creates sellers `pending`, as Spree::Sellers::Create does.
+    api.collections.set('/sellers', [])
+    const original = api.request
+    api.request = async (method, path, options) => {
+      const result = await original(method, path, options)
+      if (method === 'POST' && path === '/sellers')
+        (result as { status?: string }).status = 'pending'
+      return result as never
+    }
+    const report = await deployConfig(config, api)
+    expect(report.results[0]).toMatchObject({
+      status: 'failed',
+      message: expect.stringMatching(/can be approved only once onboarding has started/),
+    })
   })
 })

@@ -1,6 +1,12 @@
+import type { Customer as SdkCustomer, Seller as SdkSeller } from '@spree/admin-sdk'
 import type { CustomerEntry, SellerEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import { keysOf, type Payload, pick, present, refs, type Section } from './section.js'
+
+// The SDK's generated types plus the index signature, so a section can read
+// both declared attributes and the associations an `expand` adds.
+type Customer = SdkCustomer & LiveRecord
+type Seller = SdkSeller & LiveRecord
 
 const CUSTOMER_ATTRIBUTES: (keyof CustomerEntry)[] = [
   'email',
@@ -11,7 +17,7 @@ const CUSTOMER_ATTRIBUTES: (keyof CustomerEntry)[] = [
   'tags',
 ]
 
-export const customers: Section<CustomerEntry> = {
+export const customers: Section<CustomerEntry, Customer> = {
   name: 'customers',
   scope: 'write_customers',
   introspectByDefault: false,
@@ -35,7 +41,7 @@ export const customers: Section<CustomerEntry> = {
     const body = entry.password
       ? { ...payload, password: entry.password, password_confirmation: entry.password }
       : payload
-    return ctx.client.request<LiveRecord>('POST', '/customers', { body })
+    return ctx.client.request<Customer>('POST', '/customers', { body })
   },
   async toFile(live, ctx) {
     const entry: CustomerEntry = present(
@@ -61,7 +67,7 @@ const SELLER_ATTRIBUTES: (keyof SellerEntry)[] = [
 
 const STATUS_ACTIONS: Record<string, string> = { approved: 'approve', suspended: 'suspend' }
 
-export const sellers: Section<SellerEntry> = {
+export const sellers: Section<SellerEntry, Seller> = {
   name: 'sellers',
   scope: 'write_sellers',
   introspectByDefault: true,
@@ -76,23 +82,34 @@ export const sellers: Section<SellerEntry> = {
   },
   async create(payload, _entry, ctx) {
     const { status: _status, ...body } = payload
-    return ctx.client.request<LiveRecord>('POST', '/sellers', { body })
+    return ctx.client.request<Seller>('POST', '/sellers', { body })
   },
   async update(live, payload, _entry, ctx) {
     const { status: _status, ...body } = payload
-    return ctx.client.request<LiveRecord>('PATCH', `/sellers/${live.id}`, { body })
+    return ctx.client.request<Seller>('PATCH', `/sellers/${live.id}`, { body })
   },
   // Approval steps over the onboarding checklist the way an operator can:
   // the file is the operator's word that the seller may trade.
   async afterWrite(entry, live, _changes, ctx) {
     if (!entry.status || live.status === entry.status) return
+    if (
+      entry.status === 'approved' &&
+      ['pending', 'invited', 'canceled'].includes(String(live.status))
+    ) {
+      throw new Error(
+        `seller "${entry.slug}" is ${live.status} and can be approved only once onboarding has started; the seller was written without the status`,
+      )
+    }
     const action = STATUS_ACTIONS[entry.status]
     const body = action === 'approve' ? { override_requirements: true } : {}
     await ctx.client.request('PATCH', `/sellers/${live.id}/${action}`, { body })
   },
   async toFile(live) {
     const entry = present(live as unknown as SellerEntry, SELLER_ATTRIBUTES) as SellerEntry
-    if (live.status === 'approved' || live.status === 'suspended') entry.status = live.status
+    // Only the two statuses the file can express; a seller mid-onboarding is
+    // written without one, since the file cannot ask for that state.
+    if (live.status === 'approved') entry.status = 'approved'
+    if (live.status === 'suspended') entry.status = 'suspended'
     return entry
   },
 }

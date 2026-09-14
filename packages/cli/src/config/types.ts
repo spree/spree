@@ -26,6 +26,13 @@ export interface ConfigClient {
   request: <T>(method: string, path: string, options?: RequestOptions) => Promise<T>
 }
 
+/**
+ * A record as the Admin API returns it. Sections narrow this to the SDK's
+ * generated type for their resource (`Section<Entry, Channel>`), so a
+ * misspelled attribute in a section is a compile error rather than a silent
+ * `undefined`; the index signature carries the expanded associations the
+ * generated types mark optional.
+ */
 export interface LiveRecord {
   id: string
   [attribute: string]: unknown

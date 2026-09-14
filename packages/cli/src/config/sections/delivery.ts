@@ -1,6 +1,16 @@
+import type {
+  DeliveryMethod as SdkDeliveryMethod,
+  DeliveryZone as SdkDeliveryZone,
+} from '@spree/admin-sdk'
 import { numericString } from '../diff.js'
 import type { DeliveryMethodEntry, DeliveryZoneEntry } from '../schema.js'
+import type { LiveRecord } from '../types.js'
 import { FIRST_PARTY, keysOf, type Payload, pick, present, refs, type Section } from './section.js'
+
+// The SDK's generated types plus the index signature, so a section can read
+// both declared attributes and the associations an `expand` adds.
+type DeliveryMethod = SdkDeliveryMethod & LiveRecord
+type DeliveryZone = SdkDeliveryZone & LiveRecord
 
 interface ZoneMember {
   member_type: string
@@ -35,7 +45,7 @@ function sortedMembers(members: ZoneMember[]): ZoneMember[] {
     )
 }
 
-export const deliveryZones: Section<DeliveryZoneEntry> = {
+export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
   name: 'delivery_zones',
   scope: 'write_settings',
   introspectByDefault: true,
@@ -100,7 +110,7 @@ function numeric(value: unknown): unknown {
   return numericString(value) ?? value
 }
 
-export const deliveryMethods: Section<DeliveryMethodEntry> = {
+export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
   name: 'delivery_methods',
   scope: 'write_delivery_methods',
   introspectByDefault: true,

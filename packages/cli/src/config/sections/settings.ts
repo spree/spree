@@ -1,4 +1,13 @@
 import type {
+  Channel as SdkChannel,
+  CustomerGroup as SdkCustomerGroup,
+  Market as SdkMarket,
+  StockLocation as SdkStockLocation,
+  Store as SdkStore,
+  Supplier as SdkSupplier,
+  TaxCategory as SdkTaxCategory,
+} from '@spree/admin-sdk'
+import type {
   ChannelEntry,
   CustomerGroupEntry,
   MarketEntry,
@@ -20,6 +29,16 @@ import {
   type Section,
 } from './section.js'
 
+// The SDK's generated types plus the index signature, so a section can read
+// both declared attributes and the associations an `expand` adds.
+type Channel = SdkChannel & LiveRecord
+type CustomerGroup = SdkCustomerGroup & LiveRecord
+type Market = SdkMarket & LiveRecord
+type StockLocation = SdkStockLocation & LiveRecord
+type Store = SdkStore & LiveRecord
+type Supplier = SdkSupplier & LiveRecord
+type TaxCategory = SdkTaxCategory & LiveRecord
+
 const STORE_ATTRIBUTES: (keyof StoreEntry)[] = [
   'name',
   'mail_from_address',
@@ -27,7 +46,7 @@ const STORE_ATTRIBUTES: (keyof StoreEntry)[] = [
   'new_order_notifications_email',
 ]
 
-export const store: Section<StoreEntry> = {
+export const store: Section<StoreEntry, Store> = {
   name: 'store',
   scope: 'write_settings',
   singleton: true,
@@ -42,7 +61,7 @@ export const store: Section<StoreEntry> = {
     return { ...pick(entry, STORE_ATTRIBUTES), ...preferencesPayload(entry.preferences) }
   },
   async update(_live, payload, _entry, ctx) {
-    return ctx.client.request<LiveRecord>('PATCH', '/store', { body: payload })
+    return ctx.client.request<Store>('PATCH', '/store', { body: payload })
   },
   async toFile(live) {
     const entry = present(live as unknown as StoreEntry, STORE_ATTRIBUTES)
@@ -66,7 +85,7 @@ export const store: Section<StoreEntry> = {
 
 const CHANNEL_ATTRIBUTES: (keyof ChannelEntry)[] = ['code', 'name', 'active', 'default']
 
-export const channels: Section<ChannelEntry> = {
+export const channels: Section<ChannelEntry, Channel> = {
   name: 'channels',
   scope: 'write_settings',
   introspectByDefault: true,
@@ -101,7 +120,7 @@ export const channels: Section<ChannelEntry> = {
   },
 }
 
-export const markets: Section<MarketEntry> = {
+export const markets: Section<MarketEntry, Market> = {
   name: 'markets',
   scope: 'write_settings',
   introspectByDefault: true,
@@ -138,7 +157,7 @@ export const markets: Section<MarketEntry> = {
   },
 }
 
-export const customerGroups: Section<CustomerGroupEntry> = {
+export const customerGroups: Section<CustomerGroupEntry, CustomerGroup> = {
   name: 'customer_groups',
   scope: 'write_customers',
   introspectByDefault: true,
@@ -160,7 +179,7 @@ export const customerGroups: Section<CustomerGroupEntry> = {
 
 const TAX_CATEGORY_ATTRIBUTES: (keyof TaxCategoryEntry)[] = ['name', 'tax_code', 'description']
 
-export const taxCategories: Section<TaxCategoryEntry> = {
+export const taxCategories: Section<TaxCategoryEntry, TaxCategory> = {
   name: 'tax_categories',
   scope: 'write_settings',
   introspectByDefault: true,
@@ -201,7 +220,7 @@ const STOCK_LOCATION_ATTRIBUTES: (keyof StockLocationEntry)[] = [
   'company',
 ]
 
-export const stockLocations: Section<StockLocationEntry> = {
+export const stockLocations: Section<StockLocationEntry, StockLocation> = {
   name: 'stock_locations',
   scope: 'write_stock',
   introspectByDefault: true,
@@ -242,7 +261,7 @@ const SUPPLIER_ATTRIBUTES: (keyof SupplierEntry)[] = [
   'postal_code',
 ]
 
-export const suppliers: Section<SupplierEntry> = {
+export const suppliers: Section<SupplierEntry, Supplier> = {
   name: 'suppliers',
   scope: 'write_purchasing',
   introspectByDefault: true,

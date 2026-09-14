@@ -10,7 +10,16 @@ export type Payload = Record<string, unknown>
  * records it lists, how a file entry becomes a request body, how a live
  * record reads back as an entry, and any writes beyond the resource itself.
  */
-export interface Section<Entry = unknown> extends Omit<SectionSource, 'fileKeys'> {
+/**
+ * How one section of the file maps onto one Admin API resource.
+ *
+ * `Entry` is the file's own shape (inferred from the section's Zod schema)
+ * and `Live` is the record as the API returns it — the SDK's generated type
+ * for that resource, so reading an attribute the API does not have is a
+ * compile error rather than a silent `undefined`.
+ */
+export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
+  extends Omit<SectionSource, 'fileKeys'> {
   name: SectionName
   /** The write scope a secret key needs to deploy this section. */
   scope: string
@@ -25,21 +34,23 @@ export interface Section<Entry = unknown> extends Omit<SectionSource, 'fileKeys'
   /** Request body for the entry, references resolved to ids or pending refs. */
   desired(entry: Entry, ctx: RunContext, path: string): Promise<Payload>
   /** The live record in the same attribute vocabulary as `desired`, for comparison; the record itself when not given. */
-  current?(live: LiveRecord, ctx: RunContext, desired?: Payload): Promise<Payload>
+  current?(live: Live, ctx: RunContext, desired?: Payload): Promise<Payload>
   /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
   references?(config: SpreeConfig): Partial<Record<string, string[]>>
-  create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<LiveRecord>
-  update?(live: LiveRecord, payload: Payload, entry: Entry, ctx: RunContext): Promise<LiveRecord>
-  remove?(live: LiveRecord, ctx: RunContext): Promise<void>
+  create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<Live>
+  update?(live: Live, payload: Payload, entry: Entry, ctx: RunContext): Promise<Live>
+  remove?(live: Live, ctx: RunContext): Promise<void>
   /** Writes that go through other endpoints once the record exists (stock, publication, approval). */
-  afterWrite?(
-    entry: Entry,
-    live: LiveRecord,
-    changes: AttributeChange[],
-    ctx: RunContext,
-  ): Promise<void>
-  toFile(live: LiveRecord, ctx: RunContext): Promise<Entry>
+  afterWrite?(entry: Entry, live: Live, changes: AttributeChange[], ctx: RunContext): Promise<void>
+  toFile(live: Live, ctx: RunContext): Promise<Entry>
 }
+
+/**
+ * A section as the registry holds it. Each section is written against its own
+ * file entry and its own Admin API type; the engine calls them uniformly, so
+ * the registry keeps the shape and drops the two type parameters.
+ */
+export type AnySection = Section<never, LiveRecord>
 
 /** `{ guest_checkout: false }` → `{ preferred_guest_checkout: false }`. */
 export function preferencesPayload(preferences: Record<string, unknown> | undefined): Payload {

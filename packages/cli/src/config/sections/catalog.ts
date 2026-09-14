@@ -1,13 +1,37 @@
+import type { Category as SdkCategory, Product as SdkProduct } from '@spree/admin-sdk'
 import type { RunContext } from '../context.js'
 import type { CategoryEntry, ProductEntry, VariantEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import { FIRST_PARTY, type Payload, pick, present, refs, type Section } from './section.js'
+
+// The SDK's generated types plus the index signature, so a section can read
+// both declared attributes and the associations an `expand` adds.
+type Category = SdkCategory & LiveRecord
+type Product = SdkProduct & LiveRecord
 
 // --- Categories ------------------------------------------------------------
 
 function parentPermalink(permalink: string): string | null {
   const index = permalink.lastIndexOf('/')
   return index === -1 ? null : permalink.slice(0, index)
+}
+
+/**
+ * What the Admin API reports for a rich-text field: its plain-text rendering,
+ * tags dropped and whitespace collapsed. Comparing the file's own value the
+ * same way keeps a description with markup, or a YAML block scalar, from
+ * diffing against itself on every run.
+ */
+export function plainText(value: unknown): string | null {
+  if (typeof value !== 'string') return (value as string | null) ?? null
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [
@@ -19,7 +43,7 @@ const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [
   'meta_keywords',
 ]
 
-export const categories: Section<CategoryEntry> = {
+export const categories: Section<CategoryEntry, Category> = {
   name: 'categories',
   scope: 'write_categories',
   introspectByDefault: true,
@@ -36,8 +60,30 @@ export const categories: Section<CategoryEntry> = {
     const parent = parentPermalink(entry.permalink)
     return {
       ...pick(entry, CATEGORY_ATTRIBUTES),
+      ...(entry.description !== undefined ? { description: plainText(entry.description) } : {}),
       parent_id: parent ? await ctx.ref('categories', parent, path) : null,
     }
+  },
+  async current(live, _ctx, desired = {}) {
+    return desired.description !== undefined
+      ? { ...live, description: plainText(live.description) }
+      : live
+  },
+  async create(payload, entry, ctx) {
+    return ctx.client.request<Category>('POST', '/categories', {
+      body: {
+        ...payload,
+        ...(entry.description !== undefined ? { description: entry.description } : {}),
+      },
+    })
+  },
+  async update(live, payload, entry, ctx) {
+    return ctx.client.request<Category>('PATCH', `/categories/${live.id}`, {
+      body: {
+        ...payload,
+        ...(entry.description !== undefined ? { description: entry.description } : {}),
+      },
+    })
   },
   async toFile(live) {
     return present(live as unknown as CategoryEntry, CATEGORY_ATTRIBUTES) as CategoryEntry
@@ -91,7 +137,9 @@ interface LiveStockLevel {
 
 interface LiveOptionValue {
   name: string
+  label?: string
   option_type_name: string
+  option_type_label?: string
 }
 
 interface LiveVariant extends LiveRecord {
@@ -109,7 +157,7 @@ interface LivePublication {
 /** The variants a product entry declares: its list, or the one simple-product variant. */
 function entryVariants(entry: ProductEntry): VariantEntry[] {
   if (entry.variants) return entry.variants
-  if (!entry.sku && !entry.prices && !entry.stock) return []
+  if (!entry.sku && !entry.prices && !entry.compare_at_prices && !entry.stock) return []
   return [
     {
       sku: entry.sku ?? entry.slug.toUpperCase(),
@@ -156,66 +204,50 @@ async function variantPayload(
   return payload
 }
 
-/**
- * Rails' `parameterize`, which is how the API keys option types and values:
- * `Red` and `red` name the same value, and the file may use either.
- */
-export function parameterize(value: string): string {
-  return value
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
 type OptionPair = { name: string; value: string }
 
 /**
- * Live option values in the file's own spelling where they parameterize the
- * same, so a file that says `Red` compares equal to a stored `red`.
+ * Live option values in the file's own spelling where they name the same
+ * value: the API stores a parameterized `name` next to the `label` it was
+ * given, and the file may use either, in any case.
  */
 function liveOptions(live: LiveVariant, desired: Payload | undefined): OptionPair[] {
   const wanted = (desired?.options as OptionPair[] | undefined) ?? []
+  const same = (left: string, right: string | undefined) =>
+    right !== undefined && left.toLowerCase() === right.toLowerCase()
   return (live.option_values ?? []).map((value) => {
     const match = wanted.find(
       (option) =>
-        parameterize(option.name) === parameterize(value.option_type_name) &&
-        parameterize(option.value) === parameterize(value.name),
+        (same(option.name, value.option_type_name) || same(option.name, value.option_type_label)) &&
+        (same(option.value, value.name) || same(option.value, value.label)),
     )
-    return match ?? { name: value.option_type_name, value: value.name }
+    return match ?? { name: value.option_type_name, value: value.label ?? value.name }
   })
 }
 
-/** A live variant in the payload vocabulary, trimmed to what the entry's variant mentions. */
+/**
+ * A live variant in the payload vocabulary. Prices and stock levels come
+ * back whole, not trimmed to what the file names: the product write replaces
+ * both sets, so a currency or warehouse the file omits is about to be
+ * removed and has to appear in the diff rather than vanish silently.
+ */
 function liveVariantPayload(live: LiveVariant, desired: Payload | undefined): Payload {
   const payload: Payload = { ...pick(live as unknown as VariantEntry, VARIANT_ATTRIBUTES) }
   payload.options = liveOptions(live, desired).sort((left, right) =>
     left.name.localeCompare(right.name),
   )
-  const wantedCurrencies = new Set(
-    ((desired?.prices as { currency: string }[] | undefined) ?? []).map((price) => price.currency),
-  )
   payload.prices = (live.prices ?? [])
     .filter((price) => price.price_list_id === null && price.min_quantity <= 1)
-    .filter((price) => wantedCurrencies.has(price.currency))
     .sort((left, right) => left.currency.localeCompare(right.currency))
     .map((price) => ({
       currency: price.currency,
       amount: price.amount,
       compare_at_amount: price.compare_at_amount,
     }))
-  const wantedLocations = new Set(
-    ((desired?.stock_levels as { stock_location_id: unknown }[] | undefined) ?? []).map((level) =>
-      String(level.stock_location_id),
-    ),
-  )
-  payload.stock_levels = (live.stock_levels ?? [])
-    .filter((level) => wantedLocations.has(String(level.stock_location_id)))
-    .map((level) => ({
-      stock_location_id: level.stock_location_id,
-      count_on_hand: level.count_on_hand,
-    }))
+  payload.stock_levels = (live.stock_levels ?? []).map((level) => ({
+    stock_location_id: level.stock_location_id,
+    count_on_hand: level.count_on_hand,
+  }))
   return payload
 }
 
@@ -240,7 +272,7 @@ function publishedChannelIds(live: LiveRecord): string[] {
     .map((publication) => publication.channel_id)
 }
 
-export const products: Section<ProductEntry> = {
+export const products: Section<ProductEntry, Product> = {
   name: 'products',
   scope: 'write_products',
   introspectByDefault: false,
@@ -265,6 +297,7 @@ export const products: Section<ProductEntry> = {
   },
   async desired(entry, ctx, path) {
     const payload: Payload = pick(entry, PRODUCT_ATTRIBUTES)
+    if (entry.description !== undefined) payload.description = plainText(entry.description)
     if (entry.product_type)
       payload.product_type_id = await ctx.ref('product_types', entry.product_type, path)
     if (entry.tax_category)
@@ -290,6 +323,7 @@ export const products: Section<ProductEntry> = {
     ).filter((code): code is string => code !== null)
     return {
       ...live,
+      ...(desired.description !== undefined ? { description: plainText(live.description) } : {}),
       category_ids: ((live.categories as LiveRecord[] | undefined) ?? []).map(
         (category) => category.id,
       ),
@@ -302,15 +336,19 @@ export const products: Section<ProductEntry> = {
       ),
     }
   },
-  async create(payload, _entry, ctx) {
+  async create(payload, entry, ctx) {
     const { channels: _channels, ...body } = payload
-    return ctx.client.request<LiveRecord>('POST', '/products', {
+    // The comparison used the plain-text rendering; the write sends the
+    // markup the file holds.
+    if (entry.description !== undefined) body.description = entry.description
+    return ctx.client.request<Product>('POST', '/products', {
       params: { expand: PRODUCT_EXPAND.join(',') },
       body,
     })
   },
-  async update(live, payload, _entry, ctx) {
+  async update(live, payload, entry, ctx) {
     const { channels: _channels, ...body } = payload
+    if (entry.description !== undefined) body.description = entry.description
     // A variant already on the product is addressed by id, so the full
     // replacement the API performs updates it in place instead of recreating it.
     const liveVariants = (live.variants as LiveVariant[] | undefined) ?? []
@@ -320,7 +358,7 @@ export const products: Section<ProductEntry> = {
         return match ? { id: match.id, ...variant } : variant
       })
     }
-    return ctx.client.request<LiveRecord>('PATCH', `/products/${live.id}`, {
+    return ctx.client.request<Product>('PATCH', `/products/${live.id}`, {
       params: { expand: PRODUCT_EXPAND.join(',') },
       body,
     })
@@ -398,7 +436,7 @@ async function variantToFile(live: LiveVariant, ctx: RunContext): Promise<Varian
   }
   if (!entry.sku) entry.sku = String(live.id)
   const options = Object.fromEntries(
-    (live.option_values ?? []).map((value) => [value.option_type_name, value.name]),
+    (live.option_values ?? []).map((value) => [value.option_type_name, value.label ?? value.name]),
   )
   if (Object.keys(options).length) entry.options = options
   const prices: Record<string, number> = {}

@@ -15,6 +15,8 @@ import {
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
   FIXTURE_LEDGER_SELLER,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
+  FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
+  FIXTURE_PROMO_CUSTOMER_FULL_NAME,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_SKU,
@@ -34,6 +36,13 @@ const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
 const STORE_CONFIG = resolve(E2E_DIR, 'fixtures/store.yml')
 
 const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT, DASHBOARD_E2E: '1' }
+
+// The last name follows from the full name, so the fixture file and the
+// `full_name` assertion in promotions.spec stay in step.
+const FIXTURE_PROMO_CUSTOMER_LAST_NAME = FIXTURE_PROMO_CUSTOMER_FULL_NAME.replace(
+  `${FIXTURE_PROMO_CUSTOMER_FIRST_NAME} `,
+  '',
+)
 
 // What has no Admin API by design (docs/plans/6.0-store-context-and-first-run-setup.md):
 // the seeds, the first admin, and a secret key for the deploy that follows.
@@ -133,6 +142,8 @@ function assertFixturesDeclared(config: StoreConfig): void {
     ['categories', 'permalink', FIXTURE_BULK_CATEGORY_PERMALINK],
     ['customer_groups', 'name', FIXTURE_PROMO_CUSTOMER_GROUP],
     ['customers', 'email', FIXTURE_PROMO_CUSTOMER_EMAIL],
+    ['customers', 'first_name', FIXTURE_PROMO_CUSTOMER_FIRST_NAME],
+    ['customers', 'last_name', FIXTURE_PROMO_CUSTOMER_LAST_NAME],
     ['suppliers', 'name', FIXTURE_SUPPLIER],
     ['sellers', 'name', FIXTURE_LEDGER_SELLER],
     ['stock_locations', 'name', FIXTURE_TRANSFER_SOURCE],

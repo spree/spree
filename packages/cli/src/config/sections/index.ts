@@ -3,7 +3,7 @@ import type { SectionName } from '../types.js'
 import { categories, products } from './catalog.js'
 import { deliveryMethods, deliveryZones } from './delivery.js'
 import { customers, sellers } from './people.js'
-import type { Section } from './section.js'
+import type { AnySection } from './section.js'
 import {
   channels,
   customerGroups,
@@ -19,7 +19,10 @@ import {
  * reference, so a run creates targets before the records pointing at them.
  * Prune runs the same list backwards.
  */
-export const ORDERED_SECTIONS: Section<never>[] = [
+// Each section is written against its own file entry and its own Admin API
+// type; the engine drives them uniformly through `AnySection`, so the list
+// erases those two parameters once, here.
+export const ORDERED_SECTIONS: AnySection[] = [
   store,
   stockLocations,
   channels,
@@ -33,11 +36,11 @@ export const ORDERED_SECTIONS: Section<never>[] = [
   products,
   customers,
   sellers,
-] as Section<never>[]
+] as unknown as AnySection[]
 
-export const SECTIONS: Record<SectionName, Section<never>> = Object.fromEntries(
+export const SECTIONS = Object.fromEntries(
   ORDERED_SECTIONS.map((section) => [section.name, section]),
-) as Record<SectionName, Section<never>>
+) as Record<SectionName, AnySection>
 
 /** Resources the file references by key but does not manage. */
 const REFERENCE_SOURCES: Record<string, SectionSource> = {
@@ -58,4 +61,4 @@ export const SOURCES: Record<string, SectionSource> = {
   ),
 }
 
-export type { Section } from './section.js'
+export type { AnySection, Section } from './section.js'

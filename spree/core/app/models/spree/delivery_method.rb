@@ -9,7 +9,7 @@ module Spree
     include Spree::Metadata
     include Spree::MemoizedData
     include Spree::TypedAssociations
-    include Spree::NaturalKey
+    include Spree::UniqueWithinStore
 
     extend Spree::DisplayMoney
 
@@ -120,7 +120,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
-    natural_key :name, scope: [:seller_id]
+    unique_within_store :name, scope: [:seller_id]
     validates :storefront_visible, inclusion: { in: [true, false] }
     validate :delivery_zone_must_belong_to_profile,
              if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }

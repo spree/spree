@@ -2,7 +2,7 @@ import { RunContext } from './context.js'
 import { diffAttributes } from './diff.js'
 import { ConfigError } from './errors.js'
 import type { SpreeConfig } from './schema.js'
-import { ORDERED_SECTIONS, type Section, SOURCES } from './sections/index.js'
+import { type AnySection, ORDERED_SECTIONS, SOURCES } from './sections/index.js'
 import type {
   ConfigClient,
   LiveRecord,
@@ -35,16 +35,13 @@ export function presentSections(config: SpreeConfig): SectionName[] {
 }
 
 function operation(
-  section: Section<never>,
+  section: AnySection,
   partial: Omit<PlannedOperation, 'section'>,
 ): PlannedOperation {
   return { section: section.name, ...partial }
 }
 
-async function planSingleton(
-  section: Section<never>,
-  ctx: RunContext,
-): Promise<PlannedOperation[]> {
+async function planSingleton(section: AnySection, ctx: RunContext): Promise<PlannedOperation[]> {
   const [entry] = section.entries(ctx.config)
   const live = await ctx.client.request<LiveRecord>('GET', section.path)
   const path = section.name
@@ -67,7 +64,7 @@ async function planSingleton(
 }
 
 async function planCollection(
-  section: Section<never>,
+  section: AnySection,
   ctx: RunContext,
   prune: boolean,
 ): Promise<PlannedOperation[]> {
@@ -97,7 +94,10 @@ async function planCollection(
   for (const [target, referenced] of Object.entries(section.references?.(ctx.config) ?? {})) {
     if (referenced?.length) await ctx.load(target, [...new Set(referenced)])
   }
-  const live = await ctx.load(section.name, prune ? undefined : keys)
+  const live = await ctx.load(section.name, keys)
+  // Records the file does not declare are found from a key-only listing,
+  // so pruning a catalog never expands every product it is about to keep.
+  const unmanaged = prune ? await ctx.loadKeys(section.name) : null
 
   for (const [index, entry] of entries.entries()) {
     const key = keys[index]
@@ -147,19 +147,17 @@ async function planCollection(
     )
   }
 
-  if (live.complete) {
-    for (const [key, records] of live.byKey) {
-      if (seen.has(key)) continue
-      for (const record of records) {
-        operations.push(
-          operation(section, {
-            kind: prune ? 'delete' : 'unmanaged',
-            key,
-            path: section.name,
-            live: record,
-          }),
-        )
-      }
+  for (const [key, records] of unmanaged ?? (live.complete ? live.byKey : [])) {
+    if (seen.has(key)) continue
+    for (const record of records) {
+      operations.push(
+        operation(section, {
+          kind: prune ? 'delete' : 'unmanaged',
+          key,
+          path: section.name,
+          live: record,
+        }),
+      )
     }
   }
 

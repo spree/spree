@@ -146,6 +146,10 @@ export async function runFirstRunSetup(flags: {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
     s.stop('Sample data loaded.')
+  } else if (sampleData) {
+    p.log.info(
+      'Sample data: tick "Load sample data" on the setup screen, or run `spree sample-data` any time later.',
+    )
   }
 
   s.start('Indexing products for search...')

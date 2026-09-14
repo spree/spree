@@ -244,9 +244,13 @@ export async function mintApiKey(projectDir: string, options: MintKeyOptions): P
       ...(options.replace ? { REPLACE: 'true' } : {}),
     })
   } catch (error) {
-    const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)
+    const message = error instanceof Error ? error.message : String(error)
+    // A refused key (a name already taken, a missing scope) is the model's
+    // own message, not a stack that is down.
+    const refused = message.match(/Validation failed: (.+)/)?.[1]
+    if (refused) throw new CredentialError(`Could not create the API key: ${refused}`)
     throw new CredentialError(
-      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(detail)}`,
+      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(message.split('\n')[0])}`,
     )
   }
   const prefix = options.keyType === 'publishable' ? 'pk_' : 'sk_'

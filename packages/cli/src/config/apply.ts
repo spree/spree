@@ -1,6 +1,6 @@
 import { inBatches } from './client.js'
 import type { PlannedOperation, PlannedRun } from './plan.js'
-import { SECTIONS, type Section } from './sections/index.js'
+import { type AnySection, SECTIONS } from './sections/index.js'
 import type { ApplyReport, ApplyResult, LiveRecord } from './types.js'
 
 /** Writes within a section that run at once. */
@@ -25,7 +25,7 @@ function failure(operation: PlannedOperation, error: unknown): ApplyResult {
 }
 
 async function write(
-  section: Section<never>,
+  section: AnySection,
   operation: PlannedOperation,
   run: PlannedRun,
 ): Promise<ApplyResult> {
@@ -55,7 +55,7 @@ async function write(
 }
 
 async function remove(
-  section: Section<never>,
+  section: AnySection,
   operation: PlannedOperation,
   run: PlannedRun,
 ): Promise<ApplyResult> {

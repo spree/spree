@@ -14,7 +14,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::CaptureMethod
-    include Spree::NaturalKey
+    include Spree::UniqueWithinStore
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
@@ -53,7 +53,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
-    natural_key :name
+    unique_within_store :name
     validates :store, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

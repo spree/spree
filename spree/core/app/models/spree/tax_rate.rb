@@ -15,7 +15,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::SingleStoreResource
-    include Spree::NaturalKey
+    include Spree::UniqueWithinStore
 
     with_options inverse_of: :tax_rates do
       belongs_to :tax_category,
@@ -28,7 +28,7 @@ module Spree
     # Per store, so a config file can address a rate by name; a soft-deleted
     # rate frees its name.
     validates :name, presence: true
-    natural_key :name
+    unique_within_store :name
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole

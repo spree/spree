@@ -35,6 +35,7 @@ export function liveKeyOf(source: SectionSource, live: LiveRecord): string {
  */
 export class RunContext {
   private readonly live = new Map<string, LiveSection>()
+  private readonly pending = new Map<string, Promise<LiveSection>>()
   private readonly created = new Map<string, Map<string, LiveRecord>>()
 
   constructor(
@@ -54,8 +55,26 @@ export class RunContext {
     if (!source) throw new Error(`unknown section ${section}`)
     const cached = this.live.get(section)
     if (cached?.complete) return cached
-    if (cached && keys?.every((key) => cached.byKey.has(key))) return cached
+    const missing = keys && source.filterable ? keys.filter((key) => !cached?.byKey.has(key)) : keys
+    if (cached && missing && missing.length === 0) return cached
 
+    // Concurrent callers share one request per section rather than each
+    // listing it; a full listing also satisfies every keyed one.
+    const pendingKey = missing && source.filterable ? `${section}?${missing.join('\n')}` : section
+    const inFlight = this.pending.get(pendingKey) ?? this.pending.get(section)
+    if (inFlight) return inFlight
+    const request = this.fetch(source, section, missing).finally(() =>
+      this.pending.delete(pendingKey),
+    )
+    this.pending.set(pendingKey, request)
+    return request
+  }
+
+  private async fetch(
+    source: SectionSource,
+    section: string,
+    keys?: string[],
+  ): Promise<LiveSection> {
     const params = {
       ...(source.listParams ?? {}),
       ...(source.expand ? { expand: source.expand.join(',') } : {}),
@@ -64,8 +83,17 @@ export class RunContext {
     const records = partial
       ? await listByKeys(this.client, source.path, source.keyAttribute, keys as string[], params)
       : await listAll(this.client, source.path, params)
+    return this.remember(section, source, records, keys, !partial)
+  }
 
-    const byKey = cached?.byKey ?? new Map<string, LiveRecord[]>()
+  private remember(
+    section: string,
+    source: SectionSource,
+    records: LiveRecord[],
+    keys: string[] | undefined,
+    complete: boolean,
+  ): LiveSection {
+    const byKey = this.live.get(section)?.byKey ?? new Map<string, LiveRecord[]>()
     for (const record of records) {
       const key = liveKeyOf(source, record)
       const existing = byKey.get(key) ?? []
@@ -74,9 +102,30 @@ export class RunContext {
     }
     // A filtered fetch marks the asked-for keys as known, even when absent.
     for (const key of keys ?? []) if (!byKey.has(key)) byKey.set(key, [])
-    const loaded = { byKey, complete: !partial }
+    const loaded = { byKey, complete }
     this.live.set(section, loaded)
     return loaded
+  }
+
+  /**
+   * Every live key of a section with only the id and the key attribute, for
+   * finding records the file does not declare without expanding each one.
+   */
+  async loadKeys(section: string): Promise<Map<string, LiveRecord[]>> {
+    const source = this.sources[section]
+    if (!source) throw new Error(`unknown section ${section}`)
+    const cached = this.live.get(section)
+    if (cached?.complete) return cached.byKey
+    const records = await listAll(this.client, source.path, {
+      ...(source.listParams ?? {}),
+      fields: `id,${source.keyAttribute}`,
+    })
+    const byKey = new Map<string, LiveRecord[]>()
+    for (const record of records) {
+      const key = liveKeyOf(source, record)
+      byKey.set(key, [...(byKey.get(key) ?? []), record])
+    }
+    return byKey
   }
 
   /** The one live record under a key, or null when there is none. */
