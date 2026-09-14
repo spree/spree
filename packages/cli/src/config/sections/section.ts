@@ -12,6 +12,8 @@ export type Payload = Record<string, unknown>
  */
 export interface Section<Entry = unknown> extends SectionSource {
   name: SectionName
+  /** The write scope a secret key needs to deploy this section. */
+  scope: string
   /** The store section: one record, update only. */
   singleton?: boolean
   /** Entries write one at a time, in order (parents before children). */
@@ -22,8 +24,10 @@ export interface Section<Entry = unknown> extends SectionSource {
   entryKey(entry: Entry): string
   /** Request body for the entry, references resolved to ids or pending refs. */
   desired(entry: Entry, ctx: RunContext, path: string): Promise<Payload>
-  /** The live record in the same attribute vocabulary as `desired`, for comparison. Only what the entry mentions needs to be there. */
-  current(live: LiveRecord, ctx: RunContext, entry?: Entry): Promise<Payload>
+  /** The live record in the same attribute vocabulary as `desired`, for comparison. Only what `desired` mentions needs to be there. */
+  current(live: LiveRecord, ctx: RunContext, desired?: Payload): Promise<Payload>
+  /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
+  references?(config: SpreeConfig): Partial<Record<string, string[]>>
   create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<LiveRecord>
   update?(live: LiveRecord, payload: Payload, entry: Entry, ctx: RunContext): Promise<LiveRecord>
   remove?(live: LiveRecord, ctx: RunContext): Promise<void>

@@ -1,25 +1,9 @@
+import { SECTIONS } from './sections/index.js'
 import type { ConfigClient, SectionName } from './types.js'
-
-/** The write scope each section needs on a secret key. */
-export const SECTION_SCOPES: Record<SectionName, string> = {
-  store: 'write_settings',
-  channels: 'write_settings',
-  markets: 'write_settings',
-  customer_groups: 'write_customers',
-  tax_categories: 'write_settings',
-  delivery_zones: 'write_settings',
-  delivery_methods: 'write_delivery_methods',
-  stock_locations: 'write_stock',
-  suppliers: 'write_purchasing',
-  categories: 'write_categories',
-  products: 'write_products',
-  customers: 'write_customers',
-  sellers: 'write_sellers',
-}
 
 /** Scopes a deploy of these sections needs, deduplicated, in section order. */
 export function requiredScopes(sections: SectionName[]): string[] {
-  return [...new Set(sections.map((section) => SECTION_SCOPES[section]))]
+  return [...new Set(sections.map((section) => SECTIONS[section].scope))]
 }
 
 /**

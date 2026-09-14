@@ -3,23 +3,14 @@
  * the plan it produces and the report an apply returns.
  */
 
-export const SECTION_NAMES = [
-  'store',
-  'channels',
-  'markets',
-  'customer_groups',
-  'tax_categories',
-  'delivery_zones',
-  'delivery_methods',
-  'stock_locations',
-  'suppliers',
-  'categories',
-  'products',
-  'customers',
-  'sellers',
-] as const
+import { configSchema, type SpreeConfig } from './schema.js'
 
-export type SectionName = (typeof SECTION_NAMES)[number]
+/** Every section the file may carry — the schema's keys, less the version. */
+export type SectionName = Exclude<keyof SpreeConfig, 'version'>
+
+export const SECTION_NAMES = Object.keys(configSchema.shape).filter(
+  (key) => key !== 'version',
+) as SectionName[]
 
 export interface RequestOptions {
   params?: Record<string, string | number | boolean | (string | number)[] | undefined>

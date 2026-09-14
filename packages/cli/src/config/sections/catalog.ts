@@ -21,6 +21,7 @@ const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [
 
 export const categories: Section<CategoryEntry> = {
   name: 'categories',
+  scope: 'write_categories',
   introspectByDefault: true,
   sequential: true,
   path: '/categories',
@@ -247,6 +248,7 @@ function publishedChannelIds(live: LiveRecord): string[] {
 
 export const products: Section<ProductEntry> = {
   name: 'products',
+  scope: 'write_products',
   introspectByDefault: false,
   path: '/products',
   keyAttribute: 'slug',
@@ -257,6 +259,18 @@ export const products: Section<ProductEntry> = {
   fileKeys: (config) => (config.products ?? []).map((product) => product.slug),
   entries: (config) => config.products ?? [],
   entryKey: (entry) => entry.slug,
+  references: (config) => {
+    const products = config.products ?? []
+    return {
+      product_types: products.flatMap((product) => product.product_type ?? []),
+      tax_categories: products.flatMap((product) => product.tax_category ?? []),
+      categories: products.flatMap((product) => product.categories ?? []),
+      channels: products.flatMap((product) => product.channels ?? []),
+      stock_locations: products.flatMap((product) =>
+        entryVariants(product).flatMap((variant) => Object.keys(variant.stock ?? {})),
+      ),
+    }
+  },
   async desired(entry, ctx, path) {
     const payload: Payload = pick(entry, PRODUCT_ATTRIBUTES)
     if (entry.product_type)
@@ -276,8 +290,7 @@ export const products: Section<ProductEntry> = {
     }
     return payload
   },
-  async current(live, ctx, entry) {
-    const desired = entry ? await this.desired(entry, ctx, '') : {}
+  async current(live, ctx, desired = {}) {
     const desiredVariants = (desired.variants as Payload[] | undefined) ?? []
     const liveVariants = (live.variants as LiveVariant[] | undefined) ?? []
     const channels = (

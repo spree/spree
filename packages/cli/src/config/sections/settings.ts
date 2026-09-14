@@ -30,6 +30,7 @@ const STORE_ATTRIBUTES: (keyof StoreEntry)[] = [
 
 export const store: Section<StoreEntry> = {
   name: 'store',
+  scope: 'write_settings',
   singleton: true,
   introspectByDefault: true,
   path: '/store',
@@ -70,6 +71,7 @@ export const store: Section<StoreEntry> = {
 
 export const channels: Section<ChannelEntry> = {
   name: 'channels',
+  scope: 'write_settings',
   introspectByDefault: true,
   path: '/channels',
   keyAttribute: 'code',
@@ -78,6 +80,9 @@ export const channels: Section<ChannelEntry> = {
   fileKeys: (config) => (config.channels ?? []).map((channel) => channel.code),
   entries: (config) => config.channels ?? [],
   entryKey: (entry) => entry.code,
+  references: (config) => ({
+    stock_locations: (config.channels ?? []).flatMap((channel) => channel.stock_locations ?? []),
+  }),
   async desired(entry, ctx, path) {
     return {
       ...pick(entry, ['code', 'name', 'active', 'default']),
@@ -106,6 +111,7 @@ export const channels: Section<ChannelEntry> = {
 
 export const markets: Section<MarketEntry> = {
   name: 'markets',
+  scope: 'write_settings',
   introspectByDefault: true,
   path: '/markets',
   keyAttribute: 'name',
@@ -147,6 +153,7 @@ export const markets: Section<MarketEntry> = {
 
 export const customerGroups: Section<CustomerGroupEntry> = {
   name: 'customer_groups',
+  scope: 'write_customers',
   introspectByDefault: true,
   path: '/customer_groups',
   keyAttribute: 'name',
@@ -171,6 +178,7 @@ export const customerGroups: Section<CustomerGroupEntry> = {
 
 export const taxCategories: Section<TaxCategoryEntry> = {
   name: 'tax_categories',
+  scope: 'write_settings',
   introspectByDefault: true,
   path: '/tax_categories',
   keyAttribute: 'name',
@@ -216,6 +224,7 @@ const STOCK_LOCATION_ATTRIBUTES: (keyof StockLocationEntry)[] = [
 
 export const stockLocations: Section<StockLocationEntry> = {
   name: 'stock_locations',
+  scope: 'write_stock',
   introspectByDefault: true,
   path: '/stock_locations',
   keyAttribute: 'name',
@@ -261,6 +270,7 @@ const SUPPLIER_ATTRIBUTES: (keyof SupplierEntry)[] = [
 
 export const suppliers: Section<SupplierEntry> = {
   name: 'suppliers',
+  scope: 'write_purchasing',
   introspectByDefault: true,
   path: '/suppliers',
   keyAttribute: 'name',

@@ -89,10 +89,16 @@ export class RunContext {
     return matches[0] ?? null
   }
 
-  /** Records the file declares under a section, by key. */
+  private readonly declared = new Map<string, Set<string>>()
+
+  /** Whether the file declares a record under this section and key. */
   declares(section: string, key: string): boolean {
-    const source = this.sources[section]
-    return source ? source.fileKeys(this.config).includes(key) : false
+    let keys = this.declared.get(section)
+    if (!keys) {
+      keys = new Set(this.sources[section]?.fileKeys(this.config) ?? [])
+      this.declared.set(section, keys)
+    }
+    return keys.has(key)
   }
 
   /**

@@ -47,6 +47,7 @@ function sortedMembers(members: ZoneMember[]): ZoneMember[] {
 
 export const deliveryZones: Section<DeliveryZoneEntry> = {
   name: 'delivery_zones',
+  scope: 'write_settings',
   introspectByDefault: true,
   path: '/delivery_zones',
   keyAttribute: 'name',
@@ -113,6 +114,7 @@ function numeric(value: unknown): unknown {
 
 export const deliveryMethods: Section<DeliveryMethodEntry> = {
   name: 'delivery_methods',
+  scope: 'write_delivery_methods',
   introspectByDefault: true,
   path: '/delivery_methods',
   keyAttribute: 'name',
@@ -122,6 +124,14 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
   fileKeys: (config) => (config.delivery_methods ?? []).map((method) => method.name),
   entries: (config) => config.delivery_methods ?? [],
   entryKey: (entry) => entry.name,
+  references: (config) => {
+    const methods = config.delivery_methods ?? []
+    return {
+      delivery_zones: methods.flatMap((method) => method.delivery_zone ?? []),
+      tax_categories: methods.flatMap((method) => method.tax_category ?? []),
+      stock_locations: methods.flatMap((method) => method.pickup_locations ?? []),
+    }
+  },
   async desired(entry, ctx, path) {
     const payload: Payload = pick(entry, METHOD_ATTRIBUTES)
     if (entry.delivery_zone)

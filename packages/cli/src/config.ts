@@ -222,6 +222,43 @@ export function tokenPrefix(token: string): string {
   return token.slice(0, 12)
 }
 
+export interface MintKeyOptions {
+  name: string
+  keyType: 'secret' | 'publishable'
+  scopes?: string[]
+  /** Revoke active keys of the same name first — for keys the CLI mints under a fixed name on every run. */
+  replace?: boolean
+}
+
+/**
+ * Mints an API key through the project's dev stack and returns its token.
+ * The one place that knows the rake task's contract and the token shape.
+ */
+export async function mintApiKey(projectDir: string, options: MintKeyOptions): Promise<string> {
+  let stdout: string
+  try {
+    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
+      NAME: options.name,
+      KEY_TYPE: options.keyType,
+      ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),
+      ...(options.replace ? { REPLACE: 'true' } : {}),
+    })
+  } catch (error) {
+    const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)
+    throw new CredentialError(
+      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(detail)}`,
+    )
+  }
+  const prefix = options.keyType === 'publishable' ? 'pk_' : 'sk_'
+  const token = stdout.match(new RegExp(`${prefix}[A-Za-z0-9_-]+`))?.[0]
+  if (!token) {
+    throw new CredentialError(
+      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
+    )
+  }
+  return token
+}
+
 /**
  * Auto-mints a read-only secret key through the project's dev stack and
  * persists it in `.spree/credentials.json` (gitignored). Write scopes are
@@ -243,34 +280,19 @@ export async function mintProjectCredentials(
     )
   }
 
-  let stdout: string
-  try {
-    // REPLACE: the name is fixed, and names are unique among a store's active
-    // keys, so a re-run (an interrupted init, a deleted credentials file)
-    // supersedes the previous key instead of colliding with it.
-    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
-      NAME: '@spree/cli (auto)',
-      KEY_TYPE: 'secret',
-      SCOPES: 'read_all',
-      REPLACE: 'true',
-    })
-  } catch (error) {
-    const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)
-    throw new CredentialError(
-      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(detail)}`,
-    )
-  }
-
-  const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
-  if (!match) {
-    throw new CredentialError(
-      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
-    )
-  }
+  // The name is fixed and names are unique among a store's active keys, so a
+  // re-run (an interrupted init, a deleted credentials file) supersedes the
+  // previous key instead of colliding with it.
+  const token = await mintApiKey(projectDir, {
+    name: '@spree/cli (auto)',
+    keyType: 'secret',
+    scopes: ['read_all'],
+    replace: true,
+  })
 
   const credentials: ProjectCredentials = {
     baseUrl: `http://localhost:${port}`,
-    token: match[0],
+    token,
     scopes: ['read_all'],
     mintedAt: new Date().toISOString(),
   }

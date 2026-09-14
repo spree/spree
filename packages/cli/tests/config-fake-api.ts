@@ -141,7 +141,7 @@ export class FakeApi implements ConfigClient {
   private list(
     path: string,
     params: NonNullable<RequestOptions['params']>,
-  ): { data: Record_[]; meta: { next: number | null } } {
+  ): { data: Record_[]; meta: { pages: number; next: number | null } } {
     let records = this.all(path)
     for (const [key, value] of Object.entries(params)) {
       const match = key.match(/^q\[(\w+)_in\]\[\]$/)
@@ -152,6 +152,7 @@ export class FakeApi implements ConfigClient {
     const limit = Number(params.limit ?? 100)
     const page = Number(params.page ?? 1)
     const data = records.slice((page - 1) * limit, page * limit)
-    return { data, meta: { next: page * limit < records.length ? page + 1 : null } }
+    const pages = Math.max(1, Math.ceil(records.length / limit))
+    return { data, meta: { pages, next: page < pages ? page + 1 : null } }
   }
 }

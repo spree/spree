@@ -13,7 +13,12 @@ import {
   renderReport,
   reportHasFailures,
 } from '../config/index.js'
-import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
+import {
+  mintApiKey,
+  mintProjectCredentials,
+  writeAdminEmail,
+  writeProjectSetupMarker,
+} from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import {
@@ -136,7 +141,8 @@ export async function runFirstRunSetup(flags: {
 
   // Sample-data imports need an admin as their owner; without credentials
   // the seed minted none, and the setup screen offers the load instead.
-  if (sampleData && adminEmail && adminPassword) {
+  const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
+  if (sampleDataLoaded) {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
     s.stop('Sample data loaded.')
@@ -197,7 +203,7 @@ export async function runFirstRunSetup(flags: {
   // group/prices (sampleData) to be walkable end to end. The portal runs on
   // the default publishable key — the channel header selects the channel.
   const wholesaleBlock =
-    sampleData && storefrontWholesaleChannel(ctx.projectDir)
+    sampleDataLoaded && storefrontWholesaleChannel(ctx.projectDir)
       ? [
           pc.bold('Wholesale portal (B2B demo)'),
           `  ${pc.cyan(`http://localhost:${STOREFRONT_PORT}/wholesale`)} ${pc.dim('— needs the storefront dev server running')}`,
@@ -375,17 +381,14 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
 
   const s = p.spinner()
   s.start(`Deploying ${DEFAULT_CONFIG_FILE}...`)
-  const token = (
-    await rakeTask('spree:cli:create_api_key', projectDir, {
-      NAME: 'spree init (config deploy)',
-      KEY_TYPE: 'secret',
-      SCOPES: 'write_all',
-      // A revoke that did not happen (Ctrl-C mid-deploy) must not block the
-      // next run: the fixed name supersedes the leftover key.
-      REPLACE: 'true',
-    })
-  ).match(/sk_[A-Za-z0-9_-]+/)?.[0]
-  if (!token) throw new Error(`Could not mint a key to deploy ${DEFAULT_CONFIG_FILE}.`)
+  // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
+  // run: the fixed name supersedes the leftover key.
+  const token = await mintApiKey(projectDir, {
+    name: 'spree init (config deploy)',
+    keyType: 'secret',
+    scopes: ['write_all'],
+    replace: true,
+  })
 
   const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
   try {

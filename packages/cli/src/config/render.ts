@@ -1,4 +1,5 @@
 import pc from 'picocolors'
+import { PendingRef } from './diff.js'
 import type { PlannedOperation, PlannedRun } from './plan.js'
 import type { ApplyReport, AttributeChange, OperationKind, Plan, PlanOperation } from './types.js'
 
@@ -22,9 +23,8 @@ const COLOR: Record<OperationKind, (text: string) => string> = {
 
 function show(value: unknown): string {
   if (value === null || value === undefined) return pc.dim('null')
-  if (typeof value === 'object' && 'section' in (value as object) && 'key' in (value as object)) {
-    const ref = value as { section: string; key: string }
-    return `${ref.section}/${ref.key} ${pc.dim('(created by this run)')}`
+  if (value instanceof PendingRef) {
+    return `${value.section}/${value.key} ${pc.dim('(created by this run)')}`
   }
   return JSON.stringify(value)
 }

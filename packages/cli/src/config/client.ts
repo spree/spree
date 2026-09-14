@@ -3,29 +3,39 @@ import type { ConfigClient, LiveRecord, RequestOptions } from './types.js'
 const PAGE_LIMIT = 100
 /** Keys per `q[<key>_in][]` request, well under any URL length limit. */
 const KEY_CHUNK = 50
+/** Requests in flight at once while listing. */
+const CONCURRENCY = 4
 
 interface Paginated<T> {
   data: T[]
-  meta?: { pages?: number; next?: number | null }
+  meta?: { pages?: number }
 }
 
-/** Every page of a list endpoint. */
+async function inBatches<T, R>(items: T[], run: (item: T) => Promise<R>): Promise<R[]> {
+  const results: R[] = []
+  for (let index = 0; index < items.length; index += CONCURRENCY) {
+    results.push(...(await Promise.all(items.slice(index, index + CONCURRENCY).map(run))))
+  }
+  return results
+}
+
+/** Every page of a list endpoint: the first tells how many follow, the rest come in parallel. */
 export async function listAll<T extends LiveRecord = LiveRecord>(
   client: ConfigClient,
   path: string,
   params: RequestOptions['params'] = {},
 ): Promise<T[]> {
-  const records: T[] = []
-  let page = 1
-  for (;;) {
-    const response = await client.request<Paginated<T>>('GET', path, {
-      params: { ...params, page, limit: PAGE_LIMIT },
+  const page = (number: number) =>
+    client.request<Paginated<T>>('GET', path, {
+      params: { ...params, page: number, limit: PAGE_LIMIT },
     })
-    records.push(...response.data)
-    if (!response.meta?.next) break
-    page = response.meta.next
-  }
-  return records
+  const first = await page(1)
+  const remaining = Array.from(
+    { length: Math.max(0, (first.meta?.pages ?? 1) - 1) },
+    (_, index) => index + 2,
+  )
+  const rest = await inBatches(remaining, page)
+  return [first, ...rest].flatMap((response) => response.data)
 }
 
 /**
@@ -39,12 +49,11 @@ export async function listByKeys<T extends LiveRecord = LiveRecord>(
   keys: string[],
   params: RequestOptions['params'] = {},
 ): Promise<T[]> {
-  const records: T[] = []
-  for (let index = 0; index < keys.length; index += KEY_CHUNK) {
-    const chunk = keys.slice(index, index + KEY_CHUNK)
-    records.push(
-      ...(await listAll<T>(client, path, { ...params, [`q[${keyAttribute}_in][]`]: chunk })),
-    )
-  }
-  return records
+  const chunks = Array.from({ length: Math.ceil(keys.length / KEY_CHUNK) }, (_, index) =>
+    keys.slice(index * KEY_CHUNK, (index + 1) * KEY_CHUNK),
+  )
+  const results = await inBatches(chunks, (chunk) =>
+    listAll<T>(client, path, { ...params, [`q[${keyAttribute}_in][]`]: chunk }),
+  )
+  return results.flat()
 }

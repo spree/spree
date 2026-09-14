@@ -46,7 +46,7 @@ export type {
   VariantEntry,
 } from './schema.js'
 export { configSchema, SCHEMA_URL, toJsonSchema } from './schema.js'
-export { missingScopes, requiredScopes, SECTION_SCOPES } from './scopes.js'
+export { missingScopes, requiredScopes } from './scopes.js'
 export { ORDERED_SECTIONS, SECTIONS } from './sections/index.js'
 export type {
   ApplyOptions,

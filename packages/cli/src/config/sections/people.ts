@@ -13,6 +13,7 @@ const CUSTOMER_ATTRIBUTES: (keyof CustomerEntry)[] = [
 
 export const customers: Section<CustomerEntry> = {
   name: 'customers',
+  scope: 'write_customers',
   introspectByDefault: false,
   path: '/customers',
   keyAttribute: 'email',
@@ -21,6 +22,9 @@ export const customers: Section<CustomerEntry> = {
   fileKeys: (config) => (config.customers ?? []).map((customer) => customer.email),
   entries: (config) => config.customers ?? [],
   entryKey: (entry) => entry.email,
+  references: (config) => ({
+    customer_groups: (config.customers ?? []).flatMap((customer) => customer.customer_groups ?? []),
+  }),
   async desired(entry, ctx, path) {
     const payload: Payload = pick(entry, CUSTOMER_ATTRIBUTES)
     const groups = await refs(ctx, 'customer_groups', entry.customer_groups, path)
@@ -64,6 +68,7 @@ const STATUS_ACTIONS: Record<string, string> = { approved: 'approve', suspended:
 
 export const sellers: Section<SellerEntry> = {
   name: 'sellers',
+  scope: 'write_sellers',
   introspectByDefault: true,
   path: '/sellers',
   keyAttribute: 'slug',
@@ -85,7 +90,6 @@ export const sellers: Section<SellerEntry> = {
   },
   async update(live, payload, _entry, ctx) {
     const { status: _status, ...body } = payload
-    if (Object.keys(body).length === 0) return live
     return ctx.client.request<LiveRecord>('PATCH', `/sellers/${live.id}`, { body })
   },
   // Approval steps over the onboarding checklist the way an operator can:

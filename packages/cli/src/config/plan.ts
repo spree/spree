@@ -49,7 +49,7 @@ async function planSingleton(
   const live = await ctx.client.request<LiveRecord>('GET', section.path)
   const path = section.name
   const payload = await section.desired(entry, ctx, path)
-  const changes = diffAttributes(payload, await section.current(live, ctx, entry))
+  const changes = diffAttributes(payload, await section.current(live, ctx, payload))
   return [
     operation(section, {
       kind: changes.length ? 'update' : 'unchanged',
@@ -73,8 +73,10 @@ async function planCollection(
   const operations: PlannedOperation[] = []
 
   const seen = new Set<string>()
+  const duplicates = new Set<string>()
   for (const [index, key] of keys.entries()) {
     if (seen.has(key)) {
+      duplicates.add(key)
       operations.push(
         operation(section, {
           kind: 'error',
@@ -87,12 +89,17 @@ async function planCollection(
     seen.add(key)
   }
 
+  // Every key the entries refer to, one request per target section, so the
+  // reference lookups below hit the cache instead of the network.
+  for (const [target, referenced] of Object.entries(section.references?.(ctx.config) ?? {})) {
+    if (referenced?.length) await ctx.load(target, [...new Set(referenced)])
+  }
   const live = await ctx.load(section.name, prune ? undefined : keys)
 
   for (const [index, entry] of entries.entries()) {
     const key = keys[index]
     const path = `${section.name}[${index}]`
-    if (operations.some((existing) => existing.key === key && existing.kind === 'error')) continue
+    if (duplicates.has(key)) continue
     const matches = live.byKey.get(key) ?? []
     if (matches.length > 1) {
       operations.push(
@@ -120,7 +127,7 @@ async function planCollection(
       operations.push(operation(section, { kind: 'create', key, path, entry, payload }))
       continue
     }
-    const changes = diffAttributes(payload, await section.current(match, ctx, entry))
+    const changes = diffAttributes(payload, await section.current(match, ctx, payload))
     operations.push(
       operation(section, {
         kind: changes.length ? 'update' : 'unchanged',
