@@ -23,7 +23,7 @@ A role with `mutable: false` (set from seeds or the console) renders read-only i
 
 ## Registering extension permissions
 
-Register your models as a catalog resource once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
+Register your models as a catalog scope once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
 
 ```ruby
 # in your engine's initializer
@@ -32,11 +32,29 @@ Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
 })
 ```
 
-- `group` places the row in the permission pickers (`:orders`, `:catalog`, `:marketing`, `:customers`, `:settings`, `:access`, `:analytics` — or your own).
-- `subjects` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
-- Pass `write: false` for read-only resources.
+- `group` places the row in the permission pickers (`:analytics`, `:orders`, `:catalog`, `:customers`, `:sellers`, `:loyalty`, `:marketing`, `:settings`, `:access` — or your own). Rows render in registration order, so a scope registered from an initializer lands after core's.
+- `resources` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
+- Pass `write: false` for read-only scopes.
 
-Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same resource on your admin controllers with `scoped_resource :reviews`.
+Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same scope on your admin controllers with `scoped_resource :reviews`.
+
+## Who may hold a key
+
+`audiences` is the complete list of audiences whose roles may hold a scope's keys. The store's own back office is `:store`, and is the list when a registration names none — so the example above is grantable to staff and nobody else.
+
+```ruby
+# Staff configure the marketplace's; a seller configures their own.
+Spree.permissions.register_scope(:reviews, group: :catalog, audiences: %i[store seller], resources: -> {
+  [SpreeReviews::Review]
+})
+```
+
+Naming another audience exposes the scope to a principal outside the store's own staff, so it is always a deliberate act. Two consequences worth knowing:
+
+- **Leaving `:store` out** keeps the scope off the staff permission picker, out of `read_all` / `write_all`, and unmintable on a secret API key — which is how a seller panel's own scopes (`seller_profile`, `seller_earnings`) exist without a store role ever being offered them.
+- **`read_only_for: %i[seller]`** gives that audience the read key alone, for a vocabulary they consult but do not own.
+
+A key never decides *which rows* its holder reaches. That is the controller's job, through scope fetching — a seller holding `write_products` manages their own products because the seller API reads through `current_seller`, not because the key says so.
 
 ## Beyond the catalog
 
