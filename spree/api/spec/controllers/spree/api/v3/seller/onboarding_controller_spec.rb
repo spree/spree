@@ -47,6 +47,18 @@ RSpec.describe Spree::Api::V3::Seller::OnboardingController, type: :controller d
       expect(json_response['requirements']).to eq([])
     end
 
+    # Accepting something they cannot read is not consent — the panel
+    # renders this rather than only offering a link away.
+    it 'includes the terms the seller is asked to accept' do
+      create(:accept_terms_requirement, store: store,
+                                        preferred_terms_body: '<p>Be excellent to each other.</p>')
+
+      get :show, as: :json
+
+      terms = json_response['requirements'].find { |row| row['kind'] == 'accept_terms' }
+      expect(terms['terms_html']).to include('Be excellent to each other')
+    end
+
     it 'returns the checklist with the seller current standing' do
       create(:accept_terms_requirement, store: store)
       create(:billing_address_requirement, store: store)

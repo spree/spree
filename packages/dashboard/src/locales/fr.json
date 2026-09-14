@@ -4207,6 +4207,12 @@
       "percent": "Pourcentage",
       "preferred_amount": "Montant",
       "preferred_percent": "Pourcentage",
+      "terms_body": "Conditions",
+      "terms_body_description": "Ce que le vendeur lit avant d’accepter. Affiché dans sa liste de configuration.",
+      "terms_effective_from": "Conditions en vigueur à partir du",
+      "terms_effective_from_description": "Les vendeurs qui ont accepté avant cette date sont invités à accepter à nouveau.",
+      "terms_url": "URL des conditions",
+      "terms_url_description": "Copie publiée facultative des mêmes conditions, ouverte dans un nouvel onglet.",
       "webhook_secret": "Clé de signature du webhook",
       "webhook_secret_description": "Le secret défini sur le webhook EasyPost. Sans lui, les mises à jour du transporteur sont refusées."
     },
