@@ -10,6 +10,12 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
+    it_behaves_like 'a list without N+1 queries' do
+      subject { get :index, as: :json }
+
+      let!(:second_payment_method) { create(:check_payment_method, store: store, name: 'Second method') }
+    end
+
     it 'returns store-scoped payment methods' do
       get :index, as: :json
 

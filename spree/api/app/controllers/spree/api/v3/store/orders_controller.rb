@@ -28,7 +28,7 @@ module Spree
           def scope
             storefront_access_policy.
               scope(current_store.orders.complete, token: order_token).
-              includes(:market, :fulfillments)
+              includes(:market, :fulfillments, :bill_address, :ship_address)
           end
 
           def serializer_class

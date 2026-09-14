@@ -178,6 +178,24 @@ shared_examples 'returns 422 Unprocessable Entity' do
   end
 end
 
+# Prosopite reports a statement only once it repeats, and most specs create a
+# single record, so a list endpoint's N+1 stays invisible unless the spec
+# renders several rows. Include this in every `GET #index` block with a
+# `subject` that performs the request and a `let!` creating at least two
+# records the serializer will render:
+#
+#   it_behaves_like 'a list without N+1 queries' do
+#     let!(:records) { create_list(:product, 3, store: store) }
+#   end
+shared_examples 'a list without N+1 queries' do
+  it 'renders several records without repeating a query' do
+    subject
+
+    expect(response).to have_http_status(:ok)
+    expect(json_response['data'].size).to be >= 2
+  end
+end
+
 shared_examples 'requires API key' do
   context 'without API key' do
     let(:headers) { {} }

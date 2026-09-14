@@ -248,30 +248,75 @@ module Spree
         def category_filter
           return nil if @category.nil?
 
-          # Get child categories at the next depth level
-          child_categories = @category.children.order(:lft).select do |child|
-            # Only include categories that have products in the current scope
-            @scope.in_category(child).exists?
+          children = @category.children.order(:lft).to_a
+          return nil if children.empty?
+
+          counts = product_counts_by_child_category(children)
+          # A child with nothing in the current scope is not offered as a
+          # filter, which is what the per-child `exists?` decided before.
+          options = children.filter_map do |child|
+            count = counts[child.id]
+            next if count.nil? || count.zero?
+
+            {
+              id: child.prefixed_id,
+              name: child.name,
+              permalink: child.permalink,
+              count: count
+            }
           end
 
-          return nil if child_categories.empty?
+          return nil if options.empty?
 
-          {
-            id: 'categories',
-            type: 'category',
-            options: child_categories.map { |c| category_option_data(c) }
-          }
+          { id: 'categories', type: 'category', options: options }
         end
 
-        def category_option_data(category)
-          count = @scope.in_category(category).distinct.count
+        # Distinct product counts for each child category, counting its whole
+        # subtree, in one query rather than two per child (an existence probe
+        # and a count). A category sidebar is drawn on every filtered
+        # storefront request, so the per-child pair is paid on each one.
+        #
+        # @param children [Array<Spree::Category>]
+        # @return [Hash{Integer => Integer}] child category id => product count
+        def product_counts_by_child_category(children)
+          descendant_ids_by_child = descendant_ids_for(children)
+          all_descendant_ids = descendant_ids_by_child.values.flatten.uniq
+          return {} if all_descendant_ids.empty?
 
-          {
-            id: category.prefixed_id,
-            name: category.name,
-            permalink: category.permalink,
-            count: count
-          }
+          product_categories = Spree::ProductCategory.table_name
+          # product id => the categories it sits in, narrowed to this subtree
+          pairs = @scope.joins(:product_categories).
+                  where("#{product_categories}.category_id" => all_descendant_ids).
+                  distinct.
+                  pluck("#{product_categories}.category_id", "#{product_categories}.product_id")
+
+          product_ids_by_category = Hash.new { |hash, key| hash[key] = [] }
+          pairs.each { |category_id, product_id| product_ids_by_category[category_id] << product_id }
+
+          descendant_ids_by_child.transform_values do |descendant_ids|
+            descendant_ids.flat_map { |id| product_ids_by_category[id] }.uniq.size
+          end
+        end
+
+        # Every child's subtree ids in one query. A nested set stores a
+        # subtree as an `lft`/`rgt` range, so one read of the categories
+        # spanned by the children answers for all of them — asking each child
+        # separately is a query per filter option.
+        #
+        # @param children [Array<Spree::Category>]
+        # @return [Hash{Integer => Array<Integer>}] child id => subtree ids
+        def descendant_ids_for(children)
+          bounds = children.to_h { |child| [child.id, (child.lft..child.rgt)] }
+
+          rows = Spree::Category.
+                 where(store_id: children.first.store_id).
+                 where(lft: children.map(&:lft).min..children.map(&:rgt).max).
+                 pluck(:id, :lft)
+
+          children.to_h do |child|
+            range = bounds[child.id]
+            [child.id, rows.filter_map { |id, lft| id if range.cover?(lft) }]
+          end
         end
       end
     end

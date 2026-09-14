@@ -15,8 +15,11 @@ FactoryBot.define do
     end
     after(:create) do |product|
       if product.store&.default_channel && product.product_publications.empty?
-        Spree::ProductPublication.create!(
-          product: product,
+        # Built through the association, not Spree::ProductPublication.create!:
+        # the `empty?` above loads and caches the collection, so a row written
+        # around it leaves the product holding an association that reads empty
+        # while the table has the row.
+        product.product_publications.create!(
           channel: product.store.default_channel,
           published_at: product.available_on,
           unpublished_at: product.discontinue_on
@@ -60,8 +63,11 @@ FactoryBot.define do
       # keep passing. Production callers must publish explicitly via the
       # Admin SDK / Dashboard create form.
       if product.store&.default_channel && product.product_publications.empty?
-        Spree::ProductPublication.create!(
-          product: product,
+        # Built through the association, not Spree::ProductPublication.create!:
+        # the `empty?` above loads and caches the collection, so a row written
+        # around it leaves the product holding an association that reads empty
+        # while the table has the row.
+        product.product_publications.create!(
           channel: product.store.default_channel,
           published_at: product.available_on,
           unpublished_at: product.discontinue_on

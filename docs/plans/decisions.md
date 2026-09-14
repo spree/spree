@@ -666,6 +666,75 @@ changes only affect future numbers; and code saving a numbered record with
 normally assigns one is `before_validation`. Plan:
 `6.0-document-numbers.md`.
 
+## 2026-09-07: N+1 tripwire — every API request in the suite is scanned for repeated queries
+
+Lazy preloading on list collections already batches association reads, so
+the N+1s Spree still ships are per-record model queries a serializer
+reaches: a stock check, a price lookup, a `count`, a derived number. Rails'
+strict loading cannot see those (it watches association loading, which the
+lazy preloader satisfies first), so the net is Prosopite, which fingerprints
+the SQL a request ran and reports a statement repeated from one call site.
+
+The v3 base controller wraps each request in a scan wherever the gem is
+bundled, and this repository's dummy app raises on a report — the same
+shape as the store-scope guard. Statements issued under an Active Record
+save or destroy are not reported: writes run their callbacks one record at
+a time by design (a `dependent: :destroy` cascade, a uniqueness or number
+probe per created row), and the guard exists for what a request reads.
+
+Two traps are worth naming, because both make the guard lie. Prosopite
+fingerprints through pg_query, which cannot parse SQLite's `?` binds, so
+SQLite borrows the text normalizer written for MySQL — and that normalizer
+blanks anything double-quoted, which is a string literal in MySQL but an
+identifier in SQLite. Left alone it erases every table name, so unrelated
+queries share one fingerprint and a single record's distinct associations
+report as an N+1; re-quoting identifiers as backticks first fixes it, and
+it accounted for more than half of the first run's failures. The second has no fix at the guard: two associations on one table — an
+order's billing and shipping address, a category's image and square image —
+are indistinguishable from a repeat in the SQL alone. Telling them apart by
+the row each lookup asks for was tried and abandoned, because a genuine
+`belongs_to` N+1 also fetches a different row every time, so the same rule
+hid the commonest N+1 there is. The guard therefore reports these, and the
+fix is to preload the pair at the render site; a review of this change
+caught the earlier attempt.
+
+Turning it on, with the fingerprinting corrected, left 57 API spec files
+with a repeated query. They are listed in
+`spree/api/spec/support/n_plus_one_debt.rb`, where their examples log the
+report instead of failing; every other file, and every new one, fails on
+the first N+1. The list only shrinks: a fix deletes its line, and new work
+never adds one.
+
+Products, categories and collections were then taken first, as the
+highest-traffic surfaces. Every listing and detail endpoint across the
+three is now clean; what remains on them is write-path work, where a query
+per record created is inherent. The fixes worth naming are structural: a
+category's product counts and its ancestor chain each collapse to one
+query using the nested set's own `lft`/`rgt` bounds rather than a query per
+node; the storefront's category filter sidebar costs one query instead of
+two per child; counter-cache recounts across a bulk assignment are grouped
+rather than `reset_counters` per record; and bulk tagging reads the tags it
+needs once. A category's breadcrumb trail now preloads the images it
+renders.
+
+An earlier pass through the backlog took it from 79 files to 57 and fixed
+the shape behind most of them: a model method that reads a loaded
+association when one happens to be loaded and runs a scoped query when it
+is not, which on a list means a query per row. Prices, store credit,
+publications, confirmation checks and the cart's delivery-address question
+all had it. Cart writes were the worst case — price queries scaled at three
+per line item, so a five-line cart cost fifteen — because a cart built one
+item at a time has no relation to batch from; registering the resolved
+variants as one preload context makes it flat. Two candidates were reverted
+after the core suite caught them: `category_and_ancestors` is memoized, so
+calling it from a callback poisons later reads, and the line-item finder
+must re-query because callers add lines behind its back. Two conventions follow. A repeated query is fixed
+at the line the report names — the association goes into
+`collection_includes`, or the model reads a loaded association instead of
+running a scoped query per record — never by widening the allow list. And a
+list endpoint's spec renders at least two records, since a repeated
+statement cannot show with one.
+
 ## 2026-08-13: Isolation tripwires — the guard under the store-scoping discipline
 
 Open-core isolation is the controller discipline (every lookup through a

@@ -181,14 +181,79 @@ module Spree
     def self.recalculate_products_count(category_ids)
       changed = unscoped.where(id: Array(category_ids).compact.uniq)
 
-      # The affected nodes are each changed category plus its ancestors.
-      affected = changed.flat_map { |category| category.self_and_ancestors.to_a }.uniq(&:id)
+      # The affected nodes are each changed category plus its ancestors,
+      # collected in one read: an ancestor chain per category is a query per
+      # node, which a bulk catalog move pays for every category it touched.
+      # A nested set makes an ancestor a node whose `lft`/`rgt` span the
+      # child's, so one range query answers for all of them.
+      changed = changed.to_a
+      return if changed.empty?
+
+      ancestor_conditions = changed.map do |category|
+        arel_table[:store_id].eq(category.store_id).
+          and(arel_table[:lft].lteq(category.lft)).
+          and(arel_table[:rgt].gteq(category.rgt))
+      end.reduce(:or)
+
+      affected = unscoped.where(ancestor_conditions).to_a
+
+      # One grouped query for the whole set rather than a count per node:
+      # this runs on every catalog move, and a deep tree would otherwise
+      # spend a query on each affected ancestor.
+      counts = distinct_product_counts_for(affected)
 
       affected.each do |category|
-        count = Spree::ProductCategory.where(category_id: category.self_and_descendants.select(:id))
-                                     .distinct.count(:product_id)
+        count = counts.fetch(category.id, 0)
         category.update_column(:products_count, count) if category.products_count != count
       end
+    end
+
+    # Distinct product counts per category, each counting its whole subtree.
+    # A nested set stores the subtree as an `lft`/`rgt` range, so the tie
+    # between a node and its descendants is a range join rather than a
+    # separate descendant query for every node.
+    #
+    # @param categories [Array<Spree::Category>]
+    # @return [Hash{Integer => Integer}] category id => distinct product count
+    def self.distinct_product_counts_for(categories)
+      return {} if categories.empty?
+
+      nodes = arel_table.alias('counted_nodes')
+      descendants = arel_table
+      product_categories = Spree::ProductCategory.arel_table
+
+      relation = unscoped.
+                 from(nodes).
+                 joins(
+                   Arel::Nodes::InnerJoin.new(
+                     descendants,
+                     Arel::Nodes::On.new(
+                       descendants[:store_id].eq(nodes[:store_id]).
+                         and(descendants[:lft].gteq(nodes[:lft])).
+                         and(descendants[:rgt].lteq(nodes[:rgt]))
+                     )
+                   )
+                 ).
+                 joins(
+                   Arel::Nodes::InnerJoin.new(
+                     product_categories,
+                     Arel::Nodes::On.new(product_categories[:category_id].eq(descendants[:id]))
+                   )
+                 ).
+                 where(nodes[:id].in(categories.map(&:id))).
+                 group(nodes[:id])
+
+      relation.distinct.count(product_categories[:product_id])
+    end
+
+    # The breadcrumb trail, with the images a serializer renders alongside
+    # each crumb already loaded. `ancestors` comes from the nested set and
+    # preloads nothing, so drawing a trail would otherwise cost two
+    # attachment lookups per level.
+    #
+    # @return [ActiveRecord::Relation<Spree::Category>]
+    def ancestors
+      super.with_attached_image.with_attached_square_image
     end
 
     def slug

@@ -221,8 +221,11 @@ module Spree
         end
 
         # Finds a single resource within scope using prefixed ID
+        # Loaded through the lazy-preload relation, as the collection is, so
+        # the serializer's walk over the record's children batches their
+        # associations instead of querying once per child.
         def find_resource
-          scope.find_by_prefix_id!(params[:id])
+          scope.preload_associations_lazily.find_by_prefix_id!(params[:id])
         end
 
         # Per-record authorization hook. A no-op in the shared base: the Store
