@@ -1,4 +1,5 @@
 import type { MeResponse, MeUpdateParams } from '@spree/admin-sdk'
+import { accountFormToParams } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
 
 // Profile form for the signed-in admin (PATCH /me). All fields optional —
@@ -37,18 +38,5 @@ export function meToForm(me: MeResponse, fallbackLocale: string): MeFormValues {
 
 /** Map the form to the PATCH /me params (drops frontend-only fields). */
 export function meToParams(values: MeFormValues): MeUpdateParams {
-  return {
-    first_name: values.first_name || undefined,
-    last_name: values.last_name || undefined,
-    selected_locale: values.selected_locale || undefined,
-    ...avatarParam(values.avatar_signed_id, values.avatar_cleared),
-  }
-}
-
-// Three-state mapping: a fresh upload sends the signed_id, an explicit clear
-// sends null (purges the attachment), and an untouched field is omitted.
-function avatarParam(signedId: string | null, cleared: boolean) {
-  if (signedId) return { avatar: signedId }
-  if (cleared) return { avatar: null }
-  return {}
+  return accountFormToParams(values)
 }
