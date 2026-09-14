@@ -120,9 +120,9 @@ export function planToJson(plan: Plan | PlannedRun): {
 /** Per-section outcome of an apply, one line per failure. */
 export function renderReport(report: ApplyReport): string {
   const lines: string[] = []
-  const bySection = new Map<string, { applied: number; failed: number; skipped: number }>()
+  const bySection = new Map<string, { applied: number; failed: number }>()
   for (const result of report.results) {
-    const counts = bySection.get(result.operation.section) ?? { applied: 0, failed: 0, skipped: 0 }
+    const counts = bySection.get(result.operation.section) ?? { applied: 0, failed: 0 }
     counts[result.status] += 1
     bySection.set(result.operation.section, counts)
     if (result.status === 'failed') {
@@ -146,7 +146,6 @@ export function renderReport(report: ApplyReport): string {
   for (const [section, counts] of bySection) {
     const parts = [pc.green(`${counts.applied} applied`)]
     if (counts.failed) parts.push(pc.red(`${counts.failed} failed`))
-    if (counts.skipped) parts.push(pc.dim(`${counts.skipped} skipped`))
     lines.push(`${pc.bold(section)}: ${parts.join(', ')}`)
   }
   if (report.results.length === 0) lines.push(pc.dim('Nothing to apply.'))

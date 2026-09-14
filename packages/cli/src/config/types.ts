@@ -64,7 +64,7 @@ export interface Plan {
   sections: SectionPlan[]
 }
 
-export type ApplyStatus = 'applied' | 'failed' | 'skipped'
+export type ApplyStatus = 'applied' | 'failed'
 
 export interface ApplyResult {
   operation: PlanOperation
@@ -81,9 +81,4 @@ export interface ApplyReport {
 export interface PlanOptions {
   /** Sections whose live records absent from the file become deletes. */
   prune?: SectionName[]
-}
-
-export interface ApplyOptions {
-  /** Writes within a section that may run at once. */
-  concurrency?: number
 }

@@ -1,8 +1,10 @@
+import { inBatches } from './client.js'
 import type { PlannedOperation, PlannedRun } from './plan.js'
 import { SECTIONS, type Section } from './sections/index.js'
-import type { ApplyOptions, ApplyReport, ApplyResult, LiveRecord } from './types.js'
+import type { ApplyReport, ApplyResult, LiveRecord } from './types.js'
 
-const DEFAULT_CONCURRENCY = 4
+/** Writes within a section that run at once. */
+const CONCURRENCY = 4
 
 interface ApiFailure {
   status?: number
@@ -19,16 +21,6 @@ function failure(operation: PlannedOperation, error: unknown): ApplyResult {
     status: 'failed',
     message: api?.status ? `HTTP ${api.status}: ${message}` : message,
     ...(api?.details ? { details: api.details } : {}),
-  }
-}
-
-async function inBatches<T>(
-  items: T[],
-  size: number,
-  run: (item: T) => Promise<void>,
-): Promise<void> {
-  for (let index = 0; index < items.length; index += size) {
-    await Promise.all(items.slice(index, index + size).map(run))
   }
 }
 
@@ -84,8 +76,7 @@ async function remove(
  * and the rest of the run continues, so a single bad row never hides the
  * others.
  */
-export async function applyPlan(run: PlannedRun, options: ApplyOptions = {}): Promise<ApplyReport> {
-  const concurrency = options.concurrency ?? DEFAULT_CONCURRENCY
+export async function applyPlan(run: PlannedRun): Promise<ApplyReport> {
   const results: ApplyResult[] = []
 
   for (const planned of run.sections) {
@@ -93,7 +84,7 @@ export async function applyPlan(run: PlannedRun, options: ApplyOptions = {}): Pr
     const writes = planned.operations.filter(
       (operation) => operation.kind === 'create' || operation.kind === 'update',
     )
-    await inBatches(writes, section.sequential ? 1 : concurrency, async (operation) => {
+    await inBatches(writes, section.sequential ? 1 : CONCURRENCY, async (operation) => {
       results.push(await write(section, operation, run))
     })
     // A plan error is a failed deploy of that entry, not a quiet skip: a
@@ -107,7 +98,7 @@ export async function applyPlan(run: PlannedRun, options: ApplyOptions = {}): Pr
   for (const planned of [...run.sections].reverse()) {
     const section = SECTIONS[planned.section]
     const deletes = planned.operations.filter((operation) => operation.kind === 'delete')
-    await inBatches(deletes, concurrency, async (operation) => {
+    await inBatches(deletes, CONCURRENCY, async (operation) => {
       results.push(await remove(section, operation, run))
     })
   }

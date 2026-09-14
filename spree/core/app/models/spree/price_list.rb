@@ -7,6 +7,7 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::NaturalKey
 
     MATCH_POLICIES = %w[all any].freeze
 
@@ -75,12 +76,7 @@ module Spree
     end
 
     validates :name, presence: true
-    # Checked only when the name changes, so a row that already shares its
-    # name with another (from before this rule) can still be saved.
-    validates :name, uniqueness: { case_sensitive: false,
-                                   scope: [*spree_base_uniqueness_scope, :store_id],
-                                   conditions: -> { where(deleted_at: nil) } },
-                     if: :will_save_change_to_name?
+    natural_key :name
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     # One live list per catalog; soft-deleted lists release the slot. Backed
     # by a unique index on every adapter — partial on PostgreSQL and SQLite,

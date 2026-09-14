@@ -19,9 +19,14 @@ export interface SectionSource {
   expand?: string[]
   /** Extra list filters, e.g. first-party rows only on a table sellers share. */
   listParams?: Record<string, string | number | boolean>
-  liveKey: (live: LiveRecord) => string
-  /** Natural keys the file declares, for the reference check. */
-  fileKeys: (config: SpreeConfig) => string[]
+  /** Natural key of a live record; defaults to its `keyAttribute`. */
+  liveKey?: (live: LiveRecord) => string
+  /** Natural keys the file declares; a read-only source declares none. */
+  fileKeys?: (config: SpreeConfig) => string[]
+}
+
+export function liveKeyOf(source: SectionSource, live: LiveRecord): string {
+  return source.liveKey ? source.liveKey(live) : String(live[source.keyAttribute])
 }
 
 /**
@@ -62,7 +67,7 @@ export class RunContext {
 
     const byKey = cached?.byKey ?? new Map<string, LiveRecord[]>()
     for (const record of records) {
-      const key = source.liveKey(record)
+      const key = liveKeyOf(source, record)
       const existing = byKey.get(key) ?? []
       if (!existing.some((candidate) => candidate.id === record.id)) existing.push(record)
       byKey.set(key, existing)
@@ -95,7 +100,7 @@ export class RunContext {
   declares(section: string, key: string): boolean {
     let keys = this.declared.get(section)
     if (!keys) {
-      keys = new Set(this.sources[section]?.fileKeys(this.config) ?? [])
+      keys = new Set(this.sources[section]?.fileKeys?.(this.config) ?? [])
       this.declared.set(section, keys)
     }
     return keys.has(key)

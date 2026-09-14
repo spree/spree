@@ -9,6 +9,7 @@ module Spree
     include Spree::Metadata
     include Spree::MemoizedData
     include Spree::TypedAssociations
+    include Spree::NaturalKey
 
     extend Spree::DisplayMoney
 
@@ -119,14 +120,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[seller]
 
     validates :name, presence: true
-    # Per store and per owner: a seller's own methods share the table, and two
-    # sellers may each run a "Standard". Checked only when the name changes,
-    # so a row that already shares its name (from before this rule) can still
-    # be saved.
-    validates :name, uniqueness: { case_sensitive: false,
-                                   scope: [*spree_base_uniqueness_scope, :store_id, :seller_id],
-                                   conditions: -> { where(deleted_at: nil) } },
-                     if: :will_save_change_to_name?
+    natural_key :name, scope: [:seller_id]
     validates :storefront_visible, inclusion: { in: [true, false] }
     validate :delivery_zone_must_belong_to_profile,
              if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }

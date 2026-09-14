@@ -11,10 +11,15 @@ interface Paginated<T> {
   meta?: { pages?: number }
 }
 
-async function inBatches<T, R>(items: T[], run: (item: T) => Promise<R>): Promise<R[]> {
+/** Runs `run` over `items`, at most `size` at a time, in order of batches. */
+export async function inBatches<T, R>(
+  items: T[],
+  size: number,
+  run: (item: T) => Promise<R>,
+): Promise<R[]> {
   const results: R[] = []
-  for (let index = 0; index < items.length; index += CONCURRENCY) {
-    results.push(...(await Promise.all(items.slice(index, index + CONCURRENCY).map(run))))
+  for (let index = 0; index < items.length; index += size) {
+    results.push(...(await Promise.all(items.slice(index, index + size).map(run))))
   }
   return results
 }
@@ -34,7 +39,7 @@ export async function listAll<T extends LiveRecord = LiveRecord>(
     { length: Math.max(0, (first.meta?.pages ?? 1) - 1) },
     (_, index) => index + 2,
   )
-  const rest = await inBatches(remaining, page)
+  const rest = await inBatches(remaining, CONCURRENCY, page)
   return [first, ...rest].flatMap((response) => response.data)
 }
 
@@ -52,7 +57,7 @@ export async function listByKeys<T extends LiveRecord = LiveRecord>(
   const chunks = Array.from({ length: Math.ceil(keys.length / KEY_CHUNK) }, (_, index) =>
     keys.slice(index * KEY_CHUNK, (index + 1) * KEY_CHUNK),
   )
-  const results = await inBatches(chunks, (chunk) =>
+  const results = await inBatches(chunks, CONCURRENCY, (chunk) =>
     listAll<T>(client, path, { ...params, [`q[${keyAttribute}_in][]`]: chunk }),
   )
   return results.flat()

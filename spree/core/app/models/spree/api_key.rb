@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :key  # Spree-specific: api key
 
     include Spree::SingleStoreResource
+    include Spree::NaturalKey
 
     KEY_TYPES = %w[publishable secret].freeze
     PREFIXES = { 'publishable' => 'pk_', 'secret' => 'sk_' }.freeze
@@ -53,12 +54,7 @@ module Spree
     belongs_to :revoked_by, polymorphic: true, optional: true
 
     validates :name, presence: true
-    # Checked only when the name changes, so a row that already shares its
-    # name with another (from before this rule) can still be saved.
-    validates :name, uniqueness: { case_sensitive: false,
-                                   scope: [*spree_base_uniqueness_scope, :store_id],
-                                   conditions: -> { where(revoked_at: nil) } },
-                     if: :will_save_change_to_name?
+    natural_key :name, live: :revoked_at
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
     validates :token, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }, if: :publishable?
     validates :token_digest, presence: true, uniqueness: true, if: :secret?

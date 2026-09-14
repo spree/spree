@@ -14,6 +14,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::CaptureMethod
+    include Spree::NaturalKey
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
@@ -52,12 +53,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
-    # Checked only when the name changes, so a row that already shares its
-    # name with another (from before this rule) can still be saved.
-    validates :name, uniqueness: { case_sensitive: false,
-                                   scope: [*spree_base_uniqueness_scope, :store_id],
-                                   conditions: -> { where(deleted_at: nil) } },
-                     if: :will_save_change_to_name?
+    natural_key :name
     validates :store, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

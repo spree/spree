@@ -10,7 +10,7 @@ export type Payload = Record<string, unknown>
  * records it lists, how a file entry becomes a request body, how a live
  * record reads back as an entry, and any writes beyond the resource itself.
  */
-export interface Section<Entry = unknown> extends SectionSource {
+export interface Section<Entry = unknown> extends Omit<SectionSource, 'fileKeys'> {
   name: SectionName
   /** The write scope a secret key needs to deploy this section. */
   scope: string
@@ -24,8 +24,8 @@ export interface Section<Entry = unknown> extends SectionSource {
   entryKey(entry: Entry): string
   /** Request body for the entry, references resolved to ids or pending refs. */
   desired(entry: Entry, ctx: RunContext, path: string): Promise<Payload>
-  /** The live record in the same attribute vocabulary as `desired`, for comparison. Only what `desired` mentions needs to be there. */
-  current(live: LiveRecord, ctx: RunContext, desired?: Payload): Promise<Payload>
+  /** The live record in the same attribute vocabulary as `desired`, for comparison; the record itself when not given. */
+  current?(live: LiveRecord, ctx: RunContext, desired?: Payload): Promise<Payload>
   /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
   references?(config: SpreeConfig): Partial<Record<string, string[]>>
   create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<LiveRecord>
@@ -110,7 +110,3 @@ export function present<T extends object>(source: T, attributes: (keyof T)[]): P
 
 /** Operator-owned rows only, on tables a marketplace's sellers also write to. */
 export const FIRST_PARTY = { 'q[seller_id_null]': 1 } as const
-
-export function byName(live: LiveRecord): string {
-  return String(live.name)
-}

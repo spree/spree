@@ -15,6 +15,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::SingleStoreResource
+    include Spree::NaturalKey
 
     with_options inverse_of: :tax_rates do
       belongs_to :tax_category,
@@ -27,12 +28,7 @@ module Spree
     # Per store, so a config file can address a rate by name; a soft-deleted
     # rate frees its name.
     validates :name, presence: true
-    # Checked only when the name changes, so a row that already shares its
-    # name with another (from before this rule) can still be saved.
-    validates :name, uniqueness: { case_sensitive: false,
-                                   scope: [*spree_base_uniqueness_scope, :store_id],
-                                   conditions: -> { where(deleted_at: nil) } },
-                     if: :will_save_change_to_name?
+    natural_key :name
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole

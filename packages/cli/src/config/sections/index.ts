@@ -45,14 +45,17 @@ const REFERENCE_SOURCES: Record<string, SectionSource> = {
     path: '/product_types',
     keyAttribute: 'name',
     filterable: true,
-    liveKey: (live) => String(live.name),
-    fileKeys: () => [],
   },
 }
 
 export const SOURCES: Record<string, SectionSource> = {
   ...REFERENCE_SOURCES,
-  ...SECTIONS,
+  ...Object.fromEntries(
+    ORDERED_SECTIONS.map((section) => [
+      section.name,
+      { ...section, fileKeys: (config) => section.entries(config).map(section.entryKey) },
+    ]),
+  ),
 }
 
 export type { Section } from './section.js'

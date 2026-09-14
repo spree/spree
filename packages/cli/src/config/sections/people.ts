@@ -18,8 +18,6 @@ export const customers: Section<CustomerEntry> = {
   path: '/customers',
   keyAttribute: 'email',
   filterable: true,
-  liveKey: (live) => String(live.email),
-  fileKeys: (config) => (config.customers ?? []).map((customer) => customer.email),
   entries: (config) => config.customers ?? [],
   entryKey: (entry) => entry.email,
   references: (config) => ({
@@ -30,9 +28,6 @@ export const customers: Section<CustomerEntry> = {
     const groups = await refs(ctx, 'customer_groups', entry.customer_groups, path)
     if (groups) payload.customer_group_ids = groups
     return payload
-  },
-  async current(live) {
-    return live
   },
   // The password is set on create only: the file cannot read it back, so it
   // cannot tell whether the live one differs.
@@ -73,16 +68,11 @@ export const sellers: Section<SellerEntry> = {
   path: '/sellers',
   keyAttribute: 'slug',
   filterable: true,
-  liveKey: (live) => String(live.slug),
-  fileKeys: (config) => (config.sellers ?? []).map((seller) => seller.slug),
   entries: (config) => config.sellers ?? [],
   entryKey: (entry) => entry.slug,
   async desired(entry) {
     // `status` is not writable: it moves through the approve/suspend actions in afterWrite.
     return { ...pick(entry, SELLER_ATTRIBUTES), ...(entry.status ? { status: entry.status } : {}) }
-  },
-  async current(live) {
-    return live
   },
   async create(payload, _entry, ctx) {
     const { status: _status, ...body } = payload

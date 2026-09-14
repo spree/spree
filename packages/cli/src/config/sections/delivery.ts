@@ -1,16 +1,6 @@
 import { numericString } from '../diff.js'
 import type { DeliveryMethodEntry, DeliveryZoneEntry } from '../schema.js'
-import type { LiveRecord } from '../types.js'
-import {
-  byName,
-  FIRST_PARTY,
-  keysOf,
-  type Payload,
-  pick,
-  present,
-  refs,
-  type Section,
-} from './section.js'
+import { FIRST_PARTY, keysOf, type Payload, pick, present, refs, type Section } from './section.js'
 
 interface ZoneMember {
   member_type: string
@@ -53,8 +43,6 @@ export const deliveryZones: Section<DeliveryZoneEntry> = {
   keyAttribute: 'name',
   filterable: true,
   expand: ['members'],
-  liveKey: byName,
-  fileKeys: (config) => (config.delivery_zones ?? []).map((zone) => zone.name),
   entries: (config) => config.delivery_zones ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
@@ -120,8 +108,6 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
   keyAttribute: 'name',
   filterable: true,
   listParams: FIRST_PARTY,
-  liveKey: byName,
-  fileKeys: (config) => (config.delivery_methods ?? []).map((method) => method.name),
   entries: (config) => config.delivery_methods ?? [],
   entryKey: (entry) => entry.name,
   references: (config) => {
@@ -146,9 +132,6 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
         payload.calculator_preferences = entry.calculator.preferences
     }
     return payload
-  },
-  async current(live) {
-    return live
   },
   async toFile(live, ctx) {
     const entry: DeliveryMethodEntry = present(
@@ -185,5 +168,3 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
     return entry
   },
 }
-
-export type { LiveRecord }

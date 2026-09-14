@@ -27,9 +27,6 @@ export const categories: Section<CategoryEntry> = {
   path: '/categories',
   keyAttribute: 'permalink',
   filterable: true,
-  liveKey: (live) => String(live.permalink),
-  fileKeys: (config) => (config.categories ?? []).map((category) => category.permalink),
-  // Parents before children, so a child's reference resolves within the run.
   entries: (config) =>
     [...(config.categories ?? [])].sort(
       (left, right) => left.permalink.split('/').length - right.permalink.split('/').length,
@@ -41,9 +38,6 @@ export const categories: Section<CategoryEntry> = {
       ...pick(entry, CATEGORY_ATTRIBUTES),
       parent_id: parent ? await ctx.ref('categories', parent, path) : null,
     }
-  },
-  async current(live) {
-    return live
   },
   async toFile(live) {
     return present(live as unknown as CategoryEntry, CATEGORY_ATTRIBUTES) as CategoryEntry
@@ -255,8 +249,6 @@ export const products: Section<ProductEntry> = {
   filterable: true,
   listParams: FIRST_PARTY,
   expand: PRODUCT_EXPAND,
-  liveKey: (live) => String(live.slug),
-  fileKeys: (config) => (config.products ?? []).map((product) => product.slug),
   entries: (config) => config.products ?? [],
   entryKey: (entry) => entry.slug,
   references: (config) => {

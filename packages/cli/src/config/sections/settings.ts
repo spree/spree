@@ -9,7 +9,6 @@ import type {
 } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import {
-  byName,
   FIRST_PARTY,
   keysOf,
   type Payload,
@@ -37,14 +36,10 @@ export const store: Section<StoreEntry> = {
   keyAttribute: 'id',
   filterable: false,
   liveKey: () => 'store',
-  fileKeys: (config) => (config.store ? ['store'] : []),
   entries: (config) => (config.store ? [config.store] : []),
   entryKey: () => 'store',
   async desired(entry) {
     return { ...pick(entry, STORE_ATTRIBUTES), ...preferencesPayload(entry.preferences) }
-  },
-  async current(live) {
-    return live
   },
   async update(_live, payload, _entry, ctx) {
     return ctx.client.request<LiveRecord>('PATCH', '/store', { body: payload })
@@ -69,6 +64,8 @@ export const store: Section<StoreEntry> = {
   },
 }
 
+const CHANNEL_ATTRIBUTES: (keyof ChannelEntry)[] = ['code', 'name', 'active', 'default']
+
 export const channels: Section<ChannelEntry> = {
   name: 'channels',
   scope: 'write_settings',
@@ -76,8 +73,6 @@ export const channels: Section<ChannelEntry> = {
   path: '/channels',
   keyAttribute: 'code',
   filterable: true,
-  liveKey: (live) => String(live.code),
-  fileKeys: (config) => (config.channels ?? []).map((channel) => channel.code),
   entries: (config) => config.channels ?? [],
   entryKey: (entry) => entry.code,
   references: (config) => ({
@@ -85,16 +80,13 @@ export const channels: Section<ChannelEntry> = {
   }),
   async desired(entry, ctx, path) {
     return {
-      ...pick(entry, ['code', 'name', 'active', 'default']),
+      ...pick(entry, CHANNEL_ATTRIBUTES),
       stock_location_ids: await refs(ctx, 'stock_locations', entry.stock_locations, path),
       ...preferencesPayload(entry.preferences),
     }
   },
-  async current(live) {
-    return live
-  },
   async toFile(live, ctx) {
-    const entry = present(live as unknown as ChannelEntry, ['code', 'name', 'active', 'default'])
+    const entry = present(live as unknown as ChannelEntry, CHANNEL_ATTRIBUTES)
     const stockLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
     const preferences = preferencesFromLive(live, [
       'order_routing_strategy',
@@ -116,8 +108,6 @@ export const markets: Section<MarketEntry> = {
   path: '/markets',
   keyAttribute: 'name',
   filterable: true,
-  liveKey: byName,
-  fileKeys: (config) => (config.markets ?? []).map((market) => market.name),
   entries: (config) => config.markets ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
@@ -132,9 +122,6 @@ export const markets: Section<MarketEntry> = {
       ]),
       country_codes: entry.countries,
     }
-  },
-  async current(live) {
-    return live
   },
   async toFile(live) {
     return {
@@ -158,15 +145,10 @@ export const customerGroups: Section<CustomerGroupEntry> = {
   path: '/customer_groups',
   keyAttribute: 'name',
   filterable: true,
-  liveKey: byName,
-  fileKeys: (config) => (config.customer_groups ?? []).map((group) => group.name),
   entries: (config) => config.customer_groups ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
     return pick(entry, ['name', 'description'])
-  },
-  async current(live) {
-    return live
   },
   async toFile(live) {
     return present(live as unknown as CustomerGroupEntry, [
@@ -176,6 +158,8 @@ export const customerGroups: Section<CustomerGroupEntry> = {
   },
 }
 
+const TAX_CATEGORY_ATTRIBUTES: (keyof TaxCategoryEntry)[] = ['name', 'tax_code', 'description']
+
 export const taxCategories: Section<TaxCategoryEntry> = {
   name: 'tax_categories',
   scope: 'write_settings',
@@ -183,20 +167,15 @@ export const taxCategories: Section<TaxCategoryEntry> = {
   path: '/tax_categories',
   keyAttribute: 'name',
   filterable: true,
-  liveKey: byName,
-  fileKeys: (config) => (config.tax_categories ?? []).map((category) => category.name),
   entries: (config) => config.tax_categories ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
-    const payload: Payload = pick(entry, ['name', 'tax_code', 'description'])
+    const payload: Payload = pick(entry, TAX_CATEGORY_ATTRIBUTES)
     if (entry.default !== undefined) payload.is_default = entry.default
     return payload
   },
-  async current(live) {
-    return live
-  },
   async toFile(live) {
-    const entry = present(live as unknown as TaxCategoryEntry, ['name', 'tax_code', 'description'])
+    const entry = present(live as unknown as TaxCategoryEntry, TAX_CATEGORY_ATTRIBUTES)
     return { ...entry, ...(live.is_default ? { default: true } : {}) } as TaxCategoryEntry
   },
 }
@@ -230,15 +209,10 @@ export const stockLocations: Section<StockLocationEntry> = {
   keyAttribute: 'name',
   filterable: true,
   listParams: FIRST_PARTY,
-  liveKey: byName,
-  fileKeys: (config) => (config.stock_locations ?? []).map((location) => location.name),
   entries: (config) => config.stock_locations ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
     return pick(entry, STOCK_LOCATION_ATTRIBUTES)
-  },
-  async current(live) {
-    return live
   },
   async toFile(live) {
     const entry = present(live as unknown as StockLocationEntry, STOCK_LOCATION_ATTRIBUTES)
@@ -275,15 +249,10 @@ export const suppliers: Section<SupplierEntry> = {
   path: '/suppliers',
   keyAttribute: 'name',
   filterable: true,
-  liveKey: byName,
-  fileKeys: (config) => (config.suppliers ?? []).map((supplier) => supplier.name),
   entries: (config) => config.suppliers ?? [],
   entryKey: (entry) => entry.name,
   async desired(entry) {
     return pick(entry, SUPPLIER_ATTRIBUTES)
-  },
-  async current(live) {
-    return live
   },
   async toFile(live) {
     return present(live as unknown as SupplierEntry, SUPPLIER_ATTRIBUTES) as SupplierEntry

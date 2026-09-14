@@ -49,7 +49,10 @@ async function planSingleton(
   const live = await ctx.client.request<LiveRecord>('GET', section.path)
   const path = section.name
   const payload = await section.desired(entry, ctx, path)
-  const changes = diffAttributes(payload, await section.current(live, ctx, payload))
+  const changes = diffAttributes(
+    payload,
+    await (section.current ? section.current(live, ctx, payload) : live),
+  )
   return [
     operation(section, {
       kind: changes.length ? 'update' : 'unchanged',
@@ -127,7 +130,10 @@ async function planCollection(
       operations.push(operation(section, { kind: 'create', key, path, entry, payload }))
       continue
     }
-    const changes = diffAttributes(payload, await section.current(match, ctx, payload))
+    const changes = diffAttributes(
+      payload,
+      await (section.current ? section.current(match, ctx, payload) : match),
+    )
     operations.push(
       operation(section, {
         kind: changes.length ? 'update' : 'unchanged',

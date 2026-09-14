@@ -49,7 +49,6 @@ export { configSchema, SCHEMA_URL, toJsonSchema } from './schema.js'
 export { missingScopes, requiredScopes } from './scopes.js'
 export { ORDERED_SECTIONS, SECTIONS } from './sections/index.js'
 export type {
-  ApplyOptions,
   ApplyReport,
   ApplyResult,
   ApplyStatus,
@@ -68,14 +67,14 @@ export { SECTION_NAMES } from './types.js'
 import { applyPlan } from './apply.js'
 import { planConfig } from './plan.js'
 import type { SpreeConfig } from './schema.js'
-import type { ApplyOptions, ApplyReport, ConfigClient, PlanOptions } from './types.js'
+import type { ApplyReport, ConfigClient, PlanOptions } from './types.js'
 
 /** Plan and apply in one call — what the dashboard e2e setup and `spree init` use. */
 export async function deployConfig(
   config: SpreeConfig,
   client: ConfigClient,
-  options: PlanOptions & ApplyOptions = {},
+  options: PlanOptions = {},
 ): Promise<ApplyReport> {
   const run = await planConfig(config, client, options)
-  return applyPlan(run, options)
+  return applyPlan(run)
 }
