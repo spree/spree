@@ -31,7 +31,7 @@ module Spree
     # that is not a marketplace.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true, inverse_of: :stock_locations
 
-    # Per owner rather than per store, which is why UniqueName is not included
+    # Per owner rather than per store, which is why unique_per_store is not used
     # here: an operator and each of their sellers may each have a "Warehouse",
     # which is what a marketplace looks like.
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

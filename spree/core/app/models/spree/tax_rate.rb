@@ -23,10 +23,11 @@ module Spree
 
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :nullify
 
-    with_options presence: true do
-      validates :amount, numericality: { allow_nil: true }
-      validates :name
-    end
+    validates :amount, presence: true, numericality: { allow_nil: true }
+    # Per store, so a config file can address a rate by name; a soft-deleted
+    # rate frees its name.
+    validates :name, presence: true
+    unique_per_store :name
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole

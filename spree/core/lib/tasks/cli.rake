@@ -8,12 +8,15 @@ namespace :spree do
       print key.plaintext_token
     end
 
-    desc 'Create an API key'
+    desc 'Create an API key (REPLACE=true revokes active keys of the same name first)'
     task create_api_key: :environment do
       name = ENV.fetch('NAME')
       key_type = ENV.fetch('KEY_TYPE')
       scopes = ENV.fetch('SCOPES', '').split(',').map(&:strip).reject(&:empty?)
       store = Spree::Store.default
+      # Names are unique among a store's active keys, so a key the CLI mints
+      # under a fixed name on every run supersedes the previous one.
+      store.api_keys.active.where(name: name).find_each(&:revoke!) if ENV['REPLACE'] == 'true'
       key = store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
       print key.plaintext_token
     end

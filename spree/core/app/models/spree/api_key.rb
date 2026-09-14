@@ -53,6 +53,7 @@ module Spree
     belongs_to :revoked_by, polymorphic: true, optional: true
 
     validates :name, presence: true
+    unique_per_store :name, live: :revoked_at
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
     validates :token, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }, if: :publishable?
     validates :token_digest, presence: true, uniqueness: true, if: :secret?

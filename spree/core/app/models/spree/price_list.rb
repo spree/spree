@@ -75,6 +75,7 @@ module Spree
     end
 
     validates :name, presence: true
+    unique_per_store :name
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     # One live list per catalog; soft-deleted lists release the slot. Backed
     # by a unique index on every adapter — partial on PostgreSQL and SQLite,
