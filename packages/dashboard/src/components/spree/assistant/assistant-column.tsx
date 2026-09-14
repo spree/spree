@@ -1,15 +1,23 @@
 import { cn } from '@spree/dashboard-ui'
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AssistantPanel } from './assistant-panel'
 import { useAssistant } from './assistant-provider'
 
 /**
- * The assistant's slot in the page layout. A fixed column on wide screens; on
- * narrow ones it covers the page, because splitting a phone-width viewport in
- * two leaves neither half usable. Expanding widens it for longer answers
- * without going full-screen.
+ * The assistant's column in the shell: `[rail] [page] [assistant]`.
+ *
+ * It mirrors the content sheet deliberately — same card fill, radius, border
+ * and margin — so the two read as a pair of panels on one ground rather than
+ * as a page with something bolted to its edge. The shell renders it as a
+ * sibling of the sheet, so it is exactly the viewport's height and scrolls
+ * its own transcript; it never rides down a long page.
+ *
+ * Below `md` it covers the page instead, because splitting a phone-width
+ * viewport in two leaves neither half usable.
  */
 export function AssistantColumn() {
+  const { t } = useTranslation()
   const { open, close } = useAssistant()
   const [expanded, setExpanded] = useState(false)
   // Nothing is mounted until the merchant first opens the assistant, so a
@@ -23,17 +31,21 @@ export function AssistantColumn() {
   if (!everOpened.current) return null
 
   return (
-    <div
+    <aside
+      aria-label={t('admin.assistant.title')}
       hidden={!open}
-      // `sticky` + viewport height rather than `static`: as a plain flex child
-      // the column stretches to the height of the page, so on a long dashboard
-      // the composer ends up below the fold and the transcript scrolls the
-      // whole window instead of itself. Pinned to the viewport, the panel is
-      // always exactly one screen tall and scrolls internally.
       className={cn(
-        'fixed inset-0 z-40 border-l',
-        'lg:sticky lg:top-0 lg:z-auto lg:h-svh lg:shrink-0',
-        expanded ? 'lg:w-[640px] xl:w-[760px]' : 'lg:w-[400px] xl:w-[460px]',
+        // Phone: over the page.
+        'fixed inset-0 z-40 flex flex-col bg-card',
+        // From `md`: a card beside the page. The same treatment
+        // `SidebarInset` gives the content sheet, minus the left margin it
+        // drops to sit flush against the rail — here the margin on both sides
+        // is what separates the two cards.
+        'md:static md:z-auto md:my-2 md:me-2 md:h-auto md:rounded-xl md:border md:border-sidebar-border md:shadow-sm',
+        // `min-w-0` so the column can shrink; a fixed basis so it does not
+        // grow with the conversation.
+        'md:min-w-0 md:shrink-0',
+        expanded ? 'md:w-[560px] xl:w-[680px]' : 'md:w-[380px] xl:w-[440px]',
       )}
     >
       <AssistantPanel
@@ -41,6 +53,6 @@ export function AssistantColumn() {
         expanded={expanded}
         onToggleExpanded={() => setExpanded((current) => !current)}
       />
-    </div>
+    </aside>
   )
 }

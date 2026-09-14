@@ -17,8 +17,8 @@ import {
   Minimize2Icon,
   WrenchIcon,
   XIcon,
-} from 'lucide-react'
-import { type FormEvent, useRef } from 'react'
+} from '@spree/dashboard-ui/icons'
+import { type FormEvent, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   type AssistantTranscriptEntry,
@@ -26,6 +26,7 @@ import {
 } from '../../../hooks/use-assistant'
 import { AssistantHistoryMenu } from './assistant-history-menu'
 import { AssistantMarkdown } from './assistant-markdown'
+import { useAssistant } from './assistant-provider'
 import { AssistantRecords } from './assistant-records'
 
 interface AssistantPanelProps {
@@ -47,6 +48,7 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
     useAssistantConversation()
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const empty = entries.length === 0
+  const { pendingQuestion, clearPendingQuestion } = useAssistant()
 
   function submit(value: string) {
     const text = value.trim()
@@ -56,15 +58,28 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
     if (inputRef.current) inputRef.current.value = ''
   }
 
+  // A question asked from the command palette. Cleared as it is sent, so
+  // reopening the panel later does not ask it a second time.
+  useEffect(() => {
+    if (!pendingQuestion || streaming) return
+    clearPendingQuestion()
+    void send(pendingQuestion)
+  }, [pendingQuestion, streaming, send, clearPendingQuestion])
+
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
     submit(inputRef.current?.value ?? '')
   }
 
   return (
-    <aside
-      aria-label={t('admin.assistant.title')}
-      className="flex h-full w-full flex-col bg-background"
+    <div
+      // No `aria-label` here: the column that wraps this is the labelled
+      // landmark, and a label on a plain div attaches to no role anyway.
+      // `bg-card`, matching the page sheet: the two columns are one surface
+      // treatment, not a page beside a differently-shaded drawer. The rounding
+      // is inherited from the column, so overflow is clipped here to keep the
+      // header's rule and the composer inside the card's corners.
+      className="flex h-full w-full flex-col overflow-hidden bg-card md:rounded-xl"
     >
       <header className="flex h-header-height border-b border-border shrink-0 items-center justify-between gap-2 px-4">
         <AssistantHistoryMenu
@@ -202,7 +217,7 @@ export function AssistantPanel({ onClose, expanded, onToggleExpanded }: Assistan
           {t('admin.assistant.disclaimer')}
         </p>
       </div>
-    </aside>
+    </div>
   )
 }
 

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { ChevronDownIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { ChevronDownIcon, PlusIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { useTranslation } from 'react-i18next'
 import { useAssistantChats, useDeleteAssistantChat } from '../../../hooks/use-assistant'
 

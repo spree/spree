@@ -214,6 +214,7 @@
         "all_channels": "Tous les canaux"
       },
       "command_palette": {
+        "ask_assistant": "Demander à l'assistant : « {{query}} »",
         "create": {
           "heading": "Créer",
           "label": "Créer : {{noun}}",

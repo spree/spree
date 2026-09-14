@@ -132,6 +132,7 @@ export function AppSidebar({
   onEditProfile,
   notifications,
   widget,
+  actions,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -149,6 +150,12 @@ export function AppSidebar({
   notifications?: ReactNode
   /** A card pinned above the account menu. */
   widget?: ReactNode
+  /**
+   * App-level rail actions, rendered under the nav — the assistant's toggle in
+   * the operator dashboard. A node because the frame owns where these sit
+   * while the app owns what they are, the same split as `header`.
+   */
+  actions?: ReactNode
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
@@ -200,6 +207,9 @@ export function AppSidebar({
       {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
       <SidebarFooter className="hidden md:flex">
         {widget}
+        {/* Above the account row: these open a surface, which puts them with
+            the nav rather than with the identity menu. */}
+        {actions}
         {/* In icon mode the rail is too narrow for a row, so the control
             stacks above the avatar. */}
         <div

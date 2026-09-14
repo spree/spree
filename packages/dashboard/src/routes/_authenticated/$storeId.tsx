@@ -9,7 +9,9 @@ import {
 } from '@spree/dashboard-core'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
+import { AssistantColumn } from '../../components/spree/assistant/assistant-column'
 import { AssistantProvider } from '../../components/spree/assistant/assistant-provider'
+import { AssistantToggle } from '../../components/spree/assistant/assistant-toggle'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { FeedbackDialog } from '../../components/spree/feedback-dialog'
 import { GettingStartedWidget } from '../../components/spree/getting-started-widget'
@@ -101,6 +103,8 @@ function StoreShell({ storeId, inSettings }: { storeId: string; inSettings: bool
       onEditProfile={() => setProfileOpen(true)}
       notifications={<Notifications />}
       sidebarWidget={<GettingStartedWidget />}
+      sidebarActions={<AssistantToggle />}
+      asidePanel={<AssistantColumn />}
     >
       <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
       {/* A plugin page more specific than the matched route (`/sellers/shopify`

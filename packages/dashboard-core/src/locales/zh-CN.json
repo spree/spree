@@ -214,6 +214,7 @@
         "all_channels": "全部渠道"
       },
       "command_palette": {
+        "ask_assistant": "询问助手：“{{query}}”",
         "create": {
           "heading": "创建",
           "label": "新建{{noun}}",

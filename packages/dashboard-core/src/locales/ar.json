@@ -214,6 +214,7 @@
         "all_channels": "جميع القنوات"
       },
       "command_palette": {
+        "ask_assistant": "اسأل المساعد: \"{{query}}\"",
         "create": {
           "heading": "إنشاء",
           "label": "إنشاء {{noun}}",

@@ -1,8 +1,8 @@
 import type { AssistantRecord } from '@spree/admin-sdk'
 import { useStore } from '@spree/dashboard-core'
 import { Badge } from '@spree/dashboard-ui'
+import { ChevronRightIcon, ImageIcon } from '@spree/dashboard-ui/icons'
 import { useNavigate } from '@tanstack/react-router'
-import { ChevronRightIcon, ImageIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface AssistantRecordsProps {
