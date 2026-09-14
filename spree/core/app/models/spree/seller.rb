@@ -275,10 +275,11 @@ module Spree
     # @param currency [String] a settlement currency
     # @return [BigDecimal]
     def balance(currency)
-      earnings = seller_transfers.completed.settling_in(currency).includes(:payout).to_a
+      earnings = seller_transfers.completed.settling_in(currency)
+      settled = Spree::SellerTransfer.arel_settlement_amount
 
-      earnings.sum(&:settlement_amount) -
-        earnings.select { |transfer| transfer.payout&.completed? }.sum(&:settlement_amount)
+      earnings.sum(settled) -
+        earnings.joins(:payout).merge(Spree::SellerPayout.completed).sum(settled)
     end
 
     # The seller's position in every currency they have earned or been paid

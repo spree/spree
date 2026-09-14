@@ -92,6 +92,12 @@ module Spree
       Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[:settled_currency], arel_table[:currency]])
     end
 
+    # The settled figure as a summable column, so a balance over a long ledger
+    # stays one aggregate rather than loading every row to add them up.
+    def self.arel_settlement_amount
+      Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[:settled_amount], arel_table[:amount]])
+    end
+
     # The currencies this seller can actually be paid in.
     #
     # @return [Array<String>]

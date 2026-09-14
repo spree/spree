@@ -41,19 +41,20 @@ module Spree
     # @return [Spree::SellerBalance]
     def self.for(seller, currency, settlement_currency = currency)
       transfers = seller.seller_transfers.where(currency: currency).settling_in(settlement_currency)
-      completed = transfers.completed.to_a
+      settled = Spree::SellerTransfer.arel_settlement_amount
 
       new(
         seller: seller,
         currency: currency,
         settlement_currency: settlement_currency,
-        earned: completed.sum(&:amount),
+        earned: transfers.completed.sum(:amount),
         pending: transfers.with_status('pending', 'processing', 'unresolved').sum(:amount),
-        payable: completed.sum(&:settlement_amount),
+        payable: transfers.completed.sum(settled),
         # Read through the transfers a settlement claimed rather than off the
         # settlement's own total: two sale currencies can settle into one, and
         # the payout's figure would then count against both of them.
-        paid: completed.select { |transfer| transfer.payout&.completed? }.sum(&:settlement_amount)
+        paid: transfers.completed.joins(:payout).
+              merge(Spree::SellerPayout.completed).sum(settled)
       )
     end
 
