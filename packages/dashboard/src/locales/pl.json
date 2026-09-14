@@ -1883,6 +1883,10 @@
         "password_confirmation": {
           "label": "Potwierdź hasło"
         },
+        "sample_data": {
+          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
+          "label": "Wczytaj dane przykładowe"
+        },
         "store_name": {
           "label": "Nazwa sklepu"
         }

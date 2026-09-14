@@ -1860,6 +1860,10 @@
         "password_confirmation": {
           "label": "确认密码"
         },
+        "sample_data": {
+          "help": "在后台添加演示商品、分类、客户和订单，方便您浏览后台。需要几分钟并会下载商品图片。",
+          "label": "加载示例数据"
+        },
         "store_name": {
           "label": "商店名称"
         }
