@@ -1062,7 +1062,8 @@
       },
       "validation": {
         "non_negative": "doit être supérieur ou égal à zéro"
-      }
+      },
+      "description": "Les boîtes, cartons et palettes dans lesquels vos marchandises sont expédiées, avec les dimensions et poids sur lesquels les transporteurs établissent leurs tarifs."
     },
     "pages": {
       "settings": {
@@ -1403,7 +1404,8 @@
         "unknown_product": "Produit inconnu",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
-      }
+      },
+      "description": "Les entrepôts et boutiques où vous détenez du stock et depuis lesquels vous expédiez les commandes."
     },
     "validation": {
       "codes": {

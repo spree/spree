@@ -1,0 +1,68 @@
+---
+title: "Commission Rates"
+description: "What the marketplace charges on each sale — set as rates with rules, applied in list order, and frozen onto every sale."
+---
+
+Commission is what you charge a seller for a sale. It is set as **rates**, each with the rules for when it applies, and recorded per sale as a **commission line** that never changes afterwards.
+
+Find them under **Sellers → Commission rates**.
+
+## A rate
+
+| Field | Meaning |
+|---|---|
+| Name and code | How it appears on the seller's earnings and in reports |
+| Kind | **Percentage** of the sale, or a **fixed** fee per sale |
+| Value | The percentage |
+| Enabled | Switched-off rates are skipped |
+
+A percentage rate can carry a **floor and cap per currency** — at least $1, at most $50 — so a small sale still earns you something and a large one is not commissioned without limit. A fixed rate states its fee per currency, and applies only in currencies it has an amount for.
+
+## The list is the precedence
+
+This is the most important thing to understand, and it is deliberately simple.
+
+When a sale happens, Spree walks your enabled rates **from the top of the list** and takes **the first whose rules match**. There is no scoring, and no built-in idea that a product rule beats a category rule. What you see in the table is exactly what happens — to change the answer, drag a row up or down.
+
+Two consequences:
+
+- **A rate with no rules matches everything.** That is how you express your default — and it belongs at the **bottom**, because anything below it can never be reached.
+- **New rates are created at the top**, since a new rate is there to say something more specific than what exists.
+
+If nothing matches, **no commission is charged**. A marketplace with no rate covering a sale charges nothing rather than inventing a default nobody set.
+
+## Rules
+
+Rules narrow when a rate applies. A rate can hold several, and **all of them must match**; the items listed *within* one rule are alternatives.
+
+| Rule | Matches when the item is |
+|---|---|
+| Seller | from one of the sellers named |
+| Category | in one of the categories named |
+| Product | one of the products named |
+| Item total | worth at least, or at most, an amount |
+
+So "electronics from these three sellers" is two rules on one rate.
+
+## What the fee is charged on
+
+- **Net of tax, by default.** The customer's VAT is not the seller's revenue, so commission is charged on the amount excluding it. Switch **tax inclusive** on to charge on the gross instead.
+- **After discounts, always.** Commission is charged on what the customer actually paid — a promotion is the seller's concession.
+- **Delivery is optional.** **Include shipping** charges commission on the delivery charge as well as the goods. A fixed fee cannot do this, since charging it again on the parcel would double it.
+
+## Tax on your commission
+
+Your commission is a service you sell to the seller — a separate taxable supply from their sale to the customer. It is taxed at the **seller's** location, not the shopper's: a German marketplace charging a French seller is a cross-border business supply, and where the shopper lives has nothing to do with it.
+
+The tax rate is taken from the rate itself if you set one, otherwise from your tax setup using the seller's address, otherwise from the store's default commission tax rate.
+
+## What gets recorded
+
+When an order is placed, the matching rate is applied and the result frozen as a commission line — one per item, plus one per delivery where the rate includes it. Every field is a snapshot: editing or deleting the rate later changes nothing already charged. Lines cannot be edited; correcting a charge means recording a reversal, as with any ledger.
+
+Sellers see their commission on each earning in their panel.
+
+## Related
+
+- [Payouts](/user/sellers/payouts) — where the net of sale and commission ends up
+- [Managing sellers](/user/sellers/managing-sellers) — the sellers a rule can name

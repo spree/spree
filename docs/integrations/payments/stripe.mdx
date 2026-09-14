@@ -1,12 +1,12 @@
 ---
 title: "Connect Stripe payments to Spree Commerce"
 sidebarTitle: Stripe
-description: "Set up Spree's native Stripe integration to accept cards and alternative payment methods, automate payouts, and power marketplace split payments on Enterprise."
+description: "Set up Spree's native Stripe integration to accept cards and alternative payment methods, and pay marketplace sellers through Stripe Connect."
 ---
 
 Stripe is a widely used payment processor that enables secure and seamless transactions for online businesses. It supports multiple payment methods, automates payouts, and ensures a smooth checkout experience for customers.
 
-<Tip>In [Spree Enterprise Edition](https://spreecommerce.org/pricing/), Stripe can also be used to power marketplace payments, enabling automated vendor payouts, split payments, and secure transaction handling.</Tip>
+<Tip>Running a marketplace? The same Stripe account pays your sellers through [Stripe Connect](/integrations/payments/stripe-connect).</Tip>
 
 ## Installation
 
@@ -123,13 +123,4 @@ See [<u>Settings → Tax</u>](/user/settings/tax) for more on configuring tax ra
 
 ## Stripe Connect for Marketplaces
 
-Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) comes with a fully automated Stripe Connect integration for [multi-vendor marketplace use cases](https://spreecommerce.org/marketplace-ecommerce/):
-
-- Automated split payments between marketplace and vendors
-- Support for multiple payment methods including cards and digital wallets
-- Configurable marketplace fees and commission structures
-- Automated payouts to vendors
-- Comprehensive transaction reporting
-- Built-in fraud prevention tools
-
-Feel free to [reach out](https://spreecommerce.org/get-started/) to learn more.
+Stripe Connect is the payout provider that ships with this integration: each seller onboards to an Express account through Stripe's hosted pages, their share of every order is transferred as it ships, and settlements are confirmed by webhook. Setup and the money flow are on their own page — [Stripe Connect for marketplaces](/integrations/payments/stripe-connect).

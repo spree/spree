@@ -5,6 +5,8 @@ import { TagIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<Promotion>('promotions', {
+  docsPath: 'promotions/create-a-promotion',
+  description: i18n.t('admin.table_descriptions.promotions'),
   title: i18n.t('admin.nav.promotions'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.promotions.table.search_placeholder'),

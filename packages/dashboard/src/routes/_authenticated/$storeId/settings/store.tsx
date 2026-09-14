@@ -384,8 +384,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
         <ResourceLayout
           header={
             <PageHeader
+              docsPath="settings/store-details"
               title={t('admin.pages.settings.store.title')}
-              subtitle={t('admin.pages.settings.store.subtitle')}
+              description={t('admin.pages.settings.store.subtitle')}
               actions={<FormActions form={form} />}
             />
           }

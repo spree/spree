@@ -1,0 +1,101 @@
+---
+title: "Sell to Businesses"
+description: "Set up a wholesale or trade customer end to end — the company, its buyers, and the catalog that decides what they see and pay."
+---
+
+Selling to a business is different from selling to a person. The buyer acts for an organization with several people, several delivery addresses and a negotiated deal — their own prices, sometimes their own range, often a minimum order. Spree models that with two things working together:
+
+- a **Company** — who the buyer is, who else can buy for them, where goods go, and how they are taxed
+- a **Catalog** — the agreement: what that company sees, what they pay, and how much they must order
+
+This guide walks through setting up one trade customer from scratch. Once it is in place, every buyer at that company logs in to the same storefront as everyone else and simply sees their own deal.
+
+<Note>
+This is the Spree 6 way to give a customer segment its own pricing. Earlier versions did it with a **Customer Group** rule on a price list; that rule keeps working on lists that already have it, but is not offered for new lists. A catalog does the same job and more — it can also restrict the range and set order minimums.
+</Note>
+
+## Prerequisites
+
+Your products should already exist with their normal prices. If you sell in more than one currency, set base prices in each currency first — see [Set Up Multi-Currency Pricing](/user/how-to/multi-currency-pricing).
+
+## 1. Create the company
+
+Navigate to **Customers → Companies** and click **Add company**. Give it a name and keep the kind as **Company** — that is a legal entity, which is what a root always is.
+
+If the business has divisions or subsidiaries that buy separately, open the company and use **Add sub-unit** to build them beneath it. A **Division** shares its parent's tax identity; a nested **Company** has registrations of its own. Delivery sites are not sub-units — they go in the address book in a moment.
+
+See [Companies](/user/customers/companies) for the full reference.
+
+## 2. Add the buyers
+
+On the company page, click **Add member** and enter the buyer's email address.
+
+- If they already have a customer account, they become a member immediately.
+- If not, they receive an invitation by email. It is valid for 30 days, and accepting it creates their account and their membership in one step.
+
+Add people at the level they buy for. Someone added to the top-level company can buy for every division beneath it — you do not need to add them to each one.
+
+## 3. Add delivery and billing addresses
+
+Still on the company page, use **Add address** in the address book to record where goods go and where invoices go. Label each one — "Northern Warehouse", "Head Office" — and mark one ship-to and one bill-to address as the default. Buyers choose from this book at checkout instead of typing addresses.
+
+## 4. Record tax details
+
+If the company is tax-registered, add its registration — a VAT number, an ABN — on the company page. If it holds an exemption certificate, add that too, scoped to the country or state that issued it.
+
+These live on the legal entity only. A division is taxed through the company above it, so its page has no tax cards.
+
+## 5. Create their catalog
+
+Navigate to **Products → Catalogs** and click **Add catalog**. The wizard asks five things:
+
+- **Details** — name the agreement so you recognise it later, e.g. `Acme wholesale`.
+- **Audience** — assign the company you just created. Assigning the top-level company covers every division beneath it.
+- **Products** — decide what the deal covers:
+  - **Leave it empty** and the company browses your whole range at the catalog's prices.
+  - **Add products** and the company sees *only* those products.
+- **Pricing** — what they pay. Either enter an amount per product, or set a percentage adjustment — "15% off everything" — with no rows to maintain as your prices change.
+- **Review** — nothing is created until you finish.
+
+The distinction in the Products step is the one thing worth pausing on: adding the first product does not add one item to what the company sees. It switches the catalog into restricting mode, and they now see only that item.
+
+See [Catalogs](/user/catalogs/catalogs) for the full reference, including where each product's price comes from.
+
+## 6. Set order terms (optional)
+
+Open the catalog and find the **Commercial terms** card. Here you can set:
+
+- a **minimum order quantity** and **order multiple** — per product, or for the whole catalog
+- an **order minimum** — the least a whole order must come to, per currency
+
+Leave them blank and buyers may order any quantity, any total. Set them and the storefront enforces them: quantity steppers move by the multiple, and an order below the minimum cannot be placed.
+
+## 7. Require a PO number (optional)
+
+If the company's finance team needs a purchase order number on every order, open the company and turn on **Require a PO number**. Their buyers must supply it before checking out, and it is shown on the order, in the confirmation email and in order search.
+
+## 8. Activate the catalog
+
+Catalogs are created switched off, so nobody sees a half-finished agreement. When it is ready, open it and click **Activate**. From that moment the company's buyers see its range and its prices.
+
+**Deactivate** stops it applying without losing anything, so you can switch a deal off and on again.
+
+## 9. Gate the storefront (optional)
+
+A public storefront shows prices to everyone. For a trade-only store, change the sales channel's storefront access so that prices are hidden until a buyer logs in, or the whole storefront requires a login. This is set on the channel under **Settings → Sales Channels**, and can also be set store-wide as a default.
+
+## What the buyer sees
+
+A buyer at the company logs in to your normal storefront. If they belong to more than one company, they pick which one they are buying for on the cart and at checkout. From there:
+
+- products and prices are the catalog's, not the shop's
+- the address step offers the company address book instead of their personal one
+- any minimums apply, and a PO number is asked for if the company requires one
+- their orders — and the orders of every node beneath their standing — appear in the company's order history
+
+## Next steps
+
+- [Companies](/user/customers/companies) — members, the tree, addresses and tax in depth
+- [Catalogs](/user/catalogs/catalogs) — the two ways a catalog is used, and where prices come from
+- [Customer Groups](/user/customers/customer-groups) — pricing for a segment of individual customers rather than a company
+- [Price Lists](/user/pricing/price-lists) — regional, volume and scheduled pricing that applies to everyone

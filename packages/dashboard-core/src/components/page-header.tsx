@@ -254,12 +254,12 @@ export function PageHeader({
               )}
             </div>
           )}
-          {description && (
+          {(description || docsPath) && (
             <p className="text-muted-foreground text-sm">
               {description}
               {docsPath && (
                 <>
-                  {' '}
+                  {description ? ' ' : null}
                   <ExternalLink href={docsUrl(docsPath)}>
                     {t('admin.common.learn_more')}
                   </ExternalLink>

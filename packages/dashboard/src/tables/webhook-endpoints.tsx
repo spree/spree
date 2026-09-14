@@ -13,6 +13,8 @@ import i18n from 'i18next'
 import { webhookEndpointHealth, webhookHealthBadgeVariant } from '../lib/webhook-health'
 
 defineTable<WebhookEndpoint>('webhook-endpoints', {
+  docsPath: 'settings/webhooks',
+  description: i18n.t('admin.table_descriptions.webhook_endpoints'),
   title: i18n.t('admin.pages.settings.webhooks.title'),
   searchParam: 'url_cont',
   searchPlaceholder: i18n.t('admin.pages.settings.webhooks.search_placeholder'),

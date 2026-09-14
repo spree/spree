@@ -2591,7 +2591,8 @@
       "inventory": "Inventaire",
       "suppliers": "Fournisseurs",
       "loyalty": "Fidélité",
-      "store_credits": "Avoirs"
+      "store_credits": "Avoirs",
+      "commission_rates": "Taux de commission"
     },
     "option_types": {
       "columns": {
@@ -3016,11 +3017,14 @@
         "use_default_addresses": "Utiliser les adresses de facturation et de livraison par défaut du client"
       },
       "payment_statuses": {
-        "balance_due": "Solde dû",
-        "credit_owed": "Crédit dû",
-        "failed": "Échouée",
+        "none": "Non payée",
+        "authorized": "Autorisée",
+        "partially_paid": "Partiellement payée",
         "paid": "Payée",
-        "void": "Annulée"
+        "partially_refunded": "Partiellement remboursée",
+        "refunded": "Remboursée",
+        "overcharged": "Trop-perçu",
+        "voided": "Annulée"
       },
       "statuses": {
         "canceled": "Annulée",
@@ -4861,6 +4865,7 @@
         },
         "all_done": "Tout est fait 🎉",
         "download": "Télécharger le fichier",
+        "manage_requirements": "Gérer les exigences",
         "policy_empty": "Cette politique n'a pas encore de contenu.",
         "policy_updated": "Dernière mise à jour le {{date}}",
         "progress": "{{done}} sur {{total}} terminé",
@@ -5347,7 +5352,31 @@
       "stock_transfers": "Le stock qui circule entre vos entrepôts, et ce qui est arrivé.",
       "purchase_orders": "Le stock commandé à vos fournisseurs, et ce qui est arrivé",
       "suppliers": "Votre carnet d'adresses fournisseurs",
-      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, alloué à des commandes, retenu par des paiements en cours, disponible à la vente et en route."
+      "stock_levels": "Ce que vous avez à chaque emplacement : en stock, alloué à des commandes, retenu par des paiements en cours, disponible à la vente et en route.",
+      "allowed_origins": "Les adresses web autorisées à appeler l'API de votre boutique depuis un navigateur.",
+      "channels": "Où vous vendez — chaque vitrine, application ou portail, avec son propre catalogue et ses valeurs par défaut.",
+      "commission_rates": "Ce que la place de marché prélève sur chaque vente, appliqué dans l'ordre de la liste.",
+      "custom_field_definitions": "Champs supplémentaires que vous attachez aux produits, commandes, clients et autres enregistrements.",
+      "customers": "Toutes les personnes ayant acheté ou créé un compte sur votre boutique.",
+      "gift_cards": "Cartes prépayées que les clients utilisent au paiement.",
+      "imports": "Les fichiers CSV que vous avez importés, et le résultat de chacun.",
+      "markets": "Les régions où vous vendez, chacune avec sa devise, ses taxes et sa livraison.",
+      "orders": "Chaque commande passée sur votre boutique, et où elle en est.",
+      "draft_orders": "Commandes que votre équipe prépare au nom d'un client, pas encore passées.",
+      "payment_methods": "Comment les clients peuvent payer, et les prestataires derrière chaque option.",
+      "policies": "Vos conditions générales et politiques de confidentialité, de retour et de livraison, publiées sur la vitrine.",
+      "products": "Tout ce que vous vendez, avec ses variantes, ses prix et son stock.",
+      "promotions": "Remises et offres, et les règles qui décident quand elles s'appliquent.",
+      "seller_requirements": "La liste de contrôle que les vendeurs complètent avant de pouvoir être approuvés.",
+      "sellers": "Les vendeurs tiers actifs sur votre place de marché, et où en est chacun.",
+      "store_credits": "Avoirs que les clients peuvent dépenser au paiement, et comment chacun a été émis.",
+      "tax_categories": "Regroupements qui décident du taux de taxe appliqué à un produit.",
+      "tax_rates": "La taxe facturée par catégorie et par région.",
+      "webhook_deliveries": "Chaque événement envoyé à ce point de terminaison, et s'il a été reçu.",
+      "webhook_endpoints": "Où vos autres systèmes sont notifiés quand quelque chose se produit dans la boutique.",
+      "returns": "Marchandises qui reviennent, de la demande au remboursement.",
+      "exchanges": "Achats échangés contre une autre taille, une autre couleur ou un autre produit.",
+      "claims": "Livraisons qui ont mal tourné — articles endommagés, manquants ou erronés — et comment chacune a été résolue."
     },
     "tax_categories": {
       "add_cta": "Ajouter une catégorie de taxe",

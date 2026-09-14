@@ -1,21 +1,18 @@
 ---
-title: "Returns Processing"
-description: "Learn how to process returns, exchanges, and claims in Spree Commerce."
+title: "Returns"
+description: "Process a return from request to refund — approve it, receive the goods, restock what can be resold, and refund the customer."
 ---
 
-Spree 6 handles everything that happens after a sale with three records, each covering a different situation:
+A return is the customer sending items back and getting their money back. It belongs to the order it came from, so opening the order shows the whole story in one place.
 
-- **Return** — the customer sends items back and gets their money back.
-- **Exchange** — the customer sends items back and gets different items instead, such as another size or colour.
-- **Claim** — something went wrong with the delivery. The item arrived damaged, never arrived, or was the wrong product. You can send a replacement, refund the customer, or both, without asking for the original item back.
-
-Each one belongs directly to an order, so opening an order shows you everything that has happened to it.
+Returns sit beside two related records — an [Exchange](/user/orders/exchanges), where the customer gets different items instead of money, and a [Claim](/user/orders/claims), where something went wrong with the delivery and nothing need come back. Find all three under **Orders** in the dashboard.
 
 <Note>
   This replaces the older three-step flow of Return Authorization, Customer Return, and Reimbursement. One record now covers the whole operation from request through to refund.
 </Note>
 
-## Returns
+## Processing a return
+
 
 ### 1. Open the return
 
@@ -47,29 +44,10 @@ Once the refund goes through, the customer receives an email confirming it.
   A return can be cancelled at any point before the goods are received. Cancelling restocks nothing.
 </Note>
 
-## Exchanges
-
-An exchange follows the same path as a return — open, approve, receive — but instead of refunding the customer at the end, you fulfil the replacement items.
-
-When you fulfil an exchange, Spree creates the replacement shipment for the quantities that were actually received, and checks the replacements are in stock first.
-
-If the replacement items are worth less than what came back, the difference is returned to the customer as store credit or refunded to their original payment method. If the replacements are worth more, Spree records the difference but does not charge the customer automatically — collecting that balance is up to you, so nobody's card is charged without them agreeing to it.
-
-## Claims
-
-A claim starts when a customer reports a problem. Claims record what went wrong — damaged, missing, wrong item, or another reason you define — and the customer can attach photographs as evidence.
-
-When you resolve a claim you choose what to do:
-
-- **Refund** — money back, with no items required in return.
-- **Replacement** — ship the item again, either the same variant or a different one.
-- **Refund and replacement** — both.
-
-You can also deny a claim if it does not hold up, or cancel it.
 
 ## Where to find them
 
-Returns, exchanges, and claims each have their own section in the dashboard, so you can see everything in progress across all orders. Individual records also appear on the order they belong to, giving you the full history of that order in one place.
+Returns, exchanges, and claims each have their own page under Orders in the dashboard, so you can see everything in progress across all orders. Individual records also appear on the order they belong to, giving you the full history of that order in one place.
 
 ## Reasons
 
@@ -85,3 +63,9 @@ They are kept separate because they answer different questions, and mixing them 
 Spree does not enforce a return window, restocking fee, or final-sale rule out of the box. Every merchant's policy differs, and the rules often vary by country for legal reasons.
 
 Instead, your developers can attach your policy to the point where a return is created. A common setup enforces the policy for customers opening returns themselves, while still letting your staff override it — so a supervisor can accept a return outside the window for a good customer without needing a code change.
+
+## Related
+
+- [Exchanges](/user/orders/exchanges) — swapping items rather than refunding
+- [Claims](/user/orders/claims) — damaged, missing or wrong deliveries
+- [Returns & reasons](/user/settings/returns-configuration) — the reason lists staff pick from

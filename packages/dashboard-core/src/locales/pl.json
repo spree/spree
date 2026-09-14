@@ -1063,7 +1063,8 @@
       },
       "validation": {
         "non_negative": "musi wynosić zero lub więcej"
-      }
+      },
+      "description": "Pudełka, kartony i palety, w których wysyłasz towary, z wymiarami i wagami, na podstawie których przewoźnicy wyceniają przesyłki."
     },
     "pages": {
       "settings": {
@@ -1420,7 +1421,8 @@
         "unknown_product": "Nieznany produkt",
         "variant_count_one": "{{count}} wariant",
         "variant_count_other": "{{count}} wariantów"
-      }
+      },
+      "description": "Magazyny i sklepy, w których trzymasz towar i z których realizujesz zamówienia."
     },
     "validation": {
       "codes": {

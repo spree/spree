@@ -44,11 +44,13 @@ You can add multiple rules with Match Any or Match All logic.
 
 Available Rule Types:
 
-- **User** - Apply pricing only for specific users.
-- **Customer Group** - Apply pricing to a specific customer group.
 - **Market** - Apply pricing to customers shopping in a specific market.
 - **Volume** - Apply pricing when order quantity falls within a min–max range.
 - **Zone** - Apply pricing to customers in a specific tax/shipping zone.
+
+<Note>
+Pricing for a particular customer group or company is no longer a price list rule. Create a [Catalog](/user/catalogs/catalogs) and assign it to the group or company instead — it carries its own price list, and can also restrict what they see and set order minimums. Price lists that already use a **Customer Group** or **User** rule keep working; those rules are simply not offered for new lists.
+</Note>
 
 To add a rule, simply click **Add Rule**, select a rule type, and configure its criteria.
 

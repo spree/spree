@@ -1,0 +1,33 @@
+---
+title: "Allowed Origins"
+description: "The web addresses allowed to call your store's API from a browser — needed when your storefront or dashboard runs on its own domain."
+---
+
+Browsers refuse to let a page on one domain call an API on another unless the API says that domain is allowed. Allowed origins is that list: the addresses of your own sites that may talk to your store's API from a browser.
+
+Find it under **Settings → Allowed origins**.
+
+## When you need it
+
+You need an entry whenever something of yours runs on a **different domain** from the API:
+
+- a storefront at `https://www.mystore.com` calling an API at `https://api.mystore.com`
+- the admin dashboard hosted separately from Spree, for instance on a CDN
+- a mobile web app or a checkout widget embedded in another site
+
+If your storefront or dashboard is served from the same domain as the API, no entry is needed.
+
+## Adding one
+
+Click **Add allowed origin** and enter the address exactly as the browser sees it — scheme and host, such as `https://www.mystore.com`. No path, and the scheme matters: `http://` and `https://` are different origins.
+
+For local development, `http://localhost` matches any port, so one entry covers `localhost:3000`, `localhost:4000` and so on.
+
+## What else it protects
+
+Allowed origins also guard the links your store puts in emails. When a storefront asks for a password-reset or newsletter-confirmation email and says where the link should point, that address must be on this list — otherwise the link is dropped rather than sent. That stops a forged request from pointing your customers at a site you do not control.
+
+## Related
+
+- [API Keys](/user/settings/api-keys) — a publishable key still needs its origin allowed to work from a browser
+- [Deploying the dashboard](/developer/dashboard/deployment) — the cross-origin setup in full

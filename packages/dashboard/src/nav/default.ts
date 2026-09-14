@@ -221,6 +221,16 @@ nav.add({
   subject: Subject.Seller,
   position: 450,
   children: [
+    // What the marketplace charges on each sale. A rules engine merchants tune
+    // the way they tune promotions and price lists, and the input to the
+    // ledger below — so it lives here rather than in Settings.
+    {
+      key: 'sellers.commission-rates',
+      labelKey: 'admin.nav.commission_rates',
+      path: '/sellers/commission-rates',
+      subject: Subject.CommissionRate,
+      position: 50,
+    },
     // The fund ledger. Under Sellers because that is what it is about, the
     // way returns sit under Orders — and gated on the ledger subjects, so a
     // staff member who manages sellers without seeing the money gets neither.

@@ -2591,7 +2591,8 @@
       "inventory": "Lagerbestand",
       "suppliers": "Lieferanten",
       "loyalty": "Treue",
-      "store_credits": "Guthaben"
+      "store_credits": "Guthaben",
+      "commission_rates": "Provisionssätze"
     },
     "option_types": {
       "columns": {
@@ -3016,11 +3017,14 @@
         "use_default_addresses": "Standard-Rechnungs- und Lieferadresse des Kunden verwenden"
       },
       "payment_statuses": {
-        "balance_due": "Offener Betrag",
-        "credit_owed": "Guthaben",
-        "failed": "Fehlgeschlagen",
+        "none": "Unbezahlt",
+        "authorized": "Autorisiert",
+        "partially_paid": "Teilweise bezahlt",
         "paid": "Bezahlt",
-        "void": "Storniert"
+        "partially_refunded": "Teilweise erstattet",
+        "refunded": "Erstattet",
+        "overcharged": "Überzahlt",
+        "voided": "Storniert"
       },
       "statuses": {
         "canceled": "Storniert",
@@ -4861,6 +4865,7 @@
         },
         "all_done": "Alles erledigt 🎉",
         "download": "Datei herunterladen",
+        "manage_requirements": "Anforderungen verwalten",
         "policy_empty": "Diese Richtlinie hat noch keinen Inhalt.",
         "policy_updated": "Zuletzt aktualisiert am {{date}}",
         "progress": "{{done}} von {{total}} erledigt",
@@ -5347,7 +5352,31 @@
       "stock_transfers": "Bestand, der zwischen Ihren Lagern bewegt wird, und was angekommen ist.",
       "purchase_orders": "Ware, die Sie bei Lieferanten bestellt haben, und was eingetroffen ist",
       "suppliers": "Ihr Lieferanten-Adressbuch",
-      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, Bestellungen zugewiesen, durch Kassen gehalten, verkäuflich und unterwegs."
+      "stock_levels": "Was Sie an jedem Lagerort haben: vorrätig, Bestellungen zugewiesen, durch Kassen gehalten, verkäuflich und unterwegs.",
+      "allowed_origins": "Die Webadressen, die die API Ihres Shops aus dem Browser aufrufen dürfen.",
+      "channels": "Wo Sie verkaufen — jeder Storefront, jede App und jedes Portal mit eigenem Katalog und eigenen Vorgaben.",
+      "commission_rates": "Was der Marktplatz bei jedem Verkauf berechnet, in Listenreihenfolge angewendet.",
+      "custom_field_definitions": "Zusätzliche Felder, die Sie an Produkte, Bestellungen, Kunden und andere Datensätze anhängen.",
+      "customers": "Alle, die in Ihrem Shop gekauft oder sich registriert haben.",
+      "gift_cards": "Vorausbezahlte Karten, die Kunden an der Kasse einlösen.",
+      "imports": "Hochgeladene CSV-Dateien und wie jede verarbeitet wurde.",
+      "markets": "Die Regionen, in die Sie verkaufen, jeweils mit eigener Währung, Steuer und Lieferung.",
+      "orders": "Jede Bestellung in Ihrem Shop und ihr aktueller Stand.",
+      "draft_orders": "Bestellungen, die Ihr Team im Namen eines Kunden anlegt und die noch nicht aufgegeben sind.",
+      "payment_methods": "Wie Kunden bezahlen können und welche Anbieter dahinterstehen.",
+      "policies": "Ihre AGB sowie Datenschutz-, Rückgabe- und Versandrichtlinien, veröffentlicht im Storefront.",
+      "products": "Alles, was Sie verkaufen, mit Varianten, Preisen und Bestand.",
+      "promotions": "Rabatte und Angebote und die Regeln, die entscheiden, wann sie gelten.",
+      "seller_requirements": "Die Checkliste, die Verkäufer abschließen, bevor sie freigegeben werden können.",
+      "sellers": "Die Drittanbieter auf Ihrem Marktplatz und der Stand jedes einzelnen.",
+      "store_credits": "Guthaben, das Kunden an der Kasse ausgeben können, und wie es ausgestellt wurde.",
+      "tax_categories": "Gruppen, die entscheiden, welcher Steuersatz für ein Produkt gilt.",
+      "tax_rates": "Die je Kategorie und Region berechnete Steuer.",
+      "webhook_deliveries": "Jedes an diesen Endpunkt gesendete Ereignis und ob es empfangen wurde.",
+      "webhook_endpoints": "Wohin Ihre anderen Systeme benachrichtigt werden, wenn im Shop etwas passiert.",
+      "returns": "Zurückkommende Ware, von der Anfrage bis zur Erstattung.",
+      "exchanges": "Käufe, die gegen eine andere Größe, Farbe oder ein anderes Produkt getauscht werden.",
+      "claims": "Fehlgeschlagene Lieferungen — beschädigte, fehlende oder falsche Artikel — und wie sie gelöst wurden."
     },
     "tax_categories": {
       "add_cta": "Steuerkategorie hinzufügen",

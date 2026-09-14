@@ -1,0 +1,70 @@
+---
+title: "Onboarding"
+description: "Invite a seller, set the checklist they complete before they can sell, and approve them when it is done."
+---
+
+Bringing a seller onto a marketplace is a process with a decision at the end of it, not a switch. You invite them, they work through a checklist you have defined, they ask to be reviewed, and you approve — or send them back.
+
+## The lifecycle
+
+| Status | Meaning |
+|---|---|
+| Pending | Created, nothing sent yet |
+| Invited | Invitation sent, not yet accepted |
+| Onboarding | Working through the requirements |
+| Ready for review | Waiting on you |
+| Approved | Live — they can sell |
+| Rejected | Sent back, with a reason; they return to Onboarding |
+| Suspended | Paused by you |
+| Canceled | Gone |
+
+Only an **approved** seller can sell.
+
+## 1. Invite a seller
+
+Navigate to **Sellers**, click **Add seller** and name them. On their page, click **Invite** and enter the email of the person who will run the account. They receive a link; accepting it creates their sign-in and lands them in the seller panel, where the checklist is waiting.
+
+## 2. The checklist
+
+What a seller must do before selling differs by marketplace — a hardware marketplace wants insurance documents, a craft marketplace wants a filled-in profile and one product. So the checklist is yours to define, under **Settings → Seller requirements**.
+
+Every store starts with seven, all required:
+
+| Requirement | Done when |
+|---|---|
+| Accept terms | The seller has read and accepted your marketplace terms |
+| Complete profile | Their public profile is filled in |
+| Billing address | They have given the address payouts are billed from |
+| Returns address | They have given the address customer returns go to |
+| Delivery method | They offer at least one way to ship |
+| Shipping box | They have recorded the size and weight of the box they ship in |
+| Minimum products | They have listed at least the number you set |
+
+Five more are available to add: a **document** upload for you to review, a **seller confirmation** they attest to, a **manual check** you perform, a **seller policy** they must publish, **required custom fields** they must fill in, and — for marketplaces that pay through a provider — a **payout account** they connect.
+
+For each one you choose:
+
+- **Required** or recommended. Required items must be done before you can approve the seller; recommended ones are shown but do not block.
+- **Active** — switch off to stop asking for it without deleting it.
+- **Instructions** — what the seller sees, and why you need it.
+
+<Note>
+With no requirements at all, a seller can ask to be reviewed straight away.
+</Note>
+
+Requirements are checked three ways, which is what lets one list cover very different demands: some are **computed** from the seller's own data (a billing address exists, three products are listed), some are **attested** by the seller (accepting terms), and some are **verified** by you (a document, a manual check).
+
+## 3. Review and approve
+
+When the seller finishes, they submit for review and move to **Ready for review**. Open their page:
+
+- The **Onboarding** card shows every requirement and its state. Documents they uploaded are there to open; anything you verify by hand is marked complete by you.
+- **Approve** makes them live. A required item still incomplete blocks this — approving anyway is a deliberate override, recorded as such.
+- **Send back** returns them to Onboarding with a reason they will see.
+
+Your developers can turn on automatic approval, so a seller who completes every required item is approved the moment they submit.
+
+## Related
+
+- [Managing sellers](/user/sellers/managing-sellers) — suspending, reinstating, and the rest of a seller's page
+- [Payouts](/user/sellers/payouts) — the payout account requirement, and what happens once they sell

@@ -1,0 +1,333 @@
+---
+title: Seller Payouts
+description: Pay marketplace sellers through your own rails — a bank transfer API, a wallet, another PSP's platform product — by implementing the payout provider contract.
+---
+
+Spree keeps the marketplace's books on its own: what each seller earned as their orders shipped, and what has been settled to them. A **payout provider** is the part that actually moves the money. The built-in one moves nothing and leaves the operator to pay by bank; Stripe Connect moves it through connected accounts. This guide is for the third case — a provider of your own.
+
+Read [how the ledger works](/developer/core-concepts/sellers#payouts) first. Everything below assumes the vocabulary there: a *transfer* is one order's earning, a *payout* is a batch of them settled to the seller.
+
+## What a provider decides
+
+Core calls a provider at exactly three moments. Each verb takes the ledger row it is about and returns it:
+
+| Verb | When core calls it | What you do |
+|---|---|---|
+| `transfer!(seller_transfer)` | An order is fulfilled and the seller is payable | Credit the seller's earning — or, if your rails only move money at settlement, mark the row `completed` and do nothing else |
+| `pay!(seller_payout)` | A scheduled sweep or an operator settles a seller | Send the batch. Store the provider's own id in `reference`, and leave the status alone — a payout is completed when the money is confirmed to have landed, not when it was sent |
+| `reverse!(seller_transfer)` | A refund takes back part of an earning | Pull the money back if your rails can. Core writes the reversal row either way, so a provider that cannot claw back implements this as a no-op |
+
+Alongside the verbs, a provider tells core what it needs from sellers before it can pay them:
+
+| Method | Answers |
+|---|---|
+| `self.requires_payout_account?` | Must a seller hold an account with you first? When `true`, core will not credit a seller until they are marked payable |
+| `onboarding_url(seller, refresh_url:, return_url:)` | A fresh hosted link where the seller gives you what you need. Minted per call — these links expire. `nil` when you host nothing |
+| `onboarded?(seller)` | Will you accept money for this seller right now? Ask your API; the answer can change without anything happening in Spree |
+| `onboarding_state(seller)` | Why not yet: `:action` (the seller must do something), `:pending` (you are checking), `:rejected`, or `nil` |
+| `onboarding_message(seller)` | Your own words about what is outstanding. Best-effort and unlocalized |
+
+And three class-level descriptors: `display_name` (what the operator picks in settings), `reference_system` (the key a seller's account is filed under — a lowercase identifier, matching your `Spree::Integration` key if you ship one), and `available_for_store?(store)` (`false` until the store holds credentials for you). Leave `provider_key` alone: it is the full class name, and it is what the ledger's unique index on `(provider, reference)` keys on.
+
+Providers are stateless and built with no arguments. Anything request-specific arrives as a parameter.
+
+## Writing your own
+
+The example below settles sellers by bank transfer through a fictional payments API. It moves money only at payout time, so `transfer!` is pure bookkeeping.
+
+```ruby server/app/models/my_app/payout_provider.rb
+module MyApp
+  class PayoutProvider < Spree::PayoutProvider::Base
+    def self.display_name
+      'Acme Bank Rails'
+    end
+
+    def self.reference_system
+      'acme'
+    end
+
+    def self.requires_payout_account?
+      true
+    end
+
+    def self.available_for_store?(store)
+      store.integrations.active.exists?(type: 'MyApp::AcmeIntegration')
+    end
+
+    def onboarding_url(seller, refresh_url:, return_url:)
+      account_id = seller.payout_account_reference(self.class) ||
+                   client(seller.store).accounts.create(email: seller.contact_email).id.tap do |id|
+                     seller.set_payout_account_reference(self.class, id)
+                   end
+
+      client(seller.store).onboarding_links.create(account: account_id, refresh_url:, return_url:).url
+    rescue Acme::Error => e
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    def onboarded?(seller)
+      account = client(seller.store).accounts.retrieve(seller.payout_account_reference(self.class))
+      account.verified?
+    end
+
+    def transfer!(seller_transfer)
+      seller_transfer.update!(status: 'completed')
+      seller_transfer
+    end
+
+    def pay!(seller_payout)
+      seller = seller_payout.seller
+      transfer = client(seller.store).transfers.create(
+        amount: seller_payout.amount,
+        currency: seller_payout.currency,
+        destination: seller.payout_account_reference(self.class),
+        idempotency_key: idempotency_key(seller_payout)
+      )
+
+      seller_payout.update!(reference: transfer.id)
+      seller_payout
+    rescue Acme::TimeoutError, Acme::ServerError => e
+      raise Spree::Core::AmbiguousGatewayError, e.message
+    rescue Acme::Error => e
+      raise Spree::Core::GatewayError, e.message
+    end
+
+    def reverse!(seller_transfer)
+      seller_transfer.update!(status: 'completed')
+      seller_transfer
+    end
+
+    private
+
+    def client(store)
+      Acme::Client.new(api_key: store.integrations.find_by!(type: 'MyApp::AcmeIntegration').preferred_api_key)
+    end
+  end
+end
+```
+
+Credentials come from a [Spree integration](/developer/how-to/custom-delivery-rate-provider#1-store-credentials-in-an-integration), never from environment variables — a marketplace may run several stores, and each pays from its own account. The one the provider reads above holds the API key and the secret your webhooks are signed with:
+
+```ruby server/app/models/my_app/acme_integration.rb
+module MyApp
+  class AcmeIntegration < Spree::Integration
+    preference :api_key, :password
+    preference :webhook_secret, :password
+
+    def self.integration_group = 'payments'
+
+    def can_connect?
+      Acme::Client.new(api_key: preferred_api_key).ping
+      true
+    rescue Acme::Error => e
+      self.connection_error_message = e.message
+      false
+    end
+  end
+end
+```
+
+### Register it
+
+```ruby server/config/initializers/spree.rb
+Spree.integrations << 'MyApp::AcmeIntegration'
+Spree.payout_providers << MyApp::PayoutProvider
+```
+
+The operator then picks it under **Settings → Payouts**, which is the store's `payout_provider` preference. The picker is built from the registry, so your provider appears with the two built-in ones and reports whether the store can use it today:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: providers } = await adminClient.payoutProviders.list()
+// [{ id: 'MyApp::PayoutProvider', name: 'Acme Bank Rails', available: true,
+//    requires_payout_account: true, default: false }, ...]
+```
+
+```bash cURL
+curl https://your-store.com/api/v3/admin/payout_providers \
+  -H "X-Spree-API-Key: sk_xxx"
+```
+
+</CodeGroup>
+
+A store whose configured provider disappears from the registry — a gem removed, a class renamed — silently falls back to the built-in one so the ledger keeps recording. Rename with `def self.provider_key` pinned to the old name if you ever need to, or the rows written under the old name stop matching.
+
+## Errors decide what happens next
+
+Core reads two exceptions, and which one you raise decides whether the money is offered to your API again:
+
+| You raise | What it means | What core does |
+|---|---|---|
+| `Spree::Core::GatewayError` (or any other `StandardError`) | A definite refusal — the money did not move | An earning stays retryable and `SellerTransfers::ExecutePendingDueJob` asks again on its hourly run. A payout is marked `failed` and its earnings are released for the next sweep |
+| `Spree::Core::AmbiguousGatewayError` | Nobody knows — a timeout, a 5xx, an idempotency conflict | The row is parked as `unresolved`. Nothing automatic touches it again; an operator resolves it against your books, or your webhook does |
+
+Get this right. Raising a plain error on a timeout is how the same settlement is sent twice: the payout is failed, its earnings go back on the pile, and the next sweep batches them into a new payout with a new idempotency key — one your provider has never seen.
+
+## Idempotency
+
+Every call carries `idempotency_key(record)` — `spree-<prefixed id>` of the ledger row. Pass it to your API on every write. A crash between your API answering and Spree committing is retried, and the retry must find the movement it already made rather than make a second.
+
+If your rails have no idempotency keys, look the movement up by that key (or by the row's prefixed id in your own metadata) before creating it.
+
+## Seller accounts
+
+A seller's account with your provider is stored as an [external reference](/developer/providers/erp#addressing-records-by-your-keys) filed under your `reference_system`, so a marketplace that migrates between providers keeps every account on record:
+
+| Need | Call |
+|---|---|
+| Record the account you opened | `seller.set_payout_account_reference(MyApp::PayoutProvider, 'acct_123')` |
+| Read it back | `seller.payout_account_reference(MyApp::PayoutProvider)` |
+| Find the seller a webhook is about | `Spree::Seller.with_payout_account(store, MyApp::PayoutProvider, 'acct_123').first` |
+
+The reverse lookup is a uniquely indexed read, scoped to the store's own sellers — a webhook naming an account from another store finds nothing.
+
+## Onboarding
+
+When a store's provider requires an account, the operator adds the **Payout account** row to the seller [onboarding checklist](/developer/core-concepts/sellers#onboarding-requirements). That row reads your `onboarded?` and `onboarding_state`, and the seller panel's button asks for a link at the moment it is clicked:
+
+<CodeGroup>
+
+```typescript Seller SDK
+const { url } = await sellerClient.onboarding.payoutAccount({
+  refresh_url: 'https://sellers.your-store.com/onboarding?refresh=1',
+  return_url: 'https://sellers.your-store.com/onboarding',
+})
+// url is null when the provider hosts no onboarding of its own
+```
+
+```bash cURL
+curl -X POST https://your-store.com/api/v3/seller/onboarding/payout_account \
+  -H "Authorization: Bearer <seller_jwt>" \
+  -H "X-Spree-Seller-Id: sel_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{"refresh_url": "https://sellers.your-store.com/onboarding?refresh=1", "return_url": "https://sellers.your-store.com/onboarding"}'
+```
+
+</CodeGroup>
+
+That request lands in your `onboarding_url`. A `Spree::Core::GatewayError` raised there becomes a 422 the panel can show; anything else is a crash.
+
+## Confirming from a webhook
+
+Two things only your provider can tell Spree, and both usually arrive as webhooks: that a seller became payable, and that a payout landed or bounced. The Stripe provider receives them through the shipped `/api/v3/webhooks/payouts/:payment_method_id` route, which works for any provider that is also a payment method and implements `handle_payout_webhook(raw_body, headers)` on its gateway. A standalone provider adds its own endpoint to the host app.
+
+Address it to the integration rather than the store: the integration is what holds the signing secret, and the store follows from it.
+
+```ruby server/config/routes.rb
+Rails.application.routes.draw do
+  post 'webhooks/acme/:integration_id', to: 'acme_webhooks#create'
+
+  mount Spree::Core::Engine, at: '/'
+end
+```
+
+```ruby server/app/controllers/acme_webhooks_controller.rb
+# Events from the payout provider: POST /webhooks/acme/:integration_id
+#
+# Handled inline rather than in a job — marking a seller payable or a payout
+# settled is a couple of database writes — and answered with a 5xx when they
+# fail, so the provider redelivers. A 200 for work that did not happen is a
+# settlement nobody will ever record.
+class AcmeWebhooksController < ActionController::API
+  include ActionController::RateLimiting
+
+  rate_limit to: 120, within: 1.minute, store: Rails.cache, by: -> { request.remote_ip }
+
+  def create
+    integration = Spree::Integration.active.find_by_prefix_id!(params[:integration_id])
+    event = verified_event(integration)
+
+    case event['type']
+    when 'account.updated' then account_updated(integration.store, event['data'])
+    when 'transfer.paid' then payout_settled(integration.store, event['data'], paid: true)
+    when 'transfer.failed' then payout_settled(integration.store, event['data'], paid: false)
+    end
+
+    head :ok
+  rescue Spree::Integration::WebhookSignatureError
+    head :unauthorized
+  rescue ActiveRecord::RecordNotFound
+    head :not_found
+  rescue StandardError => e
+    Rails.error.report(e, source: 'my_app.webhooks.acme')
+    head :internal_server_error
+  end
+
+  private
+
+  # Constant-time comparison against the secret this integration was given.
+  # Anything unsigned or signed for another store is a 401, so a
+  # misconfigured sender notices rather than being silently ignored.
+  def verified_event(integration)
+    expected = OpenSSL::HMAC.hexdigest('SHA256', integration.preferred_webhook_secret.to_s, request.raw_post)
+    given = request.headers['X-Acme-Signature'].to_s
+    raise Spree::Integration::WebhookSignatureError unless ActiveSupport::SecurityUtils.secure_compare(expected, given)
+
+    JSON.parse(request.raw_post)
+  rescue JSON::ParserError
+    raise Spree::Integration::WebhookSignatureError, 'Malformed webhook payload'
+  end
+
+  # The provider knows the account, not the seller. The reverse lookup is a
+  # uniquely indexed read scoped to this store, so an account id from another
+  # tenant finds nothing.
+  def seller_for(store, account_id)
+    Spree::Seller.with_payout_account(store, MyApp::PayoutProvider, account_id).first
+  end
+
+  # Whether the provider will now accept money for this seller. It can go
+  # back to false — expired documents, a closed account — and clearing the
+  # stamp makes Spree hold new earnings instead of promising money nothing
+  # can send. Becoming payable sends whatever they earned while unverified.
+  def account_updated(store, data)
+    seller = seller_for(store, data['account_id'])
+    return if seller.nil?
+
+    verified = data['verified'] == true
+    became_payable = verified && seller.payouts_enabled_at.nil?
+
+    seller.update!(payouts_enabled_at: verified ? (seller.payouts_enabled_at || Time.current) : nil)
+    Spree::SellerTransfers::ExecutePendingJob.perform_later(seller.id) if became_payable
+  end
+
+  # Matched on the reference stored in `pay!`, never on amount or recency: a
+  # redelivered event would otherwise skip the settlement it already completed
+  # and land on the next one owed. The workflow is idempotent against a second
+  # delivery and races safely with an operator marking the same payout paid.
+  def payout_settled(store, data, paid:)
+    seller = seller_for(store, data['account_id'])
+    return if seller.nil?
+
+    payout = seller.seller_payouts.find_by(provider: MyApp::PayoutProvider.provider_key, reference: data['transfer_id'])
+    return if payout.nil? || payout.completed?
+
+    if paid
+      Spree.seller_payout_complete_workflow.call(seller_payout: payout, reference: data['transfer_id'])
+    else
+      payout.fail!
+    end
+  end
+end
+```
+
+`fail!` releases the payout's earnings so the next sweep picks them up again. Completing publishes `seller_payout.completed`, which is what the seller's balance and their panel read.
+
+## What to test
+
+The Stripe provider's spec in the monorepo (`spree/providers/stripe/spec/models/spree_stripe/payout_provider_spec.rb`) is the reference battery. The cases worth copying:
+
+- `pay!` passes the idempotency key and stores the provider's id as `reference`, leaving the status `pending`
+- A timeout raises `AmbiguousGatewayError`, a refusal raises `GatewayError` — the two the ledger tells apart
+- Amounts are sent in the units your API expects (`Spree::Money::Rounding.to_minor_units(amount, currency)` for cents)
+- `onboarded?` asks the API rather than reading the cached stamp
+
+<Note>
+Refund clawbacks netted across settlements, reconciliation against provider statements, KYC operations and seller tax reporting (DAC7) are Spree Enterprise. Open source ships the ledger, the contract, and the two providers above.
+</Note>
+
+## Related
+
+- [Sellers — payouts](/developer/core-concepts/sellers#payouts) — the ledger, the schedule, and the admin API around it
+- [Commissions](/developer/core-concepts/commissions) — what a seller's earning is net of
+- [Stripe Connect for marketplaces](/integrations/payments/stripe-connect) — the shipped provider that moves money

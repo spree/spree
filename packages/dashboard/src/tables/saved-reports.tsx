@@ -6,6 +6,7 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 
 defineTable<SavedReport>('saved-reports', {
+  docsPath: 'reports/reports',
   title: i18n.t('admin.reports.title'),
   description: i18n.t('admin.reports.subtitle'),
   searchParam: 'name_cont',

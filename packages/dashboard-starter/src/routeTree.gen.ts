@@ -60,6 +60,7 @@ import { Route as SettingsChannelsRouteImport } from './../../dashboard/src/rout
 import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/api-keys'
 import { Route as SettingsAllowedOriginsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/allowed-origins'
 import { Route as SellersTransfersRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/transfers'
+import { Route as SellersCommissionRatesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/commission-rates'
 import { Route as SellersSellerIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/sellers/$sellerId'
 import { Route as ReportsNewRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/reports/new'
 import { Route as ReportsReportIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/reports/$reportId'
@@ -364,6 +365,11 @@ const SellersTransfersRoute = SellersTransfersRouteImport.update({
   path: '/sellers/transfers',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const SellersCommissionRatesRoute = SellersCommissionRatesRouteImport.update({
+  id: '/sellers/commission-rates',
+  path: '/sellers/commission-rates',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const SellersSellerIdRoute = SellersSellerIdRouteImport.update({
   id: '/sellers/$sellerId',
   path: '/sellers/$sellerId',
@@ -644,6 +650,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
   '/$storeId/reports/new': typeof ReportsNewRoute
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
+  '/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
@@ -740,6 +747,7 @@ export interface FileRoutesByTo {
   '/$storeId/reports/$reportId': typeof ReportsReportIdRoute
   '/$storeId/reports/new': typeof ReportsNewRoute
   '/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
+  '/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
@@ -840,6 +848,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/reports/$reportId': typeof ReportsReportIdRoute
   '/_authenticated/$storeId/reports/new': typeof ReportsNewRoute
   '/_authenticated/$storeId/sellers/$sellerId': typeof SellersSellerIdRoute
+  '/_authenticated/$storeId/sellers/commission-rates': typeof SellersCommissionRatesRoute
   '/_authenticated/$storeId/sellers/transfers': typeof SellersTransfersRoute
   '/_authenticated/$storeId/settings/allowed-origins': typeof SettingsAllowedOriginsRoute
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
@@ -940,6 +949,7 @@ export interface FileRouteTypes {
     | '/$storeId/reports/$reportId'
     | '/$storeId/reports/new'
     | '/$storeId/sellers/$sellerId'
+    | '/$storeId/sellers/commission-rates'
     | '/$storeId/sellers/transfers'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
@@ -1036,6 +1046,7 @@ export interface FileRouteTypes {
     | '/$storeId/reports/$reportId'
     | '/$storeId/reports/new'
     | '/$storeId/sellers/$sellerId'
+    | '/$storeId/sellers/commission-rates'
     | '/$storeId/sellers/transfers'
     | '/$storeId/settings/allowed-origins'
     | '/$storeId/settings/api-keys'
@@ -1135,6 +1146,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/reports/$reportId'
     | '/_authenticated/$storeId/reports/new'
     | '/_authenticated/$storeId/sellers/$sellerId'
+    | '/_authenticated/$storeId/sellers/commission-rates'
     | '/_authenticated/$storeId/sellers/transfers'
     | '/_authenticated/$storeId/settings/allowed-origins'
     | '/_authenticated/$storeId/settings/api-keys'
@@ -1566,6 +1578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellersTransfersRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/sellers/commission-rates': {
+      id: '/_authenticated/$storeId/sellers/commission-rates'
+      path: '/sellers/commission-rates'
+      fullPath: '/$storeId/sellers/commission-rates'
+      preLoaderRoute: typeof SellersCommissionRatesRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/sellers/$sellerId': {
       id: '/_authenticated/$storeId/sellers/$sellerId'
       path: '/sellers/$sellerId'
@@ -1992,6 +2011,7 @@ interface authenticatedStoreIdRouteChildren {
   ReportsReportIdRoute: typeof ReportsReportIdRoute
   ReportsNewRoute: typeof ReportsNewRoute
   SellersSellerIdRoute: typeof SellersSellerIdRoute
+  SellersCommissionRatesRoute: typeof SellersCommissionRatesRoute
   SellersTransfersRoute: typeof SellersTransfersRoute
   TransfersNewRoute: typeof TransfersNewRoute
   BrandsDotindexRoute: typeof BrandsDotindexRoute
@@ -2055,6 +2075,7 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   ReportsReportIdRoute: ReportsReportIdRoute,
   ReportsNewRoute: ReportsNewRoute,
   SellersSellerIdRoute: SellersSellerIdRoute,
+  SellersCommissionRatesRoute: SellersCommissionRatesRoute,
   SellersTransfersRoute: SellersTransfersRoute,
   TransfersNewRoute: TransfersNewRoute,
   BrandsDotindexRoute: BrandsDotindexRoute,

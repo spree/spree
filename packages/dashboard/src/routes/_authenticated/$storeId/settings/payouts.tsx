@@ -130,8 +130,9 @@ function PayoutSettingsPage({ store }: { store: Store }) {
         <ResourceLayout
           header={
             <PageHeader
+              docsPath="sellers/payouts"
               title={t('admin.pages.settings.payouts.title')}
-              subtitle={t('admin.pages.settings.payouts.subtitle')}
+              description={t('admin.pages.settings.payouts.subtitle')}
               actions={<FormActions form={form} />}
             />
           }

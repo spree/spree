@@ -26,6 +26,8 @@ function statusLabel(value: string): string {
 
 defineTable<GiftCard>('gift-cards', {
   title: i18n.t('admin.nav.gift_cards'),
+  docsPath: 'loyalty/gift-cards',
+  description: i18n.t('admin.table_descriptions.gift_cards'),
   searchParam: 'code_cont',
   searchPlaceholder: i18n.t('admin.gift_cards.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

@@ -1,0 +1,66 @@
+---
+title: "Purchase Orders"
+description: "Order stock from a supplier, track what is on its way, and receive it into a warehouse."
+---
+
+A purchase order is how you buy stock from a supplier. It records what you asked for, what it costs, which warehouse it is coming to and when it was promised — then, as deliveries arrive, what actually turned up.
+
+Buying from a supplier is different from moving stock you already own. If goods are travelling between your own warehouses, use a [Stock Transfer](/user/inventory/stock-transfers) instead — it has no supplier, no cost per unit and no promised date.
+
+To manage purchase orders, open **Purchase Orders** under Inventory.
+
+## Creating one
+
+Click **New Purchase Order** and fill in:
+
+| Field | What it means |
+|---|---|
+| Supplier | Who you are buying from — a [Supplier](/user/inventory/suppliers) you have set up |
+| Deliver to | The warehouse the goods are coming to |
+| Currency | What the line costs are priced in |
+| Expected | The day the supplier promised |
+| Supplier reference | The supplier's own order number, so you can match paperwork later |
+| Notes | Anything your team needs to know |
+
+Then add lines — a product variant, how many, and what each unit costs.
+
+<Note>
+The currency is fixed once the order is opened, because every line cost is priced in it. Choose it before you mark the order as ordered.
+</Note>
+
+## The lifecycle
+
+A purchase order moves through a few states, and each one means something specific for your stock figures.
+
+| Status | What it means |
+|---|---|
+| Draft | Being put together. Nothing has been ordered and stock is unaffected |
+| Ordered | Sent to the supplier. The units now count as **incoming** on the Inventory page |
+| Partially received | Some deliveries have arrived, more are expected |
+| Received | Everything ordered has arrived |
+| Over-received | More arrived than was ordered — worth checking before you close it |
+| Cancelled | Called off. Anything still outstanding stops counting as incoming |
+
+Use **Mark as ordered** once the order is placed with the supplier. That is the moment the goods start showing as on their way. **Back to draft** reverses it if you sent it too early.
+
+## Receiving a delivery
+
+When goods arrive, click **Receive**. Each delivery is recorded as its own stock receipt — numbered, dated, and carrying the packing-slip reference — so an order that arrives in three shipments has three receipts against it.
+
+For each line, record what you accepted. If something was refused — damaged, wrong item, short — record that too, with a reason. Accepted units are added to the destination warehouse's on-hand count and stop being counted as incoming.
+
+Because each receipt is kept separately, the order's history shows what arrived when, rather than one final number.
+
+## Closing an order short
+
+Sometimes a supplier simply will not send the rest. **Close short** finishes the order with less than you ordered and asks for a reason. The order is marked received and noted as closed short, and the outstanding units stop counting as incoming — so your inventory figures stop promising stock that is not coming.
+
+## Importing and exporting
+
+Purchase orders export to CSV, one row per line — the file you send a supplier.
+
+They import from one too. Rows sharing a reference become a single draft order, naming the [supplier](/user/inventory/suppliers), warehouse and SKU by name. A name that does not exist fails that row rather than quietly creating something, so a typo is visible instead of becoming a new supplier.
+
+## What it costs you
+
+Stock received through a purchase order carries what the units cost into the stock history. That is what makes "what did this inventory cost us" answerable later, without reconstructing it from supplier invoices.

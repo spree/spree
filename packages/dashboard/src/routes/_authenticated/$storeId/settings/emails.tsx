@@ -135,8 +135,9 @@ function EmailSettingsForm({ store }: { store: Store }) {
       <ResourceLayout
         header={
           <PageHeader
+            docsPath="settings/emails"
             title={t('admin.pages.settings.emails.title')}
-            subtitle={t('admin.pages.settings.emails.subtitle')}
+            description={t('admin.pages.settings.emails.subtitle')}
             actions={<FormActions form={form} />}
           />
         }

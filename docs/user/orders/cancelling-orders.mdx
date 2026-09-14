@@ -11,7 +11,7 @@ Spree allows you to cancel orders directly from the admin dashboard in just a fe
 
 Navigate to the **Orders** tab of the admin dashboard.
 
-![Spree Commerce Orders tab showing order states](/docs/images/user/orders/cancelling-orders/1-cancelling-orders.png)
+![Spree Commerce Orders tab showing order statuses](/docs/images/user/orders/cancelling-orders/1-cancelling-orders.png)
 
 Find and click on the order you want to cancel to open its detail page.
 
@@ -31,8 +31,8 @@ Once confirmed, the order will be cancelled and its status will be updated autom
 
 ### Order Status
 
-- The order’s shipment state will be updated to Cancelled.
-- The payment state may also change to Void or Refunded, depending on whether payment has already been captured.
+- The order’s status becomes **Canceled** and its fulfillment status **Canceled** — allocated stock is released and unshipped parcels are stood down.
+- Its payment status becomes **Voided** if the payment was only authorised, or **Refunded** once the captured amount has been given back.
 
 ### Payment Refunds
 
@@ -42,9 +42,9 @@ Refunds are not always automatic. Whether the payment is refunded depends on:
 - The payment method used
 - Whether the payment had already been captured
 
-If the payment state does not change to Refunded, you'll need to issue a refund manually.
+If the payment status does not change to Refunded, you'll need to issue a refund manually.
 
 Learn more about refunds and returns here:
 
 - [<u>Refunding Orders</u>](https://spreecommerce.org/docs/user/orders/refunding-orders)
-- [<u>Returns Processing</u>](https://spreecommerce.org/docs/user/returns/returns-processing)
+- [<u>Returns Processing</u>](https://spreecommerce.org/docs/user/orders/returns)

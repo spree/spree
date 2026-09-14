@@ -5,6 +5,8 @@ import { CreditCardIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<PaymentMethod>('payment-methods', {
+  docsPath: 'settings/payments',
+  description: i18n.t('admin.table_descriptions.payment_methods'),
   title: i18n.t('admin.payment_methods.title'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.payment_methods.search_placeholder'),
