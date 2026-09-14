@@ -5518,3 +5518,38 @@ links out to the customer profile for edits — the list never writes, so the
 per-currency `meta.totals` render as **one summary card per currency above the
 table**, showing outstanding, issued and used; a single line or a footer row
 cannot carry three figures per currency once a store trades in more than one.
+
+
+## 2026-09-14 — Store configuration is a file deployed through the Admin API, not Ruby seeds
+
+Plan: `6.0-cli-configurator.md`.
+
+Shaping an environment (channels, markets, tax, delivery, payment methods,
+catalog, customer groups, roles, origins, webhooks) was only possible from
+Ruby: `db:seed`, `spree:load_sample_data`, or Ruby embedded in the
+dashboard's e2e global setup. None of that works against a hosted instance,
+none of it is reviewable as a change, and headless teams on the API-only
+install may never open the Rails side.
+
+**Decision.** `spree config diff | deploy | introspect | validate` in
+`@spree/cli` reconciles a YAML file against a live store through the Admin
+API. YAML is canonical (comments, block text, clean diffs); JSON is accepted
+because YAML is its superset; no `defineConfig()` TypeScript form. Records are
+matched on natural keys, never prefixed IDs. Deploy is additive: deletes
+happen only in sections named in `--prune`, and `--fail-on-delete` refuses any
+plan with a delete. The engine lives inside `@spree/cli` as an exported
+library entry so the dashboard e2e setup imports it. Every project scaffolded
+by `create-spree-app` ships a `spree.config.yml` with the store, its default
+channel and default market, and `spree init` deploys it.
+
+**Bootstrap stays in Ruby.** The store row, the immutable admin role, the
+first admin user and the first API key have no API by design and a Rails app
+must seed without Node, so `Spree::Seeds::All` does not shrink. Transaction
+data (orders, payments, fulfillments, payouts) is never configuration.
+
+**Consequences for other work.** A new admin-manageable resource needs a
+stable, unique, human-readable key (code, slug or name, unique per store,
+backed by an index) and that key on its Ransack allowlist, or it cannot be
+declared in a config file. Credential attributes on payment methods and
+integrations must never read back in plain text through the Admin API;
+`introspect` relies on that. Do not add a Ruby-side YAML loader to core.
