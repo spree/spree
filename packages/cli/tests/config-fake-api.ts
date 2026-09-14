@@ -48,7 +48,7 @@ export class FakeApi implements ConfigClient {
     if (method === 'POST' && path === '/products/bulk_remove_from_channels')
       return this.publish(options.body, false) as T
     const action = path.match(/^(\/[a-z_]+)\/([^/]+)\/(approve|suspend)$/)
-    if (method === 'POST' && action) {
+    if (method === 'PATCH' && action) {
       const record = this.find(action[1], action[2])
       record.status = action[3] === 'approve' ? 'approved' : 'suspended'
       return record as T

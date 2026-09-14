@@ -94,7 +94,7 @@ export const sellers: Section<SellerEntry> = {
     if (!entry.status || live.status === entry.status) return
     const action = STATUS_ACTIONS[entry.status]
     const body = action === 'approve' ? { override_requirements: true } : {}
-    await ctx.client.request('POST', `/sellers/${live.id}/${action}`, { body })
+    await ctx.client.request('PATCH', `/sellers/${live.id}/${action}`, { body })
   },
   async toFile(live) {
     const entry = present(live as unknown as SellerEntry, SELLER_ATTRIBUTES) as SellerEntry

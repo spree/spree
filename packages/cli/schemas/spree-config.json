@@ -355,8 +355,8 @@
             "type": "string",
             "minLength": 1
           },
-          "stock_locations": {
-            "description": "Stock location names.",
+          "pickup_locations": {
+            "description": "Stock location names a pickup method offers as collection points.",
             "type": "array",
             "items": {
               "type": "string",

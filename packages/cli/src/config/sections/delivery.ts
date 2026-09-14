@@ -128,8 +128,8 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
       payload.delivery_zone_id = await ctx.ref('delivery_zones', entry.delivery_zone, path)
     if (entry.tax_category)
       payload.tax_category_id = await ctx.ref('tax_categories', entry.tax_category, path)
-    const stockLocations = await refs(ctx, 'stock_locations', entry.stock_locations, path)
-    if (stockLocations) payload.stock_location_ids = stockLocations
+    const pickupLocations = await refs(ctx, 'stock_locations', entry.pickup_locations, path)
+    if (pickupLocations) payload.stock_location_ids = pickupLocations
     if (entry.calculator) {
       payload.calculator_type = entry.calculator.type
       if (entry.calculator.preferences)
@@ -155,8 +155,8 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
       const category = await ctx.keyOf('tax_categories', String(live.tax_category_id))
       if (category) entry.tax_category = category
     }
-    const stockLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
-    if (stockLocations.length) entry.stock_locations = stockLocations
+    const pickupLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
+    if (pickupLocations.length) entry.pickup_locations = pickupLocations
     if (live.calculator_type) {
       // Unset preferences and numeric strings are how the API reports them;
       // a file reads better without the former and with plain numbers.

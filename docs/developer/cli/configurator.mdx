@@ -100,7 +100,7 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 | `customer_groups` | `name` | |
 | `tax_categories` | `name` | `default: true` marks the store default |
 | `delivery_zones` | `name` | `countries` and `states` members |
-| `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences` |
+| `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `pickup_locations` by stock location name; unique per store and owner |
 | `suppliers` | `name` | |
 | `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing` |
 | `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants` |

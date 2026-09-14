@@ -104,7 +104,10 @@ export const deliveryMethodSchema = z
     available_to_sellers: z.boolean().optional(),
     tracking_url: z.string().nullable().optional(),
     tax_category: nonEmpty.optional().describe('Tax category name.'),
-    stock_locations: z.array(nonEmpty).optional().describe('Stock location names.'),
+    pickup_locations: z
+      .array(nonEmpty)
+      .optional()
+      .describe('Stock location names a pickup method offers as collection points.'),
     estimated_transit_business_days_min: z.number().int().positive().nullable().optional(),
     estimated_transit_business_days_max: z.number().int().positive().nullable().optional(),
   })
