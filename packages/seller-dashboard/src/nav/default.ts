@@ -93,10 +93,10 @@ nav.add({
   subject: 'seller_profile',
 })
 
-// Settings is a launcher for the secondary rail, not a page: the entries
-// inside it live in `nav/settings.ts`. Bottom section and gated on there
-// being something to see, exactly as the operator's dashboard does it — a
-// member with no settings authority never opens an empty shell.
+// Settings opens the landing page (and the secondary rail on wide viewports).
+// The entries inside it live in `nav/settings.ts`. Bottom section and gated
+// on there being something to see, exactly as the operator's dashboard does
+// it — a member with no settings authority never opens an empty shell.
 nav.add({
   key: 'settings',
   label: i18n.t('nav.settings'),

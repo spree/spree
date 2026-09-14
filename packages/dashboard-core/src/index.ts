@@ -112,6 +112,7 @@ export * from './lib/table-registry'
 export { ensureTimestampColumns } from './lib/timestamp-columns'
 export * from './lib/type-labels'
 export * from './pages/package-types'
+export * from './pages/settings-index'
 export * from './pages/stock-locations'
 // ---------------------------------------------------------------------------
 // Plugin facade — re-exported for convenience; same API as `/plugin` subpath
