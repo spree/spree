@@ -143,6 +143,35 @@ RSpec.describe Spree::SellerTransfers::Reverse do
     end
   end
 
+  # Payouts are swept by settlement currency. A clawback left in the sale's
+  # currency would never join the batch paying the earning it cancels.
+  describe 'when the earning settled in another currency' do
+    it 'takes the money back where the earning landed' do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 80,
+                                           settled_amount: 60, settled_currency: 'GBP')
+
+      reversal = described_class.call(order: order, amount: 30).value
+
+      expect(reversal.settled_currency).to eq('GBP')
+      expect(reversal.currency).to eq('USD')
+    end
+
+    # 30 refunded on a 100 order that earned 80 claws back 24, which at the rate
+    # that earning actually settled at is 18 of the 60 that arrived.
+    it 'claws back at the rate the money went out at' do
+      create(:seller_transfer, :completed, seller: seller, order: order, amount: 80,
+                                           settled_amount: 60, settled_currency: 'GBP')
+
+      expect(described_class.call(order: order, amount: 30).value.settled_amount).to eq(-18)
+    end
+
+    it 'records no settlement when the earning had none' do
+      earn(80)
+
+      expect(described_class.call(order: order, amount: 30).value.settled_amount).to be_nil
+    end
+  end
+
   describe 'what it will not take back' do
     it 'refuses to claw back more than was credited' do
       earn(80)

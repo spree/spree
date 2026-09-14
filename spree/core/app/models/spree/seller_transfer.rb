@@ -81,6 +81,23 @@ module Spree
     # Earned and confirmed, but not yet swept into a settlement — what the next
     # payout will pick up.
     scope :unsettled, -> { completed.where(payout_id: nil) }
+    # Rows whose money can be paid out in this currency. A seller's account
+    # settles in its own currency, so what a payout can move is the settled
+    # currency, not the one the sale was priced in.
+    scope :settling_in, ->(currency) { where(arel_settlement_currency.eq(currency)) }
+
+    # COALESCE rather than two queries, so a row that predates its provider
+    # reporting a settlement still groups under the currency it was earned in.
+    def self.arel_settlement_currency
+      Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[:settled_currency], arel_table[:currency]])
+    end
+
+    # The currencies this seller can actually be paid in.
+    #
+    # @return [Array<String>]
+    def self.settlement_currencies
+      distinct.pluck(arel_settlement_currency)
+    end
 
     self.whitelisted_ransackable_attributes = %w[amount currency kind status provider reference created_at seller_id order_id payout_id]
     self.whitelisted_ransackable_associations = %w[seller order payout refund]
@@ -104,6 +121,28 @@ module Spree
     # @return [Boolean]
     def earning?
       kind == 'earning'
+    end
+
+    # What the seller's account actually holds for this row, and in what.
+    #
+    # A sale is priced in the customer's currency; an account settles in its
+    # own, and the provider converts on the way in. Both figures are recorded
+    # facts — Spree holds no exchange rates and converts nothing — and these
+    # answer the earned side whenever no settlement was reported.
+    #
+    # @return [BigDecimal]
+    def settlement_amount
+      settled_amount || amount
+    end
+
+    # @return [String]
+    def settlement_currency
+      settled_currency.presence || currency
+    end
+
+    # @return [Boolean] whether the provider converted this on the way in
+    def converted?
+      settled_currency.present? && settled_currency != currency
     end
   end
 end

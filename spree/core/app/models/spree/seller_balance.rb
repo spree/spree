@@ -6,45 +6,76 @@ module Spree
   # only presents it. One per currency — a marketplace paying a seller in two
   # currencies has two ledgers, and adding them would answer a question nobody
   # asked.
+  #
+  # A position has two sides when the seller's account settles in a currency
+  # other than the one they sold in: what the sale was worth, and what their
+  # account received once the provider converted it. Both are recorded figures.
+  # They are never added together, and Spree converts nothing itself.
   class SellerBalance
     include ActiveModel::Model
     include ActiveModel::Attributes
 
     attribute :seller
+    # What the sales were priced in.
     attribute :currency, :string
+    # What the seller's account holds, and is paid in. The same as `currency`
+    # unless the provider converted on the way in.
+    attribute :settlement_currency, :string
     # What the seller has earned: completed transfers, reversals included.
     attribute :earned, :decimal, default: 0
-    # What has reached them: completed settlements.
-    attribute :paid, :decimal, default: 0
     # Earnings still with the provider — a transfer not yet confirmed, or one
     # whose outcome is unknown. Shown so a shipped order does not read as
     # unpaid while the money is in flight.
     attribute :pending, :decimal, default: 0
+    # The same completed earnings, as their account received them.
+    attribute :payable, :decimal, default: 0
+    # How much of that has reached them, through settlements that completed.
+    attribute :paid, :decimal, default: 0
 
     extend Spree::DisplayMoney
-    money_methods :earned, :paid, :pending, :balance
+    money_methods :earned, :pending
 
     # @param seller [Spree::Seller]
-    # @param currency [String]
+    # @param currency [String] what the sales were priced in
+    # @param settlement_currency [String] what the account settles in
     # @return [Spree::SellerBalance]
-    def self.for(seller, currency)
-      transfers = seller.seller_transfers.where(currency: currency)
+    def self.for(seller, currency, settlement_currency = currency)
+      transfers = seller.seller_transfers.where(currency: currency).settling_in(settlement_currency)
+      completed = transfers.completed.to_a
 
       new(
         seller: seller,
         currency: currency,
-        earned: transfers.completed.sum(:amount),
+        settlement_currency: settlement_currency,
+        earned: completed.sum(&:amount),
         pending: transfers.with_status('pending', 'processing', 'unresolved').sum(:amount),
-        paid: seller.seller_payouts.completed.where(currency: currency).sum(:amount)
+        payable: completed.sum(&:settlement_amount),
+        # Read through the transfers a settlement claimed rather than off the
+        # settlement's own total: two sale currencies can settle into one, and
+        # the payout's figure would then count against both of them.
+        paid: completed.select { |transfer| transfer.payout&.completed? }.sum(&:settlement_amount)
       )
     end
 
-    # What the marketplace still owes — the same figure {Spree::Seller#balance}
-    # answers, which is what the payout sweep settles.
+    # What the marketplace still owes, in the currency it can actually be sent
+    # in — which is what the payout sweep settles.
     #
     # @return [BigDecimal]
     def balance
-      earned - paid
+      payable - paid
+    end
+
+    # @return [Boolean] whether the provider converted this seller's earnings
+    def converted?
+      settlement_currency != currency
+    end
+
+    # Formatted in the settlement currency rather than the sale's, since these
+    # are what the account holds.
+    %i[payable paid balance].each do |figure|
+      define_method(:"display_#{figure}") do
+        Spree::Money.new(public_send(figure), currency: settlement_currency)
+      end
     end
   end
 end

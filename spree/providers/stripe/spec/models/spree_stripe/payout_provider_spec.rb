@@ -166,6 +166,53 @@ RSpec.describe SpreeStripe::PayoutProvider do
     end
   end
 
+  # An account settles in its own currency and Stripe converts on the way in, so
+  # what the ledger owes and what the account can send are different figures.
+  describe 'what the seller actually received' do
+    def transfer_settling(minor, currency)
+      Stripe::StripeObject.construct_from(
+        id: 'tr_1',
+        destination_payment: { balance_transaction: { amount: minor, currency: currency } }
+      )
+    end
+
+    it 'records the converted figure the account received' do
+      allow(Stripe::Transfer).to receive(:create).and_return(transfer_settling(5_160, 'gbp'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_amount).to eq(51.60)
+      expect(seller_transfer.settled_currency).to eq('GBP')
+    end
+
+    it 'asks Stripe for it, since the transfer alone does not say' do
+      expect(Stripe::Transfer).to receive(:create).
+        with(hash_including(expand: ['destination_payment.balance_transaction']), anything).
+        and_return(transfer_settling(4_250, 'usd'))
+
+      described_class.new.transfer!(seller_transfer)
+    end
+
+    it 'records a same-currency settlement too, so nothing has to be inferred' do
+      allow(Stripe::Transfer).to receive(:create).and_return(transfer_settling(4_250, 'usd'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_currency).to eq('USD')
+      expect(seller_transfer).not_to be_converted
+    end
+
+    # Better to read the earned figure than to invent a settlement.
+    it 'leaves it unrecorded when Stripe did not say' do
+      allow(Stripe::Transfer).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'tr_1'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_amount).to be_nil
+      expect(seller_transfer.settlement_currency).to eq('USD')
+    end
+  end
+
   describe '#pay!' do
     let(:payout) { create(:seller_payout, seller: seller, amount: 42.5, currency: 'USD') }
 

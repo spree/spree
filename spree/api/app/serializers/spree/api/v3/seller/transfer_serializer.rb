@@ -14,6 +14,9 @@ module Spree
                    currency: :string,
                    provider: :string,
                    amount: :string,
+                   settled_amount: 'string | null',
+                   settled_currency: 'string | null',
+                   converted: :boolean,
                    display_amount: :string,
                    reference: 'string | null',
                    order_id: 'string | null',
@@ -27,6 +30,12 @@ module Spree
           # A string, so the figure a seller is paid round-trips exactly.
           attribute(:amount) { |transfer| transfer.amount&.to_s }
           attribute(:display_amount) { |transfer| transfer.display_amount.to_s }
+
+          # What this seller's account received, when the provider converted
+          # on the way in. Null when it settled in the currency of the sale.
+          attribute(:settled_amount) { |transfer| transfer.settled_amount&.to_s }
+          attribute(:settled_currency) { |transfer| transfer.settled_currency }
+          attribute(:converted) { |transfer| transfer.converted? }
 
           %i[order payout reversed_from].each do |association|
             attribute(:"#{association}_id") { |transfer| transfer.public_send(association)&.prefixed_id }

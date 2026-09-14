@@ -66,14 +66,17 @@ module Spree
         halt!(seller)
       end
 
+      # Selected and summed on what the seller's account holds, not on what the
+      # sale was priced in: a cross-border account settles in its own currency,
+      # and that is the only figure a payout can move.
       def collect_transfers
-        rows = seller.seller_transfers.unsettled.where(currency: currency).order(:created_at, :id).to_a
+        rows = seller.seller_transfers.unsettled.settling_in(currency).order(:created_at, :id).to_a
         halt!(seller) if rows.empty?
 
         @transfers = payable_within(rows)
         halt!(seller) if @transfers.empty?
 
-        @amount = @transfers.sum(&:amount)
+        @amount = @transfers.sum(&:settlement_amount)
       end
 
       # Every reversal counts, whatever is available: it is money already taken
@@ -84,12 +87,12 @@ module Spree
       def payable_within(rows)
         return rows if @available.nil?
 
-        reversals, earnings = rows.partition { |row| row.amount.negative? }
-        running = reversals.sum(&:amount)
+        reversals, earnings = rows.partition { |row| row.settlement_amount.negative? }
+        running = reversals.sum(&:settlement_amount)
 
         reversals + earnings.take_while do |earning|
-          fits = (running + earning.amount) <= @available
-          running += earning.amount if fits
+          fits = (running + earning.settlement_amount) <= @available
+          running += earning.settlement_amount if fits
           fits
         end
       end

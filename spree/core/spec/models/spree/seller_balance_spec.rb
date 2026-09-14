@@ -17,21 +17,23 @@ RSpec.describe Spree::SellerBalance, type: :model do
       earn(25, status: 'pending')
       earn(10, status: 'unresolved')
       earn(7, status: 'failed')
-      create(:seller_payout, :completed, seller: seller, amount: 50)
+      settled = create(:seller_payout, :completed, seller: seller, amount: 50)
+      earn(50).update!(payout: settled)
       create(:seller_payout, seller: seller, amount: 15)
 
       balance = described_class.for(seller, 'USD')
 
-      expect(balance.earned).to eq(65)
+      expect(balance.earned).to eq(115)
       expect(balance.paid).to eq(50)
-      expect(balance.balance).to eq(15)
+      expect(balance.balance).to eq(65)
       expect(balance.pending).to eq(35)
-      expect(balance.display_balance.to_s).to eq('$15.00')
+      expect(balance.display_balance.to_s).to eq('$65.00')
     end
 
     it 'answers what Seller#balance answers' do
       earn(40)
-      create(:seller_payout, :completed, seller: seller, amount: 10)
+      settled = create(:seller_payout, :completed, seller: seller, amount: 10)
+      earn(10).update!(payout: settled)
 
       expect(described_class.for(seller, 'USD').balance).to eq(seller.balance('USD'))
     end

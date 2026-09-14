@@ -5627,7 +5627,9 @@
         "owed": "Do zapłaty ({{currency}})",
         "earned": "Zarobione",
         "paid": "Wypłacone",
-        "pending": "W drodze"
+        "pending": "W drodze",
+        "earned_in": "Earned ({{currency}})",
+        "payable": "Payable"
       },
       "complete": {
         "title": "Oznacz wypłatę jako zapłaconą",

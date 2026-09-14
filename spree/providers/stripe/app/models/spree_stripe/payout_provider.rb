@@ -176,12 +176,18 @@ module SpreeStripe
           metadata: {
             spree_seller_transfer_id: seller_transfer.id,
             spree_order_number: seller_transfer.order.number
-          }
+          },
+          # What the seller's own account received. An account settles in its
+          # own currency and Stripe converts on the way in, so the sale's
+          # figure is not the payable one.
+          expand: ['destination_payment.balance_transaction']
         }.compact,
         gateway.api_options.merge(idempotency_key: idempotency_key(seller_transfer))
       )
 
-      seller_transfer.update!(status: 'completed', reference: transfer.id)
+      seller_transfer.update!(
+        { status: 'completed', reference: transfer.id }.merge(settlement_of(transfer))
+      )
       seller_transfer
     rescue *AMBIGUOUS_ERRORS => e
       # As with a settlement: the transfer may have been made before the answer
@@ -272,6 +278,23 @@ module SpreeStripe
     end
 
     private
+
+    # What landed on the seller's account, read off the balance transaction of
+    # the payment the transfer created there. Empty when Stripe did not expand
+    # it, which leaves the ledger reading the earned figures rather than
+    # inventing a settlement.
+    #
+    # @return [Hash]
+    def settlement_of(transfer)
+      balance_transaction = transfer.try(:destination_payment).try(:balance_transaction)
+      return {} if balance_transaction.blank? || balance_transaction.try(:currency).blank?
+
+      {
+        settled_amount: Spree::Money::Rounding.from_minor_units(balance_transaction.amount,
+                                                                balance_transaction.currency),
+        settled_currency: balance_transaction.currency.upcase
+      }
+    end
 
     def complete_without_sending(seller_transfer)
       seller_transfer.update!(status: 'completed')

@@ -65,8 +65,10 @@ module Spree
 
     # @return [BigDecimal] what the transfers this payout holds actually come
     #   to, for checking a stored amount against its parts
+    # Summed on what the seller's account actually received, since that is
+    # what this payout moves.
     def transfers_total
-      transfers.sum(:amount)
+      transfers.sum(&:settlement_amount)
     end
 
     # Gives up on this settlement and puts its earnings back.

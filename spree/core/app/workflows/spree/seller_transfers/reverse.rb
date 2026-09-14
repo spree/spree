@@ -155,19 +155,42 @@ module Spree
           next nil if bounded <= 0
 
           Spree::SellerTransfer.create!(
-            store: @earning.store,
-            seller: @earning.seller,
-            order: order,
-            reversed_from: @earning,
-            refund: refund,
-            # Negative, so what a seller has earned is the plain sum of the rows.
-            amount: -bounded,
-            currency: @earning.currency,
-            kind: 'refund_reversal',
-            provider: @earning.provider,
-            status: 'pending'
+            {
+              store: @earning.store,
+              seller: @earning.seller,
+              order: order,
+              reversed_from: @earning,
+              refund: refund,
+              # Negative, so what a seller has earned is the plain sum of the rows.
+              amount: -bounded,
+              currency: @earning.currency,
+              kind: 'refund_reversal',
+              provider: @earning.provider,
+              status: 'pending'
+            }.merge(settlement_of(bounded))
           )
         end
+      end
+
+      # A clawback has to settle where its earning settled. Payouts are swept by
+      # settlement currency, so a reversal left in the sale's currency would
+      # never join the batch that pays the earning it cancels — the seller would
+      # be paid in full for goods that came back, and the row would sit in a
+      # currency their account cannot pay.
+      #
+      # Prorated from the earning's own settled figure rather than converted at
+      # today's rate, so the money comes back at the rate it went out at.
+      def settlement_of(bounded)
+        return {} if @earning.settled_amount.blank? || @earning.amount.zero?
+
+        share = @earning.settled_amount * (bounded / @earning.amount)
+
+        {
+          settled_amount: -Spree::Money::Rounding.quantize(
+            share, Spree::Money::Rounding.precision(@earning.settlement_currency)
+          ),
+          settled_currency: @earning.settled_currency
+        }
       end
 
       def execute_reversal

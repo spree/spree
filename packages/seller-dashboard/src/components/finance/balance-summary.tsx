@@ -9,6 +9,10 @@ import { useTranslation } from 'react-i18next'
  * positions rather than one total. `pending` is money the payout provider has
  * not confirmed yet — shown beside the balance so a seller who has shipped
  * does not read their own order as unpaid.
+ *
+ * A position has two sides when the seller banks in a currency other than the
+ * one they sold in: the balance is what their account will actually be paid,
+ * and the sale's own figure is shown beneath it. Both are recorded figures.
  */
 export function BalanceSummary({ balances }: { balances: Balance[] }) {
   const { t } = useTranslation()
@@ -27,14 +31,22 @@ export function BalanceSummary({ balances }: { balances: Balance[] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {balances.map((balance) => (
-        <Card key={balance.currency}>
+        <Card key={`${balance.currency}-${balance.settlement_currency}`}>
           <CardHeader>
-            <CardTitle>{t('earnings.balance.owed', { currency: balance.currency })}</CardTitle>
+            <CardTitle>{t('earnings.balance.owed', { currency: balance.settlement_currency })}</CardTitle>
+            {balance.converted && (
+              <CardDescription>
+                {t('earnings.balance.converted', { currency: balance.currency })}
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <span className="text-2xl font-semibold tabular-nums">{balance.display_balance}</span>
             <dl className="flex flex-col gap-1 text-sm">
               <Figure label={t('earnings.balance.earned')} value={balance.display_earned} />
+              {balance.converted && (
+                <Figure label={t('earnings.balance.payable')} value={balance.display_payable} />
+              )}
               <Figure label={t('earnings.balance.paid')} value={balance.display_paid} />
               <Figure label={t('earnings.balance.pending')} value={balance.display_pending} />
             </dl>
