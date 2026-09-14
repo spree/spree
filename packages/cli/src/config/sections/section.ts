@@ -104,6 +104,9 @@ export function present<T extends object>(source: T, attributes: (keyof T)[]): P
   return entry
 }
 
+/** Operator-owned rows only, on tables a marketplace's sellers also write to. */
+export const FIRST_PARTY = { 'q[seller_id_null]': 1 } as const
+
 export function byName(live: LiveRecord): string {
   return String(live.name)
 }

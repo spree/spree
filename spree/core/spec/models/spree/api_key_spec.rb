@@ -26,6 +26,16 @@ RSpec.describe Spree::ApiKey, type: :model do
       expect(build(:api_key, name: 'Storefront', store: store)).to be_valid
     end
 
+    it 'still saves a key that shared its name before the rule existed' do
+      store = create(:store)
+      create(:api_key, name: 'Storefront', store: store)
+      older = create(:api_key, name: 'Storefront (old)', store: store)
+      older.update_column(:name, 'Storefront')
+
+      expect { older.revoke! }.not_to raise_error
+      expect(older.reload.revoked_at).to be_present
+    end
+
     it 'requires a key_type' do
       api_key.key_type = nil
       expect(api_key).not_to be_valid

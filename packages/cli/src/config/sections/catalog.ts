@@ -1,7 +1,7 @@
 import type { RunContext } from '../context.js'
 import type { CategoryEntry, ProductEntry, VariantEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
-import { type Payload, pick, present, refs, type Section } from './section.js'
+import { FIRST_PARTY, type Payload, pick, present, refs, type Section } from './section.js'
 
 // --- Categories ------------------------------------------------------------
 
@@ -251,6 +251,7 @@ export const products: Section<ProductEntry> = {
   path: '/products',
   keyAttribute: 'slug',
   filterable: true,
+  listParams: FIRST_PARTY,
   expand: PRODUCT_EXPAND,
   liveKey: (live) => String(live.slug),
   fileKeys: (config) => (config.products ?? []).map((product) => product.slug),

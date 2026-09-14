@@ -16,9 +16,12 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
-    validates :url, presence: true,
-                    uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
-                                  conditions: -> { where(deleted_at: nil) } }
+    validates :url, presence: true
+    # Checked only when the url changes, so a row that already shares its
+    # url with another (from before this rule) can still be saved.
+    validates :url, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+                                  conditions: -> { where(deleted_at: nil) } },
+                    if: :will_save_change_to_url?
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
     validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }

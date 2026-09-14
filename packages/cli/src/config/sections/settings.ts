@@ -10,6 +10,7 @@ import type {
 import type { LiveRecord } from '../types.js'
 import {
   byName,
+  FIRST_PARTY,
   keysOf,
   type Payload,
   pick,
@@ -219,6 +220,7 @@ export const stockLocations: Section<StockLocationEntry> = {
   path: '/stock_locations',
   keyAttribute: 'name',
   filterable: true,
+  listParams: FIRST_PARTY,
   liveKey: byName,
   fileKeys: (config) => (config.stock_locations ?? []).map((location) => location.name),
   entries: (config) => config.stock_locations ?? [],

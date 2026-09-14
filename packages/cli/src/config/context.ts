@@ -1,6 +1,6 @@
 import { listAll, listByKeys } from './client.js'
 import { PendingRef } from './diff.js'
-import { DanglingReferenceError } from './errors.js'
+import { ConfigError, DanglingReferenceError } from './errors.js'
 import type { SpreeConfig } from './schema.js'
 import type { ConfigClient, LiveRecord } from './types.js'
 
@@ -17,6 +17,8 @@ export interface SectionSource {
   /** Whether `q[<key>_in]` filters on the key; otherwise the section is listed whole. */
   filterable: boolean
   expand?: string[]
+  /** Extra list filters, e.g. first-party rows only on a table sellers share. */
+  listParams?: Record<string, string | number | boolean>
   liveKey: (live: LiveRecord) => string
   /** Natural keys the file declares, for the reference check. */
   fileKeys: (config: SpreeConfig) => string[]
@@ -47,9 +49,12 @@ export class RunContext {
     if (!source) throw new Error(`unknown section ${section}`)
     const cached = this.live.get(section)
     if (cached?.complete) return cached
-    if (keys?.every((key) => cached?.byKey.has(key))) return cached as LiveSection
+    if (cached && keys?.every((key) => cached.byKey.has(key))) return cached
 
-    const params = source.expand ? { expand: source.expand.join(',') } : {}
+    const params = {
+      ...(source.listParams ?? {}),
+      ...(source.expand ? { expand: source.expand.join(',') } : {}),
+    }
     const partial = Boolean(keys && source.filterable)
     const records = partial
       ? await listByKeys(this.client, source.path, source.keyAttribute, keys as string[], params)
@@ -69,13 +74,19 @@ export class RunContext {
     return loaded
   }
 
-  /** The one live record under a key, or null when there is none. Several is the caller's problem. */
-  async find(section: string, key: string): Promise<LiveRecord | null> {
+  /** The one live record under a key, or null when there is none. */
+  async find(section: string, key: string, path = section): Promise<LiveRecord | null> {
     const fresh = this.created.get(section)?.get(key)
     if (fresh) return fresh
     const loaded = await this.load(section, [key])
     const matches = loaded.byKey.get(key) ?? []
-    return matches.length === 1 ? matches[0] : null
+    if (matches.length > 1) {
+      throw new ConfigError(
+        `${matches.length} live ${section} share the key "${key}"; rename them before deploying`,
+        path,
+      )
+    }
+    return matches[0] ?? null
   }
 
   /** Records the file declares under a section, by key. */
@@ -89,7 +100,7 @@ export class RunContext {
    * reference when the file declares the record and the run will create it.
    */
   async ref(section: string, key: string, path: string): Promise<string | PendingRef> {
-    const live = await this.find(section, key)
+    const live = await this.find(section, key, path)
     if (live) return live.id
     if (this.declares(section, key)) return new PendingRef(section, key)
     throw new DanglingReferenceError(section, key, path)

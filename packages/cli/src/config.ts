@@ -245,10 +245,14 @@ export async function mintProjectCredentials(
 
   let stdout: string
   try {
+    // REPLACE: the name is fixed, and names are unique among a store's active
+    // keys, so a re-run (an interrupted init, a deleted credentials file)
+    // supersedes the previous key instead of colliding with it.
     stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
       NAME: '@spree/cli (auto)',
       KEY_TYPE: 'secret',
       SCOPES: 'read_all',
+      REPLACE: 'true',
     })
   } catch (error) {
     const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)

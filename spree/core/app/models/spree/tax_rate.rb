@@ -26,9 +26,12 @@ module Spree
     validates :amount, presence: true, numericality: { allow_nil: true }
     # Per store, so a config file can address a rate by name; a soft-deleted
     # rate frees its name.
-    validates :name, presence: true,
-                     uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
-                                   conditions: -> { where(deleted_at: nil) } }
+    validates :name, presence: true
+    # Checked only when the name changes, so a row that already shares its
+    # name with another (from before this rule) can still be saved.
+    validates :name, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+                                   conditions: -> { where(deleted_at: nil) } },
+                     if: :will_save_change_to_name?
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole

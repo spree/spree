@@ -1,6 +1,16 @@
+import { numericString } from '../diff.js'
 import type { DeliveryMethodEntry, DeliveryZoneEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
-import { byName, keysOf, type Payload, pick, present, refs, type Section } from './section.js'
+import {
+  byName,
+  FIRST_PARTY,
+  keysOf,
+  type Payload,
+  pick,
+  present,
+  refs,
+  type Section,
+} from './section.js'
 
 interface ZoneMember {
   member_type: string
@@ -97,9 +107,8 @@ function isEmptyPreference(value: unknown): boolean {
 }
 
 function numeric(value: unknown): unknown {
-  return typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Number(value))
-    ? Number(value)
-    : value
+  if (typeof value !== 'string') return value
+  return numericString(value) ?? value
 }
 
 export const deliveryMethods: Section<DeliveryMethodEntry> = {
@@ -108,6 +117,7 @@ export const deliveryMethods: Section<DeliveryMethodEntry> = {
   path: '/delivery_methods',
   keyAttribute: 'name',
   filterable: true,
+  listParams: FIRST_PARTY,
   liveKey: byName,
   fileKeys: (config) => (config.delivery_methods ?? []).map((method) => method.name),
   entries: (config) => config.delivery_methods ?? [],

@@ -457,3 +457,38 @@ describe('missingScopes', () => {
     expect(await missingScopes(api, ['products'])).toBeNull()
   })
 })
+
+describe('edge cases', () => {
+  it('plans an empty section as nothing to do', async () => {
+    const api = new FakeApi()
+    api.seed('/products', [{ slug: 'left-alone', name: 'Left alone' }])
+    const { config } = parseConfig('version: 1\nproducts: []\ncustomers: []\n')
+    const plan = await planConfig(config, api)
+    expect(plan.sections.map((section) => [section.section, section.operations.length])).toEqual([
+      ['products', 0],
+      ['customers', 0],
+    ])
+  })
+
+  it('reports a referenced key shared by several live records as ambiguous', async () => {
+    const api = new FakeApi()
+    api.seed('/delivery_zones', [{ name: 'Europe' }, { name: 'Europe' }])
+    const { config } = parseConfig(
+      'version: 1\ndelivery_methods:\n  - name: Standard\n    delivery_zone: Europe\n',
+    )
+    const plan = await planConfig(config, api)
+    expect(planOperations(plan)[0]).toMatchObject({
+      kind: 'error',
+      path: 'delivery_methods[0]',
+      message: expect.stringMatching(/2 live delivery_zones share the key "Europe"/),
+    })
+  })
+
+  it('lists only first-party rows on tables sellers also write to', async () => {
+    const api = new FakeApi()
+    api.seed('/stock_locations', [{ name: 'Warehouse' }])
+    const { config } = parseConfig('version: 1\nstock_locations:\n  - name: Warehouse\n')
+    await planConfig(config, api)
+    expect(api.calls[0].params).toMatchObject({ 'q[seller_id_null]': 1 })
+  })
+})

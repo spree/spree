@@ -172,11 +172,13 @@ describe Spree::DeliveryMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
-    it 'requires a name unique within the store' do
+    it 'requires a name unique within the store and owner' do
       create(:delivery_method, name: 'Standard')
 
       expect(build(:delivery_method, name: 'Standard')).not_to be_valid
       expect(build(:delivery_method, name: 'Standard', store: create(:store))).to be_valid
+      # A seller's own method shares the table and may reuse the operator's name.
+      expect(build(:delivery_method, name: 'Standard', seller: create(:seller))).to be_valid
     end
 
     it 'defaults to storefront visible and rejects a blank value' do

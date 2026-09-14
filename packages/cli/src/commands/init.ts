@@ -380,6 +380,9 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
       NAME: 'spree init (config deploy)',
       KEY_TYPE: 'secret',
       SCOPES: 'write_all',
+      // A revoke that did not happen (Ctrl-C mid-deploy) must not block the
+      // next run: the fixed name supersedes the leftover key.
+      REPLACE: 'true',
     })
   ).match(/sk_[A-Za-z0-9_-]+/)?.[0]
   if (!token) throw new Error(`Could not mint a key to deploy ${DEFAULT_CONFIG_FILE}.`)
@@ -398,6 +401,12 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
           : `${DEFAULT_CONFIG_FILE} deployed (nothing to change).`,
       )
     }
+  } catch (error) {
+    // Setup still stands without the deploy; the file can be applied by hand.
+    s.stop(pc.yellow(`Could not deploy ${DEFAULT_CONFIG_FILE}.`))
+    p.log.warn(
+      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config deploy\` once the app is up.`,
+    )
   } finally {
     // The key exists for this deploy only; revoking it through the API needs
     // no rake round-trip and works whether or not the deploy succeeded.
