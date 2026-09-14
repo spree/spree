@@ -781,7 +781,7 @@ module Spree
   # code only registers the vocabulary.
   #
   # @example Registering a resource from an extension
-  #   Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  #   Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
   #     [SpreeReviews::Review]
   #   })
   #

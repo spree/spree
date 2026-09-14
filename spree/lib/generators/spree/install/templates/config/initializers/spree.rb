@@ -88,7 +88,7 @@ Rails.application.config.after_initialize do
   #     .update!(permissions: %w[read_orders read_customers])
   #
   # Extensions can register additional permission resources:
-  # Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [MyApp::Review] })
+  # Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> { [MyApp::Review] })
   #
   # To customize authorization beyond the catalog, replace the ability class:
   # Spree::Dependencies.ability_class = 'MyApp::Ability'

@@ -148,7 +148,7 @@ appearing twice in the admin;
 
 **Suppliers and purchase orders are one new catalog resource, `:purchasing`**
 (`read_purchasing` / `write_purchasing`), registered beside `:stock` in
-`PermissionConfiguration#register_default_resources`. The plan's earlier
+`PermissionConfiguration::DefaultCatalog.register`. The plan's earlier
 `read_inventory` / `write_inventory` would have put "Stock" and "Inventory"
 side by side on the roles screen with nothing to tell a merchant which covers
 what. `Spree::StockTransferItem` joins the existing `:stock` subject list.
@@ -3937,7 +3937,7 @@ match `resource_type: 'Spree::Store'` (today it matches `store_id`, which a
 vendor-resourced assignment passes — scope-exempt admin endpoints such as
 `/admin/tags` and `/admin/store` would be reachable by a vendor-only user
 once vendors exist); ship this ahead of the Vendor model. `Role#audience` and
-a vendor-grantable marker on `register_resource` come from the RBAC plan's
+a vendor-grantable marker on `register_scope` come from the RBAC plan's
 settled direction. Never add a login surface without its own strategy
 registry and JWT audience; refresh tokens carry the audience they were minted
 for. Accepted trade-off: password policy and lockout stay shared between
@@ -5387,7 +5387,7 @@ books, and a seller's owner must be able to hand a packing teammate the orders
 without also handing them the money. So a new read-only, seller-audience
 catalog resource with a symbol subject — the ledger classes stay subjects of
 the operator's `payouts` key, and claiming them twice would make
-`resource_for_subject` answer by registration order. The cost is real and was
+`scope_for_resource` answer by registration order. The cost is real and was
 accepted knowingly: **a role holds the keys it was created with and is never
 re-read**, so a key added to the catalog reaches new roles only. That is
 harmless here because sellers are new in 6.0 and no older role exists — but a

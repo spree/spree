@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
 
     it 'returns the full catalog as permission_keys for admin users' do
       subject
-      expect(json_response['permission_keys']).to eq(Spree.permissions.catalog_keys)
+      expect(json_response['permission_keys']).to eq(Spree.permissions.grantable_keys(:store))
     end
 
     context 'as a staffer with a limited role' do

@@ -13,7 +13,18 @@ RSpec.describe Spree::Api::V3::Admin::PermissionsController, type: :controller d
 
       expect(response).to have_http_status(:ok)
       keys = json_response['data'].map { |entry| entry['key'] }
-      expect(keys).to eq(Spree.permissions.catalog_keys)
+      expect(keys).to eq(Spree.permissions.grantable_keys(:store))
+    end
+
+    # Both surfaces this feeds build something the store owns — a store role,
+    # a secret key — and neither can hold another audience's keys, so offering
+    # them would only produce a role that refuses to save.
+    it 'omits the keys only another audience may hold' do
+      get :index, as: :json
+
+      keys = json_response['data'].map { |entry| entry['key'] }
+      expect(keys).not_to include('read_seller_profile', 'write_seller_profile', 'read_seller_earnings')
+      expect(keys).to include('read_sellers', 'read_payouts', 'read_commissions')
     end
 
     it 'describes each entry with resource, kind, group and labels' do

@@ -27,7 +27,7 @@ Register your models as a catalog resource once; the keys appear in the role edi
 
 ```ruby
 # in your engine's initializer
-Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
   [SpreeReviews::Review]
 })
 ```

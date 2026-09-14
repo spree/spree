@@ -14,8 +14,11 @@ module Spree
 
           attributes :name, :description, created_at: :iso8601, updated_at: :iso8601
 
+          # The admin role ignores its stored list and grants everything — so
+          # it reports every key its own audience may hold, which is what the
+          # role grid renders and what a duplicate of it copies.
           attribute(:permissions) do |role|
-            role.name == Spree::Role::ADMIN_ROLE ? Spree.permissions.catalog_keys : role.permissions
+            role.name == Spree::Role::ADMIN_ROLE ? Spree.permissions.grantable_keys(role.audience) : role.permissions
           end
 
           attribute(:mutable, &:mutable?)

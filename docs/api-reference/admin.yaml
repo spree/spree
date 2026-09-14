@@ -342,6 +342,9 @@ paths:
                   - all
                   has_conditions: false
                 permission_keys:
+                - read_dashboard
+                - read_reports
+                - write_reports
                 - read_orders
                 - write_orders
                 - read_payments
@@ -350,10 +353,6 @@ paths:
                 - write_fulfillments
                 - read_refunds
                 - write_refunds
-                - read_gift_cards
-                - write_gift_cards
-                - read_store_credits
-                - write_store_credits
                 - read_products
                 - write_products
                 - read_product_types
@@ -370,10 +369,20 @@ paths:
                 - write_stock
                 - read_purchasing
                 - write_purchasing
-                - read_promotions
-                - write_promotions
                 - read_customers
                 - write_customers
+                - read_sellers
+                - write_sellers
+                - read_commissions
+                - write_commissions
+                - read_payouts
+                - write_payouts
+                - read_gift_cards
+                - write_gift_cards
+                - read_store_credits
+                - write_store_credits
+                - read_promotions
+                - write_promotions
                 - read_settings
                 - write_settings
                 - read_delivery_methods
@@ -388,18 +397,6 @@ paths:
                 - write_api_keys
                 - read_staff
                 - write_staff
-                - read_sellers
-                - write_sellers
-                - read_commissions
-                - write_commissions
-                - read_payouts
-                - write_payouts
-                - read_seller_profile
-                - write_seller_profile
-                - read_seller_earnings
-                - read_dashboard
-                - read_reports
-                - write_reports
               schema:
                 "$ref": "#/components/schemas/MeResponse"
         '401':
@@ -482,6 +479,9 @@ paths:
                   - all
                   has_conditions: false
                 permission_keys:
+                - read_dashboard
+                - read_reports
+                - write_reports
                 - read_orders
                 - write_orders
                 - read_payments
@@ -490,10 +490,6 @@ paths:
                 - write_fulfillments
                 - read_refunds
                 - write_refunds
-                - read_gift_cards
-                - write_gift_cards
-                - read_store_credits
-                - write_store_credits
                 - read_products
                 - write_products
                 - read_product_types
@@ -510,10 +506,20 @@ paths:
                 - write_stock
                 - read_purchasing
                 - write_purchasing
-                - read_promotions
-                - write_promotions
                 - read_customers
                 - write_customers
+                - read_sellers
+                - write_sellers
+                - read_commissions
+                - write_commissions
+                - read_payouts
+                - write_payouts
+                - read_gift_cards
+                - write_gift_cards
+                - read_store_credits
+                - write_store_credits
+                - read_promotions
+                - write_promotions
                 - read_settings
                 - write_settings
                 - read_delivery_methods
@@ -528,18 +534,6 @@ paths:
                 - write_api_keys
                 - read_staff
                 - write_staff
-                - read_sellers
-                - write_sellers
-                - read_commissions
-                - write_commissions
-                - read_payouts
-                - write_payouts
-                - read_seller_profile
-                - write_seller_profile
-                - read_seller_earnings
-                - read_dashboard
-                - read_reports
-                - write_reports
               schema:
                 "$ref": "#/components/schemas/MeResponse"
       requestBody:
@@ -24452,6 +24446,27 @@ paths:
             application/json:
               example:
                 data:
+                - key: read_dashboard
+                  resource: dashboard
+                  kind: read
+                  group: analytics
+                  group_label: Analytics
+                  label: Analytics dashboard
+                  description: Sales and performance analytics
+                - key: read_reports
+                  resource: reports
+                  kind: read
+                  group: analytics
+                  group_label: Analytics
+                  label: Reports
+                  description: ''
+                - key: write_reports
+                  resource: reports
+                  kind: write
+                  group: analytics
+                  group_label: Analytics
+                  label: Reports
+                  description: ''
                 - key: read_orders
                   resource: orders
                   kind: read
@@ -24508,34 +24523,6 @@ paths:
                   group_label: Orders
                   label: Refunds
                   description: Issue and view refunds
-                - key: read_gift_cards
-                  resource: gift_cards
-                  kind: read
-                  group: loyalty
-                  group_label: Loyalty
-                  label: Gift cards
-                  description: Gift cards and gift card batches
-                - key: write_gift_cards
-                  resource: gift_cards
-                  kind: write
-                  group: loyalty
-                  group_label: Loyalty
-                  label: Gift cards
-                  description: Gift cards and gift card batches
-                - key: read_store_credits
-                  resource: store_credits
-                  kind: read
-                  group: loyalty
-                  group_label: Loyalty
-                  label: Store credits
-                  description: Customer store credit balances
-                - key: write_store_credits
-                  resource: store_credits
-                  kind: write
-                  group: loyalty
-                  group_label: Loyalty
-                  label: Store credits
-                  description: Customer store credit balances
                 - key: read_products
                   resource: products
                   kind: read
@@ -24648,20 +24635,6 @@ paths:
                   group_label: Catalog
                   label: Purchasing
                   description: Suppliers and purchase orders
-                - key: read_promotions
-                  resource: promotions
-                  kind: read
-                  group: marketing
-                  group_label: Marketing
-                  label: Promotions
-                  description: Promotions, rules and coupon codes
-                - key: write_promotions
-                  resource: promotions
-                  kind: write
-                  group: marketing
-                  group_label: Marketing
-                  label: Promotions
-                  description: Promotions, rules and coupon codes
                 - key: read_customers
                   resource: customers
                   kind: read
@@ -24676,6 +24649,90 @@ paths:
                   group_label: Customers
                   label: Customers
                   description: Customer accounts, addresses, cards and groups
+                - key: read_sellers
+                  resource: sellers
+                  kind: read
+                  group: sellers
+                  group_label: Sellers
+                  label: Sellers
+                  description: ''
+                - key: write_sellers
+                  resource: sellers
+                  kind: write
+                  group: sellers
+                  group_label: Sellers
+                  label: Sellers
+                  description: ''
+                - key: read_commissions
+                  resource: commissions
+                  kind: read
+                  group: sellers
+                  group_label: Sellers
+                  label: Commissions
+                  description: ''
+                - key: write_commissions
+                  resource: commissions
+                  kind: write
+                  group: sellers
+                  group_label: Sellers
+                  label: Commissions
+                  description: ''
+                - key: read_payouts
+                  resource: payouts
+                  kind: read
+                  group: sellers
+                  group_label: Sellers
+                  label: Payouts
+                  description: ''
+                - key: write_payouts
+                  resource: payouts
+                  kind: write
+                  group: sellers
+                  group_label: Sellers
+                  label: Payouts
+                  description: ''
+                - key: read_gift_cards
+                  resource: gift_cards
+                  kind: read
+                  group: loyalty
+                  group_label: Loyalty
+                  label: Gift cards
+                  description: Gift cards and gift card batches
+                - key: write_gift_cards
+                  resource: gift_cards
+                  kind: write
+                  group: loyalty
+                  group_label: Loyalty
+                  label: Gift cards
+                  description: Gift cards and gift card batches
+                - key: read_store_credits
+                  resource: store_credits
+                  kind: read
+                  group: loyalty
+                  group_label: Loyalty
+                  label: Store credits
+                  description: Customer store credit balances
+                - key: write_store_credits
+                  resource: store_credits
+                  kind: write
+                  group: loyalty
+                  group_label: Loyalty
+                  label: Store credits
+                  description: Customer store credit balances
+                - key: read_promotions
+                  resource: promotions
+                  kind: read
+                  group: marketing
+                  group_label: Marketing
+                  label: Promotions
+                  description: Promotions, rules and coupon codes
+                - key: write_promotions
+                  resource: promotions
+                  kind: write
+                  group: marketing
+                  group_label: Marketing
+                  label: Promotions
+                  description: Promotions, rules and coupon codes
                 - key: read_settings
                   resource: settings
                   kind: read
@@ -24774,92 +24831,8 @@ paths:
                   group_label: Access
                   label: Staff & roles
                   description: Team members, invitations, roles and their permissions
-                - key: read_sellers
-                  resource: sellers
-                  kind: read
-                  group: access
-                  group_label: Access
-                  label: Sellers
-                  description: ''
-                - key: write_sellers
-                  resource: sellers
-                  kind: write
-                  group: access
-                  group_label: Access
-                  label: Sellers
-                  description: ''
-                - key: read_commissions
-                  resource: commissions
-                  kind: read
-                  group: access
-                  group_label: Access
-                  label: Commissions
-                  description: ''
-                - key: write_commissions
-                  resource: commissions
-                  kind: write
-                  group: access
-                  group_label: Access
-                  label: Commissions
-                  description: ''
-                - key: read_payouts
-                  resource: payouts
-                  kind: read
-                  group: access
-                  group_label: Access
-                  label: Payouts
-                  description: ''
-                - key: write_payouts
-                  resource: payouts
-                  kind: write
-                  group: access
-                  group_label: Access
-                  label: Payouts
-                  description: ''
-                - key: read_seller_profile
-                  resource: seller_profile
-                  kind: read
-                  group: access
-                  group_label: Access
-                  label: Seller profile
-                  description: ''
-                - key: write_seller_profile
-                  resource: seller_profile
-                  kind: write
-                  group: access
-                  group_label: Access
-                  label: Seller profile
-                  description: ''
-                - key: read_seller_earnings
-                  resource: seller_earnings
-                  kind: read
-                  group: access
-                  group_label: Access
-                  label: Seller earnings
-                  description: ''
-                - key: read_dashboard
-                  resource: dashboard
-                  kind: read
-                  group: analytics
-                  group_label: Analytics
-                  label: Analytics dashboard
-                  description: Sales and performance analytics
-                - key: read_reports
-                  resource: reports
-                  kind: read
-                  group: analytics
-                  group_label: Analytics
-                  label: Reports
-                  description: ''
-                - key: write_reports
-                  resource: reports
-                  kind: write
-                  group: analytics
-                  group_label: Analytics
-                  label: Reports
-                  description: ''
                 meta:
-                  count: 58
+                  count: 55
   "/api/v3/admin/roles":
     get:
       summary: List roles
@@ -24911,6 +24884,9 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   permissions:
+                  - read_dashboard
+                  - read_reports
+                  - write_reports
                   - read_orders
                   - write_orders
                   - read_payments
@@ -24919,10 +24895,6 @@ paths:
                   - write_fulfillments
                   - read_refunds
                   - write_refunds
-                  - read_gift_cards
-                  - write_gift_cards
-                  - read_store_credits
-                  - write_store_credits
                   - read_products
                   - write_products
                   - read_product_types
@@ -24939,10 +24911,20 @@ paths:
                   - write_stock
                   - read_purchasing
                   - write_purchasing
-                  - read_promotions
-                  - write_promotions
                   - read_customers
                   - write_customers
+                  - read_sellers
+                  - write_sellers
+                  - read_commissions
+                  - write_commissions
+                  - read_payouts
+                  - write_payouts
+                  - read_gift_cards
+                  - write_gift_cards
+                  - read_store_credits
+                  - write_store_credits
+                  - read_promotions
+                  - write_promotions
                   - read_settings
                   - write_settings
                   - read_delivery_methods
@@ -24957,18 +24939,6 @@ paths:
                   - write_api_keys
                   - read_staff
                   - write_staff
-                  - read_sellers
-                  - write_sellers
-                  - read_commissions
-                  - write_commissions
-                  - read_payouts
-                  - write_payouts
-                  - read_seller_profile
-                  - write_seller_profile
-                  - read_seller_earnings
-                  - read_dashboard
-                  - read_reports
-                  - write_reports
                   mutable: false
                   users_count: 1
                 meta:
@@ -25046,11 +25016,15 @@ paths:
               example:
                 error:
                   code: validation_error
-                  message: 'Permissions contains unknown permissions: write_bogus'
+                  message: 'Permissions contains unknown permissions: write_bogus
+                    and Permissions cannot be granted to a store role: write_bogus'
                   details:
                     permissions:
                     - code: role_permissions_unknown
                       message: 'contains unknown permissions: write_bogus'
+                      specific: false
+                    - code: role_permissions_not_grantable_for_audience
+                      message: 'cannot be granted to a store role: write_bogus'
                       specific: false
       requestBody:
         content:
@@ -32792,13 +32766,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e0b00316ff259ca72f01e5fa8c0e6d47d44f586/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4e4737de3b9d8c5ab3ac3e9cfa1647ec2755dbda/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8f824e6b0b17ff6477085f6cc361191c98eb8266/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a44632ea7357cee0359d0c2bed39b733e923c4/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--548b44418f7b10929a5bf25fbd9a6a643b513ab5/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7bea325100367a1a8ce37b150c65c79b604be719/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32806,10 +32780,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6eb647891da8012a06b60e1989bb7af4f68b0ec0/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32880,13 +32854,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e0b00316ff259ca72f01e5fa8c0e6d47d44f586/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4e4737de3b9d8c5ab3ac3e9cfa1647ec2755dbda/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8f824e6b0b17ff6477085f6cc361191c98eb8266/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a44632ea7357cee0359d0c2bed39b733e923c4/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--548b44418f7b10929a5bf25fbd9a6a643b513ab5/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7bea325100367a1a8ce37b150c65c79b604be719/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32894,10 +32868,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6eb647891da8012a06b60e1989bb7af4f68b0ec0/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--c44cdefef8e662078a349557e3a1371a62f56057/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -33054,13 +33028,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6e0b00316ff259ca72f01e5fa8c0e6d47d44f586/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--4e4737de3b9d8c5ab3ac3e9cfa1647ec2755dbda/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8f824e6b0b17ff6477085f6cc361191c98eb8266/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--18a44632ea7357cee0359d0c2bed39b733e923c4/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--548b44418f7b10929a5bf25fbd9a6a643b513ab5/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--7bea325100367a1a8ce37b150c65c79b604be719/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -33068,10 +33042,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--6eb647891da8012a06b60e1989bb7af4f68b0ec0/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -36066,6 +36040,7 @@ paths:
                   name: Accept terms
                   description: Read and accept the marketplace terms
                   preferences:
+                    terms_body:
                     terms_effective_from:
                     terms_url:
                   custom_field_definition_ids: []
@@ -36289,6 +36264,9 @@ paths:
                   accepted_content_types: []
                   association_fields: []
                   preference_schema:
+                  - key: terms_body
+                    type: text
+                    default:
                   - key: terms_effective_from
                     type: string
                     default:

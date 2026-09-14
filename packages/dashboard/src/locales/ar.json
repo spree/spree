@@ -4113,10 +4113,11 @@
         "analytics": "التحليلات",
         "catalog": "الكتالوج",
         "customers": "العملاء",
+        "loyalty": "الولاء",
         "marketing": "التسويق",
         "orders": "الطلبات",
-        "settings": "الإعدادات",
-        "loyalty": "الولاء"
+        "sellers": "البائعون",
+        "settings": "الإعدادات"
       },
       "labels": {
         "read": "عرض {{resource}}",
