@@ -14,22 +14,19 @@
   },
   "account": {
     "avatar": "Zdjęcie",
-    "avatar_help": "PNG, JPEG lub WebP.",
+    "avatar_help": "Wyświetlane obok Twojego imienia w całym panelu. Najlepiej wyglądają zdjęcia kwadratowe.",
     "email": "E-mail",
     "first_name": "Imię",
     "language": "Język",
     "last_name": "Nazwisko",
-    "load_failed_title": "Nie udało się wczytać Twojego konta",
-    "save_failed": "Nie udało się zapisać Twojego konta.",
-    "saved": "Konto zaktualizowane",
+    "load_failed_title": "Nie udało się załadować Twojego profilu",
+    "save_failed": "Nie udało się zapisać Twojego profilu",
+    "saved": "Profil zaktualizowany",
     "saving": "Zapisywanie…",
-    "subtitle": "Twoje imię, zdjęcie i język. Tylko Ty możesz je zmienić.",
-    "title": "Twoje konto"
+    "subtitle": "Zarządzaj swoimi danymi osobowymi i językiem panelu.",
+    "title": "Profil"
   },
   "admin": {
-    "account": {
-      "edit_profile": "Twoje konto"
-    },
     "actions": {
       "actions_menu": "Działania",
       "cancel": "Anuluj",
