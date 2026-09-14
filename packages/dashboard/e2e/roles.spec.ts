@@ -85,6 +85,37 @@ test.describe('roles', () => {
     })
   })
 
+  // The row opens the editor on click, so the overflow trigger has to swallow
+  // its own click — otherwise reaching for what is hidden opens the sheet
+  // instead. The tooltip's own appearance is left to the design system; what
+  // matters here is that asking for it is not a click on the row.
+  test('the overflow count does not open the editor', async ({ page }) => {
+    const creds = await login(page)
+    await gotoRoles(page, creds.store_id)
+
+    const name = `e2e-overflow-${Date.now()}`
+    await page.getByRole('button', { name: /add role/i }).click()
+    await sheet(page)
+      .getByRole('button', { name: /^order manager$/i })
+      .click()
+    await page.locator('#role-name').fill(name)
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(sheet(page)).toHaveCount(0, { timeout: 15_000 })
+
+    // Order manager grants more than the row previews, so the count shows.
+    const row = page.getByRole('row').filter({ hasText: new RegExp(name, 'i') })
+    const more = row.getByRole('button', { name: /\+\d+ more/i })
+    await expect(more).toBeVisible()
+
+    await more.click()
+    await expect(sheet(page)).toHaveCount(0)
+
+    // Still on the list, with the row intact.
+    await expect(more).toBeVisible()
+  })
+
   test('the admin role opens read-only', async ({ page }) => {
     const creds = await login(page)
     await gotoRoles(page, creds.store_id)

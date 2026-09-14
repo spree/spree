@@ -248,9 +248,15 @@ function PermissionSummary({ role }: { role: Role }) {
         <Tooltip>
           <TooltipTrigger asChild>
             {/* Focusable and named: the rest of the list opens on focus as
-                well as hover, so it is not pointer-only. */}
+                well as hover, so it is not pointer-only. The row itself opens
+                the editor on click, so reading what is hidden must not count
+                as clicking the row — by pointer or by keyboard. */}
             <button
               type="button"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') event.stopPropagation()
+              }}
               className="cursor-help rounded-sm text-xs text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             >
               {t('admin.roles.badges.more', { count: overflow })}
