@@ -72,6 +72,7 @@ export const setupFormSchema = z
     country_code: z.string().min(1, { error: () => i18n.t('admin.validation.country_required') }),
     locale: z.string().min(1),
     currency: z.string().min(1, { error: () => i18n.t('admin.validation.currency_required') }),
+    sample_data: z.boolean(),
   })
   .refine((data) => data.password === data.password_confirmation, {
     error: passwordsDontMatch,

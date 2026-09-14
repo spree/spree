@@ -822,6 +822,11 @@ paths:
                   description: ISO 4217 currency. Defaults to the country's own currency
                     — pass one only when the store prices in something else.
                   example: USD
+                sample_data:
+                  type: boolean
+                  description: Load the demo catalog, customers and orders in the
+                    background once the admin account exists.
+                  example: false
   "/api/v3/admin/auth/setup/countries":
     get:
       summary: List countries for first-run setup

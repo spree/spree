@@ -9,6 +9,7 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
+  Checkbox,
   Combobox,
   ComboboxButtonTrigger,
   ComboboxContent,
@@ -176,6 +177,7 @@ function SetupForm({ token }: { token: string }) {
       country_code: '',
       locale: 'en',
       currency: 'USD',
+      sample_data: true,
     },
   })
   const { errors } = form.formState
@@ -512,6 +514,31 @@ function SetupForm({ token }: { token: string }) {
             <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
           )}
         </div>
+        {/* Sample data needs an admin to own its imports, so this is the
+            earliest moment it can be offered; the load runs in the
+            background after setup completes. */}
+        <Controller
+          name="sample_data"
+          control={form.control}
+          render={({ field }) => (
+            <div className="grid gap-1">
+              <label
+                htmlFor="sample_data"
+                className="flex cursor-pointer items-center gap-2 text-sm font-medium"
+              >
+                <Checkbox
+                  id="sample_data"
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                />
+                {t('admin.fields.setup.sample_data.label')}
+              </label>
+              <p className="pl-6 text-xs text-muted-foreground">
+                {t('admin.fields.setup.sample_data.help')}
+              </p>
+            </div>
+          )}
+        />
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? t('admin.setup.completing') : t('admin.setup.complete')}
         </Button>
