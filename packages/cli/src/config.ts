@@ -222,6 +222,55 @@ export function tokenPrefix(token: string): string {
   return token.slice(0, 12)
 }
 
+export interface MintKeyOptions {
+  name: string
+  keyType: 'secret' | 'publishable'
+  scopes?: string[]
+  /**
+   * Revoke active keys of the same name first. For a key the CLI mints under
+   * a fixed name on every run: names are unique among a store's active keys,
+   * so without this an interrupted setup or a lost credentials.json makes the
+   * next mint fail on "Name has already been taken". The task revokes and
+   * creates in one transaction, so a failure never leaves neither.
+   */
+  replace?: boolean
+}
+
+/**
+ * Mints an API key through the project's dev stack and returns its token.
+ * The one place that knows the rake task's contract and the token shape.
+ */
+export async function mintApiKey(projectDir: string, options: MintKeyOptions): Promise<string> {
+  let stdout: string
+  try {
+    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
+      NAME: options.name,
+      KEY_TYPE: options.keyType,
+      ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),
+      ...(options.replace ? { REPLACE: 'true' } : {}),
+    })
+  } catch (error) {
+    // Surface what the task actually said. Blaming a stopped stack for every
+    // failure sends operators after a stack that is running fine while the
+    // real cause (a validation error) scrolls past.
+    const output = error instanceof Error ? error.message : String(error)
+    const railsError = output.match(/^\w*(?:::\w+)*(?:Error|Invalid):.*$/m)?.[0]
+    throw new CredentialError(
+      railsError
+        ? `Could not mint an API key.\n${pc.dim(railsError)}`
+        : `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(output.split('\n')[0])}`,
+    )
+  }
+  const prefix = options.keyType === 'publishable' ? 'pk_' : 'sk_'
+  const token = stdout.match(new RegExp(`${prefix}[A-Za-z0-9_-]+`))?.[0]
+  if (!token) {
+    throw new CredentialError(
+      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
+    )
+  }
+  return token
+}
+
 /**
  * Auto-mints a read-only secret key through the project's dev stack and
  * persists it in `.spree/credentials.json` (gitignored). Write scopes are
@@ -243,43 +292,16 @@ export async function mintProjectCredentials(
     )
   }
 
-  let stdout: string
-  try {
-    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
-      NAME: '@spree/cli (auto)',
-      KEY_TYPE: 'secret',
-      SCOPES: 'read_all',
-      // The name is fixed, and names are unique among a store's active keys —
-      // so without this a second mint fails on "Name has already been taken".
-      // That is the normal case, not an edge one: an interrupted setup, a
-      // `spree init` re-run, or a lost credentials.json all mint again. The
-      // task revokes the previous key and creates the replacement in one
-      // transaction, so a failure never leaves the project with neither.
-      REPLACE: 'true',
-    })
-  } catch (error) {
-    // Surface what the task actually said. The old message blamed a stopped
-    // stack for every failure, which sent operators after a stack that was
-    // running fine while the real cause (a validation error) scrolled past.
-    const output = error instanceof Error ? error.message : String(error)
-    const railsError = output.match(/^\w*(?:::\w+)*(?:Error|Invalid):.*$/m)?.[0]
-    throw new CredentialError(
-      railsError
-        ? `Could not mint an API key.\n${pc.dim(railsError)}`
-        : `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(output.split('\n')[0])}`,
-    )
-  }
-
-  const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
-  if (!match) {
-    throw new CredentialError(
-      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
-    )
-  }
+  const token = await mintApiKey(projectDir, {
+    name: '@spree/cli (auto)',
+    keyType: 'secret',
+    scopes: ['read_all'],
+    replace: true,
+  })
 
   const credentials: ProjectCredentials = {
     baseUrl: `http://localhost:${port}`,
-    token: match[0],
+    token,
     scopes: ['read_all'],
     mintedAt: new Date().toISOString(),
   }
