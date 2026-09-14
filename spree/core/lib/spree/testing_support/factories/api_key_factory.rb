@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :api_key, class: Spree::ApiKey do
-    name { FFaker::Lorem.word }
+    sequence(:name) { |n| "API key #{n}" }
     key_type { 'publishable' }
     store
 

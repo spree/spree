@@ -51,7 +51,9 @@ module Spree
 
     after_initialize :set_name, if: :new_record?
 
-    validates :name, presence: true
+    validates :name, presence: true,
+                     uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+                                   conditions: -> { where(deleted_at: nil) } }
     validates :store, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

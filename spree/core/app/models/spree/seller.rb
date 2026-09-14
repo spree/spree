@@ -196,6 +196,8 @@ module Spree
     has_one_attached :square_logo, service: Spree.public_storage_service_name
     has_one_attached :cover_photo, service: Spree.public_storage_service_name
 
+    self.whitelisted_ransackable_attributes = %w[name slug status]
+
     #
     # Validations
     #

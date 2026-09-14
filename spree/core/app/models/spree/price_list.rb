@@ -74,7 +74,9 @@ module Spree
       (price_adjustment_tiers - kept).each(&:mark_for_destruction)
     end
 
-    validates :name, presence: true
+    validates :name, presence: true,
+                     uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+                                   conditions: -> { where(deleted_at: nil) } }
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     # One live list per catalog; soft-deleted lists release the slot. Backed
     # by a unique index on every adapter — partial on PostgreSQL and SQLite,

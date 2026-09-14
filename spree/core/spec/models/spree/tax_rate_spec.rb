@@ -359,6 +359,19 @@ describe Spree::TaxRate, type: :model do
       expect(create(:tax_rate, store: other_store).store).to eq(other_store)
     end
 
+    it 'requires a name unique within the store' do
+      create(:tax_rate, name: 'VAT')
+
+      expect(build(:tax_rate, name: 'VAT')).not_to be_valid
+      expect(build(:tax_rate, name: 'VAT', store: create(:store))).to be_valid
+    end
+
+    it 'frees the name of a soft-deleted rate' do
+      create(:tax_rate, name: 'VAT').destroy
+
+      expect(build(:tax_rate, name: 'VAT')).to be_valid
+    end
+
     it 'only returns rates of the given store' do
       other_store = create(:store)
       own_rate = create(:tax_rate)

@@ -118,7 +118,9 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[storefront_visible available_to_sellers seller_id]
     self.whitelisted_ransackable_associations = %w[seller]
 
-    validates :name, presence: true
+    validates :name, presence: true,
+                     uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+                                   conditions: -> { where(deleted_at: nil) } }
     validates :storefront_visible, inclusion: { in: [true, false] }
     validate :delivery_zone_must_belong_to_profile,
              if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }
