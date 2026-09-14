@@ -93,6 +93,23 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(json_response['totals']['orders']['value']).to eq(1)
       end
 
+      # The endpoint slices the payload against an allowlist, so a contract key
+      # missing from it would be dropped and the caller would get unfiltered
+      # rows back with no error at all.
+      it 'applies metric filters sent by a client' do
+        create(:completed_order_with_totals, store: store, completed_at: 3.days.ago)
+
+        post :query, params: {
+          metrics: %w[units_sold],
+          dimensions: %w[product],
+          metric_filters: [{ metric: 'units_sold', op: 'gt', value: 10_000 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['rows']).to be_empty
+        expect(json_response['totals']['units_sold']['value']).to be > 0
+      end
+
       it 'returns 404 for a channel filter from another store' do
         foreign_channel = create(:channel, store: create(:store))
 

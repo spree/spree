@@ -29,7 +29,7 @@ RSpec.describe Spree::Reporting::Schema do
 
   it 'describes the time range grammar and store meta' do
     expect(schema[:time_range][:presets].map { |p| p[:name] }).to include('last_month', 'yesterday', 'last_30_days')
-    expect(schema[:limits]).to eq(default: 50, max: 1000)
+    expect(schema[:limits]).to eq(default: 50, max: 1000, max_buckets: 2000)
     expect(schema[:time_range][:presets].first[:label]).to be_present
     expect(schema[:meta]).to include(:currency, :timezone, :supported_currencies)
   end
@@ -44,7 +44,7 @@ RSpec.describe Spree::Reporting::Schema do
   it 'groups members into the families that can be queried together' do
     families = schema[:families].index_by { |f| f[:name] }
 
-    expect(families.keys).to contain_exactly(:sales, :payments, :inventory)
+    expect(families.keys).to contain_exactly(:sales, :payments, :inventory, :carts)
     expect(families[:sales][:metrics]).to include(:net_sales, :total_sales, :average_order_value)
     expect(families[:payments][:metrics]).to include(:net_payments)
     expect(families[:payments][:dimensions]).to include(:payment_method, :paid_at)

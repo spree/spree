@@ -14,13 +14,35 @@ import { getParams, transformListParams } from '@spree/sdk-core'
 // Semantic reporting contract (docs/plans/6.0-analytics-semantic-layer.md)
 // ============================================
 
-export type ReportingGrain = 'day' | 'week' | 'month'
+export type ReportingGrain = 'hour' | 'day' | 'week' | 'month'
+
+export type ReportingCompare = 'previous_period' | 'previous_year'
+
+export type ReportingMetricFilterOp = 'eq' | 'gt' | 'gte' | 'lt' | 'lte'
 
 export interface ReportingQuery {
   /** Registered metric names — discover via `reporting.schema()`. */
   metrics: string[]
-  dimensions?: Array<string | { name: string; grain?: ReportingGrain }>
+  dimensions?: Array<
+    | string
+    | {
+        name: string
+        grain?: ReportingGrain
+        /**
+         * Include members with no matching rows, so a breakdown lists what had
+         * no activity ("which products never sold"). One dimension only, and
+         * only where `supports_include_empty` is set on the schema entry.
+         */
+        include_empty?: boolean
+      }
+  >
   filters?: Array<{ dimension: string; op: 'eq' | 'in'; value: string | string[] }>
+  /**
+   * Filter on an aggregate (a HAVING clause), e.g. `units_sold = 0`. Narrows
+   * the rows only — the totals stay the period's real figure. The metric must
+   * also appear in `metrics`, and cannot be a derived one.
+   */
+  metric_filters?: Array<{ metric: string; op: ReportingMetricFilterOp; value: number }>
   /**
    * A named preset (`last_month`, `week_to_date`, `last_4_weeks`, any
    * `last_<n>_<days|weeks|months>`), or ISO 8601 dates/datetimes in
@@ -28,7 +50,7 @@ export interface ReportingQuery {
    * last 30 days. Everything resolves in the store timezone.
    */
   time_range?: { preset?: string; since?: string; until?: string }
-  compare?: 'previous_period'
+  compare?: ReportingCompare
   /** Metric name, `-` prefix for descending. */
   sort?: string
   limit?: number
@@ -80,6 +102,8 @@ export interface ReportingSchemaMetric {
   format: 'money' | 'integer' | 'decimal' | 'percent' | string
   currency?: string
   derived: boolean
+  /** Derived metrics are computed after aggregation, so they cannot be sorted or filtered in SQL. */
+  filterable?: boolean
 }
 
 export interface ReportingSchemaDimension {
@@ -91,13 +115,15 @@ export interface ReportingSchemaDimension {
   /** Set when rows carry hydrated `{ id, label, meta }` payloads for this dimension. */
   lookup?: string
   filter_ops: Array<'eq' | 'in'>
+  /** Whether this dimension can lead a query with `include_empty`. */
+  supports_include_empty?: boolean
   /** Enumerated raw values for status-like dimensions. */
   values?: Array<{ name: string; label: string }>
   /** Metrics this dimension can break down without double counting. */
   compatible_metrics: string[]
 }
 
-/** Members that can be queried together: sales, payments, inventory. */
+/** Members that can be queried together: sales, payments, inventory, carts. */
 export interface ReportingSchemaFamily {
   name: string
   label: string
@@ -117,7 +143,10 @@ export interface ReportingSchema {
     absolute: string
   }
   /** Ranking defaults the server applies (`limit` when omitted, and its ceiling). */
-  limits: { default: number; max: number }
+  limits: { default: number; max: number; max_buckets?: number }
+  /** Ops accepted by `metric_filters`. */
+  metric_filter_ops?: ReportingMetricFilterOp[]
+  compare_modes?: ReportingCompare[]
 }
 
 export interface DashboardCounters {
