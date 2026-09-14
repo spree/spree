@@ -7,6 +7,14 @@ describe Spree::WebhookEndpoint, type: :model do
   let(:webhook_endpoint) { build(:webhook_endpoint, store: store) }
 
   describe 'validations' do
+    it 'requires a url unique within the store' do
+      store = create(:store)
+      create(:webhook_endpoint, url: 'https://example.com/hook', store: store)
+
+      expect(build(:webhook_endpoint, url: 'https://example.com/hook', store: store)).not_to be_valid
+      expect(build(:webhook_endpoint, url: 'https://example.com/hook', store: create(:store))).to be_valid
+    end
+
     describe 'url format' do
       it 'accepts valid https urls' do
         webhook_endpoint.url = 'https://example.com/webhooks'

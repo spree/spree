@@ -17,6 +17,21 @@ describe Spree::PaymentMethod, type: :model do
     Spree.payment_methods.replace(original)
   end
 
+  describe 'validations' do
+    it 'requires a name unique within the store' do
+      create(:check_payment_method, name: 'Check', store: store)
+
+      expect(build(:check_payment_method, name: 'Check', store: store)).not_to be_valid
+      expect(build(:check_payment_method, name: 'Check', store: create(:store))).to be_valid
+    end
+
+    it 'frees the name of a soft-deleted method' do
+      create(:check_payment_method, name: 'Check', store: store).destroy
+
+      expect(build(:check_payment_method, name: 'Check', store: store)).to be_valid
+    end
+  end
+
   context 'visibility scopes' do
     let!(:visible_method) do
       store.payment_methods.create!(

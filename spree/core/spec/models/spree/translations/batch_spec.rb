@@ -2,11 +2,14 @@ require 'spec_helper'
 
 RSpec.describe Spree::Translations::Batch do
   let(:store) { @default_store }
-  let!(:option_type) { create(:option_type, name: 'size', label: 'Size') }
+  let!(:option_type) do
+    store.default_market.update!(supported_locales: 'en,de,fr')
+    store.reload
+    create(:option_type, name: 'size', label: 'Size', store: store)
+  end
   let!(:option_value) { create(:option_value, name: 'small', label: 'Small', option_type: option_type) }
 
   before do
-    store.update!(supported_locales: 'en,de,fr')
     allow(Spree::Current).to receive(:store).and_return(store)
   end
 

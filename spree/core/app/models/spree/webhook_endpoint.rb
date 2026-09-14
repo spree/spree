@@ -17,6 +17,7 @@ module Spree
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
     validates :url, presence: true
+    unique_per_store :url
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
     validate :url_must_not_resolve_to_private_ip, if: -> { !Rails.env.development? && url.present? && url_changed? }

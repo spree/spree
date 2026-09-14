@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::NamedType do
+RSpec.describe Spree::UniquePerStore do
   describe 'name uniqueness' do
     let!(:existing) { create(:return_reason, name: 'Wrong size') }
 
