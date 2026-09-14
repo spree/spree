@@ -88,6 +88,11 @@ overrides:
   '@tiptap/extension-image': 3.31.3
   '@tiptap/extension-link': 3.31.3
   '@tiptap/extension-placeholder': 3.31.3
+  # @tiptap/pm 3.31 wants prosemirror-model ^1.25.11 and prosemirror-view
+  # ^1.42.3, but schema-list/state still resolve the older 1.25.4 / 1.41.8
+  # line. Two copies make wrapInList throw, so list toolbar buttons no-op.
+  prosemirror-model: 1.25.11
+  prosemirror-view: 1.42.3
   maplibre-gl: 6.4.1
   '@vitest/mocker': ^4.1.11
   baseline-browser-mapping: ^2.11.0
@@ -131,3 +136,5 @@ minimumReleaseAgeExclude:
   - '@tiptap/extension-image@3.31.3'
   - '@tiptap/extension-link@3.31.3'
   - '@tiptap/extension-placeholder@3.31.3'
+  - prosemirror-model@1.25.11
+  - prosemirror-view@1.42.3

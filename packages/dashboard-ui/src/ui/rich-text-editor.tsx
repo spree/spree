@@ -6,6 +6,7 @@ import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toggleOrWrapBlock } from '../lib/rich-text-block'
 import { sameRichText, shouldEmitRichTextChange } from '../lib/same-rich-text'
 import { cn } from '../lib/utils'
 import {
@@ -267,14 +268,9 @@ function EditorToolbar({
 
   const runToolbarCommand = (command: () => boolean) => {
     const selection = editor.state.selection.toJSON() as { type?: string }
-    // AllSelection (Ctrl/Cmd+A) sits at the document root, so wrap/list
-    // commands no-op. Put the caret in the first textblock first.
     if (selection.type === 'all' || editor.state.selection.from === 0) {
       editor.commands.setTextSelection(1)
     }
-    const before = editor.getHTML()
-    if (command() && editor.getHTML() !== before) return
-    editor.commands.setTextSelection(1)
     command()
   }
 
@@ -370,37 +366,6 @@ function EditorToolbar({
   )
 }
 
-function toggleOrWrapBlock(
-  editor: Editor,
-  kind: 'bulletList' | 'orderedList' | 'blockquote',
-): boolean {
-  const before = editor.getHTML()
-  const toggle = {
-    bulletList: () => editor.commands.toggleBulletList(),
-    orderedList: () => editor.commands.toggleOrderedList(),
-    blockquote: () => editor.commands.toggleBlockquote(),
-  }[kind]
-  toggle()
-  if (editor.getHTML() !== before) return true
-
-  if (editor.isActive(kind)) {
-    const paragraphs = editor
-      .getText()
-      .split('\n')
-      .map((line) => `<p>${line}</p>`)
-      .join('')
-    return editor.commands.setContent(paragraphs || '<p></p>')
-  }
-
-  const wrapper =
-    kind === 'bulletList'
-      ? `<ul><li>${before}</li></ul>`
-      : kind === 'orderedList'
-        ? `<ol><li>${before}</li></ol>`
-        : `<blockquote>${before}</blockquote>`
-  return editor.commands.setContent(wrapper)
-}
-
 function ToolbarButton({
   active,
   disabled,
@@ -414,15 +379,28 @@ function ToolbarButton({
   children: React.ReactNode
   title: string
 }) {
+  const ranOnPointerDown = useRef(false)
+
   return (
     <button
       type="button"
-      onMouseDown={(event) => {
-        // Keep the editor selection. A toolbar click otherwise blurs the
-        // contenteditable and list/quote commands apply to nothing.
+      onPointerDown={(event) => {
+        if (event.button !== 0) return
+        // Keep the editor selection and run the command here. preventDefault
+        // on pointer/mouse down stops the contenteditable from blurring, but
+        // it also swallows the following click in Chromium — which is how
+        // Playwright activates the button.
         event.preventDefault()
+        ranOnPointerDown.current = true
+        onClick()
       }}
-      onClick={onClick}
+      onClick={() => {
+        if (ranOnPointerDown.current) {
+          ranOnPointerDown.current = false
+          return
+        }
+        onClick()
+      }}
       disabled={disabled}
       title={title}
       aria-label={title}
