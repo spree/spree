@@ -15,7 +15,32 @@ class AddStoreToSpreeOptionTypes < ActiveRecord::Migration[8.1]
 
   def down
     remove_index :spree_option_types, %i[store_id name]
+
+    # Two stores may each hold a `size` by now, which the global index would
+    # refuse. Rolling back means going back to installation-wide option
+    # types, so the duplicates are suffixed rather than dropped: no row is
+    # lost, and the operator can see what to reconcile. Written in SQL
+    # because a migration must not depend on model scopes or callbacks.
+    execute(<<~SQL.squish)
+      UPDATE spree_option_types
+      SET name = #{concat_sql}
+      WHERE id NOT IN (
+        SELECT MIN(id) FROM spree_option_types GROUP BY name
+      )
+    SQL
+
     add_index :spree_option_types, :name, unique: true
     remove_reference :spree_option_types, :store
+  end
+
+  private
+
+  # MySQL has no `||` string operator under its default SQL mode.
+  def concat_sql
+    if connection.adapter_name.downcase.include?('mysql')
+      "CONCAT(name, '-', id)"
+    else
+      "name || '-' || id"
+    end
   end
 end

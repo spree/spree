@@ -45,6 +45,17 @@ describe 'spree:cli:create_api_key' do
       context 'with REPLACE=true' do
         let(:env) { super().merge('REPLACE' => 'true') }
 
+        it 'leaves the previous key usable when the replacement cannot be created' do
+          allow_any_instance_of(Spree::ApiKey).to receive(:save!).and_raise(
+            ActiveRecord::RecordInvalid.new(Spree::ApiKey.new)
+          )
+
+          expect { subject.invoke }.to raise_error(ActiveRecord::RecordInvalid)
+          # The revoke rolled back with the failed create, so the operator
+          # still has a working key.
+          expect(previous.reload.revoked_at).to be_nil
+        end
+
         it 'revokes the previous key and mints the new one' do
           expect { subject.invoke }.to output(/\Ask_/).to_stdout
 

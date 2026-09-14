@@ -22,6 +22,20 @@ RSpec.describe Spree::UniquePerStore do
     end
   end
 
+  describe 'the scope the value is unique within' do
+    it 'checks a move between sellers, not only a rename' do
+      seller = create(:seller)
+      create(:delivery_method, name: 'Standard', seller: seller)
+      other = create(:delivery_method, name: 'Standard', seller: create(:seller))
+
+      # Same name, different seller until now: moving it collides.
+      other.seller = seller
+
+      expect(other).not_to be_valid
+      expect(other.errors[:name]).to be_present
+    end
+  end
+
   describe 'name normalization' do
     it 'squishes surrounding and repeated whitespace' do
       reason = create(:return_reason, name: '  Wrong   size  ')
