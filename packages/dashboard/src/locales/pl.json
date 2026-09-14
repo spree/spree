@@ -5991,11 +5991,13 @@
       },
       "ledger": {
         "title": "Historia",
-        "empty": "Brak zarejestrowanych operacji."
+        "empty": "Brak zarejestrowanych operacji.",
+        "load_failed": "Nie udało się wczytać historii."
       },
       "sheet": {
         "description": "Jak te środki powstały i jak zostały wykorzystane.",
-        "open_customer": "Otwórz profil klienta"
+        "open_customer": "Otwórz profil klienta",
+        "load_failed": "Nie udało się wczytać tych środków."
       },
       "table": {
         "search_placeholder": "Szukaj w notatkach…",

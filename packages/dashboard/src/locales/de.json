@@ -5925,11 +5925,13 @@
       },
       "ledger": {
         "title": "Buchungen",
-        "empty": "Noch keine Bewegungen erfasst."
+        "empty": "Noch keine Bewegungen erfasst.",
+        "load_failed": "Die Buchungen konnten nicht geladen werden."
       },
       "sheet": {
         "description": "Wie dieses Guthaben entstanden ist und wie es verwendet wurde.",
-        "open_customer": "Kundenprofil öffnen"
+        "open_customer": "Kundenprofil öffnen",
+        "load_failed": "Dieses Guthaben konnte nicht geladen werden."
       },
       "table": {
         "search_placeholder": "Notizen durchsuchen…",

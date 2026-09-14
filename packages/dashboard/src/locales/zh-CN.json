@@ -5912,11 +5912,13 @@
       },
       "ledger": {
         "title": "流水",
-        "empty": "暂无变动记录。"
+        "empty": "暂无变动记录。",
+        "load_failed": "无法加载流水。"
       },
       "sheet": {
         "description": "这笔余额如何发放，以及如何被使用。",
-        "open_customer": "打开客户资料"
+        "open_customer": "打开客户资料",
+        "load_failed": "无法加载该店铺信用。"
       },
       "table": {
         "search_placeholder": "搜索备注…",

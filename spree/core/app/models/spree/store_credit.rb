@@ -48,13 +48,25 @@ module Spree
 
     scope :not_authorized, -> { where(amount_authorized: 0) }
     scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
+    # Spendable right now, for the checkout path: a credit with any amount
+    # authorized is mid-payment and must not be authorized again, even though
+    # part of it may still be unspent. Narrower than {.unspent} on purpose.
     scope :available, -> { not_authorized.not_used }
-    # Nothing left to spend: every unit is used or committed to an in-flight
-    # authorization. Expressed directly rather than as `where.not(available)`,
-    # so it stays one predicate the caller's own scoping composes with.
+
+    # Money the store still owes: whatever is neither spent nor committed to an
+    # in-flight authorization. A credit of 100 with 10 authorized has 90 left
+    # and belongs here, which is what separates this from {.available}.
+    scope :unspent, lambda {
+      table = arel_table
+      committed = Arel::Nodes::Grouping.new(table[:amount_used] + table[:amount_authorized])
+      where(committed.lt(table[:amount]))
+    }
+
+    # The complement of {.unspent}: nothing left to draw on.
     scope :exhausted, lambda {
       table = arel_table
-      where(table[:amount_authorized].gt(0).or(table[:amount_used].gteq(table[:amount])))
+      committed = Arel::Nodes::Grouping.new(table[:amount_used] + table[:amount_authorized])
+      where(committed.gteq(table[:amount]))
     }
     scope :with_gift_card, -> { where(originator_type: 'Spree::GiftCard') }
     scope :without_gift_card, -> { where(originator_type: [nil, '']).or(where.not(originator_type: 'Spree::GiftCard')) }
@@ -68,7 +80,7 @@ module Spree
     # asking for both sides is no constraint at all. See Spree::Base.ransack_flag.
     scope :outstanding, ->(*values) {
       case Spree::Base.ransack_flag(*values)
-      when true then available
+      when true then unspent
       when false then exhausted
       else all
       end
@@ -224,14 +236,14 @@ module Spree
       payment.completed? && payment.credit_allowed > 0
     end
 
-    # Whether any of this credit is still spendable. The record-level twin of
-    # the `available` scope, and the two must agree: the list filters on the
-    # scope and the row renders this, so a client deriving one from the money
-    # columns itself would drift from the filter that hides it.
+    # Whether the store still owes anything on this credit. The record-level
+    # twin of the `unspent` scope, and the two must agree: the list filters on
+    # the scope and the row renders this, so a client deriving one from the
+    # money columns itself would drift from the filter that hides it.
     #
     # @return [Boolean]
     def outstanding?
-      amount_authorized.zero? && amount_used < amount
+      amount_used + amount_authorized < amount
     end
 
     def editable?

@@ -5925,11 +5925,13 @@
       },
       "ledger": {
         "title": "Ledger",
-        "empty": "No movements recorded yet."
+        "empty": "No movements recorded yet.",
+        "load_failed": "Could not load the ledger."
       },
       "sheet": {
         "description": "How this balance was issued and how it has been spent.",
-        "open_customer": "Open customer profile"
+        "open_customer": "Open customer profile",
+        "load_failed": "Could not load this store credit."
       },
       "table": {
         "search_placeholder": "Search memos…",

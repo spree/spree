@@ -53,6 +53,8 @@ RSpec.describe 'Admin Store Credits API', type: :request, swagger_doc: 'api-refe
       response '200', 'store credits found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
+        schema SwaggerSchemaHelpers.paginated('StoreCredit')
+
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].pluck('id')).to include(store_credit.prefixed_id)
@@ -90,6 +92,8 @@ RSpec.describe 'Admin Store Credits API', type: :request, swagger_doc: 'api-refe
       response '200', 'store credit found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { store_credit.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/StoreCredit'
 
         run_test! do |response|
           expect(JSON.parse(response.body)['id']).to eq(store_credit.prefixed_id)
@@ -131,6 +135,8 @@ RSpec.describe 'Admin Store Credits API', type: :request, swagger_doc: 'api-refe
       response '200', 'events found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:store_credit_id) { store_credit.prefixed_id }
+
+        schema SwaggerSchemaHelpers.paginated('StoreCreditEvent')
 
         run_test! do |response|
           data = JSON.parse(response.body)

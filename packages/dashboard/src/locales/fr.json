@@ -5914,22 +5914,24 @@
         "refund": "Remboursement"
       },
       "filters": {
-        "outstanding": "En cours",
+        "outstanding": "Solde restant dû",
         "spent": "Utilisé",
         "not_from_gift_card": "Tout le reste"
       },
       "totals": {
-        "outstanding": "En cours",
+        "outstanding": "Solde restant dû",
         "issued": "Émis",
         "used": "Utilisé"
       },
       "ledger": {
         "title": "Journal",
-        "empty": "Aucun mouvement enregistré."
+        "empty": "Aucun mouvement enregistré.",
+        "load_failed": "Impossible de charger le journal."
       },
       "sheet": {
         "description": "Comment cet avoir a été émis et comment il a été utilisé.",
-        "open_customer": "Ouvrir la fiche client"
+        "open_customer": "Ouvrir la fiche client",
+        "load_failed": "Impossible de charger cet avoir."
       },
       "table": {
         "search_placeholder": "Rechercher dans les notes…",
@@ -5937,7 +5939,7 @@
       },
       "no_customer": "Aucun client",
       "page": {
-        "subtitle": "Ce que la boutique doit en avoirs, tous clients confondus."
+        "subtitle": "Total des avoirs dus par la boutique, tous clients confondus."
       }
     }
   }

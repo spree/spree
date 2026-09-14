@@ -7,6 +7,7 @@ import {
   CardContent,
   cn,
   Pagination,
+  RelativeTime,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -18,7 +19,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import {
@@ -62,6 +63,10 @@ function StoreCreditsPage() {
   // still describe the previous filter. Dimming them says "these are being
   // recalculated" rather than passing stale figures off as the current ones.
   const refetching = useIsFetching({ queryKey: ['store-credits'] }) > 0
+  // Two filter changes in quick succession can resolve out of order. Without a
+  // sequence the slower, older response would land last and leave the cards
+  // describing a filter the table is no longer showing.
+  const latestRequest = useRef(0)
 
   const openCredit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, credit: id }) as never })
@@ -91,8 +96,9 @@ function StoreCreditsPage() {
           tableKey="store-credits"
           queryKey="store-credits"
           queryFn={async (params) => {
+            const request = ++latestRequest.current
             const response = await listStoreCredits(params)
-            setTotals(response.meta.totals ?? [])
+            if (request === latestRequest.current) setTotals(response.meta.totals ?? [])
             return response
           }}
           searchParams={search}
@@ -180,8 +186,12 @@ function StoreCreditSheet({
 }) {
   const { t } = useTranslation()
   const [ledgerPage, setLedgerPage] = useState(1)
-  const { data: credit, isLoading } = useStoreCredit(id, ['customer', 'created_by'])
-  const { data: events, isLoading: eventsLoading } = useStoreCreditEvents(id, ledgerPage)
+  const { data: credit, isLoading, isError } = useStoreCredit(id, ['customer', 'created_by'])
+  const {
+    data: events,
+    isLoading: eventsLoading,
+    isError: eventsError,
+  } = useStoreCreditEvents(id, ledgerPage)
 
   const customerLabel = credit?.customer
     ? erasedFieldValue(credit.customer.email, credit.customer.anonymized)
@@ -196,7 +206,13 @@ function StoreCreditSheet({
         </SheetHeader>
 
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-4">
-          {isLoading || !credit ? (
+          {/* A failed request is not a slow one: leaving the skeleton up would
+              tell the merchant the panel is still loading, forever. */}
+          {isError ? (
+            <p className="py-8 text-center text-destructive">
+              {t('admin.store_credits.sheet.load_failed')}
+            </p>
+          ) : isLoading || !credit ? (
             <Skeleton className="h-40 w-full" />
           ) : (
             <>
@@ -242,7 +258,13 @@ function StoreCreditSheet({
 
               <div className="flex flex-col gap-2">
                 <h3 className="font-medium text-sm">{t('admin.store_credits.ledger.title')}</h3>
-                {eventsLoading ? (
+                {eventsError ? (
+                  // Never "no movements" over an error — that would claim the
+                  // balance never moved.
+                  <p className="text-destructive text-sm">
+                    {t('admin.store_credits.ledger.load_failed')}
+                  </p>
+                ) : eventsLoading ? (
                   <Skeleton className="h-20 w-full" />
                 ) : events?.data.length ? (
                   <>
@@ -255,12 +277,9 @@ function StoreCreditSheet({
                           <span className="text-sm">{event.display_action ?? event.action}</span>
                           <span className="flex items-baseline gap-3">
                             <span className="text-sm tabular-nums">{event.display_amount}</span>
-                            <time
-                              className="whitespace-nowrap text-muted-foreground text-xs"
-                              dateTime={event.created_at}
-                            >
-                              {new Date(event.created_at).toLocaleDateString()}
-                            </time>
+                            <span className="whitespace-nowrap text-muted-foreground text-xs">
+                              <RelativeTime iso={event.created_at} />
+                            </span>
                           </span>
                         </li>
                       ))}

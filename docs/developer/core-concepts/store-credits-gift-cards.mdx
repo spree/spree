@@ -74,28 +74,24 @@ erDiagram
 | `currency` | Currency code | `USD` |
 | `memo` | Optional note about the credit | `Refund for order #R123` |
 
-### Store Credit Categories
+### Why a Credit Exists
 
-Categories help organize store credits by their purpose:
+Store credits carry no category and no type — both were retired in Spree 6.0
+because neither answered a question anything asked. Two fields cover it
+instead:
 
-| Category | Description |
-|----------|-------------|
-| Default | General purpose store credit (also the default reimbursement category) |
-| Expiring | Store credit that may expire |
-| Non-expiring | Store credit that does not expire |
+| Field | What it tells you |
+|-------|-------------------|
+| `originator` | The return, exchange, claim or gift card that issued the credit, or nothing when an admin issued it by hand |
+| `memo` | The free-text reason, written by the refund workflows or by the admin |
 
-<Info>
-"Gift Card" is not a seeded category but a special name recognized by the model: any category named "Gift Card" (or one listed in `Spree::Config[:non_expiring_credit_types]`) is treated as non-expiring via `StoreCreditCategory#non_expiring?`.
-</Info>
+Store credits do not expire; only gift cards carry an expiry, on their own
+record. Which credit is spent first is decided by `Spree::StoreCredit.oldest_first`.
 
-### Store Credit Types
-
-Types define the priority in which store credits are applied at checkout:
-
-| Type | Description |
-|------|-------------|
-| Expiring | Credits that may expire (applied first) |
-| Non-expiring | Credits that don't expire (applied last) |
+<Note>
+`Spree::StoreCreditCategory` and `Spree::StoreCreditType` survive as deprecated
+shells for one release and are removed in 6.1. Nothing writes them.
+</Note>
 
 ### Store Credit Events
 

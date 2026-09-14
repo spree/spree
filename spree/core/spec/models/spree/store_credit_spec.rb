@@ -107,6 +107,24 @@ describe Spree::StoreCredit, type: :model do
       expect(result).not_to include(available)
     end
 
+    # A credit of 100 with 10 authorized still owes 90. Filing it under "spent"
+    # would let the spent view report a positive outstanding balance.
+    it 'excludes a credit that is only partly committed' do
+      partial = create(:store_credit, amount: 100).tap { |credit| credit.update_columns(amount_authorized: 10) }
+
+      expect(described_class.exhausted).not_to include(partial)
+      expect(described_class.unspent).to include(partial)
+      expect(partial.outstanding?).to be(true)
+    end
+
+    # The checkout path must not authorize against a credit that is already
+    # mid-authorization, so `available` stays narrower than `unspent`.
+    it 'is narrower than available, which the checkout path relies on' do
+      partial = create(:store_credit, amount: 100).tap { |credit| credit.update_columns(amount_authorized: 10) }
+
+      expect(described_class.available).not_to include(partial)
+    end
+
     it 'composes with the caller\'s own scoping rather than replacing it' do
       store = create(:store)
       mine = create(:store_credit, store: store, amount: 20).tap { |c| c.update_columns(amount_used: 20) }

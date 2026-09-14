@@ -26019,6 +26019,18 @@ paths:
                     display_amount_used: "$0.00"
                     display_amount_authorized: "$0.00"
                     display_amount_remaining: "$50.00"
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreCredit"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
         '401':
           description: unauthorized
           content:
@@ -26103,6 +26115,8 @@ paths:
                 created_by_id: adm_UkLWZg9DAJ
                 originator_type:
                 originator_id:
+              schema:
+                "$ref": "#/components/schemas/StoreCredit"
         '404':
           description: not found
           content:
@@ -26200,6 +26214,18 @@ paths:
                   in: 1
                   previous:
                   next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreCreditEvent"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
   "/api/v3/admin/products/{product_id}/variants":
     get:
       summary: List product variants
