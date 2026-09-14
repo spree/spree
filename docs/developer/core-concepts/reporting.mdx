@@ -191,7 +191,7 @@ beside metrics and dimensions, and `GET /dashboard/counters` evaluates them:
       "nav": "orders",
       "link": {
         "resource": "orders",
-        "filters": [{ "field": "fulfillment_status", "operator": "eq", "value": "unfulfilled" }]
+        "filters": [{ "field": "fulfillment_status", "operator": "in", "value": "unfulfilled" }]
       }
     }
   ]

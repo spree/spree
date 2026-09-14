@@ -301,7 +301,10 @@ function counterLink(
     // The orders table's column key, not its ransack attribute — the filter
     // chip looks the column up by key to render "Channel is Web" rather than
     // the raw id.
-    filters.push({ id: 'home-channel', field: 'channel', operator: 'eq', value: channelId })
+    // `in`, not `eq`: a resource filter offers only `is any of` / `is none
+    // of`, so an `eq` rule renders a chip labelled with the raw operator and
+    // no control on the row recognises it.
+    filters.push({ id: 'home-channel', field: 'channel', operator: 'in', value: channelId })
   }
   return { to, filters }
 }

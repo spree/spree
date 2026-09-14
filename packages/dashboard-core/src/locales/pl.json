@@ -430,6 +430,7 @@
         "filter_select_placeholder": "Wybierz…",
         "filter_text_placeholder": "Filtruj…",
         "filter_to_placeholder": "Filtruj do…",
+        "more_conditions": "Więcej warunków",
         "operators": {
           "after": "po",
           "before": "przed",

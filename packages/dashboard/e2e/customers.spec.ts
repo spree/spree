@@ -497,9 +497,13 @@ test.describe('customers', () => {
     await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
     await expect(page.getByRole('link', { name: email })).toHaveCount(0, { timeout: 15_000 })
 
+    // Scoped to the panel's list rows: once a field is picked, its name also
+    // appears on the header button that goes back to the field list, so a bare
+    // name match finds both. The field and its `true` value are both "Erased".
     await page.getByRole('button', { name: /add filter/i }).click()
-    await page.getByRole('button', { name: /^erased$/i }).click()
-    await page.getByRole('button', { name: /^erased$/i }).click()
+    const filterOption = page.locator('[data-slot="filter-panel-item"]')
+    await filterOption.getByText(/^erased$/i).click()
+    await filterOption.getByText(/^erased$/i).click()
 
     await expect(page.getByText('(erased)').first()).toBeVisible({ timeout: 15_000 })
   })

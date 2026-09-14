@@ -429,6 +429,7 @@
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
+        "more_conditions": "更多条件",
         "operators": {
           "after": "晚于",
           "before": "早于",

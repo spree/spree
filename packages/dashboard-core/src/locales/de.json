@@ -429,6 +429,7 @@
         "filter_select_placeholder": "Auswählen…",
         "filter_text_placeholder": "Filtern…",
         "filter_to_placeholder": "Filtern auf…",
+        "more_conditions": "Weitere Bedingungen",
         "operators": {
           "after": "nach",
           "before": "vor",
