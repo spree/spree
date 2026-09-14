@@ -127,10 +127,7 @@ const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
 
 /** Admin-UI locale codes the framework ships a bundle for (including `en`). */
 export function coreLocaleCodes(): string[] {
-  return [
-    'en',
-    ...Object.keys(coreLocales).map((p) => p.replace('../locales/', '').replace('.json', '')),
-  ]
+  return localeCodesFromBundlePaths(Object.keys(coreLocales))
 }
 
 /**
@@ -147,12 +144,13 @@ export function coreLocaleCodes(): string[] {
  *   `./locales/de.json`
  */
 export function localesFromBundlePaths(paths: string[]): Array<{ code: string; name: string }> {
-  const codes = [
-    'en',
-    ...paths.map((path) => path.replace(/^.*\/locales\//, '').replace('.json', '')),
-  ]
+  return localeCodesFromBundlePaths(paths).map((code) => ({ code, name: localeEndonym(code) }))
+}
 
-  return codes.map((code) => ({ code, name: localeEndonym(code) }))
+// `en` first, then a code per bundle path. The glob hands back whatever prefix
+// the calling file used (`./locales/`, `../locales/`), so match either.
+function localeCodesFromBundlePaths(paths: string[]): string[] {
+  return ['en', ...paths.map((path) => path.replace(/^.*\/locales\//, '').replace('.json', ''))]
 }
 
 // Each language's endonym (its own name: `Deutsch`, `中文`). `Intl.DisplayNames`

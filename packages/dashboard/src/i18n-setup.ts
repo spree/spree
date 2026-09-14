@@ -15,7 +15,7 @@
 //
 // `deep: true` + `overwrite: true` merge nested objects without dropping
 // keys the framework already provided; plugin keys win on collision.
-import { i18n, intlDisplayName } from '@spree/dashboard-core'
+import { i18n, localesFromBundlePaths } from '@spree/dashboard-core'
 import en from './locales/en.json'
 
 i18n.addResourceBundle('en', 'translation', en, true, true)
@@ -43,21 +43,10 @@ for (const [path, mod] of Object.entries(appLocales)) {
   i18n.addResourceBundle(codeFromPath(path), 'translation', mod.default, true, true)
 }
 
-// Each language's endonym (its own name: `Deutsch`, `日本語`). `Intl.DisplayNames`
-// returns it in the language's own convention, so some are lowercase
-// (`français`, `polski`); capitalize the first letter — per the language's own
-// casing rules — for a uniform, title-cased list. Scripts without case
-// (`日本語`) are unaffected. Falls back to the code on no coverage.
-function localeName(code: string): string {
-  const name = intlDisplayName('language', code, code) ?? code
-  return name.charAt(0).toLocaleUpperCase(code) + name.slice(1)
-}
-
 /**
  * Admin UI languages the dashboard can display, as `{ code, name }` pairs for
  * the language picker. Derived from the shipped locale bundles, not the API.
  */
 export function getAvailableUiLocales(): Array<{ code: string; name: string }> {
-  const codes = ['en', ...Object.keys(appLocales).map(codeFromPath)]
-  return codes.map((code) => ({ code, name: localeName(code) }))
+  return localesFromBundlePaths(Object.keys(appLocales))
 }
