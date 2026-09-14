@@ -1,0 +1,98 @@
+/**
+ * Shared vocabulary of the configurator engine: the client it talks through,
+ * the plan it produces and the report an apply returns.
+ */
+
+export const SECTION_NAMES = [
+  'store',
+  'channels',
+  'markets',
+  'customer_groups',
+  'tax_categories',
+  'delivery_zones',
+  'delivery_methods',
+  'stock_locations',
+  'suppliers',
+  'categories',
+  'products',
+  'customers',
+  'sellers',
+] as const
+
+export type SectionName = (typeof SECTION_NAMES)[number]
+
+export interface RequestOptions {
+  params?: Record<string, string | number | boolean | (string | number)[] | undefined>
+  body?: unknown
+}
+
+/**
+ * The slice of `@spree/admin-sdk`'s client the engine needs. Structural, so
+ * tests can hand in a stub and the dashboard e2e setup can hand in a real
+ * `createAdminClient(...)`.
+ */
+export interface ConfigClient {
+  request: <T>(method: string, path: string, options?: RequestOptions) => Promise<T>
+}
+
+export interface LiveRecord {
+  id: string
+  [attribute: string]: unknown
+}
+
+export type OperationKind = 'create' | 'update' | 'unchanged' | 'delete' | 'unmanaged' | 'error'
+
+export interface AttributeChange {
+  attribute: string
+  from: unknown
+  to: unknown
+}
+
+export interface PlanOperation {
+  section: SectionName
+  kind: OperationKind
+  /** Natural key of the record, or `store` for the singleton. */
+  key: string
+  /** Where the entry sits in the file, e.g. `products[2]` — what an error is reported against. */
+  path: string
+  changes?: AttributeChange[]
+  /** For `error`: what is wrong. */
+  message?: string
+  /** For `create`/`update`: the file entry the payload came from. */
+  entry?: unknown
+  /** For `update`/`delete`/`unchanged`: the live record. */
+  live?: LiveRecord
+}
+
+export interface SectionPlan {
+  section: SectionName
+  operations: PlanOperation[]
+}
+
+export interface Plan {
+  sections: SectionPlan[]
+}
+
+export type ApplyStatus = 'applied' | 'failed' | 'skipped'
+
+export interface ApplyResult {
+  operation: PlanOperation
+  status: ApplyStatus
+  message?: string
+  /** The API's own validation details for a 422, keyed by attribute. */
+  details?: Record<string, unknown>
+}
+
+export interface ApplyReport {
+  results: ApplyResult[]
+}
+
+export interface PlanOptions {
+  /** Sections whose live records absent from the file become deletes. */
+  prune?: SectionName[]
+}
+
+export interface ApplyOptions {
+  /** Writes within a section that may run at once. */
+  concurrency?: number
+}

@@ -8,11 +8,12 @@
   },
   "files": [
     "dist",
+    "schemas",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-dashboard-starter.mjs templates/dashboard-starter && tsup",
+    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-dashboard-starter.mjs templates/dashboard-starter && tsup && node scripts/emit-config-schema.mjs",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -24,7 +25,8 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "npm run build && changeset publish",
-    "generate:spec": "node scripts/bundle-spec.mjs"
+    "generate:spec": "node scripts/bundle-spec.mjs",
+    "generate:config-schema": "tsup && node scripts/emit-config-schema.mjs"
   },
   "keywords": [
     "spree",
@@ -60,9 +62,18 @@
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
-    "yaml": "^2.8.4"
+    "yaml": "^2.8.4",
+    "zod": "^4.4.3"
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
+    },
+    "./schemas/spree-config.json": "./schemas/spree-config.json"
   }
 }
