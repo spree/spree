@@ -20,7 +20,7 @@ RSpec.describe Spree::Reporting::Counters do
     expect(results['orders_to_fulfill'].nav).to eq('orders')
     expect(results['orders_to_fulfill'].link).to eq(
       'resource' => 'orders',
-      'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
+      'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'in', 'value' => 'unfulfilled' }]
     )
     expect(results.values.map(&:value)).to all(be_a(Integer))
   end

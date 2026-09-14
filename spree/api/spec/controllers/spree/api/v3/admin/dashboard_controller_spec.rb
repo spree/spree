@@ -27,7 +27,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       expect(fulfill.keys).to match_array(%w[key value link nav])
       expect(fulfill['link']).to eq(
         'resource' => 'orders',
-        'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'eq', 'value' => 'unfulfilled' }]
+        'filters' => [{ 'field' => 'fulfillment_status', 'operator' => 'in', 'value' => 'unfulfilled' }]
       )
     end
 

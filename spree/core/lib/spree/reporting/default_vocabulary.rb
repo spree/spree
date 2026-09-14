@@ -650,8 +650,12 @@ module Spree
           counter :orders_to_fulfill,
                   subject: -> { Spree::Order }, key_scope: 'read_orders', nav: 'orders',
                   count: ->(store, channel:) { PLACED_ORDERS.call(store, channel).ready_to_ship.count },
+                  # `in` rather than `eq`, though it names one value: the
+                  # orders table's Fulfillment control reads `in`, so an `eq`
+                  # rule lands beside it as a separate chip and the control
+                  # still says "All" — two filters on screen for one idea.
                   link: { resource: 'orders',
-                          filters: [{ field: 'fulfillment_status', operator: 'eq', value: 'unfulfilled' }] }
+                          filters: [{ field: 'fulfillment_status', operator: 'in', value: 'unfulfilled' }] }
 
           # Placed orders still owed money: nothing collected yet, authorized
           # but not captured, or only partially paid.
