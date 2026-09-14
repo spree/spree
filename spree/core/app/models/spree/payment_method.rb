@@ -54,7 +54,8 @@ module Spree
     validates :name, presence: true
     # Checked only when the name changes, so a row that already shares its
     # name with another (from before this rule) can still be saved.
-    validates :name, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id],
+    validates :name, uniqueness: { case_sensitive: false,
+                                   scope: [*spree_base_uniqueness_scope, :store_id],
                                    conditions: -> { where(deleted_at: nil) } },
                      if: :will_save_change_to_name?
     validates :store, presence: true

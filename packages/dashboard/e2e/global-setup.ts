@@ -17,10 +17,12 @@ import {
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
+  FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON_PERMALINK,
   FIXTURE_SUPPLIER,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_PRODUCT,
+  FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
 } from './helpers'
 import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
@@ -53,29 +55,30 @@ const BOOTSTRAP_RUBY = [
 // Transaction data the fixture file cannot carry (orders, payouts, transfers,
 // a checkout's reservation): written directly once the configured records
 // exist, keyed on the same natural keys the file declares.
-const TRANSACTIONS_RUBY = [
-  's = Spree::Store.default',
-  // A seller with one settled earning and one payout still owed, so the
-  // marketplace ledger screens have rows to read and a settlement to mark
-  // paid. Both are produced by fulfilment and the payout sweep, neither of
-  // which an E2E run can reach.
-  `ledger_seller = s.sellers.find_by!(slug: '${FIXTURE_LEDGER_SELLER.toLowerCase().replace(/\s+/g, '-')}')`,
-  // Approved directly: the approve workflow wants a seller who has started
-  // onboarding, and a ledger fixture never signs in.
-  "ledger_seller.update!(status: 'approved') unless ledger_seller.approved?",
-  `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
-  `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
-  `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
-  `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
-  // The Inventory page's SKU, held by one checkout at the destination. The
-  // hold is a reservation row written directly — the row keeps the level's
-  // counter itself — because a real checkout needs reservations switched on
-  // store-wide, which the order specs must not inherit.
-  `inventory_variant = Spree::Variant.find_by!(sku: '${FIXTURE_INVENTORY_SKU}')`,
-  `transfer_destination = s.stock_locations.find_by!(name: '${FIXTURE_TRANSFER_DESTINATION}')`,
-  'inventory_level = transfer_destination.stock_levels.where(variant: inventory_variant).first_or_create!',
-  `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
-].join('; ')
+const transactionsRuby = (ledgerSellerSlug: string) =>
+  [
+    's = Spree::Store.default',
+    // A seller with one settled earning and one payout still owed, so the
+    // marketplace ledger screens have rows to read and a settlement to mark
+    // paid. Both are produced by fulfilment and the payout sweep, neither of
+    // which an E2E run can reach.
+    `ledger_seller = s.sellers.find_by!(slug: '${ledgerSellerSlug}')`,
+    // Approved directly: the approve workflow wants a seller who has started
+    // onboarding, and a ledger fixture never signs in.
+    "ledger_seller.update!(status: 'approved') unless ledger_seller.approved?",
+    `ledger_payout = ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
+    `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
+    `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
+    `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+    // The Inventory page's SKU, held by one checkout at the destination. The
+    // hold is a reservation row written directly — the row keeps the level's
+    // counter itself — because a real checkout needs reservations switched on
+    // store-wide, which the order specs must not inherit.
+    `inventory_variant = Spree::Variant.find_by!(sku: '${FIXTURE_INVENTORY_SKU}')`,
+    `transfer_destination = s.stock_locations.find_by!(name: '${FIXTURE_TRANSFER_DESTINATION}')`,
+    'inventory_level = transfer_destination.stock_levels.where(variant: inventory_variant).first_or_create!',
+    `unless inventory_level.stock_reservations.exists?; inventory_cart = Spree::Cart.create!(store: s, currency: s.default_currency, email: 'e2e-inventory@example.com'); inventory_line = inventory_cart.line_items.create!(variant: inventory_variant, quantity: ${FIXTURE_INVENTORY_RESERVED}); inventory_level.stock_reservations.create!(cart: inventory_cart, line_item: inventory_line, quantity: ${FIXTURE_INVENTORY_RESERVED}, expires_at: 10.years.from_now); end`,
+  ].join('; ')
 
 function rmIfExists(path: string) {
   try {
@@ -115,66 +118,55 @@ async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
   throw new Error(`Server did not start within ${timeoutMs}ms at ${url}`)
 }
 
+type StoreConfig = ReturnType<typeof loadConfig>['config']
+
 /**
  * The specs reference fixtures through the constants in `helpers.ts`; the
  * file is what creates them. Refuse to start when they disagree, which is
- * cheaper than a spec failing on a record that was never seeded.
+ * cheaper than a spec failing on a record that was never seeded. Checked on
+ * the keys the specs and the Ruby block below resolve by.
  */
-function assertFixturesDeclared(config: ReturnType<typeof loadConfig>['config']): void {
-  const expected: [string, boolean][] = [
-    [
-      `channel ${FIXTURE_BULK_CHANNEL_CODE}`,
-      (config.channels ?? []).some((c) => c.code === FIXTURE_BULK_CHANNEL_CODE),
-    ],
-    [
-      `category ${FIXTURE_PROMO_TAXON_PERMALINK}`,
-      (config.categories ?? []).some((c) => c.permalink === FIXTURE_PROMO_TAXON_PERMALINK),
-    ],
-    [
-      `category ${FIXTURE_BULK_CATEGORY_PERMALINK}`,
-      (config.categories ?? []).some((c) => c.permalink === FIXTURE_BULK_CATEGORY_PERMALINK),
-    ],
-    [
-      `customer group ${FIXTURE_PROMO_CUSTOMER_GROUP}`,
-      (config.customer_groups ?? []).some((g) => g.name === FIXTURE_PROMO_CUSTOMER_GROUP),
-    ],
-    [
-      `customer ${FIXTURE_PROMO_CUSTOMER_EMAIL}`,
-      (config.customers ?? []).some((c) => c.email === FIXTURE_PROMO_CUSTOMER_EMAIL),
-    ],
-    [
-      `supplier ${FIXTURE_SUPPLIER}`,
-      (config.suppliers ?? []).some((s) => s.name === FIXTURE_SUPPLIER),
-    ],
-    [
-      `seller ${FIXTURE_LEDGER_SELLER}`,
-      (config.sellers ?? []).some((s) => s.name === FIXTURE_LEDGER_SELLER),
-    ],
-    [
-      `stock location ${FIXTURE_TRANSFER_SOURCE}`,
-      (config.stock_locations ?? []).some((l) => l.name === FIXTURE_TRANSFER_SOURCE),
-    ],
-    [
-      `stock location ${FIXTURE_TRANSFER_DESTINATION}`,
-      (config.stock_locations ?? []).some((l) => l.name === FIXTURE_TRANSFER_DESTINATION),
-    ],
-    ...[
-      FIXTURE_PROMO_PRODUCT,
-      FIXTURE_BULK_PRODUCT_A,
-      FIXTURE_BULK_PRODUCT_N,
-      FIXTURE_TRANSFER_PRODUCT,
-      FIXTURE_INVENTORY_PRODUCT,
-    ].map((name): [string, boolean] => [
-      `product ${name}`,
-      (config.products ?? []).some((p) => p.name === name),
-    ]),
+function assertFixturesDeclared(config: StoreConfig): void {
+  const expected: [keyof StoreConfig, string, string][] = [
+    ['channels', 'code', FIXTURE_BULK_CHANNEL_CODE],
+    ['categories', 'permalink', FIXTURE_PROMO_TAXON_PERMALINK],
+    ['categories', 'permalink', FIXTURE_BULK_CATEGORY_PERMALINK],
+    ['customer_groups', 'name', FIXTURE_PROMO_CUSTOMER_GROUP],
+    ['customers', 'email', FIXTURE_PROMO_CUSTOMER_EMAIL],
+    ['suppliers', 'name', FIXTURE_SUPPLIER],
+    ['sellers', 'name', FIXTURE_LEDGER_SELLER],
+    ['stock_locations', 'name', FIXTURE_TRANSFER_SOURCE],
+    ['stock_locations', 'name', FIXTURE_TRANSFER_DESTINATION],
+    ['products', 'name', FIXTURE_PROMO_PRODUCT],
+    ['products', 'sku', FIXTURE_PROMO_SKU],
+    ['products', 'name', FIXTURE_BULK_PRODUCT_A],
+    ['products', 'name', FIXTURE_BULK_PRODUCT_N],
+    ['products', 'name', FIXTURE_TRANSFER_PRODUCT],
+    ['products', 'sku', FIXTURE_TRANSFER_SKU],
+    ['products', 'name', FIXTURE_INVENTORY_PRODUCT],
+    ['products', 'sku', FIXTURE_INVENTORY_SKU],
   ]
-  const missing = expected.filter(([, declared]) => !declared).map(([label]) => label)
+  const missing = expected
+    .filter(([section, attribute, value]) => {
+      const entries = (config[section] ?? []) as Record<string, unknown>[]
+      return !entries.some((entry) => entry[attribute] === value)
+    })
+    .map(([section, attribute, value]) => `${section} with ${attribute} "${value}"`)
   if (missing.length) {
     throw new Error(
       `e2e/fixtures/store.yml does not declare: ${missing.join(', ')} (helpers.ts and the fixture file drifted apart)`,
     )
   }
+}
+
+/** The ledger seller's slug as the file states it, for the Ruby block that adds its payouts. */
+function ledgerSellerSlug(config: StoreConfig): string {
+  const seller = (config.sellers ?? []).find(
+    (candidate) => candidate.name === FIXTURE_LEDGER_SELLER,
+  )
+  if (!seller)
+    throw new Error(`e2e/fixtures/store.yml does not declare seller "${FIXTURE_LEDGER_SELLER}"`)
+  return seller.slug
 }
 
 let serverProcess: ChildProcess | null = null
@@ -238,5 +230,5 @@ export default async function globalSetup() {
     throw new Error(`Deploying e2e/fixtures/store.yml failed:\n${renderReport(report)}`)
   }
 
-  railsRunner(TRANSACTIONS_RUBY, 'Transaction fixtures runner')
+  railsRunner(transactionsRuby(ledgerSellerSlug(config)), 'Transaction fixtures runner')
 }

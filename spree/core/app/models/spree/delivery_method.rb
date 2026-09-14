@@ -123,7 +123,8 @@ module Spree
     # sellers may each run a "Standard". Checked only when the name changes,
     # so a row that already shares its name (from before this rule) can still
     # be saved.
-    validates :name, uniqueness: { scope: [*spree_base_uniqueness_scope, :store_id, :seller_id],
+    validates :name, uniqueness: { case_sensitive: false,
+                                   scope: [*spree_base_uniqueness_scope, :store_id, :seller_id],
                                    conditions: -> { where(deleted_at: nil) } },
                      if: :will_save_change_to_name?
     validates :storefront_visible, inclusion: { in: [true, false] }

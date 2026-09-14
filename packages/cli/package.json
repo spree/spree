@@ -13,7 +13,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-dashboard-starter.mjs templates/dashboard-starter && tsup && node scripts/emit-config-schema.mjs",
+    "build": "pnpm run clean && node scripts/bundle-spec.mjs && node ../../scripts/sync-dashboard-starter.mjs templates/dashboard-starter && tsup && node scripts/emit-config-schema.mjs",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

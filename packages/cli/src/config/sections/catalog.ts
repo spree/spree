@@ -169,7 +169,7 @@ async function variantPayload(
 export function parameterize(value: string): string {
   return value
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\p{M}/gu, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
