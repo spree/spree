@@ -12,7 +12,24 @@
     "subtitle": "You were invited as {{email}}. Set a password to finish.",
     "title": "Join the team"
   },
+  "account": {
+    "avatar": "Photo",
+    "avatar_help": "PNG, JPEG or WebP.",
+    "email": "Email",
+    "first_name": "First name",
+    "language": "Language",
+    "last_name": "Last name",
+    "load_failed_title": "We could not load your account",
+    "save_failed": "We could not save your account.",
+    "saved": "Account updated",
+    "saving": "Saving…",
+    "subtitle": "Your name, photo and language. Only you can change these.",
+    "title": "Your account"
+  },
   "admin": {
+    "account": {
+      "edit_profile": "Your account"
+    },
     "actions": {
       "actions_menu": "Actions",
       "cancel": "Cancel",

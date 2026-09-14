@@ -1,7 +1,12 @@
 import { AppShell, AppShellProvider, TenantProvider } from '@spree/dashboard-core'
 import { useParams, useRouterState } from '@tanstack/react-router'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
+import { AccountDialog } from './components/account-dialog'
 import { SellerSwitcher } from './components/seller-switcher'
+import { getAvailableUiLocales } from './i18n'
+
+// Derived once from the shipped locale bundles — stable for the panel's life.
+const UI_LOCALES = getAvailableUiLocales()
 
 /**
  * The panel's frame: the nav rail, and the page as a sheet beside it.
@@ -20,6 +25,10 @@ export function PanelChrome({ children }: { children: ReactNode }) {
   const inSettings = useRouterState({
     select: (state) => state.location.pathname.startsWith(`/${sellerId}/settings`),
   })
+  // The account is edited in a dialog rather than on a page, so the frame owns
+  // its open state — the trigger sits in the sidebar's account menu, which is
+  // mounted here and stays put across route changes.
+  const [accountOpen, setAccountOpen] = useState(false)
 
   return (
     // Scopes every shared query key to this seller, the way `StoreProvider`
@@ -27,7 +36,14 @@ export function PanelChrome({ children }: { children: ReactNode }) {
     // survive a switch and be shown under the next seller.
     <TenantProvider id={sellerId}>
       <AppShellProvider>
-        <AppShell tenantId={sellerId} sidebarHeader={<SellerSwitcher />} inSettings={inSettings}>
+        <AppShell
+          tenantId={sellerId}
+          sidebarHeader={<SellerSwitcher />}
+          inSettings={inSettings}
+          uiLocales={UI_LOCALES}
+          onEditProfile={() => setAccountOpen(true)}
+        >
+          <AccountDialog open={accountOpen} onOpenChange={setAccountOpen} />
           {children}
         </AppShell>
       </AppShellProvider>
