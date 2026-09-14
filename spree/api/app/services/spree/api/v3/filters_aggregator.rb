@@ -137,7 +137,8 @@ module Spree
           var_table = Spree::Variant.table_name
 
           Spree::OptionValueVariant
-            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id AND #{var_table}.deleted_at IS NULL")
+            .joins("INNER JOIN #{var_table} ON #{var_table}.id = #{ovv_table}.variant_id " \
+                   "AND #{var_table}.deleted_at IS NULL AND #{var_table}.status = 'active'")
             .where(var_table => { product_id: product_scope.reorder('').select(:id) })
             .where(ovv_table => { option_value_id: option_value_ids })
             .group("#{ovv_table}.option_value_id")
@@ -224,7 +225,7 @@ module Spree
           # Rebuild: start from scope before options, apply only other option types
           scope = @scope_before_options
           other_groups.each_value do |ov_ids|
-            matching = Spree::Variant.where(deleted_at: nil)
+            matching = Spree::Variant.where(deleted_at: nil).listed
                                      .joins(:option_value_variants)
                                      .where(Spree::OptionValueVariant.table_name => { option_value_id: ov_ids })
                                      .select(:product_id)

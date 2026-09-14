@@ -149,6 +149,11 @@ module Spree
         joins(:product_collections).where(Spree::ProductCollection.table_name => { collection_id: collection.id }).distinct
       end
 
+      # Ties broken by id, because several products routinely share a minimum
+      # position and ordering by position alone leaves their relative order to
+      # whatever the database returns — stable on SQLite, not on PostgreSQL,
+      # which is why the tie only ever surfaced as an intermittent CI failure
+      # rather than a local one.
       scope :ascend_by_taxons_min_position, ->(taxon_ids) {
         min_position_sql = "MIN(#{Spree::ProductCategory.table_name}.position)"
 
@@ -156,7 +161,7 @@ module Spree
           where(Spree::ProductCategory.table_name => { category_id: taxon_ids }).
           select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
           group("#{Product.table_name}.id").
-          order(Arel.sql("#{min_position_sql} ASC"))
+          order(Arel.sql("#{min_position_sql} ASC"), "#{Product.table_name}.id ASC")
       }
 
       scope :with_option_value, ->(option, value) {
@@ -198,7 +203,11 @@ module Spree
         grouped = OptionValue.where(id: actual_ids).group_by(&:option_type_id)
         return none if grouped.empty?
 
-        matching_product_ids = Variant.where(deleted_at: nil).
+        # Active rows only, matching what the search providers index and what
+        # the Store API serializes: a filter must not surface a product
+        # through a seller's offer nobody has approved yet
+        # (docs/plans/6.0-seller-master-catalog-listings.md, Decision 3).
+        matching_product_ids = Variant.where(deleted_at: nil).listed.
                                joins(option_value_variants: :option_value).
                                where(OptionValue.table_name => { id: actual_ids }).
                                group(Variant.arel_table[:id]).

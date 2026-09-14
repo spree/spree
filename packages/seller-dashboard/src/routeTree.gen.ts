@@ -24,6 +24,7 @@ import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$sell
 import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sellerId/products/index'
 import { Route as PayoutsIndexRouteImport } from './routes/_authenticated/$sellerId/payouts/index'
 import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
+import { Route as OffersIndexRouteImport } from './routes/_authenticated/$sellerId/offers/index'
 import { Route as EarningsIndexRouteImport } from './routes/_authenticated/$sellerId/earnings/index'
 import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
@@ -34,6 +35,8 @@ import { Route as ProductsNewRouteImport } from './routes/_authenticated/$seller
 import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
 import { Route as PayoutsPayoutIdRouteImport } from './routes/_authenticated/$sellerId/payouts/$payoutId'
 import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$sellerId/orders/$orderId'
+import { Route as OffersNewRouteImport } from './routes/_authenticated/$sellerId/offers/new'
+import { Route as OffersVariantIdRouteImport } from './routes/_authenticated/$sellerId/offers/$variantId'
 
 const resetPasswordRoute = resetPasswordRouteImport.update({
   id: '/reset-password',
@@ -110,6 +113,11 @@ const OrdersIndexRoute = OrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const OffersIndexRoute = OffersIndexRouteImport.update({
+  id: '/offers/',
+  path: '/offers/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const EarningsIndexRoute = EarningsIndexRouteImport.update({
   id: '/earnings/',
   path: '/earnings/',
@@ -160,6 +168,16 @@ const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
   path: '/orders/$orderId',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const OffersNewRoute = OffersNewRouteImport.update({
+  id: '/offers/new',
+  path: '/offers/new',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const OffersVariantIdRoute = OffersVariantIdRouteImport.update({
+  id: '/offers/$variantId',
+  path: '/offers/$variantId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof authenticatedIndexRoute
@@ -172,6 +190,8 @@ export interface FileRoutesByFullPath {
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/': typeof IndexRoute
+  '/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/$sellerId/offers/new': typeof OffersNewRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
@@ -182,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings/': typeof EarningsIndexRoute
+  '/$sellerId/offers/': typeof OffersIndexRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
   '/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/$sellerId/products/': typeof ProductsIndexRoute
@@ -196,6 +217,8 @@ export interface FileRoutesByTo {
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId': typeof IndexRoute
+  '/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/$sellerId/offers/new': typeof OffersNewRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
@@ -206,6 +229,7 @@ export interface FileRoutesByTo {
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
   '/$sellerId/earnings': typeof EarningsIndexRoute
+  '/$sellerId/offers': typeof OffersIndexRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
   '/$sellerId/payouts': typeof PayoutsIndexRoute
   '/$sellerId/products': typeof ProductsIndexRoute
@@ -224,6 +248,8 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$sellerId/': typeof IndexRoute
+  '/_authenticated/$sellerId/offers/$variantId': typeof OffersVariantIdRoute
+  '/_authenticated/$sellerId/offers/new': typeof OffersNewRoute
   '/_authenticated/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
   '/_authenticated/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
@@ -234,6 +260,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
   '/_authenticated/$sellerId/earnings/': typeof EarningsIndexRoute
+  '/_authenticated/$sellerId/offers/': typeof OffersIndexRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
   '/_authenticated/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/_authenticated/$sellerId/products/': typeof ProductsIndexRoute
@@ -252,6 +279,8 @@ export interface FileRouteTypes {
     | '/$sellerId/profile'
     | '/$sellerId/settings'
     | '/$sellerId/'
+    | '/$sellerId/offers/$variantId'
+    | '/$sellerId/offers/new'
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/payouts/$payoutId'
     | '/$sellerId/products/$productId'
@@ -262,6 +291,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings/'
+    | '/$sellerId/offers/'
     | '/$sellerId/orders/'
     | '/$sellerId/payouts/'
     | '/$sellerId/products/'
@@ -276,6 +306,8 @@ export interface FileRouteTypes {
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId'
+    | '/$sellerId/offers/$variantId'
+    | '/$sellerId/offers/new'
     | '/$sellerId/orders/$orderId'
     | '/$sellerId/payouts/$payoutId'
     | '/$sellerId/products/$productId'
@@ -286,6 +318,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
     | '/$sellerId/earnings'
+    | '/$sellerId/offers'
     | '/$sellerId/orders'
     | '/$sellerId/payouts'
     | '/$sellerId/products'
@@ -303,6 +336,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/settings'
     | '/_authenticated/$sellerId/'
+    | '/_authenticated/$sellerId/offers/$variantId'
+    | '/_authenticated/$sellerId/offers/new'
     | '/_authenticated/$sellerId/orders/$orderId'
     | '/_authenticated/$sellerId/payouts/$payoutId'
     | '/_authenticated/$sellerId/products/$productId'
@@ -313,6 +348,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/settings/stock-locations'
     | '/_authenticated/$sellerId/settings/team'
     | '/_authenticated/$sellerId/earnings/'
+    | '/_authenticated/$sellerId/offers/'
     | '/_authenticated/$sellerId/orders/'
     | '/_authenticated/$sellerId/payouts/'
     | '/_authenticated/$sellerId/products/'
@@ -434,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/offers/': {
+      id: '/_authenticated/$sellerId/offers/'
+      path: '/offers'
+      fullPath: '/$sellerId/offers/'
+      preLoaderRoute: typeof OffersIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/earnings/': {
       id: '/_authenticated/$sellerId/earnings/'
       path: '/earnings'
@@ -504,6 +547,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersOrderIdRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/offers/new': {
+      id: '/_authenticated/$sellerId/offers/new'
+      path: '/offers/new'
+      fullPath: '/$sellerId/offers/new'
+      preLoaderRoute: typeof OffersNewRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/offers/$variantId': {
+      id: '/_authenticated/$sellerId/offers/$variantId'
+      path: '/offers/$variantId'
+      fullPath: '/$sellerId/offers/$variantId'
+      preLoaderRoute: typeof OffersVariantIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
   }
 }
 
@@ -534,11 +591,14 @@ interface authenticatedSellerIdRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
+  OffersVariantIdRoute: typeof OffersVariantIdRoute
+  OffersNewRoute: typeof OffersNewRoute
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
   PayoutsPayoutIdRoute: typeof PayoutsPayoutIdRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   ProductsNewRoute: typeof ProductsNewRoute
   EarningsIndexRoute: typeof EarningsIndexRoute
+  OffersIndexRoute: typeof OffersIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   PayoutsIndexRoute: typeof PayoutsIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
@@ -549,11 +609,14 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
+  OffersVariantIdRoute: OffersVariantIdRoute,
+  OffersNewRoute: OffersNewRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
   PayoutsPayoutIdRoute: PayoutsPayoutIdRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsNewRoute: ProductsNewRoute,
   EarningsIndexRoute: EarningsIndexRoute,
+  OffersIndexRoute: OffersIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   PayoutsIndexRoute: PayoutsIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,

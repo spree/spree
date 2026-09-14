@@ -232,7 +232,7 @@ module SpreeMeilisearch
     MAX_COMBINATION_AXES = 6
 
     def variant_option_value_combination_ids
-      product.variants.flat_map do |variant|
+      product.visible_variants.flat_map do |variant|
         ids = variant.option_values.map(&:prefixed_id).sort
         (2..[ids.size, MAX_COMBINATION_AXES].min).flat_map do |size|
           ids.combination(size).map { |combination| combination.join('|') }
@@ -242,7 +242,7 @@ module SpreeMeilisearch
 
     # Use variants (matches reindex preload) instead of variants.includes
     def variant_option_values_data
-      @variant_option_values_data ||= product.variants.flat_map(&:option_values).uniq
+      @variant_option_values_data ||= product.visible_variants.flat_map(&:option_values).uniq
     end
   end
 end
