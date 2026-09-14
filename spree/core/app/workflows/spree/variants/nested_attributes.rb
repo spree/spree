@@ -68,22 +68,38 @@ module Spree
       def apply_stock_levels(variant, stock_levels_params)
         return if stock_levels_params.blank?
 
-        Array(stock_levels_params).each do |raw|
-          row = raw.to_h.with_indifferent_access
-          next if row[:stock_location_id].blank?
+        rows = Array(stock_levels_params).map { |raw| raw.to_h.with_indifferent_access }
+        rows.reject! { |row| row[:stock_location_id].blank? }
+        return if rows.empty?
 
-          # Scoped through the product's own store: Spree::StockLocation
-          # lookup is global, so an id belonging to another store would
-          # otherwise put this variant's stock in that store's warehouse.
-          location = stock_location_for(variant, row[:stock_location_id])
+        locations = stock_locations_by_param(variant, rows.map { |row| row[:stock_location_id] })
+
+        rows.each do |row|
+          location = locations[row[:stock_location_id].to_s]
           next if location.nil?
 
           variant.set_stock(row[:count_on_hand], row[:backorderable], location)
         end
       end
 
-      def stock_location_for(variant, param)
-        variant.product&.store&.stock_locations&.find_by_param(param)
+      # Resolves every stock location the payload names in one read. Scoped
+      # through the product's own store: Spree::StockLocation lookup is
+      # global, so an id belonging to another store would otherwise put this
+      # variant's stock in that store's warehouse. A store keeps few
+      # locations, so loading them beats a lookup per row.
+      #
+      # @return [Hash{String => Spree::StockLocation}] keyed by both the
+      #   prefixed id and the raw id, which is what the payload may carry
+      def stock_locations_by_param(variant, params)
+        scope = variant.product&.store&.stock_locations
+        return {} if scope.nil? || params.empty?
+
+        wanted = params.map(&:to_s).uniq
+        scope.each_with_object({}) do |location, memo|
+          [location.prefixed_id.to_s, location.id.to_s].each do |key|
+            memo[key] = location if wanted.include?(key)
+          end
+        end
       end
     end
   end

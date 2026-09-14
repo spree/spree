@@ -89,6 +89,30 @@ class Spree::Base < ApplicationRecord
     association(name).loaded? || lazy_preload_context.present?
   end
 
+  # Recomputes a counter cache for many records at once. Rails'
+  # +reset_counters+ spends two queries per record, which a bulk write pays
+  # for every row it touched; this is one grouped count plus one UPDATE per
+  # distinct value.
+  #
+  # @param ids [Array] the records whose counter is recomputed
+  # @param association [Symbol] the has_many whose rows are counted
+  # @return [void]
+  def self.reset_counters_in_bulk(ids, association)
+    ids = Array(ids).compact.uniq
+    return if ids.empty?
+
+    reflection = reflect_on_association(association)
+    counter = reflection.klass.reflect_on_all_associations(:belongs_to).find do |belongs_to|
+      belongs_to.foreign_key.to_s == reflection.foreign_key.to_s && belongs_to.options[:counter_cache]
+    end.counter_cache_column
+
+    counts = reflection.klass.where(reflection.foreign_key => ids).group(reflection.foreign_key).count
+
+    ids.group_by { |id| counts.fetch(id, 0) }.each do |count, grouped_ids|
+      unscoped.where(id: grouped_ids).where.not(counter => count).update_all(counter => count)
+    end
+  end
+
   # @see Spree.mysql? — the single definition; this reads it so a model can
   #   branch without reaching for the connection itself.
   def mysql_adapter?
