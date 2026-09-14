@@ -15,9 +15,13 @@ namespace :spree do
       scopes = ENV.fetch('SCOPES', '').split(',').map(&:strip).reject(&:empty?)
       store = Spree::Store.default
       # Names are unique among a store's active keys, so a key the CLI mints
-      # under a fixed name on every run supersedes the previous one.
-      store.api_keys.active.where(name: name).find_each(&:revoke!) if ENV['REPLACE'] == 'true'
-      key = store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
+      # under a fixed name on every run supersedes the previous one. Both
+      # steps in one transaction: a failed create must not leave the operator
+      # with the old key revoked and no replacement.
+      key = Spree::ApiKey.transaction do
+        store.api_keys.active.where(name: name).find_each(&:revoke!) if ENV['REPLACE'] == 'true'
+        store.api_keys.create!(name: name, key_type: key_type, scopes: scopes)
+      end
       print key.plaintext_token
     end
 

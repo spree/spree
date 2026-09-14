@@ -248,7 +248,12 @@ module Spree
     }
 
     scope :with_option_value, lambda { |option_name, option_value|
-      option_type_ids = OptionType.where(name: option_name).ids
+      # Option types are per store, so two stores may each define `size`;
+      # narrow to the store in context so a filter never matches another
+      # store's values.
+      option_types = OptionType.where(name: option_name)
+      option_types = option_types.where(store_id: Spree::Current.store.id) if Spree::Current.store
+      option_type_ids = option_types.ids
       return none if option_type_ids.empty?
 
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })

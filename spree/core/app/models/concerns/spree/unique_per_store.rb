@@ -26,15 +26,23 @@ module Spree
           live && klass.column_names.include?(live.to_s) ? where(live => nil) : all
         end
 
+        uniqueness_scope = [*spree_base_uniqueness_scope, :store_id, *scope]
+
         validates attribute,
                   uniqueness: { case_sensitive: false,
-                                scope: [*spree_base_uniqueness_scope, :store_id, *scope],
+                                scope: uniqueness_scope,
                                 conditions: conditions },
-                  # Checked only when the attribute changes, so a row that
-                  # already shares its value with another (from before this
-                  # rule) can still be saved. Removed once the follow-up adds
-                  # the unique index and renames existing duplicates.
-                  if: :"will_save_change_to_#{attribute}?"
+                  # Checked only when the value or the scope it is unique
+                  # within changes — moving a delivery method to another
+                  # seller has to be checked too. A row that already shares
+                  # its value with another (from before this rule) stays
+                  # saveable until the follow-up adds the unique index and
+                  # renames existing duplicates.
+                  if: lambda { |record|
+                    [attribute, *uniqueness_scope].any? do |column|
+                      record.will_save_change_to_attribute?(column)
+                    end
+                  }
       end
     end
   end
