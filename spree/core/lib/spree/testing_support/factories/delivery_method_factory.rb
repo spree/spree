@@ -25,15 +25,15 @@ FactoryBot.define do
     end
 
     factory :pickup_delivery_method, class: Spree::DeliveryMethod do
-      name { 'Store pickup' }
-      code { 'PICKUP' }
+      sequence(:name) { |n| "Store pickup #{n}" }
+      sequence(:code) { |n| "PICKUP_#{n}" }
       fulfillment_provider { 'Spree::FulfillmentProvider::Pickup' }
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end
 
     factory :pickup_point_delivery_method, class: Spree::DeliveryMethod do
-      name { 'Parcel locker' }
-      code { 'PICKUP_POINT' }
+      sequence(:name) { |n| "Parcel locker #{n}" }
+      sequence(:code) { |n| "PICKUP_POINT_#{n}" }
       fulfillment_provider { 'Spree::FulfillmentProvider::PickupPoint' }
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end
