@@ -24,14 +24,23 @@ function parentPermalink(permalink: string): string | null {
  */
 export function plainText(value: unknown): string | null {
   if (typeof value !== 'string') return (value as string | null) ?? null
-  return value
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/\s+/g, ' ')
-    .trim()
+  const entities: Record<string, string> = {
+    '&nbsp;': ' ',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&amp;': '&',
+  }
+  return (
+    value
+      .replace(/<[^>]*>/g, ' ')
+      // One pass over the entities, so an escaped entity (`&amp;lt;`) decodes to
+      // the text `&lt;` rather than being unescaped twice into `<`.
+      .replace(/&(?:nbsp|lt|gt|quot|amp|#39);/g, (entity) => entities[entity] ?? entity)
+      .replace(/\s+/g, ' ')
+      .trim()
+  )
 }
 
 const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [

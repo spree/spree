@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { diffAttributes, valuesEqual } from '../src/config/index'
+import { plainText } from '../src/config/sections/catalog'
 
 describe('valuesEqual', () => {
   it('bridges a number in the file against a numeric string from the API', () => {
@@ -25,5 +26,19 @@ describe('valuesEqual', () => {
       diffAttributes({ name: 'A', note: undefined }, { name: 'A', note: 'x', extra: 1 }),
     ).toEqual([])
     expect(diffAttributes({ note: null }, { note: undefined })).toEqual([])
+  })
+})
+
+describe('plainText', () => {
+  it('renders markup the way the API does', () => {
+    expect(plainText('<p>Soft cotton</p>')).toBe('Soft cotton')
+    expect(plainText('line one\n\nline two')).toBe('line one line two')
+    expect(plainText(null)).toBeNull()
+  })
+
+  it('decodes each entity once, so an escaped entity stays text', () => {
+    expect(plainText('Tea &amp; Coffee')).toBe('Tea & Coffee')
+    // `&amp;lt;` is the text `&lt;`, not a second-round `<`.
+    expect(plainText('&amp;lt;b&amp;gt;')).toBe('&lt;b&gt;')
   })
 })
