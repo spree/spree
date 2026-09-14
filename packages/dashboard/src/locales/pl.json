@@ -3056,7 +3056,11 @@
         "partially_refunded": "Częściowo zwrócone",
         "refunded": "Zwrócone",
         "overcharged": "Nadpłata",
-        "voided": "Unieważnione"
+        "voided": "Unieważnione",
+        "balance_due": "Należność",
+        "credit_owed": "Nadpłata",
+        "failed": "Nieudana",
+        "void": "Unieważnione"
       },
       "statuses": {
         "canceled": "Anulowane",

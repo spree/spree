@@ -100,7 +100,7 @@ module MyApp
     private
 
     def client(store)
-      Acme::Client.new(api_key: store.integrations.find_by!(type: 'MyApp::AcmeIntegration').preferred_api_key)
+      Acme::Client.new(api_key: store.integrations.active.find_by!(type: 'MyApp::AcmeIntegration').preferred_api_key)
     end
   end
 end

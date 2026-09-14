@@ -3024,7 +3024,11 @@
         "partially_refunded": "Partiellement remboursée",
         "refunded": "Remboursée",
         "overcharged": "Trop-perçu",
-        "voided": "Annulée"
+        "voided": "Annulée",
+        "balance_due": "Solde dû",
+        "credit_owed": "Crédit dû",
+        "failed": "Échouée",
+        "void": "Annulée"
       },
       "statuses": {
         "canceled": "Annulée",
