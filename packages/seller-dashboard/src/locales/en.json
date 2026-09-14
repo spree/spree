@@ -181,6 +181,18 @@
           }
         }
       }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "How your goods ship to customers",
+        "package_types": "Boxes, cartons and containers you pack orders in",
+        "policies": "Terms, privacy, returns and shipping documents",
+        "stock_locations": "Warehouses and pickup points that hold stock",
+        "team": "People with access to this seller"
+      }
+    },
+    "settings_page": {
+      "description": "Manage fulfillment, legal documents and your team."
     }
   },
   "app": {

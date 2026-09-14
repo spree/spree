@@ -1,16 +1,18 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { SettingsIndexPage } from '@spree/dashboard-core'
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/_authenticated/$sellerId/settings/')({
+  component: SettingsIndexRoute,
+})
 
 /**
- * Settings is a launcher, not a page — landing on it bare would show the rail
- * beside an empty pane, so it opens the first entry, as the operator's
- * dashboard does.
+ * The same landing page the operator's dashboard renders: a card grid of every
+ * settings area this member can reach. On a narrow viewport the settings rail
+ * is hidden, so this grid is the only way into the area — it must not redirect
+ * to a specific page.
  */
-export const Route = createFileRoute('/_authenticated/$sellerId/settings/')({
-  beforeLoad: ({ params }) => {
-    throw redirect({
-      to: '/$sellerId/settings/stock-locations',
-      params: { sellerId: params.sellerId },
-      replace: true,
-    })
-  },
-})
+function SettingsIndexRoute() {
+  const { sellerId } = Route.useParams()
+
+  return <SettingsIndexPage tenantId={sellerId} />
+}
