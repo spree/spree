@@ -1,8 +1,9 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
+import type { PaginationMeta } from '@spree/sdk-core'
 import type { ReportingQuery } from './admin-client'
-import type { SellerRequirementStatus } from './types'
+import type { SellerRequirementStatus, StoreCredit } from './types'
 
 /** One pricing or inventory engine a store can choose between. */
 export interface StoreDataSourceProvider {
@@ -3061,3 +3062,34 @@ export interface SavedReportCreateParams {
 }
 
 export type SavedReportUpdateParams = Partial<SavedReportCreateParams>
+
+/**
+ * The outstanding balance for one currency, summed over the filter the list
+ * request used. Amounts are canonical decimal strings; the `display_*` twins
+ * are pre-formatted in that currency.
+ */
+export interface StoreCreditCurrencyTotal {
+  currency: string
+  /** Everything ever issued in this currency. */
+  amount: string
+  /** How much of it has been spent. */
+  amount_used: string
+  /** How much is committed to an in-flight authorization. */
+  amount_authorized: string
+  /** What the store still owes: issued minus used minus authorized. */
+  amount_remaining: string
+  display_amount: string
+  display_amount_used: string
+  display_amount_authorized: string
+  display_amount_remaining: string
+}
+
+export interface StoreCreditListMeta extends PaginationMeta {
+  /** One row per currency present in the filtered scope, ordered by currency. */
+  totals: StoreCreditCurrencyTotal[]
+}
+
+export interface StoreCreditListResponse {
+  data: StoreCredit[]
+  meta: StoreCreditListMeta
+}

@@ -2607,7 +2607,9 @@
       "translations": "الترجمات",
       "purchase_orders": "أوامر الشراء",
       "inventory": "المخزون",
-      "suppliers": "الموردون"
+      "suppliers": "الموردون",
+      "loyalty": "الولاء",
+      "store_credits": "أرصدة المتجر"
     },
     "option_types": {
       "columns": {
@@ -4105,7 +4107,8 @@
         "customers": "العملاء",
         "marketing": "التسويق",
         "orders": "الطلبات",
-        "settings": "الإعدادات"
+        "settings": "الإعدادات",
+        "loyalty": "الولاء"
       },
       "labels": {
         "read": "عرض {{resource}}",
@@ -5927,6 +5930,53 @@
         "update_failed": "تعذر تحديث التقرير",
         "deleted": "تم حذف التقرير",
         "delete_failed": "تعذر حذف التقرير"
+      }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "العميل",
+        "used": "المستخدم",
+        "remaining": "المتبقي",
+        "authorized": "محجوز",
+        "standing": "الحالة",
+        "origin": "المصدر",
+        "issued_by": "أصدرها"
+      },
+      "origins": {
+        "manual": "صادر يدويًا",
+        "gift_card": "بطاقة هدايا",
+        "return": "إرجاع",
+        "exchange": "استبدال",
+        "claim": "مطالبة",
+        "refund": "استرداد"
+      },
+      "filters": {
+        "outstanding": "مستحق",
+        "spent": "مستخدم",
+        "not_from_gift_card": "كل ما عدا ذلك"
+      },
+      "totals": {
+        "outstanding": "مستحق",
+        "issued": "صادر",
+        "used": "مستخدم"
+      },
+      "ledger": {
+        "title": "السجل",
+        "empty": "لا توجد حركات مسجلة بعد.",
+        "load_failed": "تعذر تحميل السجل."
+      },
+      "sheet": {
+        "description": "كيف صدر هذا الرصيد وكيف تم إنفاقه.",
+        "open_customer": "فتح ملف العميل",
+        "load_failed": "تعذر تحميل هذا الرصيد."
+      },
+      "table": {
+        "search_placeholder": "البحث في الملاحظات…",
+        "empty": "لا توجد أرصدة بعد. أصدر رصيدًا من ملف العميل."
+      },
+      "no_customer": "بدون عميل",
+      "page": {
+        "subtitle": "ما يدين به المتجر من أرصدة مدفوعة مسبقًا لجميع العملاء."
       }
     }
   }

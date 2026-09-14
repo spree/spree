@@ -2582,7 +2582,9 @@
       "translations": "翻译",
       "purchase_orders": "采购订单",
       "inventory": "库存",
-      "suppliers": "供应商"
+      "suppliers": "供应商",
+      "loyalty": "会员权益",
+      "store_credits": "店铺信用"
     },
     "option_types": {
       "columns": {
@@ -4070,7 +4072,8 @@
         "customers": "客户",
         "marketing": "营销",
         "orders": "订单",
-        "settings": "设置"
+        "settings": "设置",
+        "loyalty": "会员权益"
       },
       "labels": {
         "read": "查看{{resource}}",
@@ -5877,6 +5880,53 @@
         "update_failed": "无法更新报表",
         "deleted": "报表已删除",
         "delete_failed": "无法删除报表"
+      }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "客户",
+        "used": "已使用",
+        "remaining": "剩余",
+        "authorized": "已冻结",
+        "standing": "状态",
+        "origin": "来源",
+        "issued_by": "发放人"
+      },
+      "origins": {
+        "manual": "手动发放",
+        "gift_card": "礼品卡",
+        "return": "退货",
+        "exchange": "换货",
+        "claim": "索赔",
+        "refund": "退款"
+      },
+      "filters": {
+        "outstanding": "未使用",
+        "spent": "已用完",
+        "not_from_gift_card": "其他来源"
+      },
+      "totals": {
+        "outstanding": "未使用",
+        "issued": "已发放",
+        "used": "已使用"
+      },
+      "ledger": {
+        "title": "流水",
+        "empty": "暂无变动记录。",
+        "load_failed": "无法加载流水。"
+      },
+      "sheet": {
+        "description": "这笔余额如何发放，以及如何被使用。",
+        "open_customer": "打开客户资料",
+        "load_failed": "无法加载该店铺信用。"
+      },
+      "table": {
+        "search_placeholder": "搜索备注…",
+        "empty": "暂无店铺信用。可从客户资料中发放。"
+      },
+      "no_customer": "无客户",
+      "page": {
+        "subtitle": "店铺在所有客户中欠下的预付余额总额。"
       }
     }
   }

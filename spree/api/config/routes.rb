@@ -735,6 +735,12 @@ Spree::Core::Engine.add_routes do
         resources :gift_cards
         resources :gift_card_batches, only: [:index, :show, :create]
 
+        # Store credits across all customers. Read-only: issuing, editing and
+        # deleting a credit stays nested under the customer that holds it.
+        resources :store_credits, only: [:index, :show] do
+          resources :events, only: [:index], controller: 'store_credits/events'
+        end
+
         # Post-sale, across all orders. Read-only — creating any of these
         # needs an order, so writes live under /orders/:order_id/...
         resources :returns, only: [:index, :show]

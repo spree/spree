@@ -16,6 +16,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'
+import type { ActionName, SubjectName } from '../lib/permissions'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { useOptionalStore } from '../providers/store-provider'
 import { type NavItem, NavMain } from './nav-main'
@@ -46,16 +47,31 @@ function entryToNavItem(entry: NavEntry, tenantId: string, t: (key: string) => s
   }
 }
 
-/** Hide items the user can't act on — `read` unless the entry says otherwise. */
+/**
+ * Hide items the user can't act on — `read` unless the entry says otherwise.
+ *
+ * A group that declares no `subject` of its own is gated by its children
+ * instead: it has no page of its own, so its own link points at whichever
+ * child it lists first. Once permissions remove some of those children, both
+ * halves of that arrangement need fixing — the group's link has to follow the
+ * first child that survived, and a group with nothing left has to go.
+ */
 function filterByPermissions(items: NavItem[], permissions: Permissions): NavItem[] {
-  return items
-    .filter((item) => !item.subject || permissions.can(item.action ?? 'read', item.subject))
-    .map((item) => ({
-      ...item,
-      items: item.items?.filter(
-        (sub) => !sub.subject || permissions.can(sub.action ?? 'read', sub.subject),
-      ),
-    }))
+  const allowed = (entry: { subject?: SubjectName; action?: ActionName }) =>
+    !entry.subject || permissions.can(entry.action ?? 'read', entry.subject)
+
+  return items.flatMap((item) => {
+    if (!allowed(item)) return []
+
+    const children = item.items?.filter(allowed)
+    if (item.subject) return [{ ...item, items: children }]
+
+    // Subject-less: gated by, and pointed at, its children.
+    const first = children?.[0]
+    if (item.items && !first) return []
+
+    return [{ ...item, items: children, url: first?.url ?? item.url }]
+  })
 }
 
 /**

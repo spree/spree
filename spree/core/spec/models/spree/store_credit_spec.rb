@@ -96,6 +96,135 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe '.exhausted' do
+    it 'is every credit with nothing left to spend' do
+      spent = create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_used: 20) }
+      committed = create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_authorized: 20) }
+      available = create(:store_credit, amount: 20)
+
+      result = described_class.exhausted
+      expect(result).to include(spent, committed)
+      expect(result).not_to include(available)
+    end
+
+    # A credit of 100 with 10 authorized still owes 90. Filing it under "spent"
+    # would let the spent view report a positive outstanding balance.
+    it 'excludes a credit that is only partly committed' do
+      partial = create(:store_credit, amount: 100).tap { |credit| credit.update_columns(amount_authorized: 10) }
+
+      expect(described_class.exhausted).not_to include(partial)
+      expect(described_class.unspent).to include(partial)
+      expect(partial.outstanding?).to be(true)
+    end
+
+    # The checkout path must not authorize against a credit that is already
+    # mid-authorization, so `available` stays narrower than `unspent`.
+    it 'is narrower than available, which the checkout path relies on' do
+      partial = create(:store_credit, amount: 100).tap { |credit| credit.update_columns(amount_authorized: 10) }
+
+      expect(described_class.available).not_to include(partial)
+    end
+
+    it 'composes with the caller\'s own scoping rather than replacing it' do
+      store = create(:store)
+      mine = create(:store_credit, store: store, amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+      theirs = create(:store_credit, store: create(:store), amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+
+      result = store.store_credits.exhausted
+      expect(result).to include(mine)
+      expect(result).not_to include(theirs)
+    end
+  end
+
+  describe '#outstanding?' do
+    # The row-level twin of the `available` scope; if these disagree the list
+    # shows a badge that its own filter contradicts.
+    it 'agrees with the outstanding scope for every state' do
+      available = create(:store_credit, amount: 20)
+      spent = create(:store_credit, amount: 20).tap { |c| c.update_columns(amount_used: 20) }
+      committed = create(:store_credit, amount: 20).tap { |c| c.update_columns(amount_authorized: 20) }
+
+      [available, spent, committed].each do |credit|
+        expect(credit.outstanding?).to eq(described_class.outstanding(true).exists?(credit.id)),
+                                      "expected ##{credit.id} predicate and scope to agree"
+      end
+    end
+  end
+
+  describe '.outstanding' do
+    let!(:available) { create(:store_credit, amount: 20) }
+    let!(:spent) { create(:store_credit, amount: 20).tap { |credit| credit.update_columns(amount_used: 20) } }
+
+    it 'answers what is still owed when true' do
+      expect(described_class.outstanding(true)).to contain_exactly(available)
+    end
+
+    it 'answers what has been spent when false' do
+      expect(described_class.outstanding(false)).to contain_exactly(spent)
+    end
+
+    it 'reads a string the way Ransack passes it' do
+      expect(described_class.outstanding('false')).to contain_exactly(spent)
+    end
+
+    # An `_in`-style predicate arrives as an array, and casting the array
+    # itself answers `true` for any non-empty value — which would silently
+    # invert the filter and show money owed when the merchant asked what had
+    # been spent.
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.outstanding(['false'])).to contain_exactly(spent)
+      expect(described_class.outstanding(['true'])).to contain_exactly(available)
+    end
+
+    # Ransack splats an array predicate, so a filter panel offering both sides
+    # calls the scope with two arguments. A fixed-arity lambda raises there,
+    # 500ing a request the merchant is entitled to make.
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('outstanding' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('outstanding' => %w[true false]).result).to include(available, spent)
+    end
+
+    it 'applies the chosen side through Ransack' do
+      expect(described_class.ransack('outstanding' => 'false').result).to contain_exactly(spent)
+      expect(described_class.ransack('outstanding' => 'true').result).to contain_exactly(available)
+    end
+
+    # Ransack invokes a scope with NO arguments when the predicate is a literal
+    # boolean `true`, which is what a JSON client sends. Reading that as "no
+    # side chosen" would answer an unfiltered list to a caller who asked for
+    # one side of the filter.
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('outstanding' => true).result).to contain_exactly(available)
+    end
+  end
+
+  describe '.from_gift_card' do
+    let!(:from_card) { create(:store_credit, amount: 20, originator: create(:gift_card)) }
+    let!(:by_hand) { create(:store_credit, amount: 20) }
+
+    it 'answers the gift card redemptions when true' do
+      expect(described_class.from_gift_card('true')).to contain_exactly(from_card)
+    end
+
+    it 'answers everything else when false' do
+      expect(described_class.from_gift_card('false')).to contain_exactly(by_hand)
+    end
+
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.from_gift_card(['false'])).to contain_exactly(by_hand)
+      expect(described_class.from_gift_card(['true'])).to contain_exactly(from_card)
+    end
+
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('from_gift_card' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('from_gift_card' => %w[true false]).result).to include(from_card, by_hand)
+    end
+
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('from_gift_card' => true).result).to contain_exactly(from_card)
+    end
+  end
+
   describe '#display_amount' do
     it 'returns a Spree::Money instance' do
       expect(store_credit.display_amount).to be_instance_of(Spree::Money)

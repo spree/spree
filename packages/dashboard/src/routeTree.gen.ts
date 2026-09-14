@@ -73,6 +73,8 @@ import { Route as ProductsMediaRouteImport } from './routes/_authenticated/$stor
 import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$storeId/products/$productId'
 import { Route as OrdersNewRouteImport } from './routes/_authenticated/$storeId/orders/new'
 import { Route as OrdersDraftsRouteImport } from './routes/_authenticated/$storeId/orders/drafts'
+import { Route as LoyaltyStoreCreditsRouteImport } from './routes/_authenticated/$storeId/loyalty/store-credits'
+import { Route as LoyaltyGiftCardsRouteImport } from './routes/_authenticated/$storeId/loyalty/gift-cards'
 import { Route as CustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
 import { Route as CustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
 import { Route as CompaniesCompanyIdRouteImport } from './routes/_authenticated/$storeId/companies/$companyId'
@@ -425,6 +427,16 @@ const OrdersDraftsRoute = OrdersDraftsRouteImport.update({
   path: '/orders/drafts',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const LoyaltyStoreCreditsRoute = LoyaltyStoreCreditsRouteImport.update({
+  id: '/loyalty/store-credits',
+  path: '/loyalty/store-credits',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const LoyaltyGiftCardsRoute = LoyaltyGiftCardsRouteImport.update({
+  id: '/loyalty/gift-cards',
+  path: '/loyalty/gift-cards',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const CustomersGroupsRoute = CustomersGroupsRouteImport.update({
   id: '/customers/groups',
   path: '/customers/groups',
@@ -603,6 +615,8 @@ export interface FileRoutesByFullPath {
   '/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
+  '/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/$storeId/orders/new': typeof OrdersNewRoute
   '/$storeId/products/$productId': typeof ProductsProductIdRoute
@@ -695,6 +709,8 @@ export interface FileRoutesByTo {
   '/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
+  '/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/$storeId/orders/new': typeof OrdersNewRoute
   '/$storeId/products/$productId': typeof ProductsProductIdRoute
@@ -791,6 +807,8 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/companies/$companyId': typeof CompaniesCompanyIdRoute
   '/_authenticated/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
   '/_authenticated/$storeId/customers/groups': typeof CustomersGroupsRoute
+  '/_authenticated/$storeId/loyalty/gift-cards': typeof LoyaltyGiftCardsRoute
+  '/_authenticated/$storeId/loyalty/store-credits': typeof LoyaltyStoreCreditsRoute
   '/_authenticated/$storeId/orders/drafts': typeof OrdersDraftsRoute
   '/_authenticated/$storeId/orders/new': typeof OrdersNewRoute
   '/_authenticated/$storeId/products/$productId': typeof ProductsProductIdRoute
@@ -887,6 +905,8 @@ export interface FileRouteTypes {
     | '/$storeId/companies/$companyId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
+    | '/$storeId/loyalty/gift-cards'
+    | '/$storeId/loyalty/store-credits'
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
     | '/$storeId/products/$productId'
@@ -979,6 +999,8 @@ export interface FileRouteTypes {
     | '/$storeId/companies/$companyId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
+    | '/$storeId/loyalty/gift-cards'
+    | '/$storeId/loyalty/store-credits'
     | '/$storeId/orders/drafts'
     | '/$storeId/orders/new'
     | '/$storeId/products/$productId'
@@ -1074,6 +1096,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/companies/$companyId'
     | '/_authenticated/$storeId/customers/$customerId'
     | '/_authenticated/$storeId/customers/groups'
+    | '/_authenticated/$storeId/loyalty/gift-cards'
+    | '/_authenticated/$storeId/loyalty/store-credits'
     | '/_authenticated/$storeId/orders/drafts'
     | '/_authenticated/$storeId/orders/new'
     | '/_authenticated/$storeId/products/$productId'
@@ -1609,6 +1633,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersDraftsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/loyalty/store-credits': {
+      id: '/_authenticated/$storeId/loyalty/store-credits'
+      path: '/loyalty/store-credits'
+      fullPath: '/$storeId/loyalty/store-credits'
+      preLoaderRoute: typeof LoyaltyStoreCreditsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/loyalty/gift-cards': {
+      id: '/_authenticated/$storeId/loyalty/gift-cards'
+      path: '/loyalty/gift-cards'
+      fullPath: '/$storeId/loyalty/gift-cards'
+      preLoaderRoute: typeof LoyaltyGiftCardsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/customers/groups': {
       id: '/_authenticated/$storeId/customers/groups'
       path: '/customers/groups'
@@ -1899,6 +1937,8 @@ interface authenticatedStoreIdRouteChildren {
   CompaniesCompanyIdRoute: typeof CompaniesCompanyIdRoute
   CustomersCustomerIdRoute: typeof CustomersCustomerIdRoute
   CustomersGroupsRoute: typeof CustomersGroupsRoute
+  LoyaltyGiftCardsRoute: typeof LoyaltyGiftCardsRoute
+  LoyaltyStoreCreditsRoute: typeof LoyaltyStoreCreditsRoute
   OrdersDraftsRoute: typeof OrdersDraftsRoute
   OrdersNewRoute: typeof OrdersNewRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
@@ -1958,6 +1998,8 @@ const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   CompaniesCompanyIdRoute: CompaniesCompanyIdRoute,
   CustomersCustomerIdRoute: CustomersCustomerIdRoute,
   CustomersGroupsRoute: CustomersGroupsRoute,
+  LoyaltyGiftCardsRoute: LoyaltyGiftCardsRoute,
+  LoyaltyStoreCreditsRoute: LoyaltyStoreCreditsRoute,
   OrdersDraftsRoute: OrdersDraftsRoute,
   OrdersNewRoute: OrdersNewRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,

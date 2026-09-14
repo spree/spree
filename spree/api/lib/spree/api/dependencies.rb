@@ -254,6 +254,7 @@ module Spree
         admin_payment_method_serializer: 'Spree::Api::V3::Admin::PaymentMethodSerializer',
         admin_credit_card_serializer: 'Spree::Api::V3::Admin::CreditCardSerializer',
         admin_store_credit_serializer: 'Spree::Api::V3::Admin::StoreCreditSerializer',
+        admin_store_credit_event_serializer: 'Spree::Api::V3::Admin::StoreCreditEventSerializer',
         admin_customer_group_serializer: 'Spree::Api::V3::Admin::CustomerGroupSerializer',
         admin_payment_source_serializer: 'Spree::Api::V3::Admin::PaymentSourceSerializer',
         admin_digital_asset_serializer: 'Spree::Api::V3::Admin::DigitalAssetSerializer',

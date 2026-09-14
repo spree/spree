@@ -4,6 +4,7 @@ import type { Store } from '@spree/admin-sdk'
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
   AnalyticsIcon,
+  GiftIcon,
   HomeIcon,
   InboxIcon,
   MapIcon,
@@ -240,6 +241,37 @@ nav.add({
   ],
 })
 
+// Stored value, not marketing: a gift card or a store credit is prepaid money
+// the store owes, with a balance and a ledger and no rules or actions. Its own
+// group, and the home for a rewards programme later.
+nav.add({
+  key: 'loyalty',
+  labelKey: 'admin.nav.loyalty',
+  path: '/loyalty/gift-cards',
+  icon: GiftIcon,
+  // No subject of its own: the group has no landing page, so gating it on
+  // gift cards would hide Store Credits from a role that may read credits but
+  // not cards. The children declare their own subjects and the sidebar drops
+  // the ones a role cannot open.
+  position: 475,
+  children: [
+    {
+      key: 'loyalty.gift-cards',
+      labelKey: 'admin.nav.gift_cards',
+      path: '/loyalty/gift-cards',
+      subject: Subject.GiftCard,
+      position: 100,
+    },
+    {
+      key: 'loyalty.store-credits',
+      labelKey: 'admin.nav.store_credits',
+      path: '/loyalty/store-credits',
+      subject: Subject.StoreCredit,
+      position: 200,
+    },
+  ],
+})
+
 nav.add({
   key: 'promotions',
   labelKey: 'admin.nav.promotions',
@@ -247,15 +279,6 @@ nav.add({
   icon: TagIcon,
   subject: Subject.Promotion,
   position: 500,
-  children: [
-    {
-      key: 'promotions.gift-cards',
-      labelKey: 'admin.nav.gift_cards',
-      path: '/promotions/gift-cards',
-      subject: Subject.GiftCard,
-      position: 100,
-    },
-  ],
 })
 
 nav.add({
