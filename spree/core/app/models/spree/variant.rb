@@ -656,7 +656,11 @@ module Spree
     def price_in(currency)
       currency = currency&.upcase
 
-      price = if prices.loaded? && prices.any?
+      # Detects over the loaded association when there is one — on a list it
+      # is loaded, batched across the page — and queries otherwise. Reading
+      # the cache unconditionally would serve a stale amount to a caller that
+      # loaded the association before someone else updated the row.
+      price = if prices.loaded?
                 prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
                 prices.base_prices.find_by(currency: currency)

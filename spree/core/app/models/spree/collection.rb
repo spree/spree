@@ -4,6 +4,27 @@ require 'stringex'
 
 module Spree
   class Collection < Spree.base_class
+    # Recomputes the `products_count` counter cache for many collections at
+    # once. `reset_counters` spends two queries per collection, which a bulk
+    # assignment pays for every collection it touched.
+    #
+    # @param collection_ids [Array<Integer>]
+    # @return [void]
+    def self.reset_products_counts(collection_ids)
+      collection_ids = Array(collection_ids).compact.uniq
+      return if collection_ids.empty?
+
+      counts = Spree::ProductCollection.where(collection_id: collection_ids).group(:collection_id).count
+
+      # Grouped by the count they should carry, so this is one UPDATE per
+      # distinct value rather than per collection. `upsert_all` is wrong
+      # here: a partial row would be treated as an insert and fail the
+      # table's NOT NULL columns.
+      collection_ids.group_by { |id| counts.fetch(id, 0) }.each do |count, ids|
+        where(id: ids).where.not(products_count: count).update_all(products_count: count)
+      end
+    end
+
     include Spree::SingleStoreResource
     include Spree::HasListPosition
 

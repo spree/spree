@@ -11,9 +11,15 @@ module Spree
       def call(categories:, products:)
         return if categories.blank? || products.blank?
 
+        category_ids = categories.pluck(:id)
+        # Every category's current size in one grouped count: a bulk assign
+        # across many categories would otherwise probe each one for the
+        # position to append at.
+        positions = Spree::ProductCategory.where(category_id: category_ids).group(:category_id).count
+
         # build the params for the insert_all
-        product_categories_params = categories.pluck(:id).flat_map do |category_id|
-          position = Spree::ProductCategory.where(category_id: category_id).count
+        product_categories_params = category_ids.flat_map do |category_id|
+          position = positions.fetch(category_id, 0)
 
           products.pluck(:id).map do |product_id|
             {
@@ -29,9 +35,8 @@ module Spree
         Spree::ProductCategory.insert_all(product_categories_params)
 
         # update counter caches
-        category_ids = categories.pluck(:id)
         product_ids = products.pluck(:id)
-        product_ids.each { |id| Spree::Product.reset_counters(id, :product_categories) }
+        Spree::Product.reset_categories_counts(product_ids)
         # Recompute the descendant-inclusive products_count for the categories and
         # their ancestors (bulk insert skips ProductCategory callbacks).
         Spree::Category.recalculate_products_count(category_ids)

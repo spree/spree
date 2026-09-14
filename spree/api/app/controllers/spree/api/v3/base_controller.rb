@@ -43,6 +43,13 @@ module Spree
         # (credential searches) opt out with Spree::StoreScopeGuard.skip.
         around_action { |_controller, action| Spree::StoreScopeGuard.watch(&action) }
 
+        # N+1 tripwire: Prosopite fingerprints every SELECT the request runs
+        # and reports a statement repeated from one call site — the shape of
+        # a per-record query that lazy preloading cannot batch (stock checks,
+        # prices, counts). Only present where the gem is bundled (development
+        # and test); reporting mode is Prosopite's own configuration.
+        around_action { |_controller, action| Prosopite.scan(&action) } if defined?(Prosopite)
+
         # Optional JWT authentication by default
         before_action :authenticate_user
 

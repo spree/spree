@@ -45,8 +45,8 @@ module Spree
           end
         end
 
-        collection_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }
-        product_ids.each { |id| Spree::Product.reset_counters(id, :product_collections) }
+        Spree::Collection.reset_products_counts(collection_ids)
+        Spree::Product.reset_collections_counts(product_ids)
 
         Spree::Product.where(id: product_ids).touch_all
         products.each(&:enqueue_search_index)

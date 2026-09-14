@@ -196,8 +196,12 @@ module Spree
             # are loaded with their selected rate because the freight summary
             # reads it — otherwise a page of orders costs a query per
             # fulfillment for a field that is nil on every parcel order.
+            # Both addresses are named because they are two associations on
+            # one table, so a row that reads them separately costs a lookup
+            # each.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
              :market, { fulfillments: :selected_delivery_rate },
+             :bill_address, :ship_address,
              { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
           end
 

@@ -15,15 +15,22 @@ module Spree
         product_ids = products.pluck(:id)
 
         ApplicationRecord.transaction do
-          category_ids.each do |category_id|
-            Spree::ProductCategory.where(category_id: category_id, product_id: product_ids).delete_all
-          end
+          Spree::ProductCategory.where(category_id: category_ids, product_id: product_ids).delete_all
+
+          # What survived the delete, for every category at once: re-packing
+          # positions category by category is a read per category on a bulk
+          # removal.
+          remaining_by_category = Hash.new { |hash, key| hash[key] = [] }
+          Spree::ProductCategory.
+            where(category_id: category_ids).
+            order(:position).
+            pluck(:category_id, :product_id).
+            each { |category_id, product_id| remaining_by_category[category_id] << product_id }
 
           product_categories_params = category_ids.flat_map do |category_id|
             position = 0
-            existing_product_ids = Spree::ProductCategory.where(category_id: category_id).pluck(:product_id)
 
-            existing_product_ids.map do |product_id|
+            remaining_by_category[category_id].map do |product_id|
               {
                 category_id: category_id,
                 product_id: product_id,
@@ -46,7 +53,7 @@ module Spree
         end
 
         # update counter caches
-        product_ids.each { |id| Spree::Product.reset_counters(id, :product_categories) }
+        Spree::Product.reset_categories_counts(product_ids)
         # Recompute the descendant-inclusive products_count for the categories and
         # their ancestors (delete_all skips ProductCategory callbacks).
         Spree::Category.recalculate_products_count(category_ids)

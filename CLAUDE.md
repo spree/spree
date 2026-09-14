@@ -456,6 +456,8 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 ### Performance
 
 - Use `includes`/`preload` to avoid N+1 queries (`ar_lazy_preload` gem also active)
+- **Every API request in the test suite is scanned for N+1 queries** (Prosopite in raise mode, configured in the dummy app's `test.rb`). A `Prosopite::NPlusOneQueriesError` prints the repeated statement and the serializer or model line that issued it. Fix it at that line: add the association to `collection_includes`, read a loaded association instead of running a scoped query, or replace the per-record lookup with one grouped query. Never answer it with `count` or `exists?` per record — that is the same N+1 in another shape; `size` on an already-loaded association is free, a `count` is not. Never fix it by disabling the guard or by adding the spec file to `spree/api/spec/support/n_plus_one_debt.rb` — that list is the backlog of files that already repeated a query when the guard was turned on, and it only shrinks. An allow-list entry is only for a lookup that legitimately runs once per created record (a uniqueness probe, a tagging gem's own writes) and carries its reason next to it.
+- A list endpoint spec must render at least two records, since a repeated query cannot show with one — every `GET #index` block includes `it_behaves_like 'a list without N+1 queries'` with a `let!` creating them.
 - Use `Rails.cache` for expensive operations; use `cache_key_with_version` for custom keys
 - Proper database indexing
 

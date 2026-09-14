@@ -50,8 +50,11 @@ module Spree
       #
       # @return [Boolean]
       def confirmation_required?
+        # Filtered over the loaded payments rather than through the `valid`
+        # scope: on a list the association is batched across the page, while
+        # a scoped query would run once for every cart rendered.
         Spree::Config[:always_include_confirm_step] ||
-          payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
+          payments.reject(&:has_invalid_status?).filter_map(&:payment_method).any?(&:confirmation_required?)
       end
 
       def unprocessed_payments

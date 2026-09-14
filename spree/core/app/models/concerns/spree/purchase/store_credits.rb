@@ -56,16 +56,17 @@ module Spree
         end
       end
 
+      # Summed over the payments rather than with a SUM query: on a list the
+      # association batches across the page (4 orders cost 1 query instead
+      # of 4), and a single order pays nothing extra — it holds few payments,
+      # which the serializer renders anyway.
+      #
       # @return [BigDecimal]
       def total_applied_store_credit
-        if payments.loaded?
-          payments.
-            find_all(&:store_credit?).
-            reject(&:has_invalid_status?).
-            sum(&:amount) || BigDecimal::ZERO
-        else
-          payments.store_credits.valid.sum(:amount)
-        end
+        payments.
+          select(&:store_credit?).
+          reject(&:has_invalid_status?).
+          sum(BigDecimal('0'), &:amount)
       end
 
       def using_store_credit?

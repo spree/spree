@@ -65,9 +65,11 @@ module Spree
           cache[profile] = profile.present? && profile.requires_shipping_address?
         end
 
-        # Both profile paths are preloaded: the variant's own override, and the
-        # product's for the variants that inherit it.
-        line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
+        # Read through the association rather than a fresh `includes` query:
+        # on a list of carts the association is batched across the page,
+        # while re-scoping it here would load the line items of every cart
+        # separately. Lazy preloading carries the profile lookups with it.
+        line_items.any? do |line_item|
           profile_requires_address[line_item.variant&.resolved_delivery_profile]
         end
       end

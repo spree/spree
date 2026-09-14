@@ -106,8 +106,10 @@ module Spree
             super.not_drafts
           end
 
+          # Both addresses are named because they are two associations on one
+          # table, so a row that reads them separately costs a lookup each.
           def collection_includes
-            [:line_items, :customer, :channel]
+            [:line_items, :customer, :channel, :bill_address, :ship_address]
           end
 
           private

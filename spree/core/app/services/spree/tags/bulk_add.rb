@@ -10,8 +10,15 @@ module Spree
       # @param context [String] default: 'tags'
       # @return [Spree::ServiceModule::Base::Result]
       def call(tag_names: [], records: [], context: 'tags')
-        tags = tag_names.map do |tag_name|
-          ActsAsTaggableOn::Tag.find_or_create_by(name: tag_name.strip)
+        names = tag_names.map(&:strip).reject(&:blank?).uniq
+        return if names.empty?
+
+        # One read for the names that already exist, then a create only for
+        # the ones that do not. `find_or_create_by` per name is a query per
+        # tag, which a bulk tagging pays on every name in the payload.
+        existing = ActsAsTaggableOn::Tag.where(name: names).index_by(&:name)
+        tags = names.map do |name|
+          existing[name] || ActsAsTaggableOn::Tag.create_or_find_by(name: name)
         end
 
         record_class = records.first.class

@@ -418,6 +418,47 @@ module Spree
       run_status_workflow(Spree.product_draft_workflow)
     end
 
+    # Recomputes the `categories_count` counter cache for many products at
+    # once. `reset_counters` spends two queries per product, which a bulk
+    # category assignment pays for every row it touched.
+    #
+    # @param product_ids [Array<Integer>]
+    # @return [void]
+    def self.reset_categories_counts(product_ids)
+      product_ids = Array(product_ids).compact.uniq
+      return if product_ids.empty?
+
+      counts = Spree::ProductCategory.where(product_id: product_ids).group(:product_id).count
+
+      # Grouped by the count they should carry, so this is one UPDATE per
+      # distinct value rather than per product. `upsert_all` is wrong here: a
+      # partial row would be treated as an insert and fail the table's NOT
+      # NULL columns.
+      product_ids.group_by { |id| counts.fetch(id, 0) }.each do |count, ids|
+        where(id: ids).where.not(categories_count: count).update_all(categories_count: count)
+      end
+    end
+
+    # Recomputes the `collections_count` counter cache for many products at
+    # once, for the same reason as {.reset_categories_counts}.
+    #
+    # @param product_ids [Array<Integer>]
+    # @return [void]
+    def self.reset_collections_counts(product_ids)
+      product_ids = Array(product_ids).compact.uniq
+      return if product_ids.empty?
+
+      counts = Spree::ProductCollection.where(product_id: product_ids).group(:product_id).count
+
+      # Grouped by the count they should carry, so this is one UPDATE per
+      # distinct value rather than per product. `upsert_all` is wrong here: a
+      # partial row would be treated as an insert and fail the table's NOT
+      # NULL columns.
+      product_ids.group_by { |id| counts.fetch(id, 0) }.each do |count, ids|
+        where(id: ids).where.not(collections_count: count).update_all(collections_count: count)
+      end
+    end
+
     def self.bulk_auto_match_collections(store, product_ids)
       return if store.collections.automatic.none?
 

@@ -103,7 +103,9 @@ module Spree
 
       products = Spree::Product.where(id: product_ids)
       products.touch_all
-      products.each(&:enqueue_search_index)
+      # `to_a` once: `touch_all` does not load the relation, so iterating it
+      # afterwards would re-run the query.
+      products.to_a.each(&:enqueue_search_index)
       touch
 
       records_to_upsert.size
