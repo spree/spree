@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  cn,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -28,6 +29,7 @@ import {
   ArrowUpDownIcon,
   CheckIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
   ChevronRightIcon,
   Columns3Icon,
   ListFilter,
@@ -307,7 +309,6 @@ export function TableToolbar({
                       setFilterOpen(false)
                     }}
                     onChange={onFiltersChange}
-                    onClose={() => setFilterOpen(false)}
                   />
                 </PopoverContent>
               </Popover>
@@ -342,7 +343,7 @@ export function TableToolbar({
             {/* The search term as a chip, mobile only — the field it came from is
               hidden there, so this is the only way to see or clear it. */}
             {search && (
-              <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted py-1 pr-1 pl-2.5 text-sm lg:hidden">
+              <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-md border border-border bg-card py-1 pr-1 pl-2.5 text-sm shadow-xs lg:hidden">
                 <span className="text-muted-foreground">
                   {t('admin.components.table_toolbar.search_placeholder')}
                 </span>
@@ -460,7 +461,13 @@ function FilterChip({
     // like a Badge: on this row it is the same kind of thing — a constraint
     // you can see and remove — and a chip that reads as a label instead of a
     // control invites the reader to look for the control elsewhere.
-    <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted py-1 pr-1 pl-2.5 text-sm lg:h-[2.125rem]">
+    //
+    // So it wears the outline button's own surface — `bg-card`, `shadow-xs`,
+    // `rounded-md` — rather than a `bg-muted` of its own. A filled chip beside
+    // outlined controls reads as a different kind of object, when the only
+    // real difference is that this one is set and they are not: the solid
+    // border already says that, against the dashed one an unused control wears.
+    <span className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-md border border-border bg-card py-1 pr-1 pl-2.5 text-sm shadow-xs lg:h-[2.125rem]">
       <span className="text-muted-foreground">{label}</span>
       {isRange ? (
         // "1 Aug – 29 Aug 2026" rather than two chips of ISO bounds: the range
@@ -616,6 +623,22 @@ function SortDropdown({
 // ============================================================================
 
 /**
+ * Trigger styling shared by the three quick filters.
+ *
+ * A control that is not narrowing anything wears a dashed border. Solid
+ * borders read as "this is set", and a row of four identical outlines made the
+ * operator check each one's value to find which were actually filtering the
+ * list. Dashed is the quieter state, so the ones doing work stand out without
+ * having to shout — the chips beside them stay solid for the same reason.
+ *
+ * `Add filter` keeps its solid border: it is an action, not a filter that
+ * happens to be empty.
+ */
+function quickFilterTriggerClass(unset: boolean) {
+  return cn('h-11 gap-1.5 lg:h-[2.125rem]', unset && 'border-dashed')
+}
+
+/**
  * Always-visible control for one heavily-used filter.
  *
  * These write ordinary `FilterRule`s, so a status set here is indistinguishable
@@ -682,7 +705,7 @@ function QuickEnumFilter({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+        <Button variant="outline" size="sm" className={quickFilterTriggerClass(allSelected)}>
           <span className="text-muted-foreground">{column.label}</span>
           <span className="tabular-nums">
             {allSelected ? t('admin.common.all') : `${selected.length}/${options.length}`}
@@ -788,7 +811,11 @@ function QuickResourceFilter({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+        <Button
+          variant="outline"
+          size="sm"
+          className={quickFilterTriggerClass(selected.length === 0)}
+        >
           <span className="text-muted-foreground">{column.label}</span>
           <span className="max-w-40 truncate">{summary}</span>
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
@@ -888,7 +915,7 @@ function QuickDateFilter({
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="h-11 gap-1.5 lg:h-[2.125rem]">
+        <Button variant="outline" size="sm" className={quickFilterTriggerClass(active === 'all')}>
           <span className="text-muted-foreground">{column.label}</span>
           <span>{t(`admin.components.table_toolbar.date_presets.${active}`)}</span>
           <ChevronDownIcon className="size-3.5 text-muted-foreground" />
@@ -1161,17 +1188,13 @@ function InlineValueList({
 
   if (!isCurrency && (tags.isLoading || resources.isLoading)) {
     return (
-      <p className="px-2 py-6 text-center text-sm text-muted-foreground">
-        {t('admin.common.loading')}
-      </p>
+      <p className="px-2 py-6 text-center text-muted-foreground">{t('admin.common.loading')}</p>
     )
   }
 
   if (ordered.length === 0) {
     return (
-      <p className="px-2 py-6 text-center text-sm text-muted-foreground">
-        {t('admin.common.no_results')}
-      </p>
+      <p className="px-2 py-6 text-center text-muted-foreground">{t('admin.common.no_results')}</p>
     )
   }
 
@@ -1181,7 +1204,7 @@ function InlineValueList({
         <button
           key={option.value}
           type="button"
-          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           onClick={() => onToggle(option.value)}
         >
           <Checkbox checked={selected.includes(option.value)} className="pointer-events-none" />
@@ -1196,8 +1219,7 @@ function InlineValueList({
  * The advanced filter panel, in two stages.
  *
  * Stage one lists the fields. Stage two commits to one of them and shows its
- * values, with the field name kept as a select in the header so switching
- * subject is one click rather than a trip back.
+ * values, with the field name kept in the header as the way back to stage one.
  *
  * One filter at a time, deliberately: filters compose by being applied in
  * succession, and each one lands as a chip on the toolbar row, so the row is
@@ -1210,18 +1232,17 @@ function FilterPanel({
   filters,
   onApply,
   onChange,
-  onClose,
 }: {
   /** Fields offered in the list — excludes those with a quick control. */
   columns: ColumnDef[]
-  /** Every filterable field, for the field-switch select once one is chosen. */
+  /** Every filterable field — resolves the chosen one, which may be a
+   *  quick-filtered field the list itself omits. */
   allColumns: ColumnDef[]
   filters: FilterRule[]
   /** Commit and close — for the filters that are finished in one action. */
   onApply: (filters: FilterRule[]) => void
   /** Update without closing — for a multi-select the user is still building. */
   onChange: (filters: FilterRule[]) => void
-  onClose: () => void
 }) {
   const { t } = useTranslation()
   const tenantId = useTenantId()
@@ -1244,22 +1265,6 @@ function FilterPanel({
   const operators = useMemo(
     () => getOperators(type).map((op) => ({ value: op.value, label: t(op.labelKey) })),
     [type, t],
-  )
-  // The switch select offers what the field list offered, plus whatever is
-  // currently chosen. Listing every filterable field would put the
-  // quick-filtered ones — which have their own control on the row — back into
-  // the panel, so "Date" would appear twice on screen at once.
-  const switchColumns = useMemo(() => {
-    const offered = columns.slice()
-    if (field && !offered.some((c) => c.key === field)) {
-      const current = allColumns.find((c) => c.key === field)
-      if (current) offered.unshift(current)
-    }
-    return offered
-  }, [columns, allColumns, field])
-  const fieldItems = useMemo(
-    () => switchColumns.map((c) => ({ value: c.key, label: c.label })),
-    [switchColumns],
   )
 
   // Types whose values are a fixed list the panel can render inline. Anything
@@ -1307,6 +1312,18 @@ function FilterPanel({
     const applied = filters.find((f) => f.field === key && f.operator === 'in')
     setValue(applied?.value ?? '')
     setQuery('')
+    setCustomRange(null)
+  }
+
+  /** Back to the field list. Clears the half-built rule with it — the search
+   *  box is shared between the two stages, and a value left behind would be
+   *  seeded into whichever field is picked next. */
+  function clearField() {
+    setField(null)
+    setOperator('')
+    setValue('')
+    setQuery('')
+    setCustomRange(null)
   }
 
   /**
@@ -1371,34 +1388,40 @@ function FilterPanel({
   }
 
   return (
-    <div className="flex flex-col">
+    // `rounded-xl` to match the popover, and `overflow-hidden` to enforce it:
+    // the panel is mounted with `p-0`, so the header meets the popover's edge
+    // directly and every square background inside it — the back button's hover
+    // fill, the search field's own ground — paints over the rounded corner and
+    // squares it off. Clipping here fixes both top corners once, rather than
+    // asking each child to round the one it happens to touch.
+    <div className="flex flex-col overflow-hidden rounded-xl">
       {/* Header. Before a field is chosen this is a label and a search box over
-          the field list; after, the label becomes a select, so changing subject
-          costs one click instead of backing out. */}
-      <div className="flex items-stretch border-b">
+          the field list; after, the label becomes the way back to it. */}
+      {/* The panel reads at the app's base size rather than the 13px the
+          dropdowns beside it use: it is a surface to read a list in, not a
+          menu to flick through, and its rows carry field names an operator has
+          to recognise. Set here and on the body below, so a row only names a
+          size when it departs from it. */}
+      <div className="flex items-stretch border-b text-base">
         {field ? (
-          <Select items={fieldItems} value={field} onValueChange={chooseField}>
-            <SelectTrigger
-              size="sm"
-              // Sits flush in the panel's top-left corner, so it drops the
-              // standalone-field focus treatment: a blue border and a 3px
-              // outer glow paint past the panel's rounded edge and read as a
-              // rendering fault. A background change carries focus instead,
-              // which stays inside the element's own box.
-              className="w-auto shrink-0 rounded-none border-0 border-r bg-transparent shadow-none focus:border-border focus:bg-accent focus:shadow-none"
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {switchColumns.map((c) => (
-                <SelectItem key={c.key} value={c.key}>
-                  {c.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          // The field name is the way back, not a second picker. It used to
+          // open a dropdown over the value list underneath — a menu on top of
+          // the menu it was covering, offering the same fields the screen
+          // behind it was already showing. Clicking it now simply returns to
+          // that list, which is where changing subject was always going to
+          // end up.
+          <button
+            type="button"
+            className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-none border-r px-3 py-2 font-medium transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+            onClick={clearField}
+          >
+            {/* Leads the label rather than trailing it: a back arrow points at
+                what it returns to, and after the word it pointed at nothing. */}
+            <ChevronLeftIcon className="size-4 shrink-0 text-muted-foreground" />
+            {column?.label ?? field}
+          </button>
         ) : (
-          <span className="flex shrink-0 items-center border-r px-3 py-2 text-sm font-medium">
+          <span className="flex shrink-0 items-center border-r px-3 py-2 font-medium">
             {t('admin.components.table_toolbar.filter_by')}
           </span>
         )}
@@ -1417,16 +1440,30 @@ function FilterPanel({
         ) : (
           <span className="flex-1" />
         )}
-        <Button onClick={onClose} size="icon-sm" variant="ghost" className="m-1 shrink-0">
-          <XIcon className="size-4" />
-        </Button>
+        {/* Clears the search box, and only that. It used to close the whole
+            panel, sitting a few pixels from a text field it looked like it
+            belonged to — so the one gesture that reliably means "empty this
+            field" threw away the filter being built instead. Closing is what
+            Escape and a click outside already do, and neither is ambiguous. */}
+        {searchable && query ? (
+          <Button
+            type="button"
+            onClick={() => setQuery('')}
+            size="icon-sm"
+            variant="ghost"
+            aria-label={t('admin.common.clear')}
+            className="m-1 shrink-0"
+          >
+            <XIcon className="size-4" />
+          </Button>
+        ) : null}
       </div>
 
       {/* Scrolls, and says so. `overscroll-contain` keeps a flick at the end of
           the list from scrolling the page behind the panel; the themed
           scrollbar the popover supplies is what tells the reader there is more
           below, since the rows themselves end flush at the container's edge. */}
-      <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1 themed-scrollbar">
+      <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1 text-base themed-scrollbar">
         {/* Stage one: pick a subject. */}
         {!field &&
           visibleFields.map((col) => (
@@ -1434,7 +1471,7 @@ function FilterPanel({
               key={col.key}
               type="button"
               data-slot="filter-panel-item"
-              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => chooseField(col.key)}
             >
               {col.label}
@@ -1454,7 +1491,7 @@ function FilterPanel({
               key={option.value}
               type="button"
               data-slot="filter-panel-item"
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => commit(option.value, 'eq')}
             >
               {/* Booleans get one too: their values carry the same
@@ -1489,7 +1526,7 @@ function FilterPanel({
                 key={preset}
                 type="button"
                 data-slot="filter-panel-item"
-                className="flex w-full items-center rounded-lg px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="flex w-full items-center rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 onClick={() => commitDatePreset(preset)}
               >
                 {t(`admin.components.table_toolbar.date_presets.${preset}`)}
@@ -1498,7 +1535,7 @@ function FilterPanel({
             <button
               type="button"
               data-slot="filter-panel-item"
-              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+              className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               onClick={() => setCustomRange({ from: '', to: '' })}
             >
               {t('admin.components.table_toolbar.date_presets.custom')}
@@ -1576,7 +1613,11 @@ function FilterPanel({
         {field && !listed && !dated && (
           <div data-slot="filter-panel-controls" className="flex flex-col gap-2 p-2">
             <Select items={operators} value={operator} onValueChange={setOperator}>
-              <SelectTrigger size="sm">
+              {/* Default size, not `sm`: this sits directly above the value
+                  input, and `sm` pins a fixed 8 height while the input only
+                  has that as a floor and grows with the panel's 14px text —
+                  so the pair rendered at two different heights. */}
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -1623,7 +1664,7 @@ function FilterPanel({
             panel that reads as broken. */}
         {((!field && visibleFields.length === 0) ||
           (field && listed && !multi && listOptions.length === 0)) && (
-          <p className="px-2 py-6 text-center text-sm text-muted-foreground">
+          <p className="px-2 py-6 text-center text-muted-foreground">
             {t('admin.common.no_results')}
           </p>
         )}
