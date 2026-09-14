@@ -7,6 +7,7 @@ import { registerAuthCommand } from './commands/auth.js'
 import { registerBuildCommand } from './commands/build.js'
 import { registerBundleCommand } from './commands/bundle.js'
 import { registerCompletionCommand } from './commands/completion.js'
+import { registerConfigCommand } from './commands/config.js'
 import { registerConsoleCommand } from './commands/console.js'
 import { registerDbCommand } from './commands/db.js'
 import { registerDevCommand } from './commands/dev.js'
@@ -100,6 +101,7 @@ registerPluginCommand(program)
 // Admin API access (works against any Spree 5.5+ instance, not just local projects)
 registerApiCommand(program)
 registerAuthCommand(program)
+registerConfigCommand(program)
 registerCompletionCommand(program)
 
 async function main() {
