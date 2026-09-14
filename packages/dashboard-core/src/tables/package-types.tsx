@@ -5,6 +5,8 @@ import type { PanelPackageType } from '../api-client'
 import { defineTable } from '../lib/table-registry'
 
 defineTable<PanelPackageType>('package-types', {
+  docsPath: 'settings/package-types',
+  description: i18n.t('admin.package_types.description'),
   title: i18n.t('admin.package_types.table_title'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.package_types.search_placeholder'),

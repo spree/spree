@@ -24,6 +24,8 @@ const ORIGIN_OPTIONS = [
 ]
 
 defineTable<StoreCredit>('store-credits', {
+  docsPath: 'loyalty/store-credits',
+  description: i18n.t('admin.table_descriptions.store_credits'),
   title: i18n.t('admin.nav.store_credits'),
   searchParam: 'memo_cont',
   searchPlaceholder: i18n.t('admin.store_credits.table.search_placeholder'),

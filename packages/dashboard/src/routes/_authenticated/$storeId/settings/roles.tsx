@@ -69,8 +69,9 @@ function RolesSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        docsPath="settings/users"
         title={t('admin.pages.roles.title')}
-        subtitle={t('admin.pages.roles.subtitle')}
+        description={t('admin.pages.roles.subtitle')}
         actions={
           permissions.can('create', 'Spree::Role') && (
             <Button onClick={() => openCreate()}>

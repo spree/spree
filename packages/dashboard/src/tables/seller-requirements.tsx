@@ -6,6 +6,8 @@ import i18n from 'i18next'
 import { useSellerRequirementTypes } from '../hooks/use-seller-requirements'
 
 defineTable<SellerRequirement>('seller-requirements', {
+  docsPath: 'sellers/onboarding',
+  description: i18n.t('admin.table_descriptions.seller_requirements'),
   title: i18n.t('admin.seller_requirements.title'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.seller_requirements.search_placeholder'),

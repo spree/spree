@@ -20,6 +20,8 @@ function statusLabel(namespace: string, status: string): string {
 
 defineTable('orders', {
   title: i18n.t('admin.nav.orders'),
+  docsPath: 'orders/processing-orders',
+  description: i18n.t('admin.table_descriptions.orders'),
   searchParam: 'multi_search',
   searchPlaceholder: i18n.t('admin.orders.table.search_placeholder'),
   defaultSort: { field: 'completed_at', direction: 'desc' },
@@ -89,11 +91,17 @@ defineTable('orders', {
       default: true,
       filterType: 'enum',
       filterOptions: [
-        { value: 'balance_due', label: i18n.t('admin.orders.payment_statuses.balance_due') },
-        { value: 'credit_owed', label: i18n.t('admin.orders.payment_statuses.credit_owed') },
-        { value: 'failed', label: i18n.t('admin.orders.payment_statuses.failed') },
+        { value: 'none', label: i18n.t('admin.orders.payment_statuses.none') },
+        { value: 'authorized', label: i18n.t('admin.orders.payment_statuses.authorized') },
+        { value: 'partially_paid', label: i18n.t('admin.orders.payment_statuses.partially_paid') },
         { value: 'paid', label: i18n.t('admin.orders.payment_statuses.paid') },
-        { value: 'void', label: i18n.t('admin.orders.payment_statuses.void') },
+        {
+          value: 'partially_refunded',
+          label: i18n.t('admin.orders.payment_statuses.partially_refunded'),
+        },
+        { value: 'refunded', label: i18n.t('admin.orders.payment_statuses.refunded') },
+        { value: 'overcharged', label: i18n.t('admin.orders.payment_statuses.overcharged') },
+        { value: 'voided', label: i18n.t('admin.orders.payment_statuses.voided') },
       ],
       quickFilter: true,
       render: (order) =>

@@ -2613,7 +2613,8 @@
       "inventory": "Magazyn",
       "suppliers": "Dostawcy",
       "loyalty": "Lojalność",
-      "store_credits": "Środki w sklepie"
+      "store_credits": "Środki w sklepie",
+      "commission_rates": "Stawki prowizji"
     },
     "option_types": {
       "columns": {
@@ -3048,10 +3049,17 @@
         "use_default_addresses": "Użyj domyślnych adresów rozliczeniowego i wysyłki klienta"
       },
       "payment_statuses": {
+        "none": "Nieopłacone",
+        "authorized": "Autoryzowane",
+        "partially_paid": "Częściowo opłacone",
+        "paid": "Opłacone",
+        "partially_refunded": "Częściowo zwrócone",
+        "refunded": "Zwrócone",
+        "overcharged": "Nadpłata",
+        "voided": "Unieważnione",
         "balance_due": "Należność",
         "credit_owed": "Nadpłata",
         "failed": "Nieudana",
-        "paid": "Opłacone",
         "void": "Unieważnione"
       },
       "statuses": {
@@ -4923,6 +4931,7 @@
         },
         "all_done": "Wszystko gotowe 🎉",
         "download": "Pobierz plik",
+        "manage_requirements": "Zarządzaj wymaganiami",
         "policy_empty": "Ta polityka nie ma jeszcze treści.",
         "policy_updated": "Ostatnia aktualizacja: {{date}}",
         "progress": "Ukończono {{done}} z {{total}}",
@@ -5411,7 +5420,31 @@
       "stock_transfers": "Zapasy przemieszczane między lokalizacjami i to, co już dotarło.",
       "purchase_orders": "Towar zamówiony u dostawców i to, co już dotarło",
       "suppliers": "Twoja książka adresowa dostawców",
-      "stock_levels": "Co masz w każdej lokalizacji: na stanie, przydzielone do zamówień, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze."
+      "stock_levels": "Co masz w każdej lokalizacji: na stanie, przydzielone do zamówień, wstrzymane przez koszyki, dostępne do sprzedaży i w drodze.",
+      "allowed_origins": "Adresy internetowe, które mogą wywoływać API Twojego sklepu z przeglądarki.",
+      "channels": "Gdzie sprzedajesz — każdy sklep internetowy, aplikacja lub portal z własnym katalogiem i ustawieniami domyślnymi.",
+      "commission_rates": "Ile marketplace pobiera od każdej sprzedaży, stosowane w kolejności listy.",
+      "custom_field_definitions": "Dodatkowe pola dołączane do produktów, zamówień, klientów i innych rekordów.",
+      "customers": "Wszyscy, którzy kupili w Twoim sklepie lub założyli w nim konto.",
+      "gift_cards": "Przedpłacone karty, które klienci realizują przy kasie.",
+      "imports": "Przesłane pliki CSV i wynik przetwarzania każdego z nich.",
+      "markets": "Regiony, do których sprzedajesz, każdy z własną walutą, podatkami i dostawą.",
+      "orders": "Każde zamówienie złożone w Twoim sklepie i jego aktualny stan.",
+      "draft_orders": "Zamówienia, które Twój zespół tworzy w imieniu klienta, jeszcze niezłożone.",
+      "payment_methods": "Jak klienci mogą płacić i którzy dostawcy stoją za każdą opcją.",
+      "policies": "Twój regulamin oraz polityki prywatności, zwrotów i wysyłki, publikowane w sklepie.",
+      "products": "Wszystko, co sprzedajesz, wraz z wariantami, cenami i stanami magazynowymi.",
+      "promotions": "Rabaty i oferty oraz reguły decydujące o tym, kiedy obowiązują.",
+      "seller_requirements": "Lista kontrolna, którą sprzedawcy wypełniają, zanim będzie można ich zatwierdzić.",
+      "sellers": "Sprzedawcy zewnętrzni działający na Twoim marketplace i status każdego z nich.",
+      "store_credits": "Środki, które klienci mogą wydać przy kasie, oraz sposób ich wystawienia.",
+      "tax_categories": "Grupy decydujące o tym, która stawka podatku dotyczy produktu.",
+      "tax_rates": "Podatek naliczany według kategorii i regionu.",
+      "webhook_deliveries": "Każde zdarzenie wysłane do tego punktu końcowego i informacja, czy zostało odebrane.",
+      "webhook_endpoints": "Gdzie Twoje inne systemy są powiadamiane, gdy coś dzieje się w sklepie.",
+      "returns": "Towary wracające do sklepu, od zgłoszenia do zwrotu pieniędzy.",
+      "exchanges": "Zakupy wymieniane na inny rozmiar, kolor lub produkt.",
+      "claims": "Nieudane dostawy — uszkodzone, brakujące lub błędne produkty — i sposób ich rozwiązania."
     },
     "tax_categories": {
       "add_cta": "Dodaj kategorię podatkową",

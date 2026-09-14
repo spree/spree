@@ -98,8 +98,9 @@ function StaffSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        docsPath="settings/users"
         title={t('admin.pages.staff.title')}
-        subtitle={t('admin.pages.staff.subtitle')}
+        description={t('admin.pages.staff.subtitle')}
         actions={
           <Button onClick={() => setInviteOpen(true)}>
             <PlusIcon className="size-4" />

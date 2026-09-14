@@ -17,6 +17,8 @@ function DraftOrdersPage() {
 
   return (
     <ResourceTable
+      docsPath="orders/creating-orders"
+      description={t('admin.table_descriptions.draft_orders')}
       tableKey="orders"
       queryKey="draft-orders"
       queryFn={(params) => adminClient.orders.list(params)}

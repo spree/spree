@@ -30,6 +30,7 @@ function statusOptions() {
 }
 
 defineTable<SellerTransfer>('seller-transfers', {
+  docsPath: 'sellers/payouts',
   title: i18n.t('admin.nav.seller_transfers'),
   description: i18n.t('admin.payouts.transfers_description'),
   // The provider's own id for the movement. Without a searchParam the toolbar

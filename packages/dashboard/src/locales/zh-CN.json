@@ -2584,7 +2584,8 @@
       "inventory": "库存",
       "suppliers": "供应商",
       "loyalty": "会员权益",
-      "store_credits": "店铺信用"
+      "store_credits": "店铺信用",
+      "commission_rates": "佣金费率"
     },
     "option_types": {
       "columns": {
@@ -3008,10 +3009,17 @@
         "use_default_addresses": "使用客户的默认账单和配送地址"
       },
       "payment_statuses": {
+        "none": "未付款",
+        "authorized": "已授权",
+        "partially_paid": "部分付款",
+        "paid": "已付款",
+        "partially_refunded": "部分退款",
+        "refunded": "已退款",
+        "overcharged": "多付款",
+        "voided": "已作废",
         "balance_due": "待付款",
         "credit_owed": "应退款",
         "failed": "失败",
-        "paid": "已付款",
         "void": "已作废"
       },
       "statuses": {
@@ -4850,6 +4858,7 @@
         },
         "all_done": "全部完成 🎉",
         "download": "下载文件",
+        "manage_requirements": "管理要求",
         "policy_empty": "该政策尚无内容。",
         "policy_updated": "最后更新于 {{date}}",
         "progress": "已完成 {{done}} / {{total}}",
@@ -5335,7 +5344,31 @@
       "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。",
       "purchase_orders": "已向供应商订购的库存，以及已到货的部分",
       "suppliers": "你的供应商通讯簿",
-      "stock_levels": "各地点的库存情况：现有、已分配给订单、结账中暂扣、可售以及在途。"
+      "stock_levels": "各地点的库存情况：现有、已分配给订单、结账中暂扣、可售以及在途。",
+      "allowed_origins": "允许从浏览器调用您店铺 API 的网址。",
+      "channels": "您的销售渠道——每个店面、应用或门户，各有自己的目录和默认设置。",
+      "commission_rates": "平台在每笔销售中收取的费用，按列表顺序应用。",
+      "custom_field_definitions": "附加到商品、订单、客户及其他记录上的额外字段。",
+      "customers": "在您店铺购物或注册过的所有人。",
+      "gift_cards": "客户在结账时使用的预付卡。",
+      "imports": "您上传的 CSV 文件，以及每个文件的处理结果。",
+      "markets": "您销售的地区，各有自己的货币、税务和配送设置。",
+      "orders": "店铺收到的每一笔订单及其当前状态。",
+      "draft_orders": "团队代客户创建、尚未提交的订单。",
+      "payment_methods": "客户可用的支付方式，以及每个选项背后的服务商。",
+      "policies": "发布在店面上的条款、隐私、退货和配送政策。",
+      "products": "您销售的所有商品，包括其变体、价格和库存。",
+      "promotions": "折扣与优惠，以及决定何时生效的规则。",
+      "seller_requirements": "卖家在获批前需完成的核对清单。",
+      "sellers": "在您平台上经营的第三方卖家及各自的状态。",
+      "store_credits": "客户可在结账时使用的余额，以及每笔余额的发放方式。",
+      "tax_categories": "决定商品适用哪种税率的分组。",
+      "tax_rates": "按类别和地区收取的税费。",
+      "webhook_deliveries": "发送到此端点的每个事件，以及是否已被接收。",
+      "webhook_endpoints": "店铺发生事件时通知您其他系统的地址。",
+      "returns": "退回的商品，从申请到退款。",
+      "exchanges": "换成其他尺码、颜色或商品的购买。",
+      "claims": "出问题的配送——损坏、缺失或错发的商品——以及各自的处理结果。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",

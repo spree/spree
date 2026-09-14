@@ -1064,7 +1064,8 @@
       },
       "validation": {
         "non_negative": "must be zero or more"
-      }
+      },
+      "description": "The boxes, cartons and pallets your goods ship in, with the sizes and weights carriers quote on."
     },
     "pages": {
       "settings": {
@@ -1405,7 +1406,8 @@
         "unknown_product": "Unknown product",
         "variant_count_one": "{{count}} variant",
         "variant_count_other": "{{count}} variants"
-      }
+      },
+      "description": "The warehouses and shops you hold stock in and fulfil orders from."
     },
     "validation": {
       "codes": {

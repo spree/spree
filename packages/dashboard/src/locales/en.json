@@ -2591,7 +2591,8 @@
       "inventory": "Inventory",
       "suppliers": "Suppliers",
       "loyalty": "Loyalty",
-      "store_credits": "Store Credits"
+      "store_credits": "Store Credits",
+      "commission_rates": "Commission rates"
     },
     "option_types": {
       "columns": {
@@ -3016,10 +3017,17 @@
         "use_default_addresses": "Use customer's default billing & shipping addresses"
       },
       "payment_statuses": {
+        "none": "Unpaid",
+        "authorized": "Authorized",
+        "partially_paid": "Partially paid",
+        "paid": "Paid",
+        "partially_refunded": "Partially refunded",
+        "refunded": "Refunded",
+        "overcharged": "Overcharged",
+        "voided": "Voided",
         "balance_due": "Balance due",
         "credit_owed": "Credit owed",
         "failed": "Failed",
-        "paid": "Paid",
         "void": "Void"
       },
       "statuses": {
@@ -4861,6 +4869,7 @@
         },
         "all_done": "All done 🎉",
         "download": "Download file",
+        "manage_requirements": "Manage requirements",
         "policy_empty": "This policy has no content yet.",
         "policy_updated": "Last updated {{date}}",
         "progress": "{{done}} of {{total}} done",
@@ -5347,7 +5356,31 @@
       "stock_transfers": "Stock moving between your locations, and what has arrived.",
       "purchase_orders": "Stock you have ordered from suppliers, and what has arrived",
       "suppliers": "Your supplier address book",
-      "stock_levels": "What you have at each location: on hand, allocated to orders, held by checkouts, available to sell, and on its way."
+      "stock_levels": "What you have at each location: on hand, allocated to orders, held by checkouts, available to sell, and on its way.",
+      "allowed_origins": "The web addresses allowed to call your store's API from a browser.",
+      "channels": "Where you sell — each storefront, app or portal, with its own catalog and defaults.",
+      "commission_rates": "What the marketplace charges on each sale, applied in list order.",
+      "custom_field_definitions": "Extra fields you attach to products, orders, customers and other records.",
+      "customers": "Everyone who has shopped with or registered at your store.",
+      "gift_cards": "Prepaid cards customers redeem at checkout.",
+      "imports": "CSV files you have uploaded, and how each one went.",
+      "markets": "The regions you sell to, each with its own currency, tax and delivery setup.",
+      "orders": "Every order placed with your store, and where each one stands.",
+      "draft_orders": "Orders your team is building on a customer's behalf, not yet placed.",
+      "payment_methods": "How customers can pay, and the providers behind each option.",
+      "policies": "Your terms, privacy, returns and shipping policies, published on the storefront.",
+      "products": "Everything you sell, with its variants, prices and stock.",
+      "promotions": "Discounts and offers, and the rules that decide when they apply.",
+      "seller_requirements": "The checklist sellers complete before they can be approved.",
+      "sellers": "The third-party sellers trading on your marketplace, and where each one stands.",
+      "store_credits": "Balances customers can spend at checkout, and how each was issued.",
+      "tax_categories": "Groupings that decide which tax rate a product gets.",
+      "tax_rates": "The tax charged per category and region.",
+      "webhook_deliveries": "Each event sent to this endpoint, and whether it was received.",
+      "webhook_endpoints": "Where your other systems are notified when something happens in the store.",
+      "returns": "Goods coming back, from request to refund.",
+      "exchanges": "Purchases swapped for a different size, colour or product.",
+      "claims": "Deliveries that went wrong — damaged, missing or wrong items — and how each was resolved."
     },
     "tax_categories": {
       "add_cta": "Add tax category",

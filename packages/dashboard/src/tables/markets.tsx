@@ -6,6 +6,8 @@ import i18n from 'i18next'
 
 defineTable<Market>('markets', {
   title: i18n.t('admin.settings_nav.items.markets'),
+  docsPath: 'settings/markets',
+  description: i18n.t('admin.table_descriptions.markets'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.markets.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

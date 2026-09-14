@@ -5,7 +5,6 @@ import {
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
-  HandCoinsIcon,
   KeyRoundIcon,
   MailIcon,
   PackageIcon,
@@ -259,18 +258,6 @@ settingsNav.add({
   group: 'marketplace',
   position: 100,
   subject: Subject.SellerPayout,
-})
-
-settingsNav.add({
-  key: 'settings.commission-rates',
-  labelKey: 'admin.settings_nav.items.commission_rates',
-  descriptionKey: 'admin.settings_nav.descriptions.commission_rates',
-  keywords: ['marketplace', 'sellers', 'payouts', 'fees'],
-  path: '/commission-rates',
-  icon: HandCoinsIcon,
-  group: 'marketplace',
-  position: 200,
-  subject: Subject.CommissionRate,
 })
 
 settingsNav.add({

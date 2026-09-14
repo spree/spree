@@ -7,6 +7,8 @@ import { JurisdictionLabel } from '../components/spree/jurisdiction-label'
 import { TaxCategoryLabel } from '../components/spree/tax-category-label'
 
 defineTable<TaxRate>('tax-rates', {
+  docsPath: 'settings/tax',
+  description: i18n.t('admin.table_descriptions.tax_rates'),
   title: i18n.t('admin.settings_nav.items.tax_rates'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.tax_rates.search_placeholder'),

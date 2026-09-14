@@ -1062,7 +1062,8 @@
       },
       "validation": {
         "non_negative": "必须大于或等于零"
-      }
+      },
+      "description": "您的货物用于发运的箱子、纸箱和托盘，以及承运商报价所依据的尺寸和重量。"
     },
     "pages": {
       "settings": {
@@ -1403,7 +1404,8 @@
         "unknown_product": "未知产品",
         "variant_count_one": "{{count}} 个变体",
         "variant_count_other": "{{count}} 个变体"
-      }
+      },
+      "description": "您存放库存并从中履行订单的仓库和门店。"
     },
     "validation": {
       "codes": {

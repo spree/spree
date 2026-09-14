@@ -122,6 +122,13 @@ const statusToneMap: Record<string, StatusTone> = {
   archived: 'neutral',
   returned: 'success',
   backorder: 'warning',
+  // Order payment status: amber while money is still owed either way, blue
+  // for a hold or a part refund, red once the authorisation is gone.
+  none: 'neutral',
+  partially_paid: 'warning',
+  partially_refunded: 'info',
+  overcharged: 'warning',
+  voided: 'destructive',
   balance_due: 'warning',
   credit_owed: 'warning',
   canceled: 'destructive',

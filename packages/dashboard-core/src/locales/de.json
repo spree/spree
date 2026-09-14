@@ -1062,7 +1062,8 @@
       },
       "validation": {
         "non_negative": "muss null oder größer sein"
-      }
+      },
+      "description": "Die Kartons, Umkartons und Paletten, in denen Ihre Ware versendet wird, mit den Maßen und Gewichten, auf denen Frachtangebote beruhen."
     },
     "pages": {
       "settings": {
@@ -1403,7 +1404,8 @@
         "unknown_product": "Unbekanntes Produkt",
         "variant_count_one": "{{count}} Variante",
         "variant_count_other": "{{count}} Varianten"
-      }
+      },
+      "description": "Die Lager und Läden, in denen Sie Bestand halten und aus denen Sie Bestellungen erfüllen."
     },
     "validation": {
       "codes": {

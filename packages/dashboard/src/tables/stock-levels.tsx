@@ -27,7 +27,7 @@ function ProductLabel({ level }: { level: StockLevel }) {
 defineTable<StockLevel>('stock-levels', {
   title: i18n.t('admin.stock_levels.title'),
   description: i18n.t('admin.table_descriptions.stock_levels'),
-  docsPath: 'manage-products/stock-levels',
+  docsPath: 'inventory/stock-levels',
   searchParam: 'variant_sku_or_variant_product_name_cont',
   searchPlaceholder: i18n.t('admin.stock_levels.table.search_placeholder'),
   // A shelf list has to hold still. Without this the table falls back to

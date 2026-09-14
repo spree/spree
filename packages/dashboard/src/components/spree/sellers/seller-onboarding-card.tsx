@@ -31,6 +31,7 @@ import {
   FileTextIcon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -97,6 +98,13 @@ export function SellerOnboardingCard({ seller, canEdit }: { seller: Seller; canE
               <p className="text-muted-foreground text-sm">{t('admin.common.loading')}</p>
             )}
           </div>
+          {canEdit && (
+            <div className="border-t px-4 pb-4 pt-3 text-sm">
+              <Link to={'/$storeId/settings/seller-requirements' as string}>
+                {t('admin.sellers.onboarding.manage_requirements')}
+              </Link>
+            </div>
+          )}
         </CollapsibleContent>
       </Collapsible>
     </Card>

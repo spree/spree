@@ -12,7 +12,7 @@ function statusLabel(value: string): string {
 defineTable<StockTransfer>('stock-transfers', {
   title: i18n.t('admin.stock_transfers.title'),
   description: i18n.t('admin.table_descriptions.stock_transfers'),
-  docsPath: 'manage-products/stock-transfers',
+  docsPath: 'inventory/stock-transfers',
   searchParam: 'number_or_reference_cont',
   searchPlaceholder: i18n.t('admin.stock_transfers.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

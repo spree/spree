@@ -8,7 +8,7 @@ import { sortOrderLabelKey } from '../schemas/collection'
 defineTable<Collection>('collections', {
   title: i18n.t('admin.collections.title'),
   description: i18n.t('admin.table_descriptions.collections'),
-  docsPath: 'manage-products/product-taxonomies',
+  docsPath: 'products/collections',
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.collections.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

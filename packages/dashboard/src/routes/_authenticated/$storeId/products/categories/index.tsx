@@ -78,7 +78,7 @@ function CategoriesPage() {
           sticky={false}
           title={t('admin.categories.title')}
           description={t('admin.table_descriptions.categories')}
-          docsPath="manage-products/product-taxonomies"
+          docsPath="products/categories"
           actions={
             <Can I="create" a={Subject.Category}>
               <Button

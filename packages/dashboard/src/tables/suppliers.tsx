@@ -5,6 +5,7 @@ import { Building2Icon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<Supplier>('suppliers', {
+  docsPath: 'inventory/suppliers',
   title: i18n.t('admin.suppliers.title'),
   description: i18n.t('admin.table_descriptions.suppliers'),
   searchParam: 'name_or_contact_name_or_email_cont',

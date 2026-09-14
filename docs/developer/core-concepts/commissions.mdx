@@ -312,15 +312,17 @@ There is **no write path**. Lines are read-only in the API, and correcting a cha
 
 ## What this doesn't do
 
-Commission lines say what the marketplace charged. They don't move money.
+Commission lines say what the marketplace charged. They don't move money, and they don't say what a seller is owed.
 
-<Warning>
-Open source has **no payout ledger**. Paying sellers means connecting a provider such as Stripe Connect, or building against the commission lines and [payment splits](/developer/core-concepts/sellers#one-checkout-several-sellers). Scheduled payout runs, refund clawbacks and reconciliation are Enterprise features.
-</Warning>
+That is the [payout ledger's](/developer/core-concepts/sellers#payouts) job: when an order is fulfilled, a seller transfer is written for the sale *less these lines*, and payouts settle those transfers on the seller's schedule — by the built-in provider, which keeps the books and leaves the operator to pay by bank, or by Stripe Connect, which performs the transfer. A commission line is an input to that ledger, never a row in it.
+
+<Note>
+Refund clawbacks and netting across settlements, reconciliation and seller tax reporting are Spree Enterprise.
+</Note>
 
 ## Related
 
-- [Sellers](/developer/core-concepts/sellers) — marketplaces, order splitting and payment splits
+- [Sellers](/developer/core-concepts/sellers) — marketplaces, order splitting, and the payout ledger commission feeds
 - [Taxes](/developer/core-concepts/taxes) — the tax vocabulary commission lines share
 - [Fees](/developer/core-concepts/fees) — buyer-facing charges, which commissions are not
 - [Promotions](/developer/core-concepts/promotions) — the same rules-and-record split, on the buyer side

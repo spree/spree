@@ -14,6 +14,8 @@ const STATUS_OPTIONS = [
 ] as const
 
 defineTable<WebhookDelivery>('webhook-deliveries', {
+  docsPath: 'settings/webhooks',
+  description: i18n.t('admin.table_descriptions.webhook_deliveries'),
   title: i18n.t('admin.pages.settings.webhooks.deliveries_sheet_title'),
   searchParam: 'event_name_cont',
   searchPlaceholder: i18n.t('admin.pages.settings.webhooks.deliveries.search_placeholder'),
