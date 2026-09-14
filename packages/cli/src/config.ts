@@ -222,6 +222,44 @@ export function tokenPrefix(token: string): string {
   return token.slice(0, 12)
 }
 
+export interface MintKeyOptions {
+  name: string
+  keyType: 'secret' | 'publishable'
+  scopes?: string[]
+}
+
+/**
+ * Mints an API key through the project's dev stack and returns its token.
+ * The one place that knows the rake task's contract and the token shape.
+ */
+export async function mintApiKey(projectDir: string, options: MintKeyOptions): Promise<string> {
+  let stdout: string
+  try {
+    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
+      NAME: options.name,
+      KEY_TYPE: options.keyType,
+      ...(options.scopes?.length ? { SCOPES: options.scopes.join(',') } : {}),
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    // A refused key (a name already taken, a missing scope) is the model's
+    // own message, not a stack that is down.
+    const refused = message.match(/Validation failed: (.+)/)?.[1]
+    if (refused) throw new CredentialError(`Could not create the API key: ${refused}`)
+    throw new CredentialError(
+      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(message.split('\n')[0])}`,
+    )
+  }
+  const prefix = options.keyType === 'publishable' ? 'pk_' : 'sk_'
+  const token = stdout.match(new RegExp(`${prefix}[A-Za-z0-9_-]+`))?.[0]
+  if (!token) {
+    throw new CredentialError(
+      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
+    )
+  }
+  return token
+}
+
 /**
  * Auto-mints a read-only secret key through the project's dev stack and
  * persists it in `.spree/credentials.json` (gitignored). Write scopes are
@@ -243,30 +281,15 @@ export async function mintProjectCredentials(
     )
   }
 
-  let stdout: string
-  try {
-    stdout = await rakeTask('spree:cli:create_api_key', projectDir, {
-      NAME: '@spree/cli (auto)',
-      KEY_TYPE: 'secret',
-      SCOPES: 'read_all',
-    })
-  } catch (error) {
-    const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)
-    throw new CredentialError(
-      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(detail)}`,
-    )
-  }
-
-  const match = stdout.match(/sk_[A-Za-z0-9_-]+/)
-  if (!match) {
-    throw new CredentialError(
-      'Could not mint an API key via the dev stack. Is it running? Start it with `spree dev`.',
-    )
-  }
+  const token = await mintApiKey(projectDir, {
+    name: '@spree/cli (auto)',
+    keyType: 'secret',
+    scopes: ['read_all'],
+  })
 
   const credentials: ProjectCredentials = {
     baseUrl: `http://localhost:${port}`,
-    token: match[0],
+    token,
     scopes: ['read_all'],
     mintedAt: new Date().toISOString(),
   }

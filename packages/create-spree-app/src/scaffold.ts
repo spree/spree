@@ -258,7 +258,7 @@ function printSuccessWithoutDocker(
       `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
       `  http://localhost:${DASHBOARD_PORT}`,
       `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
-      `  ${pc.dim("# you'll create the admin account on first run")}`,
+      `  ${pc.dim("# you'll create the admin account (and pick sample data) on first run")}`,
       `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
       '',
     )
@@ -267,7 +267,7 @@ function printSuccessWithoutDocker(
       '',
       `${pc.bold('Admin Dashboard')}`,
       `  http://localhost:${port}/admin`,
-      `  ${pc.dim("# you'll create the admin account on first run")}`,
+      `  ${pc.dim("# you'll create the admin account (and pick sample data) on first run")}`,
       '',
     )
   }

@@ -17,7 +17,10 @@ const program = new Command()
     '--react-dashboard',
     'include the React Dashboard (Developer Preview — work in progress; also available later via `spree add dashboard`)',
   )
-  .option('--no-sample-data', 'skip loading sample data')
+  .option(
+    '--no-sample-data',
+    'scripted installs: skip sample data (interactive setups choose it on the setup screen)',
+  )
   .option('--no-start', 'do not start Docker services')
   .option('--port <number>', 'port for the Spree server', String(DEFAULT_SPREE_PORT))
   .option('--use-npm', 'use npm as package manager')

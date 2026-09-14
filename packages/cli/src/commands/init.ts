@@ -23,11 +23,14 @@ const HEALTH_CHECK_TIMEOUT_MS = 120_000
 export function registerInitCommand(program: Command): void {
   program
     .command('init')
-    .description('First-run setup: start services, configure API key, load sample data')
-    .option('--no-sample-data', 'skip loading sample data')
+    .description('First-run setup: start services, seed the database, configure API keys')
+    .option('--no-sample-data', 'skip loading sample data on scripted installs (see --admin-email)')
     .option('--no-open', 'skip opening browser')
-    .option('--admin-email <email>', 'email for the admin account created during setup')
-    .option('--admin-password <password>', 'password for the admin account created during setup')
+    .option(
+      '--admin-email <email>',
+      'scripted installs only: seed an admin account instead of printing the setup link',
+    )
+    .option('--admin-password <password>', 'password for the admin account seeded by --admin-email')
     .action(
       async (flags: {
         sampleData: boolean
@@ -55,15 +58,16 @@ export async function runFirstRunSetup(flags: {
 }): Promise<void> {
   const ctx = detectProject()
 
-  // Resolved before any slow work so the operator isn't ambushed by a prompt
-  // minutes into the run. Seeds only mint an admin when the credentials are
-  // passed explicitly — there are no server-side dummy defaults anymore.
-  const { adminEmail, adminPassword } = await resolveAdminCredentials(flags)
+  // Never prompted: the admin account is created on the setup screen the
+  // seed prints a link to, which also asks where the store is and whether to
+  // load sample data. Flags are for scripted installs, which have no screen,
+  // and are checked before Docker starts rather than failing minutes later.
+  const { adminEmail, adminPassword } = resolveAdminCredentials(flags)
 
-  // `--no-sample-data` always wins; otherwise the choice create-spree-app
-  // persisted in .env decides, so a deferred first run keeps the answer the
-  // operator gave at scaffold time. Load sample data later any time with
-  // `spree sample-data`.
+  // Sample data needs an admin to own its imports, so it loads here only on
+  // a scripted install; otherwise the setup screen offers it. `--no-sample-data`
+  // always wins; otherwise the choice create-spree-app persisted in .env
+  // decides. Load it later any time with `spree sample-data`.
   const sampleData = flags.sampleData && (readSampleDataFromEnv(ctx.projectDir) ?? true)
 
   p.log.step('Pulling latest images...')
@@ -117,18 +121,17 @@ export async function runFirstRunSetup(flags: {
   await installAppDeps(ctx.projectDir, 'dashboard')
   ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
-  if (sampleData) {
-    // Sample-data imports need an admin as their owner; without credentials
-    // the seed minted none and the loader would raise mid-init.
-    if (adminEmail && adminPassword) {
-      s.start('Loading sample data...')
-      await rakeTask('spree:load_sample_data', ctx.projectDir)
-      s.stop('Sample data loaded.')
-    } else {
-      p.log.warn(
-        'Skipping sample data — it needs an admin account. Finish setup, then run `spree sample-data`.',
-      )
-    }
+  // Sample-data imports need an admin as their owner; without credentials
+  // the seed minted none, and the setup screen offers the load instead.
+  const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
+  if (sampleDataLoaded) {
+    s.start('Loading sample data...')
+    await rakeTask('spree:load_sample_data', ctx.projectDir)
+    s.stop('Sample data loaded.')
+  } else if (sampleData) {
+    p.log.info(
+      'Sample data: tick "Load sample data" on the setup screen, or run `spree sample-data` any time later.',
+    )
   }
 
   s.start('Indexing products for search...')
@@ -161,7 +164,7 @@ export async function runFirstRunSetup(flags: {
     adminEmail && adminPassword
       ? [`  Email:    ${adminEmail}`, `  Password: ${adminPassword}`]
       : [
-          `  ${pc.dim('Create your admin account:')}`,
+          `  ${pc.dim('Create your admin account (and load sample data, if you like):')}`,
           `  ${pc.cyan(
             setupToken
               ? `${setupBase}/setup?token=${setupToken}`
@@ -186,7 +189,7 @@ export async function runFirstRunSetup(flags: {
   // group/prices (sampleData) to be walkable end to end. The portal runs on
   // the default publishable key — the channel header selects the channel.
   const wholesaleBlock =
-    sampleData && storefrontWholesaleChannel(ctx.projectDir)
+    sampleDataLoaded && storefrontWholesaleChannel(ctx.projectDir)
       ? [
           pc.bold('Wholesale portal (B2B demo)'),
           `  ${pc.cyan(`http://localhost:${STOREFRONT_PORT}/wholesale`)} ${pc.dim('— needs the storefront dev server running')}`,
@@ -341,49 +344,18 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
- * Flags win; otherwise an interactive terminal prompts (Medusa-style). A
- * non-interactive run with no flags seeds no admin at all — the setup link
- * printed by the seed claims the installation instead, so an automated
- * install never mints a well-known password.
+ * Flags only. A run without them seeds no admin at all — the setup link
+ * printed by the seed claims the installation instead, so an install never
+ * mints a well-known password and the operator answers the store questions
+ * once, on the setup screen.
  */
-async function resolveAdminCredentials(flags: {
+function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: string }): {
   adminEmail?: string
   adminPassword?: string
-}): Promise<{ adminEmail?: string; adminPassword?: string }> {
-  let adminEmail = flags.adminEmail
-  let adminPassword = flags.adminPassword
+} {
+  const { adminEmail, adminPassword } = flags
 
-  if ((!adminEmail || !adminPassword) && process.stdin.isTTY) {
-    p.log.step('Create your admin account')
-
-    if (!adminEmail) {
-      const answer = await p.text({
-        message: 'Admin email',
-        initialValue: 'spree@example.com',
-        validate: (value) => (value?.includes('@') ? undefined : 'Enter a valid email address'),
-      })
-      if (p.isCancel(answer)) {
-        p.cancel('Setup cancelled.')
-        process.exit(1)
-      }
-      adminEmail = answer
-    }
-
-    if (!adminPassword) {
-      const answer = await p.password({
-        message: 'Admin password (min. 8 characters)',
-        validate: (value) => ((value ?? '').length >= 8 ? undefined : 'Use at least 8 characters'),
-      })
-      if (p.isCancel(answer)) {
-        p.cancel('Setup cancelled.')
-        process.exit(1)
-      }
-      adminPassword = answer
-    }
-  }
-
-  // Flag values skip the prompt validators, so check them here too — the
-  // alternative is failing after Docker start and seeding, minutes later.
+  // Checked here rather than after Docker start and seeding, minutes later.
   if (adminEmail && !adminEmail.includes('@')) {
     p.cancel(`Invalid --admin-email: ${adminEmail}`)
     process.exit(1)
