@@ -379,8 +379,6 @@ function ToolbarButton({
   children: React.ReactNode
   title: string
 }) {
-  const ranOnPointerDown = useRef(false)
-
   return (
     <button
       type="button"
@@ -391,14 +389,15 @@ function ToolbarButton({
         // it also swallows the following click in Chromium — which is how
         // Playwright activates the button.
         event.preventDefault()
-        ranOnPointerDown.current = true
         onClick()
       }}
-      onClick={() => {
-        if (ranOnPointerDown.current) {
-          ranOnPointerDown.current = false
-          return
-        }
+      onClick={(event) => {
+        // Pointer activations already ran above (`detail` is 0 for keyboard
+        // and assistive-technology clicks). Do not keep a flag across
+        // events: undo/redo can disable this button before the paired
+        // click arrives, and a leftover flag would discard the next
+        // keyboard activation.
+        if (event.detail !== 0) return
         onClick()
       }}
       disabled={disabled}

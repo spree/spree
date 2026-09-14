@@ -78,4 +78,54 @@ describe('toggleOrWrapBlock', () => {
     expect(toggleOrWrapBlock(editor, 'blockquote')).toBe(true)
     expect(documentHasBlock(editor.getJSON(), 'blockquote')).toBe(true)
   })
+
+  it('wraps only the selected paragraph when another list already exists', () => {
+    editor = new Editor({
+      extensions: [StarterKit.configure({ link: false, trailingNode: false })],
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'bulletList',
+            content: [
+              {
+                type: 'listItem',
+                content: [{ type: 'paragraph', content: [{ type: 'text', text: 'First' }] }],
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: 'Second' }],
+          },
+        ],
+      },
+    })
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+    expect(toggleOrWrapBlock(editor, 'bulletList')).toBe(true)
+    const json = JSON.stringify(editor.getJSON())
+    expect(json).toContain('First')
+    expect(json).toContain('Second')
+    expect(
+      editor.getJSON().content?.filter((node) => node.type === 'bulletList').length,
+    ).toBeGreaterThanOrEqual(1)
+  })
+
+  it('keeps marks on the wrapped paragraph', () => {
+    editor = new Editor({
+      extensions: [StarterKit.configure({ link: false, trailingNode: false })],
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Formatted line' }],
+          },
+        ],
+      },
+    })
+    expect(toggleOrWrapBlock(editor, 'bulletList')).toBe(true)
+    expect(JSON.stringify(editor.getJSON())).toContain('"type":"bold"')
+    expect(editor.getText()).toContain('Formatted line')
+  })
 })

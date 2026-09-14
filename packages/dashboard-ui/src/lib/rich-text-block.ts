@@ -8,63 +8,82 @@ export const BLOCK_COMMANDS = {
 
 export type RichTextBlockKind = keyof typeof BLOCK_COMMANDS
 
+/**
+ * Whether `doc` contains a node of `kind` at any depth.
+ *
+ * @param doc - TipTap JSON document or fragment
+ * @param kind - list or quote type to look for
+ * @return true when a matching block exists
+ */
 export function documentHasBlock(doc: JSONContent, kind: RichTextBlockKind): boolean {
   if (doc.type === kind) return true
   return (doc.content ?? []).some((child) => documentHasBlock(child, kind))
 }
 
 /**
- * Toggle a list or quote. TipTap 3.31's wrap commands can no-op when the
- * selection sits at the document edge, so if the expected node did not
- * appear (or disappear), replace the document with a JSON node of that
- * kind instead of trusting an HTML string the schema may flatten.
+ * Toggle a list or quote on the current selection. TipTap 3.31's wrap
+ * commands can no-op or throw when two copies of prosemirror-model are
+ * loaded, so if the selection did not change, wrap or unwrap only the
+ * selected top-level block. Other nodes and marks stay as they are.
  *
  * @param editor - live TipTap editor
  * @param kind - block to toggle
- * @return whether the editor now contains the requested block
+ * @return whether the selection is now inside the requested block
  */
 export function toggleOrWrapBlock(editor: Editor, kind: RichTextBlockKind): boolean {
-  const wasActive = documentHasBlock(editor.getJSON(), kind)
+  const wasActive = editor.isActive(kind)
   try {
     BLOCK_COMMANDS[kind](editor)
-    const afterToggle = editor.getJSON()
-    if (wasActive ? !documentHasBlock(afterToggle, kind) : documentHasBlock(afterToggle, kind)) {
+    const isActive = editor.isActive(kind)
+    if (wasActive ? !isActive : isActive) {
       return true
     }
   } catch {
     // wrapInList throws when two copies of prosemirror-model are loaded.
-    // The JSON fallback below still produces a valid list or quote.
   }
 
-  const text = editor.getText()
-  const lines = text.split('\n')
+  return wasActive ? unwrapSelectedBlock(editor, kind) : wrapSelectedBlock(editor, kind)
+}
 
-  if (wasActive) {
-    return editor.commands.setContent({
-      type: 'doc',
-      content: lines.map((line) => ({
-        type: 'paragraph',
-        content: line ? [{ type: 'text', text: line }] : [],
-      })),
-    })
+function selectedTopLevelIndex(editor: Editor): number {
+  return editor.state.selection.$from.index(0)
+}
+
+function wrapSelectedBlock(editor: Editor, kind: RichTextBlockKind): boolean {
+  const index = selectedTopLevelIndex(editor)
+  const blocks = editor.getJSON().content ?? []
+  const selected = blocks[index]
+  if (!selected || (selected.type !== 'paragraph' && selected.type !== 'heading')) {
+    return false
   }
 
-  const paragraph = {
-    type: 'paragraph',
-    content: text ? [{ type: 'text', text }] : [],
-  }
+  const wrapped: JSONContent =
+    kind === 'blockquote'
+      ? { type: 'blockquote', content: [selected] }
+      : {
+          type: kind,
+          content: [{ type: 'listItem', content: [selected] }],
+        }
 
-  const applied = editor.commands.setContent({
+  return editor.commands.setContent({
     type: 'doc',
-    content: [
-      kind === 'blockquote'
-        ? { type: 'blockquote', content: [paragraph] }
-        : {
-            type: kind,
-            content: [{ type: 'listItem', content: [paragraph] }],
-          },
-    ],
+    content: [...blocks.slice(0, index), wrapped, ...blocks.slice(index + 1)],
   })
+}
 
-  return applied && documentHasBlock(editor.getJSON(), kind)
+function unwrapSelectedBlock(editor: Editor, kind: RichTextBlockKind): boolean {
+  const index = selectedTopLevelIndex(editor)
+  const blocks = editor.getJSON().content ?? []
+  const selected = blocks[index]
+  if (!selected || selected.type !== kind) return false
+
+  const inner = (selected.content ?? []) as JSONContent[]
+  const unwrapped =
+    kind === 'blockquote' ? inner : inner.flatMap((item) => (item.content ?? []) as JSONContent[])
+  if (unwrapped.length === 0) return false
+
+  return editor.commands.setContent({
+    type: 'doc',
+    content: [...blocks.slice(0, index), ...unwrapped, ...blocks.slice(index + 1)],
+  })
 }
