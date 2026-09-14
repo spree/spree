@@ -287,6 +287,59 @@ RSpec.describe SpreeStripe::PayoutProvider do
   # to arrive — an endpoint never registered, a delivery dropped. A seller who
   # has finished onboarding must not be left looking at a checklist that says
   # they have not while Stripe is ready to pay them.
+  # A transfer is credited on fulfilment but funded by the customer's charge,
+  # so the money reaches the seller only when that charge settles. Stripe
+  # refuses a payout for more than the balance holds, so the sweep has to ask.
+  describe '#available_payout' do
+    def balance(entries)
+      Stripe::StripeObject.construct_from(
+        available: entries.map { |currency, amount| { currency: currency, amount: amount } }
+      )
+    end
+
+    it 'reports what the account can send, in major units' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance('usd' => 30_269))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(302.69)
+    end
+
+    it 'asks as the connected account, since it is their balance' do
+      expect(Stripe::Balance).to receive(:retrieve).
+        with(anything, hash_including(stripe_account: 'acct_seller')).
+        and_return(balance('usd' => 1_000))
+
+      described_class.new.available_payout(seller, 'USD')
+    end
+
+    it 'sums the parts a balance is split into' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance([['usd', 600], ['usd', 400]]))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(10)
+    end
+
+    # The cross-border case: a GB account settles in GBP, so a ledger
+    # denominated in USD has nothing that account can send.
+    it 'reports nothing for a currency the account does not hold' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance('gbp' => 12_254))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(0)
+    end
+
+    it 'refuses to guess when Stripe cannot be reached' do
+      allow(Stripe::Balance).to receive(:retrieve).and_raise(Stripe::APIConnectionError, 'timed out')
+
+      expect { described_class.new.available_payout(seller, 'USD') }.
+        to raise_error(Spree::Core::AmbiguousGatewayError)
+    end
+
+    it 'refuses a seller with no account rather than reporting zero' do
+      seller.external_references.destroy_all
+
+      expect { described_class.new.available_payout(seller.reload, 'USD') }.
+        to raise_error(Spree::Core::GatewayError)
+    end
+  end
+
   describe '#onboarded?' do
     def stub_account(payouts_enabled:)
       allow(Stripe::Account).to receive(:retrieve).and_return(

@@ -116,6 +116,80 @@ RSpec.describe Spree::SellerPayouts::Sweep do
   # A payout is created by the sweep and by nothing else, so earnings left
   # stamped to a failed one would be unreachable — skipped by every later
   # sweep while the balance still says the seller is owed them.
+  # What a seller has earned and what their account can send are different
+  # figures: money credited on fulfilment is funded by the customer's payment
+  # and only becomes payable once that settles. Asking for the whole balance
+  # regardless is how every payout gets refused.
+  describe 'when the provider can send less than is owed' do
+    def available(amount)
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:available_payout).and_return(amount)
+    end
+
+    it 'settles the oldest earnings that fit' do
+      old = earn(40)
+      earn(30)
+      available(50)
+
+      payout = described_class.call(seller: seller, currency: 'USD').value
+
+      expect(payout.amount).to eq(40)
+      expect(payout.transfers).to contain_exactly(old)
+    end
+
+    it 'leaves the rest for the next period' do
+      earn(40)
+      recent = earn(30)
+      available(50)
+      described_class.call(seller: seller, currency: 'USD')
+
+      expect(seller.seller_transfers.unsettled).to contain_exactly(recent)
+    end
+
+    # A reversal is money already taken back. Leaving one out of a batch would
+    # settle earnings it cancels, paying the seller for a refunded sale.
+    it 'always counts reversals, whatever is available' do
+      earning = earn(40)
+      reversal = create(:seller_transfer, :reversal, :completed, seller: seller, currency: 'USD', amount: -10,
+                                                                 reversed_from: earning, order: earning.order)
+      available(30)
+
+      payout = described_class.call(seller: seller, currency: 'USD').value
+
+      expect(payout.amount).to eq(30)
+      expect(payout.transfers).to contain_exactly(earning, reversal)
+    end
+
+    # Nothing has settled yet. Better to wait than to write a payout row a
+    # provider is certain to refuse.
+    it 'settles nothing when no earning fits' do
+      earn(40)
+      available(0)
+
+      expect { described_class.call(seller: seller, currency: 'USD') }.
+        not_to change { Spree::SellerPayout.count }
+    end
+
+    it 'settles everything when the provider names no limit' do
+      earn(40)
+      earn(30)
+      available(nil)
+
+      expect(described_class.call(seller: seller, currency: 'USD').value.amount).to eq(70)
+    end
+
+    # A provider that cannot say costs a period, not a payout: settling a
+    # smaller batch would under-pay, and asking for everything is the bug.
+    it 'settles nothing when the provider cannot say' do
+      earn(40)
+      allow_any_instance_of(Spree::PayoutProvider::System).to receive(:available_payout).
+        and_raise(Spree::Core::AmbiguousGatewayError, 'timed out')
+
+      expect { described_class.call(seller: seller, currency: 'USD') }.
+        not_to change { Spree::SellerPayout.count }
+      expect(seller.seller_transfers.unsettled.sum(:amount)).to eq(40)
+    end
+  end
+
   describe 'when the provider will not pay' do
     before do
       allow_any_instance_of(Spree::PayoutProvider::System).to receive(:pay!).and_raise(StandardError, 'gateway down')

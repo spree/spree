@@ -231,6 +231,35 @@ module SpreeStripe
       raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
+    # What the seller's account can send today, in the currency asked for.
+    #
+    # A transfer is credited on fulfilment but funded by the customer's charge,
+    # so the money reaches the seller's balance only when that charge settles.
+    # Asking Stripe is the documented way to know the difference; a payout for
+    # more than the available balance is refused outright.
+    #
+    # Zero when the account holds nothing in this currency — including a
+    # cross-border seller whose account settles in its own currency and can
+    # therefore never pay out what the ledger denominated the sale in.
+    #
+    # @return [BigDecimal]
+    def available_payout(seller, currency)
+      gateway = gateway_for(seller.store)
+      account_id = seller.payout_account_reference(self.class)
+      raise Spree::Core::GatewayError, 'Seller holds no Stripe account' if account_id.blank?
+
+      balance = Stripe::Balance.retrieve({}, gateway.api_options.merge(stripe_account: account_id))
+      wanted = currency.to_s.downcase
+      minor = balance.available.select { |entry| entry.currency == wanted }.sum(&:amount)
+
+      Spree::Money::Rounding.from_minor_units(minor, currency)
+    rescue *AMBIGUOUS_ERRORS => e
+      # The sweep must not read silence as "nothing to send" and settle a
+      # smaller batch than the seller is owed, nor as "no limit" and ask for
+      # everything again. Neither is knowable, so nothing is paid this period.
+      raise Spree::Core::AmbiguousGatewayError, e.message
+    end
+
     # Pulls a seller's money back after a refund.
     #
     # Ledger-only in open source: the row is written either way, so the books

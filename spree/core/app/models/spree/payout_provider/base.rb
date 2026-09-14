@@ -174,6 +174,23 @@ module Spree
         raise NotImplementedError
       end
 
+      # How much of what a seller is owed this provider can move right now.
+      #
+      # What the ledger says a seller has earned and what their account can
+      # actually send are different figures: money credited on fulfilment is
+      # only payable once the customer's payment settles. A provider that knows
+      # the difference answers it here, and the sweep settles what fits.
+      #
+      # Nil means the provider does not know or does not care — the built-in
+      # one moves no money, so everything owed is payable.
+      #
+      # @param seller [Spree::Seller]
+      # @param currency [String]
+      # @return [BigDecimal, nil]
+      def available_payout(_seller, _currency)
+        nil
+      end
+
       # Takes back part of an earning after a refund.
       #
       # The ledger row is written by core either way — the books stay correct
