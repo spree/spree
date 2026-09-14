@@ -18,6 +18,28 @@ RSpec.describe Spree::Market, type: :model do
       expect(market).not_to be_valid
       expect(market.errors[:name]).to be_present
     end
+
+    it 'rejects a default_locale that is not a known locale code' do
+      market = build(:market, store: store, default_locale: 'rubbish')
+      expect(market).not_to be_valid
+      expect(market.errors[:default_locale]).to be_present
+    end
+
+    it 'accepts regional locale codes, including ones absent from Locales::ALL' do
+      expect(build(:market, store: store, default_locale: 'pt-BR')).to be_valid
+      expect(build(:market, store: store, default_locale: 'en-US')).to be_valid
+    end
+
+    it 'rejects unknown codes among supported_locales' do
+      market = build(:market, store: store, supported_locales: %w[en rubbish])
+      expect(market).not_to be_valid
+      expect(market.errors[:supported_locales].join).to include('rubbish')
+    end
+
+    it 'accepts known codes among supported_locales' do
+      market = build(:market, store: store, supported_locales: %w[en pt-BR])
+      expect(market).to be_valid
+    end
   end
 
   describe 'associations' do

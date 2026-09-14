@@ -48,5 +48,28 @@ module Spree
       yi yo
       za zh-CN zh-HK zh-TW zu
     ].freeze
+
+    # The ISO 639-1 base languages behind ALL, without any region.
+    BASE_LANGUAGES = ALL.map { |code| code.split('-').first }.uniq.freeze
+
+    # BCP-47 shape. Anchored, and every repeated group starts with a separator,
+    # so there is nothing for a backtracking engine to explore.
+    FORMAT = /\A[a-z]{2,3}(?:[-_][A-Za-z0-9]{2,8})*\z/
+    private_constant :FORMAT
+
+    # Whether a code is usable as a locale setting.
+    #
+    # Looser than ALL.include? on purpose: ALL is what the pickers offer and
+    # carries only commercially significant variants, so it has en-GB but no
+    # en-US. Requiring exact membership would reject valid configurations.
+    #
+    # @param code [String, Symbol, nil]
+    # @return [Boolean]
+    def self.known?(code)
+      code = code.to_s
+      return false unless code.match?(FORMAT)
+
+      BASE_LANGUAGES.include?(Spree::Locale.new(code: code).language_code)
+    end
   end
 end

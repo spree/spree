@@ -76,6 +76,28 @@ RSpec.describe Spree::Api::V3::Admin::MarketsController, type: :controller do
       expect(market.reload.tax_provider).to be_nil
     end
 
+    it 'refuses a default_locale that is not a locale code' do
+      original = market.default_locale
+
+      patch :update, params: { id: market.prefixed_id, default_locale: 'rubbish' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(market.reload.default_locale).to eq(original)
+    end
+
+    it 'refuses unknown codes in supported_locales' do
+      patch :update, params: { id: market.prefixed_id, supported_locales: %w[en rubbish] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'accepts a regional locale code' do
+      patch :update, params: { id: market.prefixed_id, default_locale: 'en-US' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(market.reload.default_locale).to eq('en-US')
+    end
+
     it 'clears the selection back to the store default' do
       market.update_columns(tax_provider: 'Spree::TaxProvider::Internal')
 

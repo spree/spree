@@ -120,7 +120,19 @@ module Spree
         def set_locale
           Spree::Current.locale = current_locale
           Spree::Current.content_locale = current_store&.default_locale
-          I18n.locale = current_locale
+          I18n.locale = loadable_locale(current_locale)
+        end
+
+        # Runs from a before_action, so an unloadable code would take down every
+        # endpoint rather than degrade one response — including the endpoints
+        # needed to correct it. Reached by a stored locale with no UI bundle
+        # installed (en-US), or one persisted before it was validated.
+        #
+        # @return [String, Symbol] the locale if I18n can load it, else the default.
+        def loadable_locale(locale)
+          return locale if I18n.available_locales.map(&:to_s).include?(locale.to_s)
+
+          I18n.default_locale
         end
 
         # Sets +Spree::Current.currency+ from the resolved currency.
