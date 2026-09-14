@@ -15,7 +15,7 @@ export function SellerPicker() {
   const { t } = useTranslation()
   const { data, isLoading, error } = useQuery({
     queryKey: ['seller', 'me'],
-    queryFn: () => sellerClient().me(),
+    queryFn: () => sellerClient().me.get(),
   })
 
   if (isLoading) return <CenteredMessage>{t('common.loading')}</CenteredMessage>

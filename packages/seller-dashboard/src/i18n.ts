@@ -10,7 +10,7 @@ import '@spree/dashboard-core/lib/i18n'
 // The instance comes from core too, not a bare `i18next` import: a bundled
 // build can resolve a second copy of the package, and `addResourceBundle` on
 // that one throws. Core re-exports the object it initialised for exactly this.
-import { i18n } from '@spree/dashboard-core'
+import { i18n, localesFromBundlePaths } from '@spree/dashboard-core'
 import en from './locales/en.json'
 
 /**
@@ -22,5 +22,30 @@ import en from './locales/en.json'
  * flags merge these in without dropping the framework keys underneath.
  */
 i18n.addResourceBundle('en', 'translation', en, true, true)
+
+// Every other language, imported EAGERLY so the active one registers
+// synchronously at module load — before any table or registry module
+// evaluates its `i18n.t(...)` labels. Switching language reloads the page, so
+// only the booted language's strings are ever resolved; eager keeps that
+// resolution synchronous and flash-free.
+const panelLocales = import.meta.glob<{ default: Record<string, unknown> }>(
+  ['./locales/*.json', '!./locales/en.json'],
+  { eager: true },
+)
+
+for (const [path, mod] of Object.entries(panelLocales)) {
+  const code = path.replace('./locales/', '').replace('.json', '')
+  i18n.addResourceBundle(code, 'translation', mod.default, true, true)
+}
+
+/**
+ * The languages this panel can display, as `{ code, name }` pairs for the
+ * account menu and the account dialog. Derived from the locale bundles the
+ * panel ships — not from the API, which knows nothing about what the client
+ * can render.
+ */
+export function getAvailableUiLocales(): Array<{ code: string; name: string }> {
+  return localesFromBundlePaths(Object.keys(panelLocales))
+}
 
 export default i18n

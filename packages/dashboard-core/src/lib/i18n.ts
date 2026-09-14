@@ -1,5 +1,6 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { intlDisplayName } from '../hooks/use-display-name'
 // Relative path, not `@/...`: dashboard-core ships source; the consuming
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'
@@ -130,6 +131,39 @@ export function coreLocaleCodes(): string[] {
     'en',
     ...Object.keys(coreLocales).map((p) => p.replace('../locales/', '').replace('.json', '')),
   ]
+}
+
+/**
+ * Turns a panel's locale-bundle paths into the `{ code, name }` pairs its
+ * language pickers render, with `en` always first.
+ *
+ * The glob itself has to stay in the calling package — `import.meta.glob` is a
+ * compile-time transform resolved against the file that writes it, so hoisting
+ * it here would scan the framework's own locales instead of the panel's. What
+ * IS shared is everything after that: stripping the path down to a code, and
+ * naming each language in its own words.
+ *
+ * @param paths bundle paths from the caller's `import.meta.glob`, e.g.
+ *   `./locales/de.json`
+ */
+export function localesFromBundlePaths(paths: string[]): Array<{ code: string; name: string }> {
+  const codes = [
+    'en',
+    ...paths.map((path) => path.replace(/^.*\/locales\//, '').replace('.json', '')),
+  ]
+
+  return codes.map((code) => ({ code, name: localeEndonym(code) }))
+}
+
+// Each language's endonym (its own name: `Deutsch`, `中文`). `Intl.DisplayNames`
+// answers in the language's own convention, so some come back lowercase
+// (`français`, `polski`); capitalize the first letter by THAT language's casing
+// rules rather than the current locale's. Scripts without case are unaffected,
+// and an unknown code falls back to itself.
+function localeEndonym(code: string): string {
+  const name = intlDisplayName('language', code, code) ?? code
+
+  return name.charAt(0).toLocaleUpperCase(code) + name.slice(1)
 }
 
 /**

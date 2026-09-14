@@ -128,7 +128,7 @@ module Spree
           def auth_response(user)
             {
               token: generate_jwt(user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_SELLER),
-              user: Spree.api.seller_team_member_serializer.new(
+              user: Spree.api.seller_account_serializer.new(
                 user, params: { store: seller_store(user) }
               ).to_h,
               sellers: serialized_sellers(user)
