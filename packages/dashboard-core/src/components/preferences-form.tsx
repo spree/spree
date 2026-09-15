@@ -211,11 +211,9 @@ export function PreferenceField({
     case 'datetime':
       return (
         <Field>
-          {/* No `htmlFor`: the picker renders a button, not a labelable
-              control, so pointing at an id nothing owns would be worse than
-              leaving the label adjacent. Matches the other pickers in admin. */}
-          <FieldLabel>{displayLabel}</FieldLabel>
+          <FieldLabel htmlFor={id}>{displayLabel}</FieldLabel>
           <StoreDatePicker
+            id={id}
             value={(value as string) ?? null}
             onChange={(next) => onChange(next)}
             includeTime={field.type === 'datetime'}

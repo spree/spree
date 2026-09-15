@@ -37,6 +37,13 @@ interface DatePickerProps {
    * keep the default Popover behavior.
    */
   inline?: boolean
+  /**
+   * Forwarded to the trigger button, so a `<FieldLabel htmlFor>` can name the
+   * control. Without it the label sits next to the picker visually but is not
+   * associated with it, and a screen reader announces only the formatted date
+   * the trigger happens to show.
+   */
+  id?: string
 }
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/
@@ -77,6 +84,7 @@ function DatePicker({
   includeTime = false,
   timezone,
   inline = false,
+  id,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -211,6 +219,7 @@ function DatePicker({
     return (
       <div ref={containerRef} className={cn('relative', className)}>
         <Button
+          id={id}
           type="button"
           variant="outline"
           data-empty={!isValidDate}
@@ -238,7 +247,13 @@ function DatePicker({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
-        <Button type="button" variant="outline" data-empty={!isValidDate} className={className}>
+        <Button
+          id={id}
+          type="button"
+          variant="outline"
+          data-empty={!isValidDate}
+          className={className}
+        >
           {triggerChildren}
         </Button>
       </PopoverTrigger>
