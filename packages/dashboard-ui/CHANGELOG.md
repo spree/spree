@@ -1,6 +1,16 @@
 # @spree/dashboard-ui
 
-## 1.0.0
+## 1.0.0-beta.2
+
+### Minor Changes
+
+- Removed the address map from the design system.
+
+  The map was rendered on one card — a seller's billing and returns addresses — and could not plot anything, because Spree addresses carry no coordinates. It also cost every dashboard user around a megabyte of MapLibre in the main bundle.
+
+  Its `?worker&url` import made the package impossible to install, too: Vite's dependency optimizer cannot resolve that specifier inside `node_modules`, so any project depending on `@spree/dashboard-ui` failed to start its dev server. Projects on the previous release should upgrade.
+
+## 1.0.0-beta.1
 
 ### Minor Changes
 

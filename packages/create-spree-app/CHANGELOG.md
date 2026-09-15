@@ -1,5 +1,15 @@
 # create-spree-app
 
+## 2.0.1
+
+### Patch Changes
+
+- Fixed first-run setup failing partway through, and scaffolded both admin apps.
+
+  Several failures could leave a new project unusable: minting the CLI's API key raised "Name has already been taken" on any re-run, so a setup interrupted for any reason could never be completed; Mailpit's ports were not probed like the web port, so another Spree project or a local mail catcher failed `docker compose up` with a raw Docker daemon error; sample data was loaded before first-run setup created an admin to own it, aborting the run; and a failed key mint reported that the stack was not running, sending operators after a stack that was running fine.
+
+  Scaffolds also create `apps/seller-dashboard` alongside `apps/dashboard` (`spree add seller-dashboard` adds it to an existing project). The React Dashboard is the admin in Spree 6, so it is no longer opt-in behind a flag, and first-run setup no longer prompts for an admin email and password — the account is created on the dashboard's own setup screen, which the browser opens automatically.
+
 ## 2.0.0
 
 ### Major Changes
