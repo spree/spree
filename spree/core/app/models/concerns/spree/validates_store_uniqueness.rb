@@ -2,28 +2,32 @@ module Spree
   # Declares an attribute unique within its store, ignoring rows that are gone.
   # Included in {Spree::Base}, so any model can declare one directly:
   #
-  #   unique_per_store :name
-  #   unique_per_store :name, scope: [:seller_id]
-  #   unique_per_store :url, live: :revoked_at
+  #   validates_store_uniqueness :name
+  #   validates_store_uniqueness :name, scope: [:seller_id]
+  #   validates_store_uniqueness :name, soft_delete_column: :revoked_at
   #
   # Nothing here resolves a record from a string — finding one by a slug or
   # permalink is FriendlyId's job.
-  module UniquePerStore
+  module ValidatesStoreUniqueness
     extend ActiveSupport::Concern
 
     class_methods do
       # @param attribute [Symbol] the column to keep unique
-      # @param live [Symbol, nil] the column that is nil while the row counts —
-      #   `deleted_at` for soft-deleted models, `revoked_at` for API keys, and
-      #   nil for a model whose rows are deleted outright
+      # @param soft_delete_column [Symbol] the column a removed row is stamped
+      #   with, so removed rows free their value. Defaults to `deleted_at`;
+      #   a model without that column simply has none, and every row counts.
       # @param scope [Array<Symbol>] extra columns the value is unique within,
       #   e.g. `:seller_id` on a table sellers share with the operator
-      def unique_per_store(attribute, live: :deleted_at, scope: [])
+      def validates_store_uniqueness(attribute, soft_delete_column: :deleted_at, scope: [])
         # Resolved inside the lambda, not here: reading `column_names` while
         # the class body runs would hit the database during boot.
         conditions = lambda do
           klass = respond_to?(:klass) ? self.klass : self
-          live && klass.column_names.include?(live.to_s) ? where(live => nil) : all
+          if klass.column_names.include?(soft_delete_column.to_s)
+            where(soft_delete_column => nil)
+          else
+            all
+          end
         end
 
         uniqueness_scope = [*spree_base_uniqueness_scope, :store_id, *scope]

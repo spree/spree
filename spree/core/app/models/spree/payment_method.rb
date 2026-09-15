@@ -52,7 +52,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
-    unique_per_store :name
+    validates_store_uniqueness :name
     validates :store, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

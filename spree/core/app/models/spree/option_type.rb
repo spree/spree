@@ -29,7 +29,7 @@ module Spree
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     validates :name, presence: true
-    unique_per_store :name, live: nil
+    validates_store_uniqueness :name
     acts_as_list scope: :store_id
 
     #
