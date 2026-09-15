@@ -131,6 +131,9 @@ importers:
       yaml:
         specifier: ^2.8.4
         version: 2.8.4
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/create-spree-app:
     dependencies:
@@ -292,6 +295,9 @@ importers:
       '@playwright/test':
         specifier: ^1.59.1
         version: 1.59.1
+      '@spree/cli':
+        specifier: workspace:^
+        version: link:../cli
       '@spree/dashboard-plugin-example':
         specifier: workspace:^
         version: link:../dashboard-plugin-example
