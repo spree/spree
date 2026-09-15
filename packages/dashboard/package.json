@@ -102,7 +102,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
     "@vitejs/plugin-react": "^6.0.1",
-    "shadcn": "^4.7.0",
+    "shadcn": "^4.21.0",
     "tailwindcss": "^4.2.4",
     "tsup": "^8.5.1",
     "typescript": "~6.0.3",
