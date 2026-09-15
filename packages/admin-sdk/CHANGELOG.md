@@ -1,5 +1,141 @@
 # @spree/admin-sdk
 
+## 1.0.0
+
+### Major Changes
+
+- [#14442](https://github.com/spree/spree/pull/14442) [`4df88ac`](https://github.com/spree/spree/commit/4df88ac684688e65623703544686c6043a8ed816) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Rename the geography fields to `country_code` and `state_code` across the v3 API, replacing `country_iso` and `state_abbr`. Addresses, stock locations, delivery zone members, markets, tax rates and tax exemption certificates all use the new names, on read and on write. Markets rename their list of countries from `country_isos` to `country_codes`.
+
+  Addresses keep `country_iso` and `state_abbr` as deprecated read fields and accepted write names for one release, so existing storefronts keep working; both are removed in 6.1. Every other resource moves outright.
+
+- [#14445](https://github.com/spree/spree/pull/14445) [`6d4fe64`](https://github.com/spree/spree/commit/6d4fe64a1444bc42338942025a4ed1d5788cb9d7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - First-run setup asks which country the store sells from.
+
+  `completeSetup` now requires `country_code` and accepts optional `locale` and `currency`. Both default to the country's own — its first official language and its currency — so a store's money and geography agree unless you say otherwise. An unrecognised currency is now rejected rather than quietly ignored.
+
+  `login`, `acceptInvitation`, `resetPassword` and `completeSetup` on the dashboard auth context now resolve with the session they establish, so callers can read the signed-in user without waiting for provider state.
+
+  A new `auth.setupCountries()` lists the countries a store can be set up in, each with the currency and official languages derived from it. Like the rest of the setup flow it needs no credentials, and stops answering once an admin account exists.
+
+- [#14458](https://github.com/spree/spree/pull/14458) [`da49f27`](https://github.com/spree/spree/commit/da49f27a5da1e40dbd4ce0901f8d4b21573d98df) Thanks [@mad-eel](https://github.com/mad-eel)! - Renamed stock items to stock levels.
+
+  Spree 6.0 renames `Spree::StockItem` to `Spree::StockLevel`, and the admin API and SDK follow. There is no compatibility shim on the client side, so update your code before upgrading:
+
+  - `client.stockItems` is now `client.stockLevels`, and it calls `/stock_levels` instead of `/stock_items`.
+  - The `StockItem` type is now `StockLevel`, and `StockItemUpdateParams` is now `StockLevelUpdateParams`.
+  - `StockLevelUpdateParams` also gains `reason`, which labels a count correction in the stock history.
+  - `client.stockMovements` is new, and reads the typed stock history behind those levels.
+  - A variant's `stock_items` array is now `stock_levels`, on both reads and writes.
+  - `Subject.StockItem` is now `Subject.StockLevel` in `@spree/dashboard-core`. The old name stays as a deprecated alias for one release.
+  - Prefixed ids change from `si_…` to `sl_…`. Ids you stored earlier no longer resolve.
+
+  Webhook endpoints keep working: Spree publishes both `stock_level.*` and the older `stock_item.*` events for one release, so existing subscriptions keep firing. The dashboard's event picker now offers the `stock_level` names, and shows any `stock_item` subscription you already have under its Custom section. Move your subscriptions over before Spree 6.1, when the old names stop being published.
+
+- [#14461](https://github.com/spree/spree/pull/14461) [`32d4db9`](https://github.com/spree/spree/commit/32d4db9cdb027d9fb59e18807b26c0aa6ceb48ad) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Store credits no longer carry a category. `client.storeCreditCategories` and the `StoreCreditCategory` type are removed, `category_id` is no longer accepted or returned on customer store credits, and the dashboard's issue/edit store credit dialogs drop the category picker — the memo is the place to record why a credit was issued.
+
+### Minor Changes
+
+- [#14410](https://github.com/spree/spree/pull/14410) [`fdd88eb`](https://github.com/spree/spree/commit/fdd88eb3d2d7ac36a710a2af38593a8f4c83f2bf) Thanks [@mad-eel](https://github.com/mad-eel)! - Add dashboard pages for business customers and tax configuration.
+
+  Companies get a list and a detail page with their branches, tax registration
+  and exemption certificates; a branch has its own page listing the buyers
+  authorised to purchase for it. Customers gain the same tax registration panel
+  on their profile. Tax rates get a settings page, and a market can now name the
+  tax engine that prices it — showing what that engine cannot handle, so a
+  merchant learns about a gap while configuring rather than from a tax bill.
+
+  The admin SDK gains the customer tax-identifier endpoints and `tax_provider`
+  on market params.
+
+- [#14430](https://github.com/spree/spree/pull/14430) [`9a4eb46`](https://github.com/spree/spree/commit/9a4eb466c2698d15d735c06e4b5faf984bb63dd2) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Order numbers are now configurable from the dashboard.
+
+  **Settings → Store → Order numbers** controls how document numbers are shaped: the numbering format (sequential or random), the order number prefix and suffix, and the value the sequence starts at. A live preview shows what the next number will look like.
+
+  Sequential numbering is the new default — orders count up from 1001 (`R1001`, `R1002`) instead of carrying nine random digits. Merchants who would rather not disclose their order volume can switch the format back to random. Either way, changes apply to future orders only; numbers already issued never change.
+
+  `StoreUpdateParams` and the `Store` type gain `preferred_document_number_format`, `preferred_order_number_prefix`, `preferred_order_number_suffix` and `preferred_order_number_sequence_start`.
+
+- [#14489](https://github.com/spree/spree/pull/14489) [`889a8cf`](https://github.com/spree/spree/commit/889a8cfd24443710cfff5a7d30fbe83d65148cac) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Media library. Every image and video in a store now lives in one place under Products → Media: browse it, search by file name, filter by type or by whether a file is in use, and upload files before deciding where they go. Picking a file from the library reuses it rather than copying it, so the same photo on three products is one file in storage.
+
+  The library is reachable from everywhere media is set. The product gallery gains "Add from library", category, collection and seller image fields gain "Choose from library", and the rich text editor can embed an image in a description for the first time. Category and collection images now appear in the library too, so a file uploaded there can be reused anywhere else.
+
+  Every file shows where it is used before it is deleted, and deleting one that is still in use removes it from those places once the merchant confirms.
+
+  New in `@spree/admin-sdk`: the `media` resource (`list`, `get`, `create`, `update`, `delete`, `usage`), `source_media_id` on product media creation for reuse, and `signed_id`, `embed_url`, `filename`, `content_type`, `byte_size` and `attached` on the admin media payload.
+
+- [#14591](https://github.com/spree/spree/pull/14591) [`8e5dc20`](https://github.com/spree/spree/commit/8e5dc20147ff24f53dd73b506c3f06a074d3d302) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Volume pricing: quantity breaks, percentage tiers and a price-list CSV.
+
+  A price list can now carry a ladder per variant — a unit price from each
+  quantity up — edited as tier rows in the price spreadsheet, and a catalog's
+  percentage adjustment can step by quantity too. The catalog's price column
+  shows how many tiers a variant carries, with the ladder on hover and a note
+  that fixed tiers set the price regardless of the percentage.
+
+  A price list's prices can be exported and imported as CSV, one rung per row
+  keyed by SKU, from the list's own page and from the catalog that owns it.
+  The import merges: rows in the file are written, a blank price removes that
+  rung, and rungs the file does not mention are left alone. The admin SDK's
+  price, price list and import types carry the new fields, and the import
+  create call accepts the price list to merge into.
+
+- [#14457](https://github.com/spree/spree/pull/14457) [`676aa0d`](https://github.com/spree/spree/commit/676aa0dee62a26944cb0a2c83273b149ba922b8a) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Product galleries can hold video.
+
+  A media item now says what it is through `media_type`. `video` is a file you upload and serve yourself; `external_video` is a YouTube or Vimeo link. Both sit in the same gallery as images and reorder alongside them.
+
+  Spree reads the link when it is saved and rejects anything it cannot embed, so the media object comes back carrying `video_provider`, `video_embed_url`, `video_url` and `poster_url` — a storefront embeds a video without parsing links itself. A video's sized URLs resolve to its poster, so a gallery written for images still renders the right still.
+
+  `MediaCreateParams` and `MediaUpdateParams` accept `media_type`, `external_video_url`, `poster_signed_id` and the focal point. The `type` parameter, which named an internal Ruby class, is gone — `media_type` replaces it.
+
+  A video carries a **poster** — the still shown before it plays. Upload one with `poster_signed_id`, or leave it off and a YouTube link falls back to the provider's own image. Spree does not extract a frame from an uploaded file, so hosted video and Vimeo links want a poster.
+
+  In the dashboard, video files upload through the same drop zone as images, an "Add video link" button takes a YouTube or Vimeo URL, and the media editor plays the video back and takes a poster the merchant uploads. The editor also gains a focal-point picker: click the spot on an image that must stay in frame when a storefront crops it.
+
+  Choosing which variants a media item represents happens in one place — the media editor on the product. The unmounted variant-side gallery picker has been removed; it was a second way to edit the same thing.
+
+- [#14462](https://github.com/spree/spree/pull/14462) [`abc6e22`](https://github.com/spree/spree/commit/abc6e22cb60ea305a83583ded0b999458b2c9cbd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Which address a sale's tax is computed from is now a store setting rather than a global one. `preferred_tax_using_ship_address` can be read and written through the Admin API, and merchants can change it under Settings → Store in the Payments card. The default is unchanged: tax follows the shipping address.
+
+### Patch Changes
+
+- [#14521](https://github.com/spree/spree/pull/14521) [`9cee487`](https://github.com/spree/spree/commit/9cee487fdce34c5f2ec873fc1d965196bd716663) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New address forms pre-select the store's default country.
+
+  The Admin store payload now includes `default_country_code` (the same country the default market already answers). The shared address dialog uses it for new records and leaves an existing address's country alone.
+
+- [#14394](https://github.com/spree/spree/pull/14394) [`a8b11ec`](https://github.com/spree/spree/commit/a8b11ecb409a04c8d48ec6d64892ffa3bd6dacf7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Collections reach both SDKs.
+
+  `@spree/sdk` (storefront):
+
+  - `collections.list()` / `collections.get(idOrPermalink)` — the flat, merchandising-driven groupings ("Summer Sale", "New Arrivals"), whether membership is curated by hand or maintained from rules.
+  - `collections.products.list(idOrPermalink, params)` — a collection's product listing page. Takes the same filters and sorts as `products.list`, and when `sort` is omitted the collection's own `sort_order` applies, so a shopper sees the ordering the merchant chose (including their manual arrangement).
+  - `in_collection` on `ProductListParams`, for composing a collection filter into a wider product query.
+
+  `@spree/admin-sdk` (back office):
+
+  - `collections` CRUD, with reordering as a plain 1-based `position` on update rather than a separate action — collections are a flat list. Nested `collections.products` covers membership, ordering and `reposition`, plus custom fields and translations.
+  - `collectionRules.types()` enumerates the registered rule kinds, so a rule a plugin registers shows up without an SDK release.
+  - `products.bulkAddToCollections` / `bulkRemoveFromCollections`, and `collection_ids` on product create/update.
+  - `rules` on a collection is expand-gated (`?expand=rules`), matching `custom_fields` — a listing no longer ships every collection's full rule set.
+  - `hide_from_nav` is gone from the category params. Nothing read it.
+
+- [#14417](https://github.com/spree/spree/pull/14417) [`7e35951`](https://github.com/spree/spree/commit/7e35951361a6cee7b735640b0228710928719fee) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Rich-text fields read as plain text plus HTML.
+
+  Spree 6.0 stores rich text as sanitized HTML in plain text columns instead of Action Text. The write params are unchanged — `description` and `internal_note` still take the value, and that value is HTML.
+
+  What changed is the read side:
+
+  - `internal_note_html` is now readable on `Order`, and `internal_note` (plain text) on `Customer`. Previously the order serializer returned only plain text and the customer serializer only HTML; both now return the pair.
+  - `description` returns tag-stripped plain text, with the markup under `description_html`. Hydrate an editor from `description_html`, not `description`.
+
+  The field stores HTML, so send markup — a plain-text value with newlines in it renders as one run-on line.
+
+- [#14376](https://github.com/spree/spree/pull/14376) [`a52a6da`](https://github.com/spree/spree/commit/a52a6da42f5c456e889f8bba12ee7194934289b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API additions from the 6.0 core rewrite:
+
+  - `deliveryMethods.rules` CRUD and `deliveryMethods.ruleTypes()` — delivery method eligibility rules (item total, weight).
+  - `orders.discountCodes.create/delete` — apply and remove coupon codes on draft orders with the storefront's pending semantics.
+  - `expand=cart` on orders returns the originating cart (new admin `Cart` type); the embedded promotion summaries moved from the `discounts` key to `applied_promotions` (the `discounts` name stays reserved for the typed money rows at `/orders/:id/discounts`).
+  - Delivery methods accept `stock_location_ids` for pickup; delivery zones, delivery methods and stock locations are store-scoped.
+  - `Order` gains `cart_id` and `coupon_code`; `DeliveryZone.members` requires `expand=members`.
+
+- [#14593](https://github.com/spree/spree/pull/14593) [`0f22450`](https://github.com/spree/spree/commit/0f224508b3d270aaa9899a508966a27c37f873ed) Thanks [@Hemang-ai](https://github.com/Hemang-ai)! - Preserve HTTP error statuses when a server returns an empty, non-JSON, or malformed error body. Avoid treating these responses as network failures, and allow admin and seller session recovery to handle unauthorized responses.
+
 ## 0.8.1
 
 ### Patch Changes

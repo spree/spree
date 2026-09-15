@@ -137,10 +137,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     }
   }
 
-  // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
-  // project-local `npx spree add dashboard` — @spree/cli is already installed
-  // (root deps, above) and bundles the dashboard-starter template. It reads
-  // the port from the project's .env and prints its own progress.
+  // Phase 3b: the admin SPAs (optional, Developer Preview) — the Dashboard
+  // and the marketplace Seller Panel. Delegates to the project-local
+  // `npx spree add <component>` — @spree/cli is already installed (root deps,
+  // above) and bundles both starter templates. It reads the port from the
+  // project's .env and prints its own progress.
   let dashboardReady = dashboard
   if (dashboard) {
     try {
@@ -149,7 +150,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       dashboardReady = false
       // Remove the partial scaffold so the recovery command (`spree add
       // dashboard`, which expects the directory to be absent) actually works.
-      fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true, force: true })
+      // Both apps go: the second can fail after the first succeeded, and a
+      // half-scaffolded pair is worse than none.
+      for (const app of ['dashboard', 'seller-dashboard']) {
+        fs.rmSync(path.join(projectDir, 'apps', app), { recursive: true, force: true })
+      }
       p.log.warn(
         `Continuing without the React Dashboard — add it later with ${pc.bold(`${runCommand(options.packageManager)} spree add dashboard`)}.\n${errorMessage(err)}`,
       )

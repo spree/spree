@@ -20,17 +20,28 @@
 // in sync. (A public template repo can reuse this script as a second target
 // later.)
 //
-// Usage: node scripts/sync-dashboard-starter.mjs <target-dir>
+// Usage: node scripts/sync-dashboard-starter.mjs <target-dir> [starter-package]
+//
+// `starter-package` names the directory under packages/ to render, defaulting
+// to dashboard-starter. The seller panel ships the same way from
+// seller-dashboard-starter, so the two share this script rather than drifting
+// apart in two near-identical copies.
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const starterDir = path.join(repoRoot, 'packages', 'dashboard-starter')
 
 const target = process.argv[2]
 if (!target) {
-  console.error('Usage: node scripts/sync-dashboard-starter.mjs <target-dir>')
+  console.error('Usage: node scripts/sync-dashboard-starter.mjs <target-dir> [starter-package]')
+  process.exit(2)
+}
+
+const starterPackage = process.argv[3] ?? 'dashboard-starter'
+const starterDir = path.join(repoRoot, 'packages', starterPackage)
+if (!fs.existsSync(path.join(starterDir, 'package.json'))) {
+  console.error(`No package.json under packages/${starterPackage} — is the name right?`)
   process.exit(2)
 }
 const targetDir = path.resolve(target)

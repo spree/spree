@@ -1,5 +1,43 @@
 # @spree/sdk
 
+## 2.0.0
+
+### Major Changes
+
+- [#14442](https://github.com/spree/spree/pull/14442) [`4df88ac`](https://github.com/spree/spree/commit/4df88ac684688e65623703544686c6043a8ed816) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Rename the geography fields to `country_code` and `state_code` across the v3 API, replacing `country_iso` and `state_abbr`. Addresses, stock locations, delivery zone members, markets, tax rates and tax exemption certificates all use the new names, on read and on write. Markets rename their list of countries from `country_isos` to `country_codes`.
+
+  Addresses keep `country_iso` and `state_abbr` as deprecated read fields and accepted write names for one release, so existing storefronts keep working; both are removed in 6.1. Every other resource moves outright.
+
+- [#14376](https://github.com/spree/spree/pull/14376) [`a52a6da`](https://github.com/spree/spree/commit/a52a6da42f5c456e889f8bba12ee7194934289b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Spree 6.0 Store API line. Breaking changes for storefront integrations:
+
+  - Completed carts are no longer served by the cart endpoints — fetching one returns 404, the signal to drop stale cart state. The checkout outcome stays reachable through `orders.get(cartId)` authorized by the cart token (the order inherits it).
+  - `DeliveryZone.members` is only embedded when requested with `expand=members` (the type is now optional).
+  - The placement webhook event is `order.placed`; `order.completed` is still dual-emitted through 6.0 with `deprecated_alias_of` metadata and drops in 6.1.
+
+  Additions: `coupon_code` on Cart and Order (with pending-code semantics — a real but not-yet-eligible code is kept and applies once the cart qualifies), `cart_id` on Order for matching cart activity to its conversion, and `cart.created` / `cart.updated` / `cart.deleted` webhook events for abandonment tooling.
+
+### Minor Changes
+
+- [#14394](https://github.com/spree/spree/pull/14394) [`a8b11ec`](https://github.com/spree/spree/commit/a8b11ecb409a04c8d48ec6d64892ffa3bd6dacf7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Collections reach both SDKs.
+
+  `@spree/sdk` (storefront):
+
+  - `collections.list()` / `collections.get(idOrPermalink)` — the flat, merchandising-driven groupings ("Summer Sale", "New Arrivals"), whether membership is curated by hand or maintained from rules.
+  - `collections.products.list(idOrPermalink, params)` — a collection's product listing page. Takes the same filters and sorts as `products.list`, and when `sort` is omitted the collection's own `sort_order` applies, so a shopper sees the ordering the merchant chose (including their manual arrangement).
+  - `in_collection` on `ProductListParams`, for composing a collection filter into a wider product query.
+
+  `@spree/admin-sdk` (back office):
+
+  - `collections` CRUD, with reordering as a plain 1-based `position` on update rather than a separate action — collections are a flat list. Nested `collections.products` covers membership, ordering and `reposition`, plus custom fields and translations.
+  - `collectionRules.types()` enumerates the registered rule kinds, so a rule a plugin registers shows up without an SDK release.
+  - `products.bulkAddToCollections` / `bulkRemoveFromCollections`, and `collection_ids` on product create/update.
+  - `rules` on a collection is expand-gated (`?expand=rules`), matching `custom_fields` — a listing no longer ships every collection's full rule set.
+  - `hide_from_nav` is gone from the category params. Nothing read it.
+
+### Patch Changes
+
+- [#14593](https://github.com/spree/spree/pull/14593) [`0f22450`](https://github.com/spree/spree/commit/0f224508b3d270aaa9899a508966a27c37f873ed) Thanks [@Hemang-ai](https://github.com/Hemang-ai)! - Preserve HTTP error statuses when a server returns an empty, non-JSON, or malformed error body. Avoid treating these responses as network failures, and allow admin and seller session recovery to handle unauthorized responses.
+
 ## 1.2.1
 
 ### Patch Changes
