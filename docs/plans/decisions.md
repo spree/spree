@@ -5554,6 +5554,52 @@ declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
 
+## 2026-09-14 — Project setup asks nothing the setup screen already asks; configurator ships in stages
+
+Plan: `6.0-cli-configurator.md`.
+
+Building the configurator raised three calls about first-run setup and two
+about the configurator's own first release.
+
+**The scaffolded `spree.config.yml` is a skeleton.** First-run setup already
+asks the merchant for the store name, country, currency and locale and builds
+the default market, warehouse and delivery zones from those answers. A file
+that pre-filled a `store` or `markets` section would be deployed before the
+merchant opens that screen and would revert their answers on the next deploy.
+So `create-spree-app` gains no store prompts, the file ships with commented
+sections only, `spree init` still deploys it (a no-op until the team fills it
+in), and `spree config introspect` captures the store into the file afterwards.
+
+**`spree init` stops prompting for an admin.** The setup link the seed prints
+is the default path; `--admin-email` / `--admin-password` stay for scripted
+installs. Because sample data needs an admin to own its imports, the setup
+screen gains a "Load sample data" checkbox: the setup request accepts
+`sample_data` and enqueues a job that runs the loader once the admin exists.
+`create-spree-app` and `spree init` no longer ask about sample data;
+`SPREE_SAMPLE_DATA` and `spree sample-data` remain for scripts and for later.
+
+**Natural keys get validations now and indexes later.** The audit found keys
+with no uniqueness guard (tax rate, delivery method, payment method and price
+list names, webhook endpoint URL, API key name), keys guarded by validation
+only, and the reason lists guarded by an index only. Store-scoped uniqueness
+validations land with the configurator; unique indexes need a dedupe task for
+installations that already hold duplicates and ship separately. The engine
+refuses to reconcile an entry whose key matches more than one live record.
+
+**The first release covers what the e2e suite and the scaffold need:** store,
+channels, markets, customer groups, tax categories, delivery zones and methods,
+stock locations, suppliers, categories, products with variants, prices and
+stock, customers, sellers. The other sections in the plan's key table follow
+in a second pull request on the same engine. The `store` section carries the
+name, contact addresses and preferences only; currency, locale and country
+are market attributes, and markets keep `name` as their key.
+
+**Consequences for other work.** A `store` section never carries currency,
+locale or country. Nothing a scaffold writes may pre-fill what first-run setup
+owns. A new natural key gets a store-scoped validation and an index in the same
+change.
+
+
 ## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
 
 Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.
