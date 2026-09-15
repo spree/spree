@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::NamedType do
+RSpec.describe Spree::ValidatesStoreUniqueness do
   describe 'name uniqueness' do
     let!(:existing) { create(:return_reason, name: 'Wrong size') }
 
@@ -19,6 +19,20 @@ RSpec.describe Spree::NamedType do
 
     it 'allows the same name in another store' do
       expect(build(:return_reason, store: create(:store), name: 'Wrong size')).to be_valid
+    end
+  end
+
+  describe 'the scope the value is unique within' do
+    it 'checks a move between sellers, not only a rename' do
+      seller = create(:seller)
+      create(:delivery_method, name: 'Standard', seller: seller)
+      other = create(:delivery_method, name: 'Standard', seller: create(:seller))
+
+      # Same name, different seller until now: moving it collides.
+      other.seller = seller
+
+      expect(other).not_to be_valid
+      expect(other.errors[:name]).to be_present
     end
   end
 

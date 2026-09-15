@@ -2,6 +2,13 @@ require 'spec_helper'
 
 describe Spree::PriceList, type: :model do
   describe 'Validations' do
+    it 'requires a name unique within the store' do
+      create(:price_list, name: 'Trade')
+
+      expect(build(:price_list, name: 'Trade')).not_to be_valid
+      expect(build(:price_list, name: 'Trade', store: create(:store))).to be_valid
+    end
+
     context 'date range validation' do
       let(:price_list) { build(:price_list, starts_at: 2.days.from_now, ends_at: 1.day.from_now) }
 

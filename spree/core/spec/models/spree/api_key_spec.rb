@@ -15,6 +15,27 @@ RSpec.describe Spree::ApiKey, type: :model do
       expect(api_key.errors[:name]).to be_present
     end
 
+    it 'requires a name unique among the store\'s active keys' do
+      store = create(:store)
+      existing = create(:api_key, name: 'Storefront', store: store)
+
+      expect(build(:api_key, name: 'Storefront', store: store)).not_to be_valid
+      expect(build(:api_key, name: 'Storefront', store: create(:store))).to be_valid
+
+      existing.revoke!
+      expect(build(:api_key, name: 'Storefront', store: store)).to be_valid
+    end
+
+    it 'still saves a key that shared its name before the rule existed' do
+      store = create(:store)
+      create(:api_key, name: 'Storefront', store: store)
+      older = create(:api_key, name: 'Storefront (old)', store: store)
+      older.update_column(:name, 'Storefront')
+
+      expect { older.revoke! }.not_to raise_error
+      expect(older.reload.revoked_at).to be_present
+    end
+
     it 'requires a key_type' do
       api_key.key_type = nil
       expect(api_key).not_to be_valid

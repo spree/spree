@@ -2,7 +2,7 @@ module Spree
   class Role < Spree.base_class
     has_prefix_id :role
 
-    # Deliberately NOT Spree::UniqueName: its uniqueness is global, while a
+    # Deliberately NOT validates_store_uniqueness: a role's uniqueness is per owner, while a
     # role is unique within the resource that owns it (see the name validation
     # below). The normalization it applies is kept verbatim.
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
