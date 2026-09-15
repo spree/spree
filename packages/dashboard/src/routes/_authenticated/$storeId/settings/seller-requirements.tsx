@@ -526,6 +526,7 @@ function RequirementFields({
           schema={kindEntry.preference_schema as unknown as PreferenceField[]}
           values={values.preferences}
           onChange={onChange.setPreferences}
+          inlineDatePickers
         />
       )}
 
