@@ -1,0 +1,279 @@
+import type {
+  Channel as SdkChannel,
+  CustomerGroup as SdkCustomerGroup,
+  Market as SdkMarket,
+  StockLocation as SdkStockLocation,
+  Store as SdkStore,
+  Supplier as SdkSupplier,
+  TaxCategory as SdkTaxCategory,
+} from '@spree/admin-sdk'
+import type {
+  ChannelEntry,
+  CustomerGroupEntry,
+  MarketEntry,
+  StockLocationEntry,
+  StoreEntry,
+  SupplierEntry,
+  TaxCategoryEntry,
+} from '../schema.js'
+import type { LiveRecord } from '../types.js'
+import {
+  FIRST_PARTY,
+  keysOf,
+  type Payload,
+  pick,
+  preferencesFromLive,
+  preferencesPayload,
+  present,
+  refs,
+  type Section,
+} from './section.js'
+
+// The SDK's generated types plus the index signature, so a section can read
+// both declared attributes and the associations an `expand` adds.
+type Channel = SdkChannel & LiveRecord
+type CustomerGroup = SdkCustomerGroup & LiveRecord
+type Market = SdkMarket & LiveRecord
+type StockLocation = SdkStockLocation & LiveRecord
+type Store = SdkStore & LiveRecord
+type Supplier = SdkSupplier & LiveRecord
+type TaxCategory = SdkTaxCategory & LiveRecord
+
+const STORE_ATTRIBUTES: (keyof StoreEntry)[] = [
+  'name',
+  'mail_from_address',
+  'customer_support_email',
+  'new_order_notifications_email',
+]
+
+export const store: Section<StoreEntry, Store> = {
+  name: 'store',
+  scope: 'write_settings',
+  singleton: true,
+  introspectByDefault: true,
+  path: '/store',
+  keyAttribute: 'id',
+  filterable: false,
+  liveKey: () => 'store',
+  entries: (config) => (config.store ? [config.store] : []),
+  entryKey: () => 'store',
+  async desired(entry) {
+    return { ...pick(entry, STORE_ATTRIBUTES), ...preferencesPayload(entry.preferences) }
+  },
+  async update(_live, payload, _entry, ctx) {
+    return ctx.client.request<Store>('PATCH', '/store', { body: payload })
+  },
+  async toFile(live) {
+    const entry = present(live as unknown as StoreEntry, STORE_ATTRIBUTES)
+    const preferences = preferencesFromLive(live, [
+      'timezone',
+      'weight_unit',
+      'unit_system',
+      'storefront_access',
+      'guest_checkout',
+      'capture_method',
+      'track_inventory_levels',
+      'stock_reservations_enabled',
+      'low_stock_threshold',
+      'tax_using_ship_address',
+      'order_number_prefix',
+      'order_number_suffix',
+    ])
+    return { ...entry, ...(Object.keys(preferences).length ? { preferences } : {}) } as StoreEntry
+  },
+}
+
+const CHANNEL_ATTRIBUTES: (keyof ChannelEntry)[] = ['code', 'name', 'active', 'default']
+
+export const channels: Section<ChannelEntry, Channel> = {
+  name: 'channels',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  path: '/channels',
+  keyAttribute: 'code',
+  filterable: true,
+  entries: (config) => config.channels ?? [],
+  entryKey: (entry) => entry.code,
+  references: (config) => ({
+    stock_locations: (config.channels ?? []).flatMap((channel) => channel.stock_locations ?? []),
+  }),
+  async desired(entry, ctx, path) {
+    return {
+      ...pick(entry, CHANNEL_ATTRIBUTES),
+      stock_location_ids: await refs(ctx, 'stock_locations', entry.stock_locations, path),
+      ...preferencesPayload(entry.preferences),
+    }
+  },
+  async toFile(live, ctx) {
+    const entry = present(live as unknown as ChannelEntry, CHANNEL_ATTRIBUTES)
+    const stockLocations = await keysOf(ctx, 'stock_locations', live.stock_location_ids)
+    const preferences = preferencesFromLive(live, [
+      'order_routing_strategy',
+      'storefront_access',
+      'guest_checkout',
+    ])
+    return {
+      ...entry,
+      ...(stockLocations.length ? { stock_locations: stockLocations } : {}),
+      ...(Object.keys(preferences).length ? { preferences } : {}),
+    } as ChannelEntry
+  },
+}
+
+export const markets: Section<MarketEntry, Market> = {
+  name: 'markets',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  path: '/markets',
+  keyAttribute: 'name',
+  filterable: true,
+  entries: (config) => config.markets ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    return {
+      ...pick(entry, [
+        'name',
+        'currency',
+        'default_locale',
+        'supported_locales',
+        'default',
+        'tax_inclusive',
+      ]),
+      country_codes: entry.countries,
+    }
+  },
+  async toFile(live) {
+    return {
+      ...present(live as unknown as MarketEntry, [
+        'name',
+        'currency',
+        'default_locale',
+        'supported_locales',
+        'default',
+        'tax_inclusive',
+      ]),
+      countries: (live.country_codes as string[]) ?? [],
+    } as MarketEntry
+  },
+}
+
+export const customerGroups: Section<CustomerGroupEntry, CustomerGroup> = {
+  name: 'customer_groups',
+  scope: 'write_customers',
+  introspectByDefault: true,
+  path: '/customer_groups',
+  keyAttribute: 'name',
+  filterable: true,
+  entries: (config) => config.customer_groups ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    return pick(entry, ['name', 'description'])
+  },
+  async toFile(live) {
+    return present(live as unknown as CustomerGroupEntry, [
+      'name',
+      'description',
+    ]) as CustomerGroupEntry
+  },
+}
+
+const TAX_CATEGORY_ATTRIBUTES: (keyof TaxCategoryEntry)[] = ['name', 'tax_code', 'description']
+
+export const taxCategories: Section<TaxCategoryEntry, TaxCategory> = {
+  name: 'tax_categories',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  path: '/tax_categories',
+  keyAttribute: 'name',
+  filterable: true,
+  entries: (config) => config.tax_categories ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    const payload: Payload = pick(entry, TAX_CATEGORY_ATTRIBUTES)
+    if (entry.default !== undefined) payload.is_default = entry.default
+    return payload
+  },
+  async toFile(live) {
+    const entry = present(live as unknown as TaxCategoryEntry, TAX_CATEGORY_ATTRIBUTES)
+    return { ...entry, ...(live.is_default ? { default: true } : {}) } as TaxCategoryEntry
+  },
+}
+
+const STOCK_LOCATION_ATTRIBUTES: (keyof StockLocationEntry)[] = [
+  'name',
+  'admin_name',
+  'active',
+  'default',
+  'kind',
+  'backorderable_default',
+  'propagate_all_variants',
+  'pickup_enabled',
+  'returns_enabled',
+  'address1',
+  'address2',
+  'city',
+  'zipcode',
+  'country_code',
+  'state_code',
+  'state_name',
+  'phone',
+  'company',
+]
+
+export const stockLocations: Section<StockLocationEntry, StockLocation> = {
+  name: 'stock_locations',
+  scope: 'write_stock',
+  introspectByDefault: true,
+  path: '/stock_locations',
+  keyAttribute: 'name',
+  filterable: true,
+  listParams: FIRST_PARTY,
+  entries: (config) => config.stock_locations ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    return pick(entry, STOCK_LOCATION_ATTRIBUTES)
+  },
+  async toFile(live) {
+    const entry = present(live as unknown as StockLocationEntry, STOCK_LOCATION_ATTRIBUTES)
+    // Defaults that only add noise to a file.
+    if (entry.active === true) delete entry.active
+    if (entry.default === false) delete entry.default
+    if (entry.pickup_enabled === false) delete entry.pickup_enabled
+    if (entry.returns_enabled === false) delete entry.returns_enabled
+    if (entry.propagate_all_variants === false) delete entry.propagate_all_variants
+    if (entry.backorderable_default === false) delete entry.backorderable_default
+    return entry as StockLocationEntry
+  },
+}
+
+const SUPPLIER_ATTRIBUTES: (keyof SupplierEntry)[] = [
+  'name',
+  'contact_name',
+  'email',
+  'phone',
+  'notes',
+  'address1',
+  'address2',
+  'city',
+  'state_name',
+  'state_code',
+  'country_code',
+  'postal_code',
+]
+
+export const suppliers: Section<SupplierEntry, Supplier> = {
+  name: 'suppliers',
+  scope: 'write_purchasing',
+  introspectByDefault: true,
+  path: '/suppliers',
+  keyAttribute: 'name',
+  filterable: true,
+  entries: (config) => config.suppliers ?? [],
+  entryKey: (entry) => entry.name,
+  async desired(entry) {
+    return pick(entry, SUPPLIER_ATTRIBUTES)
+  },
+  async toFile(live) {
+    return present(live as unknown as SupplierEntry, SUPPLIER_ATTRIBUTES) as SupplierEntry
+  },
+}

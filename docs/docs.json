@@ -833,7 +833,8 @@
                       "developer/agentic/agent-skills",
                       "developer/agentic/docs-mcp",
                       "developer/agentic/llm-docs",
-                      "developer/cli/admin-api"
+                      "developer/cli/admin-api",
+                      "developer/cli/configurator"
                     ],
                     "icon": "sparkles"
                   },
@@ -2664,7 +2665,8 @@
                 "group": "CLI",
                 "pages": [
                   "developer/cli/quickstart",
-                  "developer/cli/admin-api"
+                  "developer/cli/admin-api",
+                  "developer/cli/configurator"
                 ]
               }
             ]
