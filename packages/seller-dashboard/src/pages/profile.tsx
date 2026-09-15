@@ -1,4 +1,10 @@
-import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  FormImageField,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  useOnSheetOpen,
+} from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -7,37 +13,44 @@ import {
   CardHeader,
   CardTitle,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
   Input,
   RelativeTime,
   ResourceLayout,
+  RichTextEditor,
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   StatusBadge,
-  Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
 import { PackageIcon, PencilIcon, StoreIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import type { Profile } from '@spree/seller-sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
-import { ProfileImageField } from '../components/profile-image-field'
 import { ReadRow } from '../components/read-row'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerBusinessCard } from '../components/seller-business-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
 import { SellerTaxIdentifiersCard } from '../components/seller-tax-identifiers-card'
-import { PROFILE_DEFAULTS, type ProfileFormValues, profileValuesToParams } from '../schemas/profile'
+import {
+  PROFILE_DEFAULTS,
+  type ProfileFormValues,
+  profileFormSchema,
+  profileImageParams,
+  profileValuesToParams,
+} from '../schemas/profile'
 
 /**
  * The seller's own record, laid out as the operator sees it on their seller
@@ -272,6 +285,7 @@ function SettlementCard({ profile }: { profile: Profile }) {
   )
 }
 
+/** Mirrors the operator's seller edit profile sheet, minus slug and settlement. */
 function EditProfileSheet({
   profile,
   open,
@@ -286,15 +300,12 @@ function EditProfileSheet({
   const queryClient = useQueryClient()
 
   const form = useForm<ProfileFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(profileFormSchema) as any,
     defaultValues: PROFILE_DEFAULTS,
   })
 
-  // The sheet stays mounted across opens, so re-seed from the latest record
-  // each time it opens rather than only on first mount. Image triples reset
-  // empty — persisted images come through as `serverUrl` on each field.
-  useEffect(() => {
-    if (!open) return
-
+  useOnSheetOpen(open, () => {
     form.reset({
       ...PROFILE_DEFAULTS,
       name: profile.name,
@@ -302,11 +313,18 @@ function EditProfileSheet({
       billing_email: profile.billing_email ?? '',
       about: profile.about_html ?? '',
     })
-  }, [open, profile, form])
+  })
 
   async function onSubmit(values: ProfileFormValues) {
     try {
-      const updated = await sellerClient().profile.update(profileValuesToParams(values))
+      const params = profileValuesToParams(values)
+      const updated = await sellerClient().profile.update({
+        ...profileImageParams(values),
+        name: params.name,
+        contact_email: params.contact_email,
+        billing_email: params.billing_email,
+        about: params.about,
+      })
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
       queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
       onOpenChange(false)
@@ -321,17 +339,16 @@ function EditProfileSheet({
     }
   }
 
-  const { errors, isSubmitting } = form.formState
+  const { errors } = form.formState
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('profile.edit_title')}</SheetTitle>
+          <SheetDescription>{t('profile.edit_description')}</SheetDescription>
         </SheetHeader>
 
-        {/* `stopPropagation` after handleSubmit: this form is portalled and
-            a parent form would otherwise see the bubbling submit. */}
         <form
           onSubmit={(event) => {
             form.handleSubmit(onSubmit)(event)
@@ -347,63 +364,101 @@ function EditProfileSheet({
                 </p>
               )}
 
-              <ProfileImageField
-                form={form}
-                kind="cover_photo"
-                serverUrl={profile.cover_photo_url}
-                labelKey="cover_photo_label"
-                helpKey="cover_photo_help"
-              />
-              <ProfileImageField
+              <FormImageField
                 form={form}
                 kind="logo"
                 serverUrl={profile.logo_url}
                 square
+                translationNamespace="profile"
                 labelKey="logo_label"
                 helpKey="logo_help"
               />
-              <ProfileImageField
+              <FormImageField
                 form={form}
                 kind="square_logo"
                 serverUrl={profile.square_logo_url}
                 square
+                translationNamespace="profile"
                 labelKey="square_logo_label"
                 helpKey="square_logo_help"
               />
+              <FormImageField
+                form={form}
+                kind="cover_photo"
+                serverUrl={profile.cover_photo_url}
+                translationNamespace="profile"
+                labelKey="cover_photo_label"
+                helpKey="cover_photo_help"
+              />
 
               <Field>
-                <FieldLabel htmlFor="name">{t('profile.name')}</FieldLabel>
+                <FieldLabel htmlFor="profile-name">{t('profile.name')}</FieldLabel>
                 <Input
-                  id="name"
+                  id="profile-name"
                   aria-invalid={!!errors.name || undefined}
-                  {...form.register('name', { required: true })}
+                  {...form.register('name')}
                 />
                 <FieldError errors={[errors.name]} />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="about">{t('profile.about')}</FieldLabel>
-                <Textarea id="about" rows={6} {...form.register('about')} />
+                <FieldLabel htmlFor="profile-contact-email">
+                  {t('profile.contact_email')}
+                </FieldLabel>
+                <Input
+                  id="profile-contact-email"
+                  type="email"
+                  aria-invalid={!!errors.contact_email || undefined}
+                  {...form.register('contact_email')}
+                />
+                <FieldDescription>{t('profile.contact_email_help')}</FieldDescription>
+                <FieldError errors={[errors.contact_email]} />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="contact_email">{t('profile.contact_email')}</FieldLabel>
-                <Input id="contact_email" type="email" {...form.register('contact_email')} />
+                <FieldLabel htmlFor="profile-billing-email">
+                  {t('profile.billing_email')}
+                </FieldLabel>
+                <Input
+                  id="profile-billing-email"
+                  type="email"
+                  aria-invalid={!!errors.billing_email || undefined}
+                  {...form.register('billing_email')}
+                />
+                <FieldDescription>{t('profile.billing_email_help')}</FieldDescription>
+                <FieldError errors={[errors.billing_email]} />
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="billing_email">{t('profile.billing_email')}</FieldLabel>
-                <Input id="billing_email" type="email" {...form.register('billing_email')} />
+                <FieldLabel htmlFor="profile-about">{t('profile.about')}</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="about"
+                  render={({ field }) => (
+                    <RichTextEditor
+                      id="profile-about"
+                      ariaLabel={t('profile.about')}
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                <FieldDescription>{t('profile.about_help')}</FieldDescription>
               </Field>
             </FieldGroup>
           </div>
 
           <SheetFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
               {t('common.cancel')}
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t('profile.saving') : t('profile.save')}
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? t('profile.saving') : t('profile.save')}
             </Button>
           </SheetFooter>
         </form>

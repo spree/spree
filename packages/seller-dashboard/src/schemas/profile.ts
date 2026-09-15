@@ -1,11 +1,16 @@
+import { attachmentImageParam, imageTripleDefaults } from '@spree/dashboard-core'
+import { requiredMessage } from '@spree/dashboard-ui'
 import type { ProfileUpdateParams } from '@spree/seller-sdk'
 import { z } from 'zod/v4'
 
 export const profileFormSchema = z.object({
-  name: z.string().trim().min(1),
-  contact_email: z.string(),
-  billing_email: z.string(),
-  about: z.string(),
+  name: z
+    .string()
+    .trim()
+    .min(1, { error: requiredMessage('name') }),
+  contact_email: z.email().or(z.literal('')).optional(),
+  billing_email: z.email().or(z.literal('')).optional(),
+  about: z.string().optional(),
   logo_signed_id: z.string().nullable(),
   logo_preview_url: z.string().nullable(),
   logo_cleared: z.boolean(),
@@ -24,24 +29,19 @@ export const PROFILE_DEFAULTS: ProfileFormValues = {
   contact_email: '',
   billing_email: '',
   about: '',
-  logo_signed_id: null,
-  logo_preview_url: null,
-  logo_cleared: false,
-  square_logo_signed_id: null,
-  square_logo_preview_url: null,
-  square_logo_cleared: false,
-  cover_photo_signed_id: null,
-  cover_photo_preview_url: null,
-  cover_photo_cleared: false,
+  ...imageTripleDefaults('logo'),
+  ...imageTripleDefaults('square_logo'),
+  ...imageTripleDefaults('cover_photo'),
 }
 
-export function profileValuesToParams(values: ProfileFormValues): ProfileUpdateParams {
+export function profileValuesToParams(
+  values: ProfileFormValues,
+): Pick<ProfileUpdateParams, 'name' | 'contact_email' | 'billing_email' | 'about'> {
   return {
     name: values.name,
     contact_email: values.contact_email || null,
     billing_email: values.billing_email || null,
     about: values.about || null,
-    ...profileImageParams(values),
   }
 }
 
@@ -49,18 +49,16 @@ export function profileImageParams(
   values: ProfileFormValues,
 ): Partial<Pick<ProfileUpdateParams, 'logo' | 'square_logo' | 'cover_photo'>> {
   return {
-    ...imageParam('logo', values.logo_signed_id, values.logo_cleared),
-    ...imageParam('square_logo', values.square_logo_signed_id, values.square_logo_cleared),
-    ...imageParam('cover_photo', values.cover_photo_signed_id, values.cover_photo_cleared),
+    ...attachmentImageParam('logo', values.logo_signed_id, values.logo_cleared),
+    ...attachmentImageParam(
+      'square_logo',
+      values.square_logo_signed_id,
+      values.square_logo_cleared,
+    ),
+    ...attachmentImageParam(
+      'cover_photo',
+      values.cover_photo_signed_id,
+      values.cover_photo_cleared,
+    ),
   }
-}
-
-function imageParam(
-  key: 'logo' | 'square_logo' | 'cover_photo',
-  signedId: string | null,
-  cleared: boolean,
-): Partial<Record<'logo' | 'square_logo' | 'cover_photo', string | null>> {
-  if (signedId) return { [key]: signedId }
-  if (cleared) return { [key]: null }
-  return {}
 }
