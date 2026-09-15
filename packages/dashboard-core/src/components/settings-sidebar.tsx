@@ -9,6 +9,7 @@ import {
   SIDEBAR_WIDTH_MOBILE,
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
@@ -58,6 +59,9 @@ export function SettingsSidebar({
 }) {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
+  // Held here rather than in the body: the search box lives in the header,
+  // and the list it filters scrolls below it.
+  const [query, setQuery] = useState('')
 
   // `h-full` fills the content sheet, which is itself exactly viewport-height
   // and scrolls internally — so the nav stays put as the page scrolls without
@@ -81,33 +85,56 @@ export function SettingsSidebar({
           : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
-      {/* `quiet-scrollbar` rather than the browser default: this nav is an
-          inset panel beside the primary sidebar, and a full-width native
-          scrollbar cuts a heavy grey stripe down the middle of the chrome. */}
       <div
         className={cn(
-          'quiet-scrollbar h-full w-(--spacing-sidebar-width) overflow-y-auto transition-opacity duration-200',
+          'flex h-full w-(--spacing-sidebar-width) flex-col transition-opacity duration-200',
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >
-        {/* Names the area and offers the way out. Without it this panel is
-            visually identical to the primary sidebar, so nothing says the
-            merchant has entered a different part of the app — and the only
-            exit is the icon rail beside it. `h-rail-header-height` matches the
-            store switcher opposite, so the two line up. */}
-        <div className="flex h-rail-header-height items-center gap-1 px-2">
-          <Link
-            to={`/${tenantId ?? storeId}` as never}
-            tabIndex={open ? 0 : -1}
-            aria-label={t('admin.settings_page.back_to_dashboard')}
-            className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
-          >
-            <ArrowLeftIcon className="size-4" />
-          </Link>
-          <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
-        </div>
+        {/* Names the area, offers the way out, and carries the search box —
+            the same pairing the primary sidebar's `SidebarHeader` holds, so
+            the two rails open to the same silhouette.
 
-        <SettingsNavBody tabIndex={open ? 0 : -1} tenantId={tenantId} />
+            A sibling of the scroll area rather than a sticky child of it: the
+            fade below is a `mask-image` on the scrolling element, and a mask
+            applies to sticky descendants too — a header inside it would
+            dissolve along with the rows it is meant to stay above. */}
+        <SidebarHeader className="shrink-0 gap-2 pb-2">
+          {/* `h-rail-header-height` matches the store switcher opposite, so the
+              two line up. */}
+          <div className="flex h-rail-header-height items-center gap-1">
+            <Link
+              to={`/${tenantId ?? storeId}` as never}
+              tabIndex={open ? 0 : -1}
+              aria-label={t('admin.settings_page.back_to_dashboard')}
+              className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
+              <ArrowLeftIcon className="size-4" />
+            </Link>
+            <span className="truncate font-medium text-sm">{t('admin.settings_page.title')}</span>
+          </div>
+
+          <SettingsNavSearch value={query} onValueChange={setQuery} tabIndex={open ? 0 : -1} />
+        </SidebarHeader>
+
+        {/* `quiet-scrollbar` rather than the browser default: this nav is an
+            inset panel beside the primary sidebar, and a full-width native
+            scrollbar cuts a heavy grey stripe down the middle of the chrome.
+
+            `scroll-fade` dissolves the rows into the header above and the
+            panel's foot below, and tracks the scroll position — crisp at the
+            top until there is something scrolled past, clear again at the
+            bottom once the end is reached. Falls back to a static fade on both
+            edges where scroll-driven animations are unsupported. */}
+        <div className="quiet-scrollbar scroll-fade min-h-0 flex-1 overflow-y-auto">
+          <SettingsNavBody
+            tabIndex={open ? 0 : -1}
+            tenantId={tenantId}
+            query={query}
+            onQueryChange={setQuery}
+            renderSearch={false}
+          />
+        </div>
       </div>
     </aside>
   )
@@ -199,24 +226,65 @@ export function SettingsNavSheet({
   )
 }
 
+/**
+ * The settings search box. Extracted so the desktop rail can render it in its
+ * fixed header while the sheet keeps it at the top of its scroll body.
+ */
+function SettingsNavSearch({
+  value,
+  onValueChange,
+  tabIndex,
+}: {
+  value: string
+  onValueChange: (next: string) => void
+  tabIndex: number
+}) {
+  const { t } = useTranslation()
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={onValueChange}
+      placeholder={t('admin.settings_page.search_placeholder')}
+      aria-label={t('admin.settings_page.search_placeholder')}
+      clearLabel={t('admin.common.clear')}
+      tabIndex={tabIndex}
+      className="h-8 text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
+    />
+  )
+}
+
 /** Search box plus grouped entries — shared by the desktop aside and the sheet. */
 function SettingsNavBody({
   tabIndex,
   onNavigate,
   tenantId,
+  query: controlledQuery,
+  onQueryChange,
+  renderSearch = true,
 }: {
   tabIndex: number
   /** Called when an entry is tapped — closes the mobile sheet. */
   onNavigate?: () => void
   /** See `SettingsSidebar` — a seller id on the marketplace panel. */
   tenantId?: string
+  /**
+   * Controlled query, passed by the desktop rail whose search box sits in the
+   * header above this body. The sheet leaves both unset and keeps its own
+   * state, since its search scrolls with the list.
+   */
+  query?: string
+  onQueryChange?: (next: string) => void
+  /** False when the caller renders the search box itself (the desktop rail). */
+  renderSearch?: boolean
 }) {
   const { t } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const id = tenantId ?? storeId ?? 'default'
   const snapshot = useSettingsNav()
   const { permissions } = usePermissions()
-  const [query, setQuery] = useState('')
+  const [uncontrolledQuery, setUncontrolledQuery] = useState('')
+  const query = controlledQuery ?? uncontrolledQuery
+  const setQuery = onQueryChange ?? setUncontrolledQuery
   // Permission filtering depends only on the snapshot, so it survives typing.
   const allowed = useMemo(
     () => filterSettingsByPermissions(snapshot, permissions),
@@ -230,22 +298,16 @@ function SettingsNavBody({
     // biome-ignore lint/a11y/noStaticElementInteractions: delegated link taps only
     // biome-ignore lint/a11y/useKeyWithClickEvents: links keep their own keyboard behaviour
     <div
-      className="flex flex-col gap-2 py-2"
+      className={cn('flex flex-col gap-2 pb-2', renderSearch && 'pt-2')}
       onClick={(event) => {
         if ((event.target as HTMLElement).closest('a')) onNavigate?.()
       }}
     >
-      <div className="px-2">
-        <SearchInput
-          value={query}
-          onValueChange={setQuery}
-          placeholder={t('admin.settings_page.search_placeholder')}
-          aria-label={t('admin.settings_page.search_placeholder')}
-          clearLabel={t('admin.common.clear')}
-          tabIndex={tabIndex}
-          className="h-8 text-sm in-data-[mobile=true]:h-11 in-data-[mobile=true]:text-base"
-        />
-      </div>
+      {renderSearch && (
+        <div className="px-2">
+          <SettingsNavSearch value={query} onValueChange={setQuery} tabIndex={tabIndex} />
+        </div>
+      )}
 
       {visible.groups.length === 0 && (
         <p className="px-4 py-2 text-sm text-sidebar-foreground/70">
