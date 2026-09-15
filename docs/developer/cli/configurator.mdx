@@ -1,0 +1,180 @@
+---
+title: "Store Configuration as Code"
+description: "Describe a store in spree.config.yml and deploy it to any environment with spree config"
+---
+
+`spree config` treats a YAML file as the desired configuration of a store and reconciles a live instance against it through the [Admin API](/developer/cli/admin-api). The same file provisions a fresh local project, a staging environment and a hosted production store, because records are matched on natural keys (a channel's code, a product's slug, a warehouse's name) rather than on ids that differ per environment.
+
+```bash
+spree config validate                  # schema check, no network
+spree config diff                      # what deploy would change
+spree config deploy                    # diff, confirm, apply
+spree config introspect --out store.yml   # write the live configuration to a file
+```
+
+A configuration file is reviewable in a pull request, runs from CI against any instance, and needs no Ruby on the machine that runs it. Every project created with `create-spree-app` ships a `spree.config.yml` at its root, and `spree init` deploys it right after seeding.
+
+<Note>
+The file describes configuration and catalog. Orders, payments, fulfillments and payouts are history, not configuration, and never appear in it. The store row, the first admin account and the first API key come from installation and first-run setup, which the file cannot replace.
+</Note>
+
+## The file
+
+```yaml spree.config.yml
+# yaml-language-server: $schema=https://spreecommerce.org/docs/schemas/spree-config/1.json
+version: 1
+
+store:
+  name: Acme Wholesale
+  preferences:
+    guest_checkout: false
+
+channels:
+  - code: wholesale
+    name: Wholesale
+    preferences: { storefront_access: login_required, guest_checkout: false }
+
+customer_groups:
+  - name: Wholesale
+
+tax_categories:
+  - name: Default
+    default: true
+
+delivery_zones:
+  - name: Europe
+    countries: [DE, FR, NL, PL]
+
+delivery_methods:
+  - name: Standard EU
+    delivery_zone: Europe
+    calculator:
+      type: flat_rate
+      preferences: { amount: 9.9, currency: EUR }
+
+stock_locations:
+  - name: Warehouse
+    country_code: DE
+
+categories:
+  - permalink: clothing
+    name: Clothing
+  - permalink: clothing/t-shirts
+    name: T-Shirts
+
+products:
+  - slug: classic-tee
+    name: Classic Tee
+    status: active
+    categories: [clothing/t-shirts]
+    channels: [online, wholesale]
+    variants:
+      - sku: TEE-S-RED
+        options: { size: S, color: Red }
+        prices: { USD: 29.99, EUR: 27.9 }
+        stock: { Warehouse: 100 }
+
+customers:
+  - email: buyer@example.com
+    first_name: Ada
+    password: ${BUYER_PASSWORD}
+    customer_groups: [Wholesale]
+```
+
+Three rules govern the file:
+
+- **Only sections present in the file are managed.** A file with just `delivery_zones` and `delivery_methods` touches nothing else. Inside a section, live records absent from the file are left alone unless the section is pruned (see below).
+- **References use natural keys.** A delivery method names its zone, a product names its categories and channels, a variant names the warehouse its stock sits in. A reference to something that exists neither in the file nor on the store is reported, with its line, before anything is written.
+- **Secrets come from the environment.** `${VAR}` anywhere in the file is replaced with the variable's value at deploy time, so a committed file carries no passwords. A missing variable stops the run.
+
+The header line points editors at the published JSON Schema, so VS Code and every editor with a YAML language server autocomplete keys and flag mistakes inline. The same schema is what the CLI validates with, and it is also shipped inside the package at `@spree/cli/schemas/spree-config.json`.
+
+### Sections and their keys
+
+| Section | Matched on | Notes |
+|---|---|---|
+| `store` | the one store | update only: name, contact addresses and `preferences` |
+| `stock_locations` | `name` | |
+| `channels` | `code` | `stock_locations` by name, `preferences` without the `preferred_` prefix |
+| `markets` | `name` | `currency`, `countries`, `default_locale`; this is where currency and country live |
+| `customer_groups` | `name` | |
+| `tax_categories` | `name` | `default: true` marks the store default |
+| `delivery_zones` | `name` | `countries` and `states` members |
+| `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `pickup_locations` by stock location name; unique per store and owner |
+| `suppliers` | `name` | |
+| `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing` |
+| `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants` |
+| `customers` | `email` | `customer_groups` by name; `password` is set on create only |
+| `sellers` | `slug` | `status: approved` or `suspended` once onboarding has started |
+
+Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy.
+
+## Diff and deploy
+
+`spree config diff` reads the store and prints, per section, what a deploy would create, update or delete, with attribute-level detail for updates. It exits 0 when the store already matches the file, 1 when it does not, and 2 when the file has a problem (a dangling reference, a key shared by two live records). `--format json` prints the plan for CI to post.
+
+`spree config deploy` shows the same diff, asks once on an interactive terminal, and applies it: creates and updates section by section in dependency order, deletes afterwards in reverse. A record the API refuses is reported against its line in the file with the API's own messages, and the run continues with the rest, so one bad row never hides the others. The exit code is non-zero if anything failed.
+
+```bash
+spree config deploy --yes                       # no prompt (non-interactive runs never ask)
+spree config deploy --prune products,categories # delete live records missing from these sections
+spree config deploy --fail-on-delete            # refuse any plan that contains a delete
+```
+
+Deletes are opt-in per section through `--prune`. Without it a deploy only creates and updates, and `diff` reports live records absent from the file as not managed, so a stale record is visible without being at risk. `--fail-on-delete` is the CI guard: a plan that would delete anything stops the run before touching the store.
+
+## Credentials
+
+Credentials resolve exactly as for [`spree api`](/developer/cli/admin-api): flags, then `SPREE_API_KEY` and `SPREE_BASE_URL`, then the project's own key, then a saved profile. A deploy needs write scopes for every section in the file (`write_settings`, `write_products`, `write_customers`, …). The key's scopes are checked first and the missing ones are named, with the command that mints a key that has them, before anything is written. Inside a project the auto-minted key is read-only by design, so `spree init` mints a short-lived write key for its own deploy and revokes it afterwards; for day-to-day deploys create one:
+
+```bash
+spree api-key create --name "Config deploy" --type secret --scopes write_all
+export SPREE_API_KEY=sk_...
+spree config deploy
+```
+
+<Tabs>
+  <Tab title="Staging from CI">
+    ```yaml .github/workflows/deploy-config.yml
+    - run: npx spree config deploy --yes --fail-on-delete
+      env:
+        SPREE_BASE_URL: https://staging.example.com
+        SPREE_API_KEY: ${{ secrets.SPREE_STAGING_API_KEY }}
+        BUYER_PASSWORD: ${{ secrets.BUYER_PASSWORD }}
+    ```
+  </Tab>
+  <Tab title="Production with a profile">
+    ```bash
+    spree auth login --profile prod
+    spree config diff --profile prod
+    spree config deploy --profile prod --fail-on-delete
+    ```
+  </Tab>
+</Tabs>
+
+## Introspect
+
+`spree config introspect` reads the live store and writes it out in the file format: ids, timestamps and computed values stripped, references written as natural keys, the `$schema` header on top. By default it reads every section but products and customers, since a large catalog belongs in the [CSV import and export](/developer/customization/imports) pipeline rather than a hand-edited file; `--include products` adds it.
+
+```bash
+spree config introspect --out spree.config.yml
+spree config introspect --include channels,delivery_zones,delivery_methods
+```
+
+This is how a project captures what first-run setup created. The scaffolded `spree.config.yml` is a skeleton on purpose: the store name, country, currency and default market are answered on the setup screen, and a file that pre-filled them would overwrite those answers on the next deploy. Once setup has run, introspect writes the real values into the file and the file becomes the source of truth.
+
+## Using the engine from code
+
+The reconciliation engine is a library first and a command second. The dashboard's end-to-end suite deploys its fixtures through it before the first test starts, which means every CI run exercises the Admin API's write paths.
+
+```ts
+import { createAdminClient } from '@spree/admin-sdk'
+import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/cli/config'
+
+const { config } = loadConfig('fixtures/store.yml')
+const client = createAdminClient({ baseUrl, secretKey })
+const report = await deployConfig(config, client, { prune: ['products'] })
+if (reportHasFailures(report)) throw new Error(renderReport(report))
+```
+
+`planConfig` returns the plan without applying it, `applyPlan` applies one, and `introspect` reads a store back as a config object.
