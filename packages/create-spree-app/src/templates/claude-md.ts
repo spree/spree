@@ -47,7 +47,8 @@ export function rootClaudeMdContent(
   }
 
   if (hasDashboard) {
-    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA (Developer Preview) |')
+    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA |')
+    lines.push('| `apps/seller-dashboard/` | Seller Panel — marketplace seller SPA |')
   }
 
   lines.push(
