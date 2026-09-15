@@ -255,6 +255,12 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
     expect(variant).to include('prices', 'stock_levels')
     expect(variant['prices']).to be_present
     expect(variant['prices'].first).to include('amount', 'currency')
+
+    default_variant = json_response['default_variant']
+    expect(default_variant).to include('prices', 'stock_levels')
+    expect(default_variant['prices']).to be_present
+    expect(default_variant['prices'].first).to include('amount', 'currency')
+    expect(default_variant['stock_levels']).to be_present
   end
 
   describe 'writing variants, media and memberships' do
