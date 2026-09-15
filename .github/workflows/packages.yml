@@ -472,6 +472,11 @@ jobs:
           npm install -g npm@latest --prefix="$HOME/.npm-global"
           echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
 
+      # As in the seller job: prepublishOnly compiles the Vite-plugin entries
+      # with tsup, so the workspace dependency graph must be built first.
+      - name: Build
+        run: pnpm turbo build --filter=@spree/dashboard
+
       - name: Publish unpublished versions (dependency order)
         run: |
           set -euo pipefail
@@ -528,6 +533,14 @@ jobs:
         run: |
           npm install -g npm@latest --prefix="$HOME/.npm-global"
           echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+
+      # Each package's prepublishOnly runs tsup while packing, and tsup bundles
+      # its workspace dependencies from their dist/ — @spree/seller-sdk pulls
+      # in the private @spree/sdk-core, which nothing has built yet in a fresh
+      # checkout. Build the graph first; `--filter` follows ^build, exactly as
+      # the SDK and CLI release jobs do.
+      - name: Build
+        run: pnpm turbo build --filter=@spree/seller-sdk --filter=@spree/seller-dashboard
 
       - name: Publish unpublished versions (dependency order)
         run: |

@@ -59,7 +59,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/spree/spree.git",
-    "directory": "packages/admin-sdk"
+    "directory": "packages/seller-sdk"
   },
   "homepage": "https://spreecommerce.org",
   "bugs": {

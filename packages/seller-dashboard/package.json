@@ -4,6 +4,22 @@
   "license": "MIT",
   "type": "module",
   "description": "Spree marketplace seller panel — the seller-facing counterpart to the admin dashboard.",
+  "homepage": "https://spreecommerce.org",
+  "author": "Vendo Connect Inc.",
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "marketplace",
+    "seller",
+    "dashboard",
+    "react"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/seller-dashboard"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
