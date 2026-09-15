@@ -139,22 +139,43 @@ namespace :gem do
     end
   end
 
+  # Push one gem, skipping it if that exact version is already on RubyGems.
+  # Without this the task aborts on the first already-published gem, so a run
+  # that failed part-way (a missing trusted publisher, a network blip) can
+  # never be retried — and a version can't be yanked and re-pushed after 30
+  # minutes. Only "already published" is swallowed; every other failure still
+  # stops the release.
+  def push_gem(file_name, gem_name)
+    require 'open-uri'
+    published = begin
+      URI.parse("https://rubygems.org/api/v1/versions/#{gem_name}.json").open.read.include?("\"#{version}\"")
+    rescue OpenURI::HTTPError
+      false # 404 = gem has never been published; the push creates it
+    end
+
+    if published
+      puts "#{gem_name} #{version} already published — skipping."
+    else
+      sh "gem push #{file_name}"
+    end
+  end
+
   desc "Release all gems to rubygems"
   task release: :build do
     Dir.chdir("pkg") do
       SPREE_CORE_GEMS.each do |gem_name|
-        sh "gem push spree_#{gem_name}-#{version}.gem"
+        push_gem("spree_#{gem_name}-#{version}.gem", "spree_#{gem_name}")
       end
 
       # release main spree gem
-      sh "gem push spree-#{version}.gem"
+      push_gem("spree-#{version}.gem", 'spree')
 
       SPREE_OPTIONAL_GEMS.each do |gem_name|
-        sh "gem push spree_#{gem_name}-#{version}.gem"
+        push_gem("spree_#{gem_name}-#{version}.gem", "spree_#{gem_name}")
       end
 
       SPREE_PROVIDER_GEMS.each_key do |gem_name|
-        sh "gem push #{gem_name}-#{version}.gem"
+        push_gem("#{gem_name}-#{version}.gem", gem_name)
       end
     end
   end
