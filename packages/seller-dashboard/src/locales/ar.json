@@ -1,0 +1,865 @@
+{
+  "accept_invitation": {
+    "failed": "تعذَّر قبول هذه الدعوة. ربما انتهت صلاحيتها أو كانت كلمة المرور خاطئة.",
+    "first_name": "الاسم الأول",
+    "invalid_link": "هذا الرابط ينقصه الرمز. افتح الرابط من رسالة الدعوة.",
+    "last_name": "اسم العائلة",
+    "not_found": "لم تعد هذه الدعوة صالحة. اطلب ممن دعاك إرسال دعوة جديدة.",
+    "password": "كلمة المرور",
+    "password_confirmation": "تأكيد كلمة المرور",
+    "submit": "قبول الدعوة",
+    "submitting": "جارٍ القبول…",
+    "subtitle": "تمت دعوتك بالبريد {{email}}. عيّن كلمة مرور لإتمام التسجيل.",
+    "title": "انضم إلى الفريق"
+  },
+  "account": {
+    "avatar": "الصورة",
+    "avatar_help": "تظهر بجوار اسمك في جميع أنحاء اللوحة. الصور المربعة تبدو أفضل.",
+    "email": "البريد الإلكتروني",
+    "first_name": "الاسم الأول",
+    "language": "اللغة",
+    "last_name": "اسم العائلة",
+    "load_failed_title": "تعذر تحميل ملفك الشخصي",
+    "save_failed": "تعذر حفظ ملفك الشخصي",
+    "saved": "تم تحديث الملف الشخصي",
+    "saving": "جارٍ الحفظ…",
+    "subtitle": "إدارة بياناتك الشخصية ولغة اللوحة.",
+    "title": "الملف الشخصي"
+  },
+  "admin": {
+    "actions": {
+      "actions_menu": "إجراءات",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…"
+    },
+    "common": {
+      "loading": "جارٍ التحميل…",
+      "no_results": "لا توجد نتائج"
+    },
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "تجاهل عوامل التصفية وصدِّر جميع سجلاتك."
+        }
+      }
+    },
+    "fields": {
+      "tax_identifier": {
+        "kind": {
+          "help": "نوع التسجيل. يجب أن يطابق أداة التحقق المسجَّلة له، لذا الإملاء مهم.",
+          "label": "النوع",
+          "required": "اختر نوع التسجيل أو اكتبه"
+        },
+        "value": {
+          "label": "الرقم",
+          "placeholder": "DE123456789",
+          "required": "أدخل رقم التسجيل"
+        }
+      }
+    },
+    "orders": {
+      "detail": {
+        "cancel": {
+          "description": "يُسجَّل السبب والملاحظة على الطلب، وتُسوَّى أي مدفوعات.",
+          "keep_order": "الإبقاء على الطلب",
+          "no_reason": "لم يُذكر سبب",
+          "note_label": "ملاحظة",
+          "note_placeholder": "الموظفون وحدهم يرون هذه الملاحظة",
+          "notify_customer": "إرسال بريد إلى العميل",
+          "reason_label": "السبب",
+          "refund_payments": "رد المبلغ إلى العميل",
+          "refund_payments_help": "تُعاد الأموال المحصَّلة فعلاً. أما التفويض غير المُحصَّل فيُحرَّر في الحالتين."
+        },
+        "fulfillments": {
+          "add_tracking_title": "إضافة تتبُّع",
+          "carrier_auto": "كشف تلقائي",
+          "carrier_label": "شركة الشحن",
+          "carrier_search": "البحث في شركات الشحن",
+          "delivery_method": "طريقة التوصيل",
+          "edit_description": "غيِّر مكان شحن هذا التنفيذ وطريقة التوصيل التي تنقله.",
+          "edit_title": "تعديل التنفيذ",
+          "edit_tracking_title": "تعديل التتبُّع",
+          "move_and_requote": "النقل وإعادة التسعير",
+          "no_rates": "لا توجد طرق توصيل مُسعَّرة لهذا التنفيذ.",
+          "rates_pending_origin": "احفظ المصدر الجديد لعرض طرق التوصيل المتاحة منه.",
+          "ships_from": "يُشحن من",
+          "tracking_description": "رقم التتبُّع لدى شركة الشحن، أو رابط تتبُّع كامل.",
+          "upload_label_cost": "تكلفة البريد",
+          "upload_label_description": "سجِّل ملصقًا اشتريته من مكان آخر، ليكون للطرد ملفه ورقم تتبُّعه وتكلفته.",
+          "upload_label_file": "ملف الملصق",
+          "upload_label_title": "رفع ملصق"
+        },
+        "section_customer_note": "تعليمات خاصة",
+        "section_internal_note": "ملاحظة داخلية"
+      },
+      "fulfill": {
+        "empty": "لا يحتوي هذا التنفيذ على عناصر قابلة للتنفيذ.",
+        "include_item": "شحن {{name}}",
+        "notify_customer": "إرسال إشعار الشحن إلى العميل",
+        "of_units": "من {{count}}",
+        "partial_hint": "تنتقل الوحدات التي اخترتها إلى تنفيذ جديد يُشحن الآن. ويبقى الباقي على هذا التنفيذ مفتوحًا.",
+        "quantity_for": "الكمية المراد شحنها من {{name}}",
+        "submit": "تنفيذ العناصر",
+        "tracking_label": "رقم التتبُّع",
+        "tracking_placeholder": "رقم التتبُّع أو رابطه",
+        "units_selected": "الوحدات المراد شحنها"
+      }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "actions": {
+            "cancel": "إلغاء الطلب"
+          },
+          "claims": {
+            "actions": {
+              "create": "مطالبة جديدة",
+              "resolve": "حل"
+            },
+            "create_title": "مطالبة جديدة",
+            "refund_amount": "مبلغ الاسترداد",
+            "replacement_items": "إرسال بديل عن",
+            "resolution": "طريقة الحل",
+            "resolutions": {
+              "refund": "رد المبلغ",
+              "refund_and_replacement": "رد المبلغ والاستبدال",
+              "replacement": "استبدال"
+            },
+            "resolve_title": "حل المطالبة"
+          },
+          "dialogs": {
+            "cancel_title": "إلغاء الطلب؟"
+          },
+          "returns": {
+            "actions": {
+              "receive": "استلام العناصر",
+              "refund": "رد المبلغ"
+            },
+            "create_title": "إرجاع جديد",
+            "location": "الإرجاع إلى",
+            "location_default": "موقع الإرجاع الافتراضي",
+            "location_no_returns": "{{name}} (لا يقبل الإرجاع)",
+            "memo": "ملاحظة",
+            "reason": "السبب",
+            "receive_title": "استلام العناصر المرتجعة",
+            "received_quantity": "المستلَم",
+            "refund_amount": "المبلغ",
+            "refund_method": "رد المبلغ إلى",
+            "refund_methods": {
+              "original_payment": "وسيلة الدفع الأصلية",
+              "store_credit": "رصيد المتجر"
+            },
+            "refund_title": "رد مبلغ الإرجاع",
+            "resellable": "قابل لإعادة البيع"
+          }
+        }
+      }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "كيفية شحن بضائعك إلى العملاء",
+        "package_types": "الصناديق والكراتين والحاويات التي تعبِّئ بها الطلبات",
+        "policies": "مستندات الشروط والخصوصية والإرجاع والشحن",
+        "stock_locations": "المستودعات ونقاط الاستلام التي تحفظ المخزون",
+        "team": "الأشخاص الذين لديهم وصول إلى هذا البائع"
+      }
+    },
+    "settings_page": {
+      "description": "إدارة التنفيذ والمستندات القانونية وفريقك."
+    },
+    "tax_identifiers": {
+      "add_cta": "إضافة تسجيل",
+      "add_title": "إضافة تسجيل ضريبي",
+      "checked_prefix": "تم التحقق",
+      "delete_confirm": {
+        "message": "سيُحذف {{value}}. أما الطلبات التي صدرت فواتيرها بهذا الرقم فتحتفظ به.",
+        "title": "حذف هذا التسجيل؟"
+      },
+      "dialog_description": "رقم ضريبة القيمة المضافة أو رقم النشاط التجاري الذي يظهر على الفواتير. وهو ما يتيح آلية الاحتساب العكسي بين الشركات في الاتحاد الأوروبي.",
+      "edit_title": "تعديل التسجيل الضريبي",
+      "empty": "لا يوجد تسجيل ضريبي مسجَّل",
+      "kinds": {
+        "au_abn": "رقم النشاط التجاري الأسترالي",
+        "ch_vat": "ضريبة القيمة المضافة السويسرية",
+        "eu_vat": "ضريبة القيمة المضافة الأوروبية",
+        "gb_vat": "ضريبة القيمة المضافة البريطانية",
+        "us_ein": "رقم التعريف الضريبي الأمريكي (EIN)"
+      },
+      "messages": {
+        "created": "تمت إضافة التسجيل",
+        "deleted": "تم حذف التسجيل",
+        "updated": "تم تحديث التسجيل",
+        "validation_failed": "تعذَّر التحقق من الرقم",
+        "validation_requested": "جارٍ التحقق من الرقم لدى السجل"
+      },
+      "not_validatable": "لا يوجد سجل للتحقق من هذا النوع، لذا يُسجَّل الرقم كما أُدخل.",
+      "select_kind": "اختر نوعًا",
+      "title": "التسجيل الضريبي",
+      "validate_action": "التحقق لدى السجل",
+      "validation_status": {
+        "not_checked": "لم يتم التحقق",
+        "pending": "جارٍ التحقق",
+        "unavailable": "السجل غير متاح",
+        "unsupported": "لا يمكن التحقق منه",
+        "unverified": "غير صالح",
+        "verified": "تم التحقق"
+      }
+    }
+  },
+  "app": {
+    "name": "لوحة البائع"
+  },
+  "common": {
+    "actions": "إجراءات",
+    "apply": "تطبيق",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "error": "حدث خطأ ما.",
+    "loading": "جارٍ التحميل…",
+    "no_results": "لا توجد نتائج",
+    "remove": "إزالة",
+    "retry": "أعد المحاولة",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…"
+  },
+  "delivery_methods": {
+    "add": "إضافة طريقة توصيل",
+    "columns": {
+      "name": "الاسم",
+      "owner": "المالك",
+      "visibility": "الظهور"
+    },
+    "conditions": {
+      "add": "إضافة شرط",
+      "description": "بدون شروط، تُعرض هذه الطريقة على كل طلب يمكن شحنه بها.",
+      "remove": "إزالة الشرط"
+    },
+    "delete_confirm": {
+      "message": "سيُحذف {{name}}. أما الطلبات التي شُحنت به فتحتفظ بسجلاتها.",
+      "title": "حذف طريقة التوصيل؟"
+    },
+    "description": "كيف تصل طلباتك إلى عملائك، وكم يكلفهم الشحن.",
+    "empty": {
+      "description": "أضف طريقة للشحن، أو استخدم طريقة يشاركها هذا السوق مع بائعيه.",
+      "title": "لا توجد طرق توصيل بعد"
+    },
+    "fields": {
+      "admin_name": "الاسم الداخلي",
+      "calculator": "التسعير",
+      "delivery_profile": "نوع البضائع",
+      "delivery_zone": "يُشحن إلى",
+      "name": "الاسم",
+      "storefront_visible": "إظهارها عند الدفع"
+    },
+    "messages": {
+      "deleted": "تم حذف طريقة التوصيل",
+      "saved": "تم حفظ طريقة التوصيل"
+    },
+    "owner": {
+      "marketplace": "السوق",
+      "mine": "خاصتك"
+    },
+    "search_placeholder": "البحث بالاسم…",
+    "sections": {
+      "conditions": "متى تنطبق هذه الطريقة",
+      "goods": "ما تشحنه",
+      "price": "كم تكلف"
+    },
+    "sheet": {
+      "description": "يختارها المتسوقون عند الدفع، لذا سمِّها كما تصفها لهم.",
+      "new_title": "طريقة توصيل جديدة"
+    },
+    "title": "طرق التوصيل",
+    "visibility": {
+      "hidden": "مخفية",
+      "storefront": "واجهة المتجر"
+    },
+    "zone": {
+      "everywhere": "كل مكان يصله هذا النوع من البضائع"
+    }
+  },
+  "earnings": {
+    "balance": {
+      "earned": "المكتسب",
+      "empty": "بمجرد تنفيذ أحد طلباتك، تظهر أرباحه هنا.",
+      "load_error": "تعذَّر تحميل رصيدك.",
+      "owed": "المستحق لك ({{currency}})",
+      "paid": "المدفوع",
+      "pending": "في الطريق",
+      "title": "الرصيد"
+    },
+    "columns": {
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "kind": "النوع",
+      "order": "الطلب",
+      "status": "الحالة"
+    },
+    "kinds": {
+      "earning": "بيع",
+      "refund_reversal": "استرداد"
+    },
+    "search_placeholder": "البحث بالمرجع",
+    "statuses": {
+      "completed": "مكتمل",
+      "failed": "فشل",
+      "pending": "قيد الانتظار",
+      "processing": "قيد المعالجة",
+      "unresolved": "يحتاج مراجعة"
+    },
+    "subtitle": "ما حققته مبيعاتك، وموقفك مع السوق.",
+    "title": "الأرباح",
+    "transfers": {
+      "empty": "لا توجد أرباح بعد.",
+      "title": "الأرباح"
+    }
+  },
+  "forgot_password": {
+    "back_to_login": "العودة إلى تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "failed": "تعذَّر إرسال هذا الطلب. أعد المحاولة بعد قليل.",
+    "sent_subtitle": "إذا كان هذا العنوان يخص حساب بائع، فرابط إعادة التعيين في الطريق. تنتهي صلاحية الرابط بعد وقت قصير.",
+    "sent_title": "تحقق من بريدك",
+    "submit": "إرسال رابط إعادة التعيين",
+    "submitting": "جارٍ الإرسال…",
+    "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.",
+    "title": "هل نسيت كلمة المرور؟"
+  },
+  "home": {
+    "products": "المنتجات",
+    "selling_no": "منتجاتك ليست معروضة للبيع بعد.",
+    "selling_title": "البيع",
+    "selling_yes": "منتجاتك معروضة للبيع.",
+    "setup_cta": "متابعة الإعداد",
+    "setup_description": "أُنجز {{done}} من {{total}} — أكمل هذه الخطوات لتبدأ البيع.",
+    "setup_title": "أكمل الإعداد",
+    "status": "الحالة",
+    "subtitle": "موقفك مع هذا السوق.",
+    "team": "أعضاء الفريق",
+    "title": "مرحبًا، {{name}}"
+  },
+  "login": {
+    "email": "البريد الإلكتروني",
+    "failed": "لا يطابق هذا البريد وكلمة المرور أي حساب بائع.",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "no_seller": "لا يدير هذا الحساب أي بائع في هذا السوق.",
+    "password": "كلمة المرور",
+    "submit": "تسجيل الدخول",
+    "submitting": "جارٍ تسجيل الدخول…",
+    "subtitle": "أدر واجهة متجرك وفريقك ودفعاتك.",
+    "title": "سجّل الدخول إلى لوحة البائع"
+  },
+  "nav": {
+    "delivery_methods": "طرق التوصيل",
+    "earnings": "الأرباح",
+    "home": "الرئيسية",
+    "legal": "الشؤون القانونية",
+    "onboarding": "الإعداد",
+    "orders": "الطلبات",
+    "package_types": "أنواع الطرود",
+    "payouts": "الدفعات",
+    "policies": "السياسات",
+    "products": "المنتجات",
+    "profile": "الملف التعريفي",
+    "settings": "الإعدادات",
+    "sign_out": "تسجيل الخروج",
+    "team": "الفريق"
+  },
+  "onboarding": {
+    "accept_terms": "اقبل الشروط",
+    "awaiting_payout_provider": "في انتظار انتهاء مزوّد الدفع من التحقق من بياناتك.",
+    "awaiting_review": "في انتظار مراجعة السوق لهذا البند.",
+    "confirm": "تأكيد",
+    "connect_payout_account": "حدِّد طريقة استلام أموالك",
+    "document_help": "ملف PDF أو صورة للمستند.",
+    "document_label": "المستند",
+    "done": "هذا البند مكتمل.",
+    "go": "الانتقال",
+    "note_placeholder": "أي شيء ينبغي أن يعرفه السوق (اختياري)",
+    "optional": "اختياري",
+    "payout_account_rejected": "تواصل مع مزوّد الدفع",
+    "progress_count": "أُنجز {{done}} من {{total}}",
+    "progress_title": "تقدُّمك",
+    "read_terms": "اقرأ الشروط",
+    "ready": "اكتمل كل ما هو مطلوب.",
+    "remaining_few": "بقيت {{count}} أمور قبل أن ترسل طلبك",
+    "remaining_many": "بقي {{count}} أمرًا قبل أن ترسل طلبك",
+    "remaining_one": "بقي أمر واحد قبل أن ترسل طلبك",
+    "remaining_other": "بقي {{count}} أمر قبل أن ترسل طلبك",
+    "remaining_two": "بقي أمران قبل أن ترسل طلبك",
+    "remaining_zero": "لا شيء متبقٍ قبل أن ترسل طلبك",
+    "status": {
+      "complete": "مكتمل",
+      "pending": "قيد المراجعة",
+      "rejected": "يحتاج مراجعة أخرى"
+    },
+    "submit": "إرسال للمراجعة",
+    "submit_document": "إرسال للمراجعة",
+    "submitted": "أُرسل للمراجعة",
+    "submitted_requirement": "أُرسل",
+    "submitting": "جارٍ الإرسال…",
+    "subtitle": "ما يطلبه هذا السوق منك قبل أن تبدأ البيع.",
+    "terms_accepted": "تم قبول الشروط",
+    "title": "الإعداد",
+    "under_review": "يراجع السوق طلبك. سنرسل لك بريدًا عند وجود جديد."
+  },
+  "orders": {
+    "address_edit": {
+      "billing_title": "تعديل عنوان الفوترة",
+      "shipping_title": "تعديل عنوان الشحن"
+    },
+    "billing_address": "عنوان الفوترة",
+    "columns": {
+      "fulfillment": "التنفيذ",
+      "number": "الطلب",
+      "payment": "الدفع",
+      "placed": "تاريخ الطلب",
+      "quantity": "الكمية",
+      "total": "الإجمالي"
+    },
+    "customer": {
+      "title": "العميل"
+    },
+    "customer_note": "ملاحظة العميل",
+    "earnings": {
+      "not_settled": "لم تُدفع بعد",
+      "payout": "الدفعة",
+      "title": "ما كسبته",
+      "view_payout": "عرض الدفعة"
+    },
+    "empty": "لا توجد طلبات بعد. ستظهر هنا عندما يشتري منك العملاء.",
+    "fulfill": "وضع علامة مُنفَّذ",
+    "fulfillment_statuses": {
+      "backorder": "طلب مؤجَّل",
+      "canceled": "ملغى",
+      "delivered": "تم التوصيل",
+      "fulfilled": "مُنفَّذ",
+      "partial": "جزئي",
+      "unfulfilled": "غير مُنفَّذ"
+    },
+    "fulfillments": {
+      "add_delivery": "إضافة تتبُّع",
+      "add_tracking": "إضافة تتبُّع",
+      "cancel": "إلغاء الطرد",
+      "cancel_message": "تعود البضائع إلى المخزون ويُلغى طلب الاستلام من شركة الشحن.",
+      "cancel_title": "إلغاء هذا الطرد؟",
+      "carrier_status_available_for_pickup": "متاح للاستلام",
+      "carrier_status_delivered": "تم التوصيل",
+      "carrier_status_failure": "فشل التوصيل",
+      "carrier_status_in_transit": "قيد النقل",
+      "carrier_status_out_for_delivery": "خرج للتوصيل",
+      "carrier_status_pending": "في انتظار شركة الشحن",
+      "carrier_status_pre_transit": "تم إنشاء الملصق",
+      "carrier_status_return_to_sender": "قيد الإعادة إلى المرسِل",
+      "carrier_status_unknown": "الحالة غير معروفة",
+      "confirm_delete_delivery": "إزالة رقم التتبُّع هذا؟",
+      "confirm_delete_label": "إزالة هذا الملصق؟ سيُحذف الملف ولا يمكن طباعته مرة أخرى.",
+      "confirm_split": "يسري هذا فورًا.",
+      "delete_label": "إزالة الملصق",
+      "empty": "لا شيء لإرساله في هذا الطلب.",
+      "free": "مجاني",
+      "label_cost": "التكلفة {{amount}}",
+      "label_title": "ملصق الشحن",
+      "label_uploaded": "تم الرفع",
+      "packing_slip_title": "قائمة التعبئة — الطلب {{number}}",
+      "print_label": "طباعة الملصق",
+      "print_packing_slip": "طباعة قائمة التعبئة",
+      "ship_to": "الشحن إلى",
+      "ships_from_label": "يُشحن من",
+      "split": "تقسيم",
+      "split_description": "انقل جزءًا مما يحمله هذا الطرد إلى طرد مستقل.",
+      "split_item": "العنصر",
+      "split_quantity": "الكمية المراد نقلها",
+      "split_title": "تقسيم هذا الطرد",
+      "split_would_empty": "نقل كل المحتويات سيترك هذا الطرد فارغًا.",
+      "splitting": "جارٍ التقسيم…",
+      "title": "عمليات التنفيذ",
+      "upload_label": "رفع ملصق"
+    },
+    "items": "العناصر",
+    "not_found": "تعذَّر العثور على هذا الطلب.",
+    "payment": {
+      "authorized": "مُفوَّض",
+      "captured": "مُحصَّل",
+      "refundable": "قابل للاسترداد",
+      "refunded": "مُسترد",
+      "share_help": "حصتك مما دفعه العميل مقابل هذه السلة.",
+      "title": "الدفع"
+    },
+    "payment_statuses": {
+      "authorized": "مُفوَّض",
+      "none": "غير مدفوع",
+      "overcharged": "محصَّل بالزيادة",
+      "paid": "مدفوع",
+      "partially_paid": "مدفوع جزئيًا",
+      "partially_refunded": "مُسترد جزئيًا",
+      "refunded": "مُسترد",
+      "voided": "ملغى"
+    },
+    "post_sale": {
+      "approve": "موافقة",
+      "cancel": "إلغاء",
+      "claims": {
+        "cancel_message": "يُبلَّغ العميل بأنها لن تمضي قدمًا.",
+        "cancel_title": "إلغاء هذه المطالبة؟",
+        "create": "مطالبة جديدة",
+        "deny": "رفض",
+        "deny_message": "يُبلَّغ العميل بأن المطالبة لم تُقبل.",
+        "deny_title": "رفض هذه المطالبة؟",
+        "empty": "لم يُبلَّغ عن أي شيء في هذا الطلب.",
+        "resolve": "حل",
+        "title": "المطالبات"
+      },
+      "exchanges": {
+        "cancel_message": "يُبلَّغ العميل بأنه لن يمضي قدمًا.",
+        "cancel_title": "إلغاء هذا الاستبدال؟",
+        "fulfill": "إرسال البديل",
+        "price_difference": "فرق السعر: {{amount}}",
+        "receive": "استلام",
+        "title": "الاستبدالات"
+      },
+      "reason": "السبب",
+      "returns": {
+        "cancel_message": "يُبلَّغ العميل بأنه لن يمضي قدمًا.",
+        "cancel_title": "إلغاء هذا الإرجاع؟",
+        "create": "إرجاع جديد",
+        "empty": "لم يُرجَع أي شيء من هذا الطلب.",
+        "not_resellable": "غير قابل لإعادة البيع",
+        "partially_received": "استُلم {{received}} من {{quantity}}",
+        "receive": "استلام",
+        "refund": "رد المبلغ",
+        "refund_total": "إجمالي الاسترداد: {{amount}}",
+        "title": "المرتجعات"
+      },
+      "statuses": {
+        "approved": "مقبول",
+        "canceled": "ملغى",
+        "denied": "مرفوض",
+        "fulfilled": "مُنفَّذ",
+        "open": "مفتوح",
+        "received": "مستلَم",
+        "refunded": "مُسترد",
+        "requested": "مطلوب",
+        "resolved": "تم الحل"
+      }
+    },
+    "search_placeholder": "البحث برقم الطلب…",
+    "shipping_address": "يُشحن إلى",
+    "ships_from": "يُشحن من {{name}}",
+    "summary": {
+      "adjustments": "التعديلات",
+      "cancel_note": "ملاحظة الإلغاء",
+      "cancel_reason": "سبب الإلغاء",
+      "canceled_at": "تاريخ الإلغاء",
+      "commission_fee": "رسوم السوق",
+      "commission_tax": "ضريبة رسوم السوق",
+      "commission_total": "إجمالي رسوم السوق",
+      "completed_at": "تاريخ الإتمام",
+      "created_at": "تاريخ الإنشاء",
+      "currency": "العملة",
+      "item_total": "العناصر",
+      "outstanding_balance": "الرصيد المستحق",
+      "payment_total": "إجمالي المدفوع",
+      "promotions": "العروض",
+      "shipping": "الشحن",
+      "subtotal": "المجموع الفرعي",
+      "tax_additional": "الضريبة (مضافة)",
+      "tax_included": "الضريبة (مشمولة)",
+      "tax_total": "الضريبة",
+      "title": "الملخص",
+      "total": "الإجمالي"
+    },
+    "title": "الطلبات",
+    "tracking_label": "رقم التتبُّع"
+  },
+  "payouts": {
+    "columns": {
+      "amount": "المبلغ",
+      "date": "التاريخ",
+      "earnings": "الأرباح",
+      "reference": "المرجع",
+      "status": "الحالة"
+    },
+    "detail": {
+      "covers_empty": "لا تغطي هذه الدفعة أي أرباح.",
+      "covers_error": "تعذَّر تحميل الأرباح التي تغطيها هذه الدفعة.",
+      "covers_few": "تغطي {{count}} أرباح",
+      "covers_many": "تغطي {{count}} ربحًا",
+      "covers_one": "تغطي ربحًا واحدًا",
+      "covers_other": "تغطي {{count}} ربح",
+      "covers_two": "تغطي ربحين",
+      "covers_zero": "لا تغطي أي أرباح",
+      "period": "الفترة",
+      "settlement": "الدفعة"
+    },
+    "empty": "لا توجد دفعات بعد.",
+    "not_found": "تعذَّر العثور على هذه الدفعة.",
+    "search_placeholder": "البحث بالمرجع",
+    "subtitle": "ما أرسله إليك السوق، وما هو في طريقه.",
+    "title": "الدفعات"
+  },
+  "policies": {
+    "add": "إضافة سياسة",
+    "columns": {
+      "name": "الاسم",
+      "updated": "آخر تحديث"
+    },
+    "delete_confirm": {
+      "message": "سيُحذف {{name}}. وإذا كان السوق يشترطه، فسيظهر في إعدادك كبند غير مكتمل من جديد.",
+      "title": "حذف السياسة؟"
+    },
+    "description": "المستندات القانونية التي يراها المتسوقون في واجهة متجرك.",
+    "empty": {
+      "description": "انشر المستندات التي يطلبها منك هذا السوق.",
+      "title": "لا توجد سياسات بعد"
+    },
+    "fields": {
+      "body": "المحتوى",
+      "name": "الاسم"
+    },
+    "messages": {
+      "deleted": "تم حذف السياسة",
+      "saved": "تم حفظ السياسة"
+    },
+    "required": {
+      "description": "يشترط هذا السوق هذه السياسات قبل الموافقة عليك.",
+      "title": "مطلوب منك",
+      "write": "اكتبها"
+    },
+    "search_placeholder": "البحث بالاسم…",
+    "sheet": {
+      "description": "يقرأ المتسوقون هذا في صفحة متجرك.",
+      "new_title": "سياسة جديدة"
+    },
+    "title": "السياسات"
+  },
+  "products": {
+    "add": "إضافة منتج",
+    "add_images": "إضافة صور",
+    "add_variant": "إضافة خيار",
+    "archive": "أرشفة",
+    "archive_confirm_description": "يُسحب من البيع ومن قوائمك النشطة.",
+    "archive_confirm_title": "أرشفة هذا المنتج؟",
+    "bulk": {
+      "delete_confirm_description": "يزيل هذا {n} من كتالوجك. لن يراها المتسوقون بعد الآن.",
+      "delete_confirm_title": "حذف المنتجات المحددة؟",
+      "delete_failed": "تعذَّر حذف هذه المنتجات.",
+      "deleted": "تم حذف {n} منتج",
+      "set_status_action": "تعيين الحالة",
+      "skipped_few": "تُركت {{count}} منتجات دون تغيير. {{message}}",
+      "skipped_many": "تُرك {{count}} منتجًا دون تغيير. {{message}}",
+      "skipped_one": "تُرك منتج واحد دون تغيير. {{message}}",
+      "skipped_other": "تُرك {{count}} منتج دون تغيير. {{message}}",
+      "skipped_refused": "لم يسمح السوق بنقلها. افتح أحدها لمعرفة السبب.",
+      "skipped_submit": "لا يمكن إرسال سوى القوائم المسودة وتلك التي طلب السوق تعديلها.",
+      "skipped_two": "تُرك منتجان دون تغيير. {{message}}",
+      "skipped_zero": "لم يُترك أي منتج. {{message}}",
+      "status_dialog_description": "اسحب هذه القوائم مؤقتًا بينما تعمل عليها، أو أرشفها نهائيًا. أما عرض المنتج للبيع فهو قرار السوق — أرسِله للمراجعة بدلاً من ذلك.",
+      "status_dialog_title": "تعيين الحالة",
+      "status_update_failed": "تعذَّر تحديث هذه المنتجات.",
+      "status_updated": "تم تحديث {n} منتج",
+      "submit_confirm_description": "سيراجع السوق {n} منتج ويقرر ما إذا كان سيعرضها للبيع.",
+      "submit_confirm_title": "إرسال المنتجات المحددة للمراجعة؟",
+      "submit_failed": "تعذَّر إرسال هذه المنتجات.",
+      "submitted": "تم إرسال {n} منتج للمراجعة"
+    },
+    "columns": {
+      "name": "المنتج",
+      "price": "السعر",
+      "status": "الحالة"
+    },
+    "custom_fields": "تفاصيل المنتج",
+    "details": "التفاصيل",
+    "empty": "لا توجد منتجات بعد. أضف منتجًا لتبدأ البيع.",
+    "fields": {
+      "alt": "النص البديل",
+      "categories": "الفئات",
+      "categories_placeholder": "البحث في الفئات…",
+      "collections": "المجموعات",
+      "collections_placeholder": "البحث في المجموعات…",
+      "country_of_origin": "بلد المنشأ",
+      "country_of_origin_placeholder": "مثال: PL",
+      "description": "الوصف",
+      "hs_code": "رمز HS",
+      "hs_code_placeholder": "مثال: 9405.20",
+      "meta_description": "وصف الميتا",
+      "meta_keywords": "كلمات الميتا المفتاحية",
+      "meta_title": "عنوان الصفحة",
+      "name": "الاسم",
+      "option": "الخيار",
+      "option_name": "الخيار",
+      "option_value": "القيمة",
+      "price": "السعر",
+      "price_in": "السعر ({{currency}})",
+      "price_placeholder": "اتركه فارغًا للإبقاء على السعر الحالي",
+      "product_type": "نوع المنتج",
+      "product_type_placeholder": "اختر نوعًا",
+      "sku": "SKU",
+      "slug": "معرّف الرابط",
+      "status": "الحالة",
+      "stock": "المخزون",
+      "weight": "الوزن"
+    },
+    "media": "الوسائط",
+    "media_remove_confirm_description": "تُزال من المنتج عند الحفظ.",
+    "media_remove_confirm_title": "إزالة هذه الصورة؟",
+    "new_title": "منتج جديد",
+    "not_found": "تعذَّر العثور على هذا المنتج.",
+    "organization": "التنظيم",
+    "rejection_reason": "السبب: {{reason}}",
+    "saved": "تم حفظ المنتج",
+    "search_placeholder": "البحث بالاسم…",
+    "seo": "الظهور في محركات البحث",
+    "shipping": "الشحن والجمارك",
+    "status_help": {
+      "active": "معروض للبيع وظاهر للمتسوقين.",
+      "archived": "مسحوب من البيع وخارج قوائمك النشطة.",
+      "draft": "أنت وحدك من يراه. أرسِله عندما تكون مستعدًا لمراجعة السوق له.",
+      "proposed": "في انتظار مراجعة السوق له. لا يزال بإمكانك إجراء تعديلات.",
+      "rejected": "طلب السوق تعديلات. عدِّله ثم أرسِله مرة أخرى."
+    },
+    "status_updated": "تم تحديث الحالة",
+    "statuses": {
+      "active": "نشط",
+      "archived": "مؤرشف",
+      "draft": "مسودة",
+      "proposed": "قيد المراجعة",
+      "rejected": "يحتاج تعديلات"
+    },
+    "submit_for_review": "إرسال للمراجعة",
+    "take_down": "سحب",
+    "take_down_confirm_description": "لن يراه المتسوقون بعد الآن. يمكنك إرساله مرة أخرى لاحقًا.",
+    "take_down_confirm_title": "سحب هذه القائمة؟",
+    "title": "المنتجات",
+    "uploading": "جارٍ رفع {{count}} ملف…",
+    "uploading_plural": "جارٍ رفع {{count}} ملفات…",
+    "variant_remove_confirm_description": "يُزال من المنتج عند الحفظ.",
+    "variant_remove_confirm_title": "إزالة هذا الخيار؟",
+    "variants": "الخيارات",
+    "variants_empty": "يُباع هذا المنتج كقطعة واحدة بالسعر أعلاه. أضف خيارًا لبيعه بخيارات مثل المقاس أو اللون."
+  },
+  "profile": {
+    "about": "نبذة",
+    "add_address": "إضافة عنوان",
+    "address_filled": "مضاف",
+    "address_missing": "غير مضاف",
+    "address_not_provided": "لا يوجد عنوان بعد.",
+    "at_a_glance": "لمحة سريعة",
+    "billing_address": "عنوان الفوترة",
+    "billing_email": "بريد الفوترة",
+    "business_details": "بيانات النشاط التجاري",
+    "contact_email": "بريد التواصل",
+    "edit": "تعديل",
+    "edit_title": "تعديل ملفك التعريفي",
+    "joined": "تاريخ الانضمام",
+    "legal_name": "الاسم القانوني",
+    "minimum_payout": "الحد الأدنى للدفعة",
+    "name": "الاسم",
+    "no_about": "لم تكتب وصفًا بعد.",
+    "not_provided": "غير محدد",
+    "on_holiday_notice": "وضع الإجازة مفعَّل، لذا منتجاتك ظاهرة لكن لا يمكن شراؤها.",
+    "operator_managed": "يحدده السوق",
+    "payout_schedule": "جدول الدفعات",
+    "products_count": "المنتجات",
+    "registration_number": "رقم التسجيل",
+    "returns_address": "عنوان المرتجعات",
+    "save": "حفظ التغييرات",
+    "saved": "تم حفظ الملف التعريفي",
+    "saving": "جارٍ الحفظ…",
+    "section_contact": "التواصل",
+    "section_settlement": "الدفعات والضرائب",
+    "section_standing": "الموقف",
+    "select_tax_identifier_kind": "اختر نوع التسجيل أو اكتبه",
+    "status_help": {
+      "approved": "تمت الموافقة عليك ويمكنك البيع في هذا السوق.",
+      "canceled": "حساب البائع هذا مغلق.",
+      "invited": "تمت دعوتك. أكمل الإعداد لتقديم طلبك.",
+      "onboarding": "أكمل قائمة مهامك، ثم أرسِل للمراجعة.",
+      "pending": "لم يبدأ السوق النظر في طلبك بعد.",
+      "ready_for_review": "يراجع السوق طلبك.",
+      "rejected": "لم يُقبل طلبك. تواصل مع السوق لمعرفة المزيد.",
+      "suspended": "البيع متوقف مؤقتًا. تواصل مع السوق لمعرفة المزيد."
+    },
+    "subtitle": "كيف تعرِّف واجهة متجرك بك، وكيف يتواصل معك السوق.",
+    "tax_identifier_kind": "نوع التسجيل",
+    "tax_identifier_kinds": {
+      "au_abn": "رقم النشاط التجاري الأسترالي",
+      "ch_vat": "ضريبة القيمة المضافة السويسرية",
+      "eu_vat": "ضريبة القيمة المضافة الأوروبية",
+      "gb_vat": "ضريبة القيمة المضافة البريطانية",
+      "us_ein": "رقم التعريف الضريبي الأمريكي (EIN)"
+    },
+    "tax_remittance": "الضريبة يوردها",
+    "team_count": "أعضاء الفريق",
+    "vat_number": "رقم ضريبة القيمة المضافة",
+    "vat_status": {
+      "pending": "نتحقق من هذا الرقم.",
+      "unavailable": "تعذَّر الوصول إلى السجل — سنحاول مرة أخرى.",
+      "unsupported": "سُجِّل هذا الرقم كما أُدخل؛ لا يمكننا التحقق منه تلقائيًا.",
+      "unverified": "تعذَّر التحقق من هذا الرقم."
+    }
+  },
+  "reset_password": {
+    "failed": "تعذَّر استخدام هذا الرابط. ربما انتهت صلاحيته أو لم تُقبل كلمة المرور.",
+    "invalid_link": "هذا الرابط ينقصه الرمز. افتح الرابط من رسالة إعادة التعيين.",
+    "mismatch": "يجب أن تتطابق كلمتا المرور.",
+    "password": "كلمة المرور الجديدة",
+    "password_confirmation": "تأكيد كلمة المرور الجديدة",
+    "request_new_link": "اطلب رابطًا جديدًا",
+    "submit": "تغيير كلمة المرور",
+    "submitting": "جارٍ الحفظ…",
+    "subtitle": "اختر كلمة مرور جديدة لإتمام تسجيل الدخول.",
+    "title": "اختر كلمة مرور جديدة"
+  },
+  "seller_picker": {
+    "status": "الحالة",
+    "subtitle": "أنت تدير أكثر من بائع. اختر أيها تريد إدارته.",
+    "title": "اختر بائعًا"
+  },
+  "seller_switcher": {
+    "label": "تبديل البائع"
+  },
+  "team": {
+    "actions": {
+      "copy_link": "نسخ رابط الدعوة",
+      "remove": "إزالة",
+      "resend": "إعادة إرسال الدعوة",
+      "revoke": "إلغاء"
+    },
+    "confirm": {
+      "remove_message": "سيفقد {{name}} الوصول إلى هذا البائع فورًا.",
+      "remove_title": "إزالة العضو",
+      "revoke_message": "ستتوقف الدعوة المرسلة إلى {{email}} عن العمل.",
+      "revoke_title": "إلغاء الدعوة"
+    },
+    "empty": "لا يوجد أحد في الفريق بعد",
+    "empty_description": "ادعُ زميلاً وسيظهر هنا بمجرد قبوله.",
+    "invitations_section": "الدعوات المعلَّقة",
+    "invite_cta": "دعوة عضو",
+    "invite_description": "سيصلهم بريد يحتوي على رابط للانضمام إلى هذا البائع.",
+    "invite_email": "البريد الإلكتروني",
+    "invite_email_placeholder": "colleague@example.com",
+    "invite_sending": "جارٍ الإرسال…",
+    "invite_submit": "إرسال الدعوة",
+    "invite_title": "ادعُ زميلاً",
+    "members_section": "الأعضاء",
+    "messages": {
+      "invited": "تم إرسال الدعوة",
+      "link_copied": "تم نسخ رابط الدعوة",
+      "removed": "تمت إزالة العضو",
+      "resent": "تم إرسال الدعوة مرة أخرى",
+      "revoked": "تم إلغاء الدعوة"
+    },
+    "subtitle": "الأشخاص الذين يمكنهم تسجيل الدخول وإدارة هذا البائع.",
+    "table": {
+      "email": "البريد الإلكتروني",
+      "expires": "تنتهي في",
+      "member": "العضو"
+    },
+    "title": "فريقك"
+  }
+}
