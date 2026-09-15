@@ -334,6 +334,36 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
+    # Deliberately not coerced to a Date: a date's meaning depends on the
+    # store's timezone, which the coercion has no access to, so the reader
+    # applies the zone instead. The type exists so the admin form renders a
+    # picker.
+    context 'keeps date preferences as plain yyyy-mm-dd strings' do
+      before do
+        A.preference :effective_from, :date, default: nil
+      end
+
+      it 'keeps a date string as written' do
+        @a.set_preference(:effective_from, '2026-01-01')
+        expect(@a.preferences[:effective_from]).to eq('2026-01-01')
+      end
+
+      it 'keeps a full timestamp, so an existing stored value still reads back' do
+        @a.set_preference(:effective_from, '2026-01-01T09:00:00Z')
+        expect(@a.preferences[:effective_from]).to eq('2026-01-01T09:00:00Z')
+      end
+
+      it 'formats a Date object rather than storing the object itself' do
+        @a.set_preference(:effective_from, Date.new(2026, 1, 1))
+        expect(@a.preferences[:effective_from]).to eq('2026-01-01')
+      end
+
+      it 'treats a blank value as unset' do
+        @a.set_preference(:effective_from, '')
+        expect(@a.preferences[:effective_from]).to be_nil
+      end
+    end
+
     context 'converts any preferences to any values' do
       before do
         A.preference :product_ids, :any, default: []

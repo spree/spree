@@ -19,6 +19,7 @@ import { PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CurrencySelect } from './currency-select'
+import { StoreDatePicker } from './store-date-picker'
 
 /**
  * Hydrates a `preferences` hash with each field's default. Used to seed
@@ -64,6 +65,12 @@ interface PreferencesFormProps {
    * calculator set to one quotes no rate at all.
    */
   currencyOptions?: string[]
+  /**
+   * Render date/datetime pickers inline instead of in a Popover portal.
+   * Set this when the form is inside a `<Sheet>` — Base UI's Popover fails
+   * to mount in deeply nested portal trees, so the calendar never appears.
+   */
+  inlineDatePickers?: boolean
 }
 
 /**
@@ -85,6 +92,7 @@ export function PreferencesForm({
   redactPasswords = false,
   labelOverrides,
   currencyOptions,
+  inlineDatePickers,
 }: PreferencesFormProps) {
   if (!schema?.length) return null
 
@@ -104,6 +112,7 @@ export function PreferencesForm({
           onChange={(v) => setValue(field.key, v)}
           redactPasswords={redactPasswords}
           currencyOptions={currencyOptions}
+          inlineDatePickers={inlineDatePickers}
         />
       ))}
     </FieldGroup>
@@ -117,6 +126,7 @@ interface PreferenceFieldProps {
   onChange: (value: unknown) => void
   redactPasswords?: boolean
   currencyOptions?: string[]
+  inlineDatePickers?: boolean
 }
 
 export function PreferenceField({
@@ -126,6 +136,7 @@ export function PreferenceField({
   onChange,
   redactPasswords,
   currencyOptions,
+  inlineDatePickers,
 }: PreferenceFieldProps) {
   const { t, i18n } = useTranslation()
   const id = `preference-${field.key}`
@@ -189,6 +200,28 @@ export function PreferenceField({
             value={(value as string) ?? ''}
             onChange={(e) => onChange(e.target.value)}
           />
+        </Field>
+      )
+
+    // A date is a picker, never a text box: an operator typing "1 Jan 2026"
+    // into a field the server parses as ISO-8601 gets a validation error with
+    // no hint of the format wanted. `<StoreDatePicker>` also reads the store's
+    // timezone, so a date means the same day for every admin.
+    case 'date':
+    case 'datetime':
+      return (
+        <Field>
+          {/* No `htmlFor`: the picker renders a button, not a labelable
+              control, so pointing at an id nothing owns would be worse than
+              leaving the label adjacent. Matches the other pickers in admin. */}
+          <FieldLabel>{displayLabel}</FieldLabel>
+          <StoreDatePicker
+            value={(value as string) ?? null}
+            onChange={(next) => onChange(next)}
+            includeTime={field.type === 'datetime'}
+            inline={inlineDatePickers}
+          />
+          {description && <FieldDescription>{description}</FieldDescription>}
         </Field>
       )
 
