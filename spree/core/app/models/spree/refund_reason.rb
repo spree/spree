@@ -4,16 +4,7 @@ module Spree
   class RefundReason < Spree.base_class
     has_prefix_id :rr
 
-    include Spree::SingleStoreResource
-
-    scope :active, -> { where(active: true) }
-    default_scope { order(name: :asc) }
-
-    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
-
-    validates :name, presence: true
-    # Per store, not global: two stores can each have their own "Damaged".
-    unique_per_store :name, live: nil
+    include Spree::NamedType
 
     self.whitelisted_ransackable_attributes = %w[name active]
 

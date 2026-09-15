@@ -27,7 +27,7 @@ module Spree
     # Per store, so a config file can address a rate by name; a soft-deleted
     # rate frees its name.
     validates :name, presence: true
-    unique_per_store :name
+    validates_store_uniqueness :name
 
     # The jurisdiction this rate applies in, held as codes: a blank country_code
     # means everywhere, and a country with no state_code means the whole
