@@ -229,14 +229,32 @@ RSpec.describe Spree::Api::V3::Seller::ProductsController, type: :controller do
 
   # The form loads a product with everything it edits in one request, so each
   # of these has to resolve — a missing seller-side serializer raises rather
-  # than quietly omitting the key.
+  # than quietly omitting the key. Prices and stock live on variants and are
+  # expand-gated; without the nested keys the form hydrates with empty arrays
+  # and the next save wipes what was stored.
   it 'expands the collections the form edits' do
-    get :show,
-        params: { id: mine.prefixed_id, expand: 'variants,media,default_variant' },
-        as: :json
+    expand = [
+      'variants',
+      'variants.prices',
+      'variants.stock_levels',
+      'variants.stock_levels.stock_location',
+      'default_variant',
+      'default_variant.prices',
+      'default_variant.stock_levels',
+      'default_variant.stock_levels.stock_location',
+      'media',
+      'submission'
+    ].join(',')
+
+    get :show, params: { id: mine.prefixed_id, expand: expand }, as: :json
 
     expect(response).to have_http_status(:ok)
-    expect(json_response).to include('variants', 'media', 'default_variant')
+    expect(json_response).to include('variants', 'media', 'default_variant', 'submission')
+
+    variant = json_response['variants'].first
+    expect(variant).to include('prices', 'stock_levels')
+    expect(variant['prices']).to be_present
+    expect(variant['prices'].first).to include('amount', 'currency')
   end
 
   describe 'writing variants, media and memberships' do
