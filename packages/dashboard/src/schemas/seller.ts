@@ -1,5 +1,5 @@
 import type { SellerCreateParams } from '@spree/admin-sdk'
-import { blankToNull } from '@spree/dashboard-core'
+import { attachmentImageParam, blankToNull } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
@@ -93,22 +93,18 @@ export function sellerImageParams(
   values: SellerFormValues,
 ): Pick<SellerCreateParams, 'logo' | 'square_logo' | 'cover_photo'> {
   return {
-    ...imageParam('logo', values.logo_signed_id, values.logo_cleared),
-    ...imageParam('square_logo', values.square_logo_signed_id, values.square_logo_cleared),
-    ...imageParam('cover_photo', values.cover_photo_signed_id, values.cover_photo_cleared),
+    ...attachmentImageParam('logo', values.logo_signed_id, values.logo_cleared),
+    ...attachmentImageParam(
+      'square_logo',
+      values.square_logo_signed_id,
+      values.square_logo_cleared,
+    ),
+    ...attachmentImageParam(
+      'cover_photo',
+      values.cover_photo_signed_id,
+      values.cover_photo_cleared,
+    ),
   }
-}
-
-// Three-state mapping: a fresh upload sends the signed_id, an explicit clear
-// sends null (purges the attachment), and an untouched field is omitted.
-function imageParam(
-  key: 'logo' | 'square_logo' | 'cover_photo',
-  signedId: string | null,
-  cleared: boolean,
-): Partial<Record<'logo' | 'square_logo' | 'cover_photo', string | null>> {
-  if (signedId) return { [key]: signedId }
-  if (cleared) return { [key]: null }
-  return {}
 }
 
 export const sellerInviteSchema = z.object({
