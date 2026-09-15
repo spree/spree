@@ -9,11 +9,12 @@
   "files": [
     "bin",
     "dist",
+    "schemas",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
+    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup && node scripts/emit-config-schema.mjs",
     "dev": "node scripts/bundle-spec.mjs && tsup --watch",
     "test": "node scripts/bundle-spec.mjs && vitest run",
     "typecheck": "node scripts/bundle-spec.mjs && tsc --noEmit",
@@ -22,7 +23,8 @@
     "format": "biome format --write src tests",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "generate:spec": "node scripts/bundle-spec.mjs"
+    "generate:spec": "node scripts/bundle-spec.mjs",
+    "generate:config-schema": "tsup && node scripts/emit-config-schema.mjs"
   },
   "keywords": [
     "spree",
@@ -65,9 +67,18 @@
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "yaml": "catalog:"
+    "yaml": "catalog:",
+    "zod": "catalog:"
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
+    },
+    "./schemas/spree-config.json": "./schemas/spree-config.json"
   }
 }

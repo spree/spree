@@ -285,6 +285,9 @@ importers:
       yaml:
         specifier: 'catalog:'
         version: 2.9.1
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
 
   packages/core:
     devDependencies:
@@ -386,6 +389,9 @@ importers:
       '@spree/admin-sdk':
         specifier: workspace:^
         version: link:../admin-sdk
+      '@spree/cli':
+        specifier: workspace:^
+        version: link:../cli
       '@spree/dashboard-core':
         specifier: workspace:^
         version: link:../dashboard-core
