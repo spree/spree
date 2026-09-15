@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_dashboard'
   s.version     = Spree.version
-  s.authors     = ['Vendo Connect Inc.']
+  s.authors     = ['Vendo Connect Inc.', 'Vendo Sp. z o.o.']
   s.email       = 'hello@spreecommerce.org'
   s.summary     = 'Hosts the Spree React Dashboard from your Spree server'
-  s.description = 'Serves a built Spree React Dashboard at /dashboard with SPA semantics — the single-node topology where the dashboard and the Admin API share one origin. Developer Preview; becomes the default admin delivery in Spree 6.'
+  s.description = 'Serves a built Spree React Dashboard with your Rails server, simplest way to deploy Spree API + Dashboard'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -22,8 +22,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.2'
 
-  s.files        = Dir["{app,config,lib,vendor}/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) }
+  s.files        = Dir["{app,config,lib,vendor}/**/*", "Rakefile", "LICENSE", "README.md"].reject { |f| f.match(/^spec/) }
   s.require_path = 'lib'
 
-  s.add_dependency 'spree', ">= #{s.version}"
+  s.add_dependency 'spree', s.version
 end

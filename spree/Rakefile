@@ -13,7 +13,8 @@ SPREE_OPTIONAL_GEMS = %w(emails dashboard opentelemetry).freeze
 # directory, so they carry the path explicitly.
 SPREE_PROVIDER_GEMS = {
   'spree_easypost' => 'providers/easypost',
-  'spree_meilisearch' => 'providers/meilisearch'
+  'spree_meilisearch' => 'providers/meilisearch',
+  'spree_stripe' => 'providers/stripe'
 }.freeze
 
 task default: :test
