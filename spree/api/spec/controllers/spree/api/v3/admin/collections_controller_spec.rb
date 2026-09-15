@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       rules = json_response['rules']
       expect(rules.length).to eq(1)
       expect(rules.first).to include(
-        'type' => 'Spree::CollectionRules::Tag', 'value' => 'summer', 'match_policy' => 'contains'
+        'type' => 'tag', 'value' => 'summer', 'match_policy' => 'contains'
       )
       expect(rules.first['id']).to start_with('crule_')
     end
@@ -107,8 +107,8 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
         automatic: true,
         rules_match_policy: 'any',
         rules: [
-          { type: 'Spree::CollectionRules::Tag', value: 'summer', match_policy: 'contains' },
-          { type: 'Spree::CollectionRules::Sale', value: 'true', match_policy: 'is_equal_to' }
+          { type: 'tag', value: 'summer', match_policy: 'contains' },
+          { type: 'sale', value: 'true', match_policy: 'is_equal_to' }
         ]
       }, as: :json
 
@@ -146,7 +146,7 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
           id: automatic.prefixed_id,
           rules: [
             { id: keep.prefixed_id, value: 'kept' },
-            { type: 'Spree::CollectionRules::Sale', value: 'true', match_policy: 'is_equal_to' }
+            { type: 'sale', value: 'true', match_policy: 'is_equal_to' }
           ]
         }, as: :json
 
@@ -158,8 +158,8 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
         expect(automatic.rules.map(&:type)).to include('Spree::CollectionRules::Sale')
       end
 
-      # `/collection_rules/types` advertises the shorthand (`tag`), so writes
-      # must accept it as well as the STI class name.
+      # `/collection_rules/types` advertises the shorthand (`tag`), which is
+      # the only spelling writes accept.
       it 'accepts the api_type shorthand for a rule type' do
         patch :update, params: {
           id: automatic.prefixed_id,

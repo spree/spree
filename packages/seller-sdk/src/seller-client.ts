@@ -2,6 +2,7 @@ import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@
 import { transformListParams } from '@spree/sdk-core'
 import type {
   AuthTokens,
+  Balance,
   Claim,
   Delivery,
   DeliveryMethod,
@@ -15,6 +16,7 @@ import type {
   Invitation,
   Order,
   PackageType,
+  Payout,
   Policy,
   Product,
   ProductType,
@@ -28,6 +30,7 @@ import type {
   StockLocation,
   TaxIdentifier,
   TeamMember,
+  Transfer,
 } from './types'
 
 /**
@@ -386,8 +389,22 @@ export class SellerClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('GET', `/orders/${id}`, options),
+    /**
+     * One of this seller's orders.
+     *
+     * Takes `(id, params, options)` like every other expandable `get` in the
+     * Spree SDKs, so the second argument is the query rather than request
+     * options — pass `undefined` for it when only options are wanted.
+     *
+     * @param params `expand: ['payment_splits']` adds this order's share of
+     *   the payment the buyer made for the whole basket. A basket placed with
+     *   one seller only does not split and has no shares.
+     */
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('GET', `/orders/${id}`, {
+        ...options,
+        params: params?.expand?.length ? { expand: params.expand.join(',') } : undefined,
+      }),
 
     /**
      * Withdraws from an order this seller cannot fulfil.
@@ -1156,6 +1173,56 @@ export class SellerClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/package_types/${id}`, options),
+  }
+
+  /**
+   * Where this seller stands with the marketplace, one row per currency:
+   * earned, paid, still owed, and earnings the payout provider has not yet
+   * confirmed. Computed from the ledger, so the rows carry no id.
+   */
+  readonly balances = {
+    list: (options?: RequestOptions): Promise<{ data: Balance[] }> =>
+      this.request<{ data: Balance[] }>('GET', '/balances', options),
+  }
+
+  /**
+   * What this seller has earned, order by order — the sale less the
+   * marketplace's commission, credited when the goods went out.
+   *
+   * Read-only: a refund writes a negative reversal row rather than editing
+   * the earning. Filter with `q[order_id_eq]` or `q[payout_id_eq]`.
+   */
+  readonly transfers = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Transfer>> =>
+      this.request<PaginatedResponse<Transfer>>('GET', '/transfers', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Transfer> =>
+      this.request<Transfer>('GET', `/transfers/${id}`, options),
+  }
+
+  /**
+   * Settlements to this seller, each batching the earnings that accumulated
+   * since the last one. Created by the marketplace's sweep and confirmed by
+   * the payout provider or the operator, so read-only here.
+   */
+  readonly payouts = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Payout>> =>
+      this.request<PaginatedResponse<Payout>>('GET', '/payouts', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Payout> =>
+      this.request<Payout>('GET', `/payouts/${id}`, options),
   }
 
   /**

@@ -122,7 +122,6 @@ module Spree
       images: :default,
       imports: :default,
       products: :default,
-      reports: :default,
       variants: :default,
       categories: :default,
       collections: :default,
@@ -637,13 +636,6 @@ module Spree
     Rails.application.config.spree.taggable_types = value
   end
 
-  def self.reports
-    Rails.application.config.spree.reports
-  end
-
-  def self.reports=(value)
-    Rails.application.config.spree.reports = value
-  end
 
   # Registry of the Getting Started onboarding tasks shown on the admin
   # dashboard. See {Spree::SetupTasks} for the extension API.
@@ -760,6 +752,18 @@ module Spree
     Rails.application.config.spree.seller_authentication_strategies = value
   end
 
+  # Semantic reporting registry — the queryable metric/dimension vocabulary.
+  # Not to be confused with +Spree.analytics+ (storefront event tracking).
+  #
+  # @return [Spree::Reporting::Registry]
+  def self.reporting
+    Rails.application.config.spree.reporting
+  end
+
+  def self.reporting=(value)
+    Rails.application.config.spree.reporting = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end
@@ -787,8 +791,8 @@ module Spree
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
   # code only registers the vocabulary.
   #
-  # @example Registering a resource from an extension
-  #   Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  # @example Registering a scope from an extension
+  #   Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
   #     [SpreeReviews::Review]
   #   })
   #
@@ -906,6 +910,7 @@ require 'spree/money'
 require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/analytics'
+require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
 

@@ -134,13 +134,17 @@ module Spree
       # Moved here from the old updater completed-order branch: pending/ready
       # fulfillments re-price from backoffice-visible delivery methods;
       # fulfilled ones keep their frozen cost.
+      #
+      # A caller that priced this parcel itself is honoured rather than
+      # re-quoted.
       def reprice_pending_fulfillments(order)
-        order.fulfillments.each do |fulfillment|
-          next unless fulfillment.persisted?
-          next if fulfillment.fulfilled?
+        order.fulfillments.each do |candidate|
+          next unless candidate.persisted?
+          next if candidate.fulfilled?
+          next if @requested_cost && candidate.id == fulfillment.id
 
-          fulfillment.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
-          fulfillment.update_amounts
+          candidate.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
+          candidate.update_amounts
         end
       end
 
@@ -299,7 +303,12 @@ module Spree
       # docs for pending-path re-pricing. The carrier rides along as a
       # selected rate.
       def attach_cost_and_rate(fulfillment, delivery_method, cost, inherited)
-        effective_cost = cost || inherited[:cost]
+        # A stated price replaces the inherited one — except a zero, which says
+        # "do not price this parcel" rather than "this parcel is free". A
+        # drained shipment's cost is money the order already carried and whose
+        # row has just been destroyed, so discarding it would drop the delivery
+        # total below what the customer paid.
+        effective_cost = cost.to_d.zero? ? inherited[:cost] : cost
         method = delivery_method || inherited[:delivery_method]
 
         fulfillment.update_columns(cost: effective_cost) if effective_cost.positive?

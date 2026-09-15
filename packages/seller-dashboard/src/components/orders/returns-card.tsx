@@ -62,8 +62,8 @@ export function ReturnsCard({ order }: { order: Order }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <Card variant="container">
+      <CardHeader className="items-center">
         <CardTitle>
           <RotateCcwIcon className="size-4" />
           {t('orders.post_sale.returns.title')}

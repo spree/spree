@@ -40,8 +40,9 @@ function ApiKeysSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        docsPath="settings/api-keys"
         title={t('admin.pages.settings.api_keys.title')}
-        subtitle={t('admin.pages.settings.api_keys.subtitle')}
+        description={t('admin.pages.settings.api_keys.subtitle')}
         actions={
           <Button onClick={() => setCreateOpen(true)}>
             <PlusIcon className="size-4" />

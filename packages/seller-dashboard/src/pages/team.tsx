@@ -149,7 +149,7 @@ function MembersCard({ members, loading }: { members: TeamMember[]; loading: boo
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('team.table.member')}</TableHead>
@@ -257,7 +257,7 @@ function PendingInvitationsCard({
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('team.table.email')}</TableHead>

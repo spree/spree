@@ -49,6 +49,18 @@ FactoryBot.define do
       end
     end
 
+    factory :purchase_orders_import, class: 'Spree::Imports::PurchaseOrders', parent: :import do
+      type { 'Spree::Imports::PurchaseOrders' }
+
+      after(:build) do |import|
+        import.attachment.attach(
+          io: StringIO.new(Spree::ImportSchemas::PurchaseOrders.new.headers.join(',') + "\n"),
+          filename: 'purchase_orders_import.csv',
+          content_type: 'text/csv'
+        )
+      end
+    end
+
     factory :customer_import, class: 'Spree::Imports::Customers', parent: :import do
       type { 'Spree::Imports::Customers' }
 

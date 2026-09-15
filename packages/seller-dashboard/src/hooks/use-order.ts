@@ -8,7 +8,9 @@ import { sellerClient } from '../api-client'
 export function useOrder(orderId: string) {
   return useQuery({
     queryKey: useResourceKey('seller-order', orderId),
-    queryFn: () => sellerClient().orders.get(orderId),
+    // The shares of the basket's payment are expand-gated, and the payment
+    // card is what reads them.
+    queryFn: () => sellerClient().orders.get(orderId, { expand: ['payment_splits'] }),
     enabled: !!orderId,
   })
 }

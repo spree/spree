@@ -121,8 +121,8 @@ describe Spree::Role do
 
   describe 'resource-bounded permissions' do
     before do
-      Spree.permissions.register_resource(
-        :products, group: :catalog, audiences: %i[customer_group], subjects: -> { [Spree::Product] }
+      Spree.permissions.register_scope(
+        :products, group: :catalog, audiences: %i[customer_group], resources: -> { [Spree::Product] }
       )
     end
 
@@ -140,8 +140,22 @@ describe Spree::Role do
       expect(role.errors[:permissions].join).not_to include('write_products')
     end
 
-    it 'leaves store roles unbounded' do
+    it 'allows a store role every key its own audience is granted' do
       expect(build(:role, permissions: %w[write_settings write_staff])).to be_valid
+    end
+
+    # The catalog carries resources only another audience can use. A store
+    # role holding one would be granted its subjects at activation without
+    # ever holding the staff key that covers them.
+    it 'refuses a store role the keys only another audience may hold' do
+      Spree.permissions.register_scope(
+        :their_own_thing, group: :seller, audiences: %i[customer_group], resources: -> { [Spree::Product] }
+      )
+
+      role = build(:role, permissions: %w[write_settings write_their_own_thing])
+
+      expect(role).not_to be_valid
+      expect(role.errors[:permissions].join).to include('write_their_own_thing')
     end
   end
 

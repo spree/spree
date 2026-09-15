@@ -63,6 +63,18 @@ module Spree
       originator.return_line_items.to_a
     end
 
+    # What this refund paid for, line by line, when whatever caused it can say.
+    # Empty for a manual refund or a cancellation, which name no originator, and
+    # for an exchange, whose credit is a net price difference across the swap
+    # rather than the value of the units that came back.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => amount
+    def refunded_line_amounts
+      return {} unless originator.respond_to?(:refunded_line_amounts)
+
+      originator.refunded_line_amounts
+    end
+
     # Returns true if the refund is editable.
     #
     # Read through the refund's own order: a payment shared by a split checkout

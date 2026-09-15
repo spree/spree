@@ -7,7 +7,7 @@ module Spree
         # `type` is not exposed: the old Spree::Image/Spree::Video STI collapsed
         # into one class, so the column is a legacy vestige with no subclasses
         # — `media_type` is the discriminator (see MediaSerializer).
-        typelize media_type: :string, viewable_type: :string,
+        typelize media_type: [:string, enum: Spree::Media::MEDIA_TYPES], viewable_type: :string,
                  viewable_id: :string, position: [:number, nullable: true],
                  alt: [:string, nullable: true]
 

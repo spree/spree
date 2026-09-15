@@ -9,6 +9,25 @@ Channels segment a single [Store](/developer/core-concepts/stores) into distinct
 
 Every store ships with one default channel named *Online Store*. You can add more from **Settings → Sales channels** in the admin dashboard.
 
+```mermaid
+erDiagram
+    Store ||--o{ Channel : "has many"
+    Channel ||--o{ ProductPublication : "publishes"
+    ProductPublication }o--|| Product : "lists"
+    Channel ||--o{ Order : "attributes"
+    Channel ||--o{ OrderRoutingRule : "routes by"
+    Channel ||--o{ ChannelStockLocation : "serves from"
+    Channel }o--o| Catalog : "default assortment"
+    Channel ||--o{ ApiKey : "authenticates"
+
+    Channel {
+        string name
+        string code
+        boolean active
+        boolean default
+    }
+```
+
 ## Channel Attributes
 
 | Attribute | Description | Example |
@@ -214,7 +233,7 @@ The write contract is **full-set**: the array represents the complete desired st
 
 - **Dashboard** — new products are auto-published on the store's default channel. The merchant can untick channels via the Publishing card post-create.
 - **Admin API** — new products are **not** auto-published. The caller supplies `product_publications: [{ channel_id }]` on create, or calls `POST /admin/channels/:id/add_products` afterwards.
-- **Sample data** (`bin/rake spree:load_sample_data`) — all loaded products are explicitly published on the default channel.
+- **Sample data** (`spree sample-data`) — all loaded products are explicitly published on the default channel.
 
 ## Related Documentation
 

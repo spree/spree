@@ -17,7 +17,6 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import {
   Card,
-  CardContent,
   Checkbox,
   cn,
   DragHandle,
@@ -37,8 +36,12 @@ import {
   TableHeader,
   TableHeaderRow,
   TableRow,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   useIsMobile,
 } from '@spree/dashboard-ui'
+import { InfoIcon } from '@spree/dashboard-ui/icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
@@ -66,6 +69,7 @@ import {
 } from '../lib/table-registry'
 import { useTenantId } from '../providers/tenant-provider'
 import { type BulkAction, BulkActionBar } from './bulk-action-bar'
+import { PageHeader } from './page-header'
 import { TableToolbar } from './table-toolbar'
 
 // ============================================================================
@@ -78,6 +82,39 @@ const filterSchema = z.object({
   operator: z.string(),
   value: z.string(),
 })
+
+/**
+ * A column header, with its explanation behind an info icon when it has one.
+ *
+ * Figures whose meaning is a definition rather than a word — available,
+ * reserved, incoming — need somewhere to say what they count. A tooltip keeps
+ * that out of the header row until it is asked for.
+ */
+function ColumnLabel({ column, hideHint }: { column: ColumnDef; hideHint?: boolean }) {
+  if (!column.labelHint || hideHint) return column.label
+
+  return (
+    <span className="inline-flex items-center gap-1">
+      {column.label}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* Focusable and named, so the explanation opens on focus as well as
+              hover and reaches a screen reader the same way. */}
+          <button
+            type="button"
+            className="cursor-help rounded-sm text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            aria-label={column.labelHint}
+          >
+            <InfoIcon className="size-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs font-normal normal-case">
+          {column.labelHint}
+        </TooltipContent>
+      </Tooltip>
+    </span>
+  )
+}
 
 export const resourceSearchSchema = z.object({
   page: z.coerce.number().optional().default(1),
@@ -145,6 +182,17 @@ interface ResourceTableProps<T> {
   searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
   title?: string
+  /**
+   * Set when the PAGE already renders its own `PageHeader` and this table is a
+   * panel inside it, so the table renders no heading of its own.
+   *
+   * Declared rather than detected. The shell tracks how many headers are
+   * mounted, but during a route change the outgoing page's header has not
+   * unregistered by the time the incoming table first renders — so a table
+   * reading that count saw a header that was on its way out and silently
+   * dropped its own. Only the page knows this, and it knows it statically.
+   */
+  hideHeader?: boolean
   /** One line under the title. Overrides the table definition's description. */
   description?: string
   /** Docs for the feature, linked after the description. Overrides the table definition's. */
@@ -209,6 +257,7 @@ export function ResourceTable<T extends Record<string, any>>({
   queryFn,
   searchParams,
   title,
+  hideHeader = false,
   description,
   docsPath,
   defaultParams,
@@ -295,6 +344,14 @@ export function ResourceTable<T extends Record<string, any>>({
   const sortString = dir === 'desc' ? `-${sort}` : sort
 
   const tenantId = useTenantId()
+  // Whether the PAGE mounted a header of its own, in which case this table is
+  // a panel inside it and renders no heading.
+  //
+  // Latched from the first render, before this component's own `PageHeader`
+  // can register: the flag counts every mounted header, so reading it live
+  // would see the one rendered below, conclude the page already had one, and
+  // unmount it — which re-clears the flag and mounts it again, forever.
+  const pageOwnsHeader = hideHeader
   // Auto-inject the tenant id so every list query — and the matching mutation
   // invalidation — is tenant-scoped without each page re-implementing it.
   // Goes through +withStoreScope+ so the slot ordering matches +useResourceKey+
@@ -486,10 +543,48 @@ export function ResourceTable<T extends Record<string, any>>({
     // Below `sm` the table spans the full width: the page gutter plus the
     // card's own border spends ~34px of a 390px screen on chrome, and a table
     // is the one place that width is worth reclaiming. Negative margins cancel
-    // the gutter the page container applies, and the frame drops to a plain
-    // surface — background only, no border, radius or shadow. Scoped to this
-    // card so every other card on the page keeps its frame.
-    <Card className="-mx-4 rounded-none border-0 bg-transparent sm:bg-card sm:mx-0 sm:rounded-xl sm:border">
+    // The frame belongs to the ROWS, not to the screen. The toolbar sits above
+    // it and the pagination below it, both on the sheet itself — so the border
+    // encloses exactly the tabular data, and the controls that act on it read
+    // as chrome rather than as its first and last rows.
+    //
+    // Below `sm` the table loses its frame and spans the gutter the page
+    // container applies, so narrow screens spend no width on a box.
+    //
+    // No shadow at any width: the sheet under it is already a raised surface,
+    // so the table is a region drawn on it rather than a second card floating
+    // above one. Its hairline is `--border`, the same weight as the rules
+    // between its own rows, so the frame and its contents read as one table.
+    <div className="flex flex-col gap-3">
+      {/* The page's own header, not a title bar of the table's own: a list page
+          IS this table, so its title and actions are the page's. Rendering
+          `PageHeader` here rather than a parallel implementation means a list
+          page and a detail page share one heading — the same type, spacing,
+          sticky behaviour and action slot — and the `page.actions` slot a
+          plugin registers into reaches both.
+
+          Skipped via `hideHeader` when the page already mounts its own
+          `PageHeader` (a table embedded as a panel), which would otherwise
+          give the page two. */}
+      {!pageOwnsHeader && (
+        <PageHeader
+          // Not pinned: on a list page the table's own column row is the band
+          // worth keeping on screen, and stacking a sticky title above it
+          // spends a third of a short viewport on chrome.
+          sticky={false}
+          title={title ?? table.title}
+          description={description ?? table.description}
+          docsPath={docsPath ?? table.docsPath}
+          actions={resolvedActions}
+        />
+      )}
+      {/* A page that owns its header still passes `actions` here, and they
+          would otherwise vanish with the suppressed `PageHeader` — taking the
+          orders export and the policies Add button with them. Render them
+          above the toolbar so the control keeps a home either way. */}
+      {pageOwnsHeader && resolvedActions && (
+        <div className="flex flex-wrap items-center justify-end gap-2">{resolvedActions}</div>
+      )}
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -502,13 +597,14 @@ export function ResourceTable<T extends Record<string, any>>({
         filters={filters as FilterRule[]}
         onFiltersChange={handleFiltersChange}
         allColumns={allColumns}
-        title={title ?? table.title}
-        description={description ?? table.description}
-        docsPath={docsPath ?? table.docsPath}
-        actions={resolvedActions}
         hideSort={reorderActive}
       />
-      <CardContent className="p-0">
+      {/* `overflow-x-clip`, never `overflow-hidden`: the rows clip to the
+          rounded frame horizontally, but a `hidden` overflow on either axis
+          makes this a scroll container, and the pinned column row inside
+          would then stick to THIS box rather than to the page — which is to
+          say, scroll away with it. */}
+      <Card className="-mx-4 gap-0 overflow-x-clip rounded-none border-0 bg-transparent py-0 shadow-none sm:mx-0 sm:rounded-xl sm:border">
         {reorderActive ? (
           <DndContext
             sensors={sensors}
@@ -519,13 +615,13 @@ export function ResourceTable<T extends Record<string, any>>({
               items={rows.map((r) => (r as any).id)}
               strategy={verticalListSortingStrategy}
             >
-              <Table stickyHeader roundedBottom>
+              <Table stickyHeader roundedTop roundedBottom>
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHead className="w-8" />
                     {headerColumns.map((col) => (
                       <TableHead key={col.key} className={col.headerClassName}>
-                        {col.label}
+                        <ColumnLabel column={col} />
                       </TableHead>
                     ))}
                     {rowActionsEnabled && (
@@ -639,7 +735,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 </section>,
                 document.body,
               )}
-            <Table stickyHeader roundedBottom>
+            <Table stickyHeader roundedTop roundedBottom>
               <TableHeader>
                 {/* Column headers stay mounted with rows selected, and the bulk
                     bar is laid over them. Swapping them for one `colSpan` cell
@@ -672,7 +768,10 @@ export function ResourceTable<T extends Record<string, any>>({
                         bulkActive && !isMobile && 'text-transparent select-none',
                       )}
                     >
-                      {col.label}
+                      {/* The hint hides with the label: an info icon floating
+                          over the bulk-actions band would be the only thing
+                          left in the row. */}
+                      <ColumnLabel column={col} hideHint={bulkActive && !isMobile} />
                     </TableHead>
                   ))}
                   {rowActionsEnabled && (
@@ -725,7 +824,15 @@ export function ResourceTable<T extends Record<string, any>>({
                         // Selected rows carry the hover tint so the selection is
                         // visible at rest; hovering one goes a step deeper so the
                         // row still answers the pointer.
-                        className={isSelected ? 'bg-accent/60 hover:bg-accent' : undefined}
+                        //
+                        // A row holding an open popover is shaded the same way:
+                        // the panel floats over its neighbours, and without this
+                        // a merchant editing a figure has to count rows to see
+                        // which record they are editing.
+                        className={cn(
+                          'has-data-[popup-open]:bg-accent-strong/40',
+                          isSelected && 'bg-accent-strong/75 hover:bg-accent-strong-hover',
+                        )}
                       >
                         {selectionEnabled && (
                           <TableCell className="w-8">
@@ -752,25 +859,23 @@ export function ResourceTable<T extends Record<string, any>>({
             </Table>
           </>
         )}
-        {/* Clears the fixed bottom bar so it can't cover the pagination or the
-            last row while a selection is active. Carries the same safe-area
-            inset the bar pads itself by, or the home indicator's worth of bar
-            still overlaps the last row. */}
-        {bulkActive && isMobile && (
-          <div
-            className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))]"
-            aria-hidden
-          />
-        )}
-        {meta && (
-          <Pagination
-            meta={meta}
-            onPageChange={(p) => updateSearch({ page: p })}
-            onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-          />
-        )}
-      </CardContent>
-    </Card>
+      </Card>
+      {meta && (
+        <Pagination
+          meta={meta}
+          onPageChange={(p) => updateSearch({ page: p })}
+          onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
+        />
+      )}
+      {/* Clears the fixed bottom bar so it can't cover the pagination or the
+          last row while a selection is active. Carries the same safe-area
+          inset the bar pads itself by, or the home indicator's worth of bar
+          still overlaps the last row. Sits after the pagination, which is now
+          the last thing the bar can cover. */}
+      {bulkActive && isMobile && (
+        <div className="h-[calc(4rem+max(0px,env(safe-area-inset-bottom)-0.75rem))]" aria-hidden />
+      )}
+    </div>
   )
 }
 
@@ -823,7 +928,7 @@ function SortableRow<T extends Record<string, any>>({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group/row hover:bg-accent/25 last:*:border-b-0',
+        'group/row hover:bg-accent-strong/50 last:*:border-b-0',
         isDragging && 'relative z-10 opacity-70',
       )}
     >

@@ -8,6 +8,7 @@ import type {
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { getApiClient, type PanelSession } from '../api-client'
 import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
+import { queryClient } from '../lib/query-client'
 
 interface AuthContextValue {
   user: AdminUser | null
@@ -114,6 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // principal's first requests (permissions, the index redirect) and 403
     // them against a tenant they may hold no role on.
     client.clearTenant?.()
+    // Everything fetched as the previous principal, permissions included. The
+    // permission query stops running once `isAuthenticated` goes false, but its
+    // cached rules survive — so the next admin to sign in on this browser would
+    // render the last one's navigation and action buttons until the refetch
+    // landed. Server-side authorization is unaffected either way; this is about
+    // not showing one principal what another may do.
+    queryClient.clear()
     setToken(null)
     setUser(null)
     clearRefreshTimer()

@@ -4,6 +4,7 @@ require 'alba'
 require 'oj'
 require 'typelizer'
 require 'typelizer/proc_resource_resolution'
+require 'typelizer/open_enums'
 
 module Spree
   module Api

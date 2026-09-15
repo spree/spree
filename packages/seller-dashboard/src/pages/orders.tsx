@@ -18,9 +18,10 @@ export function OrdersPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={t('orders.title')} />
+      <PageHeader title={t('orders.title')} sticky={false} />
 
       <ResourceTable<Order>
+        hideHeader
         tableKey="seller-orders"
         queryKey="seller-orders"
         queryFn={(params) => sellerClient().orders.list(params)}

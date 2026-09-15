@@ -31,6 +31,55 @@ RSpec.describe SpreeStripe::PayoutProvider do
       described_class.new.transfer!(seller_transfer)
     end
 
+    # "You cannot use `transfer_group` if the `source_transaction` already has
+    # one set" — which refused every split checkout's transfers.
+    context 'when the customer\'s own charge funds it' do
+      let(:payment) do
+        create(:payment, order: order, payment_method: gateway, amount: order.total,
+                         status: 'completed', metadata: { 'stripe_charge_id' => 'ch_1' })
+      end
+
+      before { payment }
+
+      it 'draws on the charge and leaves its group alone' do
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload[:source_transaction]).to eq('ch_1')
+          expect(payload).not_to have_key(:transfer_group)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+    end
+
+    # Nothing else ties these together, so the group is worth naming.
+    context 'when it is paid out of the platform balance' do
+      it 'names the order it settles' do
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload).not_to have_key(:source_transaction)
+          expect(payload[:transfer_group]).to eq(order.number)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+
+      # A split checkout's sellers each get their own transfer, and the group's
+      # number is what reads them back as one basket.
+      it 'names the whole checkout when the order was placed alongside others' do
+        group = create(:order_group, store: store)
+        order.update!(order_group: group)
+
+        expect(Stripe::Transfer).to receive(:create) do |payload, _options|
+          expect(payload[:transfer_group]).to eq(group.number)
+          expect(payload[:transfer_group]).not_to eq(order.number)
+          Stripe::StripeObject.construct_from(id: 'tr_1')
+        end
+
+        described_class.new.transfer!(seller_transfer)
+      end
+    end
+
     # A retry after a timeout must find the movement it already made rather
     # than making a second one.
     it 'carries an idempotency key derived from the ledger row' do
@@ -114,6 +163,54 @@ RSpec.describe SpreeStripe::PayoutProvider do
 
         described_class.new.transfer!(seller_transfer)
       end
+    end
+  end
+
+  # An account settles in its own currency and Stripe converts on the way in, so
+  # what the ledger owes and what the account can send are different figures.
+  describe 'what the seller actually received' do
+    def transfer_settling(minor, currency)
+      Stripe::StripeObject.construct_from(
+        id: 'tr_1',
+        destination_payment: { balance_transaction: { amount: minor, currency: currency } }
+      )
+    end
+
+    it 'records the converted figure the account received' do
+      allow(Stripe::Transfer).to receive(:create).and_return(transfer_settling(5_160, 'gbp'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_amount).to eq(51.60)
+      expect(seller_transfer.settled_currency).to eq('GBP')
+    end
+
+    it 'asks Stripe for it, since the transfer alone does not say' do
+      expect(Stripe::Transfer).to receive(:create).
+        with(hash_including(expand: ['destination_payment.balance_transaction']), anything).
+        and_return(transfer_settling(4_250, 'usd'))
+
+      described_class.new.transfer!(seller_transfer)
+    end
+
+    it 'records a same-currency settlement too, so nothing has to be inferred' do
+      allow(Stripe::Transfer).to receive(:create).and_return(transfer_settling(4_250, 'usd'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_currency).to eq('USD')
+      expect(seller_transfer).not_to be_converted
+    end
+
+    # Better to leave the sale's own figures standing than to invent a
+    # settlement Stripe never reported.
+    it 'leaves the sale figures standing when Stripe did not say' do
+      allow(Stripe::Transfer).to receive(:create).and_return(Stripe::StripeObject.construct_from(id: 'tr_1'))
+
+      described_class.new.transfer!(seller_transfer)
+
+      expect(seller_transfer.reload.settled_amount).to eq(seller_transfer.amount)
+      expect(seller_transfer.settled_currency).to eq('USD')
     end
   end
 
@@ -238,6 +335,59 @@ RSpec.describe SpreeStripe::PayoutProvider do
   # to arrive — an endpoint never registered, a delivery dropped. A seller who
   # has finished onboarding must not be left looking at a checklist that says
   # they have not while Stripe is ready to pay them.
+  # A transfer is credited on fulfilment but funded by the customer's charge,
+  # so the money reaches the seller only when that charge settles. Stripe
+  # refuses a payout for more than the balance holds, so the sweep has to ask.
+  describe '#available_payout' do
+    def balance(entries)
+      Stripe::StripeObject.construct_from(
+        available: entries.map { |currency, amount| { currency: currency, amount: amount } }
+      )
+    end
+
+    it 'reports what the account can send, in major units' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance('usd' => 30_269))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(302.69)
+    end
+
+    it 'asks as the connected account, since it is their balance' do
+      expect(Stripe::Balance).to receive(:retrieve).
+        with(anything, hash_including(stripe_account: 'acct_seller')).
+        and_return(balance('usd' => 1_000))
+
+      described_class.new.available_payout(seller, 'USD')
+    end
+
+    it 'sums the parts a balance is split into' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance([['usd', 600], ['usd', 400]]))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(10)
+    end
+
+    # The cross-border case: a GB account settles in GBP, so a ledger
+    # denominated in USD has nothing that account can send.
+    it 'reports nothing for a currency the account does not hold' do
+      allow(Stripe::Balance).to receive(:retrieve).and_return(balance('gbp' => 12_254))
+
+      expect(described_class.new.available_payout(seller, 'USD')).to eq(0)
+    end
+
+    it 'refuses to guess when Stripe cannot be reached' do
+      allow(Stripe::Balance).to receive(:retrieve).and_raise(Stripe::APIConnectionError, 'timed out')
+
+      expect { described_class.new.available_payout(seller, 'USD') }.
+        to raise_error(Spree::Core::AmbiguousGatewayError)
+    end
+
+    it 'refuses a seller with no account rather than reporting zero' do
+      seller.external_references.destroy_all
+
+      expect { described_class.new.available_payout(seller.reload, 'USD') }.
+        to raise_error(Spree::Core::GatewayError)
+    end
+  end
+
   describe '#onboarded?' do
     def stub_account(payouts_enabled:)
       allow(Stripe::Account).to receive(:retrieve).and_return(

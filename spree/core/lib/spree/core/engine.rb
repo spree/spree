@@ -47,6 +47,7 @@ module Spree
                                :translatable_resources,
                                :taggable_types,
                                :custom_fields,
+                               :reporting,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
@@ -191,6 +192,14 @@ module Spree
         app.config.spree.custom_fields = CustomFieldsEnvironment.new
         app.config.spree.custom_fields.types = []
         app.config.spree.custom_fields.enabled_resources = []
+      end
+
+      # Seed the reporting vocabulary before app initializers so applications
+      # and extensions can register their own metrics/dimensions in
+      # config/initializers (see docs/plans/6.0-analytics-semantic-layer.md).
+      initializer 'spree.register.reporting', before: :load_config_initializers do |app|
+        app.config.spree.reporting = Spree::Reporting::Registry.new
+        Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -468,14 +477,17 @@ module Spree
           Spree::Exports::GiftCards,
           Spree::Exports::NewsletterSubscribers,
           Spree::Exports::CouponCodes,
-          Spree::Exports::PriceListPrices
+          Spree::Exports::PriceListPrices,
+          Spree::Exports::PurchaseOrders,
+          Spree::Exports::Report
         ]
 
         Rails.application.config.spree.import_types = [
           Spree::Imports::Products,
           Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
-          Spree::Imports::PriceListPrices
+          Spree::Imports::PriceListPrices,
+          Spree::Imports::PurchaseOrders
         ]
 
         Rails.application.config.spree.taxon_rules = [
@@ -497,11 +509,6 @@ module Spree
         # Drives Spree::Collections::RegenerateTimeBasedJob.
         Rails.application.config.spree.time_based_collection_rules = [
           Spree::CollectionRules::AvailableOn,
-        ]
-
-        Rails.application.config.spree.reports = [
-          Spree::Reports::ProductsPerformance,
-          Spree::Reports::SalesTotal
         ]
 
         Rails.application.config.spree.translatable_resources = [
@@ -616,7 +623,6 @@ module Spree
           Spree::SellerTransferSubscriber,
           Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
-          Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,

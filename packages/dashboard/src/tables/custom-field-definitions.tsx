@@ -13,6 +13,8 @@ const t = (key: string) => i18n.t(key)
 
 defineTable<CustomFieldDefinition>('custom-field-definitions', {
   title: t('admin.custom_field_definitions.table_title'),
+  docsPath: 'settings/metafields',
+  description: t('admin.table_descriptions.custom_field_definitions'),
   searchParam: 'search',
   searchPlaceholder: t('admin.custom_field_definitions.search_placeholder'),
   defaultSort: { field: 'resource_type', direction: 'asc' },

@@ -41,6 +41,7 @@ module Spree
             # them trade. Runs after stores for the same reason roles do.
             SellerRequirements.call
             ApiKeys.call
+            SavedReports.call
             AllowedOrigins.call
           end
         end

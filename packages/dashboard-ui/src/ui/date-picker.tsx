@@ -218,7 +218,7 @@ function DatePicker({
           aria-haspopup="dialog"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="w-full justify-start"
+          className="w-full justify-start shadow-none"
         >
           {triggerChildren}
         </Button>

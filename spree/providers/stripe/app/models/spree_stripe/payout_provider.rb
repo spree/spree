@@ -160,6 +160,7 @@ module SpreeStripe
 
       seller = seller_transfer.seller
       gateway = gateway_for(seller.store)
+      source_charge = source_charge_for(seller_transfer, gateway)
 
       transfer = Stripe::Transfer.create(
         {
@@ -168,17 +169,25 @@ module SpreeStripe
           destination: seller.payout_account_reference(self.class),
           # Funds the transfer from the customer's own charge, so it settles
           # with that charge rather than out of the platform's balance.
-          source_transaction: source_charge_for(seller_transfer, gateway),
-          transfer_group: seller_transfer.order.order_group&.number || seller_transfer.order.number,
+          source_transaction: source_charge,
+          # Stripe refuses a second group on a transfer drawn from a charge
+          # that already carries one, and the intent is grouped at checkout.
+          transfer_group: (transfer_group_for(seller_transfer) if source_charge.blank?),
           metadata: {
             spree_seller_transfer_id: seller_transfer.id,
             spree_order_number: seller_transfer.order.number
-          }
+          },
+          # What the seller's own account received. An account settles in its
+          # own currency and Stripe converts on the way in, so the sale's
+          # figure is not the payable one.
+          expand: ['destination_payment.balance_transaction']
         }.compact,
         gateway.api_options.merge(idempotency_key: idempotency_key(seller_transfer))
       )
 
-      seller_transfer.update!(status: 'completed', reference: transfer.id)
+      seller_transfer.update!(
+        { status: 'completed', reference: transfer.id }.merge(settlement_of(transfer))
+      )
       seller_transfer
     rescue *AMBIGUOUS_ERRORS => e
       # As with a settlement: the transfer may have been made before the answer
@@ -228,6 +237,35 @@ module SpreeStripe
       raise Spree::Core::AmbiguousGatewayError, e.message
     end
 
+    # What the seller's account can send today, in the currency asked for.
+    #
+    # A transfer is credited on fulfilment but funded by the customer's charge,
+    # so the money reaches the seller's balance only when that charge settles.
+    # Asking Stripe is the documented way to know the difference; a payout for
+    # more than the available balance is refused outright.
+    #
+    # Zero when the account holds nothing in this currency — including a
+    # cross-border seller whose account settles in its own currency and can
+    # therefore never pay out what the ledger denominated the sale in.
+    #
+    # @return [BigDecimal]
+    def available_payout(seller, currency)
+      gateway = gateway_for(seller.store)
+      account_id = seller.payout_account_reference(self.class)
+      raise Spree::Core::GatewayError, 'Seller holds no Stripe account' if account_id.blank?
+
+      balance = Stripe::Balance.retrieve({}, gateway.api_options.merge(stripe_account: account_id))
+      wanted = currency.to_s.downcase
+      minor = balance.available.select { |entry| entry.currency == wanted }.sum(&:amount)
+
+      Spree::Money::Rounding.from_minor_units(minor, currency)
+    rescue *AMBIGUOUS_ERRORS => e
+      # The sweep must not read silence as "nothing to send" and settle a
+      # smaller batch than the seller is owed, nor as "no limit" and ask for
+      # everything again. Neither is knowable, so nothing is paid this period.
+      raise Spree::Core::AmbiguousGatewayError, e.message
+    end
+
     # Pulls a seller's money back after a refund.
     #
     # Ledger-only in open source: the row is written either way, so the books
@@ -240,6 +278,23 @@ module SpreeStripe
     end
 
     private
+
+    # What landed on the seller's account, read off the balance transaction of
+    # the payment the transfer created there. Empty when Stripe did not expand
+    # it, which leaves the ledger reading the earned figures rather than
+    # inventing a settlement.
+    #
+    # @return [Hash]
+    def settlement_of(transfer)
+      balance_transaction = transfer.try(:destination_payment).try(:balance_transaction)
+      return {} if balance_transaction.blank? || balance_transaction.try(:currency).blank?
+
+      {
+        settled_amount: Spree::Money::Rounding.from_minor_units(balance_transaction.amount,
+                                                                balance_transaction.currency),
+        settled_currency: balance_transaction.currency.upcase
+      }
+    end
 
     def complete_without_sending(seller_transfer)
       seller_transfer.update!(status: 'completed')
@@ -268,6 +323,12 @@ module SpreeStripe
 
     def minor_units(record)
       Spree::Money::Rounding.to_minor_units(record.amount.abs, record.currency)
+    end
+
+    # Ties transfers paid from the platform balance to the checkout they
+    # settle — a split checkout's sellers share their group's number.
+    def transfer_group_for(seller_transfer)
+      seller_transfer.order.order_group&.number || seller_transfer.order.number
     end
 
     # The charge that paid for this order, so Stripe can fund the transfer from

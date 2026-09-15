@@ -43,18 +43,27 @@ function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Tr
  * Deliberately matches `<SelectTrigger>` so a picker sitting beside a plain
  * select is indistinguishable from it until opened.
  */
-function ComboboxButtonTrigger({ className, children, ...props }: ComboboxPrimitive.Trigger.Props) {
+function ComboboxButtonTrigger({
+  className,
+  children,
+  size = 'default',
+  ...props
+}: ComboboxPrimitive.Trigger.Props & {
+  /** `sm` is the toolbar size — see `SelectTrigger`, which it matches exactly. */
+  size?: 'sm' | 'default'
+}) {
   return (
     <ComboboxPrimitive.Trigger
       data-slot="combobox-button-trigger"
+      data-size={size}
       className={cn(
-        "flex w-full min-h-8.5 cursor-pointer items-center justify-between gap-1.5 rounded-lg border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-all duration-100 ease-in-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/combobox-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[size=sm]:shadow-xs data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
     >
       <span className="flex min-w-0 items-center gap-2 truncate">{children}</span>
-      <ChevronDownIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground" />
+      <ChevronDownIcon className="pointer-events-none size-4 shrink-0 text-muted-foreground group-data-[size=sm]/combobox-trigger:size-3.5" />
     </ComboboxPrimitive.Trigger>
   )
 }
@@ -87,7 +96,7 @@ function ComboboxSearch({ className, ...props }: ComboboxPrimitive.Input.Props) 
       <ComboboxInput
         data-slot="combobox-search"
         className={cn(
-          'min-h-8.5 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none',
+          'min-h-8 border-0 shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:shadow-none',
           className,
         )}
         autoComplete="off"
@@ -286,7 +295,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
+        'flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
         className,
       )}
       {...props}
@@ -314,7 +323,7 @@ function ComboboxChip({
         // chip and a selected option are the same thing at two moments, so they
         // read as the same thing. `bg-muted` sat within 1.03:1 of the field it
         // sits on, which left the chips barely visible.
-        'flex min-h-8 w-fit max-w-full items-center justify-center gap-1 rounded-md bg-accent py-1 pl-2.5 pr-2 text-sm font-medium text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
+        'flex min-h-7 w-fit max-w-full items-center justify-center gap-1 rounded-sm bg-accent py-1 pl-2.5 pr-2 text-sm font-base text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-1',
         className,
       )}
       {...props}

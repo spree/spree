@@ -92,16 +92,16 @@ To learn how to add pages, tweak tables, or build plugins, see the
   content += `
 ## Customizing the Spree API
 
-The \`backend/\` directory is the Spree API — a full Rails application serving the Store and Admin APIs (plus background jobs and transactional emails) that your storefront and dashboard talk to. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
+The \`server/\` directory is the Spree API — a full Rails application serving the Store and Admin APIs (plus background jobs and transactional emails) that your storefront and dashboard talk to. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
 
 \`\`\`bash
 ${run} spree eject
 \`\`\`
 
-This rebuilds the Docker image from \`backend/\` and restarts services. You can then:
+This rebuilds the Docker image from \`server/\` and restarts services. You can then:
 
-- **Customize the API** by editing the files in \`backend/\`
-- **Add gems** to \`backend/Gemfile\`
+- **Customize the API** by editing the files in \`server/\`
+- **Add gems** to \`server/Gemfile\`
 - **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
@@ -115,7 +115,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 | \`spree dev\` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop the API services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
-| \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |
+| \`spree eject\` | Switch from prebuilt image to building from \`server/\` |
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |
 | \`spree logs worker\` | View background jobs logs |

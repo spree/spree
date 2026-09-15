@@ -15,6 +15,16 @@ describe Spree::StockReservations::Release do
     expect(Spree::StockReservation.find(untouched.id)).to be_present
   end
 
+  it 'gives the held units back to the level' do
+    reservation = create(:stock_reservation, order: order, quantity: 4)
+    level = reservation.stock_level
+    expect(level.reload.reserved_count).to eq(4)
+
+    described_class.call(order: order)
+
+    expect(level.reload.reserved_count).to eq(0)
+  end
+
   it 'returns success even when no reservations exist' do
     result = described_class.call(order: order)
     expect(result).to be_success

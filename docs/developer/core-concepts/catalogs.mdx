@@ -21,6 +21,8 @@ erDiagram
     Catalog ||--o{ CatalogProduct : "assortment"
     Catalog ||--o{ CatalogAssignment : "audiences"
     Catalog ||--o| PriceList : "owns (optional)"
+    Catalog ||--o{ CatalogQuantityRule : "per-SKU terms"
+    Catalog ||--o{ CatalogOrderMinimum : "cart minimum"
     CatalogAssignment }o--|| CustomerGroup : "one of"
     CatalogAssignment }o--|| Company : "one of"
 
@@ -28,6 +30,8 @@ erDiagram
         string name
         boolean active
         integer position
+        integer minimum_order_quantity
+        integer order_multiple
     }
 ```
 
@@ -52,13 +56,30 @@ That's worth pausing on, because it's the one behaviour that surprises people: a
 
 ## Creating one
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const catalog = await adminClient.catalogs.create({
   name: 'Wholesale',
-  price_list_id: 'plist_xxx',
-  active: true,
+  price_list: { name: 'Wholesale pricing' },
 })
+
+await adminClient.catalogs.activate(catalog.id)
 ```
+
+```bash cURL
+# Create the agreement with its pricing inline
+curl -X POST 'https://api.mystore.com/api/v3/admin/catalogs' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "name": "Wholesale", "price_list": { "name": "Wholesale pricing" } }'
+
+# Catalogs are born inactive — going live is its own act
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/activate' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 The price list is optional. A catalog with an assortment and no price list restricts the range at normal prices; a catalog with a price list and no assortment adjusts prices without hiding anything.
 
@@ -67,6 +88,8 @@ A price list is either **standalone** (matched by its own rules) or **owned by e
 Removing a catalog's pricing (`price_list: null`), or deleting the catalog itself, **deletes the owned list** rather than releasing it. A released list would match by its own rules, and an owned list has none — so it would begin pricing every shopper in the store. It is a soft delete, so the prices stay recoverable.
 
 ### Filling the assortment
+
+<CodeGroup>
 
 ```typescript Admin SDK
 // Add products (a bare array of IDs)
@@ -77,13 +100,36 @@ const { data: products } = await adminClient.catalogs.products.list(catalog.id)
 await adminClient.catalogs.products.delete(catalog.id, 'prod_xxx')
 ```
 
+```bash cURL
+# Add products to the assortment
+curl -X POST 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/products' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "product_ids": ["prod_xxx", "prod_yyy"] }'
+
+# List them
+curl 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/products' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
 Membership is all a catalog holds — it decides *what* a buyer sees, never the order they see it in. Presentation order stays with categories and collections.
 
 When a catalog should restrict to exactly what its price list covers, there's a shortcut that copies those products in rather than making someone add them by hand:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { added_count } = await adminClient.catalogs.importProducts(catalog.id)
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/import_products' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 ## Choosing the audience
 
@@ -96,12 +142,23 @@ A catalog is assigned to a buyer audience:
 
 A [Channel](/developer/core-concepts/channels) is not assigned — it names its catalog directly via `default_catalog_id`, which applies to everyone buying through it when nothing narrower does.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.catalogs.assign(catalog.id, {
   assignable_type: 'customer_group',
   assignable_id: 'cgrp_xxx',
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/assign' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "assignable_type": "customer_group", "assignable_id": "cgrp_xxx" }'
+```
+
+</CodeGroup>
 
 <Note>
 **A company assignment covers the whole subtree.** Assign the group-wide catalog once at the root of a [company tree](/developer/core-concepts/companies) and every division below inherits it — no re-assigning per branch. A branch can still add its own catalog on top.

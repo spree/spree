@@ -23,7 +23,7 @@ module Spree
                    country_of_origin: [:string, nullable: true],
                    customs_description: [:string, nullable: true],
                    minimum_order_quantity: ['number | null'], order_multiple: ['number | null'],
-                   purchase_unit: [:string, nullable: true],
+                   purchase_unit: [:string, nullable: true, enum: Spree::Variant::PURCHASE_UNITS],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata, :position, :cost_price, :cost_currency,

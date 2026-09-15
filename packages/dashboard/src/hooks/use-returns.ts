@@ -36,7 +36,7 @@ function useReturnMutation<TParams>(
       queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
       // Keyed separately from the per-order list, so the sidebar count would
       // otherwise stay stale until a page reload.
-      queryClient.invalidateQueries({ queryKey: buildKey('returns-pending') })
+      queryClient.invalidateQueries({ queryKey: buildKey('dashboard', 'counters') })
     },
     onError: (error) => {
       // Without this a rejected workflow — a claim with nothing to refund, a

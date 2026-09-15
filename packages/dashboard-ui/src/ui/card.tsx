@@ -9,11 +9,22 @@ function Card({
 }: React.ComponentProps<'div'> & {
   /**
    * `nested` is one resource listed inside a card — a fulfillment on an order,
-   * a return, a rule. It sits on the muted surface so it reads as a thing
+   * a return, a rule. It sits on a recessed surface so it reads as a thing
    * *within* the card rather than another card beside it, and carries its own
    * horizontal padding so its sections divide edge to edge.
+   *
+   * The box is load-bearing once there is more than one of them: a fulfillment
+   * already divides its own rows, so grouping by rules alone would draw the
+   * boundary between two fulfillments as the same line at the same inset as
+   * the boundary between two items — and the panel's own actions would have no
+   * visible owner.
+   *
+   * `container` is the card those nested records sit in. Pair the two: the
+   * container recedes, the records stay raised. A `default` card wrapping
+   * `nested` ones puts the content in a well and the frame in front of it,
+   * which reads as the content being demoted.
    */
-  variant?: 'default' | 'nested'
+  variant?: 'default' | 'nested' | 'container'
 }) {
   return (
     <div
@@ -26,9 +37,15 @@ function Card({
         // rather than `hidden` so `overflow-y` stays `visible` and sticky
         // descendants keep resolving against the page.
         'group/card flex flex-col min-w-0 overflow-x-clip break-words text-card-foreground shadow-xs',
-        variant === 'nested'
-          ? 'rounded-lg border border-border-subtle bg-muted px-3'
-          : 'rounded-xl border border-border bg-card',
+        variant === 'nested' &&
+          'rounded-lg border border-border-subtle bg-nested-raised px-3 shadow-none',
+        // Holds nested records rather than content, so it recedes and lets
+        // them be the raised, readable thing.
+        variant === 'container' && 'rounded-xl border border-border-card bg-card-container',
+        // `--border-card`, not `--border`: a card is a region of the sheet
+        // rather than a surface floating above it, so its edge is softer than
+        // the structural one the sheet, dialogs and dropdowns draw.
+        variant === 'default' && 'rounded-xl border border-border-card bg-card',
         className,
       )}
       {...props}
@@ -55,7 +72,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="card-title"
       // Same size and weight as SheetTitle and DialogTitle: a card, a sheet
       // and a dialog heading are the same rank of thing.
-      className={cn('text-base font-medium flex items-center gap-2', className)}
+      className={cn('text-base font-semibold flex items-center gap-2', className)}
       {...props}
     />
   )

@@ -93,7 +93,7 @@ export function CustomerStoreCreditsCard({ customer }: { customer: Customer }) {
           </CardContent>
         ) : (
           <CardContent className="p-0">
-            <Table roundedBottom>
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.fields.amount.label')}</TableHead>

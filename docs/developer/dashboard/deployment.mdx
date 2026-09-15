@@ -24,13 +24,13 @@ The official image contains the *stock* dashboard. Once you've customized yours 
 spree build --production            # optionally --tag registry/repo:tag
 ```
 
-The Dockerfile normalizes its own build context: built from the project root it detects the layout (`backend/` = the Rails app, `apps/dashboard/` = your dashboard) and builds *your* dashboard into the image — no flags, no named contexts. Without the CLI, the equivalent is:
+The Dockerfile normalizes its own build context: built from the project root it detects the layout (`server/` = the Rails app, `apps/dashboard/` = your dashboard) and builds *your* dashboard into the image — no flags, no named contexts. Without the CLI, the equivalent is:
 
 ```bash
-docker build . -f backend/Dockerfile -t my-shop-spree:latest
+docker build . -f server/Dockerfile -t my-shop-spree:latest
 ```
 
-Inside the dashboard stage the build runs with `VITE_BASE_PATH=/dashboard/` (asset URLs resolve under the mount) and `VITE_SPREE_API_URL` unset (API calls stay origin-relative); the Node toolchain lives only in that throw-away stage. Projects **without** `apps/dashboard/` get the stock dashboard baked instead — and if your `backend/Dockerfile` predates this layout support, the command warns instead of silently shipping the stock dashboard over your customized one (update it from the spree-starter template).
+Inside the dashboard stage the build runs with `VITE_BASE_PATH=/dashboard/` (asset URLs resolve under the mount) and `VITE_SPREE_API_URL` unset (API calls stay origin-relative); the Node toolchain lives only in that throw-away stage. Projects **without** `apps/dashboard/` get the stock dashboard baked instead — and if your `server/Dockerfile` predates this layout support, the command warns instead of silently shipping the stock dashboard over your customized one (update it from the spree-starter template).
 
 ## Static host / CDN — the alternative
 
@@ -55,7 +55,7 @@ The Blueprint that `create-spree-app` places at the project root deploys the bac
 
 ```yaml
 runtime: docker
-dockerfilePath: ./backend/Dockerfile
+dockerfilePath: ./server/Dockerfile
 dockerContext: .
 ```
 

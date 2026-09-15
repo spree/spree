@@ -6,14 +6,15 @@ module Spree
           include Alba::Resource
           include Typelizer::DSL
 
-          typelize id: :string, kind: :string, name: :string,
+          typelize id: :string, kind: [:string, comment: 'Requirement kind. Built-in: accept_terms, complete_profile, billing_address, returns_address, delivery_method, package_type, minimum_products, payout_account, required_custom_fields, policy, attestation, operator_review, document. Extensions may register more.'], name: :string,
                    description: [:string, nullable: true],
-                   required: :boolean, position: :number, status: :string,
+                   required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES],
                    blocking: :boolean, action_url: [:string, nullable: true],
                    blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
                    accepted_content_types: [:string, multi: true],
-                   required_policy_name: [:string, nullable: true]
+                   required_policy_name: [:string, nullable: true],
+                   terms_html: [:string, nullable: true]
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
@@ -37,6 +38,12 @@ module Spree
           # exactly that policy. Null for every other kind.
           attribute :required_policy_name do |status|
             status.required_policy_name
+          end
+
+          # The marketplace terms this line asks the seller to accept. Null
+          # for every other kind, and null while nothing has been written.
+          attribute :terms_html do |status|
+            status.terms_html
           end
 
           one :submission,

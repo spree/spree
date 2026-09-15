@@ -19,7 +19,7 @@ A person has the right to a copy of their data and the right to have it
 erased. Both arrive as a `Spree::DataRequest`, which records that the request
 was made and how it was answered.
 
-```
+```http
 POST /api/v3/store/customers/me/data_requests   { "kind": "access" }
 POST /api/v3/store/customers/me/data_requests   { "kind": "erasure", "current_password": "..." }
 ```
@@ -37,7 +37,7 @@ Most requests never reach the storefront. They arrive as email to the
 merchant, often from someone who can no longer sign in, so the same two
 actions exist in the admin:
 
-```
+```http
 GET  /api/v3/admin/customers/:id/export
 POST /api/v3/admin/customers/:id/anonymize
 ```
@@ -71,7 +71,7 @@ does not reach.
 Spree exports what Spree knows. If your application holds data of its own — a
 loyalty ledger, support history — add it through the hook:
 
-```ruby
+```ruby server/config/initializers/spree.rb
 Spree.hooks.register('data_requests.fulfill.extend_payload', 'MyStore::LoyaltyExport')
 
 class MyStore::LoyaltyExport
@@ -87,7 +87,7 @@ drop what Spree contributes.
 You can also veto an erasure — an open dispute, a fraud investigation, a legal
 hold:
 
-```ruby
+```ruby server/config/initializers/spree.rb
 Spree.hooks.register('customers.anonymize.validate', 'MyStore::LegalHold')
 
 class MyStore::LegalHold
@@ -125,7 +125,7 @@ The Omnibus Directive requires that an announced price reduction shows the
 lowest price of the previous 30 days. Spree records every base price change in
 `Spree::PriceHistory` and exposes the lowest prior price on request:
 
-```
+```http
 GET /api/v3/store/products/:id?expand=prior_price
 ```
 
@@ -133,16 +133,24 @@ Recording is on by default and controlled per store with
 `track_price_history`, since a non-EU store has no use for it. Retention
 defaults to 30 days via `price_history_retention_days`; prune with:
 
-```bash
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:price_history:prune
+```
+
+```bash Without Spree CLI
 bundle exec rake spree:price_history:prune
 ```
+
+</CodeGroup>
 
 ## Right of withdrawal
 
 EU buyers may withdraw from a distance sale within 14 days of receiving the
 goods. Orders expose the deadline:
 
-```json
+```json Response
 { "withdrawal_period_ends_at": "2026-09-20T10:30:00Z", "within_withdrawal_period": true }
 ```
 
@@ -154,3 +162,10 @@ goodwill, while withdrawal is a statutory right running from delivery.
 The deadline is computed on read from the order's latest delivery, falling back
 to completion while nothing has been delivered. A stored copy would be wrong
 the moment a parcel arrived.
+
+## Related
+
+- [Pricing](/developer/core-concepts/pricing) — price history and the `prior_price` an Omnibus display needs
+- [Customers](/developer/core-concepts/customers) — the account an export or erasure acts on
+- [Markets](/developer/core-concepts/markets) — where `withdrawal_period_days` is set, since the right is regional law
+- [Events](/developer/core-concepts/events) — subscribing to erasure and data-request activity

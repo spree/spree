@@ -10,8 +10,8 @@ module Spree
         class SellerPayoutSerializer < V3::BaseSerializer
           typelize seller_id: :string,
                    seller_name: 'string | null',
-                   status: :string,
-                   provider: :string,
+                   status: [:string, enum: Spree::SellerPayout.statuses, enum_type_name: 'SellerPayoutStatus'],
+                   provider: [:string, comment: 'Payout provider class name. Built-in: Spree::PayoutProvider::System. Provider gems register more.'],
                    amount: :string,
                    currency: :string,
                    reference: 'string | null',

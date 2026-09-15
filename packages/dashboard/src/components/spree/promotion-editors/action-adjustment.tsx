@@ -14,6 +14,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { resolveCalculatorType } from '../../../lib/promotion-calculator-type'
+
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 
@@ -36,14 +38,18 @@ export function AdjustmentActionEditor({ draft, onSave, onClose }: PromotionActi
     () => draft.calculator?.preferences ?? {},
   )
 
-  // Once the catalog arrives, ensure `calculatorType` points at a known
-  // calculator. Falls back to the first entry if the draft has no
-  // calculator yet (newly-picked action) or carries a removed one.
+  // Once the catalog arrives, reconcile the draft's calculator against the
+  // list. Accepts api shorthand or legacy full class names, and only falls
+  // back to the first entry for a new action or a calculator that no longer
+  // exists. Runs when the catalog loads — not on every picker change.
   useEffect(() => {
     if (calculators.length === 0) return
-    const matches = calculators.some((c) => c.type === calculatorType)
-    if (!matches) setCalculatorType(calculators[0].type)
-  }, [calculators, calculatorType])
+
+    setCalculatorType((current) => {
+      const resolved = resolveCalculatorType(calculators, current)
+      return resolved ?? calculators[0].type
+    })
+  }, [calculators])
 
   const selectedCalculator: PromotionActionCalculator | undefined = useMemo(
     () => calculators.find((c) => c.type === calculatorType),

@@ -586,7 +586,7 @@ function OptionValuesFieldArray({
                           image_cleared: false,
                         })
                       }
-                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex w-full items-center justify-center gap-2 px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <PlusIcon className="size-4" />
                       {t('admin.pages.products.options.add_value')}

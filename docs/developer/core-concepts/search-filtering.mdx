@@ -296,8 +296,7 @@ See [Querying](/api-reference/store-api/querying) for the full list of filtering
 
 Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
 
-```ruby
-# config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
 ```
 

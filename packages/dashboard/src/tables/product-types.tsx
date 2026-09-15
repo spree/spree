@@ -5,6 +5,7 @@ import { ShapesIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<ProductType>('product-types', {
+  docsPath: 'settings/product-types',
   title: i18n.t('admin.settings_nav.items.product_types'),
   description: i18n.t('admin.table_descriptions.product_types'),
   searchParam: 'name_cont',

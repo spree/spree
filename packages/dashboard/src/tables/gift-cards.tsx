@@ -7,6 +7,7 @@ import { adminUserAutocompleteProps } from '../hooks/use-admin-users'
 import { customerAutocompleteProps } from '../hooks/use-customers'
 import { giftCardBatchAutocompleteProps } from '../hooks/use-gift-cards'
 import { erasedFieldValue } from '../lib/erased-customer'
+import { translatedLabel } from '../lib/translated-label'
 
 // Server `Spree::GiftCard#display_status` exposes "expired" when the card
 // is past its expiration date, even though the underlying column is still
@@ -20,13 +21,13 @@ const STATUS_OPTIONS = [
 ] as const
 
 function statusLabel(value: string): string {
-  return i18n.exists(`admin.gift_cards.statuses.${value}`)
-    ? i18n.t(`admin.gift_cards.statuses.${value}`)
-    : value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  return translatedLabel('admin.gift_cards.statuses', value)
 }
 
 defineTable<GiftCard>('gift-cards', {
   title: i18n.t('admin.nav.gift_cards'),
+  docsPath: 'loyalty/gift-cards',
+  description: i18n.t('admin.table_descriptions.gift_cards'),
   searchParam: 'code_cont',
   searchPlaceholder: i18n.t('admin.gift_cards.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

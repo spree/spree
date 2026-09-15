@@ -132,6 +132,8 @@ curl -X POST 'https://api.mystore.com/api/v3/store/customers/me/addresses' \
 
 On a cart you can point at a saved address or send a new one inline:
 
+<CodeGroup>
+
 ```typescript Store SDK
 // Reuse something from the address book
 await client.carts.update(cartId, {
@@ -153,6 +155,19 @@ await client.carts.update(cartId, {
   },
 })
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "shipping_address_id": "addr_xxx",
+    "billing_address_id": "addr_yyy"
+  }'
+```
+
+</CodeGroup>
 
 Setting the shipping address is what makes delivery options and tax appear, so do it before asking the customer to choose delivery. The updated cart comes back with new totals — you don't need a second request.
 

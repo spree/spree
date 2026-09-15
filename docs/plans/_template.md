@@ -5,6 +5,13 @@
 **Depends on:** (other plans or features)
 **Author:** (who drove the design)
 **Last updated:** YYYY-MM-DD
+**Tracking:** Linear V-NNNN · GitHub spree/spree#NNNN
+
+<!-- Tracking names the Linear issue (Spree project, milestone = target
+     version) and the GitHub issue (milestone vX.Y, on the Roadmap project).
+     /project:create-plan opens both; /project:update-plan and
+     /project:implement-plan keep them in step. Write "Linear —" or
+     "GitHub —" when one could not be created, never leave the line out. -->
 
 <!-- Status is exactly one of the four labels, with detail after an em dash:
      Draft       — designed, nothing built

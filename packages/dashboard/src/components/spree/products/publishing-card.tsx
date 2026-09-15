@@ -235,7 +235,7 @@ function PublicationRow({
     <button
       type="button"
       onClick={onEdit}
-      className="group flex w-full items-start justify-between gap-3 rounded-md px-2 py-2 text-left hover:bg-muted/40"
+      className="group flex w-full items-start justify-between gap-3 rounded-md px-2 py-2 text-left hover:bg-accent cursor-pointer"
     >
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
@@ -377,7 +377,7 @@ function ManageChannelsSheet({
                   key={channel.id}
                   type="button"
                   onClick={() => toggle(channel, !checked)}
-                  className="flex w-full cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-3 py-2 text-left hover:bg-muted/40"
+                  className="flex w-full cursor-pointer items-center gap-3 rounded-md border border-border bg-background px-3 py-2 text-left hover:bg-accent"
                 >
                   <Checkbox checked={checked} tabIndex={-1} />
                   <span className="flex-1 text-sm">

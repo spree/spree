@@ -1,0 +1,72 @@
+---
+title: "Companies"
+description: "Set up business customers as organizations — with members, delivery sites, tax registrations and their own pricing."
+---
+
+A company is a business customer. Where a retail customer is one person, a business buyer is a person acting *for* an organization — one with other buyers, several delivery sites, a VAT number, and a finance team who wants to see everything anyone ordered.
+
+Companies model that. And because real organizations are not flat, a company can be a **tree**: a parent with subsidiaries, divisions or regional units, each with its own people and addresses.
+
+To manage companies, open **Companies** under Customers.
+
+## Companies and divisions
+
+Every node in the tree is one of two kinds. The difference is about tax, not hierarchy:
+
+| Kind | What it is |
+|---|---|
+| Company | A legal entity of its own, with its own tax registrations |
+| Division | An organizational unit inside a legal entity. It shares that entity's tax identity |
+
+The top of a tree is always a company. Trees go up to five levels deep.
+
+Use **Add sub-unit** on a company's page to build the tree beneath it. Delivery sites are *not* sub-units — ten warehouses do not mean ten nodes. Nodes are for organizational and legal structure; where goods go is an address.
+
+## Members
+
+A member is a customer who can buy for the company. Add one with **Add member** and an email address:
+
+- An email that already has a customer account becomes a member straight away.
+- An unknown email becomes an **invitation**, valid for 30 days, and the person gets an email with a link. Accepting it either signs them in or creates their account, and ends as a membership.
+
+Pending invitations are listed on the company page until they are accepted or you revoke them.
+
+Membership reaches downward. Someone added at "Acme Europe" can buy for every division beneath it without being added to each one. Add someone at the top of the tree and they cover the whole group.
+
+<Note>
+In Spree open source, every member can do everything within their standing — buy, see the orders of their node and everything below it, and manage the address book and members. Roles, order approvals and spending limits are part of Spree Enterprise.
+</Note>
+
+Removing a member stops them buying for the company. Their customer account is not affected.
+
+## Address book
+
+A company keeps its own addresses — ship-to sites and billing addresses — separate from any individual member's. Each is labelled, and one of each kind can be marked as the default the buyer starts from at checkout.
+
+## Tax
+
+Tax registrations and exemption certificates belong to legal entities only, so a division's page has no tax cards. A division's purchases are taxed through its legal entity — the nearest company above it.
+
+That lookup stops at the first company, whether or not it holds a registration. A subsidiary with no VAT number of its own therefore has none: it never quietly borrows its parent's, because in most places that would be a false declaration.
+
+Exemption certificates are scoped to the country or state that issued them, and stop applying when they expire.
+
+## Purchase order numbers
+
+Turn on **Require a PO number** and buyers from the company must supply their purchase order number before they can check out. The number is kept on the order, shown on the order page and in the confirmation email, and can be searched for.
+
+## Giving a company its own range and prices
+
+What a company sees and pays is set through a [Catalog](/user/catalogs/catalogs) assigned to it. Assigning to a node covers everything beneath it, so one assignment at the top prices the whole group.
+
+Company assignments win over customer-group ones. A buyer whose company — or any company above it — has a catalog gets those catalogs, and their customer groups are not consulted.
+
+## Deleting a company
+
+Deleting a node removes its whole subtree. It is refused once any order exists beneath it — order history is kept, even when an org chart is tidied up.
+
+## Related
+
+- [Selling to businesses](/user/how-to/selling-to-businesses) — the whole B2B setup, end to end
+- [Catalogs](/user/catalogs/catalogs) — what a company sees and pays
+- [Customer Groups](/user/customers/customer-groups) — the other audience a catalog can be assigned to

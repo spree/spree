@@ -204,6 +204,50 @@ describe Spree.customer_class, type: :model do
     end
   end
 
+  # The dashboard's "erased / not erased" filter reaches this scope through
+  # Ransack, which passes an `_in` predicate as an array — and casting an
+  # array answers true for any non-empty value, so the "not erased" half
+  # silently returned erased accounts instead.
+  describe '.anonymized' do
+    let!(:erased) { create(:user).tap { |user| user.update_columns(anonymized_at: Time.current) } }
+    let!(:intact) { create(:user) }
+
+    it 'answers the erased accounts when true' do
+      expect(described_class.anonymized(true)).to include(erased)
+      expect(described_class.anonymized(true)).not_to include(intact)
+    end
+
+    it 'answers the intact accounts when false' do
+      expect(described_class.anonymized('false')).to include(intact)
+      expect(described_class.anonymized('false')).not_to include(erased)
+    end
+
+    it 'unwraps an array argument rather than casting the array' do
+      expect(described_class.anonymized(['false'])).to include(intact)
+      expect(described_class.anonymized(['false'])).not_to include(erased)
+    end
+
+    # Ransack splats an array predicate, so selecting both sides in the filter
+    # panel calls the scope with two arguments rather than one.
+    it 'treats every side selected as no constraint rather than raising' do
+      expect { described_class.ransack('anonymized' => %w[true false]).result.to_sql }.not_to raise_error
+      expect(described_class.ransack('anonymized' => %w[true false]).result).to include(erased, intact)
+    end
+
+    it 'applies the chosen side through Ransack' do
+      expect(described_class.ransack('anonymized' => 'false').result).to include(intact)
+      expect(described_class.ransack('anonymized' => 'false').result).not_to include(erased)
+    end
+
+    # Ransack invokes a scope with NO arguments for a literal boolean `true`,
+    # which is what a JSON client sends. Reading that as "no side chosen" hands
+    # back the whole customer list to a caller asking only for erased accounts.
+    it 'applies the affirmative side for a literal boolean predicate' do
+      expect(described_class.ransack('anonymized' => true).result).to include(erased)
+      expect(described_class.ransack('anonymized' => true).result).not_to include(intact)
+    end
+  end
+
   describe '#total_available_store_credit' do
     context 'user does not have any associated store credits' do
       subject { create(:user) }

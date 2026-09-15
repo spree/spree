@@ -1,3 +1,188 @@
+## 2026-09-12: Reporting scopes money to one currency and never converts; counts are not scoped at all
+
+**Context:** Every sales and payments base filtered `currency` unconditionally, so a multi-currency store could not ask how many orders it took — only how many were priced in one currency. That is a wrong answer rather than a partial one. The wider question of cross-currency totals came up at the same time, so both were settled together after looking at how other platforms handle it.
+
+**Decision:** Money stays per-currency and is never converted. `Query#scope_currency` returns the currency only when some aggregated component of the requested metrics is money-formatted, and the bases skip the filter when it is nil — so counts, quantities and money-free ratios span every currency, while any query containing money narrows as before. A ratio counts as money when either side is (average order value), and not when neither is (sell-through). The dashboard home screen carries a currency switcher, shown only where the store sells in more than one.
+
+**Consequences:** No base-currency column on orders and no conversion anywhere in reporting. The market splits on this: Magento and Shopify store a second, converted amount per order and report on it, while Saleor's Pulse analytics, Medusa and Vendure keep money scoped per currency. The converted approach buys one aggregate number and pays for it in reconciliation — Shopify converts at each money movement rather than freezing the sale's rate, so a full refund need not net to zero in shop currency and their own documentation calls the reporting conversion "approximate and may differ slightly from actual captured amounts"; Magento's own Advanced Reporting only supports installations that kept a single base currency throughout. For a platform whose figures merchants may file, exactness beats a single headline number. If a cross-currency total is ever wanted it must be a separate, clearly labelled figure carrying its rate and date — never the same metric as the exact one. A base that registers its own relation must guard the currency filter against nil.
+
+## 2026-09-11: Home-screen counters send a key and a number, never copy
+
+**Context:** The counters endpoint shipped with `label` and `description` resolved server-side through `Spree.t`, mirroring how the reporting schema labels metrics and dimensions. That reproduces exactly the defect the 2026-09-05 ruling was written to fix: `Spree.t` answers in the request locale, which the dashboard never sets, so a merchant reading the interface in one language could get a counter labelled in another. The low stock description also interpolated a store preference, putting a merchant setting into a translated sentence built on the server.
+
+**Decision:** The endpoint returns `{ key, value, link, nav }` only. The dashboard translates the key from its own locale files under `admin.pages.home.operations.counters.<key>`, and interpolates the low stock threshold from the store record the shell already holds — so the threshold stays a number on the wire and the sentence stays a translation. A counter the dashboard has no entry for renders its humanized key, which reads sensibly for an extension's own counter before anyone translates it. The `description:` registration option is removed; `Registry::Counter` keeps `count`, `subject`, `key_scope`, `link` and `nav`.
+
+**Consequences:** Stricter than the 2026-09-05 decision, which deliberately keeps `label`/`description` on type catalogs as documented fallback for integrations and untranslated extension types. That fallback earns its place there because a type catalog is also read by non-dashboard clients; a counter is rendered by the dashboard alone, so the fallback bought nothing and guaranteed the mixed-language bug. Type catalogs are unchanged. An extension registering a counter now ships dashboard translations or accepts the humanized key.
+
+## 2026-09-11: The legacy Spree::Report system is removed, its tables left alone
+
+**Context:** `6.0-analytics-semantic-layer.md` Decision 10 kept `Spree::Report` alongside the new reporting layer, on the grounds that it is a row-level CSV exporter and so answers a different question. Reviewing it once the layer shipped, that separation does not survive contact: `Spree::Report` has no v3 route and no dashboard screen, so a merchant cannot run one at all; both subclasses core ships are aggregate questions the new layer now answers as seeded reports; and row-level CSV is already `Spree::Export`'s job, with the Admin API and dashboard page `Spree::Report` never had.
+
+**Decision:** Remove the subsystem — the STI base and its two subclasses, `ReportLineItem` and its two subclasses, the generate job, the mailer and its view, the subscriber, the v3 serializer and its dependency key, the `Spree.reports` registry, the `reports` queue entry, the mailer preview, the factory, and the `Store` and admin-user associations. **Leave the tables.** The creating migration is deleted so a fresh install never makes them, while existing stores keep every row, inert. No drop migration is scheduled — there is no data-loss moment to time, and a merchant who wants the history can still read it.
+
+**Consequences:** Aggregate questions are registry members (`Spree.reporting`); row-level CSV is a `Spree::Export` subclass. Nothing may reference `Spree::Report`, `Spree::ReportLineItem` or `Spree.reports` again. A host app that subclassed `Spree::Report` breaks on upgrade and has to move to one of the two replacements — accepted, since the class was unreachable from any shipped surface. Supersedes Decision 10 in `6.0-analytics-semantic-layer.md`.
+
+## 2026-09-11: Counters are reporting registry members, and one request serves the home card and the sidebar
+
+**Context:** `dashboard/operations` served five counts as private methods on a serializer in the API gem, the dashboard hardcoded the matching rows (icons, labels, deep-link filters), one permission covered all five, and the out-of-stock deep link pointed at a products filter the server silently dropped. The low stock threshold was a request parameter with a hardcoded default that nothing sent.
+
+**Decision:** Counters are a fourth member type on `Spree.reporting` (`registry.counter`), evaluated by `Spree::Reporting::Counters` rather than compiled into the query — a counter has no range, currency or base. Each declares `subject` + `key_scope` like every other member and is filtered by the shared `Admin::ReportingAuthorization#member_allowed?`; the endpoint returns `{ key, label, description, value, link }` per counter and the dashboard renders whatever arrives. The link is declared beside the count so the list opened shows exactly the rows counted; a counter with no honest list (the stock ones, until the Inventory page) carries none. `low_stock_threshold` is a `Spree::Store` preference (default 5, 0 = off) surfaced in store settings. `Spree.operations` stays reserved; the registry name `Spree.reporting` is unchanged.
+
+**Amended 2026-09-11:** the endpoint is `dashboard/counters`, not `dashboard/operations` — the payload was already named after what it holds, and the developer preview needs no bridge. The three post-sale sidebar badges fold into it: each used to issue its own list request with `limit: 1` to read a total off the pagination meta, so the shell spent three round trips counting three things, and the returns badge counted `received` while `open_returns` did not. Counters now carry the `nav` entry they badge, `open_exchanges` and `open_claims` join the vocabulary, `open_returns` adopts the badge's wider definition, and the sidebar and home card share one query. The shell issues that query rather than any badge — the sidebar mounts only the children of the section being viewed, so the old badge-driven fetch produced no counts anywhere outside Orders — and a parent nav entry sums its own counter with its children's so the total is visible while the submenu is collapsed. `orders_to_fulfill` badges Orders as an inbox-unread count; `payments_to_collect` deliberately carries no `nav`, since a badge lit on nearly every store stops informing. The stock counters adopted the Inventory page's own reading of the shelves — what a customer could still buy (`count_on_hand − allocated − reserved`), counted per location — replacing a raw `count_on_hand` count of distinct variants that both undercounted, by ignoring allocation, and would have landed on a different number than the list it links to; `Spree::StockLevel.low_stock` is the shared scope behind the page's filter and the counter, so the two cannot drift.
+
+**Consequences:** An extension registers a counter with a locale label and it appears on every merchant's home screen — and, with `nav`, in the sidebar — with the right permission gating and no dashboard change. A limited role sees a shorter list, not a refused card. New point-in-time numbers for the home screen are registrations — never serializer methods or client-side derivations. See `6.0-analytics-semantic-layer.md` Decision 15.
+
+## 2026-09-10: Close-short writes the incoming counter, the Inventory page opens on every location, and the recount is an upgrade step
+
+**Context:** Implementing Phase 7 of `6.0-inventory-operations.md` turned up three things the plan left open. The incoming writer table listed `Update` (which refuses anything past `draft`, so it never changes an incoming figure) and omitted the `Close` workflows, whose whole job is to take a document out of the open set the recount reads. The page had no stated default before a location is picked. And the backfill was described as "run it once" without saying who runs it.
+
+**Decision:** (1) `PurchaseOrders::Close` and `StockTransfers::Close` decrement `incoming_count` by each line's `incoming`; `Update` leaves the table. (2) The Inventory page lists one row per stock level across every location, with a *Location* column, and the location switcher narrows the list. (3) `spree:stock:recount_levels` is a step of the `5_6_to_6_0` upgrade manifest.
+
+**Consequences:** The writer set and the recount source now agree at every status: a document counts toward incoming exactly while it is `ordered`, `in_transit` or `partially_received`, whichever workflow moved it there or out. Nothing on the page is summed across locations — a merchant reading a variant's total on-hand across warehouses reads it on the variant, not here. Existing installs get their counters filled by the same `spree:upgrade` that runs the other 6.0 backfills; the task stays runnable by hand to repair drift.
+
+## 2026-09-10: Stock levels carry reserved and incoming as counters, and the Inventory page reads them
+
+**Context:** The dashboard's Inventory section (transfers, purchase orders, suppliers) had no view of the stock itself — no page answering "what do I have, where, and what is committed, held or on its way". The columns a merchant expects are Shopify's: on hand, committed, available, incoming. Spree already persists on hand (`count_on_hand`) and committed (`allocated_count`) but computed reserved at read time in `Stock::Quantifier` and had no notion of incoming at all, even though every purchase order and transfer now carries a `destination_location_id`.
+
+**Decision:** Two new counter-cache columns on `spree_stock_levels` — `reserved_count` and `incoming_count` — and a new phase in `6.0-inventory-operations.md` for the page that reads them. Counters, not computes: the page is a paginated list read many times a day, the inputs change through a small number of workflows, and the repo already trusts `allocated_count`, `fee_total` and `commission_total` the same way. **Each counter has exactly one writer path** — `Reserve`/`Release`/`ExpireJob` for reserved; `MarkOrdered`/`MarkDraft`/`Cancel`/`Update` on purchase orders, `MarkInTransit`/`Cancel` on transfers, and `StockReceipts::Recording` for both, for incoming — mirroring the movement-callback discipline that keeps `allocated_count` honest. A `spree:stock:recount_levels` task recomputes both from their sources, reports drift, and is the backfill. `Available` on the page is `count_on_hand − allocated_count − reserved_count`, the same figure the Quantifier already produces.
+
+**Consequences:** *Incoming* is `[expected − received − rejected, 0].max` per line, added to `Spree::ReceivableItem` as `#incoming` so the counter and the recount share one definition — `outstanding` alone still counts rejected units as awaited, and they are not coming. A transfer counts as incoming from **`in_transit`**, when `quantity_shipped` is written, not from `ready_to_ship`; that diverges from Shopify, which counts from creation, and is deliberate: nothing is moving yet. The receipt recorder already runs inside `receivable.with_lock`, so the incoming decrement is atomic with the on-hand increment. **Unavailable is out of scope.** Rejected delivery units are not it — they "exist only on the receipt" (the 2026-09-10 dock decision) and were never in the building, whereas Shopify's Unavailable is on-site stock held back; a true bucket would be a fourth counter with its own adjust action and reason vocabulary, and no reference validates it yet. The page is dashboard-only; the seller panel gets the same table under a forced seller scope as a follow-up, per the dashboard-is-the-reference rule. The earlier note that "rejected receipt units have no backing" was half right: the *count* is recorded, the *stock* is not.
+
+## 2026-09-10: A delivery is a stock receipt — discrepancies get quantities, over-receipt gets a status, and a short order can be closed
+
+**Context:** Comparing the shipped inventory operations against a multi-location omnichannel
+merchant's own purchasing code showed what a warehouse dock records that ours could not: a
+delivery with two damaged units out of ten, a delivery of twelve against ten ordered, and a
+supplier confirming the last two will never come. Ours held one running total per line, a
+single free-text discrepancy on transfer lines only, refused any receive above the expected
+quantity, and left a short order in `partially_received` forever. The same review found no way
+back from `ready_to_ship`, no cancel-by date, and no CSV in either direction.
+
+**Decision:** One new model and five additions, recorded in `6.0-inventory-operations.md`
+under "Receipts, discrepancies and the rest of the dock". `Spree::StockReceipt` is one
+delivery against a purchase order or a transfer — numbered `SR-…`, carrying the packing-slip
+reference and date — and `Spree::StockReceiptItem` is one line of it with `quantity_accepted`,
+`quantity_rejected` and a `rejection_reason`. Named *stock* receipt because a customer-facing
+sales receipt will want the plain word. A receive payload now carries this delivery's counts
+rather than running totals, and `PATCH …/receive` becomes `POST …/stock_receipts`. Rejected
+units are never stocked. Over-receipt is allowed and is a terminal `over_received` status of
+its own (chosen over a badge: a list should say it at a glance). `Close` takes
+`partially_received → received` with `closed_short_at` and a `close_reason`, which also
+records why a cancelled transfer's in-flight units were written off. `cancel_by` is a date
+on the order with *Overdue* and *Past cancel-by* filters and no automatic cancelling.
+`MarkDraft` returns a `ready_to_ship` transfer, or an `ordered` order with no receipt, to
+`draft`. CSV export and import ride the existing `Spree::Export` / `Spree::Import` frameworks
+under the `purchasing` scope; the import groups rows by reference into drafts and requires
+the SKU to exist.
+
+**Consequences:** Every `received` movement against these documents now also names its
+`stock_receipt_id`, so a delivery can be reconciled, and the upgrade task mints one receipt
+per migrated 5.x receive so history reads the same way. `discrepancy_reason` leaves
+`spree_stock_transfer_items`. Out of scope on purpose: purchase-order lines for products not
+yet in the catalog, dropship, consignment, and a quarantine location for rejected units —
+the first is a buying feature that drags product creation into purchasing, and the rest are
+their own plans.
+
+## 2026-09-09: Reporting bases are registry data, in three families that never mix
+
+**Context:** The reporting compiler hardcoded its two bases (`:orders`, `:line_items`) in a case statement, and `compatible?` was written as a two-base special case where `:orders` is universal. That left the two report families merchants ask for next — payments and inventory — unreachable, and they were recorded as out of scope on an implementation-difficulty judgment rather than a product one. They are not session data, so nothing about a headless storefront excludes them.
+
+**Decision:** Bases become registry entries. `registry.base` declares a base's family, its own table, a store-scoped relation, its time column and which bases its dimensions can reach; `compatible?` generalises into that reachability rule and the compiler stops branching on base names. Core registers four bases in three families: **sales** (`:orders`, `:line_items`), **payments** (`:payments`), **inventory** (`:stock_movements`). **A query draws from one family only** — the three answer different questions on different clocks (order completion, when a payment was taken, when stock moved), and a payment total beside a units-received count is two reports wearing one table. The schema publishes families so a builder never offers a cross-family pair.
+
+**Consequences:** Payments and inventory ship with vocabulary and five more seeded reports (19 in total). Two mechanics are load-bearing: a stock movement's `kind` carries direction, so each metric sums one kind rather than raw quantity — summing across kinds nets a receipt against a dispatch; and `spree_stock_movements` has no store column, so its base scopes through `StockMovement.for_store`'s stock level → variant → product walk, which is the only tenancy path that table has. A base now declares its `table` separately from its `time_column`, because deriving one from the other read every line-item dimension off the orders table (a line item's clock lives on its order). `payment_result` is deliberately not called `payment_status`: the order-level dimension of that name says how much of an order is paid, this one says whether one charge went through. Sessions, referrers and conversion rates remain the only recorded gap, and are unavailable by construction.
+
+## 2026-09-09: Reporting speaks the industry sales chain; commission and payout numbers are permission-gated
+
+**Context:** A survey of what merchants expect a commerce back office to report — the whole catalogue minus marketing and behaviour, which need session data a headless storefront never collects — showed the shipped reporting vocabulary answered the right questions under the wrong names. `gross_revenue` was in fact *total sales*, `net_revenue` was neither of the industry's two terms, and the two figures merchants ask for first (real net revenue, and what each seller is owed) could not be expressed at all. Registered names are public API from the release, so a rename had to happen before saved reports baked the wrong ones in.
+
+**Decision:** The vocabulary follows the recognised chain — `gross_sales − discounts − returns = net_sales`, then `net_sales + shipping + duties + fees + taxes = total_sales` — with `orders`, `customers` and `average_order_value` replacing the `*_count`/`aov` names, plus margin (`cost_of_goods`, `gross_profit`, `gross_margin`) and marketplace (`commission`, `seller_payout`) metrics and `seller` / `customer_type` dimensions. A returning customer is one with prior orders, decided per order against history rather than a stored flag. Refunds are reported on the date they were processed, so a past period restates. Order-level money living on another table (refunds, commissions) is summed through a correlated subquery, never a join — an order with three refunds must stay one row. Metrics may now declare `subject`/`key_scope` the way dimensions do, and `commission`/`seller_payout` use it: marketplace money is gated by `read_commissions` / `read_payouts`, not readable by anyone holding `read_reports`.
+
+**Consequences:** The nine seeded reports, the dashboard home's metric list and the reporting specs move together; a store already seeded keeps its old rows, since the seeder only adds what is missing (and a saved report naming a removed metric fails validation loudly rather than silently returning nothing — the upgrade note belongs with the release). A dimension may now carry `expression:` for a computed key, which is how `customer_type` works; `column:` keeps its identifier-only guard. Still out of reach and recorded so nobody hand-rolls them: net payments and payment-method breakdowns need a `:payments` base, inventory history needs a `:stock_movements` base, and both wait on the compiler taking its base list from the registry rather than its hardcoded pair. Sessions, referrers and conversion rates stay unavailable by construction.
+
+## 2026-09-07: Inventory operations grooming — transfers get a status and workflows, supplier receives become purchase orders, and a receive records what the units cost
+
+**Context:** `6.0-inventory-operations.md` was written before three things
+landed that its own code samples assume away: `state_machines-activerecord`
+left the dependency list, permission sets became a registered catalog of
+grant keys, and the `public_metadata`/`private_metadata` pair became one
+`metadata` column. `decisions.md` 2026-08-30 also left one call explicitly to
+this grooming — whether removing the one-shot `StockTransfer.transfer` API
+uses the 6.0 breaking window or ships behind a deprecation bridge. Grooming it
+for implementation surfaced a tenancy hole as well: `spree_stock_transfers`
+has no `store_id`, `Spree::Store` has no `stock_transfers` association, and so
+`Spree::Base.for_store` falls through to `self` — the admin transfers endpoint
+has never been store-scoped.
+
+**Decision:** Seven rulings, all inside the plan's existing design.
+
+**Statuses are declared, transitions are workflows.** `Spree::StockTransfer`
+(`draft | ready_to_ship | in_transit | partially_received | received |
+canceled`) and `Spree::PurchaseOrder` (`draft | ordered | partially_received |
+received | canceled`) both `include Spree::HasStatus`; every move between
+statuses is a workflow under `Spree::StockTransfers::` /
+`Spree::PurchaseOrders::`, registered on `Spree::Dependencies`. This is not
+merely conformance with `6.0-normalize-state-to-status.md`: a receive has to
+carry the quantities the warehouse actually counted and a cancellation has to
+carry the merchant's restock-or-write-off choice, and a transition callback
+takes no arguments. The guards a state machine expressed as `from:` become
+each workflow's own status check.
+
+**The one-shot `StockTransfer.transfer` / `.receive` methods are removed
+outright.** A shim would keep a second write path into `count_on_hand` alive
+through 6.0, which is the exact thing typed movements exist to prevent. The
+admin `POST /stock_transfers` now persists a draft rather than moving stock.
+
+**`spree_stock_transfers` gains its own `store_id`**, closing the scoping hole
+above and giving transfers the same tenancy rule as purchase orders instead of
+a second one derived from `destination_location`. `source_location_id` stays
+nullable in the database with presence enforced on the model — a
+`change_column_null` would fail on any install still holding external-receive
+rows, and emptying that column is the upgrade task's job.
+
+**Legacy source-less transfers are soft-deleted, not dropped.**
+`spree:upgrade:migrate_external_receives_to_purchase_orders` mints the `PO-…`,
+points the existing movements at it and stamps the `T-…` transfer
+`deleted_at`, so the old number stays findable without the same receive
+appearing twice in the admin;
+`spree:upgrade:purge_migrated_external_receives` removes them later.
+
+**Suppliers and purchase orders are one new catalog resource, `:purchasing`**
+(`read_purchasing` / `write_purchasing`), registered beside `:stock` in
+`PermissionConfiguration::DefaultCatalog.register`. The plan's earlier
+`read_inventory` / `write_inventory` would have put "Stock" and "Inventory"
+side by side on the roles screen with nothing to tell a merchant which covers
+what. `Spree::StockTransferItem` joins the existing `:stock` subject list.
+
+**Suppliers are per store** — `store_id`, `Spree::SingleStoreResource`, unique
+on `(store_id, name)`. Promoting them to installation-wide later means a join
+table and a one-row-per-supplier backfill; nothing is built against that.
+
+**A receive records what the units cost.**
+`spree_stock_movements.unit_cost` (nullable `decimal(10, 2)`) carries the price
+each unit landed at, so the rolling average-cost feature the plan defers has a
+ledger to read rather than a reconstruction to attempt — including across two
+partial receives at different prices. Transfers and returns leave it null:
+moving stock a merchant already owns is not a purchase. Money is a
+`decimal(10, 2)` column throughout, following `Spree::Variant#cost_price` —
+Spree has no money-rails dependency, so the plan's `_cents` + `monetize` shape
+does not exist.
+
+**Consequences:** `StockTransfer.transfer` and `.receive` are gone at 6.0 and
+need an upgrade note. Never write `status` on a transfer or a purchase order
+directly — it passes the inclusion validation, writes no movement, and
+desynchronizes the ledger from the shelf; call the workflow. Never reach
+`Spree::StockTransfer` unscoped now that it carries `store_id`. Status columns
+ship with no database default (the creating workflow sets them; `has_status`
+supplies the attribute default), and both new metadata-carrying tables have
+one `metadata` column. `StockLocation#restock` and `#move` take an optional
+`unit_cost:`. Statuses spell `canceled` with one `l`, matching the other 87
+occurrences in core. Status transitions are `PATCH` member routes, matching
+`orders/:id/cancel` and `returns/:id/receive` — the plan's claim that they are
+POSTs described no existing endpoint. Lot tracking stays 6.1 and the 6.0 half
+builds no lot rows, so open questions 5 and 6 keep their reasons; open
+question 4 (ship-to-store transfers) stays open pending the fulfillment plan's
+call on what a pickup date range promises when stock has to travel.
+
 ## 2026-09-07: Deposits are not a shipping concern — how a buyer pays gets its own plan
 
 **Context:** `6.0-b2b-wholesale-shipping.md` originally specified deposits as part of wholesale freight: a delivery method would carry a `deposit_percentage`, checkout would collect it, and the order would complete part-paid. Building it raised two questions that had to be answered before it could ship. Is a shipping method the right thing to hang a payment arrangement on? And does merchant-configurable deposit collection belong in open source at all? Researching the second answered the first.
@@ -5,7 +190,40 @@
 **Decision:** This plan covers how goods **ship**; how the buyer **pays** is a separate subject with its own plan. Three findings drove it. **Deposits and net terms are two halves of one arrangement** — merchants combine them ("40% deposit, balance Net 30"), and the only native implementation in the market models the deposit as an attribute *on* a payment term. Shipping half the subject inside a shipping plan leaves a vocabulary with no way to set it and no home for the other half. **The arrangement belongs to the buyer, not the shipment** — a deposit is negotiated with a company; no comparable platform configures one per shipping method, and every one that offers deposits scopes them per product, per customer, or per order. **Two OSS plans already defer net terms** to a payment-terms plan that does not exist (`6.0-payment-method-rules.md`, `6.0-6.1-b2b-payment-terms.md`), so the destination was already named — it just had not been written.
 
 **Consequences:** No delivery method carries a `deposit_percentage`, and freight must not become a second place payment arrangements are configured. One piece is deliberately kept so the payment-terms plan starts from a hook rather than from patching: `Purchase#amount_due_at_checkout`, answering the full total through `Spree::Purchases::AmountDueAtCheckout` (registered in `Spree::Dependencies`), read by the four decisions that gate on money arriving — checkout requirements, both completion guards, and dispatch. Without it, an arrangement collecting part of the total up front has to patch those four independently. It ships with a spec proving the open-source answer is the total, and a spec registering a half-up-front replacement and proving checkout, completion and dispatch all follow it. What a new payment or gateway session *defaults* to, and the capture loop, still read `total`: those are amounts rather than decisions. Partial payments are untouched — they predate this work. A related fix rides along because it holds independently: dispatch now guards on `payment_total >= amount_due_at_checkout` rather than `paid?`, which required a positive total and so refused to ship a fully discounted or store-credit-paid order.
+## 2026-09-04: Catalog audiences are alternatives, not layers — a company buyer is never also priced by their customer group (V-3570)
 
+**Context:** `Catalog.for_context` consults a buyer's customer groups only when the company axis came back empty, so a merchant who put a shared range on a dealer group's company node and each trade tier on a customer group got tier prices that never applied — every dealer paid retail, with the catalog active, the audience assigned and the percentage saved. The code said two things about whether that was intended: the plan and the resolver describe a fallback chain, while `Spree::Catalog`'s class comment said visibility across applicable catalogs is their union, which reads as both audiences being consulted. The reading had to be ruled before either could be documented.
+
+**Decision:** The fallback chain is the intended behaviour and stays: the company subtree if any of its nodes carry a catalog, otherwise the customer's groups, otherwise the channel's default catalog. A buyer is on one agreement, resolved from the nearest party to them — layering a personal segment's prices on top of a company's negotiated ones would price one purchase under two agreements at once, and which won would depend on catalog position rather than on anything a merchant chose. Trade tiers over a company tree are expressed as company assignments: the shared range on the root, each tier's catalog on the member companies or divisions in that tier (one tier catalog carries as many assignments as the tier has members). That route already works and is what the union-within-an-audience plus nearest-node-first pricing was built for. Customer group assignments remain for buyers not purchasing for a company at all — a retail loyalty tier, a staff discount.
+
+**Consequences:** No behaviour change; the fix is that the code and the dashboard now say so. The class comment is corrected (it was the only place claiming the two audiences combine), the `for_context` and pricing-resolver comments read "or failing that" rather than "then", and the fallback carries an inline note. The dashboard states the precedence where a merchant can act on it: help text under the audience picker when a customer group is chosen, and a standing note on the audience card and wizard step whenever a group assignment is present, pointing at the company route for tier pricing. The developer docs stop framing the three ways of reaching a buyer as combining and carry the tier recipe as a warning. Three examples in `catalog_spec.rb` lock the ruling — the group dropping out once a company catalog exists, the group still applying when none does, and the subtree union when the tier is a company assignment. What is *not* solved: nothing detects a catalog assigned only to groups whose members are all company buyers, so such a catalog is still silently unreachable; a reachability warning needs the buyer population and is a separate piece of work.
+
+## 2026-09-04: Catalog audiences are alternatives, not layers — a company buyer is never also priced by their customer group (V-3570)
+
+**Context:** `Catalog.for_context` consults a buyer's customer groups only when the company axis came back empty, so a merchant who put a shared range on a dealer group's company node and each trade tier on a customer group got tier prices that never applied — every dealer paid retail, with the catalog active, the audience assigned and the percentage saved. The code said two things about whether that was intended: the plan and the resolver describe a fallback chain, while `Spree::Catalog`'s class comment said visibility across applicable catalogs is their union, which reads as both audiences being consulted. The reading had to be ruled before either could be documented.
+
+**Decision:** The fallback chain is the intended behaviour and stays: the company subtree if any of its nodes carry a catalog, otherwise the customer's groups, otherwise the channel's default catalog. A buyer is on one agreement, resolved from the nearest party to them — layering a personal segment's prices on top of a company's negotiated ones would price one purchase under two agreements at once, and which won would depend on catalog position rather than on anything a merchant chose. Trade tiers over a company tree are expressed as company assignments: the shared range on the root, each tier's catalog on the member companies or divisions in that tier (one tier catalog carries as many assignments as the tier has members). That route already works and is what the union-within-an-audience plus nearest-node-first pricing was built for. Customer group assignments remain for buyers not purchasing for a company at all — a retail loyalty tier, a staff discount.
+
+**Consequences:** No behaviour change; the fix is that the code and the dashboard now say so. The class comment is corrected (it was the only place claiming the two audiences combine), the `for_context` and pricing-resolver comments read "or failing that" rather than "then", and the fallback carries an inline note. The dashboard states the precedence where a merchant can act on it: help text under the audience picker when a customer group is chosen, and a standing note on the audience card and wizard step whenever a group assignment is present, pointing at the company route for tier pricing. The developer docs stop framing the three ways of reaching a buyer as combining and carry the tier recipe as a warning. Three examples in `catalog_spec.rb` lock the ruling — the group dropping out once a company catalog exists, the group still applying when none does, and the subtree union when the tier is a company assignment. What is *not* solved: nothing detects a catalog assigned only to groups whose members are all company buyers, so such a catalog is still silently unreachable; a reachability warning needs the buyer population and is a separate piece of work.
+
+## 2026-09-03: Reporting counts what stayed sold; the Total row is the dimensionless figure
+
+**Context:** Reviewing the shipped saved-reports work (`6.0-analytics-semantic-layer.md` Steps 7–9) surfaced two semantic gaps in the live adapter: canceled orders kept counting toward revenue because only `completed_at` scoped the base, and the ungrouped totals carried the grouping joins, so a product in three categories tripled in the footer while orders without a shipping address vanished from "Sales by country".
+
+**Decision:** Both metric bases exclude `status: 'canceled'`. Grouping joins apply only to the grouped query; totals run on the base rows with the same filters, and a filter on a joined dimension narrows through an id subquery so a line item matching two selected categories is counted once. Built-in (seeded) reports are read-only on the model; report CSV exports validate the query and the requester's members at create time. One predicate each for member authorization (`Query#unreadable_subjects`) and base compatibility (`Registry#compatible?`).
+
+**Consequences:** The rows of a fan-out breakdown do not sum to the Total row, by design — the footer is the store figure for the range, the rows are the share each group had in it. Future adapters (fact tables, ClickHouse) inherit the same rule. Refund semantics are unchanged (already net in `payment_total`).
+
+## 2026-09-03: Saved reports are store-wide and export through the Export pipeline
+
+Steps 7–9 of `6.0-analytics-semantic-layer.md` settled three product questions:
+saved reports are visible store-wide (author recorded, viewer re-authorized at
+execution), CSV export is a `Spree::Exports::Report` type on the existing
+async Export pipeline rather than a synchronous download (one export UX across
+the admin), and the full Step 8 vocabulary (presets, week grain, market /
+country / variant dimensions, discounts / delivery / tax metrics) ships with the
+Reports page. The `:reports` permission catalog resource gains write keys and
+covers `Spree::SavedReport` + `Spree::Exports::Report`.
 ## 2026-09-03: A return label buys the cheapest rate; the fulfillment's tracking becomes a read-through summary
 
 **Context:** Implementing `6.0-shipping-labels-and-deliveries.md` raised two
@@ -2500,6 +2718,28 @@ payment providers, OSS platform B per-channel payment apps, the hosted leader's 
    one record (OSS platform B style) — plus the legal-entity attribution question
    (per-entity payouts, compliance, reporting). No plan yet; do not implement.
 
+## 2026-07-22: Analytics semantic layer ships live-OLTP-first; fact tables are a later adapter
+
+`6.0-analytics-semantic-layer.md` deliberately inverts the "fact tables as the
+default substrate" instinct: Phase 1 ships the metric/dimension registry, the
+query contract, and a live-OLTP adapter compiling through store associations —
+zero new infra, correct on SQLite dev installs, proven viable at typical scale
+by the 5.6 Pulse dashboard queries. Because every consumer speaks the contract,
+storage swaps (incremental fact tables in 6.1, ClickHouse for Enterprise)
+without touching consumers. This gets the developer extension point — the
+actual replacement for `Spree::Report` authoring — out a release earlier and
+keeps the hard restatement problems (refunds restating the original day, order
+edits, timezone-of-record) off Phase 1's critical path.
+
+Also decided: forced scopes (store, one-currency-per-money-query, vendor) are
+compiler-enforced below every consumer including the future AI layer; unknown
+query members 422 rather than being silently dropped (the Ransack
+silently-dropped-predicate bug from 2026-07-22 is the cautionary tale); and
+`ankane/rollup` / `ankane/blazer` are design references, not dependencies
+(float-only values + PG-only dimensions, and a raw-SQL trust model with no
+store scoping, respectively). Until Phase 1 lands: no new hand-rolled
+aggregate endpoints anywhere in `spree/api`.
+
 ## 2026-07-21: Order routing rules get admin management in the React dashboard only
 
 Per-channel `Spree::OrderRoutingRule` management (the Phase 2 "Admin API + SPA
@@ -3697,7 +3937,7 @@ match `resource_type: 'Spree::Store'` (today it matches `store_id`, which a
 vendor-resourced assignment passes — scope-exempt admin endpoints such as
 `/admin/tags` and `/admin/store` would be reachable by a vendor-only user
 once vendors exist); ship this ahead of the Vendor model. `Role#audience` and
-a vendor-grantable marker on `register_resource` come from the RBAC plan's
+a vendor-grantable marker on `register_scope` come from the RBAC plan's
 settled direction. Never add a login surface without its own strategy
 registry and JWT audience; refresh tokens carry the audience they were minted
 for. Accepted trade-off: password policy and lockout stay shared between
@@ -5182,3 +5422,183 @@ parcel.
 `Stock::Package#default_package_type`, never `store.default_package_type`;
 seller-facing reads go through `available_to_seller(seller)`, seller writes
 through `seller.package_types`.
+
+## 2026-09-09 — A seller's own books get their own permission key, and a grouped order's payments are read where they were taken
+
+Making the marketplace fund ledger visible (`docs/plans/6.0-seller-ledger-ui.md`)
+forced two questions that outlive the screens themselves.
+
+**The seller ledger is `seller_earnings`, not `seller_profile`.** The obvious
+move was to reuse the profile key, the way `PoliciesController` does for a
+class the operator's `settings` owns. It was rejected: settlement
+*configuration* is the seller's profile, but what they have earned is their
+books, and a seller's owner must be able to hand a packing teammate the orders
+without also handing them the money. So a new read-only, seller-audience
+catalog resource with a symbol subject — the ledger classes stay subjects of
+the operator's `payouts` key, and claiming them twice would make
+`scope_for_resource` answer by registration order. The cost is real and was
+accepted knowingly: **a role holds the keys it was created with and is never
+re-read**, so a key added to the catalog reaches new roles only. That is
+harmless here because sellers are new in 6.0 and no older role exists — but a
+seller-audience key added after 6.0 ships needs a backfill task, and the
+question to ask before adding one is always "which existing roles does this
+silently not reach?"
+
+**A grouped child order's payments are the group's, read-only, with the
+child's share beside them.** `order.payments` is empty on an order from a
+split checkout, so the operator's payments card rendered "no payments" on an
+order that was paid in full — wrong, not merely incomplete. The fix reads the
+group's payments and the order's `payment_splits` and shows both, and it
+deliberately **does not** re-point `Admin::OrderSerializer#payments` at
+`settlement_payments`: that would change what `order.payments` means for every
+consumer, and capture/void through `orders/:id/payments` would then act on
+every sibling's money without saying so. Capture, void and add are hidden on a
+grouped child for the same reason — they belong on a surface that names every
+order they touch.
+
+**Constraints now:** a seller-facing money serializer carries amounts, never
+provenance (no payment id, method, gateway status or source — `Seller::
+PaymentSplitSerializer` and `Seller::TransferSerializer` are the reference);
+seller ledger endpoints authorize `:seller_earnings` and root in
+`current_seller`, never by opening `payouts` or `payments` to the seller
+audience; and a new `q[<column>_eq]` filter on either ledger model needs that
+column in `whitelisted_ransackable_attributes` — a whitelisted association
+name does not make its foreign key filterable.
+
+## 2026-09-12 — Reporting: the carts family, and abandonment is not the reaper's population
+
+The reporting vocabulary gains a fourth family. A cart is its own table in 6.0,
+so **abandoned carts and cart conversion are a `:carts` base anchored on
+`created_at`**, never a filter on orders: the population being measured is the
+carts that were *started*, and anchoring on completion drops every cart that
+never converted — the exact rows the report is about. The one-family rule
+refuses to mix carts with sales for the same reason it refuses sales with
+inventory; the two clocks mean different things.
+
+**Abandonment is incomplete + untouched for the store's
+`abandoned_cart_after_hours` window, and nothing else.**
+`Carts::ReapExpiredJob` additionally excludes carts carrying a live payment
+session or a valid payment, and reporting deliberately **does not** inherit
+that: the exclusion is there so the reaper cannot destroy rows with money
+attached, not because such a cart is un-abandoned. A cart stalled mid-payment
+is the most recoverable kind there is, and dropping it would hide the rows the
+report exists to surface. The report and the reaper therefore disagree about
+which carts they mean, which is recorded because they otherwise look like they
+should match. Consequence worth knowing: the reaper destroys abandoned carts at
+30 days (guest) / 90 days (customer), so an abandoned-cart report over a longer
+range under-reports because the rows are gone.
+
+**Promotion attribution reads `spree_discounts`**, which carries
+`promotion_id`, `promotion_action_id` and a snapshot of the redeemed `code` on
+every money row. Three rules bind anyone adding to it: `amount` is non-positive
+by DB constraint so metrics sum `-amount`; `promotion_id` is nullified rather
+than cascaded on deletion so the dimension must group NULL as "Unassigned"; and
+rows are `order_id` XOR `cart_id`, so a sales-family join that omits the owner
+filter mixes unpurchased cart discounts into revenue. Redemptions count
+checkouts (`COALESCE(order_group_id, id)`), not orders — a multi-seller basket
+is one redemption.
+
+**Constraints now:** a metric filter (`HAVING`) never touches the ungrouped
+totals query — the Total stays the period's real figure; a new grain is taught
+to `time_bucket_sql` and `expected_buckets` together, because an unhandled
+grain falls through to `nil` and silently groups by NULL rather than raising;
+and `cart_conversion_rate` is never renamed to `conversion_rate` — storefront
+conversion needs session data that never reaches Spree, and the two numbers
+must not be confusable.
+
+**Reporting refusal data is registry data, not compiler data.** The compiler
+briefly held three hardcoded lists — which metrics need grouping, what to
+suggest when an order-level metric is refused for a per-line breakdown, and
+what each family's clock means. All three are now fields on the definitions
+(`requires_grouping:` and `suggests:` on a metric, `clock:` on a base), for the
+same reason a base is registered rather than hardcoded: an extension's own
+metric must get the same refusals and the same advice without editing core.
+`per_group` as a boolean was the wrong shape — it could say a metric needed
+grouping but not *by what*, so the dimension was hardcoded in the validator
+beside it.
+
+**Customer lifetime value needs `spree_orders (store_id, email)`.** The metric
+correlates a customer's whole history on email, which had no index at all, so
+each customer group drove a full scan; and it walked that history twice, once
+for totals and again for refunds. One pass over the new index. Anything else
+correlating on order email needs the same index to be viable.
+
+
+## 2026-09-13 — Stored value is not a promotion: gift cards and store credits live under Loyalty
+
+Plan: `6.0-6.1-loyalty-gift-cards-store-credits.md`.
+
+Gift cards sat under Promotions in the dashboard nav and in the user docs
+because both reduce an order total at checkout. That is where the likeness
+ends. A promotion is marketing: margin given up to change behaviour. A gift
+card or a store credit is prepaid money the store owes, a liability with a
+balance, redemption statuses and a ledger, and no rules or actions. Every
+platform in the comparison keeps the two apart; so does our model.
+
+**Decision.** A top-level **Loyalty** group holds Gift Cards and a new
+cross-customer Store Credits list, and is the home for any rewards or points
+programme later. Promotions keeps only the discount machinery. The
+`gift_cards` and `store_credits` permission keys move to a `loyalty` group;
+the key names do not change, so existing roles keep working.
+
+**Store credits are edited per customer and listed across customers.**
+`GET /admin/store_credits` (index, show) is read-only; create, update and
+destroy stay nested under `/customers/:id/store_credits`. The list carries
+`meta.totals`, one grouped sum per currency over the filtered scope, so the
+same list answers "this customer's balance" and "the store's liability"
+depending on the filter. A separate balances resource was rejected because it
+could not follow the filters; waiting for Reports was rejected because the
+list would then answer "who" but not "how much".
+
+**Consequences for other work.** Anything that should not apply to prepaid
+money (tax, promotions, inventory, shipping, paying a balance with a balance)
+must check one predicate on the product, `gift_card?`, which phase 2 adds as
+a boolean on `spree_products`. Do not introduce a second "non-physical" flag
+that would need reconciling with it. Gift card codes never appear in events,
+logs or the buyer's order payload; only the recipient email carries the code.
+Recipient details get their own table rather than columns on
+`spree_line_items` or keys in `metadata`.
+
+**Two implementation calls settled when phase 1 was built (2026-09-13).** The
+cross-customer store credit list opens a **read-only** detail sheet carrying the
+credit's amounts, origin, issuer, memo and its `StoreCreditEvent` ledger, and
+links out to the customer profile for edits — the list never writes, so the
+"writes stay nested under the customer" constraint holds without exception. The
+per-currency `meta.totals` render as **one summary card per currency above the
+table**, showing outstanding, issued and used; a single line or a footer row
+cannot carry three figures per currency once a store trades in more than one.
+
+
+## 2026-09-14 — Store configuration is a file deployed through the Admin API, not Ruby seeds
+
+Plan: `6.0-cli-configurator.md`.
+
+Shaping an environment (channels, markets, tax, delivery, payment methods,
+catalog, customer groups, roles, origins, webhooks) was only possible from
+Ruby: `db:seed`, `spree:load_sample_data`, or Ruby embedded in the
+dashboard's e2e global setup. None of that works against a hosted instance,
+none of it is reviewable as a change, and headless teams on the API-only
+install may never open the Rails side.
+
+**Decision.** `spree config diff | deploy | introspect | validate` in
+`@spree/cli` reconciles a YAML file against a live store through the Admin
+API. YAML is canonical (comments, block text, clean diffs); JSON is accepted
+because YAML is its superset; no `defineConfig()` TypeScript form. Records are
+matched on natural keys, never prefixed IDs. Deploy is additive: deletes
+happen only in sections named in `--prune`, and `--fail-on-delete` refuses any
+plan with a delete. The engine lives inside `@spree/cli` as an exported
+library entry so the dashboard e2e setup imports it. Every project scaffolded
+by `create-spree-app` ships a `spree.config.yml` with the store, its default
+channel and default market, and `spree init` deploys it.
+
+**Bootstrap stays in Ruby.** The store row, the immutable admin role, the
+first admin user and the first API key have no API by design and a Rails app
+must seed without Node, so `Spree::Seeds::All` does not shrink. Transaction
+data (orders, payments, fulfillments, payouts) is never configuration.
+
+**Consequences for other work.** A new admin-manageable resource needs a
+stable, unique, human-readable key (code, slug or name, unique per store,
+backed by an index) and that key on its Ransack allowlist, or it cannot be
+declared in a config file. Credential attributes on payment methods and
+integrations must never read back in plain text through the Admin API;
+`introspect` relies on that. Do not add a Ruby-side YAML loader to core.

@@ -213,7 +213,7 @@ export function FileUploadField({
             Enter/Space; the label paints a focus ring via has-[:focus-visible]. */}
         <label
           className={cn(
-            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-accent/50',
+            'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed px-4 py-8 text-center transition-colors hover:bg-accent/50',
             'has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
             (disabled || !!pending) && 'pointer-events-none opacity-60',
           )}

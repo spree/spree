@@ -143,7 +143,7 @@ describe('readmeContent', () => {
   it('includes eject instructions', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('spree eject')
-    expect(content).toContain('backend/')
+    expect(content).toContain('server/')
   })
 
   it('uses spree cli commands', () => {
@@ -234,11 +234,11 @@ describe('gitignoreContent', () => {
 })
 
 describe('dependabotContent', () => {
-  it('covers the root wrapper, backend gems, and CI', () => {
+  it('covers the root wrapper, server gems, and CI', () => {
     const content = dependabotContent(false)
     expect(content).toContain('version: 2')
     expect(content).toContain('package-ecosystem: npm\n    directory: "/"')
-    expect(content).toContain('package-ecosystem: bundler\n    directory: "/backend"')
+    expect(content).toContain('package-ecosystem: bundler\n    directory: "/server"')
     expect(content).toContain('package-ecosystem: github-actions')
   })
 
@@ -277,7 +277,7 @@ describe('dependabotContent', () => {
     expect(content.match(/applies-to: version-updates/g)).toHaveLength(4)
     // Group names are unique per ecosystem.
     expect(content).toContain('root-security:')
-    expect(content).toContain('backend-version:')
+    expect(content).toContain('server-version:')
     expect(content).toContain('storefront-security:')
   })
 })

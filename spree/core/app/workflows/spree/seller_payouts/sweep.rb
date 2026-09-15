@@ -34,6 +34,7 @@ module Spree
         super
 
         step :ensure_payable
+        external_step :resolve_available_payout
         step :collect_transfers
         step :ensure_worth_sending
         run_hooks :validate
@@ -54,11 +55,49 @@ module Spree
         halt!(seller) unless seller.payouts_enabled?
       end
 
+      # What a seller has earned and what their account can send are different
+      # figures — money credited on fulfilment is only payable once the
+      # customer's payment settles. Asked before anything is claimed, so a
+      # provider that refuses to answer costs a period rather than a payout.
+      def resolve_available_payout
+        @available = provider.available_payout(seller, currency)
+      rescue StandardError => e
+        # A refusal rather than a halt: halting reads as "nothing to settle",
+        # which is what an operator pressing Settle would be told while the
+        # provider was simply unreachable.
+        Rails.error.report(e, handled: true, context: { seller_id: seller.id, currency: currency }, source: 'spree.core')
+        failure(seller, e.message)
+      end
+
+      # Selected and summed on what the seller's account holds, not on what the
+      # sale was priced in: a cross-border account settles in its own currency,
+      # and that is the only figure a payout can move.
       def collect_transfers
-        @transfers = seller.seller_transfers.unsettled.where(currency: currency).to_a
+        rows = seller.seller_transfers.unsettled.settling_in(currency).order(:created_at, :id).to_a
+        halt!(seller) if rows.empty?
+
+        @transfers = payable_within(rows)
         halt!(seller) if @transfers.empty?
 
-        @amount = @transfers.sum(&:amount)
+        @amount = @transfers.sum(&:settlement_amount)
+      end
+
+      # Every reversal counts, whatever is available: it is money already taken
+      # back, and leaving one out would settle earnings it cancels. Earnings
+      # then join oldest first until the next one would not fit, so a payout
+      # stays a contiguous period a seller can reconcile rather than a
+      # selection made to hit a number.
+      def payable_within(rows)
+        return rows if @available.nil?
+
+        reversals, earnings = rows.partition { |row| row.settlement_amount.negative? }
+        running = reversals.sum(&:settlement_amount)
+
+        reversals + earnings.take_while do |earning|
+          fits = (running + earning.settlement_amount) <= @available
+          running += earning.settlement_amount if fits
+          fits
+        end
       end
 
       # Below the threshold the balance carries to the next period rather than

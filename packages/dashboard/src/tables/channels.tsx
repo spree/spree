@@ -6,6 +6,8 @@ import i18n from 'i18next'
 
 defineTable<Channel>('channels', {
   title: i18n.t('admin.pages.channels.title'),
+  docsPath: 'settings/sales-channels',
+  description: i18n.t('admin.table_descriptions.channels'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'name', direction: 'asc' },
@@ -41,7 +43,13 @@ defineTable<Channel>('channels', {
       filterable: true,
       filterType: 'boolean',
       default: true,
-      render: (channel) => <ActiveBadge active={channel.active} />,
+      render: (channel) => (
+        <ActiveBadge
+          active={channel.active}
+          activeLabel={i18n.t('admin.common.active')}
+          inactiveLabel={i18n.t('admin.common.inactive')}
+        />
+      ),
     },
     {
       key: 'default',

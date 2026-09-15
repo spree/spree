@@ -154,7 +154,10 @@ export function CreateClaimDialog({
               const chosenQuantity = selection[line.id] ?? 0
 
               return (
-                <div key={line.id} className="flex flex-col gap-2 rounded-lg border p-3">
+                <div
+                  key={line.id}
+                  className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
+                >
                   <div className="flex items-center justify-between gap-4">
                     <span className="min-w-0 truncate text-sm">{line.label}</span>
                     <Input

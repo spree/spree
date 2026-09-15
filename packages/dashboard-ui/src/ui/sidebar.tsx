@@ -14,10 +14,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = '220px'
+const SIDEBAR_WIDTH = '240px'
 /**
  * Width of any nav drawer on a phone: near-full-width, capped so it doesn't
- * stretch on a tablet. The desktop rail's 220px leaves ~45% of a phone screen
+ * stretch on a tablet. The desktop rail's width leaves ~40% of a phone screen
  * unused while still cramping the labels. Exported so a second drawer (the
  * settings nav sheet) matches this one instead of re-inlining the number.
  */
@@ -173,7 +173,11 @@ function SidebarProvider({
           } as React.CSSProperties
         }
         className={cn(
-          'group/sidebar-wrapper flex min-h-svh w-full has-data-[variant=inset]:bg-sidebar',
+          // `h-svh` + `overflow-hidden`, not `min-h-svh`: an inset shell scrolls
+          // inside its own sheet, so the wrapper must be exactly the viewport
+          // and never let the document scroll behind it.
+          'group/sidebar-wrapper flex w-full has-data-[variant=inset]:h-svh has-data-[variant=inset]:overflow-hidden has-data-[variant=inset]:bg-sidebar',
+          'not-has-data-[variant=inset]:min-h-svh',
           className,
         )}
         {...props}
@@ -281,7 +285,7 @@ function Sidebar({
         <div
           data-sidebar="sidebar"
           data-slot="sidebar-inner"
-          className="flex size-full flex-col bg-sidebar border-e border-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+          className="flex size-full flex-col bg-sidebar group-data-[variant=sidebar]:border-e group-data-[variant=sidebar]:border-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
         >
           {children}
         </div>
@@ -299,7 +303,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon-sm"
-      className={cn(className)}
+      className={cn('hover:bg-accent-strong-hover', className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
@@ -337,16 +341,27 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
   )
 }
 
-function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
+function SidebarInset({ className, id = 'main-content', ...props }: React.ComponentProps<'main'>) {
   return (
     <main
+      // The skip link's target. Defaulted here rather than set by each host so
+      // the link cannot point at nothing.
+      id={id}
+      // `-1`: a container is not normally focusable, but the skip link has to
+      // be able to move focus here — without it the browser scrolls to the
+      // anchor and leaves focus behind in the nav, so the next Tab continues
+      // through the sidebar the user just asked to skip.
+      tabIndex={-1}
       data-slot="sidebar-inset"
       className={cn(
         // `min-w-0`: `w-full` sets the flex basis to the wrapper's full width,
         // and a flex item's default `min-width: auto` then refuses to shrink
         // below it — so beside the collapsed icon rail the inset stays a full
         // viewport wide and its content runs off the right edge.
-        'relative z-0 flex w-full min-w-0 flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
+        // The inset sheet is the raised surface, so it takes the card colour —
+        // pure white in light mode — rather than the page grey, which is now the
+        // ground the rail sits on.
+        'relative z-0 flex w-full min-w-0 flex-1 flex-col bg-background md:peer-data-[variant=inset]:bg-card md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:border md:peer-data-[variant=inset]:border-sidebar-border md:peer-data-[variant=inset]:shadow-sm',
         className,
       )}
       {...props}
@@ -373,7 +388,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>) {
       className={cn(
         // In the drawer the switcher is the only thing above the nav, so it
         // needs a rule under it to read as a header rather than a first row.
-        'flex flex-col gap-0 px-2 in-data-[mobile=true]:border-b in-data-[mobile=true]:border-border-subtle in-data-[mobile=true]:pb-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        'flex flex-col gap-3 px-2 in-data-[mobile=true]:border-b in-data-[mobile=true]:border-border-subtle in-data-[mobile=true]:pb-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -387,7 +402,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-footer"
       data-sidebar="footer"
       className={cn(
-        'flex flex-col gap-0 p-2 mt-auto border-t border-border group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        'flex flex-col gap-0 p-2 mt-auto border-t border-border-subtle group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -412,7 +427,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        'no-scrollbar flex min-h-0 flex-1 flex-col gap-0 pt-2 overflow-auto group-data-[collapsible=icon]:overflow-visible',
+        'no-scrollbar flex min-h-0 flex-1 flex-col gap-0 pt-3 overflow-auto group-data-[collapsible=icon]:overflow-visible',
         className,
       )}
       {...props}
@@ -426,7 +441,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-group"
       data-sidebar="group"
       className={cn(
-        'relative flex w-full min-w-0 flex-col px-3 py-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        'relative flex w-full min-w-0 flex-col px-2 py-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
         className,
       )}
       {...props}
@@ -518,7 +533,7 @@ const sidebarMenuButtonVariants = cva(
   // badge. Without it the flex line wraps and the label visibly squashes to two
   // lines inside the fixed height until the animation lands. Labels clip
   // instead — which is what the `truncate` below already intends.
-  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden whitespace-nowrap rounded-lg p-1 text-left text-base text-sidebar-foreground/80 outline-hidden transition-colors duration-100 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-foreground data-active:bg-sidebar-accent data-active:text-foreground data-active:font-semibold [&>span:last-child]:truncate',
+  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden whitespace-nowrap rounded-md p-1 text-left font-medium text-base text-sidebar-foreground/80 outline-hidden transition-[color,background-color,border-color,box-shadow] duration-100 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent-hover data-open:hover:text-sidebar-foreground data-active:bg-accent-strong data-active:text-foreground data-active:font-semibold data-active:hover:bg-accent-strong-hover [&>span:last-child]:truncate',
   {
     variants: {
       variant: {
@@ -619,13 +634,31 @@ function SidebarMenuAction({
   )
 }
 
+/**
+ * A count or progress marker on a nav item — "3" beside Orders, "2/6" beside
+ * Getting Started.
+ *
+ * Its own component rather than the page's `Badge`: this one sits on the rail
+ * rather than on a card, so it takes the sidebar's foreground token and follows
+ * the item it belongs to (brightening with the label on hover, going full
+ * strength when the item is active). A page badge on a nav row keeps the card
+ * palette and stays the same colour while everything around it moves.
+ *
+ * Rendered inline, at the end of the item's own row — not absolutely positioned
+ * like shadcn's original, which assumed a badge placed as a sibling of the
+ * button rather than inside its link.
+ */
 function SidebarMenuBadge({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="sidebar-menu-badge"
       data-sidebar="menu-badge"
       className={cn(
-        'pointer-events-none absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium text-sidebar-foreground tabular-nums select-none group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5 peer-data-[size=sm]/menu-button:top-1 peer-data-active/menu-button:text-sidebar-accent-foreground',
+        'pointer-events-none flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md border border-sidebar-border px-1.5 text-[11px] font-medium text-sidebar-foreground/70 tabular-nums select-none',
+        'transition-colors duration-100 ease-out group-data-[collapsible=icon]:hidden',
+        // Follows its own row: brighter under the pointer, full strength when
+        // the item is the active one.
+        'group-hover/menu-button:text-sidebar-foreground group-data-active/menu-button:text-foreground',
         className,
       )}
       {...props}
@@ -711,7 +744,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 in-data-[mobile=true]:h-11 in-data-[mobile=true]:px-2 min-w-0 items-center gap-2 overflow-hidden rounded-lg p-1 text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 in-data-[mobile=true]:h-11 in-data-[mobile=true]:px-2 min-w-0 items-center gap-2 overflow-hidden rounded-lg p-1 font-medium text-sidebar-foreground/80 outline-hidden group-data-[collapsible=icon]:hidden hover:bg-sidebar-accent-hover hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-foreground data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

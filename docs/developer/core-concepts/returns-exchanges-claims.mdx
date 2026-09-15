@@ -169,6 +169,8 @@ how postage records work in general.
 
 What to do about a claim is decided when you resolve it, not when the customer opens it — merchants usually decide once they've seen the photos.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.orders.claims.approve('or_xxx', 'clm_xxx')
 
@@ -179,11 +181,29 @@ await adminClient.orders.claims.resolve('or_xxx', 'clm_xxx', {
 })
 ```
 
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/clm_xxx/approve' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/clm_xxx/resolve' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "resolution": "refund_and_replacement",
+    "refund_method": "store_credit",
+    "replacement_line_item_ids": ["li_xxx"]
+  }'
+```
+
+</CodeGroup>
+
 A replacement creates a new [fulfillment](/developer/core-concepts/fulfillments) on the original order, so the customer doesn't have to place a second one.
 
 ## Exchanges
 
 An exchange works like a return, but ends by sending different items instead of refunding:
+
+<CodeGroup>
 
 ```typescript Admin SDK
 await adminClient.orders.exchanges.approve('or_xxx', 'exch_xxx')
@@ -191,19 +211,44 @@ await adminClient.orders.exchanges.receive('or_xxx', 'exch_xxx')
 await adminClient.orders.exchanges.fulfill('or_xxx', 'exch_xxx')
 ```
 
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/exchanges/exch_xxx/approve' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/exchanges/exch_xxx/receive' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/exchanges/exch_xxx/fulfill' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
 ## Reporting
 
 Because each one is its own record, you can query them directly:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Everything awaiting action
-const pending = await adminClient.returns.list({ filter: { status_eq: 'approved' } })
+const pending = await adminClient.returns.list({ status_eq: 'approved' })
 
 // Claims opened this month
 const claims = await adminClient.claims.list({
-  filter: { created_at_gt: '2026-08-01' },
+  created_at_gt: '2026-08-01',
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/returns?q[status_eq]=approved' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl 'https://api.mystore.com/api/v3/admin/claims?q[created_at_gt]=2026-08-01' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 ## Return policy
 

@@ -209,7 +209,10 @@ export function BulkPriceEditorDialog({
             </Button>
           </div>
         </DialogHeader>
-        <DialogBody className="flex min-h-0 flex-1 flex-col p-3">
+        {/* `p-0`: the editor pads its own toolbar and pager, so the grid
+            between them reaches the dialog's edges instead of floating
+            inside a gutter. */}
+        <DialogBody className="flex min-h-0 flex-1 flex-col p-0">
           <BulkPriceEditor
             priceListId={priceList.id}
             currency={currency}

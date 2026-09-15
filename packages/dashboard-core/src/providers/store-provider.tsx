@@ -31,9 +31,23 @@ interface StoreContextValue {
   /** ISO country the store sells from — used to pre-fill new address forms. */
   defaultCountry: string
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
-   *  browser's resolved timezone when the store hasn't loaded yet. */
+   *  browser's resolved timezone when the store hasn't loaded yet, or when
+   *  the store's preference is not a name this platform recognizes. */
   timezone: string
   refetch: () => Promise<unknown>
+}
+
+const browserTimezone = () => Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+
+/** The store's zone when it is an IANA name the platform knows, else the browser's. */
+function resolveTimezone(preferred: string | null | undefined): string {
+  if (!preferred) return browserTimezone()
+  try {
+    Intl.DateTimeFormat('en-US', { timeZone: preferred })
+    return preferred
+  } catch {
+    return browserTimezone()
+  }
 }
 
 const StoreContext = createContext<StoreContextValue | null>(null)
@@ -82,8 +96,10 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   const defaultCurrency = store?.default_currency ?? 'USD'
   const defaultLocale = store?.default_locale ?? 'en'
   const defaultCountry = store?.default_country_code ?? ''
-  const timezone =
-    store?.preferred_timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'UTC'
+  // A store's zone preference defaults to the host app's `Time.zone.name`,
+  // which may be a Rails name ("Eastern Time (US & Canada)") that Intl and
+  // date-fns-tz reject — falling back keeps every date control working.
+  const timezone = resolveTimezone(store?.preferred_timezone)
 
   return (
     <StoreContext.Provider

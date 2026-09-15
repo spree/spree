@@ -35,6 +35,36 @@ describe 'spree:cli:create_api_key' do
       expect(key.scopes).to eq(%w[read_orders write_promotions])
     end
 
+    context 'when an active key already carries the name' do
+      let!(:previous) { create(:api_key, :secret, name: 'CI key', store: store, scopes: %w[read_all]) }
+
+      it 'refuses, since names are unique among a store\'s active keys' do
+        expect { subject.invoke }.to raise_error(ActiveRecord::RecordInvalid, /Name/)
+      end
+
+      context 'with REPLACE=true' do
+        let(:env) { super().merge('REPLACE' => 'true') }
+
+        it 'leaves the previous key usable when the replacement cannot be created' do
+          allow_any_instance_of(Spree::ApiKey).to receive(:save!).and_raise(
+            ActiveRecord::RecordInvalid.new(Spree::ApiKey.new)
+          )
+
+          expect { subject.invoke }.to raise_error(ActiveRecord::RecordInvalid)
+          # The revoke rolled back with the failed create, so the operator
+          # still has a working key.
+          expect(previous.reload.revoked_at).to be_nil
+        end
+
+        it 'revokes the previous key and mints the new one' do
+          expect { subject.invoke }.to output(/\Ask_/).to_stdout
+
+          expect(previous.reload.revoked_at).to be_present
+          expect(store.api_keys.active.where(name: 'CI key').count).to eq(1)
+        end
+      end
+    end
+
     context 'without SCOPES' do
       let(:env) { { 'NAME' => 'CI key', 'KEY_TYPE' => 'secret' } }
 

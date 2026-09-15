@@ -9,6 +9,8 @@ import { customerDisplayName, erasedFieldValue } from '../lib/erased-customer'
 
 defineTable('customers', {
   title: i18n.t('admin.nav.customers'),
+  docsPath: 'customers/customer-profile',
+  description: i18n.t('admin.table_descriptions.customers'),
   searchParam: 'search',
   searchPlaceholder: i18n.t('admin.customers.table.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

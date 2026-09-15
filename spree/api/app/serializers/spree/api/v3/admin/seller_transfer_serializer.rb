@@ -14,11 +14,14 @@ module Spree
                    refund_id: 'string | null',
                    seller_name: 'string | null',
                    order_number: 'string | null',
-                   kind: :string,
-                   status: :string,
-                   provider: :string,
+                   kind: [:string, enum: Spree::SellerTransfer::KINDS],
+                   status: [:string, enum: Spree::SellerTransfer.statuses, enum_type_name: 'SellerTransferStatus'],
+                   provider: [:string, comment: 'Payout provider class name. Built-in: Spree::PayoutProvider::System. Provider gems register more.'],
                    amount: :string,
                    currency: :string,
+                   settled_amount: 'string | null',
+                   settled_currency: 'string | null',
+                   converted: :boolean,
                    reference: 'string | null',
                    display_amount: :string
 
@@ -28,6 +31,12 @@ module Spree
           # A string, so the figure a seller is paid round-trips exactly.
           attribute(:amount) { |transfer| transfer.amount&.to_s }
           attribute(:display_amount) { |transfer| transfer.display_amount.to_s }
+
+          # What the seller's account received, when the provider converted on
+          # the way in. Null when it settled in the currency of the sale.
+          attribute(:settled_amount) { |transfer| transfer.settled_amount&.to_s }
+          attribute(:settled_currency) { |transfer| transfer.settled_currency }
+          attribute(:converted) { |transfer| transfer.converted? }
 
           %i[seller order payout reversed_from refund].each do |association|
             attribute(:"#{association}_id") { |transfer| transfer.public_send(association)&.prefixed_id }

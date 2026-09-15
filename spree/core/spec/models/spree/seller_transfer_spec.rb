@@ -26,6 +26,65 @@ RSpec.describe Spree::SellerTransfer, type: :model do
     end
   end
 
+  # A sale is priced in the customer's currency; the seller's account settles in
+  # its own. Both figures are recorded, and the settlement one is what a payout
+  # can actually move.
+  describe 'settlement' do
+    let(:seller) { create(:seller, :approved, store: store) }
+
+    def transfer(**attrs)
+      create(:seller_transfer, seller: seller, currency: 'USD', amount: 69.80,
+                               order: create(:order, store: store, seller: seller), **attrs)
+    end
+
+    it 'answers what the account received when the provider converted' do
+      row = transfer(settled_amount: 51.60, settled_currency: 'GBP')
+
+      expect(row.settlement_amount).to eq(51.60)
+      expect(row.settlement_currency).to eq('GBP')
+      expect(row).to be_converted
+    end
+
+    it 'falls back to the sale when no settlement was reported' do
+      row = transfer
+
+      expect(row.settlement_amount).to eq(69.80)
+      expect(row.settlement_currency).to eq('USD')
+      expect(row).not_to be_converted
+    end
+
+    it 'is not a conversion when the provider settled in the same currency' do
+      expect(transfer(settled_amount: 69.80, settled_currency: 'USD')).not_to be_converted
+    end
+
+    # An aggregate over an expression carries no column type, so the adapter
+    # decides what comes back — a Float on SQLite and MySQL. Money is not kept
+    # in one.
+    it 'sums settlement in decimal, whatever the adapter' do
+      transfer(settled_amount: 51.60, settled_currency: 'GBP')
+
+      expect(Spree::SellerTransfer.settling_in('GBP').settlement_total).to be_a(BigDecimal)
+      expect(seller.balance('GBP')).to be_a(BigDecimal)
+    end
+
+    it 'sums the sale figure for rows no provider has settled' do
+      transfer
+      transfer(settled_amount: 51.60, settled_currency: 'GBP')
+
+      expect(Spree::SellerTransfer.settling_in('USD').settlement_total).to eq(69.80)
+      expect(Spree::SellerTransfer.settling_in('GBP').settlement_total).to eq(51.60)
+    end
+
+    it 'groups by the currency a payout could send' do
+      converted = transfer(settled_amount: 51.60, settled_currency: 'GBP')
+      plain = transfer
+
+      expect(Spree::SellerTransfer.settling_in('GBP')).to contain_exactly(converted)
+      expect(Spree::SellerTransfer.settling_in('USD')).to contain_exactly(plain)
+      expect(Spree::SellerTransfer.where(seller: seller).settlement_currencies).to match_array(%w[GBP USD])
+    end
+  end
+
   describe '#reversible_amount' do
     let(:earning) { create(:seller_transfer, :completed, seller: seller, order: order, amount: 40) }
 

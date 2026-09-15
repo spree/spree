@@ -48,7 +48,10 @@ function ItemQuantityRow({
 
   return (
     <div
-      className={cn('my-2 flex items-center gap-3 rounded-lg py-2 pl-2', selected && 'bg-accent')}
+      className={cn(
+        'my-2 flex items-center gap-3 rounded-lg py-2 pl-2',
+        selected && 'bg-accent-strong',
+      )}
     >
       <Controller
         control={form.control}

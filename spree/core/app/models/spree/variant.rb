@@ -85,6 +85,14 @@ module Spree
 
     belongs_to :primary_media, class_name: 'Spree::Media', optional: true, foreign_key: :primary_media_id
 
+    # The variant's own image, or its product's when it has none — the
+    # picture a list row shows for it.
+    #
+    # @return [Spree::Media, nil]
+    def thumbnail
+      primary_media || product&.primary_media
+    end
+
     has_many :prices,
              class_name: 'Spree::Price',
              dependent: :destroy,
@@ -167,6 +175,34 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_levels).where(Spree::StockLevel.table_name => { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
+    # Variants one warehouse could actually send: it holds a level for them
+    # with something available on it. Written for the transfer form's picker,
+    # which would otherwise offer SKUs the source has none of — and
+    # `MarkInTransit` refuses those per line, once the van is supposedly
+    # loaded and the merchant has moved on.
+    #
+    # Untracked variants are excluded on purpose, unlike `in_stock`: a
+    # transfer moves counted units, and the ship guard would refuse them too.
+    #
+    # Takes a prefixed or a raw id — a ransackable scope decodes its own
+    # argument, since the controller only decodes keys carrying a predicate
+    # suffix.
+    scope :available_at_stock_location, ->(stock_location) {
+      levels = Spree::StockLevel.table_name
+      # Decoded against the stock location's own prefix, so another model's ID
+      # cannot resolve to a warehouse whose numeric payload happens to match.
+      # Anything that is neither that nor a raw id selects nothing rather than
+      # reaching the database, where a non-numeric value raises on PostgreSQL.
+      location_id = Spree::StockLocation.decode_own_prefixed_id(stock_location)
+      location_id ||= stock_location if stock_location.to_s.match?(/\A\d+\z/)
+
+      next none if location_id.blank?
+
+      joins(:stock_levels).
+        where(levels => { stock_location_id: location_id }).
+        where("#{levels}.count_on_hand - #{levels}.allocated_count > ?", 0)
+    }
+
     scope :eligible, -> { all }
 
     # Variants whose *resolved* seller is the given one: their own column when
@@ -212,7 +248,12 @@ module Spree
     }
 
     scope :with_option_value, lambda { |option_name, option_value|
-      option_type_ids = OptionType.where(name: option_name).ids
+      # Option types are per store, so two stores may each define `size`;
+      # narrow to the store in context so a filter never matches another
+      # store's values.
+      option_types = OptionType.where(name: option_name)
+      option_types = option_types.where(store_id: Spree::Current.store.id) if Spree::Current.store
+      option_type_ids = option_types.ids
       return none if option_type_ids.empty?
 
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
@@ -287,7 +328,8 @@ module Spree
                                                  deleted_at product_id hs_code country_of_origin
                                                  minimum_order_quantity order_multiple purchase_unit units_per_carton
                                                  carton_package_type_id carton_weight cartons_per_pallet]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
+                                             available_at_stock_location)
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)

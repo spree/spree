@@ -10,28 +10,40 @@ Customers interact with your store through the Store API. They can register, log
 ```mermaid
 erDiagram
     Customer ||--o{ Order : "places"
-    Customer ||--o{ Address : "has many"
+    Customer ||--o{ Address : "address book"
+    Customer ||--o| Address : "default ship/bill"
     Customer ||--o{ Wishlist : "has many"
     Customer ||--o{ StoreCredit : "has many"
-    Customer ||--o{ PaymentSource : "has many"
+    Customer ||--o{ GiftCard : "holds"
+    Customer ||--o{ CompanyMembership : "buys for"
+    CompanyMembership }o--|| Company : "belongs to"
+    Customer }o--o{ CustomerGroup : "segmented by"
 
     Customer {
-        string id
         string email
         string first_name
         string last_name
+        string phone
     }
 
     Order {
         string number
-        string state
+        string payment_status
+        string fulfillment_status
     }
 
     Address {
+        string label
         string first_name
         string last_name
+        string company
         string address1
+        string address2
         string city
+        string postal_code
+        string state_code
+        string country_code
+        string phone
     }
 
     Wishlist {
@@ -74,7 +86,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/customers' \
 <Note>
 The Store API flow above is **customer self-registration** — the customer sets a password and gets a JWT back. To [create a customer record from the back office](/developer/sdk/admin/resources) (importers, CRM sync, phone orders), use the [Admin SDK](/developer/sdk/admin/quickstart) instead. No password is set, so it's a managed record rather than a sign-up:
 
-```typescript
+```typescript Admin SDK
 import { createAdminClient } from '@spree/admin-sdk'
 
 const client = createAdminClient({

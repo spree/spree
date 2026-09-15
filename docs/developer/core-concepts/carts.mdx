@@ -105,15 +105,26 @@ Every change returns the whole cart with new totals, so you never need a second 
 
 When a guest signs in, attach their cart to the account:
 
+<CodeGroup>
+
 ```typescript Store SDK
 await client.carts.associate(cartId, { spreeToken: 'abc123' })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/associate' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H 'X-Spree-Token: abc123'
+```
+
+</CodeGroup>
 
 ## Checkout requirements
 
 A cart tells you what it still needs before it can be completed:
 
-```json
+```json Response
 {
   "requirements": [
     {
@@ -178,11 +189,22 @@ This is what lets you design your own checkout. Spree tells you what's missing; 
 
 Discount codes, gift cards and store credit can be applied any time before completion:
 
+<CodeGroup>
+
 ```typescript Store SDK
 await client.carts.discountCodes.apply(cartId, 'SUMMER20')
 await client.carts.giftCards.apply(cartId, 'GIFT-XXXX')
 await client.carts.storeCredits.apply(cartId)
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/discount_codes' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "code": "SUMMER20" }'
+```
+
+</CodeGroup>
 
 ## What completion guarantees
 

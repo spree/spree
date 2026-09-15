@@ -8,12 +8,17 @@ export const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
 /**
  * Focus the product form's description field and type `text`. The field is a
  * tiptap `RichTextEditor` (contenteditable), not a textarea, so `.fill()` is
- * wrong; we click to focus and `keyboard.type` instead, which presses Enter
- * for each `\n` — splitting the text into separate paragraphs.
+ * wrong. Click the editable surface and press Enter for each `\n` so each
+ * line becomes its own paragraph.
  */
 export async function typeDescription(page: Page, text: string): Promise<void> {
-  await page.getByLabel(/^description$/i).click()
-  await page.keyboard.type(text)
+  const editor = page.locator('#product-description')
+  await editor.click()
+  const paragraphs = text.split('\n')
+  for (const [index, paragraph] of paragraphs.entries()) {
+    if (index > 0) await editor.press('Enter')
+    if (paragraph.length > 0) await editor.pressSequentially(paragraph)
+  }
 }
 
 /**
@@ -117,9 +122,9 @@ export const mediaCard = (page: Page) => card(page, /^Media$/)
  * Act on the first media thumbnail: clicking a tile opens its edit sheet, and
  * every other action lives in the tile's right-click menu.
  *
- * Scrolls the Media card below the sticky TopBar + PageHeader stack first —
- * restoring sticky headers (PR #14218) made Playwright's default
- * scroll-into-view land the tile under the header chrome.
+ * Scrolls the Media card clear of the sticky PageHeader first — restoring
+ * sticky headers (PR #14218) made Playwright's default scroll-into-view land
+ * the tile under the header chrome.
  */
 export async function clickMediaThumbnailAction(
   media: Locator,
@@ -130,17 +135,40 @@ export async function clickMediaThumbnailAction(
   const thumb = media.locator('[data-slot="media-thumbnail"]').first()
 
   await thumb.scrollIntoViewIfNeeded()
-  // Keep the card below the stacked sticky TopBar + PageHeader. Playwright's
-  // default click scrolls the target back into view, so we force-click after
-  // positioning — otherwise the header chrome intercepts pointer events.
+  // Keep the card below the sticky PageHeader. Playwright's default click
+  // scrolls the target back into view, so we force-click after positioning —
+  // otherwise the header chrome intercepts pointer events.
+  //
+  // The header publishes its own measured height into this variable, so read
+  // it rather than assuming one: it is the whole of the sticky chrome now that
+  // there is no top bar above it.
+  //
+  // Scroll the sheet, not the window. The inset shell is exactly viewport
+  // height and scrolls inside itself, so the document cannot scroll at all and
+  // `window.scrollBy` moves nothing — the tile would stay under the header.
   await media.evaluate((el) => {
     const headerHeight =
       Number.parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--spacing-header-height'),
-      ) || 58
-    const stickyOffset = headerHeight * 2 + 24
+      ) || 0
+    const stickyOffset = headerHeight + 24
     const top = el.getBoundingClientRect().top
-    if (top < stickyOffset) window.scrollBy(0, top - stickyOffset)
+    if (top >= stickyOffset) return
+
+    const delta = top - stickyOffset
+    // Nearest scrollable ancestor: the shell's sheet in the new layout, and
+    // the document in any context that still scrolls that way.
+    let node: HTMLElement | null = el.parentElement
+    while (node) {
+      const style = getComputedStyle(node)
+      const scrolls = /auto|scroll/.test(style.overflowY)
+      if (scrolls && node.scrollHeight > node.clientHeight) {
+        node.scrollTop += delta
+        return
+      }
+      node = node.parentElement
+    }
+    window.scrollBy(0, delta)
   })
 
   if (action === 'edit') {

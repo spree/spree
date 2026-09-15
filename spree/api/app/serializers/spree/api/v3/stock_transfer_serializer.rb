@@ -4,13 +4,13 @@ module Spree
   module Api
     module V3
       class StockTransferSerializer < BaseSerializer
-        # `type` is not exposed: Spree::StockTransfer has no STI subclasses, so
-        # the column is a legacy vestige that is always nil. The admin
-        # serializer already omits it.
-        typelize number: [:string, nullable: true],
+        # Both warehouses are required now: receiving from a supplier is a
+        # Spree::PurchaseOrder, not a transfer with a missing source
+        # (docs/plans/6.0-inventory-operations.md).
+        typelize number: :string,
                  reference: [:string, nullable: true],
-                 source_location_id: [:string, nullable: true],
-                 destination_location_id: [:string, nullable: true]
+                 source_location_id: :string,
+                 destination_location_id: :string
 
         attributes :number, :reference,
                    created_at: :iso8601, updated_at: :iso8601

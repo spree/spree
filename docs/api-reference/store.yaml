@@ -879,8 +879,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2116979
-                  slug: product-2116979
+                  name: Product 2506979
+                  slug: product-2506979
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1054,8 +1054,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2589085
-                  slug: product-2589085
+                  name: Product 2979085
+                  slug: product-2979085
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1086,8 +1086,8 @@ paths:
                   original_price:
                   seller_id:
                 - id: prod_gbHJdmfrXB
-                  name: Product 2598209
-                  slug: product-2598209
+                  name: Product 2988209
+                  slug: product-2988209
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -1216,8 +1216,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2866885
-                slug: product-2866885
+                name: Product 3256885
+                slug: product-3256885
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -1576,8 +1576,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 185715
-                    slug: product-185715
+                    name: Product 224715
+                    slug: product-224715
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1695,8 +1695,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 1862171
-                    slug: product-1862171
+                    name: Product 2252171
+                    slug: product-2252171
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -2004,14 +2004,14 @@ paths:
                 total_quantity: 0
                 warnings:
                 - code: line_item_removed
-                  message: Product 190307 was removed because it was sold out
+                  message: Product 229307 was removed because it was sold out
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                 coupon_code:
                 item_total: '0.0'
                 display_item_total: "$0.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '17.0'
+                display_adjustment_total: "$17.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -2020,16 +2020,16 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '0.0'
-                display_total: "$0.00"
+                total: '17.0'
+                display_total: "$17.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '0.0'
-                display_amount_due: "$0.00"
+                amount_due: '17.0'
+                display_amount_due: "$17.00"
                 delivery_total: '0.0'
                 display_delivery_total: "$0.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '17.0'
+                display_fee_total: "$17.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
@@ -2044,13 +2044,31 @@ paths:
                   step: address
                   field: email
                   message: Email address is required
+                - code: payment_required
+                  step: payment
+                  field: payment
+                  message: Add a payment method
                 order_minimum:
                 order_minimum_shortfall:
                 below_order_minimum: false
                 freight_summary:
                 shipping_eq_billing_address: true
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Gift wrapping
+                  kind: gift_wrap
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '5.0'
+                  display_amount: "$5.00"
+                - id: fee_gbHJdmfrXB
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items: []
                 fulfillments: []
                 payments: []
@@ -2226,8 +2244,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1913263
-                  slug: product-1913263
+                  name: Product 2303263
+                  slug: product-2303263
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2512,8 +2530,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1938992
-                  slug: product-1938992
+                  name: Product 2328992
+                  slug: product-2328992
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2544,7 +2562,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 234 Lovely Street
+                  address1: 252 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2566,7 +2584,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 233 Lovely Street
+                  address1: 251 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2725,8 +2743,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 1964794
-                  slug: product-1964794
+                  name: Product 2354794
+                  slug: product-2354794
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2860,7 +2878,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 240 Lovely Street
+                  address1: 258 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -2882,7 +2900,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 239 Lovely Street
+                  address1: 257 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3065,8 +3083,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2252614
-                  slug: product-2252614
+                  name: Product 2642614
+                  slug: product-2642614
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3264,8 +3282,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2263461
-                  slug: product-2263461
+                  name: Product 2653461
+                  slug: product-2653461
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3451,8 +3469,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2288182
-                  slug: product-2288182
+                  name: Product 2678182
+                  slug: product-2678182
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3562,7 +3580,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 336 Lovely Street
+                  address1: 354 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -3748,8 +3766,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2305702
-                  slug: product-2305702
+                  name: Product 2695702
+                  slug: product-2695702
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4002,8 +4020,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2349569
-                  slug: product-2349569
+                  name: Product 2739569
+                  slug: product-2739569
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4156,10 +4174,10 @@ paths:
                 total_quantity: 2
                 warnings:
                 - code: delivery_unavailable
-                  message: Product 23763 cannot be delivered to the selected address
+                  message: Product 27663 cannot be delivered to the selected address
                   line_item_id: li_UkLWZg9DAJ
                 - code: delivery_unavailable
-                  message: Product 238298 cannot be delivered to the selected address
+                  message: Product 277298 cannot be delivered to the selected address
                   line_item_id: li_gbHJdmfrXB
                 coupon_code:
                 item_total: '29.99'
@@ -4217,8 +4235,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 23763
-                  slug: product-23763
+                  name: Product 27663
+                  slug: product-27663
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4248,8 +4266,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 238298
-                  slug: product-238298
+                  name: Product 277298
+                  slug: product-277298
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4478,8 +4496,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2449165
-                  slug: product-2449165
+                  name: Product 2839165
+                  slug: product-2839165
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5308,8 +5326,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 3069789
-                  slug: product-3069789
+                  name: Product 3459789
+                  slug: product-3459789
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5526,8 +5544,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 308179
-                  slug: product-308179
+                  name: Product 347179
+                  slug: product-347179
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5665,8 +5683,8 @@ paths:
                 completed_at: '2026-01-15T12:00:00.000Z'
                 item_total: '10.0'
                 display_item_total: "$10.00"
-                adjustment_total: '0.0'
-                display_adjustment_total: "$0.00"
+                adjustment_total: '12.0'
+                display_adjustment_total: "$12.00"
                 discount_total: '0.0'
                 display_discount_total: "$0.00"
                 tax_total: '0.0'
@@ -5675,21 +5693,28 @@ paths:
                 display_included_tax_total: "$0.00"
                 additional_tax_total: '0.0'
                 display_additional_tax_total: "$0.00"
-                total: '110.0'
-                display_total: "$110.00"
+                total: '122.0'
+                display_total: "$122.00"
                 gift_card_total: '0.0'
                 display_gift_card_total: "$0.00"
-                amount_due: '110.0'
-                display_amount_due: "$110.00"
+                amount_due: '122.0'
+                display_amount_due: "$122.00"
                 delivery_total: '100.0'
                 display_delivery_total: "$100.00"
-                fee_total: '0.0'
-                display_fee_total: "$0.00"
+                fee_total: '12.0'
+                display_fee_total: "$12.00"
                 store_credit_total: '0.0'
                 display_store_credit_total: "$0.00"
                 covered_by_store_credit: false
                 discounts: []
-                fees: []
+                fees:
+                - id: fee_UkLWZg9DAJ
+                  label: Import duty
+                  kind: duty
+                  line_item_id:
+                  fulfillment_id:
+                  amount: '12.0'
+                  display_amount: "$12.00"
                 items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
@@ -5698,8 +5723,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 248496
-                  slug: product-248496
+                  name: Product 287496
+                  slug: product-287496
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5817,7 +5842,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 392 Lovely Street
+                  address1: 410 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5839,7 +5864,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 393 Lovely Street
+                  address1: 411 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5945,7 +5970,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 198 Lovely Street
+                  address1: 216 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5966,7 +5991,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 199 Lovely Street
+                  address1: 217 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -5987,7 +6012,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 200 Lovely Street
+                  address1: 218 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -6245,7 +6270,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 212 Lovely Street
+                address1: 230 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -6327,7 +6352,7 @@ paths:
                 first_name: John
                 last_name: Doe
                 full_name: John Doe
-                address1: 218 Lovely Street
+                address1: 236 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: Los Angeles
@@ -6822,8 +6847,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2135270
-                    slug: product-2135270
+                    name: Product 2525270
+                    slug: product-2525270
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -6941,7 +6966,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 284 Lovely Street
+                    address1: 302 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -6963,7 +6988,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 285 Lovely Street
+                    address1: 303 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -7144,8 +7169,8 @@ paths:
                   preorder_ships_at:
                   quantity: 1
                   currency: USD
-                  name: Product 2155633
-                  slug: product-2155633
+                  name: Product 2545633
+                  slug: product-2545633
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7263,7 +7288,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 290 Lovely Street
+                  address1: 308 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7285,7 +7310,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 291 Lovely Street
+                  address1: 309 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7506,7 +7531,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 296 Lovely Street
+                  address1: 314 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7527,7 +7552,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 297 Lovely Street
+                  address1: 315 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7549,7 +7574,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 297 Lovely Street
+                  address1: 315 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7571,7 +7596,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 296 Lovely Street
+                  address1: 314 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7663,7 +7688,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 298 Lovely Street
+                  address1: 316 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7684,7 +7709,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 299 Lovely Street
+                  address1: 317 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7706,7 +7731,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 299 Lovely Street
+                  address1: 317 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -7728,7 +7753,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 298 Lovely Street
+                  address1: 316 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -9707,7 +9732,7 @@ paths:
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
-                  sku: SKU-366
+                  sku: SKU-435
                   options_text: ''
                   track_inventory: true
                   media_count: 0
@@ -10638,7 +10663,7 @@ paths:
                   first_name:
                   last_name:
                   full_name: ''
-                  address1: 257 Lovely Street
+                  address1: 275 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -10709,7 +10734,7 @@ paths:
                 first_name:
                 last_name:
                 full_name: ''
-                address1: 260 Lovely Street
+                address1: 278 Lovely Street
                 address2: Northwest
                 postal_code: '10118'
                 city: New York
@@ -10888,8 +10913,8 @@ paths:
                     preorder_ships_at:
                     quantity: 1
                     currency: USD
-                    name: Product 2125649
-                    slug: product-2125649
+                    name: Product 2515649
+                    slug: product-2515649
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -11007,7 +11032,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 268 Lovely Street
+                    address1: 286 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -11029,7 +11054,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 269 Lovely Street
+                    address1: 287 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -12395,7 +12420,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - open
+            - approved
+            - resolved
+            - denied
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resolution:
           type: string
           nullable: true
@@ -12508,6 +12543,11 @@ components:
           type: string
         status:
           type: string
+          enum:
+          - pending
+          - accepted
+          - revoked
+          - expired
       required:
       - id
       - email
@@ -12542,6 +12582,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - company
+          - division
         po_number_required:
           type: boolean
         parent_id:
@@ -12745,8 +12788,20 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - access
+          - erasure
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         requested_at:
           type: string
           nullable: true
@@ -12770,8 +12825,20 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - access
+          - erasure
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         requested_at:
           type: string
           nullable: true
@@ -12914,6 +12981,16 @@ components:
           nullable: true
         status:
           type: string
+          enum:
+          - pending
+          - pre_transit
+          - in_transit
+          - out_for_delivery
+          - available_for_pickup
+          - delivered
+          - return_to_sender
+          - failure
+          - unknown
         tracking_url:
           type: string
           nullable: true
@@ -12941,6 +13018,10 @@ components:
           type: string
         member_type:
           type: string
+          enum:
+          - country
+          - state
+          - postal_code
         country_code:
           type: string
           nullable: true
@@ -13054,6 +13135,9 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - promotion
+          - manual
         code:
           type: string
           nullable: true
@@ -13099,7 +13183,19 @@ components:
         label:
           type: string
         kind:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - surcharge
+            - handling
+            - gift_wrap
+            - cod
+            - payment
+            - duty
+          - type: string
+          description: What sort of charge this is. `duty` is a customs duty on a
+            cross-border order and is not taxed; the other kinds are. Extensions may
+            register further kinds.
         line_item_id:
           type: string
           nullable: true
@@ -13203,9 +13299,23 @@ components:
           type: string
           nullable: true
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - unfulfilled
+            - fulfilled
+            - delivered
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         fulfillment_type:
           type: string
+          enum:
+          - shipping
+          - digital
+          - pickup
+          - pickup_point
         fulfilled_at:
           type: string
           nullable: true
@@ -13307,7 +13417,17 @@ components:
         code:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - active
+            - partially_redeemed
+            - redeemed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
         amount:
@@ -13370,7 +13490,14 @@ components:
         updated_at:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - accepted
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         resource_type:
           type: string
           nullable: true
@@ -13608,6 +13735,10 @@ components:
           type: string
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         position:
           type: number
           nullable: true
@@ -13647,6 +13778,10 @@ components:
           nullable: true
         media_type:
           type: string
+          enum:
+          - image
+          - video
+          - external_video
         focal_point_x:
           type: number
           nullable: true
@@ -13752,6 +13887,10 @@ components:
           type: number
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
       required:
       - id
       - name
@@ -13820,9 +13959,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -13908,9 +14066,28 @@ components:
         fulfillment_status:
           type: string
           nullable: true
+          enum:
+          - backorder
+          - canceled
+          - partial
+          - unfulfilled
+          - fulfilled
+          - delivered
+          - pending
+          - ready
+          - shipped
         payment_status:
           type: string
           nullable: true
+          enum:
+          - none
+          - authorized
+          - partially_paid
+          - paid
+          - partially_refunded
+          - refunded
+          - overcharged
+          - voided
         completed_at:
           type: string
           nullable: true
@@ -14093,6 +14270,9 @@ components:
           nullable: true
         type:
           type: string
+          description: 'Payment method type. Built-in: check, store_credit, custom_payment_source_method,
+            bogus (test only); payment provider gems register their own, for example
+            stripe.'
         session_required:
           type: boolean
         source_required:
@@ -14118,7 +14298,19 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - checkout
+            - processing
+            - pending
+            - completed
+            - failed
+            - void
+            - invalid
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         amount:
           type: string
           nullable: true
@@ -14162,7 +14354,18 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         currency:
           type: string
         external_id:
@@ -14209,7 +14412,18 @@ components:
         id:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+            - canceled
+            - expired
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         external_id:
           type: string
           nullable: true
@@ -14426,6 +14640,10 @@ components:
           type: string
         kind:
           type: string
+          enum:
+          - dropdown
+          - color_swatch
+          - buttons
         options:
           type: array
           items:
@@ -14787,7 +15005,17 @@ components:
         number:
           type: string
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - refunded
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         order_id:
           type: string
           nullable: true
@@ -14872,8 +15100,19 @@ components:
           type: string
         source:
           type: string
+          enum:
+          - purchased
+          - uploaded
         status:
-          type: string
+          anyOf:
+          - type: string
+            enum:
+            - purchased
+            - refund_requested
+            - refunded
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
         carrier:
           type: string
           nullable: true
@@ -14908,6 +15147,9 @@ components:
           type: string
         owner_type:
           type: string
+          enum:
+          - Spree::Fulfillment
+          - Spree::Return
         cost:
           type: string
         display_cost:
@@ -15009,6 +15251,34 @@ components:
       required:
       - id
       x-typelizer: true
+    StoreCreditEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        authorization_code:
+          type: string
+          nullable: true
+        display_action:
+          type: string
+          nullable: true
+        amount:
+          type: string
+        display_amount:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - action
+      - authorization_code
+      - display_action
+      - amount
+      - display_amount
+      - created_at
+      x-typelizer: true
     StoreCredit:
       type: object
       properties:
@@ -15045,6 +15315,8 @@ components:
           type: string
         kind:
           type: string
+          description: 'Tax identifier kind, keyed to a registered validator. Built-in:
+            eu_vat. Extensions may register more.'
         value:
           type: string
       required:
@@ -15137,14 +15409,27 @@ components:
           nullable: true
         weight_unit:
           type: string
+          enum:
+          - g
+          - kg
+          - lb
+          - oz
         dimensions_unit:
           type: string
+          enum:
+          - mm
+          - cm
+          - in
+          - ft
         minimum_order_quantity:
           type: number
         order_multiple:
           type: number
         purchase_unit:
           type: string
+          enum:
+          - unit
+          - carton
         units_per_carton:
           type: number
           nullable: true

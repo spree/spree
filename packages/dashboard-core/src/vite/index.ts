@@ -98,7 +98,25 @@ export interface SpreeDashboardPluginOptions {
  *     })
  */
 export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}): PluginOption[] {
-  return [dashboardTailwindSourcePlugin(options), tailwindcss()]
+  return [dashboardProseMirrorDedupePlugin(), dashboardTailwindSourcePlugin(options), tailwindcss()]
+}
+
+/**
+ * TipTap 3.31's `@tiptap/pm` asks for `prosemirror-model` ^1.25.11, but
+ * `prosemirror-schema-list` still resolves 1.25.4. Two copies in the
+ * bundle make `wrapInList` throw. Force Vite onto one module.
+ */
+function dashboardProseMirrorDedupePlugin(): Plugin {
+  return {
+    name: 'spree:dashboard-prosemirror-dedupe',
+    config() {
+      return {
+        resolve: {
+          dedupe: ['prosemirror-model', 'prosemirror-view', '@tiptap/pm', '@tiptap/core'],
+        },
+      }
+    },
+  }
 }
 
 /** Module specifier hosts import to activate discovered dashboard plugins. */

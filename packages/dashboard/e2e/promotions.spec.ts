@@ -317,6 +317,39 @@ test.describe('promotions', () => {
     await expect(page.getByText(/currency:\s*USD/i).first()).toBeVisible({ timeout: 5_000 })
   })
 
+  test('reopens a Create Adjustment action on the configured calculator', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Adjustment Edit ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    await pickAction(page, /^create whole-order adjustment\b/i)
+    await expect(
+      page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
+    ).toBeVisible({ timeout: 5_000 })
+
+    const calculatorSelect = page.locator('#calculator-type')
+    await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+    await calculatorSelect.click()
+    await page.getByRole('option', { name: /^flat rate$/i }).click()
+    await saveEditor(page)
+
+    await submitCreate(page, name)
+
+    await page
+      .locator('div.items-stretch')
+      .filter({ hasText: /create whole-order adjustment/i })
+      .first()
+      .getByRole('button')
+      .first()
+      .click()
+    await expect(
+      page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
+    ).toBeVisible({ timeout: 5_000 })
+    await expect(calculatorSelect).toContainText(/flat rate/i, { timeout: 10_000 })
+  })
+
   test('creates a promotion with a Create Adjustment action', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)

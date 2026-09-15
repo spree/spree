@@ -8,11 +8,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/85',
+        // `shadow-xs` like the outline and destructive variants: the primary
+        // action is the one thing on a page that should sit slightly above it,
+        // and it was the only variant with no lift at all.
+        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/85',
         outline:
-          'border-border bg-muted text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
-        ghost: 'hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent',
-        destructive: 'text-destructive bg-muted border-border shadow-xs hover:bg-destructive/10',
+          'border-border bg-card shadow-xs text-foreground hover:bg-accent hover:text-foreground aria-expanded:bg-accent',
+        // `group-hover/row:` — inside a hovered table row the row already wears
+        // --accent, so repeating it here leaves the button at 1.03:1 against its
+        // own background: invisible exactly when the pointer is on it. On a
+        // hovered row it steps to --accent-strong instead.
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground aria-expanded:bg-accent group-hover/row:hover:bg-accent-strong',
+        destructive: 'text-destructive bg-card border-border shadow-xs hover:bg-destructive/10',
         // Ghost's chrome (none until hover) with destructive's colour. The
         // inline remove buttons that sit inside a row or field want no box of
         // their own, but still need the red tint on hover rather than ghost's

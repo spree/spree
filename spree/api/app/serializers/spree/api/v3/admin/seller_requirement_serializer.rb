@@ -6,7 +6,7 @@ module Spree
         # what a marketplace asks of its sellers is between the operator and
         # the seller, and never appears on the store surface.
         class SellerRequirementSerializer < BaseSerializer
-          typelize kind: :string, name: :string, description: [:string, nullable: true],
+          typelize kind: [:string, comment: 'Requirement kind. Built-in: accept_terms, complete_profile, billing_address, returns_address, delivery_method, package_type, minimum_products, payout_account, required_custom_fields, policy, attestation, operator_review, document. Extensions may register more.'], name: :string, description: [:string, nullable: true],
                    position: :number, active: :boolean, required: :boolean,
                    allow_multiple: :boolean, accepts_submissions: :boolean,
                    reviewed_by_operator: :boolean,

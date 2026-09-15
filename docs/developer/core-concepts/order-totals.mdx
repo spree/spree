@@ -22,6 +22,8 @@ flowchart TB
 
 ## The totals
 
+<CodeGroup>
+
 ```typescript Store SDK
 const order = await client.orders.get('or_xxx')
 
@@ -32,6 +34,14 @@ order.display_fee_total      // "$2.50"    surcharges
 order.display_tax_total      // "$22.60"   all tax
 order.display_total          // "$138.10"  what the customer pays
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Authorization: Bearer $CUSTOMER_JWT'
+```
+
+</CodeGroup>
 
 | Attribute | What it sums |
 |---|---|
@@ -49,7 +59,7 @@ order.display_total          // "$138.10"  what the customer pays
 
 Every total comes twice: `total` is the raw value, `display_total` is formatted for the order's currency.
 
-```json
+```json Response
 {
   "total": "138.10",
   "display_total": "$138.10"
@@ -78,6 +88,8 @@ The two exist because the same order can carry both: VAT already inside the good
 
 Every change to a cart returns the whole cart, totals included:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const cart = await client.carts.items.create(cartId, {
   variant_id: 'var_xxx',
@@ -86,6 +98,15 @@ const cart = await client.carts.items.create(cartId, {
 
 cart.display_total // already correct
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/items' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "variant_id": "variant_xxx", "quantity": 2 }'
+```
+
+</CodeGroup>
 
 There is never a second "recalculate" request to make, and never a moment where the summary on screen disagrees with what the server thinks. Adding an item, entering an address, applying a code — each response carries the new numbers.
 

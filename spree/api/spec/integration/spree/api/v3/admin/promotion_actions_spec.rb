@@ -44,7 +44,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       consumes 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Adds a new action to a promotion. The `type` is the wire shorthand from `GET /promotion_actions/types` (e.g. `free_shipping`, `create_item_adjustments`). Fully-qualified Ruby class names are also accepted for backward compatibility.'
+      description 'Adds a new action to a promotion. The `type` is the wire shorthand from `GET /promotion_actions/types` (e.g. `free_shipping`, `create_item_adjustments`).'
       admin_scope :write, :promotions
 
       admin_sdk_example 'promotion-actions/create'

@@ -181,9 +181,10 @@ RSpec.configure do |config|
         { name: 'Reasons', description: 'Merchant-owned vocabularies for why a return, claim, refund or cancellation happened' },
         { name: 'Promotions', description: 'Promotions, promotion rules, promotion actions, and coupon codes' },
         { name: 'Refunds', description: 'Order refunds' },
-        { name: 'Settings', description: 'Store-level settings — store profile, tags, store credit categories' },
+        { name: 'Settings', description: 'Store-level settings — store profile, tags, and configuration' },
         { name: 'Staff', description: 'Admin users, roles, and invitations to the store' },
         { name: 'Stock Locations', description: 'Warehouses and physical fulfillment locations' },
+        { name: 'Store Credits', description: 'Prepaid customer balances across all customers, and each balance\'s ledger' },
         { name: 'Variants', description: 'Product variants — the individual SKUs (size/color combinations) sold under a product' },
         { name: 'Webhooks', description: 'Webhook endpoints and webhook delivery history' }
       ],

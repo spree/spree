@@ -37,7 +37,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
 | `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
-
+| `docs/` | Mintlify powered documentation website, which is deployed to https://spreecommerce.org/docs |
 ## Development Server (worktrees)
 
 Development happens in **git worktrees** — every worktree is a self-contained native dev environment, no Docker: its own gitignored `server/` clone of spree-starter (monorepo gems loaded as path gems via `SPREE_PATH`), its own database on the shared Homebrew Postgres (:5432, copied in ~2 s from the seeded `spree_worktree_template`), and stable per-branch https URLs via [portless](https://github.com/vercel-labs/portless). Worktrees are managed with [worktrunk](https://worktrunk.dev) (`wt`): creating one runs `scripts/worktree/setup.sh` automatically (see `.config/wt.toml`), removing one drops its databases. The main checkout is for integration (merges, template rebuilds), not for running servers.
@@ -101,12 +101,12 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 ## Git Policy
 
 - Commit message body: max 3-4 sentences, DON'T include implementation detail, focus on the "what" and "why", not the "how"
-- Commits fixing bugs should start with "Fix" prefix, branch name should start with "fix/"
+- Commits fixing bugs should start with "Fix: " prefix, branch name should start with "fix/"
 - Use plain phrases like "Added/Removed/Fixed/Changed" in commit messages/titles 
-- If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
 - NEVER commit anything to main branch, always use feat/fix/chore branches for development
 - Pull Request descriptions are public, never disclose any credentials, PII, sensitive data or local dev environment URLs
 - Pull Request descriptions should follow same guidelines as git commits - short, cohesive and short, use bullets to list changes / new features if it's a big PR
+- NEVER add yourself as a co-author of the commit
 
 ## Backend (Ruby)
 
@@ -124,6 +124,7 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 - ALWAYS use Yard comments for classes and public methods, with `@param` and `@return` types
 - DO NOT generate too much comment noise, be very strict and selective about what gets a comment — only non-obvious public methods, never private methods or internal helpers
 - DO NOT use shorthand variable names, readibility by humans is the core principle
+- Always use `ActiveJob::Continuable`` when a Background Job iterates over records and perform operations on them
 
 ### Code Organization
 
@@ -147,7 +148,7 @@ Per-request context available in models, controllers, jobs, and services:
 - We're on Rails 8.1 so use all the new and available methods from this release
 - New models carrying store-specific data (configuration, catalog, commerce records) ALWAYS `belongs_to :store` via `Spree::SingleStoreResource` — only genuinely global reference data (countries, states, roles) goes unscoped. Cross-store sharing is gone (`spree_multi_store` is legacy and unsupported)
 - ALWAYS pass `class_name` and `dependent` on associations; use `dependent: :destroy_async` for high-fanout associations to offload deletion to a background job
-- Include `Spree::CustomFields` for custom fields support
+- Include `Spree::HasCustomFields` for custom fields support
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
 - NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
@@ -163,13 +164,18 @@ Per-request context available in models, controllers, jobs, and services:
 - ALWAYS put callbacks in private group
 - ALWAYS use existing vocabulary and naming patterns, avoid slang terms
 - DO NOT override Rails core API methods, eg. `update```
+- All new models should have `store_id` and belong to `Store` unless they are sub-children of another Parent (eg. `Variant` under `Product`)
+- All new tier-1 models (eg. Product) should publish events via `publishes_lifecycle_events`
 
 ```ruby
 class Spree::Product < Spree.base_class
-  include Spree::Metafields
+  include Spree::SingleStoreResource
+  include Spree::HasCustomFields
   include Spree::Metadata
 
   acts_as_paranoid
+
+  publishes_lifecycle_events
 
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   scope :available, -> { where(available_on: ..Time.current) }
@@ -322,6 +328,25 @@ end
 attribute :variant_id
 ```
 
+### Typed subclasses (`api_type`, never the Ruby class name)
+
+STI families selected by a `type` on the wire (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports) are addressed by their **`api_type` shorthand** — the demodulized + underscored leaf, so `Spree::PriceRules::VolumeRule` is `volume_rule`:
+
+- Never put a Ruby class name in a request, response, SDK type, doc example or fixture — `subclassed_via` and `find_by_api_type` match on `api_type` **only**, so a class name is rejected as an unknown type. A few surfaces (exports/imports, calculators, collection rules) also accept it as a compat fallback; never document or generate that form
+- Serialize with `attribute :type { |record| record.class.api_type }`
+- Override `def self.api_type` to keep the wire value stable across a class rename — the default is derived, so renaming otherwise changes a public identifier
+- Build pickers from the family's `…/types` endpoint (`{ type, label, preference_schema }`), never a hardcoded list — extension kinds then appear for free
+- Adding a built-in kind means updating the serializer's `comment:` list in the same change (see the value-list tiers below)
+- Polymorphic columns are different: `resource_type`, `taggable_type`, `owner_type` hold real class names and stay as they are (`Spree::Base.polymorphic_api_type` shortens where needed)
+
+```ruby
+# ✅ Wire shorthand
+{ type: 'volume_rule', preferences: { min_quantity: 10 } }
+
+# ❌ Rejected as an unknown type
+{ type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 10 } }
+```
+
 ### Serializers (Alba)
 
 Located in `api/app/serializers/spree/api/v3/`. Store and Admin APIs have separate serializers; **Admin always extends Store** so changes to public fields propagate automatically.
@@ -365,6 +390,10 @@ end
 ```
 
 - `typelize attr: :type` for computed/delegated attribute types
+- Value lists come in three tiers — picking the wrong one is a contract bug:
+  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS` → closed TS union, plain OpenAPI `enum`
+  - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values
+  - **Registry-driven `type`** (the typed-subclass families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
@@ -535,6 +564,8 @@ The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legac
 - `@spree/dashboard` — routes, resource hooks (`use-orders`, `use-products`, …), Zod schemas, locales, app shell.
 
 The split lets plugin authors register UI via `defineDashboardPlugin` from `@spree/dashboard-core/plugin`, build new pages with `@spree/dashboard-ui` primitives, and reuse the same providers/hooks. It also lets app developers compose custom dashboards (e.g. seller panels) from the same packages.
+
+We use [Shadcn](https://ui.shadcn.com/docs/components) components using Base UI (NOT radix). Before adding a component ALWAYS check if Shadcn doesnt include it already. Use Shadcn CLI to install them in `dashboard-ui`.  
 
 **Running the admin UI locally** (from a worktree — see "Development Server" above):
 
@@ -751,3 +782,15 @@ Both are rare in the admin SPA, which renders success states only after mutation
 - Use `Date.now()` suffixes on names so leftover rows from earlier specs don't collide (the suite runs serially — `fullyParallel: false, workers: 1`).
 - Disambiguate duplicate button names (e.g., a "Delete" in the sheet footer + another in a confirm dialog) by scoping: `page.getByRole('dialog').getByRole('button', { name: /^delete$/i })`.
 - Reference: `e2e/option-types.spec.ts`, `e2e/invitation-acceptance.spec.ts`.
+
+
+## Mintlify Documentation
+
+* every architectural changes, new models and entities need to be documented in `docs/developer` documentation
+* before adding new pages to documentation try to fit this into existing pages
+* if adding new pages ALWAYS link to existing associated/connected pages, cross-linking for easier navigation is very important
+* all API calls should be documented via mintlify Tabs component with examples via SDK and/or CURL
+* don't over-expose Ruby code, always try to interface via SDK/API first
+* ruby code snippets should have documented full path of the file, the root is always `server` as it's the default location for new apps created with `create-spree-app` CLI tool (the only official way to setup a Spree project)
+* for rake tasks/rails commands always show this via `spree` CLI tool, not directly rails, as all new projects are bootstrapped in Rails API dockerized by default, we use Tabs component to show `Spree CLI / Without CLI` examples
+* DON'T touch docs in the `v5` directory, it's Spree 5 documentation which is now frozen and shouldn't be updated

@@ -130,7 +130,7 @@ function ApiKeyTableFrame({
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>

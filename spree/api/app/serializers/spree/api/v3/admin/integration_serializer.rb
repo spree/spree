@@ -5,7 +5,7 @@ module Spree
         # Admin-only — credentials never have a storefront surface. Secrets
         # are `:password` preferences, masked by `serialized_preferences`.
         class IntegrationSerializer < V3::BaseSerializer
-          typelize type: :string,
+          typelize type: [:string, comment: 'Integration type, registered by the provider gem that owns it (for example the EasyPost provider). Core ships none.'],
                    name: :string,
                    group: [:string, nullable: true],
                    active: :boolean,

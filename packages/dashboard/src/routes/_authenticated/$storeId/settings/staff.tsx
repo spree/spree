@@ -98,8 +98,9 @@ function StaffSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        docsPath="settings/users"
         title={t('admin.pages.staff.title')}
-        subtitle={t('admin.pages.staff.subtitle')}
+        description={t('admin.pages.staff.subtitle')}
         actions={
           <Button onClick={() => setInviteOpen(true)}>
             <PlusIcon className="size-4" />
@@ -147,7 +148,7 @@ function StaffCard({ staff, loading }: { staff: AdminUser[]; loading: boolean })
             </EmptyHeader>
           </Empty>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.pages.staff.table.member')}</TableHead>
@@ -222,7 +223,7 @@ function StaffRow({ member }: { member: AdminUser }) {
           ) : (
             <div className="flex flex-wrap gap-1">
               {member.roles.map((role) => (
-                <Badge key={role.id} className="capitalize">
+                <Badge key={role.id} className="capitalize" variant="info">
                   {role.name}
                 </Badge>
               ))}
@@ -274,7 +275,7 @@ function PendingInvitationsCard({
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.fields.email.label')}</TableHead>
@@ -353,7 +354,9 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       </TableCell>
       <TableCell>
         {invitation.role_name ? (
-          <Badge className="capitalize">{invitation.role_name}</Badge>
+          <Badge className="capitalize" variant="info">
+            {invitation.role_name}
+          </Badge>
         ) : (
           <span className="text-sm text-muted-foreground">—</span>
         )}

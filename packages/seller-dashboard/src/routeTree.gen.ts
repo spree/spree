@@ -22,7 +22,9 @@ import { Route as ProfileRouteImport } from './routes/_authenticated/$sellerId/p
 import { Route as OnboardingRouteImport } from './routes/_authenticated/$sellerId/onboarding'
 import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$sellerId/settings/index'
 import { Route as ProductsIndexRouteImport } from './routes/_authenticated/$sellerId/products/index'
+import { Route as PayoutsIndexRouteImport } from './routes/_authenticated/$sellerId/payouts/index'
 import { Route as OrdersIndexRouteImport } from './routes/_authenticated/$sellerId/orders/index'
+import { Route as EarningsIndexRouteImport } from './routes/_authenticated/$sellerId/earnings/index'
 import { Route as SettingsTeamRouteImport } from './routes/_authenticated/$sellerId/settings/team'
 import { Route as SettingsStockLocationsRouteImport } from './routes/_authenticated/$sellerId/settings/stock-locations'
 import { Route as SettingsPoliciesRouteImport } from './routes/_authenticated/$sellerId/settings/policies'
@@ -30,6 +32,7 @@ import { Route as SettingsPackageTypesRouteImport } from './routes/_authenticate
 import { Route as SettingsDeliveryMethodsRouteImport } from './routes/_authenticated/$sellerId/settings/delivery-methods'
 import { Route as ProductsNewRouteImport } from './routes/_authenticated/$sellerId/products/new'
 import { Route as ProductsProductIdRouteImport } from './routes/_authenticated/$sellerId/products/$productId'
+import { Route as PayoutsPayoutIdRouteImport } from './routes/_authenticated/$sellerId/payouts/$payoutId'
 import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$sellerId/orders/$orderId'
 
 const resetPasswordRoute = resetPasswordRouteImport.update({
@@ -97,9 +100,19 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const PayoutsIndexRoute = PayoutsIndexRouteImport.update({
+  id: '/payouts/',
+  path: '/payouts/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const EarningsIndexRoute = EarningsIndexRouteImport.update({
+  id: '/earnings/',
+  path: '/earnings/',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const SettingsTeamRoute = SettingsTeamRouteImport.update({
@@ -137,6 +150,11 @@ const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   path: '/products/$productId',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
+const PayoutsPayoutIdRoute = PayoutsPayoutIdRouteImport.update({
+  id: '/payouts/$payoutId',
+  path: '/payouts/$payoutId',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
 const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
   id: '/orders/$orderId',
   path: '/orders/$orderId',
@@ -155,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/$sellerId/settings': typeof SettingsRouteWithChildren
   '/$sellerId/': typeof IndexRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
@@ -162,7 +181,9 @@ export interface FileRoutesByFullPath {
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/earnings/': typeof EarningsIndexRoute
   '/$sellerId/orders/': typeof OrdersIndexRoute
+  '/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/$sellerId/products/': typeof ProductsIndexRoute
   '/$sellerId/settings/': typeof SettingsIndexRoute
 }
@@ -176,6 +197,7 @@ export interface FileRoutesByTo {
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId': typeof IndexRoute
   '/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/$sellerId/products/new': typeof ProductsNewRoute
   '/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
@@ -183,7 +205,9 @@ export interface FileRoutesByTo {
   '/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/$sellerId/earnings': typeof EarningsIndexRoute
   '/$sellerId/orders': typeof OrdersIndexRoute
+  '/$sellerId/payouts': typeof PayoutsIndexRoute
   '/$sellerId/products': typeof ProductsIndexRoute
   '/$sellerId/settings': typeof SettingsIndexRoute
 }
@@ -201,6 +225,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$sellerId/': typeof IndexRoute
   '/_authenticated/$sellerId/orders/$orderId': typeof OrdersOrderIdRoute
+  '/_authenticated/$sellerId/payouts/$payoutId': typeof PayoutsPayoutIdRoute
   '/_authenticated/$sellerId/products/$productId': typeof ProductsProductIdRoute
   '/_authenticated/$sellerId/products/new': typeof ProductsNewRoute
   '/_authenticated/$sellerId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
@@ -208,7 +233,9 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId/settings/policies': typeof SettingsPoliciesRoute
   '/_authenticated/$sellerId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$sellerId/settings/team': typeof SettingsTeamRoute
+  '/_authenticated/$sellerId/earnings/': typeof EarningsIndexRoute
   '/_authenticated/$sellerId/orders/': typeof OrdersIndexRoute
+  '/_authenticated/$sellerId/payouts/': typeof PayoutsIndexRoute
   '/_authenticated/$sellerId/products/': typeof ProductsIndexRoute
   '/_authenticated/$sellerId/settings/': typeof SettingsIndexRoute
 }
@@ -226,6 +253,7 @@ export interface FileRouteTypes {
     | '/$sellerId/settings'
     | '/$sellerId/'
     | '/$sellerId/orders/$orderId'
+    | '/$sellerId/payouts/$payoutId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
     | '/$sellerId/settings/delivery-methods'
@@ -233,7 +261,9 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/earnings/'
     | '/$sellerId/orders/'
+    | '/$sellerId/payouts/'
     | '/$sellerId/products/'
     | '/$sellerId/settings/'
   fileRoutesByTo: FileRoutesByTo
@@ -247,6 +277,7 @@ export interface FileRouteTypes {
     | '/$sellerId/profile'
     | '/$sellerId'
     | '/$sellerId/orders/$orderId'
+    | '/$sellerId/payouts/$payoutId'
     | '/$sellerId/products/$productId'
     | '/$sellerId/products/new'
     | '/$sellerId/settings/delivery-methods'
@@ -254,7 +285,9 @@ export interface FileRouteTypes {
     | '/$sellerId/settings/policies'
     | '/$sellerId/settings/stock-locations'
     | '/$sellerId/settings/team'
+    | '/$sellerId/earnings'
     | '/$sellerId/orders'
+    | '/$sellerId/payouts'
     | '/$sellerId/products'
     | '/$sellerId/settings'
   id:
@@ -271,6 +304,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/settings'
     | '/_authenticated/$sellerId/'
     | '/_authenticated/$sellerId/orders/$orderId'
+    | '/_authenticated/$sellerId/payouts/$payoutId'
     | '/_authenticated/$sellerId/products/$productId'
     | '/_authenticated/$sellerId/products/new'
     | '/_authenticated/$sellerId/settings/delivery-methods'
@@ -278,7 +312,9 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId/settings/policies'
     | '/_authenticated/$sellerId/settings/stock-locations'
     | '/_authenticated/$sellerId/settings/team'
+    | '/_authenticated/$sellerId/earnings/'
     | '/_authenticated/$sellerId/orders/'
+    | '/_authenticated/$sellerId/payouts/'
     | '/_authenticated/$sellerId/products/'
     | '/_authenticated/$sellerId/settings/'
   fileRoutesById: FileRoutesById
@@ -384,11 +420,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/payouts/': {
+      id: '/_authenticated/$sellerId/payouts/'
+      path: '/payouts'
+      fullPath: '/$sellerId/payouts/'
+      preLoaderRoute: typeof PayoutsIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/orders/': {
       id: '/_authenticated/$sellerId/orders/'
       path: '/orders'
       fullPath: '/$sellerId/orders/'
       preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/earnings/': {
+      id: '/_authenticated/$sellerId/earnings/'
+      path: '/earnings'
+      fullPath: '/$sellerId/earnings/'
+      preLoaderRoute: typeof EarningsIndexRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/settings/team': {
@@ -440,6 +490,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsProductIdRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
+    '/_authenticated/$sellerId/payouts/$payoutId': {
+      id: '/_authenticated/$sellerId/payouts/$payoutId'
+      path: '/payouts/$payoutId'
+      fullPath: '/$sellerId/payouts/$payoutId'
+      preLoaderRoute: typeof PayoutsPayoutIdRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
     '/_authenticated/$sellerId/orders/$orderId': {
       id: '/_authenticated/$sellerId/orders/$orderId'
       path: '/orders/$orderId'
@@ -478,9 +535,12 @@ interface authenticatedSellerIdRouteChildren {
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  PayoutsPayoutIdRoute: typeof PayoutsPayoutIdRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   ProductsNewRoute: typeof ProductsNewRoute
+  EarningsIndexRoute: typeof EarningsIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
+  PayoutsIndexRoute: typeof PayoutsIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
@@ -490,9 +550,12 @@ const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
+  PayoutsPayoutIdRoute: PayoutsPayoutIdRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsNewRoute: ProductsNewRoute,
+  EarningsIndexRoute: EarningsIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
+  PayoutsIndexRoute: PayoutsIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
 }
 

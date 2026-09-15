@@ -22,6 +22,8 @@ flowchart LR
 
 Every file in a store is in the library, whether or not it's currently placed on anything. That means a file can be uploaded ahead of time, browsed, searched, and reused.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Browse everything in the store
 const { data: media } = await adminClient.media.list()
@@ -29,6 +31,18 @@ const { data: media } = await adminClient.media.list()
 // Where is this file being used?
 const { data: usage } = await adminClient.media.usage('med_xxx')
 ```
+
+```bash cURL
+# Browse everything in the store
+curl 'https://api.mystore.com/api/v3/admin/media' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Where is this file being used?
+curl 'https://api.mystore.com/api/v3/admin/media/med_xxx/usage' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 | Field | What it tells you |
 |---|---|
@@ -43,6 +57,8 @@ const { data: usage } = await adminClient.media.usage('med_xxx')
 
 Placing a library file on a product creates a **new media row that shares the same underlying file**:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.products.media.create('prod_xxx', {
   source_media_id: 'med_xxx',
@@ -50,6 +66,15 @@ await adminClient.products.media.create('prod_xxx', {
   position: 2,
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_xxx/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "source_media_id": "med_xxx", "alt": "Worn over a navy jumper", "position": 2 }'
+```
+
+</CodeGroup>
 
 The copy gets its own alt text, its own position, and its own variant links — because the same photograph might be the third image on one product and the hero on another, with different alt text describing what matters in each context. What it doesn't get is a second copy of the bytes.
 
@@ -61,6 +86,8 @@ This is why there's no single "shared asset" record to manage. Each placement is
 
 A file in use can't be deleted by accident:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // Returns 422 with the list of places it's used
 await adminClient.media.delete('med_xxx')
@@ -68,6 +95,18 @@ await adminClient.media.delete('med_xxx')
 // Remove it from everywhere, then delete
 await adminClient.media.delete('med_xxx', { detach: true })
 ```
+
+```bash cURL
+# Returns 422 with the list of places it is used
+curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/med_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Remove it from everywhere, then delete
+curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/med_xxx?detach=true' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 The dashboard shows you the usage list and asks before doing the second one. Check `usage` before offering a delete in your own tooling.
 
@@ -239,6 +278,8 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/medi
 
 A hosted video is uploaded the same way an image is, with `media_type` telling Spree what it is. Add `poster_signed_id` to give it a still frame:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const video = await client.products.media.create('prod_86Rf07xd4z', {
   media_type: 'video',
@@ -248,13 +289,38 @@ const video = await client.products.media.create('prod_86Rf07xd4z', {
 })
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "media_type": "video",
+    "signed_id": "SIGNED_VIDEO_BLOB_ID",
+    "poster_signed_id": "SIGNED_POSTER_BLOB_ID",
+    "alt": "Product in use"
+  }'
+```
+
+</CodeGroup>
+
 A poster can also be added or replaced later, on its own:
+
+<CodeGroup>
 
 ```typescript Admin SDK
 await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
   poster_signed_id: signedPosterBlobId,
 })
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "poster_signed_id": "SIGNED_POSTER_BLOB_ID" }'
+```
+
+</CodeGroup>
 
 <Info>
 Spree serves an uploaded video as you uploaded it — it does not transcode. Keep files web-friendly (H.264 MP4 or WebM) so they play everywhere, and prefer an external video for long footage so the provider handles streaming.
@@ -276,12 +342,23 @@ Spree does not extract a frame from an uploaded video, so give hosted video and 
 
 `focal_point_x` and `focal_point_y` mark the part of an image that must stay in frame when a storefront crops it to a different shape. Both are fractions between 0 and 1, measured from the top left, so `{ x: 0.5, y: 0.5 }` is dead centre — which is also what a storefront should assume when they are null.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
   focal_point_x: 0.25,
   focal_point_y: 0.4,
 })
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "focal_point_x": 0.25, "focal_point_y": 0.4 }'
+```
+
+</CodeGroup>
 
 Spree stores the focal point and serves it; the cropping itself is the storefront's decision, since only it knows the shape it needs.
 
@@ -369,7 +446,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=media,vari
 
 **Response (media object):**
 
-```json
+```json Response
 {
   "id": "media_k5nR8xLq",
   "media_type": "image",

@@ -18,7 +18,7 @@ module Spree
 
           typelize id: 'string | null', label: 'string | null', sku: 'string | null',
                    amount: :string, display_amount: :string,
-                   currency: :string, source: :string, break_count: :number
+                   currency: :string, source: [:string, enum: Spree::CatalogPrice::SOURCES], break_count: :number
 
           # The variant this prices, so a row can name what it is showing —
           # a product's variants can be priced differently, and one figure

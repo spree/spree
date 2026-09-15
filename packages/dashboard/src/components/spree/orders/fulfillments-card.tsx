@@ -366,7 +366,7 @@ function CreateFulfillmentDialog({
                 {units.map((unit) => (
                   <div
                     key={unit.itemId}
-                    className="flex items-center justify-between gap-4 rounded-lg border p-3"
+                    className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle p-3"
                   >
                     <span className="text-sm truncate">{unit.label}</span>
                     <Input
@@ -524,7 +524,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                       await confirm({
                         message: t('admin.orders.detail.confirm.cancel_shipment_message'),
                         variant: 'destructive',
-                        confirmLabel: t('admin.actions.cancel'),
+                        confirmLabel: t('admin.orders.detail.confirm.cancel_shipment_confirm'),
+                        cancelLabel: t('admin.orders.detail.confirm.cancel_shipment_dismiss'),
                       })
                     ) {
                       cancel.mutate(fulfillment.id)
@@ -795,7 +796,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <TruckIcon className="size-4" />

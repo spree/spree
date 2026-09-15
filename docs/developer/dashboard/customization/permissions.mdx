@@ -103,7 +103,7 @@ The same `permissions` object backs the nav registry's `if` predicate, so you ca
 
 ## Custom permissions
 
-If your customization introduces a new model on the backend, register it as a permission catalog resource there (`Spree.permissions.register_resource` in your engine's initializer). Its keys then appear in the role editor and the API-key scope picker, and any role granted them makes `permissions.can('read', 'MyApp::Report')` resolve in the dashboard exactly like a first-party check — the abilities ship with the current-user response (`GET /api/v3/admin/me`) at sign-in, alongside `permission_keys`, the flat key list the role editor grants from.
+If your customization introduces a new model on the backend, register it as a permission catalog scope there (`Spree.permissions.register_scope` in your engine's initializer). Its keys then appear in the role editor and the API-key scope picker, and any role granted them makes `permissions.can('read', 'MyApp::Report')` resolve in the dashboard exactly like a first-party check — the abilities ship with the current-user response (`GET /api/v3/admin/me`) at sign-in, alongside `permission_keys`, the flat key list the role editor grants from.
 
 ## Reference
 

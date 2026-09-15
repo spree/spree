@@ -88,7 +88,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       expect {
         post :create,
              params: {
-               type: 'Spree::Exports::Products',
+               type: 'products',
                search_params: { name_cont: 'shirt' }
              },
              as: :json
@@ -127,14 +127,14 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
     end
 
     it 'creates an Orders export' do
-      post :create, params: { type: 'Spree::Exports::Orders' }, as: :json
+      post :create, params: { type: 'orders' }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(Spree::Export.find_by_prefix_id(json_response['id'])).to be_a(Spree::Exports::Orders)
     end
 
     it 'creates a Customers export' do
-      post :create, params: { type: 'Spree::Exports::Customers' }, as: :json
+      post :create, params: { type: 'customers' }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(Spree::Export.find_by_prefix_id(json_response['id'])).to be_a(Spree::Exports::Customers)
@@ -146,7 +146,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
 
         post :create,
              params: {
-               type: 'Spree::Exports::Products',
+               type: 'products',
                results_url: 'https://admin.example.com/store_abc/exports'
              },
              as: :json
@@ -159,7 +159,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       it 'silently drops it when it does not match an allowed origin' do
         post :create,
              params: {
-               type: 'Spree::Exports::Products',
+               type: 'products',
                results_url: 'https://evil.example.com/phish'
              },
              as: :json
@@ -172,7 +172,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
     it 'clears search_params when record_selection is "all"' do
       post :create,
            params: {
-             type: 'Spree::Exports::Products',
+             type: 'products',
              record_selection: 'all',
              search_params: { name_cont: 'shirt' }
            },
@@ -260,12 +260,12 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       # scope of the exported resource (Spree::Export.required_scope), so a
       # key can never export data it couldn't read through the API.
       it 'allows creating a Products export with read_products' do
-        post :create, params: { type: 'Spree::Exports::Products' }, as: :json
+        post :create, params: { type: 'products' }, as: :json
         expect(response).to have_http_status(:created)
       end
 
       it 'rejects creating a Customers export without read_customers' do
-        post :create, params: { type: 'Spree::Exports::Customers' }, as: :json
+        post :create, params: { type: 'customers' }, as: :json
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['details']['required_scope']).to eq('read_customers')
@@ -312,7 +312,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
         let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_promotions']) }
 
         it 'gates coupon-code exports by the promotions scope' do
-          post :create, params: { type: 'Spree::Exports::CouponCodes' }, as: :json
+          post :create, params: { type: 'coupon_codes' }, as: :json
           expect(response).to have_http_status(:created)
         end
       end

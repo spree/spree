@@ -62,7 +62,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <RepeatIcon className="size-4" />
@@ -140,7 +140,12 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                                   await confirm({
                                     message: t('admin.pages.orders.detail.returns.confirm.cancel'),
                                     variant: 'destructive',
-                                    confirmLabel: t('admin.actions.cancel'),
+                                    confirmLabel: t(
+                                      'admin.pages.orders.detail.exchanges.confirm.cancel_confirm',
+                                    ),
+                                    cancelLabel: t(
+                                      'admin.pages.orders.detail.exchanges.confirm.cancel_dismiss',
+                                    ),
                                   })
                                 ) {
                                   cancel.mutate({ exchangeId: exchange.id })
@@ -214,7 +219,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <ShieldAlertIcon className="size-4" />
@@ -297,7 +302,12 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                                 await confirm({
                                   message: t('admin.pages.orders.detail.returns.confirm.cancel'),
                                   variant: 'destructive',
-                                  confirmLabel: t('admin.actions.cancel'),
+                                  confirmLabel: t(
+                                    'admin.pages.orders.detail.claims.confirm.cancel_confirm',
+                                  ),
+                                  cancelLabel: t(
+                                    'admin.pages.orders.detail.claims.confirm.cancel_dismiss',
+                                  ),
                                 })
                               ) {
                                 cancel.mutate({ claimId: claim.id })

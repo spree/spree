@@ -132,7 +132,7 @@ module Spree
     # @param klass [Class]
     # @return [Symbol]
     def permission_resource_name(klass)
-      Spree.permissions.resource_for_subject(klass)&.name ||
+      Spree.permissions.scope_for_resource(klass)&.name ||
         public_resource_type(klass).pluralize.to_sym
     end
 

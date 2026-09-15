@@ -11,7 +11,7 @@ module Spree
                    effective_authorized_clicks: :number,
                    effective_authorized_days: :number,
                    provider_type: [:string, nullable: true],
-                   provider_name: :string,
+                   provider_name: [:string, comment: 'Digital asset provider name. Built-in: File. Extensions may register more.'],
                    provider_settings: 'Record<string, unknown>',
                    download_url: [:string, nullable: true]
 

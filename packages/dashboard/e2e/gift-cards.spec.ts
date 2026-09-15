@@ -1,7 +1,7 @@
 import { expect, type Page, test } from '@playwright/test'
 import { gotoIndex, login, openRowMenu, rowButton } from './helpers'
 
-const GIFT_CARDS_PATH = (storeId: string) => `/${storeId}/promotions/gift-cards`
+const GIFT_CARDS_PATH = (storeId: string) => `/${storeId}/loyalty/gift-cards`
 const CTA = /new gift card/i
 
 async function createGiftCard(

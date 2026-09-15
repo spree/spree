@@ -55,7 +55,7 @@ export function CustomerOrdersCard({
             <Link
               to={'/$storeId/orders' as string}
               search={{
-                filters: [{ id: '1', field: 'user_id_eq', operator: 'eq', value: customer.id }],
+                filters: [{ id: '1', field: 'customer_id', operator: 'eq', value: customer.id }],
               }}
               className="text-sm text-primary hover:underline"
             >
@@ -72,7 +72,7 @@ export function CustomerOrdersCard({
         </CardContent>
       ) : (
         <CardContent className="p-0">
-          <Table roundedBottom>
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>{t('admin.customers.detail.orders_table.order')}</TableHead>

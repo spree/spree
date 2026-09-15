@@ -9,7 +9,7 @@ module Spree
         # shipped unit, not against a line item.
         class FulfillmentItemSerializer < BaseSerializer
           typelize quantity: :number,
-                   status: :string,
+                   status: [:string, enum: Spree::FulfillmentItem.statuses, enum_type_name: 'FulfillmentItemStatus'],
                    variant_id: [:string, nullable: true],
                    line_item_id: [:string, nullable: true],
                    name: [:string, nullable: true],

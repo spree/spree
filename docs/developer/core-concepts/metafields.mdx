@@ -180,7 +180,7 @@ A custom field can take part in product listings — but only if you ask, becaus
 
 Setting either flag also makes the field **filterable**. Filter and sort with the field's `cf_` key, on both APIs:
 
-```
+```http
 GET /api/v3/store/products?q[cf_properties_material_i_cont]=wool
 GET /api/v3/store/products?sort=-cf_properties_weight
 GET /api/v3/admin/products?q[cf_properties_weight_gteq]=3.5

@@ -18,7 +18,7 @@ module Spree
                    enabled: :boolean,
                    position: :number,
                    global: :boolean,
-                   kind: :string,
+                   kind: [:string, enum: Spree::CommissionRate::KINDS],
                    value: :string,
                    amounts: 'Record<string, string>',
                    bounds: 'Record<string, { min_amount: string | null; max_amount: string | null }>',

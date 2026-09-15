@@ -6,10 +6,38 @@ module Spree
           include Concerns::ExternalReferencesAttribute
 
           typelize metadata: 'Record<string, unknown>',
-                   allocated_count: :number, available_count: :number
+                   allocated_count: :number, available_count: :number,
+                   reserved_count: :number, incoming_count: :number, purchasable_count: :number,
+                   stock_location_name: [:string, nullable: true],
+                   product_id: [:string, nullable: true],
+                   variant_name: [:string, nullable: true], variant_sku: [:string, nullable: true],
+                   options_text: [:string, nullable: true],
+                   thumbnail_url: [:string, nullable: true]
 
-          attributes :metadata,
+          # Reserved: units held by checkouts in progress. Incoming: units on
+          # their way on an open purchase order or a transfer in transit.
+          # Which shelf and which SKU, flat, the way a stock movement names
+          # them: enough for a list row without expanding the variant, whose
+          # own serializer computes availability per row.
+          attributes :metadata, :reserved_count, :incoming_count, :purchasable_count,
+                     :variant_name, :variant_sku,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :stock_location_name do |stock_level|
+            stock_level.stock_location&.name
+          end
+
+          attribute :product_id do |stock_level|
+            stock_level.product&.prefixed_id
+          end
+
+          attribute :options_text do |stock_level|
+            stock_level.variant&.options_text.presence
+          end
+
+          attribute :thumbnail_url do |stock_level|
+            image_url_for(stock_level.thumbnail)
+          end
 
           # Units promised to placed orders but not yet dispatched. Raised by an
           # `allocated` movement and retired by `released` or `shipped`, so an

@@ -7,6 +7,8 @@ import { importTypeLabel } from '../lib/import-types'
 
 defineTable<Import>('imports', {
   title: i18n.t('admin.pages.settings.imports.title'),
+  docsPath: 'manage-products/import-products',
+  description: i18n.t('admin.table_descriptions.imports'),
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('admin.pages.settings.imports.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

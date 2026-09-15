@@ -75,13 +75,13 @@ vi.mock('../src/dashboard', () => ({
   scaffoldDashboard: vi.fn(),
 }))
 
-vi.mock('../src/backend', () => ({
-  downloadBackend: vi.fn(async (projectDir: string) => {
-    // Simulate what downloadBackend does: create backend/ with compose files
-    const backendDir = path.join(projectDir, 'backend')
-    fs.mkdirSync(backendDir, { recursive: true })
-    fs.writeFileSync(path.join(backendDir, 'docker-compose.yml'), FAKE_COMPOSE)
-    fs.writeFileSync(path.join(backendDir, 'docker-compose.dev.yml'), FAKE_COMPOSE_DEV)
+vi.mock('../src/server', () => ({
+  downloadServer: vi.fn(async (projectDir: string) => {
+    // Simulate what downloadServer does: create server/ with compose files
+    const serverDir = path.join(projectDir, 'server')
+    fs.mkdirSync(serverDir, { recursive: true })
+    fs.writeFileSync(path.join(serverDir, 'docker-compose.yml'), FAKE_COMPOSE)
+    fs.writeFileSync(path.join(serverDir, 'docker-compose.dev.yml'), FAKE_COMPOSE_DEV)
   }),
 }))
 
@@ -153,7 +153,7 @@ describe('scaffold (no-start)', () => {
     expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, false)
   })
 
-  it('copies docker-compose.yml from backend template', async () => {
+  it('copies docker-compose.yml from server template', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -172,7 +172,7 @@ describe('scaffold (no-start)', () => {
     expect(compose).toBe(FAKE_COMPOSE)
   })
 
-  it('adjusts docker-compose.dev.yml build context to ./backend', async () => {
+  it('adjusts docker-compose.dev.yml build context to ./server', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -186,11 +186,11 @@ describe('scaffold (no-start)', () => {
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
-    expect(compose).toContain('context: ./backend')
+    expect(compose).toContain('context: ./server')
     expect(compose).not.toContain('ghcr.io/spree/spree')
   })
 
-  it('adjusts docker-compose.dev.yml source bind-mount to ./backend', async () => {
+  it('adjusts docker-compose.dev.yml source bind-mount to ./server', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -204,7 +204,7 @@ describe('scaffold (no-start)', () => {
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
-    expect(compose).toContain('- ./backend:/rails')
+    expect(compose).toContain('- ./server:/rails')
     expect(compose).not.toContain('- .:/rails')
     // Named volumes are left untouched
     expect(compose).toContain('- bundle_cache:/usr/local/bundle')

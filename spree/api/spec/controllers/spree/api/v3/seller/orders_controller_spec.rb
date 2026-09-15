@@ -180,6 +180,31 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(json_response['shipping_address']).to have_key('phone')
     end
 
+    # A basket spanning several sellers is paid once, against the group; what
+    # this order has is a share of that payment. The seller reads the share
+    # and nothing about the payment behind it.
+    it "expands this order's share of the basket's payment, amounts only" do
+      group = create(:order_group, store: store)
+      mine.update_columns(order_group_id: group.id)
+      payment = create(:payment, order: nil, cart: nil, order_group: group, amount: 100)
+      split = create(:payment_split, payment: payment, order: mine, authorized_amount: 100,
+                                     captured_amount: 100, refunded_amount: 20)
+
+      get :show, params: { id: mine.prefixed_id, expand: 'payment_splits' }, as: :json
+
+      row = json_response['payment_splits'].first
+      expect(row['id']).to eq(split.prefixed_id)
+      expect(row).to include('captured_amount' => '100.0', 'refunded_amount' => '20.0',
+                             'net_captured_amount' => '80.0', 'display_captured_amount' => '$100.00')
+      expect(row.keys).not_to include('payment_id', 'payment_number', 'payment_method')
+    end
+
+    it 'leaves the shares out unless asked' do
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      expect(json_response).not_to have_key('payment_splits')
+    end
+
     it "404s on another seller's order" do
       get :show, params: { id: theirs.prefixed_id }, as: :json
 

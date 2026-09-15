@@ -36,6 +36,8 @@ settingsNav.addGroup({
 settingsNav.add({
   key: 'settings.stock-locations',
   labelKey: 'admin.settings_nav.items.stock_locations',
+  descriptionKey: 'admin.settings_nav.descriptions.stock_locations',
+  keywords: ['warehouse', 'inventory', 'fulfillment', 'pickup'],
   path: '/stock-locations',
   icon: WarehouseIcon,
   group: 'fulfillment',
@@ -50,6 +52,8 @@ settingsNav.add({
 settingsNav.add({
   key: 'settings.delivery-methods',
   label: i18n.t('nav.delivery_methods'),
+  descriptionKey: 'admin.settings_nav.descriptions.delivery_methods',
+  keywords: ['shipping', 'rates', 'carriers', 'delivery'],
   path: '/delivery-methods',
   icon: TruckIcon,
   group: 'fulfillment',
@@ -65,6 +69,8 @@ settingsNav.add({
 settingsNav.add({
   key: 'settings.package-types',
   label: i18n.t('nav.package_types'),
+  descriptionKey: 'admin.settings_nav.descriptions.package_types',
+  keywords: ['box', 'carton', 'pallet', 'container', 'packaging', 'parcel'],
   path: '/package-types',
   icon: PackageIcon,
   group: 'fulfillment',
@@ -80,6 +86,8 @@ settingsNav.add({
 settingsNav.add({
   key: 'settings.team',
   label: i18n.t('nav.team'),
+  descriptionKey: 'admin.settings_nav.descriptions.team',
+  keywords: ['users', 'staff', 'invite', 'members'],
   path: '/team',
   icon: UsersRoundIcon,
   group: 'team',
@@ -95,6 +103,8 @@ settingsNav.add({
 settingsNav.add({
   key: 'settings.policies',
   label: i18n.t('nav.policies'),
+  descriptionKey: 'admin.settings_nav.descriptions.policies',
+  keywords: ['legal', 'terms', 'privacy', 'returns', 'refund'],
   path: '/policies',
   icon: ScrollTextIcon,
   group: 'legal',

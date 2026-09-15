@@ -12,7 +12,7 @@ module Spree
         # via {#plaintext_token} below — it is `nil` everywhere else.
         class ApiKeySerializer < V3::BaseSerializer
           typelize name: :string,
-                   key_type: :string,
+                   key_type: [:string, enum: Spree::ApiKey::KEY_TYPES],
                    token_prefix: [:string, nullable: true],
                    plaintext_token: [:string, nullable: true],
                    scopes: [:string, multi: true],

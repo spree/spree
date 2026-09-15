@@ -531,6 +531,131 @@ describe Spree::StockLevel, type: :model do
       end
     end
 
+    describe '#adjust_reserved_count and #adjust_incoming_count' do
+      it 'move in both directions' do
+        subject.adjust_reserved_count(4)
+        subject.adjust_incoming_count(20)
+        subject.adjust_reserved_count(-3)
+        subject.adjust_incoming_count(-5)
+
+        expect(subject.reload).to have_attributes(reserved_count: 1, incoming_count: 15)
+      end
+
+      # A recount may already have taken these units off; withdrawing them a
+      # second time must not eat into what something else is holding.
+      it 'never withdraw below zero' do
+        subject.adjust_reserved_count(2)
+
+        subject.adjust_reserved_count(-5)
+        subject.adjust_incoming_count(-1)
+
+        expect(subject.reload).to have_attributes(reserved_count: 0, incoming_count: 0)
+      end
+
+      it 'touch the variant so its caches and search index follow' do
+        subject.variant.update_column(:updated_at, 1.day.ago)
+
+        expect { subject.adjust_incoming_count(1) }.to change { subject.variant.reload.updated_at }
+      end
+    end
+
+    describe '#purchasable_count and the filters built on it' do
+      # The Inventory page's Available column and its In stock filter read the
+      # same subtraction, one in Ruby and one in SQL. They have to agree.
+      it 'is the shelf minus the promise minus the holds' do
+        subject.update_columns(count_on_hand: 10, allocated_count: 4, reserved_count: 3)
+
+        expect(subject.purchasable_count).to eq(3)
+        expect(Spree::StockLevel.in_stock).to include(subject)
+        expect(Spree::StockLevel.out_of_stock).not_to include(subject)
+      end
+
+      it 'counts a fully held shelf as out of stock' do
+        subject.update_columns(count_on_hand: 5, allocated_count: 2, reserved_count: 3)
+
+        expect(subject.purchasable_count).to eq(0)
+        expect(Spree::StockLevel.out_of_stock).to include(subject)
+        expect(Spree::StockLevel.in_stock).not_to include(subject)
+      end
+
+      it 'finds the levels with units on the way or held' do
+        subject.update_columns(incoming_count: 4, reserved_count: 0)
+
+        expect(Spree::StockLevel.with_incoming).to include(subject)
+        expect(Spree::StockLevel.with_reserved).not_to include(subject)
+      end
+    end
+
+    describe '.low_stock' do
+      let!(:running_low) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 3) }
+      end
+      let!(:plenty) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 50) }
+      end
+      let!(:gone) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 0) }
+      end
+
+      it 'matches what is nearly gone, and excludes what is already gone' do
+        expect(Spree::StockLevel.low_stock(5)).to include(running_low)
+        expect(Spree::StockLevel.low_stock(5)).not_to include(plenty, gone)
+      end
+
+      # Same reading as the rest of the page: allocated units are spoken for.
+      it 'measures what is left to sell, not what is on the shelf' do
+        plenty.update_columns(allocated_count: 48)
+
+        expect(Spree::StockLevel.low_stock(5)).to include(plenty)
+      end
+
+      it 'matches nothing when the threshold turns the warning off' do
+        expect(Spree::StockLevel.low_stock(0)).to be_empty
+      end
+
+      it 'falls back to the current store threshold when none is given' do
+        stub_store_preferences(Spree::Current.store, low_stock_threshold: 2)
+
+        expect(Spree::StockLevel.low_stock).not_to include(running_low)
+      end
+    end
+
+    # The Inventory page asks one question with several answers — "out of
+    # stock, or already on its way?" — so the states are OR-ed rather than
+    # combined into an impossible AND.
+    describe '.with_stock_status' do
+      let!(:sellable) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 5) }
+      end
+      let!(:awaited) do
+        create(:stock_level, adjust_count_on_hand: false).tap { |l| l.update_columns(count_on_hand: 0, incoming_count: 9) }
+      end
+
+      it 'matches any of the states named' do
+        expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).to include(awaited)
+        expect(Spree::StockLevel.with_stock_status(%w[out_of_stock with_incoming])).not_to include(sellable)
+        expect(Spree::StockLevel.with_stock_status(%w[in_stock with_incoming])).to include(sellable, awaited)
+      end
+
+      # The home screen's low stock counter links to this filter, and the two
+      # states never overlap: five units against the default threshold is low,
+      # nothing left is out.
+      it 'answers low stock, separately from out of stock' do
+        expect(Spree::StockLevel.with_stock_status(%w[low_stock])).to include(sellable)
+        expect(Spree::StockLevel.with_stock_status(%w[low_stock])).not_to include(awaited)
+      end
+
+      it 'constrains nothing when nothing is named' do
+        expect(Spree::StockLevel.with_stock_status([])).to include(sellable, awaited)
+      end
+
+      # A stale bookmark should show a list, not an error — and nothing a
+      # request names may reach a method that is not on the allowlist.
+      it 'ignores a name it does not know' do
+        expect(Spree::StockLevel.with_stock_status(%w[destroy_all])).to include(sellable, awaited)
+      end
+    end
+
     describe '#available_count' do
       it 'is the shelf minus the promise' do
         subject.update_columns(count_on_hand: 10, allocated_count: 4)

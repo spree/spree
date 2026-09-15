@@ -34,7 +34,9 @@ test.describe('admin authentication', () => {
     await page.getByRole('link', { name: /forgot password/i }).click()
 
     await expect(page).toHaveURL(/\/forgot-password/)
-    await expect(page.getByText('Reset your password', { exact: true })).toBeVisible()
+    // The heading specifically: the route announcer's live region briefly holds
+    // the same text, so a bare text match resolves to two elements.
+    await expect(page.getByRole('heading', { name: 'Reset your password' })).toBeVisible()
   })
 
   test('confirms the reset request without revealing whether the email exists', async ({

@@ -80,19 +80,22 @@ export type StockLocationsSearch = z.infer<typeof stockLocationsSearchSchema>
  * API answers with every location in the store and a seller's with only their
  * own, and this page renders whatever it is given.
  *
- * Two things a panel supplies rather than this page assuming them: the API
- * resource, registered through `setApiClient`, and `stockLevelsPanel` — the
- * on-hand editor, which reads the Admin API and links to the operator's
- * product pages, so a seller's panel simply passes nothing and gets a page
- * without it.
+ * Three things a panel supplies rather than this page assuming them: the API
+ * resource, registered through `setApiClient`, and the two injected panels —
+ * the on-hand editor and the movement history, both of which read the Admin
+ * API and link to the operator's product pages, so a seller's panel simply
+ * passes nothing and gets a page without them.
  */
 export function StockLocationsPage({
   search,
   stockLevelsPanel: StockLevelsPanel,
+  activityPanel: ActivityPanel,
 }: {
   search: StockLocationsSearch
   /** Rendered inside the edit sheet, below the form. Optional — see above. */
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
+  /** What changed in this warehouse, for reconciliation. Optional. */
+  activityPanel?: ComponentType<{ stockLocationId: string }>
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -174,6 +177,7 @@ export function StockLocationsPage({
           open
           onOpenChange={(o) => !o && closeSheet()}
           stockLevelsPanel={StockLevelsPanel}
+          activityPanel={ActivityPanel}
         />
       )}
     </>
@@ -258,11 +262,13 @@ function EditStockLocationSheet({
   open,
   onOpenChange,
   stockLevelsPanel: StockLevelsPanel,
+  activityPanel: ActivityPanel,
 }: {
   id: string
   open: boolean
   onOpenChange: (open: boolean) => void
   stockLevelsPanel?: ComponentType<{ stockLocationId: string }>
+  activityPanel?: ComponentType<{ stockLocationId: string }>
 }) {
   const { t } = useTranslation()
   const { data: stockLocation, isLoading } = useStockLocation(id)
@@ -309,6 +315,7 @@ function EditStockLocationSheet({
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <StockLocationFormFields form={form} />
               {StockLevelsPanel && <StockLevelsPanel stockLocationId={id} />}
+              {ActivityPanel && <ActivityPanel stockLocationId={id} />}
             </div>
             <SheetFooter>
               <Button

@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "مسار التنقل",
       "breadcrumb_more": "المزيد",
@@ -156,6 +157,7 @@
       "empty_value": "—",
       "inactive": "غير نشط",
       "learn_more": "اعرف المزيد",
+      "skip_to_content": "تخطي إلى المحتوى",
       "loading": "جارٍ التحميل…",
       "next": "التالي",
       "no": "لا",
@@ -192,7 +194,8 @@
         "selected": "تم تحديد {{count}}"
       },
       "channel_select": {
-        "placeholder": "اختر قناة مبيعات"
+        "placeholder": "اختر قناة مبيعات",
+        "all_channels": "جميع القنوات"
       },
       "command_palette": {
         "create": {
@@ -246,6 +249,7 @@
         },
         "no_results": "لا توجد نتائج لـ \"{{query}}\".",
         "placeholder": "البحث في المنتجات والطلبات والعملاء…",
+        "search_label": "ابحث عن أي شيء…",
         "title": "البحث والأوامر"
       },
       "confirm_dialog": {
@@ -425,6 +429,7 @@
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",
+        "more_conditions": "شروط إضافية",
         "operators": {
           "after": "بعد",
           "before": "قبل",
@@ -975,7 +980,8 @@
         "customers": "العملاء",
         "price_list_prices": "أسعار قائمة الأسعار",
         "product_translations": "ترجمات المنتجات",
-        "products": "المنتجات"
+        "products": "المنتجات",
+        "purchase_orders": "أوامر الشراء"
       },
       "wizard_title": "الاستيراد"
     },
@@ -1057,7 +1063,8 @@
       },
       "validation": {
         "non_negative": "يجب أن يكون صفرًا أو أكثر"
-      }
+      },
+      "description": "الصناديق والكراتين والمنصات التي تُشحن فيها بضائعك، مع الأبعاد والأوزان التي يعتمد عليها الناقلون في التسعير."
     },
     "pages": {
       "settings": {
@@ -1398,7 +1405,8 @@
         "unknown_product": "منتج غير معروف",
         "variant_count_one": "{{count}} متغير",
         "variant_count_other": "{{count}} متغيرات"
-      }
+      },
+      "description": "المستودعات والمتاجر التي تحتفظ فيها بالمخزون وتنفذ الطلبات منها."
     },
     "validation": {
       "codes": {
@@ -1408,6 +1416,7 @@
         "empty": "لا يمكن أن يكون فارغًا",
         "equal_to": "يجب أن يساوي {{count}}",
         "exclusion": "محجوز",
+        "forbidden_reporting_member": "يشير هذا التقرير إلى بيانات غير مسموح لك بقراءتها.",
         "greater_than": "يجب أن يكون أكبر من {{count}}",
         "greater_than_or_equal_to": "يجب أن يكون أكبر من أو يساوي {{count}}",
         "inclusion": "غير مدرج في القائمة",
@@ -1421,6 +1430,7 @@
         "present": "يجب أن يكون فارغًا",
         "product_not_in_store": "يجب أن تنتمي جميعها إلى هذا المتجر",
         "required": "يجب أن يكون موجودًا",
+        "seeded_report_read_only": "هذا تقرير مدمج ولا يمكن تغييره. احفظ نسخة بدلاً من ذلك.",
         "taken": "مستخدم بالفعل",
         "too_long": "طويل جدًا (الحد الأقصى {{count}} حرفًا)",
         "too_short": "قصير جدًا (الحد الأدنى {{count}} حرفًا)",

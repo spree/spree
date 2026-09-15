@@ -119,7 +119,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} />
+      <PageHeader title={t('policies.title')} subtitle={t('policies.description')} sticky={false} />
 
       {outstanding.length > 0 && (
         <Card>
@@ -132,7 +132,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
               {outstanding.map((name) => (
                 <li
                   key={name}
-                  className="flex items-center justify-between gap-4 rounded-md border border-border px-3 py-2"
+                  className="flex items-center justify-between gap-4 rounded-lg border border-border-subtle px-3 py-2"
                 >
                   <span className="font-medium text-sm">{name}</span>
                   <Button size="sm" variant="outline" onClick={() => setCreatingName(name)}>
@@ -146,6 +146,7 @@ export function PoliciesPage({ search }: { search: ResourceSearch }) {
       )}
 
       <ResourceTable<Policy>
+        hideHeader
         tableKey="seller-policies"
         queryKey="seller-policies"
         queryFn={(params) => sellerClient().policies.list(params)}

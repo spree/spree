@@ -110,9 +110,11 @@ export function DeliveryMethodsPage({ search }: { search: ResourceSearch }) {
       <PageHeader
         title={t('delivery_methods.title')}
         subtitle={t('delivery_methods.description')}
+        sticky={false}
       />
 
       <ResourceTable<DeliveryMethod>
+        hideHeader
         tableKey="seller-delivery-methods"
         queryKey="seller-delivery-methods"
         queryFn={(params) => sellerClient().deliveryMethods.list(params)}
@@ -273,7 +275,7 @@ function DeliveryMethodSheet({
   // quietly created the method free.
   useEffect(() => {
     if (methodId || form.getValues('calculator_type')) return
-    const flatRate = calculators?.data.find((calculator) => calculator.type.endsWith('::FlatRate'))
+    const flatRate = calculators?.data.find((calculator) => calculator.type === 'flat_rate')
     if (!flatRate) return
 
     form.setValue('calculator_type', flatRate.type)
@@ -547,7 +549,7 @@ function DeliveryMethodSheet({
                   return (
                     <div
                       key={rule.id ?? `${rule.type}-${index}`}
-                      className="flex flex-col gap-3 rounded-md border border-border p-3"
+                      className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col">

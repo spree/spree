@@ -75,7 +75,7 @@ export function registerDbCommand(program: Command): void {
       } catch (err) {
         // `compose ps` itself failed: broken/stale compose, daemon down, unknown
         // service. Point home rather than dumping the raw env-file error (mirrors
-        // upgrade.ts; backstop for a stale backend/ past detectProject re-rooting).
+        // upgrade.ts; backstop for a stale API directory past detectProject re-rooting).
         // `return` is load-bearing: it tells TS `stackUp` is assigned past here.
         return refuse([
           'Could not inspect the Docker stack from this directory.',

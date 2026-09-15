@@ -6,6 +6,8 @@ import i18n from 'i18next'
 
 defineTable<AllowedOrigin>('allowed-origins', {
   title: i18n.t('admin.allowed_origins.table_title'),
+  docsPath: 'settings/allowed-origins',
+  description: i18n.t('admin.table_descriptions.allowed_origins'),
   searchParam: 'origin_cont',
   searchPlaceholder: i18n.t('admin.allowed_origins.search_placeholder'),
   defaultSort: { field: 'origin', direction: 'asc' },

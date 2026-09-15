@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { ResourceDetailSkeleton } from '../../../../components/spree/route-pending'
 import { SellerAddressCard } from '../../../../components/spree/sellers/seller-address-card'
 import { SellerAtAGlanceCard } from '../../../../components/spree/sellers/seller-at-a-glance-card'
+import { SellerBalanceCard } from '../../../../components/spree/sellers/seller-balance-card'
 import { SellerBrandCard } from '../../../../components/spree/sellers/seller-brand-card'
 import { SellerContactCard } from '../../../../components/spree/sellers/seller-contact-card'
 import { SellerEditProfileSheet } from '../../../../components/spree/sellers/seller-edit-profile-sheet'
@@ -275,6 +276,7 @@ function SellerBody({ seller }: { seller: Seller }) {
           <>
             <SellerStatusCard seller={seller} />
             <SellerAtAGlanceCard seller={seller} />
+            <SellerBalanceCard seller={seller} />
             <SellerContactCard
               seller={seller}
               canEdit={canEdit}

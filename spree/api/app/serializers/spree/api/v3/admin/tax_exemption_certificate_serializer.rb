@@ -5,7 +5,7 @@ module Spree
         # Admin-only: certificates are back-office evidence with no storefront
         # surface, so there is no store serializer to extend.
         class TaxExemptionCertificateSerializer < V3::BaseSerializer
-          typelize certificate_number: :string, reason_code: :string, status: :string,
+          typelize certificate_number: :string, reason_code: :string, status: [:string, enum: Spree::TaxExemptionCertificate.statuses, enum_type_name: 'TaxExemptionCertificateStatus'],
                    issuing_authority: [:string, nullable: true],
                    company_id: :string,
                    country_code: [:string, nullable: true], state_code: [:string, nullable: true],

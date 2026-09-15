@@ -100,7 +100,7 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
       end
 
       it 'forbids assigning a role whose permissions exceed its own' do
-        owner_role = create(:role, name: 'owner', permissions: Spree.permissions.catalog_keys)
+        owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 
         patch :update, params: { id: target.prefixed_id, role_ids: [owner_role.prefixed_id] }, as: :json
 

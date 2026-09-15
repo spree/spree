@@ -268,13 +268,44 @@ module Spree
     # answer while nobody knows, and it cannot be paid twice by mistake: those
     # earnings stay claimed by the settlement holding them until it resolves.
     #
-    # @param currency [String]
+    # Answered in the currency the money can actually be sent in: a seller whose
+    # account settles in another currency is owed what their account holds, not
+    # what the sale was priced in.
+    #
+    # @param currency [String] a settlement currency
     # @return [BigDecimal]
     def balance(currency)
-      earned = seller_transfers.completed.where(currency: currency).sum(:amount)
-      settled = seller_payouts.completed.where(currency: currency).sum(:amount)
+      earnings = seller_transfers.completed.settling_in(currency)
 
-      earned - settled
+      earnings.settlement_total -
+        earnings.joins(:payout).merge(Spree::SellerPayout.completed).settlement_total
+    end
+
+    # The currencies this seller can actually be paid in — the ones their
+    # account settles in, which is not the same as the ones they sold in.
+    #
+    # @return [Array<String>]
+    def payable_currencies
+      seller_transfers.unsettled.settlement_currencies
+    end
+
+    # The seller's position in every currency they have earned or been paid
+    # in, for the ledger screens. Empty before their first fulfilled sale.
+    #
+    # Only rows that contribute a figure decide the list: a currency whose
+    # every transfer failed would otherwise show a row of zeros on a money
+    # screen, which reads as a balance rather than as nothing having happened.
+    #
+    # One position per (sale currency, settlement currency) pair, so a seller
+    # who sells in dollars and banks in pounds sees both sides of the one
+    # relationship rather than two unrelated ledgers.
+    #
+    # @return [Array<Spree::SellerBalance>]
+    def balances
+      pairs = seller_transfers.where.not(status: 'failed').
+              distinct.pluck(:currency, :settled_currency)
+
+      pairs.sort.map { |currency, settlement| Spree::SellerBalance.for(self, currency, settlement) }
     end
 
     # The seller's account with whichever provider pays them — a Stripe Connect
@@ -304,6 +335,11 @@ module Spree
     def set_payout_account_reference(provider, account_reference)
       set_external_id(provider.reference_system, account_reference)
     end
+
+    # A seller keeps no clock of their own: a date means whatever the
+    # marketplace says it means, so their panel reads timestamps in the
+    # store's zone rather than in whichever one their browser sits in.
+    delegate :preferred_timezone, to: :store, allow_nil: true
 
     # Sellers holding an account with one provider, for the reverse lookup a
     # provider webhook does — it knows the account, not the seller.

@@ -104,7 +104,7 @@ export function useCustomerOrders(customerId: string, params: { limit: number; s
     ),
     queryFn: () =>
       adminClient.orders.list({
-        user_id_eq: customerId,
+        customer_id_eq: customerId,
         ...(params.status ? { status_eq: params.status } : {}),
         limit: params.limit,
         sort: '-completed_at',

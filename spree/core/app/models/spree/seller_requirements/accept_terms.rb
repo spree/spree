@@ -8,12 +8,16 @@ module Spree
     # them: everyone who accepted before that date falls back to unmet, and
     # the seller sees the requirement return to their checklist.
     class AcceptTerms < Spree::SellerRequirement
+      # What the seller reads in the panel. Optional: a marketplace that
+      # already publishes customer Terms of Service can leave this blank
+      # and the checklist falls back to that policy, so the two cannot
+      # drift. A seller agreement that is not the shopper-facing document
+      # is written here instead.
+      preference :terms_body, :text, default: nil, nullable: true
       preference :terms_effective_from, :string, default: nil
-      # Where the terms actually are. A URL rather than stored copy: a
-      # marketplace already publishes its terms somewhere, and keeping a
-      # second copy here would be the one that goes stale. Optional — a
-      # marketplace that agrees terms out of band still uses this kind to
-      # record that the seller accepted.
+      # A published copy of the same terms, for a marketplace that also
+      # hosts them on a public page. Optional — the panel renders the
+      # body above; this is the "open the full document" link.
       preference :terms_url, :string, default: nil
 
       # A date nobody can parse would otherwise read as "no date at all", and
@@ -30,6 +34,27 @@ module Spree
         accepted_at >= effective_from
       end
 
+      # The terms themselves, so the seller can read what they are accepting.
+      # `action_url` is the checklist's existing "go here" channel for a
+      # published copy; the body is what the panel renders inline.
+      #
+      # @return [String, nil]
+      def action_url(_seller)
+        preferred_terms_url.presence
+      end
+
+      # Sanitized markup the seller reads before accepting. The requirement's
+      # own body wins; otherwise the store's Terms of Service, so a
+      # marketplace that already wrote that policy does not write it twice.
+      #
+      # @return [String, nil]
+      def terms_html
+        source = preferred_terms_body.presence || store_terms_body
+        return if source.blank?
+
+        Spree::RichTextSanitizer.sanitize(source).presence
+      end
+
       # `iso8601`, not `parse`: parse fills in whatever a value leaves out, so
       # "09:00" becomes nine o'clock *today* and the threshold would move every
       # midnight — sellers who met it yesterday would fall out of compliance
@@ -39,15 +64,6 @@ module Spree
       # types means midnight where they trade, and interpreting "2026-01-01"
       # in UTC would move the deadline by hours for everyone else.
       #
-      # The terms themselves, so the seller can read what they are accepting.
-      # `action_url` is the checklist's existing "go here" channel, which the
-      # panel already renders — no new field for one kind.
-      #
-      # @return [String, nil]
-      def action_url(_seller)
-        preferred_terms_url.presence
-      end
-
       # @return [ActiveSupport::TimeWithZone, nil]
       def effective_from
         return nil if preferred_terms_effective_from.blank?
@@ -72,6 +88,12 @@ module Spree
         errors.add(:preferred_terms_effective_from, :invalid_terms_effective_from,
                    message: Spree.t('seller_requirements.invalid_terms_effective_from',
                                     default: 'Terms effective from is not a date'))
+      end
+
+      def store_terms_body
+        return if store.nil?
+
+        store.policies.with_matching_name(Spree.t(:terms_of_service)).detect(&:with_body?)&.body
       end
     end
   end

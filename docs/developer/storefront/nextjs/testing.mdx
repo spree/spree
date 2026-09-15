@@ -63,7 +63,7 @@ npm run test:e2e
 
 ### A `create-spree-app` project's backend
 
-A project scaffolded with [`create-spree-app`](/developer/create-spree-app/quickstart) has its customizable Spree in `backend/` (built from `backend/Dockerfile`) and this storefront in `apps/storefront/`. Build that backend into a local image and point the suite at it — this is what tests the storefront against the **exact Spree you deploy**, extensions and all:
+A project scaffolded with [`create-spree-app`](/developer/create-spree-app/quickstart) has its customizable Spree in `server/` (built from `server/Dockerfile`) and this storefront in `apps/storefront/`. Build that backend into a local image and point the suite at it — this is what tests the storefront against the **exact Spree you deploy**, extensions and all:
 
 ```bash
 # From the project root — build the customized backend image
@@ -77,7 +77,7 @@ npm run e2e:down
 ```
 
 <Note>
-  New `create-spree-app` projects wire this into the generated storefront CI workflow automatically — the workflow builds `backend/Dockerfile` and runs the storefront E2E against that image rather than stock Spree.
+  New `create-spree-app` projects wire this into the generated storefront CI workflow automatically — the workflow builds `server/Dockerfile` and runs the storefront E2E against that image rather than stock Spree.
 </Note>
 
 ### Interactive / manual

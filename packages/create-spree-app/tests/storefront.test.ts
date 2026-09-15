@@ -39,14 +39,14 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Boot Spree backend (Postgres + Redis + latest Spree)
-        run: docker compose -f e2e-backend/docker-compose.yml up -d --wait
+      - name: Boot Spree server (Postgres + Redis + latest Spree)
+        run: docker compose -f e2e-server/docker-compose.yml up -d --wait
       - name: Run Playwright tests
         run: pnpm run test:e2e
 `
 
 describe('adaptStorefrontWorkflow', () => {
-  it('renames the workflow so it does not shadow the backend CI', () => {
+  it('renames the workflow so it does not shadow the server CI', () => {
     const result = adaptStorefrontWorkflow(STOREFRONT_CI)
     expect(result).toContain('name: Storefront CI')
     expect(result).not.toMatch(/^name:\s*CI\s*$/m)
@@ -65,25 +65,25 @@ describe('adaptStorefrontWorkflow', () => {
     )
   })
 
-  it('builds the project backend image before booting the E2E stack', () => {
+  it('builds the project server image before booting the E2E stack', () => {
     const result = adaptStorefrontWorkflow(STOREFRONT_CI)
     expect(result).toContain(
-      '- name: Build project backend image\n' +
-        '        run: docker build -t project-spree:e2e "$GITHUB_WORKSPACE/backend"',
+      '- name: Build project server image\n' +
+        '        run: docker build -t project-spree:e2e "$GITHUB_WORKSPACE/server"',
     )
     // Build step comes before the boot step.
-    expect(result.indexOf('Build project backend image')).toBeLessThan(
-      result.indexOf('Boot Spree backend'),
+    expect(result.indexOf('Build project server image')).toBeLessThan(
+      result.indexOf('Boot Spree server'),
     )
   })
 
   it('boots the E2E stack against the project image via SPREE_IMAGE', () => {
     const result = adaptStorefrontWorkflow(STOREFRONT_CI)
     expect(result).toContain(
-      '- name: Boot Spree backend (project backend image)\n' +
+      '- name: Boot Spree server (project server image)\n' +
         '        env:\n' +
         '          SPREE_IMAGE: project-spree:e2e\n' +
-        '        run: docker compose -f e2e-backend/docker-compose.yml up -d --wait',
+        '        run: docker compose -f e2e-server/docker-compose.yml up -d --wait',
     )
   })
 

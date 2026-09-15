@@ -34,12 +34,19 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { completed_order.to_param }
 
+        before do
+          create(:fee, order: completed_order, amount: 12, label: 'Import duty', kind: 'duty')
+          completed_order.reload.recalculate_totals!
+        end
+
         schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('or_')
           expect(data['number']).to eq(completed_order.number)
+          expect(data['fees'].map { |fee| fee['kind'] }).to eq(['duty'])
+          expect(data['fee_total']).to eq('12.0')
           expect(data['completed_at']).to be_present
           expect(data).not_to have_key('token')
           expect(data).not_to have_key('checkout_steps')
@@ -52,6 +59,11 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { guest_order.to_param }
         let(:'x-spree-token') { guest_order.token }
+
+        before do
+          create(:fee, order: guest_order, amount: 12, label: 'Import duty', kind: 'duty')
+          guest_order.reload.recalculate_totals!
+        end
 
         schema '$ref' => '#/components/schemas/Order'
 

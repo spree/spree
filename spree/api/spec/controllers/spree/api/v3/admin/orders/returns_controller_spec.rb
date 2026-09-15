@@ -129,12 +129,23 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(line.reload.received_quantity).to eq(0)
     end
 
-    it 'refuses an item list that is not a list' do
-      patch :receive, params: {
-        order_id: order.prefixed_id, id: return_record.prefixed_id, items: 'everything'
-      }, as: :json
+    # The refusal has to be the payload's own: an `items` the caller got wrong
+    # must not be reported as "you named no units", and an object shape used to
+    # answer a 500, because the message named an attribute a return has not got.
+    [['a bare string', 'everything'], ['an object', { return_line_item_id: 'x' }]].each do |shape, items|
+      it "refuses an item list that is #{shape}" do
+        line = return_record.return_line_items.first
 
-      expect(response).to have_http_status(:unprocessable_content)
+        patch :receive, params: {
+          order_id: order.prefixed_id, id: return_record.prefixed_id, items: items
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['details']['base']).to include(
+          hash_including('code' => 'invalid_items')
+        )
+        expect(line.reload.received_quantity).to eq(0)
+      end
     end
 
     it 'records a partial, non-resellable receipt' do

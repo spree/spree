@@ -94,11 +94,11 @@ module SpreeStripe
         secrets.select(&:present?)
       end
 
-      # Also the loop guard: registration writes the secret back through
-      # `update!`, which re-runs this callback. A stored secret means the
-      # endpoint is already registered, so the second pass stops here.
+      # A stored secret means the endpoint is already registered — unless the
+      # key now points at a different Stripe account.
       def create_webhook_endpoint_async
-        return if preferred_webhook_signing_secret.present?
+        return if only_webhook_registration_changed?
+        return if preferred_webhook_signing_secret.present? && !stripe_secret_key_changed?
 
         SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: false)
       end

@@ -10,9 +10,9 @@ module Spree
           include Alba::Resource
           include Typelizer::DSL
 
-          typelize id: :string, kind: :string, name: :string,
+          typelize id: :string, kind: [:string, comment: 'Requirement kind. Built-in: accept_terms, complete_profile, billing_address, returns_address, delivery_method, package_type, minimum_products, payout_account, required_custom_fields, policy, attestation, operator_review, document. Extensions may register more.'], name: :string,
                    description: [:string, nullable: true],
-                   required: :boolean, position: :number, status: :string,
+                   required: :boolean, position: :number, status: [:string, enum: Spree::SellerRequirementStatus::STATUSES],
                    blocking: :boolean, action_url: [:string, nullable: true],
                    blocker: ['{ state: string; message: string | null } | null'],
                    required_policy_name: [:string, nullable: true]

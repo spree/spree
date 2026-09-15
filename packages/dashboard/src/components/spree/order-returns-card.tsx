@@ -74,7 +74,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
 
   return (
     <>
-      <Card>
+      <Card variant="container">
         <CardHeader>
           <CardTitle>
             <RotateCcwIcon className="size-4" />
@@ -148,7 +148,12 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                                   await confirm({
                                     message: t('admin.pages.orders.detail.returns.confirm.cancel'),
                                     variant: 'destructive',
-                                    confirmLabel: t('admin.actions.cancel'),
+                                    confirmLabel: t(
+                                      'admin.pages.orders.detail.returns.confirm.cancel_confirm',
+                                    ),
+                                    cancelLabel: t(
+                                      'admin.pages.orders.detail.returns.confirm.cancel_dismiss',
+                                    ),
                                   })
                                 ) {
                                   cancel.mutate({ returnId: returnRecord.id })

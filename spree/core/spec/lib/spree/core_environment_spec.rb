@@ -58,11 +58,6 @@ RSpec.describe 'Spree environment accessors' do
       expect(Spree.taxon_rules).to be_an(Array)
     end
 
-    it 'provides access to reports' do
-      expect(Spree.reports).to eq(Rails.application.config.spree.reports)
-      expect(Spree.reports).to be_an(Array)
-    end
-
     it 'provides access to translatable_resources' do
       expect(Spree.translatable_resources).to eq(Rails.application.config.spree.translatable_resources)
       expect(Spree.translatable_resources).to be_an(Array)
@@ -113,14 +108,6 @@ RSpec.describe 'Spree environment accessors' do
       Spree.stock_splitters = original
     end
 
-    it 'allows setting reports' do
-      original = Spree.reports.dup
-      Spree.reports = ['Custom::Report']
-      expect(Spree.reports).to eq(['Custom::Report'])
-      expect(Rails.application.config.spree.reports).to eq(['Custom::Report'])
-      # Restore original
-      Spree.reports = original
-    end
   end
 
   describe 'nested accessors' do

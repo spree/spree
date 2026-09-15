@@ -47,6 +47,16 @@ module Spree
       claim_line_items.sum(&:refund_amount)
     end
 
+    # What a refund from this claim paid for, line by line — each line already
+    # carries the amount agreed for it.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => amount
+    def refunded_line_amounts
+      claim_line_items.each_with_object(Hash.new(0)) do |line, amounts|
+        amounts[line.line_item_id] += line.refund_amount.to_d
+      end
+    end
+
     def display_refund_total
       Spree::Money.new(refund_total, currency: currency)
     end

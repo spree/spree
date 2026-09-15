@@ -8,7 +8,7 @@ module Spree
         class CollectionSerializer < V3::CollectionSerializer
           include Spree::Api::V3::Admin::Translatable
 
-          typelize automatic: :boolean, rules_match_policy: :string,
+          typelize automatic: :boolean, rules_match_policy: [:string, enum: Spree::Collection::RULES_MATCH_POLICIES],
                    metadata: 'Record<string, unknown>'
 
           attributes :automatic, :rules_match_policy, :metadata,

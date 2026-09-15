@@ -715,7 +715,7 @@ function RuleRow({
   }
 
   return (
-    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-muted/50">
+    <div className="flex w-full items-stretch rounded-md border bg-card hover:bg-accent/50">
       <button
         type="button"
         onClick={onEdit}
@@ -890,7 +890,7 @@ function RulePickerSheet({
                 key={tt.type}
                 type="button"
                 onClick={() => onPicked(tt)}
-                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-muted/50"
+                className="flex flex-col items-start rounded-md border p-3 text-left transition-colors hover:bg-accent/50"
               >
                 <span className="text-sm font-medium">
                   {typeLabel('price_rule', tt.type, tt.label)}

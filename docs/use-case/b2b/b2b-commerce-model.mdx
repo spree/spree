@@ -43,23 +43,21 @@ B2B platforms typically feature:
 - **Regional Wholesale Expansion** — A single storefront serves wholesale buyers in multiple markets, each seeing wholesale prices in their local currency.
 - **B2B2C Hybrid Stores** — Retail and trade customers shop side-by-side on one storefront, with pricing automatically applied based on account type.
 - **Trade-Only Portals** — Gated storefronts where unapproved visitors cannot see products or prices until their account has been verified.
-- **Buyer Organizations** — Multiple users (buyers, managers, finance) operate under one company account with shared order history. *(Coming in Spree 6.0)*
+- **Buyer Organizations** — Multiple buyers operate under one company account, with its sub-units, address book and shared order history.
 
 ## How Spree Supports B2B Commerce
 
 ### Community Edition
 
-With [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists), [<u>Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups), [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets), and gated storefronts, you can configure working B2B scenarios directly in the Spree admin — no development required:
+With [<u>Price Lists</u>](https://spreecommerce.org/docs/user/pricing/price-lists), [<u>Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups), [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets), and gated storefronts, you can configure working B2B scenarios directly in the Spree admin — no development required:
 
 - Offer wholesale pricing to registered trade accounts while retail visitors see standard prices
 - Create independent price lists for different wholesalers or distributor tiers
-- Combine Customer Group and Market rules to deliver region-specific wholesale pricing in the correct currency
+- Assign a catalog to a customer group or a company to deliver that buyer their own assortment and prices, in their own currency
 - Gate your storefront so only approved, logged-in buyers can browse products and prices
 - Run combined B2C and B2B from a single storefront, with no separate portal or login system needed
 
-### Coming in Spree 6.0
-
-The open-source roadmap includes buyer organizations (company accounts with locations and contacts) and B2B catalogs (curated per-segment product assortments).
+Buyer organizations and catalogs are part of this — [<u>companies</u>](https://spreecommerce.org/docs/user/customers/companies) model a business buyer and its sub-units, and a [<u>catalog</u>](https://spreecommerce.org/docs/user/catalogs/catalogs) is the agreement that says what they see and what they pay.
 
 ### Enterprise Edition
 
@@ -70,7 +68,7 @@ For complex procurement requirements, Spree Enterprise Edition adds role-based o
 - **Custom Pricing Logic** — B2B pricing often includes tiers, discounts, and customer-specific contracts. Spree's Price Lists engine handles this natively in the admin, no development required.
 - **Multi-Region Complexity** — Serving wholesale buyers across multiple markets, currencies, and tax regimes requires flexible pricing infrastructure. Spree's Markets and Price List rules handle this without custom code.
 - **Gated Access** — Restricting catalog and pricing visibility to approved accounts is a standard requirement for trade portals. This is supported out of the box in Community Edition.
-- **Role-Based Buyer Structures** — Supporting multi-user organizations with shared accounts is coming in Spree 6.0 for open-source.
+- **Multi-User Organizations** — A company account with several buyers, its own address book and shared order history is supported in Community Edition. Role-based approval chains are Enterprise Edition.
 - **ERP & Fulfillment Integration** — Role-based approval chains and pre-built ERP connectors are available in Enterprise Edition.
 
 <Columns cols={2}>

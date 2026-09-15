@@ -1,5 +1,6 @@
 {
   "admin": {
+    "app_name": "Spree Admin",
     "a11y": {
       "breadcrumb": "Breadcrumb",
       "breadcrumb_more": "More",
@@ -156,6 +157,7 @@
       "empty_value": "—",
       "inactive": "Inactive",
       "learn_more": "Learn more",
+      "skip_to_content": "Skip to content",
       "loading": "Loading…",
       "next": "Next",
       "no": "No",
@@ -192,7 +194,8 @@
         "selected": "{{count}} selected"
       },
       "channel_select": {
-        "placeholder": "Select a sales channel"
+        "placeholder": "Select a sales channel",
+        "all_channels": "All channels"
       },
       "command_palette": {
         "create": {
@@ -246,6 +249,7 @@
         },
         "no_results": "No results for \"{{query}}\".",
         "placeholder": "Search products, orders, customers…",
+        "search_label": "Search anything…",
         "title": "Search and commands"
       },
       "confirm_dialog": {
@@ -427,6 +431,7 @@
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",
+        "more_conditions": "More conditions",
         "operators": {
           "after": "after",
           "before": "before",
@@ -977,7 +982,8 @@
         "customers": "Customers",
         "price_list_prices": "Price list prices",
         "product_translations": "Product translations",
-        "products": "Products"
+        "products": "Products",
+        "purchase_orders": "Purchase orders"
       },
       "wizard_title": "Import"
     },
@@ -1059,7 +1065,8 @@
       },
       "validation": {
         "non_negative": "must be zero or more"
-      }
+      },
+      "description": "The boxes, cartons and pallets your goods ship in, with the sizes and weights carriers quote on."
     },
     "pages": {
       "settings": {
@@ -1400,7 +1407,8 @@
         "unknown_product": "Unknown product",
         "variant_count_one": "{{count}} variant",
         "variant_count_other": "{{count}} variants"
-      }
+      },
+      "description": "The warehouses and shops you hold stock in and fulfil orders from."
     },
     "validation": {
       "codes": {
@@ -1410,6 +1418,7 @@
         "empty": "can't be empty",
         "equal_to": "must be equal to {{count}}",
         "exclusion": "is reserved",
+        "forbidden_reporting_member": "This report references data you are not allowed to read.",
         "greater_than": "must be greater than {{count}}",
         "greater_than_or_equal_to": "must be greater than or equal to {{count}}",
         "inclusion": "is not included in the list",
@@ -1423,6 +1432,7 @@
         "present": "must be blank",
         "product_not_in_store": "must all belong to this store",
         "required": "must exist",
+        "seeded_report_read_only": "This is a built-in report and cannot be changed. Save a copy instead.",
         "taken": "has already been taken",
         "too_long": "is too long (maximum is {{count}} characters)",
         "too_short": "is too short (minimum is {{count}} characters)",

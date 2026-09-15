@@ -1,0 +1,72 @@
+---
+title: "Order Statuses"
+description: "What an order's status, payment status and fulfillment status mean, how each changes, and what to do next."
+---
+
+Every order carries three statuses. One says where the order itself is in its life; the other two roll up what has happened to its money and its goods. You never set any of them by hand — each changes when something happens: a customer checks out, a payment is captured, a parcel goes out, a refund is issued.
+
+They are the first columns on the **Orders** page, and the quick filters above the table let you narrow the list to any of their values.
+
+![Spree Commerce dashboard showing order statuses](/docs/images/user/orders/order-statuses/orders-tab.png)
+
+## Order status
+
+An order is one of three things:
+
+| Status | Meaning |
+|---|---|
+| **Draft** | Your team started it on a customer's behalf and has not placed it yet. Drafts live under **Orders → Drafts**, can be edited freely, and carry no payment or fulfillment status until placed. See [creating orders](/user/orders/creating-orders). |
+| **Placed** | The order is real: a customer checked out, or a team member placed a draft. Stock is allocated, the customer has their confirmation, and payment and fulfillment start being tracked. |
+| **Canceled** | Cancelled by your team. Allocated stock is released, any unshipped parcels are stood down, and an uncaptured payment is voided. See [cancelling orders](/user/orders/cancelling-orders). |
+
+There is nothing to advance. A placed order does not move to "complete" — its payment and fulfillment statuses say how far along it is.
+
+## Payment status
+
+What has been collected against the order, worked out from its payments and refunds and compared with the order total.
+
+| Status | Meaning |
+|---|---|
+| **Unpaid** | Nothing has been authorised or captured yet. |
+| **Authorized** | The customer's payment method has approved the amount, but it has not been taken. Your store's capture setting decides whether that happens at checkout, when the goods ship, or by hand. |
+| **Partially paid** | Some money has been captured, but less than the order total — a deposit, or a fee added after payment. |
+| **Paid** | Captured payments cover the order total. |
+| **Partially refunded** | A refund has been issued, and the customer has still paid something net. |
+| **Refunded** | Refunds have given back everything that was captured. |
+| **Overcharged** | Captured payments exceed the order total — usually because items were removed or a discount was added after the customer paid. The customer is owed the difference. |
+| **Voided** | The order was cancelled and its authorisation released, or its captured money fully returned. |
+
+A refund reduces both sides of the comparison, so an order refunded for a removed item still reads **Paid** rather than **Partially refunded** once the total matches what the customer kept.
+
+## Fulfillment status
+
+What has happened to the goods, rolled up from the order's fulfillments (its parcels, pickups or downloads).
+
+| Status | Meaning |
+|---|---|
+| **Unfulfilled** | Nothing has gone out yet. Also shown when every parcel so far was cancelled but the order is still live — the goods are still owed. |
+| **Partial** | Some parcels are out, others are not. |
+| **Fulfilled** | Everything has been handed over — shipped, collected, or delivered digitally. |
+| **Delivered** | The carrier, or your team, has confirmed every parcel reached the customer. This starts the returns window. |
+| **Backorder** | At least one item was sold without stock on hand. Ships once stock arrives. |
+| **Canceled** | The order was cancelled and every parcel stood down. |
+
+Cancelled parcels are ignored while any other parcel is live, so an order whose second parcel was recalled is still described by the first.
+
+## What to do next
+
+| Payment | Fulfillment | Suggested action |
+|---|---|---|
+| Paid | Fulfilled or Delivered | Nothing — the order is done. |
+| Paid | Unfulfilled | Ship it. See [processing orders](/user/orders/processing-orders). |
+| Authorized | Unfulfilled | Capture the payment, or ship and let capture-on-dispatch take it. |
+| Unpaid or Partially paid | Any | Collect the balance — take a new payment from the order page, or ask the customer to pay. |
+| Overcharged | Any | Refund the difference. See [refunding orders](/user/orders/refunding-orders). |
+| Any | Backorder | Restock the item, or tell the customer when it will ship. |
+
+## Related
+
+- [Processing orders](/user/orders/processing-orders) — capturing payment and shipping
+- [Discounts, fees and taxes](/user/orders/discounts-fees-and-taxes) — the changes that move an order's total after it was paid
+- [Cancelling orders](/user/orders/cancelling-orders)
+- [Returns](/user/orders/returns) — what the returns window opens once an order is delivered

@@ -117,7 +117,8 @@ module Spree
     self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags seller order_group]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
-      total item_total total_quantity considered_risky channel_id currency coupon_code seller_id order_group_id po_number
+      total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
+      order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 
@@ -279,6 +280,8 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
     scope :canceled, -> { where(status: 'canceled') }
     scope :not_canceled, -> { where.not(status: 'canceled') }
+    # Nil-tolerant channel filter for optional scoping (nil means all channels).
+    scope :for_channel, ->(channel) { channel ? where(channel_id: channel.id) : all }
     scope :ready_to_ship, -> { where(fulfillment_status: %w[unfulfilled]) }
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
     scope :not_shipped, -> { where(fulfillment_status: %w[unfulfilled partial]) }
@@ -692,6 +695,29 @@ module Spree
     # @return [ActiveRecord::Relation<Spree::Payment>]
     def settlement_payments
       order_group_id.present? ? order_group.payments : payments
+    end
+
+    # What has been captured against this order, net of refunds.
+    #
+    # An order placed in a split checkout owns no payments, so its own
+    # +payment_total+ stays at zero however much the customer paid — the
+    # figure comes from its share of the group's payments instead, the same
+    # way {Spree::Orders::UpdateStatuses} derives +payment_status+. The
+    # group's own total will not do: once one seller has been captured and
+    # another has not, no proportion of it describes either.
+    #
+    # @return [BigDecimal]
+    def net_captured_total
+      return payment_total unless grouped?
+
+      payment_splits.sum(&:net_captured_amount)
+    end
+
+    # Payments still to be collected for this order, wherever they live.
+    #
+    # @return [ActiveRecord::Relation<Spree::Payment>, Array<Spree::Payment>]
+    def settlement_pending_payments
+      grouped? ? settlement_payments.pending : pending_payments
     end
 
     # @return [Boolean] whether this order was placed alongside others in one

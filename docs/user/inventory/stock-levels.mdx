@@ -1,0 +1,43 @@
+---
+title: "Inventory"
+description: "See what you have at each location, what is promised, held and on its way, and correct a count in place."
+---
+
+The Inventory page answers the question every merchant asks first: what do I have, where, and how much of it can I still sell? It lists one row per variant per stock location, with five figures on each row.
+
+| Column | What it means |
+|---|---|
+| **On hand** | Units physically on the shelf at that location |
+| **Allocated** | Units promised to orders that have been placed but not yet shipped |
+| **Reserved** | Units held by customers who are in checkout right now |
+| **Available** | On hand minus allocated minus reserved: what a new customer can still buy |
+| **Incoming** | Units on their way to this location, on a purchase order placed with a supplier or a transfer already in transit |
+
+<Note>Placing an order does not lower **On hand**. The units stay on the shelf, counted under **Allocated**, until the parcel actually ships. A warehouse worker counting boxes should always find the number Spree shows.</Note>
+
+## Finding a product
+
+Open **Inventory** in the sidebar. The list opens on every location; use the **Location** filter to narrow it to one warehouse, and the search box to find a product by name or SKU. Click a row to open the product.
+
+A product that has never been stocked at a warehouse still appears there once a purchase order or transfer is on its way to it, so **Incoming** is visible before the first delivery lands.
+
+## Correcting a count
+
+Click the **On hand** figure on any row to correct it in place:
+
+1. Choose **Set to** to enter the count you found on the shelf, or **Adjust by** to add or remove a number of units.
+2. Enter the amount.
+3. Pick a reason — correction, count, received, return restock, damaged, theft or loss, promotion or donation.
+4. Confirm.
+
+The change is recorded in the product's stock history with the reason you picked, beside every other movement on that shelf.
+
+<Warning>A correction is for what you have counted. Stock that arrives from a supplier belongs on a purchase order, and stock moving between your own warehouses belongs on a [stock transfer](/user/inventory/stock-transfers), so that the delivery is recorded and the **Incoming** figure stays right.</Warning>
+
+## Adding incoming stock
+
+Click the **Incoming** figure on a row for shortcuts to create a transfer or a purchase order. The figure itself does not move while a document is still a draft: a purchase order counts once you mark it ordered, a transfer once it is in transit. It comes back down as the goods are received, or when the document is closed, cancelled, or put back to draft.
+
+## Enabling backorders
+
+Backorders are set per variant and location on the product's inventory panel. A backorderable variant can be sold past zero; only enable it for stock you plan to replenish.

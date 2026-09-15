@@ -175,7 +175,10 @@ export function CreateExchangeDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {units.map((unit) => (
-            <div key={unit.id} className="flex flex-col gap-2 rounded-lg border p-3">
+            <div
+              key={unit.id}
+              className="flex flex-col gap-2 rounded-lg border border-border-subtle p-3"
+            >
               <div className="flex items-center justify-between gap-4">
                 <span className="text-sm truncate">{unit.label}</span>
                 <Input

@@ -31,9 +31,9 @@ function ecosystemBlock({ comment, ecosystem, directory, group }: Ecosystem): st
 
 /**
  * Dependabot config for a generated project. Covers each package ecosystem in
- * the scaffold: the npm wrapper at the root, the Rails backend gems, GitHub
+ * the scaffold: the npm wrapper at the root, the Rails server gems, GitHub
  * Actions, and — when included — the Next.js storefront. Dockerfile base
- * images are intentionally left out: the backend runs a prebuilt image until
+ * images are intentionally left out: the server runs a prebuilt image until
  * `spree eject`, and the base tags are pinned via ARG defaults.
  *
  * Security updates additionally require the "Dependabot security updates"
@@ -49,10 +49,10 @@ export function dependabotContent(hasStorefront: boolean, hasDashboard = false):
       group: 'root',
     },
     {
-      comment: 'Rails backend gems',
+      comment: 'Rails server gems',
       ecosystem: 'bundler',
-      directory: '/backend',
-      group: 'backend',
+      directory: '/server',
+      group: 'server',
     },
     {
       comment: 'CI workflows',

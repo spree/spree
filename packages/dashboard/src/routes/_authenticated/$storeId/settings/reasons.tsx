@@ -102,7 +102,11 @@ function ReasonsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t('admin.reasons.title')} subtitle={t('admin.reasons.description')} />
+      <PageHeader
+        title={t('admin.reasons.title')}
+        description={t('admin.reasons.description')}
+        docsPath="settings/returns-configuration"
+      />
 
       {SECTIONS.map((section) => (
         <ReasonSection key={section.kind} {...section} />
@@ -171,7 +175,7 @@ function ReasonSection({
               </EmptyHeader>
             </Empty>
           ) : (
-            <Table roundedBottom>
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.fields.name.label')}</TableHead>

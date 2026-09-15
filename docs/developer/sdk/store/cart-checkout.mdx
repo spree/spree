@@ -77,6 +77,27 @@ const cart = await client.carts.giftCards.apply(cartId, 'GC-ABCD-1234', options)
 await client.carts.giftCards.remove(cartId, 'gc_abc123', options);
 ```
 
+### Fees and Duties
+
+A cart may carry charges that are neither a product price nor tax: gift wrapping, a handling charge, a cash-on-delivery surcharge, or an import duty on a cross-border order. Each is a [fee](/developer/core-concepts/fees) on the cart, and the storefront should show every one of them before the customer pays.
+
+```typescript
+const cart = await client.carts.get(cartId, options);
+
+cart.fees.forEach((fee) => {
+  fee.label;          // "Import duty"
+  fee.kind;           // "duty"
+  fee.display_amount; // "$12.00"
+  fee.line_item_id;   // set when the fee is for one item, otherwise null
+});
+
+cart.display_fee_total; // "$17.00"
+```
+
+`kind` is one of `surcharge`, `handling`, `gift_wrap`, `cod`, `payment` or `duty`. Fees are already part of `total`, so list them as their own lines between the subtotal and the total; never add them on top. A `duty` fee is a customs charge and is not taxed, which is why it is worth showing under its own label rather than folding it into a generic "fees" line.
+
+Fees are written by the merchant or by an integration, never by the customer; there is no Store API endpoint to create one.
+
 ## Checkout
 
 ### Update Cart
@@ -136,10 +157,18 @@ await client.carts.storeCredits.apply(cartId, 25.00, options);
 await client.carts.storeCredits.remove(cartId, options);
 ```
 
-The cart/order response includes store credit and gift card totals:
+### Totals
 
-- `store_credit_total` / `display_store_credit_total` — total store credit applied
-- `gift_card_total` / `display_gift_card_total` — total gift card value applied
+The cart and order responses break the amount the customer pays into these totals. Each has a raw string value and a `display_` twin formatted in the cart's currency.
+
+- `item_total` — the products, before anything else
+- `delivery_total` — the selected delivery rates
+- `discount_total` — promotions and discount codes, as a negative amount
+- `fee_total` — every [fee](#fees-and-duties) on the cart, duties included
+- `tax_total` — tax on items, delivery and taxable fees
+- `total` — what the order costs: items, delivery, fees and tax, less discounts
+- `store_credit_total` / `gift_card_total` — store credit or gift card value applied against the total
+- `amount_due` — what is left to pay after store credit and gift cards
 - `covered_by_store_credit` — boolean, whether the order is fully covered by store credit
 - `gift_card` — associated gift card (if applicable)
 

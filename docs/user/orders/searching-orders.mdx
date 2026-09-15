@@ -46,7 +46,7 @@ Spree’s new table system allows you to customize and sort your order view.
 
 ![Apply sorting to orders in the Spree Commerce dashboard](/docs/images/user/orders/searching-orders/4-sorting.png)
 
-You can sort orders by clicking on the Sort dropdown above the table, and selecting the column you’d like to sort by (such as Order Number, Total, Payment State, etc.).
+You can sort orders by clicking on the Sort dropdown above the table, and selecting the column you’d like to sort by (such as Order Number, Total, Payment status, etc.).
 
 At the bottom of the dropdown, select whether you prefer Ascending or Descending order.
 
@@ -73,10 +73,10 @@ Filters have been significantly improved and now support **operators** and **AND
 You can create filter groups using the following fields:
 
 - Order Number
-- Payment State
-- Shipment State
+- Payment status
+- Fulfillment status
 - Total
-- State
+- Status (Draft, Placed, Canceled)
 - Email
 - First Name
 - Last Name
@@ -101,9 +101,9 @@ Each filter condition also includes an operator, allowing you to define exactly 
 For example:
 
 - Total greater than 500
-- Payment State is any of Paid, Refunded
+- Payment status is any of Paid, Refunded
 - Promotion is not empty
-- Shipment State does not equal Fulfilled
+- Fulfillment status does not equal Fulfilled
 
 ### Using AND / OR Groups
 
@@ -112,7 +112,7 @@ For example:
 
 For example:
 
-- Orders where **Payment State = Balance Due AND Shipment State = Ready**
+- Orders where **Payment status = Partially paid AND Fulfillment status = Unfulfilled**
 - Orders where **Promotion = SUMMER2025 OR Promotion = VIPDISCOUNT**
 
 This flexibility makes it much easier to identify specific subsets of orders for follow-up, reporting, or operational tasks.

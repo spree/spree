@@ -65,6 +65,8 @@ That is how a store with a refrigerated warehouse keeps chilled goods from
 being picked at a dry one: order routing only allocates from locations the
 profile covers.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 // What profiles the store has
 const profiles = await adminClient.deliveryProfiles.list()
@@ -74,6 +76,20 @@ await adminClient.products.update('prod_xxx', {
   delivery_profile_id: 'dp_digital',
 })
 ```
+
+```bash cURL
+# What profiles the store has
+curl 'https://api.mystore.com/api/v3/admin/delivery_profiles' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+# Ship a product as a download
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "delivery_profile_id": "dp_digital" }'
+```
+
+</CodeGroup>
 
 <Note>
 Profiles are a template at creation time, not a live binding: changing a
@@ -87,6 +103,8 @@ A **delivery method** is what the customer picks — "Standard", "Express", "Col
 
 Zones match on country and state, and also on postal code prefixes and ranges, so you can offer same-day delivery to a handful of city postcodes without listing every one:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.deliveryZones.create({
   name: 'London same-day',
@@ -96,6 +114,20 @@ await adminClient.deliveryZones.create({
   ],
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/delivery_zones' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "London same-day",
+    "members": [
+      { "member_type": "postal_code", "country_code": "GB", "postal_code_prefix": "SW1" }
+    ]
+  }'
+```
+
+</CodeGroup>
 
 A zone member is either a whole country, a state, or a postal code prefix or range.
 
@@ -133,6 +165,8 @@ Package types are that vocabulary: the box parcels ship in, and for wholesale,
 the cartons products are packed into and the pallets or containers an order
 leaves on.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.packageTypes.create({
   name: 'Standard mailer',
@@ -142,6 +176,21 @@ await adminClient.packageTypes.create({
   default: true,
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/package_types' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Standard mailer",
+    "kind": "box",
+    "length": 30, "width": 20, "height": 15, "dimensions_unit": "cm",
+    "weight": 0.4, "weight_unit": "kg",
+    "default": true
+  }'
+```
+
+</CodeGroup>
 
 One row is marked `default`, and that is the box quotes are built on. Marking
 another one default demotes the first, so there is never more than one.
@@ -168,6 +217,8 @@ falling back to the marketplace's when a seller has not recorded one. Sellers
 manage theirs through the Seller API, and can also pack products into the
 marketplace's cartons — those they read but cannot change.
 
+<CodeGroup>
+
 ```typescript Seller SDK
 // Their own packaging — what the seller panel's settings page lists.
 const { data: mine } = await sellerClient.packageTypes.list({ owner: 'mine' })
@@ -181,6 +232,20 @@ available.forEach((row) => {
   row.default    // this seller's default box
 })
 ```
+
+```bash cURL
+# The seller's own packaging
+curl 'https://marketplace.example.com/api/v3/seller/package_types?owner=mine' \
+  -H 'Authorization: Bearer $SELLER_JWT' \
+  -H 'X-Spree-Seller-Id: sel_xxx'
+
+# Theirs plus the marketplace's shared rows
+curl 'https://marketplace.example.com/api/v3/seller/package_types' \
+  -H 'Authorization: Bearer $SELLER_JWT' \
+  -H 'X-Spree-Seller-Id: sel_xxx'
+```
+
+</CodeGroup>
 
 A seller's settings page asks for `owner: 'mine'`. A list mixing both owners
 reads as "packaging is configured" while the seller has recorded nothing of

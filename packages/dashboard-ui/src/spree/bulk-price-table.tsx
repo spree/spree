@@ -302,12 +302,15 @@ export function BulkPriceTable({
   const hasSearch = !!search && search.length > 0
 
   return (
+    // Padding lives on the toolbar and the pager, not on this wrapper: the
+    // grid between them should run to the container's edges, the way a
+    // table in a card does.
     <div className="flex h-full flex-col gap-3">
       {showToolbar && (
         // Always-mounted toolbar. Conditionally rendering the search input
         // would unmount it whenever a deferred query refetches into the
         // loading state, blurring the field mid-keystroke.
-        <div className="flex shrink-0 items-center justify-between gap-3">
+        <div className="flex shrink-0 items-center justify-between gap-3 px-3">
           {labels.countSummary !== undefined && (
             <p className="text-xs text-muted-foreground">{labels.countSummary}</p>
           )}
@@ -323,7 +326,10 @@ export function BulkPriceTable({
         </div>
       )}
 
-      <div className="min-h-0 flex-1 overflow-auto">
+      {/* No `overflow-auto` here: the grid inside owns its own scroller
+          (it needs one for the sticky header), and a second one around it
+          nests two scrollbars over the same content. */}
+      <div className="min-h-0 flex-1">
         {isLoading ? (
           <p className="text-sm text-muted-foreground">{labels.loading}</p>
         ) : isEmpty ? (
@@ -348,7 +354,7 @@ export function BulkPriceTable({
       </div>
 
       {showPagination && (
-        <div className="flex shrink-0 items-center justify-between gap-2 text-xs text-muted-foreground">
+        <div className="flex shrink-0 items-center justify-between gap-2 px-3 pb-3 text-xs text-muted-foreground">
           <span>
             {labels.pageOf.replace('{page}', String(page)).replace('{total}', String(totalPages))}
           </span>

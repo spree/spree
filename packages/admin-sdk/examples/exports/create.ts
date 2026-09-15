@@ -7,7 +7,7 @@ const client = createAdminClient({
 
 // region:example
 const exp = await client.exports.create({
-  type: 'Spree::Exports::Products',
+  type: 'products',
   search_params: { name_cont: 'shirt' },
 })
 
