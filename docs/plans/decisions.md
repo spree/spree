@@ -5553,3 +5553,39 @@ backed by an index) and that key on its Ransack allowlist, or it cannot be
 declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
+
+## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
+
+Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.
+
+Creating a store asks the same four questions wherever it happens — name,
+country, currency, language — and provisions the same things from the
+answers. Two flows ask them:
+
+- **Self-hosted:** account setup, then store setup. No email confirmation.
+- **Hosted signup:** account setup, then confirmation (instant with an OAuth
+  provider), then store setup.
+
+Only the middle step differs, so the store step is shared rather than
+reimplemented.
+
+**Frontend.** The four fields live in `StoreSetupFields`, exported from
+`@spree/dashboard` at `./components/spree/store-setup-fields`. It is headless
+about submission: the caller owns the form, the countries query and what
+happens on submit, because those genuinely differ (a one-time setup token
+versus an authenticated session). The country drives the currency and
+language defaults, and both stay editable.
+
+**Backend.** `Spree::Stores::ProvisionDefaults` is the one provisioning path,
+already called by the first-run setup endpoint. Anything else that creates a
+store calls it too, rather than hand-rolling a subset: it builds the default
+market, the warehouse, the delivery zones, the package type and pickup, and a
+store missing those cannot ship. The earlier hosted sandbox created only a
+market, which is why its stores could not fulfil.
+
+**Consequences for other work.** A new flow that creates a store mounts
+`StoreSetupFields` and calls `ProvisionDefaults`; it does not write its own
+country picker or its own provisioning. `ProvisionDefaults` previously
+documented exactly two callers — that list grows as flows are added, but the
+rule it protects stands: never wire it to a settings screen, since re-running
+it against a configured store is a data reset.
