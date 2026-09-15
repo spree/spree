@@ -1,4 +1,4 @@
-import { PageHeader } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -24,25 +24,20 @@ import {
 } from '@spree/dashboard-ui'
 import { PackageIcon, PencilIcon, StoreIcon, UsersIcon } from '@spree/dashboard-ui/icons'
 import type { Profile } from '@spree/seller-sdk'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { sellerClient } from '../api-client'
 import { CenteredMessage } from '../components/centered-message'
+import { ProfileImageField } from '../components/profile-image-field'
 import { ReadRow } from '../components/read-row'
 import { SellerAddressCard } from '../components/seller-address-card'
 import { SellerBusinessCard } from '../components/seller-business-card'
 import { SellerReturnsLocationCard } from '../components/seller-returns-location-card'
 import { SellerTaxIdentifiersCard } from '../components/seller-tax-identifiers-card'
-
-interface ProfileValues {
-  name: string
-  contact_email: string
-  billing_email: string
-  about: string
-}
+import { PROFILE_DEFAULTS, type ProfileFormValues, profileValuesToParams } from '../schemas/profile'
 
 /**
  * The seller's own record, laid out as the operator sees it on their seller
@@ -290,16 +285,18 @@ function EditProfileSheet({
   const { sellerId } = useParams({ from: '/_authenticated/$sellerId' })
   const queryClient = useQueryClient()
 
-  const form = useForm<ProfileValues>({
-    defaultValues: { name: '', contact_email: '', billing_email: '', about: '' },
+  const form = useForm<ProfileFormValues>({
+    defaultValues: PROFILE_DEFAULTS,
   })
 
   // The sheet stays mounted across opens, so re-seed from the latest record
-  // each time it opens rather than only on first mount.
+  // each time it opens rather than only on first mount. Image triples reset
+  // empty — persisted images come through as `serverUrl` on each field.
   useEffect(() => {
     if (!open) return
 
     form.reset({
+      ...PROFILE_DEFAULTS,
       name: profile.name,
       contact_email: profile.contact_email ?? '',
       billing_email: profile.billing_email ?? '',
@@ -307,27 +304,24 @@ function EditProfileSheet({
     })
   }, [open, profile, form])
 
-  const save = useMutation({
-    mutationFn: (values: ProfileValues) =>
-      sellerClient().profile.update({
-        name: values.name,
-        contact_email: values.contact_email || null,
-        billing_email: values.billing_email || null,
-        about: values.about || null,
-      }),
-    onSuccess: (updated) => {
+  async function onSubmit(values: ProfileFormValues) {
+    try {
+      const updated = await sellerClient().profile.update(profileValuesToParams(values))
       queryClient.setQueryData(['seller', sellerId, 'profile'], updated)
+      queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'onboarding'] })
       onOpenChange(false)
       toastManager.add({ type: 'success', title: t('profile.saved') })
-    },
-    onError: (err) =>
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('common.error'),
-      }),
-  })
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) {
+        toastManager.add({
+          type: 'error',
+          title: err instanceof Error ? err.message : t('common.error'),
+        })
+      }
+    }
+  }
 
-  const { errors } = form.formState
+  const { errors, isSubmitting } = form.formState
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -340,13 +334,43 @@ function EditProfileSheet({
             a parent form would otherwise see the bubbling submit. */}
         <form
           onSubmit={(event) => {
-            form.handleSubmit((values) => save.mutate(values))(event)
+            form.handleSubmit(onSubmit)(event)
             event.stopPropagation()
           }}
           className="flex min-h-0 flex-1 flex-col"
         >
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
             <FieldGroup>
+              {errors.root?.message && (
+                <p className="text-destructive text-sm" role="alert">
+                  {errors.root.message}
+                </p>
+              )}
+
+              <ProfileImageField
+                form={form}
+                kind="cover_photo"
+                serverUrl={profile.cover_photo_url}
+                labelKey="cover_photo_label"
+                helpKey="cover_photo_help"
+              />
+              <ProfileImageField
+                form={form}
+                kind="logo"
+                serverUrl={profile.logo_url}
+                square
+                labelKey="logo_label"
+                helpKey="logo_help"
+              />
+              <ProfileImageField
+                form={form}
+                kind="square_logo"
+                serverUrl={profile.square_logo_url}
+                square
+                labelKey="square_logo_label"
+                helpKey="square_logo_help"
+              />
+
               <Field>
                 <FieldLabel htmlFor="name">{t('profile.name')}</FieldLabel>
                 <Input
@@ -378,8 +402,8 @@ function EditProfileSheet({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t('common.cancel')}
             </Button>
-            <Button type="submit" disabled={save.isPending}>
-              {save.isPending ? t('profile.saving') : t('profile.save')}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? t('profile.saving') : t('profile.save')}
             </Button>
           </SheetFooter>
         </form>
