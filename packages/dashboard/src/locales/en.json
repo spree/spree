@@ -5597,7 +5597,9 @@
         "owed": "Owed ({{currency}})",
         "earned": "Earned",
         "paid": "Paid out",
-        "pending": "On its way"
+        "pending": "On its way",
+        "earned_in": "Earned ({{currency}})",
+        "payable": "Payable"
       },
       "complete": {
         "title": "Mark this payout as paid",

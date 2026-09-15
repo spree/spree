@@ -115,6 +115,19 @@ module Spree
       return_line_items.sum(&:pre_tax_amount)
     end
 
+    # What a refund from this return paid for, line by line. Counts what the
+    # warehouse received rather than what the customer announced, so it agrees
+    # with the amount {Spree::Returns::Refund} works out for itself.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => amount
+    def refunded_line_amounts
+      return_line_items.each_with_object(Hash.new(0)) do |line, amounts|
+        next if line.quantity.to_i.zero? || line.received_quantity.to_i.zero?
+
+        amounts[line.line_item_id] += (line.pre_tax_amount / line.quantity) * line.received_quantity.to_i
+      end
+    end
+
     # What has actually been refunded so far — a return can be refunded in
     # more than one step (part to store credit, part to the card), and store
     # credit is its own ledger rather than a Spree::Refund row.

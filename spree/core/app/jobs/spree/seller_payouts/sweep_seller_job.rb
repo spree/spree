@@ -63,7 +63,7 @@ module Spree
       # marketplace trading in three currencies should not run three sweeps for
       # a seller who sold in one.
       def currencies_owed(seller)
-        seller.seller_transfers.unsettled.distinct.pluck(:currency)
+        seller.payable_currencies
       end
     end
   end

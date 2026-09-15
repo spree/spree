@@ -5597,7 +5597,9 @@
         "owed": "Offen ({{currency}})",
         "earned": "Verdient",
         "paid": "Ausgezahlt",
-        "pending": "Unterwegs"
+        "pending": "Unterwegs",
+        "earned_in": "Verdient ({{currency}})",
+        "payable": "Auszahlbar"
       },
       "complete": {
         "title": "Auszahlung als bezahlt markieren",

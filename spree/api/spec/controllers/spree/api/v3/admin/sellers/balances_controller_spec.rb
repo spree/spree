@@ -11,9 +11,13 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::BalancesController, type: :contro
 
   describe 'GET #index' do
     it "answers the seller's position per currency" do
-      create(:seller_transfer, :completed, seller: seller, amount: 40,
+      create(:seller_transfer, :completed, seller: seller, amount: 25,
                                            order: create(:completed_order_with_totals, store: store, seller: seller))
-      create(:seller_payout, :completed, seller: seller, amount: 15)
+      # A settlement claims the earnings it covers; one claiming none is not
+      # something the sweep can produce.
+      settled = create(:seller_payout, :completed, seller: seller, amount: 15)
+      create(:seller_transfer, :completed, seller: seller, amount: 15, payout: settled,
+                                           order: create(:completed_order_with_totals, store: store, seller: seller))
 
       get :index, params: { seller_id: seller.prefixed_id }, as: :json
 

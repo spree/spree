@@ -268,13 +268,25 @@ module Spree
     # answer while nobody knows, and it cannot be paid twice by mistake: those
     # earnings stay claimed by the settlement holding them until it resolves.
     #
-    # @param currency [String]
+    # Answered in the currency the money can actually be sent in: a seller whose
+    # account settles in another currency is owed what their account holds, not
+    # what the sale was priced in.
+    #
+    # @param currency [String] a settlement currency
     # @return [BigDecimal]
     def balance(currency)
-      earned = seller_transfers.completed.where(currency: currency).sum(:amount)
-      settled = seller_payouts.completed.where(currency: currency).sum(:amount)
+      earnings = seller_transfers.completed.settling_in(currency)
 
-      earned - settled
+      earnings.settlement_total -
+        earnings.joins(:payout).merge(Spree::SellerPayout.completed).settlement_total
+    end
+
+    # The currencies this seller can actually be paid in — the ones their
+    # account settles in, which is not the same as the ones they sold in.
+    #
+    # @return [Array<String>]
+    def payable_currencies
+      seller_transfers.unsettled.settlement_currencies
     end
 
     # The seller's position in every currency they have earned or been paid
@@ -284,12 +296,16 @@ module Spree
     # every transfer failed would otherwise show a row of zeros on a money
     # screen, which reads as a balance rather than as nothing having happened.
     #
+    # One position per (sale currency, settlement currency) pair, so a seller
+    # who sells in dollars and banks in pounds sees both sides of the one
+    # relationship rather than two unrelated ledgers.
+    #
     # @return [Array<Spree::SellerBalance>]
     def balances
-      currencies = seller_transfers.where.not(status: 'failed').distinct.pluck(:currency) |
-                   seller_payouts.completed.distinct.pluck(:currency)
+      pairs = seller_transfers.where.not(status: 'failed').
+              distinct.pluck(:currency, :settled_currency)
 
-      currencies.sort.map { |currency| Spree::SellerBalance.for(self, currency) }
+      pairs.sort.map { |currency, settlement| Spree::SellerBalance.for(self, currency, settlement) }
     end
 
     # The seller's account with whichever provider pays them — a Stripe Connect

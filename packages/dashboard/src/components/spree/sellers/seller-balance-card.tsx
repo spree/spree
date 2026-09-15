@@ -21,6 +21,10 @@ import { ReadRow } from './seller-read-row'
  * Nothing is ever converted between currencies, so a seller trading in two
  * has two positions rather than one total. Renders nothing until their first
  * fulfilled sale — an empty card on every new seller would only be noise.
+ *
+ * A seller whose account settles in another currency has two sides to one
+ * position: what the sales were worth, and what their account received once
+ * the provider converted. The owed figure is the one a payout can send.
  */
 export function SellerBalanceCard({ seller }: { seller: Seller }) {
   const { t } = useTranslation()
@@ -60,12 +64,30 @@ export function SellerBalanceCard({ seller }: { seller: Seller }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {balances.map((balance, index) => (
-          <div key={balance.currency} className="flex flex-col gap-3">
+          <div
+            key={`${balance.currency}-${balance.settlement_currency}`}
+            className="flex flex-col gap-3"
+          >
             {index > 0 && <Separator />}
-            <ReadRow label={t('admin.payouts.balance.owed', { currency: balance.currency })}>
+            <ReadRow
+              label={t('admin.payouts.balance.owed', { currency: balance.settlement_currency })}
+            >
               <span className="font-medium">{balance.display_balance}</span>
             </ReadRow>
-            <ReadRow label={t('admin.payouts.balance.earned')}>{balance.display_earned}</ReadRow>
+            <ReadRow
+              label={
+                balance.converted
+                  ? t('admin.payouts.balance.earned_in', { currency: balance.currency })
+                  : t('admin.payouts.balance.earned')
+              }
+            >
+              {balance.display_earned}
+            </ReadRow>
+            {balance.converted && (
+              <ReadRow label={t('admin.payouts.balance.payable')}>
+                {balance.display_payable}
+              </ReadRow>
+            )}
             <ReadRow label={t('admin.payouts.balance.paid')}>{balance.display_paid}</ReadRow>
             <ReadRow label={t('admin.payouts.balance.pending')}>{balance.display_pending}</ReadRow>
           </div>

@@ -5585,7 +5585,9 @@
         "owed": "应付（{{currency}}）",
         "earned": "已赚取",
         "paid": "已打款",
-        "pending": "在途"
+        "pending": "在途",
+        "earned_in": "已赚取（{{currency}}）",
+        "payable": "可打款"
       },
       "complete": {
         "title": "将此打款标记为已支付",

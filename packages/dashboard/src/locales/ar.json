@@ -5631,7 +5631,9 @@
         "owed": "المستحق ({{currency}})",
         "earned": "المكتسب",
         "paid": "المدفوع",
-        "pending": "في الطريق"
+        "pending": "في الطريق",
+        "earned_in": "المكتسب ({{currency}})",
+        "payable": "قابل للدفع"
       },
       "complete": {
         "title": "وضع علامة مدفوعة على هذه الدفعة",

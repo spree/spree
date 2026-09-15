@@ -93,7 +93,7 @@ module Spree
             end
 
             def currencies_owed
-              @seller.seller_transfers.unsettled.distinct.pluck(:currency)
+              @seller.payable_currencies
             end
 
             def serialize_payout(payout)

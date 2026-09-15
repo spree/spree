@@ -138,7 +138,13 @@ module SpreeStripe
             losses: { payments: 'application' },
             stripe_dashboard: { type: 'express' }
           },
-          capabilities: { transfers: { requested: true } },
+          # `card_payments` is never exercised — the marketplace charges on its
+          # own account and only transfers onwards — but Stripe will not grant
+          # `transfers` alone outside the recipient agreement, and refuses
+          # that agreement for a seller in the platform's own country. Abroad
+          # it would be allowed, and is still wrong: a recipient account
+          # cannot receive the cross-border payouts this gem then makes.
+          capabilities: { transfers: { requested: true }, card_payments: { requested: true } },
           # Spree decides when a seller is settled, so Stripe must not also be
           # paying their balance out on a schedule of its own — two clocks on
           # one relationship, and the seller's own setting would be the one
@@ -214,11 +220,19 @@ module SpreeStripe
         return if seller.nil?
 
         payout = find_payout(seller, object)
-        return if payout.nil? || payout.completed?
+        return if payout.nil?
 
         if status == 'paid'
+          # A redelivery of a settlement already completed changes nothing.
+          return if payout.completed?
+
           Spree.seller_payout_complete_workflow.call(seller_payout: payout, reference: object.id)
         else
+          # Answered even on a completed settlement. A bank can return a payout
+          # days after it was paid, and the money is back in the seller's
+          # balance whether or not our books had moved on — left alone, the
+          # ledger reports a seller settled while Stripe still holds their
+          # earnings. Failing it releases them for the next sweep to send again.
           payout.fail!
         end
       end
@@ -303,7 +317,8 @@ module SpreeStripe
       end
 
       def create_connect_webhook_endpoint_async
-        return if preferred_connect_webhook_signing_secret.present?
+        return if only_webhook_registration_changed?
+        return if preferred_connect_webhook_signing_secret.present? && !stripe_secret_key_changed?
 
         SpreeStripe::CreateWebhookEndpointJob.perform_later(id, connect: true)
       end

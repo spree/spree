@@ -7,18 +7,26 @@ module Spree
         class SellerBalanceSerializer < V3::BaseSerializer
           typelize seller_id: :string,
                    currency: :string,
+                   settlement_currency: :string,
+                   converted: :boolean,
                    earned: :string, display_earned: :string,
+                   payable: :string, display_payable: :string,
                    paid: :string, display_paid: :string,
                    balance: :string, display_balance: :string,
                    pending: :string, display_pending: :string
 
           _attributes.delete(:id)
 
-          attributes :currency
+          # Two sides when the account settles in another currency: what the
+          # sales were worth, and what the account received once the provider
+          # converted. Never added together.
+          attributes :currency, :settlement_currency
+
+          attribute(:converted) { |balance| balance.converted? }
 
           attribute(:seller_id) { |balance| balance.seller&.prefixed_id }
 
-          %i[earned paid balance pending].each do |figure|
+          %i[earned payable paid balance pending].each do |figure|
             attribute(figure) { |balance| balance.public_send(figure).to_s }
             attribute(:"display_#{figure}") { |balance| balance.public_send(:"display_#{figure}").to_s }
           end

@@ -43,6 +43,23 @@ RSpec.describe Spree::Return do
     end
   end
 
+  # The seller's clawback is built from these, so a line the warehouse never
+  # counted must not appear: nothing came back, so nothing was earned back.
+  describe '#refunded_line_amounts' do
+    let(:return_record) { create(:received_return, store: store) }
+    let(:line) { return_record.return_line_items.first }
+
+    it 'names each line and what it is worth' do
+      expect(return_record.refunded_line_amounts).to eq(line.line_item_id => line.pre_tax_amount)
+    end
+
+    it 'counts what was received rather than what was announced' do
+      line.update!(received_quantity: 0)
+
+      expect(return_record.refunded_line_amounts).to be_empty
+    end
+  end
+
   describe Spree::ReturnLineItem do
     let(:return_record) { create(:return, store: store) }
     let(:line) { return_record.return_line_items.first }

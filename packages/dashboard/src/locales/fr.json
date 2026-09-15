@@ -5597,7 +5597,9 @@
         "owed": "Dû ({{currency}})",
         "earned": "Gagné",
         "paid": "Versé",
-        "pending": "En route"
+        "pending": "En route",
+        "earned_in": "Gagné ({{currency}})",
+        "payable": "À verser"
       },
       "complete": {
         "title": "Marquer ce versement comme payé",
