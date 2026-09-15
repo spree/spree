@@ -143,7 +143,7 @@ export async function installStorefrontDeps(projectDir: string, pm: PackageManag
   await execa(cmd, args, { cwd: storefrontDir, stdio: 'ignore' })
 }
 
-export function writeStorefrontEnv(projectDir: string, port: number, wholesale = false): void {
+export function writeStorefrontEnv(projectDir: string, port: number): void {
   const envPath = path.join(projectDir, 'apps', 'storefront', '.env.local')
-  fs.writeFileSync(envPath, storefrontEnvContent(port, wholesale))
+  fs.writeFileSync(envPath, storefrontEnvContent(port))
 }

@@ -1,4 +1,4 @@
-import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
+import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import type { PackageManager } from '../types.js'
 import { globalAddCommand, runCommand, storefrontPm } from '../utils.js'
 
@@ -40,11 +40,10 @@ Wait for the services to be healthy, then open:
 
 ${
   hasDashboard
-    ? `- **Admin Dashboard (React, Developer Preview):** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
-  - You choose the admin email and password during the first run
-  - Classic admin: http://localhost:${port}/admin (same credentials)`
-    : `- **Admin Dashboard:** http://localhost:${port}/admin
-  - You choose the admin email and password during the first run`
+    ? `- **Admin Dashboard:** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
+  - The first run opens a setup link where you create the admin account
+- **Seller Panel (marketplace):** http://localhost:${SELLER_DASHBOARD_PORT} — run it with \`cd apps/seller-dashboard && pnpm dev\``
+    : `- **Admin Dashboard:** run \`spree add dashboard\` to scaffold it`
 }
 - **Store API:** http://localhost:${port}/api/v3/store
 `
@@ -66,7 +65,7 @@ Open http://localhost:${STOREFRONT_PORT}
 
   if (hasDashboard) {
     content += `
-### The React Dashboard (Developer Preview)
+### The React Dashboard
 
 \`apps/dashboard/\` is your admin — a customizable React SPA (plugins, your
 own pages, table tweaks) with live reload. \`spree dev\` starts it

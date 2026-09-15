@@ -95,7 +95,7 @@ export function registerDevCommand(program: Command): void {
           '',
           ...(withDashboard
             ? [
-                pc.bold('Admin Dashboard (React, Developer Preview)'),
+                pc.bold('Admin Dashboard'),
                 `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
                 ...adminIdentityLines(ctx.projectDir),
                 `  ${pc.dim('Live-reloading from apps/dashboard/')}`,

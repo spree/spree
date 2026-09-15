@@ -31,7 +31,6 @@ export { requiredMessage } from './lib/validation-messages'
 // ---------------------------------------------------------------------------
 export * from './spree/address-block'
 export * from './spree/address-book-row'
-export * from './spree/address-map'
 export * from './spree/back-button'
 export * from './spree/bulk-dialog'
 export * from './spree/bulk-price-table'

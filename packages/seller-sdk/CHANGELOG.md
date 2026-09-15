@@ -1,6 +1,12 @@
 # @spree/seller-sdk
 
-## 0.1.1
+## 1.0.0-beta.2
+
+### Patch Changes
+
+- Released alongside the dashboard packages it is versioned with.
+
+## 1.0.0-beta.1
 
 ### Patch Changes
 

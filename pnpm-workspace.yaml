@@ -79,7 +79,7 @@ overrides:
   # @tiptap/react stayed on 3.22, which still imports cancelPositionCheck
   # and schedulePositionCheck — exports 3.31 removed. Pin the family
   # together on the patched line (prototype pollution <3.30.4, Markdown
-  # ReDoS <3.30.5). maplibre-gl is exact: ^6.4.1 resolved to 6.9.
+  # ReDoS <3.30.5).
   '@tiptap/core': 3.31.3
   '@tiptap/pm': 3.31.3
   '@tiptap/react': 3.31.3
@@ -93,7 +93,6 @@ overrides:
   # line. Two copies make wrapInList throw, so list toolbar buttons no-op.
   prosemirror-model: 1.25.11
   prosemirror-view: 1.42.3
-  maplibre-gl: 6.4.1
   '@vitest/mocker': ^4.1.11
   baseline-browser-mapping: ^2.11.0
   browserslist: ^4.28.7
@@ -122,7 +121,6 @@ minimumReleaseAgeExclude:
   - browserslist@4.28.7
   - qs@6.16.0
   - fast-uri@3.1.6
-  - maplibre-gl@6.4.1
   - vitest@4.1.11
   - '@vitest/mocker@4.1.11'
   - baseline-browser-mapping@2.11.0

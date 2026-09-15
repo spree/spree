@@ -249,11 +249,24 @@ export async function mintProjectCredentials(
       NAME: '@spree/cli (auto)',
       KEY_TYPE: 'secret',
       SCOPES: 'read_all',
+      // The name is fixed, and names are unique among a store's active keys —
+      // so without this a second mint fails on "Name has already been taken".
+      // That is the normal case, not an edge one: an interrupted setup, a
+      // `spree init` re-run, or a lost credentials.json all mint again. The
+      // task revokes the previous key and creates the replacement in one
+      // transaction, so a failure never leaves the project with neither.
+      REPLACE: 'true',
     })
   } catch (error) {
-    const detail = error instanceof Error ? error.message.split('\n')[0] : String(error)
+    // Surface what the task actually said. The old message blamed a stopped
+    // stack for every failure, which sent operators after a stack that was
+    // running fine while the real cause (a validation error) scrolled past.
+    const output = error instanceof Error ? error.message : String(error)
+    const railsError = output.match(/^\w*(?:::\w+)*(?:Error|Invalid):.*$/m)?.[0]
     throw new CredentialError(
-      `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(detail)}`,
+      railsError
+        ? `Could not mint an API key.\n${pc.dim(railsError)}`
+        : `Could not mint an API key via the dev stack. Is it running? Start it with \`spree dev\`.\n${pc.dim(output.split('\n')[0])}`,
     )
   }
 

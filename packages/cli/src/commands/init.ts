@@ -171,7 +171,7 @@ export async function runFirstRunSetup(flags: {
 
   const adminBlock = dashboardRunnable
     ? [
-        pc.bold('Admin Dashboard (React, Developer Preview)'),
+        pc.bold('Admin Dashboard'),
         `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
         ...credentialLines,
         `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
@@ -341,49 +341,19 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
- * Flags win; otherwise an interactive terminal prompts (Medusa-style). A
- * non-interactive run with no flags seeds no admin at all — the setup link
- * printed by the seed claims the installation instead, so an automated
- * install never mints a well-known password.
+ * Admin credentials come from flags only, for scripted installs that want a
+ * known account. Without them no admin is seeded and the first one is created
+ * in the dashboard's own setup screen, which the seed's one-time link opens —
+ * so no install, automated or not, mints a well-known password.
  */
 async function resolveAdminCredentials(flags: {
   adminEmail?: string
   adminPassword?: string
 }): Promise<{ adminEmail?: string; adminPassword?: string }> {
-  let adminEmail = flags.adminEmail
-  let adminPassword = flags.adminPassword
+  const { adminEmail, adminPassword } = flags
 
-  if ((!adminEmail || !adminPassword) && process.stdin.isTTY) {
-    p.log.step('Create your admin account')
-
-    if (!adminEmail) {
-      const answer = await p.text({
-        message: 'Admin email',
-        initialValue: 'spree@example.com',
-        validate: (value) => (value?.includes('@') ? undefined : 'Enter a valid email address'),
-      })
-      if (p.isCancel(answer)) {
-        p.cancel('Setup cancelled.')
-        process.exit(1)
-      }
-      adminEmail = answer
-    }
-
-    if (!adminPassword) {
-      const answer = await p.password({
-        message: 'Admin password (min. 8 characters)',
-        validate: (value) => ((value ?? '').length >= 8 ? undefined : 'Use at least 8 characters'),
-      })
-      if (p.isCancel(answer)) {
-        p.cancel('Setup cancelled.')
-        process.exit(1)
-      }
-      adminPassword = answer
-    }
-  }
-
-  // Flag values skip the prompt validators, so check them here too — the
-  // alternative is failing after Docker start and seeding, minutes later.
+  // Validate before Docker starts — the alternative is failing after the
+  // image pull and seed, minutes later.
   if (adminEmail && !adminEmail.includes('@')) {
     p.cancel(`Invalid --admin-email: ${adminEmail}`)
     process.exit(1)
