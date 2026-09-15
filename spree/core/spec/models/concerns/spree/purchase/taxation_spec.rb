@@ -207,5 +207,63 @@ RSpec.describe Spree::Purchase::Taxation do
         expect(record.reload.resolved_tax_identifier).to eq(snapshot)
       end
     end
+
+    # A certificate lapses on its own date with nothing written to it, so a
+    # credit filed months later must read what the sale was priced with rather
+    # than what resolves on the day.
+    describe '#usable_exemptions on a placed order' do
+      let(:record) { create(:completed_order_with_totals) }
+
+      # A resolver answering something the snapshot never contains, so which
+      # source was read is visible in the result rather than in a call count —
+      # completing an order resolves exemptions of its own accord.
+      before do
+        live = Spree::TaxExemption.new(reason_code: 'resolved_live')
+        allow(Spree).to receive(:tax_resolve_exemptions_service).and_return(
+          class_double(Spree::Tax::ResolveExemptions,
+                       new: instance_double(Spree::Tax::ResolveExemptions, call: double(value: [live])))
+        )
+      end
+
+      it 'answers from its frozen claims instead of resolving again' do
+        record.update_column(:applied_tax_exemptions,
+                             [{ 'reason_code' => 'resale', 'certificate_number' => 'CERT-1',
+                                'country_code' => 'US', 'state_code' => 'CA', 'item_overrides' => [] }])
+
+        claim = record.reload.usable_exemptions.sole
+
+        expect(claim).to be_a(Spree::TaxExemption)
+        expect(claim.reason_code).to eq('resale')
+        expect(claim.certificate_number).to eq('CERT-1')
+        expect(claim.covers_jurisdiction?('US', 'CA')).to be(true)
+        expect(claim.covers_jurisdiction?('US', 'NY')).to be(false)
+      end
+
+      it 'rebuilds the per-line carve-outs a claim was narrowed by' do
+        line_item = record.line_items.first
+        record.update_column(:applied_tax_exemptions,
+                             [{ 'reason_code' => 'resale', 'item_overrides' => [
+                               { 'item_id' => line_item.prefixed_id, 'exempt' => false, 'reason_code' => nil }
+                             ] }])
+
+        claim = record.reload.usable_exemptions.sole
+
+        expect(claim.covers_item?(line_item)).to be(false)
+      end
+
+      # An empty snapshot records "found no claim", not an absence. Read as
+      # absent, a certificate added later would explain a sale it never touched.
+      it 'keeps answering nothing when it froze nothing' do
+        record.update_column(:applied_tax_exemptions, [])
+
+        expect(record.reload.usable_exemptions).to eq([])
+      end
+
+      # Only nil is the legacy state — orders placed before the column existed.
+      it 'resolves live only when it holds no snapshot at all' do
+        expect(record.applied_tax_exemptions).to be_nil
+        expect(record.usable_exemptions.map(&:reason_code)).to eq(['resolved_live'])
+      end
+    end
   end
 end

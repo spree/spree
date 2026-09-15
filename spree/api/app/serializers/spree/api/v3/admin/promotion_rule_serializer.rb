@@ -11,7 +11,7 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: currency, country, channel, market, item_total, product, customer, customer_group, first_order, customer_logged_in, one_use_per_user, category, option_value. Extensions may register more.'],
                    promotion_id: :string,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>",
                    product_ids: 'Array<string> | null',
                    category_ids: 'Array<string> | null',
                    customer_ids: 'Array<string> | null',

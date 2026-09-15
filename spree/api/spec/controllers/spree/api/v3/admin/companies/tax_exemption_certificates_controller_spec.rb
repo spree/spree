@@ -19,6 +19,68 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     )
   end
 
+  describe 'GET #reason_codes' do
+    def groups
+      JSON.parse(response.body)['data']
+    end
+
+    context 'with no provider vocabulary registered' do
+      before { Spree.tax_exemption_reason_codes = {} }
+
+      # A store with no tax provider installed still has to offer something.
+      it 'answers with the neutral default list, ungrouped' do
+        get :reason_codes, params: { company_id: company.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(groups.size).to eq(1)
+        expect(groups.first['provider']).to be_nil
+        expect(groups.first['reason_codes'].map { |code| code['value'] }).
+          to eq(%w[resale government charitable educational manufacturing agricultural])
+      end
+    end
+
+    context 'with providers registering their own vocabularies' do
+      before do
+        Spree.tax_exemption_reason_codes = {
+          'Avalara AvaTax' => { 'G' => 'RESALE', 'N' => 'EDUCATIONAL ORG' },
+          'Other Engine' => %w[exempt]
+        }
+      end
+
+      after { Spree.tax_exemption_reason_codes = {} }
+
+      # Grouped so a merchant with two engines installed can tell the
+      # vocabularies apart rather than picking a code theirs never heard of.
+      it 'answers with a group per provider' do
+        get :reason_codes, params: { company_id: company.prefixed_id }
+
+        expect(groups.map { |group| group['provider'] }).to eq(['Avalara AvaTax', 'Other Engine'])
+        expect(groups.first['reason_codes']).to eq(
+          [{ 'value' => 'G', 'label' => 'RESALE' }, { 'value' => 'N', 'label' => 'EDUCATIONAL ORG' }]
+        )
+      end
+
+      # A provider may register a bare list when the code is its own label.
+      it 'accepts a list as well as a hash of code to label' do
+        get :reason_codes, params: { company_id: company.prefixed_id }
+
+        expect(groups.last['reason_codes']).to eq([{ 'value' => 'exempt', 'label' => 'exempt' }])
+      end
+    end
+
+    it 'is a read, so a read-scoped key may ask' do
+      get :reason_codes, params: { company_id: company.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'is scoped to a company the caller can reach' do
+      get :reason_codes, params: { company_id: 'company_missing' }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #index' do
     it 'lists the company certificates with whether each counts' do
       create(:tax_exemption_certificate, :verified, company: company,

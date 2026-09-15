@@ -28,6 +28,7 @@ module Spree
             step :process_payments unless payment_pending || !order.payment_required?
             step :finalize_fulfillments
             step :place_order
+            step :freeze_tax_exemptions
             step :use_coupon_codes
             step :redeem_gift_card
             step :fulfill_auto_fulfillments
@@ -82,6 +83,13 @@ module Spree
 
       def place_order
         order.update!(status: 'placed', completed_at: Time.current)
+      end
+
+      # Pins what the sale was priced with, as `Carts::Complete` does for a cart.
+      # A draft is its own source, so nothing needs translating — and it is the
+      # path company certificates take, which left it resolving live at credit.
+      def freeze_tax_exemptions
+        order.update_column(:applied_tax_exemptions, order.usable_exemptions.map(&:to_snapshot))
       end
 
       def use_coupon_codes
