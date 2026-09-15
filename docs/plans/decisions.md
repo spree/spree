@@ -5660,7 +5660,6 @@ ownership associations that gate visibility (`Import#user`, `Export#user`,
 not `try_spree_current_user`, for actor keywords. Workflow principal
 parameters stay `[Object, nil]` and are assigned, not inspected.
 
-<<<<<<< Updated upstream
 **Amended the same day, at implementation.** Three points the design left
 open. An expanded actor serializes as `{ id, type, label }` through a new
 `ActorSerializer`, not through the admin user serializer — the order
@@ -5674,7 +5673,6 @@ file alone, which left a 500 waiting for the first key-creates-key call.
 and overridden in `AdminAuthentication` to prefer `current_api_key`, because
 the post-sale concerns are shared with the JWT-only seller panel while a
 publishable Store API key must never become an actor.
-=======
 
 ## 2026-09-16 — Update checks and usage telemetry are one daily heartbeat, on by default
 
@@ -5704,4 +5702,38 @@ call from core is cached, run from a job, short-timeout, failure-cached.
 Env-backed booleans read through `Spree::Config` must be cast: the `env:`
 option on `preference` returns the raw string. Cross-page notices go through
 the `AppShell` `banner` slot, nowhere else.
->>>>>>> Stashed changes
+## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
+
+Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.
+
+Creating a store asks the same four questions wherever it happens — name,
+country, currency, language — and provisions the same things from the
+answers. Two flows ask them:
+
+- **Self-hosted:** account setup, then store setup. No email confirmation.
+- **Hosted signup:** account setup, then confirmation (instant with an OAuth
+  provider), then store setup.
+
+Only the middle step differs, so the store step is shared rather than
+reimplemented.
+
+**Frontend.** The four fields live in `StoreSetupFields`, exported from
+`@spree/dashboard` at `./components/spree/store-setup-fields`. It is headless
+about submission: the caller owns the form, the countries query and what
+happens on submit, because those genuinely differ (a one-time setup token
+versus an authenticated session). The country drives the currency and
+language defaults, and both stay editable.
+
+**Backend.** `Spree::Stores::ProvisionDefaults` is the one provisioning path,
+already called by the first-run setup endpoint. Anything else that creates a
+store calls it too, rather than hand-rolling a subset: it builds the default
+market, the warehouse, the delivery zones, the package type and pickup, and a
+store missing those cannot ship. The earlier hosted sandbox created only a
+market, which is why its stores could not fulfil.
+
+**Consequences for other work.** A new flow that creates a store mounts
+`StoreSetupFields` and calls `ProvisionDefaults`; it does not write its own
+country picker or its own provisioning. `ProvisionDefaults` previously
+documented exactly two callers — that list grows as flows are added, but the
+rule it protects stands: never wire it to a settings screen, since re-running
+it against a configured store is a data reset.
