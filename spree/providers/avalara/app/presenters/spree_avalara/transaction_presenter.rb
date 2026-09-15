@@ -44,8 +44,8 @@ module SpreeAvalara
       # `exemptionNo` here, `exemptionCode` on a line — see ItemPresenter for the
       # matrix. Each name is ignored at the other level, silently.
       if (entry = document_exemption)
-        code = EntityUseCodes.for(entry.reason_code)
-        payload[:entityUseCode] = code if code
+        entity_use_code = EntityUseCodes.for(entry.reason_code)
+        payload[:entityUseCode] = entity_use_code if entity_use_code
         payload[:exemptionNo] = entry.certificate_number if entry.certificate_number.present?
       end
 

@@ -103,15 +103,36 @@ RSpec.describe SpreeAvalara::Client do
     end
   end
 
-  describe 'retries' do
-    it 'retries a connection failure twice before giving up' do
+  # Translated, never repeated: retrying would mean sleeping inside the request
+  # while a customer waits, and the caller is told the engine was unavailable so
+  # its own client can decide.
+  describe 'transport failures' do
+    it 'reports a refused connection as unavailable, having called once' do
       stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
 
       expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /connection refused/) { |error|
         # No status: nothing answered, so the failure was the network.
         expect(error.status).to be_nil
       }
-      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(3)
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
+    end
+
+    it 'reports a timeout the same way' do
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::TimeoutError.new('execution expired'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError, /execution expired/) { |error|
+        expect(error.status).to be_nil
+      }
+      expect(WebMock).to have_requested(:get, /utilities\/ping/).times(1)
+    end
+
+    it 'never sleeps inside the request' do
+      allow(client).to receive(:sleep)
+      stub_request(:get, /utilities\/ping/).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+
+      expect { client.ping }.to raise_error(SpreeAvalara::RequestError)
+
+      expect(client).not_to have_received(:sleep)
     end
 
     it 'does not repeat a call Avalara already refused' do

@@ -61,7 +61,10 @@ module SpreeAvalara
         sweep!(owner)
         write_lines(owner, taxable, lines)
       end
-    rescue SpreeAvalara::RequestError => error
+    rescue SpreeAvalara::Error => error
+      # The whole family, not just a refused request: reading the response back
+      # raises on a line we never sent or an item we cannot tax, and those left
+      # unmapped escaped as a 500 — the failure this contract exists to remove.
       raise tax_failure(error)
     end
 
@@ -149,9 +152,9 @@ module SpreeAvalara
     # Which of core's two failures an AvaTax error is, decided by whether
     # Avalara answered at all.
     #
-    # No status means nothing was answered — the network, a timeout, retries
-    # exhausted — and a later attempt may well succeed. A 5xx is the same
-    # shape: Avalara's own fault, not the request's.
+    # No status means nothing was answered — the network, or a timeout — and a
+    # later attempt may well succeed. A 5xx is the same shape: Avalara's own
+    # fault, not the request's.
     #
     # Anything else is Avalara saying no to this particular request: an address
     # it will not accept, a company code that does not exist. The service is
@@ -160,8 +163,11 @@ module SpreeAvalara
     # message is carried across, because it names the problem better than
     # anything this gem could invent.
     def tax_failure(error)
-      status = error.status.to_i
-      unavailable = error.status.nil? || status >= 500 || RETRYABLE_STATUSES.include?(status)
+      # A protocol violation carries no status at all, and lands as unavailable:
+      # the sale is refused either way, and telling a customer to correct an
+      # address when the response shape was wrong would send them nowhere.
+      status = error.try(:status).to_i
+      unavailable = error.try(:status).nil? || status >= 500 || RETRYABLE_STATUSES.include?(status)
 
       failure = unavailable ? Spree::Tax::ProviderUnavailable : Spree::Tax::CalculationRefused
       failure.new(error.message, provider_key: SpreeAvalara::PROVIDER_ID)

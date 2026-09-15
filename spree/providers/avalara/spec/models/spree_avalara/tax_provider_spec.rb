@@ -269,10 +269,13 @@ RSpec.describe SpreeAvalara::TaxProvider do
       expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable)
     end
 
-    it 'raises when Avalara prices a line that was never sent' do
+    # Reported in core's vocabulary like every other failure: left as this
+    # gem's own error it escaped the contract and reached the customer as a
+    # 500, which a storefront cannot tell from a platform bug.
+    it 'reports a line that was never sent as a provider failure' do
       allow(client).to receive(:create_transaction).and_return(response(line_number: 'li_never_sent'))
 
-      expect { provider.estimate(cart) }.to raise_error(SpreeAvalara::Error, /never sent/)
+      expect { provider.estimate(cart) }.to raise_error(Spree::Tax::ProviderUnavailable, /never sent/)
     end
   end
 

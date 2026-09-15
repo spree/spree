@@ -4,18 +4,18 @@ module SpreeAvalara
   # {SpreeAvalara::RequestError} on anything else.
   #
   # The legacy extension achieved the same by monkey-patching the SDK's request
-  # method. Nothing is patched here — retries and error translation live in this
-  # wrapper, which is also what makes the SDK upgradable.
+  # method. Nothing is patched here — error translation lives in this wrapper,
+  # which is also what makes the SDK upgradable.
   class Client
-    # Retries are safe because every write this gem makes is idempotent: filings
-    # are keyed on document codes, so a replayed request adjusts the same
-    # document rather than creating a second one.
-    MAX_RETRIES = 2
-
-    # Only transport failures are retried. A rejected credential or a refused
-    # document is a decision Avalara already made, and repeating the call cannot
-    # change it — it only spends a checkout's remaining time budget.
-    RETRIABLE_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError].freeze
+    # Nothing was answered, so these become a statusless RequestError and the
+    # caller reports the engine as unavailable.
+    #
+    # Deliberately translated but never repeated here. Repeating means sleeping
+    # inside the request, which holds a thread — and the completion lock — while
+    # a customer waits, and a timeout has already spent the whole read budget
+    # before it even begins. Retrying belongs to the caller: the response says
+    # 503, and the SDK retries that with backoff of its own.
+    TRANSPORT_ERRORS = [Faraday::ConnectionFailed, Faraday::TimeoutError].freeze
 
     attr_reader :account_number, :license_key, :endpoint, :company_code
 
@@ -143,18 +143,11 @@ module SpreeAvalara
     end
 
     def request
-      attempts = 0
-
-      begin
-        attempts += 1
-        interpret(yield)
-      rescue *RETRIABLE_ERRORS => error
-        retry if attempts <= MAX_RETRIES
-
-        # No status: nothing was answered, so the failure is the network rather
-        # than a decision by Avalara.
-        raise RequestError.new(error.message, status: nil, details: nil)
-      end
+      interpret(yield)
+    rescue *TRANSPORT_ERRORS => error
+      # No status: nothing was answered, so the failure is the network rather
+      # than a decision by Avalara.
+      raise RequestError.new(error.message, status: nil, details: nil)
     end
 
     # AvaTax reports refusals two ways — an HTTP status and an `error` object in

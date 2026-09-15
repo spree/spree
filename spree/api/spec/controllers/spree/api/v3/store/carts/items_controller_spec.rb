@@ -24,7 +24,9 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
       post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1 }
 
-      expect(response).to have_http_status(:unprocessable_content)
+      # 503, not 422: nothing is wrong with the request, and it is the status a
+      # client retries — the SDK retries on status, not on our error code.
+      expect(response).to have_http_status(:service_unavailable)
       expect(json_response['error']['code']).to eq('tax_provider_unavailable')
       # Our endpoint is named in the underlying message, so it stays in the
       # error tracker rather than going to the customer.

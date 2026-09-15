@@ -249,7 +249,9 @@ module Spree
           render_error(
             code: refused ? ERROR_CODES[:tax_calculation_refused] : ERROR_CODES[:tax_provider_unavailable],
             message: refused ? exception.message.to_s : Spree.t('cart_line_item.tax_unavailable'),
-            status: :unprocessable_content
+            # A refusal is the request's fault, an outage is not. 503 is also
+            # the one the SDK retries — it retries on status, not on our code.
+            status: refused ? :unprocessable_content : :service_unavailable
           )
         end
 

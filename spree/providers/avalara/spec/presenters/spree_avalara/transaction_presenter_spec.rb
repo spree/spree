@@ -104,6 +104,17 @@ RSpec.describe SpreeAvalara::TransactionPresenter do
       expect(payload[:lines].sole).not_to have_key(:entityUseCode)
     end
 
+    # The exemption block once assigned a local named `code`, one line below the
+    # document code being read from the reader of the same name. It worked only
+    # because the read is parsed first; either block moving would have filed the
+    # sale under an entity use code instead of its own number.
+    it 'keeps the document code alongside the exemption' do
+      payload = present(code: 'R1001', exemptions: [exemption])
+
+      expect(payload[:code]).to eq('R1001')
+      expect(payload[:entityUseCode]).to eq('G')
+    end
+
     it 'goes per line when the claim carves lines out' do
       override = Spree::TaxExemption::ItemOverride.new(item_id: line_item.prefixed_id, exempt: true,
                                                        reason_code: 'FEDERAL_GOV')

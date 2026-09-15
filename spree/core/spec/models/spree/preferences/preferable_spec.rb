@@ -31,6 +31,7 @@ describe Spree::Preferences::Preferable, type: :model do
                                      in: { 'https://one.example' => 'One',
                                            'https://two.example' => 'Two' }
       preference :mode, :string, default: 'live', in: %w[test live]
+      preference :tier, :integer, default: 1, in: 1..3
       preference :note, :string
     end
   end
@@ -71,6 +72,14 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'carries no label for a plain list' do
       expect(C.serialized_preference_schema).to include(
         hash_including(key: :mode, choices: [{ value: 'test' }, { value: 'live' }])
+      )
+    end
+
+    # Anything the declaration listed them as, not only an Array — falling
+    # through left a text box and no sign of why the picker had gone.
+    it 'accepts a set that is not a list' do
+      expect(C.serialized_preference_schema).to include(
+        hash_including(key: :tier, choices: [{ value: '1' }, { value: '2' }, { value: '3' }])
       )
     end
 
