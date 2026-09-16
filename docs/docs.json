@@ -2474,6 +2474,7 @@
                   "developer/agentic/overview",
                   "developer/agentic/agent-skills",
                   "developer/agentic/mcp",
+                  "developer/agentic/admin-mcp",
                   "developer/agentic/llm-docs"
                 ]
               }
