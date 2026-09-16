@@ -11,7 +11,9 @@ module Spree
       tool_name 'get_import_status'
       description 'Check how an import is going: its state, how many rows succeeded ' \
                   'or failed, and why the failures failed.'
-      permission 'read_settings'
+      # Gated per import in `call`, on the scope of the resource being
+      # imported: the failed rows carry the uploaded data.
+      permission nil
 
       param :id, description: 'Import id or number. Omit for the most recent import.',
                  required: false
@@ -19,6 +21,9 @@ module Spree
       def call(id: nil)
         import = find_import(id)
         return { error: 'No import found.' } if import.nil?
+
+        refusal = unauthorized_import(import)
+        return refusal if refusal
 
         {
           id: import.prefixed_id,
