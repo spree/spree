@@ -777,7 +777,7 @@ steps:
 
   - id: recount_stock_levels
     name: "Fill in the reserved and incoming counters on every stock level"
-    task: "spree:stock:recount_levels"
+    task_class: "Spree::MaintenanceTasks::Upgrade::RecountStockLevels"
     notes: |
       Spree 6.0 keeps two more figures on each stock level beside on hand and
       committed: reserved (units held by checkouts in progress) and incoming

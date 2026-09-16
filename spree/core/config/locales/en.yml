@@ -1078,6 +1078,8 @@ en:
           description: Rewrite Option Value promotion rules
         reason_store_ids:
           description: Assign return and refund reasons to the default store
+        recount_stock_levels:
+          description: Recount reserved and incoming stock
         remove_master_variant:
           description: Migrate products off the master variant
         returns:

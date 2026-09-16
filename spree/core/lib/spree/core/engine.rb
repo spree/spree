@@ -577,7 +577,8 @@ module Spree
           'Spree::MaintenanceTasks::Upgrade::ImportExportTenancy',
           'Spree::MaintenanceTasks::Upgrade::CustomFieldDefinitionStores',
           'Spree::MaintenanceTasks::Upgrade::PackageTypes',
-          'Spree::MaintenanceTasks::Upgrade::ExternalReceivesToPurchaseOrders'
+          'Spree::MaintenanceTasks::Upgrade::ExternalReceivesToPurchaseOrders',
+          'Spree::MaintenanceTasks::Upgrade::RecountStockLevels'
         ]
 
         Rails.application.config.spree.validators.addresses = [
