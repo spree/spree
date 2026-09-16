@@ -81,7 +81,10 @@ module Spree
 
           { error: "You do not have permission to report on #{forbidden.to_s.demodulize.underscore.humanize.downcase}." }
         else
-          missing = query.required_key_scopes.reject { |scope| context.api_key.has_scope?(scope) }
+          # Through the context, so a key's scopes expand the one way the rest
+          # of the gate expands them — `has_scope?` treats `read_all` as
+          # granting scopes no staff key may actually hold.
+          missing = query.required_key_scopes.reject { |scope| context.holds?(scope) }
           return if missing.empty?
 
           { error: "This API key lacks the #{missing.to_sentence} scope." }

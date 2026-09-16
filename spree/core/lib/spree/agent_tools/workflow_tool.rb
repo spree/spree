@@ -28,11 +28,17 @@ module Spree
           workflow_class = resolve_workflow(dependency_key)
           return if workflow_class.nil?
 
-          # Keyed by what actually shapes the class. A summary override is a
-          # callable with no stable identity, so its presence is part of the
-          # key but the object is not — otherwise every code reload would add
-          # a permanent entry for the same tool.
-          cache_key = [dependency_key, workflow_class.name, permission, except, !summary.nil?]
+          # Keyed by what actually shapes the class, including the workflow's
+          # own source location and mtime: a tool's parameters are read off
+          # `perform`, so editing a workflow in development has to produce a
+          # new tool rather than serve the schema built before the reload.
+          # That is the same reason the registry stores names and not classes.
+          #
+          # A summary override is a callable with no stable identity, so its
+          # presence is part of the key but the object is not — otherwise
+          # every reload would leave a permanent entry behind.
+          cache_key = [dependency_key, workflow_class.name, source_fingerprint(workflow_class),
+                       permission, except, !summary.nil?]
           cached = cache[cache_key]
           return cached if cached && cached.summary_override.equal?(summary)
 
@@ -42,6 +48,21 @@ module Spree
         # @return [void]
         def clear_cache!
           @cache = {}
+        end
+
+        # Identifies the source a tool's schema was read from, so an edit in
+        # development invalidates the generated class. Nil in a packaged gem
+        # whose source is not on disk, which simply means the key never
+        # changes there — correct, since the source cannot change either.
+        #
+        # @return [Array, nil]
+        def source_fingerprint(workflow_class)
+          file, = workflow_class.instance_method(:perform).source_location
+          return if file.nil?
+
+          [file, File.mtime(file)]
+        rescue StandardError
+          nil
         end
 
         # The tool name for a dependency key: the workflow's dotted identity
