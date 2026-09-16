@@ -19,6 +19,12 @@ module Spree
         end
       end
 
+      # Tenancy, which comes from the credential and never from the caller.
+      # A workflow that takes `store:` is given the context's store; offering
+      # it would invite a model to name another merchant's store, and the
+      # answer to "which store" is the API key or the signed-in admin.
+      CONTEXT_PARAMETERS = %i[store].freeze
+
       # Parameters the caller never supplies: they say who acted, and the
       # answer is the authenticated principal, not something a model should be
       # free to name. The adapter injects `context.principal` for whichever of
@@ -64,11 +70,11 @@ module Spree
       def parameters
         @parameters ||= begin
           documented = docs
-          undocumented = keywords.keys - documented.keys - PRINCIPAL_PARAMETERS - @except
+          undocumented = keywords.keys - documented.keys - injected_parameters - @except
           raise UndocumentedParameterError.new(workflow_class, undocumented) if undocumented.any?
 
           keywords.filter_map do |name, required|
-            next if @except.include?(name) || PRINCIPAL_PARAMETERS.include?(name)
+            next if @except.include?(name) || injected_parameters.include?(name)
 
             build_parameter(name, required, documented.fetch(name))
           end
@@ -81,6 +87,20 @@ module Spree
       # @return [Array<Symbol>]
       def principal_parameters
         keywords.keys & PRINCIPAL_PARAMETERS
+      end
+
+      # The tenancy keywords this workflow accepts.
+      #
+      # @return [Array<Symbol>]
+      def context_parameters
+        keywords.keys & CONTEXT_PARAMETERS
+      end
+
+      # Everything filled from the context rather than by the caller.
+      #
+      # @return [Array<Symbol>]
+      def injected_parameters
+        PRINCIPAL_PARAMETERS + CONTEXT_PARAMETERS
       end
 
       # @return [Hash] a JSON Schema object for the tool's arguments
@@ -109,7 +129,7 @@ module Spree
 
       def build_parameter(name, required, doc)
         types = doc[:types]
-        model_name = types.find { |type| model_type?(type) }
+        model_name = types.filter_map { |type| model_name_for(type) }.first
 
         {
           name: name,
@@ -134,14 +154,23 @@ module Spree
         text.present? ? "#{prefix} — #{text}" : prefix
       end
 
-      # A Spree model, addressed by prefixed id. `Spree.admin_user_class` and
-      # the bare `Object` of a principal parameter are not: they never reach
-      # the schema, because principal parameters are stripped first.
-      def model_type?(type)
-        return false unless type.start_with?('Spree::')
+      # A Spree model, addressed by prefixed id, as its canonical class name.
+      # A YARD block may name a deprecated alias (`Spree::ShippingMethod` for
+      # `Spree::DeliveryMethod`), and the alias is a constant pointing at the
+      # same class — so resolve the constant and ask it for its own name
+      # rather than trusting the spelling.
+      #
+      # `Spree.admin_user_class` and the bare `Object` of a principal
+      # parameter never reach here: those parameters are stripped first.
+      #
+      # @return [String, nil]
+      def model_name_for(type)
+        return unless type.start_with?('Spree::')
 
         constant = type.safe_constantize
-        constant.is_a?(Class) && constant < ActiveRecord::Base
+        return unless constant.is_a?(Class) && constant < ActiveRecord::Base
+
+        constant.name
       end
 
       def json_type_for(types)
