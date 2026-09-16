@@ -14,7 +14,7 @@ Every list page in the dashboard renders through `<ResourceTable>`, which reads 
 Imperatively, from `src/plugins.ts` (or a plugin entry):
 
 ```tsx
-import { tables } from '@spree/dashboard-core'
+import { tables } from '@spree/dashboard'
 
 tables.products.addColumn({
   key: 'brand',
@@ -119,7 +119,7 @@ Filtering and sorting are executed by the Admin API (Ransack), not in the browse
 For your own list page, declare the table once — typically right next to your `defineDashboardPlugin` call:
 
 ```tsx
-import { defineTable } from '@spree/dashboard-core'
+import { defineTable } from '@spree/dashboard'
 
 defineTable<Brand>('brands', {
   title: 'Brands',

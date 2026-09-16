@@ -11,7 +11,7 @@ The dashboard never reaches into Rails models or fetches HTML. All data flows th
 The SPA boots a single `adminClient` instance and exposes it from `@spree/dashboard-core`. Resource methods follow `client.<resource>.<verb>()`:
 
 ```ts
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard'
 
 await adminClient.products.list({ filter: { name_cont: 'shirt' } })
 await adminClient.products.get('prod_86Rf07xd4z', { expand: ['variants'] })
@@ -50,7 +50,7 @@ Resource methods are just `request<T>()` calls with the right path + types pre-b
 The dashboard's data layer is React-Query — every `useFoo` hook is `useQuery({ queryKey, queryFn })` over an SDK call. Follow the same pattern for your own data:
 
 ```ts
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient } from '@spree/dashboard'
 import { useQuery } from '@tanstack/react-query'
 import type { AdminBrand } from './types'
 
@@ -67,7 +67,7 @@ export function useBrands(params?: { search?: string }) {
 For mutations, prefer the existing `useResourceMutation` helper — it wires up the SDK's error shape, the 422 silencer, and the toast for non-validation errors:
 
 ```ts
-import { useResourceMutation } from '@spree/dashboard-core'
+import { useResourceMutation } from '@spree/dashboard'
 
 export function useUpdateBrand(id: string) {
   return useResourceMutation({
@@ -100,7 +100,7 @@ try {
 In a React Hook Form submit handler, prefer the higher-level helper:
 
 ```tsx
-import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm } from '@spree/dashboard'
 
 async function handleSubmit(values: FormValues) {
   try {

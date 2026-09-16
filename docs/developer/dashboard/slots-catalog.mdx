@@ -13,7 +13,7 @@ If you need a new injection point in a built-in page, open a PR adding `<Slot na
 Ambient context (`permissions`, `store`, `user` merged into every slot's props) is planned but **not wired up yet** — today slot components receive only the slot-specific context listed below. Until it lands, read those values with the hooks instead:
 
 ```tsx
-import { usePermissions, useStore } from '@spree/dashboard-core'
+import { usePermissions, useStore } from '@spree/dashboard'
 
 function MyWidget({ product }: { product: Product }) {
   const { permissions } = usePermissions()

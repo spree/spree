@@ -9,7 +9,7 @@ The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` 
 ## Add translations
 
 ```ts
-import { i18n } from '@spree/dashboard-core'
+import { i18n } from '@spree/dashboard'
 
 i18n.addResourceBundle('en', 'translation', {
   admin: {
@@ -127,7 +127,7 @@ Register translations **before** any code that calls `i18n.t()` at module-load t
 
 ```tsx
 // src/plugins.ts (same pattern in a plugin package's entry module)
-import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
+import { defineDashboardPlugin, i18n } from '@spree/dashboard'
 import en from './locales/en.json'
 
 i18n.addResourceBundle('en', 'translation', en, true, true)  // ① translations first

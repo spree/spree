@@ -11,7 +11,7 @@ The dashboard has two navigation registries: **main sidebar** (`nav`) and **sett
 ### Add an entry
 
 ```ts
-import { nav } from '@spree/dashboard-core'
+import { nav } from '@spree/dashboard'
 import { BarChartIcon } from 'lucide-react'
 
 nav.add({
@@ -31,7 +31,7 @@ nav.add({
 The facade groups multiple registry calls:
 
 ```ts
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 
 defineDashboardPlugin({
   nav: [
@@ -156,7 +156,7 @@ The settings page has its own sub-shell sidebar with grouped entries (Store, Loc
 ### Register a group
 
 ```ts
-import { settingsNav } from '@spree/dashboard-core'
+import { settingsNav } from '@spree/dashboard'
 
 settingsNav.addGroup({
   key: 'integrations',
