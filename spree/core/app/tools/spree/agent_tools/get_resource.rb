@@ -19,6 +19,9 @@ module Spree
         return { error: "No #{entry.key.singularize} found for #{id.inspect}" } if record.nil?
 
         attributes = serialize(entry, record)
+        # An empty hash would be reported as a successful lookup of a record
+        # with no fields, which is worse than saying the read failed.
+        return { error: "Could not read this #{entry.key.singularize}." } if attributes.nil?
 
         {
           resource: entry.key,
@@ -58,7 +61,7 @@ module Spree
         Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h)
       rescue StandardError => e
         Rails.logger.warn("[Spree] #{entry.key} serializer failed: #{e.class}: #{e.message}")
-        {}
+        nil
       end
 
       # Scoped through the store, so an id belonging to another store is a
