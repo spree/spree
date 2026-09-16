@@ -20,7 +20,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/reports/$reportId
   component: ReportPage,
 })
 
-const EXPORT_TYPE = 'Spree::Exports::Report'
+const EXPORT_TYPE = 'report'
 
 function ReportPage() {
   const { t } = useTranslation()
