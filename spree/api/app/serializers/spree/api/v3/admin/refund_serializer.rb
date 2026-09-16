@@ -14,17 +14,7 @@ module Spree
 
           # Who issued it — an admin user, or the API key an integration
           # refunded through.
-          attribute :refunder_id do |refund|
-            refund.refunder&.prefixed_id
-          end
-
-          attribute :refunder_type do |refund|
-            Spree::Base.polymorphic_api_type(refund.acted_by_type(:refunder))
-          end
-
-          one :refunder,
-              resource: proc { Spree.api.admin_actor_serializer },
-              if: proc { expand?('refunder') }
+          actor_attributes :refunder
 
           one :payment,
               resource: proc { Spree.api.admin_payment_serializer },

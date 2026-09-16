@@ -17,17 +17,7 @@ module Spree
             exchange.stock_location&.prefixed_id
           end
 
-          attribute :created_by_id do |exchange|
-            exchange.created_by&.prefixed_id
-          end
-
-          attribute :created_by_type do |exchange|
-            Spree::Base.polymorphic_api_type(exchange.acted_by_type(:created_by))
-          end
-
-          one :created_by,
-              resource: proc { Spree.api.admin_actor_serializer },
-              if: proc { expand?('created_by') }
+          actor_attributes :created_by
 
           many :exchange_line_items,
                resource: proc { Spree.api.admin_exchange_line_item_serializer },

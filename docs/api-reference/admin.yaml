@@ -13294,13 +13294,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -13558,13 +13558,13 @@ paths:
                   internal_note:
                   internal_note_html:
                   approver_id:
-                  canceler_id:
                   approver_type:
+                  canceler_id:
                   canceler_type:
+                  created_by_id:
                   created_by_type:
                   cancel_reason_id:
                   cancel_reason_name:
-                  created_by_id:
                   customer_id: cust_UkLWZg9DAJ
                   freight_summary:
                 meta:
@@ -13799,13 +13799,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id: adm_UkLWZg9DAJ
                 created_by_type: admin_user
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id: adm_UkLWZg9DAJ
                 customer_id:
                 freight_summary:
       requestBody:
@@ -14073,13 +14073,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
         '404':
@@ -14235,13 +14235,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -14509,13 +14509,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
         '422':
@@ -14706,13 +14706,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id: adm_UkLWZg9DAJ
                 approver_type:
+                canceler_id: adm_UkLWZg9DAJ
                 canceler_type: admin_user
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -14881,13 +14881,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id: adm_UkLWZg9DAJ
+                approver_type: admin_user
                 canceler_id:
-                approver_type:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
   "/api/v3/admin/orders/{id}/resend_confirmation":
@@ -15030,13 +15030,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
-                canceler_id:
                 approver_type:
+                canceler_id:
                 canceler_type:
+                created_by_id:
                 created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
   "/api/v3/admin/payment_methods":
@@ -44898,9 +44898,6 @@ components:
         approver_id:
           type: string
           nullable: true
-        canceler_id:
-          type: string
-          nullable: true
         approver_type:
           anyOf:
           - type: string
@@ -44911,6 +44908,11 @@ components:
           nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
+        approver:
+          "$ref": "#/components/schemas/Actor"
+        canceler_id:
+          type: string
+          nullable: true
         canceler_type:
           anyOf:
           - type: string
@@ -44921,6 +44923,11 @@ components:
           nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
+        canceler:
+          "$ref": "#/components/schemas/Actor"
+        created_by_id:
+          type: string
+          nullable: true
         created_by_type:
           anyOf:
           - type: string
@@ -44931,13 +44938,12 @@ components:
           nullable: true
           description: The values listed are the built-in ones; extensions may add
             more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         cancel_reason_id:
           type: string
           nullable: true
         cancel_reason_name:
-          type: string
-          nullable: true
-        created_by_id:
           type: string
           nullable: true
         customer_id:
@@ -44963,14 +44969,8 @@ components:
             "$ref": "#/components/schemas/PaymentMethod"
         customer:
           "$ref": "#/components/schemas/Customer"
-        approver:
-          "$ref": "#/components/schemas/Actor"
-        canceler:
-          "$ref": "#/components/schemas/Actor"
         cancel_reason:
           "$ref": "#/components/schemas/OrderCancellationReason"
-        created_by:
-          "$ref": "#/components/schemas/Actor"
         returns:
           type: array
           items:
@@ -45064,13 +45064,13 @@ components:
       - internal_note
       - internal_note_html
       - approver_id
-      - canceler_id
       - approver_type
+      - canceler_id
       - canceler_type
+      - created_by_id
       - created_by_type
       - cancel_reason_id
       - cancel_reason_name
-      - created_by_id
       - customer_id
       - freight_summary
       x-typelizer: true

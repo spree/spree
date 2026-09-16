@@ -125,7 +125,7 @@ module Spree
       model.
         where(:"#{name}_id" => id).
         where(:"#{name}_type" => [self.class.polymorphic_name, nil]).
-        update_all(:"#{name}_id" => nil, :"#{name}_type" => nil, :updated_at => Time.current)
+        update_all(Spree::ActedBy.columns_for(name, nil).merge(updated_at: Time.current))
     end
   end
 end

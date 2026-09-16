@@ -103,5 +103,11 @@ RSpec.describe Spree::ActedBy do
       expect(described_class.models).to include(Spree::Order, Spree::Refund, Spree::Return,
                                                 Spree::Exchange, Spree::Claim, Spree::StockReceipt)
     end
+
+    # The registry holds names and resolves them on read, so a code reload in
+    # development cannot leave it pointing at superseded copies of a model.
+    it 'answers live classes' do
+      expect(described_class.models).to all(satisfy { |model| model.equal?(model.name.constantize) })
+    end
   end
 end

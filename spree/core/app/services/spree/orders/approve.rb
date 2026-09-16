@@ -17,12 +17,7 @@ module Spree
         end
 
         changes = { considered_risky: false, approved_at: Time.current }
-        # Both halves together: the actor is polymorphic, so an id without its
-        # type names nothing (see docs/plans/6.0-action-actors.md).
-        if approver.present?
-          changes[:approver_id] = approver.id
-          changes[:approver_type] = approver.class.polymorphic_name
-        end
+        changes.merge!(Spree::ActedBy.columns_for(:approver, approver)) if approver.present?
         order.update_columns(changes)
 
         order.publish_event('order.approved')

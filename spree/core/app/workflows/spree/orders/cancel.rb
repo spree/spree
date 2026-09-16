@@ -103,12 +103,7 @@ module Spree
 
       def mark_canceled
         changes = { status: 'canceled', canceled_at: @decided_at, cancel_reason_id: reason&.id, cancel_note: note }
-        # Both halves together: the actor is polymorphic, so an id without its
-        # type names nothing (see docs/plans/6.0-action-actors.md).
-        if canceler.present?
-          changes[:canceler_id] = canceler.id
-          changes[:canceler_type] = canceler.class.polymorphic_name
-        end
+        changes.merge!(Spree::ActedBy.columns_for(:canceler, canceler)) if canceler.present?
         order.update_columns(changes)
       end
 

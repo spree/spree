@@ -33,14 +33,9 @@ module Spree
     end
 
     # @api private
-    # @return [Array<String>]
+    # @return [Set<String>]
     def self.registered_model_names
-      @registered_model_names ||= []
-    end
-
-    # @api private
-    def self.register_model(model)
-      registered_model_names << model.name unless registered_model_names.include?(model.name)
+      @registered_model_names ||= Set.new
     end
 
     included do
@@ -72,13 +67,41 @@ module Spree
       Spree.admin_user_class.to_s if self[:"#{name}_id"].present?
     end
 
+    # The actor's prefixed id, encoded from the columns without loading the
+    # row — so a page of orders costs no query per actor it names. Paired with
+    # {#acted_by_type} so the id and the kind always describe the same row,
+    # including one the backfill has not reached.
+    #
+    # @param name [Symbol, String] the acted_by association
+    # @return [String, nil]
+    def acted_by_prefixed_id(name)
+      Spree::Base.polymorphic_prefixed_id(acted_by_type(name), self[:"#{name}_id"])
+    end
+
+    # Both halves of an actor column, for a caller writing through
+    # `update_columns` or `update_all` rather than through the association —
+    # an id without its type names nothing, so the pair is produced together
+    # and never by hand.
+    #
+    #   changes.merge!(Spree::ActedBy.columns_for(:canceler, canceler))
+    #
+    # @param name [Symbol, String] the acted_by association
+    # @param actor [Object, nil]
+    # @return [Hash{Symbol => Object, nil}]
+    def self.columns_for(name, actor)
+      {
+        :"#{name}_id" => actor&.id,
+        :"#{name}_type" => actor && actor.class.polymorphic_name
+      }
+    end
+
     class_methods do
       # @param names [Array<Symbol>] the association names to declare
       # @return [void]
       def acted_by(*names)
         names = names.map(&:to_sym)
         self.acted_by_associations = acted_by_associations + names
-        Spree::ActedBy.register_model(self)
+        Spree::ActedBy.registered_model_names << name_for_actor_registry
 
         names.each do |name|
           belongs_to name, polymorphic: true, optional: true
@@ -89,6 +112,12 @@ module Spree
       end
 
       private
+
+      # STI subclasses register under the base class, whose table the backfill
+      # updates; an anonymous class registers nothing.
+      def name_for_actor_registry
+        base_class.name
+      end
 
       def validate_actor_type(name)
         type_column = :"#{name}_type"

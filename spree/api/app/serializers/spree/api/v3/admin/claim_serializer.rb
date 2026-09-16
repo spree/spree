@@ -12,17 +12,7 @@ module Spree
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :created_by_id do |claim|
-            claim.created_by&.prefixed_id
-          end
-
-          attribute :created_by_type do |claim|
-            Spree::Base.polymorphic_api_type(claim.acted_by_type(:created_by))
-          end
-
-          one :created_by,
-              resource: proc { Spree.api.admin_actor_serializer },
-              if: proc { expand?('created_by') }
+          actor_attributes :created_by
 
           many :claim_line_items,
                resource: proc { Spree.api.admin_claim_line_item_serializer },

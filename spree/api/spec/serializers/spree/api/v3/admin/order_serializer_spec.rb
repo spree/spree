@@ -89,6 +89,22 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
       end
     end
 
+    # A list page names three actors per row. Reading them off the columns
+    # rather than through the association is what keeps that free.
+    context 'when only the ids are rendered' do
+      let(:admin) { create(:admin_user) }
+      let(:order) { create(:order, store: store, created_by: admin, approver: admin, canceler: admin) }
+      let(:base_params) { { store: store, currency: store.default_currency } }
+
+      it 'names them without loading a single actor' do
+        order.reload
+
+        expect { subject }.not_to change { order.association(:canceler).loaded? }.from(false)
+        expect(subject['canceler_id']).to eq(admin.prefixed_id)
+        expect(subject['canceler_type']).to eq('admin_user')
+      end
+    end
+
     context 'when nobody is recorded' do
       let(:order) { create(:order, store: store) }
 

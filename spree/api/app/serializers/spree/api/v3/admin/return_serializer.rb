@@ -20,18 +20,7 @@ module Spree
             return_record.stock_location&.prefixed_id
           end
 
-          attribute :created_by_id do |return_record|
-            return_record.created_by&.prefixed_id
-          end
-
-          # `admin_user` / `api_key` — which kind of actor the id names.
-          attribute :created_by_type do |return_record|
-            Spree::Base.polymorphic_api_type(return_record.acted_by_type(:created_by))
-          end
-
-          one :created_by,
-              resource: proc { Spree.api.admin_actor_serializer },
-              if: proc { expand?('created_by') }
+          actor_attributes :created_by
 
           attribute :refunded_total do |return_record|
             return_record.refunded_total.to_s

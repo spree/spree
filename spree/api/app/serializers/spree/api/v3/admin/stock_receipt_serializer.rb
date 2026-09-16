@@ -32,17 +32,7 @@ module Spree
             receipt.receivable&.prefixed_id
           end
 
-          attribute :received_by_id do |receipt|
-            receipt.received_by.try(:prefixed_id)
-          end
-
-          attribute :received_by_type do |receipt|
-            Spree::Base.polymorphic_api_type(receipt.acted_by_type(:received_by))
-          end
-
-          one :received_by,
-              resource: proc { Spree.api.admin_actor_serializer },
-              if: proc { expand?('received_by') }
+          actor_attributes :received_by
 
           attribute :items_count do |receipt|
             receipt.items.size
