@@ -210,7 +210,10 @@ module Spree
         # @param workflow_class [Class]
         # @return [Hash{Symbol => Hash}] `{types: [String], description: String}`
         def parse_docs(workflow_class)
-          cache[workflow_class.name] ||= parse_source(workflow_class)
+          file, = workflow_class.instance_method(:perform).source_location
+          key = [workflow_class.name, file, (File.mtime(file) if file && File.exist?(file))]
+
+          cache[key] ||= parse_source(workflow_class)
         end
 
         # @return [void]
