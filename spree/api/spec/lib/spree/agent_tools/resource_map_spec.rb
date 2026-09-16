@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Assistant::ResourceMap do
+RSpec.describe Spree::AgentTools::ResourceMap do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
   let(:context) do
-    Spree::Assistant::Context.new(store: store, user: admin, ability: full_ability)
+    Spree::AgentTools::Context.new(store: store, user: admin, ability: full_ability)
   end
   let(:full_ability) do
     Class.new do
@@ -18,7 +18,7 @@ RSpec.describe Spree::Assistant::ResourceMap do
   # exists, is searchable, and links somewhere real. A typo in any of the four
   # fields is invisible until a merchant asks the question that needs it.
   describe 'every registered resource' do
-    Spree::Assistant::ResourceMap.all.each do |entry|
+    Spree::AgentTools::ResourceMap.all.each do |entry|
       context "`#{entry.key}`" do
         it 'names a model that exists' do
           expect(entry.model_name.safe_constantize).to be_present
@@ -44,13 +44,23 @@ RSpec.describe Spree::Assistant::ResourceMap do
     end
   end
 
-  describe 'a resource that is a slice of a model' do
-    it 'narrows through its scope' do
-      draft_orders = described_class.find('draft_orders')
+  # The map is derived from the controllers, one entry per model, so a
+  # resource that used to be a hand-written slice of another (draft orders
+  # among orders) is now reached by filtering the model's own entry. The
+  # `scope_name` mechanism stays for a registration that needs it.
+  describe 'a resource narrowed by a scope' do
+    it 'narrows through its scope when one is registered' do
+      described_class.register(key: 'draft_orders', model_name: 'Spree::Order', scope_name: :drafts,
+                               permission: 'read_orders',
+                               serializer_name: 'Spree::Api::V3::Admin::OrderSerializer')
+
+      drafts = described_class.find('draft_orders')
       orders = described_class.find('orders')
 
-      expect(draft_orders.model_name).to eq(orders.model_name)
-      expect(draft_orders.scope_for(context).to_sql).not_to eq(orders.scope_for(context).to_sql)
+      expect(drafts.model_name).to eq(orders.model_name)
+      expect(drafts.scope_for(context).to_sql).not_to eq(orders.scope_for(context).to_sql)
+    ensure
+      Spree::Api::AgentResourceMap.install
     end
   end
 
@@ -63,7 +73,7 @@ RSpec.describe Spree::Assistant::ResourceMap do
   end
 end
 
-RSpec.describe Spree::Assistant::ResourceMap, 'permission alignment' do
+RSpec.describe Spree::AgentTools::ResourceMap, 'permission alignment' do
   # A resource must not be reachable through the assistant on a looser key than
   # the Admin API demands for the same records — otherwise an admin can ask the
   # assistant for something the dashboard would refuse them, and the permission
@@ -82,20 +92,29 @@ RSpec.describe Spree::Assistant::ResourceMap, 'permission alignment' do
   DYNAMIC_PERMISSION = %w[imports exports].freeze
   CONTROLLER_OVERRIDES = { 'draft_orders' => 'OrdersController' }.freeze
 
-  described_class.all.each do |entry|
-    next if DYNAMIC_PERMISSION.include?(entry.key)
+  # Permissions no longer need comparing entry by entry: each one IS the
+  # invoking controller's `scoped_resource`, read straight off the class. What
+  # is worth asserting is that the derivation reached the controllers at all,
+  # and that nothing arrived with a permission outside the catalog.
+  it 'derives every entry from a controller that declares the same scope' do
+    # What each controller actually declares, read the way the derivation
+    # reads it, so this compares the map against its own source rather than
+    # against a second list.
+    declared = Spree::Api::AgentResourceMap.controllers.filter_map do |controller|
+      scope = controller._scoped_resource
+      model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+      next if scope.blank? || model.nil?
 
-    controller_name = CONTROLLER_OVERRIDES.fetch(entry.key) { "#{entry.key.camelize}Controller" }
-
-    it "`#{entry.key}` uses the same permission as #{controller_name}" do
-      controller = "Spree::Api::V3::Admin::#{controller_name}".safe_constantize
-      skip("#{controller_name} not found") if controller.nil?
-
-      scoped = controller._scoped_resource
-      skip("#{controller_name} declares no scoped_resource") if scoped.blank?
-
-      expect(entry.permission).to eq("read_#{scoped}")
+      [model.name, "read_#{scope}"]
     end
+
+    mismatched = described_class.all.
+                 # Imports and exports resolve their scope per request, so they
+                 # are registered explicitly rather than derived.
+                 reject { |entry| Spree::Api::AgentResourceMap::DYNAMIC_SCOPE_RESOURCES.key?(entry.key) }.
+                 reject { |entry| declared.include?([entry.model_name, entry.permission]) }
+
+    expect(mismatched.map(&:key)).to be_empty
   end
 
   it 'points every resource at a permission the catalog actually defines' do
