@@ -202,12 +202,24 @@ module Spree
       # subject, since a cancellation reason from another seller is as much a
       # leak as the order itself.
       def unauthorized_record(arguments)
+        action = ability_action
+
         records(arguments).each do |record|
-          refusal = unauthorized(:update, record)
+          refusal = unauthorized(action, record)
           return refusal if refusal
         end
 
         nil
+      end
+
+      # Which CanCanCan action this workflow amounts to. The stock catalog
+      # grants writes as `:manage`, which covers everything — but an ability
+      # may be replaced, and a host app that grants `:update` without
+      # `:destroy` means it: a deletion checked as an update would go through.
+      #
+      # @return [Symbol]
+      def ability_action
+        workflow_class.workflow_key.split('.').last == 'destroy' ? :destroy : :update
       end
 
       # Only what the caller named. The store and the principal are injected
