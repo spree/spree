@@ -128,6 +128,24 @@ RSpec.describe Spree::ActedBy do
     end
   end
 
+  describe '.columns_for' do
+    it 'produces both halves of the pair' do
+      expect(described_class.columns_for(:canceler, admin_user)).
+        to eq(canceler_id: admin_user.id, canceler_type: Spree.admin_user_class.to_s)
+    end
+
+    it 'clears both halves for no actor' do
+      expect(described_class.columns_for(:canceler, nil)).to eq(canceler_id: nil, canceler_type: nil)
+    end
+
+    # These writes go through update_columns, which skips validation — so the
+    # registry is enforced here or nowhere.
+    it 'refuses an unregistered actor' do
+      expect { described_class.columns_for(:canceler, create(:user)) }.
+        to raise_error(ArgumentError, /not a registered actor class/)
+    end
+  end
+
   describe '.models' do
     it 'names every model that declares an actor' do
       expect(described_class.models).to include(Spree::Order, Spree::Refund, Spree::Return,

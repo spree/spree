@@ -150,9 +150,12 @@ bundle exec rake spree:upgrade:backfill_actor_types
 
 Orders, refunds, returns, exchanges, claims and stock receipts remember who
 cancelled, approved, created or received them. In 6.0 that can be a member of
-staff **or an API key**, so each of those columns gained a companion naming
-which kind it is. Rows written before the upgrade carry only an id; this fills
-in the kind. Until it runs they still read as the staff member they always
+staff **or an API key**, so each id column — `canceler_id`, `approver_id`,
+`created_by_id`, `refunder_id`, `received_by_id` — gained a type column beside
+it (`canceler_type`, and so on) naming which kind of actor the id points at.
+
+Rows written before the upgrade carry an id and an empty type; this task fills
+the type in. Until it runs they still read as the staff member they always
 were, with a deprecation warning. Safe to re-run at any time.
 
 ## The Cart/Order split

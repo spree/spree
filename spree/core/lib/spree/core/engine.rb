@@ -106,6 +106,13 @@ module Spree
         app.config.spree.subscribers = []
       end
 
+      # Seeded before application initializers so an extension registering an
+      # actor class has something to append to. The defaults are unioned in
+      # after initialization, where Spree.admin_user_class is finally known.
+      initializer 'spree.register.actor_classes', before: :load_config_initializers do |app|
+        app.config.spree.actor_classes = []
+      end
+
       initializer 'spree.register.calculators', before: :after_initialize do |app|
       end
 
@@ -531,7 +538,10 @@ module Spree
         # against. Extend in an app initializer to register an App or bot
         # class, which must include Spree::Actor:
         #   Rails.application.config.spree.actor_classes << 'MyApp::App'.
-        Rails.application.config.spree.actor_classes = [
+        #
+        # Unioned rather than assigned, so what an initializer registered
+        # above survives.
+        Rails.application.config.spree.actor_classes |= [
           Spree.admin_user_class.to_s,
           'Spree::ApiKey'
         ]

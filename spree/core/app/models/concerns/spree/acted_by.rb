@@ -105,14 +105,23 @@ module Spree
     #
     #   changes.merge!(Spree::ActedBy.columns_for(:canceler, canceler))
     #
+    # The actor is checked against the registry here because these writes go
+    # through `update_columns` / `update_all`, which skip validation — without
+    # it an unregistered actor persists as a row the model itself calls
+    # invalid.
+    #
     # @param name [Symbol, String] the acted_by association
     # @param actor [Object, nil]
+    # @raise [ArgumentError] when the actor's class is not registered
     # @return [Hash{Symbol => Object, nil}]
     def self.columns_for(name, actor)
-      {
-        :"#{name}_id" => actor&.id,
-        :"#{name}_type" => actor && actor.class.polymorphic_name
-      }
+      type = actor && actor.class.polymorphic_name
+
+      if type.present? && Spree.actor_classes.exclude?(type)
+        raise ArgumentError, "#{type} is not a registered actor class — add it to Spree.actor_classes"
+      end
+
+      { :"#{name}_id" => actor&.id, :"#{name}_type" => type }
     end
 
     class_methods do
@@ -121,7 +130,9 @@ module Spree
       def acted_by(*names)
         names = names.map(&:to_sym)
         self.acted_by_associations = acted_by_associations + names
-        Spree::ActedBy.registered_model_names << name_for_actor_registry
+        # An anonymous class — one built in a spec or a console — has no name
+        # to register, and a nil in the registry would break every later read.
+        Spree::ActedBy.registered_model_names << name_for_actor_registry if name_for_actor_registry
 
         names.each do |name|
           belongs_to name, polymorphic: true, optional: true

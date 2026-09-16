@@ -39,9 +39,13 @@ module Spree
     # The wire shorthand for this actor's kind — `admin_user`, `api_key`, …
     # The same derivation every polymorphic type column on the Admin API uses.
     #
+    # Read from `polymorphic_name`, which is what the `*_type` column stores,
+    # so an STI subclass of an actor answers the same kind on the expansion
+    # as it does in the column beside it.
+    #
     # @return [String]
     def actor_kind
-      Spree::Base.polymorphic_api_type(self.class.name)
+      Spree::Base.polymorphic_api_type(self.class.polymorphic_name)
     end
   end
 end
