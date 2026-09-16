@@ -53,10 +53,15 @@ module Spree
 
           private
 
+          # Split rather than matched: a regex with `\s+(.+)` backtracks on a
+          # header of many spaces, and this one is attacker-supplied on an
+          # unauthenticated request.
           def bearer_secret_key
-            token = request.headers['Authorization'].to_s[/\ABearer\s+(.+)\z/i, 1]
+            scheme, token = request.headers['Authorization'].to_s.split(' ', 2)
+            return unless scheme&.casecmp?('Bearer')
 
-            token if token.to_s.start_with?(Spree::ApiKey::PREFIXES['secret'])
+            token = token.to_s.strip
+            token if token.start_with?(Spree::ApiKey::PREFIXES['secret'])
           end
 
           def server
