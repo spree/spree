@@ -5889,6 +5889,8 @@
       "builder": {
         "metrics": "Indicateurs",
         "no_metrics": "Choisissez au moins un indicateur.",
+        "one_family_only": "Un rapport couvre un seul groupe de mesures. Choisir une mesure d'un autre groupe fait basculer le rapport vers ce groupe.",
+        "switches_family": "Fait basculer ce rapport vers {{family}}",
         "group_by": "Regrouper par",
         "none": "Aucun (totaux uniquement)",
         "grain": "Intervalle",
