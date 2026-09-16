@@ -116,6 +116,36 @@ RSpec.describe 'assistant authorization' do
       end
     end
 
+    # A create workflow builds its own record, so there is nothing to check
+    # when the tool runs — the Admin API checks `:create` on a built record
+    # before calling the workflow, and the tool has no equivalent unless it
+    # authorizes against the class.
+    context 'when the admin may edit products but not create one' do
+      let(:ability) do
+        Class.new do
+          include CanCan::Ability
+
+          def initialize(*)
+            can :read, Spree::Product
+            can :update, Spree::Product
+          end
+
+          def permission_keys
+            Spree.permissions.catalog_keys
+          end
+        end.new
+      end
+
+      it 'refuses the create workflow' do
+        create_tool = Spree.agent_tools.available_for(context).
+                      find { |candidate| candidate.tool_name == 'products_create' }
+        result = create_tool.call(attributes: { 'name' => 'Should Not Exist' })
+
+        expect(result[:error]).to be_present
+        expect(Spree::Product.for_store(store).where(name: 'Should Not Exist')).not_to exist
+      end
+    end
+
     # The stock catalog grants writes as `:manage`, which covers deletion —
     # but an ability can be replaced, and a host app that grants `:update`
     # without `:destroy` means it. A deletion checked as an update would go
