@@ -30,17 +30,31 @@ module Spree
 
       private
 
+      def writable_attributes_for(entry)
+        return unless entry.generic_writes?
+        return unless context.permitted?(entry.write_permission)
+
+        entry.writable_attribute_names.presence
+      end
+
       def describe(entry)
         {
           resource: entry.key,
           filterable_fields: entry.filterable_fields,
+          # What a generic write accepts, so the model learns the schema here
+          # rather than by sending an invalid write and reading the refusal —
+          # which is what create_resource and update_resource tell it to do.
+          # Offered only where the caller could actually write.
+          writable_attributes: writable_attributes_for(entry),
+          # Named so a model that reaches for a write knows which tool does it.
+          written_by: (entry.update_workflow_key || entry.create_workflow_key)&.tr('.', '_'),
           # Named queries answer things no column can — stock levels live
           # across warehouses, so "out of stock" is a scope, not a field.
           filterable_scopes: entry.filterable_scopes,
           usage: 'Attribute filters use Ransack predicates, e.g. name_cont, created_at_gteq, ' \
                  'status_eq. Named scopes are passed as a bare key set to true, e.g. ' \
                  '{"out_of_stock": true}.'
-        }
+        }.compact
       end
     end
   end

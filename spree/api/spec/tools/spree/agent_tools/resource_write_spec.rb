@@ -103,6 +103,27 @@ RSpec.describe 'agent generic record writes' do
     end
   end
 
+  # The write tools tell the caller to call describe_resource for the
+  # attributes a resource accepts, so it has to answer that question.
+  describe 'describe_resource and the write tools agree' do
+    it 'lists the attributes a generic write accepts' do
+      described = Spree.agent_tools.available_for(context).
+                  find { |candidate| candidate.tool_name == 'describe_resource' }.
+                  call(resource: 'markets')[:resources].first
+
+      expect(described[:writable_attributes]).to include('name', 'currency')
+    end
+
+    it 'names the workflow tool for a resource the generic write refuses' do
+      described = Spree.agent_tools.available_for(context).
+                  find { |candidate| candidate.tool_name == 'describe_resource' }.
+                  call(resource: 'products')[:resources].first
+
+      expect(described[:written_by]).to eq('products_update')
+      expect(described).not_to have_key(:writable_attributes)
+    end
+  end
+
   describe 'what a read-only key is offered' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_all']) }
 

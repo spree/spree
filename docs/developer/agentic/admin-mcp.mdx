@@ -61,7 +61,7 @@ The key travels as a header on every request. Spree accepts it as `X-Spree-API-K
     ```
   </Tab>
   <Tab title="Cursor">
-    Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
+    Add to `~/.cursor/mcp.json` for yourself, or `.cursor/mcp.json` in the project to share it with your team:
 
     ```json
     {
@@ -73,6 +73,8 @@ The key travels as a header on every request. Spree accepts it as `X-Spree-API-K
       }
     }
     ```
+
+    Cursor reads the key from the file, so a project config puts a live credential in your repository. Either keep it in `~/.cursor/mcp.json`, which is outside the project, or add `.cursor/mcp.json` to `.gitignore` and have each developer mint their own key.
   </Tab>
   <Tab title="VS Code (Copilot)">
     Add to `.vscode/mcp.json`. The `inputs` block prompts for the key instead of storing it in the file:
