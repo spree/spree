@@ -5642,6 +5642,7 @@ ownership associations that gate visibility (`Import#user`, `Export#user`,
 not `try_spree_current_user`, for actor keywords. Workflow principal
 parameters stay `[Object, nil]` and are assigned, not inspected.
 
+<<<<<<< Updated upstream
 **Amended the same day, at implementation.** Three points the design left
 open. An expanded actor serializes as `{ id, type, label }` through a new
 `ActorSerializer`, not through the admin user serializer — the order
@@ -5655,3 +5656,34 @@ file alone, which left a 500 waiting for the first key-creates-key call.
 and overridden in `AdminAuthentication` to prefer `current_api_key`, because
 the post-sale concerns are shared with the JWT-only seller panel while a
 publishable Store API key must never become an actor.
+=======
+
+## 2026-09-16 — Update checks and usage telemetry are one daily heartbeat, on by default
+
+Plan: `6.0-telemetry-and-update-check.md`.
+
+The 5.x update banner went with the `spree_admin` engine, and 6.0 had no
+replacement and no usage reporting from servers or the CLI.
+
+**Decision.** `Spree::UpdateCheck` in core asks spreecloud.io once a day
+from a job, never inline in a request, and the same request is the usage
+heartbeat: the four 5.x query keys (`version`, `environment`, `url`,
+`install_id`) stay frozen, and stack fields plus order-of-magnitude size
+buckets sit beside them. The dashboard reads `GET /api/v3/admin/updates`
+(JWT admins with `manage` on the store only; secret keys get 404) and shows
+a banner through an `AppShell` `banner` slot the seller panel leaves empty.
+`@spree/cli` and `create-spree-app` send one event per command. Both
+channels are on by default; `SPREE_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1`
+reduces the heartbeat to `version` and silences the CLI,
+`SPREE_UPDATE_CHECK_DISABLED=1` stops the request entirely. Rejected: exact
+counts (business data next to a store URL), folding the status into `/me`
+(reaches admins who cannot manage the store), opt-in by default (no banner
+for most installs, 5.x regression).
+
+**Consequences for other work.** The running Spree version, gem list or
+environment must not appear in any other Admin API response. A new outbound
+call from core is cached, run from a job, short-timeout, failure-cached.
+Env-backed booleans read through `Spree::Config` must be cast: the `env:`
+option on `preference` returns the raw string. Cross-page notices go through
+the `AppShell` `banner` slot, nowhere else.
+>>>>>>> Stashed changes
