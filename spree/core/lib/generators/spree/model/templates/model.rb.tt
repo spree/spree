@@ -1,6 +1,6 @@
 module Spree
   class <%= class_name.demodulize %> < <%= parent_class_name %>
-<% if store_scoped? -%>
+<% if includes_store_concern? -%>
     include Spree::SingleStoreResource
 
 <% end -%>

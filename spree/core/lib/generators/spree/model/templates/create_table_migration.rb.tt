@@ -1,7 +1,7 @@
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :<%= table_name %><%= primary_key_type %> do |t|
-<% if store_scoped? -%>
+<% if includes_store_concern? -%>
       t.references :store, null: false, index: true, foreign_key: false
 
 <% end -%>

@@ -210,21 +210,30 @@ module Spree
     def append_app_route(path, namespace, route_line)
       full = File.join(destination_root, path)
       content = File.read(full)
-      anchor = /^(\s*)namespace :#{namespace} do\n/
 
-      match = content.match(anchor)
+      # Confined to the engine's route hook: an application may well have its
+      # own `namespace :admin` earlier in the file, and a route inserted there
+      # would never be drawn on the engine.
+      hook = content[/^(\s*)Spree::Core::Engine\.add_routes do\n.*?^\1end\n/m]
+      unless hook
+        say_status :skip, "#{path} (no `Spree::Core::Engine.add_routes` block — add `#{route_line}` by hand)", :yellow
+        return
+      end
+
+      match = hook.match(/^(\s*)namespace :#{namespace} do\n/)
       unless match
         say_status :skip, "#{path} (no :#{namespace} namespace — add `#{route_line}` by hand)", :yellow
         return
       end
 
-      block = content[match.end(0)..].to_s[/\A.*?^#{match[1]}end$/m].to_s
+      block = hook[match.end(0)..].to_s[/\A.*?^#{match[1]}end$/m].to_s
       if block.include?(route_line)
         say_status :identical, "#{path} (#{namespace}: #{route_line})", :blue
         return
       end
 
-      File.write(full, content.sub(match[0], "#{match[0]}#{match[1]}  #{route_line}\n"))
+      updated_hook = hook.sub(match[0], "#{match[0]}#{match[1]}  #{route_line}\n")
+      File.write(full, content.sub(hook, updated_hook))
       say_status :route, "#{path} (#{namespace}: #{route_line})", :green
     end
     end

@@ -106,6 +106,14 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
       expect(result[:model]).not_to include('Spree::SingleStoreResource')
     end
 
+    it 'keeps uniqueness store-scoped when the store reference is declared explicitly' do
+      result = run_generator(['Brand', 'slug:string:uniq', 'store:references'])
+
+      expect(result[:model]).to include('uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }')
+      expect(result[:migration]).to include('add_index :spree_brands, [:store_id, :slug], unique: true')
+      expect(result[:migration].scan('t.references :store').size).to eq(1)
+    end
+
     it 'does not add the concern when the attributes already declare a store reference' do
       result = run_generator(['Brand', 'name:string', 'store:references'])
 
