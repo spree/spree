@@ -31,7 +31,7 @@ module Spree
         if context.user_principal?
           member.subject.nil? || context.can?(:read, member.subject.call)
         else
-          member.key_scope.blank? || context.api_key.has_scope?(member.key_scope)
+          context.holds?(member.key_scope)
         end
       end
     end
