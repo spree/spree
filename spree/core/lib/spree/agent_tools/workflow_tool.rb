@@ -169,7 +169,7 @@ module Spree
         resolved = resolve_arguments(arguments)
         return resolved if resolved.is_a?(Hash) && resolved[:error]
 
-        refusal = unauthorized_record(resolved)
+        refusal = unauthorized_create || unauthorized_record(resolved)
         return refusal if refusal
 
         keywords = resolved.merge(principal_arguments).merge(context_arguments)
@@ -202,7 +202,10 @@ module Spree
       # subject, since a cancellation reason from another seller is as much a
       # leak as the order itself.
       def unauthorized_record(arguments)
-        action = ability_action
+        # A create's own action is checked against the class above; the records
+        # it was handed are collaborators (a supplier, a stock location), so
+        # they are checked for the read-and-use they actually get.
+        action = ability_action == :create ? :show : ability_action
 
         records(arguments).each do |record|
           refusal = unauthorized(action, record)
@@ -212,6 +215,28 @@ module Spree
         nil
       end
 
+      # A create workflow has no record to check yet — the workflow builds it
+      # — so the Admin API's `authorize_resource!(@resource, :create)` has no
+      # counterpart here. Authorize against the class instead, which is what a
+      # record-level rule on a create would be evaluated against anyway.
+      #
+      # @return [Hash, nil]
+      def unauthorized_create
+        return unless ability_action == :create
+        return if context.can?(:create, created_model)
+
+        { error: "You do not have permission to create this #{created_model.model_name.human.downcase}." }
+      end
+
+      # What the workflow creates, named by its own key: `products.create`
+      # creates a product. A key whose model cannot be resolved falls back to
+      # the subject check alone rather than guessing.
+      #
+      # @return [Class, nil]
+      def created_model
+        @created_model ||= "Spree::#{workflow_class.workflow_key.split('.').first.classify}".safe_constantize
+      end
+
       # Which CanCanCan action this workflow amounts to. The stock catalog
       # grants writes as `:manage`, which covers everything — but an ability
       # may be replaced, and a host app that grants `:update` without
@@ -219,7 +244,11 @@ module Spree
       #
       # @return [Symbol]
       def ability_action
-        workflow_class.workflow_key.split('.').last == 'destroy' ? :destroy : :update
+        case workflow_class.workflow_key.split('.').last
+        when 'destroy' then :destroy
+        when 'create' then :create
+        else :update
+        end
       end
 
       # Only what the caller named. The store and the principal are injected
