@@ -32,7 +32,9 @@ module Spree
           properties = tool.params.to_h do |name, options|
             property = { type: json_type(options[:type]) }
             property[:description] = options[:description] if options[:description].present?
-            property[:items] = { type: 'object' } if property[:type] == 'array'
+            # An array must say what it holds: a client validating arguments
+            # against the schema refuses the call otherwise.
+            property[:items] = { type: json_type(options[:items] || :string) } if property[:type] == 'array'
 
             [name.to_s, property]
           end

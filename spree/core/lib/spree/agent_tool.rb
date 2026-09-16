@@ -72,12 +72,15 @@ class AgentTool
       # @param type [Symbol] JSON schema type
       # @param description [String]
       # @param required [Boolean]
+      # @param items [Symbol] what an array holds — a JSON Schema array without
+      #   it is ambiguous, and a client that validates arguments against the
+      #   schema rejects the call before the tool ever runs
       # @return [void]
-      def param(name, type: :string, description: nil, required: false)
+      def param(name, type: :string, description: nil, required: false, items: nil)
         # Reassigned rather than mutated, so declaring a param on a subclass
         # does not reach back and change the parent's list.
         self.declared_params = declared_params.merge(
-          name => { type: type, description: description, required: required }
+          name => { type: type, description: description, required: required, items: items }
         ).freeze
       end
 
