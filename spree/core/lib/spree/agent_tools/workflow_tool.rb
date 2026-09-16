@@ -98,6 +98,7 @@ module Spree
             derived_schema.parameters.each do |parameter|
               param parameter[:name],
                     type: parameter[:json_type].to_sym,
+                    items: parameter[:item_type]&.to_sym,
                     description: parameter[:description],
                     required: parameter[:required]
             end
