@@ -1,0 +1,154 @@
+---
+title: "Admin MCP Server"
+sidebarTitle: Admin MCP
+description: "Let Claude, Cursor or your own agent merchandise the catalog, answer reporting questions and manage store setup in plain language, under the same permissions as the Admin API."
+---
+
+Your store can host a [Model Context Protocol](https://modelcontextprotocol.io) server of its own. Where the [docs MCP server](/developer/agentic/mcp) lets an agent read Spree's documentation, this one lets an agent operate *your* store: find products, answer "what did we sell in Germany last month", cancel an order, mark a shipment delivered, add a market.
+
+It runs inside your Spree application — there is no separate service to deploy — and a request goes through the same tenancy, permission and validation rules as the Admin API. An agent can do exactly what the credential you give it allows, and nothing else.
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+<Note>
+  The server is an optional gem. Add `spree_mcp` to your `Gemfile` and restart; there is nothing else to configure.
+
+  ```ruby server/Gemfile
+  gem 'spree_mcp'
+  ```
+</Note>
+
+## Mint a key first
+
+The credential is an ordinary Spree secret API key, and its scopes decide what the agent is even told exists. A key that can read orders is never shown a refund tool.
+
+1. In the dashboard, go to **Settings → API keys** and create a **secret** key.
+2. Name it after the agent that will hold it — "Claude Code, orders" — so you know what you are revoking later.
+3. Grant only the scopes that agent needs. `read_products` for a merchandising assistant; add `write_orders` only if it should genuinely be able to cancel and refund.
+4. Copy the key. It is shown once.
+
+Revoking the key in the dashboard is the off switch, and it takes effect on the agent's next call.
+
+<Warning>
+  Give an agent the narrowest scopes that let it do its job. A tool that moves money — refunds, payment capture — is offered to any key holding `write_orders`, and the only thing standing between the model and the action is your client's confirmation prompt.
+</Warning>
+
+## Setup
+
+The key travels as a header on every request. Spree accepts it as `X-Spree-API-Key` — the Admin API's own header — or as `Authorization: Bearer`, for clients that only offer a bearer-token field.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http spree-admin https://your-store.com/api/v3/admin/mcp \
+      --header "X-Spree-API-Key: sk_your_key"
+    ```
+
+    To share the connection with your team without putting the key in git, commit a project `.mcp.json` that reads it from the environment and let each developer export their own:
+
+    ```json .mcp.json
+    {
+      "mcpServers": {
+        "spree-admin": {
+          "type": "http",
+          "url": "https://your-store.com/api/v3/admin/mcp",
+          "headers": { "X-Spree-API-Key": "${SPREE_API_KEY}" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` globally):
+
+    ```json
+    {
+      "mcpServers": {
+        "spree-admin": {
+          "url": "https://your-store.com/api/v3/admin/mcp",
+          "headers": { "X-Spree-API-Key": "sk_your_key" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code (Copilot)">
+    Add to `.vscode/mcp.json`. The `inputs` block prompts for the key instead of storing it in the file:
+
+    ```json
+    {
+      "inputs": [
+        { "id": "spree-key", "type": "promptString", "description": "Spree secret API key", "password": true }
+      ],
+      "servers": {
+        "spree-admin": {
+          "type": "http",
+          "url": "https://your-store.com/api/v3/admin/mcp",
+          "headers": { "X-Spree-API-Key": "${input:spree-key}" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Your own agent">
+    Any HTTP client works. Post one JSON-RPC message per request:
+
+    ```bash
+    curl https://your-store.com/api/v3/admin/mcp \
+      -H "Content-Type: application/json" \
+      -H "X-Spree-API-Key: sk_your_key" \
+      -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Claude Desktop's connector UI and claude.ai's hosted connectors expect OAuth rather than a header, so they cannot reach this endpoint yet. Every client above can.
+</Note>
+
+## What the agent can do
+
+The tools are not a mirror of the API's endpoints — there would be hundreds, and a catalog that size makes a model worse at choosing. They come in four groups instead.
+
+| Group | Tools | What they are for |
+| --- | --- | --- |
+| Finding things | `describe_resource`, `search_resources`, `get_resource` | Discovering which resources exist and what they can be filtered by, then finding and reading records |
+| Answering with numbers | `describe_reporting`, `query_report` | Revenue, orders and units, sliced by time, product, channel or country — the same figures the dashboard charts show |
+| Doing things | One tool per operation: `orders_cancel`, `fulfillments_mark_delivered`, `products_activate`, `refunds_create`, `price_lists_activate` and around fifty more | Each runs the same workflow the dashboard runs, so validations, emails and webhooks behave identically |
+| Store setup | `create_resource`, `update_resource`, `delete_resource` | Markets, channels, delivery and payment methods, tax rates and the rest of the settings screens |
+
+An agent is only ever shown the tools its key permits, so the list stays small and relevant: a key minted for order operations sees around twenty.
+
+### How a conversation goes
+
+The agent picks tools from what you ask; there is no command to learn.
+
+> **You:** Which products are out of stock, and what did we sell in Germany last month?
+
+The agent calls `describe_resource` to learn that products can be filtered by an `out_of_stock` scope, `search_resources` to list them, then `describe_reporting` and `query_report` for the German figures — and answers in one reply.
+
+> **You:** Cancel order R123456789, refund the customer, and tell them why.
+
+The agent finds the order, then calls `orders_cancel`. Your client asks you to confirm before the call runs; Spree then runs the same cancellation the dashboard runs, and the order's timeline records the API key as the canceller, so an audit later shows which agent did it.
+
+## What it will not do
+
+Some things are deliberately out of reach, whatever scopes the key holds.
+
+- **Credentials.** API keys, integrations, webhook endpoints and gift card codes are never returned by any tool. A gift card code is the money itself, and an integration's settings are where provider credentials live.
+- **Erasing a customer.** GDPR erasure is irreversible and is not something to put behind a single confirmation prompt. Do it in the dashboard.
+- **Files.** Media uploads, import files and label downloads. The protocol carries text and structured data.
+- **Order editing.** Adding line items, discounts and fees to an existing order still runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
+
+## Choosing between this and the CLI
+
+If your agent has a shell, the [`spree api` CLI](/developer/cli/admin-api) is usually the better tool: it reaches every endpoint, handles bulk work, and its output can be piped into other commands. This server is for agents that cannot shell out, and for conversational work where a job-shaped tool beats composing raw HTTP calls.
+
+## See also
+
+- [Docs MCP server](/developer/agentic/mcp) — the same protocol, for reading Spree's documentation
+- [Agent skills](/developer/agentic/agent-skills) — teaching an agent how your team works with Spree
+- [API keys and scopes](/user/settings/api-keys) — minting a key and what each scope grants
+- [Permissions](/developer/customization/permissions) — the catalog the scopes come from
