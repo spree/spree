@@ -24,10 +24,10 @@ export {
 // re-exported so a host writing its own pages never has to work out which
 // package an export lives in. Both stay importable directly.
 //
-// `export *` drops a name declared by both rather than picking one, so the
-// duplicates are re-exported explicitly below, resolving to the framework's
-// version — the one that fetches its own data. Import from
-// `@spree/dashboard-ui` for the presentational half.
+// `export *` from two modules that both declare a name is an error (TS2308),
+// resolved by naming the winner explicitly above. The framework's version
+// wins: it fetches its own data, where the design system's takes everything
+// as props. Import from `@spree/dashboard-ui` for the presentational half.
 export * from '@spree/dashboard-ui'
 
 export {

@@ -14,24 +14,22 @@
 // subpath exports (`@spree/dashboard-ui/icons`, `@spree/dashboard-core/vite`)
 // are unaffected.
 //
-// Order matters. A handful of names exist in both packages: the design system
-// ships a presentational component and the framework wraps it with data. The
-// framework is exported last so its version wins, which is the one an
-// application wants — `ResourceCombobox` that loads its own options rather
-// than the pure one that takes them as props. Reach past the facade when you
-// want the presentational half:
+// A handful of names exist in both packages, where the design system ships a
+// presentational component and the framework wraps it with data. Reach past
+// the facade when you want the presentational half:
 //
 //     import { ResourceCombobox } from '@spree/dashboard-ui'
 //
-// `pnpm --filter @spree/dashboard test` fails when a new duplicate appears,
-// so this list cannot drift silently.
+// `pnpm --filter @spree/dashboard test` checks that every such name resolves
+// to the framework, so a reordering or a new duplicate cannot change the
+// public API unnoticed.
 
 export * from '@spree/dashboard-core'
-// `export *` drops a name declared by both modules rather than picking one,
-// so the duplicates below are re-exported explicitly. The framework's version
-// wins because it is the one an application wants: it fetches its own data,
-// where the design system's takes everything as props. Import from
-// `@spree/dashboard-ui` directly for the presentational half.
+// `export *` from two modules that both declare a name is an error (TS2308),
+// and the ambiguity is resolved by naming the winner explicitly. The
+// framework's version wins: it fetches its own data, where the design
+// system's takes everything as props. `pnpm test` checks every duplicate
+// resolves this way, so a new one cannot slip in unnoticed.
 export {
   type DateRange,
   ResourceCombobox,
