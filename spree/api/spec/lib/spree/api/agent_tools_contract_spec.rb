@@ -217,6 +217,30 @@ RSpec.describe 'agent tool contract' do
       MESSAGE
     end
 
+    # A model served by two controllers under different scopes has no single
+    # right permission, and picking whichever sorted last would grant a key
+    # holding the wider scope records the narrower one guards. So the narrower
+    # wins and the resource stays read-only.
+    it 'resolves a resource served under two scopes to the narrower, read-only' do
+      by_model = Spree::Api::AgentResourceMap.controllers.each_with_object(Hash.new { |h, k| h[k] = [] }) do |controller, result|
+        model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+        next if model.nil? || controller._scoped_resource.blank?
+
+        result[model.name] << "read_#{controller._scoped_resource}"
+      end
+
+      contested = by_model.select { |_model, permissions| permissions.uniq.size > 1 }
+
+      contested.each do |model_name, permissions|
+        entry = Spree::AgentTools::ResourceMap.all.find { |candidate| candidate.model_name == model_name }
+        next if entry.nil?
+
+        expect(permissions).to include(entry.permission)
+        expect(entry.generic_writes?).to be(false),
+                                        "#{entry.key} is served under #{permissions.uniq.to_sentence} yet accepts generic writes"
+      end
+    end
+
     it 'scopes every registered resource to a store' do
       unscoped = Spree::AgentTools::ResourceMap.all.reject(&:store_scoped?)
 
