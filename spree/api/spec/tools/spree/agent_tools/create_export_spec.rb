@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Assistant::Tools::CreateExport do
+RSpec.describe Spree::AgentTools::CreateExport do
   subject(:tool) { described_class.new(context) }
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
   let(:ability) do
     Class.new do
       include CanCan::Ability
