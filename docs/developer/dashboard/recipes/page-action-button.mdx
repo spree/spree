@@ -17,8 +17,7 @@ This recipe shows both — and how to gate them by permission + resource state. 
 
 ```tsx
 // src/actions/send-invoice-button.tsx
-import { adminClient, usePermissions, useResourceMutation } from '@spree/dashboard-core'
-import { Button } from '@spree/dashboard-ui'
+import { Button, adminClient, usePermissions, useResourceMutation } from '@spree/dashboard'
 import { Send } from 'lucide-react'
 
 interface Props {
@@ -55,7 +54,7 @@ Register it:
 
 ```ts
 // src/plugins.ts (in your dashboard app)
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 import { SendInvoiceButton } from './actions/send-invoice-button'
 
 defineDashboardPlugin({
@@ -82,8 +81,7 @@ For secondary actions, use `page.actions_dropdown` and render `<DropdownMenuItem
 
 ```tsx
 // src/actions/sync-to-erp-item.tsx
-import { adminClient, usePermissions, useResourceMutation } from '@spree/dashboard-core'
-import { DropdownMenuItem } from '@spree/dashboard-ui'
+import { DropdownMenuItem, adminClient, usePermissions, useResourceMutation } from '@spree/dashboard'
 import { RefreshCw } from 'lucide-react'
 
 interface Props {
@@ -135,9 +133,12 @@ For destructive or expensive actions, wrap the click in a `<Dialog>`:
 ```tsx
 import { useState } from 'react'
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-  DropdownMenuItem, Button,
-} from '@spree/dashboard-ui'
+  adminClient,
+  Button,
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  DropdownMenuItem,
+  useResourceMutation,
+} from '@spree/dashboard'
 
 export function ResetCartItem({ resource }: { resource: { id: string } }) {
   const [open, setOpen] = useState(false)

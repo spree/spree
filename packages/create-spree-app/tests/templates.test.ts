@@ -209,7 +209,9 @@ describe('rootClaudeMdContent', () => {
   it('lists apps/dashboard when the dashboard is included', () => {
     const content = rootClaudeMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')
-    expect(content).toContain('docs/developer/dashboard')
+    // Each app carries its own instructions; the root file points at them.
+    expect(content).toContain('apps/dashboard/AGENTS.md')
+    expect(content).toContain('apps/seller-dashboard/AGENTS.md')
   })
 
   it('renders commands for the chosen package manager', () => {

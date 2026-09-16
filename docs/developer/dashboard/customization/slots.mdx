@@ -4,6 +4,10 @@ sidebarTitle: Slots
 description: Inject your own widgets into existing dashboard pages without forking them. Slots are named injection points the dashboard exposes on built-in pages.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 A slot is a named injection point in a built-in page. Components registered against a slot render inside it, sorted by `position`, gated by an optional `if` predicate. The host page knows nothing about your widget — it just renders `<Slot name="..." context={...} />` and the slot registry handles the rest.
 
 ## Quick example
@@ -11,8 +15,7 @@ A slot is a named injection point in a built-in page. Components registered agai
 Render a card with the current user's email in every page's actions dropdown:
 
 ```tsx
-import { defineDashboardPlugin } from '@spree/dashboard-core'
-import { DropdownMenuItem } from '@spree/dashboard-ui'
+import { DropdownMenuItem, defineDashboardPlugin } from '@spree/dashboard'
 
 function UserBadge({ user }: { user?: { email: string } }) {
   if (!user) return null
@@ -45,7 +48,7 @@ For anything beyond the slot's own context — permissions, the current store, t
 If you'd rather have full type safety, call `registerSlot` directly with the explicit type parameter:
 
 ```tsx
-import { registerSlot } from '@spree/dashboard-core'
+import { registerSlot } from '@spree/dashboard'
 
 interface ProductSlotContext {
   product: { id: string; brand_id?: string | null }
@@ -63,7 +66,7 @@ registerSlot<ProductSlotContext>('product.form_sidebar', {
 Gate inside the component with `usePermissions()` — return `null` when the user lacks access:
 
 ```tsx
-import { usePermissions } from '@spree/dashboard-core'
+import { usePermissions } from '@spree/dashboard'
 
 function AdminOnlyMenuItem() {
   const { permissions } = usePermissions()
@@ -79,7 +82,7 @@ The entry-level `if` predicate also exists, but it only receives the slot's own 
 Slots on form pages (product, category, store settings — see the [slots catalog](/developer/dashboard/slots-catalog#detail-page-form-slots) for which) render **inside the page's `<form>`** and expose its react-hook-form instance. A widget can register inputs against it with `useHostForm()` — they hydrate from the API, flip the Save button on change, and persist in the page's own save, with no save logic in the widget:
 
 ```tsx
-import { useHostForm } from '@spree/dashboard-core'
+import { useHostForm } from '@spree/dashboard'
 
 function TechSpecsCard() {
   const form = useHostForm<{ tech_specs: string }>()
@@ -96,7 +99,7 @@ Pair it with a `formFields` registration so the field hydrates and ships in the 
 ## Removing or updating an entry
 
 ```ts
-import { removeSlot, updateSlot } from '@spree/dashboard-core'
+import { removeSlot, updateSlot } from '@spree/dashboard'
 
 removeSlot('product.form_sidebar', 'brand-card')
 updateSlot('product.form_sidebar', 'brand-card', { position: 999 })

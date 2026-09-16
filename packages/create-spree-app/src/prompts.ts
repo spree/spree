@@ -56,7 +56,7 @@ export async function runPrompts(
     start = !flags.noStart
   } else {
     const startResult = await p.confirm({
-      message: 'Start services now? (requires Docker)',
+      message: 'Start services now? Requires Docker - will start Spree server and PostgreSQL',
       initialValue: true,
     })
 

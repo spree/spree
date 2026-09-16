@@ -237,10 +237,10 @@ Spree::Dependencies.validate!
 # => true (or raises Spree::DependencyError)
 ```
 
-## Renamed seams in Spree 6.0
+## Seams backed by a workflow
 
-Seams backed by a [workflow](/developer/customization/workflows) were renamed
-from `*_service` to `*_workflow` in 6.0:
+Seams backed by a [workflow](/developer/customization/workflows) use a
+`*_workflow` name, not `*_service`:
 
 | Legacy name | Current name |
 |---|---|
@@ -254,14 +254,14 @@ from `*_service` to `*_workflow` in 6.0:
 | `payments_handle_webhook_service` | `payments_handle_webhook_workflow` |
 
 <Warning>
-The legacy names stay readable for one release, but **assigning to one no longer
-has any effect** — the override is recorded and a deprecation warning names the
-seam to port to. A class written against the old service contract isn't
-interchangeable with the workflow the new call sites use, so applying it
-silently would break checkout in ways that are hard to trace.
+The legacy names stay readable, but **assigning to one no longer has any
+effect** — the override is recorded and a deprecation warning names the seam to
+port to. A class written against the old service contract isn't interchangeable
+with the workflow the new call sites use, so applying it silently would break
+checkout in ways that are hard to trace.
 
 If you override any of these, move to the `*_workflow` name and make sure your
-class subclasses the workflow. The legacy names are removed in Spree 6.1.
+class subclasses the workflow.
 </Warning>
 
 ## Backwards compatibility

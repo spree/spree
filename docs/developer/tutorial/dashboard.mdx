@@ -1,0 +1,325 @@
+---
+title: Dashboard
+description: Add Brands management to the dashboard of a create-spree-app project — a list page, navigation, a typed Admin API client and a card on the product page.
+---
+
+Staff need a place to manage brands. The back office is a React app that lives in your project at `apps/dashboard/`, and you add screens to it by editing that app's own code.
+
+The dashboard talks to the Admin API you generated in step 1. That is the only data source — it never reaches into the Server app’s models or renders server HTML.
+
+## Where this code goes
+
+A project created with `create-spree-app` has this shape:
+
+```
+my-store/
+├── apps/
+│   ├── dashboard/          # the admin SPA — you edit this
+│   │   ├── src/
+│   │   │   ├── main.tsx
+│   │   │   ├── plugins.ts  # ← your customizations start here
+│   │   │   └── routeTree.gen.ts
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   ├── seller-dashboard/
+│   └── storefront/
+└── server/                  # the Server app from step 1
+```
+
+`apps/dashboard/src/plugins.ts` ships empty, imported once by `main.tsx` before the dashboard renders. Everything in this step goes there or in files next to it.
+
+The file and the `defineDashboardPlugin` function are named for the registries they talk to, not for how the code ships. A distributed package and your own app call the same function with the same options — the only difference is where the file lives.
+
+<Note>
+  Everything here is an ordinary file in your dashboard app, committed and deployed with the rest of your project. Publishing a package is only worth it when you want to reuse the same screens across several stores — the registrations are identical either way, so moving one into a package later is a copy, not a rewrite. See [dashboard plugins](/developer/dashboard/plugins/overview).
+</Note>
+
+`@spree/dashboard-core` (registries, providers and hooks) and `@spree/dashboard-ui` (the design system) come installed with the dashboard, so you can import from them straight away.
+
+## Step 1: A typed client for the endpoint
+
+Wrap the Admin API calls in one file so pages never call `request` directly. `adminClient` carries authentication, retries and error handling for you — see [talking to the backend](/developer/dashboard/customization/backend) for custom endpoints, React-Query hooks and error handling:
+
+```ts apps/dashboard/src/brands/client.ts
+import type { PaginatedResponse } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard'
+
+export interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface BrandCreateParams {
+  name: string
+  slug?: string
+  active?: boolean
+}
+
+type ListParams = Record<string, string | number | boolean | undefined>
+
+export const BrandsClient = {
+  list: (params?: ListParams) =>
+    adminClient.request<PaginatedResponse<Brand>>('GET', '/brands', { params }),
+
+  get: (id: string) => adminClient.request<Brand>('GET', `/brands/${id}`),
+
+  create: (body: BrandCreateParams) =>
+    adminClient.request<Brand>('POST', '/brands', { body }),
+
+  update: (id: string, body: Partial<BrandCreateParams>) =>
+    adminClient.request<Brand>('PATCH', `/brands/${id}`, { body }),
+
+  delete: (id: string) => adminClient.request<void>('DELETE', `/brands/${id}`),
+}
+```
+
+Paths are relative to `/api/v3/admin`, so `'/brands'` reaches the controller from step 1. The `Brand` interface matches what your Admin serializer returns, timestamps included.
+
+## Step 2: Describe the table
+
+`defineTable` declares the columns, sorting, search and empty state. The dashboard renders it with the same table chrome as Products and Orders:
+
+```tsx apps/dashboard/src/plugins.ts
+import { RelativeTime, defineTable, i18n } from '@spree/dashboard'
+import type { Brand } from './brands/client'
+
+defineTable<Brand>('brands', {
+  title: i18n.t('admin.brands.table.title'),
+  searchParam: 'search',
+  defaultSort: { field: 'name', direction: 'asc' },
+  emptyMessage: i18n.t('admin.brands.table.empty'),
+  columns: [
+    {
+      key: 'name',
+      label: i18n.t('admin.brands.fields.name'),
+      sortable: true,
+      filterable: true,
+      default: true,
+      render: (record) => <span className="font-medium text-foreground">{record.name}</span>,
+    },
+    {
+      key: 'created_at',
+      label: i18n.t('admin.brands.fields.created_at'),
+      sortable: true,
+      default: true,
+      render: (record) => <RelativeTime iso={record.created_at} />,
+    },
+  ],
+})
+```
+
+`name` is `sortable` and `filterable` because the model allowlisted it in step 1. A column that sorts by an attribute the backend does not permit fails at request time, so the two lists have to agree.
+
+This is the short version. [Tables](/developer/dashboard/customization/tables) documents every field of a [column definition](/developer/dashboard/customization/tables#column-definition), plus [bulk actions, row actions and drag reordering](/developer/dashboard/customization/tables#bulk-actions-row-actions-reordering) — and how to [add or remove columns on a built-in table](/developer/dashboard/customization/tables#add-a-column-to-a-built-in-table) such as products or orders.
+
+<Warning>
+  Every visible string goes through i18next — column labels, titles, buttons, empty states. Never hardcode English into a table definition or into JSX, and add each new key to every locale file your project ships. See [translations](/developer/dashboard/customization/translations) for the field-key convention and how server-side validation messages are resolved.
+</Warning>
+
+## Step 3: Build the list page
+
+`ResourceTable` supplies filtering, sorting and pagination against the table you just declared:
+
+```tsx apps/dashboard/src/brands/list-page.tsx
+import { Button, PageHeader, ResourceLayout, ResourceTable, type ResourceSearch } from '@spree/dashboard'
+import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { type Brand, BrandsClient } from './client'
+
+export function BrandsListPage({ searchParams }: { searchParams: Record<string, unknown> }) {
+  const { t } = useTranslation()
+
+  return (
+    <ResourceLayout
+      header={
+        <PageHeader
+          title={t('admin.brands.page.title')}
+          // A create form is the natural next step — see the recipes below.
+          actions={
+            <Button size="sm" disabled>
+              <PlusIcon className="size-4" />
+              {t('admin.brands.page.new_cta')}
+            </Button>
+          }
+        />
+      }
+      main={
+        <ResourceTable<Brand>
+          tableKey="brands"
+          queryKey="brands"
+          queryFn={(params) => BrandsClient.list(params as Record<string, never>)}
+          searchParams={searchParams as ResourceSearch}
+        />
+      }
+    />
+  )
+}
+```
+
+## Step 4: Register navigation, the route and a product card
+
+Back in `plugins.ts`, `defineDashboardPlugin` wires the page into the app:
+
+```tsx apps/dashboard/src/plugins.ts
+import { defineDashboardPlugin, i18n } from '@spree/dashboard'
+import { PackageIcon } from 'lucide-react'
+import { BrandsListPage } from './brands/list-page'
+import { BrandCard } from './brands/product-card'
+
+defineDashboardPlugin({
+  nav: [
+    {
+      key: 'brands',
+      label: i18n.t('admin.brands.nav'),
+      path: '/brands',
+      icon: PackageIcon,
+      position: 50,
+    },
+  ],
+  routes: [{ key: 'brands', path: '/brands', component: BrandsListPage }],
+  slots: {
+    'product.form_sidebar': [
+      { id: 'brand-card', component: BrandCard as never, position: 250 },
+    ],
+  },
+})
+```
+
+Three extension points are doing the work, each with its own reference page:
+
+| Option | What it does | Full documentation |
+|---|---|---|
+| `nav` | Adds the sidebar entry; `position` places it among the built-in items | [Navigation](/developer/dashboard/customization/navigation) — settings sub-nav, removing and patching built-in entries |
+| `routes` | Mounts the page under the authenticated store layout, so it becomes `/:storeId/brands` | [Routes](/developer/dashboard/customization/routes#runtime-route-registry-in-app-dynamic) — path params, layout and permission gating |
+| `slots` | Injects a component where the dashboard already renders one | [Slots](/developer/dashboard/customization/slots) and the [slots catalog](/developer/dashboard/slots-catalog) — every slot and the context it passes |
+
+`product.form_sidebar` is what makes brands useful to the person editing a product: the product page knows nothing about brands, and the slot registry is what puts your card there.
+
+<Tip>
+  Hiding a nav entry or a column behind a permission is [one option away](/developer/dashboard/customization/permissions) — but hiding is never authorising. The Admin API still has to refuse the request, which is why step 1 left authorization to you.
+</Tip>
+
+Showing the current brand is not much use on its own — the point is to change
+it. The product page is one big form with a single Save button, and
+`product.form_sidebar` renders **inside** that form, so the card can own an
+input without owning any save logic.
+
+Two pieces make that work. First, tell the form the field exists and where its
+value comes from on load:
+
+```tsx apps/dashboard/src/plugins.ts
+defineDashboardPlugin({
+  formFields: {
+    // `from` receives the fetched product, or null on the create form.
+    product: [{ name: 'brand_id', from: (product) => product?.brand_id ?? null }],
+  },
+})
+```
+
+Then render the input, binding it to the host form with `useHostForm()`. No
+`<form>` of your own, no Save button, no mutation — dirty tracking, the PATCH
+payload and re-baselining after save all stay with the page:
+
+```tsx apps/dashboard/src/brands/product-card.tsx
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Field, FieldLabel,
+  ResourceCombobox,
+  useHostForm,
+} from '@spree/dashboard'
+import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { BrandsClient } from './client'
+
+export function BrandCard() {
+  const { t } = useTranslation()
+  const form = useHostForm<{ brand_id: string | null }>()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.brands.product_card.title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Field>
+          <FieldLabel className="sr-only" htmlFor="brand_id">
+            {t('admin.brands.product_card.title')}
+          </FieldLabel>
+          <Controller
+            control={form.control}
+            name="brand_id"
+            render={({ field }) => (
+              <ResourceCombobox
+                id="brand_id"
+                queryKey="product-brand-picker"
+                value={field.value ?? ''}
+                onChange={(id) => field.onChange(id ?? null)}
+                getOptionLabel={(brand) => brand.name}
+                placeholder={t('admin.brands.product_card.placeholder')}
+                emptyText={t('admin.brands.product_card.none')}
+                search={(query) => BrandsClient.list({ name_cont: query })}
+                hydrate={(ids) => BrandsClient.list({ id_in: ids })}
+              />
+            )}
+          />
+        </Field>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+`ResourceCombobox` searches the API as the merchant types rather than loading
+every brand up front, which is what keeps the picker usable on a catalogue
+with thousands of them. `hydrate` resolves the saved ID back to a name so the
+trigger reads correctly on first render.
+
+For this to persist, the Admin API has to accept `brand_id` on the product —
+the `resource_permitted_attributes` half of the association you set up in
+step 1.
+
+<Note>
+  A field that merchants should be able to define themselves, rather than one
+  your code adds as a column, is usually better as a [custom field](/developer/core-concepts/metafields) — no code at all. See [adding a custom form field](/developer/dashboard/recipes/custom-form-field) for both paths.
+</Note>
+
+## Step 5: Run it
+
+`spree dev` runs the Server app and the dashboard together:
+
+```bash
+spree dev
+```
+
+Open the dashboard at `http://localhost:5173`. **Brands** appears in the sidebar, the list reads your Admin API endpoint from step 1, and the product edit page shows the card.
+
+<Tip>
+  Adding a create or edit form next? Wrap `handleSubmit` in a try/catch that calls `mapSpreeErrorsToForm` so 422 responses land on the right fields, and gate any delete that fires straight from a click behind `useConfirm()` with `variant: 'destructive'`.
+</Tip>
+
+## Going further
+
+This step used a handful of the dashboard's extension points. The reference documentation covers the rest:
+
+<CardGroup cols={2}>
+  <Card title="Customization quickstart" icon="rocket" href="/developer/dashboard/customization/quickstart">
+    The same ground in five minutes, without the Brands feature around it
+  </Card>
+  <Card title="Public API" icon="code" href="/developer/dashboard/public-api">
+    Every component, hook, registry and provider you can safely import
+  </Card>
+  <Card title="Concepts" icon="compass" href="/developer/dashboard/concepts">
+    The mental model — what each layer does and where your code fits
+  </Card>
+  <Card title="Recipes" icon="book-open" href="/developer/dashboard/recipes/attribute-end-to-end">
+    Worked examples: a custom form field, a page action, a sidebar widget
+  </Card>
+</CardGroup>
+
+## Next step
+
+Staff can manage brands. Now show them to customers: [Storefront](/developer/tutorial/storefront).

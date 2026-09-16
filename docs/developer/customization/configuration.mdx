@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Every global Spree setting that is actually read by Spree 6 — grouped by area, with defaults and what each one changes.
+description: Every global Spree setting that is actually read by Spree — grouped by area, with defaults and what each one changes.
 ---
 
 Global settings live in `config/initializers/spree.rb` and apply to the whole application. Anything that varies per store — currency, markets, delivery zones, languages — is data you change in the dashboard instead.
@@ -25,7 +25,7 @@ Settings that describe the deployment rather than commerce behavior can be set w
 | `dashboard_url` | `SPREE_DASHBOARD_URL` | Origin where the admin dashboard is hosted (e.g. `https://admin.my-shop.com`). Used for every link that sends someone into the dashboard: invitation emails, SSO redirects, and the first-run setup link printed by `db:seed`. |
 | `seller_panel_url` | `SPREE_SELLER_PANEL_URL` | Origin where the marketplace seller panel is hosted, when you serve it somewhere other than this app's own `/sellers` mount. Used for links sent to sellers, today the invitation email. Leave it unset to use `/sellers`; with no panel deployed at all, those links open the dashboard. |
 
-This page lists only settings Spree 6 actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
+This page lists only settings Spree actually reads. Settings that exist for backwards compatibility are listed under [Deprecated settings](#deprecated-settings) rather than mixed in with the rest.
 
 ## Settings that belong to a store
 
@@ -33,7 +33,7 @@ Settings that shape how a shop sells — when customers are charged, whether sto
 
 `capture_method`, `track_inventory_levels`, `stock_reservations_enabled`, `stock_reservation_ttl_minutes`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`, `tax_using_ship_address`, plus `guest_checkout` and `storefront_access` — those last two are owned by the channel, and the store's value is what a channel falls back to.
 
-They were global before Spree 6. The global versions still exist for one release but are no longer read, so setting one in the initializer changes nothing — run `bin/rake spree:store_settings:backfill_from_config` during the upgrade to copy your values onto every store.
+The global versions of these settings still exist but are no longer read, so setting one in the initializer changes nothing. If you're upgrading from an installation that used them, run `bin/rake spree:store_settings:backfill_from_config` to copy your values onto every store.
 
 ```ruby
 store = Spree::Current.store
@@ -61,7 +61,7 @@ payment_method.update!(capture_method: nil)   # back to inheriting
 payment_method.resolved_capture_method        # => "checkout"
 ```
 
-Before Spree 6 this was two separate booleans, `auto_capture` and `auto_capture_on_dispatch`, which could contradict each other. Two upgrade tasks carry existing installs over: `spree:store_settings:backfill_from_config` maps the old globals onto each store's `capture_method`, and `spree:migrate_capture_methods` converts the per-payment-method `auto_capture` column. A method left without a value inherits its store.
+If you're upgrading from an installation that used the older `auto_capture` and `auto_capture_on_dispatch` booleans, two tasks carry it over: `spree:store_settings:backfill_from_config` maps the old globals onto each store's `capture_method`, and `spree:migrate_capture_methods` converts the per-payment-method `auto_capture` column. A method left without a value inherits its store.
 
 ## Checkout and payments
 
@@ -182,7 +182,7 @@ Assigning at runtime affects only the current process and is lost on restart. Se
 
 ## Deprecated settings
 
-These still exist so upgrades don't break, but Spree 6 either ignores them or reads them only from subsystems it has replaced. Don't use them in new code.
+These still exist so upgrades don't break, but Spree either ignores them or reads them only from subsystems it has replaced. Don't use them in new code.
 
 | Setting | Use instead |
 |---|---|
@@ -206,12 +206,12 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `disable_store_presence_validation` | Every store-owned record now requires a store |
 
 <Warning>
-These settings have no effect at all in Spree 6, and are scheduled for removal: `allow_checkout_on_gateway_error` (completion checks whether payments cover the total, so a failed gateway call never completes an order), `products_per_page`, `alternative_shipping_phone`, `show_variant_full_price`, `reserve_stock_on`, `storefront_products_path`, `storefront_taxons_path`, `storefront_pages_path`. Setting them changes nothing.
+These settings have no effect at all, and are scheduled for removal: `allow_checkout_on_gateway_error` (completion checks whether payments cover the total, so a failed gateway call never completes an order), `products_per_page`, `alternative_shipping_phone`, `show_variant_full_price`, `reserve_stock_on`, `storefront_products_path`, `storefront_taxons_path`, `storefront_pages_path`. Setting them changes nothing.
 </Warning>
 
-## Settings removed in Spree 6
+## Settings that have been removed
 
-These were deprecated in Spree 5 and are gone. Assigning one in your initializer now raises `NoMethodError`, so delete the line.
+These settings are gone. Assigning one in your initializer now raises `NoMethodError`, so delete the line.
 
 | Setting | What to do instead |
 |---|---|

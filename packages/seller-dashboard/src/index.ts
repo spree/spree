@@ -9,11 +9,26 @@ import './i18n'
 import './nav/default'
 import './nav/settings'
 
-// Plugin facade re-export — lets a marketplace register in-app customisations
-// (nav entries, slot widgets, table columns) without declaring
-// @spree/dashboard-core as a direct dependency. Same facade the operator's
-// dashboard exposes: one API for extending either panel.
-export * from '@spree/dashboard-core/plugin'
+export * from '@spree/dashboard-core'
+export {
+  type DateRange,
+  ResourceCombobox,
+  type ResourceComboboxProps,
+  ResourceMultiAutocomplete,
+  type ResourceMultiAutocompleteProps,
+  Slot,
+  StatusCard,
+} from '@spree/dashboard-core'
+// The single import a marketplace needs: the framework
+// (`@spree/dashboard-core`) and the design system (`@spree/dashboard-ui`),
+// re-exported so a host writing its own pages never has to work out which
+// package an export lives in. Both stay importable directly.
+//
+// `export *` drops a name declared by both rather than picking one, so the
+// duplicates are re-exported explicitly below, resolving to the framework's
+// version — the one that fetches its own data. Import from
+// `@spree/dashboard-ui` for the presentational half.
+export * from '@spree/dashboard-ui'
 
 export {
   createSellerApiClient,
