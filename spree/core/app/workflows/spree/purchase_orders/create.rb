@@ -17,6 +17,9 @@ module Spree
       # @param currency [String, nil] defaults to the store's; set it for a
       #   foreign-currency order
       # @param expected_at [Date, nil]
+      # @param cancel_by [Date, nil] the date past which the merchant no longer
+      #   wants the goods, so an order still open after it reads as overdue to
+      #   cancel rather than merely late
       # @param reference [String, nil] the supplier's own order number
       # @param notes [String, nil]
       # @param created_by [Object, nil]
