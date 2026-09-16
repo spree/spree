@@ -40,7 +40,7 @@ function ItemRow({ row }: { row: FulfillmentItemRowData }) {
         )}
       </div>
 
-      <div className="shrink-0 text-right text-muted-foreground text-sm">
+      <div className="min-w-0 shrink text-right text-muted-foreground text-sm">
         {row.displayPrice ? (
           <span className="whitespace-nowrap">
             {row.displayPrice} × {row.quantity}
@@ -48,7 +48,7 @@ function ItemRow({ row }: { row: FulfillmentItemRowData }) {
         ) : (
           <span className="whitespace-nowrap">× {row.quantity}</span>
         )}
-        {row.priceSource && <div className="text-xs">{row.priceSource}</div>}
+        {row.priceSource && <div className="truncate text-xs">{row.priceSource}</div>}
       </div>
     </div>
   )

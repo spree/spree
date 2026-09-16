@@ -4,10 +4,9 @@ import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 /**
- * Which agreement priced this line, as a link to it. Read off the price list
- * the line was stamped with, never resolved again — editing a catalog must
- * not rewrite what an order says it was charged from. Renders nothing for a
- * shop-price or hand-negotiated line.
+ * Which agreement priced this line, as a link to it. The price list is the
+ * one stamped on the line, never re-resolved; the catalog is that list's
+ * current owner. Renders nothing for a shop-price or hand-negotiated line.
  */
 export function LineItemPriceSource({ lineItem }: { lineItem: LineItem }) {
   const { t } = useTranslation()

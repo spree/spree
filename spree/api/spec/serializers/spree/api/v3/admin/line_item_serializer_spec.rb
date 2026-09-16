@@ -84,6 +84,17 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
       expect(subject['catalog_id']).to be_nil
     end
 
+    # Destroying a catalog soft-deletes its owned list, and a paranoid record
+    # drops out of its association — which would blank the provenance on every
+    # past order the agreement priced, the one thing it exists to keep.
+    it 'still names the list after its catalog is deleted' do
+      line_item.update_columns(price_list_id: price_list.id)
+      catalog.destroy
+
+      expect(subject['price_list_id']).to eq(price_list.prefixed_id)
+      expect(subject['price_list_name']).to eq('Tier 2 prices')
+    end
+
     it 'stays off the store serializer, like every other provenance field' do
       line_item.update_columns(price_list_id: price_list.id)
 

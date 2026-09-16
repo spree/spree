@@ -37,11 +37,13 @@ module Spree
             line_item.variant&.amount_in(line_item.currency)&.to_s
           end
 
-          # Which agreement priced this line, read off the row it was stamped
-          # with rather than resolved again — the same reason `catalog_price`
-          # above is a base price. Empty on a shop-price or hand-negotiated
-          # line. Names ride along beside the ids so a page of lines does not
-          # cost a request each to label, as `company_name` already does.
+          # Which agreement priced this line. The list id is stamped on the
+          # row and never re-resolved (the same reason `catalog_price` above
+          # is a base price); the catalog is whichever one owns that list
+          # now, so moving a list between catalogs re-labels past orders.
+          # Empty on a shop-price or hand-negotiated line. Names ride along
+          # beside the ids so a page of lines does not cost a request each to
+          # label, as `company_name` already does.
           attribute :price_list_id do |line_item|
             line_item.price_list&.prefixed_id
           end
