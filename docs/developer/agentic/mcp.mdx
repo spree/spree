@@ -12,6 +12,13 @@ https://spreecommerce.org/docs/mcp
 
 The server exposes two tools: full-text **search** across the documentation, and **reading** doc pages as Markdown.
 
+<Note>
+  This server is about Spree's documentation, not your store. To let an agent
+  work on your own catalog, orders and settings, see the
+  [Admin MCP server](/developer/agentic/admin-mcp) — the same protocol, hosted
+  by your application and authenticated with one of your API keys.
+</Note>
+
 ## Setup
 
 In a [create-spree-app](/developer/create-spree-app/quickstart) project, one command connects Claude Code, Cursor and VS Code at once, and installs the [agent skills](/developer/agentic/agent-skills) too:
@@ -79,6 +86,7 @@ To connect a single tool by hand, or one outside a create-spree-app project:
 | **MCP server** (this page) | The latest published docs; agents working outside a scaffolded project; questions the installed skills don't cover |
 | **[`@spree/docs` npm package](/developer/agentic/llm-docs)** | Fast local reads inside a project — no network round-trip, works offline, pinned to what you installed |
 | **[Agent skills](/developer/agentic/agent-skills)** | Conventions and how-to knowledge the agent should apply without searching at all |
+| **[Admin MCP server](/developer/agentic/admin-mcp)** | Not docs at all — operating a real store: its catalog, orders, reports and settings |
 
 <Note>
   New [create-spree-app](/developer/create-spree-app/quickstart) projects come connected (skip it with `--no-docs-mcp`) — Claude Code asks you to approve the server the first time you open the project. The project's `AGENTS.md` tells agents to search here and read pages from the local `@spree/docs` package, which matches the Spree version the project runs.
