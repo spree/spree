@@ -1,6 +1,6 @@
 ---
 title: "Marketplace Capabilities"
-description: "Build a multi-vendor marketplace with Spree Enterprise: vendor onboarding, Shopify and WooCommerce integrations, Stripe Connect payouts, and order splitting."
+description: "Learn how Spree supports multi-vendor marketplaces."
 ---
 
 Spree Commerce Enterprise Edition provides a robust out-of-the-box foundation for building a [<u>multi-vendor marketplace</u>](https://spreecommerce.org/marketplace-ecommerce/), while remaining flexible enough to support advanced customization. 
@@ -9,7 +9,7 @@ Here’s an overview of each user perspective:
 
 ### Admin Capabilities
 
-![](/docs/images/use-cases/multi-vendor/admin.png)
+![A graphic showing the Spree marketplace owner dashboard](/docs/images/use-cases/multi-vendor/admin.png)
 
 - **Marketplace Management** - invite vendors, approve or reject vendor signups, suspend accounts, and monitor vendor performance metrics.
 - **Shopify Vendor Integration** - automate onboarding and operations for Shopify vendors using a white-labelled Shopify sales channel app
@@ -17,15 +17,18 @@ Here’s an overview of each user perspective:
 - **Manual or CSV Vendor Onboarding** - manually onboard vendors without an online store or using unsupported platforms via direct account setup in the vendor dashboard
 - **Marketplace Merchandising** - ensure product consistency and branding integrity across all vendors
 - **Promotions & Marketing Automations** - leverage marketing campaign tools for engagement and retention
-- **Storefront & Content Management** - drag-and-drop layouts, modular pages, blog CMS, and newsletter tools.
+- **Storefront** - the [Next.js Storefront](/developer/storefront/storefront) provides a production-ready, multi-vendor-aware frontend that supports multi-vendor checkout out of the box, with full API coverage for headless customization.
 - **Checkout & Payments** - support multi-vendor order splitting, quick checkout methods, tax calculation, and automated payouts via Stripe Connect.
 - **Order Management** - order filtering, actions like cancellations or refunds, and tracking fulfillment per vendor.
 - **Vendor Payouts** - automated or manual payouts with Stripe Connect, including KYC onboarding and vendor-accessible analytics.
+- **Markets** - define distinct shopping experiences for different regions, each with its own currency, language, and tax settings. Used as a rule condition in Price Lists for region-specific pricing without duplicating products.
+- **Price Lists** - configure custom pricing strategies by customer group, market, volume tier, or geographic zone — directly in the admin, no development required. Essential for B2B, wholesale, and localized marketplace scenarios.
+- **Sales Channels** - run multiple storefronts or selling contexts (e.g., main storefront, wholesale portal, mobile app) from a single Spree instance, with per-channel product catalogs, order attribution, and fulfillment routing.
 - **Analytics & Reporting** - built-in KPIs, Google Analytics integration, and CSV exports for products and orders.
 - **Customer Service** - optional chat and AI bots, ticketing, and store credits for efficient customer support.
 - **APIs for headless projects and programmatic operations** - full coverage for storefront, platform, and checkout to enable custom functionality and integrations.
 
-See [Marketplace Admin Panel](https://spreecommerce.org/docs/use-case/marketplace/admin-dashboard) for a more detailed breakdown.
+See [Marketplace Admin Panel](/use-case/marketplace/admin-dashboard) for a more detailed breakdown. For step-by-step user guides, see [Vendor Management](/user/vendors/vendor-management), [Commission Rates](/user/vendors/commission-rates), [Vendor Payouts](/user/vendors/vendor-payouts), and [Marketplace Configuration](/user/settings/marketplace).
 
 ### Vendor Capabilities
 
@@ -38,7 +41,7 @@ See [Marketplace Admin Panel](https://spreecommerce.org/docs/use-case/marketplac
 - **Automated WooCommerce Onboarding & Operations** - syncs products, orders, shipments, cancellations, and refunds automatically between WooCommerce and the marketplace.
 - **Vendor Payouts & Reporting** - automated or manual payouts, Stripe KYC onboarding, financial dashboards, and optional accounting integrations.
 
-See [Marketplace Vendor Panel](https://spreecommerce.org/docs/use-case/marketplace/vendor-dashboard) for a more detailed breakdown.
+See [Marketplace Vendor Panel](/use-case/marketplace/vendor-dashboard) for a more detailed breakdown. For onboarding guides, see [Shopify Vendor Onboarding](/user/vendors/vendor-onboarding-shopify), [WooCommerce Vendor Onboarding](/user/vendors/vendor-onboarding-woocommerce), and [Manual/CSV Vendor Onboarding](/user/vendors/vendor-onboarding-manual).
 
 ### Customer Experience
 
@@ -51,16 +54,16 @@ See [Marketplace Vendor Panel](https://spreecommerce.org/docs/use-case/marketpla
 - **Express Checkout & Payment Options** - including Apple Pay, Google Pay, installment plans
 - **Notifications & Shipment Tracking** - send per-vendor email updates and provides a unified order view in the customer dashboard.
 
-See [Marketplace Customer Experience](https://spreecommerce.org/docs/use-case/marketplace/customer-ux) for a more detailed breakdown.
+See [Marketplace Customer Experience](/use-case/marketplace/customer-ux) for a more detailed breakdown. For how the unified cart and checkout works in practice, see [Multi-Vendor Checkout](/user/vendors/multi-vendor-checkout).
 
 ## Marketplace Scenarios
 
 Spree’s modular architecture supports a variety of advanced marketplace models beyond the standard vendor-customer setup, enabling tailored experiences for specific business needs:
 
-- **B2B Marketplaces** - layer on custom pricing tiers, MOQs, tax exemptions, and quote workflows.
+- **B2B Marketplaces** - layer on custom pricing tiers, MOQs, tax exemptions, and quote workflows. Use [Price Lists](/user/manage-products/price-lists) to configure wholesale or account-based pricing by customer group or volume.
 - **Subscription Marketplace Hybrid** - vendors offer recurring purchases, managed through Spree’s subscriptions engine.
-- **Multi-region/Localized Marketplaces** - vendors can be grouped by country or region with localized catalogs, taxes, and shipping zones.
-- **Headless Marketplace Frontend** - use Spree’s API to deliver a marketplace within a mobile app or a custom storefront built in Next.js, Vue, while leveraging the Spree marketplace backend functionality.
+- **Multi-region/Localized Marketplaces** - vendors can be grouped by country or region with localized catalogs, taxes, and shipping zones. Use [Markets](/user/settings/markets) to define per-region currency, language, and tax settings, and combine with Price Lists for region-specific pricing.
+- **Headless Marketplace Frontend** - use Spree’s API to deliver a marketplace within a mobile app or a custom storefront built in Next.js, Vue, or any framework, while leveraging the Spree marketplace backend functionality. Use [Sales Channels](/user/settings/sales-channels) to separate order attribution, catalog availability, and fulfillment routing across each frontend.
 
 ## Marketplaces Running on Spree
 
@@ -70,19 +73,27 @@ Spree’s modular architecture supports a variety of advanced marketplace models
 
 ## Flexible, Customizable Architecture
 
-While many marketplace features are available out-of-the-box in Spree Enterprise, the open-source foundation means you can extend and tailor the platform to your exact business model - whether that means custom commission logic, ERP integrations, or unique checkout flows.
+While many marketplace features are available out-of-the-box in Spree Enterprise, the open-source foundation means you can extend and tailor the platform to your exact business model — whether that means custom commission logic, ERP integrations, bespoke checkout flows, or automating back-office operations with AI agents.
 
-Spree Enterprise offers flexibility across all layers of the platform, from code-level customization to no-code configuration.
+- **Backend (Ruby on Rails)**
+  - Extend business logic, workflows, and integrations via Spree's modular, open-source architecture. Build custom commission engines, vendor approval flows, fulfillment rules, or any other platform-specific behavior directly in Ruby on Rails. See: [<u>Spree Developer Quickstart</u>](/developer/getting-started/quickstart)
+- **Store API**
+  - Full REST API coverage for building any frontend experience — power the Next.js Storefront, a mobile app, a custom checkout, or any headless frontend in any framework. The Storefront API handles catalog browsing, multi-vendor cart and checkout, customer accounts, order tracking, and more. See: [<u>Store API Reference</u>](/api-reference/storefront)
+- **Admin API**
+  - Programmatic access to all back-office operations: products, orders, vendors, payouts, promotions, customers, and more. Built for data migrations, ERP or CRM integrations, custom reporting pipelines, and any automation that would otherwise require manual admin work. See: [<u>Admin API Reference</u>](/api-reference/admin-api)
+- **Admin CLI & Agentic Operations**
+  - The `spree api` CLI turns the Admin API into a first-class terminal client — generic HTTP verbs against any endpoint, offline schema introspection, and credentials that resolve automatically from local dev to production. Designed to be driven by both humans and AI coding agents. See: [<u>Admin CLI</u>](/developer/cli/admin-api)
+- **Next.js Storefront**
+  - **Multi-Vendor Ready** - the [Next.js Storefront](/developer/storefront/storefront) supports multi-vendor checkout out of the box with no additional configuration.
+  - **Fully Customizable** - built on React and Next.js, the storefront can be extended and restyled to match any brand or UX requirement.
+  - **API-Driven** - connects to Spree's Storefront API, giving developers full control over the frontend without touching the backend.
 
 ## Full Ownership And Control
 
 With Spree Enterprise, you’re not locked into a black-box SaaS model. You retain complete control over your infrastructure, data, and roadmap, enabling long-term flexibility, scalability, and compliance.
 
-- **API-Driven Extensibility**
-  - **Full API Coverage** - extend the platform via REST or GraphQL APIs for storefronts, checkout, vendor dashboards, or 3rd-party integrations. See: [<u>API Reference</u>](https://spreecommerce.org/docs/api-reference/introduction)
-  - **Custom Integrations** - seamlessly connect with ERPs, CRMs, payment providers, POS systems, or headless frontends.
 - **Deployment Flexibility**
-  - **Self-Hosting Options** - deploy Spree anywhere; your cloud provider, on-premise, or in specific geographic regions. See: [<u>Deployment Guide</u>](https://spreecommerce.org/docs/developer/deployment/render)
+  - **Self-Hosting Options** - deploy Spree anywhere; your cloud provider, on-premise, or in specific geographic regions. See: [<u>Deployment Guide</u>](/developer/deployment/render)
   - **Provider Agnostic** - run on AWS, GCP, Azure, or Render. Tailor infrastructure to budget, compliance, and performance needs.
 - **Scalability & Performance**
   - **Built for Scale** - Spree supports advanced architectures using load balancers, Redis caching, CDN layers (e.g., Cloudflare or Fastly).
@@ -97,11 +108,15 @@ With Spree Enterprise, you’re not locked into a black-box SaaS model. You reta
 
 ## Further Reading
 
-- [Multi-Vendor Marketplace Model](https://spreecommerce.org/docs/use-case/marketplace/model)
-- [<u>Developer Docs</u>](https://spreecommerce.org/docs/developer/getting-started/quickstart)
-- [<u>User Docs</u>](https://spreecommerce.org/docs/user/what-is-spree-commerce)
-- [<u>Ecommerce API docs</u>](https://spreecommerce.org/docs/api-reference/introduction)
-- [<u>Integrations</u>](https://spreecommerce.org/docs/integrations/integrations)
+- [Multi-Vendor Marketplace Model](/use-case/marketplace/model)
+- [Vendor Management](/user/vendors/vendor-management)
+- [Commission Rates](/user/vendors/commission-rates)
+- [Vendor Payouts](/user/vendors/vendor-payouts)
+- [Multi-Vendor Checkout](/user/vendors/multi-vendor-checkout)
+- [Shopify Vendor Onboarding](/user/vendors/vendor-onboarding-shopify)
+- [WooCommerce Vendor Onboarding](/user/vendors/vendor-onboarding-woocommerce)
+- [Manual/CSV Vendor Onboarding](/user/vendors/vendor-onboarding-manual)
+
 
 ## Get Started
 
