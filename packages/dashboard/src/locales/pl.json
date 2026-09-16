@@ -5955,6 +5955,8 @@
       "builder": {
         "metrics": "Metryki",
         "no_metrics": "Wybierz co najmniej jedną metrykę.",
+        "one_family_only": "Jeden raport obejmuje jedną grupę wskaźników. Wybór wskaźnika z innej grupy przełącza raport na tę grupę.",
+        "switches_family": "Przełącza ten raport na {{family}}",
         "group_by": "Grupuj według",
         "none": "Brak (tylko sumy)",
         "grain": "Interwał",

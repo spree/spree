@@ -41,6 +41,8 @@ import { useAllMarkets } from '../../../hooks/use-markets'
 import { productAutocompleteProps } from '../../../hooks/use-products'
 import {
   maxBuckets as bucketCeiling,
+  draftWithMetric,
+  familyOfMetrics,
   findDimension,
   hourGrainFitsRange,
   isTimeDimension,
@@ -72,9 +74,9 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
   const update = (patch: Partial<ReportDraft>) => onChange({ ...draft, ...patch })
 
   // Metrics from different families cannot be combined in one query, so the
-  // picker groups them and disables the families the current selection has
-  // ruled out — the alternative is a flat run of 27 checkboxes where the
-  // refusal only arrives after you have picked an impossible pair.
+  // picker groups them by family — the alternative is a flat run of 27
+  // checkboxes where the refusal only arrives after an impossible pair.
+  // Picking across families switches the report rather than being refused.
   const metricGroups =
     schema.families?.length > 0
       ? schema.families
@@ -87,10 +89,8 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
       : [{ name: 'all', label: '', metrics: schema.metrics }]
 
   // Whichever family the current selection belongs to; null while nothing is
-  // picked, so every family stays open.
-  const activeFamily =
-    metricGroups.find((group) => group.metrics.some((m) => draft.metrics.includes(m.name)))?.name ??
-    null
+  // picked, so every family reads as equally available.
+  const activeFamily = familyOfMetrics(schema, draft.metrics)?.name ?? null
 
   const groupableDimensions = schema.dimensions.filter((d) =>
     draft.metrics.every((metric) => d.compatible_metrics.includes(metric)),
@@ -158,10 +158,7 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
   ]
 
   function toggleMetric(name: string, checked: boolean) {
-    const metrics = checked
-      ? [...draft.metrics, name]
-      : draft.metrics.filter((metric) => metric !== name)
-    update({ metrics })
+    onChange(draftWithMetric(draft, schema, name, checked))
   }
 
   function setDimension(value: string) {
@@ -223,13 +220,17 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
               )}
               {group.metrics.map((metric) => {
                 const id = `metric-${metric.name}`
-                // Greyed out when the chosen breakdown, an active filter, or a
-                // metric from another family cannot be combined with this one.
+                // A metric outside the report's current family stays clickable:
+                // ticking it switches the report to that family, which is what
+                // a merchant means by it.
+                const otherFamily = activeFamily !== null && group.name !== activeFamily
+                // Greyed out only when the breakdown or a filter this report
+                // already carries cannot break this metric down.
                 const incompatible =
+                  !otherFamily &&
                   [dimension, ...draft.filters.map((f) => findDimension(schema, f.dimension))].some(
                     (d) => d && !d.compatible_metrics.includes(metric.name),
-                  ) ||
-                  (activeFamily !== null && group.name !== activeFamily)
+                  )
                 return (
                   <Field key={metric.name} orientation="horizontal">
                     <Checkbox
@@ -240,7 +241,11 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
                     />
                     <FieldLabel
                       htmlFor={id}
-                      title={metric.description ?? undefined}
+                      title={
+                        otherFamily
+                          ? t('admin.reports.builder.switches_family', { family: group.label })
+                          : (metric.description ?? undefined)
+                      }
                       className={cn('font-normal', incompatible && 'text-muted-foreground')}
                     >
                       {metric.label}
@@ -250,8 +255,14 @@ export function ReportBuilder({ draft, onChange, schema }: ReportBuilderProps) {
               })}
             </div>
           ))}
-          {draft.metrics.length === 0 && (
+          {draft.metrics.length === 0 ? (
             <p className="text-xs text-destructive">{t('admin.reports.builder.no_metrics')}</p>
+          ) : (
+            metricGroups.length > 1 && (
+              <p className="text-xs text-muted-foreground">
+                {t('admin.reports.builder.one_family_only')}
+              </p>
+            )
           )}
         </FieldSet>
 

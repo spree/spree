@@ -5889,6 +5889,8 @@
       "builder": {
         "metrics": "Kennzahlen",
         "no_metrics": "Wählen Sie mindestens eine Kennzahl.",
+        "one_family_only": "Ein Bericht umfasst eine Metrikgruppe. Die Auswahl einer Metrik aus einer anderen Gruppe wechselt den Bericht zu dieser Gruppe.",
+        "switches_family": "Wechselt diesen Bericht zu {{family}}",
         "group_by": "Gruppieren nach",
         "none": "Keine (nur Summen)",
         "grain": "Intervall",

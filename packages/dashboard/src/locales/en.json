@@ -5889,6 +5889,8 @@
       "builder": {
         "metrics": "Metrics",
         "no_metrics": "Pick at least one metric.",
+        "one_family_only": "One report covers one metric group. Picking a metric from another group switches the report to it.",
+        "switches_family": "Switches this report to {{family}}",
         "group_by": "Group by",
         "none": "None (totals only)",
         "grain": "Interval",

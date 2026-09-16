@@ -5876,6 +5876,8 @@
       "builder": {
         "metrics": "指标",
         "no_metrics": "请至少选择一个指标。",
+        "one_family_only": "一个报表只涵盖一个指标组。选择其他组中的指标会将报表切换到该组。",
+        "switches_family": "将此报表切换到{{family}}",
         "group_by": "分组依据",
         "none": "无（仅汇总）",
         "grain": "时间粒度",
