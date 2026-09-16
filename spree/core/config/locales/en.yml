@@ -1371,6 +1371,26 @@ en:
     order: Order
     order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
+    order_group_mailer:
+      confirm_email:
+        arriving_separately:
+          one: Your order is arriving in one delivery.
+          other: Your order is arriving in %{count} separate deliveries.
+        dear_customer: Hey %{name},
+        instructions: Please review and retain the following information about order %{number} for your records.
+        subject: Order Confirmation
+        thanks: Thank you
+      delivery: Delivery
+      delivery_numbered: Delivery %{position} of %{count}
+      nothing_to_ship: Nothing to ship
+      sold_by: Sold by %{sellers}
+      store_owner_notification_email:
+        heading: New Order Received
+        instructions:
+          one: You have received a new order.
+          other: You have received a new order, split across %{count} seller orders.
+        purchase_summary: Order %{number} Summary
+        subject: "%{store_name} received a new order"
     order_mailer:
       cancel_email:
         dear_customer: Hey %{name},

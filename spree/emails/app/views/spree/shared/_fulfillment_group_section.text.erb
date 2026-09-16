@@ -1,0 +1,12 @@
+<% if count > 1 %>
+<%= Spree.t('order_group_mailer.delivery_numbered', position: position, count: count) %>
+<% else %>
+<%= Spree.t('order_group_mailer.delivery') %>
+<% end %>
+<% if fulfillment_group.sellers.any? %>
+<%= Spree.t('order_group_mailer.sold_by', sellers: fulfillment_group.sellers.map(&:name).to_sentence) %>
+<% end %>
+<% fulfillment_group.line_items.each do |item| %>
+  <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text -%> (<%= item.quantity %>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
+<% end %>
+  <%= Spree.t(:shipping) %>: <%= fulfillment_group.name %> <%= fulfillment_group.display_cost %>

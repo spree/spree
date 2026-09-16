@@ -466,16 +466,18 @@ module Spree
       #
       # A split checkout's payments were already taken against the whole basket
       # and moved onto the group, so the children place without processing them
-      # again. One purchase means one confirmation email: the first child
-      # carries the notification and its siblings place silently.
+      # again. Every child also places *silently*: one purchase means one
+      # confirmation, and no child order is the purchase — each holds a single
+      # seller's items, delivery and total. The group event below is what the
+      # customer's confirmation hangs off.
       def complete_orders
         split = order_group.present?
 
-        placed_orders.each_with_index do |child, index|
+        placed_orders.each do |child|
           result = Spree.order_complete_workflow.call(
             order: child,
             payment_pending: split,
-            notify_customer: split && !index.zero? ? false : nil
+            notify_customer: split ? false : nil
           )
           failure(cart, code: 'completion_failed', message: result.error) if result.failure?
         end
@@ -498,8 +500,14 @@ module Spree
       # What this checkout produced: the children of a split, or the one order
       # otherwise. The single answer to "which orders came out of here", so
       # placement and tax filing can never disagree about the set.
+      #
+      # Sorted rather than re-queried, because the split hands the group over
+      # with its children loaded and those are the records everything
+      # downstream holds — the API response included. Ordering through a new
+      # relation would place fresh copies and leave the caller's own children
+      # reading as unplaced drafts.
       def placed_orders
-        order_group.present? ? order_group.orders.to_a : [order]
+        order_group.present? ? order_group.orders.to_a.sort_by(&:id) : [order]
       end
 
       def complete_cart

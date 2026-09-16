@@ -1,0 +1,23 @@
+============================================================
+<%= Spree.t('order_mailer.subtotal') %> <%= order_group.display_item_total %>
+<% order_group.discounts.promotion.to_a.group_by(&:label).each do |label, discounts| %>
+  <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
+<% end %>
+<% if order_group.delivery_total != 0 %>
+  <%= Spree.t(:shipping) %>: <%= order_group.display_delivery_total.to_html %>
+<% end %>
+<% if order_group.additional_tax_total != 0 %>
+  <%= Spree.t(:tax) %>: <%= order_group.display_additional_tax_total.to_html %>
+<% end %>
+<% if order_group.gift_card_total.positive? %>
+  <%= Spree.t(:gift_card) %>: -<%= order_group.display_gift_card_total.to_html %>
+<% end %>
+<% order_group.discounts.manual.to_a.group_by(&:label).each do |label, discounts| %>
+  <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
+<% end %>
+<% order_group.fees.each do |fee| %>
+  <% next if fee.amount == 0 %>
+  <%= fee.label %> <%= fee.display_amount %>
+<% end %>
+============================================================
+<%= Spree.t('order_mailer.total') %> <%= order_group.display_total_minus_store_credits %>

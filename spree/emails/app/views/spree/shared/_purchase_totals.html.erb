@@ -1,0 +1,61 @@
+<%# Every figure of the whole purchase, once. Locals: order_group.
+
+    Deliberately not the order summary's own totals block: that one reaches
+    into one order's fulfillments and money rows, and a purchase has neither
+    of its own. These read the group's roll-up of what each child independently
+    computed. Delivery is one line here and broken down per parcel above. %>
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td>
+      <h3 class="f-fallback"><%= Spree.t(:order_summary) %></h3>
+      <table class="summary purchase_content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+        <%= render 'spree/shared/purchased_items_table/summary_row',
+                   label: Spree.t('order_mailer.subtotal'),
+                   value: order_group.display_item_total %>
+
+        <% order_group.discounts.promotion.to_a.group_by(&:label).each do |label, discounts| %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: Spree.t(:promotion),
+                     sub: label,
+                     value: Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
+        <% end %>
+
+        <% if order_group.delivery_total != 0 %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: Spree.t(:shipping),
+                     value: order_group.display_delivery_total %>
+        <% end %>
+
+        <% if order_group.additional_tax_total != 0 %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: Spree.t(:tax),
+                     value: order_group.display_additional_tax_total %>
+        <% end %>
+
+        <% if order_group.gift_card_total.positive? %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: Spree.t(:gift_card),
+                     value: "-#{order_group.display_gift_card_total}" %>
+        <% end %>
+
+        <% order_group.discounts.manual.to_a.group_by(&:label).each do |label, discounts| %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: label,
+                     value: Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
+        <% end %>
+
+        <% order_group.fees.each do |fee| %>
+          <% next if fee.amount == 0 %>
+          <%= render 'spree/shared/purchased_items_table/summary_row',
+                     label: fee.label,
+                     value: fee.display_amount %>
+        <% end %>
+
+        <%= render 'spree/shared/purchased_items_table/summary_row',
+                   row_class: 'summary_total',
+                   label: Spree.t('order_mailer.total'),
+                   value: order_group.display_total_minus_store_credits %>
+      </table>
+    </td>
+  </tr>
+</table>

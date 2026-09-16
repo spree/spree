@@ -54,6 +54,74 @@ RSpec.describe Spree::OrderGroup, type: :model do
     end
   end
 
+  describe '#fulfillment_groups' do
+    # The whole point: "how many orders" and "how many parcels" are different
+    # numbers, and a customer is owed the second.
+    it 'counts one parcel per warehouse-and-method, not one per child order' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 3)
+
+      expect(group.orders.count).to eq(3)
+      expect(group.fulfillment_groups.size).to eq(3)
+    end
+
+    it 'collapses the halves of a parcel the split divided' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 3, shared_stock_location: true)
+
+      expect(group.orders.count).to eq(3)
+      expect(group.fulfillment_groups.size).to eq(1)
+    end
+
+    it 'gives a divided parcel back the whole charge the customer was quoted' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2, shared_stock_location: true)
+      quoted = group.fulfillments.sum(&:discounted_cost)
+
+      expect(group.fulfillment_groups.sole.cost).to eq(quoted)
+    end
+
+    it 'carries the goods and the sellers of every half it collapsed' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2, shared_stock_location: true)
+      parcel = group.fulfillment_groups.sole
+
+      expect(parcel.line_items).to match_array(group.line_items)
+      expect(parcel.sellers).to match_array(group.sellers)
+    end
+
+    it 'names each parcel by the rate the customer chose' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2)
+
+      expect(group.fulfillment_groups.map(&:name)).to all(be_present)
+    end
+  end
+
+  describe '#unfulfilled_line_items' do
+    it 'is empty when every item travels in a parcel' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2)
+
+      expect(group.unfulfilled_line_items).to be_empty
+    end
+
+    # A download has nothing to ship, and a confirmation organised by parcel
+    # would otherwise never mention it.
+    it 'names what no parcel carries' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2)
+      digital_order = create(:order, store: store, order_group: group)
+      download = create(:line_item, order: digital_order)
+
+      expect(group.reload.unfulfilled_line_items).to match_array([download])
+    end
+  end
+
+  describe 'facts about the purchase rather than one seller\'s part of it' do
+    it 'answers for the locale, the PO number and who to address' do
+      group = create(:order_group, :with_parcels, store: store, sellers_count: 2)
+      group.orders.each { |order| order.update_columns(locale: 'de', po_number: 'PO-4471') }
+
+      expect(group.reload.locale).to eq('de')
+      expect(group.po_number).to eq('PO-4471')
+      expect(group.name).to eq(group.bill_address&.full_name || group.ship_address&.full_name)
+    end
+  end
+
   describe '#sellers' do
     it 'names the sellers it reached, first-party contributing none' do
       create(:order, store: store, order_group: group)
