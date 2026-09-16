@@ -23,6 +23,12 @@ module Spree
         save_record(entry, record)
       end
 
+      protected
+
+      def preferred_workflow_key(entry)
+        entry.create_workflow_key.presence || entry.update_workflow_key
+      end
+
       private
 
       # Built through the store's own association where there is one, so the

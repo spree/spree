@@ -6,14 +6,15 @@ module Spree
     # number means.
     class QueryReport < Spree::AgentTool
       tool_name 'query_report'
-      description 'Run a reporting query: pick metrics (revenue, orders, units) and dimensions ' \
-                  '(time, product, channel, country) and get the aggregated rows. Call ' \
-                  'describe_reporting first for the metrics and dimensions this store has.'
+      description 'Run a reporting query: pick metrics (net_sales, orders, units_sold) and ' \
+                  'dimensions to group them by, and get the aggregated rows. Call ' \
+                  'describe_reporting first for the exact names this store has.'
       permission 'read_reports'
 
       param :metrics, type: :array, description: 'Metric names, e.g. ["revenue", "orders"]', required: true
       param :dimensions, type: :array,
-                         description: 'Dimensions to group by, e.g. ["time.month", "product"]. Omit for a single total.',
+                         description: 'Dimensions to group by, as named by describe_reporting ' \
+                                      '(e.g. ["completed_at", "channel"]). Omit for a single total.',
                          required: false
       param :time_range, type: :object,
                          description: 'A preset such as {"preset": "last_30_days"}, or {"from": "2026-01-01", "to": "2026-03-31"}',
