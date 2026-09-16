@@ -49,13 +49,22 @@ module Spree
       end
 
       # A resource with a workflow is not written here — the tool that does it
-      # is named, so the model retries correctly instead of giving up.
+      # is named, so the model retries correctly instead of giving up. Which
+      # tool depends on what was asked for: creating names the create
+      # workflow, changing and deleting name the update one.
       def refusal_for(entry)
-        workflow_key = entry.update_workflow_key || entry.create_workflow_key
-        return "#{entry.key} cannot be changed with this tool." if workflow_key.blank?
+        workflow_key = preferred_workflow_key(entry)
 
-        tool = workflow_key.tr('.', '_')
-        "#{entry.key} is written through a workflow — use the #{tool} tool instead."
+        if workflow_key.blank?
+          return "#{entry.key} cannot be written with this tool — it is managed elsewhere in the dashboard."
+        end
+
+        "#{entry.key} is written through a workflow — use the #{workflow_key.tr('.', '_')} tool instead."
+      end
+
+      # Overridden by CreateResource, which wants the create workflow named.
+      def preferred_workflow_key(entry)
+        entry.update_workflow_key.presence || entry.create_workflow_key
       end
 
       # Only the attributes the Admin API itself would accept. Anything else is
