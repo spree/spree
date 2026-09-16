@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Assistant::RecordSummary do
+RSpec.describe Spree::AgentTools::RecordSummary do
   # Every record the assistant emits crosses the wire to a third-party AI vendor
   # and is stored in chat history, so this filter is the last thing standing
   # between a serializer that gains a credential field and a live secret leaving

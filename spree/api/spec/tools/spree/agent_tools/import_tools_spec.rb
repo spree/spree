@@ -4,7 +4,7 @@ require 'csv'
 RSpec.describe 'assistant import tools' do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
   let(:ability) do
     Class.new do
       include CanCan::Ability
@@ -30,7 +30,7 @@ RSpec.describe 'assistant import tools' do
     record
   end
 
-  describe Spree::Assistant::Tools::DescribeImportMapping do
+  describe Spree::AgentTools::DescribeImportMapping do
     it 'hands the model the real headings and the real field names' do
       result = described_class.new(context).call(id: import.prefixed_id)
 
@@ -41,7 +41,7 @@ RSpec.describe 'assistant import tools' do
     end
   end
 
-  describe Spree::Assistant::Tools::ProposeImportMapping do
+  describe Spree::AgentTools::ProposeImportMapping do
     subject(:tool) { described_class.new(context) }
 
     it 'is held for approval rather than applied outright' do
@@ -86,7 +86,7 @@ RSpec.describe 'assistant import tools' do
     end
   end
 
-  describe Spree::Assistant::Tools::GetImportStatus do
+  describe Spree::AgentTools::GetImportStatus do
     it 'reports row counts for the latest import' do
       import
 
