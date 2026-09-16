@@ -263,6 +263,19 @@ RSpec.describe 'agent tool contract' do
       end
     end
 
+    # The real guard on generic writes is the OpenAPI document, not the
+    # hand-written exclusion list: a resource the Admin API does not document a
+    # write body for cannot become writable, whether or not anyone remembered
+    # to list it. Asserting that keeps the list belt-and-braces rather than the
+    # sole defence — a new service-written controller is refused by default.
+    it 'writes only what the Admin API documents a write body for' do
+      undocumented = Spree::AgentTools::ResourceMap.all.select(&:generic_writes?).reject do |entry|
+        Spree::Api::AgentWriteSchemas.attribute_names(entry.key).any?
+      end
+
+      expect(undocumented.map(&:key)).to be_empty
+    end
+
     it 'scopes every registered resource to a store' do
       unscoped = Spree::AgentTools::ResourceMap.all.reject(&:store_scoped?)
 
