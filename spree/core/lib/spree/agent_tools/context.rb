@@ -52,7 +52,6 @@ module Spree
       def principal
         user || api_key
       end
-      alias actor principal
 
       # @return [Boolean] whether a signed-in admin is asking
       def user_principal?

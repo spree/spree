@@ -88,15 +88,16 @@ module Spree
       # Saves through the model's own validations, and hands their messages
       # back verbatim when it refuses.
       def save_record(entry, record)
-        if record.save
-          { summary: summary_for(entry, record), record: RecordSummary.call(entry: entry, record: record) }
-        else
-          { error: record.errors.full_messages.to_sentence }
-        end
+        return { error: record.errors.full_messages.to_sentence } unless record.save
+
+        # One serialization: the summary line needs the record's title, which
+        # is what the summary row already carries.
+        row = RecordSummary.call(entry: entry, record: record)
+
+        { summary: summary_for(entry, row[:title]), record: row }
       end
 
-      def summary_for(entry, record)
-        label = RecordSummary.call(entry: entry, record: record)[:title]
+      def summary_for(entry, label)
         "#{self.class.tool_name.humanize} #{entry.key.singularize.humanize.downcase} #{label}"
       end
 

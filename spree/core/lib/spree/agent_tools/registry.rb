@@ -71,22 +71,9 @@ module Spree
       # @return [Hash{Symbol => Hash}] every exposed workflow, by dependency key
       attr_reader :exposed_workflows
 
-      # Forgets every workflow exposure. For specs that register their own.
-      #
-      # @return [void]
-      def reset_workflows!
-        @exposed_workflows = {}
-      end
-
       # @return [Array<Class<Spree::AgentTool>>]
       def to_a
         registered_classes + workflow_tool_classes
-      end
-
-      # @param name [String]
-      # @return [Class<Spree::AgentTool>, nil]
-      def find_by_name(name)
-        to_a.find { |tool_class| tool_class.tool_name == name.to_s }
       end
 
       # Tools this caller may actually use, instantiated for their context.

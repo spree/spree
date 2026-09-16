@@ -33,11 +33,6 @@ module Spree
           self.for(key).keys
         end
 
-        # @return [void]
-        def reset!
-          @schemas = nil
-        end
-
         # Where the generated document lives, relative to this engine. Resolved
         # lazily: the engine class does not exist yet while this file loads.
         #

@@ -22,11 +22,13 @@ module Spree
       end
 
       # The resources agents may read and write are derived from the admin
-      # controllers themselves (see Spree::Api::AgentResourceMap). Rebuilt on
-      # every reload, because a controller edited in development changes what
-      # the map should say.
+      # controllers themselves (see Spree::Api::AgentResourceMap). Marked
+      # stale on every reload rather than rebuilt: deriving it eager-loads the
+      # application, and doing that on each file save would turn Spree's
+      # development reload from lazy into fully eager for everyone, whether or
+      # not they run an agent client. The first caller pays instead.
       config.to_prepare do
-        Spree::Api::AgentResourceMap.install
+        Spree::Api::AgentResourceMap.stale!
       end
 
       # Add API event subscribers
