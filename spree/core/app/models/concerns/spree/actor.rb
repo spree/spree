@@ -11,6 +11,15 @@ module Spree
   module Actor
     extend ActiveSupport::Concern
 
+    # The kinds core itself registers, for the generated `ActorKind` type.
+    #
+    # A literal list rather than one derived from `Spree.actor_classes`: that
+    # registry is filled after serializer classes load, so deriving it would
+    # make the generated types depend on boot order and on which extensions
+    # are installed. The union stays open on the wire, so an extension's kind
+    # is still a valid value — it just does not autocomplete.
+    BUILT_IN_KINDS = %w[admin_user api_key].freeze
+
     # How a timeline names this actor: a person's full name or email, an API
     # key's name, an app's title.
     #

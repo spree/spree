@@ -51,16 +51,52 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
   # customer serializer raised on the first customer-only attribute (phone)
   # as soon as the association was populated — which created_by now always is
   # on staff-created drafts.
-  describe 'staff actors' do
-    let(:admin) { create(:admin_user, email: 'staff@example.com') }
-    let(:order) { create(:order, store: store, created_by: admin, approver: admin, canceler: admin) }
-    let(:base_params) { { store: store, currency: store.default_currency, expand: %w[created_by approver canceler] } }
+  describe 'actors' do
+    let(:actor_names) { %w[created_by approver canceler] }
+    let(:base_params) { { store: store, currency: store.default_currency, expand: actor_names } }
 
-    it 'embeds them through the admin user serializer' do
-      %w[created_by approver canceler].each do |actor|
-        expect(subject[actor]['id']).to eq(admin.prefixed_id)
-        expect(subject[actor]['email']).to eq('staff@example.com')
-        expect(subject[actor]).not_to have_key('phone')
+    context 'when a person performed the action' do
+      let(:admin) { create(:admin_user, email: 'staff@example.com', first_name: 'Ada', last_name: 'Lovelace') }
+      let(:order) { create(:order, store: store, created_by: admin, approver: admin, canceler: admin) }
+
+      it 'names them by their id, kind and label' do
+        actor_names.each do |actor|
+          expect(subject[actor]['id']).to eq(admin.prefixed_id)
+          expect(subject[actor]['type']).to eq('admin_user')
+          expect(subject[actor]['label']).to eq('Ada Lovelace')
+          expect(subject["#{actor}_id"]).to eq(admin.prefixed_id)
+          expect(subject["#{actor}_type"]).to eq('admin_user')
+        end
+      end
+
+      it 'exposes no customer-only attribute' do
+        expect(subject['canceler']).not_to have_key('phone')
+      end
+    end
+
+    context 'when an API key performed the action' do
+      let(:key) { create(:api_key, :secret, store: store, name: 'WMS connector') }
+      let(:order) { create(:order, store: store, created_by: key, approver: key, canceler: key) }
+
+      it 'names the key rather than nobody' do
+        actor_names.each do |actor|
+          expect(subject[actor]['id']).to eq(key.prefixed_id)
+          expect(subject[actor]['type']).to eq('api_key')
+          expect(subject[actor]['label']).to eq('WMS connector')
+          expect(subject["#{actor}_id"]).to eq(key.prefixed_id)
+          expect(subject["#{actor}_type"]).to eq('api_key')
+        end
+      end
+    end
+
+    context 'when nobody is recorded' do
+      let(:order) { create(:order, store: store) }
+
+      it 'answers null on both halves' do
+        actor_names.each do |actor|
+          expect(subject["#{actor}_id"]).to be_nil
+          expect(subject["#{actor}_type"]).to be_nil
+        end
       end
     end
   end

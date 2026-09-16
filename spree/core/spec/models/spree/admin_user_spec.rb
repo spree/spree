@@ -68,6 +68,27 @@ describe Spree.admin_user_class, type: :model do
         expect(returns.all? { |return_record| return_record.reload.created_by_id.nil? }).to be_truthy
         expect(store_credits.all? { |store_credit| store_credit.reload.created_by_id.nil? }).to be_truthy
       end
+
+      # A type left behind would name a class no id points at.
+      it 'clears both halves of a polymorphic actor' do
+        admin_user.destroy
+
+        expect(cancelled_orders.map { |order| order.reload.canceler_type }).to all(be_nil)
+        expect(approved_orders.map { |order| order.reload.approver_type }).to all(be_nil)
+        expect(refunds.map { |refund| refund.reload.refunder_type }).to all(be_nil)
+        expect(returns.map { |record| record.reload.created_by_type }).to all(be_nil)
+      end
+
+      # Ids are per-table, so an API key can share this user's numeric id. A
+      # bare foreign key would have swept its rows up with the user's.
+      it 'leaves another kind of actor alone' do
+        api_key = create(:api_key, :secret)
+        key_order = create(:order, canceler: api_key, state: 'canceled')
+
+        admin_user.destroy
+
+        expect(key_order.reload.canceler).to eq(api_key)
+      end
     end
   end
 

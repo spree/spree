@@ -34,15 +34,20 @@ module Spree
 
       # Associations
       has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
-      has_many :canceled_orders, class_name: 'Spree::Order', foreign_key: :canceler_id
-      has_many :created_orders, class_name: 'Spree::Order', foreign_key: :created_by_id
-      has_many :approved_orders, class_name: 'Spree::Order', foreign_key: :approver_id
+      # The order operations became polymorphic in 6.0, so these read through
+      # the association rather than a bare foreign key: matching on the id
+      # alone would hand this user the rows an API key with the same numeric
+      # id performed. The rest still point at admin users only and convert in
+      # 6.1 (see docs/plans/6.0-action-actors.md).
+      has_many :canceled_orders, class_name: 'Spree::Order', as: :canceler
+      has_many :created_orders, class_name: 'Spree::Order', as: :created_by
+      has_many :approved_orders, class_name: 'Spree::Order', as: :approver
+      has_many :refunded_refunds, class_name: 'Spree::Refund', as: :refunder
+      has_many :created_returns, class_name: 'Spree::Return', as: :created_by
+      has_many :created_exchanges, class_name: 'Spree::Exchange', as: :created_by
+      has_many :created_claims, class_name: 'Spree::Claim', as: :created_by
       has_many :created_gift_cards, class_name: 'Spree::GiftCard', foreign_key: :created_by_id
       has_many :created_gift_card_batches, class_name: 'Spree::GiftCardBatch', foreign_key: :created_by_id
-      has_many :refunded_refunds, class_name: 'Spree::Refund', foreign_key: :refunder_id
-      has_many :created_returns, class_name: 'Spree::Return', foreign_key: :created_by_id
-      has_many :created_exchanges, class_name: 'Spree::Exchange', foreign_key: :created_by_id
-      has_many :created_claims, class_name: 'Spree::Claim', foreign_key: :created_by_id
       has_many :created_store_credits, class_name: 'Spree::StoreCredit', foreign_key: :created_by_id
       has_many :exports, class_name: 'Spree::Export', foreign_key: :user_id
       has_many :saved_reports, class_name: 'Spree::SavedReport', foreign_key: :user_id
@@ -80,23 +85,24 @@ module Spree
     def nullify_approver_id_in_approved_orders
       return if self.class != Spree.admin_user_class
 
-      approved_orders.update_all(approver_id: nil, updated_at: Time.current)
+      approved_orders.update_all(approver_id: nil, approver_type: nil, updated_at: Time.current)
     end
 
     def cleanup_admin_user_resources
       return if self.class != Spree.admin_user_class
 
-      # resources to nullify
-      # TODO: we should change these associations to polymorphic and resolve this via standard rails association
-      # declarations with dependent: :nullify
-      canceled_orders.update_all(canceler_id: nil, updated_at: Time.current)
-      created_orders.update_all(created_by_id: nil, updated_at: Time.current)
+      # resources to nullify. Both halves of a polymorphic actor go together —
+      # a type left behind names a class no id points at.
+      # TODO: the remaining plain foreign keys become polymorphic in 6.1, at
+      # which point these can be `dependent: :nullify` on the associations.
+      canceled_orders.update_all(canceler_id: nil, canceler_type: nil, updated_at: Time.current)
+      created_orders.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
+      refunded_refunds.update_all(refunder_id: nil, refunder_type: nil, updated_at: Time.current)
+      created_returns.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
+      created_exchanges.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
+      created_claims.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
       created_gift_cards.update_all(created_by_id: nil, updated_at: Time.current)
       created_gift_card_batches.update_all(created_by_id: nil, updated_at: Time.current)
-      refunded_refunds.update_all(refunder_id: nil, updated_at: Time.current)
-      created_returns.update_all(created_by_id: nil, updated_at: Time.current)
-      created_exchanges.update_all(created_by_id: nil, updated_at: Time.current)
-      created_claims.update_all(created_by_id: nil, updated_at: Time.current)
       created_store_credits.update_all(created_by_id: nil, updated_at: Time.current)
       saved_reports.update_all(user_id: nil, updated_at: Time.current)
 

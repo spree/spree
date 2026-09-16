@@ -4,6 +4,10 @@
       "delete_image": "删除图片",
       "edit_media": "编辑媒体"
     },
+    "actors": {
+      "api_key": "API 密钥",
+      "unnamed": "未命名"
+    },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
       "create_description": "从该来源加载的浏览器可以调用管理 API。CORS 允许列表和管理后台 Cookie 会话都依赖此列表——请保持精简。",
@@ -30,10 +34,10 @@
         "never_used": "从未使用",
         "revoked": "已撤销"
       },
-      "by_email": "由 {{email}}",
       "create_key_cta": "创建密钥",
       "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
       "create_sheet_title": "创建 API key",
+      "created_by": "由 {{actor}}",
       "delete_confirm": {
         "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。",
         "title": "删除密钥？"

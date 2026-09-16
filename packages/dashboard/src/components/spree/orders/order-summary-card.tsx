@@ -5,6 +5,7 @@ import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ActorLabel } from '../actor-label'
 
 function formatDate(iso: string | null) {
   if (!iso) return '—'
@@ -65,7 +66,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         {order.created_by && (
           <SummaryRow
             label={t('admin.pages.orders.detail.summary.created_by')}
-            value={order.created_by.full_name || order.created_by.email}
+            value={<ActorLabel actor={order.created_by} />}
           />
         )}
         <SummaryRow
@@ -98,7 +99,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
             {order.canceler && (
               <SummaryRow
                 label={t('admin.orders.detail.summary.canceler')}
-                value={order.canceler.full_name || order.canceler.email}
+                value={<ActorLabel actor={order.canceler} />}
               />
             )}
             {order.cancel_reason_name && (
@@ -119,7 +120,7 @@ export function OrderSummaryCard({ order }: { order: Order }) {
         {order.approved_at && order.approver && (
           <SummaryRow
             label={t('admin.orders.detail.summary.approved_by')}
-            value={order.approver.full_name || order.approver.email}
+            value={<ActorLabel actor={order.approver} />}
           />
         )}
 

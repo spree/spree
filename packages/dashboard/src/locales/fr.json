@@ -4,6 +4,10 @@
       "delete_image": "Supprimer l'image",
       "edit_media": "Modifier le média"
     },
+    "actors": {
+      "api_key": "Clé API",
+      "unnamed": "Sans nom"
+    },
     "allowed_origins": {
       "add_cta": "Ajouter une origine autorisée",
       "create_description": "Les navigateurs chargés depuis cette origine peuvent appeler l'API admin. La liste blanche CORS et la session par cookie admin reposent toutes deux sur cette liste — restez restrictif.",
@@ -30,10 +34,10 @@
         "never_used": "Jamais",
         "revoked": "Révoquée"
       },
-      "by_email": "par {{email}}",
       "create_key_cta": "Créer la clé",
       "create_sheet_description": "Choisissez un type de clé, puis sélectionnez les portées qu'elle peut utiliser.",
       "create_sheet_title": "Créer une clé API",
+      "created_by": "par {{actor}}",
       "delete_confirm": {
         "message": "Cela supprime définitivement la clé. Préférez la révocation si vous pourriez avoir besoin de rétablir l'accès ultérieurement.",
         "title": "Supprimer la clé ?"

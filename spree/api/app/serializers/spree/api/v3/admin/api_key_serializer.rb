@@ -19,6 +19,8 @@ module Spree
                    revoked_at: [:string, nullable: true],
                    last_used_at: [:string, nullable: true],
                    created_by_email: [:string, nullable: true],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
+                   created_by_label: [:string, nullable: true],
                    channel_id: [:string, nullable: true]
 
           attributes :name, :key_type, :token_prefix, :scopes,
@@ -37,8 +39,19 @@ module Spree
             key.plaintext_token
           end
 
+          # A key can be minted by another key, which has no email — so the
+          # address is answered only for the actors that have one, and
+          # `created_by_label` is what a list column should render.
           attribute :created_by_email do |key|
-            key.created_by&.email
+            key.created_by.try(:email)
+          end
+
+          attribute :created_by_type do |key|
+            Spree::Base.polymorphic_api_type(key.created_by_type)
+          end
+
+          attribute :created_by_label do |key|
+            key.created_by.try(:actor_label)
           end
         end
       end
