@@ -91,15 +91,13 @@ module Spree
     def cleanup_admin_user_resources
       return if self.class != Spree.admin_user_class
 
-      # resources to nullify.
-      # TODO: the remaining plain foreign keys become polymorphic in 6.1, at
-      # which point these can be `dependent: :nullify` on the associations.
-      clear_actor(Spree::Order, :canceler)
-      clear_actor(Spree::Order, :created_by)
-      clear_actor(Spree::Refund, :refunder)
-      clear_actor(Spree::Return, :created_by)
-      clear_actor(Spree::Exchange, :created_by)
-      clear_actor(Spree::Claim, :created_by)
+      # Every actor column that names this user, derived from the `acted_by`
+      # declarations rather than listed here, so the 6.1 conversion of the
+      # remaining associations needs no edit in this file.
+      clear_every_actor
+
+      # The plain foreign keys that are still admin-user-only. They join the
+      # loop above once they convert in 6.1.
       created_gift_cards.update_all(created_by_id: nil, updated_at: Time.current)
       created_gift_card_batches.update_all(created_by_id: nil, updated_at: Time.current)
       created_store_credits.update_all(created_by_id: nil, updated_at: Time.current)
@@ -107,6 +105,14 @@ module Spree
 
       # resources to destroy
       exports.destroy_all
+    end
+
+    # Erases this user from every actor column any model declares with
+    # `acted_by`.
+    def clear_every_actor
+      Spree::ActedBy.models.each do |model|
+        model.acted_by_associations.each { |name| clear_actor(model, name) }
+      end
     end
 
     # Erases this user from one polymorphic actor column, clearing both halves

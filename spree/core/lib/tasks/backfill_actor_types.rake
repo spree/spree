@@ -11,11 +11,6 @@ namespace :spree do
       Idempotent: a row that already carries a type is skipped.
     DESC
     task backfill_actor_types: :environment do
-      # The registry fills as models load, so a development console (where
-      # eager loading is off) would otherwise back-fill only the handful of
-      # models something happened to reference.
-      Rails.application.eager_load!
-
       actor_type = Spree.admin_user_class.to_s
       total = 0
 

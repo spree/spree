@@ -90,6 +90,36 @@ RSpec.describe Spree::ActedBy do
       expect(order.reload.canceler).to eq(admin_user)
     end
 
+    # An un-backfilled page must not cost a query per actor: the fallback
+    # names the type across the whole preloaded group, so the association
+    # still batches.
+    it 'batches an un-backfilled page the same as a backfilled one' do
+      admin_queries = lambda do |&block|
+        count = 0
+        subscription = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
+          count += 1 if payload[:sql].to_s.include?('spree_admin_users') && !payload[:name].to_s.include?('SCHEMA')
+        end
+        block.call
+        ActiveSupport::Notifications.unsubscribe(subscription)
+        count
+      end
+
+      3.times { create(:order, store: store, canceler: admin_user) }
+      read_page = -> { Spree::Order.preload_associations_lazily.last(3).each(&:canceler) }
+
+      typed = admin_queries.call(&read_page)
+      Spree::Order.update_all(canceler_type: nil)
+      untyped = admin_queries.call(&read_page)
+
+      expect(untyped).to eq(typed)
+    end
+
+    it 'names the type in memory only, never saving it' do
+      order.reload.canceler
+
+      expect(Spree::Order.where(id: order.id).pick(:canceler_type)).to be_nil
+    end
+
     it 'answers nil for a row with no actor at all, without warning' do
       plain_order = create(:order, store: store)
 

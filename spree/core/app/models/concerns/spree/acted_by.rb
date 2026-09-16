@@ -18,17 +18,23 @@ module Spree
   module ActedBy
     extend ActiveSupport::Concern
 
-    # Every model that declares at least one `acted_by` association, so the
-    # backfill task can walk them without being handed a list. Populated at
-    # class load; eager loading is what makes it complete, which is why the
-    # task runs against a booted application.
+    # Every model that declares at least one `acted_by` association, so a
+    # caller sweeping actor columns — the backfill task, a user's erasure —
+    # walks all of them without being handed a list.
+    #
+    # The registry fills as models load, so it eager-loads first: in
+    # development nothing is loaded until something references it, and a
+    # caller that silently skipped an unloaded model would leave a deleted
+    # person's id behind or half-finish an upgrade.
     #
     # Names are held rather than classes, and resolved on read, so a code
-    # reload in development does not leave the registry pointing at
-    # superseded copies of the same model.
+    # reload does not leave the registry pointing at superseded copies of the
+    # same model.
     #
     # @return [Array<Class>]
     def self.models
+      Rails.application&.eager_load! unless Rails.application&.config&.eager_load
+
       registered_model_names.filter_map(&:safe_constantize)
     end
 
@@ -43,13 +49,6 @@ module Spree
       # what it records without being told. Inherited and extended per class,
       # never assigned, so a subclass adding one does not blank its parent's.
       class_attribute :acted_by_associations, default: [], instance_writer: false
-    end
-
-    # Drops the transitional lookups the readers memoized — a reload may have
-    # brought the backfilled type with it.
-    def reload(*)
-      @transitional_actors = nil
-      super
     end
 
     # The class an actor column names, answering what the reader would resolve
@@ -76,6 +75,27 @@ module Spree
     # @return [String, nil]
     def acted_by_prefixed_id(name)
       Spree::Base.polymorphic_prefixed_id(acted_by_type(name), self[:"#{name}_id"])
+    end
+
+    # Names the admin user class on every un-backfilled row of `record`'s
+    # lazily-preloaded group, so the association preloads as one query rather
+    # than one per row. Writes the in-memory attribute only; nothing is saved.
+    #
+    # @api private
+    # @param record [ActiveRecord::Base]
+    # @param name [Symbol] the acted_by association
+    # @return [void]
+    def self.assume_admin_actor_type(record, name)
+      type_column = :"#{name}_type"
+      admin_type = Spree.admin_user_class.to_s
+      group = record.try(:lazy_preload_context)&.records.presence || [record]
+
+      group.each do |sibling|
+        next unless sibling.instance_of?(record.class)
+        next if sibling[type_column].present? || sibling[:"#{name}_id"].blank?
+
+        sibling[type_column] = admin_type
+      end
     end
 
     # Both halves of an actor column, for a caller writing through
@@ -136,25 +156,23 @@ module Spree
       # has run they resolve through the admin user class, the only thing they
       # could ever have pointed at.
       #
-      # Prepended rather than defined outright, so `super` still reaches the
-      # generated association reader for every row that does carry a type.
+      # The type is filled in on the in-memory attribute and the ordinary
+      # association reader does the rest, so the fallback keeps every benefit
+      # the association has — preloading included. Resolving it with a direct
+      # `find_by` instead would sidestep `ar_lazy_preload`, turning a page of
+      # 25 orders into 75 queries while the backfill is outstanding.
       #
-      # The lookup is memoized per record and the warning raised once per
-      # record: a serialized page of orders touches three actors per row, and
-      # an upgrade window should not cost a query and a warning for each
-      # touch.
+      # Nothing is saved: `[]=` writes the attribute, and a record whose only
+      # change is this would still need an explicit save to persist it.
+      # Prepended rather than defined outright, so `super` reaches the
+      # generated reader.
       #
       # Removed in 6.1, once the backfill is a release behind.
       def define_transitional_actor_reader(name)
         transitional_actor_readers.module_eval do
           define_method(name) do
             return super() if self[:"#{name}_type"].present?
-
-            id = self[:"#{name}_id"]
-            return super() if id.blank?
-
-            @transitional_actors ||= {}
-            return @transitional_actors[name] if @transitional_actors.key?(name)
+            return super() if self[:"#{name}_id"].blank?
 
             Spree::Deprecation.warn(
               "#{self.class.name}##{name} resolved through #{Spree.admin_user_class} because " \
@@ -162,7 +180,12 @@ module Spree
               'is removed in Spree 6.1.'
             )
 
-            @transitional_actors[name] = Spree.admin_user_class.find_by(id: id)
+            # Fill the type across the whole lazily-preloaded group, not just
+            # this record: the preloader batches on the type it finds, and
+            # filling one row at a time as each is read produces a query per
+            # row instead of one for the page.
+            Spree::ActedBy.assume_admin_actor_type(self, name)
+            super()
           end
         end
       end
