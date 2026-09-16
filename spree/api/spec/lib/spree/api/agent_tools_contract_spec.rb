@@ -94,7 +94,7 @@ RSpec.describe 'agent tool contract' do
     it 'derives a schema for every exposed workflow' do
       failures = catalog::WORKFLOWS.filter_map do |key, options|
         options = { permission: options } unless options.is_a?(Hash)
-        Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except])).to_json_schema
+        Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except])).parameters
         nil
       rescue StandardError => e
         "#{key}: #{e.message}"
@@ -139,17 +139,39 @@ RSpec.describe 'agent tool contract' do
       MESSAGE
     end
 
-    it 'never offers a principal parameter to the caller' do
+    # Asserted against the naming convention rather than against the injected
+    # list, which would be circular: a parameter is only offered because it is
+    # not on that list, so comparing the two can never fail. A keyword that
+    # reads as "who did this" and is still offered is the bug worth catching.
+    it 'never offers a parameter that names who acted' do
+      # `<verb>ed_by` is the shape that names a person. A `cancel_by` is a
+      # date the merchant sets, not an actor, so the participle matters.
+      actor_shaped = /\A(\w+ed_by|created_by|canceler|approver|reviewer|refunder|requester)\z/
+
       offered = catalog::WORKFLOWS.flat_map do |key, options|
         options = { permission: options } unless options.is_a?(Hash)
         schema = Spree::AgentTools::WorkflowSchema.new(Spree.public_send(key), except: Array(options[:except]))
 
         schema.parameters.filter_map do |parameter|
-          "#{key}.#{parameter[:name]}" if Spree::AgentTools::WorkflowSchema::PRINCIPAL_PARAMETERS.include?(parameter[:name])
+          "#{key}.#{parameter[:name]}" if parameter[:name].to_s.match?(actor_shaped)
         end
       end
 
-      expect(offered).to be_empty
+      expect(offered).to be_empty, <<~MESSAGE
+        These parameters name who performed the action, and the answer is the
+        authenticated principal — never something a caller may claim:
+
+          #{offered.join("\n  ")}
+
+        Declare the association with `acted_by` so it is injected, or add the
+        keyword to WorkflowSchema::UNCONVERTED_PRINCIPAL_PARAMETERS until it is.
+      MESSAGE
+    end
+
+    it 'injects every actor association the acted_by registry knows' do
+      declared = Spree::ActedBy.models.flat_map(&:acted_by_associations).map(&:to_sym)
+
+      expect(Spree::AgentTools::WorkflowSchema.principal_parameter_names).to include(*declared)
     end
 
     it 'gives every exposed workflow a unique tool name' do

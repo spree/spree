@@ -69,8 +69,16 @@ module Spree
 
       private
 
+      # Preloaded the way the admin controllers preload: the summary row runs
+      # the resource's own serializer, whose associations would otherwise be
+      # one query per record.
+      def searchable_scope(entry)
+        scope = entry.scope_for(context)
+        scope.respond_to?(:preload_associations_lazily) ? scope.preload_associations_lazily : scope
+      end
+
       def build_query(entry, filters, sort)
-        query = entry.scope_for(context).ransack(filters)
+        query = searchable_scope(entry).ransack(filters)
         query.sorts = sort if sort.present?
         query
       end
