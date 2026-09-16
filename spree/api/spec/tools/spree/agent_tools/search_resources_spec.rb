@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Assistant::Tools::SearchResources do
+RSpec.describe Spree::AgentTools::SearchResources do
   subject(:tool) { described_class.new(context) }
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
   let(:ability) { full_ability_for(admin) }
   # A real ability rather than a double: the tools now call `accessible_by`,
   # which needs CanCanCan's actual machinery. `admin` here is a full admin, so
@@ -102,12 +102,12 @@ RSpec.describe Spree::Assistant::Tools::SearchResources do
   end
 end
 
-RSpec.describe Spree::Assistant::Tools::SearchResources, 'filter validation' do
+RSpec.describe Spree::AgentTools::SearchResources, 'filter validation' do
   subject(:tool) { described_class.new(context) }
 
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
   let(:ability) do
     Class.new do
       include CanCan::Ability

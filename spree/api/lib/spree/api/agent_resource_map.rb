@@ -82,6 +82,20 @@ module Spree
         Spree::GiftCard
       ].freeze
 
+      # Controllers that resolve their scope per request rather than declaring
+      # one, because the scope belongs to the resource being imported or
+      # exported — creating a product import is a product write, and reading
+      # its rows exposes the uploaded data. A single static key cannot say
+      # that, so these are registered read-only under the broadest key the
+      # controller can demand, and the write path stays with the endpoint.
+      DYNAMIC_SCOPE_RESOURCES = {
+        'imports' => { model_name: 'Spree::Import', permission: 'read_settings',
+                       serializer_name: 'Spree::Api::V3::Admin::ImportSerializer',
+                       dashboard_path: '/settings/imports' },
+        'exports' => { model_name: 'Spree::Export', permission: 'read_settings',
+                       serializer_name: 'Spree::Api::V3::Admin::ExportSerializer' }
+      }.freeze
+
       class << self
         # Walks every admin resource controller and registers what it serves.
         #
@@ -96,6 +110,8 @@ module Spree
 
             map.register(**entry)
           end
+
+          DYNAMIC_SCOPE_RESOURCES.each { |key, attributes| map.register(key: key, **attributes) }
 
           map.all.size
         end

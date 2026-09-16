@@ -7,7 +7,7 @@ require 'spec_helper'
 RSpec.describe 'assistant authorization' do
   let(:store) { @default_store }
   let(:admin) { create(:admin_user) }
-  let(:context) { Spree::Assistant::Context.new(store: store, user: admin, ability: ability) }
+  let(:context) { Spree::AgentTools::Context.new(store: store, user: admin, ability: ability) }
 
   let!(:visible) { create(:product, store: store, name: 'Visible Product', status: 'active') }
   let!(:hidden) { create(:product, store: store, name: 'Hidden Product', status: 'active') }
@@ -30,7 +30,7 @@ RSpec.describe 'assistant authorization' do
 
   describe 'reads' do
     it 'hides records the ability excludes' do
-      result = Spree::Assistant::Tools::SearchResources.new(context).call(resource: 'products', limit: 25)
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'products', limit: 25)
       titles = result[:records].map { |record| record[:title] }
 
       expect(titles).to include('Visible Product')
@@ -38,7 +38,7 @@ RSpec.describe 'assistant authorization' do
     end
 
     it 'counts only what the admin may see' do
-      result = Spree::Assistant::Tools::SearchResources.new(context).call(resource: 'products')
+      result = Spree::AgentTools::SearchResources.new(context).call(resource: 'products')
 
       # The assistant states this number out loud, so a leak here is a leak the
       # merchant reads.
@@ -46,7 +46,7 @@ RSpec.describe 'assistant authorization' do
     end
 
     it 'cannot fetch an excluded record directly' do
-      result = Spree::Assistant::Tools::GetResource.new(context).
+      result = Spree::AgentTools::GetResource.new(context).
         call(resource: 'products', id: hidden.prefixed_id)
 
       expect(result[:error]).to be_present
@@ -54,20 +54,27 @@ RSpec.describe 'assistant authorization' do
     end
   end
 
-  describe 'changes' do
+  # The hand-written status tool is gone: the products workflows are tools by
+  # the allowlist, so a change runs the same workflow the dashboard runs. What
+  # the retired tool's specs asserted — that a record the ability excludes
+  # cannot be changed, and one it includes can — is asserted here against the
+  # workflow tool that replaced it.
+  describe 'changes, through the workflow tool' do
+    let(:tool) do
+      Spree.agent_tools.available_for(context).find { |candidate| candidate.tool_name == 'products_draft' }
+    end
+
     it 'refuses a record the ability excludes' do
-      result = Spree::Assistant::Tools::UpdateProductStatus.new(context).
-        call(id: hidden.slug, status: 'draft')
+      result = tool.call(product: hidden.prefixed_id)
 
       expect(result[:error]).to be_present
       expect(hidden.reload.status).to eq('active')
     end
 
     it 'allows a record the ability includes' do
-      result = Spree::Assistant::Tools::UpdateProductStatus.new(context).
-        call(id: visible.slug, status: 'draft')
+      result = tool.call(product: visible.prefixed_id)
 
-      expect(result[:ok]).to be(true)
+      expect(result[:error]).to be_nil
       expect(visible.reload.status).to eq('draft')
     end
   end
