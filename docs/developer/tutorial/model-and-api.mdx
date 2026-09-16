@@ -171,7 +171,7 @@ attribute(:brand_id) { |product| product.brand&.prefixed_id }
 has_one :brand, serializer: Spree::Api::V3::BrandSerializer
 ```
 
-And the model has to allow filtering by it, or `?q[brand_id_eq]=…` is rejected:
+The model has to allow filtering by it, or `?q[brand_id_eq]=…` is rejected:
 
 ```ruby server/app/models/spree/product_decorator.rb
 base.whitelisted_ransackable_attributes |= %w[brand_id]
@@ -179,6 +179,14 @@ base.whitelisted_ransackable_associations |= %w[brand]
 ```
 
 The allowlist is deliberate: every entry is a query any caller can run, so add only what the storefront needs.
+
+Finally, the Admin API has to accept `brand_id` on write, or the picker you build in step 2 will appear to work and save nothing. Extensions append to the model's list rather than replacing it:
+
+```ruby server/config/initializers/spree.rb
+Spree::Product.additional_permitted_attributes += [:brand_id]
+```
+
+Always `+=`, never `=` — assigning would drop whatever another extension added.
 
 ## Next step
 

@@ -203,14 +203,41 @@ Three extension points are doing the work, each with its own reference page:
   Hiding a nav entry or a column behind a permission is [one option away](/developer/dashboard/customization/permissions) — but hiding is never authorising. The Admin API still has to refuse the request, which is why step 1 left authorization to you.
 </Tip>
 
-The card itself receives the product from the slot's context:
+Showing the current brand is not much use on its own — the point is to change
+it. The product page is one big form with a single Save button, and
+`product.form_sidebar` renders **inside** that form, so the card can own an
+input without owning any save logic.
+
+Two pieces make that work. First, tell the form the field exists and where its
+value comes from on load:
+
+```tsx apps/dashboard/src/plugins.ts
+defineDashboardPlugin({
+  formFields: {
+    // `from` receives the fetched product, or null on the create form.
+    product: [{ name: 'brand_id', from: (product) => product?.brand_id ?? null }],
+  },
+})
+```
+
+Then render the input, binding it to the host form with `useHostForm()`. No
+`<form>` of your own, no Save button, no mutation — dirty tracking, the PATCH
+payload and re-baselining after save all stay with the page:
 
 ```tsx apps/dashboard/src/brands/product-card.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Field, FieldLabel,
+  ResourceCombobox,
+  useHostForm,
+} from '@spree/dashboard'
+import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { BrandsClient } from './client'
 
-export function BrandCard({ product }: { product: { id: string; brand_id?: string | null } }) {
+export function BrandCard() {
   const { t } = useTranslation()
+  const form = useHostForm<{ brand_id: string | null }>()
 
   return (
     <Card>
@@ -218,14 +245,47 @@ export function BrandCard({ product }: { product: { id: string; brand_id?: strin
         <CardTitle>{t('admin.brands.product_card.title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">
-          {product.brand_id ?? t('admin.brands.product_card.none')}
-        </p>
+        <Field>
+          <FieldLabel className="sr-only" htmlFor="brand_id">
+            {t('admin.brands.product_card.title')}
+          </FieldLabel>
+          <Controller
+            control={form.control}
+            name="brand_id"
+            render={({ field }) => (
+              <ResourceCombobox
+                id="brand_id"
+                queryKey="product-brand-picker"
+                value={field.value ? [field.value] : []}
+                onChange={(ids) => field.onChange(ids[0] ?? null)}
+                getOptionLabel={(brand) => brand.name}
+                placeholder={t('admin.brands.product_card.placeholder')}
+                emptyText={t('admin.brands.product_card.none')}
+                search={(query) => BrandsClient.list({ name_cont: query })}
+                hydrate={(ids) => BrandsClient.list({ id_in: ids })}
+              />
+            )}
+          />
+        </Field>
       </CardContent>
     </Card>
   )
 }
 ```
+
+`ResourceCombobox` searches the API as the merchant types rather than loading
+every brand up front, which is what keeps the picker usable on a catalogue
+with thousands of them. `hydrate` resolves the saved ID back to a name so the
+trigger reads correctly on first render.
+
+For this to persist, the Admin API has to accept `brand_id` on the product —
+the `resource_permitted_attributes` half of the association you set up in
+step 1.
+
+<Note>
+  A field that merchants should be able to define themselves, rather than one
+  your code adds as a column, is usually better as a [custom field](/developer/core-concepts/metafields) — no code at all. See [adding a custom form field](/developer/dashboard/recipes/custom-form-field) for both paths.
+</Note>
 
 ## Step 5: Run it
 
