@@ -18,7 +18,7 @@ module Spree
         record = find_record(entry, id)
         return { error: "No #{entry.key.singularize} found for #{id.inspect}" } if record.nil?
 
-        attributes = Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h)
+        attributes = serialize(entry, record)
 
         {
           resource: entry.key,
@@ -51,17 +51,31 @@ module Spree
 
       private
 
+      # A serializer that raises on one record must be a tool error the model
+      # can act on, not a protocol failure — the same guard RecordSummary
+      # applies to the summary row.
+      def serialize(entry, record)
+        Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h)
+      rescue StandardError => e
+        Rails.logger.warn("[Spree] #{entry.key} serializer failed: #{e.class}: #{e.message}")
+        {}
+      end
+
       # Scoped through the store, so an id belonging to another store is a
       # miss rather than a leak.
       def find_record(entry, id)
         scope = entry.scope_for(context)
 
-        scope.find_by_prefix_id(id) || find_by_natural_key(scope, id)
-      # Only the prefixed-id decode is expected to fail here (the model may
-      # pass a slug or an order number); anything else is a real error and
-      # must not be swallowed into a confusing nil.
+        by_prefixed_id(scope, id) || find_by_natural_key(scope, id)
+      end
+
+      # Only the prefixed-id decode is expected to fail here — the model may
+      # pass a slug or an order number. Guarded around that call alone, so a
+      # failure further along is not swallowed into a confusing nil.
+      def by_prefixed_id(scope, id)
+        scope.find_by_prefix_id(id)
       rescue ArgumentError, NoMethodError
-        find_by_natural_key(scope, id)
+        nil
       end
 
       # Merchants say order numbers and product slugs out loud far more often
