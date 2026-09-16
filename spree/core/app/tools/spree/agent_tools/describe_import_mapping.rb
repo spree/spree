@@ -13,7 +13,9 @@ module Spree
       description "List an import's unmapped file columns and the Spree fields they can " \
                   'map onto, so you can propose a mapping. Call this before ' \
                   'propose_import_mapping.'
-      permission 'read_settings'
+      # Gated per import in `call`, on the scope of the resource being
+      # imported: the response carries a row of the uploaded file.
+      permission nil
 
       param :id, description: 'Import id or number. Omit for the most recent import awaiting mapping.',
                  required: false
@@ -21,6 +23,9 @@ module Spree
       def call(id: nil)
         import = find_import(id, status: 'mapping')
         return { error: 'No import is waiting to be mapped.' } if import.nil?
+
+        refusal = unauthorized_import(import)
+        return refusal if refusal
 
         {
           id: import.prefixed_id,
