@@ -93,6 +93,21 @@ module Spree
 
         alias try_spree_current_user spree_current_user
 
+        # Who performed this request, for the associations that record it —
+        # `canceler`, `approver`, `created_by` and their siblings. Answers the
+        # signed-in user here; the Admin branch prefers the authenticating
+        # secret key, because a key-made write must record the key rather than
+        # nobody (see docs/plans/6.0-action-actors.md).
+        #
+        # Deliberately not `current_api_key || current_user` at this level: on
+        # a Store API request the key is the storefront's publishable one, and
+        # a customer's own action is not the storefront's.
+        #
+        # @return [Object, nil] a member of Spree.actor_classes
+        def current_actor
+          try_spree_current_user
+        end
+
         # CanCanCan ability
         # @return [Spree::Ability]
         def current_ability

@@ -59,7 +59,7 @@ module Spree
               items: items_for_create,
               reason: reason_for_create,
               memo: create_params[:memo],
-              created_by: try_spree_current_user,
+              created_by: current_actor,
               **arguments
             )
 

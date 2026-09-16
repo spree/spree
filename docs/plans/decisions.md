@@ -5641,3 +5641,17 @@ ownership associations that gate visibility (`Import#user`, `Export#user`,
 `SavedReport#user`) keep the plain form. Controllers pass `current_actor`,
 not `try_spree_current_user`, for actor keywords. Workflow principal
 parameters stay `[Object, nil]` and are assigned, not inspected.
+
+**Amended the same day, at implementation.** Three points the design left
+open. An expanded actor serializes as `{ id, type, label }` through a new
+`ActorSerializer`, not through the admin user serializer — the order
+serializer already expanded `approver`/`canceler`/`created_by` as people and
+the dashboard read `full_name || email` off them, which no key can answer.
+`ApiKeySerializer#created_by_email` calls `.email` on the already-polymorphic
+`created_by`, so it gains `created_by_type` and `created_by_label` and the
+api-keys controller passes `current_actor`; the plan had said to leave that
+file alone, which left a 500 waiting for the first key-creates-key call.
+`current_actor` is defined on `Api::V3::BaseController` (answering the user)
+and overridden in `AdminAuthentication` to prefer `current_api_key`, because
+the post-sale concerns are shared with the JWT-only seller panel while a
+publishable Store API key must never become an actor.

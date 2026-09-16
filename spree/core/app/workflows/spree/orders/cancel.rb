@@ -11,7 +11,8 @@ module Spree
       hooks :before_cancel, :after_cancel
 
       # @param order [Spree::Order]
-      # @param canceler [Object, nil] the user/admin who initiated the cancellation
+      # @param canceler [Object, nil] who initiated it — an admin user or an
+      #   API key (see Spree.actor_classes)
       # @param canceled_at [Time, nil] timestamp (defaults to Time.current)
       # @param reason [Spree::OrderCancellationReason, nil] the merchant's own
       #   vocabulary; must belong to the order's store

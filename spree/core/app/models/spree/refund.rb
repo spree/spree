@@ -2,6 +2,7 @@ module Spree
   class Refund < Spree.base_class
     has_prefix_id :re  # Stripe: re_
 
+    include Spree::ActedBy
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::InstrumentsGatewayCalls
@@ -18,7 +19,7 @@ module Spree
     # payment covers several and only one of them is being refunded.
     belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :refunds
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
-    belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
+    acted_by :refunder
     # What triggered this refund — a Spree::Return today, later an Exchange
     # or Claim; nil for a manual refund. Deliberately polymorphic: the set is
     # small and closed, and refunds are never bulk-queried in a hot path.

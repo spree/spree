@@ -45,6 +45,7 @@ module Spree
                                :reports,
                                :translatable_resources,
                                :taggable_types,
+                               :actor_classes,
                                :custom_fields,
                                :reporting,
                                :analytics_events,
@@ -523,6 +524,16 @@ module Spree
           'Spree::Product',
           'Spree::Order',
           Spree.customer_class.to_s
+        ]
+
+        # Models that may be recorded as having performed an action — the
+        # vocabulary an `acted_by` association's `*_type` column is validated
+        # against. Extend in an app initializer to register an App or bot
+        # class, which must include Spree::Actor:
+        #   Rails.application.config.spree.actor_classes << 'MyApp::App'.
+        Rails.application.config.spree.actor_classes = [
+          Spree.admin_user_class.to_s,
+          'Spree::ApiKey'
         ]
 
         Rails.application.config.spree.custom_fields.types = [

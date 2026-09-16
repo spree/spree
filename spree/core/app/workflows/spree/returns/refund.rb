@@ -19,7 +19,7 @@ module Spree
       # @param amount [BigDecimal, Numeric, nil] defaults to what the return
       #   is still owed
       # @param refund_method [String] 'original_payment' or 'store_credit'
-      # @param refunder [Object, nil] the admin issuing it
+      # @param refunder [Object, nil] who is issuing it (see Spree.actor_classes)
       def perform(return_record:, amount: nil, refund_method: 'original_payment', refunder: nil)
         super
 

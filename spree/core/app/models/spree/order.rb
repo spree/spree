@@ -23,6 +23,7 @@ module Spree
 
     extend Spree::DisplayMoney
 
+    include Spree::ActedBy
     include Spree::SingleStoreResource
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
@@ -169,9 +170,7 @@ module Spree
     # Whose sale this is. Nil on the operator's own goods, including the
     # first-party child of a mixed marketplace checkout.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
-    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
+    acted_by :created_by, :approver, :canceler
     belongs_to :cancel_reason, class_name: 'Spree::OrderCancellationReason', optional: true, inverse_of: :orders
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
@@ -1089,10 +1088,11 @@ module Spree
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.customer_class, nil] the user who approved the order
+    # @param actor [Object, nil] who approved it — an admin user or an API
+    #   key (see Spree.actor_classes)
     # @return [Spree::ServiceModule::Result]
-    def approved_by(user = nil)
-      Spree.order_approve_service.call(order: self, approver: user)
+    def approved_by(actor = nil)
+      Spree.order_approve_service.call(order: self, approver: actor)
     end
 
     def approved?

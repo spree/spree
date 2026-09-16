@@ -43,7 +43,7 @@ module Spree
             with_order_lock do
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
-                canceler: try_spree_current_user,
+                canceler: current_actor,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
                 refund_payments: params[:refund_payments].to_b,

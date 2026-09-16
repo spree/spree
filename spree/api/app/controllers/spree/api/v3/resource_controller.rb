@@ -176,7 +176,7 @@ module Spree
         def build_resource
           resource = resource_scope.new
           resource.assign_attributes(permitted_params) if create_workflow.nil?
-          resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
+          resource.created_by = current_actor if resource.respond_to?(:created_by_id)
           resource
         end
 

@@ -23,7 +23,7 @@ module Spree
             result = Spree.order_create_service.call(
               store: current_store,
               customer: resolve_customer,
-              created_by: try_spree_current_user,
+              created_by: current_actor,
               params: order_create_params
             )
 
@@ -73,7 +73,7 @@ module Spree
             with_order_lock do
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
-                canceler: try_spree_current_user,
+                canceler: current_actor,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
                 refund_payments: params[:refund_payments].to_b,
@@ -92,7 +92,7 @@ module Spree
           # PATCH /api/v3/admin/orders/:id/approve
           def approve
             with_order_lock do
-              @resource.approved_by(try_spree_current_user)
+              @resource.approved_by(current_actor)
               render json: serialize_resource(@resource.reload)
             end
           end

@@ -21,14 +21,14 @@ module Spree
 
           # PATCH .../exchanges/:id/approve
           def approve
-            run_workflow(Spree.exchange_approve_workflow, approver: try_spree_current_user)
+            run_workflow(Spree.exchange_approve_workflow, approver: current_actor)
           end
 
           # PATCH .../exchanges/:id/receive
           def receive
             run_workflow(Spree.exchange_receive_workflow,
                          items: items_for_receive,
-                         received_by: try_spree_current_user)
+                         received_by: current_actor)
           end
 
           # PATCH .../exchanges/:id/fulfill — sends the replacement, settling
@@ -36,7 +36,7 @@ module Spree
           def fulfill
             run_workflow(Spree.exchange_fulfill_workflow,
                          refund_method: params[:refund_method] || 'store_credit',
-                         refunder: try_spree_current_user)
+                         refunder: current_actor)
           end
 
           # PATCH .../exchanges/:id/cancel

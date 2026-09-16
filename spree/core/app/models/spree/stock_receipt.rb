@@ -9,6 +9,7 @@ module Spree
   class StockReceipt < Spree.base_class
     has_prefix_id :sr
 
+    include Spree::ActedBy
     include Spree::SingleStoreResource
     has_spree_number prefix: 'SR'
     include Spree::NumberIdentifier
@@ -17,7 +18,7 @@ module Spree
     publishes_lifecycle_events
 
     belongs_to :receivable, polymorphic: true, inverse_of: :stock_receipts
-    belongs_to :received_by, class_name: Spree.admin_user_class.to_s, optional: true
+    acted_by :received_by
 
     has_many :items, class_name: 'Spree::StockReceiptItem', inverse_of: :stock_receipt,
                      dependent: :destroy
