@@ -189,3 +189,50 @@ If the caller lacks permission for a specific action, the API returns `403 Forbi
 <Note>
 If both headers are present, the JWT token wins: CanCanCan applies and scopes are ignored. This lets you use `sk_xxx` to bootstrap a session and then issue per-user JWTs for individual admin actions.
 </Note>
+
+## Who a write is attributed to
+
+Records that remember who acted on them — an order's `canceler`, `approver`
+and `created_by`, a refund's `refunder`, the opener of a return, exchange or
+claim, the receiver of a stock delivery — name whichever credential made the
+call. A JWT request records the signed-in admin; a secret-key request records
+the key itself, so a warehouse connector's write is attributed to the
+connector rather than to nobody.
+
+Each of these fields comes as a pair. The `*_id` is a prefixed id, `adm_…`
+for a person and `key_…` for a key, and the `*_type` beside it says which:
+
+```json
+{
+  "canceler_id": "key_8QrN3xLq",
+  "canceler_type": "api_key",
+  "canceled_at": "2026-09-16T11:04:22Z"
+}
+```
+
+`*_type` is `admin_user` or `api_key` today, and an extension may register
+further kinds, so treat the value as an open list rather than a closed set.
+Expanding the association gives the same three facts in one object — `id`,
+`type` and a `label` fit to show in a timeline:
+
+<Tabs>
+  <Tab title="SDK">
+```ts
+const order = await client.orders.retrieve('or_m3Rp9wXz', { expand: ['canceler'] })
+
+order.canceler // { id: 'key_8QrN3xLq', type: 'api_key', label: 'WMS connector' }
+```
+  </Tab>
+  <Tab title="cURL">
+```bash
+curl "https://example.com/api/v3/admin/orders/or_m3Rp9wXz?expand=canceler" \
+  -H "X-Spree-Api-Key: sk_xxx"
+```
+  </Tab>
+</Tabs>
+
+<Note>
+Attribution answers *who*, not *through which surface*. A store upgrading from
+an earlier release should run `rake spree:upgrade:backfill_actor_types` so
+existing records name the kind of actor they already held.
+</Note>
