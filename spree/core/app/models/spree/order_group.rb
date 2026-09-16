@@ -102,7 +102,7 @@ module Spree
     # query each time even against rows sitting in memory.
     ROLLED_UP_TOTALS = %i[
       total item_total delivery_total additional_tax_total included_tax_total
-      discount_total fee_total gift_card_total
+      discount_total fee_total
     ].freeze
 
     ROLLED_UP_TOTALS.each do |figure|
@@ -111,11 +111,8 @@ module Spree
       end
     end
 
-    # Every rolled-up figure gets its display, not just the two a gateway
-    # needed: the purchase confirmation prints the same rows a single order's
-    # does, and a template left to build its own Spree::Money would be the one
-    # place the currency is decided by a view.
     money_methods(*ROLLED_UP_TOTALS)
+    money_methods :gift_card_total
 
     alias ship_total delivery_total
 
@@ -127,13 +124,6 @@ module Spree
       orders.first&.last_ip_address
     end
 
-    # Facts about the checkout rather than about one seller's part of it, so
-    # the split copies them identically onto every child
-    # (+Spree::Carts::SplitBySeller::CARRIED_TO_SIBLING+) and any child answers
-    # for the purchase. Read here because a customer-facing document is about
-    # the purchase: the locale it must be written in, and the buyer's own
-    # purchase-order reference their accounting reconciles against.
-    #
     # @return [String, nil]
     def locale
       orders.first&.locale
@@ -165,7 +155,9 @@ module Spree
     # @return [Array<Spree::FulfillmentGroup>]
     def fulfillment_groups
       Spree::FulfillmentGroup.build_from(
-        fulfillments.includes(:stock_location, selected_delivery_rate: :delivery_method).order(:order_id, :id)
+        fulfillments.
+          includes(:stock_location, { order: :seller }, { selected_delivery_rate: :delivery_method }).
+          order(:order_id, :id)
       )
     end
 
@@ -174,9 +166,24 @@ module Spree
     # everything the customer is waiting for and silently omit what they
     # already have.
     #
+    # @param groups [Array<Spree::FulfillmentGroup>] the parcels, when the
+    #   caller has already built them — rebuilding re-reads the fulfillments
     # @return [Array<Spree::LineItem>]
-    def unfulfilled_line_items
-      line_items.to_a - fulfillment_groups.flat_map(&:line_items)
+    def unfulfilled_line_items(groups = fulfillment_groups)
+      line_items.to_a - groups.flat_map(&:line_items)
+    end
+
+    # What the customer paid with a gift card. Not rolled up from the children:
+    # the group claims the payments at completion, so a child's own
+    # +gift_card_total+ — which reads its payments — answers zero for every one
+    # of them, and the confirmation would omit a deduction its total makes.
+    #
+    # @return [BigDecimal]
+    def gift_card_total
+      return 0.to_d if gift_card.nil?
+
+      store_credit_ids = payments.store_credits.valid.pluck(:source_id)
+      Spree::StoreCredit.where(id: store_credit_ids, originator: gift_card).sum(:amount)
     end
 
     # @return [String, nil] the group's fulfillment position, in the same

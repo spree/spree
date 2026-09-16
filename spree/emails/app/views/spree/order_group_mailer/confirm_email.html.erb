@@ -1,7 +1,7 @@
 <%= render 'spree/shared/purchased_items_styles' %>
 
 <% fulfillment_groups = @order_group.fulfillment_groups %>
-<% unfulfilled_line_items = @order_group.unfulfilled_line_items %>
+<% unfulfilled_line_items = @order_group.unfulfilled_line_items(fulfillment_groups) %>
 
 <%= render layout: 'spree/shared/mailer_hero' do %>
   <h1><%= Spree.t('order_group_mailer.confirm_email.subject') %></h1>

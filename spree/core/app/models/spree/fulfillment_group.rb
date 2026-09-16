@@ -41,7 +41,7 @@ module Spree
 
     # @return [Array] origin and delivery method — see {.build_from}
     def self.identity(fulfillment)
-      [fulfillment.stock_location_id, fulfillment.delivery_method&.id]
+      [fulfillment.stock_location_id, fulfillment.selected_delivery_rate&.delivery_method_id]
     end
 
     # @return [Spree::DeliveryMethod, nil]
@@ -85,9 +85,22 @@ module Spree
       fulfillments.any?(&:unpriced?)
     end
 
-    # @return [Array<Spree::LineItem>]
+    # @return [Array<Spree::LineItem>] every line this parcel carries part of
     def line_items
       fulfillments.flat_map(&:line_items).uniq
+    end
+
+    # What the parcel carries, each line with the quantity *this* parcel holds.
+    #
+    # A line item can be packed from two warehouses, which puts it in two
+    # parcels — printing the line's own quantity in both would show the
+    # customer more goods than they bought, and charge for them twice.
+    #
+    # @return [Array<Spree::Fulfillment::ManifestItem>]
+    def manifest
+      fulfillments.flat_map(&:manifest).group_by(&:line_item).map do |line_item, items|
+        Spree::Fulfillment::ManifestItem.new(line_item, line_item.variant, items.sum(&:quantity), nil)
+      end
     end
 
     # Who is shipping it. More than one only where a marketplace's own

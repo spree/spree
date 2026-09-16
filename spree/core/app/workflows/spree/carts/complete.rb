@@ -446,9 +446,10 @@ module Spree
         failure(cart, code: 'split_failed', message: result.error) if result.failure?
 
         @order_group = result.value
-        # Ordered, because which child comes first decides which one carries
-        # the confirmation email — that must not depend on how the rows come
-        # back.
+        # Ordered, because the hook handlers and the replay path read this one
+        # as "the" order of the checkout — which child that is must not depend
+        # on how the rows come back. It carries no confirmation: the purchase
+        # is confirmed from the group.
         @order = order_group.orders.order(:id).first
       end
 
@@ -500,12 +501,6 @@ module Spree
       # What this checkout produced: the children of a split, or the one order
       # otherwise. The single answer to "which orders came out of here", so
       # placement and tax filing can never disagree about the set.
-      #
-      # Sorted rather than re-queried, because the split hands the group over
-      # with its children loaded and those are the records everything
-      # downstream holds — the API response included. Ordering through a new
-      # relation would place fresh copies and leave the caller's own children
-      # reading as unplaced drafts.
       def placed_orders
         order_group.present? ? order_group.orders.to_a.sort_by(&:id) : [order]
       end

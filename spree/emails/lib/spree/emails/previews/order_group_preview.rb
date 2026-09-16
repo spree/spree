@@ -17,7 +17,14 @@ class Spree::OrderGroupPreview < ActionMailer::Preview
 
   # The most recent split checkout. Nothing to preview until a store has one —
   # a group only exists where a basket spanned several sellers.
+  #
+  # The locale the preview toolbar asks for is applied to the children in
+  # memory (never saved), because a group reads its locale from them.
   def order_group
-    Spree::OrderGroup.last
+    group = Spree::OrderGroup.last
+    return group if group.nil? || locale.blank?
+
+    group.orders.load.each { |order| order.locale = locale }
+    group
   end
 end

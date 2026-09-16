@@ -1,5 +1,5 @@
 <% fulfillment_groups = @order_group.fulfillment_groups %>
-<% unfulfilled_line_items = @order_group.unfulfilled_line_items %>
+<% unfulfilled_line_items = @order_group.unfulfilled_line_items(fulfillment_groups) %>
 <%= Spree.t('order_group_mailer.confirm_email.dear_customer', name: name_for(@order_group)) %>
 
 <%= Spree.t('order_group_mailer.confirm_email.instructions', number: @order_group.number) %>

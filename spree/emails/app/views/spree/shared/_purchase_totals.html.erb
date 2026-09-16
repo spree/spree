@@ -35,7 +35,7 @@
         <% if order_group.gift_card_total.positive? %>
           <%= render 'spree/shared/purchased_items_table/summary_row',
                      label: Spree.t(:gift_card),
-                     value: "-#{order_group.display_gift_card_total}" %>
+                     value: safe_join(['-', order_group.display_gift_card_total.to_html]) %>
         <% end %>
 
         <% order_group.discounts.manual.to_a.group_by(&:label).each do |label, discounts| %>
@@ -44,11 +44,12 @@
                      value: Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
         <% end %>
 
-        <% order_group.fees.each do |fee| %>
-          <% next if fee.amount == 0 %>
+        <% order_group.fees.to_a.group_by(&:label).each do |label, fees| %>
+          <% amount = fees.sum(&:amount) %>
+          <% next if amount.zero? %>
           <%= render 'spree/shared/purchased_items_table/summary_row',
-                     label: fee.label,
-                     value: fee.display_amount %>
+                     label: label,
+                     value: Spree::Money.new(amount, currency: order_group.currency) %>
         <% end %>
 
         <%= render 'spree/shared/purchased_items_table/summary_row',

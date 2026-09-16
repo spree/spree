@@ -108,6 +108,48 @@ describe Spree::OrderGroupMailer, type: :mailer do
       end
     end
 
+    # SplitBySeller apportions an order-level fee into one row per child, all
+    # carrying the same label — so a $12 handling fee on a three-seller
+    # checkout is three rows of $4 in the database and one charge to the
+    # customer.
+    describe 'a fee the split apportioned across the children' do
+      before do
+        group.orders.each { |order| create(:fee, order: order, amount: 4, label: 'Handling fee') }
+        group.reload
+      end
+
+      it 'charges for it once, at what it came to' do
+        parts_of(described_class.confirm_email(group)).each do |body|
+          expect(body.scan('Handling fee').size).to eq(1)
+          expect(body).to include('$8.00')
+        end
+      end
+    end
+
+    describe 'a line packed from two warehouses' do
+      before do
+        order = group.orders.first
+        line_item = order.line_items.first
+        line_item.update_columns(quantity: 3)
+        order.fulfillments.sole.fulfillment_items.sole.update_columns(quantity: 2)
+        overflow = create(:fulfillment, order: order, stock_location: create(:stock_location, name: 'Overflow'), tracking: nil)
+        overflow.fulfillment_items.destroy_all
+        overflow.fulfillment_items.create!(
+          order_id: order.id, variant_id: line_item.variant_id, line_item_id: line_item.id, quantity: 1
+        )
+        group.reload
+      end
+
+      # The line is in both parcels; its own quantity describes the order.
+      it 'tells each parcel what it carries rather than what was ordered' do
+        text = described_class.confirm_email(group).text_part.body.to_s
+
+        expect(text).to include('(2)')
+        expect(text).to include('(1)')
+        expect(text).not_to include('(3)')
+      end
+    end
+
     describe 'goods that ship in no parcel' do
       before do
         digital_order = create(:order, store: store, order_group: group)
