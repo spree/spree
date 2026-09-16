@@ -114,7 +114,7 @@ i18n.addResourceBundle('en', 'translation', en, true, true)
 
 ## Build & deploy
 
-The app root `Dockerfile` already builds this packlage and bakes it into the production image, available at `https://yourstore.com/dashboard` URL.
+The app root `Dockerfile` already builds this package and bakes it into the production image, available at `https://yourstore.com/dashboard` URL.
 
 If you want to host it elsewhere, eg. on CDN you can build it manually.
 

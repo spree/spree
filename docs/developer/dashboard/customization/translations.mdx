@@ -4,6 +4,10 @@ sidebarTitle: Translations
 description: Add your own i18n strings to the dashboard so labels, validation messages, and notifications respect the admin's chosen locale.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` bindings. All strings live in i18next's default `translation` namespace, with every key under a top-level `admin.` prefix (`admin.nav.orders`, `admin.fields.<resource>.<attribute>.label`, …). You register your strings into the same namespace with the same prefix so they look and feel native.
 
 ## Add translations

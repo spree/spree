@@ -133,8 +133,11 @@ For destructive or expensive actions, wrap the click in a `<Dialog>`:
 ```tsx
 import { useState } from 'react'
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-  DropdownMenuItem, Button,
+  adminClient,
+  Button,
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  DropdownMenuItem,
+  useResourceMutation,
 } from '@spree/dashboard'
 
 export function ResetCartItem({ resource }: { resource: { id: string } }) {

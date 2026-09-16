@@ -30,26 +30,29 @@ These are exactly the fields your Store serializer returns — the public ones, 
 
 ```typescript apps/storefront/src/lib/spree.ts
 import { createClient } from '@spree/sdk'
-import type { PaginatedResponse } from '@spree/sdk'
 
-const client = createClient({
+export const client = createClient({
   baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL!,
   publishableKey: process.env.NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY!,
 })
+```
 
-interface Brand {
-  id: string
-  name: string
-  slug: string | null
-  active: boolean
-}
+Fetching brands then goes through `request`, with paths relative to `/api/v3/store`:
 
-// Paths are relative to /api/v3/store
+```typescript
+import type { PaginatedResponse } from '@spree/sdk'
+import { client } from '@/lib/spree'
+import type { Brand } from '@/types/brand'
+
 const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
-const wilson = await client.request<Brand>('GET', '/brands/wilson')
+const wilson = await client.request<Brand>('GET', '/brands/brand_k5nR8xLq')
 ```
 
 Only the fields the Store serializer declared come back. Timestamps and anything admin-only are absent by design — that is the serializer split from step 1 doing its job.
+
+<Note>
+  A generated resource is addressed by its prefixed ID. Looking one up by slug needs a `find_resource` override on the controller — the products endpoint does exactly that, so `/products/{slug}` works. Until you add one for brands, route by ID and treat `slug` as display data.
+</Note>
 
 ## Step 3: Expand brand on products
 
@@ -84,7 +87,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
   return (
     <article>
       {product.brand && (
-        <a href={`/brands/${product.brand.slug}`} className="text-sm text-neutral-500">
+        <a href={`/brands/${product.brand.id}`} className="text-sm text-neutral-500">
           {product.brand.name}
         </a>
       )}
@@ -97,11 +100,12 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
 And a brand page listing everything that brand makes:
 
-```tsx apps/storefront/src/app/brands/[slug]/page.tsx
+```tsx apps/storefront/src/app/brands/[id]/page.tsx
 import { client } from '@/lib/spree'
+import type { Brand } from '@/types/brand'
 
-export default async function BrandPage({ params }: { params: { slug: string } }) {
-  const brand = await client.request<Brand>('GET', `/brands/${params.slug}`)
+export default async function BrandPage({ params }: { params: { id: string } }) {
+  const brand = await client.request<Brand>('GET', `/brands/${params.id}`)
   const products = await client.products.list({ brand_id_eq: brand.id })
 
   return (

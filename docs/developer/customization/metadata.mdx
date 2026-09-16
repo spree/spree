@@ -238,7 +238,7 @@ The `public_metadata` column was never exposed in Store API responses and in pra
 Always use the single `metadata` accessor for all schemaless key-value storage. If you need data visible to customers on the storefront, use [Metafields](/developer/core-concepts/metafields) instead.
 
 ```ruby
-# Deprecated — will be removed in 6.0
+# Deprecated — use `metadata` instead
 order.public_metadata = { 'gift_message' => 'Happy Birthday!' }
 
 # Use metadata for internal storage

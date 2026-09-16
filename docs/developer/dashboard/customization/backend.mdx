@@ -4,6 +4,10 @@ sidebarTitle: Backend integration
 description: Talk to your own (or Spree's) Admin API from the dashboard — typed SDK calls, custom endpoints, prefixed IDs, error handling, and React-Query hooks.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard never reaches into Rails models or fetches HTML. All data flows through `@spree/admin-sdk` — a typed Admin API client. This page covers the patterns: calling existing endpoints, adding new ones, handling errors, and wrapping it all in React-Query hooks for caching.
 
 ## The `adminClient`
@@ -67,7 +71,8 @@ export function useBrands(params?: { search?: string }) {
 For mutations, prefer the existing `useResourceMutation` helper — it wires up the SDK's error shape, the 422 silencer, and the toast for non-validation errors:
 
 ```ts
-import { useResourceMutation } from '@spree/dashboard'
+import type { AdminBrand } from '@spree/admin-sdk'
+import { adminClient, useResourceMutation } from '@spree/dashboard'
 
 export function useUpdateBrand(id: string) {
   return useResourceMutation({

@@ -4,6 +4,10 @@ sidebarTitle: Slots
 description: Inject your own widgets into existing dashboard pages without forking them. Slots are named injection points the dashboard exposes on built-in pages.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 A slot is a named injection point in a built-in page. Components registered against a slot render inside it, sorted by `position`, gated by an optional `if` predicate. The host page knows nothing about your widget — it just renders `<Slot name="..." context={...} />` and the slot registry handles the rest.
 
 ## Quick example

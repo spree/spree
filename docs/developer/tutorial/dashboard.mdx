@@ -138,8 +138,9 @@ export function BrandsListPage({ searchParams }: { searchParams: Record<string, 
       header={
         <PageHeader
           title={t('admin.brands.page.title')}
+          // A create form is the natural next step — see the recipes below.
           actions={
-            <Button size="sm">
+            <Button size="sm" disabled>
               <PlusIcon className="size-4" />
               {t('admin.brands.page.new_cta')}
             </Button>

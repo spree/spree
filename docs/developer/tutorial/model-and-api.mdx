@@ -164,6 +164,22 @@ has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
 `optional: true` lets a product exist without a brand. `dependent: :nullify` means deleting a brand clears the reference rather than deleting the products that carried it — almost always what you want for a label attached to a catalog.
 
+Two more lines make the association usable from the API. The product serializer has to expose it, or the storefront cannot read a product's brand:
+
+```ruby server/app/serializers/spree/api/v3/product_serializer_decorator.rb
+attribute(:brand_id) { |product| product.brand&.prefixed_id }
+has_one :brand, serializer: Spree::Api::V3::BrandSerializer
+```
+
+And the model has to allow filtering by it, or `?q[brand_id_eq]=…` is rejected:
+
+```ruby server/app/models/spree/product_decorator.rb
+base.whitelisted_ransackable_attributes |= %w[brand_id]
+base.whitelisted_ransackable_associations |= %w[brand]
+```
+
+The allowlist is deliberate: every entry is a query any caller can run, so add only what the storefront needs.
+
 ## Next step
 
-The data and both APIs are live. Now give staff a way to manage brands: [Dashboard plugin](/developer/tutorial/dashboard).
+The data and both APIs are live. Now give staff a way to manage brands: [Dashboard](/developer/tutorial/dashboard).

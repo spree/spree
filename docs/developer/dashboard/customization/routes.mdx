@@ -4,6 +4,10 @@ sidebarTitle: Routes
 description: Mount custom pages under your dashboard's `/$storeId/...` path. Supports path params, permission gating, and works alongside the dashboard's built-in routes.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom pages have two mechanisms:
 
 1. **File routes** (packaged plugins — preferred): the plugin ships ordinary TanStack route files, and the host build compiles them into its typed route tree. Typed `<Link>`s with no casts, route-level code splitting, `validateSearch`, loaders — full router citizenship.
@@ -145,7 +149,7 @@ Always pair this with a matching `subject` on the **nav entry** so users without
 
 ## Layout
 
-Custom routes inherit the dashboard's `_authenticated` + `$storeId` layout (auth guard, sidebar, top bar, etc.) — your component renders inside the `<Outlet />`. Use `<ResourceLayout>` from `@spree/dashboard-ui` to get the same header/main/sidebar grid as core pages:
+Custom routes inherit the dashboard's `_authenticated` + `$storeId` layout (auth guard, sidebar, top bar, etc.) — your component renders inside the `<Outlet />`. Use `<ResourceLayout>` to get the same header/main/sidebar grid as core pages:
 
 ```tsx
 import { PageHeader, ResourceLayout } from '@spree/dashboard'

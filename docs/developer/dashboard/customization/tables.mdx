@@ -4,6 +4,10 @@ sidebarTitle: Tables
 description: Add, change, or remove columns on built-in list tables (products, orders, customers, …), or define a table for your own resource.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 Every list page in the dashboard renders through `<ResourceTable>`, which reads its column definitions from a **table registry** keyed by table name (`products`, `orders`, `customers`, …). That gives you two levers:
 
 1. **Extend a built-in table** — add, patch, or remove columns (including their filters) without forking the page.

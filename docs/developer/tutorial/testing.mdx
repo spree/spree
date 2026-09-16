@@ -91,8 +91,20 @@ cd apps/dashboard && pnpm test
 Test the client wrappers and any logic in your pages. Mock the HTTP layer rather than the client module, so the test exercises the real request path:
 
 ```ts apps/dashboard/src/brands/client.test.ts
-import { describe, expect, it } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 import { BrandsClient } from './client'
+
+const server = setupServer(
+  http.get('*/api/v3/admin/brands', () =>
+    HttpResponse.json({ data: [{ id: 'brand_k5nR8xLq', name: 'Wilson' }] }),
+  ),
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 describe('BrandsClient', () => {
   it('lists brands from the admin endpoint', async () => {
@@ -104,26 +116,31 @@ describe('BrandsClient', () => {
 })
 ```
 
+Mocking the HTTP layer rather than the client module means the test exercises the real request path — the URL, the params and the response shape — so a wrong endpoint fails here instead of in the browser.
+
 ## Step 5: One end-to-end pass
 
-Everything above tests a layer in isolation. One Playwright spec proves the layers are actually connected — create a brand in the dashboard, then see it on the storefront:
+Everything above tests a layer in isolation. One Playwright spec proves the layers are actually connected — a brand created through the Admin API reaches the dashboard screen you built:
 
 ```ts apps/dashboard/e2e/brands.spec.ts
 import { expect, test } from '@playwright/test'
+import { createBrand } from './helpers/api'
 import { login } from './helpers/login'
 
-test('a brand created in the dashboard appears on the storefront', async ({ page }) => {
+test('a brand appears on the brands screen', async ({ page }) => {
   const name = `Wilson ${Date.now()}`
+  await createBrand({ name, slug: `wilson-${Date.now()}` })
 
   await login(page)
-  await page.goto('/brands')
-  await page.getByRole('button', { name: /new brand/i }).click()
-  await page.getByLabel(/^name$/i).fill(name)
-  await page.getByRole('button', { name: /create brand/i }).click()
+  await page.getByRole('link', { name: /brands/i }).click()
 
   await expect(page.getByRole('cell', { name })).toBeVisible()
 })
 ```
+
+Navigating from the sidebar rather than calling `page.goto('/brands')` keeps the spec honest about the real path, which is store-scoped (`/:storeId/brands`) and would otherwise have to be hardcoded.
+
+Once you add a create form, replace the API call with the form itself — filling it and asserting the new row is the stronger test, because it covers the write path too.
 
 Two conventions matter here:
 

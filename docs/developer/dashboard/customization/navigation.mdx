@@ -4,6 +4,10 @@ sidebarTitle: Navigation
 description: Add, modify, and remove items from the dashboard's main sidebar and settings sub-nav.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard has two navigation registries: **main sidebar** (`nav`) and **settings sub-shell** (`settingsNav`). Both are module singletons exposed from `@spree/dashboard-core` and consumed by `<AppSidebar>` and `<SettingsSidebar>` via `useSyncExternalStore`, so late registration re-renders the sidebars automatically.
 
 ## Main sidebar (`nav`)
