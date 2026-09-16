@@ -28,6 +28,17 @@ RSpec.describe 'agent tool contract' do
     false
   end
 
+  # Resource keys whose controller guards against a caller granting authority
+  # it does not hold, which the derivation deliberately makes read-only.
+  def authority_keys
+    Spree::Api::AgentResourceMap.controllers.filter_map do |controller|
+      next unless controller.include?(Spree::Api::V3::Admin::RoleGrantGuard)
+
+      model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+      model && model.model_name.element.pluralize
+    end
+  end
+
   # Resource keys served by more than one admin controller under different
   # scopes, which the derivation deliberately makes read-only.
   def contested_keys
@@ -302,6 +313,7 @@ RSpec.describe 'agent tool contract' do
         entry.create_workflow_key.present? || entry.update_workflow_key.present? ||
           Spree::Api::AgentResourceMap::SERVICE_WRITTEN_MODELS.include?(entry.model_name) ||
           Spree::Api::AgentResourceMap::DYNAMIC_SCOPE_RESOURCES.key?(entry.key) ||
+          authority_keys.include?(entry.key) ||
           contested_keys.include?(entry.key)
       end
 
@@ -316,6 +328,35 @@ RSpec.describe 'agent tool contract' do
         docs/api-reference/admin.yaml, so their writes are silently lost:
 
           #{mismatched.map(&:key).join("\n  ")}
+      MESSAGE
+    end
+
+    # Roles, role grants, invitations and API keys all run an
+    # anti-amplification check: a caller may only hand out authority they hold
+    # themselves. A generic write assigns attributes and saves, which knows
+    # nothing about that — so those resources are never generically writable,
+    # whatever the OpenAPI document happens to document.
+    it 'never offers a generic write for a resource that hands out authority' do
+      guarded = Spree::Api::AgentResourceMap.controllers.select do |controller|
+        controller.include?(Spree::Api::V3::Admin::RoleGrantGuard)
+      end
+
+      expect(guarded).not_to be_empty, 'expected the anti-amplification guard to be in use somewhere'
+
+      writable = guarded.filter_map do |controller|
+        model = Spree::Api::AgentResourceMap.send(:safely, controller.allocate, :model_class)
+        next if model.nil?
+
+        entry = Spree::AgentTools::ResourceMap.all.find { |candidate| candidate.model_name == model.name }
+        entry&.key if entry&.generic_writes?
+      end
+
+      expect(writable).to be_empty, <<~MESSAGE
+        These resources decide who may do what, and their controllers guard
+        against a caller granting authority they do not hold. A generic write
+        would skip that guard:
+
+          #{writable.join("\n  ")}
       MESSAGE
     end
 
