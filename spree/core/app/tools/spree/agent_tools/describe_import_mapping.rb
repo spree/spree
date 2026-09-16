@@ -51,11 +51,13 @@ module Spree
 
       # Name, human label and whether it must be filled — the model needs all
       # three to explain its choices and to know what it cannot leave out.
+      #
+      # Read from `schema_fields`, which is what a mapping is validated
+      # against: it adds the model's custom-field definitions to the schema's
+      # own list. Describing the schema alone would accept a custom field on
+      # write while never telling the model it exists.
       def describe_fields(import)
-        schema = import.import_schema
-        return [] if schema.nil?
-
-        schema.fields.map do |field|
+        Array(import.schema_fields).map do |field|
           {
             field: field[:name],
             label: field[:label],

@@ -96,8 +96,10 @@ module Spree
         ability.can?(action, record)
       end
 
+      # Whether the caller holds a permission a tool *declares*.
+      #
       # @param permission_key [String, nil]
-      # @return [Boolean] whether the caller holds this permission
+      # @return [Boolean]
       def permitted?(permission_key)
         return true if permission_key.blank?
 
@@ -107,6 +109,26 @@ module Spree
         if !Spree.permissions.key?(key) && (defined?(Rails) && Rails.env.local?)
           raise ArgumentError, "Agent tool declares unknown permission key #{key.inspect}"
         end
+
+        permission_keys.include?(key)
+      end
+
+      # Whether the caller holds a permission computed at call time — an
+      # export's or import's own scope, which comes from whichever subclass
+      # the caller named.
+      #
+      # Unlike {#permitted?} this refuses an unregistered key rather than
+      # raising on it: a tool's declaration is ours to get right, but a host
+      # app's export subclass may derive a key outside the catalog, and an
+      # agent asking for it should be told no, not crash the request.
+      #
+      # @param permission_key [String, nil]
+      # @return [Boolean]
+      def holds?(permission_key)
+        return true if permission_key.blank?
+
+        key = permission_key.to_s
+        return false unless Spree.permissions.key?(key)
 
         permission_keys.include?(key)
       end
