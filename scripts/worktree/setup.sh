@@ -42,7 +42,7 @@ created_primary_server=0
 
 if [ ! -d server ]; then
   echo "▸ Cloning spree-starter into server/"
-  git clone --depth 1 --branch 6-0-dev https://github.com/spree/spree-starter.git server
+  git clone --depth 1 https://github.com/spree/spree-starter.git server
   rm -rf server/.git server/.gitignore
 
   # Adopt the primary checkout's migration set (and its schema snapshot) before

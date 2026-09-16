@@ -36,8 +36,8 @@ step() { printf '\n→ %s\n' "$1"; }
 
 bash "$ROOT/scripts/server-teardown.sh" --no-hint
 
-step "Cloning spree-starter into server/ (branch: ${SPREE_STARTER_BRANCH:-6-0-dev})"
-git clone --depth 1 --branch "${SPREE_STARTER_BRANCH:-6-0-dev}" https://github.com/spree/spree-starter.git "$SERVER_DIR"
+step "Cloning spree-starter into server/${SPREE_STARTER_BRANCH:+ (branch: $SPREE_STARTER_BRANCH)}"
+git clone --depth 1 ${SPREE_STARTER_BRANCH:+--branch "$SPREE_STARTER_BRANCH"} https://github.com/spree/spree-starter.git "$SERVER_DIR"
 rm -rf "$SERVER_DIR/.git" "$SERVER_DIR/.gitignore"
 
 step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE)"
