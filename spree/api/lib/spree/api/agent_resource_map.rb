@@ -133,6 +133,7 @@ module Spree
 
           create_workflow = workflow_key(instance, :create_workflow)
           update_workflow = workflow_key(instance, :update_workflow)
+          writable = AgentWriteSchemas.attribute_names(key)
 
           {
             key: key,
@@ -140,8 +141,8 @@ module Spree
             permission: "read_#{scope}",
             serializer_name: serializer.name,
             dashboard_path: DASHBOARD_PATHS[key],
-            write_permission: write_permission_for(model, scope, create_workflow, update_workflow),
-            writable_attributes: AgentWriteSchemas.attribute_names(key),
+            write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable),
+            writable_attributes: writable,
             create_workflow_key: create_workflow,
             update_workflow_key: update_workflow
           }
@@ -150,13 +151,16 @@ module Spree
         private
 
         # A resource is generically writable only when the Admin API writes it
-        # by saving the record, and it documents what a write may set. A
-        # workflow-written resource keeps its workflow key instead (so the
-        # refusal can name the tool), and a service-written one is not
-        # writable at all.
-        def write_permission_for(model, scope, create_workflow, update_workflow)
+        # by saving the record, and the OpenAPI document says what a write may
+        # set. A workflow-written resource keeps its workflow key instead (so
+        # the refusal can name the tool); a service-written one is not writable
+        # at all; and a resource with no documented body is read-only here,
+        # because a write tool with no attributes is one an agent can only get
+        # wrong.
+        def write_permission_for(model, scope, create_workflow, update_workflow, writable)
           return if SERVICE_WRITTEN_MODELS.include?(model.name)
           return if create_workflow.present? || update_workflow.present?
+          return if writable.empty?
 
           "write_#{scope}"
         end
