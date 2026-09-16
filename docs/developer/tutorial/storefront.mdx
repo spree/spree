@@ -81,8 +81,9 @@ In the Next.js storefront, fetch the product with its brand and render the name:
 ```tsx apps/storefront/src/app/products/[slug]/page.tsx
 import { client } from '@/lib/spree'
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = await client.products.get(params.slug, { expand: ['brand'] })
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const product = await client.products.get(slug, { expand: ['brand'] })
 
   return (
     <article>
@@ -104,8 +105,9 @@ And a brand page listing everything that brand makes:
 import { client } from '@/lib/spree'
 import type { Brand } from '@/types/brand'
 
-export default async function BrandPage({ params }: { params: { id: string } }) {
-  const brand = await client.request<Brand>('GET', `/brands/${params.id}`)
+export default async function BrandPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const brand = await client.request<Brand>('GET', `/brands/${id}`)
   const products = await client.products.list({ brand_id_eq: brand.id })
 
   return (

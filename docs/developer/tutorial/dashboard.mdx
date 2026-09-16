@@ -256,8 +256,8 @@ export function BrandCard() {
               <ResourceCombobox
                 id="brand_id"
                 queryKey="product-brand-picker"
-                value={field.value ? [field.value] : []}
-                onChange={(ids) => field.onChange(ids[0] ?? null)}
+                value={field.value ?? ''}
+                onChange={(id) => field.onChange(id ?? null)}
                 getOptionLabel={(brand) => brand.name}
                 placeholder={t('admin.brands.product_card.placeholder')}
                 emptyText={t('admin.brands.product_card.none')}
