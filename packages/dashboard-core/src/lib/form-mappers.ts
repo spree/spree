@@ -1,3 +1,5 @@
+import type { PanelAccountParams } from '../api-client'
+
 /**
  * Treat a blank or whitespace-only string as "not set" — common when mapping
  * form values to API params, where a blank `<input>` should become `undefined`
@@ -103,4 +105,42 @@ export function editableAddressToStockLocationParams(values: {
     state_code: values.state_code,
     phone: values.phone,
   }
+}
+
+/**
+ * The signed-in person's own account, mapped from either panel's edit form to
+ * the params its API accepts.
+ *
+ * Shared because the three rules here are the same on both panels and each is
+ * easy to get subtly wrong:
+ *
+ *  - A name is sent as typed, empty string included. Blank is how a person
+ *    removes a name they once gave — the model normalizes it away — so
+ *    coercing blank to `undefined` would drop the field and leave the old name
+ *    in place while the form reported success.
+ *  - A blank language is omitted instead: it means none was chosen, never
+ *    "clear the one I have".
+ *  - The photo is a three-state field — a fresh upload sends its signed id, an
+ *    explicit clear sends `null` to purge the attachment, and an untouched
+ *    field is left out entirely.
+ */
+export function accountFormToParams(values: {
+  first_name?: string | null
+  last_name?: string | null
+  selected_locale?: string | null
+  avatar_signed_id: string | null
+  avatar_cleared: boolean
+}): PanelAccountParams {
+  return {
+    first_name: values.first_name ?? undefined,
+    last_name: values.last_name ?? undefined,
+    selected_locale: blankToUndefined(values.selected_locale),
+    ...avatarParam(values.avatar_signed_id, values.avatar_cleared),
+  }
+}
+
+function avatarParam(signedId: string | null, cleared: boolean) {
+  if (signedId) return { avatar: signedId }
+  if (cleared) return { avatar: null }
+  return {}
 }

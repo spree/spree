@@ -42,7 +42,7 @@ export function SellerSwitcher() {
   // loaded by the page behind this.
   const { data: me, isLoading } = useQuery({
     queryKey: ['seller', 'me'],
-    queryFn: () => sellerClient().me(),
+    queryFn: () => sellerClient().me.get(),
   })
 
   const { data: profile } = useQuery({
