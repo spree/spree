@@ -104,12 +104,9 @@ module Spree
         def install(map: Spree::AgentTools::ResourceMap)
           map.reset!
 
-          controllers.each do |controller|
-            entry = derive(controller)
-            next if entry.nil?
+          derived = controllers.filter_map { |controller| derive(controller) }
 
-            map.register(**entry)
-          end
+          resolve_collisions(derived).each { |entry| map.register(**entry) }
 
           DYNAMIC_SCOPE_RESOURCES.each { |key, attributes| map.register(key: key, **attributes) }
 
@@ -165,6 +162,48 @@ module Spree
         end
 
         private
+
+        # A model can be served by more than one controller under different
+        # permission scopes — a tax identifier through customers and through
+        # orders, media through products and through the media library. One
+        # resource key can carry only one permission, and whichever controller
+        # happened to sort last is not an answer: it would grant a key holding
+        # `read_orders` the customers' records too.
+        #
+        # So a collision resolves to the narrowest scope offered, and the
+        # resource stays read-only, because the two controllers do not agree
+        # on who may write it. A caller holding the wider scope reaches the
+        # record through the endpoint, as before.
+        def resolve_collisions(entries)
+          entries.group_by { |entry| entry[:key] }.map do |_key, candidates|
+            next candidates.first if candidates.one?
+
+            narrowest = candidates.min_by { |entry| [scope_breadth(entry[:permission]), entry[:permission]] }
+            contested = candidates.map { |entry| entry[:permission] }.uniq.size > 1
+
+            # A workflow declaration is not in dispute — whichever controller
+            # declares one, that is how the resource is written, and the
+            # refusal has to keep naming that tool. Only the generic write is
+            # withdrawn, and only when the controllers disagree about the
+            # scope guarding it.
+            narrowest.merge(
+              create_workflow_key: candidates.filter_map { |entry| entry[:create_workflow_key] }.first,
+              update_workflow_key: candidates.filter_map { |entry| entry[:update_workflow_key] }.first,
+              write_permission: contested ? nil : narrowest[:write_permission],
+              writable_attributes: contested ? [] : narrowest[:writable_attributes]
+            )
+          end
+        end
+
+        # How much a scope covers, so the narrowest wins a collision. Measured
+        # by the number of resources the catalog grants it, which is the only
+        # ranking the catalog actually gives us.
+        def scope_breadth(permission)
+          _kind, scope = Spree.permissions.resolve_key(permission)
+          scope ? Array(scope.resources).size : Float::INFINITY
+        rescue StandardError
+          Float::INFINITY
+        end
 
         # A resource is generically writable only when the Admin API writes it
         # by saving the record, and the OpenAPI document says what a write may

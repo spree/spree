@@ -131,11 +131,14 @@ module Spree
         types = doc[:types]
         model_name = types.filter_map { |type| model_name_for(type) }.first
 
+        json_type = model_name ? 'string' : json_type_for(types)
+
         {
           name: name,
           required: required,
           model_name: model_name,
-          json_type: model_name ? 'string' : json_type_for(types),
+          json_type: json_type,
+          item_type: json_type == 'array' ? item_type_for(types) : nil,
           description: description_for(doc[:description], model_name)
         }
       end
@@ -143,7 +146,7 @@ module Spree
       def property_for(parameter)
         property = { type: parameter[:json_type] }
         property[:description] = parameter[:description] if parameter[:description].present?
-        property[:items] = { type: 'object' } if parameter[:json_type] == 'array'
+        property[:items] = { type: parameter[:item_type] } if parameter[:json_type] == 'array'
         property
       end
 
@@ -171,6 +174,15 @@ module Spree
         return unless constant.is_a?(Class) && constant < ActiveRecord::Base
 
         constant.name
+      end
+
+      # What an array holds, read from the documented type: `Array<Hash>` holds
+      # objects, and anything else is treated as strings — the common case for
+      # a list of names or codes.
+      def item_type_for(types)
+        inner = types.filter_map { |type| type[/\AArray<(.+)>\z/, 1] }.first
+
+        PRIMITIVES[inner] || 'string'
       end
 
       def json_type_for(types)

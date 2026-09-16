@@ -111,11 +111,33 @@ RSpec.describe Spree::Mcp::Server do
       it 'gives every tool a name the protocol accepts' do
         expect(names).to all(match(/\A[a-zA-Z0-9_-]{1,64}\z/))
       end
+
+      # A JSON Schema array without `items` is ambiguous, and the client
+      # validates arguments against the schema before the tool runs — so a
+      # list parameter that does not say what it holds is refused as invalid
+      # arguments, whatever the caller sends.
+      it 'says what every array parameter holds' do
+        arrays = tools.flat_map do |tool|
+          tool.dig('inputSchema', 'properties').filter_map do |name, property|
+            "#{tool['name']}.#{name}" if property['type'] == 'array' && property['items'].blank?
+          end
+        end
+
+        expect(arrays).to be_empty
+      end
     end
   end
 
   describe 'tools/call' do
     let(:scopes) { ['write_all'] }
+
+    # The bug this guards: metrics is a list of names, and an `items: object`
+    # schema made every real call fail validation before reaching the tool.
+    it 'accepts a list of names for a reporting query' do
+      response = call('tools/call', name: 'query_report', arguments: { 'metrics' => %w[orders] })
+
+      expect(response.dig('result', 'isError')).to be(false)
+    end
 
     it 'returns structured content from a read tool' do
       create(:product, store: store, name: 'Rotary Shaver 9000')

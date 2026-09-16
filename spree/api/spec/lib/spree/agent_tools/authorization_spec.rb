@@ -77,5 +77,40 @@ RSpec.describe 'assistant authorization' do
       expect(result[:error]).to be_nil
       expect(visible.reload.status).to eq('draft')
     end
+
+    # The rule that matters, and the one a `can :manage` fixture hides:
+    # reading every product and editing one is an ordinary shape for a
+    # marketplace role, and a write tool that only checks readability would
+    # let an agent change all of them.
+    context 'when the admin may read every product but edit only one' do
+      let(:ability) do
+        Class.new do
+          include CanCan::Ability
+
+          def initialize(editable)
+            can :read, Spree::Product
+            can :update, Spree::Product, id: editable.id
+          end
+
+          def permission_keys
+            Spree.permissions.catalog_keys
+          end
+        end.new(visible)
+      end
+
+      it 'refuses to change the one it may only read' do
+        result = tool.call(product: hidden.prefixed_id)
+
+        expect(result[:error]).to be_present
+        expect(hidden.reload.status).to eq('active')
+      end
+
+      it 'still changes the one it may edit' do
+        result = tool.call(product: visible.prefixed_id)
+
+        expect(result[:error]).to be_nil
+        expect(visible.reload.status).to eq('draft')
+      end
+    end
   end
 end

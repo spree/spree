@@ -27,15 +27,17 @@ module Spree
         return unknown_resource(resource) if export_class.nil?
 
         required = "read_#{export_class.required_scope}"
-        unless context.permitted?(required)
+        unless context.holds?(required)
           return { error: "You do not have permission to export #{resource.to_s.tr('_', ' ')}." }
         end
 
         export = export_class.new(
           store: context.store,
-          # The export builds its own ability from this user, so the file
-          # contains exactly the records that admin could see — record-level
-          # rules included.
+          # For a signed-in admin the export builds an ability from this user,
+          # so the file holds exactly the records that admin could see,
+          # record-level rules included. For an API key there is no user and
+          # no ability: the scope check above is the whole filter, which is
+          # how the Admin API treats key requests everywhere else.
           user: context.user,
           format: 'csv',
           search_params: filters.presence

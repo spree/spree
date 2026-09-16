@@ -32,7 +32,7 @@ module Spree
         # Per-import, because a customer import needs `write_customers`
         # while a product import needs `write_products`.
         required = "write_#{import.class.required_scope}"
-        unless context.permitted?(required)
+        unless context.holds?(required)
           return { error: "You do not have permission to run a #{import_kind(import)} import." }
         end
 
@@ -107,10 +107,13 @@ module Spree
         import.mappings.reload
       end
 
-      # Starting the import is the same transition the dashboard's own
-      # mapping step makes, and only once every required field is satisfied.
+      # Starting the import is the same transition the dashboard's own mapping
+      # step makes, and only once every required field is satisfied. Through
+      # the workflow rather than the deprecated model method it replaced.
       def start_if_ready(import)
-        import.complete_mapping! if import.mapping_done?
+        return unless import.mapping_done?
+
+        Spree.import_complete_mapping_workflow.call(import: import)
       end
 
       def unknown_fields(import, mapping)

@@ -28,8 +28,15 @@ module Spree
           workflow_class = resolve_workflow(dependency_key)
           return if workflow_class.nil?
 
-          cache_key = [dependency_key, workflow_class.name, permission, except, summary.object_id]
-          cache[cache_key] ||= build(dependency_key, workflow_class, permission, except, summary)
+          # Keyed by what actually shapes the class. A summary override is a
+          # callable with no stable identity, so its presence is part of the
+          # key but the object is not — otherwise every code reload would add
+          # a permanent entry for the same tool.
+          cache_key = [dependency_key, workflow_class.name, permission, except, !summary.nil?]
+          cached = cache[cache_key]
+          return cached if cached && cached.summary_override.equal?(summary)
+
+          cache[cache_key] = build(dependency_key, workflow_class, permission, except, summary)
         end
 
         # @return [void]
@@ -142,6 +149,9 @@ module Spree
 
         keywords = resolved.merge(principal_arguments).merge(context_arguments)
 
+        refusal = unauthorized_record(keywords)
+        return refusal if refusal
+
         run(keywords)
       rescue ArgumentError => e
         { error: e.message }
@@ -161,6 +171,24 @@ module Spree
       end
 
       private
+
+      # Holding `write_orders` says an admin may change orders; it does not say
+      # they may change *this* one. A host app narrows that with a
+      # record-level rule, the Admin API honours it, and a workflow tool must
+      # too — otherwise an agent writes records its user could not touch by
+      # clicking. Every record the workflow was handed is checked, not just the
+      # subject, since a cancellation reason from another seller is as much a
+      # leak as the order itself.
+      def unauthorized_record(keywords)
+        keywords.each_value do |value|
+          next unless value.is_a?(ActiveRecord::Base)
+
+          refusal = unauthorized(:update, value)
+          return refusal if refusal
+        end
+
+        nil
+      end
 
       def run(keywords)
         subject = keywords.values.find { |value| value.is_a?(ActiveRecord::Base) }
