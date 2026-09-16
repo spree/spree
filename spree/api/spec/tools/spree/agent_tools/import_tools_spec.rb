@@ -96,4 +96,30 @@ RSpec.describe 'assistant import tools' do
       expect(result[:status]).to eq('mapping')
     end
   end
+
+  # An import holds the uploaded file — its headings, a real sample row, the
+  # rows that failed. Reading that is reading the resource being imported, so
+  # `read_settings` alone must not open a customer list someone uploaded.
+  describe 'reading an import the caller may not read' do
+    let(:ability) do
+      Class.new do
+        include CanCan::Ability
+        def initialize = can(:manage, :all)
+        def permission_keys = %w[read_settings write_settings]
+      end.new
+    end
+
+    it 'refuses to describe its mapping' do
+      result = Spree::AgentTools::DescribeImportMapping.new(context).call(id: import.prefixed_id)
+
+      expect(result[:error]).to be_present
+      expect(result).not_to have_key(:sample_row)
+    end
+
+    it 'refuses to report its status' do
+      result = Spree::AgentTools::GetImportStatus.new(context).call(id: import.prefixed_id)
+
+      expect(result[:error]).to be_present
+    end
+  end
 end
