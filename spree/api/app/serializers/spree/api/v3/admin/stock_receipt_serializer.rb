@@ -37,7 +37,7 @@ module Spree
           end
 
           attribute :received_by_type do |receipt|
-            Spree::Base.polymorphic_api_type(receipt.received_by_type)
+            Spree::Base.polymorphic_api_type(receipt.acted_by_type(:received_by))
           end
 
           one :received_by,

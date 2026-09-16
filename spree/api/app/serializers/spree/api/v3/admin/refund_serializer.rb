@@ -19,7 +19,7 @@ module Spree
           end
 
           attribute :refunder_type do |refund|
-            Spree::Base.polymorphic_api_type(refund.refunder_type)
+            Spree::Base.polymorphic_api_type(refund.acted_by_type(:refunder))
           end
 
           one :refunder,

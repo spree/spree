@@ -26,7 +26,7 @@ module Spree
 
           # `admin_user` / `api_key` — which kind of actor the id names.
           attribute :created_by_type do |return_record|
-            Spree::Base.polymorphic_api_type(return_record.created_by_type)
+            Spree::Base.polymorphic_api_type(return_record.acted_by_type(:created_by))
           end
 
           one :created_by,

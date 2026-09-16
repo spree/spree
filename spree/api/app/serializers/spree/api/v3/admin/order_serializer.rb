@@ -142,15 +142,15 @@ module Spree
           # `admin_user` / `api_key` — which kind of actor each id names. An
           # order cancelled through a secret key names the key.
           attribute :approver_type do |order|
-            Spree::Base.polymorphic_api_type(order.approver_type)
+            Spree::Base.polymorphic_api_type(order.acted_by_type(:approver))
           end
 
           attribute :canceler_type do |order|
-            Spree::Base.polymorphic_api_type(order.canceler_type)
+            Spree::Base.polymorphic_api_type(order.acted_by_type(:canceler))
           end
 
           attribute :created_by_type do |order|
-            Spree::Base.polymorphic_api_type(order.created_by_type)
+            Spree::Base.polymorphic_api_type(order.acted_by_type(:created_by))
           end
 
           attribute :cancel_reason_id do |order|

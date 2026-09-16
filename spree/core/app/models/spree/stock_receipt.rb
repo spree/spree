@@ -30,8 +30,12 @@ module Spree
 
     normalizes :reference, with: ->(value) { value.strip.presence }
 
+    # `received_by_type` sits beside its id because ids are per-table: filtering
+    # on the id alone would match the admin user and the API key that happen to
+    # share that number.
     self.whitelisted_ransackable_attributes = %w[number reference received_at receivable_type
-                                                 receivable_id received_by_id created_at]
+                                                 receivable_id received_by_id received_by_type
+                                                 created_at]
 
     # @return [Integer] units this delivery put on the shelf
     def quantity_accepted_total

@@ -50,6 +50,28 @@ module Spree
       class_attribute :acted_by_associations, default: [], instance_writer: false
     end
 
+    # Drops the transitional lookups the readers memoized — a reload may have
+    # brought the backfilled type with it.
+    def reload(*)
+      @transitional_actors = nil
+      super
+    end
+
+    # The class an actor column names, answering what the reader would resolve
+    # rather than what the column literally holds: a row the backfill has not
+    # reached carries an id and no type, and the reader resolves it through
+    # the admin user class. Serializers read this so `<name>_id` and
+    # `<name>_type` never disagree about the same row.
+    #
+    # @param name [Symbol, String] the acted_by association
+    # @return [String, nil]
+    def acted_by_type(name)
+      stored = self[:"#{name}_type"]
+      return stored if stored.present?
+
+      Spree.admin_user_class.to_s if self[:"#{name}_id"].present?
+    end
+
     class_methods do
       # @param names [Array<Symbol>] the association names to declare
       # @return [void]
@@ -88,6 +110,11 @@ module Spree
       # Prepended rather than defined outright, so `super` still reaches the
       # generated association reader for every row that does carry a type.
       #
+      # The lookup is memoized per record and the warning raised once per
+      # record: a serialized page of orders touches three actors per row, and
+      # an upgrade window should not cost a query and a warning for each
+      # touch.
+      #
       # Removed in 6.1, once the backfill is a release behind.
       def define_transitional_actor_reader(name)
         transitional_actor_readers.module_eval do
@@ -97,13 +124,16 @@ module Spree
             id = self[:"#{name}_id"]
             return super() if id.blank?
 
+            @transitional_actors ||= {}
+            return @transitional_actors[name] if @transitional_actors.key?(name)
+
             Spree::Deprecation.warn(
               "#{self.class.name}##{name} resolved through #{Spree.admin_user_class} because " \
               "#{name}_type is blank. Run `rake spree:upgrade:backfill_actor_types`; the fallback " \
               'is removed in Spree 6.1.'
             )
 
-            Spree.admin_user_class.find_by(id: id)
+            @transitional_actors[name] = Spree.admin_user_class.find_by(id: id)
           end
         end
       end

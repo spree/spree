@@ -17,7 +17,7 @@ module Spree
           end
 
           attribute :created_by_type do |claim|
-            Spree::Base.polymorphic_api_type(claim.created_by_type)
+            Spree::Base.polymorphic_api_type(claim.acted_by_type(:created_by))
           end
 
           one :created_by,

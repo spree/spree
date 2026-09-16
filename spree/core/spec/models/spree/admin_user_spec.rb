@@ -79,6 +79,18 @@ describe Spree.admin_user_class, type: :model do
         expect(returns.map { |record| record.reload.created_by_type }).to all(be_nil)
       end
 
+      # Deleting a member of staff has to erase them from rows written before
+      # the actor columns existed too — that window is exactly the upgrade
+      # path, and it is personal data.
+      it 'clears a row the backfill has not reached yet' do
+        legacy = create(:order, canceler: admin_user, state: 'canceled')
+        Spree::Order.where(id: legacy.id).update_all(canceler_type: nil)
+
+        admin_user.destroy
+
+        expect(legacy.reload.canceler_id).to be_nil
+      end
+
       # Ids are per-table, so an API key can share this user's numeric id. A
       # bare foreign key would have swept its rows up with the user's.
       it 'leaves another kind of actor alone' do

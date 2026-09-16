@@ -22,7 +22,7 @@ module Spree
           end
 
           attribute :created_by_type do |exchange|
-            Spree::Base.polymorphic_api_type(exchange.created_by_type)
+            Spree::Base.polymorphic_api_type(exchange.acted_by_type(:created_by))
           end
 
           one :created_by,

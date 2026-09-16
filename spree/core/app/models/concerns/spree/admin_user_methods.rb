@@ -85,22 +85,21 @@ module Spree
     def nullify_approver_id_in_approved_orders
       return if self.class != Spree.admin_user_class
 
-      approved_orders.update_all(approver_id: nil, approver_type: nil, updated_at: Time.current)
+      clear_actor(Spree::Order, :approver)
     end
 
     def cleanup_admin_user_resources
       return if self.class != Spree.admin_user_class
 
-      # resources to nullify. Both halves of a polymorphic actor go together —
-      # a type left behind names a class no id points at.
+      # resources to nullify.
       # TODO: the remaining plain foreign keys become polymorphic in 6.1, at
       # which point these can be `dependent: :nullify` on the associations.
-      canceled_orders.update_all(canceler_id: nil, canceler_type: nil, updated_at: Time.current)
-      created_orders.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
-      refunded_refunds.update_all(refunder_id: nil, refunder_type: nil, updated_at: Time.current)
-      created_returns.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
-      created_exchanges.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
-      created_claims.update_all(created_by_id: nil, created_by_type: nil, updated_at: Time.current)
+      clear_actor(Spree::Order, :canceler)
+      clear_actor(Spree::Order, :created_by)
+      clear_actor(Spree::Refund, :refunder)
+      clear_actor(Spree::Return, :created_by)
+      clear_actor(Spree::Exchange, :created_by)
+      clear_actor(Spree::Claim, :created_by)
       created_gift_cards.update_all(created_by_id: nil, updated_at: Time.current)
       created_gift_card_batches.update_all(created_by_id: nil, updated_at: Time.current)
       created_store_credits.update_all(created_by_id: nil, updated_at: Time.current)
@@ -108,6 +107,25 @@ module Spree
 
       # resources to destroy
       exports.destroy_all
+    end
+
+    # Erases this user from one polymorphic actor column, clearing both halves
+    # together — a type left behind names a class no id points at.
+    #
+    # Matched on the id with either this class or no class at all, because a
+    # row written before the type column existed carries only the id until
+    # `spree:upgrade:backfill_actor_types` runs. Skipping those would leave a
+    # deleted person's id on the record through exactly the upgrade window the
+    # backfill exists for. The id alone cannot collide here: it is paired with
+    # a type that is ours or absent, and absent meant an admin user.
+    #
+    # @param model [Class]
+    # @param name [Symbol] the acted_by association
+    def clear_actor(model, name)
+      model.
+        where(:"#{name}_id" => id).
+        where(:"#{name}_type" => [self.class.polymorphic_name, nil]).
+        update_all(:"#{name}_id" => nil, :"#{name}_type" => nil, :updated_at => Time.current)
     end
   end
 end
