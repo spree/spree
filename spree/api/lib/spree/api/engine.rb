@@ -2,6 +2,8 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
+require_relative 'agent_write_schemas'
+require_relative 'agent_resource_map'
 
 module Spree
   module Api
@@ -17,6 +19,14 @@ module Spree
       initializer 'spree.api.request_size_limit' do |app|
         require_relative 'middleware/request_size_limit'
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
+      end
+
+      # The resources agents may read and write are derived from the admin
+      # controllers themselves (see Spree::Api::AgentResourceMap). Rebuilt on
+      # every reload, because a controller edited in development changes what
+      # the map should say.
+      config.to_prepare do
+        Spree::Api::AgentResourceMap.install
       end
 
       # Add API event subscribers
