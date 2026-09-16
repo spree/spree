@@ -195,14 +195,33 @@ module Spree
 
         # Fills the map once, from whatever `deriver` was registered.
         #
+        # Under a mutex, because the deriver rebuilds in place — it clears the
+        # map and registers each entry — so a second thread reading between
+        # those two moments would see an empty map and report every resource
+        # as unknown.
+        #
+        # The flag is cleared again if the deriver raises: the map is empty by
+        # then, and leaving it marked derived would answer "unknown resource"
+        # for the rest of the process, since `stale!` only runs at boot and on
+        # reload. A failed derivation is retried by the next caller instead.
+        #
         # @return [void]
         def derive!
           return if @derived || deriver.nil?
 
-          # Set before calling, so a deriver that reads the map while filling
-          # it does not recurse.
-          @derived = true
-          deriver.call
+          derive_mutex.synchronize do
+            return if @derived
+
+            # Set before calling, so a deriver that reads the map while filling
+            # it does not recurse.
+            @derived = true
+            begin
+              deriver.call
+            rescue StandardError
+              @derived = false
+              raise
+            end
+          end
         end
 
         # Resources this caller may read, so a tool description lists only what
@@ -218,6 +237,10 @@ module Spree
 
         def entries
           @entries ||= {}
+        end
+
+        def derive_mutex
+          @derive_mutex ||= Mutex.new
         end
       end
     end

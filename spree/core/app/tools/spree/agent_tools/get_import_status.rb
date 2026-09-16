@@ -6,6 +6,8 @@ module Spree
     # why did those rows fail? Both are tedious to assemble from the imports
     # page and easy to say in a sentence.
     class GetImportStatus < Spree::AgentTools::ImportTool
+      # How many failed rows are read to work out why they failed.
+      SCANNED_ROW_LIMIT = 200
       FAILED_ROW_SAMPLE = 5
 
       tool_name 'get_import_status'
@@ -45,15 +47,23 @@ module Spree
 
       # Grouped so the assistant can say "12 rows failed because the SKU was
       # missing" rather than reciting every row.
+      #
+      # Counted over a sample rather than the whole failure set, because an
+      # import that failed wholesale has as many rows as the file did. The
+      # counts therefore say `rows_in_sample`, not `rows`: reporting a sample
+      # as a total would have the assistant tell the merchant twelve rows
+      # failed when twelve hundred did.
       def failure_reasons(import)
-        failed = import.rows.failed.limit(200)
+        failed = import.rows.failed.limit(SCANNED_ROW_LIMIT).to_a
         return if failed.empty?
 
-        failed.filter_map { |row| row.validation_errors.presence }
-              .tally
-              .sort_by { |_reason, count| -count }
-              .first(FAILED_ROW_SAMPLE)
-              .map { |reason, count| { reason: reason, rows: count } }
+        reasons = failed.filter_map { |row| row.validation_errors.presence }
+                        .tally
+                        .sort_by { |_reason, count| -count }
+                        .first(FAILED_ROW_SAMPLE)
+                        .map { |reason, count| { reason: reason, rows_in_sample: count } }
+
+        { scanned: failed.size, total_failed: import.rows.failed.count, reasons: reasons }
       end
     end
   end
