@@ -6,12 +6,14 @@ import { useTranslation } from 'react-i18next'
 /**
  * Which agreement priced this line, as a link to it. The price list is the
  * one stamped on the line, never re-resolved; the catalog is that list's
- * current owner. Renders nothing for a shop-price or hand-negotiated line.
+ * current owner.
  */
 export function LineItemPriceSource({ lineItem }: { lineItem: LineItem }) {
   const { t } = useTranslation()
   const { storeId } = useStore()
 
+  // A list a catalog owns is the catalog, a standalone list stands for
+  // itself, and a shop-price or hand-negotiated line has nothing to point at.
   if (lineItem.catalog_id) {
     return (
       <Link
@@ -24,9 +26,7 @@ export function LineItemPriceSource({ lineItem }: { lineItem: LineItem }) {
         })}
       </Link>
     )
-  }
-
-  if (lineItem.price_list_id) {
+  } else if (lineItem.price_list_id) {
     return (
       <Link
         to="/$storeId/products/price-lists/$priceListId"
@@ -38,7 +38,7 @@ export function LineItemPriceSource({ lineItem }: { lineItem: LineItem }) {
         })}
       </Link>
     )
+  } else {
+    return null
   }
-
-  return null
 }

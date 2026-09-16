@@ -150,7 +150,7 @@ module Spree
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).
-          # Variant prices and each line's price list are preloaded here rather
+          # Variant prices and each line's price list are named here rather
           # than via scope_includes, which this override bypasses; the
           # serializer reads both per row.
           def scope
@@ -193,8 +193,9 @@ module Spree
           # Variant prices ride along because the admin line-item serializer
           # reads the base catalog price for every row (the negotiated-price
           # comparison); without it each line costs its own price query. Each
-          # line's price list and its catalog do the same for the agreement
-          # that priced the row.
+          # line's price list and its catalog are named for the same reason —
+          # stated rather than left to ar_lazy_preload, which happens to cover
+          # them today.
           def collection_includes
             # `market` is the withdrawal deadline's other input. Fulfillments
             # are loaded with their selected rate because the freight summary
