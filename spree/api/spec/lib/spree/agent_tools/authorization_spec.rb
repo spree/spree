@@ -116,6 +116,42 @@ RSpec.describe 'assistant authorization' do
       end
     end
 
+    # The stock catalog grants writes as `:manage`, which covers deletion —
+    # but an ability can be replaced, and a host app that grants `:update`
+    # without `:destroy` means it. A deletion checked as an update would go
+    # straight through.
+    context 'when the admin may edit a product but not delete one' do
+      let(:ability) do
+        Class.new do
+          include CanCan::Ability
+
+          def initialize(*)
+            can :read, Spree::Product
+            can :update, Spree::Product
+          end
+
+          def permission_keys
+            Spree.permissions.catalog_keys
+          end
+        end.new
+      end
+
+      it 'refuses the destroy workflow' do
+        destroy = Spree.agent_tools.available_for(context).
+                  find { |candidate| candidate.tool_name == 'products_destroy' }
+        result = destroy.call(product: visible.prefixed_id)
+
+        expect(result[:error]).to be_present
+        expect(visible.reload).to be_present
+      end
+
+      it 'still allows the edit workflows' do
+        result = tool.call(product: visible.prefixed_id)
+
+        expect(result[:error]).to be_nil
+      end
+    end
+
     # The rule that matters, and the one a `can :manage` fixture hides:
     # reading every product and editing one is an ordinary shape for a
     # marketplace role, and a write tool that only checks readability would
