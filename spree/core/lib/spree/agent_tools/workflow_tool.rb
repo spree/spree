@@ -148,12 +148,12 @@ module Spree
         resolved = resolve_arguments(arguments)
         return resolved if resolved.is_a?(Hash) && resolved[:error]
 
-        keywords = resolved.merge(principal_arguments).merge(context_arguments)
-
-        refusal = unauthorized_record(keywords)
+        refusal = unauthorized_record(resolved)
         return refusal if refusal
 
-        run(keywords)
+        keywords = resolved.merge(principal_arguments).merge(context_arguments)
+
+        run(keywords, subject: subject_record(resolved))
       rescue ArgumentError => e
         { error: e.message }
       end
@@ -163,12 +163,12 @@ module Spree
       #
       # @param arguments [Hash]
       # @return [String]
-      def summary(arguments)
+      def summary(arguments, subject: nil)
         return self.class.summary_override.call(context, arguments) if self.class.summary_override
 
         action = workflow_class.workflow_key.tr('.', ' ').humanize
-        subject = subject_summary(arguments)
-        [action, subject].compact.join(' ')
+        subject ||= subject_record(arguments)
+        [action, label_for(subject)].compact.join(' ')
       end
 
       private
@@ -180,24 +180,35 @@ module Spree
       # clicking. Every record the workflow was handed is checked, not just the
       # subject, since a cancellation reason from another seller is as much a
       # leak as the order itself.
-      def unauthorized_record(keywords)
-        keywords.each_value do |value|
-          next unless value.is_a?(ActiveRecord::Base)
-
-          refusal = unauthorized(:update, value)
+      def unauthorized_record(arguments)
+        records(arguments).each do |record|
+          refusal = unauthorized(:update, record)
           return refusal if refusal
         end
 
         nil
       end
 
-      def run(keywords)
-        subject = keywords.values.find { |value| value.is_a?(ActiveRecord::Base) }
+      # Only what the caller named. The store and the principal are injected
+      # from the credential, so checking them would ask whether the caller may
+      # "update" their own store or their own user — which an order-desk role
+      # legitimately may not, and which has nothing to do with the write they
+      # actually asked for.
+      def records(arguments)
+        arguments.values.select { |value| value.is_a?(ActiveRecord::Base) }
+      end
 
+      # The record the write is about, for the lock and the confirmation line.
+      def subject_record(arguments)
+        records(arguments).first
+      end
+
+      def run(keywords, subject: nil)
         result = with_subject_lock(subject) { workflow_class.call(**keywords) }
 
         if result.success?
-          { summary: summary(keywords), record: record_result(result.value) }
+          { summary: summary(keywords, subject: result.value.is_a?(ActiveRecord::Base) ? result.value : subject),
+            record: record_result(result.value) }
         else
           { error: error_text(result) }
         end
@@ -309,8 +320,7 @@ module Spree
         nil
       end
 
-      def subject_summary(arguments)
-        record = arguments.values.find { |value| value.is_a?(ActiveRecord::Base) }
+      def label_for(record)
         return if record.nil?
 
         record.try(:number) || record.try(:name) || record.try(:prefixed_id)

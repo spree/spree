@@ -78,6 +78,44 @@ RSpec.describe 'assistant authorization' do
       expect(visible.reload.status).to eq('draft')
     end
 
+    # A create workflow takes `store:`, and the principal is injected into
+    # `created_by:`. Neither is something the caller named, so neither is what
+    # the permission check is about — an order desk may cancel an order
+    # without being allowed to "update" the store it belongs to or the user
+    # they are signed in as.
+    context 'when the workflow takes an injected store and principal' do
+      let(:ability) do
+        Class.new do
+          include CanCan::Ability
+
+          def initialize(*)
+            can :manage, Spree::Product
+            can :read, Spree::Store
+          end
+
+          def permission_keys
+            %w[read_products write_products]
+          end
+        end.new
+      end
+
+      it 'creates without demanding permission over the store or the actor' do
+        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'products_create' }
+        result = tool.call(attributes: { 'name' => "Agent Made #{SecureRandom.hex(3)}" })
+
+        expect(result[:error]).to be_nil
+        expect(result.dig(:record, :title)).to start_with('Agent Made')
+      end
+
+      it 'names the created record in the summary, not the store' do
+        tool = Spree.agent_tools.available_for(context).find { |t| t.tool_name == 'products_create' }
+        result = tool.call(attributes: { 'name' => 'Summary Subject' })
+
+        expect(result[:summary]).to include('Summary Subject')
+        expect(result[:summary]).not_to include(store.name)
+      end
+    end
+
     # The rule that matters, and the one a `can :manage` fixture hides:
     # reading every product and editing one is an ordinary shape for a
     # marketplace role, and a write tool that only checks readability would
