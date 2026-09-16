@@ -11,15 +11,18 @@ module Spree
                   'describe_reporting first for the exact names this store has.'
       permission 'read_reports'
 
-      param :metrics, type: :array, description: 'Metric names, e.g. ["revenue", "orders"]', required: true
-      param :dimensions, type: :array,
+      param :metrics, type: :array, items: :string,
+                      description: 'Metric names, e.g. ["orders", "net_sales"]', required: true
+      param :dimensions, type: :array, items: :string,
                          description: 'Dimensions to group by, as named by describe_reporting ' \
                                       '(e.g. ["completed_at", "channel"]). Omit for a single total.',
                          required: false
       param :time_range, type: :object,
                          description: 'A preset such as {"preset": "last_30_days"}, or {"from": "2026-01-01", "to": "2026-03-31"}',
                          required: false
-      param :filters, type: :array, description: 'Dimension filters, e.g. [{"dimension": "channel", "values": ["web"]}]', required: false
+      param :filters, type: :array, items: :object,
+                      description: 'Dimension filters, e.g. [{"dimension": "channel", "values": ["web"]}]',
+                      required: false
       param :sort, description: 'Metric or dimension to sort by, prefixed with - for descending', required: false
       param :limit, type: :integer, description: 'Maximum rows to return (default 50)', required: false
       param :currency, description: 'Currency for money metrics; defaults to the store currency', required: false
