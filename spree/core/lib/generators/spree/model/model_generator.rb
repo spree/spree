@@ -25,7 +25,24 @@ module Spree
                  default: false,
                  desc: 'Include Spree::HasCustomFields and Spree::Metadata concerns'
 
-    desc 'Creates a new Spree model with prefixed IDs and Spree.base_class parent'
+    # On by default so every new resource is observable from the moment it
+    # exists — subscribers and webhooks both hang off these events, and a
+    # model that publishes nothing is invisible to integrations.
+    class_option :lifecycle_events,
+                 type: :boolean,
+                 default: true,
+                 desc: 'Publish created/updated/deleted events'
+
+    # Store scoping is the default because commerce records belong to a store:
+    # catalog, configuration and orders are all per-store. Opt out with
+    # --no-store-scoped only for genuinely global reference data (countries,
+    # states, roles), which is rare enough to be the explicit case.
+    class_option :store_scoped,
+                 type: :boolean,
+                 default: true,
+                 desc: 'Scope the model to a store'
+
+    desc 'Creates a new Spree model'
 
     def create_module_file
       return
@@ -42,6 +59,28 @@ module Spree
 
       def custom_fields?
         options[:custom_fields]
+      end
+
+      def lifecycle_events?
+        options[:lifecycle_events]
+      end
+
+      # Whether the record belongs to a store, however that reference got
+      # there: the concern below, or a `store:references` the caller passed.
+      # Uniqueness and indexes key off this, so a value stays unique within a
+      # store rather than across the whole installation.
+      def store_scoped?
+        options[:store_scoped] || declares_store_reference?
+      end
+
+      # The concern is what adds `belongs_to :store`, so a model that already
+      # declares one must not include it as well.
+      def includes_store_concern?
+        options[:store_scoped] && !declares_store_reference?
+      end
+
+      def declares_store_reference?
+        attributes.any? { |attribute| attribute.name == 'store' }
       end
 
       def class_path

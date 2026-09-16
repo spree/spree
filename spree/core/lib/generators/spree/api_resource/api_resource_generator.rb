@@ -76,7 +76,7 @@ module Spree
     # the second run with "Spree::Brand is already used in your application".
     class_option :skip_collision_check, type: :boolean, default: true, desc: false
 
-    desc 'Scaffold a complete v3-conformant API resource (model + migration + controllers + serializers + routes + factory + specs)'
+    desc 'Creates a new Spree API resource'
 
     # --- Owned-once gating ---
     #
@@ -171,8 +171,10 @@ module Spree
 
       routes_file = api_routes_path
 
+      # An installed gem is read-only, which is the normal case: a host app
+      # declares its own routes instead, through the engine's route hook.
       unless File.exist?(routes_file) && File.writable?(routes_file)
-        say_status :skip, "routes.rb at #{routes_file} (not writable — only edge installs can modify gem source)", :yellow
+        draw_app_routes
         return
       end
 
@@ -180,11 +182,67 @@ module Spree
       inject_route_for(:admin, admin_route_line) if options[:admin]
     end
 
+    no_tasks do
+    # A host app declares its API routes in config/routes.rb, inside the
+    # engine's route hook that spree-starter ships ready to fill in. The
+    # block must be registered before the engine draws its routes, which is
+    # why it lives in routes.rb rather than an initializer.
+    def draw_app_routes
+      path = 'config/routes.rb'
+      full = File.join(destination_root, path)
+
+      unless File.exist?(full)
+        say_status :skip, "#{path} not found — add the routes by hand", :yellow
+        return
+      end
+
+      unless File.read(full).include?('Spree::Core::Engine.add_routes')
+        say_status :skip, "#{path} has no `Spree::Core::Engine.add_routes` block — add the routes by hand", :yellow
+        return
+      end
+
+      append_app_route(path, :store, store_route_line.strip) if options[:store]
+      append_app_route(path, :admin, admin_route_line.strip) if options[:admin]
+    end
+
+    # Inserts one `resources` line into the named namespace. Idempotent: a
+    # resource already declared there is left alone, so re-runs are safe.
+    def append_app_route(path, namespace, route_line)
+      full = File.join(destination_root, path)
+      content = File.read(full)
+
+      # Confined to the engine's route hook: an application may well have its
+      # own `namespace :admin` earlier in the file, and a route inserted there
+      # would never be drawn on the engine.
+      hook = content[/^(\s*)Spree::Core::Engine\.add_routes do\n.*?^\1end\n/m]
+      unless hook
+        say_status :skip, "#{path} (no `Spree::Core::Engine.add_routes` block — add `#{route_line}` by hand)", :yellow
+        return
+      end
+
+      match = hook.match(/^(\s*)namespace :#{namespace} do\n/)
+      unless match
+        say_status :skip, "#{path} (no :#{namespace} namespace — add `#{route_line}` by hand)", :yellow
+        return
+      end
+
+      block = hook[match.end(0)..].to_s[/\A.*?^#{match[1]}end$/m].to_s
+      if block.include?(route_line)
+        say_status :identical, "#{path} (#{namespace}: #{route_line})", :blue
+        return
+      end
+
+      updated_hook = hook.sub(match[0], "#{match[0]}#{match[1]}  #{route_line}\n")
+      File.write(full, content.sub(hook, updated_hook))
+      say_status :route, "#{path} (#{namespace}: #{route_line})", :green
+    end
+    end
+
     def print_summary
       say ''
       say "✓ Generated Spree::#{bare_class_name} API resource", :green
       say ''
-      say "  Prefixed ID:  #{id_prefix}_xxxxxxxxxx  (edit `has_prefix_id` in the model to change)"
+      say "  Prefixed ID:  #{id_prefix}_xxxxxxxxxx"
       if store_external_name != bare_class_name
         say "  Store API:    /api/v3/store/#{store_external_plural}  (aliased from #{bare_class_name})"
       elsif options[:store]
@@ -196,9 +254,9 @@ module Spree
       say '    1. Review the generated model — add validations, scopes, callbacks'
       say '    2. Apply the migration:  pnpm exec spree migrate'
       say '    3. Set up authorization (CanCanCan ability) for the resource'
-      say '    4. Decide whether this resource is store-scoped (add `has_many` on Store)'
+      say "    4. Add `has_many :#{plural_name}` to Spree::Store" if store_scoped?
       if options[:store] || options[:admin]
-        say '    5. Run the specs:  pnpm exec spree exec bundle exec rspec spec/controllers/spree/api/v3/'
+        say "    #{store_scoped? ? 5 : 4}. Run the specs:  pnpm exec spree rspec spec/controllers/spree/api/v3/"
       end
       say ''
     end
