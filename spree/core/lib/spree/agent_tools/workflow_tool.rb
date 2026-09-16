@@ -140,7 +140,7 @@ module Spree
         resolved = resolve_arguments(arguments)
         return resolved if resolved.is_a?(Hash) && resolved[:error]
 
-        keywords = resolved.merge(principal_arguments)
+        keywords = resolved.merge(principal_arguments).merge(context_arguments)
 
         run(keywords)
       rescue ArgumentError => e
@@ -208,6 +208,11 @@ module Spree
         schema.principal_parameters.index_with { context.principal }
       end
 
+      # Tenancy comes from the credential, never from a parameter.
+      def context_arguments
+        schema.context_parameters.index_with { context.store }
+      end
+
       # Turns the caller's JSON arguments into what `perform` expects,
       # resolving every model-typed parameter from its prefixed id.
       #
@@ -237,12 +242,41 @@ module Spree
 
       # Resolves a prefixed id within the caller's store, through the resource
       # map — so tenancy is answered the same way every read is.
+      #
+      # A model the map does not hold is one with no store scoping of its own
+      # (a certificate belongs to a company, a submission to a seller). Those
+      # resolve through the mapped parent, so the id still has to belong to
+      # this store; a model with neither is not resolvable and the caller is
+      # told so rather than being handed another store's record.
       def find_record(model_name, value)
-        entry = ResourceMap.all.find { |candidate| candidate.model_name == model_name }
-        relation = entry ? entry.scope_for(context) : model_name.constantize.for_store(context.store)
+        relation = store_scoped_relation(model_name)
+        return if relation.nil?
 
         relation.find_by_prefix_id(value)
       rescue StandardError
+        nil
+      end
+
+      def store_scoped_relation(model_name)
+        entry = ResourceMap.all.find { |candidate| candidate.model_name == model_name }
+        return entry.scope_for(context) if entry
+
+        parent_scoped_relation(model_name.constantize)
+      end
+
+      # Narrows an unscoped model through whichever of its parents the map
+      # knows, so `certificate` is looked up among this store's companies'
+      # certificates rather than every store's.
+      def parent_scoped_relation(model_class)
+        model_class.reflect_on_all_associations(:belongs_to).each do |association|
+          next if association.polymorphic?
+
+          entry = ResourceMap.all.find { |candidate| candidate.model_name == association.klass.name }
+          next if entry.nil?
+
+          return model_class.where(association.foreign_key => entry.scope_for(context).select(:id))
+        end
+
         nil
       end
 
