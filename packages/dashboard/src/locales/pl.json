@@ -4,6 +4,10 @@
       "delete_image": "Usuń obraz",
       "edit_media": "Edytuj multimedia"
     },
+    "actors": {
+      "api_key": "Klucz API",
+      "unnamed": "Bez nazwy"
+    },
     "allowed_origins": {
       "add_cta": "Dodaj dozwolone źródło",
       "create_description": "Przeglądarki wczytane z tego źródła mogą wywoływać API administratora. Lista dozwolonych źródeł CORS oraz sesja cookie administratora opierają się na tej liście — utrzymuj ją zwięzłą.",
@@ -30,10 +34,10 @@
         "never_used": "Nigdy",
         "revoked": "Unieważniony"
       },
-      "by_email": "przez {{email}}",
       "create_key_cta": "Utwórz klucz",
       "create_sheet_description": "Wybierz typ klucza, a następnie zakresy, których może używać.",
       "create_sheet_title": "Utwórz klucz API",
+      "created_by": "przez {{actor}}",
       "delete_confirm": {
         "message": "Spowoduje to trwałe usunięcie klucza. Jeśli możesz chcieć przywrócić dostęp później, lepiej unieważnij klucz.",
         "title": "Usunąć klucz?"

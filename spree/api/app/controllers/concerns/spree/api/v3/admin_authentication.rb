@@ -15,6 +15,17 @@ module Spree
           Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
         end
 
+        # A key-authenticated write records the key: it is the thing that gets
+        # named, scoped and revoked, so it is what an order's `canceler` or a
+        # receipt's `received_by` should point at. A JWT request records the
+        # admin. When both credentials are present the JWT user wins here too,
+        # matching how permissions resolve below.
+        #
+        # @return [Object, nil]
+        def current_actor
+          try_spree_current_user || @current_api_key
+        end
+
         # API-key-only requests bypass CanCanCan: the ScopedAuthorization
         # concern is the authoritative gate (read_/write_ scopes per resource).
         # JWT admin users keep CanCanCan abilities; if both credentials are

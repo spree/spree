@@ -181,6 +181,7 @@ module Spree
         admin_catalog_order_minimum_serializer: 'Spree::Api::V3::Admin::CatalogOrderMinimumSerializer',
         admin_tax_exemption_certificate_serializer: 'Spree::Api::V3::Admin::TaxExemptionCertificateSerializer',
         admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
+        admin_actor_serializer: 'Spree::Api::V3::Admin::ActorSerializer',
         admin_seller_team_member_serializer: 'Spree::Api::V3::Admin::SellerTeamMemberSerializer',
         seller_serializer: 'Spree::Api::V3::SellerSerializer',
         seller_profile_serializer: 'Spree::Api::V3::Seller::ProfileSerializer',

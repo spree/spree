@@ -45,6 +45,7 @@ module Spree
                                :reports,
                                :translatable_resources,
                                :taggable_types,
+                               :actor_classes,
                                :custom_fields,
                                :reporting,
                                :analytics_events,
@@ -103,6 +104,13 @@ module Spree
       initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
         # Initialize subscribers array early so engines can add subscribers via initializers
         app.config.spree.subscribers = []
+      end
+
+      # Seeded before application initializers so an extension registering an
+      # actor class has something to append to. The defaults are unioned in
+      # after initialization, where Spree.admin_user_class is finally known.
+      initializer 'spree.register.actor_classes', before: :load_config_initializers do |app|
+        app.config.spree.actor_classes = []
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|
@@ -523,6 +531,19 @@ module Spree
           'Spree::Product',
           'Spree::Order',
           Spree.customer_class.to_s
+        ]
+
+        # Models that may be recorded as having performed an action — the
+        # vocabulary an `acted_by` association's `*_type` column is validated
+        # against. Extend in an app initializer to register an App or bot
+        # class, which must include Spree::Actor:
+        #   Rails.application.config.spree.actor_classes << 'MyApp::App'.
+        #
+        # Unioned rather than assigned, so what an initializer registered
+        # above survives.
+        Rails.application.config.spree.actor_classes |= [
+          Spree.admin_user_class.to_s,
+          'Spree::ApiKey'
         ]
 
         Rails.application.config.spree.custom_fields.types = [

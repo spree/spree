@@ -4,6 +4,10 @@
       "delete_image": "Bild löschen",
       "edit_media": "Medien bearbeiten"
     },
+    "actors": {
+      "api_key": "API-Schlüssel",
+      "unnamed": "Ohne Namen"
+    },
     "allowed_origins": {
       "add_cta": "Erlaubten Ursprung hinzufügen",
       "create_description": "Browser, die von diesem Ursprung geladen werden, können die Admin-API aufrufen. Sowohl die CORS-Zulassungsliste als auch die Admin-Cookie-Sitzung stützen sich auf diese Liste – halten Sie sie restriktiv.",
@@ -30,10 +34,10 @@
         "never_used": "Nie",
         "revoked": "Widerrufen"
       },
-      "by_email": "von {{email}}",
       "create_key_cta": "Schlüssel erstellen",
       "create_sheet_description": "Wählen Sie einen Schlüsseltyp und anschließend die Berechtigungen aus, die er verwenden darf.",
       "create_sheet_title": "API-Schlüssel erstellen",
+      "created_by": "von {{actor}}",
       "delete_confirm": {
         "message": "Dadurch wird der Schlüssel dauerhaft entfernt. Bevorzugen Sie das Widerrufen, falls Sie den Zugriff später wiederherstellen möchten.",
         "title": "Schlüssel löschen?"

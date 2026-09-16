@@ -975,6 +975,32 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['cancel_reason_id']).to be_nil
     end
 
+    describe 'who it records as the canceler' do
+      it 'names the signed-in admin on a JWT request' do
+        subject
+
+        expect(order.reload.canceler).to eq(admin_user)
+        expect(order.canceler_type).to eq(Spree.admin_user_class.to_s)
+        expect(json_response['canceler_id']).to eq(admin_user.prefixed_id)
+        expect(json_response['canceler_type']).to eq('admin_user')
+      end
+
+      # The point of the conversion: before it, a key-authenticated cancel
+      # recorded nobody at all.
+      context 'when a secret API key made the call' do
+        let(:headers) { api_key_headers }
+
+        it 'names the key' do
+          subject
+
+          expect(order.reload.canceler).to eq(secret_api_key)
+          expect(order.canceler_type).to eq('Spree::ApiKey')
+          expect(json_response['canceler_id']).to eq(secret_api_key.prefixed_id)
+          expect(json_response['canceler_type']).to eq('api_key')
+        end
+      end
+    end
+
     context 'with a reason and note' do
       let(:reason) { create(:order_cancellation_reason, store: store, name: 'Out of stock') }
       let(:params) do

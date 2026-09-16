@@ -12,6 +12,7 @@ module Spree
                    receivable_type: [:string, enum: %w[purchase_order stock_transfer]],
                    receivable_id: :string,
                    received_by_id: 'string | null',
+                   received_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    items_count: :number,
                    quantity_accepted_total: :number,
                    quantity_rejected_total: :number,
@@ -31,9 +32,7 @@ module Spree
             receipt.receivable&.prefixed_id
           end
 
-          attribute :received_by_id do |receipt|
-            receipt.received_by.try(:prefixed_id)
-          end
+          actor_attributes :received_by
 
           attribute :items_count do |receipt|
             receipt.items.size
