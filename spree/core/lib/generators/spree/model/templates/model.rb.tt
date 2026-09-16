@@ -1,5 +1,9 @@
 module Spree
   class <%= class_name.demodulize %> < <%= parent_class_name %>
+<% if store_scoped? -%>
+    include Spree::SingleStoreResource
+
+<% end -%>
 <% if custom_fields? -%>
     include Spree::HasCustomFields
     include Spree::Metadata
@@ -10,7 +14,9 @@ module Spree
 
 <% end -%>
     has_prefix_id :<%= id_prefix %>
-
+<% if lifecycle_events? -%>
+    publishes_lifecycle_events
+<% end -%>
 <% attributes.select(&:reference?).each do |attribute| -%>
 <% if attribute.polymorphic? -%>
     belongs_to :<%= attribute.name %>, polymorphic: true
@@ -38,10 +44,10 @@ module Spree
     has_secure_password
 <% end -%>
 <% required_attrs = attributes.reject { |a| a.reference? || a.type == :boolean || a.token? || a.attachment? || a.attachments? || a.rich_text? || a.password_digest? } -%>
-<% if required_attrs.any? %>
-<% required_attrs.each do |attr| -%>
-    validates :<%= attr.name %>, presence: true<% if attr.has_uniq_index? %>, uniqueness: { scope: spree_base_uniqueness_scope }<% end %>
+<% if required_attrs.any? -%>
 
+<% required_attrs.each do |attr| -%>
+    validates :<%= attr.name %>, presence: true<% if attr.has_uniq_index? %>, uniqueness: { scope: [<%= ':store_id, ' if store_scoped? %>*spree_base_uniqueness_scope] }<% end %>
 <% end -%>
 <% end -%>
 <% ransackable = attributes.reject { |a| a.reference? || a.attachment? || a.attachments? || a.rich_text? || a.token? || a.password_digest? }.map(&:name) -%>

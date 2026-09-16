@@ -25,7 +25,24 @@ module Spree
                  default: false,
                  desc: 'Include Spree::HasCustomFields and Spree::Metadata concerns'
 
-    desc 'Creates a new Spree model with prefixed IDs and Spree.base_class parent'
+    # On by default so every new resource is observable from the moment it
+    # exists — subscribers and webhooks both hang off these events, and a
+    # model that publishes nothing is invisible to integrations.
+    class_option :lifecycle_events,
+                 type: :boolean,
+                 default: true,
+                 desc: 'Publish created/updated/deleted events'
+
+    # Store scoping is the default because commerce records belong to a store:
+    # catalog, configuration and orders are all per-store. Opt out with
+    # --no-store-scoped only for genuinely global reference data (countries,
+    # states, roles), which is rare enough to be the explicit case.
+    class_option :store_scoped,
+                 type: :boolean,
+                 default: true,
+                 desc: 'Scope the model to a store'
+
+    desc 'Creates a new Spree model'
 
     def create_module_file
       return
@@ -42,6 +59,16 @@ module Spree
 
       def custom_fields?
         options[:custom_fields]
+      end
+
+      def lifecycle_events?
+        options[:lifecycle_events]
+      end
+
+      # A model that already declares a store reference in its attributes must
+      # not get a second one from the concern.
+      def store_scoped?
+        options[:store_scoped] && attributes.none? { |attribute| attribute.name == 'store' }
       end
 
       def class_path

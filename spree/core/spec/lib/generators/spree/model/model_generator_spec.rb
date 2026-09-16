@@ -82,10 +82,47 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
       expect(result[:model]).not_to include('validates :active')
     end
 
-    it 'adds uniqueness validation scoped to spree_base_uniqueness_scope for :uniq fields' do
+    it 'publishes lifecycle events by default' do
+      result = run_generator(['Brand', 'name:string'])
+
+      expect(result[:model]).to include('publishes_lifecycle_events')
+    end
+
+    it 'omits lifecycle events when --no-lifecycle-events is set' do
+      result = run_generator(['Brand', 'name:string', '--no-lifecycle-events'])
+
+      expect(result[:model]).not_to include('publishes_lifecycle_events')
+    end
+
+    it 'scopes the model to a store by default' do
+      result = run_generator(['Brand', 'name:string'])
+
+      expect(result[:model]).to include('include Spree::SingleStoreResource')
+    end
+
+    it 'omits store scoping when --no-store-scoped is set' do
+      result = run_generator(['Country', 'name:string', '--no-store-scoped'])
+
+      expect(result[:model]).not_to include('Spree::SingleStoreResource')
+    end
+
+    it 'does not add the concern when the attributes already declare a store reference' do
+      result = run_generator(['Brand', 'name:string', 'store:references'])
+
+      expect(result[:model]).not_to include('Spree::SingleStoreResource')
+      expect(result[:model]).to include('belongs_to :store')
+    end
+
+    it 'scopes a uniqueness validation to the store for :uniq fields' do
       result = run_generator(['Brand', 'slug:string:uniq'])
 
-      expect(result[:model]).to include('validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }')
+      expect(result[:model]).to include('validates :slug, presence: true, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }')
+    end
+
+    it 'falls back to spree_base_uniqueness_scope alone when not store-scoped' do
+      result = run_generator(['Country', 'iso:string:uniq', '--no-store-scoped'])
+
+      expect(result[:model]).to include('validates :iso, presence: true, uniqueness: { scope: [*spree_base_uniqueness_scope] }')
     end
   end
 
@@ -158,10 +195,28 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
       expect(result[:migration]).to include('add_index :spree_brands, :deleted_at')
     end
 
-    it 'adds a unique index for :uniq fields' do
+    it 'adds a store reference by default' do
+      result = run_generator(['Brand', 'name:string'])
+
+      expect(result[:migration]).to include('t.references :store, null: false, index: true, foreign_key: false')
+    end
+
+    it 'omits the store reference when --no-store-scoped is set' do
+      result = run_generator(['Country', 'name:string', '--no-store-scoped'])
+
+      expect(result[:migration]).not_to include('t.references :store')
+    end
+
+    it 'scopes a unique index to the store so two stores can reuse a value' do
       result = run_generator(['Brand', 'slug:string:uniq'])
 
-      expect(result[:migration]).to include('add_index :spree_brands, :slug, unique: true')
+      expect(result[:migration]).to include('add_index :spree_brands, [:store_id, :slug], unique: true')
+    end
+
+    it 'adds a plain unique index for :uniq fields when not store-scoped' do
+      result = run_generator(['Country', 'iso:string:uniq', '--no-store-scoped'])
+
+      expect(result[:migration]).to include('add_index :spree_countries, :iso, unique: true')
     end
 
     it 'does not add a foreign key constraint anywhere' do

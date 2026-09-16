@@ -1,6 +1,10 @@
 class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :<%= table_name %><%= primary_key_type %> do |t|
+<% if store_scoped? -%>
+      t.references :store, null: false, index: true, foreign_key: false
+
+<% end -%>
 <% attributes.reject(&:reference?).reject(&:virtual?).each do |attribute| -%>
 <% if attribute.password_digest? -%>
       t.string :password_digest, null: false
@@ -27,8 +31,13 @@ class <%= migration_class_name %> < ActiveRecord::Migration[<%= ActiveRecord::Mi
               name: 'index_<%= table_name %>_on_<%= attribute.name %>'
 <% end -%>
 <% attributes.select(&:has_uniq_index?).reject(&:token?).each do |attribute| -%>
+<% if store_scoped? -%>
+    add_index :<%= table_name %>, [:store_id, :<%= attribute.name %>], unique: true,
+              name: 'index_<%= table_name %>_on_store_id_and_<%= attribute.name %>'
+<% else -%>
     add_index :<%= table_name %>, :<%= attribute.name %>, unique: true,
               name: 'index_<%= table_name %>_on_<%= attribute.name %>'
+<% end -%>
 <% end -%>
 <% attributes.select { |a| a.has_index? && !a.has_uniq_index? && !a.reference? && !a.token? }.each do |attribute| -%>
     add_index :<%= table_name %>, :<%= attribute.name %>
