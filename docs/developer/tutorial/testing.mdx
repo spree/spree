@@ -1,13 +1,154 @@
 ---
 title: Testing
-description: Test the feature at every layer — model and request specs with RSpec, dashboard plugin tests with Vitest, and an end-to-end check with Playwright.
+description: Test the Brands feature at every layer — model and API specs with RSpec, dashboard tests with Vitest, and one end-to-end Playwright pass.
 ---
 
-Each layer of the feature gets the test that suits it: fast Ruby specs for the model and both API endpoints, component tests for the plugin, and one end-to-end pass proving the whole path works.
+Each layer gets the test that suits it: fast backend specs for the model and both APIs, component tests for the dashboard, and one end-to-end pass proving the whole path works.
 
-## What this chapter covers
+Your project arrives with testing already configured — RSpec, FactoryBot, and Spree's own test helpers, including every factory core ships. You can write a spec against `create(:product)` without setting anything up.
 
-- Model and factory setup
-- Request specs for the Admin and Store API endpoints
-- Dashboard plugin tests with Vitest
-- An end-to-end Playwright spec: create an FAQ in the dashboard, see it on the storefront
+## Step 1: Run what the generator wrote
+
+The generator in step 1 already wrote a factory and a controller spec per API side, so this step is mostly filling in rather than starting over:
+
+```text
+server/spec/factories/spree/brand_factory.rb
+server/spec/controllers/spree/api/v3/store/brands_controller_spec.rb
+server/spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
+```
+
+Run them:
+
+```bash
+spree rspec spec/controllers/spree/api/v3/
+```
+
+The generated factory is the starting point for every other spec — always build records through factories rather than creating them directly, so a change to the model does not mean editing fifty specs.
+
+## Step 2: Model specs
+
+Test what you wrote, not what the framework already guarantees. A presence validation on a required column needs no spec; the association behavior you chose does:
+
+```ruby server/spec/models/spree/brand_spec.rb
+RSpec.describe Spree::Brand, type: :model do
+  it 'nullifies the reference instead of deleting products' do
+    brand = create(:brand)
+    product = create(:product, brand: brand)
+
+    brand.destroy
+
+    expect(product.reload.brand_id).to be_nil
+    expect(product).to be_persisted
+  end
+end
+```
+
+Prefer `build` over `create` when a record does not need to hit the database — it is markedly faster across a suite.
+
+## Step 3: Controller specs
+
+Controller specs are where edge cases belong: authorization, scoping, filtering, error shapes. Always `render_views`, so a broken serializer fails the spec rather than passing silently:
+
+```ruby server/spec/controllers/spree/api/v3/store/brands_controller_spec.rb
+RSpec.describe Spree::Api::V3::Store::BrandsController, type: :controller do
+  render_views
+
+  it 'exposes public fields only' do
+    create(:brand, name: 'Wilson')
+
+    get :index, params: { format: :json }
+
+    record = json_response['data'].first
+    expect(record['id']).to start_with('brand_')
+    expect(record).not_to have_key('created_at')
+  end
+
+  it 'filters by name' do
+    create(:brand, name: 'Wilson')
+    create(:brand, name: 'Penn')
+
+    get :index, params: { q: { name_cont: 'wil' }, format: :json }
+
+    expect(json_response['data'].map { |b| b['name'] }).to eq(['Wilson'])
+  end
+end
+```
+
+That second example is worth keeping: it proves the Ransack allowlist from step 1 actually permits `name_cont`. Remove `name` from `whitelisted_ransackable_attributes` and this spec fails, which is exactly what you want.
+
+<Note>
+  Specs run against a store the suite sets up for you, available as `@default_store`. Use it rather than creating another store marked as the default — two of them in one run produce failures that surface far from their cause.
+</Note>
+
+## Step 4: Dashboard tests
+
+The dashboard is a TypeScript app, so its code tests with Vitest:
+
+```bash
+cd apps/dashboard && pnpm test
+```
+
+Test the client wrappers and any logic in your pages. Mock the HTTP layer rather than the client module, so the test exercises the real request path:
+
+```ts apps/dashboard/src/brands/client.test.ts
+import { describe, expect, it } from 'vitest'
+import { BrandsClient } from './client'
+
+describe('BrandsClient', () => {
+  it('lists brands from the admin endpoint', async () => {
+    const result = await BrandsClient.list({ per_page: 10 })
+
+    expect(result.data).toHaveLength(1)
+    expect(result.data[0].name).toBe('Wilson')
+  })
+})
+```
+
+## Step 5: One end-to-end pass
+
+Everything above tests a layer in isolation. One Playwright spec proves the layers are actually connected — create a brand in the dashboard, then see it on the storefront:
+
+```ts apps/dashboard/e2e/brands.spec.ts
+import { expect, test } from '@playwright/test'
+import { login } from './helpers/login'
+
+test('a brand created in the dashboard appears on the storefront', async ({ page }) => {
+  const name = `Wilson ${Date.now()}`
+
+  await login(page)
+  await page.goto('/brands')
+  await page.getByRole('button', { name: /new brand/i }).click()
+  await page.getByLabel(/^name$/i).fill(name)
+  await page.getByRole('button', { name: /create brand/i }).click()
+
+  await expect(page.getByRole('cell', { name })).toBeVisible()
+})
+```
+
+Two conventions matter here:
+
+- **Drive the UI, assert on the UI.** Fill labels, click buttons, check visible text. Avoid waiting on API responses — `expect(...).toBeVisible()` polls until the condition holds, which covers nearly every case and keeps the test from breaking when the API shape changes.
+- **Suffix names with `Date.now()`.** Specs share a database, and a fixed name collides with whatever an earlier run left behind.
+
+## What to run before you push
+
+Run the specs for what you changed rather than the whole suite:
+
+```bash
+spree rspec spec/models/spree/brand_spec.rb
+spree rspec spec/controllers/spree/api/v3/
+```
+
+Pass a file, a directory, or a single example with a line number (`spec/models/spree/brand_spec.rb:12`). Keep the full run for continuous integration, where waiting costs you nothing.
+
+## You're done
+
+You have built one feature through every layer of Spree:
+
+- A model with a Store API and an Admin API, generated in one command
+- A dashboard plugin giving staff a place to manage it
+- Storefront pages rendering it through typed SDK calls
+- Lifecycle events other systems react to
+- Tests at each layer, plus one pass across all of them
+
+From here: [customization reference](/developer/customization/quickstart) for extending core models and workflows, [dashboard customization](/developer/dashboard/customization/quickstart) for deeper plugin work, and [core concepts](/developer/core-concepts/architecture) for how the rest of the platform fits together.

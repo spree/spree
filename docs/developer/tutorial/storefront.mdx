@@ -1,12 +1,131 @@
 ---
 title: Storefront
-description: Render FAQs on the product page — regenerate the SDK types, extend the TypeScript client, and build the component in the Next.js storefront.
+description: Render brands on the Next.js storefront in apps/storefront — call the Store API through @spree/sdk and build the product and brand pages.
 ---
 
-The Store API endpoint becomes typed TypeScript and a component on the product page. This chapter closes the loop from Rails model to customer screen.
+The Store API endpoint from step 1 becomes typed TypeScript and a component on the product page. This step closes the loop from the Server app to the customer’s screen.
 
-## What this chapter covers
+## Step 1: Describe the resource to TypeScript
 
-- The type generation pipeline: serializer to TypeScript types to runtime schemas
-- Extending the SDK client with the new resource
-- Fetching and rendering FAQs on the product detail page in the Next.js storefront
+The storefront lives at `apps/storefront/` and talks to the Store API through `@spree/sdk`. Built-in resources like products and carts already ship typed. A resource you added is new to the SDK, so declare its shape once and reuse it:
+
+```typescript apps/storefront/src/types/brand.ts
+export interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  active: boolean
+}
+```
+
+These are exactly the fields your Store serializer returns — the public ones, without the timestamps the Admin API adds. Keep this file in step with the serializer: it is the contract between the two halves of your project.
+
+<Note>
+  Spree generates the built-in SDK types from its own serializers, which is why `client.products` is typed without you doing anything. That pipeline runs inside the Spree repository, not your app, so a resource you add gets a hand-written interface like the one above.
+</Note>
+
+## Step 2: Call the endpoint
+
+`createClient` gives you a typed Store API client. Built-in resources have methods; custom ones go through `request`, which carries the same authentication, retries and locale defaults:
+
+```typescript apps/storefront/src/lib/spree.ts
+import { createClient } from '@spree/sdk'
+import type { PaginatedResponse } from '@spree/sdk'
+
+const client = createClient({
+  baseUrl: process.env.NEXT_PUBLIC_SPREE_API_URL!,
+  publishableKey: process.env.NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY!,
+})
+
+interface Brand {
+  id: string
+  name: string
+  slug: string | null
+  active: boolean
+}
+
+// Paths are relative to /api/v3/store
+const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+const wilson = await client.request<Brand>('GET', '/brands/wilson')
+```
+
+Only the fields the Store serializer declared come back. Timestamps and anything admin-only are absent by design — that is the serializer split from step 1 doing its job.
+
+## Step 3: Expand brand on products
+
+Because `Spree::Product` now belongs to a brand, product responses can carry it. Ask for it with `expand`:
+
+```typescript
+// Without expand — the id only
+const product = await client.products.get('prod_86Rf07xd4z')
+
+// With expand — the nested brand object
+const withBrand = await client.products.get('prod_86Rf07xd4z', {
+  expand: ['brand'],
+})
+```
+
+Expanding avoids a second round trip per product, which matters on a product listing page.
+
+<Info>
+  For `expand: ['brand']` to work, the Product serializer must declare the association and the model must allowlist it for filtering. Add `brand` to the product's `whitelisted_ransackable_associations` if you also want `?q[brand_name_cont]=wilson`. Every allowlist entry is a query any caller can run, so add only what the storefront needs.
+</Info>
+
+## Step 4: Render it on the product page
+
+In the Next.js storefront, fetch the product with its brand and render the name:
+
+```tsx apps/storefront/src/app/products/[slug]/page.tsx
+import { client } from '@/lib/spree'
+
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await client.products.get(params.slug, { expand: ['brand'] })
+
+  return (
+    <article>
+      {product.brand && (
+        <a href={`/brands/${product.brand.slug}`} className="text-sm text-neutral-500">
+          {product.brand.name}
+        </a>
+      )}
+      <h1>{product.name}</h1>
+      <p>{product.price.display}</p>
+    </article>
+  )
+}
+```
+
+And a brand page listing everything that brand makes:
+
+```tsx apps/storefront/src/app/brands/[slug]/page.tsx
+import { client } from '@/lib/spree'
+
+export default async function BrandPage({ params }: { params: { slug: string } }) {
+  const brand = await client.request<Brand>('GET', `/brands/${params.slug}`)
+  const products = await client.products.list({ brand_id_eq: brand.id })
+
+  return (
+    <section>
+      <h1>{brand.name}</h1>
+      <p>{products.meta.count} products</p>
+      <ul>
+        {products.data.map((product) => (
+          <li key={product.id}>
+            <a href={`/products/${product.slug}`}>{product.name}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+```
+
+`brand_id_eq` is a Ransack predicate, available because `brand_id` is on the product's ransackable allowlist. See [search and filtering](/developer/core-concepts/search-filtering) for the full predicate list.
+
+<Note>
+  The storefront runs on its own dev server. From the project root, `spree dev` starts the API and dashboard; start the storefront alongside them with `cd apps/storefront && pnpm dev`. It reads the API URL and publishable key from `apps/storefront/.env.local`.
+</Note>
+
+## Next step
+
+Customers can see brands. Now let other systems react when they change: [Events](/developer/tutorial/events).
