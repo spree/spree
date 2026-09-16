@@ -5553,3 +5553,91 @@ backed by an index) and that key on its Ransack allowlist, or it cannot be
 declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
+
+
+## 2026-09-15 — Admin MCP ships in 6.0 over a core agent-tool registry; the assistant follows it
+
+Plan: `6.0-mcp-server.md`. Supersedes the "No MCP in 6.0" decision in
+`6.0-dashboard-assistant.md` (2026-08-20) and executes the future-lanes table
+in `5.5-admin-api-cli.md`, whose CLI-first precondition is met now that
+`spree api` has shipped.
+
+**Decision.** The tool registry the assistant branch built
+(`{name, description, params schema, permission key, mutating flag,
+executor}`) moves into `spree_core` as `Spree::AgentTool` /
+`Spree.agent_tools`, beside `Spree.integrations` and `Spree.reporting`, so an
+extension registers a tool without depending on any adapter gem. A new
+optional gem `spree_mcp` mounts the official `mcp` Ruby gem's Streamable HTTP
+transport at `/api/v3/admin/mcp`, authenticates with secret keys and offers
+only the tools the key's scopes permit. The assistant rebases onto the same
+registry afterwards. No new `spree_ai` or `spree_agents` gem.
+
+**Catalog shape.** Never one tool per endpoint. Generic reads and generic
+writes over a resource map derived from the admin controllers, with writable
+schemas read from the generated `admin.yaml`; reporting tools over
+`Spree.reporting`; a short list of task tools only where a job crosses
+records. Writes are scope-gated and confirmed by the MCP client; the
+server-side approval gate stays an assistant feature.
+
+**Consequences for other work.** New admin controllers must declare
+`model_class`, `serializer_class` and `scoped_resource`, and expose their
+workflow through `create_workflow` / `update_workflow`, or the generic tools
+cannot see them. Tool results must stay compact because they land in the
+model's context. No new tools under `Spree::Assistant::Tools`.
+
+
+## 2026-09-16 — Workflows are the agent write tools; exposure is an allowlist in core
+
+Plan: `6.0-mcp-server.md`. Refines the 2026-09-15 entry above.
+
+Reviewing the orders and products controllers showed that the Admin API has
+no direct record writes left on its write paths: the base controller calls
+the declared `create_workflow` / `update_workflow`, every member action calls
+a registered workflow, and a workflow's `perform` keyword signature with its
+YARD `@param` block is a machine-readable contract.
+
+**Decision.** Each exposed workflow is one agent tool with a schema derived
+from `perform`; no hand-written task tools. Exposure is
+`Spree.agent_tools.expose_workflows(<dependency key> => <permission>)` in
+`spree_core`, keyed by `Spree::Dependencies` key so a host app's replacement
+workflow keeps the tool. Generic `create_resource` / `update_resource` /
+`delete_resource` exist only for resources whose controller declares no
+workflow and refuse the rest. Tier 1 services still called from controllers
+are not adapted; they are promoted to workflows over time.
+
+**Consequences for other work.** A new back-office write is a workflow plus
+an allowlist entry in the same PR. `perform` parameters need typed YARD
+docs; record parameters must be models the resource map knows; principal
+parameters keep the established names so they are injected, never accepted
+from a caller. A contract spec fails when an admin controller invokes a
+workflow that is neither exposed nor explicitly excluded.
+
+
+## 2026-09-16 — The API key is an actor; "who did this" associations become polymorphic
+
+Plan: `6.0-action-actors.md`, shipping before `6.0-mcp-server.md`.
+
+Every association that records who performed an action (`canceler`,
+`approver`, `created_by`, `refunder`, `received_by`, …) pointed at the admin
+user class only, so a write made with a secret API key — a warehouse
+connector, an integration, soon any MCP client — recorded nobody.
+
+**Decision.** Those associations are declared with `acted_by`, which makes
+them polymorphic over `Spree.actor_classes` (the admin user class and
+`Spree::ApiKey`; extensions register more). The Admin API passes
+`current_actor` — the signed-in admin or the authenticating key — to
+workflows in place of the user. 6.0 converts the order operations (orders,
+refunds, returns, exchanges, claims, stock receipts: 8 columns on 6 tables);
+the remaining 13 convert in 6.1. Serializers expose `<name>_type` beside
+`<name>_id`. A transitional reader resolves un-backfilled rows through the
+admin user class with a deprecation warning until 6.1. Rejected: user-bound
+personal keys (platforms are retiring them; a connector is not a person) and
+waiting for OAuth (leaves 6.0 key writes unattributed). OAuth, when it comes,
+resolves a token to one of these two actor kinds.
+
+**Consequences for other work.** New "who did this" associations use
+`acted_by`, never `belongs_to … class_name: Spree.admin_user_class`;
+ownership associations that gate visibility (`Import#user`, `Export#user`,
+`SavedReport#user`) keep the plain form. Controllers pass `current_actor`,
+not `try_spree_current_user`, for actor keywords. Workflow principal
+parameters stay `[Object, nil]` and are assigned, not inspected.
