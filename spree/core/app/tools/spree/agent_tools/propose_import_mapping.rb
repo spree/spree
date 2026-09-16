@@ -46,6 +46,13 @@ module Spree
         pairs = sanitize(import, mapping)
         return unknown_fields(import, mapping) if pairs.empty?
 
+        # A pair naming a field or column that does not exist is dropped here
+        # rather than refusing the whole proposal — the valid half is usually
+        # most of it, and a model that misspelled one heading should not have
+        # to resend forty. It is named back, so the model can correct that one
+        # and never believes it was applied.
+        rejected = mapping.to_h.keys.map(&:to_s) - pairs.keys
+
         applied = apply!(import, pairs)
         start_if_ready(import)
 
@@ -56,6 +63,10 @@ module Spree
           # its mapping row did not exist would have the model tell the
           # merchant a column was handled when it was not.
           mapped: applied,
+          # Named back so the model knows exactly what did not land, and why:
+          # `rejected` did not exist on this import, `unmapped` exists but has
+          # no mapping row to write to.
+          rejected: rejected.presence,
           unmapped: (pairs.keys - applied.keys).presence,
           status: import.reload.status,
           # `mapped_fields` returns mapping records, not names.
