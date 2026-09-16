@@ -62,7 +62,7 @@ end
 The `options` hash passed to `eligible?` can include `:user`, `:email`, and other context from the checkout flow.
 
 <Warning>
-Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and in Spree 6 a cart is its own model rather than an unfinished order. A rule guarding on `Spree::Order` alone silently never applies during checkout — the promotion just appears not to work. Every built-in rule accepts both.
+Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and a cart is its own model rather than an unfinished order. A rule guarding on `Spree::Order` alone silently never applies during checkout — the promotion just appears not to work. Every built-in rule accepts both.
 </Warning>
 
 #### Using Preferences

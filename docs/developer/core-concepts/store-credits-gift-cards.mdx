@@ -76,9 +76,7 @@ erDiagram
 
 ### Why a Credit Exists
 
-Store credits carry no category and no type — both were retired in Spree 6.0
-because neither answered a question anything asked. Two fields cover it
-instead:
+Store credits carry no category and no type. Two fields cover it instead:
 
 | Field | What it tells you |
 |-------|-------------------|
@@ -89,8 +87,8 @@ Store credits do not expire; only gift cards carry an expiry, on their own
 record. Which credit is spent first is decided by `Spree::StoreCredit.oldest_first`.
 
 <Note>
-`Spree::StoreCreditCategory` and `Spree::StoreCreditType` survive as deprecated
-shells for one release and are removed in 6.1. Nothing writes them.
+`Spree::StoreCreditCategory` and `Spree::StoreCreditType` still exist as
+deprecated shells for compatibility. Nothing writes them.
 </Note>
 
 ### Store Credit Events
