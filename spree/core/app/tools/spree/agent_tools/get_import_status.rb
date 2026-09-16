@@ -5,7 +5,7 @@ module Spree
     # A merchant who uploaded a file wants one of two answers: is it done, or
     # why did those rows fail? Both are tedious to assemble from the imports
     # page and easy to say in a sentence.
-    class GetImportStatus < Spree::AgentTool
+    class GetImportStatus < Spree::AgentTools::ImportTool
       FAILED_ROW_SAMPLE = 5
 
       tool_name 'get_import_status'
@@ -37,19 +37,6 @@ module Spree
       end
 
       private
-
-      def find_import(id)
-        scope = Spree::AgentTools::ResourceMap.find('imports').scope_for(context)
-        return scope.order(created_at: :desc).first if id.blank?
-
-        scope.find_by_prefix_id(id) || scope.find_by(number: id)
-      rescue ArgumentError, NoMethodError
-        scope.find_by(number: id)
-      end
-
-      def import_kind(import)
-        import.class.name.demodulize.underscore
-      end
 
       # Grouped so the assistant can say "12 rows failed because the SKU was
       # missing" rather than reciting every row.
