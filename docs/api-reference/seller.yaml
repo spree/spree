@@ -420,7 +420,7 @@ paths:
                   avatar_url:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 78
+                  name: Seller 84
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -12334,7 +12334,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND
+                  code: UPS_GROUND_73
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12356,7 +12356,7 @@ paths:
                     currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND
+                  code: UPS_GROUND_74
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12535,7 +12535,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND
+                code: UPS_GROUND_79
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12574,7 +12574,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND
+                code: UPS_GROUND_81
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -13559,8 +13559,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2043250
-                  slug: product-2043250
+                  name: Product 2053250
+                  slug: product-2053250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13803,8 +13803,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2076710
-                slug: product-2076710
+                name: Product 2086710
+                slug: product-2086710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13883,7 +13883,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2108212
+                slug: product-2118212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13996,8 +13996,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 98
-                slug: seller-98
+                name: Seller 104
+                slug: seller-104
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14070,7 +14070,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-100
+                slug: seller-106
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14818,10 +14818,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--3f2ad28104b46cb96632d095e0988286db71eabd
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--426caeebd97229724531c2381d80061adf51f278
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--58f92e4a0da6c87eee1482e9854fe93672b534ab
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14883,8 +14883,12 @@ paths:
               example:
                 data:
                 - currency: USD
+                  settlement_currency: USD
+                  converted: false
                   earned: '40.0'
                   display_earned: "$40.00"
+                  payable: '40.0'
+                  display_payable: "$40.00"
                   paid: '15.0'
                   display_paid: "$15.00"
                   balance: '25.0'
@@ -15665,7 +15669,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 81
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15673,13 +15677,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1859315
-                    sku: SKU-251
+                    name: Product 1869315
+                    sku: SKU-252
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 81
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -15772,7 +15776,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 82
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15780,13 +15784,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 186961
-                  sku: SKU-252
+                  name: Product 187961
+                  sku: SKU-253
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 82
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15886,7 +15890,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 83
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15894,13 +15898,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1873170
-                  sku: SKU-253
+                  name: Product 1883170
+                  sku: SKU-254
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 83
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15980,7 +15984,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 84
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15988,13 +15992,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1887276
-                  sku: SKU-254
+                  name: Product 1897276
+                  sku: SKU-255
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 84
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -16091,6 +16095,553 @@ paths:
                       - name
                 required:
                 - data
+  "/api/v3/seller/master_products":
+    get:
+      summary: List the marketplace catalog
+      tags:
+      - Offers
+      security:
+      - bearer_auth: []
+      description: |
+        The marketplace's own products a seller may list an offer against.
+
+        Read only, and only the products the operator has opened to sellers —
+        a product is closed until they say otherwise. Serialized exactly as
+        the storefront sees it, so a seller compares the offers already on a
+        product without seeing a rival's costs or warehouses.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: catalog listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: prod_UkLWZg9DAJ
+                  name: Shared Lamp
+                  slug: shared-lamp
+                  meta_title:
+                  meta_description:
+                  meta_keywords:
+                  variant_count: 2
+                  available_on:
+                  preorder_ships_at:
+                  purchasable: true
+                  preorder: false
+                  in_stock: false
+                  backorderable: true
+                  available: true
+                  description: Iste temporibus esse veniam et consectetur dolore.
+                    Fuga harum architecto necessitatibus molestiae iusto cumque. Eius
+                    numquam quaerat velit ducimus atque.
+                  description_html: Iste temporibus esse veniam et consectetur dolore.
+                    Fuga harum architecto necessitatibus molestiae iusto cumque. Eius
+                    numquam quaerat velit ducimus atque.
+                  default_variant_id: variant_UkLWZg9DAJ
+                  buy_box_variant_id: variant_UkLWZg9DAJ
+                  thumbnail_url:
+                  tags: []
+                  price:
+                    id: price_UkLWZg9DAJ
+                    amount: '19.99'
+                    amount_in_cents: 1999
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                  seller_id:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        slug:
+                          type: string
+                      required:
+                      - id
+                      - name
+                      - slug
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/master_products/{master_product_id}/variants":
+    post:
+      summary: List an offer
+      tags:
+      - Offers
+      security:
+      - bearer_auth: []
+      description: |
+        Lists this seller's own offer against one of the marketplace's
+        products.
+
+        The offer opens as a draft: putting it on sale is the marketplace's
+        decision, asked for with `submit`. Name a value for every option type
+        the product is sold by, chosen from the values it already carries.
+        Stock levels naming a warehouse that is not this seller's are ignored.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: master_product_id
+        in: path
+        required: true
+        description: Master product ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: offer listed
+          content:
+            application/json:
+              example:
+                id: variant_EfhxLZ9ck8
+                product_id: prod_UkLWZg9DAJ
+                sku: OFFER-NEW
+                options_text: ''
+                track_inventory: true
+                media_count: 0
+                preorder_ships_at:
+                thumbnail_url:
+                purchasable: false
+                in_stock: true
+                backorderable: false
+                preorder: false
+                weight: 0.0
+                height:
+                width:
+                depth:
+                weight_unit: lb
+                dimensions_unit: in
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
+                price:
+                  id: price_EfhxLZ9ck8
+                  amount: '12.5'
+                  amount_in_cents: 1250
+                  compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$12.50"
+                  display_compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                option_values: []
+                status: draft
+                metadata: {}
+                position: 3
+                cost_price:
+                cost_currency: USD
+                barcode:
+                backorder_limit:
+                hs_code:
+                country_of_origin:
+                customs_description:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                preorderable: false
+                delivery_profile_id: fp_UkLWZg9DAJ
+                available_stock: 4
+                total_on_hand: 4
+              schema:
+                "$ref": "#/components/schemas/Variant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sku:
+                  type: string
+                prices:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      amount:
+                        type: string
+                      currency:
+                        type: string
+                stock_levels:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      stock_location_id:
+                        type: string
+                      count_on_hand:
+                        type: integer
+        required: true
+  "/api/v3/seller/variants":
+    get:
+      summary: List your offers
+      tags:
+      - Offers
+      security:
+      - bearer_auth: []
+      description: |
+        Every offer this seller holds, across the marketplace's catalog.
+
+        Rooted in the seller, so another seller's offer on the same product is
+        never listed and its id answers 404. Expand `product` to name what
+        each offer sits on.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Records per page (max 100)
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: offers listed
+          content:
+            application/json:
+              example:
+                data:
+                - id: variant_gbHJdmfrXB
+                  product_id: prod_UkLWZg9DAJ
+                  sku: OFFER-1
+                  options_text: 'Size: S'
+                  track_inventory: true
+                  media_count: 0
+                  preorder_ships_at:
+                  thumbnail_url:
+                  purchasable: false
+                  in_stock: false
+                  backorderable: true
+                  preorder: false
+                  weight: 8.17
+                  height: 129.59
+                  width: 69.54
+                  depth: 133.26
+                  weight_unit: lb
+                  dimensions_unit: in
+                  minimum_order_quantity:
+                  order_multiple:
+                  purchase_unit:
+                  units_per_carton:
+                  price:
+                    id: price_gbHJdmfrXB
+                    amount: '9.99'
+                    amount_in_cents: 999
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$9.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                  seller_id: sel_UkLWZg9DAJ
+                  option_values:
+                  - id: optval_UkLWZg9DAJ
+                    option_type_id: opt_UkLWZg9DAJ
+                    name: size-67
+                    label: S
+                    position: 1
+                    color_code:
+                    option_type_name: foo-size-76
+                    option_type_label: Size
+                    image_url:
+                  status: draft
+                  metadata: {}
+                  position: 2
+                  cost_price: '17.0'
+                  cost_currency: USD
+                  barcode:
+                  backorder_limit:
+                  hs_code:
+                  country_of_origin:
+                  customs_description:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  preorderable: false
+                  delivery_profile_id: fp_UkLWZg9DAJ
+                  available_stock: 0
+                  total_on_hand: 0
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/Variant"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+  "/api/v3/seller/variants/{id}":
+    patch:
+      summary: Update an offer
+      tags:
+      - Offers
+      security:
+      - bearer_auth: []
+      description: |
+        Edits this seller's own offer.
+
+        `status` and `seller_id` are not writable: an offer changes hands
+        never, and it goes on sale by being approved.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Offer (variant) ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: offer updated
+          content:
+            application/json:
+              example:
+                id: variant_gbHJdmfrXB
+                product_id: prod_UkLWZg9DAJ
+                sku: OFFER-EDITED
+                options_text: 'Size: S'
+                track_inventory: true
+                media_count: 0
+                preorder_ships_at:
+                thumbnail_url:
+                purchasable: false
+                in_stock: false
+                backorderable: true
+                preorder: false
+                weight: 117.9
+                height: 92.69
+                width: 60.38
+                depth: 36.22
+                weight_unit: lb
+                dimensions_unit: in
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
+                price:
+                  id: price_gbHJdmfrXB
+                  amount: '9.99'
+                  amount_in_cents: 999
+                  compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$9.99"
+                  display_compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                option_values:
+                - id: optval_UkLWZg9DAJ
+                  option_type_id: opt_UkLWZg9DAJ
+                  name: size-68
+                  label: S
+                  position: 1
+                  color_code:
+                  option_type_name: foo-size-77
+                  option_type_label: Size
+                  image_url:
+                status: draft
+                metadata: {}
+                position: 2
+                cost_price: '17.0'
+                cost_currency: USD
+                barcode:
+                backorder_limit:
+                hs_code:
+                country_of_origin:
+                customs_description:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                preorderable: false
+                delivery_profile_id: fp_UkLWZg9DAJ
+                available_stock: 0
+                total_on_hand: 0
+              schema:
+                "$ref": "#/components/schemas/Variant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sku:
+                  type: string
+                barcode:
+                  type: string
+        required: true
+  "/api/v3/seller/variants/{id}/submit":
+    patch:
+      summary: Submit an offer for review
+      tags:
+      - Offers
+      security:
+      - bearer_auth: []
+      description: |
+        Asks the marketplace to put this offer on sale.
+
+        An offer needs a price before it can be submitted. Where the store
+        approves offers automatically it goes straight on sale; otherwise it
+        waits as `proposed` until the operator decides.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Offer (variant) ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: offer submitted
+          content:
+            application/json:
+              example:
+                id: variant_gbHJdmfrXB
+                product_id: prod_UkLWZg9DAJ
+                sku: OFFER-1
+                options_text: 'Size: S'
+                track_inventory: true
+                media_count: 0
+                preorder_ships_at:
+                thumbnail_url:
+                purchasable: false
+                in_stock: false
+                backorderable: true
+                preorder: false
+                weight: 42.3
+                height: 68.2
+                width: 141.12
+                depth: 46.36
+                weight_unit: lb
+                dimensions_unit: in
+                minimum_order_quantity:
+                order_multiple:
+                purchase_unit:
+                units_per_carton:
+                price:
+                  id: price_gbHJdmfrXB
+                  amount: '9.99'
+                  amount_in_cents: 999
+                  compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$9.99"
+                  display_compare_at_amount:
+                  price_list_id:
+                original_price:
+                seller_id: sel_UkLWZg9DAJ
+                option_values:
+                - id: optval_UkLWZg9DAJ
+                  option_type_id: opt_UkLWZg9DAJ
+                  name: size-69
+                  label: S
+                  position: 1
+                  color_code:
+                  option_type_name: foo-size-78
+                  option_type_label: Size
+                  image_url:
+                status: proposed
+                metadata: {}
+                position: 2
+                cost_price: '17.0'
+                cost_currency: USD
+                barcode:
+                backorder_limit:
+                hs_code:
+                country_of_origin:
+                customs_description:
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                preorderable: false
+                delivery_profile_id: fp_UkLWZg9DAJ
+                available_stock: 0
+                total_on_hand: 0
+              schema:
+                "$ref": "#/components/schemas/Variant"
+        '422':
+          description: offer has no price
+          content:
+            application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: An offer needs a price before it can be submitted.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/seller/orders":
     get:
       summary: List orders
@@ -16183,7 +16734,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 19095
+                    name: Product 19195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16192,7 +16743,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-256
+                    sku: SKU-264
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16205,7 +16756,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground
+                    delivery_method_name: UPS Ground 86
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -16213,13 +16764,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 19095
-                      sku: SKU-256
+                      name: Product 19195
+                      sku: SKU-264
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground
+                      name: UPS Ground 86
                       selected: true
                       cost: '10.0'
                       total: '10.0'
@@ -16248,7 +16799,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 165 Lovely Street
+                    address1: 167 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16270,7 +16821,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 164 Lovely Street
+                    address1: 166 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16384,7 +16935,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1919755
+                  name: Product 1929755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16393,7 +16944,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-257
+                  sku: SKU-265
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16406,7 +16957,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 87
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16414,13 +16965,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1919755
-                    sku: SKU-257
+                    name: Product 1929755
+                    sku: SKU-265
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 87
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16449,7 +17000,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 167 Lovely Street
+                  address1: 169 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16471,7 +17022,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 166 Lovely Street
+                  address1: 168 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16581,7 +17132,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1946554
+                  name: Product 1956554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16590,7 +17141,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-260
+                  sku: SKU-268
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16603,7 +17154,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 90
                   stock_location_name: Ricky Kutch
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16611,13 +17162,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1946554
-                    sku: SKU-260
+                    name: Product 1956554
+                    sku: SKU-268
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 90
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16646,7 +17197,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 173 Lovely Street
+                  address1: 175 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16668,7 +17219,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 174 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16785,7 +17336,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1955038
+                  name: Product 1965038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16794,7 +17345,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-261
+                  sku: SKU-269
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16807,7 +17358,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 91
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16815,13 +17366,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1955038
-                    sku: SKU-261
+                    name: Product 1965038
+                    sku: SKU-269
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 91
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16872,7 +17423,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 176 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17052,7 +17603,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1973962
+                  name: Product 1983962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17061,7 +17612,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-263
+                  sku: SKU-271
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17074,7 +17625,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 93
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17082,13 +17633,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1973962
-                    sku: SKU-263
+                    name: Product 1983962
+                    sku: SKU-271
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 93
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17117,7 +17668,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 179 Lovely Street
+                  address1: 181 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17139,7 +17690,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 178 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17225,7 +17776,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1985749
+                  name: Product 1995749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17234,7 +17785,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-264
+                  sku: SKU-272
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17247,7 +17798,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 94
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17255,13 +17806,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1985749
-                    sku: SKU-264
+                    name: Product 1995749
+                    sku: SKU-272
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 94
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17290,7 +17841,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 181 Lovely Street
+                  address1: 183 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17312,7 +17863,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 180 Lovely Street
+                  address1: 182 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -18025,7 +18576,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2147120 can be returned
+                  message: Only 1 of Product 2157120 can be returned
       requestBody:
         content:
           application/json:
@@ -18625,6 +19176,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '42.0'
                   display_amount: "$42.00"
+                  settled_amount: '42.0'
+                  settled_currency: USD
+                  converted: false
                   order_id: or_UkLWZg9DAJ
                   payout_id:
                   reversed_from_id:
@@ -18689,6 +19243,9 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '42.0'
                 display_amount: "$42.00"
+                settled_amount: '42.0'
+                settled_currency: USD
+                converted: false
                 order_id: or_UkLWZg9DAJ
                 payout_id:
                 reversed_from_id:
@@ -19453,6 +20010,10 @@ components:
           - dropdown
           - color_swatch
           - buttons
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/OptionValue"
       required:
       - id
       - name
@@ -19562,9 +20123,17 @@ components:
       properties:
         currency:
           type: string
+        settlement_currency:
+          type: string
+        converted:
+          type: boolean
         earned:
           type: string
         display_earned:
+          type: string
+        payable:
+          type: string
+        display_payable:
           type: string
         paid:
           type: string
@@ -19580,8 +20149,12 @@ components:
           type: string
       required:
       - currency
+      - settlement_currency
+      - converted
       - earned
       - display_earned
+      - payable
+      - display_payable
       - paid
       - display_paid
       - balance
@@ -21144,6 +21717,9 @@ components:
           type: string
         product_id:
           type: string
+        variant_id:
+          type: string
+          nullable: true
       required:
       - id
       - status
@@ -21151,6 +21727,7 @@ components:
       - reviewed_at
       - created_at
       - product_id
+      - variant_id
       x-typelizer: true
     ProductType:
       type: object
@@ -21865,6 +22442,14 @@ components:
           type: string
         display_amount:
           type: string
+        settled_amount:
+          type: string
+          nullable: true
+        settled_currency:
+          type: string
+          nullable: true
+        converted:
+          type: boolean
         order_id:
           type: string
           nullable: true
@@ -21888,6 +22473,9 @@ components:
       - updated_at
       - amount
       - display_amount
+      - settled_amount
+      - settled_currency
+      - converted
       - order_id
       - payout_id
       - reversed_from_id
@@ -21993,6 +22581,8 @@ components:
           allOf:
           - "$ref": "#/components/schemas/PriceHistory"
           nullable: true
+        status:
+          type: string
         metadata:
           type: object
         position:
@@ -22024,6 +22614,15 @@ components:
           type: string
         preorderable:
           type: boolean
+        delivery_profile_id:
+          type: string
+          nullable: true
+        submission:
+          allOf:
+          - "$ref": "#/components/schemas/ProductSubmission"
+          nullable: true
+        product:
+          "$ref": "#/components/schemas/Product"
         available_stock:
           type: number
           nullable: true
@@ -22065,6 +22664,7 @@ components:
       - original_price
       - seller_id
       - option_values
+      - status
       - metadata
       - position
       - cost_price
@@ -22077,6 +22677,7 @@ components:
       - created_at
       - updated_at
       - preorderable
+      - delivery_profile_id
       - available_stock
       - total_on_hand
       x-typelizer: true
