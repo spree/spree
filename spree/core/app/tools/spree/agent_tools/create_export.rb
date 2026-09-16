@@ -11,10 +11,11 @@ module Spree
                   'optionally, the same filters search_resources accepts. The merchant ' \
                   'approves before the file is generated.'
       # Exports are gated on the READ scope of what is being exported — the
-      # Admin API treats an export as a read, because that is what it is.
-      # Checked per resource in `call`, since exporting orders and exporting
-      # products are different permissions.
-      permission 'read_products'
+      # Admin API treats an export as a read, because that is what it is. That
+      # is a per-resource question, so it is answered in `call` rather than
+      # here: a class-level key would hide the tool from a caller who may
+      # export orders but not products.
+      permission nil
       mutating!
 
       param :resource, description: 'What to export: products, orders, customers, gift_cards',

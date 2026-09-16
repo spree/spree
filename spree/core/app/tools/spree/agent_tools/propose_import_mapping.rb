@@ -7,7 +7,7 @@ module Spree
     # file becomes: get "Cost" onto `price` instead of `cost_price` and a
     # merchant has repriced their whole catalogue in one click. The merchant
     # sees the proposed pairing and approves it before anything is written.
-    class ProposeImportMapping < Spree::AgentTool
+    class ProposeImportMapping < Spree::AgentTools::ImportTool
       tool_name 'propose_import_mapping'
       description 'Map the columns of an uploaded import file onto Spree fields. ' \
                   'Call describe_import_mapping first to see the real column headings ' \
@@ -17,7 +17,9 @@ module Spree
       # The Admin API gates every import action on the write scope of the
       # resource being imported — `write_products` for a product import —
       # never on a settings key. Mirrored here, per-import, in `call`.
-      permission 'write_products'
+      # Gated per import kind in `call`, not here: a caller who may import
+      # customers but not products must still be offered the tool.
+      permission nil
       mutating!
 
       param :id, description: 'Import id or number', required: true
@@ -44,13 +46,17 @@ module Spree
         pairs = sanitize(import, mapping)
         return unknown_fields(import, mapping) if pairs.empty?
 
-        apply!(import, pairs)
+        applied = apply!(import, pairs)
         start_if_ready(import)
 
         {
           ok: true,
           id: import.prefixed_id,
-          mapped: pairs,
+          # Only what was actually written. Reporting a field as mapped when
+          # its mapping row did not exist would have the model tell the
+          # merchant a column was handled when it was not.
+          mapped: applied,
+          unmapped: (pairs.keys - applied.keys).presence,
           status: import.reload.status,
           # `mapped_fields` returns mapping records, not names.
           still_missing: import.required_fields - import.mappings.mapped.pluck(:schema_field)
@@ -68,18 +74,6 @@ module Spree
 
       private
 
-      def import_kind(import)
-        import.class.name.demodulize.underscore.tr('_', ' ')
-      end
-
-      def find_import(id)
-        scope = Spree::AgentTools::ResourceMap.find('imports').scope_for(context)
-
-        scope.find_by_prefix_id(id) || scope.find_by(number: id)
-      rescue ArgumentError, NoMethodError
-        scope.find_by(number: id)
-      end
-
       # Only fields the schema declares and columns the file actually has —
       # a hallucinated pairing must not reach the database.
       def sanitize(import, mapping)
@@ -95,16 +89,21 @@ module Spree
         end.to_h
       end
 
+      # Loaded in one query rather than one per field: a product import
+      # declares forty-five of them, and a model proposing a full mapping
+      # sends most at once.
+      #
+      # @return [Hash] only the pairs that had a mapping row to write to
       def apply!(import, pairs)
-        Spree::ImportMapping.transaction do
-          pairs.each do |field, column|
-            mapping = import.mappings.find_by(schema_field: field)
-            next if mapping.nil?
+        rows = import.mappings.where(schema_field: pairs.keys).index_by(&:schema_field)
+        applied = pairs.select { |field, _column| rows.key?(field) }
 
-            mapping.update!(file_column: column)
-          end
+        Spree::ImportMapping.transaction do
+          applied.each { |field, column| rows.fetch(field).update!(file_column: column) }
         end
         import.mappings.reload
+
+        applied
       end
 
       # Starting the import is the same transition the dashboard's own mapping

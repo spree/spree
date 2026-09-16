@@ -21,7 +21,8 @@ module Spree
                          description: 'A preset such as {"preset": "last_30_days"}, or {"from": "2026-01-01", "to": "2026-03-31"}',
                          required: false
       param :filters, type: :array, items: :object,
-                      description: 'Dimension filters, e.g. [{"dimension": "channel", "values": ["web"]}]',
+                      description: 'Dimension filters, each {"dimension": …, "op": "eq" or "in", "value": …} — ' \
+                                   'e.g. [{"dimension": "channel", "op": "in", "value": ["web", "pos"]}]',
                       required: false
       param :sort, description: 'Metric or dimension to sort by, prefixed with - for descending', required: false
       param :limit, type: :integer, description: 'Maximum rows to return (default 50)', required: false
