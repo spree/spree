@@ -2912,6 +2912,7 @@
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
           "load_error": "Nie udało się wczytać płatności tego zamówienia."
         },
+        "priced_by": "Cena z {{name}}",
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
           "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",

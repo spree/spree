@@ -31,6 +31,7 @@ import {
   FieldGroup,
   FieldLabel,
   FulfillmentItemList,
+  type FulfillmentItemRowData,
   FulfillmentPanel,
   Input,
   RelativeTime,
@@ -63,8 +64,23 @@ import { FulfillmentDeliveryDialog } from './fulfillment-delivery-dialog'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentLabelUploadDialog } from './fulfillment-label-upload-dialog'
+import { LineItemPriceSource } from './line-item-price-source'
 import { ShippingDocuments } from './shipping-documents'
 import { ShippingLabelRow } from './shipping-label-row'
+
+/**
+ * Hangs the agreement that priced each line off its row. Looked up by id from
+ * the order's items, since the row carries only the narrow shape the grouping
+ * reads; a row keyed by variant has no line item and gets nothing.
+ */
+function withPriceSource(rows: FulfillmentItemRow[], order: Order): FulfillmentItemRowData[] {
+  const byId = new Map((order.items ?? []).map((item) => [item.id, item]))
+
+  return rows.map((row) => {
+    const lineItem = byId.get(row.key)
+    return lineItem ? { ...row, priceSource: <LineItemPriceSource lineItem={lineItem} /> } : row
+  })
+}
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -596,7 +612,9 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         />
       ) : (
         <>
-          <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
+          <FulfillmentItemList
+            rows={withPriceSource(fulfillmentItemRows(fulfillment, order.items ?? []), order)}
+          />
 
           {shippable && (
             <CardFooter className="justify-end gap-2 py-3">
@@ -741,7 +759,15 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
  * so the eye can compare it against the real ones, minus the status and number
  * it does not have.
  */
-function UnfulfilledItems({ rows, canCreate }: { rows: FulfillmentItemRow[]; canCreate: boolean }) {
+function UnfulfilledItems({
+  rows,
+  order,
+  canCreate,
+}: {
+  rows: FulfillmentItemRow[]
+  order: Order
+  canCreate: boolean
+}) {
   const { t } = useTranslation()
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
@@ -762,7 +788,7 @@ function UnfulfilledItems({ rows, canCreate }: { rows: FulfillmentItemRow[]; can
         </span>
       </div>
 
-      <FulfillmentItemList rows={rows} />
+      <FulfillmentItemList rows={withPriceSource(rows, order)} />
     </div>
   )
 }
@@ -822,7 +848,7 @@ export function FulfillmentsCard({ order }: { order: Order }) {
         ) : (
           <CardContent className="flex flex-col gap-4">
             {unfulfilled.length > 0 && (
-              <UnfulfilledItems rows={unfulfilled} canCreate={canCreate} />
+              <UnfulfilledItems rows={unfulfilled} order={order} canCreate={canCreate} />
             )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />

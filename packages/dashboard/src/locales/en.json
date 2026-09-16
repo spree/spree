@@ -2886,6 +2886,7 @@
           "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it.",
           "load_error": "Could not load the payments for this order."
         },
+        "priced_by": "Priced by {{name}}",
         "purchase_order": {
           "document": "Purchase order document",
           "document_help": "PDF, image or Word file, up to 10 MB.",

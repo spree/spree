@@ -2886,6 +2886,7 @@
           "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
           "load_error": "Impossible de charger les paiements de cette commande."
         },
+        "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
           "document": "Document de bon de commande",
           "document_help": "Fichier PDF, image ou Word, jusqu’à 10 Mo.",
