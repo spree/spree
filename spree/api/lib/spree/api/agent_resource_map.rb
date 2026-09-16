@@ -163,7 +163,7 @@ module Spree
             permission: "read_#{scope}",
             serializer_name: serializer.name,
             dashboard_path: DASHBOARD_PATHS[key],
-            write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable),
+            write_permission: write_permission_for(model, scope, create_workflow, update_workflow, writable, controller),
             writable_attributes: writable,
             create_workflow_key: create_workflow,
             update_workflow_key: update_workflow
@@ -221,12 +221,29 @@ module Spree
         # at all; and a resource with no documented body is read-only here,
         # because a write tool with no attributes is one an agent can only get
         # wrong.
-        def write_permission_for(model, scope, create_workflow, update_workflow, writable)
+        def write_permission_for(model, scope, create_workflow, update_workflow, writable, controller)
           return if SERVICE_WRITTEN_MODELS.include?(model.name)
           return if create_workflow.present? || update_workflow.present?
           return if writable.empty?
+          return if hands_out_authority?(controller)
 
           "write_#{scope}"
+        end
+
+        # A controller that hands out authority — roles, role grants,
+        # invitations, API keys — runs an anti-amplification check the generic
+        # write knows nothing about: a caller may only grant permissions they
+        # themselves hold. Assigning those attributes and calling `save` would
+        # skip it, so writing them stays with the endpoint that guards them.
+        #
+        # Asked of the controller rather than listed, so a surface that adopts
+        # the guard later is covered without anyone remembering this file.
+        def hands_out_authority?(controller)
+          return false unless defined?(Spree::Api::V3::Admin::RoleGrantGuard)
+
+          controller.include?(Spree::Api::V3::Admin::RoleGrantGuard)
+        rescue StandardError
+          false
         end
 
         # The plural the resource is addressed by, taken from the model so two
