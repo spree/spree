@@ -25,14 +25,14 @@ module Spree
       # answer to "which store" is the API key or the signed-in admin.
       CONTEXT_PARAMETERS = %i[store].freeze
 
-      # Parameters the caller never supplies: they say who acted, and the
-      # answer is the authenticated principal, not something a model should be
-      # free to name. The adapter injects `context.principal` for whichever of
-      # these the workflow takes.
-      PRINCIPAL_PARAMETERS = %i[
-        canceler approver reviewer refunder created_by received_by
-        completed_by rejected_by accepted_by waived_by suspended_by
-        invited_by requested_by resolved_by denied_by verified_by
+      # Actor keywords a workflow takes whose association has not been
+      # converted to `acted_by` yet — the 6.1 half of
+      # docs/plans/6.0-action-actors.md. They are principals by the same
+      # reasoning as the converted ones, so they are injected too; each drops
+      # off this list as its association converts, and the registry below then
+      # carries it.
+      UNCONVERTED_PRINCIPAL_PARAMETERS = %i[
+        reviewer reviewed_by rejected_by suspended_by verified_by reopened_by
       ].freeze
 
       # YARD type to JSON type. A model type is handled separately — it becomes
@@ -86,7 +86,7 @@ module Spree
       #
       # @return [Array<Symbol>]
       def principal_parameters
-        keywords.keys & PRINCIPAL_PARAMETERS
+        keywords.keys & self.class.principal_parameter_names
       end
 
       # The tenancy keywords this workflow accepts.
@@ -100,20 +100,7 @@ module Spree
       #
       # @return [Array<Symbol>]
       def injected_parameters
-        PRINCIPAL_PARAMETERS + CONTEXT_PARAMETERS
-      end
-
-      # @return [Hash] a JSON Schema object for the tool's arguments
-      def to_json_schema
-        properties = parameters.to_h do |parameter|
-          [parameter[:name].to_s, property_for(parameter)]
-        end
-
-        {
-          type: 'object',
-          properties: properties,
-          required: parameters.select { |parameter| parameter[:required] }.map { |parameter| parameter[:name].to_s }
-        }
+        self.class.principal_parameter_names + CONTEXT_PARAMETERS
       end
 
       private
@@ -141,13 +128,6 @@ module Spree
           item_type: json_type == 'array' ? item_type_for(types) : nil,
           description: description_for(doc[:description], model_name)
         }
-      end
-
-      def property_for(parameter)
-        property = { type: parameter[:json_type] }
-        property[:description] = parameter[:description] if parameter[:description].present?
-        property[:items] = { type: parameter[:item_type] } if parameter[:json_type] == 'array'
-        property
       end
 
       def description_for(text, model_name)
@@ -204,6 +184,26 @@ module Spree
       end
 
       class << self
+        # Every keyword that names who acted, so none is ever offered to a
+        # caller as a free parameter.
+        #
+        # Read from {Spree::ActedBy} rather than listed here: the macro already
+        # records each actor association per model, exactly so a caller
+        # sweeping them walks all of them without being handed a list. A model
+        # that gains an actor gains it here in the same commit, and a name
+        # nobody declares cannot linger.
+        #
+        # @return [Array<Symbol>]
+        def principal_parameter_names
+          declared = if defined?(Spree::ActedBy)
+                       Spree::ActedBy.models.flat_map(&:acted_by_associations).map(&:to_sym)
+                     else
+                       []
+                     end
+
+          (declared | UNCONVERTED_PRINCIPAL_PARAMETERS).uniq
+        end
+
         # Parsed once per workflow class and cached, because a tool list is
         # built for every MCP request and the source never changes at runtime.
         #

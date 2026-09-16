@@ -58,9 +58,12 @@ module Spree
 
         # @param entry [Spree::AgentTools::ResourceMap::Entry]
         # @param record [ActiveRecord::Base]
+        # @param attributes [Hash, nil] an already-sanitized serializer hash,
+        #   for a caller that needs the full record too — serializing twice
+        #   means running every association query twice
         # @return [Hash]
-        def call(entry:, record:)
-          attributes = serialize(entry, record)
+        def call(entry:, record:, attributes: nil)
+          attributes ||= serialize(entry, record)
           title = title_for(record, attributes)
 
           {

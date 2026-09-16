@@ -97,6 +97,16 @@ module Spree
       }.freeze
 
       class << self
+        # Registers this walk as how the core map fills itself, and marks the
+        # map stale so the next reader gets a fresh one. Called on every code
+        # reload; the walk itself runs when something actually reads the map.
+        #
+        # @return [void]
+        def stale!
+          Spree::AgentTools::ResourceMap.deriver = -> { install }
+          Spree::AgentTools::ResourceMap.stale!
+        end
+
         # Walks every admin resource controller and registers what it serves.
         #
         # @param map [Class] defaults to the core resource map
@@ -104,13 +114,12 @@ module Spree
         def install(map: Spree::AgentTools::ResourceMap)
           map.reset!
 
-          derived = controllers.filter_map { |controller| derive(controller) }
-
-          resolve_collisions(derived).each { |entry| map.register(**entry) }
+          registered = resolve_collisions(controllers.filter_map { |controller| derive(controller) })
+          registered.each { |entry| map.register(**entry) }
 
           DYNAMIC_SCOPE_RESOURCES.each { |key, attributes| map.register(key: key, **attributes) }
 
-          map.all.size
+          registered.size + DYNAMIC_SCOPE_RESOURCES.size
         end
 
         # Every admin resource controller in the application, the abstract
@@ -237,9 +246,16 @@ module Spree
           return false unless model.respond_to?(:for_store)
           return true if model.method(:for_store).owner != Spree::Base.singleton_class
 
-          !model.for_store(Spree::Store.new).equal?(model)
+          !model.for_store(probe_store).equal?(model)
         rescue StandardError
           false
+        end
+
+        # One unsaved store, reused: the probe asks what `for_store` does with
+        # a store, not with any particular one, and the walk covers every
+        # admin controller.
+        def probe_store
+          @probe_store ||= Spree::Store.new
         end
 
         # The workflow a controller writes through, as its dotted key, so a

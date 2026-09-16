@@ -124,8 +124,16 @@ module Spree
 
 
       class << self
+        # How the map fills itself the first time it is read. `spree_api` sets
+        # this to its controller walk; core owns only the structure, so an
+        # installation without the API engine simply has an empty map.
+        #
+        # @return [#call, nil]
+        attr_accessor :deriver
+
         # @return [Array<Entry>] every registered resource, in registration order
         def all
+          derive!
           entries.values
         end
 
@@ -172,7 +180,29 @@ module Spree
         # @param key [String]
         # @return [Entry, nil]
         def find(key)
+          derive!
           entries[key.to_s]
+        end
+
+        # Marks the map for rebuilding on its next read. Called on every code
+        # reload, because a controller edited in development changes what the
+        # map should say — but the rebuild itself waits for a reader.
+        #
+        # @return [void]
+        def stale!
+          @derived = false
+        end
+
+        # Fills the map once, from whatever `deriver` was registered.
+        #
+        # @return [void]
+        def derive!
+          return if @derived || deriver.nil?
+
+          # Set before calling, so a deriver that reads the map while filling
+          # it does not recurse.
+          @derived = true
+          deriver.call
         end
 
         # Resources this caller may read, so a tool description lists only what

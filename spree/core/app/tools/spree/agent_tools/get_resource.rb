@@ -18,6 +18,8 @@ module Spree
         record = find_record(entry, id)
         return { error: "No #{entry.key.singularize} found for #{id.inspect}" } if record.nil?
 
+        attributes = Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h)
+
         {
           resource: entry.key,
           # The full record for the model to answer from, plus the same
@@ -28,8 +30,8 @@ module Spree
           # that emits a whole serializer hash, so without the filter a
           # serializer that gains a token field would send it straight to the
           # AI vendor — the exact case the filter exists for.
-          record: Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h),
-          records: [Spree::AgentTools::RecordSummary.call(entry: entry, record: record)],
+          record: attributes,
+          records: [Spree::AgentTools::RecordSummary.call(entry: entry, record: record, attributes: attributes)],
           count: 1,
           total: 1
         }
