@@ -588,4 +588,68 @@ describe Spree::Price, type: :model do
       expect(base.final_for_destination?).to be(false)
     end
   end
+
+  # The single-row writers reach the same rule the bulk path enforces over a
+  # whole batch — the admin price endpoints write through the model
+  # (docs/plans/6.0-volume-pricing.md).
+  describe 'a ladder that charges more for a bigger order' do
+    let(:price_list) { create(:price_list, store: @default_store) }
+    let(:variant) { create(:variant, price: 10.00) }
+
+    def rung(quantity, amount)
+      Spree::Price.create!(variant: variant, currency: 'USD', price_list: price_list,
+                           min_quantity: quantity, amount: amount)
+    end
+
+    it 'refuses a break above the rung below it' do
+      rung(10, 9.00)
+      price = Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
+                               min_quantity: 20, amount: 9.50)
+
+      expect(price).not_to be_valid
+      expect(price.errors[:amount].first).to include('20')
+    end
+
+    it 'refuses a break above the base price when the list prices nothing below' do
+      price = Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
+                               min_quantity: 100, amount: 12.00)
+
+      expect(price).not_to be_valid
+    end
+
+    # Lowering a rung strands every rung above it, which the row being saved
+    # cannot see by looking downward alone.
+    it 'refuses lowering a rung below one that sits above it' do
+      low = rung(10, 9.00)
+      rung(20, 8.00)
+      low.amount = 7.00
+
+      expect(low).not_to be_valid
+      expect(low.errors[:amount].first).to include('20')
+    end
+
+    # A base price is the floor every one of the variant's ladders reads.
+    it 'refuses dropping the base price below a break' do
+      rung(100, 9.00)
+      base = variant.prices.find_by(price_list_id: nil, currency: 'USD')
+      base.amount = 2.00
+
+      expect(base).not_to be_valid
+    end
+
+    it 'accepts a descending ladder and a flat one' do
+      rung(10, 9.00)
+
+      expect(Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
+                              min_quantity: 20, amount: 8.00)).to be_valid
+      expect(Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
+                              min_quantity: 20, amount: 9.00)).to be_valid
+    end
+
+    # An agreement may be dearer than the shop; only breaks promise less.
+    it 'accepts a bottom rung above the base price' do
+      expect(Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
+                              min_quantity: 1, amount: 25.00)).to be_valid
+    end
+  end
 end

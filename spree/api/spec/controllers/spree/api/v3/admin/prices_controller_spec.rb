@@ -415,6 +415,38 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(Spree::Price.where(variant: variant, currency: 'USD', price_list: price_list).pluck(:amount).uniq).to eq([8.0])
     end
+
+    # A break the list does not undercut charges more for a bigger order. With
+    # no rung of its own the floor is the shop price, which is what the buyer
+    # pays right up to the threshold.
+    it 'refuses a break that costs more than the shop price' do
+      upsert([{ variant_id: variant.prefixed_id, currency: 'USD',
+                price_list_id: price_list.prefixed_id, min_quantity: 100, amount: '440.00' }])
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('price_rises_with_quantity')
+      expect(Spree::Price.where(variant: variant, currency: 'USD', price_list: price_list)).to be_empty
+    end
+
+    it 'accepts a break that undercuts the shop price without a rung of its own' do
+      upsert([{ variant_id: variant.prefixed_id, currency: 'USD',
+                price_list_id: price_list.prefixed_id, min_quantity: 100, amount: '9.00' }])
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    # Keeping the later row would answer 200 while discarding a price the
+    # merchant typed.
+    it 'refuses two rows addressing the same quantity' do
+      upsert([
+        { variant_id: variant.prefixed_id, currency: 'USD', price_list_id: price_list.prefixed_id, min_quantity: 100, amount: '9.00' },
+        { variant_id: variant.prefixed_id, currency: 'USD', price_list_id: price_list.prefixed_id, min_quantity: 100, amount: '8.00' }
+      ])
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('duplicate_min_quantity')
+      expect(Spree::Price.where(variant: variant, currency: 'USD', price_list: price_list)).to be_empty
+    end
   end
 
   describe 'POST #create' do
