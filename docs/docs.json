@@ -882,12 +882,12 @@
                       "developer/customization/configuration",
                       "developer/customization/workflows",
                       "developer/customization/validations",
+                      "developer/customization/checkout",
                       "developer/customization/dependencies",
+                      "developer/customization/api",
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
                       "developer/customization/permissions",
-                      "developer/customization/api",
-                      "developer/customization/checkout",
                       "developer/customization/decorators"
                     ],
                     "icon": "code"

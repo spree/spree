@@ -52,27 +52,6 @@ Both cart keys appear above because adding to a cart and setting a quantity are
 different flows. See [Services & Workflows](/developer/customization/workflows)
 for the full hook list.
 
-## Adding a rule to a model
-
-For rules about the shape of a record, a decorator is the supported route:
-
-```ruby
-# app/models/spree/product_decorator.rb
-module MyStore
-  module ProductDecorator
-    def self.prepended(base)
-      base.validates :external_id, presence: true, uniqueness: true
-    end
-  end
-end
-
-Spree::Product.prepend(MyStore::ProductDecorator)
-```
-
-Decorators couple you to Spree internals, so prefer a hook when the rule is
-really about an operation. See
-[Decorators](/developer/customization/decorators).
-
 ## Relaxing a rule Spree ships
 
 Never call `clear_validators!` — it wipes every validation on the model,
@@ -112,17 +91,6 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
   All four are editable in the dashboard except `address_requires_company`, which
   is API-only for now.
 </Note>
-
-### Changing when a rule applies
-
-Most conditional rules on an address are gated on a predicate — `require_name?`,
-`require_street?`, `require_postal_code?`, `require_phone?` and
-`require_company?`. Overriding one changes *when* the rule applies without
-removing it, which is safer than dropping the validation outright.
-
-This is the one case here that needs Ruby. See
-[decorators](/developer/customization/decorators) for how to override a model
-method.
 
 ### The address validator registry
 
