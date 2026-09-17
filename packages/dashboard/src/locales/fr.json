@@ -1928,6 +1928,10 @@
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
         },
+        "always_include_confirm_step": {
+          "help": "Proposer toujours aux clients une étape de vérification finale avant de valider la commande, même lorsqu’aucun moyen de paiement ne l’exige.",
+          "label": "Toujours afficher l’étape de confirmation"
+        },
         "capture_method": {
           "help": "La valeur par défaut pour tous les moyens de paiement. Un moyen de paiement peut la remplacer.",
           "label": "Quand débiter les clients",

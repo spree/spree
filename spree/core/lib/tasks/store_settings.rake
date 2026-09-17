@@ -6,6 +6,7 @@ namespace :spree do
     # intent and is never copied.
     MOVED_SETTINGS = {
       address_requires_phone: { default: false },
+      always_include_confirm_step: { default: false },
       company: { default: false, store_preference: :company_field_enabled },
       default_stock_reservation_ttl_minutes: { default: 10, store_preference: :stock_reservation_ttl_minutes },
       disable_sku_validation: { default: false },

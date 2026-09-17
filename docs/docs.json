@@ -377,10 +377,6 @@
       "destination": "/v5/developer/customization/authentication"
     },
     {
-      "source": "/developer/customization/checkout",
-      "destination": "/v5/developer/customization/checkout"
-    },
-    {
       "source": "/developer/customization/routes",
       "destination": "/v5/developer/customization/routes"
     },
@@ -612,33 +608,9 @@
                     "group": "Getting Started",
                     "pages": [
                       "developer/getting-started/quickstart",
-                      "developer/create-spree-app/quickstart",
                       "developer/core-concepts/architecture"
                     ],
                     "icon": "rocket"
-                  },
-                  {
-                    "group": "Tutorial",
-                    "pages": [
-                      "developer/tutorial/introduction",
-                      "developer/tutorial/model-and-api",
-                      "developer/tutorial/dashboard",
-                      "developer/tutorial/storefront",
-                      "developer/tutorial/events",
-                      "developer/tutorial/testing"
-                    ],
-                    "icon": "graduation-cap"
-                  },
-                  {
-                    "group": "AI-Assisted Development",
-                    "pages": [
-                      "developer/agentic/overview",
-                      "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
-                      "developer/agentic/llm-docs",
-                      "developer/cli/admin-api"
-                    ],
-                    "icon": "sparkles"
                   },
                   {
                     "group": "Core Concepts",
@@ -708,79 +680,27 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "Providers & Integrations",
+                    "group": "AI-Assisted Development",
                     "pages": [
-                      "developer/providers/overview",
-                      "integrations/integrations",
-                      {
-                        "group": "Connect Your Systems",
-                        "pages": [
-                          "developer/providers/erp",
-                          "developer/providers/pim",
-                          "developer/providers/dam"
-                        ]
-                      },
-                      {
-                        "group": "Shipping & WMS",
-                        "pages": [
-                          "developer/providers/fulfillment",
-                          "integrations/shipping/easypost",
-                          "developer/how-to/custom-delivery-rate-provider"
-                        ]
-                      },
-                      {
-                        "group": "Payments",
-                        "pages": [
-                          "developer/how-to/custom-payment-method",
-                          "integrations/payments/stripe",
-                          "integrations/payments/adyen",
-                          "integrations/payments/paypal",
-                          "integrations/payments/razorpay"
-                        ]
-                      },
-                      {
-                        "group": "Marketplace",
-                        "pages": [
-                          "developer/providers/payouts",
-                          "integrations/payments/stripe-connect"
-                        ]
-                      },
-                      {
-                        "group": "Tax",
-                        "pages": [
-                          "integrations/tax/avalara"
-                        ]
-                      },
-                      {
-                        "group": "Search",
-                        "pages": [
-                          "developer/how-to/custom-search-provider",
-                          "integrations/search/meilisearch"
-                        ]
-                      },
-                      {
-                        "group": "Identity & SSO",
-                        "pages": [
-                          "developer/providers/sso",
-                          "developer/how-to/custom-api-authentication"
-                        ]
-                      },
-                      {
-                        "group": "Observability",
-                        "pages": [
-                          "developer/providers/observability"
-                        ]
-                      },
-                      {
-                        "group": "Marketing & Analytics",
-                        "pages": [
-                          "integrations/analytics/google-analytics",
-                          "integrations/analytics/google-tag-manager",
-                          "integrations/marketing/klaviyo"
-                        ]
-                      }
+                      "developer/agentic/overview",
+                      "developer/agentic/agent-skills",
+                      "developer/agentic/mcp",
+                      "developer/agentic/llm-docs",
+                      "developer/cli/admin-api"
                     ],
-                    "icon": "plug"
+                    "icon": "sparkles"
+                  },
+                  {
+                    "group": "Tutorial",
+                    "pages": [
+                      "developer/tutorial/introduction",
+                      "developer/tutorial/model-and-api",
+                      "developer/tutorial/dashboard",
+                      "developer/tutorial/storefront",
+                      "developer/tutorial/events",
+                      "developer/tutorial/testing"
+                    ],
+                    "icon": "graduation-cap"
                   },
                   {
                     "group": "Admin Dashboard",
@@ -863,7 +783,7 @@
                         ]
                       },
                       {
-                        "group": "Next.js Starter",
+                        "group": "Next.js Storefront",
                         "pages": [
                           "developer/storefront/nextjs/quickstart",
                           "developer/storefront/nextjs/architecture",
@@ -881,17 +801,93 @@
                     "icon": "store"
                   },
                   {
+                    "group": "Providers & Integrations",
+                    "pages": [
+                      "developer/providers/overview",
+                      "integrations/integrations",
+                      {
+                        "group": "Connect Your Systems",
+                        "pages": [
+                          "developer/providers/erp",
+                          "developer/providers/pim",
+                          "developer/providers/dam"
+                        ]
+                      },
+                      {
+                        "group": "Shipping & WMS",
+                        "pages": [
+                          "developer/providers/fulfillment",
+                          "integrations/shipping/easypost",
+                          "developer/how-to/custom-delivery-rate-provider"
+                        ]
+                      },
+                      {
+                        "group": "Payments",
+                        "pages": [
+                          "developer/how-to/custom-payment-method",
+                          "integrations/payments/stripe",
+                          "integrations/payments/adyen",
+                          "integrations/payments/paypal",
+                          "integrations/payments/razorpay"
+                        ]
+                      },
+                      {
+                        "group": "Marketplace",
+                        "pages": [
+                          "developer/providers/payouts",
+                          "integrations/payments/stripe-connect"
+                        ]
+                      },
+                      {
+                        "group": "Tax",
+                        "pages": [
+                          "integrations/tax/avalara"
+                        ]
+                      },
+                      {
+                        "group": "Search",
+                        "pages": [
+                          "developer/how-to/custom-search-provider",
+                          "integrations/search/meilisearch"
+                        ]
+                      },
+                      {
+                        "group": "Identity & SSO",
+                        "pages": [
+                          "developer/providers/sso",
+                          "developer/how-to/custom-api-authentication"
+                        ]
+                      },
+                      {
+                        "group": "Observability",
+                        "pages": [
+                          "developer/providers/observability"
+                        ]
+                      },
+                      {
+                        "group": "Marketing & Analytics",
+                        "pages": [
+                          "integrations/analytics/google-analytics",
+                          "integrations/analytics/google-tag-manager",
+                          "integrations/marketing/klaviyo"
+                        ]
+                      }
+                    ],
+                    "icon": "plug"
+                  },
+                  {
                     "group": "Extending the Backend",
                     "pages": [
                       "developer/customization/quickstart",
                       "developer/customization/configuration",
                       "developer/customization/workflows",
                       "developer/customization/validations",
+                      "developer/customization/checkout",
                       "developer/customization/dependencies",
+                      "developer/customization/api",
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
                       "developer/customization/permissions",
-                      "developer/customization/api",
                       "developer/customization/decorators"
                     ],
                     "icon": "code"
@@ -945,6 +941,7 @@
                   {
                     "group": "Operations",
                     "pages": [
+                      "developer/create-spree-app/quickstart",
                       "developer/cli/quickstart",
                       {
                         "group": "Upgrading",
@@ -2083,7 +2080,7 @@
           {
             "item": "Building a Storefront",
             "icon": "store",
-            "description": "Next.js, custom frontend, or Rails engine",
+            "description": "Use Spree Storefront or build your own",
             "groups": [
               {
                 "group": "Next.js Storefront",
@@ -2872,16 +2869,12 @@
   "navbar": {
     "links": [
       {
-        "label": "15.5k",
+        "label": "16k",
         "href": "https://github.com/spree/spree",
         "icon": {
           "library": "lucide",
           "name": "github"
         }
-      },
-      {
-        "label": "v5.6.0",
-        "href": "https://github.com/spree/spree/releases/tag/v5.6.0"
       },
       {
         "label": "Join Discord",
@@ -2891,12 +2884,7 @@
           "name": "discord"
         }
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Create a free sandbox",
-      "href": "https://console.spree.sh"
-    }
+    ]
   },
   "footer": {
     "socials": {

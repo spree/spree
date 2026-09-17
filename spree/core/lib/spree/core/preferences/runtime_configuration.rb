@@ -1,6 +1,21 @@
 module Spree
   module Preferences
+    # Raised when an environment variable backing a preference holds a value
+    # that does not parse as the declared type.
+    class InvalidEnvironmentValue < StandardError
+      def initialize(variable, value, type, expected = nil)
+        article = type == :integer ? 'an' : 'a'
+        expected ||= "#{article} #{type}"
+        super("#{variable}=#{value.inspect} is not valid for #{article} #{type} setting. Expected #{expected}.")
+      end
+    end
+
     class RuntimeConfiguration
+      # Deliberately not ActiveModel::Type::Boolean: it casts "no", "Off" and
+      # every unrecognised string — a typo included — to true.
+      BOOLEAN_TRUE = %w[true 1 yes on].freeze
+      BOOLEAN_FALSE = %w[false 0 no off].freeze
+
       def initialize
         load_defaults
       end
@@ -71,10 +86,12 @@ module Spree
         # set in an initializer or at runtime always wins over the
         # environment; the env var only fills an unset preference.
         #
+        # @param type [Symbol] declared type, used to coerce the env var
         # @param env [String, nil] environment variable backing this setting
-        def preference(name, _type, default: nil, deprecated: false, env: nil)
+        def preference(name, type, default: nil, deprecated: false, env: nil)
           defaults[name] = default
           deprecations[name] = deprecated
+          types[name] = type
           env_vars[name] = env if env
 
           attr_writer name
@@ -88,7 +105,12 @@ module Spree
               value = instance_variable_get(ivar)
               return value unless value.nil?
 
-              ENV[env].presence || default
+              raw = ENV[env]
+              return default if raw.nil? || raw.empty?
+
+              # Memoized into the ivar so coercion runs once per process, not
+              # once per read — these sit on the request path.
+              instance_variable_set(ivar, self.class.coerce_env(env, raw, type))
             end
           else
             attr_reader name
@@ -103,9 +125,61 @@ module Spree
           @deprecations ||= {}
         end
 
+        # @return [Hash{Symbol => Symbol}] declared type per preference
+        def types
+          @types ||= {}
+        end
+
         # @return [Hash{Symbol => String}] preferences backed by an env var
         def env_vars
           @env_vars ||= {}
+        end
+
+        # Reads every env-backed preference so a malformed value fails at boot
+        # rather than on the first request that happens to read it. Reading
+        # also memoizes the coerced value, so this doubles as a warm-up.
+        #
+        # @param instance [RuntimeConfiguration] configuration to validate
+        # @raise [Spree::Preferences::InvalidEnvironmentValue]
+        # @return [void]
+        def validate_env!(instance)
+          env_vars.each_key { |name| instance.public_send(name) }
+          nil
+        end
+
+        # Env vars arrive as strings, so an uncoerced `SPREE_X=false` would be
+        # the truthy String "false". Coercion is strict: a value that does not
+        # parse raises rather than falling back to the default, since a typo'd
+        # setting silently reverting is worse than a failed boot.
+        #
+        # @param variable [String] name of the environment variable
+        # @param value [String] raw value read from the environment
+        # @param type [Symbol] declared preference type
+        # @return [Object] the coerced value
+        def coerce_env(variable, value, type)
+          case type
+          when :boolean then coerce_env_boolean(variable, value)
+          when :integer then coerce_env_number(variable, value, type) { Integer(value, 10) }
+          when :decimal then coerce_env_number(variable, value, type) { BigDecimal(value) }
+          when :array then value.split(',').map(&:strip).reject(&:empty?)
+          else value
+          end
+        end
+
+        private
+
+        def coerce_env_boolean(variable, value)
+          normalized = value.strip.downcase
+          return true if BOOLEAN_TRUE.include?(normalized)
+          return false if BOOLEAN_FALSE.include?(normalized)
+
+          raise InvalidEnvironmentValue.new(variable, value, :boolean, "#{BOOLEAN_TRUE.join(', ')}, #{BOOLEAN_FALSE.join(', ')}")
+        end
+
+        def coerce_env_number(variable, value, type)
+          yield
+        rescue ArgumentError, TypeError
+          raise InvalidEnvironmentValue.new(variable, value, type)
         end
       end
     end

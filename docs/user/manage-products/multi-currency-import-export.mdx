@@ -19,7 +19,7 @@ These additional rows are called **price-only rows**. They contain a smaller set
 - **Compare At Price** - The original/crossed-out price, if applicable
 - **Currency** - The currency code for this row (e.g., `EUR`, `GBP`)
 
-All other product fields (name, description, taxons, metafields, etc.) are left blank in price-only rows — they're intentionally omitted because those fields are already handled by the primary row.
+All other product fields (name, description, taxons, custom fields, etc.) are left blank in price-only rows — they're intentionally omitted because those fields are already handled by the primary row.
 
 ## Exporting Multi-Currency Prices
 
@@ -55,7 +55,7 @@ To import your updated file, navigate to the **Products** tab and click **Import
 3. Click **Create** to proceed to the field mapping step.
 4. Review the field mapping and adjust any columns that weren't matched automatically, then click **Continue** to submit.
 
-Spree will automatically detect which rows are full product rows and which are price-only rows. For price-only rows, it will update only the pricing data for the specified currency — it won't overwrite your product descriptions, taxons, or metafields.
+Spree will automatically detect which rows are full product rows and which are price-only rows. For price-only rows, it will update only the pricing data for the specified currency — it won't overwrite your product descriptions, taxons, or custom fields.
 
 <Note>You can import pricing updates for a single currency without including rows for other currencies. Just remove any rows you don't want to update before importing.</Note>
 

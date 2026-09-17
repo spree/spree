@@ -81,6 +81,7 @@ module Spree
               :preferred_storefront_access,
               :preferred_storefront_url,
               :preferred_guest_checkout,
+              :preferred_always_include_confirm_step,
               :preferred_company_field_enabled,
               :preferred_address_requires_company,
               :preferred_address_requires_phone,

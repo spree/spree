@@ -52,27 +52,6 @@ Both cart keys appear above because adding to a cart and setting a quantity are
 different flows. See [Services & Workflows](/developer/customization/workflows)
 for the full hook list.
 
-## Adding a rule to a model
-
-For rules about the shape of a record, a decorator is the supported route:
-
-```ruby
-# app/models/spree/product_decorator.rb
-module MyStore
-  module ProductDecorator
-    def self.prepended(base)
-      base.validates :external_id, presence: true, uniqueness: true
-    end
-  end
-end
-
-Spree::Product.prepend(MyStore::ProductDecorator)
-```
-
-Decorators couple you to Spree internals, so prefer a hook when the rule is
-really about an operation. See
-[Decorators](/developer/customization/decorators).
-
 ## Relaxing a rule Spree ships
 
 Never call `clear_validators!` — it wipes every validation on the model,
@@ -81,7 +60,8 @@ cause. Use one of these instead.
 
 ### Store preferences
 
-Some rules are already switchable, per store, from the dashboard or a console:
+Some rules are switchable per store, with no code at all. Change them in the
+dashboard under **Settings → Store**, or through the Admin API:
 
 | Preference | Effect |
 |---|---|
@@ -90,30 +70,27 @@ Some rules are already switchable, per store, from the dashboard or a console:
 | `address_requires_company` | Requires it — only meaningful with the field shown |
 | `disable_sku_validation` | Turns off SKU uniqueness |
 
-```ruby
-store.update!(preferred_address_requires_company: true)
+<CodeGroup>
+
+```typescript Admin SDK
+await adminClient.store.update({
+  preferred_address_requires_phone: false,
+})
 ```
 
-### Overriding the gating predicate
-
-Most conditional validations in `Spree::Address` are gated on a predicate you
-can override, which is far safer than removing the validation:
-
-```ruby
-module MyStore
-  module AddressDecorator
-    # Business addresses only in this store.
-    def require_company?
-      !quick_checkout
-    end
-  end
-end
-
-Spree::Address.prepend(MyStore::AddressDecorator)
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "preferred_address_requires_phone": false }'
 ```
 
-`require_name?`, `require_street?`, `require_postal_code?`, `require_phone?` and
-`require_company?` all work this way.
+</CodeGroup>
+
+<Note>
+  All four are editable in the dashboard except `address_requires_company`, which
+  is API-only for now.
+</Note>
 
 ### The address validator registry
 
@@ -121,7 +98,7 @@ Address rules are regional and business-specific, so addresses carry a registry
 of extra validator classes you can add to and remove from:
 
 ```ruby
-# config/initializers/spree.rb — or config.to_prepare for your own classes
+# server/config/initializers/spree.rb — or config.to_prepare for your own classes
 Spree.validators.addresses.register(MyStore::PostBoxValidator)
 
 # Drop a rule Spree ships
