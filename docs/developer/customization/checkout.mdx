@@ -32,14 +32,12 @@ built-in five don't describe.
 When the flow is unchanged and you only need one more condition:
 
 ```ruby server/config/initializers/spree.rb
-Rails.application.config.to_prepare do
-  Spree::Checkout::Registry.add_requirement(
-    step: :address,
-    field: :vat_number,
-    message: 'VAT number is required for business orders',
-    satisfied: ->(cart) { cart.custom_fields['vat_number'].present? }
-  )
-end
+Spree::Checkout::Registry.add_requirement(
+  step: :address,
+  field: :vat_number,
+  message: 'VAT number is required for business orders',
+  satisfied: ->(cart) { cart.custom_fields['vat_number'].present? }
+)
 ```
 
 While `satisfied:` returns false the cart reports the requirement and refuses to
@@ -52,13 +50,6 @@ that doesn't apply never appears at all:
 applicable: ->(cart) { cart.customer&.company.present? }
 ```
 
-<Warning>
-  **Register inside `to_prepare`, not at the top level of an initializer.** The
-  registry is reloadable code holding class-level state, so anything registered once
-  at boot is discarded the first time your app reloads in development, and your
-  requirement quietly stops applying. `to_prepare` runs again after every reload.
-</Warning>
-
 `message` is stored verbatim — wrap it in `Spree.t` yourself if it needs translating.
 
 ## Adding a step
@@ -66,17 +57,15 @@ applicable: ->(cart) { cart.customer&.company.present? }
 A step bundles its own requirements and says when it is satisfied:
 
 ```ruby server/config/initializers/spree.rb
-Rails.application.config.to_prepare do
-  Spree::Checkout::Registry.register_step(
-    name: :loyalty,
-    before: :payment,
-    satisfied: ->(cart) { cart.custom_fields['loyalty_number'].present? },
-    requirements: ->(cart) {
-      [{ step: 'loyalty', field: 'loyalty_number',
-         message: 'Loyalty number is required' }]
-    }
-  )
-end
+Spree::Checkout::Registry.register_step(
+  name: :loyalty,
+  before: :payment,
+  satisfied: ->(cart) { cart.custom_fields['loyalty_number'].present? },
+  requirements: ->(cart) {
+    [{ step: 'loyalty', field: 'loyalty_number',
+       message: 'Loyalty number is required' }]
+  }
+)
 ```
 
 The step now shows up in the cart's `current_step` and `completed_steps`, its
@@ -99,16 +88,14 @@ Unlike an added requirement, a step's `requirements:` lambda may set its own `co
 ## Reordering or removing built-in steps
 
 ```ruby server/config/initializers/spree.rb
-Rails.application.config.to_prepare do
-  # Drop a step from the reported list
-  Spree::Checkout::Registry.base_steps.delete('confirm')
+# Drop a step from the reported list
+Spree::Checkout::Registry.base_steps.delete('confirm')
 
-  # Or change when one applies
-  Spree::Checkout::Registry.base_steps['payment'] = ->(cart) { cart.total > 0 }
+# Or change when one applies
+Spree::Checkout::Registry.base_steps['payment'] = ->(cart) { cart.total > 0 }
 
-  # Or reorder wholesale — known names keep their own applicability
-  Spree::Checkout::Registry.base_step_names = %w[address payment delivery complete]
-end
+# Or reorder wholesale — known names keep their own applicability
+Spree::Checkout::Registry.base_step_names = %w[address payment delivery complete]
 ```
 
 <Warning>
