@@ -617,29 +617,6 @@
                     "icon": "rocket"
                   },
                   {
-                    "group": "Tutorial",
-                    "pages": [
-                      "developer/tutorial/introduction",
-                      "developer/tutorial/model-and-api",
-                      "developer/tutorial/dashboard",
-                      "developer/tutorial/storefront",
-                      "developer/tutorial/events",
-                      "developer/tutorial/testing"
-                    ],
-                    "icon": "graduation-cap"
-                  },
-                  {
-                    "group": "AI-Assisted Development",
-                    "pages": [
-                      "developer/agentic/overview",
-                      "developer/agentic/agent-skills",
-                      "developer/agentic/mcp",
-                      "developer/agentic/llm-docs",
-                      "developer/cli/admin-api"
-                    ],
-                    "icon": "sparkles"
-                  },
-                  {
                     "group": "Core Concepts",
                     "pages": [
                       {
@@ -705,6 +682,29 @@
                       }
                     ],
                     "icon": "book-open"
+                  },
+                  {
+                    "group": "Tutorial",
+                    "pages": [
+                      "developer/tutorial/introduction",
+                      "developer/tutorial/model-and-api",
+                      "developer/tutorial/dashboard",
+                      "developer/tutorial/storefront",
+                      "developer/tutorial/events",
+                      "developer/tutorial/testing"
+                    ],
+                    "icon": "graduation-cap"
+                  },
+                  {
+                    "group": "AI-Assisted Development",
+                    "pages": [
+                      "developer/agentic/overview",
+                      "developer/agentic/agent-skills",
+                      "developer/agentic/mcp",
+                      "developer/agentic/llm-docs",
+                      "developer/cli/admin-api"
+                    ],
+                    "icon": "sparkles"
                   },
                   {
                     "group": "Providers & Integrations",
