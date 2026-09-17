@@ -1,0 +1,258 @@
+---
+title: "Custom Product Fields"
+description: "Learn how to use custom product fields in Spree Commerce to enrich your product data."
+---
+
+Custom Product Fields allow you to add custom attributes to products beyond the default fields included in Spree. Whether you want to display additional product specifications on the storefront, store internal merchandising notes, or support advanced integrations, custom fields give you complete flexibility directly from the admin dashboard.
+
+Unlike legacy product properties, custom fields are structured, scalable, and work seamlessly with imports, APIs, and storefront display settings.
+
+<Note>Earlier versions of Spree called these *metafields*. The dashboard now says **Custom fields** throughout.</Note>
+
+## Why Use Custom Product Fields?
+
+Custom product fields are ideal when you need to:
+
+- Add **technical specifications** (e.g., voltage, dimensions, fabric composition)
+- Display **care instructions**
+- Highlight **sustainability certifications**
+- Store **supplier or internal notes**
+- Add **regulatory information**
+- Include **SEO enhancements**
+- Attach **structured product data**
+- Power custom storefront sections
+- Support third-party integrations
+
+Because custom fields can be created and managed entirely from the dashboard, they reduce development time and eliminate the need for database changes or code deployments.
+
+## How to Create a Custom Product Field
+
+To create a new custom product field, navigate to **Settings → Custom fields**, under the **Store** group.
+
+![How to add custom product fields in Spree Commerce](/docs/images/user/products/product-metafields/1-product-metafields.png)
+
+Click **Add custom field** to open the creation panel. It opens with the line *"Define a typed field your team can fill in on any matching record."*
+
+![Adding a new custom product field in the Spree Commerce dashboard](/docs/images/user/products/product-metafields/2-add-metafields.png)
+
+Complete the form fields as described below.
+
+## **Custom Field Definition Fields**
+
+### **Label**
+
+The display name shown in the admin panel and (optionally) on the storefront.\
+Example:
+
+- Material
+- Care Instructions
+- Sustainability Rating
+
+### **Namespace**
+
+Used to group custom fields and avoid naming conflicts. Pre-filled with **custom**.
+
+- Leave it on **custom** for merchant-defined product fields unless you have a reason to group fields separately.
+- Avoid using reserved model names like **product**, **variant**, or **order**.
+
+### **Key**
+
+The unique identifier for the custom field (combined with the namespace).
+
+Example:
+
+- **custom.material**
+- **custom.care_instructions**
+- **custom.sustainability_score**
+
+### **Applies to**
+
+For custom product fields, select **Products**.
+
+To learn more about creating custom fields for other records, see [<u>Custom Fields</u>](/user/settings/custom-fields).
+
+<Warning>Neither **Applies to** nor **Type** can be changed once values exist for a field. Decide both before you start filling the field in.</Warning>
+
+## **Choosing the Right Data Type**
+
+Each custom field must have a type. Selecting the appropriate type ensures your data is structured correctly.
+
+### **Short Text**
+
+Single-line text values.
+
+Examples:
+
+- "Denim"
+- "Made in Italy"
+- "BPA Free"
+
+### **Long Text**
+
+Multi-line text without formatting.
+
+Examples:
+
+- Care instructions
+- Ingredient lists
+- Warranty information
+
+### **Rich Text**
+
+Formatted content with styling options.
+
+Examples:
+
+- Marketing descriptions
+- Detailed sustainability breakdowns
+- Compliance disclaimers
+
+### **Number**
+
+Numeric values.
+
+Examples:
+
+- 4.8 (average rating)
+- 32 (waist size)
+- 750 (capacity in ml)
+
+### **Boolean**
+
+True/false values.
+
+Examples:
+
+- Is this product eco-friendly?
+- Is this item fragile?
+- Limited edition?
+
+### **JSON**
+
+Structured data or multiple related values.
+
+Examples:
+
+- Technical specifications object
+- Nutritional breakdown
+- Multi-attribute certification data
+
+## Display Settings
+
+Three switches at the foot of the panel decide where the field appears and what the storefront can do with it:
+
+- **Visible on storefront** - off by default. Leave it off for internal use (e.g., supplier notes, internal margin classification); switch it on for values customers should see on product pages.
+- **Searchable** - *"Include values in storefront product text search (short text, long text, and number only)."*
+- **Sortable** - *"Allow storefront product listings to sort by this field (short text and number only)."*
+
+If displayed on the storefront, custom fields can be used within your theme to enhance the Product Detail Page (PDP).
+
+<Warning>**Searchable** and **Sortable** need a follow-up step your developers have to run: after enabling either one with Meilisearch, somebody must run `rake spree:search:reindex` so existing products are updated. The switch alone does not update what is already there.</Warning>
+
+## Adding Custom Product Field Values
+
+Once the definition is created, you can assign values to individual products.
+
+### Adding Values Individually
+
+![Adding custom field values to a product in Spree Commerce](/docs/images/user/products/product-metafields/3-metafields-values.png)
+
+To add custom field values for individual products:
+
+1. Navigate to **Products**
+2. Open the product you want to update
+3. Find the **Custom fields** card on the product page
+4. Enter the desired values
+5. Click **Save product**
+
+This method is ideal for updating a small number of products.
+
+<Note>To make a field appear on a product form automatically, add it to a [<u>product type</u>](/user/settings/product-types).</Note>
+
+### Updating Custom Product Fields in Bulk
+
+You can also import custom field values via CSV.
+
+#### Step 1: Add a Column to the product CSV file
+
+Use this format:
+
+**custom_field.namespace.key**
+
+Example:
+
+- **custom_field.custom.material**
+- **custom_field.custom.care_instructions**
+- **custom_field.custom.sustainability_score**
+
+#### Step 2: Add Values Per Product Row
+
+Fill in the values for each product.
+
+#### Step 3: Import the File
+
+- Upload during a new product import **or**
+- Export your existing catalog, update it, and reimport with the newly added columns to apply changes
+
+This is especially useful when enriching large product catalogs.
+
+<Note>The import template you download is generated for your store, and already ends with one column per custom field you have defined for products — so you may not need to add the columns by hand.</Note>
+
+Please refer to the following support articles for more information about product imports:
+
+- [<u>Import Products</u>](/user/manage-products/import-products)
+- [<u>Import File Template</u>](/user/manage-products/product-import-file-template)
+
+## Real-World Custom Product Field Examples
+
+Here are some practical examples of how merchants use custom product fields:
+
+### Apparel
+
+- Material: "100% Organic Cotton"
+- Care Instructions: "Machine wash cold, tumble dry low"
+- Fit Type: "Slim Fit"
+- Fabric Weight (gsm): 180
+
+### Electronics
+
+- Battery Life: 12 (hours)
+- Warranty Period: 24 (months)
+- Waterproof: true
+- Voltage: 110–240V
+
+### Food & Supplements
+
+- Allergens: "Contains nuts"
+- Ingredients: Long text field
+- Nutritional Info: JSON structure
+- Expiration Period: 18 (months)
+
+### Furniture
+
+- Assembly Required: true
+- Weight Capacity: 250 (lbs)
+- Material Finish: "Matte Walnut"
+- Care Instructions: Rich text
+
+### B2B Use Cases
+
+- Internal Margin Tier (admin only)
+- Supplier SKU
+- Minimum Order Quantity
+- Packaging Type
+- Compliance Classification
+
+## Replacing Product Properties
+
+Product Properties are no longer supported in the latest version of Spree. Custom product fields provide a more flexible, scalable, and structured solution for managing custom product attributes.
+
+If you previously relied on properties for product enrichment, custom fields are now the recommended approach.
+
+Custom product fields give you the flexibility to tailor your product data model to your business - without relying on developers - while keeping your catalog structured, scalable, and integration-ready.
+
+## Related
+
+- [<u>Settings → Custom Fields</u>](/user/settings/custom-fields)
+- [<u>Settings → Product Types</u>](/user/settings/product-types)
+- [<u>Import Products</u>](/user/manage-products/import-products)

@@ -1,0 +1,39 @@
+---
+title: "Payouts"
+description: "Set who pays your sellers, how often earnings are settled, and the minimum balance worth sending."
+---
+
+The Payouts settings screen decides **how and when this marketplace pays its sellers**. It holds three settings and applies to every seller unless one carries its own schedule.
+
+To reach it, navigate to **Settings → Payouts**, under the **Marketplace** group.
+
+## What's on the screen
+
+| Setting | What it does |
+|---|---|
+| **Paid through** | *"Who moves the money. Keeping your own books means you send the transfers yourself and mark each one paid."* Two choices: **Your own books** and **Stripe Connect**. |
+| **Settle sellers** | *"How often earnings are batched into a payment. A seller can carry their own schedule instead."* Five choices: **Daily**, **Weekly**, **Every two weeks**, **Monthly**, and **Only when you say so**. |
+| **Minimum payout** | *"Below this, a seller's balance carries to the next period rather than being sent. Zero pays whatever is owed."* A number. |
+
+**Save** stays greyed out until you change something.
+
+<Note>**Stripe Connect** appears in the **Paid through** list but could not be selected on the build this page was written against. If you need it, check with your developers whether it is available on your edition and set up.</Note>
+
+## How to set your payout terms
+
+1. Go to **Settings → Payouts**.
+2. Choose **Paid through**. On **Your own books**, Spree tracks what each seller is owed and you send the transfers yourself, marking each one paid.
+3. Choose how often to **Settle sellers**. Pick **Only when you say so** if you would rather run each payout by hand.
+4. Set a **Minimum payout**, or leave it at zero to pay whatever is owed each period.
+5. Click **Save**.
+
+## Good to know
+
+- A seller can carry their own settlement schedule, which overrides the store-wide setting for that seller.
+- Setting a minimum does not cancel a small balance — it carries forward to the next period.
+
+## Related
+
+- [<u>Sellers → Payouts</u>](/user/sellers/payouts)
+- [<u>Sellers → Commission Rates</u>](/user/sellers/commission-rates)
+- [<u>Settings → Seller Requirements</u>](/user/settings/seller-requirements)
