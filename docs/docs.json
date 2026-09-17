@@ -612,7 +612,6 @@
                     "group": "Getting Started",
                     "pages": [
                       "developer/getting-started/quickstart",
-                      "developer/create-spree-app/quickstart",
                       "developer/core-concepts/architecture"
                     ],
                     "icon": "rocket"
@@ -945,6 +944,7 @@
                   {
                     "group": "Operations",
                     "pages": [
+                      "developer/create-spree-app/quickstart",
                       "developer/cli/quickstart",
                       {
                         "group": "Upgrading",
@@ -2872,16 +2872,12 @@
   "navbar": {
     "links": [
       {
-        "label": "15.5k",
+        "label": "16k",
         "href": "https://github.com/spree/spree",
         "icon": {
           "library": "lucide",
           "name": "github"
         }
-      },
-      {
-        "label": "v5.6.0",
-        "href": "https://github.com/spree/spree/releases/tag/v5.6.0"
       },
       {
         "label": "Join Discord",
@@ -2891,12 +2887,7 @@
           "name": "discord"
         }
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Create a free sandbox",
-      "href": "https://console.spree.sh"
-    }
+    ]
   },
   "footer": {
     "socials": {
