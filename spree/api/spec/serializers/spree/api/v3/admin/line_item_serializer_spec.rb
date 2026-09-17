@@ -54,6 +54,57 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
     end
   end
 
+  # Which agreement charged this line, so an operator reading an order can
+  # open it rather than guessing which of a company's catalogs applied
+  # (V-3635).
+  describe 'the agreement that priced the line' do
+    let(:catalog) { create(:catalog, store: store, name: 'Wholesale tier 2') }
+    let(:price_list) { create(:price_list, store: store, name: 'Tier 2 prices', catalog: catalog) }
+
+    it 'names the catalog and its list, with prefixed ids' do
+      line_item.update_columns(price_list_id: price_list.id)
+
+      expect(subject['price_list_id']).to eq(price_list.prefixed_id)
+      expect(subject['price_list_name']).to eq('Tier 2 prices')
+      expect(subject['catalog_id']).to eq(catalog.prefixed_id)
+      expect(subject['catalog_name']).to eq('Wholesale tier 2')
+    end
+
+    it 'names only the list when it belongs to no catalog' do
+      standalone = create(:price_list, store: store, name: 'Clearance')
+      line_item.update_columns(price_list_id: standalone.id)
+
+      expect(subject['price_list_name']).to eq('Clearance')
+      expect(subject['catalog_id']).to be_nil
+      expect(subject['catalog_name']).to be_nil
+    end
+
+    it 'is empty for a line charged the shop price' do
+      expect(subject['price_list_id']).to be_nil
+      expect(subject['catalog_id']).to be_nil
+    end
+
+    # Destroying a catalog soft-deletes its owned list, and a paranoid record
+    # drops out of its association — which would blank the provenance on every
+    # past order the agreement priced, the one thing it exists to keep.
+    it 'still names the list after its catalog is deleted' do
+      line_item.update_columns(price_list_id: price_list.id)
+      catalog.destroy
+
+      expect(subject['price_list_id']).to eq(price_list.prefixed_id)
+      expect(subject['price_list_name']).to eq('Tier 2 prices')
+    end
+
+    it 'stays off the store serializer, like every other provenance field' do
+      line_item.update_columns(price_list_id: price_list.id)
+
+      store_result = Spree::Api::V3::LineItemSerializer.new(line_item, params: base_params).to_h
+
+      expect(store_result).not_to have_key('price_list_id')
+      expect(store_result).not_to have_key('catalog_id')
+    end
+  end
+
   # `seller_id` itself is covered on the store serializer this one extends.
   describe 'seller expand' do
     it 'resolves the operator view rather than the public profile' do

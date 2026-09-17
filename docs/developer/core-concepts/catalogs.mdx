@@ -198,7 +198,13 @@ Prices are checked in order, and the first match wins:
 2. Ordinary price lists whose rules match
 3. The product's base price
 
-Nearest-first is what lets a subsidiary hold a better-negotiated rate than the group's, without disturbing anyone else.
+Nearest-first is what lets a subsidiary hold a better-negotiated rate than the group's, without disturbing anyone else. A nearer node answers even when a catalog further up happens to be cheaper — it's the agreement that buyer is on.
+
+<Note>
+**When one company holds several catalogs, the buyer pays the best price among them.** Nothing about two assignments on the same node says which of them a company is on, so neither outranks the other and the cheapest applicable price wins. The order catalogs appear in on the catalogs screen is display order — it never decides money.
+
+Quantity breaks are part of that comparison: the price compared is the one for the quantity being bought, so a catalog with a deep break at 24 units wins from 24 up and may lose below it.
+</Note>
 
 <Warning>
 A price list owned by a catalog applies **because the catalog applies** — its own rules are not consulted, and it's excluded from ordinary rule matching.

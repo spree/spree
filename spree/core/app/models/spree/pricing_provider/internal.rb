@@ -45,7 +45,12 @@ module Spree
         # back to base.
         # @return [Spree::Price]
         def find_price_from_lists
-          (catalog_price_lists + applicable_price_lists).each do |price_list|
+          catalog_price_list_groups.each do |price_lists|
+            price = best_price_among(price_lists)
+            return price if price
+          end
+
+          applicable_price_lists.each do |price_list|
             price = find_price_for_list(price_list)
             return price if price
           end
@@ -53,12 +58,25 @@ module Spree
           nil
         end
 
-        # Price lists reached through the buyer's effective catalogs, in
-        # catalog resolution order — the company subtree, or failing that the
-        # customer's groups, or failing that the channel's default catalog.
-        # The same chain visibility uses, and its steps are alternatives: a
-        # company buyer is priced by their company's agreement and never
-        # also by their customer group's ({Spree::Catalog.for_context}).
+        # The cheapest price one node's lists give, nil when none prices this
+        # variant. Catalogs sharing a node rank equally, so taking the first to
+        # answer charged a company from whichever sorted first rather than the
+        # cheaper (docs/plans/6.0-b2b-companies-and-catalogs.md). Equal amounts
+        # keep list order, so the answer is stable.
+        #
+        # @param price_lists [Array<Spree::PriceList>]
+        # @return [Spree::Price, nil]
+        def best_price_among(price_lists)
+          price_lists.filter_map { |price_list| find_price_for_list(price_list) }.min_by(&:amount)
+        end
+
+        # Price lists reached through the buyer's effective catalogs, grouped
+        # by the node that assigns them and ordered nearest node first — the
+        # company subtree, or failing that the customer's groups, or failing
+        # that the channel's default catalog. The same chain visibility uses,
+        # and its steps are alternatives: a company buyer is priced by their
+        # company's agreement and never also by their customer group's
+        # ({Spree::Catalog.groups_for_context}).
         #
         # A catalog-attached list applies because the catalog applies: its
         # audience rules are not consulted, since the assignment already
@@ -68,10 +86,13 @@ module Spree
         # volume pricing is (docs/plans/6.0-price-list-automatic-pricing.md).
         # Status and dates gate the list as before.
         #
-        # @return [Array<Spree::PriceList>]
-        def catalog_price_lists
-          @catalog_price_lists ||= catalogs_for_context.filter_map(&:price_list).uniq.select do |price_list|
-            price_list.currently_active? && price_list.contextual_rules_applicable?(context)
+        # @return [Array<Array<Spree::PriceList>>]
+        def catalog_price_list_groups
+          @catalog_price_list_groups ||= catalog_groups_for_context.filter_map do |catalogs|
+            lists = catalogs.filter_map(&:price_list).select do |price_list|
+              price_list.currently_active? && price_list.contextual_rules_applicable?(context)
+            end
+            lists.presence
           end
         end
 
@@ -89,11 +110,12 @@ module Spree
         # Catalogs that apply to this buyer, through the one entry point
         # visibility and quantity terms also use — what a buyer is shown, what
         # they pay and how much they must take have to come from the same
-        # agreement. Reuses the request-scoped set for the current store, so a
+        # agreement. Grouped by assigning node, since that is where precedence
+        # lives. Reuses the request-scoped set for the current store, so a
         # listing does not re-resolve the same buyer per variant.
-        # @return [Array<Spree::Catalog>]
-        def catalogs_for_context
-          Spree::Catalog.for_buyer(
+        # @return [Array<Array<Spree::Catalog>>]
+        def catalog_groups_for_context
+          Spree::Catalog.groups_for_buyer(
             store: context.store, customer: context.user,
             company: context.company, channel: context.channel
           )

@@ -2890,6 +2890,7 @@
           "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran.",
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden."
         },
+        "priced_by": "Preis von {{name}}",
         "purchase_order": {
           "document": "Bestelldokument",
           "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",

@@ -2882,6 +2882,7 @@
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
           "load_error": "无法加载此订单的付款信息。"
         },
+        "priced_by": "定价来自 {{name}}",
         "purchase_order": {
           "document": "采购订单文件",
           "document_help": "PDF、图片或 Word 文件，最大 10 MB。",

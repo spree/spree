@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Thumbnail } from '../ui/thumbnail'
 import { PackageIcon } from './icons'
 
@@ -5,6 +6,9 @@ import { PackageIcon } from './icons'
  * One row of a fulfillment's item list, already joined to its line item by
  * the caller. The image and the price are optional: a surface that does not
  * expose them renders the name and the count alone.
+ *
+ * `priceSource` is a node because saying where a price came from means
+ * linking to it, and routing belongs to the app.
  */
 export type FulfillmentItemRowData = {
   key: string
@@ -12,6 +16,7 @@ export type FulfillmentItemRowData = {
   optionsText?: string | null
   thumbnailUrl?: string | null
   displayPrice?: string | null
+  priceSource?: ReactNode
   quantity: number
 }
 
@@ -35,14 +40,15 @@ function ItemRow({ row }: { row: FulfillmentItemRowData }) {
         )}
       </div>
 
-      <div className="shrink-0 whitespace-nowrap text-right text-muted-foreground text-sm">
+      <div className="min-w-0 shrink text-right text-muted-foreground text-sm">
         {row.displayPrice ? (
-          <span>
+          <span className="whitespace-nowrap">
             {row.displayPrice} × {row.quantity}
           </span>
         ) : (
-          <span>× {row.quantity}</span>
+          <span className="whitespace-nowrap">× {row.quantity}</span>
         )}
+        {row.priceSource && <div className="truncate text-xs">{row.priceSource}</div>}
       </div>
     </div>
   )

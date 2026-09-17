@@ -150,11 +150,13 @@ module Spree
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).
-          # Variant prices are preloaded here rather than via scope_includes,
-          # which this override bypasses; the serializer reads them per row.
+          # Variant prices and each line's price list are named here rather
+          # than via scope_includes, which this override bypasses; the
+          # serializer reads both per row.
           def scope
             base = current_store.orders.accessible_by(current_ability, :show).
-                   includes(line_items: { variant: :prices }).preload_associations_lazily
+                   includes(line_items: [{ variant: :prices }, { price_list: :catalog }]).
+                   preload_associations_lazily
 
             # Transient completion drafts (status draft + cart_id set) belong
             # to in-flight checkouts, never to the admin. Admin drafts are the
@@ -190,7 +192,10 @@ module Spree
           # only its id is reported and that comes off the order's own column.
           # Variant prices ride along because the admin line-item serializer
           # reads the base catalog price for every row (the negotiated-price
-          # comparison); without it each line costs its own price query.
+          # comparison); without it each line costs its own price query. Each
+          # line's price list and its catalog are named for the same reason —
+          # stated rather than left to ar_lazy_preload, which happens to cover
+          # them today.
           def collection_includes
             # `market` is the withdrawal deadline's other input. Fulfillments
             # are loaded with their selected rate because the freight summary
@@ -198,7 +203,8 @@ module Spree
             # fulfillment for a field that is nil on every parcel order.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
              :market, { fulfillments: :selected_delivery_rate },
-             { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
+             { line_items: [{ variant: :prices }, { price_list: :catalog }] },
+             { po_document_attachment: :blob }]
           end
 
           # Read through the store's own vocabulary, so a reason belonging to
