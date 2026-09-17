@@ -1341,6 +1341,12 @@ export interface SetupParams {
    * store's currency.
    */
   country_code: string
+  /**
+   * Load the demo catalog, customers and orders in the background once the
+   * admin account exists. The load takes minutes and downloads product
+   * images, so the response does not wait for it.
+   */
+  sample_data?: boolean
   /** Storefront locale. Defaults to the country's own language. */
   locale?: string
   /**

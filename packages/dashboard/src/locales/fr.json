@@ -1869,6 +1869,10 @@
         "password_confirmation": {
           "label": "Confirmer le mot de passe"
         },
+        "sample_data": {
+          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
+          "label": "Charger des données d’exemple"
+        },
         "store_name": {
           "label": "Nom de la boutique"
         }
