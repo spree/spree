@@ -5130,7 +5130,9 @@
       "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
       "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
       "subtitle": "Utwórz konto administratora i opisz swój sklep. Wszystko tutaj możesz później zmienić.",
-      "title": "Skonfiguruj Spree"
+      "title": "Skonfiguruj Spree",
+      "welcome_description": "Przejdź przez poniższą listę, aby otworzyć sklep {{store}}.",
+      "welcome_title": "Witamy, Twój sklep jest gotowy!"
     },
     "staff": {
       "actions": {

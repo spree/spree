@@ -5068,7 +5068,9 @@
       "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
       "required_notice_title": "Cette installation n'est pas encore configurée",
       "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
-      "title": "Configurer Spree"
+      "title": "Configurer Spree",
+      "welcome_description": "Suivez la liste ci-dessous pour ouvrir {{store}}.",
+      "welcome_title": "Bienvenue, votre boutique est prête !"
     },
     "staff": {
       "actions": {
