@@ -6,8 +6,8 @@ description: Add typed configuration options to Spree models using model prefere
 Model preferences allow you to easily extend Spree models with configuration options. Thanks to this you can store useful information on Spree models, eg.
 
 ```ruby
-user.preferred_language = "English"
-user.save
+store.preferred_timezone = 'Europe/Warsaw'
+store.save
 ```
 
 ## Defining Model Preferences
@@ -16,45 +16,26 @@ To define a model preference, you need to add them to your model class.
 
 Make sure to generate a migration to add the `preferences` column to the table. This column will store the preferences in a serialized format.
 
-<CodeGroup>
-
-```bash Spree CLI (Docker)
+```bash
 spree generate migration AddPreferencesToSpreeUsers preferences:text
 ```
 
-```bash Without Spree CLI
-bin/rails g migration AddPreferencesToSpreeUsers preferences:text
-```
-
-</CodeGroup>
-
 Run the migration.
 
-<CodeGroup>
-
-```bash Spree CLI (Docker)
+```bash
 spree migrate
 ```
 
-```bash Without Spree CLI
-bin/rails db:migrate
-```
-
-</CodeGroup>
-
-```ruby
-class Spree::User < ApplicationRecord
-  # ... you existing code ...
-
-  # include the preferable module
-  include Spree::Preferences::Preferable
-  # define the preferences
-  preference :language, :string, default: "English"
-  preference :sms_marketing, :boolean, default: false
+```ruby server/app/models/spree/brand.rb
+module Spree
+  class Brand < Spree.base_class
+    preference :featured, :boolean, default: false
+    preference :display_name, :string
+  end
 end
 ```
 
-This will add a `language` preference to the `User` model. The preference will be stored in the newly created `preferences` column of the `spree_users` table. You can add more preferences to the model in the same way.
+Any model inheriting from `Spree.base_class` can declare preferences — the reader and writer methods come with it, so there is nothing to include. The values live in that model's `preferences` column.
 
 ## Accessing Model Preferences
 
@@ -67,61 +48,40 @@ There are several shortcut methods that are generated. They are shown below.
 Query methods:
 
 ```ruby
-user.prefers_sms_marketing? # => false
+brand.prefers_featured? # => false
 ```
 
 Reader methods:
 
 ```ruby
-user.preferred_sms_marketing      # => false
-user.preferred_language   # => "English"
+brand.preferred_featured      # => false
+brand.preferred_display_name   # => "English"
 ```
 
 Writer methods:
 
 ```ruby
-user.prefers_sms_marketing = false         # => false
-user.preferred_language = "English"    # => "English"
+brand.prefers_featured = false         # => false
+brand.preferred_display_name = "English"    # => "English"
 ```
 
 <Note>
-  Remember to run `user.save` after setting the preference value to save the changes to the database.
+  Remember to run `brand.save` after setting the preference value to save the changes to the database.
 </Note>
 
 Check if a preference is available:
 
 ```ruby
-user.has_preference? :sms_marketing
+brand.has_preference? :featured
 ```
 
 ### Generic Methods
 
-Each shortcut method is essentially a wrapper for the various generic methods shown below:
-
-Query method:
+When the preference name is only known at runtime, read and write it generically:
 
 ```ruby
-user.prefers?(:sms_marketing)       # => false
-user.prefers?(:language)  # => false
-```
-
-Reader methods:
-
-```ruby
-user.preferred(:sms_marketing)      # => false
-user.preferred(:language)   # => "English"
-```
-
-```ruby
-user.get_preference :sms_marketing
-user.get_preference :language
-```
-
-Writer method:
-
-```ruby
-user.set_preference(:sms_marketing, false)     # => false
-user.set_preference(:language, "English")  # => "English"
+brand.get_preference(:featured)             # => false
+brand.set_preference(:display_name, 'Wilson')
 ```
 
 ### Accessing All Preferences
@@ -129,21 +89,23 @@ user.set_preference(:language, "English")  # => "English"
 You can get a hash of all stored preferences by accessing the `preferences` helper:
 
 ```ruby
-user.preferences # => {"language"=>"English", "sms_marketing"=>false}
+brand.preferences # => { 'featured' => false, 'display_name' => 'Wilson' }
 ```
 
 This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored.
 
 ## Models with preferences
 
-The following Spree models already have preferences defined:
+Around fifty models use preferences, and the pattern is always the same: a family of subclasses that share a table but need different settings.
 
-* `Spree::Calculator`
-* `Spree::Gateway`
-* `Spree::PageBlock`
-* `Spree::PageSection`
-* `Spree::Page`
-* `Spree::PaymentMethod`
-* `Spree::PromotionRule`
-* `Spree::Store`
+| Family | What the preferences hold |
+|---|---|
+| `Spree::Calculator` | The numbers behind a delivery charge or a discount — flat rate, percentage, tiers |
+| `Spree::PaymentMethod` | Gateway credentials and per-provider options |
+| `Spree::Promotion::Rules` and `Spree::Promotion::Actions` | What a promotion matches on, and what it does |
+| `Spree::Integration` | Per-service configuration and API keys |
+| `Spree::PriceRules` and `Spree::DeliveryMethodRules` | When a price list or a delivery method applies |
+| `Spree::Store`, `Spree::Channel` and `Spree::Market` | Merchant settings — timezone, units, currency behaviour |
+
+This is why preferences exist rather than columns: `Spree::Calculator::FlatRate` and `Spree::Calculator::TieredPercent` are rows in one table with entirely different settings, and neither wants a column the other leaves null.
 * `Spree::Theme`
