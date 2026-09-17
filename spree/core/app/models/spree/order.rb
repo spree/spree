@@ -698,12 +698,8 @@ module Spree
 
     # What has been captured against this order, net of refunds.
     #
-    # An order placed in a split checkout owns no payments, so its own
-    # +payment_total+ stays at zero however much the customer paid — the
-    # figure comes from its share of the group's payments instead, the same
-    # way {Spree::Orders::UpdateStatuses} derives +payment_status+. The
-    # group's own total will not do: once one seller has been captured and
-    # another has not, no proportion of it describes either.
+    # Read from the share rows rather than the +payment_total+ they are summed
+    # into, since a caller about to move money needs what they say now.
     #
     # @return [BigDecimal]
     def net_captured_total
@@ -1199,6 +1195,21 @@ module Spree
     end
 
     private
+
+    # An order placed in a split checkout owns no payments, so its money is
+    # the sum of its shares of the group's instead — the same source
+    # {Spree::Orders::UpdateStatuses} derives payment_status from.
+    #
+    # @return [Arel::Nodes::NamedFunction]
+    def settled_payments_arel
+      return super unless grouped?
+
+      splits = Spree::PaymentSplit.arel_table
+      net = splits.project(splits[:captured_amount].sum - splits[:refunded_amount].sum).
+            where(splits[:order_id].eq(id))
+
+      Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(net), Arel.sql('0')])
+    end
 
     def ensure_can_be_deleted
       return true if can_be_deleted?
