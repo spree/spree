@@ -41,8 +41,8 @@ On top of that, meaningful business moments get their own events:
 
 | Event | Meaning |
 |---|---|
-| `order.placed` | A customer completed checkout |
-| `order_group.completed` | A checkout that split across several sellers finished — the whole purchase |
+| `order.placed` | An order was placed — one per order, so a checkout that split across several sellers publishes one per seller |
+| `order_group.completed` | A checkout that split finished — one event for the whole purchase |
 | `order.paid` | Payment is settled in full |
 | `order.canceled` | The order was cancelled |
 | `order.shipped` / `order.delivered` | Everything has shipped / arrived |

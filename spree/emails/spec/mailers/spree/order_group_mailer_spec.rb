@@ -175,6 +175,20 @@ describe Spree::OrderGroupMailer, type: :mailer do
       end
     end
 
+    # Spree::Money#to_html turns the first space into &nbsp;, which is right in
+    # the HTML part and prints the raw entity in the text one. Invisible in
+    # USD, where nothing is formatted with a space.
+    it 'writes money as plain text in the text part' do
+      krona_store = create(:store, name: 'Krona Store', url: 'krona.example.com',
+                                   default_currency: 'SEK', supported_currencies: 'SEK')
+      krona = create(:order_group, :with_parcels, store: krona_store, sellers_count: 2, currency: 'SEK')
+
+      text = described_class.confirm_email(krona).text_part.body.to_s
+
+      expect(text).to include(krona.display_delivery_total.to_s)
+      expect(text).not_to include('&nbsp;')
+    end
+
     it 'renders in the locale the purchase was made in' do
       I18n.backend.store_translations(
         :'pt-BR', spree: { order_group_mailer: { confirm_email: { subject: 'Confirmação de Pedido' } } }

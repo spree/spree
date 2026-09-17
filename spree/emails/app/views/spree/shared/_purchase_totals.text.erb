@@ -4,13 +4,13 @@
   <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>
 <% end %>
 <% if order_group.delivery_total != 0 %>
-  <%= Spree.t(:shipping) %>: <%= order_group.display_delivery_total.to_html %>
+  <%= Spree.t(:shipping) %>: <%= order_group.display_delivery_total %>
 <% end %>
 <% if order_group.additional_tax_total != 0 %>
-  <%= Spree.t(:tax) %>: <%= order_group.display_additional_tax_total.to_html %>
+  <%= Spree.t(:tax) %>: <%= order_group.display_additional_tax_total %>
 <% end %>
 <% if order_group.gift_card_total.positive? %>
-  <%= Spree.t(:gift_card) %>: -<%= order_group.display_gift_card_total.to_html %>
+  <%= Spree.t(:gift_card) %>: -<%= order_group.display_gift_card_total %>
 <% end %>
 <% order_group.discounts.manual.to_a.group_by(&:label).each do |label, discounts| %>
   <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order_group.currency) %>

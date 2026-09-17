@@ -76,6 +76,19 @@ RSpec.describe Spree::OrderGroupEmailSubscriber do
         subscriber.send(:send_confirmation_email, mock_event(group))
       end
 
+      # A replay that gets as far as stamping the customer's flag and no
+      # further still owes the operator their notification.
+      it 'is still told when a replay finds the customer already confirmed' do
+        group.update_column(:confirmation_delivered, true)
+
+        expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
+        expect(Spree::OrderGroupMailer).to receive(:store_owner_notification_email).with(group.id).
+          and_return(double(deliver_later: true))
+
+        expect { subscriber.send(:send_confirmation_email, mock_event(group)) }.
+          to change { group.reload.store_owner_notification_delivered }.from(false).to(true)
+      end
+
       it 'is not told twice' do
         group.update_column(:store_owner_notification_delivered, true)
 

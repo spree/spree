@@ -17,13 +17,16 @@ module Spree
     def send_confirmation_email(event)
       order_group = find_order_group(event)
       return unless order_group
-      # Completion is replayable, and a resumed finalize re-publishes this
-      # event — without the flag the customer is confirmed twice.
-      return if order_group.confirmation_delivered?
       return unless order_group.store.prefers_send_consumer_transactional_emails?
 
-      OrderGroupMailer.confirm_email(order_group.id).deliver_later
-      order_group.update_column(:confirmation_delivered, true)
+      # Completion is replayable, and a resumed finalize re-publishes this
+      # event. Each email is guarded by its own flag rather than the method
+      # returning on the first: a replay that has already confirmed the
+      # customer may still owe the operator their notification.
+      unless order_group.confirmation_delivered?
+        OrderGroupMailer.confirm_email(order_group.id).deliver_later
+        order_group.update_column(:confirmation_delivered, true)
+      end
 
       send_store_owner_notification(order_group)
     end
