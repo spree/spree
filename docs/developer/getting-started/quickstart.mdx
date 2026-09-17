@@ -22,6 +22,30 @@ description: "Install Spree Commerce locally, run your first store, and deploy i
     <video autoPlay muted loop playsInline controls className="block w-auto max-w-full h-auto rounded-xl" src="/videos/store-setup.mp4"></video>
   </Frame>
 
+## Project structure and overview
+
+`create-spree-app` creates a project folder like this:
+
+```
+my-store/
+├── server/                 # The Spree API — models, endpoints, jobs, specs
+├── apps/
+│   ├── dashboard/          # Admin dashboard (React)
+│   ├── seller-dashboard/   # Seller panel, for marketplaces (React)
+│   └── storefront/         # Next.js storefront (if selected)
+├── .env                    # Ports, secrets and service URLs
+├── .spree/                 # CLI credentials — gitignored, created on first run
+├── docker-compose.yml      # The local stack
+├── package.json            # Scripts and the pinned @spree/cli
+├── AGENTS.md               # Instructions for coding agents
+├── CLAUDE.md               # Project layout and conventions
+└── README.md               # How to run everything
+```
+
+**`server/` is the only part that is Spree's.** You own the apps under `apps/` outright — they are ordinary Vite and Next.js projects that talk to the API over HTTP, so you can restyle, restructure or replace them without forking anything.
+
+Each app carries its own instructions: `server/CLAUDE.md`, `apps/dashboard/AGENTS.md` and so on. Read the one for the directory you are working in — that is also what a coding agent picks up.
+
 ## Using the Spree CLI
 
 Projects scaffolded with `create-spree-app` include [`@spree/cli`](/developer/cli/quickstart) for managing the backend and calling the Admin API. Because it's a project dependency, run it with `npx` (or any package-manager script):
@@ -48,7 +72,7 @@ See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [A
   The catalog, the cart, the order and fulfillment — what each one is for, and the two APIs you build against. Twenty minutes here saves a lot of guessing later, and it ends by pointing you at whichever path suits you.
 </Card>
 
-In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js starter](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [CLI reference](/developer/create-spree-app/quickstart) for what the scaffold generated.
+In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js Storefront](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [CLI reference](/developer/create-spree-app/quickstart) for what the scaffold generated.
 
 <Tip>
   Using an AI coding agent? Run `npx skills add spree/agent-skills` in your new project — it teaches your agent the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).
@@ -56,7 +80,7 @@ In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to
 
 ---
 
-Congrats! You've set up your Spree Commerce and it's looking amazing!
+Congrats! You've set up your Spree application and it's looking amazing!
 
 Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why don't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
 
