@@ -11,19 +11,13 @@ class AddFingerprintToSpreeCreditCards < ActiveRecord::Migration[7.2]
     # soft-deleted rows are left untouched.
     if ActiveRecord::Base.connection.adapter_name == 'Mysql2'
       # MySQL has no partial indexes, but treats NULL as distinct in unique
-      # indexes, so NULL fingerprints are naturally allowed. COALESCE on
-      # deleted_at keeps soft-deleted rows from colliding with active ones.
-      execute <<-SQL
-        CREATE UNIQUE INDEX #{INDEX_NAME}
-        ON spree_credit_cards(
-          user_id,
-          payment_method_id,
-          fingerprint,
-          month,
-          year,
-          (COALESCE(deleted_at, CAST('1970-01-01' AS DATETIME)))
-        )
-      SQL
+      # indexes, so NULL fingerprints are naturally allowed. The default value of
+      # deleted_at in the virtual column enables enforcing uniqueness of non-deleted
+      # values and keeps soft-deleted rows from colliding with active ones.
+      add_column :spree_credit_cards, :deleted_at_with_default, :virtual, type: :datetime, as: "IFNULL(deleted_at, '1970-01-01 00:00:00')", stored: false
+      add_index :spree_credit_cards, [:user_id, :payment_method_id, :fingerprint, :month, :year, :deleted_at_with_default],
+                unique: true,
+                name: INDEX_NAME
     else
       add_index :spree_credit_cards, [:user_id, :payment_method_id, :fingerprint, :month, :year],
                 unique: true,
@@ -35,5 +29,8 @@ class AddFingerprintToSpreeCreditCards < ActiveRecord::Migration[7.2]
   def down
     remove_index :spree_credit_cards, name: INDEX_NAME
     remove_column :spree_credit_cards, :fingerprint
+    if ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+      remove_column :spree_credit_cards, :deleted_at_with_default
+    end
   end
 end
