@@ -377,10 +377,6 @@
       "destination": "/v5/developer/customization/authentication"
     },
     {
-      "source": "/developer/customization/checkout",
-      "destination": "/v5/developer/customization/checkout"
-    },
-    {
       "source": "/developer/customization/routes",
       "destination": "/v5/developer/customization/routes"
     },
@@ -891,6 +887,7 @@
                       "developer/customization/metadata",
                       "developer/customization/permissions",
                       "developer/customization/api",
+                      "developer/customization/checkout",
                       "developer/customization/decorators"
                     ],
                     "icon": "code"
