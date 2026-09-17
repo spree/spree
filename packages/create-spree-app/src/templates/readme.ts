@@ -152,7 +152,7 @@ Project setup mints a read-only secret key into \`.spree/credentials.json\` (git
 
 \`\`\`bash
 ${run} spree api get products
-${run} spree api get "orders?q[state_eq]=complete"
+${run} spree api get "orders?q[status_eq]=complete"
 ${run} spree api endpoints          # list endpoints + required scopes
 ${run} spree api status             # show resolved credentials + server reachability
 \`\`\`

@@ -113,6 +113,20 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(created.created_by_id).to eq(admin_user.id)
     end
 
+    # `created_by` on a gift card still points at admin users only — it
+    # converts to a polymorphic actor in 6.1 — so a key-authenticated create
+    # records nobody rather than raising on the type mismatch.
+    context 'when a secret API key made the call' do
+      let(:headers) { api_key_headers }
+
+      it 'creates the gift card without an actor' do
+        expect { post :create, params: create_params, as: :json }.to change(Spree::GiftCard, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::GiftCard.last.created_by_id).to be_nil
+      end
+    end
+
     it 'attaches a customer when customer_id is passed as a prefixed ID' do
       customer = create(:user, email: 'buyer@example.com')
 

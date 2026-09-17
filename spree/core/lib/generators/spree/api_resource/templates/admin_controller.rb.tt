@@ -3,6 +3,11 @@ module Spree
     module V3
       module Admin
         class <%= plural_name.camelize %>Controller < ResourceController
+          # Which API key scope authorizes this endpoint — `read_<%= plural_name %>`
+          # and `write_<%= plural_name %>`. Point it at an existing resource name
+          # instead if this endpoint belongs under one.
+          scoped_resource :<%= plural_name %>
+
           protected
 
           def model_class

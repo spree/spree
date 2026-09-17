@@ -4,6 +4,10 @@
       "delete_image": "删除图片",
       "edit_media": "编辑媒体"
     },
+    "actors": {
+      "api_key": "API 密钥",
+      "unnamed": "未命名"
+    },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
       "create_description": "从该来源加载的浏览器可以调用管理 API。CORS 允许列表和管理后台 Cookie 会话都依赖此列表——请保持精简。",
@@ -30,10 +34,10 @@
         "never_used": "从未使用",
         "revoked": "已撤销"
       },
-      "by_email": "由 {{email}}",
       "create_key_cta": "创建密钥",
       "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
       "create_sheet_title": "创建 API key",
+      "created_by": "由 {{actor}}",
       "delete_confirm": {
         "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。",
         "title": "删除密钥？"
@@ -1860,6 +1864,10 @@
         "password_confirmation": {
           "label": "确认密码"
         },
+        "sample_data": {
+          "help": "在后台添加演示商品、分类、客户和订单，方便您浏览后台。需要几分钟并会下载商品图片。",
+          "label": "加载示例数据"
+        },
         "store_name": {
           "label": "商店名称"
         }
@@ -2878,6 +2886,7 @@
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
           "load_error": "无法加载此订单的付款信息。"
         },
+        "priced_by": "定价来自 {{name}}",
         "purchase_order": {
           "document": "采购订单文件",
           "document_help": "PDF、图片或 Word 文件，最大 10 MB。",
@@ -5872,6 +5881,8 @@
       "builder": {
         "metrics": "指标",
         "no_metrics": "请至少选择一个指标。",
+        "one_family_only": "一个报表只涵盖一个指标组。选择其他组中的指标会将报表切换到该组。",
+        "switches_family": "将此报表切换到{{family}}",
         "group_by": "分组依据",
         "none": "无（仅汇总）",
         "grain": "时间粒度",

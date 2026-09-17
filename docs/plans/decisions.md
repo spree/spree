@@ -6,6 +6,24 @@
 
 **Consequences:** "How many orders" and "how many deliveries" are now understood to be different questions, and any surface telling a customer what to expect must answer the second from fulfillments. Delivery method alone cannot key it — `available_to_sellers` lets two warehouses be quoted on one shared marketplace method — and a location alone cannot either, so the pair is the rule. A single-partition checkout is untouched and keeps `Spree::OrderMailer`. Grouped cancellation is left as it is: it is opt-in per child, so it is not misfiring on its own. The storefront's own confirmation page reads `order.items`, which the group serializer does not expose, so it needs the same treatment separately.
 
+## 2026-09-16: Two catalogs on one company charge the best of them, and every order line says which agreement priced it
+
+**Context:** Nothing stopped an operator assigning a second catalog to a company — the audience picker offered the company again with no warning — and once both were active the buyer was charged from whichever catalog sorted first, not the cheaper one. Reported against a company holding a 5%-off catalog and a contract catalog with a quantity break: at 24 units the buyer paid $2,280.00 where the company's other agreement said $1,200.00, and reversing the two catalogs' order reversed the outcome (V-3635). The tie-break was the documented design — `Catalog#position`, which is the order of the store-wide catalogs screen — so a merchant dragging that list to tidy it changed what companies paid, with no screen anywhere listing a company's catalogs to show it had happened.
+
+**Decision:** Precedence between nodes is real and unchanged: a division's own agreement still answers over its parent's, cheaper or not, because someone negotiated it. Precedence *within* a node is not real, so it is gone — catalogs assigned to the same company node rank equally and the buyer pays the **best price any of them gives**. Equal amounts keep list order, so the answer stays stable. `Spree::Catalog.groups_for_company` / `groups_for_context` / `groups_for_buyer` return the catalogs grouped by assigning node and the flat `for_*` readers are derived from them, so visibility and quantity terms keep the union they always had while pricing alone sees the rank boundaries. `Spree::Current` memoizes the grouped form and derives the flat set from it, so the two cannot disagree about one buyer. Position keeps ordering the catalogs screen and nothing else.
+
+Rejected: refusing the second assignment, which would delete a shipped feature (two catalogs on one company is how an operator unions two assortments) and invalidate stores already doing it; and warning the operator while leaving the money alone, which does not stop the overcharge. Best-price is also the rule a merchant can state in one sentence to the buyer they overcharged.
+
+**Consequences:** The admin line-item serializer gains `price_list_id`, `price_list_name`, `catalog_id` and `catalog_name`, and the dashboard's order item rows link to the agreement that priced them. This is read off the price list the line was stamped with at pricing time, never re-resolved — so it reports what the buyer was actually charged from rather than what would apply today, and it keeps the order read path provider-free (2026-08-30, which is why `catalog_price` on the same serializer is a base price). Provenance stays admin-only, off the store serializers, like `price_source`. The orders controller preloads `line_items: { price_list: :catalog }` so a page of orders does not pay two queries per line.
+
+Deliberately not done: an **effective-price view** on the company or customer page — what a named buyer would pay for a product before any order exists. Raised on the issue after the fix was scoped, with figures: one variant offered at $111.11 by a company catalog, $329.99 by a standalone list and $549.99 as the shop price, with no screen anywhere reconciling the three (the customer page shows groups only, the company page no pricing at all). It is a real gap and a larger one than the original report's "show which catalog applies". The link added above answers only after the fact. A preview needs a new admin endpoint taking company-or-customer plus variant and quantity — the quantity matters, since a break can reverse which agreement wins — and cards on two dashboard pages. `Spree::Pricing::Context` already takes exactly those inputs and the storefront resolves through it per variant, so this is a new surface over an existing resolver, not a second one; the provider-free rule it must respect is about order and listing serializers, not a deliberate preview call. Held out so an urgent money fix is not gated on a feature.
+
+The same walk confirmed the tier order — company catalog, then standalone lists by their own rules, then shop price — is consistent and worth preserving. It is: best-price applies only within one node, never across tiers, and a test over that scenario charges $111.11 at every quantity.
+
+The same first-wins shape remains in `Catalogs::ResolveQuantityRules`, where the fields are minimums and multiples rather than money and "best" has no obvious meaning; V-3592 is the same class of problem on commission rates and is untouched here.
+
+**Plans amended:** `6.0-b2b-companies-and-catalogs.md` (Key Decisions, the `Catalog#position` note, and Pricing).
+
 ## 2026-09-12: Reporting scopes money to one currency and never converts; counts are not scoped at all
 
 **Context:** Every sales and payments base filtered `currency` unconditionally, so a multi-currency store could not ask how many orders it took — only how many were priced in one currency. That is a wrong answer rather than a partial one. The wider question of cross-currency totals came up at the same time, so both were settled together after looking at how other platforms handle it.
@@ -5561,3 +5579,169 @@ backed by an index) and that key on its Ransack allowlist, or it cannot be
 declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
+
+
+## 2026-09-15 — Admin MCP ships in 6.0 over a core agent-tool registry; the assistant follows it
+
+Plan: `6.0-mcp-server.md`. Supersedes the "No MCP in 6.0" decision in
+`6.0-dashboard-assistant.md` (2026-08-20) and executes the future-lanes table
+in `5.5-admin-api-cli.md`, whose CLI-first precondition is met now that
+`spree api` has shipped.
+
+**Decision.** The tool registry the assistant branch built
+(`{name, description, params schema, permission key, mutating flag,
+executor}`) moves into `spree_core` as `Spree::AgentTool` /
+`Spree.agent_tools`, beside `Spree.integrations` and `Spree.reporting`, so an
+extension registers a tool without depending on any adapter gem. A new
+optional gem `spree_mcp` mounts the official `mcp` Ruby gem's Streamable HTTP
+transport at `/api/v3/admin/mcp`, authenticates with secret keys and offers
+only the tools the key's scopes permit. The assistant rebases onto the same
+registry afterwards. No new `spree_ai` or `spree_agents` gem.
+
+**Catalog shape.** Never one tool per endpoint. Generic reads and generic
+writes over a resource map derived from the admin controllers, with writable
+schemas read from the generated `admin.yaml`; reporting tools over
+`Spree.reporting`; a short list of task tools only where a job crosses
+records. Writes are scope-gated and confirmed by the MCP client; the
+server-side approval gate stays an assistant feature.
+
+**Consequences for other work.** New admin controllers must declare
+`model_class`, `serializer_class` and `scoped_resource`, and expose their
+workflow through `create_workflow` / `update_workflow`, or the generic tools
+cannot see them. Tool results must stay compact because they land in the
+model's context. No new tools under `Spree::Assistant::Tools`.
+
+
+## 2026-09-16 — Workflows are the agent write tools; exposure is an allowlist in core
+
+Plan: `6.0-mcp-server.md`. Refines the 2026-09-15 entry above.
+
+Reviewing the orders and products controllers showed that the Admin API has
+no direct record writes left on its write paths: the base controller calls
+the declared `create_workflow` / `update_workflow`, every member action calls
+a registered workflow, and a workflow's `perform` keyword signature with its
+YARD `@param` block is a machine-readable contract.
+
+**Decision.** Each exposed workflow is one agent tool with a schema derived
+from `perform`; no hand-written task tools. Exposure is
+`Spree.agent_tools.expose_workflows(<dependency key> => <permission>)` in
+`spree_core`, keyed by `Spree::Dependencies` key so a host app's replacement
+workflow keeps the tool. Generic `create_resource` / `update_resource` /
+`delete_resource` exist only for resources whose controller declares no
+workflow and refuse the rest. Tier 1 services still called from controllers
+are not adapted; they are promoted to workflows over time.
+
+**Consequences for other work.** A new back-office write is a workflow plus
+an allowlist entry in the same PR. `perform` parameters need typed YARD
+docs; record parameters must be models the resource map knows; principal
+parameters keep the established names so they are injected, never accepted
+from a caller. A contract spec fails when an admin controller invokes a
+workflow that is neither exposed nor explicitly excluded.
+
+
+## 2026-09-16 — The API key is an actor; "who did this" associations become polymorphic
+
+Plan: `6.0-action-actors.md`, shipping before `6.0-mcp-server.md`.
+
+Every association that records who performed an action (`canceler`,
+`approver`, `created_by`, `refunder`, `received_by`, …) pointed at the admin
+user class only, so a write made with a secret API key — a warehouse
+connector, an integration, soon any MCP client — recorded nobody.
+
+**Decision.** Those associations are declared with `acted_by`, which makes
+them polymorphic over `Spree.actor_classes` (the admin user class and
+`Spree::ApiKey`; extensions register more). The Admin API passes
+`current_actor` — the signed-in admin or the authenticating key — to
+workflows in place of the user. 6.0 converts the order operations (orders,
+refunds, returns, exchanges, claims, stock receipts: 8 columns on 6 tables);
+the remaining 13 convert in 6.1. Serializers expose `<name>_type` beside
+`<name>_id`. A transitional reader resolves un-backfilled rows through the
+admin user class with a deprecation warning until 6.1. Rejected: user-bound
+personal keys (platforms are retiring them; a connector is not a person) and
+waiting for OAuth (leaves 6.0 key writes unattributed). OAuth, when it comes,
+resolves a token to one of these two actor kinds.
+
+**Consequences for other work.** New "who did this" associations use
+`acted_by`, never `belongs_to … class_name: Spree.admin_user_class`;
+ownership associations that gate visibility (`Import#user`, `Export#user`,
+`SavedReport#user`) keep the plain form. Controllers pass `current_actor`,
+not `try_spree_current_user`, for actor keywords. Workflow principal
+parameters stay `[Object, nil]` and are assigned, not inspected.
+
+**Amended the same day, at implementation.** Three points the design left
+open. An expanded actor serializes as `{ id, type, label }` through a new
+`ActorSerializer`, not through the admin user serializer — the order
+serializer already expanded `approver`/`canceler`/`created_by` as people and
+the dashboard read `full_name || email` off them, which no key can answer.
+`ApiKeySerializer#created_by_email` calls `.email` on the already-polymorphic
+`created_by`, so it gains `created_by_type` and `created_by_label` and the
+api-keys controller passes `current_actor`; the plan had said to leave that
+file alone, which left a 500 waiting for the first key-creates-key call.
+`current_actor` is defined on `Api::V3::BaseController` (answering the user)
+and overridden in `AdminAuthentication` to prefer `current_api_key`, because
+the post-sale concerns are shared with the JWT-only seller panel while a
+publishable Store API key must never become an actor.
+
+## 2026-09-16 — Update checks and usage telemetry are one daily heartbeat, on by default
+
+Plan: `6.0-telemetry-and-update-check.md`.
+
+The 5.x update banner went with the `spree_admin` engine, and 6.0 had no
+replacement and no usage reporting from servers or the CLI.
+
+**Decision.** `Spree::UpdateCheck` in core asks spreecloud.io once a day
+from a job, never inline in a request, and the same request is the usage
+heartbeat: the four 5.x query keys (`version`, `environment`, `url`,
+`install_id`) stay frozen, and stack fields plus order-of-magnitude size
+buckets sit beside them. The dashboard reads `GET /api/v3/admin/updates`
+(JWT admins with `manage` on the store only; secret keys get 404) and shows
+a banner through an `AppShell` `banner` slot the seller panel leaves empty.
+`@spree/cli` and `create-spree-app` send one event per command. Both
+channels are on by default; `SPREE_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1`
+reduces the heartbeat to `version` and silences the CLI,
+`SPREE_UPDATE_CHECK_DISABLED=1` stops the request entirely. Rejected: exact
+counts (business data next to a store URL), folding the status into `/me`
+(reaches admins who cannot manage the store), opt-in by default (no banner
+for most installs, 5.x regression).
+
+**Consequences for other work.** The running Spree version, gem list or
+environment must not appear in any other Admin API response. A new outbound
+call from core is cached, run from a job, short-timeout, failure-cached.
+Env-backed booleans read through `Spree::Config` must be cast: the `env:`
+option on `preference` returns the raw string. Cross-page notices go through
+the `AppShell` `banner` slot, nowhere else.
+## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
+
+Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.
+
+Creating a store asks the same four questions wherever it happens — name,
+country, currency, language — and provisions the same things from the
+answers. Two flows ask them:
+
+- **Self-hosted:** account setup, then store setup. No email confirmation.
+- **Hosted signup:** account setup, then confirmation (instant with an OAuth
+  provider), then store setup.
+
+Only the middle step differs, so the store step is shared rather than
+reimplemented.
+
+**Frontend.** The four fields live in `StoreSetupFields`, exported from
+`@spree/dashboard` at `./components/spree/store-setup-fields`. It is headless
+about submission: the caller owns the form, the countries query and what
+happens on submit, because those genuinely differ (a one-time setup token
+versus an authenticated session). The country drives the currency and
+language defaults, and both stay editable.
+
+**Backend.** `Spree::Stores::ProvisionDefaults` is the one provisioning path,
+already called by the first-run setup endpoint. Anything else that creates a
+store calls it too, rather than hand-rolling a subset: it builds the default
+market, the warehouse, the delivery zones, the package type and pickup, and a
+store missing those cannot ship. The earlier hosted sandbox created only a
+market, which is why its stores could not fulfil.
+
+**Consequences for other work.** A new flow that creates a store mounts
+`StoreSetupFields` and calls `ProvisionDefaults`; it does not write its own
+country picker or its own provisioning. `ProvisionDefaults` previously
+documented exactly two callers — that list grows as flows are added, but the
+rule it protects stands: never wire it to a settings screen, since re-running
+it against a configured store is a data reset.

@@ -85,4 +85,26 @@ test.describe('reports', () => {
     })
     await expect(page.getByRole('link', { name: `${name} renamed` })).toHaveCount(0)
   })
+
+  test('switches the report to another metric group', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`${REPORTS_PATH(creds.store_id)}/new`)
+
+    await expect(page.getByRole('heading', { name: /^new report$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    // A new report opens on sales, so a payments metric belongs to another
+    // group — it must still be pickable, and picking it switches the report.
+    const payments = page.getByRole('checkbox', { name: /^payments received$/i })
+    await expect(payments).toBeEnabled()
+    await payments.check()
+
+    await expect(payments).toBeChecked()
+    await expect(page.getByRole('checkbox', { name: /^total sales$/i })).not.toBeChecked()
+    // The breakdown followed the switch onto the payments clock, so the
+    // report still charts a series rather than dropping to bare totals.
+    await expect(page.getByRole('combobox', { name: /group by/i })).toHaveText(/payment date/i)
+    await expect(page.getByText(/pick at least one metric/i)).toHaveCount(0)
+  })
 })

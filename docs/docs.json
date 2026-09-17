@@ -138,11 +138,11 @@
     },
     {
       "source": "/api-reference/introduction",
-      "destination": "/api-reference"
+      "destination": "/api-reference/store-api/introduction"
     },
     {
       "source": "/developer/tutorial/rich-text",
-      "destination": "/developer/tutorial/model"
+      "destination": "/developer/tutorial/model-and-api"
     },
     {
       "source": "/developer/tutorial/file-uploads",
@@ -150,7 +150,7 @@
     },
     {
       "source": "/developer/tutorial/store-api",
-      "destination": "/v5/developer/tutorial/api"
+      "destination": "/developer/tutorial/model-and-api"
     },
     {
       "source": "/developer/multi-store/quickstart",
@@ -246,11 +246,11 @@
     },
     {
       "source": "/developer/tutorial/api",
-      "destination": "/v5/developer/tutorial/api"
+      "destination": "/developer/tutorial/model-and-api"
     },
     {
       "source": "/developer/tutorial/sdk",
-      "destination": "/v5/developer/tutorial/sdk"
+      "destination": "/developer/tutorial/storefront"
     },
     {
       "source": "/developer/tutorial/extending-models",
@@ -390,7 +390,7 @@
     },
     {
       "source": "/developer/core-concepts/adjustments",
-      "destination": "/developer/core-concepts/taxes-discounts-fees"
+      "destination": "/developer/core-concepts/fees"
     },
     {
       "source": "/developer/core-concepts/shipments",
@@ -499,6 +499,90 @@
     {
       "source": "/user/settings/marketplace",
       "destination": "/user/sellers/payouts"
+    },
+    {
+      "source": "/use-case/b2b/b2b-admin-capabilities",
+      "destination": "/user/how-to/selling-to-businesses"
+    },
+    {
+      "source": "/use-case/b2b/b2b-buyer-capabilities",
+      "destination": "/user/how-to/selling-to-businesses"
+    },
+    {
+      "source": "/use-case/b2b/b2b-capabilities",
+      "destination": "/user/how-to/selling-to-businesses"
+    },
+    {
+      "source": "/use-case/b2b/b2b-commerce-model",
+      "destination": "/user/how-to/selling-to-businesses"
+    },
+    {
+      "source": "/use-case/digital-products/admin-capabilities",
+      "destination": "/developer/how-to/sell-digital-products"
+    },
+    {
+      "source": "/use-case/digital-products/capabilities",
+      "destination": "/developer/how-to/sell-digital-products"
+    },
+    {
+      "source": "/use-case/digital-products/model",
+      "destination": "/developer/how-to/sell-digital-products"
+    },
+    {
+      "source": "/use-case/marketplace/admin-dashboard",
+      "destination": "/user/sellers/managing-sellers"
+    },
+    {
+      "source": "/use-case/marketplace/capabilities",
+      "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/use-case/marketplace/customer-ux",
+      "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/use-case/marketplace/model",
+      "destination": "/developer/how-to/build-a-marketplace"
+    },
+    {
+      "source": "/use-case/marketplace/vendor-dashboard",
+      "destination": "/user/sellers/sellers"
+    },
+    {
+      "source": "/use-case/multi-tenant/franchises-and-reseller-networks",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/multi-brand-enterprise-model",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/multi-tenant-capabilities",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/multi-tenant-model",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/super-admin-capabilities",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/tenant-capabilities",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/multi-tenant/white-label-saas",
+      "destination": "/developer/multi-tenant/quickstart"
+    },
+    {
+      "source": "/use-case/overview",
+      "destination": "/"
+    },
+    {
+      "source": "/developer/tutorial/dashboard-plugin",
+      "destination": "/developer/tutorial/dashboard"
     }
   ],
   "contextual": {
@@ -537,10 +621,8 @@
                     "group": "Tutorial",
                     "pages": [
                       "developer/tutorial/introduction",
-                      "developer/tutorial/model",
-                      "developer/tutorial/admin-api",
-                      "developer/tutorial/dashboard-plugin",
-                      "developer/tutorial/store-api",
+                      "developer/tutorial/model-and-api",
+                      "developer/tutorial/dashboard",
                       "developer/tutorial/storefront",
                       "developer/tutorial/events",
                       "developer/tutorial/testing"
@@ -1909,56 +1991,6 @@
                 ]
               }
             ]
-          },
-          {
-            "tab": "Solutions",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": [
-                  "use-case/overview"
-                ]
-              },
-              {
-                "group": "B2B Commerce",
-                "pages": [
-                  "use-case/b2b/b2b-commerce-model",
-                  "use-case/b2b/b2b-capabilities",
-                  "use-case/b2b/b2b-admin-capabilities",
-                  "use-case/b2b/b2b-buyer-capabilities"
-                ]
-              },
-              {
-                "group": "Digital Products",
-                "pages": [
-                  "use-case/digital-products/model",
-                  "use-case/digital-products/capabilities",
-                  "use-case/digital-products/admin-capabilities"
-                ]
-              },
-              {
-                "group": "Multi-Tenant Platform",
-                "pages": [
-                  "use-case/multi-tenant/multi-tenant-model",
-                  "use-case/multi-tenant/multi-tenant-capabilities",
-                  "use-case/multi-tenant/super-admin-capabilities",
-                  "use-case/multi-tenant/tenant-capabilities",
-                  "use-case/multi-tenant/franchises-and-reseller-networks",
-                  "use-case/multi-tenant/multi-brand-enterprise-model",
-                  "use-case/multi-tenant/white-label-saas"
-                ]
-              },
-              {
-                "group": "Multi-Vendor Marketplace",
-                "pages": [
-                  "use-case/marketplace/model",
-                  "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard",
-                  "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"
-                ]
-              }
-            ]
           }
         ]
       }
@@ -2107,12 +2139,10 @@
                 "icon": "graduation-cap",
                 "pages": [
                   "developer/tutorial/introduction",
-                  "developer/tutorial/model",
-                  "developer/tutorial/admin",
-                  "developer/tutorial/extending-models",
-                  "developer/tutorial/api",
+                  "developer/tutorial/model-and-api",
+                  "developer/tutorial/dashboard",
+                  "developer/tutorial/storefront",
                   "developer/tutorial/events",
-                  "developer/tutorial/sdk",
                   "developer/tutorial/testing"
                 ]
               },
@@ -2811,56 +2841,6 @@
             "group": "Security",
             "pages": [
               "user/security"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Solutions",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "use-case/overview"
-            ]
-          },
-          {
-            "group": "B2B Commerce",
-            "pages": [
-              "use-case/b2b/b2b-commerce-model",
-              "use-case/b2b/b2b-capabilities",
-              "use-case/b2b/b2b-admin-capabilities",
-              "use-case/b2b/b2b-buyer-capabilities"
-            ]
-          },
-          {
-            "group": "Digital Products",
-            "pages": [
-              "use-case/digital-products/model",
-              "use-case/digital-products/capabilities",
-              "use-case/digital-products/admin-capabilities"
-            ]
-          },
-          {
-            "group": "Multi-Tenant Platform",
-            "pages": [
-              "use-case/multi-tenant/multi-tenant-model",
-              "use-case/multi-tenant/multi-tenant-capabilities",
-              "use-case/multi-tenant/super-admin-capabilities",
-              "use-case/multi-tenant/tenant-capabilities",
-              "use-case/multi-tenant/franchises-and-reseller-networks",
-              "use-case/multi-tenant/multi-brand-enterprise-model",
-              "use-case/multi-tenant/white-label-saas"
-            ]
-          },
-          {
-            "group": "Multi-Vendor Marketplace",
-            "pages": [
-              "use-case/marketplace/model",
-              "use-case/marketplace/capabilities",
-              "use-case/marketplace/admin-dashboard",
-              "use-case/marketplace/vendor-dashboard",
-              "use-case/marketplace/customer-ux"
             ]
           }
         ]

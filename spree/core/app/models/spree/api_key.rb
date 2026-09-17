@@ -2,6 +2,7 @@ module Spree
   class ApiKey < Spree.base_class
     has_prefix_id :key  # Spree-specific: api key
 
+    include Spree::Actor
     include Spree::SingleStoreResource
 
     KEY_TYPES = %w[publishable secret].freeze
@@ -124,10 +125,11 @@ module Spree
 
     # Revokes this API key by setting +revoked_at+ to the current time.
     #
-    # @param user [Object, nil] the user who performed the revocation
+    # @param actor [Object, nil] who performed the revocation — an admin user
+    #   or another API key (see Spree.actor_classes)
     # @return [Boolean] true if the update succeeded
-    def revoke!(user = nil)
-      update!(revoked_at: Time.current, revoked_by: user)
+    def revoke!(actor = nil)
+      update!(revoked_at: Time.current, revoked_by: actor)
     end
 
     # Whether this key carries the given scope. `write_*` implies the matching

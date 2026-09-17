@@ -50,7 +50,7 @@ module Spree
               received_at: params[:received_at],
               reference: params[:reference],
               notes: params[:notes],
-              received_by: try_spree_current_user
+              received_by: current_actor
             }
           end
 

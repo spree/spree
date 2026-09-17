@@ -471,6 +471,12 @@ importers:
       '@spree/dashboard':
         specifier: workspace:^
         version: link:../dashboard
+      '@spree/dashboard-core':
+        specifier: workspace:^
+        version: link:../dashboard-core
+      '@spree/dashboard-ui':
+        specifier: workspace:^
+        version: link:../dashboard-ui
       '@tanstack/react-query':
         specifier: ^5.100.9
         version: 5.100.9(react@19.2.6)
@@ -753,6 +759,12 @@ importers:
 
   packages/seller-dashboard-starter:
     dependencies:
+      '@spree/dashboard-core':
+        specifier: workspace:^
+        version: link:../dashboard-core
+      '@spree/dashboard-ui':
+        specifier: workspace:^
+        version: link:../dashboard-ui
       '@spree/seller-dashboard':
         specifier: workspace:^
         version: link:../seller-dashboard

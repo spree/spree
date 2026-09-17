@@ -230,15 +230,15 @@ The Store API currently supports writing metadata on:
 ## Deprecation: public_metadata
 
 <Warning>
-`public_metadata` is deprecated and will be removed in Spree 6.0. Use `metadata` instead.
+`public_metadata` is deprecated. Use `metadata` instead.
 </Warning>
 
-The `public_metadata` column was never exposed in Store API responses and in practice served the same purpose as `private_metadata`. It will be removed in Spree 6.0 and calling `public_metadata=` will emit a deprecation warning.
+The `public_metadata` column was never exposed in Store API responses and in practice served the same purpose as `private_metadata`. Calling `public_metadata=` emits a deprecation warning.
 
 Always use the single `metadata` accessor for all schemaless key-value storage. If you need data visible to customers on the storefront, use [Metafields](/developer/core-concepts/metafields) instead.
 
 ```ruby
-# Deprecated — will be removed in 6.0
+# Deprecated — use `metadata` instead
 order.public_metadata = { 'gift_message' => 'Happy Birthday!' }
 
 # Use metadata for internal storage

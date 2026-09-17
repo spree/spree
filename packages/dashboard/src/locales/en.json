@@ -4,6 +4,10 @@
       "delete_image": "Delete image",
       "edit_media": "Edit media"
     },
+    "actors": {
+      "api_key": "API key",
+      "unnamed": "Unnamed"
+    },
     "allowed_origins": {
       "add_cta": "Add allowed origin",
       "create_description": "Browsers loaded from this origin can call the admin API. The CORS allowlist and admin cookie session both rely on this list — keep it tight.",
@@ -30,10 +34,10 @@
         "never_used": "Never",
         "revoked": "Revoked"
       },
-      "by_email": "by {{email}}",
       "create_key_cta": "Create key",
       "create_sheet_description": "Choose a key type, then pick the scopes it can use.",
       "create_sheet_title": "Create API key",
+      "created_by": "by {{actor}}",
       "delete_confirm": {
         "message": "This permanently removes the key. Prefer revoke if you might restore access later.",
         "title": "Delete key?"
@@ -1865,6 +1869,10 @@
         "password_confirmation": {
           "label": "Confirm password"
         },
+        "sample_data": {
+          "help": "Adds demo products, categories, customers and orders in the background so you can explore the dashboard. Takes a few minutes and downloads product images.",
+          "label": "Load sample data"
+        },
         "store_name": {
           "label": "Store name"
         }
@@ -2886,6 +2894,7 @@
           "shared_help": "Paid once for a basket spanning several sellers. This order has a share of it.",
           "load_error": "Could not load the payments for this order."
         },
+        "priced_by": "Priced by {{name}}",
         "purchase_order": {
           "document": "Purchase order document",
           "document_help": "PDF, image or Word file, up to 10 MB.",
@@ -5885,6 +5894,8 @@
       "builder": {
         "metrics": "Metrics",
         "no_metrics": "Pick at least one metric.",
+        "one_family_only": "One report covers one metric group. Picking a metric from another group switches the report to it.",
+        "switches_family": "Switches this report to {{family}}",
         "group_by": "Group by",
         "none": "None (totals only)",
         "grain": "Interval",

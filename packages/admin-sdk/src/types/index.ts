@@ -15,6 +15,7 @@ export type {
   FulfillmentProviderOption,
 } from './fulfillment-providers'
 // Admin-specific generated types
+export type { default as Actor } from './generated/Actor'
 export type { default as Address } from './generated/Address'
 export type { default as AdminUser } from './generated/AdminUser'
 export type { default as AllowedOrigin } from './generated/AllowedOrigin'

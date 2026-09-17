@@ -14,8 +14,9 @@ module Spree
   # catalog to those companies or divisions rather than to a group.
   #
   # Within whichever audience answered, visibility is the union of its
-  # catalogs' assortments and pricing takes the price list of the nearest
-  # assignment first (docs/plans/6.0-b2b-companies-and-catalogs.md).
+  # catalogs' assortments; pricing walks the assigning nodes nearest first and
+  # within one node charges the best price any of its catalogs gives
+  # (docs/plans/6.0-b2b-companies-and-catalogs.md).
   class Catalog < Spree.base_class
     has_prefix_id :cat
 
@@ -97,6 +98,17 @@ module Spree
     # @param company [Spree::Company, nil]
     # @return [Array<Spree::Catalog>]
     def self.for_company(company)
+      groups_for_company(company).flatten
+    end
+
+    # The same catalogs, grouped by the node that assigns them, nearest first.
+    # Only pricing needs the boundaries: catalogs sharing a node rank equally
+    # and the best price among them wins, while a nearer node outranks a
+    # further one. Everything else takes the flat {.for_company}.
+    #
+    # @param company [Spree::Company, nil]
+    # @return [Array<Array<Spree::Catalog>>]
+    def self.groups_for_company(company)
       return [] if company.nil?
 
       nodes = company.self_and_ancestors
@@ -110,9 +122,15 @@ module Spree
                     includes(:catalog).
                     group_by(&:assignable_id)
 
-      nodes.flat_map do |node|
-        Array(assignments[node.id]).map(&:catalog).select(&:active?).sort_by { |catalog| catalog.position.to_i }
-      end.uniq
+      # A catalog assigned to a node and to an ancestor answers from the nearer.
+      seen = Set.new
+
+      nodes.filter_map do |node|
+        group = Array(assignments[node.id]).map(&:catalog).
+                select { |catalog| catalog.active? && seen.add?(catalog.id) }.
+                sort_by { |catalog| catalog.position.to_i }
+        group.presence
+      end
     end
 
     # The catalogs assigned to any of the given customer groups, by position.
@@ -151,18 +169,30 @@ module Spree
     # @param channel [Spree::Channel, nil]
     # @return [Array<Spree::Catalog>]
     def self.for_context(store:, company: nil, user: nil, channel: nil)
+      groups_for_context(store: store, company: company, user: user, channel: channel).flatten
+    end
+
+    # The same resolution, grouped by precedence rank ({.groups_for_company}).
+    # Only the company axis has more than one rank.
+    #
+    # @return [Array<Array<Spree::Catalog>>]
+    def self.groups_for_context(store:, company: nil, user: nil, channel: nil)
       return [] if store.nil?
 
-      catalogs = store.catalogs.for_company(company)
+      groups = store.catalogs.groups_for_company(company)
+
       # Only when the company axis found nothing: a buyer purchasing for a
       # company is on that company's agreement, and adding their personal
       # segment's catalogs on top would price one buyer under two agreements
       # at once.
-      if catalogs.empty? && user
-        groups = user.try(:customer_groups)&.where(store_id: store.id) || []
-        catalogs = store.catalogs.for_customer_groups(groups)
+      if groups.empty? && user
+        customer_groups = user.try(:customer_groups)&.where(store_id: store.id) || []
+        groups = [store.catalogs.for_customer_groups(customer_groups).presence].compact
       end
-      catalogs = [channel&.default_catalog].compact.select(&:active?) if catalogs.empty?
+
+      groups = [[channel&.default_catalog].compact.select(&:active?).presence].compact if groups.empty?
+
+      catalogs = groups.flatten
       # Pricing reads each catalog's price list, and the list's contextual
       # rules decide whether it applies to the quantity being bought; without
       # this the walk is one query per catalog again, plus one per list.
@@ -171,7 +201,7 @@ module Spree
           records: catalogs, associations: { price_list: [:price_rules, :price_adjustment_tiers] }
         ).call
       end
-      catalogs
+      groups
     end
 
     # The catalogs applying to a buyer, resolving the company for them when
@@ -190,15 +220,22 @@ module Spree
     # @param channel [Spree::Channel, nil]
     # @return [Array<Spree::Catalog>]
     def self.for_buyer(store:, customer: nil, company: nil, channel: nil)
+      groups_for_buyer(store: store, customer: customer, company: company, channel: channel).flatten
+    end
+
+    # {.for_buyer}, grouped by precedence rank. What pricing walks.
+    #
+    # @return [Array<Array<Spree::Catalog>>]
+    def self.groups_for_buyer(store:, customer: nil, company: nil, channel: nil)
       return [] if store.nil?
 
       if store == Spree::Current.store
         company ||= Spree::Current.standing_company_for(customer)
         channel ||= Spree::Current.channel
-        Spree::Current.catalogs_for(company: company, user: customer, channel: channel)
+        Spree::Current.catalog_groups_for(company: company, user: customer, channel: channel)
       else
         company ||= Spree::Company.sole_standing_for(store: store, customer: customer)
-        for_context(store: store, company: company, user: customer, channel: channel)
+        groups_for_context(store: store, company: company, user: customer, channel: channel)
       end
     end
 

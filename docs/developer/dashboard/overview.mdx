@@ -5,11 +5,10 @@ description: Learn about the Spree React Dashboard architecture and how to custo
 ---
 
 <Info>
-The React Dashboard is currently a **Developer Preview** — APIs may still change between releases. 
-In Spree 6 it will become the default Admin interface replacing the Spree 5 admin.
+The React Dashboard is currently a **Developer Preview** — APIs may still change between releases. It is becoming the default Admin interface.
 </Info>
 
-The React Dashboard is a React single-page application (SPA) that talks to the [Spree Admin API](/api-reference/admin-api). It can be distributed with the Spree API or as a standalone npm package, and it can be extended with plugins. The dashboard is built with modern React libraries and patterns, including:
+The React Dashboard is a React single-page application (SPA) that talks to the [Spree Admin API](/api-reference/admin-api/introduction). It can be distributed with the Spree API or as a standalone npm package, and it can be extended with plugins. The dashboard is built with modern React libraries and patterns, including:
 
 | Layer | Choice |
 |---|---|
@@ -34,9 +33,11 @@ Dashboard consinsts of 3 NPM packages, each with a different purpose. You can im
 | `@spree/dashboard-core` | Framework: registries (nav, route, slot, table, settings-nav), providers (auth, permission, store), admin SDK client, infra hooks, the `defineDashboardPlugin` API | Extending the admin — every customization API lives here |
 | `@spree/dashboard` | The deployable SPA: routes, resource hooks, schemas, locale strings, app shell | Replacing or restyling specific routes (rare) |
 
-Most customization happens via `@spree/dashboard-core`. You import its registries from your own host-app code (or from a separate plugin package) to add nav entries, routes, slot widgets, table columns, and translations.
+Most customization uses the registries in `@spree/dashboard-core` to add nav entries, routes, slot widgets, table columns and translations.
 
-You can also built your own dashboard using `@spree/dashboard-ui` primitives and `@spree/dashboard-core` registries, if you want to replace the default dashboard entirely. This is rare — most teams just add a few pages or cards to the existing dashboard.
+**In your own dashboard app, import from `@spree/dashboard`.** It re-exports both packages, so you never have to work out which one an export lives in. A distributed plugin is the exception: it imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly, because it plugs into the shell rather than shipping it.
+
+You can also build your own dashboard using `@spree/dashboard-ui` primitives and `@spree/dashboard-core` registries, if you want to replace the default dashboard entirely. This is rare — most teams just add a few pages or cards to the existing dashboard.
 
 ## Get the dashboard
 
@@ -57,7 +58,7 @@ You're building a Spree store and want a "Featured products" page or a custom ca
 
 ```tsx
 // src/plugins.ts — already imported by the app; just add your registrations
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 import { MyAnalyticsPage } from './pages/analytics'
 
 defineDashboardPlugin({

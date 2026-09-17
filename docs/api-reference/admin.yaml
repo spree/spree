@@ -456,10 +456,10 @@ paths:
               example:
                 user:
                   id: adm_UkLWZg9DAJ
-                  email: marlana@koelpin.co.uk
-                  first_name: Phebe
-                  last_name: Bosco
-                  full_name: Phebe Bosco
+                  email: marlana.bergnaum@halvorsonbosco.co.uk
+                  first_name: See
+                  last_name: Kuhlman
+                  full_name: See Kuhlman
                   selected_locale: de
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -822,6 +822,11 @@ paths:
                   description: ISO 4217 currency. Defaults to the country's own currency
                     — pass one only when the store prices in something else.
                   example: USD
+                sample_data:
+                  type: boolean
+                  description: Load the demo catalog, customers and orders in the
+                    background once the admin account exists.
+                  example: false
   "/api/v3/admin/auth/setup/countries":
     get:
       summary: List countries for first-run setup
@@ -2601,6 +2606,8 @@ paths:
                   channel_id:
                   plaintext_token: pk_K6zNkaVogFy735ukK6E7Qs1F
                   created_by_email:
+                  created_by_type:
+                  created_by_label:
                 - id: key_gbHJdmfrXB
                   name: Backend integration
                   key_type: secret
@@ -2614,8 +2621,10 @@ paths:
                   channel_id:
                   plaintext_token:
                   created_by_email:
+                  created_by_type:
+                  created_by_label:
                 - id: key_EfhxLZ9ck8
-                  name: velit
+                  name: API key 13
                   key_type: secret
                   token_prefix: sk_vihKVmP6r
                   scopes:
@@ -2627,6 +2636,8 @@ paths:
                   channel_id:
                   plaintext_token:
                   created_by_email:
+                  created_by_type:
+                  created_by_label:
                 meta:
                   page: 1
                   limit: 25
@@ -2698,7 +2709,9 @@ paths:
                 last_used_at:
                 channel_id:
                 plaintext_token: sk_kCkDUvba1Z9gf8HAy29ih1Bj
-                created_by_email: tandy.okon@weimann.co.uk
+                created_by_email: estella@okon.us
+                created_by_type: admin_user
+                created_by_label: Mana Cremin
         '422':
           description: validation error
           content:
@@ -2798,6 +2811,8 @@ paths:
                 channel_id:
                 plaintext_token: pk_XyZ9qSxtdtD6Uewb3GXYKkoV
                 created_by_email:
+                created_by_type:
+                created_by_label:
     patch:
       summary: Update an API key
       tags:
@@ -2860,6 +2875,8 @@ paths:
                 channel_id:
                 plaintext_token:
                 created_by_email:
+                created_by_type:
+                created_by_label:
       requestBody:
         content:
           application/json:
@@ -2951,7 +2968,7 @@ paths:
             application/json:
               example:
                 id: key_EfhxLZ9ck8
-                name: fugiat
+                name: API key 19
                 key_type: secret
                 token_prefix: sk_L5LVfygvH
                 scopes:
@@ -2963,6 +2980,8 @@ paths:
                 channel_id:
                 plaintext_token:
                 created_by_email:
+                created_by_type:
+                created_by_label:
   "/api/v3/admin/api_keys/{id}/revoke":
     patch:
       summary: Revoke an API key
@@ -3025,6 +3044,8 @@ paths:
                 channel_id:
                 plaintext_token:
                 created_by_email:
+                created_by_type:
+                created_by_label:
   "/api/v3/admin/categories":
     get:
       summary: List categories
@@ -13278,10 +13299,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -13539,10 +13563,13 @@ paths:
                   internal_note:
                   internal_note_html:
                   approver_id:
+                  approver_type:
                   canceler_id:
+                  canceler_type:
+                  created_by_id:
+                  created_by_type:
                   cancel_reason_id:
                   cancel_reason_name:
-                  created_by_id:
                   customer_id: cust_UkLWZg9DAJ
                   freight_summary:
                 meta:
@@ -13777,10 +13804,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id: adm_UkLWZg9DAJ
+                created_by_type: admin_user
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id: adm_UkLWZg9DAJ
                 customer_id:
                 freight_summary:
       requestBody:
@@ -14048,10 +14078,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
         '404':
@@ -14207,10 +14240,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -14478,10 +14514,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
         '422':
@@ -14672,10 +14711,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id: adm_UkLWZg9DAJ
+                canceler_type: admin_user
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
       requestBody:
@@ -14844,10 +14886,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id: adm_UkLWZg9DAJ
+                approver_type: admin_user
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
   "/api/v3/admin/orders/{id}/resend_confirmation":
@@ -14990,10 +15035,13 @@ paths:
                 internal_note:
                 internal_note_html:
                 approver_id:
+                approver_type:
                 canceler_id:
+                canceler_type:
+                created_by_id:
+                created_by_type:
                 cancel_reason_id:
                 cancel_reason_name:
-                created_by_id:
                 customer_id: cust_UkLWZg9DAJ
                 freight_summary:
   "/api/v3/admin/payment_methods":
@@ -15056,7 +15104,7 @@ paths:
               example:
                 data:
                 - id: pm_UkLWZg9DAJ
-                  name: Check
+                  name: Check 2
                   description:
                   type: check
                   session_required: false
@@ -15205,7 +15253,7 @@ paths:
             application/json:
               example:
                 id: pm_UkLWZg9DAJ
-                name: Check
+                name: Check 4
                 description:
                 type: check
                 session_required: false
@@ -22513,6 +22561,8 @@ paths:
                 metadata: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
+                refunder_id: adm_UkLWZg9DAJ
+                refunder_type: admin_user
       requestBody:
         content:
           application/json:
@@ -27960,7 +28010,7 @@ paths:
                   data:
                     message: This is a test webhook from Spree.
                   metadata:
-                    spree_version: 6.0.0.alpha
+                    spree_version: 6.0.0.beta1
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
   "/api/v3/admin/webhook_endpoints/{id}/enable":
@@ -30222,7 +30272,8 @@ paths:
                   - key: seller_ids
                     type: array
                     default: []
-                  association_fields: []
+                  association_fields:
+                  - seller_ids
                 - type: category_rule
                   name: Category
                   description: Charges this rate only for products in the selected
@@ -30231,7 +30282,8 @@ paths:
                   - key: category_ids
                     type: array
                     default: []
-                  association_fields: []
+                  association_fields:
+                  - category_ids
                 - type: product_rule
                   name: Product
                   description: Charges this rate only for the selected products
@@ -32022,7 +32074,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: UPS Ground
-                  code: UPS_GROUND
+                  code: UPS_GROUND_1
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -32766,13 +32818,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ef2f66e38d520018b60615a0903aa4ecdfa9aaee/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22947d56d4ac0912819361bb0b822dde6aecb15c/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7d198934cc9db4854d4d6d8797b2c51a08d68cd2/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2e87feabba138d36b7be60f82611c17fab8d2a91/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--af487de5d53fda6359a9f885788362b1e4570179/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6f4c660cdd78e69838fe7b0f57673dfedb55b740/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32780,10 +32832,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9c5dc339f72f9ea0877ae0fdd1a16ed0dcbdbc67/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -32854,13 +32906,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ef2f66e38d520018b60615a0903aa4ecdfa9aaee/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22947d56d4ac0912819361bb0b822dde6aecb15c/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7d198934cc9db4854d4d6d8797b2c51a08d68cd2/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2e87feabba138d36b7be60f82611c17fab8d2a91/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--af487de5d53fda6359a9f885788362b1e4570179/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6f4c660cdd78e69838fe7b0f57673dfedb55b740/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -32868,10 +32920,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9c5dc339f72f9ea0877ae0fdd1a16ed0dcbdbc67/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--8ff72e91870a04a53281fbf0de80d9b8d9d2bca2/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--fe426c2edfa9458dd7a1cdf00d6fc76cb130eca6/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -33028,13 +33080,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--84a47660df029c84dcf872b76a3cf4cef3d783ad/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2f34545691e57f6845e1a927bc06aa81970f54a7/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--79634827de815bd922ada0dbc9e4401e56b63185/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0ea5e4d32e7aad46e5690041fb5e72158deb2276/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--628f4260bc36defd4641a34a961355bd8f7396eb/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--0f0ac5549f5ab938bbb805b975fb12f879dd89dc/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--ef2f66e38d520018b60615a0903aa4ecdfa9aaee/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--22947d56d4ac0912819361bb0b822dde6aecb15c/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--7d198934cc9db4854d4d6d8797b2c51a08d68cd2/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--2e87feabba138d36b7be60f82611c17fab8d2a91/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--af487de5d53fda6359a9f885788362b1e4570179/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--6f4c660cdd78e69838fe7b0f57673dfedb55b740/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -33042,10 +33094,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--09e4cae87a6b15694e5f2c53890f1e8c8c3dd98a/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--9c5dc339f72f9ea0877ae0fdd1a16ed0dcbdbc67/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--7e8e4ef71e597b2153b11e0362cf201addb1c354/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -35558,6 +35610,7 @@ paths:
                   receivable_type: purchase_order
                   receivable_id: po_UkLWZg9DAJ
                   received_by_id:
+                  received_by_type:
                   items_count: 1
                 meta:
                   page: 1
@@ -35655,6 +35708,7 @@ paths:
                 receivable_type: purchase_order
                 receivable_id: po_UkLWZg9DAJ
                 received_by_id: adm_UkLWZg9DAJ
+                received_by_type: admin_user
                 items_count: 1
               schema:
                 "$ref": "#/components/schemas/StockReceipt"
@@ -36268,7 +36322,7 @@ paths:
                     type: text
                     default:
                   - key: terms_effective_from
-                    type: string
+                    type: date
                     default:
                   - key: terms_url
                     type: string
@@ -37755,9 +37809,13 @@ paths:
               example:
                 data:
                 - currency: USD
+                  settlement_currency: USD
+                  converted: false
                   seller_id: sel_UkLWZg9DAJ
                   earned: '40.0'
                   display_earned: "$40.00"
+                  payable: '40.0'
+                  display_payable: "$40.00"
                   paid: '0.0'
                   display_paid: "$0.00"
                   balance: '40.0'
@@ -39148,6 +39206,7 @@ paths:
                   receivable_type: stock_transfer
                   receivable_id: st_UkLWZg9DAJ
                   received_by_id:
+                  received_by_type:
                   items_count: 1
                 meta:
                   page: 1
@@ -39242,6 +39301,7 @@ paths:
                 receivable_type: stock_transfer
                 receivable_id: st_UkLWZg9DAJ
                 received_by_id: adm_UkLWZg9DAJ
+                received_by_type: admin_user
                 items_count: 1
               schema:
                 "$ref": "#/components/schemas/StockReceipt"
@@ -40396,6 +40456,28 @@ components:
       required:
       - user
       - permissions
+    Actor:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        label:
+          type: string
+          nullable: true
+      required:
+      - id
+      - type
+      - label
+      x-typelizer: true
     Address:
       type: object
       properties:
@@ -40608,6 +40690,19 @@ components:
         created_by_email:
           type: string
           nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by_label:
+          type: string
+          nullable: true
       required:
       - id
       - name
@@ -40621,6 +40716,8 @@ components:
       - channel_id
       - plaintext_token
       - created_by_email
+      - created_by_type
+      - created_by_label
       x-typelizer: true
     AppliedPromotion:
       type: object
@@ -41433,6 +41530,18 @@ components:
         created_by_id:
           type: string
           nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         order:
           "$ref": "#/components/schemas/Order"
         refunds:
@@ -41457,6 +41566,7 @@ components:
       - created_at
       - updated_at
       - created_by_id
+      - created_by_type
       x-typelizer: true
     CollectionRule:
       type: object
@@ -41731,9 +41841,22 @@ components:
         preference_schema:
           type: object
         product_ids:
+          type: object
+          nullable: true
+        seller_ids:
+          type: object
+          nullable: true
+        category_ids:
+          type: object
+          nullable: true
+        sellers:
           type: array
           items:
-            type: string
+            "$ref": "#/components/schemas/Seller"
+        categories:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Category"
       required:
       - id
       - created_at
@@ -41742,6 +41865,9 @@ components:
       - commission_rate_id
       - preferences
       - preference_schema
+      - product_ids
+      - seller_ids
+      - category_ids
       x-typelizer: true
     CompanyInvitation:
       type: object
@@ -43128,6 +43254,18 @@ components:
         created_by_id:
           type: string
           nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         order:
           "$ref": "#/components/schemas/Order"
         stock_location:
@@ -43154,6 +43292,7 @@ components:
       - updated_at
       - stock_location_id
       - created_by_id
+      - created_by_type
       x-typelizer: true
     Export:
       type: object
@@ -44764,16 +44903,52 @@ components:
         approver_id:
           type: string
           nullable: true
+        approver_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        approver:
+          "$ref": "#/components/schemas/Actor"
         canceler_id:
           type: string
           nullable: true
+        canceler_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        canceler:
+          "$ref": "#/components/schemas/Actor"
+        created_by_id:
+          type: string
+          nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         cancel_reason_id:
           type: string
           nullable: true
         cancel_reason_name:
-          type: string
-          nullable: true
-        created_by_id:
           type: string
           nullable: true
         customer_id:
@@ -44799,14 +44974,8 @@ components:
             "$ref": "#/components/schemas/PaymentMethod"
         customer:
           "$ref": "#/components/schemas/Customer"
-        approver:
-          "$ref": "#/components/schemas/AdminUser"
-        canceler:
-          "$ref": "#/components/schemas/AdminUser"
         cancel_reason:
           "$ref": "#/components/schemas/OrderCancellationReason"
-        created_by:
-          "$ref": "#/components/schemas/AdminUser"
         returns:
           type: array
           items:
@@ -44900,10 +45069,13 @@ components:
       - internal_note
       - internal_note_html
       - approver_id
+      - approver_type
       - canceler_id
+      - canceler_type
+      - created_by_id
+      - created_by_type
       - cancel_reason_id
       - cancel_reason_name
-      - created_by_id
       - customer_id
       - freight_summary
       x-typelizer: true
@@ -46340,6 +46512,21 @@ components:
           type: string
         updated_at:
           type: string
+        refunder_id:
+          type: string
+          nullable: true
+        refunder_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        refunder:
+          "$ref": "#/components/schemas/Actor"
         payment:
           "$ref": "#/components/schemas/Payment"
       required:
@@ -46353,6 +46540,8 @@ components:
       - metadata
       - created_at
       - updated_at
+      - refunder_id
+      - refunder_type
       x-typelizer: true
     ReturnLineItem:
       type: object
@@ -46484,6 +46673,18 @@ components:
         created_by_id:
           type: string
           nullable: true
+        created_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        created_by:
+          "$ref": "#/components/schemas/Actor"
         refunded_total:
           type: string
         refundable_total:
@@ -46524,6 +46725,7 @@ components:
       - updated_at
       - stock_location_id
       - created_by_id
+      - created_by_type
       - refunded_total
       - refundable_total
       - documents
@@ -46602,11 +46804,19 @@ components:
       properties:
         currency:
           type: string
+        settlement_currency:
+          type: string
+        converted:
+          type: boolean
         seller_id:
           type: string
         earned:
           type: string
         display_earned:
+          type: string
+        payable:
+          type: string
+        display_payable:
           type: string
         paid:
           type: string
@@ -46622,9 +46832,13 @@ components:
           type: string
       required:
       - currency
+      - settlement_currency
+      - converted
       - seller_id
       - earned
       - display_earned
+      - payable
+      - display_payable
       - paid
       - display_paid
       - balance
@@ -47067,6 +47281,14 @@ components:
           type: string
         display_amount:
           type: string
+        settled_amount:
+          type: string
+          nullable: true
+        settled_currency:
+          type: string
+          nullable: true
+        converted:
+          type: boolean
         seller_id:
           type: string
         order_id:
@@ -47099,6 +47321,9 @@ components:
       - updated_at
       - amount
       - display_amount
+      - settled_amount
+      - settled_currency
+      - converted
       - seller_id
       - order_id
       - payout_id
@@ -47622,6 +47847,18 @@ components:
         received_by_id:
           type: string
           nullable: true
+        received_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        received_by:
+          "$ref": "#/components/schemas/Actor"
         items_count:
           type: number
         items:
@@ -47642,6 +47879,7 @@ components:
       - receivable_type
       - receivable_id
       - received_by_id
+      - received_by_type
       - items_count
       x-typelizer: true
     StockReservation:

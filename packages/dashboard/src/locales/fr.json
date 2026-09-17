@@ -4,6 +4,10 @@
       "delete_image": "Supprimer l'image",
       "edit_media": "Modifier le média"
     },
+    "actors": {
+      "api_key": "Clé API",
+      "unnamed": "Sans nom"
+    },
     "allowed_origins": {
       "add_cta": "Ajouter une origine autorisée",
       "create_description": "Les navigateurs chargés depuis cette origine peuvent appeler l'API admin. La liste blanche CORS et la session par cookie admin reposent toutes deux sur cette liste — restez restrictif.",
@@ -30,10 +34,10 @@
         "never_used": "Jamais",
         "revoked": "Révoquée"
       },
-      "by_email": "par {{email}}",
       "create_key_cta": "Créer la clé",
       "create_sheet_description": "Choisissez un type de clé, puis sélectionnez les portées qu'elle peut utiliser.",
       "create_sheet_title": "Créer une clé API",
+      "created_by": "par {{actor}}",
       "delete_confirm": {
         "message": "Cela supprime définitivement la clé. Préférez la révocation si vous pourriez avoir besoin de rétablir l'accès ultérieurement.",
         "title": "Supprimer la clé ?"
@@ -1865,6 +1869,10 @@
         "password_confirmation": {
           "label": "Confirmer le mot de passe"
         },
+        "sample_data": {
+          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
+          "label": "Charger des données d’exemple"
+        },
         "store_name": {
           "label": "Nom de la boutique"
         }
@@ -2886,6 +2894,7 @@
           "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
           "load_error": "Impossible de charger les paiements de cette commande."
         },
+        "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
           "document": "Document de bon de commande",
           "document_help": "Fichier PDF, image ou Word, jusqu’à 10 Mo.",
@@ -5885,6 +5894,8 @@
       "builder": {
         "metrics": "Indicateurs",
         "no_metrics": "Choisissez au moins un indicateur.",
+        "one_family_only": "Un rapport couvre un seul groupe de mesures. Choisir une mesure d'un autre groupe fait basculer le rapport vers ce groupe.",
+        "switches_family": "Fait basculer ce rapport vers {{family}}",
         "group_by": "Regrouper par",
         "none": "Aucun (totaux uniquement)",
         "grain": "Intervalle",

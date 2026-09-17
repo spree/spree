@@ -142,6 +142,22 @@ bundle exec rake spree:stock:recount_levels
 
 `spree_stock_levels` gains `reserved_count` (units held by checkouts in progress) and `incoming_count` (units on their way on a purchase order placed with a supplier or a transfer in transit). Both are kept by the workflows that change them and start at zero on an existing install; this recomputes them from active reservations and open documents and prints every level it corrected. Until it runs, the dashboard's Inventory page shows zero reserved and incoming for stock that predates the upgrade. Safe to re-run at any time.
 
+### Name who performed past actions
+
+```bash
+bundle exec rake spree:upgrade:backfill_actor_types
+```
+
+Orders, refunds, returns, exchanges, claims and stock receipts remember who
+cancelled, approved, created or received them. In 6.0 that can be a member of
+staff **or an API key**, so each id column — `canceler_id`, `approver_id`,
+`created_by_id`, `refunder_id`, `received_by_id` — gained a type column beside
+it (`canceler_type`, and so on) naming which kind of actor the id points at.
+
+Rows written before the upgrade carry an id and an empty type; this task fills
+the type in. Until it runs they still read as the staff member they always
+were, with a deprecation warning. Safe to re-run at any time.
+
 ## The Cart/Order split
 
 The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:

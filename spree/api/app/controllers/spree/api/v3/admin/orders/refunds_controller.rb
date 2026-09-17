@@ -26,7 +26,7 @@ module Spree
                 payment: payment,
                 amount: params[:amount],
                 reason: reason,
-                refunder: try_spree_current_user,
+                refunder: current_actor,
                 # Names which order is being refunded. Only matters when the
                 # payment is shared by a split checkout, where it covers several
                 # and the payment cannot say which one this is for.

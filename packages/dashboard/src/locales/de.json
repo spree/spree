@@ -4,6 +4,10 @@
       "delete_image": "Bild löschen",
       "edit_media": "Medien bearbeiten"
     },
+    "actors": {
+      "api_key": "API-Schlüssel",
+      "unnamed": "Ohne Namen"
+    },
     "allowed_origins": {
       "add_cta": "Erlaubten Ursprung hinzufügen",
       "create_description": "Browser, die von diesem Ursprung geladen werden, können die Admin-API aufrufen. Sowohl die CORS-Zulassungsliste als auch die Admin-Cookie-Sitzung stützen sich auf diese Liste – halten Sie sie restriktiv.",
@@ -30,10 +34,10 @@
         "never_used": "Nie",
         "revoked": "Widerrufen"
       },
-      "by_email": "von {{email}}",
       "create_key_cta": "Schlüssel erstellen",
       "create_sheet_description": "Wählen Sie einen Schlüsseltyp und anschließend die Berechtigungen aus, die er verwenden darf.",
       "create_sheet_title": "API-Schlüssel erstellen",
+      "created_by": "von {{actor}}",
       "delete_confirm": {
         "message": "Dadurch wird der Schlüssel dauerhaft entfernt. Bevorzugen Sie das Widerrufen, falls Sie den Zugriff später wiederherstellen möchten.",
         "title": "Schlüssel löschen?"
@@ -1865,6 +1869,10 @@
         "password_confirmation": {
           "label": "Passwort bestätigen"
         },
+        "sample_data": {
+          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
+          "label": "Beispieldaten laden"
+        },
         "store_name": {
           "label": "Shopname"
         }
@@ -2886,6 +2894,7 @@
           "shared_help": "Einmal bezahlt für einen Warenkorb mehrerer Verkäufer. Diese Bestellung hat einen Anteil daran.",
           "load_error": "Die Zahlungen für diese Bestellung konnten nicht geladen werden."
         },
+        "priced_by": "Preis von {{name}}",
         "purchase_order": {
           "document": "Bestelldokument",
           "document_help": "PDF-, Bild- oder Word-Datei, bis zu 10 MB.",
@@ -5885,6 +5894,8 @@
       "builder": {
         "metrics": "Kennzahlen",
         "no_metrics": "Wählen Sie mindestens eine Kennzahl.",
+        "one_family_only": "Ein Bericht umfasst eine Metrikgruppe. Die Auswahl einer Metrik aus einer anderen Gruppe wechselt den Bericht zu dieser Gruppe.",
+        "switches_family": "Wechselt diesen Bericht zu {{family}}",
         "group_by": "Gruppieren nach",
         "none": "Keine (nur Summen)",
         "grain": "Intervall",

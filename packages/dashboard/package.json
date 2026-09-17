@@ -30,7 +30,8 @@
       "types": "./src/vite/route-collisions.ts",
       "default": "./dist/vite-plugin/route-collisions.js"
     },
-    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
+    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts",
+    "./components/spree/store-setup-fields": "./src/components/spree/store-setup-fields.tsx"
   },
   "files": [
     "src",

@@ -6,6 +6,11 @@
 // here, the same API distributed plugins use. Imported once from main.tsx,
 // before the panel renders.
 //
+// Keep this file a map of what you added: the registrations live here, the
+// implementations live in pages/, hooks/, tables/ and schemas/ — one file per
+// resource, the same layout the seller panel uses internally. Translations go
+// in locales/ and merge in with `i18n.addResourceBundle`.
+//
 // Example — add a payouts page and drop the built-in team screen:
 //
 //   import { defineDashboardPlugin } from '@spree/seller-dashboard'
@@ -23,8 +28,7 @@
 //
 // Slots the built-in screens expose: `seller.team.actions`, `seller.team.after`.
 //
-// Building custom pages? Add the framework and design-system packages first —
-// `pnpm add @spree/dashboard-core @spree/dashboard-ui` — then import hooks,
-// providers, and UI primitives from those.
+// `@spree/dashboard-core` and `@spree/dashboard-ui` are already installed —
+// import hooks, providers and UI primitives straight from them.
 
 export {}

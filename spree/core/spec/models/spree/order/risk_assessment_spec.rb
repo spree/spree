@@ -76,20 +76,28 @@ describe Spree::Order, type: :model do
   end
 
   context 'is considered risky' do
-    let(:user) { create(:user) }
+    # Clearing a risk hold is staff work, so the approver is an actor — a
+    # member of staff or an API key — never the customer who placed it.
+    let(:approver) { create(:admin_user) }
     let(:order) do
       order = FactoryBot.create(:completed_order_with_pending_payment)
       order.considered_risky!
       order
     end
 
-    it 'can be approved by a user' do
-      order.approved_by(user)
+    it 'can be approved by a member of staff' do
+      order.approved_by(approver)
       order.reload
-      expect(order.approver_id).to eq user.id
+      expect(order.approver).to eq approver
+      expect(order.approver_type).to eq Spree.admin_user_class.to_s
       expect(order.approved_at).to be_present
       expect(order.approved?).to be true
       expect(order.considered_risky).to be false
+    end
+
+    it 'refuses a customer, who is not an actor' do
+      expect { order.approved_by(create(:customer)) }.
+        to raise_error(ArgumentError, /not a registered actor class/)
     end
   end
 end

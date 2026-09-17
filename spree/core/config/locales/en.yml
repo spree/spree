@@ -1102,6 +1102,7 @@ en:
         store_is_already_set: Store is already set
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
         unknown_scopes: 'contains unknown scopes: %{scopes}'
+        unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
       services:
         get_shipping_rates:

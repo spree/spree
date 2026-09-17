@@ -4,6 +4,10 @@
       "delete_image": "Usuń obraz",
       "edit_media": "Edytuj multimedia"
     },
+    "actors": {
+      "api_key": "Klucz API",
+      "unnamed": "Bez nazwy"
+    },
     "allowed_origins": {
       "add_cta": "Dodaj dozwolone źródło",
       "create_description": "Przeglądarki wczytane z tego źródła mogą wywoływać API administratora. Lista dozwolonych źródeł CORS oraz sesja cookie administratora opierają się na tej liście — utrzymuj ją zwięzłą.",
@@ -30,10 +34,10 @@
         "never_used": "Nigdy",
         "revoked": "Unieważniony"
       },
-      "by_email": "przez {{email}}",
       "create_key_cta": "Utwórz klucz",
       "create_sheet_description": "Wybierz typ klucza, a następnie zakresy, których może używać.",
       "create_sheet_title": "Utwórz klucz API",
+      "created_by": "przez {{actor}}",
       "delete_confirm": {
         "message": "Spowoduje to trwałe usunięcie klucza. Jeśli możesz chcieć przywrócić dostęp później, lepiej unieważnij klucz.",
         "title": "Usunąć klucz?"
@@ -1883,6 +1887,10 @@
         "password_confirmation": {
           "label": "Potwierdź hasło"
         },
+        "sample_data": {
+          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
+          "label": "Wczytaj dane przykładowe"
+        },
         "store_name": {
           "label": "Nazwa sklepu"
         }
@@ -2912,6 +2920,7 @@
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
           "load_error": "Nie udało się wczytać płatności tego zamówienia."
         },
+        "priced_by": "Cena z {{name}}",
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
           "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",
@@ -5951,6 +5960,8 @@
       "builder": {
         "metrics": "Metryki",
         "no_metrics": "Wybierz co najmniej jedną metrykę.",
+        "one_family_only": "Jeden raport obejmuje jedną grupę wskaźników. Wybór wskaźnika z innej grupy przełącza raport na tę grupę.",
+        "switches_family": "Przełącza ten raport na {{family}}",
         "group_by": "Grupuj według",
         "none": "Brak (tylko sumy)",
         "grain": "Interwał",

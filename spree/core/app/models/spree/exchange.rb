@@ -11,6 +11,7 @@ module Spree
     has_prefix_id :exch
 
     has_spree_number prefix: 'EX'
+    include Spree::ActedBy
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
@@ -26,7 +27,7 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :exchanges
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
     belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :exchanges
-    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
+    acted_by :created_by
 
     has_many :exchange_line_items, class_name: 'Spree::ExchangeLineItem',
                                    dependent: :destroy, inverse_of: :exchange

@@ -20,11 +20,10 @@ module Spree
             report.user&.prefixed_id
           end
 
+          # The same "name, else email" rule every actor answers, so a report's
+          # author and an order's canceler read alike.
           attribute :author_name do |report|
-            user = report.user
-            next nil unless user
-
-            user.full_name.presence || user.email
+            report.user&.actor_label
           end
         end
       end

@@ -4,6 +4,10 @@ sidebarTitle: Navigation
 description: Add, modify, and remove items from the dashboard's main sidebar and settings sub-nav.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard has two navigation registries: **main sidebar** (`nav`) and **settings sub-shell** (`settingsNav`). Both are module singletons exposed from `@spree/dashboard-core` and consumed by `<AppSidebar>` and `<SettingsSidebar>` via `useSyncExternalStore`, so late registration re-renders the sidebars automatically.
 
 ## Main sidebar (`nav`)
@@ -11,7 +15,7 @@ The dashboard has two navigation registries: **main sidebar** (`nav`) and **sett
 ### Add an entry
 
 ```ts
-import { nav } from '@spree/dashboard-core'
+import { nav } from '@spree/dashboard'
 import { BarChartIcon } from 'lucide-react'
 
 nav.add({
@@ -24,14 +28,14 @@ nav.add({
 })
 ```
 
-`position` controls ordering — built-ins use 100–600 (Home 100, Orders 200, Products 300, Customers 400, Promotions 500, Reports 600; a conditional Getting Started entry sits at 50), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
+`position` controls ordering — built-ins run 50–600 (Getting Started 50 when shown, Home 100, Orders 200, Products 300, Inventory 350, Customers 400, Sellers 450, Loyalty 475, Promotions 500, Reports 600), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `inventory`, `customers`, `sellers`, `loyalty`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
 
 ### Add via `defineDashboardPlugin`
 
 The facade groups multiple registry calls:
 
 ```ts
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 
 defineDashboardPlugin({
   nav: [
@@ -156,7 +160,7 @@ The settings page has its own sub-shell sidebar with grouped entries (Store, Loc
 ### Register a group
 
 ```ts
-import { settingsNav } from '@spree/dashboard-core'
+import { settingsNav } from '@spree/dashboard'
 
 settingsNav.addGroup({
   key: 'integrations',
