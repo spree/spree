@@ -79,8 +79,9 @@ Rails.application.config.to_prepare do
 end
 ```
 
-The step now appears in the cart's `checkout_steps`, its requirements show up while
-unsatisfied, and completion refuses the cart until they are met.
+The step now shows up in the cart's `current_step` and `completed_steps`, its
+requirements appear in `requirements` while unsatisfied, and completion refuses the
+cart until they are met.
 
 Each lambda receives the cart. Placement is controlled by two keywords:
 

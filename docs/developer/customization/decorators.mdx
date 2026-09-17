@@ -310,9 +310,11 @@ module Spree::Api::V3::Admin
 
     # `super` is already scoped to the current store. Chain onto it — never
     # replace it, or the endpoint stops being scoped and starts returning
-    # another store's records.
+    # another store's records. `current_user` is nil for a secret-key
+    # request, hence `&.` — a caller that is not a staff member gets the
+    # narrowed scope.
     def scope
-      return super if current_user.spree_admin?
+      return super if current_user&.spree_admin?
 
       super.where(discontinue_on: nil)
     end
