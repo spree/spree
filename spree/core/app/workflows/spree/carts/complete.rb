@@ -446,9 +446,10 @@ module Spree
         failure(cart, code: 'split_failed', message: result.error) if result.failure?
 
         @order_group = result.value
-        # Ordered, because which child comes first decides which one carries
-        # the confirmation email — that must not depend on how the rows come
-        # back.
+        # Ordered, because the hook handlers and the replay path read this one
+        # as "the" order of the checkout — which child that is must not depend
+        # on how the rows come back. It carries no confirmation: the purchase
+        # is confirmed from the group.
         @order = order_group.orders.order(:id).first
       end
 
@@ -466,16 +467,18 @@ module Spree
       #
       # A split checkout's payments were already taken against the whole basket
       # and moved onto the group, so the children place without processing them
-      # again. One purchase means one confirmation email: the first child
-      # carries the notification and its siblings place silently.
+      # again. Every child also places *silently*: one purchase means one
+      # confirmation, and no child order is the purchase — each holds a single
+      # seller's items, delivery and total. The group event below is what the
+      # customer's confirmation hangs off.
       def complete_orders
         split = order_group.present?
 
-        placed_orders.each_with_index do |child, index|
+        placed_orders.each do |child|
           result = Spree.order_complete_workflow.call(
             order: child,
             payment_pending: split,
-            notify_customer: split && !index.zero? ? false : nil
+            notify_customer: split ? false : nil
           )
           failure(cart, code: 'completion_failed', message: result.error) if result.failure?
         end
@@ -499,7 +502,7 @@ module Spree
       # otherwise. The single answer to "which orders came out of here", so
       # placement and tax filing can never disagree about the set.
       def placed_orders
-        order_group.present? ? order_group.orders.to_a : [order]
+        order_group.present? ? order_group.orders.to_a.sort_by(&:id) : [order]
       end
 
       def complete_cart

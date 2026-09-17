@@ -25,14 +25,19 @@ module Spree
       send_store_owner_notification(order) if should_notify_store_owner?(order)
     end
 
+    # An admin resends from an order, because an order is what they are looking
+    # at. On a split checkout the document to send is still the purchase's —
+    # sending this child's would put back the partial confirmation the group
+    # email exists to replace.
     def resend_confirmation_email(event)
       order = find_order(event)
       return unless order
+      return order.order_group.publish_event('order_group.resend_confirmation_email') if order.grouped?
 
       store = order.store
       return unless store.prefers_send_consumer_transactional_emails?
 
-      OrderMailer.confirm_email(order.id).deliver_later
+      OrderMailer.confirm_email(order.id, true).deliver_later
       order.update_column(:confirmation_delivered, true)
     end
 

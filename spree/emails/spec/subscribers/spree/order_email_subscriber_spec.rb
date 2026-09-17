@@ -119,6 +119,31 @@ RSpec.describe Spree::OrderEmailSubscriber do
     end
   end
 
+  describe 'order.resend_confirmation_email event' do
+    it 'sends the order confirmation again, marked as a re-send' do
+      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id, true).
+        and_return(double(deliver_later: true))
+
+      subscriber.send(:resend_confirmation_email, mock_event(order))
+    end
+
+    # An admin resends from an order because an order is what they are looking
+    # at, but on a split checkout the document is the purchase's — sending this
+    # child's would put back the partial confirmation the group email replaced.
+    context 'when the order came out of a split checkout' do
+      let(:group) { create(:order_group, store: store) }
+      let(:order) { create(:completed_order_with_totals, store: store, order_group: group) }
+
+      it 'hands the re-send to the purchase' do
+        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+        expect_any_instance_of(Spree::OrderGroup).to receive(:publish_event).
+          with('order_group.resend_confirmation_email')
+
+        subscriber.send(:resend_confirmation_email, mock_event(order))
+      end
+    end
+  end
+
   describe 'order.canceled event' do
     it 'sends cancel email' do
       expect(Spree::OrderMailer).to receive(:cancel_email).with(order.id).and_return(double(deliver_later: true))

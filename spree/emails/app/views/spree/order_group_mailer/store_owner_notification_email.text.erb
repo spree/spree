@@ -1,0 +1,11 @@
+<%= Spree.t('order_group_mailer.store_owner_notification_email.instructions', count: @order_group.orders.size) %>
+
+============================================================
+<%= Spree.t('order_group_mailer.store_owner_notification_email.purchase_summary', number: @order_group.number) %>
+============================================================
+<%= render 'spree/shared/po_number', order: @order_group %>
+<% @order_group.line_items.each do |item| %>
+  <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text -%> (<%= item.quantity %>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
+<% end %>
+<%= render 'spree/shared/purchase_totals', order_group: @order_group %>
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>

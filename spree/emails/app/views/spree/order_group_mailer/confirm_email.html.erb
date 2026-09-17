@@ -1,0 +1,38 @@
+<%= render 'spree/shared/purchased_items_styles' %>
+
+<% fulfillment_groups = @order_group.fulfillment_groups %>
+<% unfulfilled_line_items = @order_group.unfulfilled_line_items(fulfillment_groups) %>
+
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('order_group_mailer.confirm_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('order_group_mailer.confirm_email.dear_customer', name: name_for(@order_group)) %></p>
+  <p><%= Spree.t('order_group_mailer.confirm_email.instructions', number: @order_group.number) %></p>
+  <%# What the customer most needs and least expects: this arrives in more
+      than one delivery. Counted from the parcels, never from the orders the
+      checkout divided into — several sellers shipping out of one warehouse
+      send one box. %>
+  <% if fulfillment_groups.many? %>
+    <p><%= Spree.t('order_group_mailer.confirm_email.arriving_separately', count: fulfillment_groups.size) %></p>
+  <% end %>
+<% end %>
+
+<% if @order_group.po_number.present? %>
+  <p class="f-fallback"><%= Spree.t('order_mailer.po_number', number: @order_group.po_number) %></p>
+<% end %>
+
+<% fulfillment_groups.each_with_index do |fulfillment_group, index| %>
+  <%= render 'spree/shared/fulfillment_group_section',
+             fulfillment_group: fulfillment_group,
+             position: index + 1,
+             count: fulfillment_groups.size %>
+<% end %>
+
+<% if unfulfilled_line_items.any? %>
+  <%= render 'spree/shared/order_summary_section',
+             heading: Spree.t('order_group_mailer.nothing_to_ship'),
+             line_items: unfulfilled_line_items,
+             order: @order_group,
+             totals: false %>
+<% end %>
+
+<%= render 'spree/shared/purchase_totals', order_group: @order_group %>

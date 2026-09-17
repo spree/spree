@@ -257,6 +257,16 @@ Two details worth knowing:
 A storefront must handle the possibility of an order group. Completing a cart may yield one order or several, and a customer's order history should show the group as one purchase rather than confronting them with three orders they don't remember placing separately.
 </Warning>
 
+### One confirmation, and it describes the purchase
+
+The customer made one purchase, so they get one confirmation email — sent from the group, not from any of its orders. Each child order is placed silently.
+
+If you replace the confirmation email, replace it at the group level too: the email a customer receives for a split checkout is `Spree::OrderGroupMailer`, reacting to the `order_group.completed` event, and a re-send from any child order in the admin sends the purchase's email rather than that child's. A checkout that doesn't split is unaffected and still sends the ordinary order confirmation.
+
+<Note>
+**Orders and deliveries are different counts.** Three seller orders do not mean three parcels. When several sellers' goods ship from one warehouse, the checkout quotes one delivery charge, and the split divides that charge between the orders rather than charging for it again — so one box arrives. Ask the group for `fulfillment_groups` to get the parcels that really ship; each one knows its delivery method, its cost, the goods it carries and who is sending it. Counting child orders instead promises the customer deliveries that will never arrive.
+</Note>
+
 ## Commission
 
 Commission is what the marketplace charges for the sale — configured as **rates**, and recorded per sale as immutable **commission lines**.
