@@ -684,18 +684,6 @@
                     "icon": "book-open"
                   },
                   {
-                    "group": "Tutorial",
-                    "pages": [
-                      "developer/tutorial/introduction",
-                      "developer/tutorial/model-and-api",
-                      "developer/tutorial/dashboard",
-                      "developer/tutorial/storefront",
-                      "developer/tutorial/events",
-                      "developer/tutorial/testing"
-                    ],
-                    "icon": "graduation-cap"
-                  },
-                  {
                     "group": "AI-Assisted Development",
                     "pages": [
                       "developer/agentic/overview",
@@ -707,79 +695,16 @@
                     "icon": "sparkles"
                   },
                   {
-                    "group": "Providers & Integrations",
+                    "group": "Tutorial",
                     "pages": [
-                      "developer/providers/overview",
-                      "integrations/integrations",
-                      {
-                        "group": "Connect Your Systems",
-                        "pages": [
-                          "developer/providers/erp",
-                          "developer/providers/pim",
-                          "developer/providers/dam"
-                        ]
-                      },
-                      {
-                        "group": "Shipping & WMS",
-                        "pages": [
-                          "developer/providers/fulfillment",
-                          "integrations/shipping/easypost",
-                          "developer/how-to/custom-delivery-rate-provider"
-                        ]
-                      },
-                      {
-                        "group": "Payments",
-                        "pages": [
-                          "developer/how-to/custom-payment-method",
-                          "integrations/payments/stripe",
-                          "integrations/payments/adyen",
-                          "integrations/payments/paypal",
-                          "integrations/payments/razorpay"
-                        ]
-                      },
-                      {
-                        "group": "Marketplace",
-                        "pages": [
-                          "developer/providers/payouts",
-                          "integrations/payments/stripe-connect"
-                        ]
-                      },
-                      {
-                        "group": "Tax",
-                        "pages": [
-                          "integrations/tax/avalara"
-                        ]
-                      },
-                      {
-                        "group": "Search",
-                        "pages": [
-                          "developer/how-to/custom-search-provider",
-                          "integrations/search/meilisearch"
-                        ]
-                      },
-                      {
-                        "group": "Identity & SSO",
-                        "pages": [
-                          "developer/providers/sso",
-                          "developer/how-to/custom-api-authentication"
-                        ]
-                      },
-                      {
-                        "group": "Observability",
-                        "pages": [
-                          "developer/providers/observability"
-                        ]
-                      },
-                      {
-                        "group": "Marketing & Analytics",
-                        "pages": [
-                          "integrations/analytics/google-analytics",
-                          "integrations/analytics/google-tag-manager",
-                          "integrations/marketing/klaviyo"
-                        ]
-                      }
+                      "developer/tutorial/introduction",
+                      "developer/tutorial/model-and-api",
+                      "developer/tutorial/dashboard",
+                      "developer/tutorial/storefront",
+                      "developer/tutorial/events",
+                      "developer/tutorial/testing"
                     ],
-                    "icon": "plug"
+                    "icon": "graduation-cap"
                   },
                   {
                     "group": "Admin Dashboard",
@@ -878,6 +803,81 @@
                       }
                     ],
                     "icon": "store"
+                  },
+                  {
+                    "group": "Providers & Integrations",
+                    "pages": [
+                      "developer/providers/overview",
+                      "integrations/integrations",
+                      {
+                        "group": "Connect Your Systems",
+                        "pages": [
+                          "developer/providers/erp",
+                          "developer/providers/pim",
+                          "developer/providers/dam"
+                        ]
+                      },
+                      {
+                        "group": "Shipping & WMS",
+                        "pages": [
+                          "developer/providers/fulfillment",
+                          "integrations/shipping/easypost",
+                          "developer/how-to/custom-delivery-rate-provider"
+                        ]
+                      },
+                      {
+                        "group": "Payments",
+                        "pages": [
+                          "developer/how-to/custom-payment-method",
+                          "integrations/payments/stripe",
+                          "integrations/payments/adyen",
+                          "integrations/payments/paypal",
+                          "integrations/payments/razorpay"
+                        ]
+                      },
+                      {
+                        "group": "Marketplace",
+                        "pages": [
+                          "developer/providers/payouts",
+                          "integrations/payments/stripe-connect"
+                        ]
+                      },
+                      {
+                        "group": "Tax",
+                        "pages": [
+                          "integrations/tax/avalara"
+                        ]
+                      },
+                      {
+                        "group": "Search",
+                        "pages": [
+                          "developer/how-to/custom-search-provider",
+                          "integrations/search/meilisearch"
+                        ]
+                      },
+                      {
+                        "group": "Identity & SSO",
+                        "pages": [
+                          "developer/providers/sso",
+                          "developer/how-to/custom-api-authentication"
+                        ]
+                      },
+                      {
+                        "group": "Observability",
+                        "pages": [
+                          "developer/providers/observability"
+                        ]
+                      },
+                      {
+                        "group": "Marketing & Analytics",
+                        "pages": [
+                          "integrations/analytics/google-analytics",
+                          "integrations/analytics/google-tag-manager",
+                          "integrations/marketing/klaviyo"
+                        ]
+                      }
+                    ],
+                    "icon": "plug"
                   },
                   {
                     "group": "Extending the Backend",
