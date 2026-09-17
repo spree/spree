@@ -175,7 +175,7 @@ The example above relies on `variant.refrigerated?`. In a real plugin you'd back
 ```ruby app/models/spree/variant_decorator.rb
 Spree::Variant.class_eval do
   def refrigerated?
-    custom fields.find_by(namespace: 'logistics', key: 'refrigerated')&.value == 'true'
+    custom_fields.find_by(namespace: 'logistics', key: 'refrigerated')&.value == 'true'
   end
 end
 ```

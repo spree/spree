@@ -121,7 +121,11 @@ i18n.addResourceBundle('en', 'translation', en, true, true)
 
 ## Test
 
-Vitest and Playwright are configured — no setup needed.
+Vitest and Playwright are configured. Playwright needs its browser once:
+
+```bash
+pnpm exec playwright install chromium
+```
 
 ```bash
 pnpm test        # unit tests: src/**/*.test.ts

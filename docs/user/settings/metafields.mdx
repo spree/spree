@@ -1,6 +1,6 @@
 ---
 title: "Custom Field Definitions"
-description: "Define and manage custom custom fields in Spree to attach extra structured data to products, orders, and other store objects without code changes."
+description: "Define and manage custom fields in Spree to attach extra structured data to products, orders, and other store objects without code changes."
 ---
 
 Custom Fields in Spree allow you to attach custom data to nearly any object in your store - without needing to write a single line of code or modify the database.
@@ -11,13 +11,13 @@ From product materials to internal order notes, custom fields give you the flexi
 
 To create a custom field definition go to **Settings → Custom Field Definitions**
 
-![Spree Commerce custom fields](/docs/images/user/settings/metafields/1-settings-custom fields.png)
+![Spree Commerce custom fields](/docs/images/user/settings/metafields/1-settings-metafields.png)
 
 Here you’ll see a list of all existing custom field definitions in your store. 
 
 To add a new one, click **New Custom Field Definition** in the top right corner.
 
-![Creating custom fields in Spree](/docs/images/user/settings/metafields/2-create-a-custom field.png)
+![Creating custom fields in Spree](/docs/images/user/settings/metafields/2-create-a-metafield.png)
 
 Fill out the form with the required details:
 
@@ -33,7 +33,7 @@ Fill out the form with the required details:
 
 ### Supported Resources
 
-![Add a custom field definition in Spree](/docs/images/user/settings/metafields/3-custom field-resource.png)
+![Add a custom field definition in Spree](/docs/images/user/settings/metafields/3-metafield-resource.png)
 
 You can define custom fields for nearly any data object in Spree:
 
@@ -71,7 +71,7 @@ You can define custom fields for nearly any data object in Spree:
 
 ### Supported Data Types
 
-![Spree Commerce custom field resources](/docs/images/user/settings/metafields/4-custom field-type.png)
+![Spree Commerce custom field resources](/docs/images/user/settings/metafields/4-metafield-type.png)
 
 Each custom field must be assigned a **type**, which determines the format of the stored value. Choosing the right type helps keep data structured, valid, and useful across the storefront and admin.
 
@@ -90,15 +90,15 @@ Once your custom field definition has been created, you can enter values in a fe
 
 First, navigate to the relevant resource (e.g., Product, Order, Shipment).
 
-![Spree Commerce custom field data types](/docs/images/user/settings/metafields/5-add-custom field-value.png)
+![Spree Commerce custom field data types](/docs/images/user/settings/metafields/5-add-metafield-value.png)
 
 Click the **three-dot menu** in the top right corner and select **Custom Fields** from the dropdown.
 
-![Adding custom fields values in Spree](/docs/images/user/settings/metafields/6-select-custom fields.png)
+![Adding custom fields values in Spree](/docs/images/user/settings/metafields/6-select-metafields.png)
 
 Enter the desired values in the form and click **Save** to finalized your changes.
 
-![Product custom fields in Spree](/docs/images/user/settings/metafields/7-enter-custom field-values.png)
+![Product custom fields in Spree](/docs/images/user/settings/metafields/7-enter-metafield-values.png)
 
 This works for any individual resource type and is perfect for adding or editing a few custom fields manually.
 
@@ -106,7 +106,7 @@ This works for any individual resource type and is perfect for adding or editing
 
 Product custom fields can also be imported or updated in bulk by:
 
-1. Adding columns to your CSV file using this format: custom field.namespace.key (e.g. custom field.custom.material)
+1. Adding columns to your CSV file using this format: custom_field.namespace.key (e.g. custom_field.custom.material)
 2. Entering the desired values for each product row.
 3. Importing the file when uploading a new product catalog
 
