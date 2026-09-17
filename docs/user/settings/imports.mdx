@@ -1,0 +1,45 @@
+---
+title: "Imports"
+description: "Review the history of CSV files you have uploaded to Spree and how each import went."
+---
+
+The Imports screen shows **CSV files you have uploaded, and how each one went**. It is a history screen, not a place to start work.
+
+<Warning>**You cannot start an import here.** There is no upload button on this screen. To import products, go to **Products → Import**, and see [<u>Import Products</u>](/user/manage-products/import-products). Come back to this screen to watch the import run and to see what happened to each row.</Warning>
+
+To reach it, navigate to **Settings → Imports**, under the **Developer** group.
+
+## What's on the screen
+
+A search box (**Search by number…**), the standard **Add filter**, **Sort** and **Columns** controls, and a table:
+
+| Column | What it shows |
+|---|---|
+| **Number** | The reference Spree gives each import |
+| **Type** | What kind of records the file held |
+| **Status** | How far the import has got |
+| **Rows** | How many rows were read, and how many failed |
+| **Created at** | When the file was uploaded |
+
+Each row has three actions: **View**, **Download original**, and **Delete**.
+
+## How to check on an import
+
+1. Start the import from its own screen — for products, that is [<u>Products → Import</u>](/user/manage-products/import-products).
+2. Go to **Settings → Imports**.
+3. Find the import by its number, or by the date it was created.
+4. Watch **Status** as it runs, and read **Rows** to see how many were read and how many failed.
+5. Click the row to open it and see what happened to each individual row.
+
+## Good to know
+
+- **Download original** gives you back the file exactly as it was uploaded, which is the quickest way to correct and retry a failed import.
+- **Delete** removes the import record, its rows and the uploaded file. An import that is still running cannot be deleted.
+- The screen shows **"No imports yet"** until you have uploaded a file.
+- Imports sits under **Developer**, alongside API keys and webhooks, even though importing is a catalogue job. That is where to look for it.
+
+## Related
+
+- [<u>Import Products</u>](/user/manage-products/import-products)
+- [<u>Import File Template</u>](/user/manage-products/product-import-file-template)
+- [<u>Export Products</u>](/user/manage-products/export-products)
