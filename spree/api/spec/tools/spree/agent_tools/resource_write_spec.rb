@@ -114,13 +114,39 @@ RSpec.describe 'agent generic record writes' do
       expect(described[:writable_attributes]).to include('name', 'currency')
     end
 
-    it 'names the workflow tool for a resource the generic write refuses' do
+    it 'names the create and update tools separately' do
       described = Spree.agent_tools.available_for(context).
                   find { |candidate| candidate.tool_name == 'describe_resource' }.
                   call(resource: 'products')[:resources].first
 
-      expect(described[:written_by]).to eq('products_update')
+      expect(described[:created_by_tool]).to eq('products_create')
+      expect(described[:updated_by_tool]).to eq('products_update')
       expect(described).not_to have_key(:writable_attributes)
+    end
+  end
+
+  # The documented attribute list is the API's CREATE body, and a create body
+  # can carry a parameter the controller translates rather than assigns — a
+  # delivery profile's `kind` picks the STI subclass and is not a column.
+  # Handing that to assign_attributes raises, which must not escape as a
+  # protocol failure.
+  describe 'an attribute the model does not accept' do
+    let(:profile) { store.delivery_profiles.first || create(:delivery_profile, store: store) }
+
+    it 'refuses instead of raising when nothing assignable is left' do
+      result = tool('update_resource').call(resource: 'delivery_profiles', id: profile.prefixed_id,
+                                            attributes: { 'kind' => 'shipping' })
+
+      expect(result[:error]).to include('kind')
+    end
+
+    it 'applies what it can and names what it could not' do
+      result = tool('update_resource').call(resource: 'delivery_profiles', id: profile.prefixed_id,
+                                            attributes: { 'name' => 'Renamed Profile', 'kind' => 'shipping' })
+
+      expect(result[:error]).to be_nil
+      expect(result[:unsupported]).to eq(['kind'])
+      expect(profile.reload.name).to eq('Renamed Profile')
     end
   end
 
