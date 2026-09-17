@@ -5,9 +5,10 @@ description: How Spree fits together — the catalog, the cart, the order, and f
 
 ## Overview
 
-Spree is a commerce engine you drive through a REST API. It holds the catalog, works out what a customer owes, takes the money, and tracks what was sent. You build the storefront, the mobile app, or the internal tool on top of it.
+Spree is a commerce engine you drive through a REST API. It holds the catalog, works out what a customer owes, takes the money, and tracks what was delivered. You build the storefront, the mobile app, Point of Sale or an internal tool on top of it.
 
-There is no built-in storefront you have to accept. Everything a customer-facing app needs is on the Store API, and everything a back office needs is on the Admin API. Both ship as typed TypeScript clients.
+There is no built-in storefront you have to accept, however we do provide a [reference one built in Next.js](/developer/storefront/nextjs/quickstart). 
+Everything a customer-facing app needs is on the Store API, and everything a back office needs is on the Admin API. Both ship as fully typed TypeScript clients.
 
 ## The shape of a purchase
 
@@ -80,7 +81,7 @@ Three things in that diagram are worth calling out, because they're where Spree 
 
 **Delivery is described by a profile, not a category.** A [delivery profile](/developer/core-concepts/fulfillments) says how a product travels — physically shipped, or digital — and which locations and methods serve it.
 
-**Stock lives per location.** A variant has a stock level at each [stock location](/developer/core-concepts/inventory), so availability is a real question about real warehouses rather than a single number.
+**Stock lives per location.** A variant can have a stock level at each [stock location](/developer/core-concepts/inventory), so availability is a real question about real warehouses rather than a single number.
 
 ## The two APIs
 
@@ -113,6 +114,7 @@ Spree assumes you'll extend it, and gives you three ways in that survive an upgr
 
 | Approach | Use it for | Guide |
 |---|---|---|
+| **Events** | Reacting inside your own app when something happens — indexing a record, calling an API with your credentials | [Events](/developer/core-concepts/events) |
 | **Webhooks** | Telling another system something happened — an ERP, a warehouse, an email tool | [Webhooks](/developer/core-concepts/webhooks) |
 | **Custom fields** | Storing your own data on a product, order or customer without changing the schema | [Custom Fields](/developer/core-concepts/metafields) |
 | **Providers** | Plugging in a real service for tax, delivery rates, payments or search | [Providers](/developer/providers/overview) |
@@ -126,43 +128,32 @@ One Spree installation can run more than one business:
 - **[Stores](/developer/core-concepts/stores)** are separate businesses — their own catalog, orders, customers and settings. Data does not cross between them.
 - **[Channels](/developer/core-concepts/channels)** are the ways one store sells: a website, a mobile app, a retail till.
 - **[Markets](/developer/core-concepts/markets)** are the regions a store sells into, each with its currency, locale and tax treatment.
-- **[Sellers](/developer/core-concepts/products#seller-submissions)** let one store list goods from many vendors, for a marketplace.
+- **[Sellers](/developer/core-concepts/sellers)** let one store list goods from many vendors, for a marketplace.
 
 ## What you install
-
-| Package | What it is |
-|---|---|
-| `spree` | The engine — catalog, checkout, payments, both APIs |
-| `spree_emails` | Transactional email, if you don't send your own |
-| `spree_dashboard` | The back-office dashboard |
-
-Providers for search, delivery rates, tax and payments install separately, so you only carry what you use.
-
-**TypeScript:**
 
 | Package | What it is |
 |---|---|
 | [`@spree/sdk`](/developer/sdk/quickstart) | Store API client — for your storefront |
 | [`@spree/admin-sdk`](/developer/sdk/admin/quickstart) | Admin API client — for back-office and integrations |
 | [`@spree/cli`](/developer/cli/quickstart) | Command line for local setup and calling the Admin API |
+| [`@spree/dashboard`](/developer/dashboard/overview) | The admin interface, a React app you own and extend |
 
 <Info>
-Spree runs on PostgreSQL, MySQL or SQLite. PostgreSQL is recommended for production — [database configuration](/developer/deployment/database).
+Spree runs on PostgreSQL, MySQL or SQLite. Check [database configuration](/developer/deployment/database) for more details.
 </Info>
 
 ## Where to go next
 
+Two ways in, depending on how you prefer to learn.
+
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/developer/getting-started/quickstart">
-    Get an installation running.
+  <Card title="Build something" icon="graduation-cap" href="/developer/tutorial/introduction">
+    Add one feature end to end — a model with its own API, a screen in the dashboard, a page on the storefront, and the tests around it. Start here if you learn by doing.
   </Card>
-  <Card title="Store SDK" icon="code" href="/developer/sdk/quickstart">
-    Build a storefront against the Store API.
-  </Card>
-  <Card title="Products" icon="package" href="/developer/core-concepts/products">
-    How the catalog is modelled.
-  </Card>
-  <Card title="Carts" icon="shopping-cart" href="/developer/core-concepts/carts">
-    Cart, checkout, and what completion guarantees.
+  <Card title="Read the reference" icon="book-open" href="/developer/core-concepts/products">
+    Every part of the platform, one page each: products and pricing, carts and orders, payments, fulfillment, promotions. Start here if you already know what you need.
   </Card>
 </CardGroup>
+
+Building a storefront rather than extending the backend? Go straight to the [Spree Next.js Storefront](/developer/storefront/nextjs/quickstart).

@@ -89,6 +89,12 @@ module Spree
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
       end
 
+      # Runs after initializers so an explicitly assigned preference — which
+      # wins over the environment — is never rejected for a stale env var.
+      config.after_initialize do
+        Spree::Core::Configuration.validate_env!(Spree::Config)
+      end
+
       # I18n's config lives in fiber/thread-local storage that survives across
       # requests on reused server threads, so a request that never assigns its
       # own locale would render in whatever locale the previous request on the

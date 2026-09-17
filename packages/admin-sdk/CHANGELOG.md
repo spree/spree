@@ -1,5 +1,13 @@
 # @spree/admin-sdk
 
+## 1.0.0-beta.2
+
+### Patch Changes
+
+- [#14671](https://github.com/spree/spree/pull/14671) [`20b5c2e`](https://github.com/spree/spree/commit/20b5c2e4fd50a83865d119e412caad1d2ad3bdad) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Accept `preferred_always_include_confirm_step` when updating a store.
+
+- [#14644](https://github.com/spree/spree/pull/14644) [`6723b99`](https://github.com/spree/spree/commit/6723b99bdf8453f6e3a2a6666211f69d658f566e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `auth.completeSetup` accepts `sample_data`, which queues the demo catalog load once the admin account exists.
+
 ## 1.0.0-beta.1
 
 ### Major Changes

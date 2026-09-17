@@ -1928,6 +1928,10 @@
           "help": "Make a phone number mandatory on customer addresses.",
           "label": "Require phone number"
         },
+        "always_include_confirm_step": {
+          "help": "Always give shoppers a final review step before placing the order, even when no payment method requires one.",
+          "label": "Always show confirmation step"
+        },
         "capture_method": {
           "help": "The default for every payment method. An individual payment method can override it.",
           "label": "When to charge customers",

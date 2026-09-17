@@ -108,6 +108,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_storefront_access:
       (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
+    preferred_always_include_confirm_step: store.preferred_always_include_confirm_step ?? false,
     preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
     preferred_capture_method:
@@ -237,6 +238,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_weight_unit: values.preferred_weight_unit,
         preferred_storefront_access: values.preferred_storefront_access,
         preferred_guest_checkout: values.preferred_guest_checkout,
+        preferred_always_include_confirm_step: values.preferred_always_include_confirm_step,
         preferred_company_field_enabled: values.preferred_company_field_enabled,
         preferred_address_requires_phone: values.preferred_address_requires_phone,
         preferred_capture_method: values.preferred_capture_method,
@@ -495,6 +497,13 @@ function StoreSettingsForm({ store }: { store: Store }) {
                         />
                       </div>
                     </Field>
+                    <SwitchField
+                      id="store-always-include-confirm-step"
+                      label={t('admin.fields.store.always_include_confirm_step.label')}
+                      help={t('admin.fields.store.always_include_confirm_step.help')}
+                      name="preferred_always_include_confirm_step"
+                      control={form.control}
+                    />
                   </FieldGroup>
                 </CardContent>
               </Card>

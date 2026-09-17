@@ -64,5 +64,8 @@ of what exists, not an implementation.
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm test        # unit tests (Vitest, Node environment)
 pnpm build
 ```
+
+Test the logic between the UI and the API — query keys, payload mapping, permission predicates. Do not write tests that render a component to assert its markup; that tests React. Use `pnpm test:e2e` when a browser is genuinely needed.

@@ -1,5 +1,17 @@
 # @spree/cli
 
+## 3.0.2
+
+### Patch Changes
+
+- [#14644](https://github.com/spree/spree/pull/14644) [`6723b99`](https://github.com/spree/spree/commit/6723b99bdf8453f6e3a2a6666211f69d658f566e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree init` says where sample data comes from. A run that seeds no admin (no `--admin-email`) cannot load sample data, since its imports need an owner, so init now points at the setup screen's own "Load sample data" option instead of skipping silently. The `--admin-email` and `--no-sample-data` help text says which flags belong to scripted installs.
+
+- [#14667](https://github.com/spree/spree/pull/14667) [`53008b4`](https://github.com/spree/spree/commit/53008b4a30eeca633206e726f0303f1f8c0673d3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Scaffold dashboards with the layout they grow into, and the packages their first import needs.
+
+  A new dashboard app shipped four files and no structure to follow, so the first customization had nowhere obvious to go. Both starters now carry the layout the dashboard uses internally — `pages/`, `hooks/`, `tables/`, `schemas/` and `locales/`, one file per resource — documented in the README, with an `AGENTS.md` covering the conventions a coding agent cannot infer.
+
+  They also gain `@spree/dashboard-core` and `@spree/dashboard-ui` as direct dependencies. Both were installed already but only as transitive ones, so under pnpm an import of either failed until you added it by hand.
+
 ## 3.0.1
 
 ### Patch Changes
