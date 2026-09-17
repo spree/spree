@@ -48,6 +48,7 @@ module Spree
                                :actor_classes,
                                :custom_fields,
                                :reporting,
+                               :agent_tools,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
@@ -207,6 +208,14 @@ module Spree
       initializer 'spree.register.reporting', before: :load_config_initializers do |app|
         app.config.spree.reporting = Spree::Reporting::Registry.new
         Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
+      end
+
+      # Seed the agent-tool registry before app initializers so applications
+      # and extensions can register their own tools and expose their own
+      # workflows in config/initializers (see docs/plans/6.0-mcp-server.md).
+      initializer 'spree.register.agent_tools', before: :load_config_initializers do |app|
+        app.config.spree.agent_tools = Spree::AgentTools::Registry.new
+        Spree::AgentTools::DefaultCatalog.install(app.config.spree.agent_tools)
       end
 
       # We need to define promotions rules here so extensions and existing apps

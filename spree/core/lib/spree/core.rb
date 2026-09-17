@@ -772,6 +772,20 @@ module Spree
     Rails.application.config.spree.reporting = value
   end
 
+  # The agent-tool registry — what an MCP client or the dashboard assistant
+  # may do on a merchant's behalf. A contract like +Spree.integrations+ and
+  # +Spree.reporting+: an extension registers a tool without depending on
+  # either adapter. See docs/plans/6.0-mcp-server.md.
+  #
+  # @return [Spree::AgentTools::Registry]
+  def self.agent_tools
+    Rails.application.config.spree.agent_tools
+  end
+
+  def self.agent_tools=(value)
+    Rails.application.config.spree.agent_tools = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end
@@ -919,6 +933,8 @@ require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/analytics'
 require 'spree/reporting'
+require 'spree/agent_tool'
+require 'spree/agent_tools'
 require 'spree/events'
 require 'spree/store_scope_guard'
 
