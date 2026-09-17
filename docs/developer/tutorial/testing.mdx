@@ -7,75 +7,26 @@ Most of the backend is generated, so most of the testing worth doing is on the c
 
 ## The backend
 
-Your project arrives with RSpec, FactoryBot and Spree's own helpers already configured — every factory core ships is available, so `create(:product)` works without any setup.
-
-The generator wrote a factory and a controller spec for each API side:
+Your project arrives with a fully configured testing environment for backend testing. The generator wrote all the files needed for running API tests:
 
 ```text
-server/spec/factories/spree/brand_factory.rb
 server/spec/controllers/spree/api/v3/store/brands_controller_spec.rb
 server/spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
 ```
 
-Run them, a directory or a single file at a time:
+You can now run them, a directory or a single file at a time:
 
 ```bash
 spree rspec spec/controllers/spree/api/v3/
 spree rspec spec/models/spree/brand_spec.rb
-spree rspec spec/models/spree/brand_spec.rb:12   # one example
 ```
-
-Three conventions carry most of the weight. Build records through **factories** rather than creating them directly, so a model change does not mean editing fifty specs. Add `render_views` to a controller spec, or a broken serializer passes silently. And use the suite's `@default_store` rather than creating another store marked as the default — two of them produce failures that surface far from their cause.
-
-What is worth testing is the behaviour you chose, not what the framework already guarantees:
-
-```ruby server/spec/models/spree/brand_spec.rb
-RSpec.describe Spree::Brand, type: :model do
-  it 'nullifies the reference instead of deleting products' do
-    brand = create(:brand)
-    product = create(:product, brand: brand)
-
-    brand.destroy
-
-    expect(product.reload.brand_id).to be_nil
-    expect(product).to be_persisted
-  end
-end
-```
-
-A presence validation on a required column needs no spec. The `dependent: :nullify` you picked in step 1 does, because a future change could quietly turn it into `:destroy` and take the catalog with it.
-
-The generated controller specs are worth one addition — proof that the Ransack allowlist actually permits what the dashboard filters by:
-
-```ruby server/spec/controllers/spree/api/v3/store/brands_controller_spec.rb
-it 'filters by name' do
-  create(:brand, name: 'Wilson')
-  create(:brand, name: 'Penn')
-
-  get :index, params: { q: { name_cont: 'wil' }, format: :json }
-
-  expect(json_response['data'].map { |b| b['name'] }).to eq(['Wilson'])
-end
-```
-
-Remove `name` from `whitelisted_ransackable_attributes` and this fails — which is the point, because the dashboard column that sorts by it would fail too.
 
 ## The dashboard
 
-This is where most of your own code lives, so it is where most of your tests belong. Unlike the backend, the starter ships no test setup — add it once:
+This is where most of your own code lives, so it is where most of your tests belong. Vitest and Playwright come configured, so there is nothing to set up:
 
 ```bash
-cd apps/dashboard
-pnpm add -D vitest @playwright/test
-```
-
-Then two scripts in `apps/dashboard/package.json`:
-
-```json
-"scripts": {
-  "test": "vitest run",
-  "test:e2e": "playwright test"
-}
+cd apps/dashboard && pnpm test
 ```
 
 ### What is worth a unit test

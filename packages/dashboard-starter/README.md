@@ -119,6 +119,19 @@ import en from './locales/en.json'
 i18n.addResourceBundle('en', 'translation', en, true, true)
 ```
 
+## Test
+
+Vitest and Playwright are configured — no setup needed.
+
+```bash
+pnpm test        # unit tests: src/**/*.test.ts
+pnpm test:e2e    # end-to-end, through a browser
+```
+
+Unit tests run in Node rather than a DOM, because what is worth testing here is the logic between your UI and the API: query keys, payload mapping, permission predicates. Rendering a component to assert its markup tests React, not your feature — use an end-to-end test when you need a browser.
+
+`pnpm test:e2e` starts the dashboard itself and reuses one you already have running, but expects your API to be up (`spree dev`). Point it elsewhere with `E2E_BASE_URL`.
+
 ## Build & deploy
 
 The app root `Dockerfile` already builds this package and bakes it into the production image, available at `https://yourstore.com/dashboard` URL.
