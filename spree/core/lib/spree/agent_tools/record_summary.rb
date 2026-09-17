@@ -79,7 +79,11 @@ module Spree
               result[key] = sanitize(nested)
             end
           when Array
-            value.map { |element| sanitize(element) }
+            # Elements are filtered too, not just hash values: a customer's or
+            # order's tags are caller-controlled and serialized as a bare
+            # string array, so a tag holding a token-bearing URL would
+            # otherwise pass straight through.
+            value.reject { |element| credential_value?(element) }.map { |element| sanitize(element) }
           else
             value
           end
