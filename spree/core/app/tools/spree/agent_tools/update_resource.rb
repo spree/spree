@@ -22,8 +22,18 @@ module Spree
         permitted, rejection = permitted_attributes(entry, attributes)
         return rejection if rejection
 
-        record.assign_attributes(permitted)
-        save_record(entry, record)
+        assignable, unsupported = assignable_attributes(record, permitted)
+
+        if assignable.empty?
+          return { error: "#{entry.key.singularize.humanize} does not accept #{unsupported.to_sentence} on update." }
+        end
+
+        record.assign_attributes(assignable)
+        save_record(entry, record).tap do |result|
+          # Named back rather than silently ignored, so the model does not
+          # believe it changed something it did not.
+          result[:unsupported] = unsupported if unsupported.any? && result[:error].nil?
+        end
       end
     end
   end

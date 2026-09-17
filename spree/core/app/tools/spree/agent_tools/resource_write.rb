@@ -85,6 +85,22 @@ module Spree
         [attributes, nil]
       end
 
+      # Assigns only what the model will actually accept.
+      #
+      # The documented attribute list is the API's create body, and a create
+      # body can carry a parameter the controller translates rather than
+      # assigns — a delivery profile's `kind` picks the STI subclass and is
+      # not a column. Handing that to `assign_attributes` raises
+      # ActiveModel::UnknownAttributeError, which escapes as a protocol
+      # failure instead of something the model can correct.
+      #
+      # @return [Array(Hash, Array<String>)] what was assigned, and what the
+      #   model does not accept
+      def assignable_attributes(record, attributes)
+        attributes.partition { |name, _value| record.respond_to?(:"#{name}=") }.
+          then { |accepted, rejected| [accepted.to_h, rejected.map(&:first)] }
+      end
+
       # Saves through the model's own validations, and hands their messages
       # back verbatim when it refuses.
       def save_record(entry, record)
