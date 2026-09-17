@@ -1099,7 +1099,7 @@
                       "user/products/categories",
                       "user/products/collections",
                       "user/manage-products/product-options",
-                      "user/manage-products/product-metafields",
+                      "user/manage-products/custom-product-fields",
                       "user/manage-products/import-products",
                       "user/manage-products/export-products",
                       "user/manage-products/product-import-file-template",
@@ -1209,28 +1209,68 @@
                   },
                   {
                     "group": "Settings",
+                    "icon": "settings",
                     "pages": [
-                      "user/settings/store-details",
-                      "user/settings/sales-channels",
-                      "user/settings/users",
-                      "user/settings/emails",
-                      "user/settings/policies",
-                      "user/settings/payments",
-                      "user/settings/markets",
-                      "user/settings/zones",
-                      "user/settings/shipping-methods",
-                      "user/settings/tax",
-                      "user/settings/locations",
-                      "user/settings/metafields",
-                      "user/settings/returns-configuration",
-                      "user/settings/product-types",
-                      "user/settings/package-types",
-                      "user/settings/integrations",
-                      "user/settings/api-keys",
-                      "user/settings/webhooks",
-                      "user/settings/allowed-origins"
-                    ],
-                    "icon": "settings"
+                      {
+                        "group": "Store",
+                        "icon": "store",
+                        "pages": [
+                          "user/settings/store-details",
+                          "user/settings/emails",
+                          "user/settings/policies",
+                          "user/settings/sales-channels",
+                          "user/settings/custom-fields",
+                          "user/settings/integrations"
+                        ]
+                      },
+                      {
+                        "group": "Selling",
+                        "icon": "badge-dollar-sign",
+                        "pages": [
+                          "user/settings/markets",
+                          "user/settings/payments",
+                          "user/settings/tax-categories",
+                          "user/settings/tax-rates"
+                        ]
+                      },
+                      {
+                        "group": "Shipping & delivery",
+                        "icon": "truck",
+                        "pages": [
+                          "user/settings/delivery-profiles",
+                          "user/settings/locations",
+                          "user/settings/package-types",
+                          "user/settings/product-types",
+                          "user/settings/returns-and-reasons"
+                        ]
+                      },
+                      {
+                        "group": "Marketplace",
+                        "icon": "handshake",
+                        "pages": [
+                          "user/settings/payouts",
+                          "user/settings/seller-requirements"
+                        ]
+                      },
+                      {
+                        "group": "Users & permissions",
+                        "icon": "user-cog",
+                        "pages": [
+                          "user/settings/staff",
+                          "user/settings/roles"
+                        ]
+                      },
+                      {
+                        "group": "Developer",
+                        "icon": "code",
+                        "pages": [
+                          "user/settings/api-keys",
+                          "user/settings/webhooks",
+                          "user/settings/allowed-origins",
+                          "user/settings/imports"
+                        ]
+                      }
+                    ]
                   },
                   {
                     "group": "How-to Guides",
