@@ -30,7 +30,9 @@ The dashboard is a **Single Page Application**: one HTML page, all routing clien
 @spree/dashboard      ─ app shell: routes, resource hooks, locales, vite config
 ```
 
-[Overview](/developer/dashboard/overview) covers the split in more detail. The short version: **`-ui`** has no providers or hooks (data comes via props); **`-core`** is the extension API and runtime services; **`-dashboard`** is the deployable app shell. Plugins and customizations consume `-core` and `-ui`, never the app shell.
+[Overview](/developer/dashboard/overview) covers the split in more detail. The short version: **`-ui`** has no providers or hooks (data comes via props); **`-core`** is the extension API and runtime services; **`-dashboard`** is the deployable app shell.
+
+The split matters when you publish a plugin: it consumes `-core` and `-ui` and never the app shell, which it plugs into rather than ships. In your own dashboard app the distinction is noise, so `@spree/dashboard` re-exports both — one import, and you never have to work out which package a given export lives in.
 
 ## How customization plugs in
 
