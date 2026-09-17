@@ -21,7 +21,7 @@ import { Button, adminClient, usePermissions, useResourceMutation } from '@spree
 import { Send } from 'lucide-react'
 
 interface Props {
-  resource: { id: string; state: string }  // Order
+  resource: { id: string; status: string }  // Order
 }
 
 export function SendInvoiceButton({ resource }: Props) {
@@ -34,7 +34,7 @@ export function SendInvoiceButton({ resource }: Props) {
 
   // Only show to users who can act, and only on completed orders.
   if (!permissions.can('update', 'Spree::Order')) return null
-  if (resource.state !== 'complete') return null
+  if (resource.status !== 'placed') return null
 
   return (
     <Button

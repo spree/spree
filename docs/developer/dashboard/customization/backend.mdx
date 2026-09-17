@@ -54,13 +54,16 @@ Resource methods are just `request<T>()` calls with the right path + types pre-b
 The dashboard's data layer is React-Query — every `useFoo` hook is `useQuery({ queryKey, queryFn })` over an SDK call. Follow the same pattern for your own data:
 
 ```ts
-import { adminClient } from '@spree/dashboard'
+import { adminClient, useResourceKey } from '@spree/dashboard'
 import { useQuery } from '@tanstack/react-query'
 import type { AdminBrand } from './types'
 
 export function useBrands(params?: { search?: string }) {
   return useQuery({
-    queryKey: ['brands', params],
+    // `useResourceKey` scopes the key to the current store. A bare
+    // `['brands', params]` key would serve one store's rows to another
+    // after a store switch.
+    queryKey: useResourceKey('brands', params),
     queryFn: () =>
       adminClient.request<{ data: AdminBrand[] }>('GET', '/brands', { params }),
     staleTime: 30_000,

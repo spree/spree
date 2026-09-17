@@ -90,7 +90,7 @@ Add a Rails validation while you're here (`validates :lead_time_days, numericali
 ```tsx
 // src/plugins.ts (or a plugin's entry module)
 import { defineDashboardPlugin, i18n } from '@spree/dashboard'
-import { LeadTimeCard } from './fields/lead-time-card'
+import { LeadTimeCard } from './slots/lead-time-card'
 import en from './locales/en.json'
 
 i18n.addResourceBundle('en', 'translation', en, true, true)
