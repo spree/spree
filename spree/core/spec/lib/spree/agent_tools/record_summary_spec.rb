@@ -85,6 +85,26 @@ RSpec.describe Spree::AgentTools::RecordSummary do
       expect(cleaned.dig('line_items', 0, 'name')).to eq('Album')
     end
 
+    # Tags are caller-controlled and serialize as a bare string array, so an
+    # element has to be filtered like a value, not just recursed into.
+    it 'drops a credential carried in an array element' do
+      cleaned = described_class.sanitize(
+        'tags' => ['seasonal', 'https://example.test/?token=LIVEtoken123']
+      )
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+      expect(cleaned['tags']).to eq(['seasonal'])
+    end
+
+    it 'drops one nested in an array of hashes' do
+      cleaned = described_class.sanitize(
+        'items' => [{ 'name' => 'Album', 'links' => ['/api/v3/store/digital_links/LIVEtoken123'] }]
+      )
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+      expect(cleaned.dig('items', 0, 'name')).to eq('Album')
+    end
+
     # The filter has to stay narrow: a merchant asks about storefront links,
     # and dropping every `*_url` would take those with it.
     it 'keeps an ordinary URL' do
