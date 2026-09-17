@@ -5068,7 +5068,9 @@
       "required_notice_message": "Es existiert noch kein Administratorkonto. Verwenden Sie den Setup-Link aus der Installationsausgabe, um eines zu erstellen.",
       "required_notice_title": "Diese Installation ist noch nicht eingerichtet",
       "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
-      "title": "Spree einrichten"
+      "title": "Spree einrichten",
+      "welcome_description": "Arbeiten Sie die folgende Checkliste ab, um {{store}} zu eröffnen.",
+      "welcome_title": "Willkommen, Ihr Shop ist startklar!"
     },
     "staff": {
       "actions": {

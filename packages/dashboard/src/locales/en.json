@@ -5068,7 +5068,9 @@
       "required_notice_message": "No admin account exists. Use the setup link from the install output to create one.",
       "required_notice_title": "This installation isn't set up yet",
       "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
-      "title": "Set up Spree"
+      "title": "Set up Spree",
+      "welcome_description": "Work through the checklist below to open {{store}} for business.",
+      "welcome_title": "Welcome, your store is now ready!"
     },
     "staff": {
       "actions": {

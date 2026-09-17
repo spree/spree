@@ -5057,7 +5057,9 @@
       "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
       "required_notice_title": "此安装尚未完成设置",
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
-      "title": "设置 Spree"
+      "title": "设置 Spree",
+      "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
+      "welcome_title": "欢迎，您的商店已就绪！"
     },
     "staff": {
       "actions": {
