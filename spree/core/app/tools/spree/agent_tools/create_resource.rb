@@ -40,6 +40,11 @@ module Spree
         scope = context.store.respond_to?(association) ? context.store.public_send(association) : entry.model_class
 
         scope.new(attributes)
+      rescue ActiveModel::UnknownAttributeError => e
+        # A documented create parameter the model does not accept as an
+        # attribute (an STI selector the controller translates, say) is a tool
+        # error naming it, not a protocol failure.
+        raise ArgumentError, "#{entry.key.singularize.humanize} does not accept that attribute: #{e.message}"
       end
     end
   end

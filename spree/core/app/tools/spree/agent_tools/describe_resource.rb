@@ -46,8 +46,10 @@ module Spree
           # which is what create_resource and update_resource tell it to do.
           # Offered only where the caller could actually write.
           writable_attributes: writable_attributes_for(entry),
-          # Named so a model that reaches for a write knows which tool does it.
-          written_by: (entry.update_workflow_key || entry.create_workflow_key)&.tr('.', '_'),
+          # Named per operation, because they are different tools: a caller
+          # preparing a creation must not be handed the update tool's name.
+          created_by_tool: entry.create_workflow_key&.tr('.', '_'),
+          updated_by_tool: entry.update_workflow_key&.tr('.', '_'),
           # Named queries answer things no column can — stock levels live
           # across warehouses, so "out of stock" is a scope, not a field.
           filterable_scopes: entry.filterable_scopes,
