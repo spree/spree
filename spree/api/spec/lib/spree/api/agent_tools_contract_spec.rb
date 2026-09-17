@@ -360,6 +360,35 @@ RSpec.describe 'agent tool contract' do
       MESSAGE
     end
 
+    # The real guard against a serializer gaining a credential-bearing field
+    # later: no registered resource may emit its own record's secure token.
+    # Checked against the serializers themselves rather than a list, so a new
+    # `has_secure_token` model is covered the day it is mapped.
+    it 'never emits a record\'s own secure token' do
+      leaking = Spree::AgentTools::ResourceMap.all.filter_map do |entry|
+        model = entry.model_class
+        next unless model.respond_to?(:column_names) && model.column_names.include?('token')
+
+        record = model.new(token: 'SENTINELtokenVALUE')
+        serialized = entry.serializer_class.new(record).to_h
+        entry.key if Spree::AgentTools::RecordSummary.sanitize(serialized).to_s.include?('SENTINELtokenVALUE')
+      rescue StandardError
+        # A serializer that cannot render an unsaved record tells us nothing
+        # about leakage; the per-resource specs cover those.
+        nil
+      end
+
+      expect(leaking).to be_empty, <<~MESSAGE
+        These resources emit their own secure token to an agent, which reaches
+        the model and, for a hosted client, a third-party vendor:
+
+          #{leaking.join("\n  ")}
+
+        Add the attribute to RecordSummary::SECRET_ATTRIBUTES, or the model to
+        AgentResourceMap::WITHHELD_MODELS.
+      MESSAGE
+    end
+
     it 'scopes every registered resource to a store' do
       unscoped = Spree::AgentTools::ResourceMap.all.reject(&:store_scoped?)
 

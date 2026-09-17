@@ -27,6 +27,33 @@ module Spree
       # commission rates all use `code` as an identifier merchants ask about.
       SECRET_ASSOCIATIONS = %w[gift_card gift_cards].freeze
 
+      # A credential does not always sit under a credential-shaped key. Several
+      # serializers expose a URL whose path or query string IS the secret — an
+      # invitation's `acceptance_url` carries the token that mints a staff
+      # account, a digital link's `download_url` is the customer's purchased
+      # file, and a data request's, media's, shipping label's and export's
+      # download links all address endpoints that authenticate on the link
+      # alone. Matching the key name cannot catch those, so the value is
+      # checked too.
+      #
+      # `Admin::DataRequestSerializer` already deletes its own inherited link
+      # for exactly this reason; this generalises that decision to every
+      # outbound record, so a serializer that gains such a field later is
+      # covered without a change here.
+      SECRET_VALUE_PATTERN = /
+        [?&](?:token|secret|signature|sig|key)=   # a credential in the query string
+        |
+        \/(?:accept-invitation|digital_links)\/  # or a path whose segment is the token
+      /xi.freeze
+
+      # Keys whose value is a link that authenticates on itself. Named rather
+      # than pattern-matched, because a bare `_url` match would also drop the
+      # ordinary public URLs merchants ask about (a product's storefront link,
+      # a store's domain).
+      SECRET_ATTRIBUTES = %w[
+        acceptance_url download_url
+      ].freeze
+
       class << self
         # Strips credential-shaped keys from a serialized record.
         #
@@ -46,6 +73,8 @@ module Spree
           when Hash
             value.to_h.stringify_keys.each_with_object({}) do |(key, nested), result|
               next if key.match?(SECRET_PATTERN) || SECRET_ASSOCIATIONS.include?(key)
+              next if SECRET_ATTRIBUTES.include?(key)
+              next if credential_value?(nested)
 
               result[key] = sanitize(nested)
             end
@@ -80,6 +109,12 @@ module Spree
         end
 
         private
+
+        # Whether a value is itself a credential — a link that authenticates on
+        # nothing but the link.
+        def credential_value?(value)
+          value.is_a?(String) && value.match?(SECRET_VALUE_PATTERN)
+        end
 
         def serialize(entry, record)
           sanitize(entry.serializer_class.new(record).to_h)
