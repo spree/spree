@@ -75,11 +75,18 @@ module Spree
       #     provider credentials and the secret that signs deliveries.
       #   gift_cards — the code IS the instrument: whoever reads it can spend
       #     the balance. A balance tool that never emits a code could be added.
+      #   invitations   — the acceptance link is a bearer token that mints a
+      #                   staff account at the invited role, and the endpoint
+      #                   it addresses is deliberately unauthenticated. The
+      #                   outbound filter drops the link, but a resource whose
+      #                   whole purpose is handing out authority does not
+      #                   belong on a read surface an agent drives.
       WITHHELD_MODELS = %w[
         Spree::ApiKey
         Spree::Integration
         Spree::WebhookEndpoint
         Spree::GiftCard
+        Spree::Invitation
       ].freeze
 
       # Controllers that resolve their scope per request rather than declaring

@@ -48,4 +48,55 @@ RSpec.describe Spree::AgentTools::RecordSummary do
       expect(result['code']).to eq('freeship')
     end
   end
+
+  # A credential does not always sit under a credential-shaped key: several
+  # serializers expose a link whose path or query string IS the secret, and the
+  # endpoint it addresses authenticates on the link alone. Matching the key
+  # name cannot catch those.
+  describe 'a credential carried in a value' do
+    it 'drops an invitation acceptance link' do
+      cleaned = described_class.sanitize(
+        'id' => 'inv_1', 'email' => 'hire@example.com',
+        'acceptance_url' => '/accept-invitation/inv_1?token=LIVEtoken123'
+      )
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+      expect(cleaned['email']).to eq('hire@example.com')
+    end
+
+    it 'drops a digital link download URL' do
+      cleaned = described_class.sanitize('download_url' => '/api/v3/store/digital_links/LIVEtoken123')
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+    end
+
+    it 'drops any link that authenticates on a query parameter' do
+      cleaned = described_class.sanitize('report' => '/exports/5/download?token=LIVEtoken123')
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+    end
+
+    it 'drops one nested inside an association' do
+      cleaned = described_class.sanitize(
+        'line_items' => [{ 'name' => 'Album', 'download_url' => '/api/v3/store/digital_links/LIVEtoken123' }]
+      )
+
+      expect(cleaned.to_s).not_to include('LIVEtoken123')
+      expect(cleaned.dig('line_items', 0, 'name')).to eq('Album')
+    end
+
+    # The filter has to stay narrow: a merchant asks about storefront links,
+    # and dropping every `*_url` would take those with it.
+    it 'keeps an ordinary URL' do
+      cleaned = described_class.sanitize(
+        'name' => 'Blue Shirt',
+        'url' => 'https://shop.example.com/products/blue-shirt',
+        'thumbnail_url' => 'https://cdn.example.com/blue.jpg'
+      )
+
+      expect(cleaned['url']).to eq('https://shop.example.com/products/blue-shirt')
+      expect(cleaned['thumbnail_url']).to eq('https://cdn.example.com/blue.jpg')
+      expect(cleaned['name']).to eq('Blue Shirt')
+    end
+  end
 end
