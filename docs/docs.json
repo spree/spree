@@ -659,6 +659,7 @@
                         "pages": [
                           "developer/core-concepts/fulfillments",
                           "developer/core-concepts/delivery-setup",
+                          "developer/core-concepts/freight",
                           "developer/core-concepts/returns-exchanges-claims",
                           "developer/core-concepts/addresses",
                           "developer/core-concepts/calculators"

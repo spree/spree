@@ -1,0 +1,293 @@
+---
+title: Freight
+description: How wholesale orders ship — the carton and pallet chain a product declares, the logistics rollup a forwarder quotes against, and rates that carry no price yet.
+---
+
+## Overview
+
+A wholesale order does not leave the warehouse as parcels. It leaves as
+cartons, a pallet, or a container, and for international freight the price is
+quoted by a forwarder after someone looks at the order — not by an API at
+checkout.
+
+Four pieces make that work, and none of them disturb retail shipping:
+
+| Piece | Question it answers |
+|---|---|
+| **Carton details** on a product | How do these units pack? |
+| **Freight summary** on a cart or order | How big is the whole load? |
+| **Volume and company rules** on a delivery method | Which shipment tier is this? |
+| **Unpriced rates** | What does a buyer see before a price exists? |
+
+One catalog serves both audiences. The same product ships parcel to a shopper
+and carton to a trade buyer, because freight methods sit on the ordinary
+shipping profile and are gated by who is buying rather than by what is bought.
+See [delivery setup](/developer/core-concepts/delivery-setup) for profiles,
+zones and methods, and [package types](/developer/core-concepts/delivery-setup#packaging)
+for the packaging vocabulary this builds on.
+
+## How products pack
+
+Freight numbers are not derivable from retail shipping data. A case of 48
+bottles is one carton, not 48 parcels — so a product says how its units pack,
+and the rest follows the chain **unit → carton → pallet → cubic meters and
+weight**.
+
+The geometry lives on a shared carton, because merchants reuse a handful of
+standard sizes across hundreds of products and one edit should fix all of
+them. What varies per product stays on the product:
+
+| Field | What it says |
+|---|---|
+| `carton_package_type_id` | Which carton this is packed into. Must be a package type of kind `carton` |
+| `units_per_carton` | How many units one carton holds |
+| `carton_weight` | What a packed carton weighs, gross. Optional |
+| `cartons_per_pallet` | How those cartons stack |
+| `purchase_unit` | `unit` or `carton` — what a buyer is quoted in |
+
+<CodeGroup>
+
+```typescript Admin SDK
+// The carton, once, shared by every product packed in it.
+const carton = await adminClient.packageTypes.create({
+  name: 'Master carton',
+  kind: 'carton',
+  length: 40, width: 30, height: 25, dimensions_unit: 'cm',
+  weight: 0.4, max_weight: 20, weight_unit: 'kg',
+})
+
+// How this product fills it.
+await adminClient.products.variants.update('prod_xxx', 'variant_xxx', {
+  carton_package_type_id: carton.id,
+  units_per_carton: 48,
+  carton_weight: 19.2,
+  cartons_per_pallet: 40,
+  purchase_unit: 'carton',
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/package_types' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Master carton", "kind": "carton",
+    "length": 40, "width": 30, "height": 25, "dimensions_unit": "cm",
+    "weight": 0.4, "max_weight": 20, "weight_unit": "kg"
+  }'
+
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx/variants/variant_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "carton_package_type_id": "pkgtype_xxx",
+    "units_per_carton": 48,
+    "carton_weight": 19.2,
+    "cartons_per_pallet": 40,
+    "purchase_unit": "carton"
+  }'
+```
+
+</CodeGroup>
+
+Stored quantities are always units, at every level. `purchase_unit` only
+changes the vocabulary a storefront presents — a buyer shown "2 cartons" is
+buying 96 units.
+
+Two data errors are refused while the merchant is still editing rather than
+discovered through a customer complaint: an `order_multiple` that straddles
+carton boundaries can never ship whole, and quoting in cartons without saying
+how many units one holds leaves a storefront no way to render the offer.
+
+Reading a product back adds `units_per_pallet`, derived from the two divisors
+so a merchant sees the far end of the chain without doing the arithmetic. It
+is null unless both halves are recorded.
+
+<Note>
+A product may only be packed into a package type of kind `carton`, and a
+carton with products packed into it cannot later become a pallet. Repack the
+products first.
+</Note>
+
+## The freight summary
+
+The **freight summary** is the load as a forwarder reads it: how many units,
+the cartons they fill, the pallets those stack onto, the cubic meters they
+occupy and what the whole thing weighs.
+
+```json
+{
+  "total_units": 480,
+  "total_cartons": 10,
+  "total_pallets": 1,
+  "total_volume": "0.3",
+  "total_weight": "192.0",
+  "complete": true
+}
+```
+
+`total_volume` is cubic meters and `total_weight` is kilograms, both as
+decimal strings. `total_pallets` is null unless every carton-bearing line says
+how it stacks — one silent product would understate the load, so no figure is
+better than a wrong one.
+
+**`complete` is the field to read before quoting from any of it.** False means
+part of the catalog carries no carton data, so those products were measured
+loose from their unit dimensions instead. The numbers are still the best
+available and real enough to quote against, but they are a floor rather than a
+total, and a surface using them should say so.
+
+A cart of unmeasured goods has no freight summary at all rather than one full
+of zeros, which would read as a shipment that takes up no space.
+
+### Where it appears
+
+| Response | Shape |
+|---|---|
+| Store cart | Totals only |
+| Store delivery rate | Totals only, on freight rates |
+| Admin cart and order | Totals plus a `lines` breakdown |
+| Admin delivery rate | Totals plus `lines` |
+
+The per-product breakdown is back-office only. A buyer is told what their
+shipment costs and how big it is; which SKU accounts for which part of it is
+the warehouse's business. Each admin line carries `variant_id`, `sku`, `name`,
+`units`, `cartons`, `pallets`, `units_per_carton`, `cartons_per_pallet`,
+`weight_per_carton`, `volume`, `weight` and its own `complete` flag.
+
+<CodeGroup>
+
+```typescript SDK
+const cart = await client.carts.get('cart_xxx')
+
+if (cart.freight_summary) {
+  const { total_cartons, total_pallets, total_volume, complete } = cart.freight_summary
+  // `complete: false` — show these as a minimum, not a total.
+}
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: guest_token'
+```
+
+</CodeGroup>
+
+<Note>
+A placed order's summary is never re-derived from the live catalog. The freight
+provider freezes a copy onto the rate it quoted, and the order reads that — so
+a carton size corrected next month does not rewrite what this container held.
+Two freight consignments on one order are merged into the one load the
+forwarder sees, and a canceled one is left out.
+</Note>
+
+## Freight rates
+
+A freight method is an ordinary [delivery method](/developer/core-concepts/delivery-setup#delivery-methods-and-zones)
+priced by the **Freight** rate provider. That provider quotes nothing and says
+so: it returns a rate with no price, carrying the freight summary the merchant
+will send to the forwarder in place of an amount.
+
+Such a rate comes back with `unpriced: true`, and every money field on it reads
+**"Quoted after review"** rather than a figure. That matters: a zero cost
+rendering as "Free" over a container of goods is a promise the merchant cannot
+keep. Unpriced rates are also sorted after every priced one and are never
+preselected, so a buyer with a real parcel option still sees it first.
+
+<CodeGroup>
+
+```typescript SDK
+const rates = fulfillment.delivery_rates
+
+rates.forEach((rate) => {
+  if (rate.unpriced) {
+    rate.display_total       // "Quoted after review"
+    rate.freight_summary     // what the forwarder will quote against
+  } else {
+    rate.display_total       // "$24.00"
+  }
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx' \
+  -H 'X-Spree-Token: guest_token'
+```
+
+</CodeGroup>
+
+Checkout completes on an unpriced rate. The shipping price arrives afterwards,
+once the forwarder has quoted it.
+
+<Note>
+How a wholesale buyer **pays** — deposits, net terms, credit limits — is a
+separate subject and is not part of freight in 6.0. Partial payments are
+generally available and predate this work. See
+[payments](/developer/core-concepts/payments).
+</Note>
+
+## Shipment tiers
+
+Which freight method a load qualifies for is configuration, not code. Each
+tier — "Cartons", "Pallet", "20ft container" — is an ordinary delivery method
+bounded by a rule.
+
+**Volume rule.** Bounds the method by packed volume in cubic meters: a pallet
+method takes 1–15 CBM, a 20ft container 15–33, and the estimator offers
+whichever one the order actually fills.
+
+Its minimum is deliberately forgiving. A partly measured catalog understates
+the load, so the figure is a floor rather than a measurement — it may raise a
+shipment into a tier but never exclude it from one. A maximum still applies,
+since passing one on too small a number errs toward offering the method.
+
+**Company rule.** Splits freight from parcel by who is buying. On, the method
+is offered only to orders placed for a [company](/developer/core-concepts/companies),
+so a carton tier disappears from retail carts. Off, only to orders that are
+not, which keeps parcel methods away from wholesale buyers. A method with no
+company rule is offered to both, so the rule is only ever added to state a
+split.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await adminClient.deliveryMethods.create({
+  name: 'Pallet freight',
+  rate_provider: 'Spree::DeliveryRateProvider::Freight',
+  rules: [
+    { type: 'volume_rule', preferences: { minimum_volume: 1, maximum_volume: 15 } },
+    { type: 'company_rule', preferences: { company_orders_only: true } },
+  ],
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/delivery_methods' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Pallet freight",
+    "rate_provider": "Spree::DeliveryRateProvider::Freight",
+    "rules": [
+      { "type": "volume_rule", "preferences": { "minimum_volume": 1, "maximum_volume": 15 } },
+      { "type": "company_rule", "preferences": { "company_orders_only": true } }
+    ]
+  }'
+```
+
+</CodeGroup>
+
+A freight method never consults a calculator — there is no price to work out —
+so admin surfaces hide its pricing form. `GET /api/v3/admin/delivery_methods/rate_providers`
+lists the providers installed on the store, which is what a picker should read
+rather than a hardcoded list.
+
+## Related
+
+- [Delivery setup](/developer/core-concepts/delivery-setup) — profiles, zones, methods and package types
+- [Fulfillments](/developer/core-concepts/fulfillments) — what happens to the consignment afterwards
+- [Companies](/developer/core-concepts/companies) — who a wholesale order is placed for
+- [Build a B2B store](/developer/how-to/build-a-b2b-store) — the wholesale setup end to end
+- [Package types](/user/settings/package-types) — configuring packaging in the dashboard
