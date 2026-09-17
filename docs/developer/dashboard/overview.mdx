@@ -8,7 +8,7 @@ description: Learn about the Spree React Dashboard architecture and how to custo
 The React Dashboard is currently a **Developer Preview** — APIs may still change between releases. It is becoming the default Admin interface.
 </Info>
 
-The React Dashboard is a React single-page application (SPA) that talks to the [Spree Admin API](/api-reference/admin-api). It can be distributed with the Spree API or as a standalone npm package, and it can be extended with plugins. The dashboard is built with modern React libraries and patterns, including:
+The React Dashboard is a React single-page application (SPA) that talks to the [Spree Admin API](/api-reference/admin-api/introduction). It can be distributed with the Spree API or as a standalone npm package, and it can be extended with plugins. The dashboard is built with modern React libraries and patterns, including:
 
 | Layer | Choice |
 |---|---|
@@ -37,7 +37,7 @@ Most customization uses the registries in `@spree/dashboard-core` to add nav ent
 
 **In your own dashboard app, import from `@spree/dashboard`.** It re-exports both packages, so you never have to work out which one an export lives in. A distributed plugin is the exception: it imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly, because it plugs into the shell rather than shipping it.
 
-You can also built your own dashboard using `@spree/dashboard-ui` primitives and `@spree/dashboard-core` registries, if you want to replace the default dashboard entirely. This is rare — most teams just add a few pages or cards to the existing dashboard.
+You can also build your own dashboard using `@spree/dashboard-ui` primitives and `@spree/dashboard-core` registries, if you want to replace the default dashboard entirely. This is rare — most teams just add a few pages or cards to the existing dashboard.
 
 ## Get the dashboard
 

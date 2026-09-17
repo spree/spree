@@ -14,7 +14,7 @@ It's the full version of the [custom form field recipe](/developer/dashboard/rec
 
 ## First: should this be a custom field instead?
 
-**Default to a [custom field definition](/developer/dashboard/recipes/custom-form-field#path-a-custom-field-definition--no-code).** It needs zero code — declare the field, and the product form renders and saves it. That covers most plugin data and everything merchants define themselves.
+**Default to a [custom field definition](/developer/dashboard/recipes/custom-form-field#path-a-custom-field-definition-no-code).** It needs zero code — declare the field, and the product form renders and saves it. That covers most plugin data and everything merchants define themselves.
 
 Graduate to a real database column only when the attribute needs **list operations or database guarantees**:
 
@@ -90,7 +90,7 @@ Add a Rails validation while you're here (`validates :lead_time_days, numericali
 ```tsx
 // src/plugins.ts (or a plugin's entry module)
 import { defineDashboardPlugin, i18n } from '@spree/dashboard'
-import { LeadTimeCard } from './fields/lead-time-card'
+import { LeadTimeCard } from './slots/lead-time-card'
 import en from './locales/en.json'
 
 i18n.addResourceBundle('en', 'translation', en, true, true)
@@ -124,7 +124,7 @@ defineDashboardPlugin({
 The form widget binds to the host form — no `<form>` of its own, no save button:
 
 ```tsx
-// src/fields/lead-time-card.tsx
+// src/slots/lead-time-card.tsx
 import { Card, CardContent, CardHeader, CardTitle, Field, FieldError, FieldLabel, Input, useHostForm } from '@spree/dashboard'
 import { useTranslation } from 'react-i18next'
 

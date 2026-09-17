@@ -51,6 +51,8 @@ src/
 ├── hooks/         one file per resource      use-brands.ts
 ├── tables/        one file per resource      brands.tsx
 ├── schemas/       one file per resource      brand.ts
+├── slots/         widgets injected into      product-brand-card.tsx
+│                  built-in pages
 └── locales/       your translations          en.json
 ```
 
@@ -100,6 +102,11 @@ pairs at render time so labels stay translatable. Never embed an SDK entity
 type (`Product`, `Order`) in a form-values type — React Hook Form walks every
 nested key and the SDK's object graph overflows the TypeScript compiler.
 Inline a short single-file schema instead.
+
+**`slots/`** — components you inject into pages the dashboard already
+renders, one file per widget. A slot widget takes its data from the slot's
+context and, on a page with a host form, binds its inputs to that form with
+`useHostForm()` rather than saving anything itself.
 
 **`locales/`** — every visible string goes through i18next, including column
 labels and button text. Keys live under a top-level `admin` object. Load the

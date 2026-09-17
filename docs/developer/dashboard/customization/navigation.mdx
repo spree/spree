@@ -28,7 +28,7 @@ nav.add({
 })
 ```
 
-`position` controls ordering — built-ins use 100–600 (Home 100, Orders 200, Products 300, Customers 400, Promotions 500, Reports 600; a conditional Getting Started entry sits at 50), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
+`position` controls ordering — built-ins run 50–600 (Getting Started 50 when shown, Home 100, Orders 200, Products 300, Inventory 350, Customers 400, Sellers 450, Loyalty 475, Promotions 500, Reports 600), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `inventory`, `customers`, `sellers`, `loyalty`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
 
 ### Add via `defineDashboardPlugin`
 

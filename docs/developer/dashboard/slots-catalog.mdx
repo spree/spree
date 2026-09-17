@@ -89,6 +89,66 @@ The resource detail pages each render a slot below their built-in cards. The con
 | Context | `{ customer }` — the full `Customer` record |
 | Host form | No — the page edits through sheets; widgets save via their own API calls |
 
+### `collection.form_sidebar`
+
+| Where | Collection detail page (`products/collections/$collectionId`), end of the sidebar column |
+|---|---|
+| Use | Collection-scoped cards — merchandising rules, feed settings, external sync state |
+| Context | `{ collection }` — the `Collection` record |
+| Host form | **Yes** — form key `collection` |
+
+### `company.form_main`
+
+| Where | Company detail page, end of the main column |
+|---|---|
+| Use | B2B account cards — credit terms, approval settings, external account references |
+| Context | `{ company, kind, canEdit }` — `kind` is the company's own `kind`, `canEdit` whether the viewer may write |
+| Host form | No — the widget owns its persistence |
+
+### `company.form_sidebar`
+
+| Where | Company detail page, end of the sidebar column |
+|---|---|
+| Use | Narrow company-scoped cards alongside the main form |
+| Context | `{ company, kind, canEdit }` |
+| Host form | No |
+
+## Seller panel slots
+
+Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way.
+
+### `seller.form_main`
+
+| Where | Seller detail page, end of the main column |
+|---|---|
+| Use | Seller-scoped cards — payout configuration, onboarding state, compliance records |
+| Context | `{ seller, canEdit }` |
+| Host form | No |
+
+### `seller.form_sidebar`
+
+| Where | Seller detail page, end of the sidebar column |
+|---|---|
+| Use | Narrow seller-scoped cards |
+| Context | `{ seller, canEdit }` |
+| Host form | No |
+
+### `seller.team.actions`
+
+| Where | Seller team screen, in the header's action area |
+|---|---|
+| Use | Team-level actions — bulk invite, export, an external directory sync |
+| Context | `{ sellerId }` |
+| Host form | No |
+
+### `seller.team.after`
+
+| Where | Seller team screen, below the member list |
+|---|---|
+| Use | Anything that belongs under the team — audit log, role explainer, seat usage |
+| Context | `{ sellerId }` |
+| Host form | No |
+
 ## Page tabs slot
 
 ### `page.tabs` (default)

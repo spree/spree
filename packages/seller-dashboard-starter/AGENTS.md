@@ -34,6 +34,7 @@ uses internally.
 | `src/hooks/` | Admin API wrappers | `use-brands.ts` |
 | `src/tables/` | `defineTable` calls | `brands.tsx` |
 | `src/schemas/` | Zod schema + `FormValues` | `brand.ts` |
+| `src/slots/` | Widgets injected into built-in pages | `seller-payout-card.tsx` |
 | `src/locales/` | Your `admin.*` translation keys | `en.json` |
 
 Adding a resource touches one file in each directory. Keep `plugins.ts` a map

@@ -4,7 +4,7 @@ sidebarTitle: Public API
 description: Every importable symbol the dashboard exposes — components, hooks, registries, providers, and the SDK client. Treat this as the surface you can safely depend on.
 ---
 
-The dashboard is structured as three packages, each with a documented public surface. **Anything not listed here is internal** — don't import it via `@spree/dashboard-core/src/internal/...`, because we'll move or rename it without a deprecation cycle.
+The dashboard is structured as three packages. This page lists the symbols we commit to keeping — **treat anything not listed as internal**, liable to move or be renamed without a deprecation cycle, even where the barrel happens to export it today. Never reach past a package entry point into `@spree/dashboard-core/src/...`.
 
 ## `@spree/dashboard-core`
 
@@ -51,7 +51,7 @@ import {
   // Page chrome
   PageHeader,
   PageTabs,
-  TopBar,
+  MobileTopBar,
   AppSidebar,
   SettingsSidebar,
   Slot,
@@ -92,6 +92,7 @@ import {
   useCustomFields,
   useDirectUpload,    // ActiveStorage direct uploads
   useExport,          // CSV export job lifecycle
+  useResourceKey,     // store-scoped query key — use it for every custom query
   useResourceMutation, // useMutation wrapper with 422 handling
   useHostForm,        // the built-in form a slot widget renders inside (throws when absent)
   useOptionalHostForm, // same, but null when the page has no host form
