@@ -22686,6 +22686,7 @@ paths:
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
+                preferred_always_include_confirm_step: false
                 preferred_company_field_enabled: false
                 preferred_address_requires_company: false
                 preferred_address_requires_phone: false
@@ -23014,6 +23015,7 @@ paths:
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
+                preferred_always_include_confirm_step: false
                 preferred_company_field_enabled: false
                 preferred_address_requires_company: false
                 preferred_address_requires_phone: false
@@ -48229,6 +48231,8 @@ components:
           type: string
         preferred_guest_checkout:
           type: boolean
+        preferred_always_include_confirm_step:
+          type: boolean
         preferred_company_field_enabled:
           type: boolean
         preferred_address_requires_company:
@@ -48335,6 +48339,7 @@ components:
       - preferred_unit_system
       - preferred_storefront_access
       - preferred_guest_checkout
+      - preferred_always_include_confirm_step
       - preferred_company_field_enabled
       - preferred_address_requires_company
       - preferred_address_requires_phone

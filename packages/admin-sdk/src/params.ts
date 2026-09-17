@@ -56,6 +56,8 @@ export interface StoreUpdateParams {
   preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
+  /** Always advertise a confirmation step in checkout, even when no payment method requires one. */
+  preferred_always_include_confirm_step?: boolean
   /** Shows a company field on address forms. */
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */

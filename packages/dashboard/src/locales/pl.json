@@ -1946,6 +1946,10 @@
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
         },
+        "always_include_confirm_step": {
+          "help": "Zawsze pokazuj klientom końcowy krok weryfikacji przed złożeniem zamówienia, nawet jeśli żadna metoda płatności tego nie wymaga.",
+          "label": "Zawsze pokazuj krok potwierdzenia"
+        },
         "capture_method": {
           "help": "Domyślne ustawienie dla każdej metody płatności. Pojedyncza metoda płatności może je nadpisać.",
           "label": "Kiedy obciążać klientów",

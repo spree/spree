@@ -185,17 +185,17 @@ RSpec.shared_examples 'a payment processing host' do
       expect(record.class.new.confirmation_required?).to be(false)
     end
 
-    context 'Spree::Config[:always_include_confirm_step] == true' do
-      before { Spree::Config[:always_include_confirm_step] = true }
+    context "when the store's always_include_confirm_step is on" do
+      before { stub_store_preferences(always_include_confirm_step: true) }
 
       it 'returns true if payments empty' do
-        expect(record.class.new.confirmation_required?).to be(true)
+        expect(record.class.new(store: @default_store).confirmation_required?).to be(true)
       end
     end
 
-    context 'Spree::Config[:always_include_confirm_step] == false' do
+    context "when the store's always_include_confirm_step is off" do
       it 'returns false if payments empty' do
-        expect(record.class.new.confirmation_required?).to be(false)
+        expect(record.class.new(store: @default_store).confirmation_required?).to be(false)
       end
 
       it 'does not bomb out with an unpersisted payment' do

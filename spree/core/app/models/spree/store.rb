@@ -95,6 +95,10 @@ module Spree
     # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
     preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
+    # Advertises a confirm/review step for every checkout, even when no
+    # payment method asks for one. Payment methods that require confirmation
+    # get it regardless of this setting.
+    preference :always_include_confirm_step, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Store-wide default for when a customer is charged rather than only
     # authorized. A payment method's own capture_method wins when set.

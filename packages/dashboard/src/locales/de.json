@@ -1928,6 +1928,10 @@
           "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
           "label": "Telefonnummer erforderlich"
         },
+        "always_include_confirm_step": {
+          "help": "Kunden vor dem Absenden der Bestellung immer einen abschließenden Prüfschritt anzeigen, auch wenn keine Zahlungsart einen erfordert.",
+          "label": "Bestätigungsschritt immer anzeigen"
+        },
         "capture_method": {
           "help": "Die Vorgabe für jede Zahlungsart. Eine einzelne Zahlungsart kann sie überschreiben.",
           "label": "Wann Kunden belastet werden",
