@@ -7,7 +7,7 @@ description: "How to store and retrieve custom metadata on carts, orders, and li
 The Store API supports storing arbitrary key-value **metadata** on carts (orders) and line items. Metadata is useful for tracking custom information like gift messages, attribution data, or integration-specific fields.
 
 <Note>
-Metadata is different from [metafields](/developer/core-concepts/metafields). Metadata is simple JSON storage (untyped, no schema), while metafields are structured, typed, and schema-defined. Use metadata for integration data and internal tracking. Use metafields for customer-facing custom attributes.
+Metadata is different from [custom fields](/developer/core-concepts/metafields). Metadata is simple JSON storage (untyped, no schema), while custom fields are structured, typed, and schema-defined. Use metadata for integration data and internal tracking. Use custom fields for customer-facing custom attributes.
 </Note>
 
 ## Cart Metadata
@@ -158,18 +158,18 @@ Metadata is stored as a flat JSON object. You can use any keys and values:
 }
 ```
 
-## Metadata vs Metafields
+## Metadata vs Custom Fields
 
-Spree has two permanent, complementary systems for custom data — **metadata for machines, metafields for humans**.
+Spree has two permanent, complementary systems for custom data — **metadata for machines, custom fields for humans**.
 
-| | Metadata | Metafields |
+| | Metadata | Custom Fields |
 |-|----------|------------|
 | **Purpose** | Developer escape hatch — integration IDs, sync state | Merchant-defined structured attributes |
-| **Schema** | Schemaless JSON — no definition required | Defined via MetafieldDefinitions (typed, validated) |
+| **Schema** | Schemaless JSON — no definition required | Defined via CustomFieldDefinitions (typed, validated) |
 | **Validation** | None | Type-specific validation |
 | **Visibility** | Write-only in Store API, readable in Admin API | Configurable (admin-only or public) |
 | **Admin UI** | JSON preview | Dedicated form fields |
 | **Best for** | Integration data, tracking, attribution, write-and-forget | Product specs, custom attributes, customer-facing data |
 | **API access** | Write via Store API, read via Admin API | Read/write via both APIs |
 
-Both systems are here to stay. For more details on metafields, see the [Metafields guide](/developer/core-concepts/metafields).
+Both systems are here to stay. For more details on custom fields, see the [Custom Fields guide](/developer/core-concepts/metafields).

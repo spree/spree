@@ -787,7 +787,7 @@
                         ]
                       },
                       {
-                        "group": "Next.js Starter",
+                        "group": "Next.js Storefront",
                         "pages": [
                           "developer/storefront/nextjs/quickstart",
                           "developer/storefront/nextjs/architecture",
@@ -2083,7 +2083,7 @@
           {
             "item": "Building a Storefront",
             "icon": "store",
-            "description": "Next.js, custom frontend, or Rails engine",
+            "description": "Use Spree Storefront or build your own",
             "groups": [
               {
                 "group": "Next.js Storefront",

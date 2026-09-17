@@ -170,12 +170,12 @@ end
 
 ### Step 4 (optional): Add a Variant-side Predicate
 
-The example above relies on `variant.refrigerated?`. In a real plugin you'd back that with a [Custom Field](/developer/core-concepts/metafields) on `Spree::Variant` — say a boolean metafield with key `refrigerated` — and define the predicate as a thin reader:
+The example above relies on `variant.refrigerated?`. In a real plugin you'd back that with a [Custom Field](/developer/core-concepts/metafields) on `Spree::Variant` — say a boolean custom field with key `refrigerated` — and define the predicate as a thin reader:
 
 ```ruby app/models/spree/variant_decorator.rb
 Spree::Variant.class_eval do
   def refrigerated?
-    metafields.find_by(namespace: 'logistics', key: 'refrigerated')&.value == 'true'
+    custom fields.find_by(namespace: 'logistics', key: 'refrigerated')&.value == 'true'
   end
 end
 ```

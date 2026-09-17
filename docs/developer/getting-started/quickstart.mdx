@@ -28,10 +28,10 @@ description: "Install Spree Commerce locally, run your first store, and deploy i
 
 ```
 my-store/
-├── server/                 # The Spree API — models, endpoints, jobs, specs
+├── server/                 # The Spree API
 ├── apps/
-│   ├── dashboard/          # Admin dashboard (React)
-│   ├── seller-dashboard/   # Seller panel, for marketplaces (React)
+│   ├── dashboard/          # Admin dashboard (Vite/React)
+│   ├── seller-dashboard/   # Seller panel, for marketplaces (Vite/React)
 │   └── storefront/         # Next.js storefront (if selected)
 ├── .env                    # Ports, secrets and service URLs
 ├── .spree/                 # CLI credentials — gitignored, created on first run
@@ -41,10 +41,6 @@ my-store/
 ├── CLAUDE.md               # Project layout and conventions
 └── README.md               # How to run everything
 ```
-
-**`server/` is the only part that is Spree's.** You own the apps under `apps/` outright — they are ordinary Vite and Next.js projects that talk to the API over HTTP, so you can restyle, restructure or replace them without forking anything.
-
-Each app carries its own instructions: `server/CLAUDE.md`, `apps/dashboard/AGENTS.md` and so on. Read the one for the directory you are working in — that is also what a coding agent picks up.
 
 ## Using the Spree CLI
 
@@ -72,7 +68,7 @@ See the [Spree CLI guide](/developer/cli/quickstart) for all commands and the [A
   The catalog, the cart, the order and fulfillment — what each one is for, and the two APIs you build against. Twenty minutes here saves a lot of guessing later, and it ends by pointing you at whichever path suits you.
 </Card>
 
-In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js Storefront](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [CLI reference](/developer/create-spree-app/quickstart) for what the scaffold generated.
+In a hurry? Jump straight to the [tutorial](/developer/tutorial/introduction) to build a feature end to end, the [Next.js Storefront](/developer/storefront/nextjs/quickstart) to put a storefront in front of it, or the [API reference](/api-reference/admin-api/introduction) to see what you can do with the Admin API.
 
 <Tip>
   Using an AI coding agent? Run `npx skills add spree/agent-skills` in your new project — it teaches your agent the customization patterns before you write a line of code. See [Agentic Development](/developer/agentic/overview).

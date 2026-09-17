@@ -154,7 +154,7 @@ module Spree
         private
 
         def matches_brand?(line_item)
-          brand = line_item.product.get_metafield('details.brand')&.value
+          brand = line_item.product.get_custom_field('details.brand')&.value
           preferred_brand_names.include?(brand)
         end
       end
