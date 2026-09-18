@@ -1,35 +1,55 @@
 ---
 title: "Suppliers"
-description: "Keep a list of who you buy stock from, ready to name on a purchase order."
+description: "Learn how to keep a record of who you buy stock from in Spree Commerce."
 ---
 
-A supplier is someone you buy stock from. Keeping them as records means a [Purchase Order](/user/inventory/purchase-orders) names its supplier once, and the supplier's contact details and address travel with it.
+A supplier is a business you buy stock from. Spree keeps each one as a record holding a name, who you deal with there, how to reach them, and where they are. That record is all a supplier is, and it does nothing on its own.
 
-To manage suppliers, open **Suppliers** under Inventory.
+Its only purpose is to be named on a [<u>purchase order</u>](/user/inventory/purchase-orders). Name a supplier once when you raise the order, and its contact details and address travel with it, so whoever sends the order knows where it is going and who to chase when it is late. A supplier has no effect on your stock figures, your pricing or your storefront.
 
-## Adding a supplier
+How useful this is depends on the size of your operation. A merchant buying from one or two regular suppliers may find it is little more than somewhere to keep an address. Once several staff members are raising orders against dozens of suppliers, a shared supplier record ensures everyone is working from the same details, and that a change of address or contact only has to be made in one place.
 
-Click **New supplier** and fill in:
+To manage suppliers, navigate to **Suppliers** in the admin dashboard.
 
-| Field | What it is for |
-|---|---|
-| Name | How the supplier appears on purchase orders. Must be unique |
-| Contact name | Who you deal with there |
-| Email, phone | How to reach them |
-| Address | Where they are. A complete address — street, city and country — is what lets a purchase order be posted to them |
-| Notes | Anything your team should know — account numbers, lead times, who to ask for |
+![The Suppliers list showing each supplier's contact details and how many purchase orders have been placed with them](/docs/images/user/inventory/suppliers/1-suppliers-overview.png)
 
-## On purchase orders
+The list shows one row per supplier:
 
-Every purchase order names a supplier, and the supplier's page lists the orders placed with them.
+- **Name** - How the supplier appears on purchase orders.
+- **Contact**, **Email** and **Phone** - Who you deal with there and how to reach them.
+- **Purchase orders** - How many orders have been placed with this supplier.
 
-When importing purchase orders from a CSV file, each row names its supplier by name. The name has to match a supplier that already exists — a name that does not is refused rather than creating a new supplier from a typo.
+Use the search box to find a supplier by name, contact or email. The list is sorted by name rather than by newest first, so it reads as an address book.
 
-## Removing a supplier
+<Note>Set your suppliers up before raising your first purchase order. The **Supplier** box on a purchase order only offers suppliers already on record.</Note>
 
-A supplier can be deleted only while nothing has been ordered from them. Once a purchase order exists, the supplier is kept: the orders naming it have to keep meaning something.
+## How to Create a Supplier
 
-## Related
+Click **New supplier** in the top-right corner. A panel opens over the list with the following fields:
 
-- [Purchase Orders](/user/inventory/purchase-orders) — buying stock from a supplier
-- [Inventory](/user/inventory/stock-levels) — where received stock lands
+- **Name** - How the supplier appears on purchase orders. This has to be unique, and Spree refuses a blank one.
+- **Contact name** - Who you deal with there.
+- **Email** and **Phone** - How to reach them.
+- **Address**, **Address line 2**, **City**, **Postal code**, **Country** - Where they are. 
+- **Notes** - Anything your team should know, such as account numbers, lead times, or who to ask for.
+
+Click **Save** when you are done.
+
+## How to Edit a Supplier
+
+Open the row menu on any supplier and choose **Edit**. The panel is the same one you filled in to create it.
+
+Renaming a supplier is safe. Every purchase order pointing at it follows the new name.
+
+## How to Delete a Supplier
+
+A supplier can only be deleted if nothing has been ordered from them. Once a purchase order names a supplier, the record of that supplier must be kept in the system. The **Purchase orders** column on the list tells you at a glance which suppliers can still be removed.
+
+To delete a supplier with no purchase orders, open the row menu and choose the delete action.
+
+<Note>To retire a supplier you can no longer delete, rename it to something obvious such as "Do not use" so nobody picks it by mistake.</Note>
+
+## Further Reading
+
+- [<u>Purchase Orders</u>](/user/inventory/purchase-orders) - Ordering stock from a supplier
+- [<u>Inventory</u>](/user/inventory/stock-levels) - Where received stock lands
