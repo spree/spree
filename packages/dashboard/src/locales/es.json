@@ -850,7 +850,7 @@
             "price_aria": "Precio de {{label}}",
             "save_cta": "Guardar precios",
             "save_failed": "No se pudieron guardar los precios",
-            "save_success_one": "{count} precio guardado",
+            "save_success_one": "{{count}} precio guardado",
             "save_success_other": "Se guardaron {{count}} precios",
             "search_placeholder": "Buscar por producto, SKU u opción…",
             "title": "Editar precios: {{name}}",

@@ -10,7 +10,7 @@
       },
       "bulk_action_bar": {
         "default_error": "La operación masiva falló",
-        "default_success": "Se actualizaron {{n}} registros",
+        "default_success": "Se actualizaron {n} registros",
         "selected": "{{count}} seleccionados"
       },
       "channel_select": {
