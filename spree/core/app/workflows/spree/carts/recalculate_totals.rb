@@ -137,7 +137,9 @@ module Spree
       # @return [BigDecimal]
       def paid_so_far
         if cart.is_a?(Spree::Order) && cart.grouped?
-          return cart.payment_splits.to_a.sum(&:net_captured_amount)
+          # Reloaded: a share moved since this instance loaded them would be
+          # re-summed at its old figure and persisted back over the correction.
+          return cart.payment_splits.reload.to_a.sum(&:net_captured_amount)
         end
 
         cart.payments.completed.includes(:refunds).inject(0) do |sum, payment|

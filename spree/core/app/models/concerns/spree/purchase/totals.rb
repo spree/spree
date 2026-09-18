@@ -35,8 +35,10 @@ module Spree
         # unsaved changes — callers legitimately hold dirty attributes while
         # a payment is destroyed (cart teardown, order merging), and this
         # must never disturb their in-memory state.
+        # updated_at moves with it, or the API validates a cached response
+        # against an unchanged timestamp and serves the pre-payment figure.
         settled = settled_payments_arel
-        self.class.where(id: id).update_all(payment_total: settled)
+        self.class.where(id: id).update_all(payment_total: settled, updated_at: Time.current)
         self.payment_total = self.class.where(id: id).pick(:payment_total)
       end
 

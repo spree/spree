@@ -496,6 +496,15 @@ module Spree
         end
       end
 
+      it 'leaves each child reporting its share as paid' do
+        group.orders.each do |order|
+          expect(order.reload.payment_total).to eq(order.total)
+          expect(order.amount_due).to be_zero
+          expect(order.outstanding_balance).to be_zero
+          expect(order).to be_paid
+        end
+      end
+
       # A gift card becomes a store-credit payment beside the card charge, and
       # both divide the same way — one attribution rule for every source, no
       # priority ordering. A seller's order is therefore not "paid by card" or
