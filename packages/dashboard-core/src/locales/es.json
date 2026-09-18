@@ -1,0 +1,2000 @@
+{
+  "admin": {
+    "components": {
+      "address_block": {
+        "not_provided": "No proporcionado"
+      },
+      "address_form_dialog": {
+        "description": "Actualiza los datos de la dirección.",
+        "edit_title": "Editar dirección"
+      },
+      "bulk_action_bar": {
+        "default_error": "La operación masiva falló",
+        "default_success": "Se actualizaron {{n}} registros",
+        "selected": "{{count}} seleccionados"
+      },
+      "channel_select": {
+        "placeholder": "Seleccionar un canal de ventas",
+        "all_channels": "Todos los canales"
+      },
+      "command_palette": {
+        "create": {
+          "heading": "Crear",
+          "label": "Nuevo {{noun}}",
+          "nouns": {
+            "catalog": "Catálogo",
+            "catalog_plural": "Catálogos",
+            "category": "Categoría",
+            "category_plural": "Categorías",
+            "collection": "Colección",
+            "collection_plural": "Colecciones",
+            "company": "Empresa",
+            "company_plural": "Empresas",
+            "customer": "Cliente",
+            "customer_group": "Grupo de clientes",
+            "customer_group_plural": "Grupos de clientes",
+            "customer_plural": "Clientes",
+            "discount": "Descuento",
+            "discount_plural": "Descuentos",
+            "gift_card": "Tarjeta de regalo",
+            "gift_card_plural": "Tarjetas de regalo",
+            "option_type": "Opción",
+            "option_type_plural": "Opciones",
+            "order": "Pedido",
+            "order_plural": "Pedidos",
+            "price_list": "Lista de precios",
+            "price_list_plural": "Listas de precios",
+            "product": "Producto",
+            "product_plural": "Productos",
+            "promotion": "Promoción",
+            "promotion_plural": "Promociones",
+            "seller": "Vendedor",
+            "seller_plural": "Vendedores",
+            "stock_location": "Ubicación",
+            "stock_location_plural": "Ubicaciones",
+            "stock_transfer": "Transferencia",
+            "stock_transfer_plural": "Transferencias"
+          },
+          "verbs": "add,new,create"
+        },
+        "description": "Busca entre productos, pedidos y clientes, o ejecuta un comando.",
+        "empty_hint": "Escribí para buscar o elegí un comando abajo.",
+        "goto": "Ir a",
+        "goto_label": "Ir a {{label}}",
+        "hints": {
+          "close": "cerrar",
+          "esc_key": "esc",
+          "navigate": "navegar",
+          "select": "seleccionar"
+        },
+        "no_results": "Sin resultados para «{{query}}».",
+        "placeholder": "Buscar productos, pedidos, clientes…",
+        "search_label": "Buscar cualquier cosa…",
+        "title": "Búsqueda y comandos"
+      },
+      "confirm_dialog": {
+        "title": "¿Estás seguro?"
+      },
+      "country_combobox": {
+        "empty": "No se encontraron países",
+        "placeholder": "Seleccionar un país",
+        "search_placeholder": "Buscar países…"
+      },
+      "currency_select": {
+        "empty": "No se encontraron monedas",
+        "placeholder": "Seleccionar una moneda",
+        "search_placeholder": "Buscar monedas…"
+      },
+      "custom_fields": {
+        "json_placeholder": "{ \"example\": \"value\" }"
+      },
+      "date_range_picker": {
+        "presets": {
+          "last_14_days": "Últimos 14 días",
+          "last_30_days": "Últimos 30 días",
+          "last_7_days": "Últimos 7 días",
+          "last_90_days": "Últimos 90 días",
+          "this_month": "Este mes",
+          "year_to_date": "De este año"
+        }
+      },
+      "error_state": {
+        "retry": "Reintentar"
+      },
+      "export_button": {
+        "all": {
+          "description": "Ignora los filtros y exporta todo en esta tienda.",
+          "title": "Todos los registros"
+        },
+        "description": "Preparamos tu CSV en segundo plano y lo descargamos apenas esté listo. Si tarda, también te enviamos un enlace por correo.",
+        "downloaded": "Exportación descargada",
+        "email_fallback": "Todavía estamos procesando: te enviaremos un enlace por correo cuando esté listo.",
+        "failed": "Exportación fallida: {{message}}",
+        "filtered": {
+          "count_few": "Exportar los {{formattedCount}} registros que coinciden con tu filtro actual.",
+          "count_many": "Exportar los {{formattedCount}} registros que coinciden con tu filtro actual.",
+          "count_one": "Exportar el {{formattedCount}} registro que coincide con tu filtro actual.",
+          "count_other": "Exportar los {{formattedCount}} registros que coinciden con tu filtro actual.",
+          "no_filter": "No hay filtro activo: equivale a exportar todos los registros.",
+          "title": "Filtro actual",
+          "unknown_count": "Exportar los registros que coinciden con tu filtro actual."
+        },
+        "preparing": "Preparando la exportación…",
+        "title": "Exportar a CSV"
+      },
+      "file_upload": {
+        "attached": "Archivo adjunto",
+        "browse": "Buscar archivos",
+        "drop_image_label": "Arrastrá una imagen acá o hacé clic para buscarla",
+        "drop_label": "Arrastrá un archivo acá o hacé clic para buscarlo",
+        "invalid_type": "Este tipo de archivo no está permitido (esperado: {{accept}})",
+        "upload_failed": "Subida fallida: {{message}}",
+        "uploading": "Subiendo…"
+      },
+      "import_button": {
+        "delimiter_label": "Separador de columnas",
+        "delimiters": {
+          "comma": "Coma (,)",
+          "pipe": "Barra vertical (|)",
+          "semicolon": "Punto y coma (;)",
+          "tab": "Tabulación"
+        },
+        "description": "Subí un archivo CSV. En el siguiente paso vas a relacionar sus columnas con los campos.",
+        "download_example": "Descargar un CSV de ejemplo",
+        "download_template": "Descargar plantilla CSV",
+        "drop_label": "Arrastrá un CSV acá o hacé clic para buscarlo",
+        "example_failed": "No se pudo descargar el ejemplo: {{message}}",
+        "failed": "Importación fallida: {{message}}",
+        "submit": "Continuar",
+        "template_failed": "No se pudo descargar la plantilla: {{message}}",
+        "title": "Importar desde CSV"
+      },
+      "json_preview_drawer": {
+        "collapse_depth": "Profundidad de contracción",
+        "copied": "Copiado",
+        "copy_all": "Copiar todo",
+        "depth": "Nivel {{level}}",
+        "failed_to_load": "No se pudo cargar: {{message}}",
+        "open_raw": "Abrir respuesta cruda",
+        "raw": "Cruda",
+        "title": "JSON"
+      },
+      "locale_select": {
+        "empty": "No se encontraron idiomas",
+        "multi_placeholder": "Agregar idiomas…",
+        "placeholder": "Seleccionar un idioma",
+        "search_placeholder": "Buscar idiomas…"
+      },
+      "market_combobox": {
+        "empty": "Ningún mercado coincide",
+        "search_placeholder": "Buscar mercados…"
+      },
+      "media": {
+        "remove_tooltip": "Quitar imagen"
+      },
+      "media_preview": {
+        "video_title": "Vista previa del video"
+      },
+      "metadata_card": {
+        "empty_description": "Las aplicaciones e integraciones lo completan automáticamente.",
+        "empty_title": "Sin metadatos",
+        "title": "Metadatos"
+      },
+      "page_header": {
+        "copy_id": "Copiar ID",
+        "copy_number": "Copiar número",
+        "view_as_json": "Ver como JSON"
+      },
+      "pagination": {
+        "first_page": "Ir a la primera página",
+        "last_page": "Ir a la última página",
+        "next_page": "Ir a la página siguiente",
+        "previous_page": "Ir a la página anterior",
+        "range": "{{from}}–{{to}} de {{count}}",
+        "rows_per_page": "Filas por página"
+      },
+      "preferences_form": {
+        "comma_separated_hint": "Separar los valores con comas.",
+        "tiers": {
+          "add_tier": "Agregar nivel",
+          "empty": "Todavía no hay niveles. La tarifa base aplica hasta que agregues uno.",
+          "header_threshold": "Total del pedido ≥",
+          "header_value": "Descuento",
+          "label": "Niveles",
+          "remove_tier": "Quitar nivel"
+        },
+        "unlimited": "Sin límite"
+      },
+      "rich_text_editor": {
+        "blockquote": "Cita",
+        "bold": "Negrita",
+        "bullet_list": "Lista con viñetas",
+        "image": "Imagen",
+        "italic": "Cursiva",
+        "link": "Enlace",
+        "link_url_prompt": "URL",
+        "ordered_list": "Lista numerada",
+        "placeholder": "Escribí algo…",
+        "redo": "Rehacer",
+        "strikethrough": "Tachado",
+        "undo": "Deshacer"
+      },
+      "secret_input": {
+        "new_value_placeholder": "Nuevo valor",
+        "replace": "Reemplazar",
+        "stored_help": "Se guarda en el servidor. Hacé clic en Reemplazar para rotarlo."
+      },
+      "state_combobox": {
+        "empty": "No se encontraron estados",
+        "placeholder": "Seleccionar un estado",
+        "search_placeholder": "Buscar estados…"
+      },
+      "table_toolbar": {
+        "add_filter": "Agregar filtro",
+        "ascending": "Ascendente",
+        "clear_all": "Borrar todo",
+        "columns_tooltip": "Columnas",
+        "date_presets": {
+          "all": "Cualquier fecha",
+          "custom": "Personalizado",
+          "last_30_days": "Últimos 30 días",
+          "last_7_days": "Últimos 7 días",
+          "last_month": "El mes pasado",
+          "this_month": "Este mes",
+          "today": "Hoy"
+        },
+        "date_range_end": "Fin",
+        "date_range_start": "Inicio",
+        "descending": "Descendente",
+        "filter_by": "Filtrar por…",
+        "filter_date_placeholder": "Elegir una fecha",
+        "filter_select_placeholder": "Seleccionar…",
+        "filter_text_placeholder": "Filtrar…",
+        "filter_to_placeholder": "Filtrar hasta…",
+        "more_conditions": "Más condiciones",
+        "operators": {
+          "after": "después de",
+          "before": "antes de",
+          "contains": "contiene",
+          "does_not_equal": "no es igual a",
+          "ends_with": "termina en",
+          "equals": "es igual a",
+          "greater_than": "mayor que",
+          "greater_than_or_equal": "mayor o igual que",
+          "is": "es",
+          "is_any_of": "es uno de",
+          "is_none_of": "no es ninguno de",
+          "is_not": "no es",
+          "is_not_set": "no está definido",
+          "is_set": "está definido",
+          "less_than": "menor que",
+          "less_than_or_equal": "menor o igual que",
+          "on_or_after": "el o después del",
+          "on_or_before": "el o antes del",
+          "starts_with": "comienza con"
+        },
+        "order": "Orden",
+        "remove_filter": "Quitar filtro",
+        "reset_to_default": "Restablecer a la configuración predeterminada",
+        "search_placeholder": "Buscar…",
+        "sort_by": "Ordenar por",
+        "sort_tooltip": "Ordenar",
+        "visible_columns": "Columnas visibles"
+      },
+      "tag_combobox": {
+        "create_option": "Crear «{{tag}}»",
+        "empty_hint": "Escribí y presioná Enter para crear una etiqueta",
+        "placeholder": "Escribí para agregar etiquetas…"
+      },
+      "theme_toggle": {
+        "dark": "Oscuro",
+        "label": "Tema",
+        "light": "Claro",
+        "system": "Sistema"
+      },
+      "wizard": {
+        "discard_cancel": "Seguir editando",
+        "discard_confirm": "Descartar",
+        "discard_message": "Todo lo que completaste hasta ahora se perderá. Esta acción no se puede deshacer.",
+        "discard_title": "¿Descartar este borrador?"
+      }
+    },
+    "pages": {
+      "settings": {
+        "stock_locations": {
+          "add_sheet_title": "Agregar ubicación de inventario",
+          "edit_sheet_title": "Editar ubicación de inventario",
+          "search_placeholder": "Buscar ubicaciones de inventario…"
+        },
+        "package_types": {
+          "add_sheet_title": "Agregar tipo de paquete"
+        }
+      },
+      "products": {
+        "add_cta": "Agregar producto",
+        "bulk": {
+          "add_categories_action": "Agregar a categorías…",
+          "add_channels_action": "Agregar a canales de venta…",
+          "add_collections_action": "Agregar a colecciones",
+          "add_tags_action": "Agregar etiquetas…",
+          "categories_add_description": "Elegí las categorías a las que querés agregar estos productos.",
+          "categories_add_failed": "No se pudieron agregar los productos a las categorías",
+          "categories_add_title": "Agregar a categorías",
+          "categories_added": "{n} productos agregados a categorías",
+          "categories_remove_description": "Elegí las categorías de las que querés quitar estos productos.",
+          "categories_remove_failed": "No se pudieron quitar los productos de las categorías",
+          "categories_remove_title": "Quitar de categorías",
+          "categories_removed": "{n} productos quitados de categorías",
+          "channels_add_description": "Elegí los canales de venta en los que querés publicar estos productos.",
+          "channels_add_failed": "No se pudieron publicar los productos en los canales de venta",
+          "channels_add_title": "Agregar a canales de venta",
+          "channels_added": "{n} productos publicados en canales de venta",
+          "channels_remove_description": "Elegí los canales de venta de los que querés despublicar estos productos.",
+          "channels_remove_failed": "No se pudieron despublicar los productos de los canales de venta",
+          "channels_remove_title": "Quitar de canales de venta",
+          "channels_removed": "{n} productos despublicados de los canales de venta",
+          "collections_add_description": "Los productos seleccionados se agregan a todas las colecciones que elijas.",
+          "collections_add_failed": "No se pudieron agregar los productos a las colecciones",
+          "collections_add_title": "Agregar a colecciones",
+          "collections_added": "Productos agregados a las colecciones",
+          "collections_remove_description": "Los productos seleccionados se quitan de todas las colecciones que elijas.",
+          "collections_remove_failed": "No se pudieron quitar los productos de las colecciones",
+          "collections_remove_title": "Quitar de colecciones",
+          "collections_removed": "Productos quitados de las colecciones",
+          "delete_confirm": {
+            "message": "Los productos seleccionados se eliminarán. Esta acción no se puede deshacer.",
+            "title": "¿Eliminar {{n}} productos?"
+          },
+          "delete_failed": "No se pudieron eliminar los productos",
+          "deleted": "{n} productos eliminados",
+          "remove_categories_action": "Quitar de categorías…",
+          "remove_channels_action": "Quitar de canales de venta…",
+          "remove_collections_action": "Quitar de colecciones",
+          "remove_tags_action": "Quitar etiquetas…",
+          "set_status_action": "Definir estado…",
+          "status_sheet_description": "Elegí el estado que se aplicará a los productos seleccionados.",
+          "status_sheet_title": "Definir estado de productos",
+          "status_update_failed": "No se pudo actualizar el estado de los productos",
+          "status_updated": "Estado actualizado en {{n}} productos",
+          "tags_add_description": "Elegí o creá etiquetas para agregar a estos productos.",
+          "tags_add_failed": "No se pudieron agregar las etiquetas",
+          "tags_add_title": "Agregar etiquetas",
+          "tags_added": "Etiquetas agregadas a {{n}} productos",
+          "tags_remove_description": "Elegí las etiquetas que querés quitar de estos productos.",
+          "tags_remove_failed": "No se pudieron quitar las etiquetas",
+          "tags_remove_title": "Quitar etiquetas",
+          "tags_removed": "Etiquetas quitadas de {{n}} productos"
+        },
+        "clone_failed": "No se pudo duplicar el producto",
+        "clone_succeeded": "Producto duplicado",
+        "delete_failed": "No se pudo eliminar el producto",
+        "delete_succeeded": "Producto eliminado",
+        "edit": {
+          "bulk_prices": {
+            "no_variants": "Agregá al menos una variante para empezar a editar precios."
+          }
+        },
+        "inventory": {
+          "in_stock": "{{count}} en stock",
+          "in_stock_short": "Con stock",
+          "on_backorder": "En contrarreserva",
+          "out_of_stock": "Sin stock"
+        },
+        "media_empty": "Todavía no hay multimedia.",
+        "media_upload": "Subir multimedia",
+        "new": {
+          "create_failed": "No se pudo crear el producto",
+          "create_succeeded": "Producto creado",
+          "description": "Configurá tu producto: agregá variantes, precios, inventario, multimedia y campos personalizados",
+          "preview_slug_placeholder": "tu-producto-slug",
+          "save_label": "Crear producto",
+          "title": "Nuevo producto"
+        },
+        "options": {
+          "add_value": "Agregar valor de opción",
+          "sheet_title_create": "Crear tipo de opción",
+          "sheet_title_edit": "Editar tipo de opción",
+          "table": {
+            "values": "Valores"
+          },
+          "values_empty": "Todavía no hay valores.",
+          "values_section": "Valores"
+        },
+        "price_lists": {
+          "activate": "Activar",
+          "activate_confirm": {
+            "message": "«{{name}}» se aplicará de inmediato a los clientes que califiquen y seguirá activa hasta que se desactive manualmente.",
+            "message_with_end": "«{{name}}» se aplicará de inmediato a los clientes que califiquen y seguirá activa hasta que se desactive manualmente o hasta su fecha de fin ({{ends_at}}).",
+            "title": "¿Activar lista de precios?"
+          },
+          "add_cta": "Nueva lista de precios",
+          "add_products_cta": "Agregar productos",
+          "add_rule": "Agregar regla",
+          "add_rule_help": "Elegí un tipo de regla para configurarla.",
+          "basics_section": "Conceptos básicos",
+          "deactivate": "Desactivar",
+          "deactivate_confirm": {
+            "message": "«{{name}}» dejará de aplicarse a los clientes de inmediato. Los pedidos existentes no se ven afectados.",
+            "title": "¿Desactivar lista de precios?"
+          },
+          "delete_confirm": {
+            "message": "Quitar «{{name}}» elimina sus precios. Esta acción no se puede deshacer.",
+            "title": "¿Eliminar lista de precios?"
+          },
+          "edit_prices": {
+            "add_products_link": "Agregar productos",
+            "columns": {
+              "compare_at_price": "Precio comparativo",
+              "price": "Precio",
+              "product": "Producto",
+              "sku": "SKU",
+              "variant": "Variante"
+            },
+            "compare_at_aria": "Precio comparativo de {{label}}",
+            "count_summary_one": "{{count}} precio en {{currency}}",
+            "count_summary_other": "{{count}} precios en {{currency}}",
+            "currency_label": "Moneda",
+            "dirty_summary_one": "{{count}} cambio sin guardar",
+            "dirty_summary_other": "{{count}} cambios sin guardar",
+            "discard_confirm": {
+              "message_close_one": "Tenés {{count}} precio sin guardar. Al cerrar se descartará.",
+              "message_close_other": "Tenés {{count}} precios sin guardar. Al cerrar se descartarán.",
+              "message_currency": "Cambiar de moneda descartará tus precios sin guardar.",
+              "title": "¿Descartar precios sin guardar?"
+            },
+            "empty": "Todavía no hay productos en esta lista.",
+            "empty_no_base_prices": "Todavía no hay precios base.",
+            "empty_pick_products": "Elegí los productos de la lista de precios para empezar a asignar precios.",
+            "grid_aria": "Precios de variantes",
+            "no_matches_for_filters": "Ningún precio coincide con los filtros actuales.",
+            "no_matches_for_search": "Ningún precio coincide con «{{search}}».",
+            "price_aria": "Precio de {{label}}",
+            "save_cta": "Guardar precios",
+            "save_failed": "No se pudieron guardar los precios",
+            "save_success_one": "{count} precio guardado",
+            "save_success_other": "Se guardaron {{count}} precios",
+            "search_placeholder": "Buscar por producto, SKU u opción…",
+            "title": "Editar precios: {{name}}",
+            "variant_default": "Predeterminada"
+          },
+          "edit_prices_cta": "Editar precios",
+          "no_changes": "No hay cambios para guardar.",
+          "prices_help_one": "{{count}} precio configurado. Abrí el editor masivo para actualizarlo.",
+          "prices_help_other": "{{count}} precios configurados. Abrí el editor masivo para actualizarlos.",
+          "prices_help_zero": "Elegí productos arriba para generar precios provisorios y después abrí el editor masivo.",
+          "products_empty": "Todavía no hay productos: agregá uno para empezar a editar precios.",
+          "products_empty_search": "Ningún producto coincide",
+          "products_help": "Elegí los productos a los que aplica esta lista. Al guardar se crean precios provisorios: completalos abajo.",
+          "products_search_placeholder": "Buscar productos por nombre…",
+          "products_section": "Productos",
+          "products_selected_one": "{{count}} producto seleccionado.",
+          "products_selected_other": "{{count}} productos seleccionados.",
+          "remove_rule_confirm": {
+            "message": "La regla se quita cuando guardes la lista de precios.",
+            "title": "¿Quitar regla?"
+          },
+          "remove_selected": "Quitar seleccionados",
+          "rule_click_to_configure": "Hacé clic para configurar",
+          "rule_default_description": "Ajustá los parámetros de la regla.",
+          "rule_name_overflow": "{{names}} +{{count}} más",
+          "rule_no_options": "Esta regla no tiene opciones configurables: su sola presencia aplica la condición.",
+          "rule_types_all_used": "Todos los tipos de regla disponibles ya están en esta lista.",
+          "rule_types_empty": "No hay tipos de regla registrados.",
+          "rules_empty": "Sin reglas: esta lista aplica a todos los compradores.",
+          "rules_help": "Condiciones que deciden cuándo aplica esta lista. Usá «todas» para requerir todas las reglas o «cualquiera» para tomar la primera coincidencia.",
+          "rules_section": "Reglas",
+          "schedule": "Programar",
+          "schedule_confirm": {
+            "message": "«{{name}}» se publicará el {{starts_at}} y seguirá activa hasta su fecha de fin.",
+            "title": "¿Programar lista de precios?"
+          },
+          "schedule_section": "Programación",
+          "sheet_title_create": "Crear lista de precios",
+          "sheet_title_edit": "Editar lista de precios",
+          "subtitle": "Precios dirigidos a grupos de clientes, regiones o niveles de volumen.",
+          "title": "Listas de precios",
+          "unschedule": "Desprogramar",
+          "unschedule_confirm": {
+            "message": "«{{name}}» ya no se activará en su fecha programada. Podés reprogramarla o activarla manualmente más adelante.",
+            "title": "¿Desprogramar lista de precios?"
+          }
+        },
+        "publishing": {
+          "caption_hidden_after": "Se retira el {{date}}",
+          "caption_live": "Visible para los clientes ahora",
+          "caption_not_available": "Oculto: el producto está {{product_status}}",
+          "caption_scheduled": "Se publica el {{date}}",
+          "caption_unpublished": "Se ocultó el {{date}}",
+          "caption_window": "Activo {{start}} → {{end}}",
+          "empty": "Todavía no está publicado en ningún canal de venta.",
+          "inactive_marker": "Inactivo",
+          "manage_cta": "Administrar",
+          "manage_description": "Elegí qué canales de venta publican este producto. Desactivá un canal para despublicarlo en todos lados.",
+          "manage_title": "Administrar canales de venta",
+          "no_channels": "No hay canales de venta disponibles. Creá uno en Configuración → Canales de venta.",
+          "status_hidden": "Oculto",
+          "status_live": "Activo",
+          "status_not_available": "No disponible",
+          "status_scheduled": "Programado",
+          "title": "Publicación"
+        },
+        "section_basics": "Conceptos básicos",
+        "section_categorization": "Categorización",
+        "section_inventory": "Inventario",
+        "section_media": "Multimedia",
+        "section_organization": "Organización",
+        "section_pricing": "Precios",
+        "section_seo": "SEO",
+        "section_variants": "Variantes",
+        "status_options": {
+          "active": "Activo",
+          "archived": "Archivado",
+          "draft": "Borrador",
+          "proposed": "En revisión",
+          "rejected": "Cambios necesarios"
+        },
+        "status_under_review": "Este producto está en revisión. Usá Aprobar o Rechazar para decidir.",
+        "transfers": {
+          "description_external": "Recepción externa en <strong>{{destination}}</strong>.",
+          "description_internal": "Inventario trasladado de <strong>{{source}}</strong> a <strong>{{destination}}</strong>.",
+          "edit_sheet_title": "Transferencia {{number}}",
+          "items_empty": "Todavía no hay artículos.",
+          "section_from": "Desde",
+          "section_items": "Artículos",
+          "section_to": "Hasta",
+          "sheet_title": "Nueva transferencia de inventario"
+        },
+        "variants_empty": "Todavía no hay variantes.",
+        "variants_one": "{{count}} variante",
+        "variants_other": "{{count}} variantes"
+      }
+    },
+    "fields": {
+      "active": {
+        "label": "Activo"
+      },
+      "address": {
+        "address1": {
+          "label": "Dirección"
+        },
+        "address2": {
+          "label": "Departamento, oficina, etc."
+        },
+        "is_default_billing": {
+          "label": "Dirección de facturación predeterminada"
+        },
+        "is_default_shipping": {
+          "label": "Dirección de envío predeterminada"
+        },
+        "label": {
+          "label": "Etiqueta",
+          "placeholder": "p. ej., Casa, Oficina"
+        },
+        "postal_code": {
+          "label": "Código postal"
+        }
+      },
+      "address1": {
+        "label": "Dirección, línea 1"
+      },
+      "address2": {
+        "label": "Dirección, línea 2"
+      },
+      "amount": {
+        "label": "Monto"
+      },
+      "city": {
+        "label": "Ciudad"
+      },
+      "code": {
+        "label": "Código"
+      },
+      "company": {
+        "label": "Empresa"
+      },
+      "completed_at": {
+        "label": "Completado el"
+      },
+      "contact_email": {
+        "label": "Email de contacto"
+      },
+      "country_code": {
+        "label": "País"
+      },
+      "created_at": {
+        "label": "Creado el"
+      },
+      "currency": {
+        "label": "Moneda"
+      },
+      "description": {
+        "label": "Descripción"
+      },
+      "discount": {
+        "label": "Descuento"
+      },
+      "email": {
+        "label": "Email"
+      },
+      "enabled": {
+        "label": "Habilitado"
+      },
+      "ends_at": {
+        "label": "Fin"
+      },
+      "expires_at": {
+        "label": "Vence"
+      },
+      "first_name": {
+        "label": "Nombre"
+      },
+      "kind": {
+        "label": "Tipo"
+      },
+      "label": {
+        "label": "Etiqueta"
+      },
+      "last_name": {
+        "label": "Apellido"
+      },
+      "login": {
+        "email": {
+          "placeholder": "admin@example.com"
+        }
+      },
+      "media": {
+        "alt": {
+          "label": "Texto alternativo",
+          "placeholder": "Describí la imagen para accesibilidad y SEO"
+        },
+        "external_video_url": {
+          "help": "Pegá un enlace de YouTube o Vimeo.",
+          "label": "Enlace de video",
+          "placeholder": "https://www.youtube.com/watch?v=..."
+        },
+        "poster": {
+          "help": "La imagen fija que se muestra antes de que se reproduzca el video. Dejala vacía para usar la imagen del proveedor si existe.",
+          "label": "Imagen de portada"
+        }
+      },
+      "meta_description": {
+        "label": "Meta descripción"
+      },
+      "meta_title": {
+        "label": "Meta título"
+      },
+      "name": {
+        "label": "Nombre"
+      },
+      "package_type": {
+        "name": {
+          "label": "Nombre"
+        },
+        "kind": {
+          "label": "Tipo",
+          "help": "Solo una caja puede ser el empaque dentro del que se acondiciona un producto."
+        },
+        "length": {
+          "label": "Largo"
+        },
+        "width": {
+          "label": "Ancho"
+        },
+        "height": {
+          "label": "Alto"
+        },
+        "dimensions_unit": {
+          "label": "Unidad"
+        },
+        "dimensions": {
+          "help": "Se usa para el peso dimensional del transportista y para los niveles de flete en metros cúbicos."
+        },
+        "weight": {
+          "label": "Peso vacío",
+          "help": "El empaque en sí, sumado a lo que contiene."
+        },
+        "max_weight": {
+          "label": "Peso máximo",
+          "help": "Lo que puede soportar."
+        },
+        "weight_unit": {
+          "label": "Unidad"
+        },
+        "default": {
+          "label": "Caja predeterminada",
+          "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
+        }
+      },
+      "number": {
+        "label": "Número"
+      },
+      "password": {
+        "label": "Contraseña"
+      },
+      "permalink": {
+        "label": "Permalink"
+      },
+      "phone": {
+        "label": "Teléfono"
+      },
+      "pretty_name": {
+        "label": "Nombre completo"
+      },
+      "quantity": {
+        "label": "Cantidad"
+      },
+      "shipping": {
+        "label": "Envío"
+      },
+      "slug": {
+        "label": "Slug"
+      },
+      "starts_at": {
+        "label": "Inicio"
+      },
+      "state_code": {
+        "label": "Provincia / Estado"
+      },
+      "state_name": {
+        "label": "Provincia / Estado"
+      },
+      "status": {
+        "label": "Estado"
+      },
+      "stock_location": {
+        "active": {
+          "help": "Las ubicaciones inactivas no aparecen en la selección de envíos.",
+          "label": "Activa"
+        },
+        "admin_name": {
+          "label": "Nombre interno",
+          "placeholder": "Opcional: solo se muestra en el admin"
+        },
+        "backorderable_default": {
+          "help": "Los nuevos niveles de stock aceptan contrarreservas por defecto cuando no hay stock.",
+          "label": "Acepta contrarreservas por defecto"
+        },
+        "default": {
+          "help": "Los nuevos niveles de stock se propagan acá. Solo una ubicación puede ser la predeterminada.",
+          "label": "Ubicación predeterminada"
+        },
+        "kind": {
+          "label": "Tipo"
+        },
+        "name": {
+          "placeholder": "Depósito Brooklyn"
+        },
+        "pickup_enabled": {
+          "help": "Los clientes pueden retirar sus pedidos en esta ubicación al finalizar la compra.",
+          "label": "Permitir retiro en el local"
+        },
+        "pickup_instructions": {
+          "label": "Instrucciones de retiro",
+          "placeholder": "A dónde debe ir el cliente para retirar su pedido."
+        },
+        "pickup_ready_in_minutes": {
+          "label": "Listo en (minutos)",
+          "placeholder": "60"
+        },
+        "pickup_stock_policy": {
+          "label": "Política de stock"
+        },
+        "propagate_all_variants": {
+          "help": "Crear niveles de stock en esta ubicación para cada variante de producto.",
+          "label": "Crear automáticamente stock para todas las variantes"
+        },
+        "returns_enabled": {
+          "help": "La mercadería devuelta vuelve a esta ubicación. Desactivá esta opción si las devoluciones se inspeccionan en otro lugar.",
+          "label": "Aceptar devoluciones acá"
+        }
+      },
+      "storefront_visible": {
+        "help": "Al desactivarla, solo el personal del admin ve esta opción (pedidos de back-office, carga manual).",
+        "label": "Visible en la tienda"
+      },
+      "subtotal": {
+        "label": "Subtotal"
+      },
+      "tax": {
+        "label": "Impuestos"
+      },
+      "total": {
+        "label": "Total"
+      },
+      "updated_at": {
+        "label": "Actualizado el"
+      },
+      "zipcode": {
+        "label": "Código postal"
+      },
+      "product": {
+        "available_on": {
+          "label": "Disponible el"
+        },
+        "category_ids": {
+          "label": "Categorías"
+        },
+        "channels": {
+          "label": "Canales de venta"
+        },
+        "collection_ids": {
+          "help": "Solo las colecciones manuales se pueden definir acá; las automáticas siguen sus propias reglas.",
+          "label": "Colecciones"
+        },
+        "delivery_profile_id": {
+          "help": "Define qué zonas y métodos de entrega llegan a este producto.",
+          "label": "Perfil de envío"
+        },
+        "description": {
+          "label": "Descripción",
+          "placeholder": "Escribí una descripción del producto…"
+        },
+        "discontinue_on": {
+          "label": "Descontinuar el"
+        },
+        "make_active_at": {
+          "label": "Activar el"
+        },
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Nombre del producto"
+        },
+        "product_type_id": {
+          "help": "Controla qué opciones de entrega se ofrecen al finalizar la compra.",
+          "label": "Tipo de producto"
+        },
+        "seller": {
+          "label": "Vendedor"
+        },
+        "tags": {
+          "label": "Etiquetas"
+        }
+      },
+      "variant": {
+        "backorder_limit": {
+          "help": "Cantidad máxima de unidades vendidas más allá del stock disponible: limita contrarreservas y preventas. Dejalo en blanco para que sea ilimitado.",
+          "label": "Límite de contrarreserva",
+          "placeholder": "Ilimitado"
+        },
+        "barcode": {
+          "label": "Código de barras"
+        },
+        "country_of_origin": {
+          "label": "País de origen"
+        },
+        "customs_description": {
+          "label": "Descripción aduanera",
+          "placeholder": "Descripción simple de la mercadería"
+        },
+        "depth": {
+          "label": "Profundidad"
+        },
+        "dimensions_unit": {
+          "label": "Unidad"
+        },
+        "height": {
+          "label": "Alto"
+        },
+        "hs_code": {
+          "label": "Código HS",
+          "placeholder": "p. ej., 640411"
+        },
+        "preorder_ships_at": {
+          "help": "Cuándo esperás enviar las preventas. Se muestra a los clientes como la promesa de entrega; la preventa termina cuando pasa esa fecha.",
+          "label": "Envía el",
+          "placeholder": "Seleccionar una fecha"
+        },
+        "preorderable": {
+          "help": "Vendé esta variante antes de que tenga stock. Limitá cuántas vas a tomar con el límite de contrarreserva, cargá el stock entrante como cantidad, o dejalo en blanco para que sea ilimitado.",
+          "label": "Disponible para preventa"
+        },
+        "sku": {
+          "label": "SKU",
+          "placeholder": "PRODUCTO-ROJO-S"
+        },
+        "weight": {
+          "label": "Peso"
+        },
+        "weight_unit": {
+          "label": "Unidad"
+        },
+        "width": {
+          "label": "Ancho"
+        },
+        "minimum_order_quantity": {
+          "label": "Cantidad mínima de pedido",
+          "placeholder": "Sin mínimo",
+          "help": "La cantidad mínima que puede pedir un comprador. Dejala en blanco para que no haya mínimo."
+        },
+        "order_multiple": {
+          "label": "Múltiplo de pedido",
+          "placeholder": "Sin múltiplo",
+          "help": "Cada escalón por encima del mínimo. Dejalo en blanco para cualquier cantidad."
+        },
+        "purchase_unit": {
+          "label": "Unidad de compra",
+          "options": {
+            "unit": "Unidades",
+            "carton": "Cajas"
+          }
+        },
+        "units_per_carton": {
+          "label": "Unidades por caja"
+        },
+        "quantity_rule_invalid": "Ingresá un número entero mayor que cero, o dejalo en blanco.",
+        "carton_package_type_id": {
+          "label": "Caja",
+          "help": "La caja en la que se acondiciona este producto. Su tamaño es compartido por todo lo que se acondiciona de la misma forma."
+        },
+        "carton_weight": {
+          "label": "Peso de la caja",
+          "help": "Cuánto pesa una caja acondicionada."
+        },
+        "cartons_per_pallet": {
+          "label": "Cajas por pallet"
+        },
+        "carton_weight_invalid": "Ingresá un peso de caja mayor que cero, o dejala en blanco."
+      },
+      "minimum_order_quantity": {
+        "label": "Cantidad mínima de pedido",
+        "help": "La cantidad mínima que puede pedir un comprador. Dejala en blanco para que no haya mínimo."
+      },
+      "order_multiple": {
+        "label": "Múltiplo de pedido",
+        "help": "Cada escalón por encima del mínimo. Dejalo en blanco para cualquier cantidad."
+      }
+    },
+    "products": {
+      "autocomplete": {
+        "empty": "Ningún producto coincide",
+        "placeholder": "Buscar productos por nombre…"
+      },
+      "category_search_placeholder": "Buscar categorías…",
+      "collection_search_placeholder": "Buscar colecciones…",
+      "columns": {
+        "in_stock": "En stock",
+        "price": "Precio",
+        "sku": "SKU"
+      },
+      "delete_confirm": "¿Estás seguro de que querés eliminar este producto?",
+      "delete_label": "Eliminar producto",
+      "inventory": {
+        "backorder_aria": "Permitir contrarreserva en {{location}}",
+        "columns": {
+          "backorder": "Contrarreserva",
+          "location": "Ubicación",
+          "on_hand": "Disponible"
+        },
+        "empty_no_locations": "Agregá una ubicación de inventario en Configuración para empezar a controlar el stock.",
+        "empty_no_variants": "Los niveles de stock se administran por ubicación. Agregá una variante para empezar a controlar el stock.",
+        "on_hand_aria": "Disponible en {{location}}",
+        "unknown_location": "Ubicación desconocida"
+      },
+      "media": {
+        "add_from_library": "Agregar desde la biblioteca",
+        "add_video": "Agregar enlace de video",
+        "add_video_submit": "Agregar video",
+        "add_video_title": "Agregar un enlace de video",
+        "assigned_variants_help": "Elegí las variantes que representa esta imagen. Dejala en blanco para aplicar a todas las variantes.",
+        "assigned_variants_label": "Variantes asignadas",
+        "delete_confirm": "¿Eliminar esta multimedia? Esta acción no se puede deshacer.",
+        "drop_hint": "Arrastrá y soltá multimedia acá, o hacé clic para buscar",
+        "edit_title": "Editar multimedia",
+        "file_types_hint": "Imágenes (PNG, JPG, WebP) y video (MP4, WebM, MOV)",
+        "focal_point_help": "Hacé clic en la imagen para definir qué se mantiene en el encuadre al recortarla.",
+        "focal_point_reset": "Restablecer",
+        "unsupported_file_one": "{{count}} archivo no se agregó: solo se admiten imágenes y video.",
+        "unsupported_file_other": "{{count}} archivos no se agregaron: solo se admiten imágenes y video.",
+        "upload_failed": "No se pudo subir {{name}}: {{message}}",
+        "upload_status_failed": "Falló",
+        "video_preview_title": "Vista previa del video",
+        "video_url_invalid": "Ingresá un enlace de YouTube o Vimeo."
+      },
+      "no_categories_found": "No se encontraron categorías",
+      "no_collections_found": "No se encontraron colecciones",
+      "options": {
+        "add_cta": "Agregar tipo de opción",
+        "count_one": "{{count}} valor",
+        "count_other": "{{count}} valores",
+        "create_description": "Definí una opción que las variantes puedan usar (p. ej., talle, color).",
+        "create_label": "Crear tipo de opción",
+        "delete_confirm": {
+          "message": "Esto también eliminará todos sus valores. Las variantes que usan estos valores los perderán.",
+          "title": "¿Eliminar tipo de opción?"
+        },
+        "edit_description": "Editá el tipo de opción y sus valores.",
+        "image_upload_failed": "No se pudo subir la imagen",
+        "kinds": {
+          "buttons": "Botones",
+          "color_swatch": "Muestra de color",
+          "dropdown": "Desplegable"
+        },
+        "value_label_placeholder": "p. ej., Pequeño",
+        "value_name_placeholder": "p. ej., pequeno",
+        "values_help": "Arrastrá los valores para reordenarlos. El primer valor es el predeterminado para las variantes nuevas."
+      },
+      "price_lists": {
+        "errors": {
+          "failed_to_activate": "No se pudo activar la lista de precios",
+          "failed_to_deactivate": "No se pudo desactivar la lista de precios"
+        },
+        "messages": {
+          "activated": "Lista de precios activada",
+          "created": "Lista de precios creada",
+          "deactivated": "Lista de precios desactivada",
+          "deleted": "Lista de precios eliminada",
+          "updated": "Lista de precios actualizada"
+        },
+        "validation": {
+          "ends_after_starts": "Debe ser posterior a la fecha de inicio."
+        }
+      },
+      "product_type_adds_options_one": "Este tipo agrega {{options}} a los productos nuevos.",
+      "product_type_adds_options_other": "Este tipo agrega {{options}} a los productos nuevos.",
+      "product_type_placeholder": "Sin tipo de producto",
+      "save_label": "Guardar producto",
+      "seo": {
+        "meta_description_placeholder": "Descripción SEO",
+        "meta_title_placeholder": "Título SEO",
+        "slug_placeholder": "url-del-producto"
+      },
+      "tax_category_placeholder": "Seleccionar categoría de impuestos",
+      "transfers": {
+        "create_description": "Mové stock entre ubicaciones o recibí stock nuevo de un proveedor externo.",
+        "delete_confirm": {
+          "message": "Los movimientos de stock creados por esta transferencia se revertirán.",
+          "title": "¿Eliminar esta transferencia?"
+        },
+        "destination_placeholder": "Seleccionar ubicación de destino",
+        "details_card": "Detalles",
+        "different_locations_error": "El origen y el destino deben ser distintos.",
+        "external_label": "Externa (recepción de proveedor)",
+        "fields": {
+          "created": "Creada",
+          "external_receive": "Recepción externa",
+          "immutable_note": "Las transferencias de stock son inmutables una vez creadas.",
+          "internal": "Interna",
+          "reference": "Referencia",
+          "type": "Tipo"
+        },
+        "items_table": {
+          "qty": "Cant.",
+          "sku": "SKU",
+          "variant": "Variante"
+        },
+        "new_cta": "Nueva transferencia",
+        "reference_label": "Referencia",
+        "reference_placeholder": "Número de OC, factura de proveedor, …",
+        "review_description": "Revisá la transferencia antes de crearla. Los artículos no se pueden modificar después.",
+        "search_items_placeholder": "Buscar por nombre o SKU (3+ caracteres)…"
+      },
+      "variants": {
+        "add_option": "Agregar opción",
+        "bulk_edit": {
+          "grid_aria": "Planilla de edición masiva de variantes",
+          "title": "Editar variantes en masa",
+          "trigger": "Edición masiva",
+          "unset": "Ninguno"
+        },
+        "create_option_type": "Crear tipo de opción",
+        "create_option_type_title": "Nuevo tipo de opción",
+        "create_value": "Nuevo valor",
+        "create_value_title": "Nuevo valor de opción",
+        "default_variant": "Variante predeterminada",
+        "edit_row_aria": "Editar {{name}}",
+        "edit_variant": "Editar variante: {{name}}",
+        "errors": {
+          "failed_to_create_option_type": "No se pudo crear el tipo de opción",
+          "failed_to_create_value": "No se pudo crear el valor"
+        },
+        "keep": "Conservar todas",
+        "option_type_label": "Tipo de opción",
+        "option_type_placeholder": "Elegir un tipo de opción",
+        "orphan_warning": "{{count}} variante(s) existente(s) se eliminará(n) al guardar:",
+        "orphan_warning_one": "{{count}} variante existente ya no coincide con las opciones seleccionadas y se eliminará al guardar:",
+        "orphan_warning_other": "{{count}} variantes existentes ya no coinciden con las opciones seleccionadas y se eliminarán al guardar:",
+        "remove_row_aria": "Quitar {{name}}",
+        "sheet": {
+          "availability": "Disponibilidad",
+          "customs": "Aduana",
+          "customs_help": "Se usa en los formularios aduaneros cuando este artículo cruza una frontera.",
+          "identity": "Identidad",
+          "tax_category_placeholder": "Heredar del producto",
+          "ordering": "Pedidos B2B",
+          "ordering_help": "Cuánto debe tomar un comprador. Se aplica al agregar artículos al carrito y nuevamente al finalizar la compra. Un grupo de clientes o un catálogo de empresa pueden reemplazarlo para sus compradores. El stock se cuenta en unidades.",
+          "packing": "Acondicionamiento",
+          "packing_help": "Cómo sale este producto del depósito a granel. Las cotizaciones de flete se calculan con estos números.",
+          "no_carton_types": "Agregá un tipo de caja en <settingsLink>Configuración → Tipos de paquete</settingsLink> para registrar cómo se acondiciona este producto.",
+          "carton_placeholder": "Sin caja",
+          "pending_save": "Los cambios acá se guardan con el producto."
+        },
+        "title": "Variantes",
+        "variant_label": "Variante"
+      }
+    },
+    "types": {
+      "calculator": {
+        "default_refund_amount": {
+          "name": "Monto de reembolso predeterminado",
+          "description": "Reembolsa el monto originalmente pagado por los artículos devueltos"
+        },
+        "default_tax": {
+          "name": "Impuesto predeterminado",
+          "description": "Aplica la tasa de impuesto al monto imponible"
+        },
+        "digital_delivery": {
+          "name": "Entrega digital",
+          "description": "Sin costo de envío: el pedido se entrega digitalmente"
+        },
+        "flat_percent_item_total": {
+          "name": "Porcentaje fijo",
+          "description": "Un porcentaje del total de los artículos del pedido"
+        },
+        "flat_rate": {
+          "name": "Tarifa fija",
+          "description": "Un monto fijo, sea cual sea el contenido del pedido"
+        },
+        "flexi_rate": {
+          "name": "Tarifa flexible",
+          "description": "Un monto base más un monto por artículo"
+        },
+        "per_item": {
+          "name": "Por artículo",
+          "description": "Un monto fijo por cada artículo del pedido"
+        },
+        "percent_on_line_item": {
+          "name": "Porcentaje por línea",
+          "description": "Un porcentaje de cada línea de pedido"
+        },
+        "price_sack": {
+          "name": "Tramos de precio",
+          "description": "Un monto por debajo de un umbral y otro al alcanzarlo o superarlo"
+        },
+        "tiered_flat_rate": {
+          "name": "Tarifa fija por niveles",
+          "description": "Un monto fijo que cambia según el total del pedido"
+        },
+        "tiered_percent": {
+          "name": "Porcentaje por niveles",
+          "description": "Un porcentaje que cambia según el total del pedido"
+        }
+      },
+      "collection_rule": {
+        "available_on": {
+          "name": "Publicado recientemente",
+          "description": "Productos publicados dentro de los últimos N días"
+        },
+        "sale": {
+          "name": "En oferta",
+          "description": "Productos actualmente descontados por debajo de su precio comparativo"
+        },
+        "tag": {
+          "name": "Etiqueta",
+          "description": "Productos que llevan una etiqueta que coincide"
+        }
+      },
+      "commission_rule": {
+        "category_rule": {
+          "name": "Categoría",
+          "description": "Aplica esta comisión solo a productos de las categorías seleccionadas y de cualquier cosa dentro de ellas"
+        },
+        "item_total_rule": {
+          "name": "Valor de venta",
+          "description": "Aplica esta comisión solo a ventas dentro de un rango de valores"
+        },
+        "product_rule": {
+          "name": "Producto",
+          "description": "Aplica esta comisión solo a los productos seleccionados"
+        },
+        "seller_rule": {
+          "name": "Vendedor",
+          "description": "Aplica esta comisión solo cuando el vendedor es uno de los seleccionados"
+        }
+      },
+      "delivery_method_rule": {
+        "channel_rule": {
+          "name": "Canal",
+          "description": "Ofrecé este método de entrega solo en los canales de venta seleccionados"
+        },
+        "company_rule": {
+          "name": "Empresa",
+          "description": "Ofrecé este método de entrega solo a pedidos realizados para una empresa, o solo a los que no lo son"
+        },
+        "excluded_products_rule": {
+          "name": "Productos excluidos",
+          "description": "Ocultá este método de entrega cuando el pedido contenga alguno de estos productos"
+        },
+        "item_total_rule": {
+          "name": "Total de artículos",
+          "description": "Ofrecé este método de entrega solo cuando el total del pedido esté dentro de un rango"
+        },
+        "volume_rule": {
+          "name": "Volumen",
+          "description": "Ofrecé este método de entrega solo cuando el volumen del envío esté dentro de un rango, en metros cúbicos"
+        },
+        "weight_rule": {
+          "name": "Peso",
+          "description": "Ofrecé este método de entrega solo cuando el peso del paquete esté dentro de un rango"
+        }
+      },
+      "order_routing_rule": {
+        "default_location": {
+          "name": "Ubicación predeterminada",
+          "description": "Preferir la ubicación de stock marcada como predeterminada"
+        },
+        "minimize_splits": {
+          "name": "Minimizar divisiones",
+          "description": "Preferir la ubicación que pueda cumplir la mayoría de los artículos por sí sola, evitando envíos divididos"
+        },
+        "preferred_location": {
+          "name": "Ubicación preferida",
+          "description": "Cumplir desde la ubicación fijada en el pedido, cuando esté definida"
+        }
+      },
+      "price_rule": {
+        "channel_rule": {
+          "name": "Canal",
+          "description": "Aplicar precios según el canal de venta"
+        },
+        "customer_group_rule": {
+          "name": "Grupo de clientes",
+          "description": "Aplicar precios a grupos de clientes específicos"
+        },
+        "market_rule": {
+          "name": "Mercado",
+          "description": "Aplicar precios según el mercado"
+        },
+        "user_rule": {
+          "name": "Cliente",
+          "description": "Aplicar precios a clientes específicos"
+        },
+        "volume_rule": {
+          "name": "Precios por volumen",
+          "description": "Aplicar precios según la cantidad comprada"
+        },
+        "zone_rule": {
+          "name": "Zona",
+          "description": "Aplicar precios según la zona de envío"
+        }
+      },
+      "promotion_action": {
+        "create_adjustment": {
+          "name": "Crear ajuste del pedido completo",
+          "description": "Crea un ajuste de crédito promocional en el pedido"
+        },
+        "create_item_adjustments": {
+          "name": "Crear ajuste por línea",
+          "description": "Crea un ajuste de crédito promocional en una línea de pedido"
+        },
+        "create_line_items": {
+          "name": "Crear líneas de pedido",
+          "description": "Completa el carrito con la cantidad especificada de la variante"
+        },
+        "free_shipping": {
+          "name": "Envío gratis",
+          "description": "Hace que todos los envíos del pedido sean gratuitos"
+        }
+      },
+      "promotion_rule": {
+        "category": {
+          "name": "Categorías",
+          "description": "El pedido incluye productos de las categorías especificadas"
+        },
+        "channel": {
+          "name": "Canal(es)",
+          "description": "Limitar a pedidos realizados a través de canales de venta específicos"
+        },
+        "country": {
+          "name": "País",
+          "description": "Limitar a pedidos con dirección de envío en un país específico"
+        },
+        "currency": {
+          "name": "Moneda",
+          "description": "Limitar a pedidos en una moneda específica"
+        },
+        "customer": {
+          "name": "Clientes",
+          "description": "Disponible solo para los clientes especificados"
+        },
+        "customer_group": {
+          "name": "Grupo(s) de clientes",
+          "description": "Disponible solo para clientes de los grupos especificados"
+        },
+        "customer_logged_in": {
+          "name": "Solo clientes con sesión iniciada",
+          "description": "Disponible solo para clientes con sesión iniciada"
+        },
+        "first_order": {
+          "name": "Primer pedido",
+          "description": "Debe ser el primer pedido del cliente"
+        },
+        "item_total": {
+          "name": "Total de artículos",
+          "description": "El total del pedido cumple estos criterios"
+        },
+        "market": {
+          "name": "Mercado(s)",
+          "description": "Limitar a pedidos de mercados específicos"
+        },
+        "one_use_per_user": {
+          "name": "Un solo uso por usuario",
+          "description": "Solo un uso por usuario"
+        },
+        "option_value": {
+          "name": "Valor(es) de opción",
+          "description": "El pedido incluye productos con valores de opción que coinciden"
+        },
+        "product": {
+          "name": "Producto(s)",
+          "description": "El pedido incluye los productos especificados"
+        }
+      },
+      "seller_requirement": {
+        "accept_terms": {
+          "name": "Aceptar términos",
+          "description": "El vendedor debe aceptar tus términos de marketplace antes de vender"
+        },
+        "attestation": {
+          "name": "Confirmación del vendedor",
+          "description": "El vendedor debe confirmar una declaración que vos escribas"
+        },
+        "billing_address": {
+          "name": "Dirección de facturación",
+          "description": "El vendedor debe proporcionar una dirección de facturación"
+        },
+        "complete_profile": {
+          "name": "Completar perfil",
+          "description": "El vendedor debe completar su perfil público"
+        },
+        "delivery_method": {
+          "name": "Método de entrega",
+          "description": "El vendedor debe configurar al menos un método de entrega"
+        },
+        "document": {
+          "name": "Documento",
+          "description": "El vendedor debe subir un documento para su revisión"
+        },
+        "minimum_products": {
+          "name": "Cantidad mínima de productos",
+          "description": "El vendedor debe publicar una cantidad mínima de productos"
+        },
+        "operator_review": {
+          "name": "Verificación manual",
+          "description": "Un miembro de tu equipo debe aprobar al vendedor manualmente"
+        },
+        "payout_account": {
+          "name": "Cuenta de pagos",
+          "description": "El vendedor debe conectar una cuenta para recibir sus pagos"
+        },
+        "policy": {
+          "name": "Política del vendedor",
+          "description": "El vendedor debe publicar sus políticas de tienda"
+        },
+        "required_custom_fields": {
+          "name": "Campos personalizados obligatorios",
+          "description": "El vendedor debe completar los campos personalizados que marques como obligatorios"
+        },
+        "returns_address": {
+          "name": "Dirección de devoluciones",
+          "description": "El vendedor debe proporcionar una dirección para devoluciones"
+        }
+      }
+    },
+    "imports": {
+      "download_original": "Descargar el archivo original",
+      "failed": {
+        "description": "No se pudo procesar el archivo.",
+        "title": "Importación fallida"
+      },
+      "failed_rows": {
+        "error": "Error",
+        "hide_data": "Ocultar datos de la fila",
+        "next_page": "Página siguiente",
+        "prev_page": "Página anterior",
+        "row_number": "Fila",
+        "title": "Filas con error",
+        "view_data": "Ver datos de la fila"
+      },
+      "load_failed": "No se pudo cargar la importación.",
+      "mapping": {
+        "description": "Relacioná las columnas de tu archivo con los campos de {{type}}.",
+        "field": "Campo",
+        "file_column": "Columna del archivo",
+        "missing_required": "Mapeá los campos obligatorios para continuar: {{fields}}",
+        "not_mapped": "Sin mapear",
+        "required": "Obligatorio",
+        "sample": "Ejemplo",
+        "start": "Iniciar importación",
+        "starting": "Iniciando…",
+        "title": "Mapear columnas"
+      },
+      "processing": {
+        "failed_count": "{{failed}} con error",
+        "note": "Podés salir de esta página: la importación continúa en segundo plano.",
+        "preparing": "Preparando filas…",
+        "progress": "{{processed}} de {{total}} filas procesadas",
+        "retrying": "Reintentando filas con error · {{remaining}} restantes",
+        "title": "Procesando filas"
+      },
+      "results": {
+        "completed_title": "Importación completada",
+        "retry_failed": "Reintentar filas con error ({{failed}})",
+        "retrying": "Reintentando…",
+        "summary": "{{completed}} filas importadas · {{failed}} con error",
+        "view_records": "Ver {{type}}"
+      },
+      "status": {
+        "completed": "Completada",
+        "completed_mapping": "En cola",
+        "failed": "Fallida",
+        "mapping": "Mapeo",
+        "pending": "Pendiente",
+        "processing": "Procesando"
+      },
+      "step_descriptions": {
+        "complete": "Tu importación terminó. Revisá qué se creó y qué se actualizó.",
+        "map_fields": "Relacioná cada columna de tu archivo con un campo de Spree.",
+        "process_rows": "Estamos importando tus filas. Puede tomar unos minutos."
+      },
+      "steps": {
+        "complete": "Completar",
+        "map_fields": "Mapear campos",
+        "process_rows": "Procesar filas"
+      },
+      "try_again": "Reintentar",
+      "types": {
+        "customers": "Clientes",
+        "price_list_prices": "Precios de listas de precios",
+        "product_translations": "Traducciones de productos",
+        "products": "Productos",
+        "purchase_orders": "Órdenes de compra"
+      },
+      "wizard_title": "Importar"
+    },
+    "actions": {
+      "actions_menu": "Acciones",
+      "add": "Agregar",
+      "adding": "Agregando…",
+      "apply": "Aplicar",
+      "back": "Volver",
+      "cancel": "Cancelar",
+      "clear": "Limpiar",
+      "close": "Cerrar",
+      "confirm": "Confirmar",
+      "copied": "¡Copiado!",
+      "copy": "Copiar",
+      "create": "Crear",
+      "creating": "Creando…",
+      "delete": "Eliminar",
+      "deleting": "Eliminando…",
+      "discard": "Descartar",
+      "discard_changes": "Descartar cambios",
+      "done": "Listo",
+      "duplicate": "Duplicar",
+      "edit": "Editar",
+      "export": "Exportar",
+      "exporting": "Exportando…",
+      "generate": "Generar",
+      "hide": "Ocultar",
+      "import": "Importar",
+      "invite": "Invitar",
+      "more_actions": "Más acciones",
+      "remove": "Quitar",
+      "remove_item": "Quitar {{label}}",
+      "remove_rule": "Quitar regla",
+      "reset": "Restablecer",
+      "revoke": "Revocar",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "search": "Buscar",
+      "send": "Enviar",
+      "send_invitation": "Enviar invitación",
+      "sending": "Enviando…",
+      "show": "Mostrar",
+      "sign_in": "Iniciar sesión",
+      "signing_in": "Iniciando sesión…",
+      "view": "Ver",
+      "view_all": "Ver todo",
+      "view_details": "Ver detalles"
+    },
+    "stock_locations": {
+      "add_cta": "Agregar ubicación de inventario",
+      "badges": {
+        "default": "Predeterminada",
+        "enabled": "Habilitada",
+        "inactive": "Inactiva"
+      },
+      "columns": {
+        "default": "Predeterminada",
+        "location": "Ubicación",
+        "pickup": "Retiro",
+        "returns": "Devoluciones",
+        "seller": "Vendedor",
+        "type": "Tipo"
+      },
+      "create_description": "Agregá un depósito, un local o un punto de retiro desde el que cumplir pedidos.",
+      "create_label": "Crear ubicación de inventario",
+      "delete_confirm": {
+        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación no se borran.",
+        "title": "¿Eliminar ubicación de inventario?"
+      },
+      "edit_description": "Actualizá el nombre, la dirección, el retiro o las políticas de stock.",
+      "empty": "Todavía no hay ubicaciones de inventario",
+      "kinds": {
+        "fulfillment_center": "Centro de cumplimiento",
+        "store": "Local",
+        "warehouse": "Depósito"
+      },
+      "pickup_stock_policies": {
+        "any": "Permitir transferencias desde otras ubicaciones",
+        "local": "Solo artículos de esta ubicación"
+      },
+      "search_placeholder": "Buscar por nombre…",
+      "section_behavior": "Comportamiento",
+      "section_details": "Detalles",
+      "section_pickup": "Retiro",
+      "section_returns": "Devoluciones",
+      "stock_levels": {
+        "empty": "Todavía no hay niveles de stock en esta ubicación.",
+        "empty_search": "Ningún nivel de stock coincide con tu búsqueda.",
+        "help": "Ajustá las cantidades disponibles y de contrarreserva por variante.",
+        "low_stock_marker": "stock bajo",
+        "search_placeholder": "Buscar SKU o producto…",
+        "table": {
+          "backorder": "Contrarreserva",
+          "on_hand": "Disponible",
+          "variant": "Variante"
+        },
+        "title": "Stock en esta ubicación",
+        "unknown_product": "Producto desconocido",
+        "variant_count_one": "{{count}} variante",
+        "variant_count_other": "{{count}} variantes"
+      },
+      "description": "Los depósitos y locales donde guardás stock y desde donde cumplís pedidos."
+    },
+    "validation": {
+      "codes": {
+        "accepted": "debe ser aceptado",
+        "blank": "no puede estar en blanco",
+        "confirmation": "no coincide",
+        "empty": "no puede estar vacío",
+        "equal_to": "debe ser igual a {{count}}",
+        "exclusion": "está reservado",
+        "forbidden_reporting_member": "Este reporte referencia datos que no tenés permiso de leer.",
+        "greater_than": "debe ser mayor que {{count}}",
+        "greater_than_or_equal_to": "debe ser mayor o igual que {{count}}",
+        "inclusion": "no está incluido en la lista",
+        "invalid": "no es válido",
+        "invalid_commission_rule_type": "{{type}} no es una regla de comisión que esta tienda ofrezca",
+        "less_than": "debe ser menor que {{count}}",
+        "less_than_or_equal_to": "debe ser menor o igual que {{count}}",
+        "not_a_number": "no es un número",
+        "not_an_integer": "debe ser un número entero",
+        "other_than": "debe ser distinto de {{count}}",
+        "present": "debe estar en blanco",
+        "product_not_in_store": "todos deben pertenecer a esta tienda",
+        "required": "debe existir",
+        "seeded_report_read_only": "Este es un reporte incorporado y no se puede modificar. Guardá una copia.",
+        "taken": "ya está en uso",
+        "too_long": "es demasiado largo (máximo {{count}} caracteres)",
+        "too_short": "es demasiado corto (mínimo {{count}} caracteres)",
+        "wrong_length": "tiene un largo incorrecto (debería ser {{count}} caracteres)"
+      },
+      "country_required": "El país es obligatorio",
+      "currency_required": "La moneda es obligatoria",
+      "first_name_required": "El nombre es obligatorio",
+      "invalid_email": "Ingresá un email válido",
+      "invalid_email_or_password": "Email o contraseña inválidos",
+      "invalid_hex_color": "Color hexadecimal inválido",
+      "invalid_password": "Contraseña inválida",
+      "last_name_required": "El apellido es obligatorio",
+      "min_length": "{{field}} debe tener al menos {{count}} caracteres",
+      "password_required": "La contraseña es obligatoria",
+      "passwords_dont_match": "Las contraseñas no coinciden",
+      "positive_number": "{{field}} debe ser mayor que 0",
+      "required": "{{field}} es obligatorio",
+      "store_name_required": "El nombre de la tienda es obligatorio"
+    },
+    "common": {
+      "active": "Activo",
+      "adjust_search_or_filters": "Probá ajustar tu búsqueda o tus filtros",
+      "all": "Todos",
+      "and": "y",
+      "are_you_sure": "¿Estás seguro?",
+      "cancel": "Cancelar",
+      "clear": "Limpiar",
+      "comma_separated_hint": "Separar los valores con comas.",
+      "default": "Predeterminado",
+      "delete_confirm_message": "¿Estás seguro? Esta acción no se puede deshacer.",
+      "deleted": "Eliminado",
+      "empty_value": "—",
+      "inactive": "Inactivo",
+      "learn_more": "Aprender más",
+      "skip_to_content": "Saltar al contenido",
+      "loading": "Cargando…",
+      "next": "Siguiente",
+      "no": "No",
+      "no_results": "Sin resultados",
+      "combobox_more_results_one": "1 resultado más no se muestra. Escribí para buscar.",
+      "combobox_more_results_other": "{{count}} resultados más no se muestran. Escribí para buscar.",
+      "none": "Ninguno",
+      "optional": "Opcional",
+      "or": "o",
+      "page_of": "Página {{page}} de {{total}}",
+      "pick_date": "Elegir una fecha",
+      "prev": "Anterior",
+      "prices": "Precios",
+      "remove_question": "¿Quitar?",
+      "required": "Obligatorio",
+      "retry": "Reintentar",
+      "search_placeholder": "Buscar…",
+      "searching": "Buscando…",
+      "select_placeholder": "Seleccionar…",
+      "unsaved_changes": "Tenés cambios sin guardar.",
+      "yes": "Sí"
+    },
+    "messages": {
+      "address_removed": "Dirección eliminada",
+      "address_saved": "Dirección guardada",
+      "copied_to_clipboard": "Copiado al portapapeles",
+      "created": "Creado",
+      "customer_deleted": "Cliente eliminado",
+      "customer_saved": "Cliente guardado",
+      "digital_asset_removed": "Archivo eliminado",
+      "digital_asset_saved": "Archivo guardado",
+      "digital_link_reset": "Acceso de descarga restablecido",
+      "digital_links_email_sent": "Email de descarga enviado",
+      "gift_card_created": "Tarjeta de regalo creada",
+      "invitation_accepted": "Bienvenido a Spree",
+      "invitation_resent": "Invitación reenviada",
+      "invitation_sent": "Invitación enviada",
+      "key_created": "Clave creada",
+      "key_deleted": "Clave eliminada",
+      "key_revoked": "Clave revocada",
+      "key_updated": "Clave actualizada",
+      "order_saved": "Pedido guardado",
+      "payment_method_saved": "Método de pago guardado",
+      "product_created": "Producto creado",
+      "product_deleted": "Producto eliminado",
+      "product_saved": "Producto guardado",
+      "profile_updated": "Perfil actualizado",
+      "promotion_created": "Promoción creada",
+      "promotion_deleted": "Promoción eliminada",
+      "promotion_saved": "Promoción guardada",
+      "removed": "Eliminado",
+      "saved": "Guardado",
+      "settings_updated": "Configuración actualizada",
+      "stock_location_saved": "Ubicación de inventario guardada",
+      "store_credit_removed": "Crédito de tienda eliminado",
+      "store_credit_saved": "Crédito de tienda guardado",
+      "store_settings_updated": "Configuración de tienda actualizada",
+      "tax_category_saved": "Categoría de impuestos guardada",
+      "updated": "Actualizado"
+    },
+    "auth": {
+      "back_to_login": "Volver a iniciar sesión",
+      "forgot_password": {
+        "error": "Algo salió mal. Intentalo de nuevo.",
+        "link": "¿Olvidaste tu contraseña?",
+        "sending": "Enviando…",
+        "sent_subtitle": "Si existe una cuenta con ese email, un enlace de restablecimiento de contraseña está en camino.",
+        "sent_title": "Revisá tu email",
+        "submit": "Enviar enlace de restablecimiento",
+        "subtitle": "Ingresá tu email y te enviaremos un enlace para restablecer tu contraseña.",
+        "title": "Restablecer tu contraseña"
+      },
+      "login": {
+        "account_not_provisioned": "Esta cuenta no está autorizada para esta tienda. Pedile una invitación a un administrador.",
+        "divider": "o",
+        "invalid_oauth_state": "Esa sesión de inicio caducó o fue inválida. Empezá a iniciar sesión de nuevo.",
+        "providers_error_message": "No pudimos cargar las opciones de inicio de sesión. Actualizá la página o contactá a tu administrador.",
+        "providers_error_title": "Inicio de sesión no disponible",
+        "rate_limit_exceeded": "Demasiados intentos de inicio de sesión. Esperá un momento y volvé a intentar.",
+        "sso_button": "Continuar con {{provider}}",
+        "sso_failed": "No pudimos iniciar sesión con ese proveedor. Volvé a intentar.",
+        "subtitle": "Iniciá sesión en tu cuenta de administrador",
+        "title": "Bienvenido de nuevo"
+      },
+      "logout": "Cerrar sesión",
+      "reset_password": {
+        "confirm_password_label": "Confirmar nueva contraseña",
+        "error": "Algo salió mal. Volvé a intentar.",
+        "missing_token_message": "Este enlace de restablecimiento de contraseña no tiene token.",
+        "missing_token_title": "Enlace de restablecimiento inválido",
+        "new_password_label": "Nueva contraseña",
+        "request_new_link": "Solicitar un nuevo enlace de restablecimiento",
+        "submit": "Restablecer contraseña",
+        "submitting": "Restableciendo…",
+        "subtitle": "Ingresá una nueva contraseña para tu cuenta de administrador.",
+        "title": "Elegí una nueva contraseña",
+        "token_invalid": "Este enlace de restablecimiento es inválido o caducó. Solicitá uno nuevo."
+      }
+    },
+    "a11y": {
+      "breadcrumb": "Miga de pan",
+      "breadcrumb_more": "Más",
+      "bulk_actions": "Acciones masivas",
+      "change_color": "Cambiar color ({{value}})",
+      "clear_date": "Borrar fecha",
+      "clear_selection": "Borrar selección",
+      "collapse_all": "Contraer todo",
+      "delete_image": "Eliminar imagen",
+      "drag_to_reorder": "Arrastrá para reordenar",
+      "edit_media": "Editar multimedia",
+      "expand_all": "Expandir todo",
+      "hide_value": "Ocultar valor",
+      "pick_color": "Elegir un color",
+      "refetch": "Reintentar carga",
+      "remove_image": "Quitar imagen",
+      "remove_value": "Quitar valor",
+      "reorder": "Reordenar",
+      "select_all_rows": "Seleccionar todas las filas de esta página",
+      "select_row": "Seleccionar fila",
+      "settings_navigation": "Navegación de configuración",
+      "show_value": "Mostrar valor",
+      "sidebar": "Barra lateral",
+      "sidebar_description": "Muestra la barra lateral en móvil.",
+      "stock_at_locations": "Stock por ubicaciones",
+      "store_switcher": "Cambiar de tienda",
+      "toggle_sidebar": "Alternar barra lateral",
+      "upload_image": "Subir imagen",
+      "user_menu": "Menú de usuario",
+      "view_image": "Ver imagen"
+    },
+    "product_types": {
+      "add_cta": "Agregar tipo de producto",
+      "add_sheet_title": "Nuevo tipo de producto",
+      "affects_new_only": {
+        "description": "Editar tipos de opción y categorías determina la forma de los productos creados de ahora en adelante. Los productos que ya tienen este tipo conservan lo que tienen. Los campos personalizados de abajo siempre se muestran en todos los productos de este tipo.",
+        "title": "Los cambios se aplican a productos nuevos"
+      },
+      "apply_to_products": {
+        "confirm_label": "Aplicar",
+        "cta_one": "Aplicar a {{count}} producto existente",
+        "cta_other": "Aplicar a {{count}} productos existentes",
+        "message_one": "Esto agrega los tipos de opción y categorías que falten de este tipo a {{count}} producto. No se quita nada.",
+        "message_other": "Esto agrega los tipos de opción y categorías que falten de este tipo a {{count}} productos. No se quita nada.",
+        "title": "Aplicar a productos existentes"
+      },
+      "create_description": "Agrupá productos y definí cómo se pueden entregar.",
+      "create_label": "Crear tipo de producto",
+      "custom_delivery_profile": "Personalizado",
+      "default_delivery_profile": "Perfil predeterminado de la tienda",
+      "delete_confirm": {
+        "message": "¿Estás seguro de que querés eliminar «{{name}}»? Los tipos aún usados por productos no se pueden eliminar.",
+        "title": "Eliminar tipo de producto"
+      },
+      "edit_description": "Cambiá el nombre o las formas de entrega de los productos de este tipo.",
+      "edit_sheet_title": "Editar tipo de producto",
+      "empty": "Todavía no hay tipos de producto",
+      "messages": {
+        "applied_to_products": "Aplicando a productos existentes",
+        "created": "Tipo de producto creado",
+        "deleted": "Tipo de producto eliminado",
+        "updated": "Tipo de producto actualizado"
+      },
+      "no_categories": "Todavía no hay categorías",
+      "no_option_types": "Todavía no hay tipos de opción",
+      "option_type_search_placeholder": "Buscar tipos de opción",
+      "search_placeholder": "Buscar tipos de producto"
+    },
+    "package_types": {
+      "table_title": "Tipos de paquete",
+      "search_placeholder": "Buscar empaques",
+      "empty": "Todavía no hay empaques. Agregá la caja en la que enviás, y las cajas y pallets sobre los que salen los pedidos mayoristas.",
+      "add_cta": "Agregar tipo de paquete",
+      "default_badge": "Predeterminado",
+      "edit_sheet_title": "Tipo de paquete",
+      "create_description": "Una caja, caja de cartón, pallet o contenedor en el que se acondiciona la mercadería.",
+      "edit_description": "Los productos acondicionados en esta caja siguen sus medidas, así un solo cambio las corrige a todas.",
+      "dimensions_column": "Dimensiones",
+      "volume_column": "Volumen",
+      "kinds": {
+        "box": "Caja",
+        "envelope": "Sobre",
+        "carton": "Caja de cartón",
+        "pallet": "Pallet",
+        "container": "Contenedor"
+      },
+      "messages": {
+        "added": "Tipo de paquete agregado",
+        "updated": "Tipo de paquete actualizado",
+        "deleted": "Tipo de paquete eliminado"
+      },
+      "delete_confirm": {
+        "title": "¿Eliminar tipo de paquete?",
+        "message": "{{name}} se eliminará. Los productos acondicionados en él deben reacondicionarse primero."
+      },
+      "validation": {
+        "non_negative": "debe ser cero o más"
+      },
+      "description": "Las cajas, cajas de cartón y pallets en los que se envían tus productos, con las medidas y pesos sobre los que cotizan los transportistas."
+    },
+    "errors": {
+      "failed_to_create": "No se pudo crear",
+      "failed_to_delete": "No se pudo eliminar",
+      "failed_to_load": "No se pudo cargar",
+      "failed_to_load_customer": "No se pudo cargar el cliente",
+      "failed_to_load_order": "No se pudo cargar el pedido",
+      "failed_to_load_product": "No se pudo cargar el producto",
+      "failed_to_revoke_key": "No se pudo revocar la clave",
+      "failed_to_save": "No se pudo guardar",
+      "failed_to_send_invitation": "No se pudo enviar la invitación",
+      "failed_to_update": "No se pudo actualizar",
+      "failed_to_update_profile": "No se pudo actualizar el perfil",
+      "failed_to_update_staff": "No se pudo actualizar el personal",
+      "failed_to_update_store": "No se pudieron actualizar las configuraciones de la tienda",
+      "generic": "Algo salió mal",
+      "label_download_failed": "No se pudo descargar la etiqueta",
+      "network": "Error de red: volvé a intentar",
+      "not_found": "No encontrado",
+      "required": "Este campo es obligatorio",
+      "unauthorized": "No tenés permiso para hacer eso",
+      "unexpected": "Se produjo un error inesperado",
+      "unexpected_retry": "Se produjo un error inesperado. Volvé a intentar."
+    },
+    "catalogs": {
+      "terms": {
+        "title": "Condiciones comerciales",
+        "description": "Cuánto deben pedir los compradores de este acuerdo.",
+        "no_rule_placeholder": "Sin regla",
+        "minimums_title": "Mínimos de pedido",
+        "minimums_description": "El mínimo al que debe llegar un pedido completo, por moneda.",
+        "minimums_empty": "Sin mínimo de pedido. Los compradores pueden finalizar la compra con cualquier total.",
+        "minimum_amount_label": "Monto mínimo",
+        "validation": {
+          "positive_integer": "Ingresá un número entero mayor que cero, o dejalo en blanco.",
+          "currency_taken": "Esta moneda ya tiene un mínimo.",
+          "positive_amount": "Ingresá un monto mayor que cero.",
+          "fix_terms": "Corregí las reglas de cantidad resaltadas antes de guardar."
+        },
+        "mixed": "Mixto",
+        "inherits": "Heredado",
+        "default_help": "Aplica a todos los productos de este catálogo, salvo que un producto indique el suyo en la lista.",
+        "column_minimum": "Mínimo",
+        "column_multiple": "Múltiplo",
+        "help": {
+          "minimum": "La cantidad mínima que puede pedir un comprador de un producto. Un pedido menor se rechaza indicando las cantidades válidas más cercanas: nunca se redondea en favor del comprador.",
+          "multiple": "El tamaño del escalón. Con un múltiplo de 24, un comprador pide 24, 48 o 72: nunca 30. Los escalones suben desde el mínimo, así un mínimo de 50 en pasos de 24 permite 50, 74 y 98.",
+          "order_minimum": "El mínimo al que debe llegar un pedido completo, contando solo artículos: el envío y los impuestos no ayudan a alcanzarlo. Los compradores ven cuánto les falta mientras compran, y no pueden finalizar la compra hasta alcanzarlo."
+        }
+      }
+    },
+    "resource_picker": {
+      "add_count_one": "Agregar {{count}}",
+      "add_count_other": "Agregar {{count}}",
+      "already_added": "Agregado",
+      "empty": "No se encontraron resultados.",
+      "load_more": "Cargar más",
+      "search_placeholder": "Buscar…",
+      "select_all_matching_one": "Seleccionar las {{count}} coincidencias",
+      "select_all_matching_other": "Seleccionar las {{count}} coincidencias",
+      "select_page_one": "Seleccionar {{count}} de esta página",
+      "select_page_other": "Seleccionar las {{count}} de esta página",
+      "selected_count_one": "{{count}} seleccionado",
+      "selected_count_other": "{{count}} seleccionados",
+      "title": "Agregar productos"
+    },
+    "calculators": {
+      "default_refund_amount": "Monto de reembolso predeterminado",
+      "default_tax": "Impuesto predeterminado",
+      "digital_delivery": "Entrega digital",
+      "flat_percent_item_total": "Porcentaje fijo",
+      "flat_rate": "Tarifa fija",
+      "flexi_rate": "Tarifa flexible",
+      "per_item": "Por artículo",
+      "percent_on_line_item": "Porcentaje por línea",
+      "price_sack": "Tramos de precio",
+      "tiered_flat_rate": "Tarifa fija por niveles",
+      "tiered_percent": "Porcentaje por niveles"
+    },
+    "option_types": {
+      "columns": {
+        "values": "Valores"
+      },
+      "kinds": {
+        "buttons": "Botones",
+        "color_swatch": "Muestra de color",
+        "dropdown": "Desplegable"
+      },
+      "messages": {
+        "created": "Tipo de opción creado",
+        "deleted": "Tipo de opción eliminado",
+        "updated": "Tipo de opción actualizado"
+      },
+      "table": {
+        "empty": "Todavía no hay tipos de opción",
+        "search_placeholder": "Buscar por nombre…"
+      },
+      "value_count_one": "{{count}} valor",
+      "value_count_other": "{{count}} valores"
+    },
+    "account": {
+      "community": "Comunidad",
+      "contact_support": "Contactar soporte",
+      "documentation": "Documentación",
+      "edit_profile": "Editar perfil",
+      "language": {
+        "label": "Idioma",
+        "update_failed": "No se pudo guardar tu preferencia de idioma. Volvé a intentar."
+      },
+      "log_out": "Cerrar sesión",
+      "preferences": "Preferencias",
+      "view_store": "Ver tienda"
+    },
+    "media_picker": {
+      "confirm": "Agregar seleccionados",
+      "description": "Elegí archivos de tu biblioteca o subí nuevos.",
+      "empty": "Tu biblioteca está vacía. Subí un archivo para empezar.",
+      "no_results": "Ningún archivo coincide con tu búsqueda.",
+      "search_placeholder": "Buscar por nombre…",
+      "selected_count_one": "{{count}} seleccionado",
+      "selected_count_other": "{{count}} seleccionados",
+      "title": "Biblioteca de multimedia",
+      "upload": "Subir"
+    },
+    "custom_field_definitions": {
+      "errors": {
+        "failed_to_create": "No se pudo crear la definición de campo personalizado",
+        "failed_to_delete": "No se pudo eliminar la definición de campo personalizado",
+        "failed_to_update": "No se pudo actualizar la definición de campo personalizado"
+      },
+      "messages": {
+        "created": "Definición de campo personalizado creada",
+        "deleted": "Definición de campo personalizado eliminada",
+        "updated": "Definición de campo personalizado actualizada"
+      }
+    },
+    "image_upload": {
+      "remove_cta": "Quitar",
+      "replace_cta": "Reemplazar imagen",
+      "upload_cta": "Subir imagen",
+      "upload_failed": "No se pudo subir la imagen",
+      "uploading": "Subiendo…"
+    },
+    "settings_page": {
+      "back_to_dashboard": "Volver al dashboard",
+      "description": "Administrá tu tienda, la configuración de venta y el equipo.",
+      "no_results": "Ninguna configuración coincide con «{{query}}».",
+      "search_placeholder": "Buscar configuraciones",
+      "title": "Configuración"
+    },
+    "address_book": {
+      "default_billing": "Facturación predeterminada",
+      "default_shipping": "Envío predeterminado",
+      "set_default_billing": "Establecer como facturación predeterminada",
+      "set_default_shipping": "Establecer como envío predeterminado"
+    },
+    "row_actions": {
+      "clone": "Duplicar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "menu_label": "Abrir acciones"
+    },
+    "settings_nav": {
+      "groups": {
+        "fulfillment": "Cumplimiento",
+        "team": "Equipo y acceso"
+      },
+      "items": {
+        "stock_locations": "Ubicaciones de inventario"
+      }
+    },
+    "stock_levels": {
+      "messages": {
+        "stock_level_deleted": "Nivel de stock eliminado",
+        "stock_updated": "Stock actualizado"
+      }
+    },
+    "app_name": "Spree Admin",
+    "address": {
+      "not_located_yet": "El mapa aparece una vez que se haya localizado esta dirección."
+    },
+    "color_picker": {
+      "no_color": "Sin color"
+    },
+    "media_library": {
+      "download": "Descargar"
+    }
+  }
+}
