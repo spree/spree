@@ -113,6 +113,22 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.merge(payload, secrets)).to eq(original)
     end
 
+    # The escape character is itself escaped, so a key carrying a backslash
+    # cannot forge the encoding of a different path.
+    it 'keeps a key containing a backslash distinct from the path it imitates' do
+      original = {
+        'data' => {
+          'a\\' => { 'b' => { 'client_secret' => 'from-backslash-parent' } },
+          'a' => { 'b' => { 'client_secret' => 'from-plain-parent' } }
+        }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(secrets.values).to contain_exactly('from-backslash-parent', 'from-plain-parent')
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
     # Both roots key their secrets identically on purpose: the payload is
     # persisted as JSON and read back with string keys, so a symbol root that
     # keyed itself separately would restore nothing after the round trip.

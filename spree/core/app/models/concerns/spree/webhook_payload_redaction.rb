@@ -46,6 +46,11 @@ module Spree
     # secrets identically or nothing restores after a round trip.
     ROOT_SEGMENT = 'data'
 
+    # A path segment escapes the separator so it cannot be read as a boundary,
+    # and the escape character itself so the escaping stays reversible.
+    PATH_ESCAPES = { '\\' => '\\\\', PATH_SEPARATOR => "\\#{PATH_SEPARATOR}" }.freeze
+    PATH_ESCAPES_PATTERN = /[\\#{Regexp.escape(PATH_SEPARATOR)}]/.freeze
+
     # Splits a payload into the version safe to persist and the secrets held
     # back from it.
     #
@@ -152,7 +157,8 @@ module Spree
     # Each segment escapes the separator (and the escape character) before the
     # join, so `['a.b', 'c']` and `['a', 'b', 'c']` stay distinct keys.
     def self.secret_key_for(path)
-      path.map { |segment| segment.gsub('\\', '\\\\\\\\').gsub(PATH_SEPARATOR, '\\.') }.join(PATH_SEPARATOR)
+      path.map { |segment| segment.gsub(PATH_ESCAPES_PATTERN) { |character| PATH_ESCAPES[character] } }.
+        join(PATH_SEPARATOR)
     end
     private_class_method :secret_key_for
   end
