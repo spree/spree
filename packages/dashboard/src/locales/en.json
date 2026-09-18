@@ -2891,6 +2891,8 @@
           "canceled": "Order canceled",
           "captured": "Payment captured",
           "completed": "Order completed",
+          "completed_as_group_one": "Order completed as {{count}} order, one per seller",
+          "completed_as_group_other": "Order completed as {{count}} orders, one per seller",
           "confirmation_sent": "Confirmation sent",
           "voided": "Payment voided"
         },
