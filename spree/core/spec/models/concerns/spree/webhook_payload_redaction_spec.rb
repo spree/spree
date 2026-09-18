@@ -42,6 +42,61 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.merge(payload, secrets)).to eq(original)
     end
 
+    # Payment session events carry live gateway credentials: a client secret
+    # confirms a payment and an ephemeral key lists a customer's saved cards.
+    it 'redacts payment session credentials nested inside external_data' do
+      original = {
+        'name' => 'payment_session.created',
+        'data' => {
+          'status' => 'pending',
+          'external_client_secret' => 'seti_live_secret',
+          'external_data' => {
+            'client_secret' => 'pi_live_secret',
+            'ephemeral_key_secret' => 'ek_live_secret',
+            'payment_intent_id' => 'pi_123'
+          }
+        }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload['data']['external_client_secret']).to eq(placeholder)
+      expect(payload['data']['external_data']['client_secret']).to eq(placeholder)
+      expect(payload['data']['external_data']['ephemeral_key_secret']).to eq(placeholder)
+      expect(payload['data']['external_data']['payment_intent_id']).to eq('pi_123')
+      expect(secrets).to eq(
+        'external_client_secret' => 'seti_live_secret',
+        'external_data.client_secret' => 'pi_live_secret',
+        'external_data.ephemeral_key_secret' => 'ek_live_secret'
+      )
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
+    # Keying by path alone: two secrets sharing a key name must not overwrite
+    # one another on the way out or back in.
+    it 'keeps same-named secrets at different depths apart' do
+      original = {
+        'data' => {
+          'client_secret' => 'top-level',
+          'external_data' => { 'client_secret' => 'nested' }
+        }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(secrets).to eq('client_secret' => 'top-level', 'external_data.client_secret' => 'nested')
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
+    it 'redacts secrets inside arrays of nested records' do
+      original = { 'data' => { 'sessions' => [{ 'client_secret' => 'one' }, { 'client_secret' => 'two' }] } }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload['data']['sessions'].map { |session| session['client_secret'] }).to all(eq(placeholder))
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
     it 'returns the payload untouched when nothing is sensitive' do
       original = { 'data' => { 'number' => 'R123' } }
 
