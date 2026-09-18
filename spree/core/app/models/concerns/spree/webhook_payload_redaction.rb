@@ -36,10 +36,15 @@ module Spree
 
     REDACTION_PLACEHOLDER = '[REDACTED]'
 
-    # Separates the segments of a secret's path. A key containing the separator
-    # would make two different paths collide, so such keys keep their value in
-    # the payload rather than being redacted into an ambiguous slot.
+    # Separates the segments of a secret's path. Segments are escaped before
+    # they are joined, so a key that itself contains the separator still maps
+    # to one unambiguous path.
     PATH_SEPARATOR = '.'
+
+    # The root both `data` keys share. A payload is persisted as JSON and read
+    # back with string keys, so the symbol and string roots must key their
+    # secrets identically or nothing restores after a round trip.
+    ROOT_SEGMENT = 'data'
 
     # Splits a payload into the version safe to persist and the secrets held
     # back from it.
@@ -51,7 +56,7 @@ module Spree
       secrets = {}
 
       redacted = transform_data_hashes(payload) do |data|
-        redact(data, [], secrets)
+        redact(data, [ROOT_SEGMENT], secrets)
       end
 
       secrets.empty? ? [payload, {}] : [redacted, secrets]
@@ -66,7 +71,7 @@ module Spree
       return payload if secrets.blank?
 
       transform_data_hashes(payload) do |data|
-        restore(data, [], secrets)
+        restore(data, [ROOT_SEGMENT], secrets)
       end
     end
 
@@ -82,7 +87,7 @@ module Spree
       node.to_h do |key, value|
         key_path = path + [key.to_s]
 
-        if sensitive?(key, value) && !key_path.last.include?(PATH_SEPARATOR)
+        if sensitive?(key, value)
           secrets[secret_key_for(key_path)] = value
           [key, REDACTION_PLACEHOLDER]
         else
@@ -92,8 +97,13 @@ module Spree
     end
     private_class_method :redact
 
-    # The mirror of {redact}. Falls back to the bare key name so deliveries
-    # enqueued before path keying shipped still restore their secrets.
+    # The mirror of {redact}. Only a slot still holding the placeholder is
+    # filled, so a real value the payload carries is never overwritten.
+    #
+    # Deliveries enqueued before path keying shipped carry secrets under a bare
+    # key name. Those only ever came from the top level of `data`, so the
+    # fallback is confined there — at depth it would fill every same-named slot
+    # in the tree with one secret.
     def self.restore(node, path, secrets)
       if node.is_a?(Array)
         return node.each_with_index.map { |element, index| restore(element, path + [index.to_s], secrets) }
@@ -102,13 +112,12 @@ module Spree
 
       node.to_h do |key, value|
         key_path = path + [key.to_s]
-        secret = secrets[secret_key_for(key_path)] || secrets[key.to_s]
+        next [key, restore(value, key_path, secrets)] unless value == REDACTION_PLACEHOLDER
 
-        if secret.present? && !value.is_a?(Hash) && !value.is_a?(Array)
-          [key, secret]
-        else
-          [key, restore(value, key_path, secrets)]
-        end
+        secret = secrets[secret_key_for(key_path)]
+        secret ||= secrets[key.to_s] if path.one?
+
+        [key, secret.presence || value]
       end
     end
     private_class_method :restore
@@ -139,8 +148,11 @@ module Spree
     # Secrets are keyed by path alone. They cross an ActiveJob serialization
     # boundary, which coerces symbol keys to strings, so the key form at split
     # time cannot be relied on to still match at merge time.
+    #
+    # Each segment escapes the separator (and the escape character) before the
+    # join, so `['a.b', 'c']` and `['a', 'b', 'c']` stay distinct keys.
     def self.secret_key_for(path)
-      path.join(PATH_SEPARATOR)
+      path.map { |segment| segment.gsub('\\', '\\\\\\\\').gsub(PATH_SEPARATOR, '\\.') }.join(PATH_SEPARATOR)
     end
     private_class_method :secret_key_for
   end
