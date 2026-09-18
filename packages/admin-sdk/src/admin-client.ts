@@ -1422,12 +1422,20 @@ export class AdminClient {
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/orders/${id}`, options),
 
+    /**
+     * An order holding several sellers' goods divides into one order per
+     * seller, and the group it produced is what comes back — narrow the result
+     * with `isOrderGroup`.
+     */
     complete: (
       id: string,
       params?: OrderCompleteParams,
       options?: RequestOptions,
-    ): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${id}/complete`, { ...options, body: params }),
+    ): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('PATCH', `/orders/${id}/complete`, {
+        ...options,
+        body: params,
+      }),
 
     cancel: (id: string, params?: OrderCancelParams, options?: RequestOptions): Promise<Order> =>
       this.request<Order>('PATCH', `/orders/${id}/cancel`, { ...options, body: params }),

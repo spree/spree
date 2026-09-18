@@ -2888,6 +2888,11 @@
           "canceled": "تم إلغاء الطلب",
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
+          "completed_as_group_few": "اكتمل الطلب كـ {{count}} طلبات، طلب لكل بائع",
+          "completed_as_group_many": "اكتمل الطلب كـ {{count}} طلبًا، طلب لكل بائع",
+          "completed_as_group_one": "اكتمل الطلب كطلب {{count}}، طلب لكل بائع",
+          "completed_as_group_other": "اكتمل الطلب كـ {{count}} طلبات، طلب لكل بائع",
+          "completed_as_group_two": "اكتمل الطلب كطلبين، طلب لكل بائع",
           "confirmation_sent": "تم إرسال التأكيد",
           "voided": "تم إلغاء الدفع"
         },
