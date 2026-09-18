@@ -35,11 +35,13 @@ module Spree
       # @return [Spree::ServiceModule::Result] success carries
       #   `{ price_count: N }` — the number of rows passed to `upsert_all`.
       #   Fails with the offending rows when a batch carries an unusable
-      #   `min_quantity`, or would take a variant past
-      #   {Spree::Price::MAXIMUM_BREAKS_PER_VARIANT} breaks on one list. This
-      #   path writes in SQL and runs no model validations, so both checks
-      #   live here rather than in each of the three controllers that reach
-      #   it (docs/plans/6.0-volume-pricing.md).
+      #   `min_quantity`, puts a quantity on a base price, names one rung twice,
+      #   would take a variant past
+      #   {Spree::Price::MAXIMUM_BREAKS_PER_VARIANT} breaks on one list, or
+      #   would leave a ladder charging more for a bigger order. This path
+      #   writes in SQL and runs no model validations, so the checks live here
+      #   rather than in each of the three writers that reach it
+      #   (docs/plans/6.0-volume-pricing.md).
       def call(rows:)
         rows = Array(rows).map { |r| r.with_indifferent_access }
         # Amounts are parsed once, here; everything below reads numbers.
@@ -54,19 +56,34 @@ module Spree
         negative = rows_with_negative_amount(keyed)
         return failure(nil, invalid_amounts: negative) if negative.any?
 
-        # PG rejects an upsert with two rows hitting the same unique key in one
-        # statement ("ON CONFLICT DO UPDATE command cannot affect row a second
-        # time"). Last-write-wins: keep the last occurrence of each key.
-        deduped = keyed.reverse.uniq { |r| row_key(r) }.reverse
-        upsert_rows, clear_rows = deduped.partition { |r| r[:amount].present? }
+        # A base price is one row per (variant, currency) whatever quantity it
+        # names, so a quantity here would upsert onto a key it does not
+        # describe. The model refuses it in `break_requires_price_list`, which
+        # this SQL path never runs.
+        misplaced = base_rows_with_quantity(keyed)
+        return failure(nil, quantities_on_base_prices: misplaced) if misplaced.any?
+
+        duplicates = rows_with_duplicate_quantity(keyed)
+        return failure(nil, duplicate_quantities: duplicates) if duplicates.any?
+
+        upsert_rows, clear_rows = keyed.partition { |r| r[:amount].present? }
+        # A clear at a quantity the batch also prices is a rung moving onto
+        # it, so the amount wins.
+        claimed = upsert_rows.map { |r| row_key(r) }.to_set
+        clear_rows = clear_rows.reject { |r| claimed.include?(row_key(r)) }
 
         payload = build_payload(upsert_rows)
-        affected_keys = deduped.map { |r| row_key(r) }
+        affected_keys = (upsert_rows + clear_rows).map { |r| row_key(r) }
 
         return success(price_count: 0) if affected_keys.empty?
 
-        over_cap = ladders_over_cap(upsert_rows, clear_rows)
+        stored = stored_rungs(upsert_rows + clear_rows)
+
+        over_cap = ladders_over_cap(upsert_rows, clear_rows, stored)
         return failure(nil, over_cap: over_cap) if over_cap.any?
+
+        rising = rising_ladders(upsert_rows, clear_rows, stored)
+        return failure(nil, rising_ladders: rising) if rising.any?
 
         base_rows, override_rows = payload.partition { |r| r[:price_list_id].nil? }
 
@@ -129,7 +146,7 @@ module Spree
       # quantity address the bottom rung, which is every row written before
       # breaks existed (docs/plans/6.0-volume-pricing.md).
       def row_key(row)
-        [row[:variant_id], row[:currency], row[:price_list_id], quantity_of(row)]
+        [row[:variant_id].to_s, row[:currency], row[:price_list_id].presence&.to_s, quantity_of(row)]
       end
 
       # Absent means the ladder's bottom rung. Anything present must be a
@@ -182,53 +199,175 @@ module Spree
       # constant is named: breaks *above* the bottom rung, so a variant priced
       # at one figure plus ten breaks is exactly at the limit.
       #
-      # Only ladders the batch actually adds a break to are checked, so an
-      # ordinary spreadsheet save — one quantity-1 row per variant — costs no
-      # extra queries at all.
-      #
       # @param rows [Array<Hash>] the rows carrying an amount
       # @param cleared_rows [Array<Hash>] the rows whose blank amount removes a rung
+      # @param stored [Hash] `{ ladder_key => { quantity => amount } }` as stored
       # @return [Array<Hash>] `[{ variant_id:, currency:, price_list_id: }, ...]`
-      def ladders_over_cap(rows, cleared_rows = [])
-        touched = rows.
-                  reject { |row| row[:price_list_id].blank? || quantity_of(row) == 1 }.
-                  group_by { |row| [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s] }.
-                  transform_values { |group| group.map { |row| quantity_of(row) }.to_set }
+      def ladders_over_cap(rows, cleared_rows, stored)
+        touched = breaks_by_ladder(rows)
         return [] if touched.empty?
 
-        cleared = cleared_rows.
-                  reject { |row| row[:price_list_id].blank? || quantity_of(row) == 1 }.
-                  group_by { |row| [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s] }.
-                  transform_values { |group| group.map { |row| quantity_of(row) }.to_set }
-
-        # One query for every ladder in the batch rather than one each: an
-        # import writing a ladder across two hundred variants would otherwise
-        # issue two hundred round trips inside the request. Cross-pairs the
-        # `IN` clauses pull in are dropped by the lookup below, the same way
-        # #sweep handles them.
-        # Placeholder rows charge nothing, so they do not fill a ladder — the
-        # model's own guard counts the same way, and a cap two writers
-        # disagree about is one that refuses what it just allowed.
-        stored = Spree::Price.
-                 where(variant_id: touched.keys.map { |key| key[0] },
-                       currency: touched.keys.map { |key| key[1] },
-                       price_list_id: touched.keys.map { |key| key[2] }).
-                 breaks.
-                 where.not(amount: nil).
-                 pluck(:variant_id, :currency, :price_list_id, :min_quantity).
-                 group_by { |variant_id, currency, price_list_id, _| [variant_id.to_s, currency, price_list_id.to_s] }
+        cleared = breaks_by_ladder(cleared_rows)
 
         touched.filter_map do |key, incoming|
           # Stored rungs this batch does not name are the ones that survive it;
           # counting the rest as well would refuse a merchant who deleted two
           # rungs and added two others, whose ladder ends the size it began.
-          # The deletions ride in `clear_rows` and the sweep applies them, so
-          # what is left after this batch is (survivors + incoming).
-          survivors = stored.fetch(key, []).map(&:last).to_set - cleared.fetch(key, Set.new)
+          survivors = stored.fetch(key, {}).keys.reject { |quantity| quantity == 1 }.to_set - cleared.fetch(key, Set.new)
           next if (survivors | incoming).size <= Spree::Price::MAXIMUM_BREAKS_PER_VARIANT
 
           { variant_id: key[0], currency: key[1], price_list_id: key[2] }
         end
+      end
+
+      # The break quantities each ladder in these rows carries.
+      def breaks_by_ladder(rows)
+        rows.
+          reject { |row| row[:price_list_id].blank? || quantity_of(row) == 1 }.
+          group_by { |row| ladder_key(row) }.
+          transform_values { |group| group.map { |row| quantity_of(row) }.to_set }
+      end
+
+      # Base-price rows naming a quantity. A base price is one row per
+      # (variant, currency), so the quantity describes nothing and the row
+      # would upsert onto a key it does not match.
+      #
+      # @return [Array<Hash>] `[{ index: }, ...]`
+      def base_rows_with_quantity(rows)
+        rows.each_with_index.filter_map do |row, index|
+          { index: index } if row[:price_list_id].blank? && quantity_of(row) != 1
+        end
+      end
+
+      # Rows repeating a rung the batch has already priced. Only amounts
+      # collide: a clear at the same key is a rung moving onto it, which #call
+      # resolves in favour of the amount.
+      #
+      # @param rows [Array<Hash>]
+      # @return [Array<Hash>] `[{ index:, min_quantity: }, ...]`
+      def rows_with_duplicate_quantity(rows)
+        seen = Set.new
+
+        rows.each_with_index.filter_map do |row, index|
+          next if row[:amount].blank?
+
+          { index: index, min_quantity: quantity_of(row) } unless seen.add?(row_key(row))
+        end
+      end
+
+      # Ladders this batch would leave charging more for a bigger order. A rung
+      # must not cost more than the rung beneath it, or than the base price for
+      # a ladder starting above one unit; a bottom rung above base is a dearer
+      # agreement, which is allowed. Judged on the state the batch leaves, not
+      # on what it changed: no write path can produce a rising ladder, so one
+      # found rising came from outside them and must be repaired rather than
+      # built on. Base is the floor even where another list would undercut it
+      # below the threshold — the write path cannot know which list wins for
+      # which buyer (docs/plans/6.0-volume-pricing.md).
+      #
+      # @param rows [Array<Hash>] the rows carrying an amount
+      # @param cleared_rows [Array<Hash>] the rows whose blank amount removes a rung
+      # @param stored [Hash] `{ ladder_key => { quantity => amount } }` as stored
+      # @return [Array<Hash>] the offending rung and the price it must not exceed
+      def rising_ladders(rows, cleared_rows, stored)
+        keys = ladder_keys_to_check(rows + cleared_rows, stored)
+        return [] if keys.empty?
+
+        incoming = rungs_by_ladder(rows)
+        cleared = breaks_and_bottom_by_ladder(cleared_rows)
+        floors = base_floors(rows, cleared_rows, keys)
+
+        keys.filter_map do |key|
+          dropped = cleared.fetch(key, Set.new)
+          now = stored.fetch(key, {}).reject { |quantity, _| dropped.include?(quantity) }.
+                merge(incoming.fetch(key, {}))
+
+          breach = Spree::Price.rising_rung(now.sort_by(&:first), floors[key.first(2)])
+          next if breach.nil?
+
+          { variant_id: key[0], currency: key[1], price_list_id: key[2],
+            min_quantity: breach[0], amount: breach[1], floor: breach[2] }
+        end
+      end
+
+      # The ladders whose shape or floor this batch could change: those it
+      # writes rows on, plus every stored ladder of a variant whose base price
+      # it moves — lowering the shop price under a break raises the bill at the
+      # threshold just as surely as mispricing the break.
+      def ladder_keys_to_check(rows, stored)
+        own = rows.reject { |row| row[:price_list_id].blank? }.map { |row| ladder_key(row) }
+        rebased = rows.select { |row| row[:price_list_id].blank? }.
+                  map { |row| [row[:variant_id].to_s, row[:currency]] }.to_set
+        return own.uniq if rebased.empty?
+
+        (own + stored.keys.select { |key| rebased.include?(key.first(2)) }).uniq
+      end
+
+      # `{ ladder_key => { quantity => amount } }` for these rows.
+      def rungs_by_ladder(rows)
+        rows.
+          reject { |row| row[:price_list_id].blank? }.
+          group_by { |row| ladder_key(row) }.
+          transform_values { |group| group.to_h { |row| [quantity_of(row), row[:amount]] } }
+      end
+
+      # Every quantity these rows remove, bottom rung included — unlike the cap
+      # check, which only counts breaks.
+      def breaks_and_bottom_by_ladder(rows)
+        rows.
+          reject { |row| row[:price_list_id].blank? }.
+          group_by { |row| ladder_key(row) }.
+          transform_values { |group| group.map { |row| quantity_of(row) }.to_set }
+      end
+
+      # The stored rungs of every ladder this batch touches, and of every
+      # ladder whose base price it moves. Placeholder rows charge nothing, so a
+      # ladder whose quantity-1 row is a placeholder starts at its first real
+      # break. Cross-pairs the `IN` clauses pull in are dropped by the lookup,
+      # as in #sweep.
+      #
+      # @param rows [Array<Hash>]
+      # @return [Hash] `{ ladder_key => { quantity => amount } }`
+      def stored_rungs(rows)
+        variant_ids = rows.map { |row| row[:variant_id] }.uniq
+        currencies = rows.map { |row| row[:currency] }.uniq
+        return {} if variant_ids.empty?
+
+        Spree::Price.
+          where(variant_id: variant_ids, currency: currencies).
+          where.not(price_list_id: nil).
+          where.not(amount: nil).
+          pluck(:variant_id, :currency, :price_list_id, :min_quantity, :amount).
+          group_by { |variant_id, currency, price_list_id, _, _| [variant_id.to_s, currency, price_list_id.to_s] }.
+          transform_values { |rungs| rungs.to_h { |rung| [rung[3], rung[4]] } }
+      end
+
+      # The base price each ladder falls through to, as this batch would leave
+      # it, so a save that moves both the shop price and a break is judged on
+      # the pair it sent.
+      #
+      # @return [Hash] `{ [variant_id, currency] => amount }`
+      def base_floors(rows, cleared_rows, keys)
+        pairs = keys.map { |key| key.first(2) }.uniq
+        return {} if pairs.empty?
+
+        stored = Spree::Price.
+                 where(variant_id: pairs.map(&:first), currency: pairs.map(&:last), price_list_id: nil).
+                 where.not(amount: nil).
+                 pluck(:variant_id, :currency, :amount).
+                 to_h { |variant_id, currency, amount| [[variant_id.to_s, currency], amount] }
+
+        written = rows.select { |row| row[:price_list_id].blank? }.
+                  to_h { |row| [[row[:variant_id].to_s, row[:currency]], row[:amount]] }
+        removed = cleared_rows.select { |row| row[:price_list_id].blank? }.
+                  map { |row| [row[:variant_id].to_s, row[:currency]] }
+
+        stored.merge(written).except(*removed)
+      end
+
+      # A ladder is one variant's rungs, in one currency, on one list.
+      def ladder_key(row)
+        [row[:variant_id].to_s, row[:currency], row[:price_list_id].to_s]
       end
 
       # Parses locale-aware decimal input ("1.234,56" in DE, "1,234.56"
@@ -254,7 +393,7 @@ module Spree
           .pluck(:id, :variant_id, :currency, :price_list_id, :min_quantity, :amount)
 
         doomed_ids = candidates.filter_map do |id, variant_id, currency, price_list_id, min_quantity, amount|
-          key = [variant_id, currency, price_list_id, min_quantity]
+          key = [variant_id.to_s, currency, price_list_id&.to_s, min_quantity]
           next unless affected_set.include?(key)
           next id if amount.nil?
           next id if cleared_keys.include?(key)

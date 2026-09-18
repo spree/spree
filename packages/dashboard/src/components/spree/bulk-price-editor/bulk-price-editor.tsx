@@ -346,6 +346,10 @@ export function BulkPriceEditor({
     return out
   }, [data, breaksByVariant, draftRungs])
 
+  // A toast cannot be seen from in here: the viewport sits below the overlay
+  // layer on purpose, so it never covers a sheet's footer buttons. Refusals
+  // render in the grid's own header instead.
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [edits, setEdits] = useState<Map<string, CellEdit>>(() => new Map())
   // Keys already written to the server, kept in `edits` until the refetch
   // carries their values — see the release effect below.
@@ -361,6 +365,7 @@ export function BulkPriceEditor({
     setEdits(new Map())
     setSavedPending(new Set())
     setDraftRungs([])
+    setSaveError(null)
   }, [priceListId, currency, filterKey])
 
   // Releases a saved edit once the refetched row agrees with it, so the cell
@@ -461,6 +466,7 @@ export function BulkPriceEditor({
 
   const handleChange = useCallback(
     (rowId: string, field: 'amount' | 'compareAt', next: string | null) => {
+      setSaveError(null)
       // Typing a price into the trailing blank row is what creates the rung.
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
@@ -524,6 +530,7 @@ export function BulkPriceEditor({
 
   const changeTierQuantity = useCallback(
     (rowId: string, value: string) => {
+      setSaveError(null)
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
 
@@ -559,6 +566,7 @@ export function BulkPriceEditor({
 
   const removeTier = useCallback(
     (rowId: string) => {
+      setSaveError(null)
       // A draft rung has nothing stored to remove; a saved one is cleared by
       // sending a blank amount, which the bulk endpoint reads as "delete this".
       if (rowId.startsWith('draft:')) {
@@ -614,12 +622,11 @@ export function BulkPriceEditor({
       return edit != null && !edit.removing && Boolean(edit.minQuantity) && !edit.amount
     })
     if (incomplete) {
-      toastManager.add({
-        type: 'error',
-        title: t('admin.pages.products.price_lists.edit_prices.tier_needs_price', {
+      setSaveError(
+        t('admin.pages.products.price_lists.edit_prices.tier_needs_price', {
           quantity: edits.get(incomplete)?.minQuantity ?? '',
         }),
-      })
+      )
       return false
     }
     // Ship the unique-key triple `(variant_id, currency, price_list_id)`
@@ -663,6 +670,7 @@ export function BulkPriceEditor({
         },
       ]
     })
+    setSaveError(null)
     try {
       const res = await bulkUpsertAsync({ prices: payload })
       toastManager.add({
@@ -680,16 +688,17 @@ export function BulkPriceEditor({
       setSavedPending((prev) => new Set([...prev, ...savedKeys]))
       return true
     } catch (err) {
-      const message =
+      setSaveError(
         err instanceof Error
           ? err.message
-          : t('admin.pages.products.price_lists.edit_prices.save_failed')
-      toastManager.add({ type: 'error', title: message })
+          : t('admin.pages.products.price_lists.edit_prices.save_failed'),
+      )
       return false
     }
   }, [edits, savedPending, currency, priceListId, bulkUpsertAsync, marketLocale, t])
 
   const discard = useCallback(() => {
+    setSaveError(null)
     setEdits(new Map())
     setSavedPending(new Set())
     setDraftRungs([])
@@ -771,6 +780,7 @@ export function BulkPriceEditor({
         tierRemove: t('admin.pages.products.price_lists.tiers.remove_short'),
         tierQuantity: t('admin.pages.products.price_lists.tiers.quantity'),
       }}
+      error={saveError}
     />
   )
 }

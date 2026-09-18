@@ -92,6 +92,10 @@ export interface BulkPriceTableProps {
   onTierAdd?: (rowId: string) => void
   /** Removes a tier row. */
   onTierRemove?: (rowId: string) => void
+  /** Why the last save was refused. Rendered above the grid rather than
+   *  toasted: this table lives in a dialog, and the toast viewport sits
+   *  below the overlay layer so nothing raised from in here is visible. */
+  error?: string | null
 
   // Optional state for the toolbar + pagination footer. Omitting all of these
   // hides the toolbar/pagination entirely (use for in-memory single-page lists).
@@ -125,6 +129,7 @@ export function BulkPriceTable({
   totalPages,
   onPageChange,
   isLoading,
+  error,
 }: BulkPriceTableProps) {
   const columns = useMemo<ColumnDef<BulkPriceRow>[]>(
     () => [
@@ -306,6 +311,14 @@ export function BulkPriceTable({
     // grid between them should run to the container's edges, the way a
     // table in a card does.
     <div className="flex h-full flex-col gap-3">
+      {error && (
+        <div
+          role="alert"
+          className="mx-3 shrink-0 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-destructive text-sm"
+        >
+          {error}
+        </div>
+      )}
       {showToolbar && (
         // Always-mounted toolbar. Conditionally rendering the search input
         // would unmount it whenever a deferred query refetches into the
