@@ -248,6 +248,32 @@ RSpec.describe 'Spree::Returns workflows' do
         )
       end
 
+      # The money side pays nothing for a line the customer paid nothing for,
+      # so the tax side must not claim one either.
+      it 'leaves out a line that arrived but was worth nothing' do
+        line = return_record.return_line_items.first
+        free = create(:return_line_item,
+                      return: return_record,
+                      fulfillment_item: line.fulfillment_item,
+                      line_item: line.line_item,
+                      variant: line.variant,
+                      quantity: 1)
+        free.update!(received_quantity: 1, pre_tax_amount: 0)
+        return_record.reload
+
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund) do |_order, lines, **|
+          expect(lines).to include(line)
+          expect(lines).not_to include(free)
+        end
+      end
+
       # A partial refund must not hand the provider the returned lines with no
       # word of how little went back: crediting their full tax would reclaim tax
       # the merchant kept, and a return is marked refunded only once.
@@ -265,6 +291,31 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(provider).to have_received(:refund).with(
           order, anything, amount: part, tax_date: order.completed_at
         )
+      end
+
+      # The refund dialog pre-fills the amount from the return and always
+      # submits it, so a ceiling that still counted the announced units paid
+      # for goods that never came back (V-3654).
+      context 'when the warehouse counted fewer units than were announced' do
+        before do
+          return_record.return_line_items.first.
+            update!(quantity: 3, received_quantity: 2, pre_tax_amount: 269.97)
+        end
+
+        it 'credits only what arrived when the caller names no amount' do
+          Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+          expect(Spree::StoreCredit.find_by(originator: return_record).amount).to eq(179.98)
+        end
+
+        it 'refuses an amount that counts units that never came back' do
+          result = Spree::Returns::Refund.call(return_record: return_record, amount: 269.97,
+                                               refund_method: 'store_credit')
+
+          expect(result).to be_failure
+          expect(result.error.value).to eq(:refund_exceeds_balance)
+          expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
+        end
       end
 
       it 'lets a validate handler veto before any credit is issued' do
