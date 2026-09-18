@@ -187,6 +187,21 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    # A workflow rejects with a symbol. The operator has to be told what went
+    # wrong, not handed `refund_exceeds_balance`.
+    it 'explains a refund larger than the return is owed' do
+      patch :refund, params: {
+        order_id: order.prefixed_id,
+        id: return_record.prefixed_id,
+        amount: '10000.00',
+        refund_method: 'store_credit'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(Spree.t(:refund_exceeds_balance))
+      expect(json_response['error']['message']).not_to include('refund_exceeds_balance')
+    end
   end
 
   describe 'PATCH #cancel' do

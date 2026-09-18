@@ -18242,7 +18242,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: refund_exceeds_balance
+                  message: That is more than the amount still refundable.
       requestBody:
         content:
           application/json:
