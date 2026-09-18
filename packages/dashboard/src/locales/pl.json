@@ -2897,6 +2897,10 @@
           "canceled": "Zamówienie anulowane",
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
+          "completed_as_group_few": "Zamówienie sfinalizowane jako {{count}} zamówienia, po jednym na sprzedawcę",
+          "completed_as_group_many": "Zamówienie sfinalizowane jako {{count}} zamówień, po jednym na sprzedawcę",
+          "completed_as_group_one": "Zamówienie sfinalizowane jako {{count}} zamówienie, po jednym na sprzedawcę",
+          "completed_as_group_other": "Zamówienie sfinalizowane jako {{count}} zamówień, po jednym na sprzedawcę",
           "confirmation_sent": "Potwierdzenie wysłane",
           "voided": "Płatność unieważniona"
         },

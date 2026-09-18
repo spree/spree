@@ -2871,6 +2871,8 @@
           "canceled": "Commande annulée",
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
+          "completed_as_group_one": "Commande finalisée en {{count}} commande, une par vendeur",
+          "completed_as_group_other": "Commande finalisée en {{count}} commandes, une par vendeur",
           "confirmation_sent": "Confirmation envoyée",
           "voided": "Paiement annulé"
         },

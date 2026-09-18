@@ -2863,6 +2863,8 @@
           "canceled": "订单已取消",
           "captured": "付款已收取",
           "completed": "订单已完成",
+          "completed_as_group_one": "订单已完成，拆分为 {{count}} 个订单，每个卖家一个",
+          "completed_as_group_other": "订单已完成，拆分为 {{count}} 个订单，每个卖家一个",
           "confirmation_sent": "确认信息已发送",
           "voided": "付款已作废"
         },

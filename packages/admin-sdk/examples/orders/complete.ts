@@ -1,4 +1,4 @@
-import { createAdminClient } from '@spree/admin-sdk'
+import { createAdminClient, isOrderGroup } from '@spree/admin-sdk'
 
 const client = createAdminClient({
   baseUrl: 'https://your-store.com',
@@ -6,10 +6,13 @@ const client = createAdminClient({
 })
 
 // region:example
-const order = await client.orders.complete('or_UkLWZg9DAJ', {
+const result = await client.orders.complete('or_UkLWZg9DAJ', {
   notify_customer: true,
 })
 
+// An order holding several sellers' goods becomes one order per seller.
+const orders = isOrderGroup(result) ? result.orders : [result]
+
 // endregion:example
 
-export { order }
+export { orders }

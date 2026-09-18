@@ -29,6 +29,9 @@ export { AdminClient } from './admin-client'
 export type { AdminClientConfig, Client } from './client'
 export { createAdminClient } from './client'
 
+// Narrows what completing an order answered with.
+export { isOrderGroup } from './order-group'
+
 // Param types (request bodies)
 export type * from './params'
 // Runtime helpers exported from params.ts alongside their related types.
