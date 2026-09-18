@@ -111,21 +111,31 @@ module Spree
       end
     end
 
-    # What the customer is owed for the items being returned.
-    def refund_total
-      return_line_items.sum(&:pre_tax_amount)
+    # Whether the warehouse has reported on this return.
+    #
+    # @return [Boolean]
+    def counted?
+      received? || refunded?
     end
 
-    # What a refund from this return paid for, line by line. Counts what the
-    # warehouse received rather than what the customer announced, so it agrees
-    # with the amount {Spree::Returns::Refund} works out for itself.
+    # What the customer is owed for the items being returned.
+    def refund_total
+      return_line_items.sum(&:refund_amount)
+    end
+
+    # What a refund from this return paid for, line by line. Only ever what
+    # the warehouse counted: the seller's clawback is built from this, and a
+    # line nobody counted earned nothing back.
     #
     # @return [Hash{Integer => BigDecimal}] line item id => amount
     def refunded_line_amounts
-      return_line_items.each_with_object(Hash.new(0)) do |line, amounts|
-        next if line.quantity.to_i.zero? || line.received_quantity.to_i.zero?
+      return {} unless counted?
 
-        amounts[line.line_item_id] += (line.pre_tax_amount / line.quantity) * line.received_quantity.to_i
+      return_line_items.each_with_object(Hash.new(0)) do |line, amounts|
+        amount = line.refund_amount
+        next if amount.zero?
+
+        amounts[line.line_item_id] += amount
       end
     end
 
