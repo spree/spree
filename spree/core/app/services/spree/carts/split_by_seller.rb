@@ -35,14 +35,15 @@ module Spree
         customer_note last_ip_address po_number
       ].freeze
 
-      # @param cart [Spree::Cart]
       # @param order [Spree::Order] the paid draft order, adopted as the
       #   group's first child rather than replaced — it is the record the
       #   payment was taken against
       # @param partitions [Array<Spree::Carts::SellerPartition>] ordered, first
       #   party first
+      # @param cart [Spree::Cart, nil] nil for an order raised from the admin,
+      #   which never had one
       # @return [Spree::ServiceModule::Result] value is the Spree::OrderGroup
-      def call(cart:, order:, partitions:)
+      def call(order:, partitions:, cart: nil)
         group = nil
         # Every apportionment here divides money in this one currency.
         @currency = order.currency
@@ -76,20 +77,23 @@ module Spree
       # keeps the reference they saw at checkout, and the children number off
       # it: R1001-1, R1001-2. The cart_id moves up too — the group is what that
       # cart completed into, and it becomes the replay anchor.
+      #
+      # The facts come off the order rather than the cart because the order
+      # carries every one of them and an admin-raised order has no cart; the
+      # cart is only linked, as the replay anchor, when there is one.
       def build_group(cart, order)
         order.update_columns(cart_id: nil)
 
-        group = cart.store.order_groups.create!(
+        order.store.order_groups.create!(
           cart: cart,
-          customer: cart.customer,
+          customer: order.customer,
           number: order.number,
-          currency: cart.currency,
-          email: cart.email,
-          token: cart.token,
-          ship_address: cart.ship_address&.snapshot,
-          bill_address: cart.bill_address&.snapshot
+          currency: order.currency,
+          email: order.email,
+          token: order.token,
+          ship_address: order.ship_address&.snapshot,
+          bill_address: order.bill_address&.snapshot
         )
-        group
       end
 
       # Files the paid order under the group as its first child. Its own

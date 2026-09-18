@@ -408,7 +408,6 @@ module Spree
       def finalize!(cart, order)
         @order = order
         step :split_by_seller
-        step :allocate_payment_splits
         step :complete_orders
         step :complete_cart
         step :mark_coupon_codes_used
@@ -430,33 +429,15 @@ module Spree
         return if order_group.present?
         return if order.placed?
 
-        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
-
-        if partitions.one?
-          # Nothing to divide, but the sale still belongs to whoever made it:
-          # a basket entirely from one seller is that seller's order, and the
-          # column is what their own order list reads.
-          order.update_columns(seller_id: partitions.first.seller_id) if order.seller_id != partitions.first.seller_id
-          return
-        end
-
-        return if partitions.empty?
-
-        result = Spree::Carts::SplitBySeller.call(cart: cart, order: order, partitions: partitions)
+        result = Spree::Orders::AttributeToSeller.call(order: order, cart: cart)
         failure(cart, code: 'split_failed', message: result.error) if result.failure?
+        return if result.value.nil?
 
         @order_group = result.value
         # Ordered, because which child comes first decides which one carries
         # the confirmation email — that must not depend on how the rows come
         # back.
         @order = order_group.orders.order(:id).first
-      end
-
-      def allocate_payment_splits
-        return if order_group.nil?
-
-        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
-        failure(cart, code: 'split_failed', message: result.error) if result.failure?
       end
 
       # Places what the checkout produced — the children of a split, or the one
@@ -475,7 +456,9 @@ module Spree
           result = Spree.order_complete_workflow.call(
             order: child,
             payment_pending: split,
-            notify_customer: split && !index.zero? ? false : nil
+            notify_customer: split && !index.zero? ? false : nil,
+            # split_by_seller above already filed this sale under its seller.
+            attribute_seller: false
           )
           failure(cart, code: 'completion_failed', message: result.error) if result.failure?
         end
