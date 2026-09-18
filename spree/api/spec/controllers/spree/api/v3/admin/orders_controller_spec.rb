@@ -950,6 +950,55 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(body['error']['message']).to eq('Order is canceled')
       end
     end
+
+    # An order holding several sellers' goods divides on completion, so the
+    # operator is answered with the purchase rather than one part of it.
+    context 'when the order divides between sellers' do
+      let(:seller) { create(:seller, :approved, store: store) }
+      let(:other_seller) { create(:seller, :approved, store: store) }
+      let!(:order) do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.each_with_index do |line_item, index|
+          assigned = index.zero? ? seller : other_seller
+          line_item.variant.update!(seller: assigned)
+          line_item.update_columns(seller_id: assigned.id)
+        end
+        draft.reload
+      end
+
+      it 'answers with the group and the orders it produced' do
+        patch :complete, params: { id: order.prefixed_id, payment_pending: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body['id']).to start_with('ogrp_')
+        expect(body['seller_count']).to eq(2)
+        expect(body['orders'].map { |child| child['seller_id'] }).to all(be_present)
+      end
+    end
+
+    context 'when the order holds one seller' do
+      let(:seller) { create(:seller, :approved, store: store) }
+      let!(:order) do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.each do |line_item|
+          line_item.variant.update!(seller: seller)
+          line_item.update_columns(seller_id: seller.id)
+        end
+        draft.reload
+      end
+
+      it 'answers with the order, carrying its seller' do
+        patch :complete, params: { id: order.prefixed_id, payment_pending: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body['id']).to eq(order.prefixed_id)
+        expect(body['seller_id']).to eq(seller.prefixed_id)
+      end
+    end
   end
 
   describe 'PATCH #cancel' do
