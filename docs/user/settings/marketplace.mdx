@@ -1,27 +1,50 @@
 ---
-title: "Payouts"
-description: "Set who pays your sellers, how often earnings are settled, and the minimum balance worth sending."
+title: "Marketplace"
+description: "Who pays your sellers and how often, whether new sellers and their products are reviewed, and the tax on your commission."
 ---
 
-The Payouts settings screen decides **how and when this marketplace pays its sellers**. It holds three settings and applies to every seller unless one carries its own schedule.
+The Marketplace settings screen holds the decisions that shape how your marketplace runs: **who gets to trade, what goes on sale, what sellers hear from you, and how they get paid.**
 
-To reach it, navigate to **Settings → Payouts**, under the **Marketplace** group.
+To reach it, navigate to **Settings → Marketplace**.
 
 ## What's on the screen
 
+### Payouts
+
 | Setting | What it does |
 |---|---|
-| **Paid through** | *"Who moves the money. Keeping your own books means you send the transfers yourself and mark each one paid."* Two choices: **Your own books** and **Stripe Connect**. |
-| **Settle sellers** | *"How often earnings are batched into a payment. A seller can carry their own schedule instead."* Five choices: **Daily**, **Weekly**, **Every two weeks**, **Monthly**, and **Only when you say so**. |
-| **Minimum payout** | *"Below this, a seller's balance carries to the next period rather than being sent. Zero pays whatever is owed."* A number. |
+| **Payout provider** | Who actually moves the money. Leave it unset and Spree keeps the books while you pay sellers yourself. |
+| **Settle sellers** | How often earnings are swept into a payout — daily, weekly, every two weeks, monthly, or only by hand. A seller can carry their own schedule, which wins. |
+| **Minimum payout** | What a seller's balance must reach before it is worth sending. Below it, the balance carries to the next period. |
 
-**Save** stays greyed out until you change something.
+### Seller admission
 
-<Note>**Stripe Connect** appears in the **Paid through** list but could not be selected on the build this page was written against. If you need it, check with your developers whether it is available on your edition and set up.</Note>
+| Setting | What it does |
+|---|---|
+| **Approve sellers automatically** | Let a seller start trading the moment they finish the onboarding checklist, with nobody reviewing them. |
+| **Approve seller products automatically** | Put a seller's product on sale as soon as they submit it, without review. |
+
+Both are off by default. What your marketplace lists is what it vouches for, so admitting sellers and listing their products are decisions worth making on purpose. Turn them on for an invite-only marketplace where you already know your sellers; leave them off for an open one.
+
+### Communication
+
+| Setting | What it does |
+|---|---|
+| **Send sellers transactional emails** | Whether Spree emails sellers about invitations, approvals and payouts. Turn it off if you send seller communications yourself. |
+
+### Commission tax
+
+| Setting | What it does |
+|---|---|
+| **Default commission tax rate** | The tax charged on your commission when nothing more specific applies. Entered as a percentage. |
+
+This is tax on **your service to the seller**, not on the goods the shopper bought — a separate supply, assessed against the seller's billing address.
+
+It is only a fallback. A commission rate carrying its own tax rate wins, and so does a connected tax service. Set it for the case where neither has an answer, so commission is never left untaxed by omission.
 
 ## How to set your payout terms
 
-1. Go to **Settings → Payouts**.
+1. Go to **Settings → Marketplace**.
 2. Choose **Paid through**. On **Your own books**, Spree tracks what each seller is owed and you send the transfers yourself, marking each one paid.
 3. Choose how often to **Settle sellers**. Pick **Only when you say so** if you would rather run each payout by hand.
 4. Set a **Minimum payout**, or leave it at zero to pay whatever is owed each period.
