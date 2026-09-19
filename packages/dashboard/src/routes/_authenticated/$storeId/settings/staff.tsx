@@ -668,11 +668,7 @@ function EditStaffSheet({
                 )}
               />
               <FieldError errors={[form.formState.errors.role_ids]} />
-              <Link
-                to="/$storeId/settings/roles"
-                params={{ storeId }}
-                className="text-xs text-muted-foreground underline-offset-4 hover:underline"
-              >
+              <Link to="/$storeId/settings/roles" params={{ storeId }} className="link text-xs">
                 {t('admin.roles.manage_roles_link')}
               </Link>
             </Field>

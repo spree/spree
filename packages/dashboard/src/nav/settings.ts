@@ -1,6 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
-  BanknoteIcon,
+  Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
@@ -248,16 +248,33 @@ settingsNav.add({
   subject: Subject.ReturnReason,
 })
 
+// Named "Settings" in the sidebar because it already sits under a Marketplace
+// header there; the breadcrumb has no such header, so it names the page in
+// full.
 settingsNav.add({
-  key: 'settings.payouts',
-  labelKey: 'admin.settings_nav.items.payouts',
-  descriptionKey: 'admin.settings_nav.descriptions.payouts',
-  keywords: ['marketplace', 'sellers', 'payouts', 'stripe', 'schedule'],
-  path: '/payouts',
-  icon: BanknoteIcon,
+  key: 'settings.marketplace',
+  labelKey: 'admin.settings_nav.items.marketplace',
+  breadcrumbLabelKey: 'admin.settings_nav.breadcrumbs.marketplace',
+  descriptionKey: 'admin.settings_nav.descriptions.marketplace',
+  keywords: [
+    'marketplace',
+    'sellers',
+    'approval',
+    'review',
+    'commission',
+    'vat',
+    'tax',
+    'emails',
+    'payouts',
+    'payout provider',
+    'schedule',
+    'minimum payout',
+  ],
+  path: '/marketplace',
+  icon: Building2Icon,
   group: 'marketplace',
   position: 100,
-  subject: Subject.SellerPayout,
+  subject: Subject.Seller,
 })
 
 settingsNav.add({
@@ -268,7 +285,7 @@ settingsNav.add({
   path: '/seller-requirements',
   icon: ClipboardCheckIcon,
   group: 'marketplace',
-  position: 300,
+  position: 200,
   subject: Subject.Seller,
 })
 

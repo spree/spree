@@ -2123,7 +2123,10 @@
           "minimum": {
             "label": "Minimum payout",
             "help": "Below this, a seller’s balance carries to the next period rather than being sent. Zero pays whatever is owed."
-          }
+          },
+          "provider_needs_connection": "Connect {{name}} to use it",
+          "provider_connect_hint": "{{name}} pays sellers through its payment method, which is not active on this store yet.",
+          "provider_connect_link": "Set it up in Payment methods"
         },
         "limit_digital_download_count": {
           "help": "Off means buyers can download as often as they like.",
@@ -2149,6 +2152,23 @@
         "preferred_default_package_weight": {
           "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
           "label": "Default package weight"
+        },
+        "auto_approve_sellers": {
+          "label": "Approve sellers automatically",
+          "help": "A seller starts trading as soon as they finish their checklist, without anyone reviewing them."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publish seller products automatically",
+          "help": "A seller’s product goes on sale the moment they submit it, without anyone reviewing it."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Email sellers",
+          "help": "Sends sellers transactional emails about approval, products and payouts. Turn this off if you write to your sellers yourself. Customer emails are unaffected."
+        },
+        "default_commission_tax_rate": {
+          "label": "Default tax on commission",
+          "help": "Charged on your commission when neither the commission rate nor your tax provider gives a rate of its own. Leave at 0 if you charge no tax on your fee.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -3972,12 +3992,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Payouts",
-          "subtitle": "How and when this marketplace pays its sellers."
-        },
         "package_types": {
           "add_sheet_title": "Add package type"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "How this marketplace pays its sellers, how sellers join it, what they hear from you, and the tax on your commission.",
+          "payouts_title": "Payouts",
+          "payouts_description": "How and when this marketplace pays its sellers. A seller can carry their own schedule and minimum instead.",
+          "admission_title": "Seller admission",
+          "admission_description": "Turning either of these on removes a human decision. Fine for an invite-only marketplace where you already know every seller; risky for one anyone can join.",
+          "communication_title": "Communication",
+          "commission_tax_title": "Commission tax"
         }
       },
       "staff": {
@@ -5014,9 +5040,9 @@
         "tax_categories": "Tax classes assigned to products",
         "tax_rates": "Rates applied per market and region",
         "webhooks": "Endpoints notified when events happen",
-        "payouts": "Who pays your sellers, how often, and the minimum worth sending",
         "package_types": "Boxes, cartons, pallets and containers",
-        "suppliers": "Who you buy stock from, and how to reach them"
+        "suppliers": "Who you buy stock from, and how to reach them",
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
       },
       "groups": {
         "audit": "Audit",
@@ -5052,9 +5078,12 @@
         "tax_categories": "Tax categories",
         "tax_rates": "Tax rates",
         "webhooks": "Webhooks",
-        "payouts": "Payouts",
         "package_types": "Package types",
-        "suppliers": "Suppliers"
+        "suppliers": "Suppliers",
+        "marketplace": "Settings"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {

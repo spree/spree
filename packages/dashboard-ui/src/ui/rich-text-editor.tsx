@@ -191,7 +191,7 @@ export function RichTextEditor({
         // in a form beside them without reading as a different kind of control.
         // `focus-within` rather than `focus`: the element that takes the caret
         // is Tiptap's inner contenteditable, not this wrapper.
-        'rounded-md border border-border bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'rounded-md border border-border shadow-xs bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
         disabled && 'pointer-events-none bg-muted text-muted-foreground shadow-none',
         className,
       )}
@@ -252,7 +252,7 @@ function EditorToolbar({
   return (
     <div
       data-slot="rich-text-editor-toolbar"
-      className="flex items-center gap-0.5 border-b border-border px-2 py-1.5"
+      className="flex items-center gap-0.5 border-b border-border-subtle px-2 py-1.5"
     >
       <ToolbarButton
         active={toolbar.isBold}

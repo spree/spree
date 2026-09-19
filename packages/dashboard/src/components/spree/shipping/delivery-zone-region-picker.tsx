@@ -199,11 +199,7 @@ export function DeliveryZoneRegionPicker({
         ))}
       </div>
 
-      <Link
-        to="/$storeId/settings/markets"
-        params={{ storeId }}
-        className="text-primary text-sm underline-offset-4 hover:underline"
-      >
+      <Link to="/$storeId/settings/markets" params={{ storeId }} className="link text-sm">
         {t('admin.delivery_zones.add_countries_in_markets')}
       </Link>
 
