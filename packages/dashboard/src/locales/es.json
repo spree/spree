@@ -658,7 +658,7 @@
         },
         "marketplace": {
           "title": "Marketplace",
-          "subtitle": "Cómo paga este marketplace a sus vendedores, cómo entran, qué reciben de ti y el impuesto sobre tu comisión.",
+          "subtitle": "Cómo paga este marketplace a sus vendedores, cómo entran, qué reciben de vos y el impuesto sobre tu comisión.",
           "payouts_title": "Pagos a vendedores",
           "payouts_description": "Cómo y cuándo paga este marketplace a sus vendedores. Un vendedor puede tener su propia frecuencia y su propio mínimo.",
           "admission_title": "Aprobación de vendedores",
@@ -2148,7 +2148,7 @@
         },
         "send_seller_transactional_emails": {
           "label": "Enviar correos a los vendedores",
-          "help": "Envía a los vendedores correos sobre aprobación, productos y pagos. Desactívalo si escribes tú mismo a tus vendedores. Los correos a clientes no cambian."
+          "help": "Envía a los vendedores correos sobre aprobación, productos y pagos. Desactivalo si les escribís vos mismo a tus vendedores. Los correos a clientes no cambian."
         },
         "default_commission_tax_rate": {
           "label": "Impuesto predeterminado sobre la comisión",

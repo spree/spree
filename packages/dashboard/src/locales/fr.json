@@ -3998,7 +3998,7 @@
         "marketplace": {
           "title": "Marketplace",
           "subtitle": "Comment cette marketplace paie ses vendeurs, comment les vendeurs la rejoignent, ce qu’ils reçoivent de vous et la taxe sur votre commission.",
-          "payouts_title": "Paiements",
+          "payouts_title": "Versements",
           "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
           "admission_title": "Validation des vendeurs",
           "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",

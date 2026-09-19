@@ -274,7 +274,10 @@ settingsNav.add({
   icon: Building2Icon,
   group: 'marketplace',
   position: 100,
-  subject: Subject.Seller,
+  // The form writes store preferences, so it needs the same permission as the
+  // other store settings pages — not Seller, which reads as "manages sellers".
+  subject: Subject.Store,
+  action: 'update',
 })
 
 settingsNav.add({
