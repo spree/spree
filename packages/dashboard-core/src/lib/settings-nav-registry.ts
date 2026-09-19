@@ -24,6 +24,16 @@ export interface SettingsNavEntry {
   /** i18n key passed to `t(...)` at render time. Takes precedence over `label`. */
   labelKey?: string
   /**
+   * What the breadcrumb calls this page, when the sidebar label alone would
+   * read badly there. The sidebar shows an entry beneath its group header, so
+   * it can be named relative to that header ("Settings" under Marketplace);
+   * the breadcrumb has no such header and would repeat itself. Falls back to
+   * the sidebar label when unset, which is the case for nearly every entry.
+   */
+  breadcrumbLabel?: string
+  /** i18n key for `breadcrumbLabel`, resolved at render. Takes precedence over it. */
+  breadcrumbLabelKey?: string
+  /**
    * One-line summary of what the page is for. Shown on the settings landing
    * page under the entry's label; the sidebar ignores it.
    */
@@ -164,6 +174,23 @@ function getSnapshot() {
 
 export function useSettingsNav() {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
+
+/**
+ * What the breadcrumb calls a settings entry: its own breadcrumb label when it
+ * declares one, otherwise the sidebar label.
+ *
+ * @param entry Entry from the settings nav registry.
+ * @param t Translation function used to resolve the key form.
+ * @returns The label to render in the trail.
+ */
+export function resolveSettingsBreadcrumbLabel(
+  entry: SettingsNavEntry,
+  t: (key: string) => string,
+): string {
+  if (entry.breadcrumbLabelKey) return t(entry.breadcrumbLabelKey)
+  if (entry.breadcrumbLabel) return entry.breadcrumbLabel
+  return resolveNavLabel(entry, t)
 }
 
 /**

@@ -2123,7 +2123,10 @@
           "minimum": {
             "label": "Mindestauszahlung",
             "help": "Darunter wird das Guthaben in die nächste Periode übertragen statt ausgezahlt. Null zahlt jeden offenen Betrag."
-          }
+          },
+          "provider_needs_connection": "Verbinden Sie {{name}}, um es zu nutzen",
+          "provider_connect_hint": "{{name}} zahlt Verkäufer über seine Zahlungsart aus, die in diesem Store noch nicht aktiv ist.",
+          "provider_connect_link": "Unter Zahlungsarten einrichten"
         },
         "limit_digital_download_count": {
           "help": "Aus bedeutet, dass Käufer beliebig oft herunterladen können.",
@@ -2149,6 +2152,23 @@
         "preferred_default_package_weight": {
           "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
           "label": "Standard-Paketgewicht"
+        },
+        "auto_approve_sellers": {
+          "label": "Verkäufer automatisch freigeben",
+          "help": "Ein Verkäufer verkauft, sobald er seine Checkliste erfüllt hat, ohne dass ihn jemand prüft."
+        },
+        "auto_approve_seller_products": {
+          "label": "Produkte von Verkäufern automatisch veröffentlichen",
+          "help": "Das Produkt eines Verkäufers ist sofort nach dem Einreichen im Verkauf, ohne dass es jemand prüft."
+        },
+        "send_seller_transactional_emails": {
+          "label": "E-Mails an Verkäufer senden",
+          "help": "Sendet Verkäufern E-Mails zu Freigabe, Produkten und Auszahlungen. Deaktivieren Sie dies, wenn Sie Ihre Verkäufer selbst anschreiben. E-Mails an Kunden bleiben davon unberührt."
+        },
+        "default_commission_tax_rate": {
+          "label": "Standardsteuer auf Provision",
+          "help": "Wird auf Ihre Provision berechnet, wenn weder der Provisionssatz noch Ihr Steueranbieter einen eigenen Satz nennt. Bei 0 belassen, wenn auf Ihre Gebühr keine Steuer anfällt.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -3972,12 +3992,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Auszahlungen",
-          "subtitle": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt."
-        },
         "package_types": {
           "add_sheet_title": "Verpackungsart hinzufügen"
+        },
+        "marketplace": {
+          "title": "Marktplatz",
+          "subtitle": "Wie dieser Marktplatz seine Verkäufer bezahlt, wie Verkäufer dazukommen, was sie von Ihnen hören und welche Steuer auf Ihre Provision anfällt.",
+          "payouts_title": "Auszahlungen",
+          "payouts_description": "Wie und wann dieser Marktplatz seine Verkäufer bezahlt. Ein Verkäufer kann stattdessen einen eigenen Rhythmus und Mindestbetrag haben.",
+          "admission_title": "Verkäuferfreigabe",
+          "admission_description": "Wenn Sie eine dieser Optionen aktivieren, entfällt eine menschliche Entscheidung. Für einen Marktplatz nur auf Einladung in Ordnung, für einen offenen riskant.",
+          "communication_title": "Kommunikation",
+          "commission_tax_title": "Steuer auf Provision"
         }
       },
       "staff": {
@@ -5014,9 +5040,9 @@
         "tax_categories": "Steuerklassen für Produkte",
         "tax_rates": "Sätze pro Markt und Region",
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
-        "payouts": "Wer Ihre Verkäufer bezahlt, wie oft und ab welchem Betrag",
         "package_types": "Kartons, Paletten und Container",
-        "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen"
+        "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
+        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision"
       },
       "groups": {
         "audit": "Audit",
@@ -5052,9 +5078,12 @@
         "tax_categories": "Steuerkategorien",
         "tax_rates": "Steuersätze",
         "webhooks": "Webhooks",
-        "payouts": "Auszahlungen",
         "package_types": "Verpackungsarten",
-        "suppliers": "Lieferanten"
+        "suppliers": "Lieferanten",
+        "marketplace": "Einstellungen"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marktplatz"
       }
     },
     "setup": {

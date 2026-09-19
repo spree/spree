@@ -653,12 +653,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Pagos",
-          "subtitle": "Cómo y cuándo este marketplace paga a sus vendedores."
-        },
         "package_types": {
           "add_sheet_title": "Agregar tipo de paquete"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Cómo paga este marketplace a sus vendedores, cómo entran, qué reciben de vos y el impuesto sobre tu comisión.",
+          "payouts_title": "Pagos a vendedores",
+          "payouts_description": "Cómo y cuándo paga este marketplace a sus vendedores. Un vendedor puede tener su propia frecuencia y su propio mínimo.",
+          "admission_title": "Aprobación de vendedores",
+          "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
+          "communication_title": "Comunicación",
+          "commission_tax_title": "Impuesto sobre la comisión"
         }
       },
       "staff": {
@@ -2102,7 +2108,10 @@
           "minimum": {
             "label": "Pago mínimo",
             "help": "Por debajo de esto, el saldo de un vendedor pasa al período siguiente en lugar de enviarse. Cero paga lo que se deba."
-          }
+          },
+          "provider_needs_connection": "Conectá {{name}} para usarlo",
+          "provider_connect_hint": "{{name}} le paga a los vendedores mediante su método de pago, que todavía no está activo en esta tienda.",
+          "provider_connect_link": "Configuralo en Métodos de pago"
         },
         "limit_digital_download_count": {
           "help": "Desactivado, los compradores pueden descargar las veces que quieran.",
@@ -2128,6 +2137,23 @@
         "preferred_default_package_weight": {
           "help": "Peso del empaque (caja y relleno) sumado al contenido de cada paquete al calcular las tarifas de entrega. Poniendo 0 lo deshabilitás.",
           "label": "Peso del paquete predeterminado"
+        },
+        "auto_approve_sellers": {
+          "label": "Aprobar vendedores automáticamente",
+          "help": "Un vendedor empieza a vender en cuanto completa su lista, sin que nadie lo revise."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publicar productos de vendedores automáticamente",
+          "help": "El producto de un vendedor sale a la venta en cuanto lo envía, sin que nadie lo revise."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Enviar correos a los vendedores",
+          "help": "Envía a los vendedores correos sobre aprobación, productos y pagos. Desactivalo si les escribís vos mismo a tus vendedores. Los correos a clientes no cambian."
+        },
+        "default_commission_tax_rate": {
+          "label": "Impuesto predeterminado sobre la comisión",
+          "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -4093,9 +4119,9 @@
         "tax_categories": "Clases de impuestos asignadas a los productos",
         "tax_rates": "Tasas aplicadas por mercado y región",
         "webhooks": "Endpoints notificados cuando ocurren eventos",
-        "payouts": "Quién les paga a tus vendedores, con qué frecuencia y el mínimo para enviar",
         "package_types": "Cajas, cajones, palets y contenedores",
-        "suppliers": "A quién le comprás stock y cómo contactarlos"
+        "suppliers": "A quién le comprás stock y cómo contactarlos",
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4131,9 +4157,12 @@
         "tax_categories": "Categorías de impuestos",
         "tax_rates": "Tasas de impuestos",
         "webhooks": "Webhooks",
-        "payouts": "Pagos a vendedores",
         "package_types": "Tipos de empaque",
-        "suppliers": "Proveedores"
+        "suppliers": "Proveedores",
+        "marketplace": "Configuración"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "reports": {

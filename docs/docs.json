@@ -33,6 +33,10 @@
   },
   "redirects": [
     {
+      "source": "/user/settings/payouts",
+      "destination": "/user/settings/marketplace"
+    },
+    {
       "source": "/user/orders/order-states",
       "destination": "/user/orders/order-statuses"
     },
@@ -1246,7 +1250,7 @@
                         "group": "Marketplace",
                         "icon": "handshake",
                         "pages": [
-                          "user/settings/payouts",
+                          "user/settings/marketplace",
                           "user/settings/seller-requirements"
                         ]
                       },

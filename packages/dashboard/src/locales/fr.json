@@ -2123,7 +2123,10 @@
           "minimum": {
             "label": "Paiement minimum",
             "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
-          }
+          },
+          "provider_needs_connection": "Connectez {{name}} pour l’utiliser",
+          "provider_connect_hint": "{{name}} paie les vendeurs via son moyen de paiement, qui n’est pas encore actif sur cette boutique.",
+          "provider_connect_link": "Configurez-le dans Moyens de paiement"
         },
         "limit_digital_download_count": {
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
@@ -2149,6 +2152,23 @@
         "preferred_default_package_weight": {
           "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
           "label": "Poids de colis par défaut"
+        },
+        "auto_approve_sellers": {
+          "label": "Valider les vendeurs automatiquement",
+          "help": "Un vendeur commence à vendre dès qu’il termine sa liste, sans que personne ne l’examine."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publier les produits des vendeurs automatiquement",
+          "help": "Le produit d’un vendeur est mis en vente dès qu’il le soumet, sans que personne ne l’examine."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Envoyer des e-mails aux vendeurs",
+          "help": "Envoie aux vendeurs les e-mails sur la validation, les produits et les paiements. Désactivez si vous écrivez vous-même à vos vendeurs. Les e-mails clients ne sont pas concernés."
+        },
+        "default_commission_tax_rate": {
+          "label": "Taxe par défaut sur la commission",
+          "help": "Appliquée à votre commission quand ni le taux de commission ni votre fournisseur de taxes n’indique son propre taux. Laissez 0 si votre commission n’est pas taxée.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -3972,12 +3992,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Paiements",
-          "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
-        },
         "package_types": {
           "add_sheet_title": "Ajouter un type d'emballage"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Comment cette marketplace paie ses vendeurs, comment les vendeurs la rejoignent, ce qu’ils reçoivent de vous et la taxe sur votre commission.",
+          "payouts_title": "Versements",
+          "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
+          "admission_title": "Validation des vendeurs",
+          "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
+          "communication_title": "Communication",
+          "commission_tax_title": "Taxe sur la commission"
         }
       },
       "staff": {
@@ -5014,9 +5040,9 @@
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
-        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant",
         "package_types": "Cartons, palettes et conteneurs",
-        "suppliers": "À qui vous achetez votre stock, et comment les joindre"
+        "suppliers": "À qui vous achetez votre stock, et comment les joindre",
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
       },
       "groups": {
         "audit": "Audit",
@@ -5052,9 +5078,12 @@
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks",
-        "payouts": "Paiements",
         "package_types": "Types d'emballage",
-        "suppliers": "Fournisseurs"
+        "suppliers": "Fournisseurs",
+        "marketplace": "Paramètres"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {

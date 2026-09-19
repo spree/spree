@@ -47,10 +47,7 @@ function ResetPasswordPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link
-              to="/forgot-password"
-              className="text-sm underline underline-offset-4 hover:text-primary"
-            >
+            <Link to="/forgot-password" className="link text-sm">
               {t('admin.auth.reset_password.request_new_link')}
             </Link>
           </CardContent>

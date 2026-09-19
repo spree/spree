@@ -2118,7 +2118,10 @@
           "minimum": {
             "label": "最低付款额",
             "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
-          }
+          },
+          "provider_needs_connection": "连接 {{name}} 后即可使用",
+          "provider_connect_hint": "{{name}} 通过其付款方式向卖家付款，而该付款方式尚未在本店启用。",
+          "provider_connect_link": "前往「付款方式」设置"
         },
         "limit_digital_download_count": {
           "help": "关闭后，买家可以不限次数下载。",
@@ -2144,6 +2147,23 @@
         "preferred_default_package_weight": {
           "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
           "label": "默认包裹重量"
+        },
+        "auto_approve_sellers": {
+          "label": "自动通过卖家审核",
+          "help": "卖家完成清单后立即开始销售，无需任何人审核。"
+        },
+        "auto_approve_seller_products": {
+          "label": "自动发布卖家商品",
+          "help": "卖家提交后商品立即上架销售，无需任何人审核。"
+        },
+        "send_seller_transactional_emails": {
+          "label": "向卖家发送邮件",
+          "help": "向卖家发送关于审核、商品和付款的邮件。如果你自行联系卖家，可以关闭。不影响发给顾客的邮件。"
+        },
+        "default_commission_tax_rate": {
+          "label": "佣金默认税率",
+          "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -3962,12 +3982,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "付款",
-          "subtitle": "本平台如何以及何时向卖家付款。"
-        },
         "package_types": {
           "add_sheet_title": "添加包装类型"
+        },
+        "marketplace": {
+          "title": "平台",
+          "subtitle": "本平台如何向卖家付款、卖家如何加入、会收到你的哪些通知，以及你的佣金要缴多少税。",
+          "payouts_title": "付款",
+          "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
+          "admission_title": "卖家审核",
+          "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "communication_title": "沟通",
+          "commission_tax_title": "佣金税"
         }
       },
       "staff": {
@@ -5003,9 +5029,9 @@
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
-        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额",
         "package_types": "纸箱、外箱、托盘与集装箱",
-        "suppliers": "你从谁那里采购库存，以及如何联系他们"
+        "suppliers": "你从谁那里采购库存，以及如何联系他们",
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
       },
       "groups": {
         "audit": "审计",
@@ -5041,9 +5067,12 @@
         "tax_categories": "税收类别",
         "tax_rates": "税率",
         "webhooks": "Webhooks",
-        "payouts": "付款",
         "package_types": "包装类型",
-        "suppliers": "供应商"
+        "suppliers": "供应商",
+        "marketplace": "设置"
+      },
+      "breadcrumbs": {
+        "marketplace": "平台"
       }
     },
     "setup": {

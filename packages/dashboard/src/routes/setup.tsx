@@ -292,7 +292,7 @@ function SetupUnavailable({ title, message }: { title: string; message: string }
       <h1 className="text-2xl font-bold">{title}</h1>
       <p className="text-sm text-muted-foreground">{message}</p>
       <p className="text-sm text-muted-foreground">
-        <Link to="/login" className="underline underline-offset-4">
+        <Link to="/login" className="link">
           {t('admin.setup.back_to_login')}
         </Link>
       </p>
