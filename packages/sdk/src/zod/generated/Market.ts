@@ -10,6 +10,7 @@ export const MarketSchema: z.ZodObject<any> = z.object({
   tax_inclusive: z.boolean(),
   default: z.boolean(),
   country_codes: z.array(z.string()),
+  country_isos: z.array(z.string()),
   supported_locales: z.array(z.string()),
   countries: z.array(z.lazy(() => CountrySchema)).optional(),
 });
