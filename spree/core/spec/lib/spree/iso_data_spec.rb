@@ -46,6 +46,16 @@ RSpec.describe Spree::IsoData do
       expect(described_class.subdivisions('HK')).to be_empty
     end
 
+    # The gem ships some subdivision names as locale-tagged placeholders
+    # ("Sind (en)") instead of a real name; the clean name is its translation.
+    it 'cleans up names the gem left as locale-tagged placeholders' do
+      subdivisions = described_class.subdivisions('PK')
+
+      expect(subdivisions['SD']).to eq('Sindh')
+      expect(subdivisions['BA']).to eq('Balochistan')
+      expect(subdivisions.values.join(', ')).not_to include('(en)')
+    end
+
     # The gem keys subdivision translations by symbol, unlike country
     # translations, so a string lookup silently falls back to English.
     context 'when the locale has subdivision translations' do
@@ -83,6 +93,14 @@ RSpec.describe Spree::IsoData do
     it 'accepts a subdivision name' do
       expect(described_class.subdivision_code('US', 'California')).to eq('CA')
       expect(described_class.subdivision_code('US', 'california')).to eq('CA')
+    end
+
+    # Regression: the gem's placeholder name for Pakistan's Sindh ("Sind (en)")
+    # used to shadow the real one, so the correct spelling matched nothing.
+    it 'resolves a name the gem shipped as a locale-tagged placeholder' do
+      expect(described_class.subdivision_code('PK', 'Sindh')).to eq('SD')
+      expect(described_class.subdivision_code('PK', 'sindh')).to eq('SD')
+      expect(described_class.subdivision_code('PK', 'Balochistan')).to eq('BA')
     end
 
     it 'returns nil when nothing matches' do

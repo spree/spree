@@ -226,8 +226,11 @@ export function AddressFormDialog({
   }, [address?.country_code, storeDefaultCountryCode, form])
 
   const countryCode = form.watch('country_code')
-  const { states, statesRequired } = useCountryStates(countryCode)
-  const useStateCombobox = statesRequired && states.length > 0
+  const { states } = useCountryStates(countryCode)
+  // Show the dropdown whenever the country enumerates subdivisions, not only
+  // when it strictly requires one — so a country like Pakistan still lets the
+  // user pick a province instead of typing a name that may not match.
+  const useStateCombobox = states.length > 0
 
   async function onSubmit(values: AddressFormValues) {
     try {
