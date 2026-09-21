@@ -56,6 +56,7 @@ module Spree
               numericality: { only_integer: true, greater_than: 0 }
     validate :break_requires_price_list
     validate :breaks_within_cap
+    validate :ladder_does_not_rise
 
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
@@ -229,6 +230,31 @@ module Spree
       variant&.product&.store
     end
 
+    # The first rung of `[[quantity, amount], ...]` costing more than the
+    # quantity below it buys — the rung beneath, or `floor` for a ladder
+    # starting above one unit. Returned as `[quantity, amount, floor]`.
+    #
+    # @param ladder [Array<Array>] rungs by quantity
+    # @param floor [BigDecimal, nil]
+    # @return [Array, nil]
+    def self.rising_rung(ladder, floor)
+      bottom_quantity, bottom_amount = ladder.first
+      return if bottom_quantity.nil?
+
+      # The bottom rung answers to the floor, and is checked first so the rung
+      # named is the first breach reading upward — a merchant who fixes what
+      # they are told to fix should not meet a second error beneath it.
+      if bottom_quantity != 1 && floor.present? && bottom_amount > floor
+        return [bottom_quantity, bottom_amount, floor]
+      end
+
+      ladder.each_cons(2) do |(_, below), (quantity, amount)|
+        return [quantity, amount, below] if amount > below
+      end
+
+      nil
+    end
+
     # Whether this row is a quantity break rather than the list's ordinary
     # price for the variant.
     # @return [Boolean]
@@ -266,6 +292,54 @@ module Spree
       return if siblings.count < MAXIMUM_BREAKS_PER_VARIANT
 
       errors.add(:min_quantity, :too_many_breaks, count: MAXIMUM_BREAKS_PER_VARIANT)
+    end
+
+    # A break promises a better price for a bigger order, so no rung may cost
+    # more than the quantity below it buys. Judged over the ladder this save
+    # would leave behind rather than this row alone: lowering one rung strands
+    # every rung above it, and a base price is the floor each ladder falls
+    # through to. The bulk path judges the same way; this covers the
+    # single-row writers, as the break cap is covered on both
+    # (docs/plans/6.0-volume-pricing.md).
+    def ladder_does_not_rise
+      return if amount.nil? || variant_id.blank? || currency.blank?
+      return unless new_record? || will_save_change_to_attribute?(:amount) || will_save_change_to_attribute?(:min_quantity)
+
+      breach = affected_ladders.lazy.filter_map { |list_id, floor| self.class.rising_rung(resulting_ladder(list_id), floor) }.first
+      return if breach.nil?
+
+      errors.add(:amount, :leaves_a_rising_ladder,
+                 quantity: breach[0],
+                 amount: Spree::Money.new(breach[1], currency: currency),
+                 floor: Spree::Money.new(breach[2], currency: currency))
+    end
+
+    # The ladders this row can disturb, each with the floor it falls through
+    # to: its own list for a break, and every ladder the variant carries for a
+    # base price, since that is the floor they all read.
+    #
+    # @return [Array<Array>] `[[price_list_id, floor], ...]`
+    def affected_ladders
+      if price_list_id.present?
+        base = self.class.base_prices.where(variant_id: variant_id, currency: currency).
+               where.not(amount: nil).pick(:amount)
+        return [[price_list_id, base]]
+      end
+
+      self.class.where(variant_id: variant_id, currency: currency).
+        where.not(price_list_id: nil).where.not(amount: nil).
+        distinct.pluck(:price_list_id).map { |list_id| [list_id, amount] }
+    end
+
+    # One list's rungs as this save would leave them, by quantity.
+    #
+    # @return [Array<Array>] `[[quantity, amount], ...]`
+    def resulting_ladder(list_id)
+      rows = self.class.where(variant_id: variant_id, currency: currency, price_list_id: list_id).where.not(amount: nil)
+      rows = rows.where.not(id: id) if persisted?
+      rungs = rows.pluck(:min_quantity, :amount).to_h
+      rungs[min_quantity] = amount if price_list_id == list_id
+      rungs.sort_by(&:first)
     end
 
     def should_record_price_history?

@@ -154,6 +154,12 @@ module Spree
             Spree.t(:price_list_import_too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
           elsif value[:invalid_quantities].present?
             Spree.t(:price_list_import_invalid_quantity, value: attributes['min_quantity'])
+          elsif (rising = value[:rising_ladders].presence)
+            # Named rung and floor, like the sibling branches: a file is written
+            # one rung per row, so the merchant needs to know which one and what
+            # it had to beat.
+            Spree.t(:price_list_import_price_rises_with_quantity,
+                    quantity: rising.first[:min_quantity], floor: rising.first[:floor])
           else
             result.error.to_s.presence || Spree.t(:price_list_import_failed)
           end
