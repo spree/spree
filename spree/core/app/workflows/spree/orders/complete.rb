@@ -18,12 +18,9 @@ module Spree
       #   rollup work's call (docs/plans/6.0-b2b-wholesale-shipping.md phase 7)
       # @param notify_customer [Boolean, nil] admin drafts pass false to
       #   complete silently; nil (checkout) leaves customer notification on
-      # @param attribute_seller [Boolean] false when the caller has already
-      #   filed the sale under its seller — the checkout does it before placing
-      #   its children, and partitioning again would re-read every line item
       # @return [Spree::ServiceModule::Result] value is the order, or the
       #   Spree::OrderGroup when it divided between sellers
-      def perform(order:, payment_pending: false, notify_customer: nil, attribute_seller: true)
+      def perform(order:, payment_pending: false, notify_customer: nil)
         super
 
         order.notify_customer = notify_customer unless notify_customer.nil?
@@ -75,22 +72,50 @@ module Spree
         failure(order, Spree.t(:payment_processing_failed)) unless payment_covered?
       end
 
+      # Files the sale under whoever made it, dividing the order into one per
+      # seller when it holds several sellers' goods.
+      #
+      # Here because this is the one home both entry points share. Commission
+      # is charged from the line item's seller while the ledger credits the
+      # order's, so an order that skipped this — as one raised from the admin
+      # used to — is charged for and credited to nobody.
+      #
       # Runs after payment so the money is settled once against the whole
-      # basket, as the checkout does it, and before placement so each seller's
-      # order is placed in its own right.
+      # basket, and before placement so each seller's order is placed in its
+      # own right.
       def split_by_seller
-        return unless attribute_seller
-        # A checkout child arrives already divided.
+        # A sibling arrives already divided.
         return if order.order_group_id.present?
 
-        result = Spree::Orders::AttributeToSeller.call(order: order)
+        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
+        return if partitions.empty?
+        return stamp_seller(partitions.first.seller_id) if partitions.one?
+
+        # The cart travels with it: the group becomes what that cart completed
+        # into, and the row carrying its id is the replay anchor.
+        result = Spree::Carts::SplitBySeller.call(order: order, partitions: partitions, cart: order.cart)
         failure(order, result.error) if result.failure?
 
         # The division adopts this very order as the group's first child and
-        # reloads it, so it is already narrowed to its own seller's rows — and
-        # it stays the row this workflow locked, and the object carrying the
-        # caller's notify_customer, which a freshly loaded one would not.
+        # reloads it, so it stays the row this workflow locked and the object
+        # carrying the caller's notify_customer, which a freshly loaded one
+        # would not.
         @order_group = result.value
+        step :allocate_payment_splits
+      end
+
+      # Nothing to divide, but the sale still belongs to whoever made it: an
+      # order entirely from one seller is that seller's, and the column is what
+      # their own order list reads.
+      def stamp_seller(seller_id)
+        return if order.seller_id == seller_id
+
+        order.update_columns(seller_id: seller_id, updated_at: Time.current)
+      end
+
+      def allocate_payment_splits
+        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
+        failure(order, result.error) if result.failure?
       end
 
       # Typed adjustment rows are frozen once completed — the totals
@@ -211,6 +236,11 @@ module Spree
         return if pending.empty?
 
         pending.each { |sibling| place_sibling(sibling) }
+
+        # The division loaded these children before placing them, and the rows
+        # just placed are not those objects — anything reading the group now
+        # would see drafts that no longer exist.
+        order_group.orders.reset
 
         order_group.publish_event('order_group.completed')
       end
