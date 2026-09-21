@@ -332,6 +332,21 @@ module Spree
         expect(stranded.reload.status).to eq('placed')
       end
 
+      # Nothing retries a webhook that was never published.
+      it 'announces the group on a replay that had nothing left to place', :events do
+        draft = draft_for(seller, other_seller)
+        described_class.call(order: draft, payment_pending: true)
+
+        announced = 0
+        allow_any_instance_of(Spree::OrderGroup).to receive(:publish_event) do |_, name, *|
+          announced += 1 if name == 'order_group.completed'
+        end
+
+        described_class.call(order: draft.reload, payment_pending: true)
+
+        expect(announced).to eq(1)
+      end
+
       it 'divides once when the completion is replayed' do
         draft = draft_for(seller, other_seller)
         described_class.call(order: draft, payment_pending: true)

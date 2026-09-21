@@ -233,14 +233,14 @@ module Spree
         return if order_group.nil?
 
         pending = order_group.orders.where.not(id: order.id).where(status: 'draft').order(:id)
-        return if pending.empty?
-
         pending.each { |sibling| place_sibling(sibling) }
 
         # The division loaded these children before placing them, and the rows
         # just placed are not those objects — anything reading the group now
         # would see drafts that no longer exist.
         order_group.orders.reset
+
+        return unless order_group.orders.all?(&:placed?)
 
         order_group.publish_event('order_group.completed')
       end
