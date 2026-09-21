@@ -2756,6 +2756,8 @@
           "cancel_shipment_message": "取消此履约单吗？",
           "capture_message": "捕获此付款吗？",
           "complete_message": "现在完成此草稿订单吗？",
+          "delete_message": "删除订单草稿 {{number}}？此操作无法撤销。",
+          "delete_title": "删除订单草稿？",
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
           "remove_store_credit_message": "从订单中移除商店积分吗？",
@@ -2783,7 +2785,8 @@
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
           "complete_failed": "完成订单失败",
-          "confirmation_send_failed": "发送确认失败"
+          "confirmation_send_failed": "发送确认失败",
+          "delete_failed": "删除订单失败"
         },
         "fulfillments": {
           "add_delivery": "添加运单号",
@@ -2884,6 +2887,7 @@
           "captured": "付款已收取",
           "completed": "订单已完成",
           "confirmation_sent": "确认信息已发送",
+          "deleted": "订单草稿已删除",
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",

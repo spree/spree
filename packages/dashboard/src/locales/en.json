@@ -2763,6 +2763,8 @@
           "cancel_shipment_message": "Cancel this fulfillment?",
           "capture_message": "Capture this payment?",
           "complete_message": "Complete this draft order now?",
+          "delete_message": "Delete draft order {{number}}? This cannot be undone.",
+          "delete_title": "Delete draft order?",
           "remove_gift_card_message": "Remove this gift card from the order?",
           "remove_item_message": "Remove this item from the order?",
           "remove_store_credit_message": "Remove store credit from the order?",
@@ -2790,7 +2792,8 @@
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
           "complete_failed": "Failed to complete order",
-          "confirmation_send_failed": "Failed to send confirmation"
+          "confirmation_send_failed": "Failed to send confirmation",
+          "delete_failed": "Failed to delete order"
         },
         "fulfillments": {
           "add_delivery": "Add tracking",
@@ -2892,6 +2895,7 @@
           "captured": "Payment captured",
           "completed": "Order completed",
           "confirmation_sent": "Confirmation sent",
+          "deleted": "Draft order deleted",
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",

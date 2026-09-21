@@ -2763,6 +2763,8 @@
           "cancel_shipment_message": "Annuler cet envoi ?",
           "capture_message": "Capturer ce paiement ?",
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
+          "delete_message": "Supprimer la commande brouillon {{number}} ? Cette action est irréversible.",
+          "delete_title": "Supprimer la commande brouillon ?",
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
           "remove_store_credit_message": "Retirer l'avoir de la commande ?",
@@ -2790,7 +2792,8 @@
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
           "complete_failed": "Échec de la finalisation de la commande",
-          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation",
+          "delete_failed": "Échec de la suppression de la commande"
         },
         "fulfillments": {
           "add_delivery": "Ajouter un suivi",
@@ -2892,6 +2895,7 @@
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
           "confirmation_sent": "Confirmation envoyée",
+          "deleted": "Commande brouillon supprimée",
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",

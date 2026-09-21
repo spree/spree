@@ -2503,6 +2503,8 @@
           "cancel_shipment_message": "¿Cancelar este cumplimiento?",
           "capture_message": "¿Capturar este pago?",
           "complete_message": "¿Completar este pedido borrador ahora?",
+          "delete_message": "¿Eliminar el pedido borrador {{number}}? Esta acción no se puede deshacer.",
+          "delete_title": "¿Eliminar el pedido borrador?",
           "remove_gift_card_message": "¿Quitar esta tarjeta de regalo del pedido?",
           "remove_item_message": "¿Quitar este artículo del pedido?",
           "remove_store_credit_message": "¿Quitar el crédito de tienda del pedido?",
@@ -2530,7 +2532,8 @@
           "approve_failed": "No se pudo aprobar el pedido",
           "cancel_failed": "No se pudo cancelar el pedido",
           "complete_failed": "No se pudo completar el pedido",
-          "confirmation_send_failed": "No se pudo enviar la confirmación"
+          "confirmation_send_failed": "No se pudo enviar la confirmación",
+          "delete_failed": "No se pudo eliminar el pedido"
         },
         "fulfillments": {
           "add_delivery": "Agregar seguimiento",
@@ -2632,6 +2635,7 @@
           "captured": "Pago capturado",
           "completed": "Pedido completado",
           "confirmation_sent": "Confirmación enviada",
+          "deleted": "Pedido borrador eliminado",
           "voided": "Pago anulado"
         },
         "no_customer": "Sin información del cliente",

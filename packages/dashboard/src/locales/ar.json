@@ -2781,6 +2781,8 @@
           "cancel_shipment_message": "إلغاء هذا الوفاء؟",
           "capture_message": "القبض على هذه الدفعة؟",
           "complete_message": "هل تريد إكمال مسودة الطلب هذه الآن؟",
+          "delete_message": "حذف مسودة الطلب {{number}}؟ لا يمكن التراجع عن هذا الإجراء.",
+          "delete_title": "حذف مسودة الطلب؟",
           "remove_gift_card_message": "هل تريد إزالة بطاقة الهدايا هذه من الطلب؟",
           "remove_item_message": "هل تريد إزالة هذا العنصر من الطلب؟",
           "remove_store_credit_message": "هل تريد إزالة رصيد المتجر من الطلب؟",
@@ -2808,7 +2810,8 @@
           "approve_failed": "فشلت الموافقة على الطلب",
           "cancel_failed": "فشل في إلغاء الطلب",
           "complete_failed": "فشل في إكمال الطلب",
-          "confirmation_send_failed": "فشل في إرسال التأكيد"
+          "confirmation_send_failed": "فشل في إرسال التأكيد",
+          "delete_failed": "فشل في حذف الطلب"
         },
         "fulfillments": {
           "add_delivery": "إضافة رقم تتبع",
@@ -2909,6 +2912,7 @@
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
           "confirmation_sent": "تم إرسال التأكيد",
+          "deleted": "تم حذف مسودة الطلب",
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",

@@ -2787,6 +2787,8 @@
           "cancel_shipment_message": "Anulować tę realizację?",
           "capture_message": "Pobrać tę płatność?",
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
+          "delete_message": "Usunąć roboczą wersję zamówienia {{number}}? Tej operacji nie można cofnąć.",
+          "delete_title": "Usunąć roboczą wersję zamówienia?",
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
           "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
@@ -2814,7 +2816,8 @@
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
           "complete_failed": "Nie udało się sfinalizować zamówienia",
-          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
+          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
+          "delete_failed": "Nie udało się usunąć zamówienia"
         },
         "fulfillments": {
           "add_delivery": "Dodaj numer przesyłki",
@@ -2918,6 +2921,7 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
+          "deleted": "Robocza wersja zamówienia została usunięta",
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
