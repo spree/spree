@@ -2631,6 +2631,8 @@
           "canceled": "Pedido cancelado",
           "captured": "Pago capturado",
           "completed": "Pedido completado",
+          "completed_as_group_one": "Pedido completado como 1 pedido, uno por vendedor",
+          "completed_as_group_other": "Pedido completado como {{count}} pedidos, uno por vendedor",
           "confirmation_sent": "Confirmación enviada",
           "voided": "Pago anulado"
         },
