@@ -461,23 +461,25 @@ function UnitField({
       <Controller
         control={form.control}
         name={name}
-        render={({ field }) => {
-          const options = units.map((unit) => ({ value: unit, label: unit }))
-          return (
-            <Select items={options} value={field.value ?? ''} onValueChange={field.onChange}>
-              <SelectTrigger id={`package-type-${name}`}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )
-        }}
+        render={({ field }) => (
+          <Select
+            value={field.value ?? ''}
+            onValueChange={(value) => field.onChange(value || undefined)}
+          >
+            <SelectTrigger id={`package-type-${name}`}>
+              {/* Nothing picked reads as an em dash rather than a blank
+                  trigger, the way the variant editor's units do. */}
+              <SelectValue>{(value) => (value as string) || '—'}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {units.map((unit) => (
+                <SelectItem key={unit} value={unit}>
+                  {unit}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       />
     </Field>
   )

@@ -201,6 +201,12 @@ they know. A box with no dimensions still contributes its weight; a box with
 nothing measured contributes nothing, and dimensional pricing has nothing to
 work from.
 
+`dimensions_unit` and `weight_unit` are optional too. A row that names neither
+is read in whatever the store's own units are, so a store trading in inches and
+pounds reads inches and pounds. A row that names them keeps them, which is how
+one store can mix units — a carton measured in centimetres sits beside a pallet
+measured in feet. Variant dimensions work the same way.
+
 <Note>
 Deleting the default box is refused, and so is switching its flag off when
 nothing else would take it. Both would leave quotes with no size and no tare,
