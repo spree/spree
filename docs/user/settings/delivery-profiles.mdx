@@ -1,105 +1,180 @@
 ---
 title: "Delivery Profiles"
-description: "Learn how to set up delivery profiles in Spree Commerce — the origins, zones and delivery methods that decide what a customer is offered at checkout."
+description: "Learn how to set up delivery profiles in Spree Commerce, the origins, zones and delivery methods that decide what a customer is offered at checkout."
 ---
 
-If you want to run a successful online business, having shipping methods in place is essential. These methods appear at checkout, representing the carriers and services used to deliver your products to customers.
+A delivery profile is a set of rules for how a group of products ships. It holds the warehouses those products ship from, the places they can be sent to, and the delivery methods offered for each of those places. Every product ships on a profile, so the deliver methods a customer sees at checkout are dependant on which profile their address and the products in their cart qualify for.
 
-<Warning>If you don’t set up at least one shipping method for each region you sell to, customers in those regions won’t be able to complete their checkout.</Warning>
+Most stores need more than one. Bulky furniture does not ship like a pair of shoes, and a download does not ship at all. Rather than setting rules product by product, you build a profile for each kind of goods and point products at it.
 
-To set up shipping methods, navigate to **Settings → Shipping** in the Spree dashboard.
+To manage delivery profiles, navigate to **Settings → Delivery profiles**, under the **Shipping & delivery** group.
 
-![Shipping section of the Spree dashboard](/docs/images/user/settings/shipping/1-shipping-methods.png)
+## Reviewing Your Delivery Profiles
 
-## Add a New Shipping Method
+![The Delivery profiles list, showing each profile's capabilities, origins, and how many products, zones and methods it carries](/docs/images/user/settings/delivery-profiles/1-profiles-overview.png)
 
-To add a new shipping method, click **New Shipping Method** in the top right corner. This will open the shipping method creation form.
+Each row shows:
 
-![Adding a new shipping method in Spree](/docs/images/user/settings/shipping/2-new-shipping-method.png)
+- **Name** - What the profile is called. One profile carries a **Default** badge.
+- **Capabilities** - What this profile can do: **Ships**, **Pickup**, **Digital**, or a combination.
+- **Ships from** - How many stock locations its goods leave from, or **All locations**.
+- **Products** - How many products are assigned to it.
+- **Zones** - How many destination zones it covers.
+- **Methods** - How many delivery methods it offers in total.
 
-This page is divided into seven distinct sections, so let’s take a look at each individually:
+<Note>The **Products** count is read-only. A product is assigned to a profile from the product page, not from the delivery profile.</Note>
 
-### Presentation
+## How to Create a Delivery Profile
 
-![Spree shipping methods presentation settings](/docs/images/user/settings/shipping/3-shipping-method-presentation.png)
+Click **Add profile** to open the delivery profile creation form.
 
-Here you can set a descriptive name for the shipping method (e.g., UPS Standard, FedEx Next Day), and choose where it should be displayed.
+![The new delivery profile form, with name, kind and origin options](/docs/images/user/settings/delivery-profiles/2-new-profile.png)
 
-<Warning>Make sure the **Display on** setting includes **storefront** if you want customers to see this shipping method on the checkout.</Warning>
+- **Name** - Name it after the kind of goods it covers, such as Bulky Items or Digital, rather than after a carrier.
+- **Kind** - **Shipping** for physical goods, or **Digital** for downloads. This decides which fulfillment providers the profile's methods can use.
+- **Origins** - **All locations**, or **Selected locations** to name the warehouses these goods ship from.
 
-### Tracking URL
+Click **Create profile**, then open it to add zones and methods. That is where the real work is.
 
-![Spree shipping method tracking url](/docs/images/user/settings/shipping/4-tracking-url.png)
+<Warning>The **Kind** cannot be changed after the profile is created. If you pick the wrong one, you will need to create a new profile and reassign its products.</Warning>
 
-Here you can add the tracking URL format for the shipping carrier that’s associated with the shipping method, e.g.:
+## Inside a Profile
 
-- [<u>https://www.fedex.com/wtrk/track/?trknbr=:tracking</u>](https://www.fedex.com/wtrk/track/?trknbr=:tracking)
-- [<u>https://www.ups.com/track?loc=en_US&tracknum=:tracking</u>](https://www.ups.com/track?loc=en_US&tracknum=:tracking)
-- [<u>https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking</u>](https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking)
+A delivery profile is built in three layers: the **origin** the goods leave from, the **zones** that origin can reach, and the **delivery methods** offered within each zone.
 
-This way, you can simply enter the tracking number when fulfilling an order that’s using the associated shipping method, and the customer will receive the correct tracking link for their order.
+![A delivery profile showing origin groups, the zones beneath them, and the methods in each zone](/docs/images/user/settings/delivery-profiles/3-profile-editor.png)
 
-<Warning>Make sure to verify the tracking link format for each shipping carrier you plan on using and test them before going live.</Warning>
+Two panels on the right side of the page control the profile itself:
 
-### Zones
+- **General** - The profile's **Name**, its **Kind** (fixed at creation), and a **Default** switch. The default profile is what products without a profile of their own ship on.
+- **Ships from** - **All locations**, or a tick box per stock location.
 
-![Set shipping zones in Spree Commerce](/docs/images/user/settings/shipping/5-shipping-method-zones.png)
+### Shipping from more than one warehouse
 
-Not all shipping methods should be available in every region - especially if you serve customers across multiple countries or continents. Zones allow you to define regional availability for each shipping method.
+If goods leave from several warehouses and the rates differ, click **Split shipping origins**. This breaks the profile into origin groups, each with its own zones and methods, so stock leaving Amsterdam can be priced differently from the same goods leaving California.
 
-Simply select the appropriate Zone(s) to ensure the method only appears for customers in those regions. This helps you prevent invalid shipping options and tailor your delivery strategy to each market.
+If rates are the same wherever goods ship from, leave it unsplit.
 
-<Note>Customers will only see shipping methods that apply to their delivery address based on the assigned Zones.</Note>
+## How to Add a Delivery Zone
 
-### Shipping Categories
+A zone is a set of destinations a method can be offered to. Click **Add delivery zone** within the origin group it belongs to.
 
-![Choose shipping categories in Spree Commerce](/docs/images/user/settings/shipping/6-shipping-categories.png)
+![The zone editor, listing the countries a zone covers](/docs/images/user/settings/delivery-profiles/4-add-zone.png)
 
-Shipping Categories are especially useful when your store includes products with very different delivery needs. For example:
+Name the zone after the region it covers, then choose the countries in it. A zone can hold one country or two hundred, so a single **International** zone is often easier to maintain than one zone per country.
 
-- Assigning a “Digital” category to non-physical products ensures they skip the shipping step during checkout.
-- Creating a “Heavy” category for large or heavy items allows you to limit specific shipping methods to those products.
+<Note>Every profile has a default **No zone restriction** container. Methods placed inside it are offered wherever the profile reaches, regardless of destination.</Note>
 
-### Tax Category
+<Warning>A customer whose address falls outside of every configured delivery zone will have no delivery method to choose from and be unable to complete checkout. Make sure each deivery profile covers every location you plan to sell to.</Warning>
 
-![Set a shipping method tax category in Spree](/docs/images/user/settings/shipping/7-tax-category.png)
+### Postal code rules
 
-Use this setting to assign a Tax Category to the shipping method. This determines how taxes are applied to shipping charges at checkout.
+For finer control, add postal code rules within a country. This is how you separate destinations that cost more to reach, such as pricing the Scottish Highlands differently from the rest of the United Kingdom, or excluding offshore postcodes from a next-day service.
 
-Different types of products may be subject to different tax rules, and assigning a tax category here ensures that shipping is taxed appropriately based on the contents of the order.
+Each rule offers three fields:
 
-For example:
+- **Prefix** - Matches any postal code starting with what you enter, so `IV` covers every code in the Scottish Highlands. Works with every postal code format.
+- **From** and **To** - Matches a range of postal codes, and the range includes both ends. `1000` to `1999` covers `1000` and `1999` as well as everything between them.
 
-- In some regions, digital goods may be exempt from shipping tax, while physical goods are not.
-- Shipping charges related to tax-exempt products might also need to be excluded from tax calculations entirely.
+<Warning>**Prefix** and the **From** / **To** range are alternatives, not companions. Set one or the other on a rule, never both. A rule carrying both is rejected.</Warning>
 
-Assigning the correct tax category helps you stay compliant with local tax regulations and ensures customers are charged accurately.
+Which you use depends on the country. **From** and **To** only work with numeric postal codes, such as the Netherlands or the United States, so a country with letters in its postcal code format has to use **Prefix**. Prefix, on the otherhand, works everywhere.
 
-### Calculator
+## How to Add a Delivery Method
 
-![Choosing a shipping calculator in Spree](/docs/images/user/settings/shipping/8-shipping-calculator.png)
+A delivery method is what the customer actually chooses at checkout. Click **Add method** inside the zone it should belong to.
 
-This section determines how the shipping cost will be calculated for this method. Spree offers several calculator types to support different pricing strategies:
+![The new delivery method panel, showing providers, calculator and conditions](/docs/images/user/settings/delivery-profiles/5-new-method.png)
 
-- **Flat Percent** - charges a percentage of the order total as the shipping cost.
-- **Flat Rate** - charges a fixed shipping amount, regardless of order size or value.
-- **Flexible Rate per package item** - charges a base rate plus an additional amount for each item in the package (ideal for variable-size orders).
-- **Flat Rate per package item** - Applies the same fixed fee to every item in the shipment.
-- **Price Sack** - offers tiered pricing based on the total order value (e.g., \$5 for orders under \$50, free over \$100).
-- **Digital Delivery** - used for digital products that don’t require physical shipping (typically results in no shipping cost).
+Within the side panel editor, there are several different sections that need to be configured:
 
-Each calculator type may reveal different fields depending on its configuration. Choose the one that best aligns with your fulfillment strategy.
+### Providers
 
-For a more detailed guide on shipping calculators, please refer to another support article.
+These two settings decide who handles the delivery and where its price comes from. Most stores can leave both on their defaults and price the method themselves.
 
-### Estimated Transit Business Days
+- **Fulfillment provider** - How fulfillments for this method are dispatched and tracked:
+ - **Manual** for goods you ship yourself, 
+ - **Pickup** for collection,
+ - **Pickup Point** for a third-party collection point.
+- **Delivery rate provider** - Where the price comes from:
+ - **Internal** prices with the calculator below, which is what most stores want. 
+ - **Freight** is for freight carriers.
 
-![Set shipping method estimated transits days in Spree](/docs/images/user/settings/shipping/9-estimated-delivery.png)
+<Note>Both dropdowns show a greyed entry reading "Connect EasyPost to use it". That is a prompt, not a choice. Connecting EasyPost lets these methods quote live carrier rates instead of using an internal calculator.</Note>
 
-This optional setting allows you to display an estimated delivery time for the shipping method, visible on both the product detail page (PDP) and during checkout.
+### Naming and visibility
 
-While not required, showing delivery estimates can help build trust, reduce cart abandonment, and improve conversions by setting clear expectations about when customers will receive their orders.
+What this method is called, who sees it, and where it can be used. Customers only ever see the **Name**, so it is worth wording it around how fast the delivery is rather than which carrier you use.
 
-### Create Shipping Method
+- **Name** - What customers see at checkout. Be specific about speed rather than carrier, such as "Next day" rather than "DHL".
+- **Internal name** - What your team sees. Useful when two methods look alike at checkout.
+- **Code** - A short reference for integrations and exports.
+- **Visible in storefront** - On by default. Turn it off to keep a method for staff-created orders only.
+- **Available to sellers** - Off by default. Turn it on to let marketplace sellers ship with this method.
 
-Once you’ve configured all of the above settings, simply click **Create** at the bottom of the page to save your new shipping method. It will become immediately available to customers provided the order details match the method’s configuration.
+### Pricing
+
+What the method charges and how that charge is taxed.
+
+- **Rate Calculator** - How the price is worked out. See the calculators below.
+- **Tax category** - Which tax applies to the delivery charge, if delivery is taxed where you sell.
+- **Currency** - Which currency the rate is priced in. This only applies to the rate-based calculators, so it has no effect on a method that does not charge a set amount.
+
+#### Rate calculators
+
+The calculator decides what a method charges. Six are available:
+
+| Calculator | What it charges |
+|---|---|
+| **Flat Rate** | One price per order, whatever is in the cart. The simplest option and the right default for most methods. |
+| **Per Item** | A price for each item in the cart, so a cart of five item costs five times a cart of one. |
+| **Flat Percent** | A percentage of the order total, so delivery scales with cart value. |
+| **Flexi Rate** | A price for the first item plus a smaller price for each additional item, up to a cap. Suits goods that combine into one parcel. |
+| **Price Sack** | Charges one rate below a set order value and a discounted rate above it, so larger orders pay less to ship. |
+| **Digital Delivery** | For downloads, where nothing physical ships. |
+
+### Delivery expectations
+
+What you tell the customer about timing and tracking. Neither field changes the price, but both reduce the number of "where is my order" messages your team answers.
+
+- **Estimated transit, business days** - A minimum and a maximum, shown to the customer at checkout.
+- **Tracking URL** - The carrier's tracking link, with `:tracking` being where the tracking number goes.
+
+### Conditions
+
+Conditions limit when a method is offered, based on what is in the cart or who is buying. A method with no conditions is offered to everyone who reaches it. Click **Add condition** to choose from:
+
+- **Item total** - Offer the method only above or below a cart value. This is how a free delivery threshold is built.
+- **Weight** - Offer the method only within a certain weight range.
+- **Excluded products** - Hide the method when the cart contains particular products.
+- **Channel** - Offer the method only on certain sales channels.
+- **Volume** - Offer the method only within a certain size range.
+- **Company** - Offer the method only to particular business customers.
+
+With no conditions set, the method is offered wherever it otherwise applies.
+
+<Note>Free delivery over a threshold is an **Item total** condition on a method priced at zero, not a setting of its own.</Note>
+
+Click **Create delivery method** when you are done.
+
+## Pickup
+
+Pickup is for orders customers collect in person. It sits in its own section on the profile page, outside the origin groups, because collection has no destination and zones do not apply.
+
+![The Pickup section, with a method and the locations customers can collect from](/docs/images/user/settings/delivery-profiles/6-pickup.png)
+
+Add a method the same way as any other, choosing **Pickup** as the fulfillment provider, then tick the locations under **Collect from**. Only the locations you tick are offered to customers.
+
+<Warning>The **Collect from** tick boxes save the moment you click them. There is no Save button on this panel and no confirmation, so an accidental tick takes effect immediately.</Warning>
+
+## How to Delete a Delivery Profile
+
+Open the row menu on the profiles list and choose **Delete**.
+
+<Note>The default profile cannot be deleted. Its row offers **Edit** only, because products with no profile of their own rely on it. Make another profile the default first if you need to remove it.</Note>
+
+## Further Reading
+
+- [<u>Stock Locations</u>](/user/settings/locations) - The warehouses and pickup points a profile ships from
+- [<u>Package Types</u>](/user/settings/package-types) - The boxes and pallets used when quoting
+- [<u>Create a Product</u>](/user/products/creating-products) - Where a product is assigned to a profile
