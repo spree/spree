@@ -2763,6 +2763,8 @@
           "cancel_shipment_message": "Diese Lieferung stornieren?",
           "capture_message": "Diese Zahlung einziehen?",
           "complete_message": "Diesen Auftragsentwurf jetzt abschließen?",
+          "delete_message": "Auftragsentwurf {{number}} löschen? Dies kann nicht rückgängig gemacht werden.",
+          "delete_title": "Auftragsentwurf löschen?",
           "remove_gift_card_message": "Diese Geschenkkarte aus dem Auftrag entfernen?",
           "remove_item_message": "Diesen Artikel aus dem Auftrag entfernen?",
           "remove_store_credit_message": "Guthaben aus dem Auftrag entfernen?",
@@ -2790,7 +2792,8 @@
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
           "complete_failed": "Auftrag konnte nicht abgeschlossen werden",
-          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden"
+          "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
+          "delete_failed": "Auftrag konnte nicht gelöscht werden"
         },
         "fulfillments": {
           "add_delivery": "Sendungsnummer hinzufügen",
@@ -2892,6 +2895,7 @@
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
+          "deleted": "Auftragsentwurf gelöscht",
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",

@@ -1,5 +1,11 @@
-import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { type QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 export function useOrder(orderId: string) {
   return useQuery({
@@ -56,6 +62,27 @@ export function useOrderMutation<TParams>(
  */
 export function orderQueryKey(orderId: string): QueryKey {
   return ['orders', orderId]
+}
+
+/**
+ * Throws a draft order away. Only a draft with no settled payment can go —
+ * the backend refuses anything else, and that refusal is toasted since the
+ * order page has no inline error surface to carry it.
+ */
+export function useDeleteOrder() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (orderId) => adminClient.orders.delete(orderId),
+    invalidate: [['orders'], ['draft-orders']],
+    successMessage: i18n.t('admin.orders.detail.messages.deleted'),
+    errorMessage: i18n.t('admin.orders.detail.errors.delete_failed'),
+    showValidationErrors: true,
+    onSuccess: (_data, orderId) => {
+      queryClient.removeQueries({ queryKey: buildKey('orders', orderId) })
+    },
+  })
 }
 
 export function useOrderTaxLines(orderId: string) {
