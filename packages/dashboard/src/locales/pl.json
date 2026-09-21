@@ -122,7 +122,7 @@
         "message": "{{name}} przestanie obowiązywać. Odbiorcy wrócą do cen sklepowych, a zawartość katalogu zostanie zachowana."
       },
       "delete_confirm": {
-        "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
+        "message": "To usunie {{name}} wraz z przypisaniami oraz cennikiem i zawartymi w nim cenami. Produkty pozostaną w sklepie. Tej operacji nie można cofnąć.",
         "title": "Usunąć katalog?"
       },
       "detach_warning": "Zapis usunie cennik tego katalogu wraz z zawartymi w nim cenami. Ta grupa odbiorców będzie płacić zwykłe ceny.",

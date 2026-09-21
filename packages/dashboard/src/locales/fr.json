@@ -120,7 +120,7 @@
         "message": "{{name}} cesse de s’appliquer. Son audience revient aux prix boutique et tout le contenu du catalogue est conservé."
       },
       "delete_confirm": {
-        "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
+        "message": "Cela supprime {{name}}, ses affectations et sa liste de prix avec les prix qu’elle contient. Les produits restent dans votre boutique. Cette action est irréversible.",
         "title": "Supprimer le catalogue ?"
       },
       "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",

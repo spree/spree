@@ -120,7 +120,7 @@
         "message": "{{name}} stops applying. Its audience goes back to the shop prices, and everything the catalog holds is kept."
       },
       "delete_confirm": {
-        "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
+        "message": "This deletes {{name}}, its assignments, and its price list with the prices in it. The products stay in your store. This cannot be undone.",
         "title": "Delete catalog?"
       },
       "detach_warning": "Saving will remove this catalog’s price list and the prices in it. This audience will pay normal prices.",

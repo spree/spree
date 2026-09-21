@@ -3046,7 +3046,7 @@
         "message": "{{name}} deja de aplicar. Su audiencia vuelve a los precios de la tienda, y todo lo que contiene el catálogo se conserva."
       },
       "delete_confirm": {
-        "message": "Esto elimina {{name}} y sus asignaciones. Los productos y las listas de precios no se ven afectados.",
+        "message": "Esto elimina {{name}}, sus asignaciones y su lista de precios con los precios que contiene. Los productos siguen en tu tienda. Esta acción no se puede deshacer.",
         "title": "¿Eliminar catálogo?"
       },
       "detach_warning": "Al guardar, se quitará la lista de precios de este catálogo y los precios que contiene. Esta audiencia pagará los precios normales.",

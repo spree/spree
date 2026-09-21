@@ -120,7 +120,7 @@
         "message": "{{name}} gilt nicht mehr. Die Zielgruppe zahlt wieder die Ladenpreise; alle Inhalte des Katalogs bleiben erhalten."
       },
       "delete_confirm": {
-        "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
+        "message": "Dies löscht {{name}}, seine Zuweisungen und seine Preisliste mit den darin enthaltenen Preisen. Die Produkte bleiben in Ihrem Shop. Dies kann nicht rückgängig gemacht werden.",
         "title": "Katalog löschen?"
       },
       "detach_warning": "Beim Speichern werden die Preisliste dieses Katalogs und die darin enthaltenen Preise entfernt. Diese Zielgruppe zahlt dann normale Preise.",
