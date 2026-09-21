@@ -47,6 +47,7 @@ export const storeSettingsFormSchema = z.object({
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
+  preferred_always_include_confirm_step: z.boolean(),
   preferred_company_field_enabled: z.boolean(),
   preferred_address_requires_phone: z.boolean(),
   preferred_capture_method: z.enum(CAPTURE_METHODS),

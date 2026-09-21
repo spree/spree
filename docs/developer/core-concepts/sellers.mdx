@@ -334,7 +334,23 @@ The scheduler is the host app's. Two jobs fan out per seller and the interval lo
 | `Spree::SellerPayouts::SweepDueJob` | daily | settles every seller who is due |
 | `Spree::SellerTransfers::ExecutePendingDueJob` | hourly | retries earnings a provider refused — usually a passing thing |
 
-`spree/spree-starter` ships both entries in `server/config/recurring.yml`. A seller on the `manual` interval is skipped by the sweep and settled by hand instead:
+<Warning>
+  **You have to schedule these yourself** — a new project does not ship them, so
+  a marketplace that skips this step never pays a seller. Add both to your
+  scheduler; with Solid Queue that is `server/config/recurring.yml`:
+
+```yaml server/config/recurring.yml
+production:
+  sweep_due_seller_payouts:
+    class: Spree::SellerPayouts::SweepDueJob
+    schedule: every day at 3am
+  execute_pending_seller_transfers:
+    class: Spree::SellerTransfers::ExecutePendingDueJob
+    schedule: every hour
+```
+</Warning>
+
+A seller on the `manual` interval is skipped by the sweep and settled by hand instead:
 
 <CodeGroup>
 
@@ -346,7 +362,7 @@ const { data: balances } = await adminClient.sellers.balances('sel_xxx')
 await adminClient.sellers.settle('sel_xxx')
 
 // The built-in provider: record that the bank transfer went out
-await adminClient.sellerPayouts.complete('spo_xxx', { reference: 'TRN-2026-0912-0042' })
+await adminClient.sellerPayouts.complete('vpo_xxx', { reference: 'TRN-2026-0912-0042' })
 ```
 
 ```bash cURL
@@ -356,7 +372,7 @@ curl 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/balances' \
 curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/payouts' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X PATCH 'https://api.mystore.com/api/v3/admin/seller_payouts/spo_xxx/complete' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/seller_payouts/vpo_xxx/complete' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "reference": "TRN-2026-0912-0042" }'
@@ -364,7 +380,36 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/seller_payouts/spo_xxx/compl
 
 </CodeGroup>
 
-`GET /admin/seller_transfers` and `GET /admin/seller_payouts` list the ledger across every seller; the seller panel reads its own through `GET /seller/balances`, `/seller/transfers` and `/seller/payouts`, all read-only — the ledger is written by fulfilment and the sweep, never by the seller.
+Settling answers `201` with the payouts it created, one per currency. When one
+currency settles and another is refused it still answers `201`, listing what
+failed under `meta.failures` — so check that rather than assuming success. With
+nothing to settle it answers `422`.
+
+### Reading the ledger
+
+Across every seller, from the marketplace side:
+
+```typescript Admin SDK
+const { data: transfers } = await adminClient.sellerTransfers.list({ seller_id_eq: 'sel_xxx' })
+const { data: payouts } = await adminClient.sellerPayouts.list({ status_eq: 'completed' })
+
+const payout = await adminClient.sellerPayouts.get('vpo_xxx')
+```
+
+And from the seller's own panel, where every request is already scoped to the
+seller signed in — which is why none of these takes a seller ID:
+
+```typescript Seller SDK
+// What I'm owed, one row per currency
+const { data: balances } = await sellerClient.balances.list()
+
+// What I earned, and which payout settled it
+const { data: transfers } = await sellerClient.transfers.list({ payout_id_eq: 'vpo_xxx' })
+const { data: payouts } = await sellerClient.payouts.list()
+```
+
+All of it is read-only: the ledger is written by fulfilment and the sweep, never
+by a seller.
 
 ### Payout providers
 
@@ -375,7 +420,9 @@ A provider is a stateless class registered in `Spree.payout_providers` and chose
 | `Spree::PayoutProvider::System` (default) | No — keeps the books | The operator marks each payout paid, with the bank reference |
 | Stripe Connect (`spree_stripe`) | Yes — transfers each earning to the seller's connected account as goods ship, tied to the charge that funds it | A Stripe webhook, when the money lands |
 
-The contract is small: `transfer!` credits one earning, `pay!` sends one settlement, `reverse!` takes back part of an earning after a refund, and every call carries an idempotency key derived from the ledger row so a retry finds the movement it already made. Providers that need the seller to hold an account with them answer `requires_payout_account?` and implement `onboarding_url` — which is what the **payout account** [onboarding requirement](#onboarding-requirements) drives. To pay sellers through rails of your own, see [Seller payouts](/developer/providers/payouts).
+The contract is small: `transfer!` credits one earning, `pay!` sends one settlement, `reverse!` takes back part of an earning after a refund, and every call carries an idempotency key derived from the ledger row so a retry finds the movement it already made. Providers that need the seller to hold an account with them answer `requires_payout_account?` and implement `onboarding_url` — which is what the **payout account** [onboarding requirement](#onboarding-requirements) drives. A seller gets a fresh link from `POST /seller/onboarding/payout_account`, and `GET /admin/payout_providers` lists what is registered, for a picker.
+
+A connected provider confirms settlements through `POST /api/v3/webhooks/payouts/:payment_method_id` — separate from the payment webhook, because providers scope seller-account events to their own subscription and signing secret. To pay sellers through rails of your own, see [Seller payouts](/developer/providers/payouts).
 
 See [Stripe Connect for marketplaces](/integrations/payments/stripe-connect) for the shipped provider.
 

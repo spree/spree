@@ -134,7 +134,7 @@ Spree.integrations << 'MyApp::AcmeIntegration'
 Spree.payout_providers << MyApp::PayoutProvider
 ```
 
-The operator then picks it under **Settings → Payouts**, which is the store's `payout_provider` preference. The picker is built from the registry, so your provider appears with the two built-in ones and reports whether the store can use it today:
+The operator then picks it under **Settings → Marketplace**, which is the store's `payout_provider` preference. The picker is built from the registry, so your provider appears alongside the built-in one and reports whether the store can use it today:
 
 <CodeGroup>
 
@@ -150,6 +150,13 @@ curl https://your-store.com/api/v3/admin/payout_providers \
 ```
 
 </CodeGroup>
+
+<Note>
+  `available` is what `available_for_store?` answers. A provider that returns
+  false still appears in the picker, greyed out, with the dashboard explaining
+  what the operator has to connect first — so implement it to mean "usable
+  today", not "installed".
+</Note>
 
 A store whose configured provider disappears from the registry — a gem removed, a class renamed — silently falls back to the built-in one so the ledger keeps recording. Rename with `def self.provider_key` pinned to the old name if you ever need to, or the rows written under the old name stop matching.
 

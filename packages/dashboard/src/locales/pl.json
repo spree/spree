@@ -1946,6 +1946,10 @@
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
         },
+        "always_include_confirm_step": {
+          "help": "Zawsze pokazuj klientom końcowy krok weryfikacji przed złożeniem zamówienia, nawet jeśli żadna metoda płatności tego nie wymaga.",
+          "label": "Zawsze pokazuj krok potwierdzenia"
+        },
         "capture_method": {
           "help": "Domyślne ustawienie dla każdej metody płatności. Pojedyncza metoda płatności może je nadpisać.",
           "label": "Kiedy obciążać klientów",
@@ -2137,7 +2141,10 @@
           "minimum": {
             "label": "Minimalna wypłata",
             "help": "Poniżej tej kwoty saldo przechodzi na następny okres zamiast zostać wypłacone. Zero wypłaca każdą należność."
-          }
+          },
+          "provider_needs_connection": "Połącz {{name}}, aby go używać",
+          "provider_connect_hint": "{{name}} wypłaca sprzedawcom pieniądze przez swoją metodę płatności, która nie jest jeszcze aktywna w tym sklepie.",
+          "provider_connect_link": "Skonfiguruj ją w Metodach płatności"
         },
         "limit_digital_download_count": {
           "help": "Wyłączone oznacza, że kupujący mogą pobierać dowolną liczbę razy.",
@@ -2163,6 +2170,23 @@
         "preferred_default_package_weight": {
           "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
           "label": "Domyślna waga paczki"
+        },
+        "auto_approve_sellers": {
+          "label": "Zatwierdzaj sprzedawców automatycznie",
+          "help": "Sprzedawca zaczyna sprzedawać zaraz po ukończeniu swojej listy, bez weryfikacji przez nikogo."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publikuj produkty sprzedawców automatycznie",
+          "help": "Produkt sprzedawcy trafia do sprzedaży zaraz po zgłoszeniu, bez weryfikacji przez nikogo."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Wysyłaj e-maile do sprzedawców",
+          "help": "Wysyła sprzedawcom e-maile o zatwierdzeniu, produktach i wypłatach. Wyłącz, jeśli piszesz do sprzedawców samodzielnie. Nie wpływa to na e-maile do klientów."
+        },
+        "default_commission_tax_rate": {
+          "label": "Domyślny podatek od prowizji",
+          "help": "Naliczany od Twojej prowizji, gdy ani stawka prowizji, ani dostawca podatków nie podaje własnej stawki. Zostaw 0, jeśli Twoja prowizja nie jest opodatkowana.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2763,6 +2787,8 @@
           "cancel_shipment_message": "Anulować tę realizację?",
           "capture_message": "Pobrać tę płatność?",
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
+          "delete_message": "Usunąć roboczą wersję zamówienia {{number}}? Tej operacji nie można cofnąć.",
+          "delete_title": "Usunąć roboczą wersję zamówienia?",
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
           "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
@@ -2790,7 +2816,8 @@
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
           "complete_failed": "Nie udało się sfinalizować zamówienia",
-          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
+          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
+          "delete_failed": "Nie udało się usunąć zamówienia"
         },
         "fulfillments": {
           "add_delivery": "Dodaj numer przesyłki",
@@ -2894,6 +2921,7 @@
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
           "confirmation_sent": "Potwierdzenie wysłane",
+          "deleted": "Robocza wersja zamówienia została usunięta",
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
@@ -4020,12 +4048,18 @@
           },
           "title": "Webhooki"
         },
-        "payouts": {
-          "title": "Wypłaty",
-          "subtitle": "Jak i kiedy ten marketplace płaci swoim sprzedawcom."
-        },
         "package_types": {
           "add_sheet_title": "Dodaj rodzaj opakowania"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Jak ten marketplace płaci sprzedawcom, jak sprzedawcy do niego dołączają, co od Ciebie dostają i jaki podatek obejmuje Twoją prowizję.",
+          "payouts_title": "Wypłaty",
+          "payouts_description": "Jak i kiedy ten marketplace płaci swoim sprzedawcom. Sprzedawca może mieć własny harmonogram i własną kwotę minimalną.",
+          "admission_title": "Zatwierdzanie sprzedawców",
+          "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
+          "communication_title": "Komunikacja",
+          "commission_tax_title": "Podatek od prowizji"
         }
       },
       "staff": {
@@ -5072,9 +5106,9 @@
         "tax_categories": "Klasy podatkowe przypisane do produktów",
         "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
-        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty",
         "package_types": "Kartony, palety i kontenery",
-        "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować"
+        "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
       },
       "groups": {
         "audit": "Audyt",
@@ -5110,9 +5144,12 @@
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki",
-        "payouts": "Wypłaty",
         "package_types": "Rodzaje opakowań",
-        "suppliers": "Dostawcy"
+        "suppliers": "Dostawcy",
+        "marketplace": "Ustawienia"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {
@@ -5130,7 +5167,9 @@
       "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
       "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
       "subtitle": "Utwórz konto administratora i opisz swój sklep. Wszystko tutaj możesz później zmienić.",
-      "title": "Skonfiguruj Spree"
+      "title": "Skonfiguruj Spree",
+      "welcome_description": "Przejdź przez poniższą listę, aby otworzyć sklep {{store}}.",
+      "welcome_title": "Witamy, Twój sklep jest gotowy!"
     },
     "staff": {
       "actions": {

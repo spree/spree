@@ -1,15 +1,15 @@
 ---
-title: "Product Metafields"
-description: "Learn how to use product metafields in Spree Commerce to enrich your product data."
+title: "Product Custom Fields"
+description: "Learn how to use product custom fields in Spree Commerce to enrich your product data."
 ---
 
-Product Metafields allow you to add custom attributes to products beyond the default fields included in Spree. Whether you want to display additional product specifications on the storefront, store internal merchandising notes, or support advanced integrations, metafields give you complete flexibility directly from the admin dashboard.
+Product Custom Fields allow you to add custom attributes to products beyond the default fields included in Spree. Whether you want to display additional product specifications on the storefront, store internal merchandising notes, or support advanced integrations, custom fields give you complete flexibility directly from the admin dashboard.
 
-Unlike legacy product properties, metafields are structured, scalable, and work seamlessly with imports, APIs, and storefront display settings.
+Unlike legacy product properties, custom fields are structured, scalable, and work seamlessly with imports, APIs, and storefront display settings.
 
-## Why Use Product Metafields?
+## Why Use Product Custom Fields?
 
-Product metafields are ideal when you need to:
+Product custom fields are ideal when you need to:
 
 - Add **technical specifications** (e.g., voltage, dimensions, fabric composition)
 - Display **care instructions**
@@ -21,21 +21,21 @@ Product metafields are ideal when you need to:
 - Power custom storefront sections
 - Support third-party integrations
 
-Because metafields can be created and managed entirely from the dashboard, they reduce development time and eliminate the need for database changes or code deployments.
+Because custom fields can be created and managed entirely from the dashboard, they reduce development time and eliminate the need for database changes or code deployments.
 
-## How to Create a Product Metafield
+## How to Create a Product Custom Field
 
-To create a new product metafield, navigate to **Settings → Metafield Definitions**.
+To create a new product custom field, navigate to **Settings → Custom Field Definitions**.
 
-![How to add product metafields in Spree Commerce](/docs/images/user/products/product-metafields/1-product-metafields.png)
+![How to add product custom fields in Spree Commerce](/docs/images/user/products/product-metafields/1-product-metafields.png)
 
-Click **New Metafield Definition** to open the metafield creation form.
+Click **New Custom Field Definition** to open the custom field creation form.
 
-![Adding a new product metafield in the Spree Commerce dashboard](/docs/images/user/products/product-metafields/2-add-metafields.png)
+![Adding a new product custom field in the Spree Commerce dashboard](/docs/images/user/products/product-metafields/2-add-metafields.png)
 
 Complete the form fields as described below.
 
-## **Metafield Definition Fields**
+## **Custom Field Definition Fields**
 
 ### **Name**
 
@@ -48,14 +48,14 @@ Example:
 
 ### **Namespace**
 
-Used to group metafields and avoid naming conflicts.
+Used to group custom fields and avoid naming conflicts.
 
 - We recommend using something like **custom** for merchant-defined product fields.
 - Avoid using reserved model names like **product**, **variant**, or **order**.
 
 ### **Key**
 
-The unique identifier for the metafield (combined with the namespace).
+The unique identifier for the custom field (combined with the namespace).
 
 Example:
 
@@ -65,13 +65,13 @@ Example:
 
 ### **Resource**
 
-For product metafields, select **Product**.
+For product custom fields, select **Product**.
 
-To learn more about creating metafields for other resources, see [<u>Metafields</u>](https://spreecommerce.org/docs/user/settings/metafields).
+To learn more about creating custom fields for other resources, see [<u>Custom Fields</u>](https://spreecommerce.org/docs/user/settings/metafields).
 
 ## **Choosing the Right Data Type**
 
-Each metafield must have a type. Selecting the appropriate type ensures your data is structured correctly.
+Each custom field must have a type. Selecting the appropriate type ensures your data is structured correctly.
 
 ### **Short Text**
 
@@ -135,47 +135,47 @@ Examples:
 
 ## Display Settings
 
-Choose where the metafield should appear:
+Choose where the custom field should appear:
 
 - **Admin Only** - Internal use (e.g., supplier notes, internal margin classification)
 - **Admin & Storefront** - Visible to customers on product pages
 
-If displayed on the storefront, metafields can be used within your theme to enhance the Product Detail Page (PDP).
+If displayed on the storefront, custom fields can be used within your theme to enhance the Product Detail Page (PDP).
 
-## Adding Product Metafield Values
+## Adding Product Custom Field Values
 
 Once the definition is created, you can assign values to individual products.
 
 ### Adding Values Individually
 
-![Adding metafield values to a product in Spree Commerce](/docs/images/user/products/product-metafields/3-metafields-values.png)
+![Adding custom field values to a product in Spree Commerce](/docs/images/user/products/product-metafields/3-metafields-values.png)
 
-To add metafield values for individual products:
+To add custom field values for individual products:
 
 1. Navigate to **Products**
 2. Open the product you want to update
 3. Click the **three-dot menu** in the top-right corner
-4. Select **Metafields** to open the metafields form
+4. Select **Custom Fields** to open the custom fields form
 5. Enter the desired values
 6. Click **Save**
 
 This method is ideal for updating a small number of products.
 
-### Updating Product Metafields in Bulk
+### Updating Product Custom Fields in Bulk
 
-You can also import metafields via CSV.
+You can also import custom fields via CSV.
 
 #### Step 1: Add a Column to the product CSV file
 
 Use this format:
 
-**metafield.namespace.key**
+**custom_field.namespace.key**
 
 Example:
 
-- **metafield.custom.material**
-- **metafield.custom.care_instructions**
-- **metafield.custom.sustainability_score**
+- **custom_field.custom.material**
+- **custom_field.custom.care_instructions**
+- **custom_field.custom.sustainability_score**
 
 #### Step 2: Add Values Per Product Row
 
@@ -193,9 +193,9 @@ Please refer to the following support articles for more information about produc
 - [<u>Import Product</u>](https://spreecommerce.org/docs/user/manage-products/import-products)
 - [<u>Product Import Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template)
 
-## Real-World Product Metafield Examples
+## Real-World Product Custom Field Examples
 
-Here are some practical examples of how merchants use product metafields:
+Here are some practical examples of how merchants use product custom fields:
 
 ### Apparel
 
@@ -235,8 +235,8 @@ Here are some practical examples of how merchants use product metafields:
 
 ## Replacing Product Properties
 
-Product Properties are no longer supported in the latest version of Spree. Product Metafields provide a more flexible, scalable, and structured solution for managing custom product attributes.
+Product Properties are no longer supported in the latest version of Spree. Product Custom Fields provide a more flexible, scalable, and structured solution for managing custom product attributes.
 
-If you previously relied on properties for product enrichment, metafields are now the recommended approach.
+If you previously relied on properties for product enrichment, custom fields are now the recommended approach.
 
-Product metafields give you the flexibility to tailor your product data model to your business - without relying on developers - while keeping your catalog structured, scalable, and integration-ready.
+Product custom fields give you the flexibility to tailor your product data model to your business - without relying on developers - while keeping your catalog structured, scalable, and integration-ready.

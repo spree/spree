@@ -922,6 +922,14 @@ require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
 
+# Not autoloaded from app/: the registry keeps registered steps in
+# class-level state, which a reload would discard.
+require 'spree/checkout/step'
+require 'spree/checkout/requirement'
+require 'spree/checkout/registry'
+require 'spree/checkout/default_requirements'
+require 'spree/checkout/requirements'
+
 require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/store'

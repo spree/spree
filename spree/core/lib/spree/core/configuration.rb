@@ -40,23 +40,23 @@ module Spree
       # case seller invitations fall back to the dashboard origin.
       preference :seller_panel_url, :string, default: nil, env: 'SPREE_SELLER_PANEL_URL'
       preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
-      preference :allow_empty_price_amount, :boolean, default: false
+      preference :allow_empty_price_amount, :boolean, default: false, env: 'SPREE_ALLOW_EMPTY_PRICE_AMOUNT'
       preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'
-      preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
-      preference :always_use_translations, :boolean, default: false
+      preference :always_include_confirm_step, :boolean, default: false, deprecated: 'Use the always_include_confirm_step preference in the Spree::Store model'
+      preference :always_use_translations, :boolean, default: false, env: 'SPREE_ALWAYS_USE_TRANSLATIONS'
       preference :auto_capture, :boolean, default: true, deprecated: 'Set it on the store instead' # automatically capture the credit card (as opposed to just authorize and capture later)
       preference :auto_capture_on_dispatch, :boolean, default: false, deprecated: 'Set it on the store instead' # Captures payment on dispatch rather than at checkout.
       preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
-      preference :credit_to_new_allocation, :boolean, default: false
-      preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
+      preference :credit_to_new_allocation, :boolean, default: false, env: 'SPREE_CREDIT_TO_NEW_ALLOCATION'
+      preference :disable_migration_check, :boolean, default: false, env: 'SPREE_DISABLE_MIGRATION_CHECK' # when turned on disables the startup warning about missing engine migrations
       preference :disable_sku_validation, :boolean, default: false, deprecated: 'Set it on the store instead' # when turned on disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false, deprecated: true # when turned off disables Store presence validation for Products and Payment Methods
-      preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger
+      preference :events_log_enabled, :boolean, default: true, env: 'SPREE_EVENTS_LOG_ENABLED' # Log all Spree events to Rails logger
       preference :expedited_exchanges, :boolean, default: false, deprecated: 'Exchanges are their own record in Spree 6 — see Spree::Exchange and the Exchanges::Fulfill workflow'
       preference :expedited_exchanges_days_window, :integer, default: 14, deprecated: 'Exchanges are their own record in Spree 6 — see Spree::Exchange and the Exchanges::Fulfill workflow'
-      preference :geocode_addresses, :boolean, default: true
-      preference :images_save_from_url_job_attempts, :integer, default: 5
-      preference :max_image_download_size, :integer, default: 20_971_520 # 20 MB in bytes
+      preference :geocode_addresses, :boolean, default: true, env: 'SPREE_GEOCODE_ADDRESSES'
+      preference :images_save_from_url_job_attempts, :integer, default: 5, env: 'SPREE_IMAGES_SAVE_FROM_URL_JOB_ATTEMPTS'
+      preference :max_image_download_size, :integer, default: 20_971_520, env: 'SPREE_MAX_IMAGE_DOWNLOAD_SIZE' # 20 MB in bytes
 
       # Preprocessed product image variant sizes at 2x retina resolution.
       # These variants are generated on upload to reduce runtime processing.
@@ -113,12 +113,12 @@ module Spree
       end
 
       # Maximum size of an uploaded product video, in bytes.
-      preference :max_video_upload_size, :integer, default: 524_288_000 # 500 MB
+      preference :max_video_upload_size, :integer, default: 524_288_000, env: 'SPREE_MAX_VIDEO_UPLOAD_SIZE' # 500 MB
 
       # Maximum size of a document a seller uploads for an onboarding
       # requirement, in bytes. Small on purpose: these are certificates and
       # registrations, and an unbounded upload is a way to fill a disk.
-      preference :max_seller_document_upload_size, :integer, default: 20_971_520 # 20 MB
+      preference :max_seller_document_upload_size, :integer, default: 20_971_520, env: 'SPREE_MAX_SELLER_DOCUMENT_UPLOAD_SIZE' # 20 MB
       preference :non_expiring_credit_types, :array, default: [], deprecated: 'Nothing reads this in Spree 6 — store credits no longer carry a category, and expiry lives on Spree::GiftCard'
       preference :products_per_page, :integer, default: 12, deprecated: 'Nothing reads this in Spree 6 — pass per_page to the API instead'
       preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'
@@ -132,9 +132,9 @@ module Spree
       # into failures (what this repo's API test suite runs); 'off' disables.
       preference :store_scope_guard, :string, default: 'log', env: 'SPREE_STORE_SCOPE_GUARD'
       # Tiered cart-expiry reaper (docs/plans/6.0-cart-order-split.md Decision 5)
-      preference :guest_cart_expiry_days, :integer, default: 30
-      preference :customer_cart_expiry_days, :integer, default: 90
-      preference :empty_cart_expiry_hours, :integer, default: 48
+      preference :guest_cart_expiry_days, :integer, default: 30, env: 'SPREE_GUEST_CART_EXPIRY_DAYS'
+      preference :customer_cart_expiry_days, :integer, default: 90, env: 'SPREE_CUSTOMER_CART_EXPIRY_DAYS'
+      preference :empty_cart_expiry_hours, :integer, default: 48, env: 'SPREE_EMPTY_CART_EXPIRY_HOURS'
       preference :show_variant_full_price, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — a storefront decides how it renders prices'
       preference :show_products_without_price, :boolean, default: false, deprecated: 'Set it on the store instead'
       preference :tax_using_ship_address, :boolean, default: true, deprecated: 'Set it on the store instead'
@@ -149,33 +149,33 @@ module Spree
       preference :storefront_pages_path, :string, default: 'pages', deprecated: 'Nothing reads this in Spree 6 — storefront routes are owned by the storefront'
 
       # coupon codes
-      preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job
-      preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
+      preference :coupon_codes_web_limit, :integer, default: 500, env: 'SPREE_COUPON_CODES_WEB_LIMIT' # number of coupon codes to be generated in the web process, more than this will be generated in a background job
+      preference :coupon_codes_total_limit, :integer, default: 5000, env: 'SPREE_COUPON_CODES_TOTAL_LIMIT' # the maximum number of coupon codes to be generated
 
       # password reset
-      preference :admin_password_reset_expires_in, :integer, default: 15 # admin password reset token expiration time in minutes
-      preference :customer_password_reset_expires_in, :integer, default: 15 # password reset token expiration time in minutes
+      preference :admin_password_reset_expires_in, :integer, default: 15, env: 'SPREE_ADMIN_PASSWORD_RESET_EXPIRES_IN' # admin password reset token expiration time in minutes
+      preference :customer_password_reset_expires_in, :integer, default: 15, env: 'SPREE_CUSTOMER_PASSWORD_RESET_EXPIRES_IN' # password reset token expiration time in minutes
 
       # account lockout
-      preference :max_failed_login_attempts, :integer, default: 5 # failed login attempts before an account is locked
-      preference :lockout_duration, :integer, default: 1800 # lockout duration in seconds (30 minutes)
+      preference :max_failed_login_attempts, :integer, default: 5, env: 'SPREE_MAX_FAILED_LOGIN_ATTEMPTS' # failed login attempts before an account is locked
+      preference :lockout_duration, :integer, default: 1800, env: 'SPREE_LOCKOUT_DURATION' # lockout duration in seconds (30 minutes)
 
       # password policy
       # NIST 800-63B recommends a length floor with no composition rules (no forced
       # symbols/digits, which push users toward predictable substitutions).
-      preference :minimum_password_length, :integer, default: 8
+      preference :minimum_password_length, :integer, default: 8, env: 'SPREE_MINIMUM_PASSWORD_LENGTH'
       # bcrypt silently truncates past 72 bytes — without a cap a long passphrase and
       # its 72-byte prefix are the same password. A correctness guard, not policy.
-      preference :maximum_password_length, :integer, default: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
+      preference :maximum_password_length, :integer, default: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED, env: 'SPREE_MAXIMUM_PASSWORD_LENGTH'
       # To replace the policy itself, assign Spree.password_validator — a class,
       # not a preference.
 
       # gift cards
-      preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
-      preference :gift_card_batch_limit, :integer, default: 50_000
+      preference :gift_card_batch_web_limit, :integer, default: 500, env: 'SPREE_GIFT_CARD_BATCH_WEB_LIMIT' # number of gift card codes to be generated in the web process, more than this will be generated in a background job
+      preference :gift_card_batch_limit, :integer, default: 50_000, env: 'SPREE_GIFT_CARD_BATCH_LIMIT'
 
       # imports
-      preference :large_import_threshold, :integer, default: 500 # imports with more rows than this skip per-row UI broadcasts and use bulk processing
+      preference :large_import_threshold, :integer, default: 500, env: 'SPREE_LARGE_IMPORT_THRESHOLD' # imports with more rows than this skip per-row UI broadcasts and use bulk processing
 
     end
   end

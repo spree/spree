@@ -92,6 +92,54 @@ module Spree
       order
     end
 
+    # Checkout-step introspection belongs to Spree::Cart
+    # ({Spree::Purchase::CheckoutSteps}) since 6.0 — an order is past checkout
+    # by definition. These bridges answer for an upgrader reaching for the
+    # Spree 5 API on an order, rather than raising NoMethodError.
+    #
+    # The step list is data-driven, so it stays accurate here: the registry
+    # computes it from the record's own predicates, all of which Order carries.
+    # Where the checkout stands within that list is not, which is why the
+    # readers below report a finished checkout.
+
+    # @deprecated Checkout steps belong to Spree::Cart; removed in 6.1.
+    def checkout_steps
+      Spree::Deprecation.warn('Spree::Order#checkout_steps is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def has_checkout_step?(step)
+      Spree::Deprecation.warn('Spree::Order#has_checkout_step? is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      step.present? && Spree::Checkout::Registry.step_names_for(self).include?(step.to_s)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def checkout_step_index(step)
+      Spree::Deprecation.warn('Spree::Order#checkout_step_index is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).index(step).to_i
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. An order has no
+    #   outstanding step, so this is always 'complete'.
+    def current_checkout_step
+      Spree::Deprecation.warn("Spree::Order#current_checkout_step is deprecated and will be removed in Spree 6.1. An order is past checkout, so this is always 'complete'.")
+      'complete'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def final_checkout_step
+      Spree::Deprecation.warn('Spree::Order#final_checkout_step is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }.last || 'address'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. Every step is behind
+    #   an order, so this is the whole list bar 'complete'.
+    def completed_checkout_steps
+      Spree::Deprecation.warn("Spree::Order#completed_checkout_steps is deprecated and will be removed in Spree 6.1. An order is past checkout, so every step bar 'complete' is behind it.")
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }
+    end
+
     # Standardized column names (renamed in 6.0); legacy readers stay as
     # aliases one release.
     alias_attribute :promo_total, :discount_total
@@ -698,12 +746,8 @@ module Spree
 
     # What has been captured against this order, net of refunds.
     #
-    # An order placed in a split checkout owns no payments, so its own
-    # +payment_total+ stays at zero however much the customer paid — the
-    # figure comes from its share of the group's payments instead, the same
-    # way {Spree::Orders::UpdateStatuses} derives +payment_status+. The
-    # group's own total will not do: once one seller has been captured and
-    # another has not, no proportion of it describes either.
+    # Read from the share rows rather than the +payment_total+ they are summed
+    # into, since a caller about to move money needs what they say now.
     #
     # @return [BigDecimal]
     def net_captured_total
@@ -1199,6 +1243,21 @@ module Spree
     end
 
     private
+
+    # An order placed in a split checkout owns no payments, so its money is
+    # the sum of its shares of the group's instead — the same source
+    # {Spree::Orders::UpdateStatuses} derives payment_status from.
+    #
+    # @return [Arel::Nodes::NamedFunction]
+    def settled_payments_arel
+      return super unless grouped?
+
+      splits = Spree::PaymentSplit.arel_table
+      net = splits.project(splits[:captured_amount].sum - splits[:refunded_amount].sum).
+            where(splits[:order_id].eq(id))
+
+      Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(net), Arel.sql('0')])
+    end
 
     def ensure_can_be_deleted
       return true if can_be_deleted?

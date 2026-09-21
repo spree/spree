@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { SpreeError } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, useAuth } from '@spree/dashboard-core'
-import { Button, Checkbox, Input, Label } from '@spree/dashboard-ui'
+import { Button, Checkbox, Input, Label, toastManager } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, Navigate, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -24,6 +25,15 @@ function SetupPage() {
   const { t } = useTranslation()
   const { token } = Route.useSearch()
   const { isAuthenticated } = useAuth()
+  // Completing setup signs the merchant in, which re-renders this component
+  // with `isAuthenticated` true. The guard below would then send them to the
+  // store index — so the store setup just claimed is held here and the guard
+  // routes to its checklist instead.
+  const [setupStoreId, setSetupStoreId] = useState<string | null>(null)
+
+  if (setupStoreId) {
+    return <Navigate to="/$storeId/getting-started" params={{ storeId: setupStoreId }} replace />
+  }
 
   if (isAuthenticated) return <Navigate to="/" replace />
 
@@ -40,12 +50,18 @@ function SetupPage() {
 
   return (
     <AuthShell>
-      <SetupLoader token={token} />
+      <SetupLoader token={token} onCompleted={setSetupStoreId} />
     </AuthShell>
   )
 }
 
-function SetupLoader({ token }: { token: string }) {
+function SetupLoader({
+  token,
+  onCompleted,
+}: {
+  token: string
+  onCompleted: (storeId: string | null) => void
+}) {
   const { t } = useTranslation()
   const status = useQuery({
     queryKey: ['setup-status'],
@@ -72,13 +88,18 @@ function SetupLoader({ token }: { token: string }) {
     )
   }
 
-  return <SetupForm token={token} />
+  return <SetupForm token={token} onCompleted={onCompleted} />
 }
 
-function SetupForm({ token }: { token: string }) {
+function SetupForm({
+  token,
+  onCompleted,
+}: {
+  token: string
+  onCompleted: (storeId: string | null) => void
+}) {
   const { t } = useTranslation()
   const { completeSetup, isLoading } = useAuth()
-  const navigate = useNavigate()
 
   const form = useForm<SetupFormValues>({
     resolver: zodResolver(setupFormSchema),
@@ -110,21 +131,21 @@ function SetupForm({ token }: { token: string }) {
   const onSubmit = async (data: SetupFormValues) => {
     try {
       const session = await completeSetup({ ...data, setup_token: token })
+      const store = session.user?.stores?.[0]
+
+      toastManager.add({
+        type: 'success',
+        title: t('admin.setup.welcome_title'),
+        description: t('admin.setup.welcome_description', {
+          store: store?.name ?? data.store_name,
+        }),
+      })
 
       // A merchant who has just claimed the installation has an empty store,
       // so the checklist is the useful landing place rather than a dashboard
-      // of zeroes. Falls back to the index redirect if the payload carries no
-      // store, which resolves one for itself.
-      const storeId = session.user?.stores?.[0]?.id
-      if (storeId) {
-        navigate({
-          to: '/$storeId/getting-started',
-          params: { storeId },
-          replace: true,
-        })
-      } else {
-        navigate({ to: '/', replace: true })
-      }
+      // of zeroes. A payload carrying no store falls through to the index
+      // redirect, which resolves one for itself.
+      onCompleted(store?.id ?? null)
     } catch (err) {
       const e = err as SpreeError
       if (e?.status === 404) {
@@ -271,7 +292,7 @@ function SetupUnavailable({ title, message }: { title: string; message: string }
       <h1 className="text-2xl font-bold">{title}</h1>
       <p className="text-sm text-muted-foreground">{message}</p>
       <p className="text-sm text-muted-foreground">
-        <Link to="/login" className="underline underline-offset-4">
+        <Link to="/login" className="link">
           {t('admin.setup.back_to_login')}
         </Link>
       </p>

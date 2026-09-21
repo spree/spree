@@ -1,0 +1,77 @@
+---
+title: "Roles"
+description: "Define what each staff role can see and do in Spree — build permission sets from a grid of resources, or start from a ready-made template."
+---
+
+A **role** is a permission set you assign to staff. It decides which parts of the dashboard a person can open, and which of those they can change.
+
+To manage roles, navigate to **Settings → Roles**, under the **Users & permissions** group.
+
+The table has three columns:
+
+- **Role**: the role's name
+- **Permissions**: a badge reading **Full access**, **No permissions**, or a count such as **+4 more**
+- **Members**: how many staff hold the role
+
+A role that Spree protects carries a **Protected** badge.
+
+## Create a Role
+
+Click **Add role**. A panel opens, headed *"Choose what this role can view and manage."*
+
+1. Optionally click one of the three **Start from** buttons — **Order manager**, **Merchandiser** or **Support** — to fill the grid with a ready-made set rather than starting empty.
+2. Give the role a **Name**, and a **Description** if the name is not self-explanatory.
+3. Set the permissions. The grid has a row per resource and two tick boxes — **View** and **Manage**. Tick **View** for everything the role should be able to open, and **Manage** for everything it should be able to change.
+4. Click **Save**.
+
+The role is then offered when you [<u>invite or edit a teammate</u>](/user/settings/staff).
+
+<Note>Three buttons above the grid set every row at once: **Read only**, **Full access**, and **Clear**. Use one of them as a starting point, then adjust the individual rows.</Note>
+
+## What You Can Grant
+
+The grid holds 28 resources in 9 groups. Each row can be granted **View**, **Manage**, or both.
+
+| Group | Resource | What it covers |
+|---|---|---|
+| **Analytics** | Dashboard | Sales and performance analytics |
+| | Reports | — |
+| **Orders** | Orders | Orders, line items, returns, exchanges and claims |
+| | Payments | Order payments and payment capture |
+| | Fulfillments | Pack, ship and track order fulfillments |
+| | Refunds | Issue and view refunds |
+| **Catalog** | Products | Products, variants, options, prices and media |
+| | Product types | Product type definitions and their custom fields |
+| | Publishing | What is visible in the storefront and when |
+| | Media | Images, video and files in the media library |
+| | Categories | Category tree and taxonomies |
+| | Collections | Manual and rule-based product collections |
+| | Stock | Stock levels, locations, movements and transfers |
+| | Purchasing | Suppliers and purchase orders |
+| **Customers** | Customers | Customer accounts, addresses, cards and groups |
+| **Sellers** | Sellers | Seller accounts, onboarding and approval |
+| | Commissions | Commission rates and what each seller is charged |
+| | Payouts | Money paid out to sellers and its schedule |
+| **Loyalty** | Gift cards | Gift cards and gift card batches |
+| | Store credits | Customer store credit balances |
+| **Marketing** | Promotions | Promotions, rules and coupon codes |
+| **Settings** | Settings | Store, payment, delivery, tax and channel configuration |
+| | Delivery methods | Shipping options, rates and the rules that gate them |
+| | Package types | — |
+| | Webhooks | Webhook endpoints and deliveries |
+| | Integrations | Provider credentials and connections |
+| **Access** | API keys | Create and revoke API credentials |
+| | Staff & roles | Team members, invitations, roles and their permissions |
+
+<Note>**Dashboard** can be viewed but not managed, so it offers only one of the two tick boxes.</Note>
+
+## Edit a Role
+
+Open the role's row actions and choose **Edit**, then adjust the grid and save.
+
+<Warning>The built-in **Admin** role is protected and cannot be edited. Opening it shows the full permission grid and a **Save** button, but reads *"This role is protected and cannot be edited."* — none of those controls will take. To run a variation on Admin, create a new role instead.</Warning>
+
+## Related
+
+- [<u>Settings → Staff</u>](/user/settings/staff)
+- [<u>Customization → Permissions</u>](/developer/customization/permissions)

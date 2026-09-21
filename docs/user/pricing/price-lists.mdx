@@ -88,11 +88,15 @@ A price list can charge less per unit from a given quantity up. In the price edi
 
 When a customer's order line reaches a break, the line is priced at that break's unit price. A variant with breaks is priced by its breaks alone: a catalog's percentage adjustment does not apply on top of them.
 
+A break must not cost more than the quantity below it buys, and saving is refused if it does — otherwise a customer would pay more for ordering more. The price a break is measured against is the one directly beneath it: the break below, or the variant's regular price on this list. You may leave that regular price empty, which means the list does not change the price until the first break is reached; the break is then measured against the shop price the customer pays up to that point.
+
+A price list may be dearer than the shop overall — only the breaks within it have to go down.
+
 ### Importing and Exporting Prices
 
 Next to **Edit Prices** you'll find **Export** and **Import**, which move a price list's prices as a CSV file, one row per variant, currency and quantity break.
 
-**Export** downloads every priced row of the list. **Import** merges a file into the list: each row in the file is written or updated, a row with a blank price removes that row from the list (the regular price or a break alike; a variant with no rows left is no longer on the list), and prices the file does not mention are left as they are. Rows the import cannot place are listed in the import report and do not stop the rest: an unknown SKU, a SKU shared by more than one variant, a currency the store does not sell in, a price that is not a plain number like `16.50`, a quantity that is not a whole number, or an eleventh break on one variant. Rows are applied one at a time, so to replace a variant's full set of ten breaks with new quantities, import the blank-price rows that clear the old breaks first, then the new ones.
+**Export** downloads every priced row of the list. **Import** merges a file into the list: each row in the file is written or updated, a row with a blank price removes that row from the list (the regular price or a break alike; a variant with no rows left is no longer on the list), and prices the file does not mention are left as they are. Rows the import cannot place are listed in the import report and do not stop the rest: an unknown SKU, a SKU shared by more than one variant, a currency the store does not sell in, a price that is not a plain number like `16.50`, a quantity that is not a whole number, an eleventh break on one variant, or a price that would make a bigger order cost more per unit. Rows are applied one at a time, so to replace a variant's full set of ten breaks with new quantities, import the blank-price rows that clear the old breaks first, then the new ones. For the same reason, when lowering every price on a variant's ladder at once, list the higher quantities first — a file that lowers the regular price before the breaks above it is momentarily a ladder that charges more for a bigger order, and that row is refused.
 
 | Field                | Description |
 | -------------------- | ----------------------------------------------------------------------------------------- |

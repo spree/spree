@@ -1928,6 +1928,10 @@
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
         },
+        "always_include_confirm_step": {
+          "help": "Proposer toujours aux clients une étape de vérification finale avant de valider la commande, même lorsqu’aucun moyen de paiement ne l’exige.",
+          "label": "Toujours afficher l’étape de confirmation"
+        },
         "capture_method": {
           "help": "La valeur par défaut pour tous les moyens de paiement. Un moyen de paiement peut la remplacer.",
           "label": "Quand débiter les clients",
@@ -2119,7 +2123,10 @@
           "minimum": {
             "label": "Paiement minimum",
             "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
-          }
+          },
+          "provider_needs_connection": "Connectez {{name}} pour l’utiliser",
+          "provider_connect_hint": "{{name}} paie les vendeurs via son moyen de paiement, qui n’est pas encore actif sur cette boutique.",
+          "provider_connect_link": "Configurez-le dans Moyens de paiement"
         },
         "limit_digital_download_count": {
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
@@ -2145,6 +2152,23 @@
         "preferred_default_package_weight": {
           "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
           "label": "Poids de colis par défaut"
+        },
+        "auto_approve_sellers": {
+          "label": "Valider les vendeurs automatiquement",
+          "help": "Un vendeur commence à vendre dès qu’il termine sa liste, sans que personne ne l’examine."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publier les produits des vendeurs automatiquement",
+          "help": "Le produit d’un vendeur est mis en vente dès qu’il le soumet, sans que personne ne l’examine."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Envoyer des e-mails aux vendeurs",
+          "help": "Envoie aux vendeurs les e-mails sur la validation, les produits et les paiements. Désactivez si vous écrivez vous-même à vos vendeurs. Les e-mails clients ne sont pas concernés."
+        },
+        "default_commission_tax_rate": {
+          "label": "Taxe par défaut sur la commission",
+          "help": "Appliquée à votre commission quand ni le taux de commission ni votre fournisseur de taxes n’indique son propre taux. Laissez 0 si votre commission n’est pas taxée.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2739,6 +2763,8 @@
           "cancel_shipment_message": "Annuler cet envoi ?",
           "capture_message": "Capturer ce paiement ?",
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
+          "delete_message": "Supprimer la commande brouillon {{number}} ? Cette action est irréversible.",
+          "delete_title": "Supprimer la commande brouillon ?",
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
           "remove_store_credit_message": "Retirer l'avoir de la commande ?",
@@ -2766,7 +2792,8 @@
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
           "complete_failed": "Échec de la finalisation de la commande",
-          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation",
+          "delete_failed": "Échec de la suppression de la commande"
         },
         "fulfillments": {
           "add_delivery": "Ajouter un suivi",
@@ -2868,6 +2895,7 @@
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
           "confirmation_sent": "Confirmation envoyée",
+          "deleted": "Commande brouillon supprimée",
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",
@@ -3968,12 +3996,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Paiements",
-          "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
-        },
         "package_types": {
           "add_sheet_title": "Ajouter un type d'emballage"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Comment cette marketplace paie ses vendeurs, comment les vendeurs la rejoignent, ce qu’ils reçoivent de vous et la taxe sur votre commission.",
+          "payouts_title": "Versements",
+          "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
+          "admission_title": "Validation des vendeurs",
+          "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
+          "communication_title": "Communication",
+          "commission_tax_title": "Taxe sur la commission"
         }
       },
       "staff": {
@@ -5010,9 +5044,9 @@
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
-        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant",
         "package_types": "Cartons, palettes et conteneurs",
-        "suppliers": "À qui vous achetez votre stock, et comment les joindre"
+        "suppliers": "À qui vous achetez votre stock, et comment les joindre",
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
       },
       "groups": {
         "audit": "Audit",
@@ -5048,9 +5082,12 @@
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks",
-        "payouts": "Paiements",
         "package_types": "Types d'emballage",
-        "suppliers": "Fournisseurs"
+        "suppliers": "Fournisseurs",
+        "marketplace": "Paramètres"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {
@@ -5068,7 +5105,9 @@
       "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
       "required_notice_title": "Cette installation n'est pas encore configurée",
       "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
-      "title": "Configurer Spree"
+      "title": "Configurer Spree",
+      "welcome_description": "Suivez la liste ci-dessous pour ouvrir {{store}}.",
+      "welcome_title": "Bienvenue, votre boutique est prête !"
     },
     "staff": {
       "actions": {

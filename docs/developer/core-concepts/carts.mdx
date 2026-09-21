@@ -137,9 +137,85 @@ A cart tells you what it still needs before it can be completed:
 }
 ```
 
-An empty `requirements` array means the cart is ready.
+Every entry has the same four fields. Branch on `code` — `message` is translated prose
+meant for a person, and `step` is only a grouping hint.
 
 This is what lets you design your own checkout. Spree tells you what's missing; you decide how and when to ask for it — one long page, a few steps, or whatever suits your storefront.
+
+Seven checks run on every cart read:
+
+| `code` | `step` | Raised when |
+|---|---|---|
+| `line_items_required` | `cart` | The cart is empty |
+| `email_required` | `address` | No email address |
+| `ship_address_required` | `address` | Something needs shipping and there is no address |
+| `delivery_method_required` | `delivery` | A delivery method hasn't been chosen |
+| `payment_required` | `payment` | The total isn't covered by payments |
+| `po_number_required` | `address` | A company requires a purchase-order number |
+| `order_minimum_not_met` | `cart` | Below the order minimum, with the shortfall in the message |
+
+<Warning>
+  **An empty `requirements` array does not guarantee completion will succeed.** What a
+  cart reports is the *advisory* set. Completing one additionally checks stock
+  (`out_of_stock`, `discontinued`), negotiated quantity rules
+  (`quantity_rule_violated`) and the guest-checkout policy
+  (`guest_checkout_not_allowed`) — each of which has to load line items, so they are
+  held back to keep reading a cart cheap. Treat a failed completion as a normal path,
+  not an exception.
+</Warning>
+
+### Checkout steps
+
+A cart also reports a step list, so you can render a progress indicator:
+
+<CodeGroup>
+
+```typescript Store SDK
+const cart = await client.carts.get(cartId)
+
+cart.current_step     // "delivery"
+cart.completed_steps  // ["address"]
+```
+
+```json Response
+{
+  "current_step": "delivery",
+  "completed_steps": ["address"]
+}
+```
+
+</CodeGroup>
+
+Spree has no checkout state machine. The list is computed from the cart's own data,
+and nothing on the server refuses a write because of where the customer appears to be
+— you can set an address, choose delivery and attach a payment in any order.
+`current_step` is simply the step of the first unmet requirement.
+
+Five steps are built in, and three only appear when they apply:
+
+| Step | Present when |
+|---|---|
+| `address` | Always |
+| `delivery` | The cart has items and isn't entirely digital |
+| `payment` | The total is above zero |
+| `confirm` | A payment method asks for one, or the store always wants one |
+| `complete` | Always |
+
+So a free digital order reports `address` then `complete`. A storefront that hardcodes
+five steps will show two that never apply.
+
+<Note>
+  Requirements use one grouping name that is not a step: **`cart`**. Missing line
+  items, the order minimum and stock problems are filed under it, and there is no
+  `cart` entry in the step list — `current_step` reports those as `address`. If you
+  group requirements by `step` to place them on screens, give `cart` a home.
+</Note>
+
+Checkout introspection lives on the cart, not the order. An order has already been
+placed, so `current_step` and `requirements` do not appear on it.
+
+To add your own step or requirement, see
+[Customizing checkout](/developer/customization/checkout).
 
 ## Checkout
 

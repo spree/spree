@@ -57,7 +57,7 @@ function ForgotPasswordPage() {
             <CardDescription>{t('admin.auth.forgot_password.sent_subtitle')}</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link to="/login" className="text-sm underline underline-offset-4 hover:text-primary">
+            <Link to="/login" className="link text-sm">
               {t('admin.auth.back_to_login')}
             </Link>
           </CardContent>
@@ -94,7 +94,7 @@ function ForgotPasswordPage() {
             : t('admin.auth.forgot_password.submit')}
         </Button>
         <div className="text-center">
-          <Link to="/login" className="text-sm underline underline-offset-4 hover:text-primary">
+          <Link to="/login" className="link text-sm">
             {t('admin.auth.back_to_login')}
           </Link>
         </div>

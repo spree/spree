@@ -430,10 +430,8 @@
      a card. Measured off a reference: the ground under a field's bottom edge
      recovers over about 2px and nothing spreads above it or to the sides, so
      this is purely directional, with no ambient layer. */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  /* The same lift, under its Tailwind-conventional name. Points at the token
-     above rather than repeating the value, so the two cannot drift. */
-  --shadow-sm: var(--shadow-xs);
+  --shadow-xs: 0 0px 1px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
   /* Floating surfaces — menus, popovers, dialogs, sheets. Wide and faint
@@ -573,6 +571,36 @@
   &:focus-visible {
     border-color: var(--ring);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 15%, transparent);
+  }
+}
+
+@utility link {
+  /* The one treatment for an inline textual link — a link in prose, in help
+     text, inside an alert or an empty state. Colour rather than a permanent
+     underline, because the dashboard puts links inside dense body copy where
+     a rule under every one reads as noise; the underline arrives on hover so
+     the affordance is still there when the pointer looks for it.
+
+     NOT for links that are really something else: a table row, a breadcrumb,
+     a nav item, a card wrapped in an anchor, a button rendered as `<a>`.
+     Those carry their own treatment and `.link` would fight it.
+
+     `focus-visible` draws a ring rather than borrowing `focus-ring`'s border
+     +shadow: a text link has no border to recolour, so it needs an outline
+     that follows the text box instead. */
+  color: var(--link);
+  text-decoration-line: none;
+  text-underline-offset: 3px;
+  border-radius: var(--radius-sm);
+
+  &:hover {
+    color: var(--link-hover);
+    text-decoration-line: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
 

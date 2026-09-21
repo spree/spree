@@ -22686,6 +22686,7 @@ paths:
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
+                preferred_always_include_confirm_step: false
                 preferred_company_field_enabled: false
                 preferred_address_requires_company: false
                 preferred_address_requires_phone: false
@@ -22705,6 +22706,10 @@ paths:
                 preferred_payout_provider:
                 preferred_default_payouts_schedule_interval: monthly
                 preferred_default_minimum_payout_amount: 0
+                preferred_auto_approve_sellers: false
+                preferred_auto_approve_seller_products: false
+                preferred_send_seller_transactional_emails: true
+                preferred_default_commission_tax_rate: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -23014,6 +23019,7 @@ paths:
                 preferred_unit_system: imperial
                 preferred_storefront_access: public
                 preferred_guest_checkout: true
+                preferred_always_include_confirm_step: false
                 preferred_company_field_enabled: false
                 preferred_address_requires_company: false
                 preferred_address_requires_phone: false
@@ -23033,6 +23039,10 @@ paths:
                 preferred_payout_provider:
                 preferred_default_payouts_schedule_interval: monthly
                 preferred_default_minimum_payout_amount: 0
+                preferred_auto_approve_sellers: false
+                preferred_auto_approve_seller_products: false
+                preferred_send_seller_transactional_emails: true
+                preferred_default_commission_tax_rate: 0
                 preferred_document_number_format: sequential
                 preferred_order_number_prefix: R
                 preferred_order_number_suffix: ''
@@ -48229,6 +48239,8 @@ components:
           type: string
         preferred_guest_checkout:
           type: boolean
+        preferred_always_include_confirm_step:
+          type: boolean
         preferred_company_field_enabled:
           type: boolean
         preferred_address_requires_company:
@@ -48267,6 +48279,14 @@ components:
         preferred_default_payouts_schedule_interval:
           type: string
         preferred_default_minimum_payout_amount:
+          type: number
+        preferred_auto_approve_sellers:
+          type: boolean
+        preferred_auto_approve_seller_products:
+          type: boolean
+        preferred_send_seller_transactional_emails:
+          type: boolean
+        preferred_default_commission_tax_rate:
           type: number
         preferred_document_number_format:
           type: string
@@ -48335,6 +48355,7 @@ components:
       - preferred_unit_system
       - preferred_storefront_access
       - preferred_guest_checkout
+      - preferred_always_include_confirm_step
       - preferred_company_field_enabled
       - preferred_address_requires_company
       - preferred_address_requires_phone
@@ -48354,6 +48375,10 @@ components:
       - preferred_payout_provider
       - preferred_default_payouts_schedule_interval
       - preferred_default_minimum_payout_amount
+      - preferred_auto_approve_sellers
+      - preferred_auto_approve_seller_products
+      - preferred_send_seller_transactional_emails
+      - preferred_default_commission_tax_rate
       - preferred_document_number_format
       - preferred_order_number_prefix
       - preferred_order_number_suffix

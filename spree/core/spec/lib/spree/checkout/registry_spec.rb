@@ -105,4 +105,23 @@ RSpec.describe Spree::Checkout::Registry do
       expect(described_class.requirements).to be_empty
     end
   end
+
+  # The registry lives in lib/ rather than app/ precisely so that a reload
+  # cannot discard what an application registered at boot. Autoloaded, a
+  # developer's custom step silently disappeared on the first code change.
+  describe 'surviving a code reload' do
+    it 'keeps registered steps and stays the same class object' do
+      described_class.register_step(
+        name: :loyalty,
+        satisfied: ->(_order) { true },
+        requirements: ->(_order) { [] }
+      )
+      before_reload = described_class
+
+      Rails.application.reloader.reload!
+
+      expect(Spree::Checkout::Registry).to be(before_reload)
+      expect(Spree::Checkout::Registry.steps.map(&:name)).to include('loyalty')
+    end
+  end
 end

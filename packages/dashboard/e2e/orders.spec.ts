@@ -149,6 +149,39 @@ test.describe('new order', () => {
     await page.goto(DRAFTS_PATH(creds.store_id))
     await expect(page.getByText(`#${number}`)).toBeVisible({ timeout: 15_000 })
   })
+
+  test('deletes a draft order from its actions menu', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(NEW_ORDER_PATH(creds.store_id))
+    await expect(page.getByRole('heading', { name: CTA })).toBeVisible({ timeout: 15_000 })
+
+    const email = `e2e-draft-delete-${Date.now()}@example.com`
+    await fillNewOrderForm(page, email)
+    await page.locator('button[type="submit"]').click()
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/or_[^/]+$`), {
+      timeout: 15_000,
+    })
+
+    const heading = await page.getByRole('heading', { level: 1 }).first().textContent()
+    const number = heading?.match(/R\d+/)?.[0] as string
+    expect(number).toBeTruthy()
+
+    await page.getByRole('button', { name: /more actions/i }).click()
+    await expect(page.getByRole('menuitem', { name: /cancel order/i })).toHaveCount(0)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+
+    await expect(page).toHaveURL(new RegExp(`/${creds.store_id}/orders/drafts`), {
+      timeout: 15_000,
+    })
+    // Wait for the list itself before reading absence, so an empty page mid-load
+    // cannot pass for a deleted draft.
+    await expect(page.getByRole('link', { name: CTA })).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByText(`#${number}`)).toHaveCount(0)
+  })
 })
 
 test.describe('order editing', () => {

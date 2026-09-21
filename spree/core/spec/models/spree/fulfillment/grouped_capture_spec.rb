@@ -77,4 +77,20 @@ RSpec.describe Spree::Fulfillment, 'capture on dispatch in a split checkout' do
 
     expect(seller_order.reload.payment_status).to eq('paid')
   end
+
+  # Without this a dispatched order reads as paid while still showing its whole
+  # total outstanding, which is the badge above disagreeing with the money.
+  it "carries what it drew onto the order's payment total, and no sibling's" do
+    expect { dispatch(seller_order, worth: 40) }.
+      to change { seller_order.reload.payment_total }.from(0).to(40)
+
+    expect(first_party_order.reload.payment_total).to be_zero
+  end
+
+  # Reserving money is not taking it, and locking the order from inside the
+  # share's lock would deadlock two sellers dispatching at once.
+  it 'leaves the payment total alone while a claim is merely reserved' do
+    expect { seller_split.update!(claimed_amount: 10) }.
+      not_to change { seller_order.reload.payment_total }
+  end
 end

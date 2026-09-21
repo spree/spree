@@ -264,7 +264,8 @@ function AddPaymentDialog({
   })
   const paymentMethods = methodsData?.data ?? []
   const selectedMethod = paymentMethods.find((m) => m.id === paymentMethodId)
-  const sourceRequired = selectedMethod?.source_required ?? false
+  const isStoreCredit = selectedMethod?.type === 'store_credit'
+  const sourceRequired = (selectedMethod?.source_required ?? false) && !isStoreCredit
 
   const { data: cardsData } = useQuery({
     queryKey: ['customer-credit-cards', customerId],
@@ -279,13 +280,15 @@ function AddPaymentDialog({
   const canSubmit = Boolean(paymentMethodId) && (!sourceRequired || Boolean(sourceId))
 
   const mutation = useOrderMutation(orderId, () =>
-    adminClient.orders.payments.create(orderId, {
-      payment_method_id: paymentMethodId,
-      ...(sourceId ? { source_id: sourceId } : {}),
-      // Ship raw merchant input; `Spree::LocalizedNumber.parse` on the
-      // backend handles locale-aware decoding (comma decimals etc.).
-      ...(amount ? { amount } : {}),
-    }),
+    isStoreCredit
+      ? adminClient.orders.storeCredits.apply(orderId, amount ? { amount } : {})
+      : adminClient.orders.payments.create(orderId, {
+          payment_method_id: paymentMethodId,
+          ...(sourceId ? { source_id: sourceId } : {}),
+          // Ship raw merchant input; `Spree::LocalizedNumber.parse` on the
+          // backend handles locale-aware decoding (comma decimals etc.).
+          ...(amount ? { amount } : {}),
+        }),
   )
 
   const captureMutation = useOrderMutation(orderId, (paymentId: string) =>
@@ -304,8 +307,10 @@ function AddPaymentDialog({
     if (!canSubmit) return
 
     mutation.mutate(undefined, {
+      // A store credit charge answers with the order, not a payment, so there
+      // is no payment id to capture — and no gateway to capture it at.
       onSuccess: (payment) => {
-        if (capture && payment && (payment as { id?: string }).id) {
+        if (capture && !isStoreCredit && payment && (payment as { id?: string }).id) {
           captureMutation.mutate((payment as { id: string }).id, {
             onSuccess: () => {
               onOpenChange(false)
@@ -420,12 +425,14 @@ function AddPaymentDialog({
                 </p>
               </Field>
 
-              <Field>
-                <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
-                  <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
-                  {t('admin.orders.detail.payment_form.capture_immediately')}
-                </label>
-              </Field>
+              {!isStoreCredit && (
+                <Field>
+                  <label className="flex items-center gap-2 text-sm" htmlFor="pay-capture">
+                    <Switch id="pay-capture" checked={capture} onCheckedChange={setCapture} />
+                    {t('admin.orders.detail.payment_form.capture_immediately')}
+                  </label>
+                </Field>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>
