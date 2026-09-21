@@ -67,19 +67,19 @@ Open a transfer from the list to move it along:
 
 1. Click **Mark as ready to ship** once the transfer is packed.
 2. Click **Mark in transit** when the units physically leave. This is the moment stock actually moves.
-3. Click **Receive** as the units land, and record how many the destination counted in.
+3. Record what the destination counted as the units land, then click **Receive**. This is covered in the next section.
 
 Use **Back to draft** to reopen a transfer you marked ready too early.
 
 <Note>Once a transfer is packed its contents are a matter of record, so it can no longer be edited.</Note>
 
-## How to Count a Transfer In
+## How to Receive a Transfer
 
-Once a transfer is in transit it is ready to receive against, so there is no separate screen to open. Record what arrived on the transfer itself, then commit it.
+Once a transfer is marked in transit, a receiving section appears at the top of the transfer itself, where you can record what has arrived.
 
 ![A stock transfer ready to receive, with accepted and rejected quantities against each line](/docs/images/user/inventory/stock-transfers/4-receive-transfer.png)
 
-1. Open the transfer. Each line shows what was sent and how much is still outstanding.
+1. Open the transfer. The receiving section shows one line per variant, indicating what was sent and how much is still outstanding.
 2. Work down the lines and record how many units the destination accepted and how many it rejected.
 3. Click **Receive** to commit what you have counted.
 
@@ -98,11 +98,13 @@ Each line is counted in two parts. Record how many units you **accepted**, meani
 
 Only accepted units are added to the destination warehouse's on-hand count. Rejected units are recorded against the delivery so there is a record of what went wrong, but they never reach the shelf.
 
+<Note>If a rejected unit does end up back on a shelf, correct the count by hand from the [<u>Inventory</u>](/user/inventory/stock-levels) page. Spree treats a rejection as units that never arrived, so nothing puts them back for you.</Note>
+
 <Warning>A rejection on a transfer is a loss inside your own business, not something a supplier will replace. The units left one of your warehouses and never made it onto the shelf at the other, so a rejected line is worth chasing with whoever packed or carried it.</Warning>
 
 ### Receiving in batches
 
-You do not have to count a whole transfer in at once. If a shipment turns up across several days or several pallets, count in what has arrived and click **Receive**. Spree records that count as a **delivery** against the transfer and moves the transfer to **Partially received**, leaving the rest outstanding.
+You do not have to count a whole transfer in at once. If a shipment turns up across several days or several pallets, record what has arrived and click **Receive**. Spree logs that as a **delivery** against the transfer and moves it to **Partially received**, leaving the rest outstanding.
 
 Each time more units arrive, count in the next batch and click **Receive** again. Every batch is recorded as its own delivery, so a transfer that arrived in three loads has three deliveries against it.
 
@@ -133,9 +135,15 @@ What cancelling does depends entirely on whether the stock has left yet.
 
 ![The confirmation asking what happened to units that have already left the source warehouse](/docs/images/user/inventory/stock-transfers/7-cancel-in-transit.png)
 
-**Close short** is used when part of a shipment never turns up. What the destination counted in stays on its shelf, the units still on the road are written off as lost, and the transfer is marked received, so your figures stop promising stock that is not coming.
+**Close short** is used when part of a shipment never turns up. It sits in the more actons menu at the top right of the transfer.
 
-<Warning>Transfers cannot be deleted. A cancelled transfer is kept, because the stock movements it made are part of your inventory history.</Warning>
+What the destination counted in stays on its shelf, the units still on the road are written off as lost, and the transfer is marked received, so your figures stop promising stock that is not coming.
+
+## How to Delete a Transfer
+
+A transfer can only be deleted while it is still a draft, because a draft has moved no stock and so has nothing to preserve. Delete one from the more actions menu at the top right of the transfer.
+
+<Warning>Once a transfer has been marked ready to ship it can no longer be deleted, only cancelled. A cancelled transfer is kept, because the stock movements it made are part of your inventory history.</Warning>
 
 ## Further Reading
 
