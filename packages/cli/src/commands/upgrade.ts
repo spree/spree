@@ -15,7 +15,7 @@ export function registerUpgradeCommand(program: Command): void {
     .description('Walk through a Spree version upgrade (bundle + migrate + spree:upgrade)')
     .option(
       '--plan',
-      'list the data backfills a run would execute for the installed Spree version (DRY_RUN=1); skip bundle + migrate',
+      'list the data backfills a run would execute — for the installed Spree version, or the --to version (DRY_RUN=1); skip bundle + migrate',
     )
     .option('--step <id>', 'run a single rake step by id (skips bundle + migrate)')
     .option(
