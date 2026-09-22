@@ -174,23 +174,6 @@ Load sample products, categories, and images.
 spree sample-data
 ```
 
-Sample data goes into the default store. To load it into a different store, name that store by its code or ID:
-
-<Tabs>
-  <Tab title="Spree CLI">
-    ```bash
-    spree task load_sample_data STORE_CODE=my-store
-    spree task load_sample_data STORE_ID=store_k5nR8xLq
-    ```
-  </Tab>
-  <Tab title="Without CLI">
-    ```bash
-    bin/rails spree:load_sample_data STORE_CODE=my-store
-    bin/rails spree:load_sample_data STORE_ID=store_k5nR8xLq
-    ```
-  </Tab>
-</Tabs>
-
 ### `spree user create`
 
 Create an admin user. Prompts for email and password interactively, or pass them as flags:

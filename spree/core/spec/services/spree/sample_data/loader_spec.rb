@@ -12,9 +12,8 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     ENV['ADMIN_EMAIL'] = 'sample-admin@example.com'
     ENV['ADMIN_PASSWORD'] = 'Secret123!'
 
-    # Loaded into a store that is not the default one, as a multi-tenant
-    # platform does for each store it provisions, so the default store has to
-    # stay empty. It exists before the seeds so they provision it too.
+    # Loaded into a store that is not the default one, so the default store
+    # has to stay empty. It exists before the seeds so they provision it too.
     Spree::Seeds::Stores.call
     @store = create(:store, default: false)
     Spree::Seeds::All.call
