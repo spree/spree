@@ -36,7 +36,7 @@ Spree::Checkout::Registry.add_requirement(
   step: :address,
   field: :vat_number,
   message: 'VAT number is required for business orders',
-  satisfied: ->(cart) { cart.custom_fields['vat_number'].present? }
+  satisfied: ->(cart) { cart.metadata['vat_number'].present? }
 )
 ```
 
@@ -60,7 +60,7 @@ A step bundles its own requirements and says when it is satisfied:
 Spree::Checkout::Registry.register_step(
   name: :loyalty,
   before: :payment,
-  satisfied: ->(cart) { cart.custom_fields['loyalty_number'].present? },
+  satisfied: ->(cart) { cart.metadata['loyalty_number'].present? },
   requirements: ->(cart) {
     [{ step: 'loyalty', field: 'loyalty_number',
        message: 'Loyalty number is required' }]

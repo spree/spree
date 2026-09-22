@@ -92,18 +92,20 @@ curl -X POST 'https://store.example.com/api/v3/admin/auth/login' \
 
 ### Token refresh
 
-JWT tokens expire after 1 hour by default. Refresh them with the current token:
+Admin JWT tokens are short-lived — they expire after 5 minutes by default (configurable with `SPREE_ADMIN_JWT_EXPIRATION`, in seconds). Login also sets a refresh token in an HttpOnly cookie scoped to `/api/v3/admin/auth`; it is never returned in the response body. Exchange that cookie for a new access token:
 
 <CodeGroup>
 
 ```typescript SDK
-const { token } = await client.auth.refresh({ token: currentToken })
+// Sends the refresh cookie set at login; the cookie is rotated on every call
+const { token } = await client.auth.refresh()
+client.setToken(token)
 ```
 
 ```bash cURL
+# Log in with -c cookies.txt to store the refresh cookie, then:
 curl -X POST 'https://store.example.com/api/v3/admin/auth/refresh' \
-  -H 'X-Spree-Api-Key: sk_xxx' \
-  -H 'Authorization: Bearer <current_jwt_token>'
+  -b cookies.txt -c cookies.txt
 ```
 
 </CodeGroup>
@@ -119,7 +121,10 @@ Each secret API key carries a list of **scopes** that grant access to specific r
 | Scope | Grants access to |
 |---|---|
 | `read_orders` / `write_orders` | `/orders/*` — including nested items and adjustments |
-| `read_products` / `write_products` | `/products/*`, `/variants/*`, `/option_types/*`, `/media/*`, `/prices/*`, `/price_lists/*` |
+| `read_products` / `write_products` | `/products/*`, `/variants/*`, `/option_types/*`, `/prices/*`, `/price_lists/*`, `/catalogs/*`, `/digital_assets/*`, `/imports/*` |
+| `read_product_types` / `write_product_types` | `/product_types/*` |
+| `read_publishing` / `write_publishing` | Publishing products to channels |
+| `read_media` / `write_media` | `/media/*` |
 | `read_promotions` / `write_promotions` | `/promotions/*` — including nested rules, actions, and coupon codes |
 | `read_customers` / `write_customers` | `/customers/*`, `/customer_groups/*` — including nested addresses and credit cards |
 | `read_payments` / `write_payments` | `/orders/:id/payments` — including capture and void |
@@ -127,12 +132,22 @@ Each secret API key carries a list of **scopes** that grant access to specific r
 | `read_refunds` / `write_refunds` | `/orders/:id/refunds` |
 | `read_gift_cards` / `write_gift_cards` | `/gift_cards/*`, `/gift_card_batches/*`, `/orders/:id/gift_cards` |
 | `read_store_credits` / `write_store_credits` | `/customers/:id/store_credits`, `/orders/:id/store_credits` |
-| `read_stock` / `write_stock` | `/stock_locations/*`, `/stock_items/*`, `/stock_transfers/*`, `/stock_reservations/*` |
+| `read_stock` / `write_stock` | `/stock_locations/*`, `/stock_levels/*`, `/stock_movements/*`, `/stock_transfers/*`, `/stock_reservations/*`, `/stock_receipts/*` |
+| `read_purchasing` / `write_purchasing` | `/suppliers/*`, `/purchase_orders/*`, `/stock_receipts/*` |
 | `read_categories` / `write_categories` | `/categories/*` |
-| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/countries`, `/custom_field_definitions/*`, staff management (`/admin_users`, `/invitations`, `/roles`), `/allowed_origins/*` |
+| `read_collections` / `write_collections` | `/collections/*` |
+| `read_sellers` / `write_sellers` | `/sellers/*`, `/seller_requirements/*` |
+| `read_commissions` / `write_commissions` | `/commission_rates/*`, `/commission_lines/*` |
+| `read_payouts` / `write_payouts` | `/seller_transfers/*`, `/seller_payouts/*` |
+| `read_settings` / `write_settings` | Store configuration — `/store`, `/payment_methods/*`, `/markets/*`, `/channels/*`, `/tax_categories/*`, `/custom_field_definitions/*`, `/allowed_origins/*` |
+| `read_staff` / `write_staff` | Staff management — `/admin_users/*`, `/invitations/*`, `/roles/*` |
+| `read_delivery_methods` / `write_delivery_methods` | `/delivery_methods/*` — including rules and carrier services |
+| `read_package_types` / `write_package_types` | `/package_types/*` |
+| `read_integrations` / `write_integrations` | `/integrations/*` |
 | `read_webhooks` / `write_webhooks` | `/webhook_endpoints/*` — including delivery logs and redelivery |
 | `read_api_keys` / `write_api_keys` | `/api_keys/*` — creating, revoking, and deleting API keys |
 | `read_dashboard` | `/dashboard/*` (analytics; read-only) |
+| `read_reports` / `write_reports` | Reports, `/saved_reports/*` and report exports |
 
 Custom field **values** are gated by the resource they're attached to: a `write_products` key can manage custom fields on products, variants, and option types; `write_orders` covers order custom fields, and so on. Custom field **definitions** (the schema) are part of `settings`.
 
@@ -164,30 +179,35 @@ If the key lacks the required scope, the API returns `403 Forbidden`:
 
 The `details.required_scope` field tells you exactly which scope to add — and `spree api-key create --type secret --scopes <scope>` mints a key that has it. Choose the narrowest set that covers your integration's needs.
 
-### JWT bearer tokens: CanCanCan abilities
+### JWT bearer tokens: role permissions
 
-JWT-authenticated admin users are authorized via [CanCanCan](https://github.com/CanCanCommunity/cancancan) abilities derived from their `Spree::Role`s. The SPA uses this fine-grained model to render UI conditionally; partial-permission staff users see only the resources their role grants.
+JWT-authenticated admin users pass the same per-controller gate as secret keys. Instead of key scopes, the gate checks the permission keys held by the user's `Spree::Role`s on the current store — the same `read_<resource>` / `write_<resource>` vocabulary. The SPA reads those keys from `GET /api/v3/admin/me` to render UI conditionally; partial-permission staff users see only the resources their role grants.
 
-If the caller lacks permission for a specific action, the API returns `403 Forbidden`:
+If the user's role lacks the required key, the API returns `403 Forbidden`:
 
 ```json
 {
   "error": {
     "code": "access_denied",
-    "message": "You are not authorized to perform this action"
+    "message": "Missing permission: write_orders",
+    "details": {
+      "required_permission": "write_orders"
+    }
   }
 }
 ```
+
+A `403` without `details.required_permission` means the user holds the key but a record-level rule refused the action.
 
 ## Authentication summary
 
 | Method | Header | Use case | Authorization |
 |---|---|---|---|
 | Secret API key | `X-Spree-Api-Key: sk_xxx` | Server-to-server integrations | Scopes |
-| JWT token | `Authorization: Bearer <token>` | Interactive admin sessions; SPA | CanCanCan abilities |
+| JWT token | `Authorization: Bearer <token>` | Interactive admin sessions; SPA | Role permissions |
 
 <Note>
-If both headers are present, the JWT token wins: CanCanCan applies and scopes are ignored. This lets you use `sk_xxx` to bootstrap a session and then issue per-user JWTs for individual admin actions.
+If both headers are present, the JWT token wins: the user's role permissions apply and the key's scopes are ignored. This lets you use `sk_xxx` to bootstrap a session and then issue per-user JWTs for individual admin actions.
 </Note>
 
 ## Who a write is attributed to
@@ -218,7 +238,7 @@ Expanding the association gives the same three facts in one object — `id`,
 <Tabs>
   <Tab title="SDK">
 ```ts
-const order = await client.orders.retrieve('or_m3Rp9wXz', { expand: ['canceler'] })
+const order = await client.orders.get('or_m3Rp9wXz', { expand: ['canceler'] })
 
 order.canceler // { id: 'key_8QrN3xLq', type: 'api_key', label: 'WMS connector' }
 ```

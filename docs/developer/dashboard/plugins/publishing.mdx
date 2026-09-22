@@ -15,9 +15,9 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
   "peerDependencies": {
     "react": "^19",
     "react-dom": "^19",
-    "@spree/dashboard-core": "^0.10.0",
-    "@spree/dashboard-ui": "^0.10.0",
-    "@spree/admin-sdk": "^0.6.0",
+    "@spree/dashboard-core": "^1.0.0-beta.3",
+    "@spree/dashboard-ui": "^1.0.0-beta.3",
+    "@spree/admin-sdk": "^1.0.0-beta.2",
     "i18next": "^26",
     "react-i18next": "^17",
     "@tanstack/react-query": "^5",
@@ -27,7 +27,7 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
 }
 ```
 
-Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One Developer Preview caveat: for `0.x` versions, `^` only allows patch-level drift (`^0.10.0` matches `0.10.x`, not `0.11.0`), so expect to bump your `@spree/dashboard-*` peers alongside dashboard releases until 1.0. `spree plugin new` scaffolds these ranges for you, matched to the current release.
+Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One pre-release caveat: a range like `^1.0.0-beta.3` accepts later `1.0.0` betas and every stable `1.x` release, but not betas of other versions — so keep your `@spree/dashboard-*` peers in step with the dashboard until 1.0 ships. Check the ranges `spree plugin new` scaffolds against the versions your host app installs.
 
 `dependencies` is for things your plugin *uses* that the host *doesn't* — small utilities (e.g., `clsx`, `date-fns` if you need a specific version, your own helper packages). When in doubt, peer-dep it. The trade-off is "user has to install one more thing" vs. "user has two copies of React" — always pay the first cost.
 

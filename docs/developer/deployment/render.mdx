@@ -29,11 +29,11 @@ The database is seeded on first boot. Your store is ready in a few minutes — i
 ### Admin
 
 ```
-https://<your-app-name>.onrender.com/admin        # admin panel
+https://<your-app-name>.onrender.com/dashboard    # admin dashboard
 https://<your-app-name>.onrender.com/jobs         # background jobs dashboard
 ```
 
-Default credentials are created during seeding. Change them immediately after first login.
+No default admin account is created. Seeding prints a one-time setup link where you create the first admin account — print it again from the web service's **Shell** tab with `bin/rails spree:setup:token`.
 
 The `/jobs` dashboard uses HTTP Basic auth: user `jobs`, with a password the Blueprint generates — read it in the Render dashboard under the web service's **Environment** tab (`MISSION_CONTROL_PASSWORD`).
 

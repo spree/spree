@@ -5,7 +5,7 @@ description: Understand Spree Stores — the top-level tenant boundary that scop
 
 ## Overview
 
-The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies — belongs to exactly one store. A store owns its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its [product catalog](/developer/core-concepts/products).
+The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, categories — belongs to exactly one store. A store owns its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its [product catalog](/developer/core-concepts/products).
 
 ```mermaid
 erDiagram
@@ -87,7 +87,7 @@ The store sets the fallback for **storefront access gating** — whether anonymo
 
 ## Store Resources
 
-Each store owns its own resources. Products, orders, channels, markets, and taxonomies in one store are independent from another.
+Each store owns its own resources. Products, orders, channels, markets, and categories in one store are independent from another.
 
 | Resource | Relationship |
 |----------|-------------|

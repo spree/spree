@@ -23,6 +23,10 @@ Email templates are React components in `src/lib/emails/`:
 
 Customize a template by editing its file directly — they use `@react-email/components` for email-safe layout primitives.
 
+<Note>
+  The storefront listens for `order.completed` and `order.shipped`, the names these events had before Spree 6.0. Spree 6.0 still sends them alongside the new names, `order.placed` and `order.fulfilled`, but stops in Spree 6.1. Before upgrading to 6.1, switch the storefront handlers and your webhook endpoint subscriptions to the new names.
+</Note>
+
 ## Previewing
 
 Run the storefront in development and open [http://localhost:3001/dev/emails](http://localhost:3001/dev/emails):
@@ -68,11 +72,11 @@ To add a new email type:
 1. Create a template in `src/lib/emails/`.
 2. Add a handler function in `src/lib/webhooks/handlers.ts`.
 3. Register the event in `route.ts`.
-4. Subscribe to the event in **Spree Admin → Settings → Developers → Webhooks**.
+4. Subscribe to the event in **Spree Admin → Settings → Developer → Webhooks**.
 
 ## Setup
 
-1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks. Subscribe to `order.completed`, `order.canceled`, `order.shipped`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
+1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks. Subscribe to `order.completed`, `order.canceled`, `order.shipped`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
 
 2. **Receive webhooks locally.** Expose the storefront with a public URL so Spree can reach it — the simplest option is a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/):
 

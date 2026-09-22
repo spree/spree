@@ -15,7 +15,7 @@ This guide walks you through building a custom search provider for Spree. By the
 Before starting, make sure you understand [how search and filtering works in Spree](/developer/core-concepts/search-filtering).
 
 <Info>
-Spree ships with a built-in [Meilisearch provider](/integrations/search/meilisearch). If Meilisearch fits your needs, you don't need to build a custom provider — just configure it.
+Spree offers an official [Meilisearch provider](/integrations/search/meilisearch) in the `spree_meilisearch` gem. If Meilisearch fits your needs, you don't need to build a custom provider — just install and configure it.
 </Info>
 
 ## Architecture
@@ -24,7 +24,7 @@ Spree ships with a built-in [Meilisearch provider](/integrations/search/meilisea
 Store API Request (locale=de, currency=EUR)
   │
   ├─ AR Scope (security + visibility)
-  │   store.products.active(currency).accessible_by(ability)
+  │   store.products.available(now, currency), narrowed to the channel/catalogs
   │
   └─ Search Provider (search + filter + facets)
        ├─ Database (default): ILIKE + Ransack + FiltersAggregator
@@ -113,7 +113,7 @@ Products are indexed as **one document per market × locale** combination. The `
 
 ```ruby app/models/my_app/search_provider/typesense.rb
 def index(product)
-  documents = Spree::SearchProvider::ProductPresenter.new(product, store).call
+  documents = presenter_class.new(product, store).call
   documents.each do |doc|
     client.collections[index_name].documents.upsert(doc)
   end
@@ -129,7 +129,16 @@ def remove_by_id(prefixed_id)
     filter_by: "product_id:=#{prefixed_id}"
   )
 end
+
+# The registered presenter — SpreeMeilisearch::ProductPresenter when the gem is installed
+def presenter_class
+  Spree::Dependencies.search_product_presenter_class
+end
 ```
+
+<Note>
+`SpreeMeilisearch::ProductPresenter` ships with the `spree_meilisearch` gem — add the gem to reuse its document shape. Otherwise, write your own presenter and register it with `Spree::Dependencies.search_product_presenter`.
+</Note>
 
 The `ProductPresenter` returns an array of documents. For a store with US (USD/English) and EU (EUR/German+French) markets, one product produces 3 documents — each with flat `name`, `price`, `locale`, `currency` fields.
 
@@ -204,7 +213,7 @@ Spree::SearchProvider::SearchResult.new(
 ### ProductPresenter
 
 ```ruby
-documents = Spree::SearchProvider::ProductPresenter.new(product, store).call
+documents = SpreeMeilisearch::ProductPresenter.new(product, store).call
 # => [
 #   { prefixed_id: "prod_abc_en_USD", product_id: "prod_abc", locale: "en",
 #     currency: "USD", name: "Blue Shirt", price: 29.99, ... },
@@ -239,4 +248,4 @@ Document shaping for `cf_*` fields stays on `search_product_presenter` — the o
 ## Related Documentation
 
 - [Search & Filtering](/developer/core-concepts/search-filtering) — Store API search reference
-- [Meilisearch Integration](/integrations/search/meilisearch) — Built-in Meilisearch provider setup
+- [Meilisearch Integration](/integrations/search/meilisearch) — Meilisearch provider setup

@@ -59,7 +59,7 @@ Client → POST /api/v3/store/auth/login
 Client → subsequent calls with `Authorization: Bearer <Spree JWT>`
 ```
 
-The third-party JWT proves identity **once, at login**. After that, the client uses the Spree JWT for everything, and `/auth/refresh` rotates it via Spree's own refresh-token mechanism. Your existing CanCanCan rules, `current_user`, and serializer params just work.
+The third-party JWT proves identity **once, at login**. After that, the client uses the Spree JWT for everything, and `/auth/refresh` rotates it via Spree's own refresh-token mechanism. Your existing authorization, `current_user`, and serializer params just work.
 
 ## Step 1: Create the Strategy Class
 

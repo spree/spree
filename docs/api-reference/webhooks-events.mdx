@@ -8,11 +8,11 @@ Every webhook delivery sends a JSON envelope with the event metadata and a `data
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
-  "name": "order.completed",
+  "name": "order.placed",
   "created_at": "2025-01-15T10:30:00Z",
   "data": { ... },
   "metadata": {
-    "spree_version": "5.4.0"
+    "spree_version": "6.0.0"
   }
 }
 ```
@@ -20,75 +20,121 @@ Every webhook delivery sends a JSON envelope with the event metadata and a `data
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | string | Unique UUID for this event |
-| `name` | string | Event name (e.g., `order.completed`) |
+| `name` | string | Event name (e.g., `order.placed`) |
 | `created_at` | string | ISO 8601 timestamp |
 | `data` | object | Serialized resource (see payloads below) |
-| `metadata` | object | Additional context including Spree version |
+| `metadata` | object | Additional context: always the Spree version, plus event-specific keys such as `notify_customer` (fulfillment events — order events carry it in `data`) or `deprecated_alias_of` |
 
 Event payloads use the same [Store API V3 serializers](/api-reference/introduction) as the REST API. All `id` fields use [prefixed IDs](/api-reference/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
 
-For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system internals and subscriber pattern, see [Events](/developer/core-concepts/events).
+For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system and the subscriber pattern, see [Events](/developer/core-concepts/events).
 
 <Info>
-Event payloads include the same top-level attributes and unconditional associations as API responses. Conditional associations (like product variants, media, or custom fields) are not included in event payloads.
+Event payloads include the same top-level attributes and unconditional associations as API responses. Associations that the API only returns when you ask for them with `expand` (like product variants, media, or custom fields) are not included in event payloads.
 </Info>
+
+## Renamed events
+
+Spree 6.0 renamed several events. For one release, Spree sends the old name as well as the new one, so existing endpoints keep receiving deliveries. The old names stop in Spree 6.1 — subscribe to the new names.
+
+| Old name (sent until 6.1) | New name |
+|---|---|
+| `order.completed` | `order.placed` |
+| `order.shipped` | `order.fulfilled` |
+| `shipment.shipped` | `fulfillment.fulfilled` |
+| `shipment.canceled` | `fulfillment.canceled` |
+| `stock_item.created` / `.updated` / `.deleted` | `stock_level.created` / `.updated` / `.deleted` |
+| `wished_item.created` / `.updated` / `.deleted` | `wishlist_item.created` / `.updated` / `.deleted` |
+| `digital.created` / `.updated` / `.deleted` | `digital_asset.created` / `.updated` / `.deleted` |
+
+An `order.completed` delivery carries `"deprecated_alias_of": "order.placed"` in its `metadata`, so an endpoint subscribed to `order.*` can skip the duplicate.
+
+These events were removed in Spree 6.0 and are no longer sent:
+
+- `order.resumed` and `fulfillment.resumed` — a canceled order or fulfillment can no longer be resumed.
+- `shipment.created` and `shipment.updated` — use `fulfillment.created` and `fulfillment.updated`.
+- `image.*` — use `media.*`.
+- `report.*` — use `saved_report.*`.
+- `reimbursement.*`, `return_authorization.*`, `return_item.*` and `customer_return.*` — use the `return.*`, `exchange.*` and `claim.*` events.
+- `post.*` and `post_category.*`.
 
 ---
 
 ## Order Events
 
-Events: `order.created`, `order.updated`, `order.completed`, `order.canceled`, `order.paid`, `order.shipped`
+Events: `order.created`, `order.updated`, `order.deleted`, `order.placed`, `order.approved`, `order.canceled`, `order.paid`, `order.fulfilled`, `order.delivered`, `order.resend_confirmation_email`, `order.resend_digital_links_email`
 
-Order payloads include nested `items`, `fulfillments` (the Store API name for shipments), `payments`, `billing_address`, `shipping_address`, `payment_methods`, and `discounts`.
+| Event | When it fires |
+|---|---|
+| `order.placed` | A customer completed checkout, or an admin placed a draft order |
+| `order.approved` | An admin approved an order that was flagged as risky |
+| `order.canceled` | The order was canceled |
+| `order.paid` | Payments cover the order total in full |
+| `order.fulfilled` | Every fulfillment on the order was handed over to the customer or carrier |
+| `order.delivered` | Every fulfillment on the order was delivered |
+| `order.resend_confirmation_email` | An admin asked to send the order confirmation again |
+| `order.resend_digital_links_email` | An admin asked to send the download links again |
+
+The `order.placed` and `order.canceled` payloads also contain a `notify_customer` boolean. It is `false` when whoever placed or canceled the order asked for the customer not to be emailed.
+
+Order payloads include nested `items`, `fulfillments`, `payments`, `discounts`, `fees`, `billing_address`, `shipping_address`, `gift_card`, and `market`.
 
 ```json
 {
   "id": "or_m3Rp9wXz",
+  "cart_id": "cart_k5nR8xLq",
   "number": "R123456789",
-  "state": "complete",
-  "token": "abc123def456",
   "email": "customer@example.com",
-  "special_instructions": null,
+  "customer_note": null,
+  "po_number": null,
   "currency": "USD",
-  "item_count": 3,
-  "fulfillment_status": "shipped",
-  "payment_state": "paid",
+  "locale": "en",
+  "total_quantity": 3,
+  "coupon_code": null,
+  "fulfillment_status": "fulfilled",
+  "payment_status": "paid",
+  "market_id": "mkt_2wMn9xPq",
+  "channel_id": "ch_3xLq8nRt",
+  "company_id": null,
+  "company_name": null,
   "item_total": "89.99",
   "display_item_total": "$89.99",
   "delivery_total": "10.00",
   "display_delivery_total": "$10.00",
   "adjustment_total": "0.00",
   "display_adjustment_total": "$0.00",
-  "promo_total": "0.00",
-  "display_promo_total": "$0.00",
+  "discount_total": "0.00",
+  "display_discount_total": "$0.00",
   "tax_total": "0.00",
   "display_tax_total": "$0.00",
   "included_tax_total": "0.00",
   "display_included_tax_total": "$0.00",
   "additional_tax_total": "0.00",
   "display_additional_tax_total": "$0.00",
+  "fee_total": "0.00",
+  "display_fee_total": "$0.00",
+  "store_credit_total": "0.00",
+  "display_store_credit_total": "$0.00",
+  "gift_card_total": "0.00",
+  "display_gift_card_total": "$0.00",
+  "covered_by_store_credit": false,
   "total": "99.99",
   "display_total": "$99.99",
+  "amount_due": "0.00",
+  "display_amount_due": "$0.00",
   "completed_at": "2025-01-15T10:30:00Z",
-  "created_at": "2025-01-15T10:00:00Z",
-  "updated_at": "2025-01-15T10:30:00Z",
-  "promotions": [],
+  "withdrawal_period_ends_at": null,
+  "within_withdrawal_period": false,
+  "discounts": [],
+  "fees": [],
   "items": [
     {
       "id": "li_7xRt4wPq",
-      "variant_id": "var_k5nR8xLq",
+      "variant_id": "variant_k5nR8xLq",
       "quantity": 2,
-      "currency": "USD",
       "name": "Spree Tote Bag",
-      "slug": "spree-tote-bag",
-      "options_text": "Size: M, Color: Black",
       "price": "29.99",
-      "display_price": "$29.99",
       "total": "59.98",
-      "display_total": "$59.98",
-      "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
-      "option_values": [],
-      "digital_links": [],
       "..."
     }
   ],
@@ -96,48 +142,38 @@ Order payloads include nested `items`, `fulfillments` (the Store API name for sh
     {
       "id": "ful_9xPq4wMn",
       "number": "H123456789",
-      "status": "shipped",
+      "status": "fulfilled",
       "fulfillment_type": "shipping",
       "tracking": "1Z999AA10123456784",
-      "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
-      "cost": "10.00",
-      "display_cost": "$10.00",
-      "fulfilled_at": "2025-01-16T14:00:00Z",
-      "delivery_method": { "id": "dm_2wMn7xRt", "..." },
-      "stock_location": { "id": "sl_2wMn7xRt", "..." },
-      "delivery_rates": [],
       "..."
     }
   ],
   "payments": [
     {
-      "id": "pay_3wXz7mRp",
-      "state": "completed",
-      "number": "P123456",
+      "id": "py_3wXz7mRp",
+      "status": "completed",
       "amount": "99.99",
-      "display_amount": "$99.99",
-      "response_code": "ch_abc123",
-      "payment_method_id": "pm_4xLq8nRt",
-      "source_type": "credit_card",
-      "source_id": "cc_5wPq9mXz",
-      "source": { "..." },
-      "payment_method": { "id": "pm_4xLq8nRt", "..." },
       "..."
     }
   ],
-  "bill_address": {
-    "id": "addr_1xPq2wMn",
-    "..."
-  },
-  "ship_address": {
-    "id": "addr_2wMn3xPq",
-    "..."
-  },
-  "payment_methods": [
-    { "id": "pm_4xLq8nRt", "..." }
-  ]
+  "billing_address": { "id": "addr_1xPq2wMn", "..." },
+  "shipping_address": { "id": "addr_2wMn3xPq", "..." },
+  "gift_card": null,
+  "market": { "id": "mkt_2wMn9xPq", "..." }
 }
 ```
+
+## Cart Events
+
+Events: `cart.created`, `cart.updated`, `cart.deleted`
+
+Carts publish their own events, separate from orders. Use them to follow carts that were never checked out. The payload is the same cart object the [Store API](/api-reference/store-api/introduction) returns. When a cart is checked out, the resulting order carries the cart's ID in its `cart_id` field.
+
+## Order Group Events
+
+Events: `order_group.created`, `order_group.updated`, `order_group.deleted`, `order_group.completed`
+
+When one checkout creates several orders (for example, one per seller), they belong to an order group. `order_group.completed` fires once every order in the group is placed. The payload includes the group's `number`, `email`, `currency`, `total`, `item_total`, `fulfillment_status`, `payment_status`, `completed_at`, the addresses, and the nested `orders`.
 
 ## Line Item Events
 
@@ -148,12 +184,15 @@ Line item payloads include nested `option_values` and `digital_links`.
 ```json
 {
   "id": "li_7xRt4wPq",
-  "variant_id": "var_k5nR8xLq",
+  "variant_id": "variant_k5nR8xLq",
+  "seller_id": null,
   "quantity": 2,
   "currency": "USD",
   "name": "Spree Tote Bag",
   "slug": "spree-tote-bag",
   "options_text": "Size: M, Color: Black",
+  "preorder": false,
+  "preorder_ships_at": null,
   "price": "29.99",
   "display_price": "$29.99",
   "total": "59.98",
@@ -164,8 +203,8 @@ Line item payloads include nested `option_values` and `digital_links`.
   "display_additional_tax_total": "$2.40",
   "included_tax_total": "0.00",
   "display_included_tax_total": "$0.00",
-  "promo_total": "-5.00",
-  "display_promo_total": "-$5.00",
+  "discount_total": "-5.00",
+  "display_discount_total": "-$5.00",
   "pre_tax_amount": "54.98",
   "display_pre_tax_amount": "$54.98",
   "discounted_amount": "54.98",
@@ -173,10 +212,8 @@ Line item payloads include nested `option_values` and `digital_links`.
   "compare_at_amount": null,
   "display_compare_at_amount": null,
   "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
-  "created_at": "2025-01-15T10:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z",
   "option_values": [
-    { "id": "ov_2wMn9xPq", "name": "M", "presentation": "Medium" }
+    { "id": "optval_2wMn9xPq", "name": "m", "label": "M", "..." }
   ],
   "digital_links": []
 }
@@ -184,41 +221,39 @@ Line item payloads include nested `option_values` and `digital_links`.
 
 ## Payment Events
 
-Events: `payment.created`, `payment.updated`, `payment.paid`
+Events: `payment.created`, `payment.updated`, `payment.deleted`, `payment.completed`, `payment.paid`, `payment.captured`, `payment.voided`, `payment.refunded`
 
-Payment payloads include a nested `payment_method` and polymorphic `source` (credit card, store credit, or payment source).
+Payment payloads include a nested `payment_method` and a `source` (a credit card, store credit, or other payment source).
 
 ```json
 {
-  "id": "pay_3wXz7mRp",
-  "state": "completed",
+  "id": "py_3wXz7mRp",
+  "status": "completed",
   "number": "P123456",
   "amount": "99.99",
   "display_amount": "$99.99",
   "response_code": "ch_abc123",
   "payment_method_id": "pm_4xLq8nRt",
   "source_type": "credit_card",
-  "source_id": "cc_5wPq9mXz",
+  "source_id": "card_5wPq9mXz",
   "source": {
-    "id": "cc_5wPq9mXz",
+    "id": "card_5wPq9mXz",
     "..."
   },
   "payment_method": {
     "id": "pm_4xLq8nRt",
     "..."
-  },
-  "created_at": "2025-01-15T10:25:00Z",
-  "updated_at": "2025-01-15T10:25:00Z"
+  }
 }
 ```
 
-The `source_type` field is normalized to one of: `"credit_card"`, `"store_credit"`, `"payment_source"`, or `null`.
+The `source_type` field is one of: `"credit_card"`, `"store_credit"`, `"payment_source"`, or `null`.
 
 ## Payment Session Events
 
-Events: `payment_session.created`, `payment_session.updated`, `payment_session.deleted`
+Events: `payment_session.created`, `payment_session.updated`, `payment_session.deleted`, `payment_session.processing`, `payment_session.completed`, `payment_session.failed`, `payment_session.canceled`, `payment_session.expired`
 
-Payment session payloads include a nested `payment_method` and optionally a nested `payment`.
+Payment session payloads include a nested `payment_method`, and a nested `payment` once one exists.
 
 ```json
 {
@@ -229,21 +264,20 @@ Payment session payloads include a nested `payment_method` and optionally a nest
   "external_id": "pi_3abc123",
   "external_data": {},
   "customer_external_id": null,
-  "order_id": "or_m3Rp9wXz",
+  "order_id": null,
+  "cart_id": "cart_k5nR8xLq",
   "payment_method_id": "pm_4xLq8nRt",
   "payment_method": {
     "id": "pm_4xLq8nRt",
     "..."
   },
-  "expires_at": "2025-01-15T11:00:00Z",
-  "created_at": "2025-01-15T10:25:00Z",
-  "updated_at": "2025-01-15T10:25:00Z"
+  "expires_at": "2025-01-15T11:00:00Z"
 }
 ```
 
 ## Payment Setup Session Events
 
-Events: `payment_setup_session.created`, `payment_setup_session.updated`, `payment_setup_session.deleted`
+Events: `payment_setup_session.created`, `payment_setup_session.updated`, `payment_setup_session.deleted`, `payment_setup_session.processing`, `payment_setup_session.completed`, `payment_setup_session.failed`, `payment_setup_session.canceled`, `payment_setup_session.expired`
 
 Payment setup session payloads include a nested `payment_method`.
 
@@ -255,43 +289,75 @@ Payment setup session payloads include a nested `payment_method`.
   "external_client_secret": "seti_abc123_secret_xyz",
   "external_data": {},
   "payment_method_id": "pm_4xLq8nRt",
-  "payment_source_id": "cc_5wPq9mXz",
-  "payment_source_type": "Spree::CreditCard",
-  "customer_id": "usr_k5nR8xLq",
+  "payment_source_id": null,
+  "payment_source_type": null,
+  "customer_id": "cust_k5nR8xLq",
   "payment_method": {
     "id": "pm_4xLq8nRt",
     "..."
-  },
-  "created_at": "2025-01-15T10:25:00Z",
-  "updated_at": "2025-01-15T10:25:00Z"
+  }
 }
 ```
 
-## Shipment Events
+## Refund Events
 
-Events: `shipment.created`, `shipment.updated`, `shipment.shipped`, `shipment.canceled`
+Events: `refund.created`, `refund.updated`, `refund.deleted`
 
-The Store API/SDK exposes shipments as `fulfillments`, and webhook payloads use the same V3 serializer. Payloads include nested `delivery_method`, `stock_location`, and `delivery_rates`.
+```json
+{
+  "id": "re_7xRt4wPq",
+  "amount": "29.99",
+  "transaction_id": "txn_abc123",
+  "payment_id": "py_3wXz7mRp",
+  "refund_reason_id": "rr_2wMn9xPq",
+  "originator_id": null,
+  "originator_type": null
+}
+```
+
+## Fulfillment Events
+
+Events: `fulfillment.created`, `fulfillment.updated`, `fulfillment.deleted`, `fulfillment.fulfilled`, `fulfillment.delivered`, `fulfillment.canceled`
+
+`fulfillment.fulfilled` fires when a fulfillment is handed over — shipped, collected, or made available for download. Its `metadata` contains `notify_customer`, which tells you whether the customer should be emailed about it. `fulfillment.delivered` carries the same key.
+
+Fulfillment payloads include nested `deliveries`, `delivery_method`, `stock_location`, and `delivery_rates`.
 
 ```json
 {
   "id": "ful_9xPq4wMn",
   "number": "H123456789",
-  "status": "shipped",
+  "status": "fulfilled",
   "fulfillment_type": "shipping",
   "tracking": "1Z999AA10123456784",
-  "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
+  "tracking_url": "https://www.ups.com/track?tracknum=1Z999AA10123456784",
+  "pickup_point_data": null,
+  "selected_delivery_rate_id": "dr_5wPq9mXz",
+  "unpriced": false,
   "cost": "10.00",
   "display_cost": "$10.00",
+  "total": "10.00",
+  "display_total": "$10.00",
+  "discount_total": "0.00",
+  "display_discount_total": "$0.00",
+  "additional_tax_total": "0.00",
+  "display_additional_tax_total": "$0.00",
+  "included_tax_total": "0.00",
+  "display_included_tax_total": "$0.00",
+  "tax_total": "0.00",
+  "display_tax_total": "$0.00",
   "fulfilled_at": "2025-01-16T14:00:00Z",
-  "created_at": "2025-01-15T10:30:00Z",
-  "updated_at": "2025-01-16T14:00:00Z",
+  "delivered_at": null,
+  "items": [
+    { "item_id": "li_7xRt4wPq", "variant_id": "variant_k5nR8xLq", "quantity": 2 }
+  ],
+  "deliveries": [],
   "delivery_method": {
     "id": "dm_2wMn7xRt",
     "..."
   },
   "stock_location": {
-    "id": "sl_2wMn7xRt",
+    "id": "sloc_2wMn7xRt",
     "..."
   },
   "delivery_rates": []
@@ -300,9 +366,9 @@ The Store API/SDK exposes shipments as `fulfillments`, and webhook payloads use 
 
 ## Product Events
 
-Events: `product.created`, `product.updated`, `product.deleted`, `product.activate`, `product.archive`, `product.out_of_stock`, `product.back_in_stock`
+Events: `product.created`, `product.updated`, `product.deleted`, `product.drafted`, `product.proposed`, `product.approved`, `product.rejected`, `product.activated`, `product.archived`, `product.out_of_stock`, `product.back_in_stock`
 
-Product event payloads include pricing, stock status, and availability flags. Conditional associations (variants, media, option types, categories, custom fields) are not included in event payloads.
+Product event payloads include pricing, stock status, and availability flags. Variants, media, option types, categories, and custom fields are not included.
 
 ```json
 {
@@ -310,18 +376,24 @@ Product event payloads include pricing, stock status, and availability flags. Co
   "name": "Spree Tote Bag",
   "slug": "spree-tote-bag",
   "description": "A beautiful tote bag",
+  "description_html": "<p>A beautiful tote bag</p>",
+  "meta_title": null,
   "meta_description": null,
   "meta_keywords": null,
   "variant_count": 3,
-  "default_variant_id": "var_k5nR8xLq",
+  "default_variant_id": "variant_k5nR8xLq",
+  "buy_box_variant_id": null,
+  "seller_id": null,
   "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
   "purchasable": true,
   "in_stock": true,
   "backorderable": false,
   "available": true,
+  "preorder": false,
+  "preorder_ships_at": null,
   "tags": ["summer", "accessories"],
   "price": {
-    "id": "pri_4wPq9mXz",
+    "id": "price_4wPq9mXz",
     "amount": "29.99",
     "amount_in_cents": 2999,
     "display_amount": "$29.99",
@@ -332,9 +404,7 @@ Product event payloads include pricing, stock status, and availability flags. Co
     "price_list_id": null
   },
   "original_price": null,
-  "available_on": "2025-01-01T00:00:00Z",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z"
+  "available_on": "2025-01-01T00:00:00Z"
 }
 ```
 
@@ -342,42 +412,43 @@ Product event payloads include pricing, stock status, and availability flags. Co
 
 Events: `variant.created`, `variant.updated`, `variant.deleted`
 
-Variant event payloads include pricing, stock status, and always-included `option_values`. Conditional associations (media, custom fields) are not included in event payloads.
+Variant event payloads include pricing, stock status, and `option_values`. Media and custom fields are not included.
 
 ```json
 {
-  "id": "var_k5nR8xLq",
+  "id": "variant_k5nR8xLq",
   "product_id": "prod_86Rf07xd4z",
+  "seller_id": null,
   "sku": "SPR-TOTE-BLK",
-  "is_master": false,
   "options_text": "Size: M, Color: Black",
   "track_inventory": true,
   "media_count": 2,
-  "thumbnail": "https://cdn.example.com/images/tote-bag-black.jpg",
+  "thumbnail_url": "https://cdn.example.com/images/tote-bag-black.jpg",
   "purchasable": true,
   "in_stock": true,
   "backorderable": false,
+  "preorder": false,
+  "preorder_ships_at": null,
   "weight": 0.5,
   "height": 40.0,
   "width": 35.0,
   "depth": 10.0,
+  "weight_unit": "kg",
+  "dimensions_unit": "cm",
+  "minimum_order_quantity": 1,
+  "order_multiple": 1,
+  "purchase_unit": "unit",
+  "units_per_carton": null,
   "price": {
-    "id": "pri_4wPq9mXz",
+    "id": "price_4wPq9mXz",
     "amount": "29.99",
-    "amount_in_cents": 2999,
-    "display_amount": "$29.99",
-    "compare_at_amount": null,
-    "compare_at_amount_in_cents": null,
-    "display_compare_at_amount": null,
     "currency": "USD",
-    "price_list_id": null
+    "..."
   },
   "original_price": null,
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z",
   "option_values": [
-    { "id": "ov_2wMn9xPq", "name": "M", "presentation": "Medium" },
-    { "id": "ov_3xLq8nRt", "name": "Black", "presentation": "Black" }
+    { "id": "optval_2wMn9xPq", "name": "m", "label": "M", "..." },
+    { "id": "optval_3xLq8nRt", "name": "black", "label": "Black", "..." }
   ]
 }
 ```
@@ -388,7 +459,7 @@ Events: `price.created`, `price.updated`, `price.deleted`
 
 ```json
 {
-  "id": "pri_4wPq9mXz",
+  "id": "price_4wPq9mXz",
   "amount": "29.99",
   "amount_in_cents": 2999,
   "display_amount": "$29.99",
@@ -400,45 +471,38 @@ Events: `price.created`, `price.updated`, `price.deleted`
 }
 ```
 
-## Image Events
+## Media Events
 
-Events: `image.created`, `image.updated`, `image.deleted`
+Events: `media.created`, `media.updated`, `media.deleted`
 
-Image payloads include URLs for all configured image variants (mini, small, medium, large, xlarge).
+Media events carry a short payload. Fetch the product or variant from the API when you need the image URLs.
 
 ```json
 {
-  "id": "img_5mXz3wPq",
-  "type": "Spree::Image",
-  "viewable_type": "Spree::Variant",
-  "viewable_id": "var_k5nR8xLq",
+  "id": "media_5mXz3wPq",
+  "media_type": "image",
+  "viewable_type": "product",
+  "viewable_id": "prod_86Rf07xd4z",
   "position": 1,
   "alt": "Black tote bag front view",
-  "original_url": "https://cdn.example.com/images/original.jpg",
-  "mini_url": "https://cdn.example.com/images/mini.jpg",
-  "small_url": "https://cdn.example.com/images/small.jpg",
-  "medium_url": "https://cdn.example.com/images/medium.jpg",
-  "large_url": "https://cdn.example.com/images/large.jpg",
-  "xlarge_url": "https://cdn.example.com/images/xlarge.jpg",
-  "og_image_url": "https://cdn.example.com/images/og.jpg",
   "created_at": "2025-01-01T00:00:00Z",
   "updated_at": "2025-01-01T00:00:00Z"
 }
 ```
 
-## Stock Item Events
+## Stock Level Events
 
-Events: `stock_item.created`, `stock_item.updated`, `stock_item.deleted`
+Events: `stock_level.created`, `stock_level.updated`, `stock_level.deleted`
+
+A stock level is the quantity of one variant at one stock location.
 
 ```json
 {
-  "id": "si_6nRt2xLq",
+  "id": "sl_6nRt2xLq",
   "count_on_hand": 25,
   "backorderable": false,
-  "stock_location_id": "sl_2wMn7xRt",
-  "variant_id": "var_k5nR8xLq",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z"
+  "stock_location_id": "sloc_2wMn7xRt",
+  "variant_id": "variant_k5nR8xLq"
 }
 ```
 
@@ -450,10 +514,9 @@ Events: `stock_movement.created`, `stock_movement.updated`, `stock_movement.dele
 {
   "id": "sm_7xRt4wPq",
   "quantity": -1,
-  "action": "sold",
-  "originator_type": "Spree::Shipment",
-  "originator_id": "ful_9xPq4wMn",
-  "stock_item_id": "si_6nRt2xLq",
+  "kind": "shipped",
+  "reason": null,
+  "stock_level_id": "sl_6nRt2xLq",
   "created_at": "2025-01-15T10:30:00Z",
   "updated_at": "2025-01-15T10:30:00Z"
 }
@@ -461,16 +524,15 @@ Events: `stock_movement.created`, `stock_movement.updated`, `stock_movement.dele
 
 ## Stock Transfer Events
 
-Events: `stock_transfer.created`, `stock_transfer.updated`, `stock_transfer.deleted`
+Events: `stock_transfer.created`, `stock_transfer.updated`, `stock_transfer.deleted`, `stock_transfer.draft`, `stock_transfer.ready_to_ship`, `stock_transfer.shipped`, `stock_transfer.partially_received`, `stock_transfer.received`, `stock_transfer.over_received`, `stock_transfer.canceled`
 
 ```json
 {
   "id": "st_8mXz3wPq",
   "number": "T123456789",
-  "type": "Spree::StockTransfer",
   "reference": "Warehouse rebalance",
-  "source_location_id": "sl_2wMn7xRt",
-  "destination_location_id": "sl_9xPq4wMn",
+  "source_location_id": "sloc_2wMn7xRt",
+  "destination_location_id": "sloc_9xPq4wMn",
   "created_at": "2025-01-15T10:00:00Z",
   "updated_at": "2025-01-15T10:00:00Z"
 }
@@ -478,21 +540,27 @@ Events: `stock_transfer.created`, `stock_transfer.updated`, `stock_transfer.dele
 
 ## Customer Events
 
-Events: `customer.created`, `customer.updated`, `customer.deleted`
+Events: `user.created`, `user.updated`, `user.deleted`, `customer.anonymized`, `customer.password_reset_requested`, `customer.password_reset`
 
-Customer payloads include nested `addresses`, `default_billing_address`, and `default_shipping_address`.
+Customer lifecycle events use the `user` prefix. Customer payloads include nested `addresses`, `default_billing_address`, `default_shipping_address`, `newsletter_subscriber`, and `customer_groups`.
 
 ```json
 {
-  "id": "usr_k5nR8xLq",
+  "id": "cust_k5nR8xLq",
   "email": "customer@example.com",
   "first_name": "John",
   "last_name": "Doe",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z",
+  "full_name": "John Doe",
+  "phone": null,
+  "accepts_email_marketing": true,
+  "email_marketing_consent_updated_at": "2025-01-01T00:00:00Z",
+  "available_store_credit_total": "0.0",
+  "display_available_store_credit_total": "$0.00",
   "addresses": [],
   "default_billing_address": null,
-  "default_shipping_address": null
+  "default_shipping_address": null,
+  "newsletter_subscriber": null,
+  "customer_groups": []
 }
 ```
 
@@ -505,53 +573,33 @@ Events: `promotion.created`, `promotion.updated`, `promotion.deleted`
   "id": "promo_2wMn9xPq",
   "name": "Summer Sale 20% Off",
   "description": "20% off all summer items",
-  "code": "SUMMER20",
-  "type": "Spree::Promotion",
-  "kind": "coupon",
-  "path": null,
-  "match_policy": "all",
-  "usage_limit": 1000,
-  "advertise": true,
-  "multi_codes": false,
-  "code_prefix": null,
-  "number_of_codes": null,
-  "starts_at": "2025-06-01T00:00:00Z",
-  "expires_at": "2025-08-31T23:59:59Z",
-  "promotion_category_id": "pcat_3xLq8nRt",
-  "created_at": "2025-05-15T10:00:00Z",
-  "updated_at": "2025-05-15T10:00:00Z"
+  "code": "SUMMER20"
 }
 ```
 
 ## Gift Card Events
 
-Events: `gift_card.created`, `gift_card.updated`, `gift_card.deleted`
+Events: `gift_card.created`, `gift_card.updated`, `gift_card.deleted`, `gift_card.partially_redeemed`, `gift_card.redeemed`, `gift_card.canceled`
 
 ```json
 {
   "id": "gc_4xLq8nRt",
-  "code": "****-1234",
-  "state": "active",
-  "amount": 50.0,
-  "amount_used": 15.0,
-  "amount_authorized": 0.0,
-  "amount_remaining": 35.0,
+  "code": "HOLIDAY-8F3K2M",
+  "status": "partially_redeemed",
+  "amount": "50.0",
+  "amount_used": "15.0",
+  "amount_authorized": "0.0",
+  "amount_remaining": "35.0",
   "display_amount": "$50.00",
   "display_amount_used": "$15.00",
   "display_amount_remaining": "$35.00",
   "currency": "USD",
   "expired": false,
   "active": true,
-  "expires_at": "2026-01-01T00:00:00Z",
-  "redeemed_at": "2025-02-01T10:00:00Z",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-02-01T10:00:00Z"
+  "expires_at": "2026-01-01",
+  "redeemed_at": null
 }
 ```
-
-<Info>
-The gift card `code` is displayed as a masked value (e.g., `****-1234`) for security.
-</Info>
 
 ## Gift Card Batch Events
 
@@ -561,10 +609,10 @@ Events: `gift_card_batch.created`, `gift_card_batch.updated`, `gift_card_batch.d
 {
   "id": "gcb_5wPq9mXz",
   "codes_count": 100,
-  "amount": "25.00",
+  "amount": "25.0",
   "currency": "USD",
   "prefix": "HOLIDAY",
-  "expires_at": "2026-12-31T00:00:00Z",
+  "expires_at": "2026-12-31",
   "created_by_id": "adm_8mXz3wPq",
   "created_at": "2025-01-01T00:00:00Z",
   "updated_at": "2025-01-01T00:00:00Z"
@@ -577,10 +625,10 @@ Events: `store_credit.created`, `store_credit.updated`, `store_credit.deleted`
 
 ```json
 {
-  "id": "sc_6nRt2xLq",
-  "amount": "100.00",
-  "amount_used": "25.00",
-  "amount_remaining": "75.00",
+  "id": "credit_6nRt2xLq",
+  "amount": "100.0",
+  "amount_used": "25.0",
+  "amount_remaining": "75.0",
   "display_amount": "$100.00",
   "display_amount_used": "$25.00",
   "display_amount_remaining": "$75.00",
@@ -588,90 +636,68 @@ Events: `store_credit.created`, `store_credit.updated`, `store_credit.deleted`
 }
 ```
 
-## Refund Events
+## Return Events
 
-Events: `refund.created`, `refund.updated`, `refund.deleted`
+Events: `return.created`, `return.updated`, `return.deleted`, `return.requested`, `return.approved`, `return.received`, `return.refunded`, `return.canceled`
 
-```json
-{
-  "id": "ref_7xRt4wPq",
-  "amount": "29.99",
-  "transaction_id": "txn_abc123",
-  "payment_id": "pay_3wXz7mRp",
-  "refund_reason_id": "rr_2wMn9xPq",
-  "reimbursement_id": "rei_3xLq8nRt",
-  "created_at": "2025-01-20T10:00:00Z",
-  "updated_at": "2025-01-20T10:00:00Z"
-}
-```
-
-## Reimbursement Events
-
-Events: `reimbursement.created`, `reimbursement.updated`, `reimbursement.deleted`
+The returned items are not included. Fetch the return from the API with `expand=return_line_items` when you need them.
 
 ```json
 {
-  "id": "rei_3xLq8nRt",
-  "number": "RI123456789",
-  "reimbursement_status": "reimbursed",
-  "total": "29.99",
+  "id": "ret_8mXz3wPq",
+  "number": "RET123456789",
+  "status": "received",
   "order_id": "or_m3Rp9wXz",
-  "customer_return_id": "cr_4xLq8nRt",
-  "created_at": "2025-01-20T10:00:00Z",
-  "updated_at": "2025-01-20T10:00:00Z"
+  "reason_id": "rar_9xPq4wMn",
+  "refund_total": "0.0",
+  "display_refund_total": "$0.00",
+  "approved_at": "2025-01-18T10:00:00Z",
+  "received_at": "2025-01-20T10:00:00Z",
+  "refunded_at": null,
+  "canceled_at": null
 }
 ```
 
-## Return Authorization Events
+## Exchange Events
 
-Events: `return_authorization.created`, `return_authorization.updated`, `return_authorization.deleted`
+Events: `exchange.created`, `exchange.updated`, `exchange.deleted`, `exchange.requested`, `exchange.approved`, `exchange.received`, `exchange.fulfilled`, `exchange.canceled`
 
 ```json
 {
-  "id": "ra_8mXz3wPq",
-  "number": "RA123456789",
-  "state": "authorized",
+  "id": "exch_4xLq8nRt",
+  "number": "EX123456789",
+  "status": "approved",
   "order_id": "or_m3Rp9wXz",
-  "stock_location_id": "sl_2wMn7xRt",
-  "return_authorization_reason_id": "rar_9xPq4wMn",
-  "created_at": "2025-01-18T10:00:00Z",
-  "updated_at": "2025-01-18T10:00:00Z"
+  "reason_id": "rar_9xPq4wMn",
+  "price_difference": "0.0",
+  "display_price_difference": "$0.00",
+  "approved_at": "2025-01-18T10:00:00Z",
+  "received_at": null,
+  "fulfilled_at": null,
+  "canceled_at": null
 }
 ```
 
-## Return Item Events
+## Claim Events
 
-Events: `return_item.created`, `return_item.updated`, `return_item.deleted`
+Events: `claim.created`, `claim.updated`, `claim.deleted`, `claim.opened`, `claim.approved`, `claim.resolved`, `claim.denied`, `claim.canceled`
 
-```json
-{
-  "id": "ri_9xPq4wMn",
-  "reception_status": "received",
-  "acceptance_status": "accepted",
-  "pre_tax_amount": "29.99",
-  "included_tax_total": "0.00",
-  "additional_tax_total": "2.40",
-  "inventory_unit_id": "iu_2wMn7xRt",
-  "return_authorization_id": "ra_8mXz3wPq",
-  "customer_return_id": "cr_4xLq8nRt",
-  "reimbursement_id": "rei_3xLq8nRt",
-  "exchange_variant_id": null,
-  "created_at": "2025-01-19T10:00:00Z",
-  "updated_at": "2025-01-19T10:00:00Z"
-}
-```
-
-## Customer Return Events
-
-Events: `customer_return.created`, `customer_return.updated`, `customer_return.deleted`
+The `resolution` field is `refund`, `replacement`, `refund_and_replacement`, or `null` until the claim is resolved.
 
 ```json
 {
-  "id": "cr_4xLq8nRt",
-  "number": "CR123456789",
-  "stock_location_id": "sl_2wMn7xRt",
-  "created_at": "2025-01-19T10:00:00Z",
-  "updated_at": "2025-01-19T10:00:00Z"
+  "id": "claim_2wMn9xPq",
+  "number": "CLM123456789",
+  "status": "resolved",
+  "resolution": "refund",
+  "order_id": "or_m3Rp9wXz",
+  "reason_id": "clr_3xLq8nRt",
+  "refund_total": "29.99",
+  "display_refund_total": "$29.99",
+  "approved_at": "2025-01-18T10:00:00Z",
+  "resolved_at": "2025-01-19T10:00:00Z",
+  "denied_at": null,
+  "canceled_at": null
 }
 ```
 
@@ -679,7 +705,7 @@ Events: `customer_return.created`, `customer_return.updated`, `customer_return.d
 
 Events: `wishlist.created`, `wishlist.updated`, `wishlist.deleted`
 
-Wishlist items are a conditional association and are not included in event payloads.
+Wishlist items are not included in wishlist event payloads.
 
 ```json
 {
@@ -687,77 +713,41 @@ Wishlist items are a conditional association and are not included in event paylo
   "name": "My Wishlist",
   "token": "abc123def456",
   "is_default": true,
-  "is_private": true,
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z"
+  "is_private": true
 }
 ```
 
-## Wished Item Events
+## Wishlist Item Events
 
-Events: `wished_item.created`, `wished_item.updated`, `wished_item.deleted`
+Events: `wishlist_item.created`, `wishlist_item.updated`, `wishlist_item.deleted`
 
-Wished item payloads include a nested `variant`.
+Wishlist item payloads include a nested `variant`.
 
 ```json
 {
   "id": "wi_6nRt2xLq",
-  "variant_id": "var_k5nR8xLq",
+  "variant_id": "variant_k5nR8xLq",
+  "product_id": "prod_86Rf07xd4z",
   "wishlist_id": "wl_5wPq9mXz",
   "quantity": 1,
-  "created_at": "2025-01-15T10:00:00Z",
-  "updated_at": "2025-01-15T10:00:00Z",
   "variant": {
-    "id": "var_k5nR8xLq",
+    "id": "variant_k5nR8xLq",
     "..."
   }
 }
 ```
 
-## Post Events
-
-Events: `post.created`, `post.updated`, `post.deleted`
-
-```json
-{
-  "id": "post_7xRt4wPq",
-  "title": "Summer Collection 2025",
-  "slug": "summer-collection-2025",
-  "meta_title": "Summer Collection | My Store",
-  "meta_description": "Discover our new summer collection",
-  "published_at": "2025-06-01T00:00:00Z",
-  "author_id": "adm_8mXz3wPq",
-  "post_category_id": "pcat_9xPq4wMn",
-  "created_at": "2025-05-15T10:00:00Z",
-  "updated_at": "2025-05-15T10:00:00Z"
-}
-```
-
-## Post Category Events
-
-Events: `post_category.created`, `post_category.updated`, `post_category.deleted`
-
-```json
-{
-  "id": "pcat_9xPq4wMn",
-  "title": "News",
-  "slug": "news",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-01T00:00:00Z"
-}
-```
-
 ## Newsletter Subscriber Events
 
-Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsletter_subscriber.deleted`
+Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsletter_subscriber.deleted`, `newsletter_subscriber.subscription_requested`, `newsletter_subscriber.verified`, `newsletter_subscriber.unsubscribe_requested`
 
 ```json
 {
-  "id": "ns_2wMn9xPq",
+  "id": "sub_2wMn9xPq",
   "email": "subscriber@example.com",
   "verified": true,
   "verified_at": "2025-01-02T10:00:00Z",
-  "user_id": "usr_k5nR8xLq",
+  "customer_id": "cust_k5nR8xLq",
   "created_at": "2025-01-01T00:00:00Z",
   "updated_at": "2025-01-02T10:00:00Z"
 }
@@ -767,14 +757,10 @@ Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsl
 
 Events: `digital_asset.created`, `digital_asset.updated`, `digital_asset.deleted`
 
-The legacy `digital.created` / `digital.updated` / `digital.deleted` names are
-still emitted alongside these, but will stop being sent in a future release —
-subscribe to the `digital_asset.*` names.
-
 ```json
 {
   "id": "dig_3xLq8nRt",
-  "variant_id": "var_k5nR8xLq",
+  "variant_id": "variant_k5nR8xLq",
   "filename": "ebook.pdf",
   "content_type": "application/pdf"
 }
@@ -797,24 +783,24 @@ file, after the access counter has been incremented.
   "expires_at": "2025-01-22T10:30:00Z",
   "authorizable": true,
   "expired": false,
-  "access_limit_exceeded": false,
-  "created_at": "2025-01-15T10:30:00Z",
-  "updated_at": "2025-01-15T12:00:00Z"
+  "access_limit_exceeded": false
 }
 ```
 
 ## Import Events
 
-Events: `import.created`, `import.updated`, `import.deleted`
+Events: `import.created`, `import.updated`, `import.deleted`, `import.progress`, `import.completed`
 
 ```json
 {
   "id": "imp_5wPq9mXz",
-  "number": "I123456789",
-  "type": "Spree::Imports::Products",
+  "number": "IM123456789",
+  "type": "products",
   "status": "completed",
-  "owner_type": "Spree::Store",
-  "owner_id": "str_9xPq2wMn",
+  "store_id": "store_9xPq2wMn",
+  "seller_id": null,
+  "owner_type": "store",
+  "owner_id": "store_9xPq2wMn",
   "user_id": "adm_8mXz3wPq",
   "rows_count": 150,
   "created_at": "2025-01-15T10:00:00Z",
@@ -824,16 +810,16 @@ Events: `import.created`, `import.updated`, `import.deleted`
 
 ## Import Row Events
 
-Events: `import_row.created`, `import_row.updated`, `import_row.deleted`
+Events: `import_row.completed`, `import_row.failed`
 
 ```json
 {
-  "id": "ir_6nRt2xLq",
+  "id": "imrow_6nRt2xLq",
   "import_id": "imp_5wPq9mXz",
   "row_number": 42,
-  "status": "success",
+  "status": "completed",
   "validation_errors": [],
-  "item_type": "Spree::Product",
+  "item_type": "product",
   "item_id": "prod_86Rf07xd4z",
   "created_at": "2025-01-15T10:01:00Z",
   "updated_at": "2025-01-15T10:01:00Z"
@@ -847,8 +833,8 @@ Events: `export.created`, `export.updated`, `export.deleted`
 ```json
 {
   "id": "exp_7xRt4wPq",
-  "number": "E123456789",
-  "type": "Spree::Exports::Products",
+  "number": "EF123456789",
+  "type": "products",
   "format": "csv",
   "user_id": "adm_8mXz3wPq",
   "created_at": "2025-01-15T10:00:00Z",
@@ -856,35 +842,18 @@ Events: `export.created`, `export.updated`, `export.deleted`
 }
 ```
 
-## Report Events
-
-Events: `report.created`, `report.updated`, `report.deleted`
-
-```json
-{
-  "id": "rep_8mXz3wPq",
-  "type": "Spree::Reports::SalesByProduct",
-  "user_id": "adm_8mXz3wPq",
-  "currency": "USD",
-  "date_from": "2025-01-01T00:00:00Z",
-  "date_to": "2025-01-31T23:59:59Z",
-  "created_at": "2025-02-01T10:00:00Z",
-  "updated_at": "2025-02-01T10:00:00Z"
-}
-```
-
 ## Invitation Events
 
-Events: `invitation.created`, `invitation.updated`, `invitation.deleted`
+Events: `invitation.created`, `invitation.resent`, `invitation.accepted`
 
 ```json
 {
   "id": "inv_9xPq4wMn",
   "email": "newadmin@example.com",
   "status": "pending",
-  "resource_type": "Spree::Store",
-  "resource_id": "str_9xPq2wMn",
-  "inviter_type": "Spree::AdminUser",
+  "resource_type": "store",
+  "resource_id": "store_9xPq2wMn",
+  "inviter_type": "admin_user",
   "inviter_id": "adm_8mXz3wPq",
   "invitee_type": null,
   "invitee_id": null,
@@ -895,3 +864,27 @@ Events: `invitation.created`, `invitation.updated`, `invitation.deleted`
   "updated_at": "2025-01-15T10:00:00Z"
 }
 ```
+
+## Other Events
+
+These resources publish events too. Their payloads use the same serializers as the matching API responses.
+
+| Resource | Events |
+|---|---|
+| Delivery (a tracked parcel within a fulfillment) | `delivery.created`, `delivery.updated`, `delivery.deleted` |
+| Shipping label | `shipping_label.created`, `shipping_label.updated`, `shipping_label.deleted`, `shipping_label.purchased`, `shipping_label.refunded` |
+| Stock reservation | `stock_reservation.created`, `stock_reservation.updated`, `stock_reservation.deleted` |
+| Purchase order | `purchase_order.created`, `purchase_order.updated`, `purchase_order.deleted`, `purchase_order.draft`, `purchase_order.ordered`, `purchase_order.partially_received`, `purchase_order.received`, `purchase_order.over_received`, `purchase_order.canceled` |
+| Stock receipt | `stock_receipt.created`, `stock_receipt.updated`, `stock_receipt.deleted` |
+| Supplier | `supplier.created`, `supplier.updated`, `supplier.deleted` |
+| Catalog | `catalog.created`, `catalog.updated`, `catalog.deleted` |
+| Saved report | `saved_report.created`, `saved_report.updated`, `saved_report.deleted` |
+| Data request (customer data export or erasure) | `data_request.created`, `data_request.updated`, `data_request.deleted`, `data_request.completed` |
+| Company | `company.created`, `company.updated`, `company.deleted` |
+| Company invitation | `company_invitation.created`, `company_invitation.updated`, `company_invitation.deleted`, `company_invitation.accepted`, `company_invitation.revoked` |
+| Tax identifier | `tax_identifier.number_changed` |
+| Tax exemption certificate | `tax_exemption_certificate.verified` |
+| Seller | `seller.created`, `seller.updated`, `seller.deleted`, `seller.invited`, `seller.onboarding_started`, `seller.submitted_for_review`, `seller.approved`, `seller.rejected`, `seller.suspended`, `seller.onboarding_reopened` |
+| Seller requirement submission | `seller_requirement_submission.created`, `seller_requirement_submission.updated`, `seller_requirement_submission.deleted`, `seller_requirement_submission.accepted`, `seller_requirement_submission.rejected`, `seller_requirement_submission.waived` |
+| Seller payout | `seller_payout.completed` |
+| Product submission | `product_submission.created`, `product_submission.updated`, `product_submission.deleted` |

@@ -101,10 +101,10 @@ await adminClient.sellers.suspend('sel_xxx', { reason: 'Unresolved delivery comp
 curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/invite' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/suspend' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/suspend' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "reason": "Unresolved delivery complaints" }'
@@ -215,7 +215,7 @@ curl -X POST 'https://marketplace.example.com/api/v3/seller/products' \
   -H 'Content-Type: application/json' \
   -d '{ "name": "Handmade Vase" }'
 
-curl -X POST 'https://marketplace.example.com/api/v3/seller/products/prod_xxx/submit' \
+curl -X PATCH 'https://marketplace.example.com/api/v3/seller/products/prod_xxx/submit' \
   -H 'Authorization: Bearer $SELLER_JWT' \
   -H 'X-Spree-Seller-Id: sel_xxx'
 ```

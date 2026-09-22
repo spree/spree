@@ -107,11 +107,11 @@ Optional. When configured, Spree uses [Meilisearch](/integrations/search/meilise
 | `MEILISEARCH_URL` | `http://localhost:7700` | Meilisearch server URL |
 | `MEILISEARCH_API_KEY` | — | Meilisearch master key. Not needed for local development — only required when Meilisearch is started with `MEILI_MASTER_KEY`. |
 
-After setting these, enable the provider and reindex:
+After setting these, add the `spree_meilisearch` gem, enable the provider and reindex:
 
 ```ruby
 # config/initializers/spree.rb
-Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 ```
 
 <CodeGroup>

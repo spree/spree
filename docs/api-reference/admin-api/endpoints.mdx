@@ -6,7 +6,7 @@ description: "Every Spree Admin API v3 endpoint at a glance — method, path, re
 
 {/* Generated from docs/api-reference/admin.yaml by packages/cli/scripts/generate-endpoints-doc.mjs — do not edit by hand. */}
 
-All 209 Admin API operations, with the [scope](/api-reference/admin-api/authentication) a secret API key needs for each. JWT-authenticated admin users are governed by their roles instead of scopes. The same index is available offline via the CLI: `spree api endpoints`.
+All 404 Admin API operations, with the [scope](/api-reference/admin-api/authentication) a secret API key needs for each. JWT-authenticated admin users are governed by their roles instead of scopes. The same index is available offline via the CLI: `spree api endpoints`.
 
 Endpoints marked — are exempt from scope checks (authentication and session endpoints) or resolve their scope at request time.
 
@@ -14,10 +14,10 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `GET` | `/admin_users` | `read_settings` | List staff |
-| `GET` | `/admin_users/{id}` | `read_settings` | Show a staff member |
-| `PATCH` | `/admin_users/{id}` | `write_settings` | Update a staff member |
-| `DELETE` | `/admin_users/{id}` | `write_settings` | Remove a staff member from this store |
+| `GET` | `/admin_users` | `read_staff` | List staff |
+| `GET` | `/admin_users/{id}` | `read_staff` | Show a staff member |
+| `PATCH` | `/admin_users/{id}` | `write_staff` | Update a staff member |
+| `DELETE` | `/admin_users/{id}` | `write_staff` | Remove a staff member from this store |
 
 ## Allowed origins
 
@@ -48,6 +48,29 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `POST` | `/auth/login` | — | Login |
 | `POST` | `/auth/refresh` | — | Refresh token |
 | `POST` | `/auth/logout` | — | Logout |
+| `POST` | `/auth/password_resets` | — | Request password reset |
+| `PATCH` | `/auth/password_resets/{id}` | — | Reset password |
+| `GET` | `/auth/setup` | — | Check first-run setup availability |
+| `POST` | `/auth/setup` | — | Complete first-run setup |
+| `GET` | `/auth/setup/countries` | — | List countries for first-run setup |
+
+## Catalogs
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/catalogs` | `read_products` | List catalogs |
+| `POST` | `/catalogs` | `write_products` | Create a catalog |
+| `POST` | `/catalogs/{id}/assign` | `write_products` | Assign a catalog to an audience |
+| `GET` | `/catalogs/{catalog_id}/products` | `read_products` | List catalog products |
+| `POST` | `/catalogs/{catalog_id}/products` | `write_products` | Add products to a catalog |
+| `DELETE` | `/catalogs/{catalog_id}/products` | `write_products` | Remove products from a catalog |
+| `GET` | `/catalogs/{catalog_id}/order_minimums` | `read_products` | List catalog order minimums |
+| `POST` | `/catalogs/{catalog_id}/order_minimums` | `write_products` | Create a catalog order minimum |
+| `PATCH` | `/catalogs/{catalog_id}/order_minimums/{id}` | `write_products` | Update a catalog order minimum |
+| `DELETE` | `/catalogs/{catalog_id}/order_minimums/{id}` | `write_products` | Delete a catalog order minimum |
+| `PUT` | `/catalogs/{catalog_id}/quantity_rules` | `write_products` | Set catalog quantity rules |
+| `PATCH` | `/catalogs/{id}/activate` | `write_products` | Activate a catalog |
+| `PATCH` | `/catalogs/{id}/deactivate` | `write_products` | Deactivate a catalog |
 
 ## Categories
 
@@ -60,7 +83,8 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `DELETE` | `/categories/{id}` | `write_categories` | Delete a category |
 | `PATCH` | `/categories/{id}/reposition` | `write_categories` | Reposition a category |
 | `GET` | `/categories/{category_id}/products` | `read_categories` | List category products |
-| `POST` | `/categories/{category_id}/products` | `write_categories` | Add a product to a category |
+| `POST` | `/categories/{category_id}/products` | `write_categories` | Add products to a category |
+| `DELETE` | `/categories/{category_id}/products` | `write_categories` | Remove products from a category |
 | `PATCH` | `/categories/{category_id}/products/{id}/reposition` | `write_categories` | Reposition a category product |
 
 ## Channels
@@ -74,6 +98,75 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `DELETE` | `/channels/{id}` | `write_settings` | Delete a channel |
 | `POST` | `/channels/{id}/add_products` | `write_products` | Publish products on a channel |
 | `POST` | `/channels/{id}/remove_products` | `write_products` | Unpublish products from a channel |
+| `GET` | `/channels/{channel_id}/order_routing_rules` | `read_settings` | List order routing rules for a channel |
+| `POST` | `/channels/{channel_id}/order_routing_rules` | `write_settings` | Create an order routing rule on a channel |
+| `PATCH` | `/channels/{channel_id}/order_routing_rules/{id}` | `write_settings` | Update an order routing rule |
+| `DELETE` | `/channels/{channel_id}/order_routing_rules/{id}` | `write_settings` | Delete an order routing rule |
+
+## Claim reasons
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/claim_reasons` | `read_settings` | List claim reasons |
+| `POST` | `/claim_reasons` | `write_settings` | Create a claim reason |
+| `GET` | `/claim_reasons/{id}` | `read_settings` | Get a claim reason |
+| `PATCH` | `/claim_reasons/{id}` | `write_settings` | Update a claim reason |
+| `DELETE` | `/claim_reasons/{id}` | `write_settings` | Delete a claim reason |
+
+## Collection rules
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/collection_rules/types` | `read_collections` | List available collection rule types |
+
+## Collections
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/collections` | `read_collections` | List collections |
+| `POST` | `/collections` | `write_collections` | Create a collection |
+| `GET` | `/collections/{id}` | `read_collections` | Get a collection |
+| `PATCH` | `/collections/{id}` | `write_collections` | Update a collection |
+| `DELETE` | `/collections/{id}` | `write_collections` | Delete a collection |
+| `GET` | `/collections/{collection_id}/products` | `read_collections` | List collection products |
+| `POST` | `/collections/{collection_id}/products` | `write_collections` | Add products to a collection |
+| `DELETE` | `/collections/{collection_id}/products` | `write_collections` | Remove products from a collection |
+| `PATCH` | `/collections/{collection_id}/products/{id}/reposition` | `write_collections` | Reposition a collection product |
+
+## Commission lines
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/commission_lines` | `read_commissions` | List commission lines |
+| `GET` | `/commission_lines/{id}` | `read_commissions` | Get a commission line |
+
+## Commission rates
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/commission_rates` | `read_commissions` | List commission rates |
+| `POST` | `/commission_rates` | `write_commissions` | Create a commission rate |
+| `GET` | `/commission_rates/rule_types` | `read_commissions` | List the commission rule kinds |
+| `GET` | `/commission_rates/{id}` | `read_commissions` | Get a commission rate |
+| `PATCH` | `/commission_rates/{id}` | `write_commissions` | Update a commission rate |
+| `DELETE` | `/commission_rates/{id}` | `write_commissions` | Delete a commission rate |
+
+## Companies
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/companies/{company_id}/memberships` | `read_customers` | List company members |
+| `POST` | `/companies/{company_id}/memberships` | `write_customers` | Add a member by email |
+| `GET` | `/companies/{company_id}/tax_exemption_certificates` | `read_customers` | List tax exemption certificates |
+| `POST` | `/companies/{company_id}/tax_exemption_certificates` | `write_customers` | Create a tax exemption certificate |
+| `PATCH` | `/companies/{company_id}/tax_exemption_certificates/{id}/verify` | `write_customers` | Verify a tax exemption certificate |
+| `PATCH` | `/companies/{company_id}/tax_exemption_certificates/{id}/revoke` | `write_customers` | Revoke a tax exemption certificate |
+| `GET` | `/companies/{company_id}/tax_exemption_certificates/{id}/download` | `read_customers` | Download a certificate document |
+| `GET` | `/companies/{company_id}/tax_identifiers` | `read_customers` | List company tax registrations |
+| `POST` | `/companies/{company_id}/tax_identifiers` | `write_customers` | Create a company tax registration |
+| `POST` | `/companies/{company_id}/tax_identifiers/{id}/validate` | `write_customers` | Re-check a company tax registration |
+| `GET` | `/companies` | `read_customers` | List companies |
+| `POST` | `/companies` | `write_customers` | Create a company |
 
 ## Custom field definitions
 
@@ -84,6 +177,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/custom_field_definitions/{id}` | `read_settings` | Show a custom field definition |
 | `PATCH` | `/custom_field_definitions/{id}` | `write_settings` | Update a custom field definition |
 | `DELETE` | `/custom_field_definitions/{id}` | `write_settings` | Delete a custom field definition |
+| `GET` | `/custom_field_definitions/resource_types` | `read_settings` | List what custom fields can be attached to |
 
 ## Customer groups
 
@@ -99,6 +193,8 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
+| `GET` | `/customers/{id}/export` | `read_customers` | Export a customer's personal data |
+| `POST` | `/customers/{id}/anonymize` | `write_customers` | Erase a customer's personal data |
 | `GET` | `/customers/{customer_id}/addresses` | `read_customers` | List customer addresses |
 | `POST` | `/customers/{customer_id}/addresses` | `write_customers` | Create a customer address |
 | `PATCH` | `/customers/{customer_id}/addresses/{id}` | `write_customers` | Update a customer address |
@@ -119,6 +215,30 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `POST` | `/customers/bulk_remove_from_groups` | `write_customers` | Bulk-remove customers from groups |
 | `POST` | `/customers/bulk_add_tags` | `write_customers` | Bulk-add tags to customers |
 | `POST` | `/customers/bulk_remove_tags` | `write_customers` | Bulk-remove tags from customers |
+
+## Delivery methods
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/delivery_methods` | `read_settings` | List delivery methods |
+| `POST` | `/delivery_methods` | `write_settings` | Create delivery method |
+| `GET` | `/delivery_methods/calculators` | `write_settings` | List delivery calculators |
+
+## Delivery profiles
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/delivery_profiles` | `read_settings` | List delivery profiles |
+| `POST` | `/delivery_profiles` | `write_settings` | Create a delivery profile |
+| `POST` | `/delivery_profiles/{delivery_profile_id}/origin_groups` | `write_settings` | Create an origin group |
+| `PATCH` | `/delivery_profiles/{id}` | `write_settings` | Update a delivery profile |
+| `DELETE` | `/delivery_profiles/{id}` | `write_settings` | Delete a delivery profile |
+
+## Delivery zones
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `POST` | `/delivery_zones` | `write_settings` | Create delivery zone |
 
 ## Exports
 
@@ -148,14 +268,38 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/gift_cards/{id}` | `write_gift_cards` | Update a gift card |
 | `DELETE` | `/gift_cards/{id}` | `write_gift_cards` | Delete a gift card |
 
+## Imports
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/imports` | *the write scope of the imported resource* | List imports |
+| `POST` | `/imports` | *the write scope of the imported resource* | Create an import |
+| `GET` | `/imports/template` | *the write scope of the imported resource* | Download an import template |
+| `GET` | `/imports/example` | *the write scope of the imported resource* | Download an example import file |
+| `GET` | `/imports/{id}` | *the write scope of the imported resource* | Show an import |
+| `DELETE` | `/imports/{id}` | *the write scope of the imported resource* | Delete an import |
+| `GET` | `/imports/{id}/download` | *the write scope of the imported resource* | Download the originally uploaded file |
+| `PATCH` | `/imports/{id}/complete_mapping` | *the write scope of the imported resource* | Complete mapping and start processing |
+| `PATCH` | `/imports/{id}/retry_failed_rows` | *the write scope of the imported resource* | Retry failed rows |
+| `GET` | `/imports/{import_id}/rows` | *the write scope of the imported resource* | List import rows |
+
+## Integrations
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/integrations` | `read_integrations` | List integrations |
+| `POST` | `/integrations` | `write_integrations` | Connect integration |
+| `GET` | `/integrations/types` | `read_integrations` | List integration types |
+| `POST` | `/integrations/{id}/test` | `write_integrations` | Test integration connection |
+
 ## Invitations
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `GET` | `/invitations` | `read_settings` | List invitations |
-| `POST` | `/invitations` | `write_settings` | Create an invitation |
-| `DELETE` | `/invitations/{id}` | `write_settings` | Revoke an invitation |
-| `PATCH` | `/invitations/{id}/resend` | `write_settings` | Resend an invitation |
+| `GET` | `/invitations` | `read_staff` | List invitations |
+| `POST` | `/invitations` | `write_staff` | Create an invitation |
+| `DELETE` | `/invitations/{id}` | `write_staff` | Revoke an invitation |
+| `PATCH` | `/invitations/{id}/resend` | `write_staff` | Resend an invitation |
 
 ## Locales
 
@@ -180,6 +324,14 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/me` | — | Get current admin user and permissions |
 | `PATCH` | `/me` | — | Update the current admin profile |
 
+## Media
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/media` | `read_media` | List media |
+| `POST` | `/media` | `write_media` | Upload a file to the library |
+| `GET` | `/media/{id}/usage` | `read_media` | Where a file is used |
+
 ## Option types
 
 | Method | Path | Required scope | Summary |
@@ -190,6 +342,22 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/option_types/{id}` | `write_products` | Update an option type |
 | `DELETE` | `/option_types/{id}` | `write_products` | Delete an option type |
 
+## Order cancellation reasons
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/order_cancellation_reasons` | `read_settings` | List order cancellation reasons |
+| `POST` | `/order_cancellation_reasons` | `write_settings` | Create a order cancellation reason |
+| `GET` | `/order_cancellation_reasons/{id}` | `read_settings` | Get a order cancellation reason |
+| `PATCH` | `/order_cancellation_reasons/{id}` | `write_settings` | Update a order cancellation reason |
+| `DELETE` | `/order_cancellation_reasons/{id}` | `write_settings` | Delete a order cancellation reason |
+
+## Order routing rules
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/order_routing_rules/types` | `read_settings` | List available order routing rule types |
+
 ## Orders
 
 | Method | Path | Required scope | Summary |
@@ -199,9 +367,13 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/orders/{order_id}/fulfillments/{id}` | `read_fulfillments` | Show a shipment |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}` | `write_fulfillments` | Update a shipment |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}/fulfill` | `write_fulfillments` | Fulfill a fulfillment |
+| `PATCH` | `/orders/{order_id}/fulfillments/{id}/mark_delivered` | `write_fulfillments` | Mark a fulfillment delivered |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}/cancel` | `write_fulfillments` | Cancel a fulfillment |
-| `PATCH` | `/orders/{order_id}/fulfillments/{id}/resume` | `write_fulfillments` | Resume a fulfillment |
 | `PATCH` | `/orders/{order_id}/fulfillments/{id}/split` | `write_fulfillments` | Split a fulfillment |
+| `GET` | `/orders/{order_id}/tax_lines` | `read_orders` | List tax lines |
+| `GET` | `/orders/{order_id}/discounts` | `read_orders` | List discounts |
+| `POST` | `/orders/{order_id}/discounts` | `write_orders` | Create manual discount |
+| `POST` | `/orders/{order_id}/fees` | `write_orders` | Create fee |
 | `POST` | `/orders/{order_id}/gift_cards` | `write_gift_cards` | Apply a gift card to an order |
 | `DELETE` | `/orders/{order_id}/gift_cards/{id}` | `write_gift_cards` | Remove a gift card from an order |
 | `GET` | `/orders/{order_id}/items` | `read_orders` | List order items |
@@ -219,7 +391,6 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/orders/{id}/complete` | `write_orders` | Complete an order |
 | `PATCH` | `/orders/{id}/cancel` | `write_orders` | Cancel an order |
 | `PATCH` | `/orders/{id}/approve` | `write_orders` | Approve an order |
-| `PATCH` | `/orders/{id}/resume` | `write_orders` | Resume a canceled order |
 | `POST` | `/orders/{id}/resend_confirmation` | `write_orders` | Resend confirmation email |
 | `GET` | `/orders/{order_id}/payments` | `read_payments` | List payments |
 | `POST` | `/orders/{order_id}/payments` | `write_payments` | Create a payment |
@@ -228,6 +399,26 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/orders/{order_id}/payments/{id}/void` | `write_payments` | Void a payment |
 | `GET` | `/orders/{order_id}/refunds` | `read_refunds` | List refunds |
 | `POST` | `/orders/{order_id}/refunds` | `write_refunds` | Create a refund |
+| `GET` | `/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries` | `read_fulfillments` | List deliveries |
+| `POST` | `/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries` | `write_fulfillments` | Record a delivery |
+| `PATCH` | `/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}` | `write_fulfillments` | Correct a delivery |
+| `DELETE` | `/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}` | `write_fulfillments` | Delete a delivery |
+| `PATCH` | `/orders/{order_id}/fulfillments/{fulfillment_id}/deliveries/{id}/mark_delivered` | `write_fulfillments` | Mark a delivery delivered |
+| `GET` | `/orders/{order_id}/fulfillments/{fulfillment_id}/labels` | `read_fulfillments` | List shipping labels |
+| `POST` | `/orders/{order_id}/fulfillments/{fulfillment_id}/labels` | `write_fulfillments` | Buy or record a shipping label |
+| `GET` | `/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}` | `read_fulfillments` | Get a shipping label |
+| `DELETE` | `/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}` | `write_fulfillments` | Delete an uploaded label |
+| `PATCH` | `/orders/{order_id}/fulfillments/{fulfillment_id}/labels/{id}/refund` | `write_fulfillments` | Refund a shipping label |
+
+## Package types
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/package_types` | `read_package_types` | List package types |
+| `POST` | `/package_types` | `write_package_types` | Create a package type |
+| `GET` | `/package_types/{id}` | `read_package_types` | Get a package type |
+| `PATCH` | `/package_types/{id}` | `write_package_types` | Update a package type |
+| `DELETE` | `/package_types/{id}` | `write_package_types` | Delete a package type |
 
 ## Payment methods
 
@@ -236,6 +427,22 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/payment_methods` | `read_settings` | List payment methods |
 | `GET` | `/payment_methods/types` | `read_settings` | List available payment provider types |
 | `GET` | `/payment_methods/{id}` | `read_settings` | Show a payment method |
+
+## Permissions
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/permissions` | — | List the permission catalog |
+
+## Policies
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/policies` | `read_settings` | List policies |
+| `POST` | `/policies` | `write_settings` | Create a policy |
+| `GET` | `/policies/{id}` | `read_settings` | Get a policy |
+| `PATCH` | `/policies/{id}` | `write_settings` | Update a policy |
+| `DELETE` | `/policies/{id}` | `write_settings` | Delete a policy |
 
 ## Price lists
 
@@ -248,6 +455,9 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `DELETE` | `/price_lists/{id}` | `write_products` | Delete a price list |
 | `PATCH` | `/price_lists/{id}/activate` | `write_products` | Activate a price list |
 | `PATCH` | `/price_lists/{id}/deactivate` | `write_products` | Deactivate a price list |
+| `GET` | `/price_lists/{price_list_id}/products` | `read_products` | List price list products |
+| `POST` | `/price_lists/{price_list_id}/products` | `write_products` | Add products to a price list |
+| `DELETE` | `/price_lists/{price_list_id}/products` | `write_products` | Remove products from a price list |
 
 ## Prices
 
@@ -260,6 +470,17 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `DELETE` | `/prices/{id}` | `write_products` | Delete a price |
 | `POST` | `/prices/bulk_upsert` | `write_products` | Bulk-upsert prices |
 | `DELETE` | `/prices/bulk_destroy` | `write_products` | Bulk-delete prices |
+
+## Product types
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/product_types` | `read_products` | List product types |
+| `POST` | `/product_types` | `write_products` | Create a product type |
+| `GET` | `/product_types/{id}` | `read_products` | Retrieve a product type |
+| `PATCH` | `/product_types/{id}` | `write_products` | Update a product type |
+| `DELETE` | `/product_types/{id}` | `write_products` | Delete a product type |
+| `POST` | `/product_types/{id}/apply_to_products` | `write_products` | Apply a product type to its existing products |
 
 ## Products
 
@@ -279,6 +500,8 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `POST` | `/products/bulk_status_update` | `write_products` | Bulk-update product status |
 | `POST` | `/products/bulk_add_to_categories` | `write_products` | Bulk-add products to categories |
 | `POST` | `/products/bulk_remove_from_categories` | `write_products` | Bulk-remove products from categories |
+| `POST` | `/products/bulk_add_to_collections` | `write_products` | Bulk-add products to collections |
+| `POST` | `/products/bulk_remove_from_collections` | `write_products` | Bulk-remove products from collections |
 | `POST` | `/products/bulk_add_to_channels` | `write_products` | Bulk-add products to channels |
 | `POST` | `/products/bulk_remove_from_channels` | `write_products` | Bulk-remove products from channels |
 | `POST` | `/products/bulk_add_tags` | `write_products` | Bulk-add tags to products |
@@ -289,6 +512,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/products/{product_id}/variants/{id}` | `read_products` | Get a variant |
 | `PATCH` | `/products/{product_id}/variants/{id}` | `write_products` | Update a variant |
 | `DELETE` | `/products/{product_id}/variants/{id}` | `write_products` | Delete a variant |
+| `POST` | `/products/{product_id}/media` | `write_products` | Place a library file on a product |
 
 ## Promotion actions
 
@@ -320,11 +544,87 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/promotions/{id}` | `write_promotions` | Update a promotion |
 | `DELETE` | `/promotions/{id}` | `write_promotions` | Delete a promotion |
 
+## Purchase orders
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/purchase_orders` | `read_purchasing` | List purchase orders |
+| `POST` | `/purchase_orders` | `write_purchasing` | Create a purchase order |
+| `GET` | `/purchase_orders/{id}` | `read_purchasing` | Get a purchase order |
+| `PATCH` | `/purchase_orders/{id}/mark_ordered` | `write_purchasing` | Place the order with the supplier |
+| `GET` | `/purchase_orders/{purchase_order_id}/stock_receipts` | `read_purchasing` | List the deliveries booked against an order |
+| `POST` | `/purchase_orders/{purchase_order_id}/stock_receipts` | `write_purchasing` | Book in a delivery |
+| `PATCH` | `/purchase_orders/{id}/mark_draft` | `write_purchasing` | Take an order back to draft |
+| `PATCH` | `/purchase_orders/{id}/close` | `write_purchasing` | Close an order short |
+| `PATCH` | `/purchase_orders/{id}/cancel` | `write_purchasing` | Cancel a purchase order |
+
+## Refund reasons
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/refund_reasons` | `read_settings` | List refund reasons |
+| `POST` | `/refund_reasons` | `write_settings` | Create a refund reason |
+| `GET` | `/refund_reasons/{id}` | `read_settings` | Get a refund reason |
+| `PATCH` | `/refund_reasons/{id}` | `write_settings` | Update a refund reason |
+| `DELETE` | `/refund_reasons/{id}` | `write_settings` | Delete a refund reason |
+
+## Return reasons
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/return_reasons` | `read_settings` | List return reasons |
+| `POST` | `/return_reasons` | `write_settings` | Create a return reason |
+| `GET` | `/return_reasons/{id}` | `read_settings` | Get a return reason |
+| `PATCH` | `/return_reasons/{id}` | `write_settings` | Update a return reason |
+| `DELETE` | `/return_reasons/{id}` | `write_settings` | Delete a return reason |
+
 ## Roles
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `GET` | `/roles` | `read_settings` | List roles |
+| `GET` | `/roles` | `read_staff` | List roles |
+| `POST` | `/roles` | `write_staff` | Create a role |
+| `PATCH` | `/roles/{id}` | `write_staff` | Update a role |
+| `DELETE` | `/roles/{id}` | `write_staff` | Delete a role |
+
+## Seller payouts
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `PATCH` | `/seller_payouts/{id}/complete` | `write_payouts` | Mark a payout paid |
+
+## Seller requirements
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/seller_requirements` | `read_sellers` | List seller requirements |
+| `POST` | `/seller_requirements` | `write_sellers` | Add a seller requirement |
+| `GET` | `/seller_requirements/types` | `read_sellers` | List seller requirement kinds |
+| `PATCH` | `/seller_requirements/{id}` | `write_sellers` | Update a seller requirement |
+| `DELETE` | `/seller_requirements/{id}` | `write_sellers` | Delete a seller requirement |
+
+## Sellers
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/sellers` | `read_sellers` | List sellers |
+| `POST` | `/sellers` | `write_sellers` | Create a seller |
+| `GET` | `/sellers/{id}` | `read_sellers` | Get a seller |
+| `PATCH` | `/sellers/{id}` | `write_sellers` | Update a seller |
+| `DELETE` | `/sellers/{id}` | `write_sellers` | Delete a seller |
+| `POST` | `/sellers/{id}/invite` | `write_sellers` | Invite someone to run a seller |
+| `PATCH` | `/sellers/{id}/approve` | `write_sellers` | Approve a seller |
+| `PATCH` | `/sellers/{id}/suspend` | `write_sellers` | Suspend a seller |
+| `PATCH` | `/sellers/{id}/reject` | `write_sellers` | Reject a seller |
+| `GET` | `/sellers/{seller_id}/balances` | `read_payouts` | List a seller's balances |
+| `POST` | `/sellers/{seller_id}/payouts` | `write_payouts` | Settle a seller |
+
+## Stock levels
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/stock_levels` | `read_stock` | List stock levels |
+| `POST` | `/stock_levels/bulk_upsert` | `write_stock` | Bulk-upsert stock levels |
 
 ## Stock locations
 
@@ -336,6 +636,29 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `PATCH` | `/stock_locations/{id}` | `write_stock` | Update a stock location |
 | `DELETE` | `/stock_locations/{id}` | `write_stock` | Delete a stock location |
 
+## Stock movements
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/stock_movements` | `read_stock` | List stock movements |
+| `GET` | `/stock_movements/{id}` | `read_stock` | Get a stock movement |
+
+## Stock transfers
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/stock_transfers` | `read_stock` | List stock transfers |
+| `POST` | `/stock_transfers` | `write_stock` | Create a stock transfer |
+| `GET` | `/stock_transfers/{id}` | `read_stock` | Get a stock transfer |
+| `DELETE` | `/stock_transfers/{id}` | `write_stock` | Delete a stock transfer |
+| `PATCH` | `/stock_transfers/{id}/mark_ready` | `write_stock` | Mark a transfer ready to ship |
+| `PATCH` | `/stock_transfers/{id}/mark_in_transit` | `write_stock` | Send a transfer |
+| `GET` | `/stock_transfers/{stock_transfer_id}/stock_receipts` | `read_stock` | List the deliveries counted in against a transfer |
+| `POST` | `/stock_transfers/{stock_transfer_id}/stock_receipts` | `write_stock` | Count a delivery in |
+| `PATCH` | `/stock_transfers/{id}/mark_draft` | `write_stock` | Take a transfer back to draft |
+| `PATCH` | `/stock_transfers/{id}/close` | `write_stock` | Close a transfer short |
+| `PATCH` | `/stock_transfers/{id}/cancel` | `write_stock` | Cancel a stock transfer |
+
 ## Store
 
 | Method | Path | Required scope | Summary |
@@ -343,11 +666,39 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 | `GET` | `/store` | `read_settings` | Get the current store |
 | `PATCH` | `/store` | `write_settings` | Update the current store |
 
+## Store credits
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/store_credits` | `read_store_credits` | List store credits |
+| `GET` | `/store_credits/{id}` | `read_store_credits` | Retrieve a store credit |
+| `GET` | `/store_credits/{store_credit_id}/events` | `read_store_credits` | List a store credit's ledger |
+
+## Suppliers
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/suppliers` | `read_purchasing` | List suppliers |
+| `POST` | `/suppliers` | `write_purchasing` | Create a supplier |
+| `GET` | `/suppliers/{id}` | `read_purchasing` | Get a supplier |
+| `PATCH` | `/suppliers/{id}` | `write_purchasing` | Update a supplier |
+| `DELETE` | `/suppliers/{id}` | `write_purchasing` | Delete a supplier |
+
 ## Tags
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
 | `GET` | `/tags` | — | List tags |
+
+## Tax rates
+
+| Method | Path | Required scope | Summary |
+|---|---|---|---|
+| `GET` | `/tax_rates` | `read_settings` | List tax rates |
+| `POST` | `/tax_rates` | `write_settings` | Create a tax rate |
+| `GET` | `/tax_rates/{id}` | `read_settings` | Get a tax rate |
+| `PATCH` | `/tax_rates/{id}` | `write_settings` | Update a tax rate |
+| `DELETE` | `/tax_rates/{id}` | `write_settings` | Delete a tax rate |
 
 ## Translatable resources
 
@@ -359,7 +710,8 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `POST` | `/translations/batch` | `write_*` (eg. `write_products`) for every resource type in the batch (for API-key authentication) | Batch upsert translations |
+| `GET` | `/translations` | `read_products` | Translation coverage for a resource type |
+| `POST` | `/translations/batch` | *write_<resource> for every resource type in the batch (for API-key authentication)* | Batch upsert translations |
 
 ## Webhook endpoints
 

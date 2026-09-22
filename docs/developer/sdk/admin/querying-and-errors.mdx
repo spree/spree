@@ -10,7 +10,7 @@ Collection endpoints support [Ransack](https://activerecord-hackery.github.io/ra
 
 ```typescript
 const { data: orders } = await client.orders.list({
-  status_eq: 'complete',          // exact match
+  status_eq: 'placed',          // exact match
   total_gteq: 100,                // greater than or equal
   email_cont: '@example.com',     // substring match
   customer_id_eq: 'cus_xxx',      // prefixed IDs work directly

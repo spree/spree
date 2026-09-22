@@ -28,7 +28,7 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 
 #### Setup
 
-1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks:
+1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks:
    - **URL:** `https://your-storefront.com/api/webhooks/spree`
    - **Events:** `order.completed`, `order.canceled`, `order.shipped`, `customer.password_reset_requested`, `newsletter_subscriber.subscription_requested`
 
@@ -54,6 +54,10 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 | `order.shipped` | Shipping notification with tracking link |
 | `customer.password_reset_requested` | Password reset link |
 | `newsletter_subscriber.subscription_requested` | Newsletter double opt-in confirmation link |
+
+<Note>
+  The storefront listens for `order.completed` and `order.shipped`, the names these events had before Spree 6.0. Spree 6.0 still sends them alongside the new names, `order.placed` and `order.fulfilled`, but stops in Spree 6.1. Before upgrading to 6.1, switch the storefront handlers and your webhook endpoint subscriptions to the new names.
+</Note>
 
 #### Custom Frameworks
 

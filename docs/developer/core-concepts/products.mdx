@@ -51,12 +51,12 @@ erDiagram
 
     OptionType {
         string name
-        string presentation
+        string label
     }
 
     OptionValue {
         string name
-        string presentation
+        string label
     }
 ```
 
@@ -646,9 +646,9 @@ erDiagram
 ```typescript Admin SDK
 const shoes = await adminClient.productTypes.create({
   name: 'Footwear',
-  option_type_ids: ['optt_size', 'optt_color'],
+  option_type_ids: ['opt_size', 'opt_color'],
   category_ids: ['ctg_footwear'],
-  delivery_profile_id: 'dp_standard',
+  delivery_profile_id: 'fp_standard',
   custom_field_definitions: [
     { id: 'cfdef_material', required: true, sort_order: 0 },
   ],
@@ -667,9 +667,9 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/product_types' \
   -H 'Content-Type: application/json' \
   -d '{
     "name": "Footwear",
-    "option_type_ids": ["optt_size", "optt_color"],
+    "option_type_ids": ["opt_size", "opt_color"],
     "category_ids": ["ctg_footwear"],
-    "delivery_profile_id": "dp_standard"
+    "delivery_profile_id": "fp_standard"
   }'
 ```
 

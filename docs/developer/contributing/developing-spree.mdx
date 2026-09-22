@@ -23,7 +23,7 @@ You need **Node.js 20+** to run the workspace scripts (including `pnpm server:se
 
 Spree is a monorepo with three main areas:
 
-- **`spree/`** — Ruby gems (core, api, admin, emails) distributed as separate packages via RubyGems
+- **`spree/`** — Ruby gems (core, api, dashboard, emails, opentelemetry, and provider gems under `spree/providers/`) distributed as separate packages via RubyGems
 - **`packages/`** — TypeScript packages (SDKs, CLI, project scaffolding, docs, React dashboard)
 - **`server/`** — A Rails application cloned from [spree-starter](https://github.com/spree/spree-starter) that mounts the local Spree gems (not checked in — `pnpm server:setup` creates it)
 
@@ -38,9 +38,9 @@ pnpm server:setup   # ~5–10 min on first run; idempotent
 
 `pnpm server:setup` clones [spree-starter](https://github.com/spree/spree-starter) into `./server/`, wires it to load Spree gems from the monorepo via a Docker compose overlay, builds the dev image, starts the stack (Postgres + Meilisearch + a single Rails `web` container — background jobs run in-process via Solid Queue), and prepares the database. The full sequence lives in `scripts/server-setup.sh`.
 
-When it's done, the backend is up at [http://localhost:3000](http://localhost:3000) and the admin is at [http://localhost:3000/admin](http://localhost:3000/admin). Sign in with the seed admin: **`spree@example.com`** / **`spree123`** (override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars — see `spree/core/app/services/spree/seeds/admin_user.rb`).
+When it's done, the backend is up at [http://localhost:3000](http://localhost:3000). The React dashboard runs as its own development server — start it with `pnpm dashboard:dev` and open [http://localhost:5173](http://localhost:5173). The setup script prints a one-time link for creating the first admin account; open it once the dashboard is running. To seed an admin account instead, set the `ADMIN_EMAIL` and `ADMIN_PASSWORD` environment variables before seeding (see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
-Optionally load sample products, taxonomies, and option types:
+Optionally load sample products, categories, and option types:
 
 ```bash
 pnpm server:load_sample_data
@@ -110,8 +110,12 @@ The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live insi
 |---|---|---|
 | `core` | `spree_core` | Models, services, business logic |
 | `api` | `spree_api` | REST APIs |
-| `admin` | `spree_admin` | Admin dashboard |
-| `emails` | `spree_emails` | Transactional emails |
+| `dashboard` | `spree_dashboard` | Serves a built React dashboard and seller panel from your Rails server |
+| `emails` | `spree_emails` | Transactional emails (optional) |
+| `opentelemetry` | `spree_opentelemetry` | OpenTelemetry tracing (optional) |
+| `providers/stripe` | `spree_stripe` | Stripe payments (optional) |
+| `providers/easypost` | `spree_easypost` | EasyPost delivery rates and shipping labels (optional) |
+| `providers/meilisearch` | `spree_meilisearch` | Meilisearch product search (optional) |
 
 ### Spree namespace
 
@@ -133,7 +137,7 @@ bundle exec rake test_app
 bundle exec rspec
 ```
 
-Replace `core` with `api`, `admin`, or `emails` to test other engines.
+Replace `core` with `api`, `dashboard`, `emails`, `opentelemetry`, or a provider path such as `providers/stripe` to test other engines.
 
 By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
 
@@ -181,15 +185,7 @@ bundle exec parallel_rspec -n 4 spec
 
 After schema changes, re-run `bundle exec rake parallel_setup` to update the worker databases.
 
-### Integration tests (legacy Rails admin)
-
-The legacy Rails admin (`spree/admin`) ships feature specs that run in a real browser via chromedriver. You only need this if you're touching the legacy admin UI.
-
-Install chromedriver on macOS:
-
-```bash
-brew install chromedriver
-```
+### Integration tests
 
 The React dashboard (`packages/dashboard`) has its own end-to-end test suite running on Playwright against a real Rails backend — see [Dashboard E2E tests](#dashboard-e2e-tests) under TypeScript Development.
 
@@ -216,7 +212,7 @@ The backend setup is the same as for Ruby work — see [Setup](#setup) above. Wi
 | `@spree/cli` | `packages/cli` | yes | CLI for managing Spree Commerce projects |
 | `create-spree-app` | `packages/create-spree-app` | yes | Project scaffolding (`npm create spree-app`) |
 | `@spree/docs` | `packages/docs` | yes | Developer documentation for AI agents and local reference |
-| `@spree/dashboard` | `packages/dashboard` | no | React SPA admin dashboard (replaces the legacy Rails admin) |
+| `@spree/dashboard` | `packages/dashboard` | no | React SPA admin dashboard |
 | `@spree/dashboard-core` | `packages/dashboard-core` | no | Framework: registries, providers, generic infra hooks for the dashboard |
 | `@spree/dashboard-ui` | `packages/dashboard-ui` | no | Design system used by the dashboard |
 | `@spree/sdk-core` | `packages/sdk-core` | no | Shared HTTP/retry/error layer used by both SDKs |
@@ -259,7 +255,7 @@ cd packages/dashboard
 pnpm dev   # http://localhost:5173
 ```
 
-Sign in with `spree@example.com` / `spree123`. To point at a non-default backend, set `VITE_SPREE_API_URL` (also needs to be set at build time for production bundles, not just dev):
+Sign in with the admin account you created from the setup link (see [Setup](#setup)). To point at a non-default backend, set `VITE_SPREE_API_URL` (also needs to be set at build time for production bundles, not just dev):
 
 ```bash
 VITE_SPREE_API_URL=https://my-spree.example.com pnpm dev

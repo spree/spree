@@ -28,7 +28,7 @@ const carts = await client.carts.list();
 await client.carts.delete(cartId, { spreeToken: cart.token });
 
 // Associate guest cart with authenticated user
-// (after user logs in, merge their guest cart with their account)
+// (after user logs in, assign the guest cart to their account — carts are not merged)
 await client.carts.associate(cartId, {
   token: jwtToken,         // User's JWT token
   spreeToken: cart.token,  // Guest cart token
@@ -112,8 +112,8 @@ await client.carts.update(cartId, {
     city: 'New York',
     postal_code: '10001',
     phone: '+1 555 123 4567',
-    country_iso: 'US',
-    state_abbr: 'NY',
+    country_code: 'US',
+    state_code: 'NY',
   },
   billing_address_id: 'addr_xxx', // Or use existing address by ID
 }, { spreeToken: cart.token });
@@ -177,7 +177,7 @@ The cart and order responses break the amount the customer pays into these total
 ### Get a Completed Order
 
 ```typescript
-const order = await client.orders.get('R123456789', {
+const order = await client.orders.get('or_xxx', { // prefixed order ID (or the cart ID)
   expand: ['items', 'fulfillments'],
 }, { spreeToken: cart.token });
 ```

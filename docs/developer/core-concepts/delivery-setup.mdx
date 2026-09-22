@@ -73,7 +73,7 @@ const profiles = await adminClient.deliveryProfiles.list()
 
 // Ship a product as a download
 await adminClient.products.update('prod_xxx', {
-  delivery_profile_id: 'dp_digital',
+  delivery_profile_id: 'fp_digital',
 })
 ```
 
@@ -86,7 +86,7 @@ curl 'https://api.mystore.com/api/v3/admin/delivery_profiles' \
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "delivery_profile_id": "dp_digital" }'
+  -d '{ "delivery_profile_id": "fp_digital" }'
 ```
 
 </CodeGroup>

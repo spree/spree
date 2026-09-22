@@ -421,13 +421,13 @@ aws application-autoscaling put-scaling-policy \
 
 ### Admin
 
-Access your admin panel at:
+Access the admin dashboard at:
 
 ```
-https://<your-domain>/admin
+https://<your-domain>/dashboard
 ```
 
-Default credentials are created during `db:seed`. Change them immediately after first login.
+No default admin account is created. Seeding prints a one-time setup link where you create the first admin account — print it again with `bin/rails spree:setup:token`. For scripted installs, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` before seeding to create the account directly.
 
 ### Database Migrations
 

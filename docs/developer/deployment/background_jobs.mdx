@@ -82,21 +82,27 @@ Configure the queues with weights — Sidekiq's equivalent of Solid Queue's poll
   - [spree_events, 3]
   - [spree_exports, 3]
   - [spree_images, 3]
+  - [spree_stock_reservations, 5]
   - [spree_products, 3]
-  - [spree_reports, 3]
   - [spree_variants, 3]
-  - [spree_taxons, 3]
-  - [spree_stock_location_stock_items, 3]
+  - [spree_categories, 3]
+  - [spree_collections, 3]
+  - [spree_stock_location_stock_levels, 3]
   - [spree_coupon_codes, 3]
   - [spree_addresses, 3]
   - [spree_gift_cards, 3]
   - [spree_webhooks, 3]
   - [spree_api_keys, 3]
   - [spree_search, 3]
+  - [spree_tax_identifiers, 3]
+  - [spree_payouts, 3]
+  - [spree_data_requests, 1]
   - [active_storage_transform, 3]
   - [active_storage_analysis, 1]
   - [active_storage_purge, 1]
 ```
+
+Unlike Solid Queue, Sidekiq has no catch-all queue: a job on a queue missing from this list never runs. Every queue name you assign with `Spree.queues` in `config/initializers/spree.rb` must appear here. Any `Spree.queues` entry you don't assign uses `default`.
 
 Move the `config/recurring.yml` schedules to sidekiq-cron (it auto-loads `config/schedule.yml`):
 

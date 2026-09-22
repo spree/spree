@@ -11,7 +11,7 @@ The Spree CLI (`@spree/cli`) does two things from your terminal:
 
 ```bash
 spree dev                                                  # boot the project
-spree api get /orders -q status_eq=complete --limit 10     # query the Admin API
+spree api get /orders -q status_eq=placed --limit 10     # query the Admin API
 spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create a resource
 spree api endpoints --search refund                        # discover endpoints, offline
 ```
@@ -229,7 +229,7 @@ Run a generator inside the container. Bare generator names are auto-prefixed wit
 ```bash
 spree generate model Brand name:string slug:string:uniq          # runs spree:model
 spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
-spree generate subscriber OmsOrderSync order.completed           # runs spree:subscriber — event subscriber + registration
+spree generate subscriber OmsOrderSync order.placed              # runs spree:subscriber — event subscriber + registration
 spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 

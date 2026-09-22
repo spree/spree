@@ -91,27 +91,31 @@ Responses vary by locale, so if you cache them, include the locale in the cache 
 
 Merchants translate in the dashboard, switching locale on the record they're editing. For bulk work — handing a catalogue to a translation agency — export to CSV, translate, and import it back.
 
-Translations can also be written through the Admin API, which is what you'd use to sync from an external translation service:
+Translations can also be written through the Admin API, which is what you'd use to sync from an external translation service. Writes go through one batch endpoint — every entry succeeds or none do — so a product and its option values can be translated in a single request:
 
 <CodeGroup>
 
 ```typescript Admin SDK
-await adminClient.products.update('prod_xxx', {
-  translations: {
-    fr: { name: 'Sac Spree', description: 'Un sac fourre-tout élégant…' },
-    de: { name: 'Spree Tasche' },
+await adminClient.translations.batch([
+  {
+    resource_type: 'product',
+    resource_id: 'prod_xxx',
+    values: {
+      fr: { name: 'Sac Spree', description: 'Un sac fourre-tout élégant…' },
+      de: { name: 'Spree Tasche' },
+    },
   },
-})
+])
 
 // Which resources and fields accept translations
 const { data: resources } = await adminClient.translatableResources.list()
 ```
 
 ```bash cURL
-curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
+curl -X POST 'https://api.mystore.com/api/v3/admin/translations/batch' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "translations": { "de": { "name": "Baumwolltasche" } } }'
+  -d '{ "translations": [ { "resource_type": "product", "resource_id": "prod_xxx", "values": { "de": { "name": "Baumwolltasche" } } } ] }'
 ```
 
 </CodeGroup>

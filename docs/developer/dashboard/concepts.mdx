@@ -55,7 +55,7 @@ The facade `defineDashboardPlugin({ nav, routes, slots, … })` groups all five 
 The signed-in admin's identity and abilities are exposed via three providers wrapping the app:
 
 - `<AuthProvider>` — the current admin user; `useAuth()` returns `{ user, signIn, signOut, … }`
-- `<PermissionProvider>` — CanCanCan abilities; `usePermissions()` returns `{ permissions, rules, isLoading }`, and the checks live on `permissions.can(...)`
+- `<PermissionProvider>` — the admin's permissions on the current store; `usePermissions()` returns `{ permissions, rules, permissionKeys, isLoading, refresh }`, and the checks live on `permissions.can(...)`
 - `<StoreProvider>` — current store + timezone + currency; `useStore()` returns `{ storeId, store, … }`
 
 When you write a custom page or hook, pull from these. **Never reach into local state for identity** — it changes on store switch or session refresh, and the providers wire all that for you.

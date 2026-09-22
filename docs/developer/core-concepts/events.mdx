@@ -44,12 +44,14 @@ On top of that, meaningful business moments get their own events:
 | `order.placed` | A customer completed checkout |
 | `order.paid` | Payment is settled in full |
 | `order.canceled` | The order was cancelled |
-| `order.shipped` / `order.delivered` | Everything has shipped / arrived |
+| `order.fulfilled` / `order.delivered` | Everything has shipped / arrived |
 | `payment.completed` / `payment.voided` | A payment succeeded / was released |
-| `fulfillment.shipped` / `fulfillment.canceled` | A parcel went out / was stood down |
+| `fulfillment.fulfilled` / `fulfillment.canceled` | A parcel went out / was stood down |
 | `product.out_of_stock` / `product.back_in_stock` | Availability flipped |
 | `return.received` / `return.refunded` | A return arrived / was refunded |
-| `import.completed` / `export.completed` | Bulk work finished |
+| `import.completed` | An import finished |
+
+For the full list of events and their payloads, see [Webhook Events & Payloads](/api-reference/webhooks-events).
 
 The distinction matters when choosing what to listen for. `order.updated` fires whenever anything about an order changes — including an admin editing a note. `order.placed` fires once, when a customer actually bought something. Sending a confirmation email on the wrong one is how customers receive nine copies.
 
@@ -61,7 +63,6 @@ An event carries the record it's about, serialized:
 {
   "id": "or_86Rf07xd4z",
   "number": "R123456789",
-  "status": "placed",
   "payment_status": "paid",
   "total": "135.60",
   "email": "customer@example.com"
@@ -131,7 +132,7 @@ subscribes_to 'order.placed', async: false
 ```
 
 <Warning>
-A synchronous subscriber runs while the customer waits, and an exception in it can fail their checkout. Reserve it for work that must be atomic with the order, and keep it fast.
+A synchronous subscriber runs while the customer waits, so a slow one slows their checkout. An exception in it is reported to `Rails.error` and swallowed in production, but re-raised in development and test so you notice it. Reserve it for work that must happen immediately, and keep it fast.
 </Warning>
 
 ## Publishing your own events

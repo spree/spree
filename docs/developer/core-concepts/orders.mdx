@@ -144,11 +144,11 @@ await adminClient.orders.cancel('or_grouped_xxx', {
 })
 
 // Take an authorized payment
-await adminClient.orders.payments.capture('or_xxx', 'pay_xxx')
+await adminClient.orders.payments.capture('or_xxx', 'py_xxx')
 
 // Refund against a specific payment
 await adminClient.orders.refunds.create('or_xxx', {
-  payment_id: 'pay_xxx',
+  payment_id: 'py_xxx',
   amount: '25.00',
 })
 ```

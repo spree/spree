@@ -64,6 +64,10 @@ module SpreeAcmeCarrier
   class DeliveryRateProvider < Spree::DeliveryRateProvider::Base
     def self.integration_class = 'SpreeAcmeCarrier::Integration'
 
+    # A carrier quotes real parcels to an address, so it can only price
+    # delivery methods that ship (not pickup or digital).
+    def self.requires_address? = true
+
     def estimates(package)
       quotes_for(package).map do |quote|
         Spree::DeliveryRateProvider::Estimate.new(
@@ -148,9 +152,13 @@ end
 
 ```ruby
 # config/initializers/spree.rb
-Spree.delivery_rate_providers << 'SpreeAcmeCarrier::DeliveryRateProvider'.constantize
-Spree.integrations << 'SpreeAcmeCarrier::Integration'
+Rails.application.config.after_initialize do
+  Spree.delivery_rate_providers << SpreeAcmeCarrier::DeliveryRateProvider
+  Spree.integrations << 'SpreeAcmeCarrier::Integration'
+end
 ```
+
+Register inside `after_initialize`: Spree sets up its own integrations list after your initializers run, so an entry added at the top level of the file would be dropped.
 
 Registration is what makes a provider selectable: Spree validates `rate_provider` against this list, so a typo fails when the method is saved rather than deep inside checkout.
 
@@ -190,7 +198,7 @@ class SpreeAcmeCarrier::Integration < Spree::Integration
 
     {
       tracking_code: payload['tracking_code'],
-      tracking_status: STATUS_MAP.fetch(payload['status'], 'unknown'),  # Spree::Fulfillment::TRACKING_STATUSES
+      tracking_status: STATUS_MAP.fetch(payload['status'], 'unknown'),  # one of Spree::Delivery::STATUSES
       estimated_delivery_at: payload['eta'],
       delivered_at: payload['delivered_scan_at'],
       details: payload.slice('status_detail', 'carrier')

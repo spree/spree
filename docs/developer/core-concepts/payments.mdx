@@ -109,7 +109,6 @@ erDiagram
 - **Payment Setup Session** manages saving payment methods for future use without an immediate charge (e.g., Stripe SetupIntent)
 - **Source** is polymorphic - can be a Credit Card, Payment Source (for alternative methods like Klarna, iDEAL), or Store Credit
 - **Gateway Customer** stores the provider-specific customer profile (e.g., Stripe Customer ID)
-- **Log Entries** record gateway responses for debugging
 - **Refunds** track money returned to customers
 
 ## Payment Methods
@@ -620,7 +619,7 @@ cannot start one from your storefront:
 await adminClient.orders.refunds.create(orderId, {
   payment_id: 'py_abc123',
   amount: '25.00',
-  reason_id: 'rr_xyz789',
+  refund_reason_id: 'rr_xyz789',
 })
 ```
 

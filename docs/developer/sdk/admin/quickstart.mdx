@@ -6,14 +6,14 @@ description: "Install and configure @spree/admin-sdk, the official TypeScript cl
 
 [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) is the official TypeScript SDK for the [Admin API v3](/api-reference/admin-api/introduction) — the back-office counterpart to [`@spree/sdk`](/developer/sdk/quickstart). Use it to build integrations, automations, internal tools, and custom admin UIs: manage products, orders, customers, stock, promotions, webhooks, and more.
 
-<Warning>
-  The Admin SDK is in **Developer Preview** on the `0.x` line and published under the `next` dist-tag. The API surface may change between minor versions — check the [changelog](https://github.com/spree/spree/blob/main/packages/admin-sdk/CHANGELOG.md) when updating. It requires Spree 5.5 or newer.
-</Warning>
+<Note>
+  `@spree/admin-sdk` 1.x works with the Spree 6.0 Admin API. Check the [changelog](https://github.com/spree/spree/blob/main/packages/admin-sdk/CHANGELOG.md) when updating.
+</Note>
 
 ## Installation
 
 ```bash
-npm install @spree/admin-sdk@next
+npm install @spree/admin-sdk
 ```
 
 ## Quick start
@@ -28,9 +28,9 @@ const client = createAdminClient({
   secretKey: process.env.SPREE_SECRET_KEY, // sk_xxx — server-side only
 })
 
-// List recent completed orders
+// List recently placed orders
 const { data: orders, meta } = await client.orders.list({
-  status_eq: 'complete',
+  status_eq: 'placed',
   sort: '-completed_at',
   limit: 25,
 })

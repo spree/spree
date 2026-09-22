@@ -31,7 +31,7 @@ To try the flow quickly, you can seed a sample seller with an owner account, a p
 <CodeGroup>
 
 ```bash Spree CLI
-spree run rake spree:sellers:sample_data
+spree rake spree:sellers:sample_data
 ```
 
 ```bash Without CLI
@@ -757,7 +757,7 @@ const tokens = await sellerClient.auth.login({
   email: 'owner@brightsparks.example',
   password: '…',
 })
-sellerClient.setToken(tokens.access_token)
+sellerClient.setToken(tokens.token)
 
 // A user who runs several sellers picks which one they are acting as
 sellerClient.setSeller('sel_xxx')

@@ -11,7 +11,7 @@ Every grantable capability is a flat key of the form `read_<resource>` or `write
 
 Keys are per resource, not per action. The money-adjacent areas (`payments`, `refunds`, `gift_cards`, `store_credits`) are separate resources from `orders`, so "view orders but don't refund" needs no special casing.
 
-Roles are data, so create them where you manage the rest of your store's data: **Settings → Staff → Roles** in the dashboard, or the Admin API when you want it scripted.
+Roles are data, so create them where you manage the rest of your store's data: **Settings → Roles** in the dashboard, or the Admin API when you want it scripted.
 
 ```bash
 spree api post roles --data '{
@@ -68,6 +68,6 @@ The catalog is deliberately flat: it answers "may this role touch this kind of r
 
 ## How enforcement works
 
-Every Admin API controller declares its resource (`scoped_resource :orders`). Each request checks the principal's keys — a staff member's role permissions on the current store, or a secret key's scopes — against `read_<resource>` or `write_<resource>` for the action. A missing key produces a 403 naming it in `details.required_permission`. Behind that gate, keys compile to CanCanCan rules for record-level concerns, and `GET /api/v3/admin/me` returns both the rule dump the dashboard mirrors and `permission_keys`, the flat key list.
+Every Admin API controller declares its resource (`scoped_resource :orders`). Each request checks the principal's keys — a staff member's role permissions on the current store, or a secret key's scopes — against `read_<resource>` or `write_<resource>` for the action. A missing key produces a 403 naming it — `details.required_permission` for staff, `details.required_scope` for a secret key. Behind that gate, keys compile to CanCanCan rules for record-level concerns, and `GET /api/v3/admin/me` returns both the rule dump the dashboard mirrors and `permission_keys`, the flat key list.
 
 Storefront customers are not part of this system — customer authorization is ownership, enforced by the Store API's scoped lookups, with nothing to configure. The one swappable piece is `Spree::Storefront::AccessPolicy` (via `Spree::Dependencies.storefront_access_policy_class`): a generic `readable?` / `writable?` / `scope` protocol that defaults to "the caller owns the record", with carts and orders adding guest-token access. Replace it only when access must widen beyond the owner, such as company accounts sharing purchases or wishlists.
