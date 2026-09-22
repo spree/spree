@@ -13,7 +13,10 @@ export function registerUpgradeCommand(program: Command): void {
   program
     .command('upgrade')
     .description('Walk through a Spree version upgrade (bundle + migrate + spree:upgrade)')
-    .option('--plan', 'print the plan via spree:upgrade DRY_RUN=1; skip bundle + migrate')
+    .option(
+      '--plan',
+      'list the data backfills a run would execute for the installed Spree version (DRY_RUN=1); skip bundle + migrate',
+    )
     .option('--step <id>', 'run a single rake step by id (skips bundle + migrate)')
     .option(
       '--to <version>',
@@ -183,12 +186,12 @@ function printPostUpgradeReminder(projectDir: string): void {
       `The manifest only ran ${pc.bold('rake-automatable')} steps.`,
       '',
       "Don't forget the manual parts from the upgrade doc:",
-      `  ${pc.dim('- Schedule Spree::StockReservations::ExpireJob (cron)')}`,
+      `  ${pc.dim('- Compare your scheduled jobs (config/recurring.yml) with the upgrade guide')}`,
       `  ${pc.dim(`- ${sdkAdvisory(projectDir)}`)}`,
-      `  ${pc.dim('- Review behavior changes (cart, availability, payment-method types)')}`,
+      `  ${pc.dim('- Review the behavior changes listed in the upgrade guide')}`,
       `  ${pc.dim('- Audit custom decorators against renamed APIs')}`,
       '',
-      `Full checklist: ${pc.cyan('https://spreecommerce.org/docs/developer/upgrades')}`,
+      `Full checklist: ${pc.cyan('https://spreecommerce.org/docs/developer/upgrades/quickstart')}`,
     ].join('\n'),
     'Next steps',
   )
