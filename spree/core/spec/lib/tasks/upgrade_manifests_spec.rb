@@ -31,6 +31,8 @@ describe 'spree:upgrade manifests' do
       it 'gives every step an id, name and task' do
         manifest['steps'].each do |step|
           expect(step).to include('id', 'name', 'task'), "malformed step: #{step.inspect}"
+          expect(step.values_at('id', 'name', 'task')).to all(be_a(String).and(match(/\S/))),
+                                                          "manifest fields must be non-empty strings: #{step.inspect}"
         end
       end
 
