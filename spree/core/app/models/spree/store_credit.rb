@@ -25,6 +25,8 @@ module Spree
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
     belongs_to :originator, polymorphic: true, optional: true
+    belongs_to :refunded_order, class_name: 'Spree::Order', optional: true,
+                                inverse_of: :store_credit_refunds
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     has_many :payments, as: :source, class_name: 'Spree::Payment'

@@ -242,6 +242,11 @@ module Spree
     # checkout names the one child being refunded. Keyed on that column rather
     # than walked through payments, which a grouped order does not own.
     has_many :refunds, class_name: 'Spree::Refund', inverse_of: :order, dependent: :nullify
+    # The other half of what this order gave back. A refund paid as store
+    # credit writes no Spree::Refund row, so anything measuring what the
+    # customer got back has to add the two ledgers.
+    has_many :store_credit_refunds, class_name: 'Spree::StoreCredit', inverse_of: :refunded_order,
+                                    foreign_key: :refunded_order_id, dependent: :nullify
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
@@ -333,12 +338,8 @@ module Spree
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
     scope :not_shipped, -> { where(fulfillment_status: %w[unfulfilled partial]) }
     scope :shipped, -> { where(fulfillment_status: %w[fulfilled delivered shipped]) }
-    scope :refunded, lambda {
-      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
-    }
-    scope :partially_refunded, lambda {
-      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
-    }
+    scope :refunded, -> { where(payment_status: 'refunded') }
+    scope :partially_refunded, -> { where(payment_status: 'partially_refunded') }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 

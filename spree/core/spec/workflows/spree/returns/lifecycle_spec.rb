@@ -206,6 +206,9 @@ RSpec.describe 'Spree::Returns workflows' do
         credit = Spree::StoreCredit.find_by(originator: return_record)
         expect(credit).to be_present
         expect(credit.amount).to eq(return_record.refund_total)
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(credit.refunded_order).to eq(return_record.order)
       end
 
       it 'credits only the lines that actually arrived' do

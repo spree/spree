@@ -112,17 +112,13 @@ module Spree
       end
 
       def issue_store_credit
-        @refunds = [
-          Spree::StoreCredit.create!(
-            store: exchange.store,
-            customer: exchange.order.customer,
-            amount: credit_amount,
-            currency: exchange.currency,
-            created_by: refunder,
-            originator: exchange,
-            memo: "Exchange #{exchange.number}"
-          )
-        ]
+        @refunds = issue_refund_store_credit(
+          order: exchange.order,
+          amount: credit_amount,
+          record: exchange,
+          memo: "Exchange #{exchange.number}",
+          refunder: refunder
+        )
       end
 
       def refund_at_gateway

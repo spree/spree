@@ -6,8 +6,58 @@ RSpec.describe Spree::OrderStatusSubscriber do
   it 'subscribes to every status-bearing record family' do
     expect(described_class.subscription_patterns).to include(
       'payment.completed', 'payment.voided', 'refund.created',
+      'store_credit.created', 'store_credit.updated', 'store_credit.deleted',
       'fulfillment.updated', 'return.received'
     )
+  end
+
+  # Credit issued as a refund is the other half of what an order gave back,
+  # and nothing else announces it — a claim settled this way writes no refund.
+  it 'recomputes the owning order statuses when a refund is issued as store credit' do
+    create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    credit = create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order.total)
+    order.update_columns(payment_status: 'paid')
+
+    event = Spree::Event.new(name: 'store_credit.created', payload: { 'id' => credit.prefixed_id }, store_id: order.store_id)
+    described_class.new.handle(event)
+
+    expect(order.reload.payment_status).to eq('refunded')
+  end
+
+  it 'ignores store credit that settles no order' do
+    create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    order.update_statuses!
+    credit = create(:store_credit, store: @default_store, customer: order.customer, amount: order.total)
+
+    event = Spree::Event.new(name: 'store_credit.created', payload: { 'id' => credit.prefixed_id }, store_id: credit.store_id)
+
+    expect { described_class.new.handle(event) }.not_to change { order.reload.payment_status }.from('paid')
+  end
+
+  # Amending or withdrawing a credit changes what the order gave back just as
+  # issuing it did, and neither writes a refund row to announce it.
+  it 'recomputes when a refund credit is amended' do
+    create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    credit = create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order.total)
+    credit.update!(amount: 1)
+    order.update_columns(payment_status: 'refunded')
+
+    event = Spree::Event.new(name: 'store_credit.updated', payload: { 'id' => credit.prefixed_id }, store_id: order.store_id)
+    described_class.new.handle(event)
+
+    expect(order.reload.payment_status).to eq('partially_refunded')
+  end
+
+  it 'recomputes when a refund credit is withdrawn' do
+    create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    credit = create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order.total)
+    credit.destroy
+    order.update_columns(payment_status: 'refunded')
+
+    event = Spree::Event.new(name: 'store_credit.deleted', payload: { 'id' => credit.prefixed_id }, store_id: order.store_id)
+    described_class.new.handle(event)
+
+    expect(order.reload.payment_status).to eq('paid')
   end
 
   it 'recomputes the owning order statuses when a return is received' do
