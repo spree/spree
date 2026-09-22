@@ -168,8 +168,11 @@ module Spree
         Spree::PrefixedId.decode_prefixed_id(prefixed_id)
       end
 
+      # Model-scoped decode: answers nil for another model's prefixed ID, like
+      # +find_by_prefix_id+. Use +Spree::PrefixedId.decode_prefixed_id+ when
+      # any model's ID is acceptable.
       def decode_prefixed_id(prefixed_id_string)
-        Spree::PrefixedId.decode_prefixed_id(prefixed_id_string)
+        decode_own_prefixed_id(prefixed_id_string)
       end
 
       # Find by prefixed ID first, falling back to integer id for backwards compatibility.
