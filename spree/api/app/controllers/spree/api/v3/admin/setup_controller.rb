@@ -65,7 +65,7 @@ module Spree
 
             # Outside the lock: the loader needs the admin committed, and it
             # runs for minutes, so it is queued rather than awaited.
-            Spree::SampleData::LoadJob.perform_later if sample_data_requested?
+            Spree::SampleData::LoadJob.perform_later(store.id) if sample_data_requested?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)

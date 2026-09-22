@@ -11,7 +11,16 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     original_password = ENV['ADMIN_PASSWORD']
     ENV['ADMIN_EMAIL'] = 'sample-admin@example.com'
     ENV['ADMIN_PASSWORD'] = 'Secret123!'
-    described_class.call
+
+    # Loaded into a store that is not the default one, as a multi-tenant
+    # platform does for each store it provisions, so the default store has to
+    # stay empty. It exists before the seeds so they provision it too.
+    Spree::Seeds::Stores.call
+    @store = create(:store, default: false)
+    Spree::Seeds::All.call
+    @store.add_user(Spree.admin_user_class.first)
+
+    described_class.call(store: @store)
   ensure
     original_email.nil? ? ENV.delete('ADMIN_EMAIL') : ENV['ADMIN_EMAIL'] = original_email
     original_password.nil? ? ENV.delete('ADMIN_PASSWORD') : ENV['ADMIN_PASSWORD'] = original_password
@@ -23,6 +32,30 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
 
   it 'creates products' do
     expect(Spree::Product.count).to be > 30
+  end
+
+  it 'loads everything into the given store and leaves the default store empty' do
+    default_store = Spree::Store.default
+
+    aggregate_failures do
+      expect(default_store).not_to eq(@store)
+      expect(Spree::Product.where.not(store: @store)).to be_empty
+      expect(Spree::Order.where.not(store: @store)).to be_empty
+      expect(Spree::OptionType.where.not(store: @store)).to be_empty
+      expect(Spree::Promotion.where.not(store: @store)).to be_empty
+      expect(Spree::Import.where.not(store: @store)).to be_empty
+
+      expect(default_store.collections).to be_empty
+      expect(default_store.price_lists).to be_empty
+      expect(default_store.companies).to be_empty
+      expect(default_store.catalogs).to be_empty
+      expect(default_store.payment_methods.where(name: 'Credit Card')).to be_empty
+      expect(default_store.channels.where(code: 'pos')).to be_empty
+
+      expect(@store.collections).to be_present
+      expect(@store.payment_methods.where(name: 'Credit Card')).to exist
+      expect(@store.orders.complete.count).to be >= 2
+    end
   end
 
   it 'assigns imported products a product type' do
@@ -116,7 +149,7 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   describe 'wholesale demo data' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @store }
     let(:wholesale) { store.channels.find_by(code: 'wholesale') }
 
     it 'gates the wholesale channel' do

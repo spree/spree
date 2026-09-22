@@ -1,8 +1,8 @@
-store = Spree::Store.default
+store = Spree::Current.store
 
 # Find products created by the product import
-product_1 = Spree::Product.find_by(name: 'Automatic Espresso Machine')
-product_2 = Spree::Product.find_by(name: 'Drip Coffee Maker 1.5L')
+product_1 = store.products.find_by(name: 'Automatic Espresso Machine')
+product_2 = store.products.find_by(name: 'Drip Coffee Maker 1.5L')
 
 unless product_1 && product_2
   puts '  Skipping orders: required products not found'
@@ -84,7 +84,7 @@ orders.each(&:rebuild_fulfillments!)
 Spree::Order.where(id: orders.map(&:id)).update_all(status: 'placed', completed_at: Time.current - 1.day)
 
 # Tax lines (zero-amount sample rows against the California rate)
-tax_rate = Spree::TaxRate.find_by(name: 'California')
+tax_rate = store.tax_rates.find_by(name: 'California')
 
 if tax_rate
   orders.each do |order|
@@ -105,7 +105,7 @@ if tax_rate
 end
 
 # Payments
-method = Spree::PaymentMethod.where(name: 'Credit Card', active: true).first
+method = store.payment_methods.where(name: 'Credit Card', active: true).first
 
 if method
   Spree::Gateway.class_eval do
@@ -114,8 +114,7 @@ if method
     end
   end
 
-  credit_card = Spree::CreditCard.find_or_initialize_by(gateway_customer_profile_id: 'BGS-1234')
-  credit_card.payment_method = method
+  credit_card = Spree::CreditCard.find_or_initialize_by(gateway_customer_profile_id: 'BGS-1234', payment_method: method)
   credit_card.cc_type = 'visa'
   credit_card.month = 12
   credit_card.year = 2.years.from_now.year
@@ -140,15 +139,15 @@ orders.each { |order| order.reload.update_statuses! }
 
 # A return in progress, so the admin has something to look at. Built through
 # the workflows rather than by direct writes — they own every transition.
-first_complete_order = Spree::Order.complete.first
+first_complete_order = store.orders.complete.first
 if first_complete_order && first_complete_order.fulfillment_items.any?
   fulfillment_item = first_complete_order.fulfillment_items.first
 
   Spree::Returns::Create.call(
     order: first_complete_order,
     items: [{ fulfillment_item: fulfillment_item, quantity: 1 }],
-    stock_location: fulfillment_item.fulfillment&.stock_location || Spree::StockLocation.first,
-    reason: Spree::ReturnReason.first,
+    stock_location: fulfillment_item.fulfillment&.stock_location || store.stock_locations.first,
+    reason: store.return_reasons.first,
     memo: 'Sample return'
   )
 end
