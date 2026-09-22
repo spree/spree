@@ -1,8 +1,7 @@
 module Spree
   module Seeds
     # Seeds what a single store needs to trade, without touching any other
-    # store — for platforms that create stores continuously, where seeding a
-    # new store must not cost a pass over every existing one.
+    # store.
     #
     # Country-shaped defaults (market, warehouse, delivery zones, pickup) are
     # not part of it: the caller runs Spree::Stores::ProvisionDefaults
