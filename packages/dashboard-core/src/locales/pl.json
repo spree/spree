@@ -125,6 +125,11 @@
         "title": "Witaj ponownie"
       },
       "logout": "Wyloguj się",
+      "no_store_access": {
+        "description": "Jesteś zalogowany, ale Twoje konto nie należy jeszcze do żadnego sklepu. Poproś administratora sklepu o zaproszenie lub zaloguj się na inne konto.",
+        "signed_in_as": "Zalogowano jako {{email}}",
+        "title": "Nie masz dostępu do żadnego sklepu"
+      },
       "reset_password": {
         "confirm_password_label": "Potwierdź nowe hasło",
         "error": "Coś poszło nie tak. Spróbuj ponownie.",

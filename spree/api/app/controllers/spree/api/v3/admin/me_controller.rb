@@ -58,6 +58,17 @@ module Spree
             )
           end
 
+          # /me describes the signed-in user rather than a store, and the
+          # dashboard reads it before any store is selected. A user who holds
+          # no role on any store (not yet given one, or removed from all of
+          # them) must still reach it, or they cannot finish signing in. A
+          # request that names a store keeps the membership check.
+          def require_store_membership!
+            return true if store_id_header.nil?
+
+            super
+          end
+
           def permitted_params
             params.permit(:selected_locale, :first_name, :last_name, :avatar)
           end
