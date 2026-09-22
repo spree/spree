@@ -111,10 +111,11 @@ module Spree
           try_spree_current_user
         end
 
-        # CanCanCan ability
+        # CanCanCan ability, built from the swappable
+        # `Spree::Dependencies.ability_class` (Spree::Ability by default).
         # @return [Spree::Ability]
         def current_ability
-          @current_ability ||= Spree::Ability.new(current_user, ability_options)
+          @current_ability ||= Spree.ability_class.new(current_user, ability_options)
         end
 
         # Options passed to the CanCanCan ability

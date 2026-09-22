@@ -46,7 +46,7 @@ module Spree
           # resource) serializes to nothing rather than raising, so the panel
           # can call `/me` before choosing a seller.
           def seller_ability
-            return Spree::Ability.new(nil) if current_seller.nil?
+            return Spree.ability_class.new(nil) if current_seller.nil?
 
             current_ability
           end
