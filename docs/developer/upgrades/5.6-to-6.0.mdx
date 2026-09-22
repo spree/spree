@@ -325,9 +325,13 @@ Replace it by swapping the handler:
 # config/initializers/spree.rb
 Spree.hooks.unregister('returns.create.validate', 'Spree::Returns::EligibilityValidator')
 Spree.hooks.register('returns.create.validate', 'MyStore::ReturnPolicy')
+
+# The same validator guards exchanges — swap it there too if your policy should cover them:
+Spree.hooks.unregister('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
+Spree.hooks.register('exchanges.create.validate', 'MyStore::ReturnPolicy')
 ```
 
-Core registers the default validator before your initializers load, so the swap works at the top level of an initializer. The same validator also guards `exchanges.create.validate`; unregister it there too if your policy should cover exchanges.
+Core registers the default validator before your initializers load, so the swap works at the top level of an initializer.
 
 A handler receives the workflow (so it can read `order`, `items`, `created_by`, `order.market`) and calls `workflow.reject!(message)` to veto. Every one of the fifteen transitions has a leading `validate` hook, so the same seam gates approving, receiving and refunding.
 
