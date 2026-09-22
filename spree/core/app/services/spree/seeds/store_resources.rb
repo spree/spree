@@ -10,24 +10,6 @@ module Spree
     class StoreResources
       prepend Spree::ServiceModule::Base
 
-      # Order matters: API keys bind to the wholesale channel that Channels
-      # creates. Seeds::All runs the same list across every store.
-      SEEDS = [
-        TaxCategories,
-        Channels,
-        Roles,
-        DigitalDelivery,
-        PaymentMethods,
-        ProductTypes,
-        CustomerGroups,
-        ReturnsEnvironment,
-        CommissionRates,
-        SellerRequirements,
-        ApiKeys,
-        SavedReports,
-        AllowedOrigins
-      ].freeze
-
       # @param store [Spree::Store] the store to seed, already persisted
       # @return [Spree::ServiceModule::Result]
       def call(store:)
@@ -36,7 +18,20 @@ module Spree
 
         Spree::Events.disable do
           ActiveRecord::Base.no_touching do
-            SEEDS.each { |seed| seed.call(store: store) }
+            TaxCategories.call(store: store)
+            Channels.call(store: store)
+            Roles.call(store: store)
+            DigitalDelivery.call(store: store)
+            PaymentMethods.call(store: store)
+            ProductTypes.call(store: store)
+            CustomerGroups.call(store: store)
+            ReturnsEnvironment.call(store: store)
+            CommissionRates.call(store: store)
+            SellerRequirements.call(store: store)
+            # Binds to the wholesale channel that Channels creates above.
+            ApiKeys.call(store: store)
+            SavedReports.call(store: store)
+            AllowedOrigins.call(store: store)
           end
         end
       end
