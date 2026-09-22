@@ -1182,11 +1182,26 @@ RSpec.describe SpreeStripe::Gateway do
   # the guard against registering that endpoint twice.
   describe 'webhook endpoint registration' do
     it 'enqueues the payment registration job on create' do
-      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).
+        with(anything, connect: false).exactly(:once)
     end
 
     it 'enqueues the Connect registration job on create' do
-      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
+      expect { gateway }.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).
+        with(anything, connect: true).exactly(:once)
+    end
+
+    # Both endpoints are enqueued on create, so registration storing its
+    # result must not enqueue a third.
+    it 'does not enqueue anything when the registration job stores its result' do
+      gateway
+
+      allow(Stripe::WebhookEndpoint).to receive(:list).and_return({ data: [] })
+      allow(Stripe::WebhookEndpoint).to receive(:create).
+        and_return({ id: 'we_test_1234567890', secret: 'whsec_test_1234567890' })
+
+      expect { SpreeStripe::CreateWebhookEndpointJob.perform_now(gateway.id, connect: false) }.
+        not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob)
     end
 
     context 'when the payment signing secret is already stored' do
@@ -1201,6 +1216,21 @@ RSpec.describe SpreeStripe::Gateway do
         expect do
           create(:stripe_gateway, :with_webhook_signing_secret, store: store)
         end.to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: true)
+      end
+
+      it 'leaves it alone on an unrelated save' do
+        stored = create(:stripe_gateway, :with_webhook_signing_secret, store: store)
+
+        expect { stored.update!(name: 'Stripe renamed') }.
+          not_to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
+      end
+
+      # A rotated key points at an account that has never seen this endpoint.
+      it 'registers again when the secret key is rotated' do
+        stored = create(:stripe_gateway, :with_webhook_signing_secret, store: store)
+
+        expect { stored.update!(preferred_secret_key: 'sk_test_rotated') }.
+          to have_enqueued_job(SpreeStripe::CreateWebhookEndpointJob).with(anything, connect: false)
       end
     end
   end

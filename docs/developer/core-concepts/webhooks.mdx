@@ -84,6 +84,17 @@ spree api post /webhook_endpoints -d '{
 }'
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://example.com/webhooks/spree",
+    "subscriptions": ["order.*", "product.created"],
+    "active": true
+  }'
+```
+
 </CodeGroup>
 
 <Warning>
@@ -118,6 +129,13 @@ spree api patch /webhook_endpoints/whe_xxx \
   -d '{"subscriptions": ["order.placed", "order.canceled"]}'
 ```
 
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "subscriptions": ["order.placed", "order.canceled"] }'
+```
+
 </CodeGroup>
 
 The `subscriptions` array accepts exact event names and wildcard patterns:
@@ -134,7 +152,7 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 
 Each webhook delivery sends a JSON payload with the following structure. The `data` object uses the same [Store API V3 serializers](/api-reference/introduction) as the REST API, so webhook payloads and API responses share the same schema:
 
-```json
+```json Payload
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "name": "order.placed",
@@ -194,7 +212,7 @@ The [Spree Storefront](https://github.com/spree/storefront) includes a ready-mad
 
 Use `@spree/sdk/webhooks` for framework-agnostic verification:
 
-```typescript
+```typescript Store SDK
 import { verifyWebhookSignature } from '@spree/sdk/webhooks'
 import type { WebhookEvent } from '@spree/sdk/webhooks'
 import type { Order } from '@spree/sdk'
@@ -217,7 +235,7 @@ app.post('/webhooks/spree', async (req, res) => {
 
 #### Ruby
 
-```ruby
+```ruby server/app/controllers/webhooks_controller.rb
 class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token
 
@@ -277,6 +295,14 @@ await client.webhookEndpoints.deliveries.redeliver('whe_xxx', 'whd_xxx')
 ```bash CLI
 spree api get /webhook_endpoints/whe_xxx/deliveries -q event_name_eq=order.placed
 spree api post /webhook_endpoints/whe_xxx/deliveries/whd_xxx/redeliver
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx/deliveries?q[event_name_eq]=order.placed' \
+  -H 'X-Spree-API-Key: sk_xxx'
+
+curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx/deliveries/whd_xxx/redeliver' \
+  -H 'X-Spree-API-Key: sk_xxx'
 ```
 
 </CodeGroup>
@@ -348,6 +374,17 @@ spree api post /webhook_endpoints -d '{
 spree api post /webhook_endpoints/whe_xxx/send_test
 ```
 
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "url": "https://your-ngrok-url.ngrok.io/webhooks",
+    "subscriptions": ["order.*"],
+    "active": true
+  }'
+```
+
 </CodeGroup>
 
 `send_test` delivers a synthetic `webhook.test` event so you can verify the endpoint is reachable and your signature-verification code works, without having to trigger a real order.
@@ -403,6 +440,11 @@ const failed = deliveries[0]
 
 ```bash CLI
 spree api get /webhook_endpoints/whe_xxx/deliveries -q success_eq=false
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx/deliveries?q[success_eq]=false' \
+  -H 'X-Spree-API-Key: sk_xxx'
 ```
 
 </CodeGroup>

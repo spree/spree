@@ -12334,7 +12334,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND
+                  code: UPS_GROUND_73
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12349,14 +12349,14 @@ paths:
                   editable: true
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: Spree::Calculator::Shipping::FlatRate
+                  calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
                     amount: '10.0'
                     currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND
+                  code: UPS_GROUND_74
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12371,7 +12371,7 @@ paths:
                   editable: false
                   delivery_profile_id: fp_UkLWZg9DAJ
                   delivery_zone_id:
-                  calculator_type: Spree::Calculator::Shipping::FlatRate
+                  calculator_type: flat_rate
                   calculator_preferences:
                     amounts: {}
                     amount: '10.0'
@@ -12440,7 +12440,7 @@ paths:
                 editable: true
                 delivery_profile_id: fp_gbHJdmfrXB
                 delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
                   amount: '9.99'
@@ -12535,7 +12535,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND
+                code: UPS_GROUND_79
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12550,7 +12550,7 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
                   amount: '10.0'
@@ -12574,7 +12574,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND
+                code: UPS_GROUND_81
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12589,7 +12589,7 @@ paths:
                 editable: true
                 delivery_profile_id: fp_UkLWZg9DAJ
                 delivery_zone_id:
-                calculator_type: Spree::Calculator::Shipping::FlatRate
+                calculator_type: flat_rate
                 calculator_preferences:
                   amounts: {}
                   amount: '10.0'
@@ -12757,13 +12757,13 @@ paths:
             application/json:
               example:
                 data:
-                - type: Spree::Calculator::Shipping::FlatPercentItemTotal
+                - type: flat_percent_item_total
                   name: Flat Percent
                   preference_schema:
                   - key: flat_percent
                     type: decimal
                     default: 0
-                - type: Spree::Calculator::Shipping::FlatRate
+                - type: flat_rate
                   name: Flat rate
                   preference_schema:
                   - key: amounts
@@ -12775,7 +12775,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::FlexiRate
+                - type: flexi_rate
                   name: Flexible Rate per package item
                   preference_schema:
                   - key: first_item
@@ -12790,7 +12790,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::PerItem
+                - type: per_item
                   name: Flat rate per package item
                   preference_schema:
                   - key: amounts
@@ -12802,7 +12802,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::PriceSack
+                - type: price_sack
                   name: Price sack
                   preference_schema:
                   - key: minimal_amount
@@ -12817,7 +12817,7 @@ paths:
                   - key: currency
                     type: string
                     default: USD
-                - type: Spree::Calculator::Shipping::DigitalDelivery
+                - type: digital_delivery
                   name: Digital Delivery
                   preference_schema:
                   - key: amounts
@@ -13559,8 +13559,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1733250
-                  slug: product-1733250
+                  name: Product 2053250
+                  slug: product-2053250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13803,8 +13803,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 1766710
-                slug: product-1766710
+                name: Product 2086710
+                slug: product-2086710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13883,7 +13883,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-1798212
+                slug: product-2118212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -14818,10 +14818,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--e320f1a336514798d1e57d0362bc67237e84513e
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--84b12e983ef99a420e514d015b34f26a6a0716bb
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--6128d7f25a498c7fad15f829a8331186efbbcf6a
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14883,8 +14883,12 @@ paths:
               example:
                 data:
                 - currency: USD
+                  settlement_currency: USD
+                  converted: false
                   earned: '40.0'
                   display_earned: "$40.00"
+                  payable: '40.0'
+                  display_payable: "$40.00"
                   paid: '15.0'
                   display_paid: "$15.00"
                   balance: '25.0'
@@ -15665,7 +15669,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 81
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15673,13 +15677,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1549315
-                    sku: SKU-190
+                    name: Product 1869315
+                    sku: SKU-252
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 81
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -15772,7 +15776,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 82
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15780,13 +15784,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 155961
-                  sku: SKU-191
+                  name: Product 187961
+                  sku: SKU-253
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 82
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15886,7 +15890,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 83
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15894,13 +15898,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1563170
-                  sku: SKU-192
+                  name: Product 1883170
+                  sku: SKU-254
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 83
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15980,7 +15984,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 84
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15988,13 +15992,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1577276
-                  sku: SKU-193
+                  name: Product 1897276
+                  sku: SKU-255
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 84
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -16183,7 +16187,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 15995
+                    name: Product 19195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16192,7 +16196,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-195
+                    sku: SKU-257
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16205,7 +16209,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground
+                    delivery_method_name: UPS Ground 86
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -16213,13 +16217,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 15995
-                      sku: SKU-195
+                      name: Product 19195
+                      sku: SKU-257
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground
+                      name: UPS Ground 86
                       selected: true
                       cost: '10.0'
                       total: '10.0'
@@ -16248,7 +16252,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 163 Lovely Street
+                    address1: 167 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16270,7 +16274,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 162 Lovely Street
+                    address1: 166 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16384,7 +16388,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1609755
+                  name: Product 1929755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16393,7 +16397,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-196
+                  sku: SKU-258
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16406,7 +16410,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 87
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16414,13 +16418,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1609755
-                    sku: SKU-196
+                    name: Product 1929755
+                    sku: SKU-258
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 87
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16449,7 +16453,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 165 Lovely Street
+                  address1: 169 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16471,7 +16475,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 164 Lovely Street
+                  address1: 168 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16581,7 +16585,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1636554
+                  name: Product 1956554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16590,7 +16594,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-199
+                  sku: SKU-261
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16603,7 +16607,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 90
                   stock_location_name: Ricky Kutch
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16611,13 +16615,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1636554
-                    sku: SKU-199
+                    name: Product 1956554
+                    sku: SKU-261
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 90
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16646,7 +16650,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 171 Lovely Street
+                  address1: 175 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16668,7 +16672,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 170 Lovely Street
+                  address1: 174 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16785,7 +16789,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1645038
+                  name: Product 1965038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16794,7 +16798,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-200
+                  sku: SKU-262
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16807,7 +16811,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 91
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16815,13 +16819,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1645038
-                    sku: SKU-200
+                    name: Product 1965038
+                    sku: SKU-262
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 91
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16872,7 +16876,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 176 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17052,7 +17056,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1663962
+                  name: Product 1983962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17061,7 +17065,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-202
+                  sku: SKU-264
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17074,7 +17078,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 93
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17082,13 +17086,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1663962
-                    sku: SKU-202
+                    name: Product 1983962
+                    sku: SKU-264
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 93
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17117,7 +17121,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 177 Lovely Street
+                  address1: 181 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17139,7 +17143,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 176 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17225,7 +17229,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1675749
+                  name: Product 1995749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17234,7 +17238,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-203
+                  sku: SKU-265
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17247,7 +17251,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 94
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17255,13 +17259,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1675749
-                    sku: SKU-203
+                    name: Product 1995749
+                    sku: SKU-265
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 94
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17290,7 +17294,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 179 Lovely Street
+                  address1: 183 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17312,7 +17316,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 178 Lovely Street
+                  address1: 182 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17431,12 +17435,12 @@ paths:
       - name: owner
         in: query
         required: false
-        enum:
-        - mine
-        description: "Narrows the list to the seller's own packaging, leaving out
-          the marketplace's shared rows:\n * `mine` \n "
         schema:
           type: string
+          enum:
+          - mine
+        description: Narrows the list to the seller's own packaging, leaving out the
+          marketplace's shared rows
       - name: page
         in: query
         required: false
@@ -17781,7 +17785,7 @@ paths:
         accumulated since the last, on the seller's payout schedule. `pending`
         and `processing` rows are owed; `completed` ones reached the seller's
         bank. `transfers_count` says how many earnings a settlement covers —
-        list them with `GET /transfers?q[payout_id_eq]=…`.
+        list them with `GET /api/v3/seller/transfers?q[payout_id_eq]=…`.
 
         Read-only: a payout is created by the marketplace's sweep and
         confirmed by the payout provider or the operator.
@@ -17806,16 +17810,14 @@ paths:
       - name: q[status_eq]
         in: query
         required: false
-        enum:
-        - pending
-        - processing
-        - completed
-        - failed
-        - unresolved
         schema:
           type: string
-        description: ":\n * `pending` \n * `processing` \n * `completed` \n * `failed`
-          \n * `unresolved` \n "
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
       responses:
         '200':
           description: payouts listed
@@ -18027,7 +18029,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 1837120 can be returned
+                  message: Only 1 of Product 2157120 can be returned
       requestBody:
         content:
           application/json:
@@ -18240,7 +18242,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: refund_exceeds_balance
+                  message: That is more than the amount still refundable.
       requestBody:
         content:
           application/json:
@@ -18594,24 +18596,22 @@ paths:
       - name: q[status_eq]
         in: query
         required: false
-        enum:
-        - pending
-        - processing
-        - completed
-        - failed
-        - unresolved
         schema:
           type: string
-        description: ":\n * `pending` \n * `processing` \n * `completed` \n * `failed`
-          \n * `unresolved` \n "
+          enum:
+          - pending
+          - processing
+          - completed
+          - failed
+          - unresolved
       - name: q[kind_eq]
         in: query
         required: false
-        enum:
-        - earning
-        - refund_reversal
         schema:
           type: string
+          enum:
+          - earning
+          - refund_reversal
       responses:
         '200':
           description: transfers listed
@@ -18629,6 +18629,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '42.0'
                   display_amount: "$42.00"
+                  settled_amount: '42.0'
+                  settled_currency: USD
+                  converted: false
                   order_id: or_UkLWZg9DAJ
                   payout_id:
                   reversed_from_id:
@@ -18693,6 +18696,9 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '42.0'
                 display_amount: "$42.00"
+                settled_amount: '42.0'
+                settled_currency: USD
+                converted: false
                 order_id: or_UkLWZg9DAJ
                 payout_id:
                 reversed_from_id:
@@ -19566,9 +19572,17 @@ components:
       properties:
         currency:
           type: string
+        settlement_currency:
+          type: string
+        converted:
+          type: boolean
         earned:
           type: string
         display_earned:
+          type: string
+        payable:
+          type: string
+        display_payable:
           type: string
         paid:
           type: string
@@ -19584,8 +19598,12 @@ components:
           type: string
       required:
       - currency
+      - settlement_currency
+      - converted
       - earned
       - display_earned
+      - payable
+      - display_payable
       - paid
       - display_paid
       - balance
@@ -21374,6 +21392,9 @@ components:
         required_policy_name:
           type: string
           nullable: true
+        terms_html:
+          type: string
+          nullable: true
         submission:
           "$ref": "#/components/schemas/RequirementSubmission"
         custom_fields:
@@ -21395,6 +21416,7 @@ components:
       - requires_file
       - accepted_content_types
       - required_policy_name
+      - terms_html
       x-typelizer: true
     RequirementSubmission:
       type: object
@@ -21865,6 +21887,14 @@ components:
           type: string
         display_amount:
           type: string
+        settled_amount:
+          type: string
+          nullable: true
+        settled_currency:
+          type: string
+          nullable: true
+        converted:
+          type: boolean
         order_id:
           type: string
           nullable: true
@@ -21888,6 +21918,9 @@ components:
       - updated_at
       - amount
       - display_amount
+      - settled_amount
+      - settled_currency
+      - converted
       - order_id
       - payout_id
       - reversed_from_id

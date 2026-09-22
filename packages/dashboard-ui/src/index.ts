@@ -18,7 +18,12 @@ export * from './hooks/use-scrolled'
 // ---------------------------------------------------------------------------
 // Helpers + hooks
 // ---------------------------------------------------------------------------
-export { sameRichText } from './lib/same-rich-text'
+export {
+  type DateRangePresetKey,
+  matchDateRangePreset,
+  resolveDateRangePreset,
+} from './lib/date-range-presets'
+export { sameRichText, shouldEmitRichTextChange } from './lib/same-rich-text'
 export { cn } from './lib/utils'
 export { requiredMessage } from './lib/validation-messages'
 // ---------------------------------------------------------------------------
@@ -26,7 +31,6 @@ export { requiredMessage } from './lib/validation-messages'
 // ---------------------------------------------------------------------------
 export * from './spree/address-block'
 export * from './spree/address-book-row'
-export * from './spree/address-map'
 export * from './spree/back-button'
 export * from './spree/bulk-dialog'
 export * from './spree/bulk-price-table'
@@ -62,6 +66,7 @@ export * from './spree/return-dialogs'
 // `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
 // way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
 
+export * from './spree/external-link'
 export * from './spree/language-menu-items'
 export * from './spree/metadata/metadata-card'
 export * from './spree/product-membership-list'
@@ -116,6 +121,7 @@ export * from './ui/popover'
 export * from './ui/progress'
 export * from './ui/radio-group'
 export * from './ui/rich-text-editor'
+export * from './ui/scroll-area'
 export * from './ui/select'
 export * from './ui/separator'
 export * from './ui/sheet'
@@ -123,6 +129,7 @@ export * from './ui/sidebar'
 export * from './ui/skeleton'
 export * from './ui/slot'
 export * from './ui/switch'
+export * from './ui/tabs'
 export * from './ui/textarea'
 export * from './ui/thumbnail'
 export * from './ui/toast'

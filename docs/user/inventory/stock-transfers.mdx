@@ -1,0 +1,144 @@
+---
+title: "Stock Transfers"
+description: "Learn how to move stock between your own warehouses in Spree Commerce."
+---
+
+A stock transfer moves stock from one of your own warehouses to another. If you run more than one location, transfers are how you balance stock across the network, position products closer to customers, and clear space at overstocked warehouses.
+
+A transfer only ever moves stock you already own. If goods are coming into your business from outside it, that's a purchase order instead. A purchase order has a supplier, a cost per unit and a promised delivery date, none of which a transfer has.
+
+<Warning>Transfers need at least two stock locations. If your store has only one location, add another first. See [<u>Stock Locations</u>](/user/settings/locations).</Warning>
+
+## Reviewing Your Transfers
+
+To review your transfers, navigate to **Transfers** in the admin dashboard. The list shows every movement between your own warehouses, both the ones still being put together and the ones that have already arrived.
+
+![The Transfers list showing stock transfers at different stages of their lifecycle](/docs/images/user/inventory/stock-transfers/1-transfers-overview.png)
+
+Each row shows:
+
+- **Number** - The reference Spree gives each transfer.
+- **Status** - Which stage the transfer has got to. See below, under [How to Process a Stock Transfer](#how-to-process-a-stock-transfer).
+- **Reference** - Your own label for the trip, if you gave it one.
+- **Received / shipped** - Two figures in one column: how many units the destination has counted in, against how many were sent.
+- **Shipped** - The day the units left the source warehouse.
+
+Use the **Status** filter to separate what is still being put together from what has left and what has landed, and the search box to find a transfer by its number or your own reference. Click any row to open a transfer and move it along.
+
+## How to Create a Stock Transfer
+
+Click **New transfer** in the top-right corner of the Transfers list.
+
+![The new stock transfer form, with the Items panel on the left and Details on the right](/docs/images/user/inventory/stock-transfers/2-new-transfer-form.png)
+
+The form has two halves: **Items** on the left and **Details** on the right. Fill in the Details first:
+
+- **From** - The warehouse the stock is leaving. Set this first, because nothing else on the form works until you do.
+- **To** - The warehouse the stock is going to. This must be a different location from **From**.
+- **Reference** - Your own label for the trip, such as a van run or a week number. Optional, but it might be useful later.
+- **Notes** - Anything your team should know about this movement.
+
+Then add what is moving:
+
+1. Click **Add a product** in the Items panel to open the variant picker.
+2. Search by product name or SKU, and select each variant you are moving.
+3. Click **Add**, then enter the number of units for each line.
+4. Click **Create draft** in the top-right corner.
+
+<Warning>**Create draft** does not move any stock. It saves the transfer as a draft, and the units stay on the source warehouse's shelf until you mark the transfer in transit.</Warning>
+
+## How to Process a Stock Transfer
+
+A transfer moves through seven statuses, and each one means something specific for your stock figures.
+
+| Status | What it means |
+|---|---|
+| **Draft** | Being put together. No stock has moved. |
+| **Ready to ship** | Packed and confirmed, but nothing has left the origin warehouse. |
+| **In transit** | The units have left the source warehouse and are on the road. |
+| **Partially received** | Some units have been counted in at the destination, more are expected. |
+| **Received** | Everything sent has arrived. |
+| **Over-received** | More arrived than was sent. Worth checking before you close it. |
+| **Cancelled** | Called off. |
+
+Open a transfer from the list to move it along:
+
+![A stock transfer showing its details, items, and the buttons that move it through its lifecycle](/docs/images/user/inventory/stock-transfers/3-transfer-detail.png)
+
+1. Click **Mark as ready to ship** once the transfer is packed.
+2. Click **Mark in transit** when the units physically leave. This is the moment stock actually moves.
+3. Click **Receive** as the units land, and record how many the destination counted in.
+
+Use **Back to draft** to reopen a transfer you marked ready too early.
+
+<Note>Once a transfer is packed its contents are a matter of record, so it can no longer be edited.</Note>
+
+## How to Count a Transfer In
+
+Once a transfer is in transit it is ready to receive against, so there is no separate screen to open. Record what arrived on the transfer itself, then commit it.
+
+![A stock transfer ready to receive, with accepted and rejected quantities against each line](/docs/images/user/inventory/stock-transfers/4-receive-transfer.png)
+
+1. Open the transfer. Each line shows what was sent and how much is still outstanding.
+2. Work down the lines and record how many units the destination accepted and how many it rejected.
+3. Click **Receive** to commit what you have counted.
+
+Count what is physically in front of you rather than what the paperwork says, because this is the figure that lands on the warehouse's shelf.
+
+<Note>**Receive** is the button that commits what you have entered. Nothing reaches the destination's shelf until you click it.</Note>
+
+### Accepting and rejecting units
+
+Each line is counted in two parts. Record how many units you **accepted**, meaning the ones going onto the destination's shelf, and how many you **rejected**, meaning the ones that arrived but are not fit to sell. Rejected units need a reason:
+
+- **Damaged** - The units arrived broken, crushed or otherwise unsaleable.
+- **Expired** - The units are past their date and cannot be sold on.
+- **Wrong item** - What turned up is not what the transfer said was sent.
+- **Other** - Anything the first three do not cover. Use the notes to say what happened.
+
+Only accepted units are added to the destination warehouse's on-hand count. Rejected units are recorded against the delivery so there is a record of what went wrong, but they never reach the shelf.
+
+<Warning>A rejection on a transfer is a loss inside your own business, not something a supplier will replace. The units left one of your warehouses and never made it onto the shelf at the other, so a rejected line is worth chasing with whoever packed or carried it.</Warning>
+
+### Receiving in batches
+
+You do not have to count a whole transfer in at once. If a shipment turns up across several days or several pallets, count in what has arrived and click **Receive**. Spree records that count as a **delivery** against the transfer and moves the transfer to **Partially received**, leaving the rest outstanding.
+
+Each time more units arrive, count in the next batch and click **Receive** again. Every batch is recorded as its own delivery, so a transfer that arrived in three loads has three deliveries against it.
+
+![The deliveries recorded against a transfer, one for each batch counted in](/docs/images/user/inventory/stock-transfers/5-transfer-deliveries.png)
+
+The transfer stays **Partially received** until the full quantity has been counted in, at which point it becomes **Received**. If more turns up than was sent, it becomes **Over-received** instead, which is worth investigating before you close it.
+
+<Note>If the rest of a shipment is never going to arrive, use **Close short** rather than leaving the transfer part-received. See the next section.</Note>
+
+### Stock movements
+
+At the bottom of every transfer, **Stock movements for this transfer** lists each change the transfer has made to your stock figures, in the order they happened.
+
+![The stock movements recorded against a transfer, showing units leaving the source and arriving at the destination](/docs/images/user/inventory/stock-transfers/6-stock-movements.png)
+
+This is where a disagreement between what was sent and what arrived becomes visible. The movements show the units leaving the source warehouse when the transfer went into transit, and arriving at the destination as each delivery is counted in, so you can see exactly what moved and when.
+
+## How to Cancel or Close a Transfer Short
+
+What cancelling does depends entirely on whether the stock has left yet.
+
+**Before it ships**, cancelling is clean. Spree confirms with *"No stock has moved yet, so nothing will be reversed."*
+
+**After it ships**, the units are somewhere, and Spree asks you to say where. You choose between:
+
+- **Put the units back at the source** - The units go back onto the source warehouse's shelf, as if the transfer had never shipped.
+- **Write the units off as lost** - The units stay off the books as lost. Nothing is added back anywhere.
+
+![The confirmation asking what happened to units that have already left the source warehouse](/docs/images/user/inventory/stock-transfers/7-cancel-in-transit.png)
+
+**Close short** is used when part of a shipment never turns up. What the destination counted in stays on its shelf, the units still on the road are written off as lost, and the transfer is marked received, so your figures stop promising stock that is not coming.
+
+<Warning>Transfers cannot be deleted. A cancelled transfer is kept, because the stock movements it made are part of your inventory history.</Warning>
+
+## Further Reading
+
+- [<u>Inventory</u>](/user/inventory/stock-levels) - What you have at each location, and where transferred stock lands
+- [<u>Purchase Orders</u>](/user/inventory/purchase-orders) - Buying stock from outside your business
+- [<u>Stock Locations</u>](/user/settings/locations) - Setting up the warehouses a transfer moves between

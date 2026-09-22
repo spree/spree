@@ -2,6 +2,7 @@ import type { Store } from '@spree/admin-sdk'
 import {
   Button,
   CopyToClipboardButton,
+  ExternalLink,
   Input,
   Label,
   Sheet,
@@ -12,8 +13,8 @@ import {
   Skeleton,
   toastManager,
 } from '@spree/dashboard-ui'
-import { ExternalLinkIcon, EyeIcon, EyeOffIcon } from '@spree/dashboard-ui/icons'
-import { type ReactNode, useState } from 'react'
+import { EyeIcon, EyeOffIcon } from '@spree/dashboard-ui/icons'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useStorefrontPublishableKey } from '../../hooks/use-api-keys'
 import { useConnectStorefront } from '../../hooks/use-store-settings'
@@ -21,20 +22,6 @@ import { useConnectStorefront } from '../../hooks/use-store-settings'
 const STOREFRONT_REPOSITORY_URL = 'https://github.com/spree/storefront'
 const STOREFRONT_DEMO_URL = 'https://demo.spreecommerce.org'
 const STOREFRONT_DOCS_URL = 'https://spreecommerce.org/docs/developer/storefront/nextjs/quickstart'
-
-function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
-    >
-      {children}
-      <ExternalLinkIcon className="size-3.5" />
-    </a>
-  )
-}
 
 // Mirrors Spree::Admin::StorefrontHelper#vercel_deploy_url: clone the official
 // Next.js storefront with the store's credentials prefilled, and come back to
@@ -199,7 +186,7 @@ export function StorefrontConnectSheet({
             )}
           </div>
 
-          <div className="flex flex-col gap-2 rounded-lg border p-4">
+          <div className="flex flex-col gap-2 rounded-lg border border-border-subtle p-4">
             <p className="font-medium text-sm">
               {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>

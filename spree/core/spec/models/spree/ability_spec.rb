@@ -150,9 +150,16 @@ describe Spree::Ability, type: :model do
         admin.role_users.create!(role: Spree::Role.default_admin_role(store))
       end
 
-      it 'grants everything and reports the full catalog' do
+      it 'grants everything and reports every key staff may hold' do
         expect(staff_ability).to be_able_to :manage, :all
-        expect(staff_ability.permission_keys).to eq(Spree.permissions.catalog_keys)
+        expect(staff_ability.permission_keys).to eq(Spree.permissions.grantable_keys(:store))
+      end
+
+      # `can :manage, :all` really does cover everything, but the reported
+      # keys drive the dashboard's pickers — and offering a key only another
+      # audience may hold builds a role that refuses to save.
+      it 'leaves out the keys only another audience may hold' do
+        expect(staff_ability.permission_keys).not_to include('read_seller_profile', 'read_seller_earnings')
       end
     end
 
@@ -200,8 +207,8 @@ describe Spree::Ability, type: :model do
       before do
         # Open orders to the stand-in's audience, as the catalog opens it to
         # marketplace sellers.
-        Spree.permissions.register_resource(
-          :orders, group: :orders, audiences: %i[customer_group], subjects: -> { [Spree::Order] }
+        Spree.permissions.register_scope(
+          :orders, group: :orders, audiences: %i[customer_group], resources: -> { [Spree::Order] }
         )
         admin.role_users.create!(
           role: create(:role, name: 'panel_orders', permissions: %w[write_orders], resource: panel)
@@ -294,8 +301,8 @@ describe Spree::Ability, type: :model do
       let(:seller_like) { Spree::DummyModel.create!(name: 'Seller A') }
 
       before do
-        Spree.permissions.register_resource(
-          :products, group: :catalog, audiences: %i[dummy_model], subjects: -> { [Spree::Product] }
+        Spree.permissions.register_scope(
+          :products, group: :catalog, audiences: %i[dummy_model], resources: -> { [Spree::Product] }
         )
       end
 

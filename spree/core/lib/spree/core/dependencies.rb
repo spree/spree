@@ -7,6 +7,9 @@ module Spree
         # ability (staff / back-office authorization)
         ability_class: 'Spree::Ability',
 
+        # reporting (see docs/plans/6.0-analytics-semantic-layer.md)
+        reporting_adapter: 'Spree::Reporting::Adapters::Live',
+
         # storefront record access (ownership + guest tokens); the B2B seam —
         # see Spree::Storefront::AccessPolicy
         storefront_access_policy_class: 'Spree::Storefront::AccessPolicy',
@@ -95,6 +98,26 @@ module Spree
         fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
         return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
+
+        # inventory operations
+        stock_level_correct_service: 'Spree::StockLevels::Correct',
+        stock_level_bulk_upsert_service: 'Spree::StockLevels::BulkUpsert',
+        stock_level_recount_service: 'Spree::StockLevels::Recount',
+        stock_transfer_create_workflow: 'Spree::StockTransfers::Create',
+        stock_transfer_update_workflow: 'Spree::StockTransfers::Update',
+        stock_transfer_mark_ready_workflow: 'Spree::StockTransfers::MarkReady',
+        stock_transfer_mark_in_transit_workflow: 'Spree::StockTransfers::MarkInTransit',
+        stock_transfer_receive_workflow: 'Spree::StockTransfers::Receive',
+        stock_transfer_cancel_workflow: 'Spree::StockTransfers::Cancel',
+        stock_transfer_mark_draft_workflow: 'Spree::StockTransfers::MarkDraft',
+        stock_transfer_close_workflow: 'Spree::StockTransfers::Close',
+        purchase_order_create_workflow: 'Spree::PurchaseOrders::Create',
+        purchase_order_update_workflow: 'Spree::PurchaseOrders::Update',
+        purchase_order_mark_ordered_workflow: 'Spree::PurchaseOrders::MarkOrdered',
+        purchase_order_receive_workflow: 'Spree::PurchaseOrders::Receive',
+        purchase_order_cancel_workflow: 'Spree::PurchaseOrders::Cancel',
+        purchase_order_mark_draft_workflow: 'Spree::PurchaseOrders::MarkDraft',
+        purchase_order_close_workflow: 'Spree::PurchaseOrders::Close',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',

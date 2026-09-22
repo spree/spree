@@ -132,7 +132,7 @@ export function CategoryTree({
       onDragEnd={handleDragEnd}
       onDragCancel={reset}
     >
-      <Table>
+      <Table roundedTop roundedBottom>
         <TableHeader>
           <TableRow>
             <TableHead className="w-8" />

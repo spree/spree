@@ -1,53 +1,62 @@
 ---
-title: "Marketplace Configuration"
-description: "Learn how to configure marketplace-wide settings for your multi-vendor marketplace in Spree Commerce."
+title: "Marketplace"
+description: "Who pays your sellers and how often, whether new sellers and their products are reviewed, and the tax on your commission."
 ---
 
-<Warning>Marketplace settings are only available in Spree Enterprise Edition with the multi-vendor module enabled.</Warning>
+The Marketplace settings screen holds the decisions that shape how your marketplace runs: **who gets to trade, what goes on sale, what sellers hear from you, and how they get paid.**
 
-The Marketplace settings page is the central place to configure how vendors operate on your marketplace by default. It's where you set the default commission rate new vendors will be invited under, how often vendors get paid, what merchants see when they install your Shopify app, and the terms of service every vendor agrees to. Most of these defaults can be overridden at a more granular level later (per vendor, category, or product), so think of this page as setting the baseline that everything else builds on.
+To reach it, navigate to **Settings → Marketplace**.
 
-To configure marketplace settings, navigate to **Settings → Marketplace** in the admin dashboard.
+## What's on the screen
 
-![The Marketplace settings page showing the commission rate, payouts, Shopify app, and terms of service sections](/docs/images/user/settings/marketplace/1-marketplace-overview.png)
+### Payouts
 
-## Vendor Commission Rate
+| Setting | What it does |
+|---|---|
+| **Payout provider** | Who actually moves the money. Leave it unset and Spree keeps the books while you pay sellers yourself. |
+| **Settle sellers** | How often earnings are swept into a payout — daily, weekly, every two weeks, monthly, or only by hand. A seller can carry their own schedule, which wins. |
+| **Minimum payout** | What a seller's balance must reach before it is worth sending. Below it, the balance carries to the next period. |
 
-This is the default percentage of each sale that your marketplace retains from a vendor's revenue. It applies to all newly invited vendors and can be overridden later per vendor, per category-vendor pairing, or per individual product.
+### Seller admission
 
-- **Commission Rate** - the percentage taken from each sale. Used as the default for all newly invited vendors.
+| Setting | What it does |
+|---|---|
+| **Approve sellers automatically** | Let a seller start trading the moment they finish the onboarding checklist, with nobody reviewing them. |
+| **Approve seller products automatically** | Put a seller's product on sale as soon as they submit it, without review. |
 
-<Warning>Changing this value only affects newly invited vendors. Existing vendors keep their current commission rate — to update an existing vendor's rate, edit it from their vendor profile.</Warning>
+Both are off by default. What your marketplace lists is what it vouches for, so admitting sellers and listing their products are decisions worth making on purpose. Turn them on for an invite-only marketplace where you already know your sellers; leave them off for an open one.
 
-## Vendor Payouts
+### Communication
 
-This setting controls how frequently vendors can receive payouts through their Stripe dashboard. Vendors can choose to follow the marketplace default or set their own schedule from their vendor profile.
+| Setting | What it does |
+|---|---|
+| **Send sellers transactional emails** | Whether Spree emails sellers about invitations, approvals and payouts. Turn it off if you send seller communications yourself. |
 
-- **Preferred Vendor Payouts Schedule Interval** - how often vendors are paid by default.
-  - Daily
-  - Weekly
-  - Bi-weekly
-  - Monthly
+### Commission tax
 
-<Note>Changing this option also updates the payout schedule for any existing vendors whose schedule is set to **Use marketplace default interval**. Vendors who have a specific schedule set won't be affected.</Note>
+| Setting | What it does |
+|---|---|
+| **Default commission tax rate** | The tax charged on your commission when nothing more specific applies. Entered as a percentage. |
 
-## Shopify App
+This is tax on **your service to the seller**, not on the goods the shopper bought — a separate supply, assessed against the seller's billing address.
 
-If your marketplace uses the Shopify integration to onboard Shopify vendors, this image is displayed to Shopify merchants when they install your app. A clear, branded image helps vendors recognize the marketplace they're connecting to.
+It is only a fallback. A commission rate carrying its own tax rate wins, and so does a connected tax service. Set it for the case where neither has an answer, so commission is never left untaxed by omission.
 
-- **Upload New Media** - the image shown on the Shopify install screen.
-  - **Recommended size:** 600 × 300 pixels.
+## How to set your payout terms
 
-<Note>For more on the broader Shopify vendor onboarding flow, see [<u>Shopify Vendor Onboarding</u>](https://spreecommerce.org/docs/user/vendors/vendor-onboarding-shopify).</Note>
+1. Go to **Settings → Marketplace**.
+2. Choose **Paid through**. On **Your own books**, Spree tracks what each seller is owed and you send the transfers yourself, marking each one paid.
+3. Choose how often to **Settle sellers**. Pick **Only when you say so** if you would rather run each payout by hand.
+4. Set a **Minimum payout**, or leave it at zero to pay whatever is owed each period.
+5. Click **Save**.
 
-## Vendor Terms of Service
+## Good to know
 
-The terms of service displayed to vendors when they accept their invitation to join the marketplace. Vendors must agree to these terms before they can complete onboarding. The editor supports rich formatting including headings, bold, italic, links, lists, quotes, and code blocks.
+- A seller can carry their own settlement schedule, which overrides the store-wide setting for that seller.
+- Setting a minimum does not cancel a small balance — it carries forward to the next period.
 
-- **Vendor Terms of Service** - the full terms vendors must agree to at invitation time.
+## Related
 
-<Note>Updating the terms doesn't require existing vendors to re-accept — only vendors invited after the change will see the new version at sign-up.</Note>
-
-## Saving Changes
-
-After making any updates, click **Update** at the bottom of the page to save your changes, otherwise any changes you've made will not be saved.
+- [<u>Sellers → Payouts</u>](/user/sellers/payouts)
+- [<u>Sellers → Commission Rates</u>](/user/sellers/commission-rates)
+- [<u>Settings → Seller Requirements</u>](/user/settings/seller-requirements)

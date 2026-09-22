@@ -1,11 +1,10 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
-  BanknoteIcon,
+  Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
   GlobeIcon,
   GlobeLockIcon,
-  HandCoinsIcon,
   KeyRoundIcon,
   MailIcon,
   PackageIcon,
@@ -249,28 +248,36 @@ settingsNav.add({
   subject: Subject.ReturnReason,
 })
 
+// Named "Settings" in the sidebar because it already sits under a Marketplace
+// header there; the breadcrumb has no such header, so it names the page in
+// full.
 settingsNav.add({
-  key: 'settings.payouts',
-  labelKey: 'admin.settings_nav.items.payouts',
-  descriptionKey: 'admin.settings_nav.descriptions.payouts',
-  keywords: ['marketplace', 'sellers', 'payouts', 'stripe', 'schedule'],
-  path: '/payouts',
-  icon: BanknoteIcon,
+  key: 'settings.marketplace',
+  labelKey: 'admin.settings_nav.items.marketplace',
+  breadcrumbLabelKey: 'admin.settings_nav.breadcrumbs.marketplace',
+  descriptionKey: 'admin.settings_nav.descriptions.marketplace',
+  keywords: [
+    'marketplace',
+    'sellers',
+    'approval',
+    'review',
+    'commission',
+    'vat',
+    'tax',
+    'emails',
+    'payouts',
+    'payout provider',
+    'schedule',
+    'minimum payout',
+  ],
+  path: '/marketplace',
+  icon: Building2Icon,
   group: 'marketplace',
   position: 100,
-  subject: Subject.SellerPayout,
-})
-
-settingsNav.add({
-  key: 'settings.commission-rates',
-  labelKey: 'admin.settings_nav.items.commission_rates',
-  descriptionKey: 'admin.settings_nav.descriptions.commission_rates',
-  keywords: ['marketplace', 'sellers', 'payouts', 'fees'],
-  path: '/commission-rates',
-  icon: HandCoinsIcon,
-  group: 'marketplace',
-  position: 200,
-  subject: Subject.CommissionRate,
+  // The form writes store preferences, so it needs the same permission as the
+  // other store settings pages — not Seller, which reads as "manages sellers".
+  subject: Subject.Store,
+  action: 'update',
 })
 
 settingsNav.add({
@@ -281,7 +288,7 @@ settingsNav.add({
   path: '/seller-requirements',
   icon: ClipboardCheckIcon,
   group: 'marketplace',
-  position: 300,
+  position: 200,
   subject: Subject.Seller,
 })
 

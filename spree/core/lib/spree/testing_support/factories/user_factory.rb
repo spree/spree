@@ -18,7 +18,6 @@ FactoryBot.define do
 
   factory :admin_user, class: Spree.admin_user_class do
     email                 { generate(:random_email) }
-    login                 { email }
     password              { 'secret123' }
     password_confirmation { password }
     first_name { FFaker::Name.first_name }

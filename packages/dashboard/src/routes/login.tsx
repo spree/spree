@@ -77,7 +77,7 @@ function SetupRequiredNotice() {
     <div className="grid gap-2 rounded-md border p-4">
       <p className="font-medium text-sm">{t('admin.setup.required_notice_title')}</p>
       <p className="text-sm text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
-      <Link to="/setup" className="text-sm underline underline-offset-4">
+      <Link to="/setup" className="link text-sm">
         {t('admin.setup.required_notice_link')}
       </Link>
     </div>
@@ -184,7 +184,7 @@ function PasswordLoginForm() {
           </Button>
           <Link
             to="/forgot-password"
-            className="col-start-2 row-start-1 justify-self-end self-center text-sm underline-offset-4 hover:underline"
+            className="link col-start-2 row-start-1 justify-self-end self-center text-sm"
           >
             {t('admin.auth.forgot_password.link')}
           </Link>

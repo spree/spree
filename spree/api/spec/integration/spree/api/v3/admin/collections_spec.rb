@@ -66,7 +66,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
               type: :object,
               properties: {
                 id: { type: :string, example: 'crule_abc123' },
-                type: { type: :string, example: 'Spree::CollectionRules::Tag' },
+                type: { type: :string, example: 'tag' },
                 value: { type: :string, example: 'summer' },
                 match_policy: { type: :string, example: 'contains' }
               }
@@ -83,7 +83,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
             name: 'On Sale',
             automatic: true,
             rules_match_policy: 'any',
-            rules: [{ type: 'Spree::CollectionRules::Tag', value: 'summer', match_policy: 'contains' }]
+            rules: [{ type: 'tag', value: 'summer', match_policy: 'contains' }]
           }
         end
 

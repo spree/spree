@@ -27,6 +27,16 @@ describe Spree::StockReservation, type: :model do
       expect(duplicate).to be_invalid
       expect(duplicate.errors[:line_item_id]).to be_present
     end
+
+    # Only a quantity change moves units between counters, so a hold that
+    # changed levels would leave its units on the old one.
+    it 'refuses to move a saved hold to another stock level' do
+      reservation.save!
+      reservation.stock_level = create(:stock_level)
+
+      expect(reservation).to be_invalid
+      expect(reservation.errors[:stock_level_id]).to be_present
+    end
   end
 
   describe 'scopes' do
@@ -77,6 +87,42 @@ describe Spree::StockReservation, type: :model do
 
     it 'falls back to ten minutes without a store to ask' do
       expect(described_class.ttl_for(nil)).to eq(10.minutes)
+    end
+  end
+
+  # The level's reserved figure is kept by the rows themselves, so every path
+  # that creates, resizes or removes a reservation — a checkout, a cart being
+  # emptied, a line item removed mid-checkout — moves it without knowing.
+  describe 'the reserved counter' do
+    let(:reservation) { create(:stock_reservation, quantity: 3) }
+    let(:level) { reservation.stock_level }
+
+    it 'follows the row through its life' do
+      expect(level.reload.reserved_count).to eq(3)
+
+      reservation.update!(quantity: 5)
+      expect(level.reload.reserved_count).to eq(5)
+
+      reservation.destroy
+      expect(level.reload.reserved_count).to eq(0)
+    end
+
+    it 'is given back when the line item is removed underneath it' do
+      reservation
+
+      reservation.line_item.destroy
+
+      expect(level.reload.reserved_count).to eq(0)
+    end
+
+    it 'is given back when the cart is emptied' do
+      cart = create(:cart_with_line_items, line_items_count: 1)
+      cart_reservation = create(:stock_reservation, cart: cart, line_item: cart.line_items.first, quantity: 2)
+      cart_level = cart_reservation.stock_level
+
+      Spree::Carts::Empty.call(cart: cart)
+
+      expect(cart_level.reload.reserved_count).to eq(0)
     end
   end
 

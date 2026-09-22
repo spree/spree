@@ -261,8 +261,36 @@ export async function dockerComposeCapture(
   }
   args.push(service, ...argv)
 
-  const { stdout } = await execa('docker', args, { cwd: projectDir })
-  return stdout
+  // `compose up -d` can recreate a container moments before this runs — a
+  // recovering project does exactly that — and `exec` into a container that
+  // is still starting fails with "not running". That is transient, but the
+  // error it surfaces ("Is it running? Start it with `spree dev`") sends the
+  // operator after a stack that IS running, so retry briefly before failing.
+  let lastError: unknown
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const { stdout } = await execa('docker', args, { cwd: projectDir })
+      return stdout
+    } catch (error) {
+      lastError = error
+      if (!isContainerNotReady(error)) throw error
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+    }
+  }
+  throw lastError
+}
+
+/**
+ * A compose `exec` that lost the race with a starting container, as opposed
+ * to a command that ran and failed — only the former is worth retrying.
+ */
+function isContainerNotReady(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return (
+    /is not running/i.test(message) ||
+    /no such container/i.test(message) ||
+    /container .* is restarting/i.test(message)
+  )
 }
 
 export async function streamLogs(service: string, projectDir: string): Promise<void> {

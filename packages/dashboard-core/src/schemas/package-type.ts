@@ -48,10 +48,13 @@ export const PACKAGE_TYPE_DEFAULTS: PackageTypeFormValues = {
   length: '',
   width: '',
   height: '',
-  dimensions_unit: 'cm',
+  // Left unset, as the variant editor leaves a variant's. A unit reaches the
+  // API only when the merchant picked one; otherwise the store's own units
+  // are recorded on the row
+  dimensions_unit: undefined,
   weight: '',
   max_weight: '',
-  weight_unit: 'kg',
+  weight_unit: undefined,
   default: false,
 }
 
@@ -86,10 +89,10 @@ export function packageTypeToFormValues(packageType: PanelPackageType): PackageT
     length: packageType.length ?? '',
     width: packageType.width ?? '',
     height: packageType.height ?? '',
-    dimensions_unit: (packageType.dimensions_unit ?? 'cm') as PackageDimensionUnit,
+    dimensions_unit: (packageType.dimensions_unit ?? undefined) as PackageDimensionUnit | undefined,
     weight: packageType.weight ?? '',
     max_weight: packageType.max_weight ?? '',
-    weight_unit: (packageType.weight_unit ?? 'kg') as PackageWeightUnit,
+    weight_unit: (packageType.weight_unit ?? undefined) as PackageWeightUnit | undefined,
     default: packageType.default ?? false,
   }
 }

@@ -1,0 +1,100 @@
+---
+title: "Stripe Connect for Marketplaces"
+sidebarTitle: Stripe Connect
+description: "Pay your sellers through Stripe Connect — hosted Express onboarding, a transfer to each seller as their goods ship, and settlements confirmed by webhook."
+---
+
+Stripe Connect is the payout provider that ships with Spree's Stripe integration. You charge customers on your own Stripe account, each seller holds a connected Express account, and Spree moves every seller's share across as their orders ship. Read [how the payout ledger works](/developer/core-concepts/sellers#payouts) first — this page covers only what Stripe adds to it.
+
+## Prerequisites
+
+- A [Stripe payment method](/integrations/payments/stripe) on the store, active, with its keys entered. Connect uses the same account and credentials — there is nothing separate to connect.
+- Connect enabled on that Stripe account (Stripe Dashboard → **Connect** → Get started). Spree creates Express accounts, so pick the platform profile Stripe suggests for marketplaces.
+- Sellers on the store. If you have none yet, [invite one](/user/sellers/onboarding).
+
+## Turn it on
+
+Go to **Settings → Marketplace** and choose **Stripe Connect** as the payout provider. The option is only offered once an active Stripe payment method exists on the store. The schedule and minimum on the same page decide when Spree settles each seller.
+
+The same setting through the Admin API:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: providers } = await adminClient.payoutProviders.list()
+// find the row with id 'SpreeStripe::PayoutProvider' — `available` says whether this store can use it
+
+await adminClient.store.update({
+  preferred_payout_provider: 'SpreeStripe::PayoutProvider',
+  preferred_default_payouts_schedule_interval: 'weekly',
+  preferred_default_minimum_payout_amount: 50,
+})
+```
+
+```bash cURL
+curl -X PATCH https://your-store.com/api/v3/admin/store \
+  -H "X-Spree-API-Key: sk_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{"preferred_payout_provider": "SpreeStripe::PayoutProvider", "preferred_default_payouts_schedule_interval": "weekly", "preferred_default_minimum_payout_amount": 50}'
+```
+
+</CodeGroup>
+
+Then add the **Payout account** row to your [seller requirements](/user/sellers/onboarding) so a seller cannot be approved before Stripe can pay them. Without it a seller is approved, sells, and their earnings sit pending until they connect an account.
+
+## Seller onboarding
+
+A seller connects from their panel. The panel asks Spree for a link, Spree creates an Express account for the seller if they have none and asks Stripe for a hosted onboarding link, and the seller lands on Stripe's own pages to give identity and bank details. Spree never handles either.
+
+The account is created with the platform paying Stripe's fees and owning disputes (what makes this a marketplace), the transfers capability requested, the Express dashboard, and — deliberately — a **manual payout schedule**. Spree decides when a seller is settled, so Stripe must not also be paying their balance out on a clock of its own.
+
+The seller's account id is stored as an external reference on the seller under the `stripe` system, so a marketplace that later changes providers keeps it on record.
+
+Three things are worth knowing about "done":
+
+- **Stripe decides, not the form.** A seller who finished typing may still be under review for days. The onboarding checklist asks Stripe each time it is rendered, and shows the seller one of three states: something to do, being checked, or refused — with Stripe's own reason where it gives one.
+- **`account.updated` is the signal.** When Stripe flips `payouts_enabled`, the webhook stamps the seller payable and immediately sends any earnings that were waiting. It can also flip back — expired documents, a closed account — and Spree then stops crediting the seller rather than promise money nothing can send.
+- **The stamp is a cache.** If the webhook never arrived (a local tunnel that was down, an endpoint not yet registered), the next checklist render asks Stripe directly and corrects it.
+
+## Webhooks
+
+Connect events arrive on a separate endpoint from your payment events, because Stripe scopes them separately: events raised inside sellers' connected accounts come on their own subscription with their own signing secret. Spree registers it with Stripe the first time a seller asks for an onboarding link, at:
+
+```
+https://your-store.com/api/v3/webhooks/payouts/<payment method id>
+```
+
+subscribed to `account.updated`, `payout.paid` and `payout.failed`. The endpoint id and signing secret are stored on the payment method. Nothing to do in production.
+
+For local development Stripe cannot reach your machine, so forward the connected-account events with the Stripe CLI and give Spree the secret it prints:
+
+```bash
+stripe listen --forward-connect-to localhost:3000/api/v3/webhooks/payouts/<payment method id>
+export STRIPE_CONNECT_SIGNING_SECRET=whsec_...
+```
+
+`STRIPE_SIGNING_SECRET` covers the payments endpoint the same way; the two are different secrets.
+
+## How the money moves
+
+**On fulfillment**, Spree records the seller's earning — their sale less commission — and creates a Stripe transfer to their connected account. The transfer names the customer's charge as its `source_transaction`, so it settles when that charge does rather than out of your platform balance: a marketplace should not have to float its sellers. The order number goes on the transfer group, and the ledger row's id on the metadata, so both sides reconcile. A seller who is not payable yet keeps the earning pending; it is sent when they become payable, or on the hourly retry.
+
+**On the schedule**, a sweep batches the seller's confirmed earnings into a payout and asks Stripe — acting as the connected account — to pay the seller's bank. The payout stays **pending** in Spree with Stripe's `po_…` id as its reference until `payout.paid` arrives, which completes it and debits the seller's balance. `payout.failed` marks it failed and releases the earnings for the next sweep.
+
+**On a refund**, Spree writes a reversal row against the seller so the books are right. The Stripe transfer itself is not reversed in open source, and a negative balance is not netted against future earnings — that money operation is Spree Enterprise.
+
+Every Stripe call carries an idempotency key derived from the ledger row, so a retried request finds the movement it already made. When Stripe's answer is lost — a timeout, a 5xx — Spree parks the row as **unresolved** instead of retrying, because the key only protects a retry for as long as Stripe remembers it. Resolve those against the Stripe Dashboard: mark the payout complete with its reference if the money went, or fail it if it did not.
+
+## What sellers see
+
+Their panel shows earnings as transfers, settlements as payouts, and a balance per currency — read-only, since Spree and Stripe write both sides. For the bank side (what Stripe actually paid out, and to which account) they use the Express dashboard Stripe gives every connected account.
+
+## Test mode
+
+Use test keys on the Stripe payment method and everything above runs against Stripe's test environment, including Express onboarding with Stripe's test identity data and simulated `payout.paid` events. Connect must be enabled on the test account too.
+
+## Related
+
+- [Payouts](/user/sellers/payouts) — the operator's view: balances, the queue, marking payouts complete
+- [Seller payouts](/developer/providers/payouts) — the provider contract, if Stripe is not your rails
+- [Stripe payments](/integrations/payments/stripe) — the payment method Connect builds on

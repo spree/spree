@@ -1,0 +1,71 @@
+---
+title: "Returns"
+description: "Process a return from request to refund — approve it, receive the goods, restock what can be resold, and refund the customer."
+---
+
+A return is the customer sending items back and getting their money back. It belongs to the order it came from, so opening the order shows the whole story in one place.
+
+Returns sit beside two related records — an [Exchange](/user/orders/exchanges), where the customer gets different items instead of money, and a [Claim](/user/orders/claims), where something went wrong with the delivery and nothing need come back. Find all three under **Orders** in the dashboard.
+
+<Note>
+  This replaces the older three-step flow of Return Authorization, Customer Return, and Reimbursement. One record now covers the whole operation from request through to refund.
+</Note>
+
+## Processing a return
+
+
+### 1. Open the return
+
+Find the order and create a return against it, choosing the items coming back and how many units of each. You can also record the reason for the return, which stock location the goods are returning to, and an internal memo.
+
+Customers can also open returns themselves from their account, if your storefront offers it. Those arrive with the status **requested**.
+
+### 2. Approve it
+
+Approving a return tells the customer it is authorised.
+
+<Note>
+  Spree does not generate prepaid return labels yet. That arrives with the carrier integrations, which is where the label actually comes from. Until then, most merchants send a label from their carrier's own tools and paste the link into the return's notes.
+</Note>
+
+### 3. Receive the goods
+
+When the parcel arrives, record what actually turned up. Partial returns are normal, so you enter the quantity received for each line rather than assuming everything the customer said they would send has arrived.
+
+You also mark each line as resellable or not. Resellable items go back into stock automatically at the return's stock location; damaged items do not.
+
+### 4. Refund the customer
+
+Refund the return to either the original payment method or store credit. You can refund the full amount or part of it, and you can refund in more than one step — part to store credit and part back to the card, for example.
+
+Once the refund goes through, the customer receives an email confirming it.
+
+<Note>
+  A return can be cancelled at any point before the goods are received. Cancelling restocks nothing.
+</Note>
+
+
+## Where to find them
+
+Returns, exchanges, and claims each have their own page under Orders in the dashboard, so you can see everything in progress across all orders. Individual records also appear on the order they belong to, giving you the full history of that order in one place.
+
+## Reasons
+
+Spree keeps two separate lists of reasons, managed under **Settings → Returns & reasons** and seeded when your store is created:
+
+- **Return reasons** explain why a customer is sending something back — "wrong size", "changed my mind", "no longer needed". These apply to both returns and exchanges.
+- **Claim reasons** explain what went wrong on your end — "arrived damaged", "never arrived", "wrong item sent".
+
+They are kept separate because they answer different questions, and mixing them makes reporting less useful. See [Settings → Returns & Reasons](/user/settings/returns-and-reasons) for how to manage them.
+
+## Return policy
+
+Spree does not enforce a return window, restocking fee, or final-sale rule out of the box. Every merchant's policy differs, and the rules often vary by country for legal reasons.
+
+Instead, your developers can attach your policy to the point where a return is created. A common setup enforces the policy for customers opening returns themselves, while still letting your staff override it — so a supervisor can accept a return outside the window for a good customer without needing a code change.
+
+## Related
+
+- [Exchanges](/user/orders/exchanges) — swapping items rather than refunding
+- [Claims](/user/orders/claims) — damaged, missing or wrong deliveries
+- [Returns & Reasons](/user/settings/returns-and-reasons) — the reason lists staff pick from

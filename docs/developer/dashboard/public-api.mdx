@@ -4,7 +4,7 @@ sidebarTitle: Public API
 description: Every importable symbol the dashboard exposes — components, hooks, registries, providers, and the SDK client. Treat this as the surface you can safely depend on.
 ---
 
-The dashboard is structured as three packages, each with a documented public surface. **Anything not listed here is internal** — don't import it via `@spree/dashboard-core/src/internal/...`, because we'll move or rename it without a deprecation cycle.
+The dashboard is structured as three packages. This page lists the symbols we commit to keeping — **treat anything not listed as internal**, liable to move or be renamed without a deprecation cycle, even where the barrel happens to export it today. Never reach past a package entry point into `@spree/dashboard-core/src/...`.
 
 ## `@spree/dashboard-core`
 
@@ -51,7 +51,7 @@ import {
   // Page chrome
   PageHeader,
   PageTabs,
-  TopBar,
+  MobileTopBar,
   AppSidebar,
   SettingsSidebar,
   Slot,
@@ -92,6 +92,7 @@ import {
   useCustomFields,
   useDirectUpload,    // ActiveStorage direct uploads
   useExport,          // CSV export job lifecycle
+  useResourceKey,     // store-scoped query key — use it for every custom query
   useResourceMutation, // useMutation wrapper with 422 handling
   useHostForm,        // the built-in form a slot widget renders inside (throws when absent)
   useOptionalHostForm, // same, but null when the page has no host form
@@ -195,7 +196,15 @@ import { cn } from '@spree/dashboard-ui'  // clsx + tailwind-merge
 
 ## `@spree/dashboard`
 
-The app shell. **Plugins don't import from here** — a plugin extends the dashboard through `@spree/dashboard-core` and never renders the shell. The host (the `dashboard-starter` project, or a create-spree-app project) is what imports it, to mount the admin:
+The app shell, and the single import a host application needs. It re-exports everything from `@spree/dashboard-core` and `@spree/dashboard-ui`, so code in your own dashboard app never has to work out which package an export lives in:
+
+```ts
+import { defineDashboardPlugin, useStore, adminClient, Button, ResourceTable } from '@spree/dashboard'
+```
+
+**Plugins don't import from here** — a plugin extends the dashboard through `@spree/dashboard-core` and never renders the shell, so importing the shell would pull the whole app into a package meant to plug into it.
+
+The host (the `dashboard-starter` project, or a create-spree-app project) is also what mounts the admin:
 
 ```ts
 import { createDashboardRouter, Dashboard } from '@spree/dashboard'
@@ -211,7 +220,13 @@ import { spreeDashboardPlugin } from '@spree/dashboard/vite'  // Vite plugin: Ta
 import '@spree/dashboard/styles.css'                          // the app's CSS entry
 ```
 
-Importing from `@spree/dashboard` pins your code to the deployable app's version. Plugins and custom UI should prefer `@spree/dashboard-core` + `@spree/dashboard-ui`.
+A few names exist in both re-exported packages — the design system ships a presentational component and the framework wraps it with data (`ResourceCombobox`, `StatusCard`, `Slot`, `DateRange`, `ResourceMultiAutocomplete`). The facade gives you the framework's version, which is the one an application wants. Reach past it when you want the presentational half:
+
+```ts
+import { ResourceCombobox } from '@spree/dashboard-ui'  // takes its options as props
+```
+
+Importing from `@spree/dashboard` pins your code to the deployable app's version, which is what a host app wants and what a distributed plugin must avoid.
 
 ## What about `@spree/admin-sdk`?
 

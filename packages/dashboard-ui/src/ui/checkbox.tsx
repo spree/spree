@@ -25,7 +25,7 @@ function Checkbox({
       disabled={disabled}
       name={name}
       className={cn(
-        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border-control align-[-3px] outline-none transition-shadow',
+        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border shadow-xs bg-card align-[-3px] outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out',
         // The 16px box is the right *visual* size in a dense table, but on its
         // own it is a 16px target — under the 24px WCAG 2.2 asks for, on the
         // control every bulk action starts from. A pseudo-element extends the
@@ -34,12 +34,12 @@ function Checkbox({
         // bridge, which would otherwise swallow presses in the padded margin
         // and navigate instead of selecting.
         "before:absolute before:inset-[-9px] before:z-1 before:content-['']",
-        'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        'focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        'disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground',
         'aria-invalid:border-destructive aria-invalid:ring-destructive/20',
         'data-[checked]:border-blue-500 data-[checked]:bg-blue-500 data-[checked]:text-white',
         'data-[indeterminate]:border-blue-500 data-[indeterminate]:bg-blue-500 data-[indeterminate]:text-white',
-        'dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[checked]:bg-blue-500',
+        'dark:aria-invalid:ring-destructive/40 dark:data-[checked]:bg-blue-500',
         className,
       )}
       {...props}

@@ -1,8 +1,10 @@
-import type { Order } from '@spree/admin-sdk'
+import { isOrderGroup, type Order } from '@spree/admin-sdk'
 import {
   adminClient,
+  Can,
   GONE_STATUSES,
   PageHeader,
+  Subject,
   useResourceMutation,
   useStore,
 } from '@spree/dashboard-core'
@@ -11,6 +13,7 @@ import {
   DropdownMenuItem,
   RelativeTime,
   StatusBadge,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -19,13 +22,15 @@ import {
   MailIcon,
   PencilIcon,
   ShieldCheckIcon,
+  Trash2Icon,
   XCircleIcon,
 } from '@spree/dashboard-ui/icons'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { orderQueryKey } from '../../../hooks/use-order'
+import { orderQueryKey, useDeleteOrder } from '../../../hooks/use-order'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { orderGroupSearch } from '../../../lib/order-group-search'
 import { OrderCancelDialog } from './order-cancel-dialog'
 
 export function OrderHeader({ order }: { order: Order }) {
@@ -33,15 +38,44 @@ export function OrderHeader({ order }: { order: Order }) {
   const orderId = order.id
   const { storeId } = useStore()
   const confirm = useConfirm()
+  const navigate = useNavigate()
   const [cancelOpen, setCancelOpen] = useState(false)
+  const deleteOrder = useDeleteOrder()
 
   const backFallback = order.completed_at ? 'orders' : 'orders/drafts'
 
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: t('admin.orders.detail.messages.completed'),
+    // Announced here instead, because what to say depends on whether the order
+    // divided.
+    successMessage: false,
     errorMessage: t('admin.orders.detail.errors.complete_failed'),
+    onSuccess: (result) => {
+      if (!isOrderGroup(result)) {
+        toastManager.add({ type: 'success', title: t('admin.orders.detail.messages.completed') })
+        return
+      }
+
+      toastManager.add({
+        type: 'success',
+        // The orders it produced, not seller_count — a basket mixing the
+        // operator's own goods with a seller's makes two orders and names one
+        // seller.
+        title: t('admin.orders.detail.messages.completed_as_group', {
+          count: result.orders.length,
+        }),
+      })
+      // The order divided into one per seller, so this page now shows only
+      // part of what was completed. Replaced rather than pushed: going back
+      // would land on that same partial view.
+      navigate({
+        to: '/$storeId/orders',
+        params: { storeId },
+        search: orderGroupSearch(result.id),
+        replace: true,
+      })
+    },
   })
   const approveMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.approve(orderId),
@@ -105,13 +139,47 @@ export function OrderHeader({ order }: { order: Order }) {
     </>
   )
 
+  async function handleDelete() {
+    const ok = await confirm({
+      title: t('admin.orders.detail.confirm.delete_title'),
+      message: t('admin.orders.detail.confirm.delete_message', { number: order.number }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+
+    const deleted = await deleteOrder
+      .mutateAsync(orderId)
+      .then(() => true)
+      .catch(() => false)
+    if (!deleted) return
+
+    navigate({ to: '/$storeId/orders/drafts', params: { storeId } })
+  }
+
   const destructiveItems = (
     <>
-      {order.status !== 'canceled' && (
-        <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
-          <XCircleIcon className="size-4" />
-          {t('admin.pages.orders.detail.actions.cancel')}
-        </DropdownMenuItem>
+      {/* Cancelling is for an order the customer has placed — it settles
+          payments and stands the order down. A draft was never placed, so
+          there is nothing to stand down: it is simply thrown away. */}
+      {order.status === 'draft' ? (
+        <Can I="destroy" a={Subject.Order}>
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={deleteOrder.isPending}
+          >
+            <Trash2Icon className="size-4" />
+            {t('admin.actions.delete')}
+          </DropdownMenuItem>
+        </Can>
+      ) : (
+        order.status !== 'canceled' && (
+          <DropdownMenuItem variant="destructive" onClick={() => setCancelOpen(true)}>
+            <XCircleIcon className="size-4" />
+            {t('admin.pages.orders.detail.actions.cancel')}
+          </DropdownMenuItem>
+        )
       )}
     </>
   )

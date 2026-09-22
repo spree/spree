@@ -13,7 +13,8 @@ module Spree
                    blocker: ['{ state: string; message: string | null } | null'],
                    accepts_submissions: :boolean, requires_file: :boolean,
                    accepted_content_types: [:string, multi: true],
-                   required_policy_name: [:string, nullable: true]
+                   required_policy_name: [:string, nullable: true],
+                   terms_html: [:string, nullable: true]
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
@@ -37,6 +38,12 @@ module Spree
           # exactly that policy. Null for every other kind.
           attribute :required_policy_name do |status|
             status.required_policy_name
+          end
+
+          # The marketplace terms this line asks the seller to accept. Null
+          # for every other kind, and null while nothing has been written.
+          attribute :terms_html do |status|
+            status.terms_html
           end
 
           one :submission,

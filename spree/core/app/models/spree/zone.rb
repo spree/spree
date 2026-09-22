@@ -6,8 +6,6 @@ module Spree
   class Zone < Spree.base_class
     has_prefix_id :zone
 
-    include Spree::UniqueName
-
     has_many :zone_members, class_name: 'Spree::ZoneMember', dependent: :destroy, inverse_of: :zone
     alias members zone_members
 

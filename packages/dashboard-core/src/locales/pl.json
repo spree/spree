@@ -195,7 +195,8 @@
         "selected": "Wybrano: {{count}}"
       },
       "channel_select": {
-        "placeholder": "Wybierz kanał sprzedaży"
+        "placeholder": "Wybierz kanał sprzedaży",
+        "all_channels": "Wszystkie kanały"
       },
       "command_palette": {
         "create": {
@@ -249,6 +250,7 @@
         },
         "no_results": "Brak wyników dla „{{query}}”.",
         "placeholder": "Szukaj produktów, zamówień, klientów…",
+        "search_label": "Szukaj wszędzie…",
         "title": "Wyszukiwanie i polecenia"
       },
       "confirm_dialog": {
@@ -428,6 +430,7 @@
         "filter_select_placeholder": "Wybierz…",
         "filter_text_placeholder": "Filtruj…",
         "filter_to_placeholder": "Filtruj do…",
+        "more_conditions": "Więcej warunków",
         "operators": {
           "after": "po",
           "before": "przed",
@@ -978,7 +981,8 @@
         "customers": "Klienci",
         "price_list_prices": "Ceny cennika",
         "product_translations": "Tłumaczenia produktów",
-        "products": "Produkty"
+        "products": "Produkty",
+        "purchase_orders": "Zamówienia zakupu"
       },
       "wizard_title": "Import"
     },
@@ -1060,7 +1064,8 @@
       },
       "validation": {
         "non_negative": "musi wynosić zero lub więcej"
-      }
+      },
+      "description": "Pudełka, kartony i palety, w których wysyłasz towary, z wymiarami i wagami, na podstawie których przewoźnicy wyceniają przesyłki."
     },
     "pages": {
       "settings": {
@@ -1417,7 +1422,8 @@
         "unknown_product": "Nieznany produkt",
         "variant_count_one": "{{count}} wariant",
         "variant_count_other": "{{count}} wariantów"
-      }
+      },
+      "description": "Magazyny i sklepy, w których trzymasz towar i z których realizujesz zamówienia."
     },
     "validation": {
       "codes": {
@@ -1427,6 +1433,7 @@
         "empty": "nie może być puste",
         "equal_to": "musi być równe {{count}}",
         "exclusion": "jest zarezerwowane",
+        "forbidden_reporting_member": "Ten raport odwołuje się do danych, których nie możesz odczytać.",
         "greater_than": "musi być większe niż {{count}}",
         "greater_than_or_equal_to": "musi być większe lub równe {{count}}",
         "inclusion": "nie znajduje się na liście",
@@ -1440,6 +1447,7 @@
         "present": "musi być puste",
         "product_not_in_store": "wszystkie muszą należeć do tego sklepu",
         "required": "musi istnieć",
+        "seeded_report_read_only": "To raport wbudowany i nie można go zmienić. Zapisz zamiast tego kopię.",
         "taken": "jest już zajęte",
         "too_long": "jest za długie (maksymalnie {{count}} znaków)",
         "too_short": "jest za krótkie (minimalnie {{count}} znaków)",

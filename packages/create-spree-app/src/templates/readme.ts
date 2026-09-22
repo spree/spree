@@ -1,4 +1,4 @@
-import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
+import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import type { PackageManager } from '../types.js'
 import { globalAddCommand, runCommand, storefrontPm } from '../utils.js'
 
@@ -40,11 +40,10 @@ Wait for the services to be healthy, then open:
 
 ${
   hasDashboard
-    ? `- **Admin Dashboard (React, Developer Preview):** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
-  - You choose the admin email and password during the first run
-  - Classic admin: http://localhost:${port}/admin (same credentials)`
-    : `- **Admin Dashboard:** http://localhost:${port}/admin
-  - You choose the admin email and password during the first run`
+    ? `- **Admin Dashboard:** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
+  - The first run opens a setup link where you create the admin account
+- **Seller Panel (marketplace):** http://localhost:${SELLER_DASHBOARD_PORT} — run it with \`cd apps/seller-dashboard && pnpm dev\``
+    : `- **Admin Dashboard:** run \`spree add dashboard\` to scaffold it`
 }
 - **Store API:** http://localhost:${port}/api/v3/store
 `
@@ -66,7 +65,7 @@ Open http://localhost:${STOREFRONT_PORT}
 
   if (hasDashboard) {
     content += `
-### The React Dashboard (Developer Preview)
+### The React Dashboard
 
 \`apps/dashboard/\` is your admin — a customizable React SPA (plugins, your
 own pages, table tweaks) with live reload. \`spree dev\` starts it
@@ -92,16 +91,16 @@ To learn how to add pages, tweak tables, or build plugins, see the
   content += `
 ## Customizing the Spree API
 
-The \`backend/\` directory is the Spree API — a full Rails application serving the Store and Admin APIs (plus background jobs and transactional emails) that your storefront and dashboard talk to. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
+The \`server/\` directory is the Spree API — a full Rails application serving the Store and Admin APIs (plus background jobs and transactional emails) that your storefront and dashboard talk to. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
 
 \`\`\`bash
 ${run} spree eject
 \`\`\`
 
-This rebuilds the Docker image from \`backend/\` and restarts services. You can then:
+This rebuilds the Docker image from \`server/\` and restarts services. You can then:
 
-- **Customize the API** by editing the files in \`backend/\`
-- **Add gems** to \`backend/Gemfile\`
+- **Customize the API** by editing the files in \`server/\`
+- **Add gems** to \`server/Gemfile\`
 - **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
@@ -115,7 +114,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 | \`spree dev\` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop the API services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
-| \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |
+| \`spree eject\` | Switch from prebuilt image to building from \`server/\` |
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |
 | \`spree logs worker\` | View background jobs logs |
@@ -153,7 +152,7 @@ Project setup mints a read-only secret key into \`.spree/credentials.json\` (git
 
 \`\`\`bash
 ${run} spree api get products
-${run} spree api get "orders?q[state_eq]=complete"
+${run} spree api get "orders?q[status_eq]=complete"
 ${run} spree api endpoints          # list endpoints + required scopes
 ${run} spree api status             # show resolved credentials + server reachability
 \`\`\`

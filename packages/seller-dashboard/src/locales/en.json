@@ -181,6 +181,18 @@
           }
         }
       }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "How your goods ship to customers",
+        "package_types": "Boxes, cartons and containers you pack orders in",
+        "policies": "Terms, privacy, returns and shipping documents",
+        "stock_locations": "Warehouses and pickup points that hold stock",
+        "team": "People with access to this seller"
+      }
+    },
+    "settings_page": {
+      "description": "Manage fulfillment, legal documents and your team."
     }
   },
   "app": {
@@ -258,11 +270,13 @@
   },
   "earnings": {
     "balance": {
+      "converted": "Earned in {{currency}}, paid in your own currency",
       "earned": "Earned",
       "empty": "Once an order of yours is fulfilled, what it earned shows up here.",
       "load_error": "Could not load your balance.",
       "owed": "Owed to you ({{currency}})",
       "paid": "Paid out",
+      "payable": "Payable to you",
       "pending": "On its way",
       "title": "Balance"
     },

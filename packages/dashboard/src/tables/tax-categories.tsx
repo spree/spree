@@ -5,6 +5,8 @@ import { PercentIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<TaxCategory>('tax-categories', {
+  docsPath: 'settings/tax',
+  description: i18n.t('admin.table_descriptions.tax_categories'),
   title: i18n.t('admin.settings_nav.items.tax_categories'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.tax_categories.search_placeholder'),

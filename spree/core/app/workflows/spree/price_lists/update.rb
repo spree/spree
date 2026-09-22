@@ -65,6 +65,12 @@ module Spree
             price_list.errors.add(:base, :negative_price)
           elsif refusal[:invalid_quantities].present?
             price_list.errors.add(:base, :invalid_quantity)
+          elsif refusal[:quantities_on_base_prices].present?
+            price_list.errors.add(:base, :quantity_on_base_price)
+          elsif refusal[:duplicate_quantities].present?
+            price_list.errors.add(:base, :duplicate_quantity)
+          elsif refusal[:rising_ladders].present?
+            price_list.errors.add(:base, :price_rises_with_quantity)
           else
             price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
           end

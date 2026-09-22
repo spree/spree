@@ -220,6 +220,22 @@ module Spree::Preferences::Preferable
       else
         value.to_time
       end
+    # Kept as the `yyyy-MM-dd` string it arrived as rather than coerced to a
+    # Time. Preferences are YAML-serialized, and what a date *means* depends on
+    # the store's timezone, which this method has no access to: coercing here
+    # would freeze the value against the server's zone and move the operator's
+    # deadline by hours. The reader owns that (see
+    # `Spree::SellerRequirements::AcceptTerms#effective_from`); the type exists
+    # so the admin form knows to render a date picker.
+    when :date
+      return nil if value.blank?
+
+      case value
+      when Date, Time, DateTime, ActiveSupport::TimeWithZone
+        value.strftime('%Y-%m-%d')
+      else
+        value.to_s
+      end
     else
       value
     end

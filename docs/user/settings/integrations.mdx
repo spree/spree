@@ -1,0 +1,35 @@
+---
+title: "Integrations"
+description: "Connect the external services your providers need — carriers, tax engines, and more — with credentials stored once per store."
+---
+
+Integrations are where you connect an outside service to your store: a carrier account for live shipping rates and labels, a tax engine, a fulfillment service. Each one holds the credentials that service needs, stored once per store, and every provider that uses that service reads them from here.
+
+Find them under **Settings → Integrations**.
+
+## What you will see
+
+Integrations arrive with **provider extensions**. Install a provider — the EasyPost provider, for example — and its integration appears on this page, grouped by what it does: Shipping, Tax, or Other. A store with no providers installed sees an empty page, and that is normal.
+
+Each integration shows its connection status:
+
+| Status | Meaning |
+|---|---|
+| Not connected | No credentials entered yet |
+| Connected (inactive) | Credentials saved and verified, but switched off |
+| Active | In use by providers |
+
+## Connecting one
+
+Open the integration and enter what the service asks for — typically an API key, sometimes an account identifier or a choice between a test and a live environment. Secrets are masked once saved.
+
+Turning an integration **active** verifies the connection first. If the service cannot be reached with those credentials, the switch is refused and the error tells you what the service said, so a mistyped key never silently breaks shipping or tax at checkout.
+
+## Where it is used
+
+Once active, the integration is picked from wherever a provider needs it. A delivery method that quotes live carrier rates points at the carrier integration; a market that uses an external tax engine points at the tax integration. Those pickers link back here, so there is one place credentials live and one place to rotate them.
+
+## Related
+
+- [Delivery Profiles](/user/settings/delivery-profiles) — delivery methods that quote through a carrier integration
+- [Tax Rates](/user/settings/tax-rates) — choosing a tax provider per market

@@ -128,7 +128,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
               {rules.fields.map((ruleField, index) => (
                 <div
                   key={ruleField.id}
-                  className="flex flex-col gap-3 rounded-lg border border-border p-3 sm:flex-row sm:items-start"
+                  className="flex flex-col gap-3 rounded-lg border border-border-subtle p-3 sm:flex-row sm:items-start"
                 >
                   <Field className="flex-1">
                     <FieldLabel className="sr-only">

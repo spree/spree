@@ -3,7 +3,7 @@ import {
   adminClient,
   Can,
   ImageUploadField,
-  SectionHeading,
+  PageHeader,
   Subject,
   useDirectUpload,
   usePermissions,
@@ -11,8 +11,6 @@ import {
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -214,15 +212,14 @@ function MediaLibraryPage() {
 
   return (
     <>
-      {/* Same shell as every other list page: the title, its description and
-          the filters all live inside one card rather than floating above it. */}
-      <Card className="-mx-4 rounded-none border-0 bg-transparent sm:mx-0 sm:rounded-xl sm:border sm:bg-card">
-        <div className="flex flex-row items-start gap-2 border-b border-border-subtle p-3 pl-4 lg:justify-between">
-          <SectionHeading
-            title={t('admin.media_library.title')}
-            description={t('admin.media_library.description')}
-          />
-          <div className="ml-auto flex shrink-0 items-center gap-2">
+      {/* The same shell `ResourceTable` builds: the page's own header on the
+          sheet, the controls under it, and the card holding only the content. */}
+      <div className="flex flex-col gap-3">
+        <PageHeader
+          sticky={false}
+          title={t('admin.media_library.title')}
+          description={t('admin.media_library.description')}
+          actions={
             <Can I="update" a={Subject.Media}>
               <input
                 ref={fileInputRef}
@@ -245,10 +242,10 @@ function MediaLibraryPage() {
                 {t('admin.media_library.upload')}
               </Button>
             </Can>
-          </div>
-        </div>
+          }
+        />
 
-        <div className="flex flex-col gap-3 border-b border-border-subtle px-3 py-2 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <SearchInput
             value={searchInput}
             onValueChange={(value) => {
@@ -301,7 +298,10 @@ function MediaLibraryPage() {
           </Select>
         </div>
 
-        <CardContent className="p-4">
+        {/* No card around the grid: each tile already carries its own frame, so
+            boxing them drew a second border around a set of borders. The sheet
+            is the surface they sit on. */}
+        <div>
           {query.isLoading ? (
             <div className="flex items-center justify-center py-16 text-muted-foreground">
               <Loader2Icon className="size-5 animate-spin" />
@@ -371,7 +371,7 @@ function MediaLibraryPage() {
               ))}
             </ul>
           )}
-        </CardContent>
+        </div>
 
         {meta && files.length > 0 && (
           <Pagination
@@ -381,7 +381,7 @@ function MediaLibraryPage() {
             onPageSizeChange={(size) => patchSearch({ limit: size })}
           />
         )}
-      </Card>
+      </div>
 
       <MediaDetailSheet
         media={selected}

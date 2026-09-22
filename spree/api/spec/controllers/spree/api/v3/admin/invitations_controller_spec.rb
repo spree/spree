@@ -54,7 +54,7 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
       end
 
       it 'forbids inviting into a role whose permissions exceed its own' do
-        owner_role = create(:role, name: 'owner', permissions: Spree.permissions.catalog_keys)
+        owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 
         expect {
           post :create, params: { email: 'attacker@evil.com', role_id: owner_role.prefixed_id }, as: :json

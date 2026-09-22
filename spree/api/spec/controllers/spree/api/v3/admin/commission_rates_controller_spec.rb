@@ -23,8 +23,11 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
       expect(row['kind']).to eq('percentage')
       # The rule is identified by `type` alone — the dashboard names it from
       # its own locale files rather than from a server-resolved label.
-      expect(row['rules'].first).to include('type' => 'seller_rule')
-      expect(row['rules'].first).not_to have_key('label')
+      rule_payload = row['rules'].first
+      expect(rule_payload).to include('type' => 'seller_rule')
+      expect(rule_payload).not_to have_key('label')
+      expect(rule_payload['seller_ids']).to eq([seller.prefixed_id])
+      expect(rule_payload['sellers'].first['id']).to eq(seller.prefixed_id)
     end
 
     it 'returns rates in precedence order' do
@@ -70,7 +73,9 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:created)
       expect(json_response['value']).to eq('12.5')
-      expect(json_response['rules'].first['type']).to eq('seller_rule')
+      rule_payload = json_response['rules'].first
+      expect(rule_payload['type']).to eq('seller_rule')
+      expect(rule_payload['seller_ids']).to eq([seller.prefixed_id])
     end
 
     it 'refuses a fixed rate that states no amount anywhere' do
@@ -127,6 +132,7 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       expect(response).to have_http_status(:ok)
       expect(rate.reload.commission_rules.map(&:class)).to eq([Spree::CommissionRules::CategoryRule])
+      expect(json_response['rules'].first['category_ids']).to eq([category.prefixed_id])
     end
 
     # A rule can only name records of its own marketplace. The preference
@@ -252,6 +258,12 @@ RSpec.describe Spree::Api::V3::Admin::CommissionRatesController, type: :controll
 
       products = types.find { |row| row['type'] == 'product_rule' }
       expect(products['association_fields']).to include('product_ids')
+
+      sellers = types.find { |row| row['type'] == 'seller_rule' }
+      expect(sellers['association_fields']).to include('seller_ids')
+
+      categories = types.find { |row| row['type'] == 'category_rule' }
+      expect(categories['association_fields']).to include('category_ids')
     end
   end
 end

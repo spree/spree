@@ -5,6 +5,8 @@ import { ScrollTextIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 
 defineTable<Policy>('policies', {
+  docsPath: 'settings/policies',
+  description: i18n.t('admin.table_descriptions.policies'),
   title: i18n.t('admin.settings_nav.items.policies'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.policies.search_placeholder'),

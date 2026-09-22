@@ -8,23 +8,28 @@ import { readmeContent } from '../src/templates/readme'
 
 describe('envContent', () => {
   it('includes the provided secret key', () => {
-    const content = envContent('my-secret-123', 3000, true)
+    const content = envContent('my-secret-123', 3000, 1025, 8025)
     expect(content).toContain('SECRET_KEY_BASE=my-secret-123')
   })
 
   it('includes SPREE_PORT', () => {
-    const content = envContent('any', 3000, true)
+    const content = envContent('any', 3000, 1025, 8025)
     expect(content).toContain('SPREE_PORT=3000')
   })
 
   it('uses custom port value', () => {
-    const content = envContent('any', 4567, true)
+    const content = envContent('any', 4567, 1025, 8025)
     expect(content).toContain('SPREE_PORT=4567')
   })
 
-  it('persists the sample-data choice', () => {
-    expect(envContent('any', 3000, true)).toContain('SPREE_SAMPLE_DATA=true')
-    expect(envContent('any', 3000, false)).toContain('SPREE_SAMPLE_DATA=false')
+  // Mailpit publishes both ports on the host, so a second Spree project or any
+  // local mail catcher takes them. The scaffold probes them and writes the
+  // result, so compose never falls back to a default nobody checked was free.
+  it('pins the probed Mailpit ports', () => {
+    const content = envContent('any', 3000, 1026, 8026)
+
+    expect(content).toContain('MAILPIT_SMTP_PORT=1026')
+    expect(content).toContain('MAILPIT_UI_PORT=8026')
   })
 })
 
@@ -48,11 +53,6 @@ describe('storefrontEnvContent', () => {
     const content = storefrontEnvContent(3000)
     expect(content).not.toContain('SPREE_WHOLESALE_CHANNEL')
   })
-
-  it('enables the wholesale portal when requested', () => {
-    const content = storefrontEnvContent(3000, true)
-    expect(content).toMatch(/^SPREE_WHOLESALE_CHANNEL=wholesale$/m)
-  })
 })
 
 describe('rootPackageJsonContent', () => {
@@ -75,7 +75,9 @@ describe('rootPackageJsonContent', () => {
       delete process.env.SPREE_CLI_VERSION
     }
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
-    expect(pkg.dependencies['@spree/cli']).toBe('^2.4.4')
+    // The floor must admit every CLI capability the scaffold calls — the
+    // seller-dashboard component landed in 3.0.
+    expect(pkg.dependencies['@spree/cli']).toBe('^3.0.0')
   })
 
   it('includes convenience scripts using spree cli', () => {
@@ -128,8 +130,8 @@ describe('readmeContent', () => {
   // during first run, so the README points there instead of printing a
   // well-known email and password.
   it('points at first-run setup instead of printing credentials', () => {
-    const content = readmeContent('my-store', true, 3000)
-    expect(content).toContain('admin email and password during the first run')
+    const content = readmeContent('my-store', true, 3000, true)
+    expect(content).toContain('setup link where you create the admin account')
     expect(content).not.toContain('spree@example.com')
     expect(content).not.toContain('spree123')
   })
@@ -143,7 +145,7 @@ describe('readmeContent', () => {
   it('includes eject instructions', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('spree eject')
-    expect(content).toContain('backend/')
+    expect(content).toContain('server/')
   })
 
   it('uses spree cli commands', () => {
@@ -160,7 +162,6 @@ describe('readmeContent', () => {
 
   it('uses custom port in URLs', () => {
     const content = readmeContent('my-store', true, 4567)
-    expect(content).toContain('http://localhost:4567/admin')
     expect(content).toContain('http://localhost:4567/api/v3/store')
   })
 
@@ -189,10 +190,12 @@ describe('readmeContent', () => {
 
   it('includes the React Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
-    expect(content).toContain('### The React Dashboard (Developer Preview)')
-    // The dashboard's dev server IS the admin; the classic admin is a pointer.
+    expect(content).toContain('### The React Dashboard')
+    // The dashboard's dev server IS the admin in Spree 6 — the Rails admin
+    // engine is gone, so the README must not point at /admin.
     expect(content).toContain('http://localhost:5173')
-    expect(content).toContain('Classic admin: http://localhost:3000/admin')
+    expect(content).not.toContain('Classic admin')
+    expect(content).toContain('Seller Panel')
     expect(content).toContain('docs/developer/dashboard')
   })
 
@@ -206,7 +209,9 @@ describe('rootClaudeMdContent', () => {
   it('lists apps/dashboard when the dashboard is included', () => {
     const content = rootClaudeMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')
-    expect(content).toContain('docs/developer/dashboard')
+    // Each app carries its own instructions; the root file points at them.
+    expect(content).toContain('apps/dashboard/AGENTS.md')
+    expect(content).toContain('apps/seller-dashboard/AGENTS.md')
   })
 
   it('renders commands for the chosen package manager', () => {
@@ -234,11 +239,11 @@ describe('gitignoreContent', () => {
 })
 
 describe('dependabotContent', () => {
-  it('covers the root wrapper, backend gems, and CI', () => {
+  it('covers the root wrapper, server gems, and CI', () => {
     const content = dependabotContent(false)
     expect(content).toContain('version: 2')
     expect(content).toContain('package-ecosystem: npm\n    directory: "/"')
-    expect(content).toContain('package-ecosystem: bundler\n    directory: "/backend"')
+    expect(content).toContain('package-ecosystem: bundler\n    directory: "/server"')
     expect(content).toContain('package-ecosystem: github-actions')
   })
 
@@ -277,7 +282,7 @@ describe('dependabotContent', () => {
     expect(content.match(/applies-to: version-updates/g)).toHaveLength(4)
     // Group names are unique per ecosystem.
     expect(content).toContain('root-security:')
-    expect(content).toContain('backend-version:')
+    expect(content).toContain('server-version:')
     expect(content).toContain('storefront-security:')
   })
 })

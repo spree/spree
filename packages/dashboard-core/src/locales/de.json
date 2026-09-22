@@ -194,7 +194,8 @@
         "selected": "{{count}} ausgewählt"
       },
       "channel_select": {
-        "placeholder": "Verkaufskanal auswählen"
+        "placeholder": "Verkaufskanal auswählen",
+        "all_channels": "Alle Kanäle"
       },
       "command_palette": {
         "create": {
@@ -248,6 +249,7 @@
         },
         "no_results": "Keine Ergebnisse für \"{{query}}\".",
         "placeholder": "Produkte, Bestellungen, Kunden suchen…",
+        "search_label": "Alles durchsuchen…",
         "title": "Suche und Befehle"
       },
       "confirm_dialog": {
@@ -427,6 +429,7 @@
         "filter_select_placeholder": "Auswählen…",
         "filter_text_placeholder": "Filtern…",
         "filter_to_placeholder": "Filtern auf…",
+        "more_conditions": "Weitere Bedingungen",
         "operators": {
           "after": "nach",
           "before": "vor",
@@ -977,7 +980,8 @@
         "customers": "Kunden",
         "price_list_prices": "Preislistenpreise",
         "product_translations": "Produktübersetzungen",
-        "products": "Produkte"
+        "products": "Produkte",
+        "purchase_orders": "Bestellungen"
       },
       "wizard_title": "Import"
     },
@@ -1059,7 +1063,8 @@
       },
       "validation": {
         "non_negative": "muss null oder größer sein"
-      }
+      },
+      "description": "Die Kartons, Umkartons und Paletten, in denen Ihre Ware versendet wird, mit den Maßen und Gewichten, auf denen Frachtangebote beruhen."
     },
     "pages": {
       "settings": {
@@ -1400,7 +1405,8 @@
         "unknown_product": "Unbekanntes Produkt",
         "variant_count_one": "{{count}} Variante",
         "variant_count_other": "{{count}} Varianten"
-      }
+      },
+      "description": "Die Lager und Läden, in denen Sie Bestand halten und aus denen Sie Bestellungen erfüllen."
     },
     "validation": {
       "codes": {
@@ -1410,6 +1416,7 @@
         "empty": "darf nicht leer sein",
         "equal_to": "muss genau {{count}} sein",
         "exclusion": "ist reserviert",
+        "forbidden_reporting_member": "Dieser Bericht verweist auf Daten, die Sie nicht lesen dürfen.",
         "greater_than": "muss größer als {{count}} sein",
         "greater_than_or_equal_to": "muss größer oder gleich {{count}} sein",
         "inclusion": "ist nicht in der Liste enthalten",
@@ -1423,6 +1430,7 @@
         "present": "muss leer sein",
         "product_not_in_store": "müssen alle zu diesem Shop gehören",
         "required": "muss vorhanden sein",
+        "seeded_report_read_only": "Dies ist ein integrierter Bericht und kann nicht geändert werden. Speichern Sie stattdessen eine Kopie.",
         "taken": "ist bereits vergeben",
         "too_long": "ist zu lang (maximal {{count}} Zeichen)",
         "too_short": "ist zu kurz (mindestens {{count}} Zeichen)",

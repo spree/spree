@@ -9,6 +9,13 @@ import { ensureTimestampColumns } from './timestamp-columns'
 interface ColumnDefBase<T = any> {
   key: string
   label: string
+  /**
+   * One sentence explaining what the column means, shown from an info icon
+   * beside the header. For a figure whose name is not self-evident — what
+   * counts as "available", which units are "reserved" — where the alternative
+   * is a merchant guessing. Leave it off a column that explains itself.
+   */
+  labelHint?: string
   sortable?: boolean
   filterable?: boolean
   default?: boolean
@@ -66,6 +73,14 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
   getOptionLabel: (option: R) => string
   placeholder?: string
   emptyText?: string
+  /**
+   * Fetches the whole list, for a resource small enough to show in full —
+   * a store's warehouses, its channels. The control then opens as a plain
+   * list of options instead of an empty box waiting to be typed into, and
+   * still searches once the operator types. Leave it off for anything that
+   * could run to hundreds of rows.
+   */
+  listAll?: () => Promise<{ data: R[] }>
 }
 
 /**

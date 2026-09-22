@@ -30,7 +30,6 @@ import {
   Skeleton,
   StatusBadge,
   toastManager,
-  useConfirm,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
@@ -44,6 +43,7 @@ import { ProductCustomFieldsProvider } from '../../../../components/spree/produc
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
 import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { StockHistoryDialog } from '../../../../components/spree/stock-history-card'
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
@@ -86,7 +86,6 @@ function ProductDetailPage() {
 
 function ProductForm({ product }: { product: Product }) {
   const { t } = useTranslation()
-  const confirm = useConfirm()
   const { productId, storeId } = Route.useParams()
   const router = useRouter()
   const updateProduct = useUpdateProduct()
@@ -230,12 +229,6 @@ function ProductForm({ product }: { product: Product }) {
   useFormSubmitShortcut(form, onSubmit)
 
   const handleDelete = async () => {
-    const confirmed = await confirm({
-      message: t('admin.products.delete_confirm'),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!confirmed) return
     try {
       await deleteProduct.mutateAsync(productId)
       toastManager.add({ type: 'success', title: t('admin.messages.product_deleted') })
@@ -269,6 +262,7 @@ function ProductForm({ product }: { product: Product }) {
               actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
               resource={{ id: product.id }}
               onDelete={handleDelete}
+              deleteConfirmMessage={t('admin.products.delete_confirm')}
               deleteLabel={t('admin.products.delete_label')}
               jsonPreview={{
                 title: `Product ${product.name}`,
@@ -288,6 +282,14 @@ function ProductForm({ product }: { product: Product }) {
                 form={form}
                 stockLocationHref={(id) =>
                   `/${storeId}/settings/stock-locations?edit=${encodeURIComponent(id)}`
+                }
+                // Why the on-hand numbers are what they are. Across every
+                // variant, because that is the question a merchant asks on a
+                // product page (docs/plans/6.0-inventory-operations.md).
+                actions={
+                  <StockHistoryDialog
+                    variantIds={assignableVariants.map((variant) => variant.id)}
+                  />
                 }
               />
               <DigitalAssetsCard productId={productId} variants={assignableVariants} />

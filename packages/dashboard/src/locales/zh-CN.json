@@ -4,6 +4,10 @@
       "delete_image": "删除图片",
       "edit_media": "编辑媒体"
     },
+    "actors": {
+      "api_key": "API 密钥",
+      "unnamed": "未命名"
+    },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
       "create_description": "从该来源加载的浏览器可以调用管理 API。CORS 允许列表和管理后台 Cookie 会话都依赖此列表——请保持精简。",
@@ -30,10 +34,10 @@
         "never_used": "从未使用",
         "revoked": "已撤销"
       },
-      "by_email": "由 {{email}}",
       "create_key_cta": "创建密钥",
       "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
       "create_sheet_title": "创建 API key",
+      "created_by": "由 {{actor}}",
       "delete_confirm": {
         "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。",
         "title": "删除密钥？"
@@ -116,7 +120,7 @@
         "message": "{{name}} 将停止生效。其受众将回到店铺价格，目录中的所有内容都会保留。"
       },
       "delete_confirm": {
-        "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
+        "message": "这将删除 {{name}}、其分配，以及它的价目表和其中的价格。产品仍保留在您的商店中。此操作无法撤销。",
         "title": "删除目录？"
       },
       "detach_warning": "保存后将删除此目录的价目表及其中的价格。此受众将支付正常价格。",
@@ -1860,6 +1864,10 @@
         "password_confirmation": {
           "label": "确认密码"
         },
+        "sample_data": {
+          "help": "在后台添加演示商品、分类、客户和订单，方便您浏览后台。需要几分钟并会下载商品图片。",
+          "label": "加载示例数据"
+        },
         "store_name": {
           "label": "商店名称"
         }
@@ -1914,6 +1922,10 @@
         "address_requires_phone": {
           "help": "将电话号码设为客户地址的必填项。",
           "label": "要求填写电话号码"
+        },
+        "always_include_confirm_step": {
+          "help": "在下单前始终为顾客提供最终确认步骤，即使没有任何支付方式要求该步骤。",
+          "label": "始终显示确认步骤"
         },
         "capture_method": {
           "help": "所有支付方式的默认设置。单个支付方式可覆盖此设置。",
@@ -2071,6 +2083,11 @@
           "help": "根据客户的配送地址计算税费。关闭此选项则改用账单地址计税。",
           "label": "按配送地址计税"
         },
+        "low_stock_threshold": {
+          "help": "现有库存不超过此数量的跟踪款式会在首页显示为低库存。设为 0 可关闭提醒。",
+          "label": "低库存阈值",
+          "suffix": "件"
+        },
         "track_inventory_levels": {
           "help": "统计现有库存。关闭后，所有商品都视为始终有货。",
           "label": "跟踪库存数量"
@@ -2080,8 +2097,6 @@
           "label": "记录价格历史"
         },
         "payouts": {
-          "title": "卖家付款",
-          "description": "本平台如何向在此交易的卖家付款。",
           "provider": {
             "label": "付款方式",
             "help": "由谁转移资金。自行记账时，由你自己转账并逐笔标记为已付。",
@@ -2103,7 +2118,10 @@
           "minimum": {
             "label": "最低付款额",
             "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
-          }
+          },
+          "provider_needs_connection": "连接 {{name}} 后即可使用",
+          "provider_connect_hint": "{{name}} 通过其付款方式向卖家付款，而该付款方式尚未在本店启用。",
+          "provider_connect_link": "前往「付款方式」设置"
         },
         "limit_digital_download_count": {
           "help": "关闭后，买家可以不限次数下载。",
@@ -2118,6 +2136,34 @@
         },
         "digital_asset_authorized_days": {
           "label": "可用天数"
+        },
+        "preferred_default_package_dimensions": {
+          "height": "高",
+          "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。",
+          "label": "默认包裹尺寸",
+          "length": "长",
+          "width": "宽"
+        },
+        "preferred_default_package_weight": {
+          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
+          "label": "默认包裹重量"
+        },
+        "auto_approve_sellers": {
+          "label": "自动通过卖家审核",
+          "help": "卖家完成清单后立即开始销售，无需任何人审核。"
+        },
+        "auto_approve_seller_products": {
+          "label": "自动发布卖家商品",
+          "help": "卖家提交后商品立即上架销售，无需任何人审核。"
+        },
+        "send_seller_transactional_emails": {
+          "label": "向卖家发送邮件",
+          "help": "向卖家发送关于审核、商品和付款的邮件。如果你自行联系卖家，可以关闭。不影响发给顾客的邮件。"
+        },
+        "default_commission_tax_rate": {
+          "label": "佣金默认税率",
+          "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2565,7 +2611,13 @@
       "sellers": "卖家",
       "settings": "设置",
       "transfers": "调拨",
-      "translations": "翻译"
+      "translations": "翻译",
+      "purchase_orders": "采购订单",
+      "inventory": "库存",
+      "suppliers": "供应商",
+      "loyalty": "会员权益",
+      "store_credits": "店铺信用",
+      "commission_rates": "佣金费率"
     },
     "option_types": {
       "columns": {
@@ -2699,9 +2751,13 @@
         "confirm": {
           "approve_message": "批准此订单吗？",
           "cancel_message": "确定要取消此订单吗？",
+          "cancel_shipment_confirm": "取消履约单",
+          "cancel_shipment_dismiss": "保留履约单",
           "cancel_shipment_message": "取消此履约单吗？",
           "capture_message": "捕获此付款吗？",
           "complete_message": "现在完成此草稿订单吗？",
+          "delete_message": "删除订单草稿 {{number}}？此操作无法撤销。",
+          "delete_title": "删除订单草稿？",
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
           "remove_store_credit_message": "从订单中移除商店积分吗？",
@@ -2729,7 +2785,8 @@
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
           "complete_failed": "完成订单失败",
-          "confirmation_send_failed": "发送确认失败"
+          "confirmation_send_failed": "发送确认失败",
+          "delete_failed": "删除订单失败"
         },
         "fulfillments": {
           "add_delivery": "添加运单号",
@@ -2829,7 +2886,10 @@
           "canceled": "订单已取消",
           "captured": "付款已收取",
           "completed": "订单已完成",
+          "completed_as_group_one": "订单已完成，拆分为 {{count}} 个独立订单",
+          "completed_as_group_other": "订单已完成，拆分为 {{count}} 个独立订单",
           "confirmation_sent": "确认信息已发送",
+          "deleted": "订单草稿已删除",
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
@@ -2856,6 +2916,7 @@
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
           "load_error": "无法加载此订单的付款信息。"
         },
+        "priced_by": "定价来自 {{name}}",
         "purchase_order": {
           "document": "采购订单文件",
           "document_help": "PDF、图片或 Word 文件，最大 10 MB。",
@@ -2987,10 +3048,17 @@
         "use_default_addresses": "使用客户的默认账单和配送地址"
       },
       "payment_statuses": {
+        "none": "未付款",
+        "authorized": "已授权",
+        "partially_paid": "部分付款",
+        "paid": "已付款",
+        "partially_refunded": "部分退款",
+        "refunded": "已退款",
+        "overcharged": "多付款",
+        "voided": "已作废",
         "balance_due": "待付款",
         "credit_owed": "应退款",
         "failed": "失败",
-        "paid": "已付款",
         "void": "已作废"
       },
       "statuses": {
@@ -3128,22 +3196,100 @@
         "columns": {
           "price": "价格",
           "product": "商品",
-          "sold": "已售"
+          "sold": "已售",
+          "trend": "趋势"
         },
         "metric_short": {
           "avg_order_value": "客单价",
           "orders": "订单数",
-          "sales": "销售额"
+          "sales": "销售额",
+          "units": "件数",
+          "customers": "客户"
         },
         "metrics": {
           "avg_order_value": "平均订单金额",
           "orders": "总订单数",
-          "sales": "总销售额"
+          "sales": "总销售额",
+          "units": "已售件数",
+          "customers": "客户数"
         },
         "subtitle": "您的店铺业绩概览",
         "title": "仪表盘",
         "top_products": "热销商品",
-        "top_products_description": "您店铺中最畅销的商品。"
+        "top_products_description": "您店铺中最畅销的商品。",
+        "legend": {
+          "current": "本期",
+          "previous": "上一期"
+        },
+        "growth": {
+          "new": "新增",
+          "vs_previous": "对比上一期"
+        },
+        "operations": {
+          "title": "运营事项",
+          "subtitle": "当前需要您处理的事项。",
+          "failed": "无法加载这些统计。",
+          "empty": "您的角色在此没有可查看的内容。",
+          "counters": {
+            "low_stock_items": {
+              "label": "低库存",
+              "description_zero": "已关闭。请在店铺设置中设定低库存阈值。",
+              "description_one": "该地点仅剩 1 件或更少可售。",
+              "description_other": "该地点仅剩 {{count}} 件或更少可售。"
+            },
+            "open_claims": {
+              "label": "未处理理赔",
+              "description": "尚未解决的理赔。"
+            },
+            "open_exchanges": {
+              "label": "未处理换货",
+              "description": "尚未完成的换货。"
+            },
+            "open_returns": {
+              "label": "未处理退货",
+              "description": "尚未退款的退货。"
+            },
+            "orders_to_fulfill": {
+              "label": "待发货订单",
+              "description": "已下单但尚未发出任何商品。"
+            },
+            "out_of_stock_items": {
+              "label": "缺货",
+              "description": "此地点已无可售库存。"
+            },
+            "payments_to_collect": {
+              "label": "待收款订单",
+              "description": "已下单但仍有款项未付。"
+            }
+          }
+        },
+        "rankings": {
+          "title": "排行榜",
+          "subtitle": "所选时间段内表现最佳。",
+          "tabs": {
+            "customers": "客户",
+            "categories": "类目",
+            "companies": "公司",
+            "sellers": "卖家"
+          },
+          "orders_count_other": "{{count}} 笔订单",
+          "units_count_other": "{{count}} 件",
+          "empty": "该时间段暂无数据。",
+          "view_report": "查看报告",
+          "report_names": {
+            "seller_payouts": "卖家结算",
+            "top_categories": "热门类别",
+            "top_companies": "热门公司",
+            "top_customers": "热门客户"
+          }
+        },
+        "unavailable": {
+          "title": "您的角色无法查看报表",
+          "description": "请管理员授予“报表”权限（并可访问订单），以在此查看销售数据。"
+        },
+        "currency": {
+          "search": "搜索货币"
+        }
       },
       "orders": {
         "detail": {
@@ -3164,6 +3310,8 @@
               "resolve_replacement": "以换货解决"
             },
             "confirm": {
+              "cancel_confirm": "取消索赔",
+              "cancel_dismiss": "保留索赔",
               "deny": "拒绝此索赔？客户将不会收到退款或补发商品。"
             },
             "create_title": "新建索赔",
@@ -3191,6 +3339,10 @@
               "create": "新建换货",
               "fulfill": "寄出替换商品"
             },
+            "confirm": {
+              "cancel_confirm": "取消换货",
+              "cancel_dismiss": "保留换货"
+            },
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
             "price_difference": "差价",
@@ -3207,7 +3359,9 @@
             "buy_label": "购买退货面单",
             "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
             "confirm": {
-              "cancel": "取消此退货？不会恢复库存，也不会退款。"
+              "cancel": "取消此退货？不会恢复库存，也不会退款。",
+              "cancel_confirm": "取消退货",
+              "cancel_dismiss": "保留退货"
             },
             "create_title": "新建退货",
             "empty": "此订单暂无退货。",
@@ -3692,7 +3846,9 @@
           "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置",
           "tab_downloads": "数字下载",
-          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。"
+          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。",
+          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
+          "tab_default_package": "默认包裹"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",
@@ -3832,12 +3988,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "付款",
-          "subtitle": "本平台如何以及何时向卖家付款。"
-        },
         "package_types": {
           "add_sheet_title": "添加包装类型"
+        },
+        "marketplace": {
+          "title": "平台",
+          "subtitle": "本平台如何向卖家付款、卖家如何加入、会收到你的哪些通知，以及你的佣金要缴多少税。",
+          "payouts_title": "付款",
+          "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
+          "admission_title": "卖家审核",
+          "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "communication_title": "沟通",
+          "commission_tax_title": "佣金税"
         }
       },
       "staff": {
@@ -3939,6 +4101,7 @@
         "products": "商品、变体、选项、价格与媒体",
         "promotions": "促销、规则与优惠码",
         "publishing": "店面中可见的内容及其时间",
+        "purchasing": "供应商与采购订单",
         "refunds": "发起和查看退款",
         "seller_profile": "卖家自身的信息、地址和政策",
         "sellers": "卖家账户、入驻与审核",
@@ -3960,8 +4123,10 @@
         "analytics": "分析",
         "catalog": "商品目录",
         "customers": "客户",
+        "loyalty": "会员权益",
         "marketing": "营销",
         "orders": "订单",
+        "sellers": "卖家",
         "settings": "设置"
       },
       "labels": {
@@ -3987,6 +4152,7 @@
         "products": "商品",
         "promotions": "优惠",
         "publishing": "发布",
+        "purchasing": "采购",
         "refunds": "退款",
         "seller_profile": "卖家资料",
         "sellers": "卖家",
@@ -4085,6 +4251,12 @@
       "percent": "百分比",
       "preferred_amount": "金额",
       "preferred_percent": "百分比",
+      "terms_body": "条款",
+      "terms_body_description": "卖家在同意前阅读的内容。显示在其设置清单中。",
+      "terms_effective_from": "条款生效日期",
+      "terms_effective_from_description": "在此日期之前已同意的卖家需要再次同意。",
+      "terms_url": "条款链接",
+      "terms_url_description": "同一条款的可选已发布副本，在新标签页中打开。",
       "webhook_secret": "Webhook 签名密钥",
       "webhook_secret_description": "您在 EasyPost webhook 上设置的密钥。缺少它，承运商更新将被拒绝。"
     },
@@ -4732,6 +4904,7 @@
         },
         "all_done": "全部完成 🎉",
         "download": "下载文件",
+        "manage_requirements": "管理要求",
         "policy_empty": "该政策尚无内容。",
         "policy_updated": "最后更新于 {{date}}",
         "progress": "已完成 {{done}} / {{total}}",
@@ -4862,8 +5035,9 @@
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
-        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额",
-        "package_types": "纸箱、外箱、托盘与集装箱"
+        "package_types": "纸箱、外箱、托盘与集装箱",
+        "suppliers": "你从谁那里采购库存，以及如何联系他们",
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
       },
       "groups": {
         "audit": "审计",
@@ -4899,8 +5073,12 @@
         "tax_categories": "税收类别",
         "tax_rates": "税率",
         "webhooks": "Webhooks",
-        "payouts": "付款",
-        "package_types": "包装类型"
+        "package_types": "包装类型",
+        "suppliers": "供应商",
+        "marketplace": "设置"
+      },
+      "breadcrumbs": {
+        "marketplace": "平台"
       }
     },
     "setup": {
@@ -4918,7 +5096,9 @@
       "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
       "required_notice_title": "此安装尚未完成设置",
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
-      "title": "设置 Spree"
+      "title": "设置 Spree",
+      "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
+      "welcome_title": "欢迎，您的商店已就绪！"
     },
     "staff": {
       "actions": {
@@ -4957,10 +5137,70 @@
       }
     },
     "stock_levels": {
+      "column_hints": {
+        "allocated": "已被下单但尚未发货占用的数量，仍在货架上。",
+        "available": "新顾客还能买到的数量：现有减去已分配再减去预留。",
+        "incoming": "正在运往此地的数量：供应商采购单或运输中的调拨。",
+        "on_hand": "该地点实际在库的数量。点击可更正。",
+        "reserved": "正在结账的顾客暂时占用的数量。"
+      },
+      "columns": {
+        "allocated": "已分配",
+        "available": "可售",
+        "incoming": "在途",
+        "location": "地点",
+        "on_hand": "现有",
+        "product": "商品",
+        "reserved": "已预留",
+        "sku": "SKU",
+        "stock_status": "库存状态"
+      },
+      "filters": {
+        "has_incoming": "有在途",
+        "has_reserved": "有预留",
+        "in_stock": "有货",
+        "low_stock": "低库存",
+        "out_of_stock": "缺货"
+      },
+      "incoming": {
+        "open_aria": "添加在途库存",
+        "create_transfer": "创建调拨",
+        "create_purchase_order": "创建采购单"
+      },
+      "location_filter": {
+        "placeholder": "搜索地点…",
+        "empty": "未找到地点"
+      },
       "messages": {
         "stock_level_deleted": "库存水平已删除",
         "stock_updated": "库存已更新"
-      }
+      },
+      "no_sku": "无 SKU",
+      "quick_edit": {
+        "modes": {
+          "set": "设为",
+          "adjust": "调整"
+        },
+        "open_aria": "编辑 {{name}} 的现有数量",
+        "mode_aria": "更改方式",
+        "amount_aria": "数量",
+        "reason_aria": "原因",
+        "confirm": "应用"
+      },
+      "reasons": {
+        "correction": "更正",
+        "count": "盘点",
+        "received": "已收货",
+        "return_restock": "退货入库",
+        "damaged": "损坏",
+        "theft_or_loss": "被盗或丢失",
+        "promotion_or_donation": "促销或捐赠"
+      },
+      "table": {
+        "search_placeholder": "搜索 SKU 或商品…",
+        "empty": "暂无库存记录。变体在某地点入库后会显示在这里。"
+      },
+      "title": "库存"
     },
     "stock_locations": {
       "add_cta": "添加库存地点",
@@ -5018,25 +5258,116 @@
       "columns": {
         "direction": "方向",
         "number": "编号",
-        "reference": "参考信息"
+        "reference": "参考信息",
+        "units": "已收 / 已发",
+        "shipped": "发出时间",
+        "quantity_shipped": "已发出",
+        "quantity_to_ship": "待发出",
+        "quantity_received": "已收到",
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量"
       },
       "direction": {
         "external_receive": "外部收货",
         "internal": "在库存地点之间调拨"
       },
       "errors": {
-        "failed_to_delete": "删除库存调拨失败",
-        "failed_to_record": "记录库存调拨失败"
+        "failed_to_delete": "删除调拨失败",
+        "failed_to_record": "记录库存调拨失败",
+        "same_location": "两个仓库必须不同。",
+        "failed_to_create": "创建调拨失败",
+        "failed_to_save": "保存调拨失败",
+        "failed_to_mark_ready": "标记调拨为待发出失败",
+        "failed_to_mark_in_transit": "标记调拨为在途失败",
+        "failed_to_receive": "调拨收货失败",
+        "failed_to_cancel": "取消调拨失败",
+        "not_editable": "该调拨已打包，内容已成为记录。如果不该发出，请取消它。",
+        "failed_to_load": "无法加载该调拨。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
       },
       "messages": {
-        "deleted": "库存调拨已删除",
-        "recorded": "库存调拨已记录"
+        "deleted": "调拨已删除",
+        "recorded": "库存调拨已记录",
+        "created": "调拨已创建",
+        "saved": "调拨已保存",
+        "marked_ready": "调拨已待发出",
+        "marked_in_transit": "调拨已在途 — 货物已离开来源仓库",
+        "received": "调拨已收货",
+        "canceled": "调拨已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
       },
       "table": {
         "empty": "暂无库存调拨",
         "search_placeholder": "按编号或参考信息搜索…"
       },
-      "title": "库存调拨"
+      "title": "库存调拨",
+      "new_cta": "新建调拨",
+      "new_title": "新建库存调拨",
+      "details_title": "详情",
+      "items_title": "明细",
+      "items_empty": "暂无明细 — 请添加要发出的商品。",
+      "receive_title": "收货",
+      "history_title": "此调拨的库存变动",
+      "units_summary": "已发出 {{shipped}} 件，已收到 {{received}} 件",
+      "statuses": {
+        "draft": "草稿",
+        "ready_to_ship": "待发出",
+        "in_transit": "在途",
+        "partially_received": "部分收货",
+        "received": "已收货",
+        "canceled": "已取消",
+        "over_received": "超量收货"
+      },
+      "in_transit_resolutions": {
+        "restock": "将数量退回来源仓库",
+        "write_off": "将数量按丢失核销"
+      },
+      "fields": {
+        "source": "从",
+        "source_placeholder": "选择发出仓库",
+        "destination": "到",
+        "destination_placeholder": "选择接收仓库",
+        "reference": "参考号",
+        "reference_placeholder": "你为此次运输自定的标识",
+        "notes": "备注",
+        "units": "数量",
+        "shipped_at": "发出时间",
+        "received_at": "收货时间",
+        "in_transit_resolution": "货物已经离库。它们怎么了？",
+        "source_locked": "有商品行时不可更改：这些商品是为该仓库挑选的。移除后才能更改。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因"
+      },
+      "actions": {
+        "create_draft": "创建草稿",
+        "mark_ready": "标记为待发出",
+        "mark_in_transit": "标记为在途",
+        "receive": "收货",
+        "cancel_transfer": "取消调拨",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
+      },
+      "delete_confirm": {
+        "title": "删除此调拨？",
+        "message": "调拨 {{number}} 仍是草稿，库存未发生变动。此操作无法撤销。"
+      },
+      "ship_confirm": {
+        "title": "发出此调拨？",
+        "message_other": "{{count}} 件将立即离开来源仓库，在到货前不可在该仓库使用。"
+      },
+      "cancel_confirm": {
+        "title": "取消此调拨？",
+        "message": "库存尚未变动，因此无需回退。",
+        "in_flight_restock": "数量将回到来源仓库的货架，如同从未发出。",
+        "in_flight_write_off": "数量保持核销为丢失，任何仓库都不会补回。"
+      },
+      "edit_title": "编辑调拨 {{number}}",
+      "close_confirm": {
+        "title": "将此调拨短缺结单？",
+        "message": "目的地已清点的部分保留。仍在途的 {{outstanding}} 件将按丢失核销，调拨标记为已收货。"
+      }
     },
     "store": {
       "load_failed_title": "加载店铺设置失败",
@@ -5061,7 +5392,34 @@
       "options": "尺码、颜色等选项，用于生成商品的多个款式。",
       "price_lists": "规则匹配时生效的备选价格。",
       "product_types": "为新商品预设字段和选项的模板。",
-      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。"
+      "stock_transfers": "在各地点之间调拨的库存，以及已到货的部分。",
+      "purchase_orders": "已向供应商订购的库存，以及已到货的部分",
+      "suppliers": "你的供应商通讯簿",
+      "stock_levels": "各地点的库存情况：现有、已分配给订单、结账中暂扣、可售以及在途。",
+      "allowed_origins": "允许从浏览器调用您店铺 API 的网址。",
+      "channels": "您的销售渠道——每个店面、应用或门户，各有自己的目录和默认设置。",
+      "commission_rates": "平台在每笔销售中收取的费用，按列表顺序应用。",
+      "custom_field_definitions": "附加到商品、订单、客户及其他记录上的额外字段。",
+      "customers": "在您店铺购物或注册过的所有人。",
+      "gift_cards": "客户在结账时使用的预付卡。",
+      "imports": "您上传的 CSV 文件，以及每个文件的处理结果。",
+      "markets": "您销售的地区，各有自己的货币、税务和配送设置。",
+      "orders": "店铺收到的每一笔订单及其当前状态。",
+      "draft_orders": "团队代客户创建、尚未提交的订单。",
+      "payment_methods": "客户可用的支付方式，以及每个选项背后的服务商。",
+      "policies": "发布在店面上的条款、隐私、退货和配送政策。",
+      "products": "您销售的所有商品，包括其变体、价格和库存。",
+      "promotions": "折扣与优惠，以及决定何时生效的规则。",
+      "seller_requirements": "卖家在获批前需完成的核对清单。",
+      "sellers": "在您平台上经营的第三方卖家及各自的状态。",
+      "store_credits": "客户可在结账时使用的余额，以及每笔余额的发放方式。",
+      "tax_categories": "决定商品适用哪种税率的分组。",
+      "tax_rates": "按类别和地区收取的税费。",
+      "webhook_deliveries": "发送到此端点的每个事件，以及是否已被接收。",
+      "webhook_endpoints": "店铺发生事件时通知您其他系统的地址。",
+      "returns": "退回的商品，从申请到退款。",
+      "exchanges": "换成其他尺码、颜色或商品的购买。",
+      "claims": "出问题的配送——损坏、缺失或错发的商品——以及各自的处理结果。"
     },
     "tax_categories": {
       "add_cta": "添加税务类别",
@@ -5277,7 +5635,9 @@
         "owed": "应付（{{currency}}）",
         "earned": "已赚取",
         "paid": "已打款",
-        "pending": "在途"
+        "pending": "在途",
+        "earned_in": "已赚取（{{currency}}）",
+        "payable": "可打款"
       },
       "complete": {
         "title": "将此打款标记为已支付",
@@ -5298,7 +5658,371 @@
         "view_payout": "查看打款",
         "not_settled": "尚未打款"
       },
-      "search_placeholder": "按参考号搜索"
+      "search_placeholder": "按参考号搜索",
+      "settle": "立即结算",
+      "settled": "已创建打款",
+      "settle_confirm": {
+        "title": "现在结算此卖家？",
+        "message": "将 {{name}} 应得的款项按币种汇总为一笔打款。此操作不会转账——转账完成后请将打款标记为已支付。"
+      },
+      "settle_failed": "无法结算此卖家。"
+    },
+    "inventory_lines": {
+      "add_label": "添加商品",
+      "search_placeholder": "按名称或 SKU 搜索商品…",
+      "pick_source_first": "请先选择发出仓库 — 列表只显示该仓库可以发出的商品。",
+      "columns": {
+        "variant": "商品",
+        "sku": "SKU",
+        "unit_cost": "单位成本"
+      },
+      "picker_title": "添加商品",
+      "empty_title": "暂无商品",
+      "empty_description": "添加此单据涉及的商品。"
+    },
+    "stock_history": {
+      "title": "库存记录",
+      "empty": "此库存尚无变动",
+      "columns": {
+        "date": "日期",
+        "product": "商品",
+        "change": "变动",
+        "where": "位置",
+        "kind": "发生了什么",
+        "cause": "原因"
+      },
+      "kinds": {
+        "received": "已入库",
+        "allocated": "已分配",
+        "shipped": "已出库",
+        "released": "已释放",
+        "adjusted": "已调整"
+      },
+      "causes": {
+        "purchase_order": "采购订单",
+        "stock_transfer": "库存调拨",
+        "return": "退货",
+        "exchange": "换货",
+        "fulfillment": "履约",
+        "order": "订单",
+        "manual": "手动调整"
+      },
+      "description": "此库存的每一次变动（最新优先）及其原因。"
+    },
+    "purchase_orders": {
+      "title": "采购订单",
+      "new_cta": "新建采购订单",
+      "new_title": "新建采购订单",
+      "details_title": "详情",
+      "items_title": "明细",
+      "items_empty": "暂无明细 — 请添加要订购的商品。",
+      "receive_title": "收货",
+      "history_title": "此采购订单的库存变动",
+      "units_summary": "已订购 {{ordered}} 件，已收到 {{received}} 件",
+      "table": {
+        "empty": "暂无采购订单",
+        "search_placeholder": "按编号或参考号搜索…"
+      },
+      "columns": {
+        "number": "编号",
+        "supplier": "供应商",
+        "units": "已收 / 已订",
+        "subtotal": "合计",
+        "expected": "预计到货",
+        "quantity_ordered": "已订购",
+        "quantity_received": "已收到",
+        "line_total": "行合计",
+        "quantity_rejected": "拒收",
+        "quantity_over": "超量",
+        "cancel_by": "取消截止日",
+        "overdue": "逾期",
+        "past_cancel_by": "已过取消截止日"
+      },
+      "statuses": {
+        "draft": "草稿",
+        "ordered": "已下单",
+        "partially_received": "部分收货",
+        "received": "已收货",
+        "canceled": "已取消",
+        "over_received": "超量收货"
+      },
+      "fields": {
+        "supplier": "供应商",
+        "supplier_placeholder": "选择供应商",
+        "destination": "送达",
+        "destination_placeholder": "选择接收仓库",
+        "currency": "货币",
+        "expected_at": "预计到货",
+        "expected_at_placeholder": "供应商承诺的日期",
+        "reference": "供应商参考号",
+        "reference_placeholder": "供应商自己的订单号",
+        "notes": "备注",
+        "units": "数量",
+        "subtotal": "合计",
+        "ordered_at": "下单时间",
+        "received_at": "收货时间",
+        "currency_locked": "创建后固定：每一行的成本都以该货币计价。",
+        "closed_short": "短缺结单",
+        "close_reason": "原因",
+        "cancel_by": "取消截止日",
+        "cancel_by_placeholder": "此日之后不再需要该货物"
+      },
+      "actions": {
+        "create_draft": "创建草稿",
+        "mark_ordered": "标记为已下单",
+        "receive": "收货",
+        "cancel_order": "取消订单",
+        "mark_draft": "退回草稿",
+        "close_short": "短缺结单"
+      },
+      "messages": {
+        "created": "采购订单已创建",
+        "saved": "采购订单已保存",
+        "deleted": "采购订单已删除",
+        "ordered": "采购订单已下单",
+        "received": "到货已入库",
+        "canceled": "采购订单已取消",
+        "marked_draft": "已退回草稿",
+        "closed": "已短缺结单——已到货部分保留，其余核销"
+      },
+      "errors": {
+        "failed_to_create": "创建采购订单失败",
+        "failed_to_save": "保存采购订单失败",
+        "failed_to_delete": "删除采购订单失败",
+        "failed_to_order": "下单失败",
+        "failed_to_receive": "到货入库失败",
+        "failed_to_cancel": "取消采购订单失败",
+        "not_editable": "该订单已发给供应商，其商品行是两家企业之间的约定。如果不该继续，请取消它。",
+        "failed_to_load": "无法加载该采购订单。",
+        "failed_to_mark_draft": "无法退回草稿",
+        "failed_to_close": "无法短缺结单"
+      },
+      "delete_confirm": {
+        "title": "删除此采购订单？",
+        "message": "订单 {{number}} 仍是草稿，尚未订购任何商品。此操作无法撤销。"
+      },
+      "order_confirm": {
+        "title": "提交此订单？",
+        "message": "订单发往 {{supplier}} 后明细将被锁定。已订购的库存要到货后才计入可用。"
+      },
+      "cancel_confirm": {
+        "title": "取消此采购订单？",
+        "message": "尚未到货的部分将被取消。已收到的数量仍留在库存中。"
+      },
+      "edit_title": "编辑采购订单 {{number}}",
+      "close_confirm": {
+        "title": "将此采购订单短缺结单？",
+        "message": "已到货部分保留在库。仍欠的 {{outstanding}} 件将被核销，订单标记为已收货。"
+      },
+      "filters": {
+        "overdue": "逾期",
+        "not_overdue": "准时",
+        "past_cancel_by": "已过取消截止日",
+        "not_past_cancel_by": "未过取消截止日"
+      }
+    },
+    "suppliers": {
+      "title": "供应商",
+      "new_cta": "新建供应商",
+      "new_title": "新建供应商",
+      "edit_title": "编辑供应商",
+      "sheet_description": "你从谁那里采购库存，以及如何联系他们。",
+      "table": {
+        "empty": "暂无供应商",
+        "search_placeholder": "按名称、联系人或邮箱搜索…"
+      },
+      "autocomplete": {
+        "placeholder": "按名称、联系人或邮箱搜索…",
+        "empty": "没有匹配的供应商"
+      },
+      "columns": {
+        "contact": "联系人",
+        "orders": "采购订单"
+      },
+      "fields": {
+        "contact_name": "联系人姓名",
+        "address1": "地址",
+        "address2": "地址第二行",
+        "city": "城市",
+        "postal_code": "邮政编码",
+        "notes": "备注"
+      },
+      "messages": {
+        "created": "供应商已创建",
+        "saved": "供应商已保存",
+        "deleted": "供应商已删除"
+      },
+      "errors": {
+        "name_blank": "供应商需要一个名称。",
+        "failed_to_create": "创建供应商失败",
+        "failed_to_save": "保存供应商失败",
+        "failed_to_delete": "删除供应商失败"
+      },
+      "delete_confirm": {
+        "title": "删除此供应商？",
+        "message": "{{name}} 将从您的供应商列表中移除。"
+      }
+    },
+    "stock_receipts": {
+      "title": "到货记录",
+      "receive_title": "收货",
+      "empty": "暂无到货记录",
+      "columns": {
+        "accepted": "接收",
+        "rejected": "拒收",
+        "reason": "原因",
+        "received_so_far": "累计已收"
+      },
+      "fields": {
+        "reference": "送货单",
+        "reference_placeholder": "送货单或装箱单号",
+        "received_at": "收货时间",
+        "received_at_placeholder": "现在",
+        "notes": "备注"
+      },
+      "delivery_total": "本次到货：接收 {{accepted}}，拒收 {{rejected}}",
+      "rejected_so_far": "（拒收 {{count}}）",
+      "summary": "接收 {{accepted}} · 拒收 {{rejected}}",
+      "reason_placeholder": "拒收原因",
+      "rejection_reasons": {
+        "damaged": "损坏",
+        "wrong_item": "货品错误",
+        "expired": "已过期",
+        "other": "其他"
+      },
+      "actions": {
+        "receive": "收货"
+      },
+      "close_short": {
+        "reason_label": "原因",
+        "reason_placeholder": "其余货物的情况",
+        "confirm": "短缺结单"
+      },
+      "load_failed": "无法加载到货记录。"
+    },
+    "reports": {
+      "title": "报表",
+      "subtitle": "关于销售、商品和客户的已保存报表。",
+      "new_cta": "新建报表",
+      "new_title": "新建报表",
+      "copy_name": "{{name}} 的副本",
+      "table": {
+        "search_placeholder": "搜索报表…",
+        "empty": "暂无报表。创建一个开始使用。",
+        "columns": {
+          "name": "名称",
+          "kind": "类型",
+          "author": "创建者"
+        }
+      },
+      "kind": {
+        "built_in": "内置",
+        "custom": "自定义"
+      },
+      "builder": {
+        "metrics": "指标",
+        "no_metrics": "请至少选择一个指标。",
+        "one_family_only": "一个报表只涵盖一个指标组。选择其他组中的指标会将报表切换到该组。",
+        "switches_family": "将此报表切换到{{family}}",
+        "group_by": "分组依据",
+        "none": "无（仅汇总）",
+        "grain": "时间粒度",
+        "time_range": "时间范围",
+        "custom_range": "自定义范围",
+        "compare": "与上一周期比较",
+        "filters": "筛选条件",
+        "add_filter": "添加筛选",
+        "remove_filter": "移除筛选",
+        "sort": "排序依据",
+        "direction": "顺序",
+        "sort_desc": "从高到低",
+        "sort_asc": "从低到高",
+        "limit": "行数",
+        "ids_placeholder": "以逗号分隔的 ID",
+        "title": "报表设置"
+      },
+      "grains": {
+        "hour": "每小时",
+        "day": "按天",
+        "week": "按周",
+        "month": "按月"
+      },
+      "view": {
+        "empty": "该时间段内暂无数据。",
+        "total": "合计",
+        "change": "变化",
+        "error": "无法加载此报表"
+      },
+      "actions": {
+        "save": "保存",
+        "save_copy": "保存副本",
+        "export_csv": "导出 CSV",
+        "rename": "重命名"
+      },
+      "save_dialog": {
+        "title_create": "保存报表",
+        "title_copy": "保存副本",
+        "title_rename": "重命名报表",
+        "name_label": "名称",
+        "description_label": "描述"
+      },
+      "seeded_hint": "内置报表无法修改。调整设置并保存副本以保留您的版本。",
+      "delete_confirm": "删除报表“{{name}}”？此操作无法撤销。",
+      "messages": {
+        "created": "报表已保存",
+        "create_failed": "无法保存报表",
+        "updated": "报表已更新",
+        "update_failed": "无法更新报表",
+        "deleted": "报表已删除",
+        "delete_failed": "无法删除报表"
+      }
+    },
+    "store_credits": {
+      "columns": {
+        "customer": "客户",
+        "used": "已使用",
+        "remaining": "剩余",
+        "authorized": "已冻结",
+        "standing": "状态",
+        "origin": "来源",
+        "issued_by": "发放人"
+      },
+      "origins": {
+        "manual": "手动发放",
+        "gift_card": "礼品卡",
+        "return": "退货",
+        "exchange": "换货",
+        "claim": "索赔",
+        "refund": "退款"
+      },
+      "filters": {
+        "outstanding": "未使用",
+        "spent": "已用完",
+        "not_from_gift_card": "其他来源"
+      },
+      "totals": {
+        "outstanding": "未使用",
+        "issued": "已发放",
+        "used": "已使用"
+      },
+      "ledger": {
+        "title": "流水",
+        "empty": "暂无变动记录。",
+        "load_failed": "无法加载流水。"
+      },
+      "sheet": {
+        "description": "这笔余额如何发放，以及如何被使用。",
+        "open_customer": "打开客户资料",
+        "load_failed": "无法加载该店铺信用。"
+      },
+      "table": {
+        "search_placeholder": "搜索备注…",
+        "empty": "暂无店铺信用。可从客户资料中发放。"
+      },
+      "no_customer": "无客户",
+      "page": {
+        "subtitle": "店铺在所有客户中欠下的预付余额总额。"
+      }
     }
   }
 }

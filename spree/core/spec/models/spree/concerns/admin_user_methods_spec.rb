@@ -130,7 +130,6 @@ describe Spree::AdminUserMethods do
         let!(:refund) { create(:refund, refunder: admin_user, amount: 1) }
         let!(:return_record) { create(:return, created_by: admin_user) }
         let!(:store_credit) { create(:store_credit, created_by: admin_user) }
-        let!(:report) { create(:report, user: admin_user) }
         let!(:export) { create(:export, user: admin_user) }
 
         it 'nullifies canceler_id on canceled orders' do
@@ -141,6 +140,13 @@ describe Spree::AdminUserMethods do
         it 'nullifies created_by_id on created orders' do
           admin_user.destroy
           expect(created_order.reload.created_by_id).to be_nil
+        end
+
+        it 'nullifies the author on saved reports, which are store-wide and outlive them' do
+          report = create(:saved_report, store: current_store, user: admin_user)
+
+          admin_user.destroy
+          expect(report.reload.user_id).to be_nil
         end
 
         it 'nullifies created_by_id on gift cards' do
@@ -168,9 +174,6 @@ describe Spree::AdminUserMethods do
           expect(store_credit.reload.created_by_id).to be_nil
         end
 
-        it 'destroys reports' do
-          expect { admin_user.destroy }.to change(Spree::Report, :count).by(-1)
-        end
 
         it 'destroys exports' do
           expect { admin_user.destroy }.to change(Spree::Export, :count).by(-1)

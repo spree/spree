@@ -75,13 +75,21 @@ vi.mock('../src/dashboard', () => ({
   scaffoldDashboard: vi.fn(),
 }))
 
-vi.mock('../src/backend', () => ({
-  downloadBackend: vi.fn(async (projectDir: string) => {
-    // Simulate what downloadBackend does: create backend/ with compose files
-    const backendDir = path.join(projectDir, 'backend')
-    fs.mkdirSync(backendDir, { recursive: true })
-    fs.writeFileSync(path.join(backendDir, 'docker-compose.yml'), FAKE_COMPOSE)
-    fs.writeFileSync(path.join(backendDir, 'docker-compose.dev.yml'), FAKE_COMPOSE_DEV)
+// `spree init` is shelled out to; the scaffold only decides its arguments.
+vi.mock('execa', () => ({ execa: vi.fn() }))
+
+vi.mock('../src/utils', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('../src/utils')>()
+  return { ...mod, isDockerRunning: vi.fn(async () => true) }
+})
+
+vi.mock('../src/server', () => ({
+  downloadServer: vi.fn(async (projectDir: string) => {
+    // Simulate what downloadServer does: create server/ with compose files
+    const serverDir = path.join(projectDir, 'server')
+    fs.mkdirSync(serverDir, { recursive: true })
+    fs.writeFileSync(path.join(serverDir, 'docker-compose.yml'), FAKE_COMPOSE)
+    fs.writeFileSync(path.join(serverDir, 'docker-compose.dev.yml'), FAKE_COMPOSE_DEV)
   }),
 }))
 
@@ -113,7 +121,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -127,40 +134,35 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
   })
 
-  it('enables the wholesale portal in the storefront env only with sample data', async () => {
-    const { writeStorefrontEnv } = await import('../src/storefront')
+  // Sample data must never ride along with first-run setup: setup configures
+  // the store through the dashboard, and the sample-data import needs an admin
+  // that setup has not created yet. `spree init` also mints credentials.json
+  // BEFORE loading sample data, so a failure there leaves a project that later
+  // runs read as "already set up" and can never finish setup.
+  it('runs first-run setup with sample data opted out', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
 
     await scaffold({
       directory: getTempProjectDir(),
-      storefront: true,
-      dashboard: false,
-      sampleData: true,
-      start: false,
-      packageManager: 'npm',
+      storefront: false,
+      dashboard: true,
+      start: true,
+      packageManager: 'pnpm',
       port: 3000,
     })
-    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, true)
 
-    await scaffold({
-      directory: getTempProjectDir(),
-      storefront: true,
-      dashboard: false,
-      sampleData: false,
-      start: false,
-      packageManager: 'npm',
-      port: 3000,
-    })
-    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, false)
+    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    expect(init?.[1]).toEqual(['spree', 'init', '--no-sample-data'])
   })
 
-  it('copies docker-compose.yml from backend template', async () => {
+  it('copies docker-compose.yml from server template', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -172,39 +174,37 @@ describe('scaffold (no-start)', () => {
     expect(compose).toBe(FAKE_COMPOSE)
   })
 
-  it('adjusts docker-compose.dev.yml build context to ./backend', async () => {
+  it('adjusts docker-compose.dev.yml build context to ./server', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
-    expect(compose).toContain('context: ./backend')
+    expect(compose).toContain('context: ./server')
     expect(compose).not.toContain('ghcr.io/spree/spree')
   })
 
-  it('adjusts docker-compose.dev.yml source bind-mount to ./backend', async () => {
+  it('adjusts docker-compose.dev.yml source bind-mount to ./server', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.dev.yml'), 'utf-8')
-    expect(compose).toContain('- ./backend:/rails')
+    expect(compose).toContain('- ./server:/rails')
     expect(compose).not.toContain('- .:/rails')
     // Named volumes are left untouched
     expect(compose).toContain('- bundle_cache:/usr/local/bundle')
@@ -217,7 +217,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 4567,
@@ -235,7 +234,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -255,7 +253,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: true,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 4567,
@@ -279,7 +276,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -304,7 +300,6 @@ describe('scaffold (no-start)', () => {
     await expect(
       scaffold({
         directory: projectDir,
-        sampleData: false,
         start: false,
         packageManager: 'npm',
         port: 3000,

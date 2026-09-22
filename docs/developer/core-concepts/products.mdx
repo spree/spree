@@ -221,6 +221,8 @@ spree api post /products -d '{
 
 For something with no options at all, send prices directly and skip the variants array — Spree forwards them to the product's single variant:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.products.create({
   name: 'The Spree Handbook',
@@ -228,6 +230,19 @@ await adminClient.products.create({
   prices: [{ currency: 'USD', amount: '19.99' }],
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/products' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "The Spree Handbook",
+    "status": "active",
+    "prices": [{ "currency": "USD", "amount": "19.99" }]
+  }'
+```
+
+</CodeGroup>
 
 Don't pass both.
 
@@ -365,7 +380,7 @@ await client.products.approve('prod_xxx')
 await client.products.reject('prod_xxx', { reason: 'Please add a photo showing scale.' })
 
 // The review queue
-const pending = await client.products.list({ filter: { status_eq: 'proposed' } })
+const pending = await client.products.list({ status_eq: 'proposed' })
 
 // Who decided, and when
 const product = await client.products.get('prod_xxx', { expand: ['submission'] })
@@ -474,6 +489,8 @@ Earlier versions of Spree had a special "master variant" alongside the real ones
 
 `default_variant_id` names the variant that represents the product — the price shown on a listing page, and what "add to cart" means before anyone picks anything.
 
+<CodeGroup>
+
 ```typescript Store SDK
 const product = await client.products.get('spree-tote')
 
@@ -481,6 +498,13 @@ product.default_variant_id // "var_xxx"
 product.price              // that variant's price
 product.variant_count      // 6
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
 
 For a single-variant product that's the only variant. For a product with options it's the first one, unless you say otherwise. If the default is ever removed, another is promoted automatically — a product is never left without one.
 
@@ -617,6 +641,8 @@ erDiagram
     }
 ```
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const shoes = await adminClient.productTypes.create({
   name: 'Footwear',
@@ -634,6 +660,20 @@ await adminClient.products.create({
   status: 'draft',
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/product_types' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Footwear",
+    "option_type_ids": ["optt_size", "optt_color"],
+    "category_ids": ["ctg_footwear"],
+    "delivery_profile_id": "dp_standard"
+  }'
+```
+
+</CodeGroup>
 
 ### A type is a template, not a controller
 
@@ -656,9 +696,18 @@ Seeding is also **additive** — it adds what's missing and never removes what a
 
 If you *do* want an edited type to reach the products already using it, that's an explicit action:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { products_count } = await adminClient.productTypes.applyToProducts('pt_xxx')
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/product_types/pt_xxx/apply_to_products' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 It runs in the background and is additive like the rest — never a side effect of saving a type.
 
@@ -934,6 +983,8 @@ Category `name` and `description` fields are translatable.
 
 Collections work the same way from a storefront's point of view:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const { data: collections } = await client.collections.list()
 
@@ -941,6 +992,16 @@ const { data: products } = await client.collections.products.list('summer-2025',
   limit: 12,
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/collections' \
+  -H 'X-Spree-API-Key: pk_xxx'
+
+curl 'https://api.mystore.com/api/v3/store/collections/summer-2025/products?limit=12' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
 
 A rule-based collection is defined once and maintains itself — set it to match everything tagged `sale` and under $50, and products appear and disappear as those facts change. Ordering can be manual or by a rule such as newest first.
 

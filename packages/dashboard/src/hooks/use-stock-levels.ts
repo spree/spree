@@ -1,4 +1,4 @@
-import type { StockLevel, StockLevelUpdateParams } from '@spree/admin-sdk'
+import type { StockLevel, StockLevelUpdateParams, StockLocation } from '@spree/admin-sdk'
 import {
   adminClient,
   useResourceKey,
@@ -39,11 +39,33 @@ export function useStockLevels(params: UseStockLevelsParams = {}) {
 }
 
 export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []) {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
   return useResourceMutation<StockLevel, Error, StockLevelUpdateParams>({
     mutationFn: (params) => adminClient.stockLevels.update(id, params),
-    invalidate: [['stock-levels'], ['stock-levels', id], ...extraInvalidate],
+    // The list is patched rather than invalidated: correcting a count from
+    // the Inventory page would otherwise refetch every row, and the edited
+    // row would be replaced underneath the pointer. The response carries the
+    // updated level, so the cached row is the same data the refetch would
+    // have brought back.
+    invalidate: [['stock-levels', id], ...extraInvalidate],
     successMessage: i18n.t('admin.stock_levels.messages.stock_updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    onSuccess: (updated) => {
+      queryClient.setQueriesData<{ data: StockLevel[] }>(
+        { queryKey: buildKey('stock-levels') },
+        (cached) => {
+          if (!cached?.data) return cached
+          const index = cached.data.findIndex((level) => level.id === updated.id)
+          if (index === -1) return cached
+
+          const data = [...cached.data]
+          data[index] = updated
+          return { ...cached, data }
+        },
+      )
+    },
   })
 }
 
@@ -60,4 +82,20 @@ export function useDeleteStockLevel() {
       queryClient.removeQueries({ queryKey: buildKey('stock-levels', id) })
     },
   })
+}
+
+/** Location picker for the Inventory page's filter panel. */
+export function stockLocationAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (query: string) =>
+      adminClient.stockLocations.list({ name_cont: query, limit: 100, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.stockLocations.list({ id_in: ids, limit: ids.length }),
+    // Every warehouse, so the filter opens as a list rather than a search
+    // box: a store has a handful, and the API caps the page at 100 anyway.
+    listAll: () => adminClient.stockLocations.list({ limit: 100, sort: 'name' }),
+    getOptionLabel: (location: StockLocation) => location.name ?? location.id,
+    placeholder: i18n.t('admin.stock_levels.location_filter.placeholder'),
+    emptyText: i18n.t('admin.stock_levels.location_filter.empty'),
+  }
 }

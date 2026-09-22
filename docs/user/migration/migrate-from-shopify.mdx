@@ -57,8 +57,8 @@ Spree's import system lets you map CSV columns to Spree fields during the import
 | `Option2 Value` | `option2_value` | Second option value |
 | `Option3 Name` | `option3_name` | Third option name |
 | `Option3 Value` | `option3_value` | Third option value |
-| `Cost per item` | — | Not directly imported, can be set via metafields |
-| `Vendor` | — | Can be imported as a metafield or tag |
+| `Cost per item` | — | Not directly imported, can be set via custom fields |
+| `Vendor` | — | Can be imported as a custom field or tag |
 | `Product Category` | `category1` | Requires format adjustment (see below) |
 
 ### Step-by-Step Import
@@ -143,13 +143,13 @@ Shopify's `Variant Grams` column is **always in grams** regardless of the `Varia
 
 These Shopify-specific columns don't have direct Spree equivalents and can be safely skipped:
 
-- `Vendor` — consider importing as a tag or metafield
+- `Vendor` — consider importing as a tag or custom field
 - `Published` — use `status` instead (`active` = published)
 - `Variant Inventory Tracker` — Spree handles inventory tracking differently
 - `Variant Fulfillment Service` — not applicable
 - `Variant Requires Shipping` — controlled by shipping categories in Spree
 - `Variant Taxable` — controlled by tax categories in Spree
-- `Variant Barcode` — can be added as a metafield
+- `Variant Barcode` — can be added as a custom field
 - `Gift Card` — Spree has its own gift card system
 - `Google Shopping / *` — not imported (legacy Shopify columns)
 
@@ -174,7 +174,7 @@ Shopify's customer CSV maps closely to Spree's customer import schema:
 | `Default Address Province Code` | `province_code` | ISO state/province code (e.g., `NY`, `CA`) |
 | `Default Address Country Code` | `country_code` | ISO country code (e.g., `US`, `GB`) |
 | `Default Address Zip` | `zip` | Postal/zip code |
-| `Note` | — | Not directly imported, can be added as a metafield |
+| `Note` | — | Not directly imported, can be added as a custom field |
 | `Tax Exempt` | — | Not directly imported |
 | `Total Spent` | — | Read-only in Shopify, not imported |
 | `Total Orders` | — | Read-only in Shopify, not imported |

@@ -1,6 +1,6 @@
 import type { DeliveryProfile } from '@spree/admin-sdk'
 import { adminClient, PageHeader } from '@spree/dashboard-core'
-import { ErrorState, ResourceLayout, useConfirm } from '@spree/dashboard-ui'
+import { ErrorState, ResourceLayout } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -57,17 +57,10 @@ function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
   const { storeId } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate()
-  const confirm = useConfirm()
   const deleteMutation = useDeleteDeliveryProfile()
 
+  // PageHeader owns the confirmation; this runs once the user has confirmed.
   async function handleDelete() {
-    const ok = await confirm({
-      title: t('admin.delivery_profiles.delete_confirm.title'),
-      message: t('admin.delivery_profiles.delete_confirm.message', { name: profile.name }),
-      variant: 'destructive',
-      confirmLabel: t('admin.actions.delete'),
-    })
-    if (!ok) return
     await deleteMutation.mutateAsync(profile.id)
     navigate({ to: '/$storeId/settings/delivery-profiles', params: { storeId } })
   }
@@ -87,6 +80,10 @@ function DeliveryProfileDetailBody({ profile }: { profile: DeliveryProfile }) {
           }}
           onDelete={profile.default ? undefined : handleDelete}
           deleteLabel={t('admin.delivery_profiles.detail.delete_label')}
+          deleteConfirmTitle={t('admin.delivery_profiles.delete_confirm.title')}
+          deleteConfirmMessage={t('admin.delivery_profiles.delete_confirm.message', {
+            name: profile.name,
+          })}
         />
       }
       main={<DeliveryZonesAndMethodsSection profile={profile} search={search} />}

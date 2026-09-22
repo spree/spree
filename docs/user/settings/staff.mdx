@@ -1,0 +1,68 @@
+---
+title: "Staff"
+description: "Invite, edit, and manage the people with access to your Spree dashboard — send invitations, assign roles, track pending invites, and remove access."
+---
+
+Effectively managing who can reach your store's backend is essential for operational security and team collaboration. The Staff screen lists everyone with access to the dashboard, lets you invite new teammates, and lets you change or remove their access.
+
+To manage staff, navigate to **Settings → Staff**, under the **Users & permissions** group.
+
+![](/images/user/settings/users/2.users_tab.png)
+
+The table has two columns:
+
+- **Member**: the person's initials, name, and email address
+- **Roles**: one badge per role they hold
+
+<Note>The column is **Roles**, plural — a person can hold more than one. The invitation panel offers only a single **Role**, so the way to give somebody a second role is to invite them first and edit them afterwards.</Note>
+
+## Invite a Teammate
+
+To invite somebody, click **Invite teammate** in the top-right corner. A panel opens, headed *"We'll email them a link to set their password."*
+
+![](/images/user/settings/users/3.invite_user.png)
+
+Then follow these steps:
+
+1. Enter their email address.
+2. Choose the **Role** they should have. The dropdown lists the roles that exist in your store, so it grows as you [<u>create roles</u>](/user/settings/roles).
+3. Click **Send invitation**.
+
+Spree emails them a link to set their own password, so nobody types a password on their behalf.
+
+When they click the invitation link, they're taken to an account creation page.
+
+![](/images/user/settings/users/4.user_signup.png)
+
+Once they complete the form, they're redirected to the admin dashboard.
+
+## Edit a Teammate
+
+To change somebody's details or roles, open the row actions and choose **Edit**. The panel is titled **Edit teammate**.
+
+![](/images/user/settings/users/8.edit_form.png)
+
+Change the fields as needed and click **Save**. This is also where you add a second role to somebody who already has one.
+
+## Remove a Teammate
+
+To take somebody's access away, open the row actions and choose **Remove from staff**.
+
+## Pending Invitations
+
+Invitations that have been sent but not yet accepted appear under **Pending invitations**, where **Resend** is available.
+
+![](/images/user/settings/users/5.invitations.png)
+
+Each invitation records:
+
+- **Email**: The email address the invitation was sent to
+- **Inviter**: The person who sent the invitation
+- **Role**: The role assigned on acceptance
+- **Created at**: Date the invitation was created
+- **Status**: Accepted, Pending, or Expired
+
+## Related
+
+- [<u>Settings → Roles</u>](/user/settings/roles)
+- [<u>Settings → API Keys</u>](/user/settings/api-keys)

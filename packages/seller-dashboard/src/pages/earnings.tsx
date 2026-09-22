@@ -20,7 +20,7 @@ export function EarningsPage({ search }: { search: ResourceSearch }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={t('earnings.title')} subtitle={t('earnings.subtitle')} />
+      <PageHeader title={t('earnings.title')} subtitle={t('earnings.subtitle')} sticky={false} />
 
       {/* A failed balance request must not fall through to the empty state:
           "you have earned nothing yet" is the opposite of "we could not ask". */}
@@ -33,6 +33,7 @@ export function EarningsPage({ search }: { search: ResourceSearch }) {
       )}
 
       <ResourceTable<Transfer>
+        hideHeader
         tableKey="seller-transfers"
         queryKey="seller-transfers-list"
         queryFn={(params) => sellerClient().transfers.list(params)}

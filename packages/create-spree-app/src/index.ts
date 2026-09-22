@@ -15,11 +15,10 @@ const program = new Command()
   .option('--no-storefront', 'skip Next.js storefront setup')
   .option(
     '--react-dashboard',
-    'include the React Dashboard (Developer Preview — work in progress; also available later via `spree add dashboard`)',
+    'no-op: the React Dashboard is always included (kept so existing scripts keep working)',
   )
-  .option('--no-sample-data', 'skip loading sample data')
   .option('--no-start', 'do not start Docker services')
-  .option('--port <number>', 'port for the Spree backend', String(DEFAULT_SPREE_PORT))
+  .option('--port <number>', 'port for the Spree server', String(DEFAULT_SPREE_PORT))
   .option('--use-npm', 'use npm as package manager')
   .option('--use-yarn', 'use yarn as package manager')
   .option('--use-pnpm', 'use pnpm as package manager')
@@ -41,7 +40,6 @@ const program = new Command()
         directory,
         noStorefront: flags.storefront === false ? true : undefined,
         reactDashboard: flags.reactDashboard === true,
-        noSampleData: flags.sampleData === false ? true : undefined,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })
@@ -52,7 +50,24 @@ const program = new Command()
         p.log.warn(`Port ${preferred} is in use, using port ${pc.bold(String(port))} instead.`)
       }
 
-      await scaffold({ ...options, port })
+      // Mailpit publishes both ports on the host, so another Spree project or
+      // any local mail catcher takes them. Compose fails on a bound port with
+      // a raw daemon error minutes into the run — after the image pull — so
+      // probe them here like the web port rather than letting that happen.
+      const mailpitSmtpPort = await getPort({ port: portNumbers(1025, 1125) })
+      const mailpitUiPort = await getPort({ port: portNumbers(8025, 8125) })
+      for (const [label, preferredPort, resolved] of [
+        ['Mailpit SMTP', 1025, mailpitSmtpPort],
+        ['Mailpit UI', 8025, mailpitUiPort],
+      ] as const) {
+        if (resolved !== preferredPort) {
+          p.log.warn(
+            `${label} port ${preferredPort} is in use, using port ${pc.bold(String(resolved))} instead.`,
+          )
+        }
+      }
+
+      await scaffold({ ...options, port, mailpitSmtpPort, mailpitUiPort })
 
       p.outro('Happy selling!')
     } catch (err) {

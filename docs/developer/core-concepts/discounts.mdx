@@ -64,6 +64,8 @@ Note the difference between `value` and `amount`. `value` is the rule — "10 pe
 
 Whatever produced them, the rows read the same way:
 
+<CodeGroup>
+
 ```typescript Store SDK
 const cart = await client.carts.get(cartId)
 
@@ -76,6 +78,13 @@ cart.discounts.forEach((discount) => {
   discount.display_amount // "-$12.00"
 })
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
+  -H 'X-Spree-API-Key: pk_xxx'
+```
+
+</CodeGroup>
 
 Applying a coupon code, and what decides whether it's accepted, belongs to [Promotions](/developer/core-concepts/promotions).
 

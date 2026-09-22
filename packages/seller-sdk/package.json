@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-sdk",
-  "version": "0.1.0",
+  "version": "1.0.0-beta.2",
   "description": "TypeScript client for the Spree Seller API — the marketplace seller panel.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -59,7 +59,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/spree/spree.git",
-    "directory": "packages/admin-sdk"
+    "directory": "packages/seller-sdk"
   },
   "homepage": "https://spreecommerce.org",
   "bugs": {

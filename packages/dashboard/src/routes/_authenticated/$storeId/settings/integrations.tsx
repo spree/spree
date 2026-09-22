@@ -72,8 +72,9 @@ function IntegrationsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
+        docsPath="settings/integrations"
         title={t('admin.integrations.title')}
-        subtitle={t('admin.integrations.description')}
+        description={t('admin.integrations.description')}
       />
 
       {!isLoading && types.length === 0 && (

@@ -284,7 +284,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=prior_pric
 
 The response includes a `prior_price` object when expanded:
 
-```json
+```json Response
 {
   "id": "prod_xxx",
   "name": "Spree Tote",
@@ -303,15 +303,22 @@ The response includes a `prior_price` object when expanded:
 
 Price history tracking is enabled by default. To disable it (e.g., for non-EU stores):
 
-```ruby
-# config/initializers/spree.rb
-Spree.config do |config|
-  config.track_price_history = false
-  config.price_history_retention_days = 30 # default
-end
+<CodeGroup>
+
+```typescript Admin SDK
+await client.store.update({ preferred_track_price_history: false })
 ```
 
-Price history retention defaults to 30 days and can be configured globally. A Rake task is provided for cleanup:
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/store' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "preferred_track_price_history": false }'
+```
+
+</CodeGroup>
+
+Retention defaults to 30 days, set per store with the `price_history_retention_days` preference. A Rake task prunes anything older:
 
 <CodeGroup>
 

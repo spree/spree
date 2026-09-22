@@ -29,7 +29,7 @@ export function ShippingDocuments({
           key={document.url}
           href={document.url}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="flex items-center gap-2 text-sm text-primary hover:underline"
         >
           <FileTextIcon className="size-4 shrink-0" />

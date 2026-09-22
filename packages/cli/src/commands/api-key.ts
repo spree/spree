@@ -2,6 +2,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { printTable } from 'console-table-printer'
 import pc from 'picocolors'
+import { mintApiKey } from '../config.js'
 import { detectProject } from '../context.js'
 import { rakeTask } from '../docker.js'
 
@@ -80,15 +81,12 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Creating API key...')
 
-      const stdout = await rakeTask('spree:cli:create_api_key', ctx.projectDir, {
-        NAME: name,
-        KEY_TYPE: keyType,
-        ...(keyType === 'secret' && scopes ? { SCOPES: scopes } : {}),
+      const token = await mintApiKey(ctx.projectDir, {
+        name,
+        keyType,
+        scopes:
+          keyType === 'secret' && scopes ? scopes.split(',').map((scope) => scope.trim()) : [],
       })
-
-      const tokenPrefix = keyType === 'publishable' ? 'pk_' : 'sk_'
-      const match = stdout.match(new RegExp(`${tokenPrefix}[A-Za-z0-9_-]+`))
-      const token = match ? match[0] : stdout.trim()
 
       s.stop('API key created.')
 

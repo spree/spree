@@ -41,7 +41,7 @@ An export is created, runs in the background, and produces a file to download.
 
 ```typescript Admin SDK
 const exportJob = await adminClient.exports.create({
-  type: 'Spree::Exports::Products',
+  type: 'products',
 })
 
 // Poll until it's done
@@ -51,7 +51,7 @@ status.download_url // available once completed
 ```
 
 ```bash CLI
-spree api post /exports -d '{"type": "Spree::Exports::Products"}'
+spree api post /exports -d '{"type": "products"}'
 spree api get /exports
 ```
 
@@ -61,12 +61,23 @@ spree api get /exports
 
 An export can carry the same filters as the listing it came from, so "export what I'm looking at" does what a merchant expects — this quarter's orders, this brand's products, not the entire table.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.exports.create({
-  type: 'Spree::Exports::Orders',
+  type: 'orders',
   filters: { completed_at_gteq: '2026-01-01' },
 })
 ```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/exports' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "type": "orders", "filters": { "completed_at_gteq": "2026-01-01" } }'
+```
+
+</CodeGroup>
 
 In the dashboard this is the Export button on any list — whatever filters are applied come along.
 
@@ -78,7 +89,7 @@ Importing has an extra step, because a file from somewhere else won't have Spree
   <Step title="Upload the file">
     ```typescript Admin SDK
     const importJob = await adminClient.imports.create({
-      type: 'Spree::Imports::Products',
+      type: 'products',
       file: uploadedFileId,
     })
     ```
@@ -120,9 +131,11 @@ Some rows will fail. A price with a currency symbol in it, a required field left
 
 **A failed row doesn't stop the import.** The good rows are imported; the bad ones are set aside with the reason.
 
+<CodeGroup>
+
 ```typescript Admin SDK
 const { data: failures } = await adminClient.imports.rows.list(importJob.id, {
-  filter: { status_eq: 'failed' },
+  status_eq: 'failed',
 })
 
 failures.forEach((row) => {
@@ -133,6 +146,13 @@ failures.forEach((row) => {
 // After fixing the source data
 await adminClient.imports.retryFailedRows(importJob.id)
 ```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/imports/imp_xxx/rows?q[status_eq]=failed' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
 
 Retrying re-runs only the failures, so a file where three rows out of ten thousand were wrong doesn't need re-importing whole.
 

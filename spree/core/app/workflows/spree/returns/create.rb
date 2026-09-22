@@ -18,8 +18,8 @@ module Spree
       #   back to; defaults to the location that shipped them
       # @param reason [Spree::ReturnReason, nil]
       # @param memo [String, nil] customer- or staff-supplied note
-      # @param created_by [Object, nil] the admin opening it; nil for
-      #   customer self-service
+      # @param created_by [Object, nil] who is opening it (see
+      #   Spree.actor_classes); nil for customer self-service
       def perform(order:, items:, stock_location: nil, reason: nil, memo: nil, created_by: nil)
         super
 

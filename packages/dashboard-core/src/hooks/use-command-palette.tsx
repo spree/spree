@@ -32,3 +32,16 @@ export function useCommandPalette(): CommandPaletteState {
   }
   return ctx
 }
+
+/**
+ * The palette state when one is mounted, `null` otherwise.
+ *
+ * The shared app shell offers a search affordance, but not every panel has a
+ * palette behind it — the seller panel deliberately mounts none. This lets the
+ * shell omit the trigger there rather than render a button that throws on
+ * click, and keeps `useCommandPalette` strict for callers that genuinely
+ * require the provider.
+ */
+export function useOptionalCommandPalette(): CommandPaletteState | null {
+  return useContext(CommandPaletteContext)
+}

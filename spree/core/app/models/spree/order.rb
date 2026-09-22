@@ -23,6 +23,7 @@ module Spree
 
     extend Spree::DisplayMoney
 
+    include Spree::ActedBy
     include Spree::SingleStoreResource
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
@@ -89,6 +90,54 @@ module Spree
       order, _messages, new_warnings = result.value
       order.warnings = existing_warnings | (new_warnings || [])
       order
+    end
+
+    # Checkout-step introspection belongs to Spree::Cart
+    # ({Spree::Purchase::CheckoutSteps}) since 6.0 — an order is past checkout
+    # by definition. These bridges answer for an upgrader reaching for the
+    # Spree 5 API on an order, rather than raising NoMethodError.
+    #
+    # The step list is data-driven, so it stays accurate here: the registry
+    # computes it from the record's own predicates, all of which Order carries.
+    # Where the checkout stands within that list is not, which is why the
+    # readers below report a finished checkout.
+
+    # @deprecated Checkout steps belong to Spree::Cart; removed in 6.1.
+    def checkout_steps
+      Spree::Deprecation.warn('Spree::Order#checkout_steps is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def has_checkout_step?(step)
+      Spree::Deprecation.warn('Spree::Order#has_checkout_step? is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      step.present? && Spree::Checkout::Registry.step_names_for(self).include?(step.to_s)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def checkout_step_index(step)
+      Spree::Deprecation.warn('Spree::Order#checkout_step_index is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).index(step).to_i
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. An order has no
+    #   outstanding step, so this is always 'complete'.
+    def current_checkout_step
+      Spree::Deprecation.warn("Spree::Order#current_checkout_step is deprecated and will be removed in Spree 6.1. An order is past checkout, so this is always 'complete'.")
+      'complete'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def final_checkout_step
+      Spree::Deprecation.warn('Spree::Order#final_checkout_step is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }.last || 'address'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. Every step is behind
+    #   an order, so this is the whole list bar 'complete'.
+    def completed_checkout_steps
+      Spree::Deprecation.warn("Spree::Order#completed_checkout_steps is deprecated and will be removed in Spree 6.1. An order is past checkout, so every step bar 'complete' is behind it.")
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }
     end
 
     # Standardized column names (renamed in 6.0); legacy readers stay as
@@ -169,9 +218,7 @@ module Spree
     # Whose sale this is. Nil on the operator's own goods, including the
     # first-party child of a mixed marketplace checkout.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
-    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
+    acted_by :created_by, :approver, :canceler
     belongs_to :cancel_reason, class_name: 'Spree::OrderCancellationReason', optional: true, inverse_of: :orders
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
@@ -280,6 +327,8 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
     scope :canceled, -> { where(status: 'canceled') }
     scope :not_canceled, -> { where.not(status: 'canceled') }
+    # Nil-tolerant channel filter for optional scoping (nil means all channels).
+    scope :for_channel, ->(channel) { channel ? where(channel_id: channel.id) : all }
     scope :ready_to_ship, -> { where(fulfillment_status: %w[unfulfilled]) }
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
     scope :not_shipped, -> { where(fulfillment_status: %w[unfulfilled partial]) }
@@ -695,6 +744,25 @@ module Spree
       order_group_id.present? ? order_group.payments : payments
     end
 
+    # What has been captured against this order, net of refunds.
+    #
+    # Read from the share rows rather than the +payment_total+ they are summed
+    # into, since a caller about to move money needs what they say now.
+    #
+    # @return [BigDecimal]
+    def net_captured_total
+      return payment_total unless grouped?
+
+      payment_splits.sum(&:net_captured_amount)
+    end
+
+    # Payments still to be collected for this order, wherever they live.
+    #
+    # @return [ActiveRecord::Relation<Spree::Payment>, Array<Spree::Payment>]
+    def settlement_pending_payments
+      grouped? ? settlement_payments.pending : pending_payments
+    end
+
     # @return [Boolean] whether this order was placed alongside others in one
     #   checkout, and therefore shares their payment
     def grouped?
@@ -1064,10 +1132,11 @@ module Spree
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.customer_class, nil] the user who approved the order
+    # @param actor [Object, nil] who approved it — an admin user or an API
+    #   key (see Spree.actor_classes)
     # @return [Spree::ServiceModule::Result]
-    def approved_by(user = nil)
-      Spree.order_approve_service.call(order: self, approver: user)
+    def approved_by(actor = nil)
+      Spree.order_approve_service.call(order: self, approver: actor)
     end
 
     def approved?
@@ -1174,6 +1243,21 @@ module Spree
     end
 
     private
+
+    # An order placed in a split checkout owns no payments, so its money is
+    # the sum of its shares of the group's instead — the same source
+    # {Spree::Orders::UpdateStatuses} derives payment_status from.
+    #
+    # @return [Arel::Nodes::NamedFunction]
+    def settled_payments_arel
+      return super unless grouped?
+
+      splits = Spree::PaymentSplit.arel_table
+      net = splits.project(splits[:captured_amount].sum - splits[:refunded_amount].sum).
+            where(splits[:order_id].eq(id))
+
+      Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(net), Arel.sql('0')])
+    end
 
     def ensure_can_be_deleted
       return true if can_be_deleted?

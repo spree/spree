@@ -6,7 +6,8 @@ module Spree
       # Approves an order: clears the risk flag and records who approved it and when.
       #
       # @param order [Spree::Order]
-      # @param approver [Object, nil] the user/admin who approved
+      # @param approver [Object, nil] who approved it — an admin user or an
+      #   API key (see Spree.actor_classes)
       # @param level [String, nil] deprecated and ignored — removed in Spree 6.1
       # @param note [String, nil] deprecated and ignored — removed in Spree 6.1
       # @return [Spree::ServiceModule::Result]
@@ -16,7 +17,7 @@ module Spree
         end
 
         changes = { considered_risky: false, approved_at: Time.current }
-        changes[:approver_id] = approver.id if approver.present?
+        changes.merge!(Spree::ActedBy.columns_for(:approver, approver)) if approver.present?
         order.update_columns(changes)
 
         order.publish_event('order.approved')

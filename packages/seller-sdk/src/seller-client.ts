@@ -310,7 +310,9 @@ export class SellerClient {
 
     /**
      * @param expand associations to include — the product form asks for
-     *   `variants,media,default_variant`, which is everything it edits.
+     *   nested variant prices and stock levels (e.g.
+     *   `variants.prices,variants.stock_levels`) alongside
+     *   `variants,media,default_variant,submission`.
      */
     get: (id: string, expand?: string, options?: RequestOptions): Promise<Product> =>
       this.request<Product>('GET', `/products/${id}`, {

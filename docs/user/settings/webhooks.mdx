@@ -1,0 +1,43 @@
+---
+title: "Webhooks"
+description: "Have your store notify your other systems the moment something happens — an order placed, a product updated, a return received."
+---
+
+A webhook is your store calling out. When something happens — an order is placed, a payment succeeds, stock runs out — Spree sends the details to a URL you choose, so your warehouse system, accounting tool or CRM learns about it immediately rather than polling.
+
+Find them under **Settings → Webhooks**.
+
+## Adding an endpoint
+
+Click **Add webhook endpoint** and give it:
+
+- **URL** — where to send events. It must be reachable from your Spree server over HTTPS.
+- **Subscriptions** — which events to send. Pick individual events such as `order.placed`, or a whole family with a wildcard such as `order.*` for everything about orders.
+
+Each endpoint gets its own **signing secret**, shown once. Give it to whoever builds the receiving side — they use it to check each delivery really came from your store and was not tampered with.
+
+## Testing
+
+Use **Send test** to fire a sample event at the endpoint straight away. It shows up in the delivery log like any other, so you can confirm the receiver is wired up before real orders depend on it.
+
+## The delivery log
+
+Every attempt is recorded. **View deliveries** on an endpoint lists them with the event, the response code your system returned and how long it took. Open a delivery to see the exact payload that was sent and the response body that came back — the first place to look when a receiver misbehaves.
+
+| Status | Meaning |
+|---|---|
+| Pending | Queued, not yet sent |
+| Succeeded | Your endpoint answered with a success code |
+| Failed | Your endpoint answered with an error |
+| Error | Could not be delivered at all — a timeout, a DNS failure |
+
+A failed delivery is retried automatically, up to five times with increasing gaps between attempts, which rides out a brief outage on your side. After that it stays failed; **Redeliver** sends it again by hand once the receiver is fixed.
+
+## Disabling an endpoint
+
+**Disable** stops deliveries without deleting the endpoint or its history — useful while a receiver is being rebuilt. **Re-enable** when it is back. Deleting an endpoint removes its delivery history too.
+
+## Related
+
+- [API Keys](/user/settings/api-keys) — the other direction: your systems calling your store
+- [Webhooks for developers](/developer/core-concepts/webhooks) — payload format, signature verification and the full event list

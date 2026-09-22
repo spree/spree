@@ -1,21 +1,15 @@
 import {
-  AppSidebar,
+  AppShell,
+  AppShellProvider,
   adminClient,
   CommandPaletteProvider,
-  MobileBreadcrumbBar,
-  SettingsNavSheet,
-  SettingsSidebar,
-  SkipLink,
-  StickyHeaderProvider,
   StoreProvider,
-  TopBar,
-  useAutoCollapseSidebar,
 } from '@spree/dashboard-core'
-import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
 import { ProfileDialog } from '../../components/spree/profile-dialog'
+import { useDashboardCounters } from '../../hooks/use-dashboard-counters'
 import { getAvailableUiLocales } from '../../i18n-setup'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
@@ -44,57 +38,34 @@ function StoreLayout() {
   return (
     <StoreProvider storeId={storeId}>
       <CommandPaletteProvider>
-        <StickyHeaderProvider>
-          <SidebarProvider>
-            <StoreShell inSettings={inSettings} />
-          </SidebarProvider>
-          <CommandPalette />
-        </StickyHeaderProvider>
+        <AppShellProvider>
+          <StoreShell inSettings={inSettings} />
+        </AppShellProvider>
+        <CommandPalette />
       </CommandPaletteProvider>
     </StoreProvider>
   )
 }
 
-/**
- * Inside `SidebarProvider` so it can drive the primary nav's collapsed state:
- * the settings area brings its own full-width nav, so the primary one folds to
- * icons while the merchant is in there.
- */
 function StoreShell({ inSettings }: { inSettings: boolean }) {
-  useAutoCollapseSidebar(inSettings)
+  // Loaded by the shell rather than by whichever badge happens to be on screen:
+  // the sidebar only mounts the children of the section you are in, so leaving
+  // the request to a badge means no counts at all on every other page. One
+  // query key, so the badges and the home screen's card share this one request.
+  useDashboardCounters()
   // The profile is edited in a dialog rather than a page, so the shell owns its
-  // open state — the trigger sits in the TopBar's user menu, which is mounted
-  // here and stays put across route changes.
+  // open state — the trigger sits in the sidebar's account menu, which is
+  // mounted here and stays put across route changes.
   const [profileOpen, setProfileOpen] = useState(false)
-  // Below `lg` the settings sidebar is hidden, so its sheet is the only way
-  // between two settings pages. The trigger lives in the mobile breadcrumb bar.
-  const [settingsNavOpen, setSettingsNavOpen] = useState(false)
 
   return (
-    <>
-      {/* First in the tab order by construction — it has to precede the
-          sidebar's thirty-odd links to be able to skip them. */}
-      <SkipLink />
-      <AppSidebar />
-      {/* `flex-row` so the secondary sidebar can sit flush against the
-          primary and span full height. The TopBar moves into the content
-          column so the secondary sidebar can extend above it. */}
-      <SidebarInset className="flex-row">
-        <SettingsSidebar open={inSettings} />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar uiLocales={UI_LOCALES} onEditProfile={() => setProfileOpen(true)} />
-          <MobileBreadcrumbBar onOpenSettingsNav={() => setSettingsNavOpen(true)} />
-          <SettingsNavSheet open={settingsNavOpen} onOpenChange={setSettingsNavOpen} />
-          <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
-          {inSettings ? (
-            <Outlet />
-          ) : (
-            <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:p-6">
-              <Outlet />
-            </div>
-          )}
-        </div>
-      </SidebarInset>
-    </>
+    <AppShell
+      inSettings={inSettings}
+      uiLocales={UI_LOCALES}
+      onEditProfile={() => setProfileOpen(true)}
+    >
+      <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
+      <Outlet />
+    </AppShell>
   )
 }

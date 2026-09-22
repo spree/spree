@@ -1,7 +1,9 @@
 // Request parameter types for Admin API endpoints
 // Based on the Admin API OpenAPI specification
 
-import type { SellerRequirementStatus } from './types'
+import type { PaginationMeta } from '@spree/sdk-core'
+import type { ReportingQuery } from './admin-client'
+import type { SellerRequirementStatus, StoreCredit } from './types'
 
 /** One pricing or inventory engine a store can choose between. */
 export interface StoreDataSourceProvider {
@@ -54,6 +56,8 @@ export interface StoreUpdateParams {
   preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
+  /** Always advertise a confirmation step in checkout, even when no payment method requires one. */
+  preferred_always_include_confirm_step?: boolean
   /** Shows a company field on address forms. */
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
@@ -70,6 +74,8 @@ export interface StoreUpdateParams {
   preferred_track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */
   preferred_stock_reservations_enabled?: boolean
+  /** On-hand units at or below which a tracked variant counts as low stock on the home screen; 0 turns the warning off. */
+  preferred_low_stock_threshold?: number
   /** Records price changes for the EU Omnibus lowest-price-in-30-days display. */
   preferred_track_price_history?: boolean
   /** Whether products with no price in the shopper's currency still appear in listings. */
@@ -114,6 +120,14 @@ export interface StoreUpdateParams {
   preferred_payout_provider?: string
   preferred_default_payouts_schedule_interval?: string
   preferred_default_minimum_payout_amount?: number
+  /** Admits a seller as soon as they finish onboarding, with no operator review. */
+  preferred_auto_approve_sellers?: boolean
+  /** Puts a seller's product on sale the moment they submit it, with no review. */
+  preferred_auto_approve_seller_products?: boolean
+  /** When false, transactional seller emails (approval, payouts, etc.) are suppressed. */
+  preferred_send_seller_transactional_emails?: boolean
+  /** Tax charged on commission as a fraction (0.23 is 23%), when neither the rate nor the tax provider names one. */
+  preferred_default_commission_tax_rate?: number
 }
 
 export interface OptionValueParams {
@@ -1036,11 +1050,11 @@ export type CollectionSortOrder =
   | 'name asc'
   | 'name desc'
 
-export type CollectionRuleType =
-  | 'Spree::CollectionRules::Tag'
-  | 'Spree::CollectionRules::Sale'
-  | 'Spree::CollectionRules::AvailableOn'
-  | (string & {})
+/**
+ * Wire shorthand (`api_type`) for an automatic-collection rule — what
+ * `collectionRules.types()` returns. Ruby class names are not accepted.
+ */
+export type CollectionRuleType = 'tag' | 'sale' | 'available_on' | (string & {})
 
 export type CollectionRuleMatchPolicy =
   | 'is_equal_to'
@@ -1337,6 +1351,12 @@ export interface SetupParams {
    * store's currency.
    */
   country_code: string
+  /**
+   * Load the demo catalog, customers and orders in the background once the
+   * admin account exists. The load takes minutes and downloads product
+   * images, so the response does not wait for it.
+   */
+  sample_data?: boolean
   /** Storefront locale. Defaults to the country's own language. */
   locale?: string
   /**
@@ -1462,6 +1482,13 @@ export interface StockLevelUpdateParams {
    * of zero or more.
    */
   count_on_hand?: number
+  /**
+   * A signed change to the shelf instead of a target count — "three more",
+   * "two fewer" — applied by the API to the count it holds at that moment.
+   * Recorded as an `adjusted` movement the same way. Must be a whole number;
+   * a fraction is refused. Cannot be sent together with `count_on_hand`.
+   */
+  adjustment?: number
   /** Whether this location sells the variant beyond what it holds. */
   backorderable?: boolean
   /** Labels the correction in the stock history. Defaults to "Manual adjustment". */
@@ -1489,13 +1516,112 @@ export interface StockLevelBulkUpsertRow {
   backorderable?: boolean
 }
 
-export interface StockTransferCreateParams {
-  /** Omit for a seller receive (external stock arriving at the destination). */
-  source_location_id?: string
-  destination_location_id: string
-  reference?: string
-  variants: Array<{ variant_id: string; quantity: number }>
+export interface StockTransferItemParams {
+  variant_id: string
+  quantity_shipped: number
 }
+
+export interface StockTransferCreateParams {
+  source_location_id: string
+  destination_location_id: string
+  /** The merchant's own label for the trip. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
+  /**
+   * A draft may open empty and gain lines as the merchant packs. Sending the
+   * list replaces whatever the draft currently holds.
+   */
+  items?: StockTransferItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type StockTransferUpdateParams = Partial<StockTransferCreateParams>
+
+/**
+ * One delivery against a transfer or a purchase order. Quantities are what
+ * this delivery brought — a second delivery adds to the first, it does not
+ * restate it.
+ */
+export interface StockReceiptCreateParams {
+  /** The supplier's delivery note, or the carrier's reference. */
+  reference?: string | null
+  /** When the goods were counted in. Defaults to now. */
+  received_at?: string | null
+  notes?: string | null
+  /**
+   * Omit to book in everything still outstanding, intact. Naming lines — even
+   * none — records exactly what the dock counted. `quantity_accepted` reaches
+   * the shelf; `quantity_rejected` is refused, recorded with a
+   * `rejection_reason` and never stocked.
+   */
+  items?: StockReceiptItemParams[]
+}
+
+export interface StockReceiptItemParams {
+  /** The purchase order or transfer line. */
+  id: string
+  quantity_accepted?: number
+  quantity_rejected?: number
+  rejection_reason?: 'damaged' | 'wrong_item' | 'expired' | 'other' | null
+  notes?: string | null
+}
+
+/** Closing a transfer or an order short: why the balance is not coming. */
+export interface ReceivableCloseParams {
+  reason?: string | null
+}
+
+export interface StockTransferCancelParams {
+  /**
+   * Required once the units have left the source: either they come back
+   * (`restock`) or they are written off as lost.
+   */
+  on_in_transit?: 'restock' | 'write_off'
+  reason?: string
+}
+
+export interface SupplierCreateParams {
+  name: string
+  contact_name?: string
+  email?: string
+  phone?: string
+  notes?: string
+  address1?: string
+  address2?: string
+  city?: string
+  state_name?: string
+  state_code?: string
+  country_code?: string
+  postal_code?: string
+  metadata?: Record<string, unknown>
+}
+
+export type SupplierUpdateParams = Partial<SupplierCreateParams>
+
+export interface PurchaseOrderItemParams {
+  variant_id: string
+  quantity_ordered: number
+  /** What the merchant agreed to pay per unit, as a decimal string. */
+  unit_cost?: string
+}
+
+export interface PurchaseOrderCreateParams {
+  supplier_id: string
+  destination_location_id: string
+  /** Defaults to the store's currency; set it for a foreign-currency order. */
+  currency?: string
+  /** The day the supplier promised, as `yyyy-mm-dd`. `null` clears it. */
+  expected_at?: string | null
+  /** The day after which the goods are no longer wanted, as `yyyy-mm-dd`. `null` clears it. */
+  cancel_by?: string | null
+  /** The supplier's own order number. `null` clears it. */
+  reference?: string | null
+  notes?: string | null
+  items?: PurchaseOrderItemParams[]
+  metadata?: Record<string, unknown>
+}
+
+export type PurchaseOrderUpdateParams = Partial<PurchaseOrderCreateParams>
 
 export interface RoleCreateParams {
   /** Unique role name (machine identifier shown capitalized in the UI). */
@@ -2224,7 +2350,11 @@ export interface PriceBulkUpsertRow {
 }
 
 export interface PaymentMethodCreateParams {
-  /** Fully-qualified STI subclass name, e.g. 'Spree::PaymentMethod::Check'. */
+  /**
+   * Wire shorthand (`Spree::PaymentMethod.api_type`), not the Ruby class
+   * name — e.g. `'check'`, not `'Spree::PaymentMethod::Check'`. Discover the
+   * available values from `paymentMethods.types()`.
+   */
   type: string
   name: string
   description?: string | null
@@ -2311,10 +2441,8 @@ export interface IntegrationUpdateParams {
  * (`Spree::Export.available_types`); a plugin can register additional types,
  * which arrive here as the trailing `string & {}` arm.
  *
- * Creating an export still accepts the fully-qualified class name for
- * backwards compatibility, but responses always use the shorthand. Note that
- * Ransack filters (`type_eq`) match the database column, so those still take
- * the class name.
+ * Note that Ransack filters (`type_eq`) match the database column, so those
+ * still take the class name.
  */
 export type ExportType =
   | 'products'
@@ -2352,8 +2480,7 @@ export interface ExportCreateParams {
 
 /**
  * API shorthand for an import type (`Spree::Import.api_type`), not the Ruby
- * class name. Creating an import still accepts the fully-qualified class name
- * for backwards compatibility, but responses always use the shorthand.
+ * class name.
  */
 export type ImportType =
   | 'products'
@@ -2646,7 +2773,7 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
+  /** Wire shorthand for the calculator, e.g. `'flat_rate'` (see `deliveryMethods.calculators()`). */
   calculator_type?: string
   calculator_preferences?: Record<string, unknown>
   /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */
@@ -2937,4 +3064,48 @@ export interface TaxRateParams {
   included_in_price?: boolean
   show_rate_in_label?: boolean
   calculator_type?: string
+}
+
+// ============================================
+// Saved reports (semantic reporting layer)
+// ============================================
+
+export interface SavedReportCreateParams {
+  name: string
+  description?: string | null
+  /** A reporting contract query — validated against the registry on save. */
+  query: ReportingQuery
+}
+
+export type SavedReportUpdateParams = Partial<SavedReportCreateParams>
+
+/**
+ * The outstanding balance for one currency, summed over the filter the list
+ * request used. Amounts are canonical decimal strings; the `display_*` twins
+ * are pre-formatted in that currency.
+ */
+export interface StoreCreditCurrencyTotal {
+  currency: string
+  /** Everything ever issued in this currency. */
+  amount: string
+  /** How much of it has been spent. */
+  amount_used: string
+  /** How much is committed to an in-flight authorization. */
+  amount_authorized: string
+  /** What the store still owes: issued minus used minus authorized. */
+  amount_remaining: string
+  display_amount: string
+  display_amount_used: string
+  display_amount_authorized: string
+  display_amount_remaining: string
+}
+
+export interface StoreCreditListMeta extends PaginationMeta {
+  /** One row per currency present in the filtered scope, ordered by currency. */
+  totals: StoreCreditCurrencyTotal[]
+}
+
+export interface StoreCreditListResponse {
+  data: StoreCredit[]
+  meta: StoreCreditListMeta
 }

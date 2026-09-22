@@ -35,6 +35,10 @@ test.describe('webhooks', () => {
   test('lists webhook endpoints', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, WEBHOOKS_PATH(creds.store_id), CTA)
+    await expect(page.getByText(/0[–-]0 of 0/)).toHaveCount(0)
+    if (await page.getByText(/no webhook endpoints yet/i).isVisible()) {
+      await expect(page.getByText(/rows per page/i)).toHaveCount(0)
+    }
   })
 
   test('creates an endpoint, reveals the secret, and navigates to its detail page', async ({

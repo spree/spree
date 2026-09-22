@@ -26,6 +26,7 @@ import {
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -501,7 +502,7 @@ export function MediaCard({
 
   return (
     <>
-      <Card className="scroll-mt-[calc(var(--spacing-header-height)*2+1.5rem)]">
+      <Card className="scroll-mt-[calc(var(--spacing-header-height)+1.5rem)]">
         <CardHeader>
           <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
         </CardHeader>
@@ -764,12 +765,14 @@ function SortableMediaThumbnail({
 export function InventoryCard({
   form,
   stockLocationHref,
-}: FormCardProps & { stockLocationHref?: (id: string) => string }) {
+  actions,
+}: FormCardProps & { stockLocationHref?: (id: string) => string; actions?: React.ReactNode }) {
   const { t } = useTranslation()
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
+        {actions && <CardAction>{actions}</CardAction>}
       </CardHeader>
       <CardContent className="p-0">
         <InventorySection form={form} stockLocationHref={stockLocationHref} />

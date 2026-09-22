@@ -53,6 +53,13 @@ module Spree
       }
     }.freeze
 
+    # Some gem subdivision names are a placeholder the gem falls back to when it
+    # has no proper name for the entry: the value it would have translated,
+    # tagged with the locale it belongs to — Pakistan's "Sind (en)",
+    # "Baluchistan (en)". The clean name is the locale's own translation, so a
+    # name matching this is replaced rather than shown or matched against.
+    LOCALE_TAGGED_NAME = /\s\([a-z]{2}(?:-[a-z]{2})?\)\z/i
+
     # Retired ISO codes mapped to their current equivalent. Reading an address
     # written under the old code still finds the right subdivision; writing
     # always stores the successor.
@@ -172,16 +179,28 @@ module Spree
       # English deliberately reads the canonical +name+ rather than the +en+
       # translation: the two disagree in places (the gem translates DC as
       # "Washington DC", where the canonical name is "District of Columbia"),
-      # and the canonical spelling is the one Spree has always stored.
+      # and the canonical spelling is the one Spree has always stored. The
+      # exception is a name the gem left as a locale-tagged placeholder
+      # ("Sind (en)"): that is not a spelling to preserve, so the clean English
+      # translation wins.
       #
       # Note the translation keys are symbols here, unlike +Country#translation+,
       # which takes a string.
       def subdivision_display_name(subdivision)
         locale = I18n.locale.to_s.downcase
-        return subdivision.name if locale.start_with?('en')
-
         translations = subdivision.translations || {}
-        translations[locale.to_sym].presence || subdivision.name
+        english = translations[:en].presence
+
+        if locale.start_with?('en')
+          name = subdivision.name
+          return name.match?(LOCALE_TAGGED_NAME) ? (english || name) : name
+        end
+
+        translated = translations[locale.to_sym].presence
+        return translated if translated
+
+        name = subdivision.name
+        name.match?(LOCALE_TAGGED_NAME) ? (english || name) : name
       end
     end
   end

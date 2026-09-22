@@ -1,4 +1,4 @@
-import { sameRichText } from '@spree/dashboard-ui'
+import { sameRichText, shouldEmitRichTextChange } from '@spree/dashboard-ui'
 import { describe, expect, it } from 'vitest'
 
 describe('sameRichText', () => {
@@ -37,5 +37,27 @@ describe('sameRichText', () => {
   it('strips a long run of trailing empty paragraphs without hanging', () => {
     const empty = '<p></p>'.repeat(200)
     expect(sameRichText(`<p>Standventilator</p>${empty}`, '<p>Standventilator</p>')).toBe(true)
+  })
+})
+
+describe('shouldEmitRichTextChange', () => {
+  it('does not emit mount wrapping of empty or bare text', () => {
+    expect(shouldEmitRichTextChange('<p></p>', '')).toBe(false)
+    expect(shouldEmitRichTextChange('<p><br></p>', '')).toBe(false)
+    expect(shouldEmitRichTextChange('<p>Hello</p>', 'Hello')).toBe(false)
+  })
+
+  it('emits a user-split empty paragraph that sameRichText would ignore', () => {
+    expect(
+      shouldEmitRichTextChange('<p>First paragraph</p><p></p>', '<p>First paragraph</p>'),
+    ).toBe(true)
+    expect(
+      shouldEmitRichTextChange('<p>First paragraph</p><p><br></p>', '<p>First paragraph</p>'),
+    ).toBe(true)
+  })
+
+  it('emits a wording or formatting change', () => {
+    expect(shouldEmitRichTextChange('<p>Two</p>', '<p>One</p>')).toBe(true)
+    expect(shouldEmitRichTextChange('<ul><li><p>One</p></li></ul>', '<p>One</p>')).toBe(true)
   })
 })

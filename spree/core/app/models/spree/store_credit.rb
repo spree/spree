@@ -48,9 +48,53 @@ module Spree
 
     scope :not_authorized, -> { where(amount_authorized: 0) }
     scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
+    # Spendable right now, for the checkout path: a credit with any amount
+    # authorized is mid-payment and must not be authorized again, even though
+    # part of it may still be unspent. Narrower than {.unspent} on purpose.
     scope :available, -> { not_authorized.not_used }
+
+    # Money the store still owes: whatever is neither spent nor committed to an
+    # in-flight authorization. A credit of 100 with 10 authorized has 90 left
+    # and belongs here, which is what separates this from {.available}.
+    scope :unspent, lambda {
+      table = arel_table
+      committed = Arel::Nodes::Grouping.new(table[:amount_used] + table[:amount_authorized])
+      where(committed.lt(table[:amount]))
+    }
+
+    # The complement of {.unspent}: nothing left to draw on.
+    scope :exhausted, lambda {
+      table = arel_table
+      committed = Arel::Nodes::Grouping.new(table[:amount_used] + table[:amount_authorized])
+      where(committed.gteq(table[:amount]))
+    }
     scope :with_gift_card, -> { where(originator_type: 'Spree::GiftCard') }
     scope :without_gift_card, -> { where(originator_type: [nil, '']).or(where.not(originator_type: 'Spree::GiftCard')) }
+
+    # What a merchant filters the credit list by: money still owed, or money
+    # already spent. One ransackable scope with two named states rather than
+    # two bare scopes, so the filter control offers a choice instead of a
+    # checkbox whose unticked state means "no filter".
+    #
+    # Splat, not a defaulted argument: Ransack splats an array predicate, and
+    # asking for both sides is no constraint at all. See Spree::Base.ransack_flag.
+    scope :outstanding, ->(*values) {
+      case Spree::Base.ransack_flag(*values)
+      when true then unspent
+      when false then exhausted
+      else all
+      end
+    }
+
+    # Whether the credit came from redeeming a gift card, as opposed to a
+    # return, an exchange, a claim or an admin issuing it by hand.
+    scope :from_gift_card, ->(*values) {
+      case Spree::Base.ransack_flag(*values)
+      when true then with_gift_card
+      when false then without_gift_card
+      else all
+      end
+    }
 
     after_save :store_event
     before_destroy :validate_no_amount_used
@@ -64,8 +108,15 @@ module Spree
       self[:amount] = Spree::LocalizedNumber.parse(amount)
     end
 
-    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency]
+    self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
     self.whitelisted_ransackable_associations = %w[customer created_by]
+    self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
+
+    # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
+    # opted out of here and done inside each scope instead.
+    def self.ransackable_scopes_skip_sanitize_args
+      %i[outstanding from_gift_card]
+    end
 
     def amount_remaining
       amount - amount_used - amount_authorized
@@ -183,6 +234,16 @@ module Spree
 
     def can_credit?(payment)
       payment.completed? && payment.credit_allowed > 0
+    end
+
+    # Whether the store still owes anything on this credit. The record-level
+    # twin of the `unspent` scope, and the two must agree: the list filters on
+    # the scope and the row renders this, so a client deriving one from the
+    # money columns itself would drift from the filter that hides it.
+    #
+    # @return [Boolean]
+    def outstanding?
+      amount_used + amount_authorized < amount
     end
 
     def editable?

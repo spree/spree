@@ -93,6 +93,8 @@ Merchants translate in the dashboard, switching locale on the record they're edi
 
 Translations can also be written through the Admin API, which is what you'd use to sync from an external translation service:
 
+<CodeGroup>
+
 ```typescript Admin SDK
 await adminClient.products.update('prod_xxx', {
   translations: {
@@ -104,6 +106,15 @@ await adminClient.products.update('prod_xxx', {
 // Which resources and fields accept translations
 const { data: resources } = await adminClient.translatableResources.list()
 ```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "translations": { "de": { "name": "Baumwolltasche" } } }'
+```
+
+</CodeGroup>
 
 Asking the API which resources are translatable means a translation tool doesn't need a hardcoded list that goes stale.
 

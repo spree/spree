@@ -194,7 +194,8 @@
         "selected": "{{count}} sélectionné(s)"
       },
       "channel_select": {
-        "placeholder": "Sélectionner un canal de vente"
+        "placeholder": "Sélectionner un canal de vente",
+        "all_channels": "Tous les canaux"
       },
       "command_palette": {
         "create": {
@@ -248,6 +249,7 @@
         },
         "no_results": "Aucun résultat pour « {{query}} ».",
         "placeholder": "Rechercher des produits, des commandes, des clients…",
+        "search_label": "Rechercher…",
         "title": "Recherche et commandes"
       },
       "confirm_dialog": {
@@ -427,6 +429,7 @@
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
+        "more_conditions": "Autres conditions",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -977,7 +980,8 @@
         "customers": "Clients",
         "price_list_prices": "Prix des listes de prix",
         "product_translations": "Traductions de produits",
-        "products": "Produits"
+        "products": "Produits",
+        "purchase_orders": "Bons de commande"
       },
       "wizard_title": "Import"
     },
@@ -1059,7 +1063,8 @@
       },
       "validation": {
         "non_negative": "doit être supérieur ou égal à zéro"
-      }
+      },
+      "description": "Les boîtes, cartons et palettes dans lesquels vos marchandises sont expédiées, avec les dimensions et poids sur lesquels les transporteurs établissent leurs tarifs."
     },
     "pages": {
       "settings": {
@@ -1400,7 +1405,8 @@
         "unknown_product": "Produit inconnu",
         "variant_count_one": "{{count}} variante",
         "variant_count_other": "{{count}} variantes"
-      }
+      },
+      "description": "Les entrepôts et boutiques où vous détenez du stock et depuis lesquels vous expédiez les commandes."
     },
     "validation": {
       "codes": {
@@ -1410,6 +1416,7 @@
         "empty": "ne peut pas être vide",
         "equal_to": "doit être égal à {{count}}",
         "exclusion": "est réservé",
+        "forbidden_reporting_member": "Ce rapport référence des données que vous n’êtes pas autorisé à lire.",
         "greater_than": "doit être supérieur à {{count}}",
         "greater_than_or_equal_to": "doit être supérieur ou égal à {{count}}",
         "inclusion": "ne fait pas partie de la liste",
@@ -1423,6 +1430,7 @@
         "present": "doit être vide",
         "product_not_in_store": "doivent tous appartenir à cette boutique",
         "required": "doit exister",
+        "seeded_report_read_only": "Ce rapport est intégré et ne peut pas être modifié. Enregistrez plutôt une copie.",
         "taken": "est déjà utilisé",
         "too_long": "est trop long ({{count}} caractères maximum)",
         "too_short": "est trop court ({{count}} caractères minimum)",

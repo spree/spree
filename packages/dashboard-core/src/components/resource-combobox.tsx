@@ -3,6 +3,7 @@ import {
   ResourceCombobox as HeadlessResourceCombobox,
   type ResourceComboboxProps as HeadlessResourceComboboxProps,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -47,6 +48,14 @@ export interface ResourceComboboxProps<T extends ComboboxOption>
    * Returning `false` drops the row from the dropdown.
    */
   filterOption?: (option: T) => boolean
+
+  /**
+   * A row pinned to the bottom of the dropdown, for creating what the search
+   * could not find — "New supplier" on a purchase order, say. It sits with the
+   * results rather than beside the field so it is found where the merchant is
+   * already looking, and it closes the dropdown when chosen.
+   */
+  action?: { label: string; onSelect: () => void }
 }
 
 /**
@@ -71,6 +80,7 @@ export function ResourceCombobox<T extends ComboboxOption>({
   emptyText,
   disabled,
   filterOption,
+  action,
   id,
 }: ResourceComboboxProps<T>) {
   const { t } = useTranslation()
@@ -132,10 +142,29 @@ export function ResourceCombobox<T extends ComboboxOption>({
       placeholder={placeholderLabel}
       emptyText={emptyLabel}
       listFooter={
-        hiddenCount > 0 ? (
-          <p className="border-t border-border px-2.5 py-2 text-muted-foreground text-xs">
-            {t('admin.common.combobox_more_results', { count: hiddenCount })}
-          </p>
+        hiddenCount > 0 || action ? (
+          <>
+            {hiddenCount > 0 && (
+              <p className="border-t border-border px-2.5 py-2 text-muted-foreground text-xs">
+                {t('admin.common.combobox_more_results', { count: hiddenCount })}
+              </p>
+            )}
+            {action && (
+              // `onMouseDown` rather than `onClick`: the input blurs first and
+              // the dropdown unmounts, so a click never lands.
+              <button
+                type="button"
+                className="flex w-full cursor-pointer items-center gap-2 border-t border-border px-2.5 py-2 text-left text-sm hover:bg-accent"
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                  action.onSelect()
+                }}
+              >
+                <PlusIcon className="size-4" />
+                {action.label}
+              </button>
+            )}
+          </>
         ) : undefined
       }
       disabled={disabled}

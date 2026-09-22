@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.version       = Spree.version
   s.authors       = ['Vendo Connect Inc.']
   s.email         = ['hello@spreecommerce.org']
-  s.summary       = %q{Spree's API}
-  s.description   = %q{Spree's API}
+  s.summary       = %q{Spree REST API}
+  s.description   = "Spree Commerce Store / Admin API and HTTP webhooks"
   s.homepage      = 'https://spreecommerce.org'
   s.license       = 'BSD-3-Clause'
 
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.2'
 
-  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "LICENSE", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rswag-specs'

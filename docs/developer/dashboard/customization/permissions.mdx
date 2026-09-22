@@ -4,6 +4,10 @@ sidebarTitle: Permissions
 description: How to hide UI behind CanCanCan permissions in your customisations — and why hiding is never the same as authorising.
 ---
 
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
 The dashboard exposes the current admin's CanCanCan abilities to every component via the `usePermissions()` hook. The registry surfaces — nav entries, settings entries, custom routes — also accept a `subject` shortcut, and nav entries take a generic `if` predicate that reads from `permissions`.
 
 ## Two layers
@@ -88,7 +92,7 @@ Use it for combined checks (permission + store state), feature flags, multi-acti
 Use the `usePermissions()` hook — it returns `{ permissions, rules, isLoading }`:
 
 ```tsx
-import { usePermissions } from '@spree/dashboard-core'
+import { usePermissions } from '@spree/dashboard'
 
 function ReportsPage() {
   const { permissions } = usePermissions()
@@ -103,7 +107,7 @@ The same `permissions` object backs the nav registry's `if` predicate, so you ca
 
 ## Custom permissions
 
-If your customization introduces a new model on the backend, register it as a permission catalog resource there (`Spree.permissions.register_resource` in your engine's initializer). Its keys then appear in the role editor and the API-key scope picker, and any role granted them makes `permissions.can('read', 'MyApp::Report')` resolve in the dashboard exactly like a first-party check — the abilities ship with the current-user response (`GET /api/v3/admin/me`) at sign-in, alongside `permission_keys`, the flat key list the role editor grants from.
+If your customization introduces a new model on the backend, register it as a permission catalog scope there (`Spree.permissions.register_scope` in your engine's initializer). Its keys then appear in the role editor and the API-key scope picker, and any role granted them makes `permissions.can('read', 'MyApp::Report')` resolve in the dashboard exactly like a first-party check — the abilities ship with the current-user response (`GET /api/v3/admin/me`) at sign-in, alongside `permission_keys`, the flat key list the role editor grants from.
 
 ## Reference
 

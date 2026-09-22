@@ -5,7 +5,7 @@ module Spree
     KINDS = %w[dropdown color_swatch buttons].freeze
 
     include Spree::ParameterizableName
-    include Spree::UniqueName
+    include Spree::SingleStoreResource
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::LabelTranslatable
@@ -24,8 +24,13 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[search_by_name]
     # `label` is what admin surfaces display, so it has to be filterable —
     # matching Spree::OptionValue, which already allows it.
-    self.whitelisted_ransackable_attributes = %w[label]
-    acts_as_list
+    self.whitelisted_ransackable_attributes = %w[label name]
+
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
+
+    validates :name, presence: true
+    validates_store_uniqueness :name
+    acts_as_list scope: :store_id
 
     #
     # Associations

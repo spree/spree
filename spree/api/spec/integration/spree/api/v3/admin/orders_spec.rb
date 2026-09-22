@@ -315,6 +315,10 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         Completes an order in the `confirm` state, marking it as placed.
 
         Set `notify_customer: true` to send the order confirmation email.
+
+        On a marketplace, an order holding several sellers' goods becomes one
+        order per seller, and the response is the order group they belong to
+        with those orders nested inside it.
       DESC
       admin_scope :write, :orders
 

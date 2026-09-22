@@ -95,6 +95,10 @@ module Spree
     # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
     preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
+    # Advertises a confirm/review step for every checkout, even when no
+    # payment method asks for one. Payment methods that require confirmation
+    # get it regardless of this setting.
+    preference :always_include_confirm_step, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Store-wide default for when a customer is charged rather than only
     # authorized. A payment method's own capture_method wins when set.
@@ -116,6 +120,14 @@ module Spree
                default: Spree::ProviderFailurePolicy::DEFAULT_INVENTORY_POLICY
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
+    # On-hand quantity at or below which a tracked variant counts as running
+    # low on the home screen. 0 turns the warning off.
+    preference :low_stock_threshold, :integer, default: 5
+    # How long a cart must sit untouched before reporting counts it abandoned.
+    # Deliberately shorter than the cart-expiry reaper's windows: that job
+    # decides when a cart is deleted, this decides when a merchant should
+    # chase it.
+    preference :abandoned_cart_after_hours, :integer, default: 24
     preference :show_products_without_price, :boolean, default: false
     preference :disable_sku_validation, :boolean, default: false
     # Records price changes so the storefront can show the lowest price of the
@@ -156,6 +168,8 @@ module Spree
     has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :orders, class_name: 'Spree::Order'
     has_many :order_groups, class_name: 'Spree::OrderGroup'
+    has_many :customers, through: :orders, source: :customer, class_name: "::#{Spree.customer_class}"
+    has_many :saved_reports, class_name: 'Spree::SavedReport', dependent: :destroy
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
     has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment'
@@ -244,6 +258,17 @@ module Spree
     # first.
     has_one :default_package_type, -> { where(default: true, seller_id: nil) },
             class_name: 'Spree::PackageType', inverse_of: :store
+    # Inventory operations (docs/plans/6.0-inventory-operations.md). Transfers
+    # carry their own store rather than borrowing the destination warehouse's,
+    # so the admin endpoint has a scope to fetch through.
+    has_many :stock_transfers, class_name: 'Spree::StockTransfer', dependent: :destroy_async, inverse_of: :store
+    # Purchase orders are declared before suppliers, and both cascade in the
+    # same transaction: a supplier refuses to be destroyed while a purchase
+    # order names it (`restrict_with_error`), so tearing a store down has to
+    # reach the orders first. `destroy_async` on either side would break that
+    # ordering and leave the suppliers behind.
+    has_many :purchase_orders, class_name: 'Spree::PurchaseOrder', dependent: :destroy, inverse_of: :store
+    has_many :suppliers, class_name: 'Spree::Supplier', dependent: :destroy, inverse_of: :store
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
@@ -266,7 +291,6 @@ module Spree
       self[:default_country_code] = value&.iso
     end
 
-    has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
     has_many :integrations, class_name: 'Spree::Integration'
@@ -303,6 +327,8 @@ module Spree
     validates :preferred_digital_asset_link_expire_time,
               numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1.hour.to_i }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_low_stock_threshold, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+    validates :preferred_abandoned_cart_after_hours, numericality: { only_integer: true, greater_than: 0 }
     # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
     # multiplied straight into what a seller is charged, so a negative would
     # credit them and a figure above 1 would bill more tax than fee.

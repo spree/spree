@@ -5,7 +5,7 @@ module Spree
 
       def call(owner: nil, cart: nil, order: nil)
         cart = owner || cart || order
-        Spree::StockReservation.merge(Spree::StockReservation.for_order(cart)).delete_all
+        Spree::StockReservation.withdraw(Spree::StockReservation.for_order(cart))
         success(cart)
       end
     end

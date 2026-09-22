@@ -10,6 +10,8 @@ import { productTypeAutocompleteProps } from '../hooks/use-product-types'
 import { sellerAutocompleteProps } from '../hooks/use-sellers'
 
 defineTable('products', {
+  docsPath: 'products/creating-products',
+  description: i18n.t('admin.table_descriptions.products'),
   title: i18n.t('admin.nav.products'),
   searchParam: 'multi_search',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),

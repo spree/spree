@@ -10,6 +10,7 @@ module Spree
     has_prefix_id :claim
 
     has_spree_number prefix: 'CLM'
+    include Spree::ActedBy
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
@@ -27,7 +28,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :claims
     belongs_to :reason, class_name: 'Spree::ClaimReason', optional: true, inverse_of: :claims
-    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
+    acted_by :created_by
 
     has_many :claim_line_items, class_name: 'Spree::ClaimLineItem',
                                 dependent: :destroy, inverse_of: :claim
@@ -45,6 +46,16 @@ module Spree
 
     def refund_total
       claim_line_items.sum(&:refund_amount)
+    end
+
+    # What a refund from this claim paid for, line by line — each line already
+    # carries the amount agreed for it.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => amount
+    def refunded_line_amounts
+      claim_line_items.each_with_object(Hash.new(0)) do |line, amounts|
+        amounts[line.line_item_id] += line.refund_amount.to_d
+      end
     end
 
     def display_refund_total

@@ -1,0 +1,49 @@
+---
+title: "Exchanges"
+description: "Swap what a customer bought for a different size, colour or product — items come back, replacements go out."
+---
+
+An exchange is a [Return](/user/orders/returns) that ends by sending different items instead of refunding: the customer sends back the medium and gets the large. It belongs to the order it came from, and you will find all exchanges under **Orders → Exchanges**, as well as on the order itself.
+
+## When to use one
+
+Use an exchange when the customer wants a *different* item and is sending the original back. If they want their money, that is a return. If the delivery went wrong — damaged, missing, wrong item — and you would replace it without asking for anything back, that is a [Claim](/user/orders/claims).
+
+## Opening an exchange
+
+On the order, click **New exchange**. For each line being swapped, choose the item coming back, how many, and the **replacement variant** going out in its place — another size or colour of the same product, or a different product entirely.
+
+Record the reason from the return-reasons list; exchanges and returns share it.
+
+Customers can also open exchanges from their account, if your storefront offers it. Those arrive as **Requested**.
+
+## The steps
+
+| Status | What it means |
+|---|---|
+| Requested | Opened, waiting on you |
+| Approved | You have authorised it — the customer can send the goods back |
+| Received | The goods arrived and you recorded what turned up |
+| Fulfilled | The replacements have shipped |
+| Canceled | Called off before the goods were received |
+
+**Approve** it, then when the parcel arrives, **Receive items** — enter the quantity that actually came back per line, and whether each is resellable. Resellable items return to stock; damaged ones do not.
+
+Then **Ship replacement**. Spree creates the replacement shipment on the original order for the quantities that were actually received — not what was promised — and checks the replacements are in stock first. The customer does not have to place a second order.
+
+## The price difference
+
+Replacements are not always worth the same as what came back. Spree works out the **price difference**:
+
+- If the replacements are worth **less**, the difference goes back to the customer — to store credit or their original payment method, your choice.
+- If they are worth **more**, Spree records the difference but does **not** charge the customer automatically. Collecting that balance is up to you, so nobody's card is charged without their agreement.
+
+## Cancelling
+
+An exchange can be cancelled at any point before the goods are received. Cancelling restocks nothing and moves no money.
+
+## Related
+
+- [Returns](/user/orders/returns) — money back instead of different items
+- [Claims](/user/orders/claims) — when the delivery went wrong
+- [Returns & reasons](/user/settings/returns-and-reasons) — the reason list exchanges share with returns

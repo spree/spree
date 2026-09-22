@@ -36,7 +36,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
 | `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
-
+| `docs/` | Mintlify powered documentation website, which is deployed to https://spreecommerce.org/docs |
 ## Development Server (worktrees)
 
 Development happens in **git worktrees** — every worktree is a self-contained native dev environment, no Docker: its own gitignored `server/` clone of spree-starter (monorepo gems loaded as path gems via `SPREE_PATH`), its own database on the shared Homebrew Postgres (:5432, copied in ~2 s from the seeded `spree_worktree_template`), and stable per-branch https URLs via [portless](https://github.com/vercel-labs/portless). Worktrees are managed with [worktrunk](https://worktrunk.dev) (`wt`): creating one runs `scripts/worktree/setup.sh` automatically (see `.config/wt.toml`), removing one drops its databases. The main checkout is for integration (merges, template rebuilds), not for running servers.
@@ -123,7 +123,7 @@ NEVER kill/shut off dev serves already running unless they are broken (eg. migra
 - ALWAYS use Yard comments for classes and public methods, with `@param` and `@return` types
 - DO NOT generate too much comment noise, be very strict and selective about what gets a comment — only non-obvious public methods, never private methods or internal helpers
 - DO NOT use shorthand variable names, readibility by humans is the core principle
-- Always use `ActiveJob::Continuable` when a Background Job iterates over records and perform operations on them
+- Always use `ActiveJob::Continuable`` when a Background Job iterates over records and perform operations on them
 
 ### Code Organization
 
@@ -327,6 +327,25 @@ end
 attribute :variant_id
 ```
 
+### Typed subclasses (`api_type`, never the Ruby class name)
+
+STI families selected by a `type` on the wire (promotion rules/actions, price rules, delivery-method rules, collection rules, commission rules, order-routing rules, payment methods, integrations, seller requirements, calculators, imports/exports) are addressed by their **`api_type` shorthand** — the demodulized + underscored leaf, so `Spree::PriceRules::VolumeRule` is `volume_rule`:
+
+- Never put a Ruby class name in a request, response, SDK type, doc example or fixture — `subclassed_via` and `find_by_api_type` match on `api_type` **only**, so a class name is rejected as an unknown type. A few surfaces (exports/imports, calculators, collection rules) also accept it as a compat fallback; never document or generate that form
+- Serialize with `attribute :type { |record| record.class.api_type }`
+- Override `def self.api_type` to keep the wire value stable across a class rename — the default is derived, so renaming otherwise changes a public identifier
+- Build pickers from the family's `…/types` endpoint (`{ type, label, preference_schema }`), never a hardcoded list — extension kinds then appear for free
+- Adding a built-in kind means updating the serializer's `comment:` list in the same change (see the value-list tiers below)
+- Polymorphic columns are different: `resource_type`, `taggable_type`, `owner_type` hold real class names and stay as they are (`Spree::Base.polymorphic_api_type` shortens where needed)
+
+```ruby
+# ✅ Wire shorthand
+{ type: 'volume_rule', preferences: { min_quantity: 10 } }
+
+# ❌ Rejected as an unknown type
+{ type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 10 } }
+```
+
 ### Serializers (Alba)
 
 Located in `api/app/serializers/spree/api/v3/`. Store and Admin APIs have separate serializers; **Admin always extends Store** so changes to public fields propagate automatically.
@@ -370,7 +389,10 @@ end
 ```
 
 - `typelize attr: :type` for computed/delegated attribute types
-- Closed value lists use `typelize kind: [:string, enum: Model::KINDS]` (a closed TS union); lists an extension may extend — `has_status` values, `Spree::Fee::KINDS` — add `enum_type_name: 'ModelStatus'`, which emits a named, exported, open union (`'a' | 'b' | (string & {})`). Registry-driven `type` fields stay `:string` with a `comment:` naming the built-ins. OpenAPI lists the values in all three cases; for the open ones it emits `anyOf` (the known values, or any string) so generated clients accept extension values too
+- Value lists come in three tiers — picking the wrong one is a contract bug:
+  - **Closed** (nothing can extend it — units, match policies): `enum: Model::KINDS` → closed TS union, plain OpenAPI `enum`
+  - **Open** (extensions may add, built-ins known at class-load — `has_status`, `Spree::Fee::KINDS`): add `enum_type_name: 'ModelStatus'` → open TS union (`'a' | 'b' | (string & {})`) + OpenAPI `anyOf`, so clients autocomplete the built-ins and still accept extension values
+  - **Registry-driven `type`** (the typed-subclass families above): plain `:string` + `comment:` listing the built-in shorthands. It *cannot* use `enum:` — registries fill in `to_prepare`/initializers, after serializer classes load, so generated types would depend on boot order and installed extensions. Cost: no autocomplete, no machine-readable list, and the comment is hand-maintained
 - Never use `typelize_from` — it connects to the database
 - Customize via inheritance + `Spree.api.product_serializer = 'MyApp::ProductSerializer'`
 - NEVER create custom hash/arrays to represent associations or records inside the serializer - each record or a variant of a record (eg. lightweight variant of an existing serializer) should be it's own serializer
@@ -541,6 +563,8 @@ The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legac
 - `@spree/dashboard` — routes, resource hooks (`use-orders`, `use-products`, …), Zod schemas, locales, app shell.
 
 The split lets plugin authors register UI via `defineDashboardPlugin` from `@spree/dashboard-core/plugin`, build new pages with `@spree/dashboard-ui` primitives, and reuse the same providers/hooks. It also lets app developers compose custom dashboards (e.g. seller panels) from the same packages.
+
+We use [Shadcn](https://ui.shadcn.com/docs/components) components using Base UI (NOT radix). Before adding a component ALWAYS check if Shadcn doesnt include it already. Use Shadcn CLI to install them in `dashboard-ui`.  
 
 **Running the admin UI locally** (from a worktree — see "Development Server" above):
 
@@ -757,3 +781,15 @@ Both are rare in the admin SPA, which renders success states only after mutation
 - Use `Date.now()` suffixes on names so leftover rows from earlier specs don't collide (the suite runs serially — `fullyParallel: false, workers: 1`).
 - Disambiguate duplicate button names (e.g., a "Delete" in the sheet footer + another in a confirm dialog) by scoping: `page.getByRole('dialog').getByRole('button', { name: /^delete$/i })`.
 - Reference: `e2e/option-types.spec.ts`, `e2e/invitation-acceptance.spec.ts`.
+
+
+## Mintlify Documentation
+
+* every architectural changes, new models and entities need to be documented in `docs/developer` documentation
+* before adding new pages to documentation try to fit this into existing pages
+* if adding new pages ALWAYS link to existing associated/connected pages, cross-linking for easier navigation is very important
+* all API calls should be documented via mintlify Tabs component with examples via SDK and/or CURL
+* don't over-expose Ruby code, always try to interface via SDK/API first
+* ruby code snippets should have documented full path of the file, the root is always `server` as it's the default location for new apps created with `create-spree-app` CLI tool (the only official way to setup a Spree project)
+* for rake tasks/rails commands always show this via `spree` CLI tool, not directly rails, as all new projects are bootstrapped in Rails API dockerized by default, we use Tabs component to show `Spree CLI / Without CLI` examples
+* DON'T touch docs in the `v5` directory, it's Spree 5 documentation which is now frozen and shouldn't be updated

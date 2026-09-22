@@ -11,7 +11,11 @@ import { Link, useParams, useRouterState } from '@tanstack/react-router'
 import { Fragment, type ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { isPathWithin, type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'
-import { type SettingsNavEntry, useSettingsNav } from '../lib/settings-nav-registry'
+import {
+  resolveSettingsBreadcrumbLabel,
+  type SettingsNavEntry,
+  useSettingsNav,
+} from '../lib/settings-nav-registry'
 
 interface Crumb {
   label: string
@@ -38,9 +42,9 @@ export function TopBarBreadcrumbs({ tenantId }: { tenantId?: string } = {}) {
 }
 
 /**
- * Breadcrumbs for a narrow screen, as a row beneath the TopBar rather than
- * inside it — the bar has no width to spare on a phone, so the trail lives on
- * its own line and scrolls sideways instead of wrapping.
+ * Breadcrumbs for a narrow screen, as a row beneath `MobileTopBar` rather
+ * than inside it — that bar has no width to spare on a phone, so the trail
+ * lives on its own line and scrolls sideways instead of wrapping.
  *
  * Only rendered where it earns the vertical space: inside settings, and on
  * record pages. A top-level list page would only repeat its own heading.
@@ -190,7 +194,10 @@ function buildCrumbs({
     const crumbs: Crumb[] = [{ label: t('admin.settings_page.title'), to: settingsRoot }]
     const entry = bestMatch(settings, (e) => `${settingsRoot}${e.path}`, pathname)
     if (entry) {
-      crumbs.push({ label: resolveNavLabel(entry, t), to: `${settingsRoot}${entry.path}` })
+      crumbs.push({
+        label: resolveSettingsBreadcrumbLabel(entry, t),
+        to: `${settingsRoot}${entry.path}`,
+      })
     }
     return crumbs
   }

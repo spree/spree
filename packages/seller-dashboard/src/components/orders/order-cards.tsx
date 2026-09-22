@@ -36,7 +36,7 @@ function SummaryRow({
 }) {
   return (
     <div
-      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-muted/50')}
+      className={cn('flex items-center justify-between px-5 py-2.5', highlight && 'bg-accent/50')}
     >
       <span className="text-sm">{label}</span>
       <span

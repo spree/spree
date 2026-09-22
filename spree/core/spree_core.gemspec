@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'The bare bones necessary for Spree'
-  s.description = 'Spree Models, Helpers, Services and core libraries'
+  s.summary     = 'Spree Core business logic code'
+  s.description = 'Spree Models, Services, Workflows and background jobs'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.2'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = Dir["{app,config,db,lib}/**/*", "spec/fixtures/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib}/**/*", "spec/fixtures/**/*", "Rakefile", "LICENSE", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   # Only used by the spec that replays the pre-6.0 seeded state list and fails

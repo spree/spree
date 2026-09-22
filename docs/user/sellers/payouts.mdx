@@ -1,0 +1,69 @@
+---
+title: "Payouts"
+description: "What each seller has earned, what they are owed, and how it reaches them — by hand, or through Stripe Connect."
+---
+
+Spree keeps a ledger of what every seller earns, and pays it out on a schedule. Two pages under **Sellers** show it, and one settings page controls how it works.
+
+## Transfers — the ledger
+
+Every time a seller ships an order, an **earning** is recorded: their share of the sale, less [commission](/user/sellers/commission-rates), in the sale's currency. If a refund is later issued on that order, a **refund reversal** takes the corresponding amount back off. **Sellers → Transfers** lists them all, and each links to the order that produced it.
+
+A seller's page sums this into a **Balance** card:
+
+| Figure | Meaning |
+|---|---|
+| Earned | Everything recorded in their favour |
+| Pending | Earned, not yet included in a payout |
+| Owed | Ready to pay |
+| Paid | Already paid out |
+
+## Payouts — settlements
+
+On schedule, a seller's pending earnings are batched into a **payout**. **Sellers → Payouts** lists them with their status, and each payout itemises the earnings it covers.
+
+| Status | Meaning |
+|---|---|
+| Pending | Batched, not yet sent |
+| Processing | Handed to the payout provider |
+| Completed | Paid |
+| Failed | The provider refused it |
+| Unresolved | The provider's answer was lost — needs a person to check |
+
+## The schedule
+
+Under **Settings → Marketplace** you set the defaults:
+
+- **Schedule** — daily, weekly, every two weeks, monthly, or manual.
+- **Minimum payout amount** — earnings below it roll into the next payout rather than paying out a trivial sum.
+
+A seller can have their own schedule and minimum, set on their page under **Payouts and tax**; leave them blank to inherit the defaults.
+
+## How the money moves
+
+**Settings → Marketplace** also chooses the **payout provider** — the thing that actually sends money.
+
+<Tabs>
+  <Tab title="Built-in (pay by hand)">
+    The default. Spree keeps the books and moves no money: earnings accrue, batch into payouts on schedule, and each payout waits in your queue as **Pending**. You pay it by bank transfer from your own bank, then open the payout and mark it **paid**, recording the reference it went out under.
+
+    Right for a marketplace starting out, or one that settles by invoice.
+  </Tab>
+  <Tab title="Stripe Connect">
+    Each seller connects a Stripe account — the **payout account** onboarding requirement asks them to, and the seller panel walks them through it. You charge the customer on your own Stripe account; as each seller's goods ship, their share is transferred to their connected account, tied to the charge that funds it so it moves as soon as that charge settles rather than out of your balance.
+
+    From there, Stripe pays the seller's bank on the schedule set for their account. Spree records what Stripe is going to do, and a webhook confirms when it did — which is when the payout turns **Completed**.
+
+    Requires an active Stripe payment method under Settings → Payments. Setup is on the [Stripe Connect](/integrations/payments/stripe-connect) page.
+  </Tab>
+</Tabs>
+
+<Note>
+Refund clawbacks and netting across payouts, reconciliation, and seller tax reports are part of Spree Enterprise.
+</Note>
+
+## Related
+
+- [Commission rates](/user/sellers/commission-rates) — what is deducted before an earning is recorded
+- [Marketplace orders](/user/sellers/orders) — the payment splits earnings are computed from
+- [Onboarding](/user/sellers/onboarding) — the payout account requirement

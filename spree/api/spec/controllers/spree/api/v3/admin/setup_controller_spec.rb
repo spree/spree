@@ -144,6 +144,16 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.default_currency).to eq('EUR')
       end
 
+      it 'queues the sample data load only when asked to' do
+        expect { post :create, params: valid_params.merge(sample_data: true) }
+          .to have_enqueued_job(Spree::SampleData::LoadJob)
+      end
+
+      it 'does not queue sample data by default' do
+        expect { post :create, params: valid_params }
+          .not_to have_enqueued_job(Spree::SampleData::LoadJob)
+      end
+
       it 'refuses an unknown currency and leaves the token usable' do
         post :create, params: valid_params.merge(currency: 'NOTACURRENCY'), as: :json
 

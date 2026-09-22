@@ -332,7 +332,7 @@ integration's metadata, not in the parcel's lifecycle vocabulary. What core
 needs to know is only *whether the parcel may go out yet*, and that is exactly
 what the fulfill workflow's validate hook expresses:
 
-```ruby
+```ruby server/config/initializers/spree.rb
 Spree.hooks.register('fulfillments.fulfill.validate') do |flow|
   work_order = MyApp::WorkOrder.find_by(fulfillment: flow.fulfillment)
   flow.reject!('still in production') unless work_order&.completed?
@@ -347,7 +347,7 @@ orders render `fulfilled` as "ready for pickup".
 by it, reports group by it, or webhooks fire on entering it, make it a
 first-class status:
 
-```ruby config/initializers/spree.rb
+```ruby server/config/initializers/spree.rb
 Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
 ```
 
@@ -356,7 +356,7 @@ a valid value. Moving into it is deliberately not declarative — write a small
 workflow, which is also where the printer submission or the workshop handoff
 belongs:
 
-```ruby
+```ruby server/app/workflows/my_app/fulfillments/start_production.rb
 class MyApp::Fulfillments::StartProduction < Spree::Workflow
   def perform(fulfillment:)
     super

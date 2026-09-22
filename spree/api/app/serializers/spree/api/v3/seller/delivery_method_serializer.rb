@@ -46,7 +46,7 @@ module Spree
           end
 
           attribute :calculator_type do |record|
-            record.calculator&.type
+            record.calculator&.class&.api_type
           end
 
           attribute :calculator_preferences do |record|

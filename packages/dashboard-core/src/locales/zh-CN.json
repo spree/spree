@@ -194,7 +194,8 @@
         "selected": "已选择 {{count}} 项"
       },
       "channel_select": {
-        "placeholder": "选择销售渠道"
+        "placeholder": "选择销售渠道",
+        "all_channels": "全部渠道"
       },
       "command_palette": {
         "create": {
@@ -248,6 +249,7 @@
         },
         "no_results": "未找到与“{{query}}”相关的结果。",
         "placeholder": "搜索商品、订单、客户…",
+        "search_label": "搜索任何内容…",
         "title": "搜索与命令"
       },
       "confirm_dialog": {
@@ -427,6 +429,7 @@
         "filter_select_placeholder": "选择…",
         "filter_text_placeholder": "筛选…",
         "filter_to_placeholder": "筛选至…",
+        "more_conditions": "更多条件",
         "operators": {
           "after": "晚于",
           "before": "早于",
@@ -977,7 +980,8 @@
         "customers": "客户",
         "price_list_prices": "价目表价格",
         "product_translations": "产品翻译",
-        "products": "产品"
+        "products": "产品",
+        "purchase_orders": "采购订单"
       },
       "wizard_title": "导入"
     },
@@ -1059,7 +1063,8 @@
       },
       "validation": {
         "non_negative": "必须大于或等于零"
-      }
+      },
+      "description": "您的货物用于发运的箱子、纸箱和托盘，以及承运商报价所依据的尺寸和重量。"
     },
     "pages": {
       "settings": {
@@ -1400,7 +1405,8 @@
         "unknown_product": "未知产品",
         "variant_count_one": "{{count}} 个变体",
         "variant_count_other": "{{count}} 个变体"
-      }
+      },
+      "description": "您存放库存并从中履行订单的仓库和门店。"
     },
     "validation": {
       "codes": {
@@ -1410,6 +1416,7 @@
         "empty": "不能为空",
         "equal_to": "必须等于 {{count}}",
         "exclusion": "已被保留",
+        "forbidden_reporting_member": "此报表引用了您无权读取的数据。",
         "greater_than": "必须大于 {{count}}",
         "greater_than_or_equal_to": "必须大于或等于 {{count}}",
         "inclusion": "不在列表中",
@@ -1423,6 +1430,7 @@
         "present": "必须为空",
         "product_not_in_store": "必须全部属于本店",
         "required": "必须存在",
+        "seeded_report_read_only": "这是内置报表，无法修改。请改为保存副本。",
         "taken": "已被占用",
         "too_long": "太长（最多 {{count}} 个字符）",
         "too_short": "太短（最少 {{count}} 个字符）",

@@ -375,6 +375,8 @@ en:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/price:
           attributes:
+            amount:
+              leaves_a_rising_ladder: would leave the price from %{quantity} units at %{amount}, above the %{floor} a buyer pays below that quantity
             min_quantity:
               requires_price_list: quantity breaks can only be set on a price list
               too_many_breaks: a variant can carry at most %{count} quantity breaks on one price list
@@ -385,9 +387,12 @@ en:
         spree/price_list:
           attributes:
             base:
+              duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
               negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
+              price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it
+              quantity_on_base_price: a shop price applies at every quantity, so it cannot start at one. Remove the quantity, or pick a price list to put the break on.
             ends_at:
               must_be_after_starts_at: must be after starts at
             price_adjustment_percentage:
@@ -558,6 +563,12 @@ en:
       spree/property:
         one: Property
         other: Properties
+      spree/purchase_order:
+        one: Purchase Order
+        other: Purchase Orders
+      spree/purchase_order_item:
+        one: Purchase Order Item
+        other: Purchase Order Items
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
@@ -591,12 +602,18 @@ en:
       spree/stock_transfer:
         one: Stock Transfer
         other: Stock Transfers
+      spree/stock_transfer_item:
+        one: Stock Transfer Item
+        other: Stock Transfer Items
       spree/store:
         one: Store
         other: Stores
       spree/store_credit:
         one: Store Credit
         other: Store Credits
+      spree/supplier:
+        one: Supplier
+        other: Suppliers
       spree/tax_category:
         one: Tax Category
         other: Tax Categories
@@ -630,6 +647,7 @@ en:
   errors:
     messages:
       already_confirmed: was already confirmed
+      forbidden_reporting_member: references data you are not allowed to read
       invalid_document_number_affix: 'can only contain uppercase letters, digits, dashes and #'
       invalid_system_key: can only contain lowercase letters, digits and underscores
       locked_after_first_number: cannot change once numbering has started
@@ -639,7 +657,7 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
-      refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
+      seeded_report_read_only: is a built-in report and cannot be changed — save a copy instead
   number:
     currency:
       format:
@@ -1046,6 +1064,7 @@ en:
         discount_has_no_effect: discount would have no effect on this order
         discount_value_must_be_positive: discount value must be a positive number
         discount_value_type_invalid: value_type must be flat or percent
+        duplicate_variant: cannot list the same variant twice
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         exactly_one_of_line_item_or_fulfillment: must be charged against exactly one of a line item or a fulfillment
@@ -1062,9 +1081,11 @@ en:
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_seller_requirement: is not a registered seller requirement
         invalid_storefront_access: is not a valid storefront access level
+        items_not_a_list: items must be a list of objects
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
+        not_cancellable: cannot be canceled once its goods have been dispatched
         oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
         oidc_authentication_failed: We could not sign you in with this provider. Please try again.
         oidc_missing_code: The identity provider did not return an authorization code.
@@ -1075,14 +1096,18 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
+        received_exceeds_expected: cannot be more than the %{expected} expected
+        refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
         same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
         seller_delivery_method_provider: a seller's delivery method prices its own rates and is fulfilled by hand — carrier accounts belong to the marketplace
         seller_requirement_store_mismatch: must belong to the same store as the seller
+        stock_level_immutable: cannot be changed after the hold is taken — release the hold and take it again
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
         unknown_scopes: 'contains unknown scopes: %{scopes}'
+        unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
       services:
         get_shipping_rates:
@@ -1432,8 +1457,11 @@ en:
         analytics: Analytics
         catalog: Catalog
         customers: Customers
+        loyalty: Loyalty
         marketing: Marketing
         orders: Orders
+        seller: Seller
+        sellers: Sellers
         settings: Settings
       kinds:
         read: View
@@ -1472,6 +1500,9 @@ en:
         promotions:
           description: Promotions, rules and coupon codes
           label: Promotions
+        purchasing:
+          description: Suppliers and purchase orders
+          label: Purchasing
         refunds:
           description: Issue and view refunds
           label: Refunds
@@ -1511,6 +1542,7 @@ en:
     price_list_import_invalid_amount: "%{column} must be a number like 16.50, got %{value}."
     price_list_import_invalid_quantity: min_quantity must be a whole number of units, got %{value}.
     price_list_import_no_price_list: This import is not attached to a price list.
+    price_list_import_price_rises_with_quantity: The price from %{quantity} units must not be above %{floor}, what a buyer pays below that quantity. A file is applied a row at a time, so list the higher quantities first when lowering a whole ladder.
     price_list_import_sku_required: SKU is required.
     price_list_import_too_many_breaks: A variant can carry at most %{count} quantity breaks on one price list.
     price_list_import_unknown_sku: No product in this store has the SKU %{sku}.
@@ -1602,6 +1634,34 @@ en:
     property: Property
     provider: Provider
     published_at: Published at
+    purchase_order:
+      errors:
+        already_closed: This purchase order has already been received or cancelled
+        already_receiving: A delivery has already been booked against this purchase order, so it cannot go back to draft
+        invalid_receipt_quantity: The quantities for %{variant} cannot be negative
+        item_not_on_document: One of the lines does not belong to this purchase order
+        must_have_variant: You must add at least one variant
+        no_items_received: No units were received
+        not_draft: Only a draft purchase order can be marked as ordered
+        not_editable: Only a draft purchase order can be edited
+        not_ordered: Only a purchase order that has been placed can be received
+        not_ordered_for_draft: Only a placed purchase order can go back to draft
+        not_partially_received: Only a partially received purchase order can be closed short
+        only_draft_can_be_deleted: Only a draft purchase order can be deleted — cancel it instead
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
+    purchase_order_import_ambiguous_sku: More than one product in this store has the SKU %{sku}. Give each a SKU of its own before importing an order for it.
+    purchase_order_import_destination_required: Destination is required.
+    purchase_order_import_failed: The purchase order could not be written.
+    purchase_order_import_invalid_cost: unit_cost must be a number like 16.50, got %{value}.
+    purchase_order_import_invalid_date: "%{column} must be a full date like 2026-03-31, got %{value}."
+    purchase_order_import_invalid_quantity: quantity must be a whole number above zero, got %{value}.
+    purchase_order_import_reference_required: Reference is required — it is what groups a file's rows into orders.
+    purchase_order_import_sku_required: SKU is required.
+    purchase_order_import_supplier_required: Supplier is required.
+    purchase_order_import_unknown_destination: This store has no warehouse named %{name}.
+    purchase_order_import_unknown_sku: No product in this store has the SKU %{sku}.
+    purchase_order_import_unknown_supplier: This store has no supplier named %{name}. Add them first.
+    purchase_order_import_unsupported_currency: This store does not buy in %{currency}.
     qty: Qty
     quantity: Quantity
     query: Query
@@ -1626,15 +1686,315 @@ en:
     remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     rename: Rename
     report: Report
-    report_mailer:
-      greeting: Hi %{user_name},
-      report_done:
-        message: Please use the link below to download it.
-        subject: Your report %{report_name} is ready
-      thanks: Thank you,
     report_names:
       products_performance: Products performance
       sales_total: Sales total
+    reporting:
+      dimensions:
+        cart_channel:
+          description: The channel the cart was started in.
+          label: Sales channel
+        cart_status:
+          description: Whether the cart converted into an order, was abandoned, or is still active.
+          label: Cart status
+        category:
+          description: The category the sold product belongs to.
+          label: Category
+        channel:
+          description: The channel the order came through.
+          label: Sales channel
+        company:
+          description: The organisation the purchase was made for.
+          label: Company
+        completed_at:
+          description: When the order was placed, bucketed by day, week or month in the store timezone.
+          label: Date
+        country:
+          description: Country of the shipping address (ISO code).
+          label: Shipping country
+        coupon_code:
+          description: The discount code redeemed, as recorded on the order.
+          label: Coupon code
+        customer:
+          description: The customer who placed the order, by email.
+          label: Customer
+        customer_type:
+          description: Whether the buyer had placed an earlier order at the time of this one.
+          label: Customer type
+        fulfillment_status:
+          description: Fulfillment state of the order.
+          label: Fulfillment status
+        market:
+          description: The market the order was placed in.
+          label: Market
+        moved_at:
+          description: When stock moved, bucketed by day, week or month in the store timezone.
+          label: Movement date
+        moved_variant:
+          description: The variant whose stock moved.
+          label: Variant moved
+        movement_kind:
+          description: What happened to the stock.
+          label: Movement type
+        paid_at:
+          description: When the payment was taken, bucketed by day, week or month in the store timezone.
+          label: Payment date
+        payment_method:
+          description: The instrument the payment was taken through.
+          label: Payment method
+        payment_result:
+          description: Whether an individual charge succeeded.
+          label: Payment result
+        payment_status:
+          description: Payment state of the order.
+          label: Payment status
+        product:
+          description: The product sold.
+          label: Product
+        promotion:
+          description: The promotion the discount came from.
+          label: Promotion
+        seller:
+          description: The seller who sold the item.
+          label: Seller
+        started_at:
+          description: When the cart was started, bucketed by hour, day, week or month in the store timezone.
+          label: Cart started
+        stock_location:
+          description: The location the stock moved in or out of.
+          label: Stock location
+        variant:
+          description: The product variant (SKU) sold.
+          label: Variant
+      export:
+        total: Total
+      families:
+        carts:
+          description: Baskets started, converted and abandoned.
+          label: Carts
+        inventory:
+          label: Inventory
+        payments:
+          label: Payments
+        sales:
+          label: Sales
+      metrics:
+        abandoned_value:
+          description: What the abandoned carts were worth. Carts are deleted once they expire, so a range longer than the cart expiry window under-reports.
+          label: Abandoned cart value
+        average_order_value:
+          description: Total sales divided by the number of orders.
+          label: Average order value
+        cart_conversion_rate:
+          description: Share of carts started in the period that became orders. This counts baskets, not visits — it is not a storefront conversion rate.
+          label: Cart conversion rate
+        carts_abandoned:
+          description: Carts that never completed and have been untouched for longer than the store abandoned-cart window.
+          label: Abandoned carts
+        carts_converted:
+          description: Carts that became an order. A basket split across sellers counts once.
+          label: Converted carts
+        carts_started:
+          description: Carts created in the period.
+          label: Carts started
+        commission:
+          description: What the marketplace earned on these sales, including its tax.
+          label: Commission
+        cost_of_goods:
+          description: What the goods sold cost you. Variants with no cost price count as zero.
+          label: Cost of goods
+        customer_lifetime_value:
+          description: 'Everything a customer has ever spent, net of refunds. Ignores the report date range: the range selects which customers appear, not which of their orders count.'
+          label: Customer lifetime value
+        customers:
+          description: Distinct customer emails that placed orders.
+          label: Customers
+        discounts:
+          description: Discounts applied to the items sold.
+          label: Discounts
+        duties:
+          description: Customs duties charged on the order.
+          label: Duties
+        fees:
+          description: Shopper-visible fees other than duties.
+          label: Fees
+        gross_margin:
+          description: Gross profit as a share of net sales.
+          label: Gross margin
+        gross_profit:
+          description: Net sales less the cost of the goods sold.
+          label: Gross profit
+        gross_sales:
+          description: Item prices multiplied by quantity, before discounts, returns and tax.
+          label: Gross sales
+        net_payments:
+          description: Money taken less money refunded, by the instrument that moved it.
+          label: Net payments
+        net_sales:
+          description: Gross sales less discounts and returns. What you actually sold.
+          label: Net sales
+        orders:
+          description: Number of placed orders.
+          label: Orders
+        orders_lifetime:
+          description: How many orders a customer has ever placed. Ignores the report date range, like customer lifetime value.
+          label: Lifetime orders
+        payments_count:
+          description: Number of successful charges.
+          label: Payments
+        payments_failed:
+          description: Number of charges that failed.
+          label: Failed payments
+        payments_received:
+          description: Money successfully taken, counted when the payment was made.
+          label: Payments received
+        payments_refunded:
+          description: Money refunded through these payments.
+          label: Payments refunded
+        promotion_discounts:
+          description: Money discounted by promotions, shown as a positive amount.
+          label: Promotion discounts
+        promotion_redemptions:
+          description: How many checkouts used a promotion. A basket split across sellers counts once.
+          label: Promotion redemptions
+        returns:
+          description: Money refunded, counted in the period the refund was issued.
+          label: Returns
+        sell_through:
+          description: Units shipped as a share of units received.
+          label: Sell-through
+        seller_payout:
+          description: What the sellers are owed on these sales, after commission.
+          label: Seller payout
+        shipping:
+          description: Delivery charged to the customer.
+          label: Shipping
+        taxes:
+          description: Sum of additional and included taxes.
+          label: Taxes
+        total_sales:
+          description: Net sales plus shipping, duties, fees and taxes. The money taken.
+          label: Total sales
+        units_adjusted:
+          description: Units added or removed by stock corrections.
+          label: Units adjusted
+        units_received:
+          description: Units booked into stock.
+          label: Units received
+        units_shipped:
+          description: Units dispatched from stock.
+          label: Units shipped
+        units_sold:
+          description: Sum of line item quantities.
+          label: Units sold
+      presets:
+        last_12_months:
+          label: Last 12 months
+        last_30_days:
+          label: Last 30 days
+        last_4_weeks:
+          label: Last 4 weeks
+        last_7_days:
+          label: Last 7 days
+        last_90_days:
+          label: Last 90 days
+        last_month:
+          label: Last month
+        last_quarter:
+          label: Last quarter
+        last_week:
+          label: Last week
+        month_to_date:
+          label: Month to date
+        quarter_to_date:
+          label: Quarter to date
+        today:
+          label: Today
+        week_to_date:
+          label: Week to date
+        year_to_date:
+          label: Year to date
+        yesterday:
+          label: Yesterday
+      seeds:
+        failed_payments:
+          description: Charges that failed over the last four weeks, by payment method.
+          name: Failed payments
+        first_time_vs_returning:
+          description: Sales split between first-time and returning buyers over the last four weeks.
+          name: First-time vs returning
+        net_sales_over_time:
+          description: Weekly gross sales, discounts, returns and net sales over the last twelve months.
+          name: Net sales over time
+        orders_by_fulfillment_status:
+          description: Order counts and sales grouped by fulfillment status over the last four weeks.
+          name: Orders by fulfillment status
+        orders_by_payment_status:
+          description: Order counts and sales grouped by payment status over the last four weeks.
+          name: Orders by payment status
+        payments_by_method:
+          description: What each payment method took, net of refunds, over the last four weeks.
+          name: Payments by method
+        payments_over_time:
+          description: Daily payments taken and refunded over the last four weeks, compared with the previous period.
+          name: Payments over time
+        product_margin:
+          description: Products ranked by gross profit over the last four weeks, with cost and margin.
+          name: Product margin
+        returns_over_time:
+          description: Monthly refunds over the last twelve months, compared with the previous period.
+          name: Returns over time
+        sales_by_channel:
+          description: Sales and orders per sales channel over the last four weeks.
+          name: Sales by channel
+        sales_by_country:
+          description: Sales and orders by shipping country over the last four weeks.
+          name: Sales by country
+        sales_by_market:
+          description: Sales and orders per market over the last four weeks.
+          name: Sales by market
+        sales_over_time:
+          description: Daily sales, orders and average order value for the last four weeks, compared with the previous period.
+          name: Sales over time
+        sell_through_by_variant:
+          description: Units shipped against units received per variant over the last four weeks.
+          name: Sell-through by variant
+        seller_payouts:
+          description: What each seller earned last month, after the marketplace commission.
+          name: Seller payouts
+        stock_movement_over_time:
+          description: Weekly units received and shipped over the last twelve months.
+          name: Stock movement over time
+        top_categories:
+          description: Best-selling categories by net sales over the last four weeks.
+          name: Top categories
+        top_companies:
+          description: Organisations ranked by spend over the last four weeks.
+          name: Top companies
+        top_customers:
+          description: Customers ranked by spend over the last four weeks.
+          name: Top customers
+        top_products:
+          description: Best-selling products by net sales over the last four weeks.
+          name: Top products
+      unassigned: Unassigned
+      values:
+        fulfillment_status:
+          backorder: Backordered
+          canceled: Canceled
+          delivered: Delivered
+          fulfilled: Fulfilled
+          partial: Partially fulfilled
+          unfulfilled: Unfulfilled
+        payment_status:
+          authorized: Authorized
+          none: Unpaid
+          overcharged: Overcharged
+          paid: Paid
+          partially_paid: Partially paid
+          partially_refunded: Partially refunded
+          refunded: Refunded
+          voided: Voided
     reports: Reports
     required: "*"
     required_fields: required fields
@@ -1715,6 +2075,7 @@ en:
         message: Selling on %{store_name} has been paused for your account. Your products and order history are unaffected.
         subject: Your %{store_name} account has been suspended
     seller_membership_required: This account does not belong to any seller.
+    seller_payout_nothing_to_settle: This seller has nothing to settle right now.
     seller_requirement_types:
       accept_terms:
         description: Read and accept the marketplace terms
@@ -1849,17 +2210,52 @@ en:
     states_required: States Required
     status: Status
     stock: Stock
+    stock_level:
+      errors:
+        adjustment_exclusive_with_count_on_hand: Send either a count on hand or an adjustment, not both
+        adjustment_not_an_integer: The adjustment must be a whole number
+        count_on_hand_not_an_integer: The count on hand must be a whole number
     stock_levels: Stock Levels
     stock_location: Stock Location
     stock_locations: Stock Locations
     stock_movement:
       reasons:
+        correction: Correction
+        count: Count
+        damaged: Damaged
+        inventory_feed: Inventory feed
         manual_adjustment: Manual adjustment
+        promotion_or_donation: Promotion or donation
+        received: Received
+        return_restock: Return restock
+        theft_or_loss: Theft or loss
     stock_movements: Stock Movements
+    stock_receipt:
+      errors:
+        nothing_counted: A line on a delivery must count at least one unit, accepted or rejected
+      rejection_reasons:
+        damaged: Damaged
+        expired: Expired
+        other: Other
+        wrong_item: Wrong item
     stock_transfer:
       errors:
+        already_closed: This transfer has already been completed or cancelled
+        in_transit_resolution_required: Choose whether the units come back to the source warehouse or are written off
         invalid_quantity: Every variant must move a quantity above zero
+        invalid_receipt_quantity: The quantities for %{variant} cannot be negative
+        item_not_on_document: One of the lines does not belong to this transfer
+        locations_in_different_stores: must belong to the same store as the source location
         must_have_variant: You must add at least one variant
+        no_items_received: No units were received
+        not_draft: Only a draft transfer can be marked as ready to ship
+        not_editable: Only a draft transfer can be edited
+        not_in_transit: Only a transfer in transit can be received
+        not_partially_received: Only a partially received transfer can be closed short
+        not_ready_to_ship: Only a transfer that is ready to ship can go back to draft
+        not_shippable: Only a draft or ready-to-ship transfer can be marked in transit
+        only_draft_can_be_deleted: Only a draft transfer can be deleted — cancel it instead
+        repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}
     stop: Stop

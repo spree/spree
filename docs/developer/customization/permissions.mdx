@@ -11,57 +11,60 @@ Every grantable capability is a flat key of the form `read_<resource>` or `write
 
 Keys are per resource, not per action. The money-adjacent areas (`payments`, `refunds`, `gift_cards`, `store_credits`) are separate resources from `orders`, so "view orders but don't refund" needs no special casing.
 
-Roles as code is plain ActiveRecord:
+Roles are data, so create them where you manage the rest of your store's data: **Settings → Staff → Roles** in the dashboard, or the Admin API when you want it scripted.
 
-```ruby
-# db/seeds.rb
-Spree::Role.find_or_create_by!(name: 'support')
-  .update!(permissions: %w[read_orders read_customers], description: 'Read-only support')
+```bash
+spree api post roles --data '{
+  "name": "Support",
+  "description": "Read-only support",
+  "permissions": ["read_orders", "read_customers"]
+}'
 ```
 
-A role with `mutable: false` (set from seeds or the console) renders read-only in the dashboard — for roles the application does not want store staff to edit. The `admin` role is always protected.
+A role marked immutable renders read-only in the dashboard, for roles the application does not want store staff editing. The `admin` role is always protected.
 
 ## Registering extension permissions
 
-Register your models as a catalog resource once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
+Register your models as a catalog scope once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
 
 ```ruby
 # in your engine's initializer
-Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> {
   [SpreeReviews::Review]
 })
 ```
 
-- `group` places the row in the permission pickers (`:orders`, `:catalog`, `:marketing`, `:customers`, `:settings`, `:access`, `:analytics` — or your own).
-- `subjects` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
-- Pass `write: false` for read-only resources.
+- `group` places the row in the permission pickers (`:analytics`, `:orders`, `:catalog`, `:customers`, `:sellers`, `:loyalty`, `:marketing`, `:settings`, `:access` — or your own). Rows render in registration order, so a scope registered from an initializer lands after core's.
+- `resources` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
+- Pass `write: false` for read-only scopes.
 
-Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same resource on your admin controllers with `scoped_resource :reviews`.
+Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same scope on your admin controllers with `scoped_resource :reviews`.
 
-## Beyond the catalog
+## Who may hold a key
 
-The catalog is deliberately flat: it answers "may this role touch this kind of record", and that is the whole grant vocabulary. Two rules that do *not* belong in it:
-
-- **Record-state rules** ("a completed order cannot be deleted") live on models and workflows, so they bind every caller — including secret API keys, which never consult CanCanCan.
-- **Row-level restrictions** (a support agent limited to one market) are not expressible as keys. Replace the ability class outright:
+`audiences` is the complete list of audiences whose roles may hold a scope's keys. The store's own back office is `:store`, and is the list when a registration names none — so the example above is grantable to staff and nobody else.
 
 ```ruby
-# config/initializers/spree.rb
-Spree::Dependencies.ability_class = 'MyApp::Ability'
+# Staff configure the marketplace's; a seller configures their own.
+Spree.permissions.register_scope(:reviews, group: :catalog, audiences: %i[store seller], resources: -> {
+  [SpreeReviews::Review]
+})
 ```
 
-```ruby
-# app/models/my_app/ability.rb
-class MyApp::Ability < Spree::Ability
-  def initialize(user, options = {})
-    super
-    return unless user.respond_to?(:market_id) && user.market_id
+Naming another audience exposes the scope to a principal outside the store's own staff, so it is always a deliberate act. Two consequences worth knowing:
 
-    cannot :manage, Spree::Order
-    can [:read, :admin], Spree::Order, market_id: user.market_id
-  end
-end
-```
+- **Leaving `:store` out** keeps the scope off the staff permission picker, out of `read_all` / `write_all`, and unmintable on a secret API key — which is how a seller panel's own scopes (`seller_profile`, `seller_earnings`) exist without a store role ever being offered them.
+- **`read_only_for: %i[seller]`** gives that audience the read key alone, for a vocabulary they consult but do not own.
+
+A key never decides *which rows* its holder reaches. That is the controller's job, through scope fetching — a seller holding `write_products` manages their own products because the seller API reads through `current_seller`, not because the key says so.
+
+## What the catalog does not cover
+
+The catalog is deliberately flat: it answers "may this role touch this kind of record", and that is the whole grant vocabulary.
+
+**Record-state rules** — "a completed order cannot be deleted" — belong on models and workflows, not on roles. Put them there and they bind every caller, including secret API keys, which never consult the role system at all. A rule enforced only in the permission layer is a rule the API can walk straight past.
+
+**Row-level restrictions**, such as a support agent limited to one market, are not expressible as permission keys. Scope them where the records are read: a controller reaching through `current_store.orders` rather than `Spree::Order` already restricts by tenant, and the same technique narrows by market or seller. See [extending the API](/developer/customization/api).
 
 ## How enforcement works
 

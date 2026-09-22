@@ -20,6 +20,7 @@ import {
   FieldLabel,
   Input,
   Progress,
+  ScrollArea,
   StatusBadge as SharedStatusBadge,
   Textarea,
   toastManager,
@@ -308,20 +309,32 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
       {rejection}
 
       {requirement.kind === 'accept_terms' && (
-        <div className="flex flex-wrap items-center gap-2">
-          {/* The terms themselves, when the marketplace configured a link.
-              Accepting something a seller cannot read is not consent. */}
-          {requirement.action_url && (
-            <Button variant="outline" asChild>
-              <a href={requirement.action_url} target="_blank" rel="noreferrer">
-                {t('onboarding.read_terms')}
-                <ExternalLinkIcon className="size-4" />
-              </a>
-            </Button>
+        <div className="flex flex-col gap-3">
+          {/* The terms themselves. Accepting something a seller cannot
+              read is not consent — a link away is not enough. */}
+          {requirement.terms_html && (
+            <ScrollArea className="h-72 rounded-md border">
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none p-4"
+                // Sanitized server-side by Spree::RichTextSanitizer.
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: sanitized on write
+                dangerouslySetInnerHTML={{ __html: requirement.terms_html }}
+              />
+            </ScrollArea>
           )}
-          <Button disabled={acceptTerms.isPending} onClick={() => acceptTerms.mutate()}>
-            {t('onboarding.accept_terms')}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            {requirement.action_url && (
+              <Button variant="outline" asChild>
+                <a href={requirement.action_url} target="_blank" rel="noopener noreferrer">
+                  {t('onboarding.read_terms')}
+                  <ExternalLinkIcon className="size-4" />
+                </a>
+              </Button>
+            )}
+            <Button disabled={acceptTerms.isPending} onClick={() => acceptTerms.mutate()}>
+              {t('onboarding.accept_terms')}
+            </Button>
+          </div>
         </div>
       )}
 
@@ -459,7 +472,7 @@ function RequirementAction({ requirement }: { requirement: RequirementStatus }) 
         requirement.kind !== 'payout_account' && (
           <div className="flex justify-start">
             <Button variant="outline" asChild>
-              <a href={requirement.action_url} target="_blank" rel="noreferrer">
+              <a href={requirement.action_url} target="_blank" rel="noopener noreferrer">
                 {t('onboarding.go')}
                 <ExternalLinkIcon className="size-4" />
               </a>

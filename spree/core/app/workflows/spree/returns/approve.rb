@@ -13,7 +13,7 @@ module Spree
       hooks :validate, :after_approve
 
       # @param return_record [Spree::Return]
-      # @param approver [Object, nil] the admin approving it
+      # @param approver [Object, nil] who is approving it (see Spree.actor_classes)
       def perform(return_record:, approver: nil)
         super
 

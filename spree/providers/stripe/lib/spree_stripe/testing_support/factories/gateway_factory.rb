@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :stripe_gateway, parent: :payment_method, class: 'SpreeStripe::Gateway' do
-    name { 'Stripe' }
+    sequence(:name) { |n| "Stripe #{n}" }
     type { 'SpreeStripe::Gateway' }
 
     preferences do

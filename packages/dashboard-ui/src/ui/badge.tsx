@@ -9,7 +9,7 @@ const badgeVariants = cva(
   // specificity, so the one Tailwind emits last wins regardless of the order
   // they appear in the class list — which silently erased the outline
   // variant's border. Each variant states its own border colour instead.
-  'group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!',
+  'group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-sm border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!',
   {
     variants: {
       variant: {
@@ -95,6 +95,14 @@ const statusToneMap: Record<string, StatusTone> = {
   expired: 'destructive',
   ready: 'warning',
   available: 'success',
+  // Stock states, as the Inventory page's filter names them: sellable is
+  // good, nothing to sell is the problem, and the two middle states are units
+  // that exist but cannot be sold today — held by a checkout, or still on the
+  // road.
+  in_stock: 'success',
+  out_of_stock: 'destructive',
+  with_reserved: 'warning',
+  with_incoming: 'info',
   draft: 'neutral',
   pending: 'warning',
   processing: 'warning',
@@ -114,6 +122,13 @@ const statusToneMap: Record<string, StatusTone> = {
   archived: 'neutral',
   returned: 'success',
   backorder: 'warning',
+  // Order payment status: amber while money is still owed either way, blue
+  // for a hold or a part refund, red once the authorisation is gone.
+  none: 'neutral',
+  partially_paid: 'warning',
+  partially_refunded: 'info',
+  overcharged: 'warning',
+  voided: 'destructive',
   balance_due: 'warning',
   credit_owed: 'warning',
   canceled: 'destructive',
@@ -135,6 +150,13 @@ const statusToneMap: Record<string, StatusTone> = {
   refunded: 'success',
   resolved: 'success',
   denied: 'destructive',
+  // Inventory operations. `received` is deliberately absent: on a return it
+  // means the merchant still owes a refund, on a transfer or purchase order it
+  // means the job is done — one code, two tones, so those two callers pass
+  // `tone` explicitly.
+  ready_to_ship: 'warning',
+  ordered: 'info',
+  partially_received: 'info',
   // Gift cards.
   partially_redeemed: 'info',
   redeemed: 'neutral',
@@ -166,8 +188,16 @@ const dotToneClasses: Record<StatusTone, string> = {
  * a status with its label in a menu or list; use `StatusBadge` when you want
  * the dot and its label together.
  */
-function StatusDot({ status, className }: { status: string; className?: string }) {
-  const tone = statusToneMap[status] ?? 'neutral'
+function StatusDot({
+  status,
+  tone: toneOverride,
+  className,
+}: {
+  status: string
+  tone?: StatusTone
+  className?: string
+}) {
+  const tone = toneOverride ?? statusToneMap[status] ?? 'neutral'
   return (
     <span
       aria-hidden
@@ -188,14 +218,21 @@ function StatusDot({ status, className }: { status: string; className?: string }
  * Stays headless: pass a translated `label` from the app layer; without one it
  * humanizes the code itself (`balance_due` → `balance due`) as a best-effort
  * fallback.
+ *
+ * `tone` overrides the shared map, for the rare code that means different
+ * things in two domains — a `received` return still owes a refund, a
+ * `received` stock transfer is finished. Reach for it only then: everything
+ * else belongs in `statusToneMap`, or two surfaces will disagree.
  */
 function StatusBadge({
   status,
   label,
+  tone,
   className,
 }: {
   status: string
   label?: string
+  tone?: StatusTone
   className?: string
 }) {
   return (
@@ -207,7 +244,7 @@ function StatusBadge({
         className,
       )}
     >
-      <StatusDot status={status} />
+      <StatusDot status={status} tone={tone} />
       {label ?? status.replace(/_/g, ' ')}
     </span>
   )

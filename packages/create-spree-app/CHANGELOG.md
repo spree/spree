@@ -1,5 +1,41 @@
 # create-spree-app
 
+## 2.0.2
+
+### Patch Changes
+
+- [#14667](https://github.com/spree/spree/pull/14667) [`53008b4`](https://github.com/spree/spree/commit/53008b4a30eeca633206e726f0303f1f8c0673d3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Point the generated agent instructions at files that exist.
+
+  The scaffolded `AGENTS.md` sent dashboard work to a README that has since gained its own `AGENTS.md`, said nothing about the seller panel every project receives, listed a documentation directory that was renamed, and demonstrated a Ransack filter on `state`, which is no longer a queryable column.
+
+## 2.0.1
+
+### Patch Changes
+
+- Fixed first-run setup failing partway through, and scaffolded both admin apps.
+
+  Several failures could leave a new project unusable: minting the CLI's API key raised "Name has already been taken" on any re-run, so a setup interrupted for any reason could never be completed; Mailpit's ports were not probed like the web port, so another Spree project or a local mail catcher failed `docker compose up` with a raw Docker daemon error; sample data was loaded before first-run setup created an admin to own it, aborting the run; and a failed key mint reported that the stack was not running, sending operators after a stack that was running fine.
+
+  Scaffolds also create `apps/seller-dashboard` alongside `apps/dashboard` (`spree add seller-dashboard` adds it to an existing project). The React Dashboard is the admin in Spree 6, so it is no longer opt-in behind a flag, and first-run setup no longer prompts for an admin email and password — the account is created on the dashboard's own setup screen, which the browser opens automatically.
+
+## 2.0.0
+
+### Major Changes
+
+- [#14431](https://github.com/spree/spree/pull/14431) [`aab4b5c`](https://github.com/spree/spree/commit/aab4b5ca517d2ef559a5ba292965d66bd2d6f38d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Scaffolded apps no longer ship with a known admin password.
+
+  Spree 6.0 replaces the seeded `spree@example.com` / `spree123` account with a first-run setup screen, so a new project no longer starts life with credentials that are public knowledge:
+
+  - The scaffold summary and the generated README point at first-run setup instead of printing an email and password.
+  - The first run opens the setup link, where you create the admin account and name the store.
+  - The exported `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` constants are gone.
+
+### Minor Changes
+
+- Added the marketplace Seller Panel to project scaffolding and deployment.
+
+  `spree add seller-dashboard` scaffolds the panel into `apps/seller-dashboard/`, and `create-spree-app` now creates both admin apps. The CLI bundles the seller-panel starter template alongside the dashboard one, so the Spree starter's Docker image can bake both and serve the panel at `/sellers`.
+
 ## 1.2.1
 
 ### Patch Changes

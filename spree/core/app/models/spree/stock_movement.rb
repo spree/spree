@@ -31,6 +31,8 @@ module Spree
     belongs_to :return, class_name: 'Spree::Return', optional: true
     belongs_to :exchange, class_name: 'Spree::Exchange', optional: true
     belongs_to :stock_transfer, class_name: 'Spree::StockTransfer', optional: true
+    belongs_to :purchase_order, class_name: 'Spree::PurchaseOrder', optional: true
+    belongs_to :stock_receipt, class_name: 'Spree::StockReceipt', optional: true, inverse_of: :stock_movements
 
     alias_attribute :stock_item_id, :stock_level_id
 
@@ -78,16 +80,41 @@ module Spree
     # hand a client still sending it the whole collection rather than an error.
     self.whitelisted_ransackable_attributes = %w[quantity kind reason created_at stock_level_id
                                                  stock_item_id order_id fulfillment_id return_id
-                                                 exchange_id stock_transfer_id]
+                                                 exchange_id stock_transfer_id purchase_order_id
+                                                 stock_receipt_id unit_cost]
     self.whitelisted_ransackable_associations = %w[stock_level]
 
-    # Stored audit text for a correction nobody labelled. Deliberately
-    # resolved in English: the column is read by every admin afterwards, not
-    # only by whoever happened to type the correction.
+    # The corrections a merchant reaches for, as codes a client can send
+    # instead of typing the text itself. Free text is still accepted — an
+    # integration's own wording is not Spree's to police — but a dashboard
+    # that sends `damaged` gets one stored string whatever language its
+    # operator works in.
+    ADJUSTMENT_REASONS = %w[
+      manual_adjustment correction count received return_restock damaged theft_or_loss
+      promotion_or_donation inventory_feed
+    ].freeze
+
+    # Stored audit text for a correction nobody labelled.
     #
     # @return [String]
     def self.default_adjustment_reason
-      Spree.t('stock_movement.reasons.manual_adjustment', locale: :en)
+      adjustment_reason_text(:manual_adjustment)
+    end
+
+    # What to store against a correction. A known code becomes its English
+    # text; anything else is the caller's own wording, kept as sent.
+    #
+    # Deliberately resolved in English rather than the operator's locale: the
+    # column is read by every admin afterwards and filtered across the whole
+    # history, so one cause has to be one string.
+    #
+    # @param reason [String, Symbol, nil]
+    # @return [String]
+    def self.adjustment_reason_text(reason)
+      return default_adjustment_reason if reason.blank?
+      return reason.to_s unless ADJUSTMENT_REASONS.include?(reason.to_s)
+
+      Spree.t("stock_movement.reasons.#{reason}", locale: :en)
     end
 
     # A movement is an immutable audit row: once written, nothing may rewrite
@@ -98,6 +125,17 @@ module Spree
     # row is being created, not updated, so it must still be allowed to finish.
     def readonly?
       persisted? && !being_created?
+    end
+
+    # What the units on this row cost, when the movement was a purchase. Null
+    # on everything else: moving stock a merchant already owns is not a
+    # purchase, so a transfer or a return has no cost to record.
+    #
+    # @return [Spree::Money, nil]
+    def display_unit_cost
+      return nil if unit_cost.nil?
+
+      Spree::Money.new(unit_cost, currency: purchase_order&.currency)
     end
 
     # @deprecated Use {#stock_level}; removed in 6.1.

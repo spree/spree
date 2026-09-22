@@ -2,8 +2,11 @@ require 'spec_helper'
 
 RSpec.describe Spree::Api::V3::Store::<%= plural_name.camelize %>Controller, type: :controller do
   render_views
+  # The controller is mounted by the engine, so its paths resolve
+  # through the engine's router rather than the application's.
+  routes { Spree::Core::Engine.routes }
 
-  include_context 'API v3 Store'
+  include_context 'API v3 Store guest'
 
   let!(:<%= singular_name %>) { create(:<%= singular_name %>) }
 

@@ -37,8 +37,11 @@ const commissionRateFieldsSchema = z.object({
       id: z.string().optional(),
       type: z.string(),
       preferences: z.record(z.string(), z.unknown()).default({}),
-      // Catalog-scale references ride beside preferences, not inside them.
+      // Reference lists ride beside preferences, not inside them — the API
+      // exposes prefixed ids at the top level while preferences hold raw ids.
       product_ids: z.array(z.string()).default([]),
+      seller_ids: z.array(z.string()).default([]),
+      category_ids: z.array(z.string()).default([]),
     }),
   ),
 })
@@ -92,12 +95,22 @@ export function commissionRateToFormValues(rate: CommissionRate): CommissionRate
     include_shipping: rate.include_shipping,
     commission_tax_rate:
       rate.commission_tax_rate == null ? '' : String(Number(rate.commission_tax_rate) * 100),
-    rules: (rate.rules ?? []).map((rule) => ({
-      id: rule.id,
-      type: rule.type,
-      preferences: (rule.preferences ?? {}) as Record<string, unknown>,
-      product_ids: rule.product_ids ?? [],
-    })),
+    rules: (rate.rules ?? []).map((rule) => {
+      const preferences = { ...(rule.preferences ?? {}) } as Record<string, unknown>
+      // Top-level id lists are the picker source of truth; raw ids in
+      // preferences would show as numbers after save.
+      delete preferences.seller_ids
+      delete preferences.category_ids
+
+      return {
+        id: rule.id,
+        type: rule.type,
+        preferences,
+        product_ids: rule.product_ids ?? [],
+        seller_ids: rule.seller_ids ?? [],
+        category_ids: rule.category_ids ?? [],
+      }
+    }),
   }
 }
 
@@ -154,13 +167,21 @@ export function commissionRateValuesToParams(
         }),
     ),
     commission_tax_rate: taxPercentage === null ? null : taxPercentage / 100,
-    // `product_ids` is only meaningful to kinds that name products; sending an
-    // empty array to the others is noise the server would ignore.
-    rules: v.rules.map((rule) => ({
-      id: rule.id,
-      type: rule.type,
-      preferences: rule.preferences,
-      ...(rule.product_ids.length > 0 ? { product_ids: rule.product_ids } : {}),
-    })),
+    rules: v.rules.map((rule) => {
+      const preferences = { ...rule.preferences }
+
+      if (rule.type === 'seller_rule') {
+        preferences.seller_ids = rule.seller_ids
+      } else if (rule.type === 'category_rule') {
+        preferences.category_ids = rule.category_ids
+      }
+
+      return {
+        id: rule.id,
+        type: rule.type,
+        preferences,
+        ...(rule.product_ids.length > 0 ? { product_ids: rule.product_ids } : {}),
+      }
+    }),
   }
 }

@@ -10,9 +10,13 @@ RSpec.describe 'Seller Balances API', type: :request, swagger_doc: 'api-referenc
   end
 
   before do
-    create(:seller_transfer, :completed, seller: seller, amount: 40,
+    create(:seller_transfer, :completed, seller: seller, amount: 25,
                                          order: create(:completed_order_with_totals, store: store, seller: seller))
-    create(:seller_payout, :completed, seller: seller, amount: 15)
+    # A settlement claims the earnings it covers; one claiming none is not
+    # something the sweep can produce, and it is the claim that debits.
+    settled = create(:seller_payout, :completed, seller: seller, amount: 15)
+    create(:seller_transfer, :completed, seller: seller, amount: 15, payout: settled,
+                                         order: create(:completed_order_with_totals, store: store, seller: seller))
   end
 
   path '/api/v3/seller/balances' do

@@ -50,7 +50,7 @@ module Spree
       #
       # @return [Boolean]
       def confirmation_required?
-        Spree::Config[:always_include_confirm_step] ||
+        Spree::StorePreferences.read(store, :always_include_confirm_step) ||
           payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
       end
 

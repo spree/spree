@@ -4,6 +4,7 @@ import type { Store } from '@spree/admin-sdk'
 import { hasVisibleSettingsEntries, nav, Subject } from '@spree/dashboard-core'
 import {
   AnalyticsIcon,
+  GiftIcon,
   HomeIcon,
   InboxIcon,
   MapIcon,
@@ -12,13 +13,10 @@ import {
   StoreIcon,
   TagIcon,
   UsersIcon,
+  WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
-import {
-  ClaimsNavBadge,
-  ExchangesNavBadge,
-  ReturnsNavBadge,
-} from '../components/spree/post-sale-nav-badges'
+import { navCounterBadge } from '../components/spree/nav-counter-badge'
 
 nav.add({
   key: 'getting-started',
@@ -50,6 +48,9 @@ nav.add({
   icon: InboxIcon,
   subject: Subject.Order,
   position: 200,
+  // The section's own work plus its children's, so the total survives the
+  // submenu being collapsed on every page outside Orders.
+  badge: navCounterBadge('orders', 'returns', 'exchanges', 'claims'),
   children: [
     {
       key: 'orders.drafts',
@@ -67,7 +68,7 @@ nav.add({
       path: '/returns',
       subject: Subject.Order,
       position: 200,
-      badge: ReturnsNavBadge,
+      badge: navCounterBadge('returns'),
     },
     {
       key: 'exchanges',
@@ -75,7 +76,7 @@ nav.add({
       path: '/exchanges',
       subject: Subject.Order,
       position: 300,
-      badge: ExchangesNavBadge,
+      badge: navCounterBadge('exchanges'),
     },
     {
       key: 'claims',
@@ -83,7 +84,7 @@ nav.add({
       path: '/claims',
       subject: Subject.Order,
       position: 400,
-      badge: ClaimsNavBadge,
+      badge: navCounterBadge('claims'),
     },
   ],
 })
@@ -147,12 +148,40 @@ nav.add({
       subject: Subject.Product,
       position: 475,
     },
+  ],
+})
+
+// Moving stock in and around is its own job, done by different people than the
+// ones who write the catalog — so it gets its own section rather than crowding
+// the end of Products.
+nav.add({
+  key: 'inventory',
+  labelKey: 'admin.nav.inventory',
+  path: '/inventory',
+  icon: WarehouseIcon,
+  subject: Subject.StockLevel,
+  position: 350,
+  children: [
     {
-      key: 'products.transfers',
+      key: 'inventory.transfers',
       labelKey: 'admin.nav.transfers',
-      path: '/products/transfers',
+      path: '/transfers',
       subject: Subject.StockTransfer,
-      position: 500,
+      position: 100,
+    },
+    {
+      key: 'inventory.purchase-orders',
+      labelKey: 'admin.nav.purchase_orders',
+      path: '/purchase-orders',
+      subject: Subject.PurchaseOrder,
+      position: 200,
+    },
+    {
+      key: 'inventory.suppliers',
+      labelKey: 'admin.nav.suppliers',
+      path: '/suppliers',
+      subject: Subject.Supplier,
+      position: 300,
     },
   ],
 })
@@ -192,6 +221,16 @@ nav.add({
   subject: Subject.Seller,
   position: 450,
   children: [
+    // What the marketplace charges on each sale. A rules engine merchants tune
+    // the way they tune promotions and price lists, and the input to the
+    // ledger below — so it lives here rather than in Settings.
+    {
+      key: 'sellers.commission-rates',
+      labelKey: 'admin.nav.commission_rates',
+      path: '/sellers/commission-rates',
+      subject: Subject.CommissionRate,
+      position: 50,
+    },
     // The fund ledger. Under Sellers because that is what it is about, the
     // way returns sit under Orders — and gated on the ledger subjects, so a
     // staff member who manages sellers without seeing the money gets neither.
@@ -212,6 +251,37 @@ nav.add({
   ],
 })
 
+// Stored value, not marketing: a gift card or a store credit is prepaid money
+// the store owes, with a balance and a ledger and no rules or actions. Its own
+// group, and the home for a rewards programme later.
+nav.add({
+  key: 'loyalty',
+  labelKey: 'admin.nav.loyalty',
+  path: '/loyalty/gift-cards',
+  icon: GiftIcon,
+  // No subject of its own: the group has no landing page, so gating it on
+  // gift cards would hide Store Credits from a role that may read credits but
+  // not cards. The children declare their own subjects and the sidebar drops
+  // the ones a role cannot open.
+  position: 475,
+  children: [
+    {
+      key: 'loyalty.gift-cards',
+      labelKey: 'admin.nav.gift_cards',
+      path: '/loyalty/gift-cards',
+      subject: Subject.GiftCard,
+      position: 100,
+    },
+    {
+      key: 'loyalty.store-credits',
+      labelKey: 'admin.nav.store_credits',
+      path: '/loyalty/store-credits',
+      subject: Subject.StoreCredit,
+      position: 200,
+    },
+  ],
+})
+
 nav.add({
   key: 'promotions',
   labelKey: 'admin.nav.promotions',
@@ -219,15 +289,6 @@ nav.add({
   icon: TagIcon,
   subject: Subject.Promotion,
   position: 500,
-  children: [
-    {
-      key: 'promotions.gift-cards',
-      labelKey: 'admin.nav.gift_cards',
-      path: '/promotions/gift-cards',
-      subject: Subject.GiftCard,
-      position: 100,
-    },
-  ],
 })
 
 nav.add({
@@ -236,6 +297,7 @@ nav.add({
   path: '/reports',
   icon: AnalyticsIcon,
   position: 600,
+  subject: Subject.SavedReport,
 })
 
 nav.add({

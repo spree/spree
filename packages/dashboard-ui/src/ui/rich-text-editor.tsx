@@ -4,9 +4,9 @@ import Placeholder from '@tiptap/extension-placeholder'
 import type { Editor } from '@tiptap/react'
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { sameRichText } from '../lib/same-rich-text'
+import { sameRichText, shouldEmitRichTextChange } from '../lib/same-rich-text'
 import { cn } from '../lib/utils'
 import {
   BoldIcon,
@@ -82,15 +82,22 @@ export function RichTextEditor({
     valueRef.current = value
   })
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({ link: false }),
+  const extensions = useMemo(
+    () => [
+      // TrailingNode is on by default in StarterKit 3.x and keeps an extra
+      // empty paragraph that list/quote commands then miss or wrap instead
+      // of the text the merchant just typed.
+      StarterKit.configure({ link: false, trailingNode: false }),
       Placeholder.configure({ placeholder: resolvedPlaceholder }),
       Link.configure({ openOnClick: false }),
       // Inline (not block) so an image can sit inside a paragraph, which is
       // how the sanitizer's allowlist expects to find it.
       Image.configure({ inline: true }),
     ],
+    [resolvedPlaceholder],
+  )
+  const editor = useEditor({
+    extensions,
     content: value,
     editable: !disabled,
     editorProps: {
@@ -101,9 +108,7 @@ export function RichTextEditor({
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML()
-      // Mount and setContent re-parse the incoming value (bare text becomes
-      // `<p>…</p>`, empty becomes `<p></p>`). That is not a user edit.
-      if (sameRichText(html, valueRef.current)) return
+      if (!shouldEmitRichTextChange(html, valueRef.current)) return
       onChangeRef.current?.(html)
     },
     onBlur: ({ event }) => {
@@ -136,9 +141,13 @@ export function RichTextEditor({
   // Sync external value changes (e.g. form reset)
   useEffect(() => {
     if (!editor) return
-    if (editor.getHTML() !== value) {
-      editor.commands.setContent(value, { emitUpdate: false })
-    }
+    const html = editor.getHTML()
+    if (html === value) return
+    // Enter adds an empty paragraph the form may not have stored yet.
+    // sameRichText treats that as equal, so a naïve !== reset would merge
+    // the next typed line back into the previous block.
+    if (sameRichText(html, value) && shouldEmitRichTextChange(html, value)) return
+    editor.commands.setContent(value, { emitUpdate: false })
   }, [editor, value])
 
   useEffect(() => {
@@ -177,8 +186,13 @@ export function RichTextEditor({
       ref={wrapperRef}
       data-slot="rich-text-editor"
       className={cn(
-        'rounded-lg border border-border-field bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
-        disabled && 'pointer-events-none bg-muted border-border',
+        // The same shell as `<Input>` and `<Textarea>` — border, fill, resting
+        // shadow, transition and focus treatment — so a description field sits
+        // in a form beside them without reading as a different kind of control.
+        // `focus-within` rather than `focus`: the element that takes the caret
+        // is Tiptap's inner contenteditable, not this wrapper.
+        'rounded-md border border-border shadow-xs bg-card text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]',
+        disabled && 'pointer-events-none bg-muted text-muted-foreground shadow-none',
         className,
       )}
     >
@@ -228,11 +242,8 @@ function EditorToolbar({
 
   const runToolbarCommand = (command: () => void) => {
     command()
-    // Ctrl/Cmd+A in Tiptap is an AllSelection that also covers the trailing
-    // empty paragraph the editor always keeps. Block formats then wrap the
-    // written text but `isActive` stays false because the selection still
-    // spans mixed nodes — collapse so the button the merchant just used
-    // lights up against the formatted text.
+    // Ctrl/Cmd+A is an AllSelection. Collapse it so the button the
+    // merchant just used lights up against the formatted text.
     if (editor.state.selection.toJSON().type === 'all') {
       editor.commands.setTextSelection(1)
     }
@@ -241,7 +252,7 @@ function EditorToolbar({
   return (
     <div
       data-slot="rich-text-editor-toolbar"
-      className="flex items-center gap-0.5 border-b border-border px-2 py-1.5"
+      className="flex items-center gap-0.5 border-b border-border-subtle px-2 py-1.5"
     >
       <ToolbarButton
         active={toolbar.isBold}
@@ -341,7 +352,24 @@ function ToolbarButton({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onPointerDown={(event) => {
+        if (event.button !== 0) return
+        // Keep the editor selection and run the command here. preventDefault
+        // on pointer/mouse down stops the contenteditable from blurring, but
+        // it also swallows the following click in Chromium — which is how
+        // Playwright activates the button.
+        event.preventDefault()
+        onClick()
+      }}
+      onClick={(event) => {
+        // Pointer activations already ran above (`detail` is 0 for keyboard
+        // and assistive-technology clicks). Do not keep a flag across
+        // events: undo/redo can disable this button before the paired
+        // click arrives, and a leftover flag would discard the next
+        // keyboard activation.
+        if (event.detail !== 0) return
+        onClick()
+      }}
       disabled={disabled}
       title={title}
       aria-label={title}

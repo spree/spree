@@ -5,6 +5,8 @@ import type { PanelStockLocation } from '../api-client'
 import { defineTable } from '../lib/table-registry'
 
 defineTable<PanelStockLocation>('stock-locations', {
+  docsPath: 'settings/locations',
+  description: i18n.t('admin.stock_locations.description'),
   title: i18n.t('admin.settings_nav.items.stock_locations'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.stock_locations.search_placeholder'),

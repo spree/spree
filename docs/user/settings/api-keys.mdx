@@ -1,0 +1,37 @@
+---
+title: "API Keys"
+description: "Authorise storefronts, apps and integrations to call your store's API — and scope each key to exactly what it needs."
+---
+
+API keys are how anything outside the dashboard talks to your store: your storefront, a mobile app, an ERP sync, a reporting tool. Each key identifies the store and says what the caller may do.
+
+Find them under **Settings → API keys**.
+
+## Two kinds of key
+
+| Kind | Prefix | Used by | Safe to expose? |
+|---|---|---|---|
+| Publishable | `pk_` | Your storefront and other customer-facing apps | Yes — it only permits what a shopper could do anyway |
+| Secret | `sk_` | Server-to-server integrations calling the admin side | **Never.** Treat it like a password |
+
+A publishable key can be tied to a **sales channel**, so orders placed with it are attributed to that channel automatically. Leave the channel blank and the key works for all of them.
+
+## Scopes
+
+A secret key carries a list of **scopes** — read or write, per resource — that gate which operations it may perform. A key for a stock sync needs to write stock and read products, and nothing else. Grant only what the integration needs; there is no benefit to a broad key and real cost if it leaks.
+
+The scope picker offers starting points — read only, full access, or a role-shaped set such as order manager — that you can then narrow. Every resource an extension adds to your store becomes scopeable here too.
+
+## Creating a key
+
+Click **New key**, choose the kind, name it after what will use it, and — for a secret key — pick its scopes. The secret value is shown **once**, when the key is created. Copy it into your integration then; it cannot be shown again.
+
+## Rotating and revoking
+
+The list shows when each key was last used, which is how you spot ones that are dead. Revoke a key and every call made with it is refused immediately. To rotate, create the replacement first, move the integration over, then revoke the old one.
+
+## Related
+
+- [Sales Channels](/user/settings/sales-channels) — the channel a publishable key can be bound to
+- [Webhooks](/user/settings/webhooks) — the other direction: your store calling your systems
+- [Roles](/user/settings/roles) — dashboard access, which is separate from API keys

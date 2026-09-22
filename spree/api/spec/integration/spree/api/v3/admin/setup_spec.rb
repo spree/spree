@@ -60,6 +60,12 @@ RSpec.describe 'Admin Setup API', type: :request, swagger_doc: 'api-reference/ad
             description: "ISO 4217 currency. Defaults to the country's own currency — " \
                          'pass one only when the store prices in something else.',
             example: 'USD'
+          },
+          sample_data: {
+            type: :boolean,
+            description: 'Load the demo catalog, customers and orders in the background ' \
+                         'once the admin account exists.',
+            example: false
           }
         }
       }

@@ -17,7 +17,7 @@ module Spree
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
-    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
+    belongs_to :price_list, -> { with_deleted }, class_name: 'Spree::PriceList', optional: true
     # Snapshotted from the variant when the line is added — see copy_seller.
     # Nil is the operator's own first-party item.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
@@ -26,6 +26,11 @@ module Spree
 
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :line_item
+    # Promotion attribution reads this rather than every discount: joining the
+    # manual ones too would group a hand-discounted line under "no promotion"
+    # alongside its real promotion row, counting the same line twice.
+    has_many :promotion_discounts, -> { promotion },
+             class_name: 'Spree::Discount', inverse_of: :line_item
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :line_item
     has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, dependent: :destroy
     has_many :fulfillments, through: :fulfillment_items, source: :fulfillment
@@ -88,9 +93,7 @@ module Spree
     # Returns the thumbnail image for this line item
     # Prefers variant primary media, falls back to product primary media
     # @return [Spree::Media, nil]
-    def thumbnail
-      variant.primary_media || product.primary_media
-    end
+    delegate :thumbnail, to: :variant
     delegate :digital?, :can_supply?, to: :variant
     # A line item's store is its owner's — an order's or a cart's, whichever it
     # belongs to.

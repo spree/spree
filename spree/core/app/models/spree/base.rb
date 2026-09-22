@@ -9,6 +9,7 @@ class Spree::Base < ApplicationRecord
   include Spree::HasNumber
   include Spree::HasIsoGeography
   include Spree::TypedAssociations
+  include Spree::ValidatesStoreUniqueness
 
   # Extra writable attributes contributed by extensions, appended to the v3
   # controller allowlist for this resource. Core attributes belong in the
@@ -141,6 +142,57 @@ class Spree::Base < ApplicationRecord
     return nil if type.blank?
 
     type.to_s.demodulize.underscore
+  end
+
+  # Prefixed id for a polymorphic reference, encoded from the columns without
+  # loading the row.
+  #
+  # Reads both halves together so a type never appears beside a null id: the
+  # pair names something a client can link to, or neither does. Answers nil for
+  # a model without `has_prefix_id` — an extension may point a polymorphic
+  # column at one, and one such row must not 500 the whole list.
+  #
+  # @param type [String, nil] the polymorphic `*_type` column
+  # @param id [Integer, String, nil] the polymorphic `*_id` column
+  # @return [String, nil]
+  def self.polymorphic_prefixed_id(type, id)
+    return nil if type.blank? || id.blank?
+
+    type.to_s.safe_constantize.try(:prefixed_id_for, id)
+  end
+
+  # Reads the arguments of a two-state ransackable scope — one that answers a
+  # question with two named sides ("erased" / "not erased", "outstanding" /
+  # "spent") rather than narrowing to a value.
+  #
+  # Declare such a scope as `->(*values)`, never `->(value = true)`. Ransack
+  # calls one of three ways, and only a splat survives all of them:
+  #
+  # - a literal boolean `true` invokes the scope with NO arguments, which
+  #   means the affirmative side (this is why an empty list reads as `true`);
+  # - a single value arrives as that value;
+  # - an array predicate is SPLATTED, so a filter offering both sides passes
+  #   two arguments and a fixed-arity lambda raises ArgumentError — a 500 on a
+  #   request the merchant is entitled to make. Asking for every side is no
+  #   constraint at all, which is the `nil` below.
+  #
+  # The scope must also be listed in the model's
+  # `ransackable_scopes_skip_sanitize_args`, or Ransack casts `false` itself
+  # and then declines to apply the scope at all.
+  #
+  # @param values [Array<Object>] whatever Ransack passed through
+  # @return [Boolean, nil] the side asked for, or nil when every side was
+  def self.ransack_flag(*values)
+    # No argument is Ransack's shorthand for the affirmative side, not an
+    # absent filter: `q[erased]=true` reaches the scope with nothing at all.
+    return true if values.empty?
+
+    flags = Array(values).flatten.map { |value| ActiveModel::Type::Boolean.new.cast(value) }.uniq
+    # `size == 1`, not `one?`: the latter counts truthy elements, so a lone
+    # `false` would read as "no side chosen" and drop the filter.
+    return nil unless flags.size == 1
+
+    flags.first
   end
 
   # @deprecated Legacy Tom Select helper for the removed Rails admin. No replacement.

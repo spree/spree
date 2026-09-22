@@ -4,6 +4,7 @@ import { RelativeTime, StatusBadge } from '@spree/dashboard-ui'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from '@spree/dashboard-ui/icons'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
+import { translatedLabel } from '../lib/translated-label'
 
 /**
  * The record's own number, linking to the order it belongs to — that page is
@@ -24,10 +25,7 @@ function numberCell(record: { number: string; order_id?: string | null }) {
 }
 
 function statusLabel(value: string): string {
-  const key = `admin.post_sale.statuses.${value}`
-  return i18n.exists(key)
-    ? i18n.t(key)
-    : value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  return translatedLabel('admin.post_sale.statuses', value)
 }
 
 function statusColumn(values: string[]) {
@@ -67,6 +65,8 @@ function createdColumn<T extends { created_at: string }>() {
 
 defineTable<Return>('returns', {
   title: i18n.t('admin.nav.returns'),
+  description: i18n.t('admin.table_descriptions.returns'),
+  docsPath: 'orders/returns',
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
@@ -96,6 +96,8 @@ defineTable<Return>('returns', {
 
 defineTable<Exchange>('exchanges', {
   title: i18n.t('admin.nav.exchanges'),
+  description: i18n.t('admin.table_descriptions.exchanges'),
+  docsPath: 'orders/exchanges',
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },
@@ -125,6 +127,8 @@ defineTable<Exchange>('exchanges', {
 
 defineTable<Claim>('claims', {
   title: i18n.t('admin.nav.claims'),
+  description: i18n.t('admin.table_descriptions.claims'),
+  docsPath: 'orders/claims',
   searchParam: 'number_cont',
   searchPlaceholder: i18n.t('admin.post_sale.search_placeholder'),
   defaultSort: { field: 'created_at', direction: 'desc' },

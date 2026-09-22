@@ -7,6 +7,8 @@ import i18n from 'i18next'
 import { SELLER_STATUSES } from '../schemas/seller'
 
 defineTable<Seller>('sellers', {
+  docsPath: 'sellers/managing-sellers',
+  description: i18n.t('admin.table_descriptions.sellers'),
   title: i18n.t('admin.nav.sellers'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.sellers.search_placeholder'),

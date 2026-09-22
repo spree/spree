@@ -1,29 +1,18 @@
-# Configure Spree Preferences
+# Spree settings are configured with environment variables — see
+# https://docs.spreecommerce.org/developer/customization/configuration
+# for every setting and the variable that sets it.
 #
-# Note: Initializing preferences available within the Admin will overwrite any changes that were made through the user interface when you restart.
-#       If you would like users to be able to update a setting with the Admin it should NOT be set here.
+#   SPREE_MINIMUM_PASSWORD_LENGTH=10
 #
-# Note: If a preference is set here it will be stored within the cache & database upon initialization.
-#       Just removing an entry from this initializer will not make the preference value go away.
-#       Instead you must either set a new value or remove entry, clear cache, and remove database entry.
+# Anything that shapes how a shop sells — currency, taxes, when customers are
+# charged — belongs to the store and is edited in the dashboard, not here.
 #
-# In order to initialize a setting do:
-# config.setting_name = 'new value'
+# Use a Spree.config block only for a value that has to be computed in Ruby;
+# it is applied at boot and wins over the environment.
 #
-# More on configuring Spree preferences can be found at:
-# https://docs.spreecommerce.org/developer/customization
-Spree.config do |config|
-  # Example:
-  # Uncomment to stop tracking inventory levels in the application
-  # config.track_inventory_levels = false
-end
-
-# Background job queue names
-# Spree.queues.default = :default
-# Spree.queues.events = :default  # Event subscribers (Spree::Events::SubscriberJob)
-# Spree.queues.variants = :default
-# Spree.queues.stock_location_stock_levels = :default
-# Spree.queues.coupon_codes = :default
+# Spree.config do |config|
+#   config.minimum_password_length = 10
+# end
 
 # Use a CDN host for images, eg. Cloudfront
 # This is used in the frontend to generate absolute URLs to images
@@ -37,17 +26,12 @@ end
 
 # Use a different service for storage (S3, google, etc)
 # unless Rails.env.test?
-#   Spree.private_storage_service_name = :amazon_public # public assets, such as product images
-#   Spree.public_storage_service_name = :amazon_private # private assets, such as invoices, etc
+#   Spree.public_storage_service_name = :amazon_public   # public assets, such as product images
+#   Spree.private_storage_service_name = :amazon_private # private assets, such as invoices, etc
 # end
 
-# Configure Spree Dependencies
-#
-# Note: If a dependency is set here it will NOT be stored within the cache & database upon initialization.
-#       Just removing an entry from this initializer will make the dependency value go away.
-#
-# More on how to use Spree dependencies can be found at:
-# https://docs.spreecommerce.org/customization/dependencies
+# Swap a Spree service for your own — see
+# https://docs.spreecommerce.org/developer/customization/dependencies
 Spree.dependencies do |dependencies|
   # Example:
   # Uncomment to change the default Service handling adding Items to Cart
@@ -77,9 +61,8 @@ Rails.application.config.after_initialize do
   # Taxon rules
   # Spree.taxon_rules << Spree::TaxonRules::ProductsWithColor
 
-  # Exports and reports
+  # Exports
   # Spree.export_types << Spree::Exports::Payments
-  # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
   # Role-based permissions
   # Staff roles and their permissions are managed as data — in the dashboard
@@ -89,33 +72,34 @@ Rails.application.config.after_initialize do
   #     .update!(permissions: %w[read_orders read_customers])
   #
   # Extensions can register additional permission resources:
-  # Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [MyApp::Review] })
-  #
-  # To customize authorization beyond the catalog, replace the ability class:
-  # Spree::Dependencies.ability_class = 'MyApp::Ability'
+  # Spree.permissions.register_scope(:reviews, group: :catalog, resources: -> { [MyApp::Review] })
   #
   # More: https://spreecommerce.org/docs/developer/customization/permissions
 end
 
 # Background job queue configuration
+# Spree.queues.addresses = :default
+# Spree.queues.api_keys = :default
+# Spree.queues.categories = :default
+# Spree.queues.collections = :default
+# Spree.queues.coupon_codes = :default
+# Spree.queues.data_requests = :default
 # Spree.queues.default = :default
 # Spree.queues.events = :default
 # Spree.queues.exports = :default
+# Spree.queues.gift_cards = :default
 # Spree.queues.images = :default
 # Spree.queues.imports = :default
-# Spree.queues.products = :default
-# Spree.queues.reports = :default
-# Spree.queues.variants = :default
-# Spree.queues.taxons = :default
-# Spree.queues.stock_location_stock_levels = :default
-# Spree.queues.coupon_codes = :default
-# Spree.queues.themes = :default
-# Spree.queues.addresses = :default
-# Spree.queues.gift_cards = :default
-# Spree.queues.webhooks = :default
 # Spree.queues.payment_webhooks = :default
-# Spree.queues.api_keys = :default
+# Spree.queues.payouts = :default
+# Spree.queues.products = :default
 # Spree.queues.search = :default
+# Spree.queues.stock_location_stock_levels = :default
+# Spree.queues.stock_reservations = :default
+# Spree.queues.tax_identifiers = :default
+# Spree.queues.themes = :default
+# Spree.queues.variants = :default
+# Spree.queues.webhooks = :default
 
 # Search provider — requires the spree_meilisearch gem
 # Spree.search_provider = 'SpreeMeilisearch::SearchProvider'

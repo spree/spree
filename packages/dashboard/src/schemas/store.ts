@@ -47,6 +47,7 @@ export const storeSettingsFormSchema = z.object({
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
+  preferred_always_include_confirm_step: z.boolean(),
   preferred_company_field_enabled: z.boolean(),
   preferred_address_requires_phone: z.boolean(),
   preferred_capture_method: z.enum(CAPTURE_METHODS),
@@ -57,6 +58,10 @@ export const storeSettingsFormSchema = z.object({
   preferred_tax_using_ship_address: z.boolean(),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
+  preferred_low_stock_threshold: z.coerce
+    .number()
+    .int()
+    .min(0, { error: requiredMessage('store.preferred_low_stock_threshold') }),
   preferred_track_price_history: z.boolean(),
   preferred_show_products_without_price: z.boolean(),
   preferred_disable_sku_validation: z.boolean(),

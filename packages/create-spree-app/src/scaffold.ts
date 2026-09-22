@@ -3,9 +3,9 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
-import { downloadBackend } from './backend.js'
-import { DASHBOARD_PORT, STOREFRONT_PORT, STOREFRONT_REPO } from './constants.js'
+import { DASHBOARD_PORT, STOREFRONT_REPO } from './constants.js'
 import { scaffoldDashboard } from './dashboard.js'
+import { downloadServer } from './server.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -54,40 +54,40 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.mkdirSync(projectDir, { recursive: true })
 
-  // Phase 1: Download backend (always included)
-  s.start('Downloading backend template...')
-  await downloadBackend(projectDir)
-  s.stop('Backend template downloaded.')
+  // Phase 1: Download server (always included)
+  s.start('Downloading server template...')
+  await downloadServer(projectDir)
+  s.stop('Server template downloaded.')
 
   // Phase 2: Generate project files
   s.start('Creating project structure...')
 
-  // Copy compose files from backend template and adjust paths for project root
-  const backendDir = path.join(projectDir, 'backend')
-  const compose = fs.readFileSync(path.join(backendDir, 'docker-compose.yml'), 'utf-8')
-  const composeDev = fs.readFileSync(path.join(backendDir, 'docker-compose.dev.yml'), 'utf-8')
+  // Copy compose files from server template and adjust paths for project root
+  const serverDir = path.join(projectDir, 'server')
+  const compose = fs.readFileSync(path.join(serverDir, 'docker-compose.yml'), 'utf-8')
+  const composeDev = fs.readFileSync(path.join(serverDir, 'docker-compose.dev.yml'), 'utf-8')
 
   fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), compose)
-  // Adjust build context and source bind-mount from current dir to ./backend
+  // Adjust build context and source bind-mount from current dir to ./server
   // for the wrapper project (in the starter repo the compose file lives in
-  // the Rails app root; here the app lives under backend/)
+  // the Rails app root; here the app lives under server/)
   fs.writeFileSync(
     path.join(projectDir, 'docker-compose.dev.yml'),
     composeDev
-      .replace('context: .', 'context: ./backend')
-      .replace('- .:/rails', '- ./backend:/rails'),
+      .replace('context: .', 'context: ./server')
+      .replace('- .:/rails', '- ./server:/rails'),
   )
 
   // The compose files now live (adjusted) at the wrapper root referencing
-  // ./backend + the root .env. The originals cloned into backend/ are stale
+  // ./server + the root .env. The originals cloned into server/ are stale
   // leftovers (mount .:/rails, expect a sibling .env) — remove them so the CLI
-  // never accidentally targets them when run from backend/.
-  fs.rmSync(path.join(backendDir, 'docker-compose.yml'), { force: true })
-  fs.rmSync(path.join(backendDir, 'docker-compose.dev.yml'), { force: true })
+  // never accidentally targets them when run from server/.
+  fs.rmSync(path.join(serverDir, 'docker-compose.yml'), { force: true })
+  fs.rmSync(path.join(serverDir, 'docker-compose.dev.yml'), { force: true })
 
   fs.writeFileSync(
     path.join(projectDir, '.env'),
-    envContent(generateSecretKeyBase(), port, options.sampleData),
+    envContent(generateSecretKeyBase(), port, options.mailpitSmtpPort, options.mailpitUiPort),
   )
   fs.writeFileSync(
     path.join(projectDir, 'package.json'),
@@ -107,7 +107,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   // Phases 3/3b are optional apps — their failures warn and continue. They
   // must never abort the scaffold before Phase 4: `spree init` is what
   // guarantees a fresh Spree image (skipping it leaves a stale local `latest`
-  // to boot) and a seeded, credentialed backend.
+  // to boot) and a seeded, credentialed server.
 
   // Phase 3: Storefront (optional)
   let storefrontReady = storefront
@@ -117,10 +117,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       await downloadStorefront(projectDir)
       s.stop('Storefront template downloaded.')
 
-      // Sample data seeds the whole wholesale demo (gated channel, buyer,
-      // trade prices), so those scaffolds get the portal enabled up front —
-      // first-run setup fills in the channel-bound key.
-      writeStorefrontEnv(projectDir, port, options.sampleData)
+      writeStorefrontEnv(projectDir, port)
 
       s.start('Installing storefront dependencies...')
       await installStorefrontDeps(projectDir, options.packageManager)
@@ -137,10 +134,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     }
   }
 
-  // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
-  // project-local `npx spree add dashboard` — @spree/cli is already installed
-  // (root deps, above) and bundles the dashboard-starter template. It reads
-  // the port from the project's .env and prints its own progress.
+  // Phase 3b: the admin SPAs — the Dashboard
+  // and the marketplace Seller Panel. Delegates to the project-local
+  // `npx spree add <component>` — @spree/cli is already installed (root deps,
+  // above) and bundles both starter templates. It reads the port from the
+  // project's .env and prints its own progress.
   let dashboardReady = dashboard
   if (dashboard) {
     try {
@@ -149,7 +147,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       dashboardReady = false
       // Remove the partial scaffold so the recovery command (`spree add
       // dashboard`, which expects the directory to be absent) actually works.
-      fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true, force: true })
+      // Both apps go: the second can fail after the first succeeded, and a
+      // half-scaffolded pair is worse than none.
+      for (const app of ['dashboard', 'seller-dashboard']) {
+        fs.rmSync(path.join(projectDir, 'apps', app), { recursive: true, force: true })
+      }
       p.log.warn(
         `Continuing without the React Dashboard — add it later with ${pc.bold(`${runCommand(options.packageManager)} spree add dashboard`)}.\n${errorMessage(err)}`,
       )
@@ -176,8 +178,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   // Phase 4: Initialize and start services
   if (options.start) {
-    const initArgs = ['spree', 'init']
-    if (!options.sampleData) initArgs.push('--no-sample-data')
+    // Sample data is never part of a scaffold: first-run setup configures the
+    // store through the dashboard, and the sample-data import needs an admin
+    // that setup has not created yet — loading it here failed the whole init.
+    // The CLI still offers it on demand via `spree sample-data`.
+    const initArgs = ['spree', 'init', '--no-sample-data']
 
     try {
       await execa(runCommand(options.packageManager), initArgs, {
@@ -196,11 +201,6 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       p.log.info(
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
-      if (options.sampleData) {
-        p.log.info(
-          `${pc.bold('Wholesale portal')}: ${pc.cyan(`http://localhost:${STOREFRONT_PORT}/wholesale`)} — register a buyer, then approve them in the admin (add to the ${pc.bold('Wholesale')} customer group)`,
-        )
-      }
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
@@ -212,7 +212,6 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       dashboardReady,
       port,
       options.packageManager,
-      options.sampleData,
     )
   }
 }
@@ -223,7 +222,6 @@ function printSuccessWithoutDocker(
   hasDashboard: boolean,
   port: number,
   pm: PackageManager,
-  sampleData: boolean,
 ): void {
   const run = runCommand(pm)
   const lines: string[] = [
@@ -242,11 +240,6 @@ function printSuccessWithoutDocker(
       `  ${installCommand(pm)}`,
       `  ${pm} run dev`,
     )
-    if (sampleData) {
-      lines.push(
-        `  ${pc.dim(`# Wholesale B2B portal: http://localhost:${STOREFRONT_PORT}/wholesale (approve buyers via the "Wholesale" customer group)`)}`,
-      )
-    }
   }
 
   // With the React Dashboard chosen, its dev server IS the admin — and
@@ -255,11 +248,10 @@ function printSuccessWithoutDocker(
   if (hasDashboard) {
     lines.push(
       '',
-      `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
+      `${pc.bold('Admin Dashboard')}`,
       `  http://localhost:${DASHBOARD_PORT}`,
       `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
       `  ${pc.dim("# you'll create the admin account on first run")}`,
-      `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
       '',
     )
   } else {
@@ -275,7 +267,7 @@ function printSuccessWithoutDocker(
   lines.push(
     `${pc.bold('Customize the Spree API')}`,
     `  ${run} spree eject`,
-    `  ${pc.dim('# Then edit backend/ — the Rails API app (Gemfile, app/, config/)')}`,
+    `  ${pc.dim('# Then edit server/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
     `  ${dlxCommand(pm)} skills add spree/agent-skills`,

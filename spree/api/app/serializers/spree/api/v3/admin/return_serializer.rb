@@ -10,6 +10,7 @@ module Spree
                    documents: "Array<{ kind: string; url: string }>",
                    stock_location_id: [:string, nullable: true],
                    created_by_id: [:string, nullable: true],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    refunded_total: :string,
                    refundable_total: :string
 
@@ -19,9 +20,7 @@ module Spree
             return_record.stock_location&.prefixed_id
           end
 
-          attribute :created_by_id do |return_record|
-            return_record.created_by&.prefixed_id
-          end
+          actor_attributes :created_by
 
           attribute :refunded_total do |return_record|
             return_record.refunded_total.to_s

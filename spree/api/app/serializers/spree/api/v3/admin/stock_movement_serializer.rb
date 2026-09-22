@@ -5,7 +5,45 @@ module Spree
         class StockMovementSerializer < V3::StockMovementSerializer
           typelize order_id: [:string, nullable: true], fulfillment_id: [:string, nullable: true],
                    return_id: [:string, nullable: true], exchange_id: [:string, nullable: true],
-                   stock_transfer_id: [:string, nullable: true]
+                   stock_transfer_id: [:string, nullable: true],
+                   purchase_order_id: [:string, nullable: true],
+                   stock_receipt_id: [:string, nullable: true],
+                   order_number: [:string, nullable: true], return_number: [:string, nullable: true],
+                   exchange_number: [:string, nullable: true],
+                   stock_transfer_number: [:string, nullable: true],
+                   purchase_order_number: [:string, nullable: true],
+                   unit_cost: [:string, nullable: true],
+                   display_unit_cost: [:string, nullable: true],
+                   stock_location_id: [:string, nullable: true],
+                   stock_location_name: [:string, nullable: true],
+                   variant_id: [:string, nullable: true],
+                   variant_name: [:string, nullable: true],
+                   variant_sku: [:string, nullable: true]
+
+          # Which shelf, and which SKU. A movement names neither directly —
+          # both hang off its stock level, the (variant, warehouse) pair — but
+          # a history panel cannot be read without them: scoped to a variant
+          # the warehouse is what varies, scoped to a warehouse the SKU is,
+          # and scoped to one transfer both do.
+          attribute :stock_location_id do |movement|
+            movement.stock_level&.stock_location&.prefixed_id
+          end
+
+          attribute :stock_location_name do |movement|
+            movement.stock_level&.stock_location&.name
+          end
+
+          attribute :variant_id do |movement|
+            movement.stock_level&.variant&.prefixed_id
+          end
+
+          attribute :variant_name do |movement|
+            movement.stock_level&.variant&.product&.name
+          end
+
+          attribute :variant_sku do |movement|
+            movement.stock_level&.variant&.sku
+          end
 
           # The cause. Exactly which keys are set follows from the kind — a
           # dispatch carries its fulfillment and its order, a transfer carries
@@ -28,6 +66,48 @@ module Spree
 
           attribute :stock_transfer_id do |movement|
             Spree::StockTransfer.prefixed_id_for(movement.stock_transfer_id)
+          end
+
+          attribute :stock_receipt_id do |movement|
+            movement.stock_receipt&.prefixed_id
+          end
+
+          attribute :purchase_order_id do |movement|
+            Spree::PurchaseOrder.prefixed_id_for(movement.purchase_order_id)
+          end
+
+          # The cause by the name a merchant knows it by — "T1001", "PO1003",
+          # "R123456789" — so a history row can point at its document without
+          # a second request to look the number up.
+          attribute :order_number do |movement|
+            movement.order&.number
+          end
+
+          attribute :return_number do |movement|
+            movement.return&.number
+          end
+
+          attribute :exchange_number do |movement|
+            movement.exchange&.number
+          end
+
+          attribute :stock_transfer_number do |movement|
+            movement.stock_transfer&.number
+          end
+
+          attribute :purchase_order_number do |movement|
+            movement.purchase_order&.number
+          end
+
+          # What the units cost, on the rows where that means something: a
+          # purchase. Null on a transfer or a return — moving stock the
+          # merchant already owns is not buying it.
+          attribute :unit_cost do |movement|
+            movement.unit_cost&.to_s
+          end
+
+          attribute :display_unit_cost do |movement|
+            movement.display_unit_cost&.to_s
           end
         end
       end

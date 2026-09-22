@@ -31,7 +31,7 @@ When the default widget isn't right — a color, a rating, a structured pair —
 
 ```tsx
 // src/plugins.ts (or a plugin's entry module)
-import { type CustomFieldComponentProps, defineDashboardPlugin } from '@spree/dashboard-core'
+import { type CustomFieldComponentProps, defineDashboardPlugin } from '@spree/dashboard'
 
 function ColorPicker({ id, value, onChange, ariaLabel }: CustomFieldComponentProps) {
   return (
@@ -76,7 +76,7 @@ Tell the product form about the field: where its value comes from on load. Every
 
 ```tsx
 // src/plugins.ts (or a plugin's entry module)
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 
 defineDashboardPlugin({
   formFields: {
@@ -93,12 +93,18 @@ defineDashboardPlugin({
 The `product.form_sidebar` slot renders inside the product form. Bind your input to the host form with `useHostForm()` — no `<form>` of your own, no save button:
 
 ```tsx
-// src/fields/tech-specs-card.tsx
-import { useHostForm } from '@spree/dashboard-core'
+// src/slots/tech-specs-card.tsx
 import {
-  Card, CardContent, CardHeader, CardTitle,
-  Field, FieldError, FieldLabel, Textarea,
-} from '@spree/dashboard-ui'
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Field,
+  FieldError,
+  FieldLabel,
+  Textarea,
+  useHostForm,
+} from '@spree/dashboard'
 import { useTranslation } from 'react-i18next'
 
 export function TechSpecsCard() {

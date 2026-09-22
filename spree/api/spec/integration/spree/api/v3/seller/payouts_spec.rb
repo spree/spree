@@ -26,7 +26,7 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
         accumulated since the last, on the seller's payout schedule. `pending`
         and `processing` rows are owed; `completed` ones reached the seller's
         bank. `transfers_count` says how many earnings a settlement covers —
-        list them with `GET /transfers?q[payout_id_eq]=…`.
+        list them with `GET /api/v3/seller/transfers?q[payout_id_eq]=…`.
 
         Read-only: a payout is created by the marketplace's sweep and
         confirmed by the payout provider or the operator.
@@ -35,8 +35,8 @@ RSpec.describe 'Seller Payouts API', type: :request, swagger_doc: 'api-reference
       parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Records per page (max 100)'
-      parameter name: :'q[status_eq]', in: :query, type: :string, required: false,
-                enum: %w[pending processing completed failed unresolved]
+      parameter name: :'q[status_eq]', in: :query, required: false,
+                schema: { type: :string, enum: %w[pending processing completed failed unresolved] }
 
       response '200', 'payouts listed' do
         let(:Authorization) { "Bearer #{seller_jwt_token}" }

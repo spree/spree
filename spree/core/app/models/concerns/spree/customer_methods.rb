@@ -186,10 +186,8 @@ module Spree
       self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent with_standing_for_company
                                                anonymized]
 
-      # Ransack casts a scope's argument before calling it, and then declines
-      # to apply the scope at all when that cast produces `false` — which is
-      # exactly the half of this filter that hides erased accounts. Opting out
-      # of the cast keeps the value a string, so the scope decides for itself.
+      # Two-state scope: see Spree::Base.ransack_flag? for why the cast is
+      # opted out of here and done inside the scope instead.
       def self.ransackable_scopes_skip_sanitize_args
         %i[anonymized]
       end
@@ -203,11 +201,11 @@ module Spree
       # value it was given is simply `true`, and passes the value through only
       # when it is something else — so both `anonymized: true` and
       # `anonymized: 'false'` have to land here.
-      scope :anonymized, ->(value = true) {
-        if ActiveModel::Type::Boolean.new.cast(value)
-          where.not(anonymized_at: nil)
-        else
-          where(anonymized_at: nil)
+      scope :anonymized, ->(*values) {
+        case Spree::Base.ransack_flag(*values)
+        when true then where.not(anonymized_at: nil)
+        when false then where(anonymized_at: nil)
+        else all
         end
       }
 

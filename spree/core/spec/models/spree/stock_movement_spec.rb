@@ -144,7 +144,8 @@ describe Spree::StockMovement, type: :model do
     it 'exposes the kind and every cause key' do
       expect(Spree::StockMovement.whitelisted_ransackable_attributes).to eq(
         %w[quantity kind reason created_at stock_level_id stock_item_id order_id fulfillment_id
-           return_id exchange_id stock_transfer_id]
+           return_id exchange_id stock_transfer_id purchase_order_id stock_receipt_id
+           unit_cost]
       )
     end
 

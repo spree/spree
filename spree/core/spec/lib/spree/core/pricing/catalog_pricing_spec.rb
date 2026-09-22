@@ -13,9 +13,9 @@ describe 'catalog-aware pricing' do
     price_list
   end
 
-  def resolve(company: nil, user: nil)
+  def resolve(company: nil, user: nil, quantity: nil)
     context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store,
-                                          user: user, company: company)
+                                          user: user, company: company, quantity: quantity)
     Spree::Pricing::PriceResolution.call(context)
   end
 
@@ -41,6 +41,79 @@ describe 'catalog-aware pricing' do
 
     expect(resolve(company: division).amount).to eq(70)
     expect(resolve(company: company).amount).to eq(90)
+  end
+
+  # A division's own agreement is the one it negotiated, so it answers even
+  # when the group-wide catalog above it happens to be cheaper. Precedence
+  # between nodes is real; precedence within a node is not (see below).
+  it 'keeps the nearest node even when the parent catalog is cheaper' do
+    parent_catalog = create(:catalog, store: store, price_list: price_list_with_price(70))
+    own_catalog = create(:catalog, store: store, price_list: price_list_with_price(90))
+    create(:catalog_assignment, catalog: parent_catalog, assignable: company)
+    create(:catalog_assignment, catalog: own_catalog, assignable: division)
+
+    expect(resolve(company: division).amount).to eq(90)
+  end
+
+  # Two catalogs on one node rank equally: nothing about either assignment
+  # says which agreement a company is on, so the buyer pays the better of the
+  # two. Catalog position orders the admin listing and must not decide money —
+  # it used to, so reordering that screen silently overcharged a company
+  # (V-3635).
+  context 'when one company carries two catalogs' do
+    let!(:shallow) do
+      catalog = create(:catalog, store: store, price_list: price_list_with_price(95), position: 1)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      catalog
+    end
+
+    let!(:deep) do
+      price_list = price_list_with_price(85)
+      create(:price, variant: variant, currency: 'USD', amount: 50, min_quantity: 24, price_list: price_list)
+      catalog = create(:catalog, store: store, price_list: price_list, position: 2)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      catalog
+    end
+
+    it 'charges the best price either of them gives' do
+      expect(resolve(company: company).amount).to eq(85)
+      expect(resolve(company: company, quantity: 24).amount).to eq(50)
+    end
+
+    it 'answers the same whichever catalog sorts first' do
+      before_swap = resolve(company: company, quantity: 24).amount
+
+      shallow.update!(position: 2)
+      deep.update!(position: 1)
+      Spree::Current.reset_catalog_memos
+
+      expect(resolve(company: company, quantity: 24).amount).to eq(before_swap)
+    end
+
+    # The cheaper catalog prices this variant and the dearer one does not, so
+    # there is nothing to compare — the node still answers rather than falling
+    # through to the base price.
+    it 'answers from the only catalog that prices the variant' do
+      deep.price_list.prices.destroy_all
+
+      expect(resolve(company: company, quantity: 24).amount).to eq(95)
+    end
+  end
+
+  it 'charges the best price across several customer group catalogs' do
+    customer = create(:customer)
+    dearer_group = create(:customer_group, store: store)
+    cheaper_group = create(:customer_group, store: store)
+    dearer_group.customer_group_users.create!(customer: customer)
+    cheaper_group.customer_group_users.create!(customer: customer)
+    create(:catalog_assignment,
+           catalog: create(:catalog, store: store, price_list: price_list_with_price(90), position: 1),
+           assignable: dearer_group)
+    create(:catalog_assignment,
+           catalog: create(:catalog, store: store, price_list: price_list_with_price(75), position: 2),
+           assignable: cheaper_group)
+
+    expect(resolve(user: customer).amount).to eq(75)
   end
 
   # A price list attached to a catalog is audience-scoped by the catalog; a

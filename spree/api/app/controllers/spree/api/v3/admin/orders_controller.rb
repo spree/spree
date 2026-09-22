@@ -23,7 +23,7 @@ module Spree
             result = Spree.order_create_service.call(
               store: current_store,
               customer: resolve_customer,
-              created_by: try_spree_current_user,
+              created_by: current_actor,
               params: order_create_params
             )
 
@@ -52,6 +52,10 @@ module Spree
           end
 
           # PATCH /api/v3/admin/orders/:id/complete
+          #
+          # An order holding several sellers' goods divides into one order per
+          # seller, so the group is what comes back — the orders it produced
+          # are nested inside it.
           def complete
             with_order_lock do
               result = Spree.order_complete_service.call(
@@ -61,7 +65,7 @@ module Spree
               )
 
               if result.success?
-                render json: serialize_resource(@resource.reload)
+                render json: serialize_completion(result.value)
               else
                 render_service_error(@resource.errors.presence || result.error, code: ERROR_CODES[:order_cannot_complete])
               end
@@ -73,7 +77,7 @@ module Spree
             with_order_lock do
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
-                canceler: try_spree_current_user,
+                canceler: current_actor,
                 reason: cancel_reason,
                 note: params[:cancel_note].presence,
                 refund_payments: params[:refund_payments].to_b,
@@ -92,7 +96,7 @@ module Spree
           # PATCH /api/v3/admin/orders/:id/approve
           def approve
             with_order_lock do
-              @resource.approved_by(try_spree_current_user)
+              @resource.approved_by(current_actor)
               render json: serialize_resource(@resource.reload)
             end
           end
@@ -149,12 +153,36 @@ module Spree
             Spree.api.admin_order_serializer
           end
 
+          # Completion answers with whatever it produced: one order, or the
+          # group a multi-seller order divided into.
+          #
+          # The group is rendered whole rather than through `filter_fields`: a
+          # `fields` list names an order's attributes, and narrowing a group by
+          # it can drop the very keys that say it is one.
+          def serialize_completion(record)
+            return serialize_resource(record.reload) unless record.is_a?(Spree::OrderGroup)
+
+            Spree.api.admin_order_group_serializer.new(completed_group(record), params: serializer_params).to_h
+          end
+
+          # Every child is rendered in full, so its associations are loaded once
+          # here rather than per order.
+          def completed_group(group)
+            Spree::OrderGroup.includes(
+              :customer, :ship_address, :bill_address,
+              { payments: %i[payment_method source] },
+              { orders: [:seller, :market, :gift_card, :customer, { line_items: { variant: :prices } }] }
+            ).find(group.id)
+          end
+
           # Override scope — Order uses SingleStoreResource (for_store).
-          # Variant prices are preloaded here rather than via scope_includes,
-          # which this override bypasses; the serializer reads them per row.
+          # Variant prices and each line's price list are named here rather
+          # than via scope_includes, which this override bypasses; the
+          # serializer reads both per row.
           def scope
             base = current_store.orders.accessible_by(current_ability, :show).
-                   includes(line_items: { variant: :prices }).preload_associations_lazily
+                   includes(line_items: [{ variant: :prices }, { price_list: :catalog }]).
+                   preload_associations_lazily
 
             # Transient completion drafts (status draft + cart_id set) belong
             # to in-flight checkouts, never to the admin. Admin drafts are the
@@ -190,7 +218,10 @@ module Spree
           # only its id is reported and that comes off the order's own column.
           # Variant prices ride along because the admin line-item serializer
           # reads the base catalog price for every row (the negotiated-price
-          # comparison); without it each line costs its own price query.
+          # comparison); without it each line costs its own price query. Each
+          # line's price list and its catalog are named for the same reason —
+          # stated rather than left to ar_lazy_preload, which happens to cover
+          # them today.
           def collection_includes
             # `market` is the withdrawal deadline's other input. Fulfillments
             # are loaded with their selected rate because the freight summary
@@ -198,7 +229,8 @@ module Spree
             # fulfillment for a field that is nil on every parcel order.
             [:customer, :channel, :seller, :external_references, :cancel_reason,
              :market, { fulfillments: :selected_delivery_rate },
-             { line_items: { variant: :prices } }, { po_document_attachment: :blob }]
+             { line_items: [{ variant: :prices }, { price_list: :catalog }] },
+             { po_document_attachment: :blob }]
           end
 
           # Read through the store's own vocabulary, so a reason belonging to

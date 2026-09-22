@@ -950,6 +950,55 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(body['error']['message']).to eq('Order is canceled')
       end
     end
+
+    # An order holding several sellers' goods divides on completion, so the
+    # operator is answered with the purchase rather than one part of it.
+    context 'when the order divides between sellers' do
+      let(:seller) { create(:seller, :approved, store: store) }
+      let(:other_seller) { create(:seller, :approved, store: store) }
+      let!(:order) do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.each_with_index do |line_item, index|
+          assigned = index.zero? ? seller : other_seller
+          line_item.variant.update!(seller: assigned)
+          line_item.update_columns(seller_id: assigned.id)
+        end
+        draft.reload
+      end
+
+      it 'answers with the group and the orders it produced' do
+        patch :complete, params: { id: order.prefixed_id, payment_pending: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body['id']).to start_with('ogrp_')
+        expect(body['seller_count']).to eq(2)
+        expect(body['orders'].map { |child| child['seller_id'] }).to all(be_present)
+      end
+    end
+
+    context 'when the order holds one seller' do
+      let(:seller) { create(:seller, :approved, store: store) }
+      let!(:order) do
+        draft = create(:order_ready_to_ship, store: store, line_items_count: 2)
+        draft.update_columns(status: 'draft', completed_at: nil, payment_status: nil)
+        draft.line_items.reload.each do |line_item|
+          line_item.variant.update!(seller: seller)
+          line_item.update_columns(seller_id: seller.id)
+        end
+        draft.reload
+      end
+
+      it 'answers with the order, carrying its seller' do
+        patch :complete, params: { id: order.prefixed_id, payment_pending: true }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body['id']).to eq(order.prefixed_id)
+        expect(body['seller_id']).to eq(seller.prefixed_id)
+      end
+    end
   end
 
   describe 'PATCH #cancel' do
@@ -973,6 +1022,32 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(order.reload.cancel_reason).to be_nil
       expect(order.cancel_note).to be_nil
       expect(json_response['cancel_reason_id']).to be_nil
+    end
+
+    describe 'who it records as the canceler' do
+      it 'names the signed-in admin on a JWT request' do
+        subject
+
+        expect(order.reload.canceler).to eq(admin_user)
+        expect(order.canceler_type).to eq(Spree.admin_user_class.to_s)
+        expect(json_response['canceler_id']).to eq(admin_user.prefixed_id)
+        expect(json_response['canceler_type']).to eq('admin_user')
+      end
+
+      # The point of the conversion: before it, a key-authenticated cancel
+      # recorded nobody at all.
+      context 'when a secret API key made the call' do
+        let(:headers) { api_key_headers }
+
+        it 'names the key' do
+          subject
+
+          expect(order.reload.canceler).to eq(secret_api_key)
+          expect(order.canceler_type).to eq('Spree::ApiKey')
+          expect(json_response['canceler_id']).to eq(secret_api_key.prefixed_id)
+          expect(json_response['canceler_type']).to eq('api_key')
+        end
+      end
     end
 
     context 'with a reason and note' do

@@ -11,7 +11,8 @@ module Spree
       hooks :before_cancel, :after_cancel
 
       # @param order [Spree::Order]
-      # @param canceler [Object, nil] the user/admin who initiated the cancellation
+      # @param canceler [Object, nil] who initiated it — an admin user or an
+      #   API key (see Spree.actor_classes)
       # @param canceled_at [Time, nil] timestamp (defaults to Time.current)
       # @param reason [Spree::OrderCancellationReason, nil] the merchant's own
       #   vocabulary; must belong to the order's store
@@ -71,7 +72,10 @@ module Spree
       private
 
       def ensure_cancellable
-        failure(order) unless order.allow_cancel?
+        return if order.allow_cancel?
+
+        order.errors.add(:base, :not_cancellable, message: Spree.t('errors.messages.not_cancellable'))
+        failure(order)
       end
 
       # An ordinary order settles at the gateway, which returns the whole
@@ -99,7 +103,7 @@ module Spree
 
       def mark_canceled
         changes = { status: 'canceled', canceled_at: @decided_at, cancel_reason_id: reason&.id, cancel_note: note }
-        changes[:canceler_id] = canceler.id if canceler.present?
+        changes.merge!(Spree::ActedBy.columns_for(:canceler, canceler)) if canceler.present?
         order.update_columns(changes)
       end
 

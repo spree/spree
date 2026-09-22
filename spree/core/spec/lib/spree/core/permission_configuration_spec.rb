@@ -6,10 +6,10 @@ RSpec.describe Spree::PermissionConfiguration do
 
   describe 'default catalog' do
     it 'registers the core resources' do
-      expect(configuration.resource(:orders)).to be_present
-      expect(configuration.resource(:products)).to be_present
-      expect(configuration.resource(:staff)).to be_present
-      expect(configuration.resource(:dashboard)).to be_present
+      expect(configuration.scope(:orders)).to be_present
+      expect(configuration.scope(:products)).to be_present
+      expect(configuration.scope(:staff)).to be_present
+      expect(configuration.scope(:dashboard)).to be_present
     end
 
     it 'yields read and write keys per resource' do
@@ -22,47 +22,79 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
-  describe '#register_resource' do
+  # The pickers render groups in first-appearance order, so the order these
+  # are registered in IS the order a merchant reads them in. Pinned here
+  # because nothing else would notice a registration moving.
+  describe 'group order' do
+    it 'runs from what a merchant looks at most to what they set up once' do
+      groups = configuration.grantable_scopes(:store).map(&:group).uniq
+
+      expect(groups).to eq(%i[analytics orders catalog customers sellers loyalty marketing settings access])
+    end
+
+    it 'keeps running the marketplace together, apart from access' do
+      expect(%i[sellers commissions payouts].map { |name| configuration.scope(name).group }).to all(eq(:sellers))
+    end
+  end
+
+  describe '#register_scope' do
     it 'registers a resource with lazy subjects and yields its keys' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: -> { [Spree::Product] })
+      configuration.register_scope(:reviews, group: :catalog, resources: -> { [Spree::Product] })
 
       expect(configuration.catalog_keys).to include('read_reviews', 'write_reviews')
-      expect(configuration.resource(:reviews).subjects).to eq([Spree::Product])
-      expect(configuration.resource(:reviews).group).to eq(:catalog)
+      expect(configuration.scope(:reviews).resources).to eq([Spree::Product])
+      expect(configuration.scope(:reviews).group).to eq(:catalog)
     end
 
     it 'replaces an existing registration with the same name' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
-      configuration.register_resource(:reviews, group: :marketing, subjects: [Spree::Order])
+      configuration.register_scope(:reviews, group: :catalog, resources: [Spree::Product])
+      configuration.register_scope(:reviews, group: :marketing, resources: [Spree::Order])
 
-      expect(configuration.resource(:reviews).group).to eq(:marketing)
+      expect(configuration.scope(:reviews).group).to eq(:marketing)
     end
 
     it 'reserves all — its keys would collide with the wildcard aliases' do
       expect {
-        configuration.register_resource(:all, group: :catalog, subjects: [Spree::Product])
+        configuration.register_scope(:all, group: :catalog, resources: [Spree::Product])
       }.to raise_error(ArgumentError, /reserved/)
     end
   end
 
   describe 'audiences' do
-    it 'grants every resource to the store back office without naming it' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+    it 'grants a resource to the store back office by default' do
+      configuration.register_scope(:reviews, group: :catalog, resources: [Spree::Product])
 
-      expect(configuration.resource(:reviews)).to be_grantable_to(:store)
-      expect(configuration.grantable_keys(:store)).to eq(configuration.catalog_keys)
+      expect(configuration.scope(:reviews)).to be_grantable_to(:store)
+      expect(configuration.grantable_keys(:store)).to include('read_reviews', 'write_reviews')
     end
 
-    it 'grants a resource to the audiences it names, store included' do
-      configuration.register_resource(:reviews, group: :catalog, audiences: %i[seller], subjects: [Spree::Product])
+    # A key that only means something on the seller's own panel: granting it
+    # to a store role would build a role the seller branch never consults.
+    # The audience list is the whole list, so leaving the store out is how a
+    # resource stays off the staff picker.
+    it 'withholds a resource whose audiences leave the store out' do
+      configuration.register_scope(:reviews, group: :catalog, audiences: %i[seller], resources: [Spree::Product])
 
-      expect(configuration.resource(:reviews).audiences).to contain_exactly(:store, :seller)
+      expect(configuration.scope(:reviews)).not_to be_grantable_to(:store)
+      expect(configuration.scope(:seller_profile)).not_to be_grantable_to(:store)
+      expect(configuration.grantable_keys(:store)).not_to include(
+        'read_seller_profile', 'write_seller_profile', 'read_seller_earnings'
+      )
+      expect(configuration.entries.map(&:key)).not_to include('read_seller_profile')
+    end
+
+    it 'grants a resource to exactly the audiences it names' do
+      configuration.register_scope(:reviews, group: :catalog, audiences: %i[store seller], resources: [Spree::Product])
+      expect(configuration.scope(:reviews).audiences).to contain_exactly(:store, :seller)
+
+      configuration.register_scope(:reviews, group: :catalog, audiences: %i[seller], resources: [Spree::Product])
+      expect(configuration.scope(:reviews).audiences).to contain_exactly(:seller)
     end
 
     it 'withholds unnamed audiences' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+      configuration.register_scope(:reviews, group: :catalog, resources: [Spree::Product])
 
-      expect(configuration.resource(:reviews)).not_to be_grantable_to(:seller)
+      expect(configuration.scope(:reviews)).not_to be_grantable_to(:seller)
       expect(configuration.grantable_keys(:seller)).not_to include('read_reviews')
     end
 
@@ -78,8 +110,8 @@ RSpec.describe Spree::PermissionConfiguration do
     # owns their own boxes, and `settings` is never seller-grantable
     # (docs/plans/6.0-seller-package-types.md).
     it 'keeps package types out of the settings resource' do
-      expect(configuration.resource(:settings).subjects).not_to include(Spree::PackageType)
-      expect(configuration.resource(:package_types).subjects).to include(Spree::PackageType)
+      expect(configuration.scope(:settings).resources).not_to include(Spree::PackageType)
+      expect(configuration.scope(:package_types).resources).to include(Spree::PackageType)
     end
 
     it 'never opens the operator-only resources to sellers' do
@@ -94,25 +126,25 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
-  describe '#unregister_resource' do
+  describe '#unregister_scope' do
     it 'removes the resource and its keys' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
-      configuration.unregister_resource(:reviews)
+      configuration.register_scope(:reviews, group: :catalog, resources: [Spree::Product])
+      configuration.unregister_scope(:reviews)
 
-      expect(configuration.resource(:reviews)).to be_nil
+      expect(configuration.scope(:reviews)).to be_nil
       expect(configuration.catalog_keys).not_to include('read_reviews')
     end
   end
 
   describe '#resolve_key' do
     it 'resolves read and write keys' do
-      kind, resource = configuration.resolve_key('write_orders')
+      kind, scope = configuration.resolve_key('write_orders')
       expect(kind).to eq(:write)
-      expect(resource.name).to eq(:orders)
+      expect(scope.name).to eq(:orders)
 
-      kind, resource = configuration.resolve_key('read_gift_cards')
+      kind, scope = configuration.resolve_key('read_gift_cards')
       expect(kind).to eq(:read)
-      expect(resource.name).to eq(:gift_cards)
+      expect(scope.name).to eq(:gift_cards)
     end
 
     it 'returns nil for unknown keys' do
@@ -168,14 +200,18 @@ RSpec.describe Spree::PermissionConfiguration do
       expect(configuration.expand_keys(%w[read_orders bogus write_nothing])).to eq(%w[read_orders])
     end
 
-    it 'expands write_all to the whole catalog' do
-      expect(configuration.expand_keys(%w[write_all])).to eq(configuration.catalog_keys)
+    # The aliases belong to secret API keys, which a store issues — so they
+    # expand over what staff may hold, never over another audience's keys.
+    it 'expands write_all to everything staff may hold' do
+      expect(configuration.expand_keys(%w[write_all])).to eq(configuration.grantable_keys(:store))
+      expect(configuration.expand_keys(%w[write_all])).not_to include('read_seller_profile')
     end
 
     it 'expands read_all to every read key' do
       expanded = configuration.expand_keys(%w[read_all])
 
       expect(expanded).to include('read_orders', 'read_products', 'read_dashboard')
+      expect(expanded).not_to include('read_seller_earnings')
       expect(expanded.grep(/\Awrite_/)).to be_empty
     end
 
@@ -186,29 +222,29 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
-  describe '#resource_for_subject' do
+  describe '#scope_for_resource' do
     it 'resolves a model class to its owning resource' do
-      expect(configuration.resource_for_subject(Spree::Order).name).to eq(:orders)
-      expect(configuration.resource_for_subject(Spree::OptionType).name).to eq(:products)
+      expect(configuration.scope_for_resource(Spree::Order).name).to eq(:orders)
+      expect(configuration.scope_for_resource(Spree::OptionType).name).to eq(:products)
     end
 
     it 'matches by ancestry so subclasses resolve to the base subject' do
-      expect(configuration.resource_for_subject(Spree::Gateway).name).to eq(:settings)
+      expect(configuration.scope_for_resource(Spree::Gateway).name).to eq(:settings)
     end
 
     it 'returns nil for classes no resource covers' do
-      expect(configuration.resource_for_subject(Spree::Country)).to be_nil
-      expect(configuration.resource_for_subject('not a class')).to be_nil
+      expect(configuration.scope_for_resource(Spree::Country)).to be_nil
+      expect(configuration.scope_for_resource('not a class')).to be_nil
     end
   end
 
   describe '#reset!' do
     it 'restores the default catalog' do
-      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+      configuration.register_scope(:reviews, group: :catalog, resources: [Spree::Product])
       configuration.reset!
 
-      expect(configuration.resource(:reviews)).to be_nil
-      expect(configuration.resource(:orders)).to be_present
+      expect(configuration.scope(:reviews)).to be_nil
+      expect(configuration.scope(:orders)).to be_present
     end
   end
 
@@ -277,7 +313,7 @@ RSpec.describe Spree::PermissionConfiguration do
     end
 
     it 'leaves Spree::Seller mapped to the operator resource' do
-      expect(Spree.permissions.resource_for_subject(Spree::Seller).name).to eq(:sellers)
+      expect(Spree.permissions.scope_for_resource(Spree::Seller).name).to eq(:sellers)
     end
   end
 

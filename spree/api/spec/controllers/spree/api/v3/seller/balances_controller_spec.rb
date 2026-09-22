@@ -26,10 +26,13 @@ RSpec.describe Spree::Api::V3::Seller::BalancesController, type: :controller do
 
   describe 'GET #index' do
     it 'answers one position per currency' do
-      earn(40)
+      earn(25)
       earn(10, status: 'pending')
       earn(30, currency: 'EUR')
-      create(:seller_payout, :completed, seller: seller, amount: 15)
+      # A settlement claims the earnings it covers; one claiming none is not
+      # something the sweep can produce.
+      settled = create(:seller_payout, :completed, seller: seller, amount: 15)
+      earn(15).update!(payout: settled)
       # Another seller's ledger must not bleed in.
       create(:seller_transfer, :completed, seller: create(:seller, :approved, store: store), amount: 999)
 

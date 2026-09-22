@@ -407,80 +407,28 @@ module Spree
       # resumes like any other finalize failure.
       def finalize!(cart, order)
         @order = order
-        step :split_by_seller
-        step :allocate_payment_splits
         step :complete_orders
         step :complete_cart
         step :mark_coupon_codes_used
         external_step :commit_tax
       end
 
-      # Divides the paid draft order into one order per seller, under a group.
-      # A cart of one partition — all first-party, or all one seller — is left
-      # exactly as it is: no group, no splits, and the order it already built
-      # is the order the customer gets.
+      # Places what the checkout produced, through the order-side workflow
+      # that owns placement — including dividing the basket between sellers,
+      # which an order raised from the admin needs just as much and which only
+      # that workflow can give both of them.
       #
-      # The draft order built in PREPARE becomes the group's first child rather
-      # than being replaced. It is the record the payment was taken against and
-      # the row carrying the unique cart_id that makes completion replayable,
-      # so it is kept and narrowed to its own partition; the remaining
-      # partitions become new siblings beside it.
-      def split_by_seller
-        @order_group = cart.order_group
-        return if order_group.present?
-        return if order.placed?
+      # It answers with the group when the basket divided, and the first of
+      # its children is the order this checkout carries on with: that is the
+      # one holding the confirmation email.
+      def complete_orders
+        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
+        failure(cart, code: 'completion_failed', message: result.error) if result.failure?
 
-        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
-
-        if partitions.one?
-          # Nothing to divide, but the sale still belongs to whoever made it:
-          # a basket entirely from one seller is that seller's order, and the
-          # column is what their own order list reads.
-          order.update_columns(seller_id: partitions.first.seller_id) if order.seller_id != partitions.first.seller_id
-          return
-        end
-
-        return if partitions.empty?
-
-        result = Spree::Carts::SplitBySeller.call(cart: cart, order: order, partitions: partitions)
-        failure(cart, code: 'split_failed', message: result.error) if result.failure?
+        return unless result.value.is_a?(Spree::OrderGroup)
 
         @order_group = result.value
-        # Ordered, because which child comes first decides which one carries
-        # the confirmation email — that must not depend on how the rows come
-        # back.
         @order = order_group.orders.order(:id).first
-      end
-
-      def allocate_payment_splits
-        return if order_group.nil?
-
-        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
-        failure(cart, code: 'split_failed', message: result.error) if result.failure?
-      end
-
-      # Places what the checkout produced — the children of a split, or the one
-      # order otherwise. Each child publishes its own order.placed, which is
-      # what gets every seller their own commission lines with no marketplace
-      # code in the commission engine.
-      #
-      # A split checkout's payments were already taken against the whole basket
-      # and moved onto the group, so the children place without processing them
-      # again. One purchase means one confirmation email: the first child
-      # carries the notification and its siblings place silently.
-      def complete_orders
-        split = order_group.present?
-
-        placed_orders.each_with_index do |child, index|
-          result = Spree.order_complete_workflow.call(
-            order: child,
-            payment_pending: split,
-            notify_customer: split && !index.zero? ? false : nil
-          )
-          failure(cart, code: 'completion_failed', message: result.error) if result.failure?
-        end
-
-        order_group&.publish_event('order_group.completed')
       end
 
       # Tells the tax engine the sale is final. A no-op for the built-in

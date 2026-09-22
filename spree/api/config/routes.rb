@@ -245,9 +245,16 @@ Spree::Core::Engine.add_routes do
         post 'auth/password_resets', to: 'password_resets#create'
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
-        # Dashboard
+        # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)
+        namespace :reporting do
+          post :query
+          get :schema
+          resources :saved_reports, only: %i[index show create update destroy]
+        end
+
+        # Dashboard (point-in-time counts registered on Spree.reporting)
         namespace :dashboard do
-          get :analytics
+          get :counters
         end
 
         # Current admin user + permissions (for UI permission checks)
@@ -429,7 +436,28 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :stock_movements, only: [:index, :show]
-        resources :stock_transfers, only: [:index, :show, :create, :destroy]
+        resources :stock_transfers do
+          member do
+            patch :mark_ready
+            patch :mark_in_transit
+            patch :mark_draft
+            patch :close
+            patch :cancel
+          end
+          resources :stock_receipts, only: [:index, :show, :create], module: :stock_transfers
+        end
+
+        # Purchasing
+        resources :suppliers
+        resources :purchase_orders do
+          member do
+            patch :mark_ordered
+            patch :mark_draft
+            patch :close
+            patch :cancel
+          end
+          resources :stock_receipts, only: [:index, :show, :create], module: :purchase_orders
+        end
 
         # Payment Methods
         resources :delivery_methods do
@@ -549,6 +577,10 @@ Spree::Core::Engine.add_routes do
 
           # Where the seller stands on the ledger, one row per currency.
           resources :balances, only: [:index], controller: 'sellers/balances'
+
+          # Settling this seller by hand. The scheduled sweep skips anyone on
+          # the `manual` interval — this is where the operator decides.
+          resources :payouts, only: [:create], controller: 'sellers/payouts'
 
           # Who runs this seller, and the offers nobody has accepted yet.
           # The operator is the only one who can repair a seller whose team
@@ -702,6 +734,12 @@ Spree::Core::Engine.add_routes do
         # Gift cards
         resources :gift_cards
         resources :gift_card_batches, only: [:index, :show, :create]
+
+        # Store credits across all customers. Read-only: issuing, editing and
+        # deleting a credit stays nested under the customer that holds it.
+        resources :store_credits, only: [:index, :show] do
+          resources :events, only: [:index], controller: 'store_credits/events'
+        end
 
         # Post-sale, across all orders. Read-only — creating any of these
         # needs an order, so writes live under /orders/:order_id/...

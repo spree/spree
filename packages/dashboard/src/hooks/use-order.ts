@@ -1,5 +1,11 @@
-import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
+import {
+  adminClient,
+  useResourceKey,
+  useResourceKeyBuilder,
+  useResourceMutation,
+} from '@spree/dashboard-core'
 import { type QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 export function useOrder(orderId: string) {
   return useQuery({
@@ -58,6 +64,27 @@ export function orderQueryKey(orderId: string): QueryKey {
   return ['orders', orderId]
 }
 
+/**
+ * Throws a draft order away. Only a draft with no settled payment can go —
+ * the backend refuses anything else, and that refusal is toasted since the
+ * order page has no inline error surface to carry it.
+ */
+export function useDeleteOrder() {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (orderId) => adminClient.orders.delete(orderId),
+    invalidate: [['orders'], ['draft-orders']],
+    successMessage: i18n.t('admin.orders.detail.messages.deleted'),
+    errorMessage: i18n.t('admin.orders.detail.errors.delete_failed'),
+    showValidationErrors: true,
+    onSuccess: (_data, orderId) => {
+      queryClient.removeQueries({ queryKey: buildKey('orders', orderId) })
+    },
+  })
+}
+
 export function useOrderTaxLines(orderId: string) {
   return useQuery({
     queryKey: useResourceKey('orders', orderId, 'tax_lines'),
@@ -82,12 +109,22 @@ export function useOrderFees(orderId: string) {
   })
 }
 
-async function listAllCommissionLines(orderId: string) {
-  const params = {
-    q: { order_id_eq: orderId },
+/**
+ * Ransack predicates go in flat: the SDK wraps them into `q[...]` itself, so a
+ * nested `q` becomes `q[q]=[object Object]`, which Ransack ignores — and an
+ * unfiltered list is every commission line in the store, rendered against
+ * whichever order happens to be open.
+ */
+export function commissionLinesParams(orderId: string) {
+  return {
+    order_id_eq: orderId,
     limit: 100,
     expand: ['commission_rate'],
   }
+}
+
+async function listAllCommissionLines(orderId: string) {
+  const params = commissionLinesParams(orderId)
   const first = await adminClient.commissionLines.list({ ...params, page: 1 })
   const rest = await Promise.all(
     Array.from({ length: (first.meta?.pages ?? 1) - 1 }, (_, index) =>

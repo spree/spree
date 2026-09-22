@@ -1,0 +1,32 @@
+---
+title: "Marketplace Orders"
+description: "One checkout across several sellers becomes one order per seller — paid once, shipped separately, settled separately."
+---
+
+This is what makes a marketplace different from a shop, and it is worth understanding before anything else.
+
+A customer fills one basket, enters one address, and pays once. But each seller needs their own order: they ship separately, they are paid separately, and they must never see each other's business. So at checkout, a basket spanning several sellers becomes an **order group** — one container holding one order per seller.
+
+| Level | Owns |
+|---|---|
+| Order group | The customer, the addresses, the single payment, the combined total |
+| Order | One seller's items, its fulfillments, its own money lines |
+
+The one payment is apportioned across the orders as **payment splits**, so each seller's share of a single charge is recorded exactly. That is what makes per-seller refunds and settlement possible later.
+
+## In the dashboard
+
+On the **Orders** list, an order that is part of a group shows it in the **Order group** column, with a link to view every order in that group. On an order's page, a **Marketplace** card names the seller — or says the order is the marketplace's own — and shows which group it belongs to.
+
+A basket with only one seller's products, or only your own, produces a single order with no group.
+
+## Who does what
+
+- **The seller** sees their order in their panel, and ships it from their own stock location with their own delivery method. Shipping is what records their earning.
+- **You** see every order. Refunds are handled per order, so refunding one seller's items never touches another's.
+- **The customer** sees one purchase, and one confirmation.
+
+## Related
+
+- [Payouts](/user/sellers/payouts) — how a shipped order turns into money owed
+- [Processing Orders](/user/orders/processing-orders) — the order page in general

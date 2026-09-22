@@ -6,6 +6,7 @@ import i18n from 'i18next'
 import { CompanyKindBadge } from '../components/spree/company-kind-badge'
 
 defineTable<Company>('companies', {
+  docsPath: 'customers/companies',
   title: i18n.t('admin.nav.companies'),
   description: i18n.t('admin.table_descriptions.companies'),
   searchParam: 'name_cont',

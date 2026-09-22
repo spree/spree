@@ -67,7 +67,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           label: { type: :string, description: 'Human-readable name; defaults to titleized `key`' },
           field_type: {
             type: :string,
-            description: 'Custom field type identifier (one of the registered field-type class names).'
+            description: 'Custom field type token (`short_text`, `long_text`, `rich_text`, `number`, …). An extension type that has no token is named by its registered class instead.'
           },
           resource_type: {
             type: :string,

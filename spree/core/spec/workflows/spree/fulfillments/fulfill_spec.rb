@@ -68,6 +68,23 @@ module Spree
         expect(source.fulfillment_items.sum(:quantity)).to eq(3)
       end
 
+      # A second parcel charged the method's rate again, which also dropped
+      # the order to partially_paid.
+      it 'ships the split parcel without charging delivery again' do
+        partial_order.recalculate_totals!
+        before_delivery = partial_order.reload.delivery_total
+
+        execute
+
+        expect(partial_order.reload.delivery_total).not_to be > before_delivery
+      end
+
+      it 'gives the new parcel no delivery cost of its own' do
+        shipped = execute.value
+
+        expect(shipped.cost).to eq(0)
+      end
+
       it 'reports the order as partially fulfilled' do
         execute
         expect(partial_order.reload.fulfillment_status).to eq('partial')
@@ -383,6 +400,42 @@ module Spree
         expect(fulfillment.reload).to be_fulfilled
         expect(fulfillment.shipping_labels).to be_empty
         expect(Rails.error).to have_received(:report)
+      end
+    end
+
+    # An order placed in a split checkout owns no payments — the customer paid
+    # once, against the group — so its own payment_total is zero and the guard
+    # refused to dispatch anything a marketplace ever sold.
+    describe 'an order sharing its payment with siblings' do
+      let(:group) { create(:order_group, store: store) }
+      let(:payment) { create(:payment, amount: order.total * 2, status: 'completed') }
+
+      before do
+        order.payments.delete_all
+        order.update_columns(order_group_id: group.id, payment_total: 0)
+        create(:payment_split, payment: payment, order: order,
+                               authorized_amount: order.total, captured_amount: order.total)
+      end
+
+      it 'hands over when its share of the payment covers what it owed' do
+        expect(subject.call(fulfillment: fulfillment)).to be_success
+      end
+
+      it 'refuses when its share was never captured' do
+        order.payment_splits.update_all(captured_amount: 0)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_failure
+        expect(result.error.value).to include(Spree.t('fulfillments.errors.order_not_paid'))
+      end
+
+      # Gross capture is not the measure: a share given back is money the
+      # order no longer holds.
+      it 'refuses when its share was captured and then refunded' do
+        order.payment_splits.update_all(refunded_amount: order.total)
+
+        expect(subject.call(fulfillment: fulfillment)).to be_failure
       end
     end
 

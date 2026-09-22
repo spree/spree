@@ -2,6 +2,7 @@ module Spree
   class ApiKey < Spree.base_class
     has_prefix_id :key  # Spree-specific: api key
 
+    include Spree::Actor
     include Spree::SingleStoreResource
 
     KEY_TYPES = %w[publishable secret].freeze
@@ -11,14 +12,19 @@ module Spree
     # Convenience aliases expanded at check time (never stored expanded).
     ALIAS_SCOPES = %w[read_all write_all].freeze
 
-    # Admin API authorization scopes — the permission catalog keys plus the
-    # aliases. Derived from the catalog so an extension registering a resource
-    # (`Spree.permissions.register_resource`) makes its keys mintable on secret
+    # Admin API authorization scopes — the permission catalog keys a store's
+    # own back office may hold, plus the aliases. Derived from the catalog so
+    # an extension registering a resource
+    # (`Spree.permissions.register_scope`) makes its keys mintable on secret
     # keys with no further wiring. See docs/plans/6.0-admin-rbac.md.
+    #
+    # Staff-grantable only: a secret key is issued against a store, so keys
+    # that exist for another audience (a seller's own profile or books) are
+    # not mintable on one.
     #
     # @return [Array<String>]
     def self.known_scopes
-      Spree.permissions.catalog_keys + ALIAS_SCOPES
+      Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE) + ALIAS_SCOPES
     end
 
     # Scopes are stored in a JSON column (jsonb on PostgreSQL, json elsewhere).
@@ -48,6 +54,7 @@ module Spree
     belongs_to :revoked_by, polymorphic: true, optional: true
 
     validates :name, presence: true
+    validates_store_uniqueness :name, soft_delete_column: :revoked_at
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
     validates :token, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }, if: :publishable?
     validates :token_digest, presence: true, uniqueness: true, if: :secret?
@@ -118,10 +125,11 @@ module Spree
 
     # Revokes this API key by setting +revoked_at+ to the current time.
     #
-    # @param user [Object, nil] the user who performed the revocation
+    # @param actor [Object, nil] who performed the revocation — an admin user
+    #   or another API key (see Spree.actor_classes)
     # @return [Boolean] true if the update succeeded
-    def revoke!(user = nil)
-      update!(revoked_at: Time.current, revoked_by: user)
+    def revoke!(actor = nil)
+      update!(revoked_at: Time.current, revoked_by: actor)
     end
 
     # Whether this key carries the given scope. `write_*` implies the matching

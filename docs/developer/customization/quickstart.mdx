@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 og:title: Spree Customization Quickstart
-description: Recommended ways to customize the Spree 6 backend — configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
+description: Recommended ways to customize the Spree backend — configuration, workflow hooks, events, checkout steps, providers, dependencies, and decorators as a last resort.
 ---
 
 Spree is designed to be customized without forking it. This guide presents the options **in order of recommendation** — start at the top and only move down when a simpler option doesn't fit.
@@ -28,7 +28,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
 | Add associations/validations to models | [Decorators](#decorators) (last resort) |
 
 <Info>
-**Customizing the admin?** This page covers the backend — models, API and business logic. The Spree 6 admin is a separate React application with its own extension points. See [Dashboard Customization](/developer/dashboard/customization/quickstart).
+**Customizing the admin?** This page covers the backend — models, API and business logic. The admin is a separate React application with its own extension points. See [Dashboard Customization](/developer/dashboard/customization/quickstart).
 </Info>
 
 <AccordionGroup>
@@ -52,7 +52,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
     **Best for:** running your own logic *inside* a core flow — checkout completion, order cancellation, refunds, fulfillment creation.
 
     <Info>
-      Hooks are the **headline extension point in Spree 6**. Before them, customizing a flow meant replacing the entire class and keeping your copy in sync with core forever.
+      Hooks are the **headline extension point in Spree**, so you don't have to replace an entire class and keep your copy in sync with core forever.
     </Info>
 
     Register a handler against a hook key — `<workflow key>.<hook name>`:
@@ -106,7 +106,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
   <Accordion title="Checkout steps">
     **Best for:** adding, removing or reordering checkout steps.
 
-    Spree 6 has no checkout state machine. A cart reports what it still needs, and you can add to that list:
+    Spree has no checkout state machine. A cart reports what it still needs, and you can add to that list:
 
     ```ruby config/initializers/spree.rb
     Spree::Checkout::Registry.register_step(
@@ -137,7 +137,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
   <Accordion title="Providers">
     **Best for:** swapping a whole area of behavior for your own implementation.
 
-    Spree 6 exposes pluggable providers for the domains that vary most between businesses:
+    Spree exposes pluggable providers for the domains that vary most between businesses:
 
     | Provider | Controls |
     |---|---|
@@ -165,7 +165,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
   <Accordion title="Authentication">
     **Best for:** using your own user model or identity provider.
 
-    Spree 6 owns its authentication stack rather than depending on Devise, and separates the customer identity from the staff identity. Point Spree at your own classes with `Spree.customer_class` and `Spree.admin_user_class`.
+    Spree owns its authentication stack rather than depending on Devise, and separates the customer identity from the staff identity. Point Spree at your own classes with `Spree.customer_class` and `Spree.admin_user_class`.
 
     See [Authentication](/developer/providers/sso).
   </Accordion>
@@ -184,7 +184,7 @@ Business logic is extended through **workflow hooks** rather than by replacing c
     ```
 
     <Warning>
-      Seam names end in `_workflow` in Spree 6. The old `*_service` names still resolve for one release with a warning, but **writes to them are ignored** — a class written against the old service contract isn't interchangeable with a workflow. Update the key when you upgrade.
+      Seam names end in `_workflow`. The old `*_service` names still resolve with a warning, but **writes to them are ignored** — a class written against the old service contract isn't interchangeable with a workflow. Update the key if your code still uses the old name.
     </Warning>
 
     Prefer a hook when you only need to add behavior. Replace the class only when you need to change what the flow fundamentally does.

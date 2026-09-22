@@ -1,11 +1,14 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarTrigger,
   Skeleton,
+  useSidebar,
 } from '@spree/dashboard-ui'
 import { PackageIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
@@ -13,9 +16,12 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { primarySidebarSide, useTranslation } from '../lib/i18n'
 import { type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-registry'
+import type { ActionName, SubjectName } from '../lib/permissions'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { useOptionalStore } from '../providers/store-provider'
 import { type NavItem, NavMain } from './nav-main'
+import { SidebarSearch } from './sidebar-search'
+import { SidebarUser } from './sidebar-user'
 import { StoreSwitcher } from './store-switcher'
 
 /**
@@ -41,16 +47,31 @@ function entryToNavItem(entry: NavEntry, tenantId: string, t: (key: string) => s
   }
 }
 
-/** Hide items the user can't act on — `read` unless the entry says otherwise. */
+/**
+ * Hide items the user can't act on — `read` unless the entry says otherwise.
+ *
+ * A group that declares no `subject` of its own is gated by its children
+ * instead: it has no page of its own, so its own link points at whichever
+ * child it lists first. Once permissions remove some of those children, both
+ * halves of that arrangement need fixing — the group's link has to follow the
+ * first child that survived, and a group with nothing left has to go.
+ */
 function filterByPermissions(items: NavItem[], permissions: Permissions): NavItem[] {
-  return items
-    .filter((item) => !item.subject || permissions.can(item.action ?? 'read', item.subject))
-    .map((item) => ({
-      ...item,
-      items: item.items?.filter(
-        (sub) => !sub.subject || permissions.can(sub.action ?? 'read', sub.subject),
-      ),
-    }))
+  const allowed = (entry: { subject?: SubjectName; action?: ActionName }) =>
+    !entry.subject || permissions.can(entry.action ?? 'read', entry.subject)
+
+  return items.flatMap((item) => {
+    if (!allowed(item)) return []
+
+    const children = item.items?.filter(allowed)
+    if (item.subject) return [{ ...item, items: children }]
+
+    // Subject-less: gated by, and pointed at, its children.
+    const first = children?.[0]
+    if (item.items && !first) return []
+
+    return [{ ...item, items: children, url: first?.url ?? item.url }]
+  })
 }
 
 /**
@@ -98,10 +119,16 @@ export function useNavItems(tenantId: string): {
  * both are props. Everything else (side-by-language, collapsible rail,
  * permission filtering) is the same in either, and a panel that copied this to
  * change the header would silently miss every later fix to the rest.
+ *
+ * The rail carries the whole of the app's chrome: the tenant switcher and
+ * search above the nav, the account menu at its foot. There is no top bar —
+ * the page's own header is the only thing above the content.
  */
 export function AppSidebar({
   tenantId,
   header,
+  uiLocales,
+  onEditProfile,
   ...props
 }: ComponentProps<typeof Sidebar> & {
   /**
@@ -111,14 +138,31 @@ export function AppSidebar({
   tenantId?: string
   /** Rendered in the header. Defaults to the store switcher. */
   header?: ReactNode
+  /** Admin UI languages offered by the account menu's language switcher. */
+  uiLocales?: ReadonlyArray<{ code: string; name: string }>
+  /** Opens the app's edit-profile dialog from the account menu. */
+  onEditProfile?: () => void
 }) {
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
 
   return (
-    <Sidebar collapsible="icon" side={primarySidebarSide(i18n.language)} {...props}>
-      <SidebarHeader>{header ?? <StoreSwitcher />}</SidebarHeader>
+    <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
+      <SidebarHeader>
+        {/* The switcher, search and the account row are all hidden on a phone:
+            the top bar already names the store and carries both search and the
+            account menu, so repeating them inside the drawer spends rows of a
+            small screen saying what is visible behind it. The drawer is for
+            navigating. */}
+        <div className="hidden items-center gap-1 md:flex">
+          <div className="min-w-0 flex-1">{header ?? <StoreSwitcher />}</div>
+          <CollapseTrigger />
+        </div>
+        <div className="hidden md:block">
+          <SidebarSearch />
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         {/* Permissions decide which links exist, and until they arrive every
             `can()` answers false — so the real nav is not "empty", it is not
@@ -131,6 +175,9 @@ export function AppSidebar({
             list is never actually empty and a length check would never fire. */}
         {isLoading ? <NavSkeleton /> : <NavMain items={navItems} bottomItems={bottomItems} />}
       </SidebarContent>
+      <SidebarFooter className="hidden md:flex">
+        <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
+      </SidebarFooter>
     </Sidebar>
   )
 }
@@ -158,5 +205,23 @@ function NavSkeleton() {
         ))}
       </SidebarMenu>
     </SidebarGroup>
+  )
+}
+
+/**
+ * Collapses the rail to its icon width, beside the tenant switcher.
+ *
+ * It lives here because the rail is now the app's only chrome — the top bar
+ * that used to carry this control is gone, and without it the rail could be
+ * collapsed by keyboard alone. Hidden once collapsed: at icon width there is
+ * no room beside the avatar, and the rail's own edge handle (`SidebarRail`)
+ * expands it again.
+ */
+function CollapseTrigger() {
+  const { isMobile, state } = useSidebar()
+  if (isMobile || state === 'collapsed') return null
+
+  return (
+    <SidebarTrigger className="shrink-0 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground" />
   )
 }

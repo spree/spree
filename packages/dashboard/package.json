@@ -1,8 +1,8 @@
 {
   "name": "@spree/dashboard",
   "license": "MIT",
-  "version": "0.13.1",
-  "description": "Spree Dashboard app shell \u2014 the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
+  "version": "1.0.0-beta.3",
+  "description": "Spree Dashboard app shell — the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
   "repository": {
@@ -30,7 +30,8 @@
       "types": "./src/vite/route-collisions.ts",
       "default": "./dist/vite-plugin/route-collisions.js"
     },
-    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
+    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts",
+    "./components/spree/store-setup-fields": "./src/components/spree/store-setup-fields.tsx"
   },
   "files": [
     "src",
@@ -68,10 +69,10 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/router-plugin": "^1.167.35",
     "@tanstack/virtual-file-routes": "^1.162.0",
-    "@tiptap/extension-link": "^3.22.5",
-    "@tiptap/extension-placeholder": "^3.22.5",
-    "@tiptap/react": "^3.22.5",
-    "@tiptap/starter-kit": "^3.22.5",
+    "@tiptap/extension-link": "^3.31.3",
+    "@tiptap/extension-placeholder": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
     "@uiw/react-json-view": "^1.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -102,7 +103,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
     "@vitejs/plugin-react": "^6.0.1",
-    "shadcn": "^4.7.0",
+    "shadcn": "^4.21.0",
     "tailwindcss": "^4.2.4",
     "tsup": "^8.5.1",
     "typescript": "~6.0.3",

@@ -1,0 +1,37 @@
+---
+title: "Product Types"
+description: "Templates for the kinds of thing you sell — so a new pair of shoes starts with the right options, categories and fields already in place."
+---
+
+Merchants who sell more than one kind of thing end up repeating themselves. Every pair of shoes needs Size and Colour, belongs under Footwear, and wants a Material field. Every book needs an ISBN and an author.
+
+A product type captures that once. Creating a product from a type gives it the right option types, the right categories, the right delivery profile, and a form that asks for the fields that kind of product actually needs.
+
+Find them under **Settings → Product types**.
+
+## Creating a type
+
+Click **New product type**, name it — "Footwear", "Books" — and choose what it seeds:
+
+| Setting | What a new product of this type gets |
+|---|---|
+| Option types | Its variant axes, such as Size and Colour |
+| Categories | Where it is filed by default |
+| Delivery profile | How it ships |
+| Custom fields | Which fields its edit form asks for, and which are marked required |
+
+## A type is a template, not a rule
+
+This is the part that decides how to think about them. A type is applied **when a product is created**. After that, the product is its own record:
+
+- Editing the type later does not change products already made from it. Add an option type to Footwear and existing shoes are untouched.
+- A product can be moved to a different type, or detached from its type, without losing anything.
+- **Required** on a custom field is advice to the person filling in the form, not a rule the server enforces.
+
+If you do want to push a type's option types and categories onto the products that already carry it, use **Apply to products**. It previews how many products will change, and only ever *adds* — it never removes what a product already has.
+
+## Related
+
+- [Creating Products](/user/products/creating-products) — choosing a type when a product is created
+- [Product Options](/user/manage-products/product-options) — the option types a product type seeds
+- [Custom Fields](/user/settings/custom-fields) — the field definitions a type can ask for

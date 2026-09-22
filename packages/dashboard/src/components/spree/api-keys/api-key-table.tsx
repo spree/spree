@@ -270,9 +270,9 @@ function ApiKeyRow({
       </TableCell>
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
         <RelativeTime iso={apiKey.created_at} />
-        {apiKey.created_by_email && (
+        {apiKey.created_by_label && (
           <div className="text-xs">
-            {t('admin.api_keys.by_email', { email: apiKey.created_by_email })}
+            {t('admin.api_keys.created_by', { actor: apiKey.created_by_label })}
           </div>
         )}
       </TableCell>

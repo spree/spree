@@ -7,15 +7,30 @@ export type {
   AuthProvider,
   AuthProvidersResponse,
   AuthTokens,
-  DashboardAnalytics,
+  DashboardCounters,
   LoginCredentials,
   MeResponse,
   PermissionRule,
+  ReportingCompare,
+  ReportingDimensionValue,
+  ReportingGrain,
+  ReportingMetricFilterOp,
+  ReportingMetricValue,
+  ReportingQuery,
+  ReportingResult,
+  ReportingRow,
+  ReportingSchema,
+  ReportingSchemaDimension,
+  ReportingSchemaFamily,
+  ReportingSchemaMetric,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)
 export { AdminClient } from './admin-client'
 export type { AdminClientConfig, Client } from './client'
 export { createAdminClient } from './client'
+
+// Narrows what completing an order answered with.
+export { isOrderGroup } from './order-group'
 
 // Param types (request bodies)
 export type * from './params'

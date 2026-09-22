@@ -373,9 +373,12 @@ describe Spree::Seller do
     it 'is what has been earned less what has been settled' do
       earn(40)
       earn(30)
-      create(:seller_payout, :completed, seller: seller, amount: 50)
+      # A settlement claims the earnings it covers; one claiming none is not
+      # something the sweep can produce, and it is the claim that debits.
+      settled = create(:seller_payout, :completed, seller: seller, amount: 50)
+      earn(50).update!(payout: settled)
 
-      expect(seller.balance('USD')).to eq(20)
+      expect(seller.balance('USD')).to eq(70)
     end
 
     it 'counts only confirmed earnings' do
@@ -403,10 +406,11 @@ describe Spree::Seller do
       it 'is one position per currency the seller was ever paid or earned in, in order' do
         earn(40)
         earn(30, currency: 'EUR')
-        create(:seller_payout, :completed, seller: seller, amount: 5, currency: 'GBP')
+        settled = create(:seller_payout, :completed, seller: seller, amount: 5, currency: 'GBP')
+        earn(5, currency: 'GBP').update!(payout: settled)
 
         expect(seller.balances.map(&:currency)).to eq(%w[EUR GBP USD])
-        expect(seller.balances.map(&:balance)).to eq([30, -5, 40])
+        expect(seller.balances.map(&:balance)).to eq([30, 0, 40])
       end
 
       it 'is empty before the first sale' do

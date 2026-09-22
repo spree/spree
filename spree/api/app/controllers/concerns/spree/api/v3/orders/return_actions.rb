@@ -21,14 +21,14 @@ module Spree
 
           # PATCH .../returns/:id/approve
           def approve
-            run_workflow(Spree.return_approve_workflow, approver: try_spree_current_user)
+            run_workflow(Spree.return_approve_workflow, approver: current_actor)
           end
 
           # PATCH .../returns/:id/receive — what the warehouse actually counted.
           def receive
             run_workflow(Spree.return_receive_workflow,
                          items: items_for_receive,
-                         received_by: try_spree_current_user)
+                         received_by: current_actor)
           end
 
           # PATCH .../returns/:id/refund
@@ -36,7 +36,7 @@ module Spree
             run_workflow(Spree.return_refund_workflow,
                          amount: params[:amount],
                          refund_method: params[:refund_method] || 'original_payment',
-                         refunder: try_spree_current_user)
+                         refunder: current_actor)
           end
 
           # PATCH .../returns/:id/cancel

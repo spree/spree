@@ -9,6 +9,7 @@ Instructions: $ARGUMENTS
 5. **Resolve open questions interactively before finishing** — see below
 6. Update the `Last updated` date
 7. If status changed, update the plan's status accordingly
+8. **Mirror the change to the plan's trackers** — see below
 
 ## Resolving open questions (required)
 
@@ -38,6 +39,35 @@ Then fold the answers back into the plan:
 If a question genuinely cannot be answered yet — it depends on work that hasn't
 landed, or on information nobody has — say so and leave it deferred with the
 reason. That is a resolution too; silently leaving it unexamined is not.
+
+## Keeping the trackers in step (required)
+
+The plan's `**Tracking:**` header names its Linear issue and its GitHub
+issue. After editing the plan, make the trackers say the same thing the plan
+now says. The shape of both issues, the milestone mapping and the fallbacks
+when a tool is unavailable are described in `/project:create-plan` under
+"Tracking the plan in Linear and GitHub"; read that section rather than
+inventing a variant here.
+
+- **Target changed** (the plan moved to another release): move the Linear
+  issue to milestone `X.Y` and the GitHub issue to milestone `vX.Y`,
+  creating either milestone if it is missing.
+- **Status changed:** set the Linear issue's status through the mapping in
+  `/project:create-plan` (`Implemented` → Done, `Superseded` → Canceled, and
+  so on). Close the GitHub issue when the plan becomes Implemented or
+  Superseded; reopen it if the plan goes back to In Progress.
+- **Title changed:** rename both issues to the new H1.
+- **Summary, dependencies or migration steps changed:** refresh the issue
+  descriptions with the `patch` operations on `save_issue`, and edit the
+  GitHub body with `gh issue edit`, so a reader of either tracker sees the
+  current design.
+- **The header has no trackers** (a plan written before this rule, or one
+  marked `Linear —` / `GitHub —`): create the missing tracker now following
+  `/project:create-plan`, and fill the header in.
+
+If the Linear MCP tools are not available in this session, update GitHub
+only, leave the Linear half of the header as it was, and say in the final
+message what still needs doing by hand.
 
 ## Recording decisions
 

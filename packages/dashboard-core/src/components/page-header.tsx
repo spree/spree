@@ -6,6 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  ExternalLink,
   useConfirm,
   useCopyToClipboard,
   useScrolled,
@@ -20,7 +21,8 @@ import {
 import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRegisterPageHeader } from '../providers/sticky-header-provider'
+import { docsUrl } from '../lib/docs'
+import { useRegisterPageHeader, useStickyHeaderOffset } from '../providers/sticky-header-provider'
 import { Slot } from './slot'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
@@ -53,8 +55,34 @@ export interface PageHeaderResource {
 interface PageHeaderProps {
   /** Main title, on its own line. */
   title: ReactNode
+  /**
+   * Whether the header pins to the top of the scroll container. Default true,
+   * which is right for a detail page: the title and its Save button have to
+   * stay reachable down a long form.
+   *
+   * A list page passes `false`. There the table's own column row is the band
+   * worth pinning — it is what a reader needs while scrolling rows — and two
+   * stacked sticky bands spend a third of a short viewport on chrome. Turning
+   * this off also stops the header publishing a sticky offset, so the column
+   * row pins to the top of the sheet rather than below a header that is no
+   * longer there.
+   */
+  sticky?: boolean
   /** Small text beside the badges (updated_at badge, customer email, etc.). */
   subtitle?: ReactNode
+  /**
+   * One line under the title saying what the page is for. Unlike `subtitle`,
+   * which shares the badge row and answers "where is this now", this explains
+   * the feature itself — worth writing for something a merchant meets for the
+   * first time (catalogs, price lists, transfers) and worth leaving off a page
+   * that explains itself.
+   */
+  description?: ReactNode
+  /**
+   * Documentation for the feature, linked at the end of the description.
+   * Relative to the user guide, or a full URL for a plugin's own docs.
+   */
+  docsPath?: string
   /** Back button target — passed to <BackButton fallback="..."/>. Omit for top-level pages. */
   backTo?: string
   /** Status badges, on the line under the title. Use <StatusBadge />. */
@@ -85,14 +113,22 @@ interface PageHeaderProps {
   /** Slot context name. Defaults to inferring from `resource` keys. Optional. */
   slotContext?: Record<string, unknown>
   /**
-   * Called after the user confirms the auto-rendered Delete action.
-   * When provided, the Delete item is enabled. The confirmation prompt is
-   * fixed ("Are you sure? This action cannot be undone.") — pass `dropdownItems`
-   * directly if you need a custom delete flow.
+   * Called after the user confirms the auto-rendered Delete action. When
+   * provided, the Delete item is enabled. PageHeader owns the confirmation,
+   * so the handler must not prompt again — pass `dropdownItems` directly if
+   * you need a delete flow this cannot express.
    */
   onDelete?: () => void | Promise<void>
   /** Override the destructive label ("Delete order", "Delete product", etc.). */
   deleteLabel?: string
+  /**
+   * Replaces the generic "Are you sure?" prompt. Say what goes with the
+   * record — "Its zones and delivery methods go with it" — since that is what
+   * the reader cannot see from the button.
+   */
+  deleteConfirmMessage?: string
+  /** Heading for the delete prompt. Defaults to none, as the message carries it. */
+  deleteConfirmTitle?: string
   /**
    * When supplied, the more-actions dropdown gains a "View as JSON" item that
    * opens a developer-style drawer with the resource payload.
@@ -111,7 +147,10 @@ interface PageHeaderProps {
  */
 export function PageHeader({
   title,
+  sticky = true,
   subtitle,
+  description,
+  docsPath,
   backTo,
   badges,
   actions,
@@ -121,6 +160,8 @@ export function PageHeader({
   slotContext,
   onDelete,
   deleteLabel,
+  deleteConfirmMessage,
+  deleteConfirmTitle,
   jsonPreview,
 }: PageHeaderProps) {
   const { t } = useTranslation()
@@ -138,24 +179,26 @@ export function PageHeader({
     setJsonOpen(true)
   }
   const scrolled = useScrolled()
-  // Tells the TopBar there's a header here to take over the top of the
-  // viewport, so it may slide away once the user scrolls, and reports when
-  // that hand-over is happening.
-  const collapsed = useRegisterPageHeader()
+  // Publishes this header's measured height as the sticky offset every other
+  // pinned band reads (`top-header-height`): the table's pinned column row,
+  // the bulk-action bar. There is no top bar any more, so this header IS the
+  // chrome above the scroll area — and its height genuinely varies with
+  // badges, a subtitle and wrapped actions, which a fixed constant could only
+  // approximate. Measured rather than assumed, so those bands sit flush
+  // against it at every size.
+  const headerRef = useStickyHeaderOffset(sticky)
+  // Announces this header so the page's other headings pick the right level —
+  // a table below one renders its title as `h2` rather than a second `h1`.
+  useRegisterPageHeader()
 
   return (
-    // This parks at `top-header-height`, directly below the TopBar, so the
-    // title, badges, and primary actions (notably Save on form pages) stay
-    // reachable as the user scrolls long detail pages.
+    // Pins at the very top of the viewport — with the top bar gone, the title,
+    // badges and primary actions (notably Save on form pages) are the only
+    // chrome that needs to stay reachable down a long page.
     //
-    // On scroll the TopBar retreats and this header rises to take its place.
-    // That rise is a `translateY`, not a change of `top`: `top` is a layout
-    // property with no transition, so animating it would teleport this header
-    // 58px while the TopBar slid, visibly breaking the pair apart. Both now
-    // move by the same distance, over the same duration and curve, off one
-    // shared scroll flag.
-    //
-    // `bg-background` masks the content scrolling behind it;
+    // `bg-card` masks the content scrolling behind it — the same surface as
+    // the content sheet this sits in, so the pinned band is invisible at rest
+    // rather than a stripe of the page ground across the top of a white sheet;
     // `-mx-4 px-4 lg:-mx-6 lg:px-6` and `-mt-4 lg:-mt-6 pt-4 lg:pt-6` undo
     // and re-apply the parent padding so the sticky band runs edge-to-edge.
     //
@@ -166,6 +209,7 @@ export function PageHeader({
     // collide with the page edges; the `border-border` color it carries is
     // the same hairline used elsewhere in the app.
     <header
+      ref={headerRef}
       className={cn(
         // One row at every width. The title truncates rather than wrapping,
         // so it yields space to the actions instead of pushing them onto a
@@ -174,19 +218,11 @@ export function PageHeader({
         // Opaque for the same reason as the top bar: this band pins over the
         // page's own scrolling content, so a translucent fill lets that content
         // ghost through it.
-        'sticky top-header-height z-20 -mx-4 -mt-4 flex flex-row items-start gap-2 bg-background px-4 pt-4 pb-3 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
-        // `translate` is listed explicitly: Tailwind v4 compiles
-        // `-translate-y-*` to the standalone `translate` property, so a
-        // `transform`-only transition never animates it and the header would
-        // jump to its raised position while the TopBar slid — the exact desync
-        // this pairing exists to avoid.
-        'transition-[transform,translate,box-shadow] duration-200 ease-out',
-        // Reduced motion: hold position rather than teleport. Suppressing only
-        // the transition would leave the 58px jump this pairing exists to avoid.
-        'motion-reduce:transition-none motion-reduce:translate-y-0',
+        '-mx-4 -mt-4 flex flex-row items-start gap-2 bg-card p-4 sm:gap-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
+        sticky && 'sticky top-0 z-20',
+        'transition-[box-shadow] duration-200 ease-out motion-reduce:transition-none',
         'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-200 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
-        collapsed && '-translate-y-header-height',
-        scrolled && 'after:opacity-100 shadow-xs',
+        sticky && scrolled && 'after:opacity-100 shadow-xs',
       )}
     >
       {/* Row one: back button beside the title, so the arrow keeps its
@@ -201,7 +237,7 @@ export function PageHeader({
           {/* Smaller and clipped on a phone: sharing the row with the actions
               leaves a long product name too little width to wrap into
               anything readable. */}
-          <h1 className="min-w-0 truncate font-medium text-xl leading-tight sm:text-2xl sm:whitespace-normal">
+          <h1 className="min-w-0 truncate font-semibold text-xl leading-tight sm:text-2xl sm:whitespace-normal">
             {title}
           </h1>
           {/* Statuses and the timestamp share the second line: both answer
@@ -217,6 +253,19 @@ export function PageHeader({
                 </span>
               )}
             </div>
+          )}
+          {(description || docsPath) && (
+            <p className="text-muted-foreground text-sm">
+              {description}
+              {docsPath && (
+                <>
+                  {description ? ' ' : null}
+                  <ExternalLink href={docsUrl(docsPath)}>
+                    {t('admin.common.learn_more')}
+                  </ExternalLink>
+                </>
+              )}
+            </p>
           )}
         </div>
       </div>
@@ -234,6 +283,8 @@ export function PageHeader({
             destructiveItems={destructiveItems}
             onDelete={onDelete}
             deleteLabel={deleteLabel ?? t('admin.actions.delete')}
+            deleteConfirmMessage={deleteConfirmMessage}
+            deleteConfirmTitle={deleteConfirmTitle}
             onOpenJson={jsonPreview ? openJson : undefined}
           />
         )}
@@ -259,6 +310,8 @@ interface PageActionsDropdownProps {
   destructiveItems?: ReactNode
   onDelete?: () => void | Promise<void>
   deleteLabel: string
+  deleteConfirmMessage?: string
+  deleteConfirmTitle?: string
   onOpenJson?: () => void
 }
 
@@ -269,6 +322,8 @@ function PageActionsDropdown({
   destructiveItems,
   onDelete,
   deleteLabel,
+  deleteConfirmMessage,
+  deleteConfirmTitle,
   onOpenJson,
 }: PageActionsDropdownProps) {
   const { t } = useTranslation()
@@ -329,7 +384,8 @@ function PageActionsDropdown({
               onClick={async () => {
                 if (
                   await confirm({
-                    message: t('admin.common.delete_confirm_message'),
+                    title: deleteConfirmTitle,
+                    message: deleteConfirmMessage ?? t('admin.common.delete_confirm_message'),
                     variant: 'destructive',
                     confirmLabel: deleteLabel,
                   })

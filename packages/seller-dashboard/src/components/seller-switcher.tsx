@@ -1,3 +1,4 @@
+import { getInitials } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -50,15 +51,14 @@ export function SellerSwitcher() {
     enabled: Boolean(sellerId),
   })
 
-  if (isLoading) return <Skeleton className="h-header-height w-full rounded-xl" />
+  if (isLoading) return <Skeleton className="h-rail-header-height w-full rounded-xl" />
 
   const sellers = me?.sellers ?? []
   const current = sellers.find((seller) => seller.id === sellerId) ?? sellers[0]
 
-  const initials = current?.name
-    .split(' ')
-    .map((word) => word[0])
-    .join('')
+  // Capped at two characters — see the store switcher: one letter per word
+  // overflows the avatar as soon as a name runs past two words.
+  const initials = getInitials(current?.name, '?')
 
   const header = (
     <>
@@ -79,7 +79,7 @@ export function SellerSwitcher() {
   if (sellers.length < 2) {
     return (
       <SidebarMenu>
-        <SidebarMenuItem className="flex h-header-height items-center">
+        <SidebarMenuItem className="flex h-rail-header-height items-center">
           <div className="flex w-full items-center gap-2 p-1.5">{header}</div>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -88,7 +88,7 @@ export function SellerSwitcher() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem className="flex h-header-height items-center">
+      <SidebarMenuItem className="flex h-rail-header-height items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="flex w-full items-center">
             <button

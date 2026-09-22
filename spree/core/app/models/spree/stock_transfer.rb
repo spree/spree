@@ -1,121 +1,114 @@
 module Spree
+  # Stock moving between two of the merchant's own warehouses
+  # (docs/plans/6.0-inventory-operations.md).
+  #
+  # A transfer is a trip, not an instant. Units leave the source when
+  # {Spree::StockTransfers::MarkInTransit} runs and land at the destination
+  # when {Spree::StockTransfers::Receive} does — in between they are in flight,
+  # physically gone from one shelf and not yet on the other. The 5.x model
+  # collapsed both into one transaction, which made the destination's
+  # availability wrong for the whole journey.
+  #
+  # Every status change is a workflow, never `transfer.receive!`, so receiving
+  # can carry the quantities the warehouse actually counted and cancelling can
+  # carry the merchant's restock-or-write-off choice.
+  #
+  # Receiving from a supplier is a {Spree::PurchaseOrder}, not a transfer with
+  # no source: a purchase has a cost, a supplier and an expected date, and none
+  # of those belong on internal logistics.
   class StockTransfer < Spree.base_class
     has_prefix_id :st
 
+    # Before `has_spree_number`, deliberately: both register a
+    # `before_validation`, and numbering reads the store to pick up its
+    # sequence. Registered the other way round, a transfer built without an
+    # explicit store would draw its number from the default store's counter.
+    include Spree::SingleStoreResource
     has_spree_number prefix: 'T'
     include Spree::NumberIdentifier
+    include Spree::HasStatus
+    include Spree::Receivable
     include Spree::HasCustomFields
     include Spree::Metadata
 
+    # The upgrade task keeps a converted external receive's number readable by
+    # stamping the row rather than deleting it.
+    acts_as_paranoid
+
     publishes_lifecycle_events
 
-    # No `dependent:` option, for the reason given on Spree::Fulfillment's own
+    has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :over_received, :canceled,
+               default: :draft
+
+    belongs_to :source_location, class_name: 'Spree::StockLocation'
+    belongs_to :destination_location, class_name: 'Spree::StockLocation'
+    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
+
+    has_many :items, class_name: 'Spree::StockTransferItem',
+                     inverse_of: :stock_transfer, dependent: :destroy
+    # No `dependent:`, for the reason given on Spree::Fulfillment's own
     # movements: the ledger outlives the record that caused it.
     has_many :stock_movements, class_name: 'Spree::StockMovement', inverse_of: :stock_transfer
-    accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|
-      attributes[:quantity] = attributes[:quantity].to_i
-      attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_level_id].blank?
-    }
 
-    belongs_to :source_location, class_name: 'StockLocation', optional: true
-    belongs_to :destination_location, class_name: 'StockLocation'
+    accepts_nested_attributes_for :items, allow_destroy: true
 
-    self.whitelisted_ransackable_attributes = %w[reference source_location_id destination_location_id number]
-
+    validates :source_location, :destination_location, presence: true
+    # A document that has left draft describes a box that physically exists —
+    # except a cancelled one, which describes a trip that never happened. The
+    # guard covers both because `update` assigns the status before validating,
+    # so cancelling an empty draft would otherwise be refused.
+    validates :items, presence: true, unless: -> { draft? || canceled? }
     validate :source_location_is_not_destination_location
-    validate :stock_movements_not_empty
+    validate :locations_belong_to_the_same_store
 
-    # Transfers have no store of their own — they belong to the warehouses
-    # they move stock between, and those are store-scoped. Used by
-    # {Spree::HasNumber} to pick up the store's numbering settings.
+    self.whitelisted_ransackable_attributes = %w[number status reference source_location_id
+                                                 destination_location_id shipped_at received_at
+                                                 closed_short_at created_at]
+    self.whitelisted_ransackable_scopes = %w[open closed]
+    self.whitelisted_ransackable_associations = %w[source_location destination_location items]
+
+    # Whether the merchant may still edit the lines. Once the box is sealed and
+    # marked ready, what is in it is a matter of record.
     #
-    # @return [Spree::Store, nil]
-    def number_store
-      destination_location&.store || source_location&.store || super
+    # @return [Boolean]
+    def editable?
+      draft?
     end
 
-    def source_movements
-      find_stock_location_with_location_id(source_location_id)
-    end
-
-    def destination_movements
-      find_stock_location_with_location_id(destination_location_id)
-    end
-
-    def transfer(source_location, destination_location, variants)
-      if variants.nil? || variants.empty?
-        errors.add(:base, :must_have_variant, message: Spree.t('stock_transfer.errors.must_have_variant'))
-        return false
-      end
-
-      # Before the availability check, which a negative quantity would sail
-      # through — every count is greater than a negative number. The move would
-      # then write a negative in both directions and take stock off the source
-      # *and* the destination.
-      unless positive_quantities?(variants)
-        errors.add(:base, :invalid_quantity, message: Spree.t('stock_transfer.errors.invalid_quantity'))
-        return false
-      end
-
-      unless variants_available_in_source_location?(source_location, variants)
-        errors.add(:base, :variants_unavailable, stock: source_location.name,
-                   message: Spree.t('stock_transfer.errors.variants_unavailable', stock: source_location.name))
-        return false
-      end
-
-      transaction do
-        variants.each_pair do |variant, quantity|
-          source_location&.unstock(variant, quantity, self, persist: false)
-          destination_location.restock(variant, quantity, self, persist: false)
-
-          self.source_location = source_location
-          self.destination_location = destination_location
-          save!
-        end
-      end
-
-      true
-    end
-
-    # receive inventory from external seller
-    def receive(destination_location, variants)
-      transfer(nil, destination_location, variants)
+    # Whether the units are somewhere between the two warehouses — gone from
+    # the source, not yet counted at the destination.
+    #
+    # @return [Boolean]
+    def in_flight?
+      in_transit? || partially_received?
     end
 
     private
 
-    def find_stock_location_with_location_id(location_id)
-      stock_movements.joins(:stock_level).
-        where(Spree::StockLevel.table_name => { stock_location_id: location_id })
+    # The warehouse the goods are going to decides whose transfer this is,
+    # which is a fact about the record rather than about the request that
+    # created it. `Spree::Current.store` stays the fallback.
+    def ensure_store
+      self.store ||= destination_location&.store
+      super
     end
 
     def source_location_is_not_destination_location
-      return unless source_location_id.present?
-      return unless destination_location_id.present?
+      return if source_location_id.blank? || destination_location_id.blank?
       return if source_location_id != destination_location_id
 
       errors.add(:source_location, :same_location, message: Spree.t('stock_transfer.errors.same_location'))
     end
 
-    def stock_movements_not_empty
-      errors.add(:base, :must_have_variant, message: Spree.t('stock_transfer.errors.must_have_variant')) if stock_movements.empty?
-    end
+    # A transfer moves a merchant's own stock between their own warehouses. Two
+    # locations from different stores would take units out of one tenant's
+    # inventory and put them into another's.
+    def locations_belong_to_the_same_store
+      return if source_location.blank? || destination_location.blank?
+      return if source_location.store_id == destination_location.store_id
 
-    # Each variant needs enough available stock for the quantity being moved,
-    # not merely some. Checking only for a positive balance let a transfer take
-    # more than the shelf held and leave it negative.
-    def positive_quantities?(variants)
-      variants.all? { |_variant, quantity| quantity.to_i.positive? }
-    end
-
-    def variants_available_in_source_location?(source_location, variants)
-      return true if source_location.nil?
-
-      variants.all? do |variant, quantity|
-        stock_level = source_location.stock_level(variant)
-
-        stock_level.present? && stock_level.available_count >= quantity.to_i
-      end
+      errors.add(:destination_location, :must_belong_to_same_store,
+                 message: Spree.t('stock_transfer.errors.locations_in_different_stores'))
     end
   end
 end

@@ -4,12 +4,17 @@ module Spree
       module Admin
         # Serializes Spree::CollectionRule (and its STI subclasses) for the
         # admin collection editor's `rules` association. Admin-only — automatic
-        # collection rules are never exposed by the Store API. `type` is the STI
-        # class name (e.g. "Spree::CollectionRules::Tag").
+        # collection rules are never exposed by the Store API. `type` is the
+        # wire shorthand (e.g. "tag"), matching every other typed-rule
+        # serializer and what the writer accepts.
         class CollectionRuleSerializer < BaseSerializer
-          typelize type: [:string, comment: 'Rule class name. Built-in: Spree::CollectionRules::Tag, Spree::CollectionRules::AvailableOn, Spree::CollectionRules::Sale. Extensions may register more.'], value: [:string, nullable: true], match_policy: [:string, enum: Spree::CollectionRule::MATCH_POLICIES]
+          typelize type: [:string, comment: 'Rule type. Built-in: tag, available_on, sale. Extensions may register more.'], value: [:string, nullable: true], match_policy: [:string, enum: Spree::CollectionRule::MATCH_POLICIES]
 
-          attributes :type, :value, :match_policy
+          attributes :value, :match_policy
+
+          attribute :type do |rule|
+            rule.class.api_type
+          end
         end
       end
     end

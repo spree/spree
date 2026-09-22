@@ -100,7 +100,7 @@ RSpec.describe 'Seller Delivery Methods API', type: :request, swagger_doc: 'api-
           {
             name: 'Next day',
             delivery_profile_id: delivery_profile.prefixed_id,
-            calculator_type: 'Spree::Calculator::Shipping::FlatRate',
+            calculator_type: 'flat_rate',
             calculator_preferences: { amount: '9.99', currency: 'USD' }
           }
         end
