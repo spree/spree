@@ -215,57 +215,6 @@ paymentMethodFormSlot('stripe')  // → "payment_method.form.stripe"
 
 Use these instead of constructing the string yourself, so a rename in one place doesn't silently break your registration.
 
-## Sign-in slots
-
-### `no_store_access`
-
-| Where | The screen a signed-in admin sees when their account holds a role on no store — they were never invited to one, or were removed from all of them |
-|---|---|
-| Use | Replace the built-in "You don't have access to any store" message. A hosted platform can show its own "Create your store" call to action, or send the user to its own onboarding app |
-| Context | `{ user, signOut }` — `user` is the signed-in `AdminUser` (its `stores` list is empty), `signOut` ends the session and returns to the sign-in page |
-
-Registering any entry replaces the built-in message, so render your own sign-out option if the user may need one. The slot name and context type are exported from `@spree/dashboard-core`:
-
-```tsx
-import {
-  NO_STORE_ACCESS_SLOT,
-  type NoStoreAccessSlotContext,
-  registerSlot,
-} from '@spree/dashboard-core'
-import { Button } from '@spree/dashboard-ui'
-import { useEffect } from 'react'
-
-// Show a call to action…
-function CreateYourStore({ signOut }: NoStoreAccessSlotContext) {
-  return (
-    <>
-      <h1 className="text-2xl font-bold">Create your first store</h1>
-      <Button asChild>
-        <a href="https://platform.example.com/new-store">Get started</a>
-      </Button>
-      <Button variant="outline" onClick={() => signOut()}>
-        Sign out
-      </Button>
-    </>
-  )
-}
-
-// …or send the user straight to your onboarding app. Keep personal data such
-// as the email out of the URL; the onboarding app reads the signed-in user
-// from its own session.
-function RedirectToOnboarding() {
-  useEffect(() => {
-    window.location.assign('https://platform.example.com/new-store')
-  }, [])
-  return null
-}
-
-registerSlot<NoStoreAccessSlotContext>(NO_STORE_ACCESS_SLOT, {
-  id: 'create-your-store',
-  component: CreateYourStore, // or RedirectToOnboarding
-})
-```
-
 ## Adding a new slot
 
 If a built-in page should expose a new injection point:

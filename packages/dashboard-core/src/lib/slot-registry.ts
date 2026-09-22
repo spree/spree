@@ -34,9 +34,8 @@ export interface SlotEntry<TContext = unknown> {
 /**
  * The screen a signed-in admin sees when they hold a role on no store — not
  * yet invited to one, or removed from all of them. Registering an entry
- * replaces the built-in message: a hosted platform can render its own
- * "create your store" call to action, or send the user elsewhere from an
- * effect.
+ * replaces the built-in message, for example to render a different call to
+ * action or send the user elsewhere from an effect.
  */
 export const NO_STORE_ACCESS_SLOT = 'no_store_access'
 
