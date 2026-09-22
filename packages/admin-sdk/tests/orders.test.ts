@@ -1,5 +1,6 @@
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it } from 'vitest'
+import { isOrderGroup } from '../src'
 import { API_PREFIX, createTestClient, paginated } from './helpers'
 import { server } from './mocks/server'
 
@@ -274,6 +275,41 @@ describe('orders', () => {
 
       await createTestClient().orders.storeCredits.remove('order_abc123')
       expect(hit).toBe(true)
+    })
+  })
+  // An order holding several sellers' goods divides on completion, and the
+  // group it produced is what comes back.
+  describe('complete', () => {
+    it('answers with the order when it holds one seller', async () => {
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/complete`, () =>
+          HttpResponse.json(sampleOrder),
+        ),
+      )
+
+      const result = await createTestClient().orders.complete('order_abc123')
+
+      expect(isOrderGroup(result)).toBe(false)
+      expect(result.id).toBe('order_abc123')
+    })
+
+    it('answers with the group when the order divided', async () => {
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/complete`, () =>
+          HttpResponse.json({
+            id: 'ogrp_abc123',
+            number: 'R123456789',
+            seller_count: 2,
+            orders: [sampleOrder, { ...sampleOrder, id: 'order_def456' }],
+          }),
+        ),
+      )
+
+      const result = await createTestClient().orders.complete('order_abc123')
+
+      expect(isOrderGroup(result)).toBe(true)
+      if (!isOrderGroup(result)) throw new Error('expected a group')
+      expect(result.orders.map((child) => child.id)).toEqual(['order_abc123', 'order_def456'])
     })
   })
 })

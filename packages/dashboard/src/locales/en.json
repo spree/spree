@@ -2894,6 +2894,8 @@
           "canceled": "Order canceled",
           "captured": "Payment captured",
           "completed": "Order completed",
+          "completed_as_group_one": "Order completed as {{count}} separate order",
+          "completed_as_group_other": "Order completed as {{count}} separate orders",
           "confirmation_sent": "Confirmation sent",
           "deleted": "Draft order deleted",
           "voided": "Payment voided"

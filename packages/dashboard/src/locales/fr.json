@@ -2894,6 +2894,8 @@
           "canceled": "Commande annulée",
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
+          "completed_as_group_one": "Commande finalisée en {{count}} commande distincte",
+          "completed_as_group_other": "Commande finalisée en {{count}} commandes distinctes",
           "confirmation_sent": "Confirmation envoyée",
           "deleted": "Commande brouillon supprimée",
           "voided": "Paiement annulé"

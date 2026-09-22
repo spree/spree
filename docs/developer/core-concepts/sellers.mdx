@@ -255,7 +255,28 @@ Two details worth knowing:
 
 <Warning>
 A storefront must handle the possibility of an order group. Completing a cart may yield one order or several, and a customer's order history should show the group as one purchase rather than confronting them with three orders they don't remember placing separately.
+
+A back office must handle it too: an order raised from the admin divides the same way, so completing one may answer with a group instead of an order.
 </Warning>
+
+<CodeGroup>
+
+```typescript Admin SDK
+import { isOrderGroup } from '@spree/admin-sdk'
+
+const result = await client.orders.complete('or_UkLWZg9DAJ')
+
+// One order per seller when the order held several sellers' goods.
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
+```bash cURL
+curl -X PATCH https://your-store.com/api/v3/admin/orders/or_UkLWZg9DAJ/complete \
+  -H "X-Spree-API-Key: sk_xxx" \
+  -H "Content-Type: application/json"
+```
+
+</CodeGroup>
 
 ## Commission
 

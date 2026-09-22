@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import { isOrderGroup, type Order } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   RelativeTime,
   StatusBadge,
+  toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
@@ -29,6 +30,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { orderQueryKey, useDeleteOrder } from '../../../hooks/use-order'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
+import { orderGroupSearch } from '../../../lib/order-group-search'
 import { OrderCancelDialog } from './order-cancel-dialog'
 
 export function OrderHeader({ order }: { order: Order }) {
@@ -45,8 +47,35 @@ export function OrderHeader({ order }: { order: Order }) {
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
-    successMessage: t('admin.orders.detail.messages.completed'),
+    // Announced here instead, because what to say depends on whether the order
+    // divided.
+    successMessage: false,
     errorMessage: t('admin.orders.detail.errors.complete_failed'),
+    onSuccess: (result) => {
+      if (!isOrderGroup(result)) {
+        toastManager.add({ type: 'success', title: t('admin.orders.detail.messages.completed') })
+        return
+      }
+
+      toastManager.add({
+        type: 'success',
+        // The orders it produced, not seller_count — a basket mixing the
+        // operator's own goods with a seller's makes two orders and names one
+        // seller.
+        title: t('admin.orders.detail.messages.completed_as_group', {
+          count: result.orders.length,
+        }),
+      })
+      // The order divided into one per seller, so this page now shows only
+      // part of what was completed. Replaced rather than pushed: going back
+      // would land on that same partial view.
+      navigate({
+        to: '/$storeId/orders',
+        params: { storeId },
+        search: orderGroupSearch(result.id),
+        replace: true,
+      })
+    },
   })
   const approveMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.approve(orderId),

@@ -2911,6 +2911,11 @@
           "canceled": "تم إلغاء الطلب",
           "captured": "القبض على الدفع",
           "completed": "اكتمل الطلب",
+          "completed_as_group_few": "اكتمل الطلب كـ {{count}} طلبات منفصلة",
+          "completed_as_group_many": "اكتمل الطلب كـ {{count}} طلبًا منفصلًا",
+          "completed_as_group_one": "اكتمل الطلب كطلب منفصل واحد",
+          "completed_as_group_other": "اكتمل الطلب كـ {{count}} طلبات منفصلة",
+          "completed_as_group_two": "اكتمل الطلب كطلبين منفصلين",
           "confirmation_sent": "تم إرسال التأكيد",
           "deleted": "تم حذف مسودة الطلب",
           "voided": "تم إلغاء الدفع"

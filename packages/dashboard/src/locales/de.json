@@ -2894,6 +2894,8 @@
           "canceled": "Auftrag storniert",
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
+          "completed_as_group_one": "Auftrag als {{count}} separater Auftrag abgeschlossen",
+          "completed_as_group_other": "Auftrag als {{count}} separate Aufträge abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
           "deleted": "Auftragsentwurf gelöscht",
           "voided": "Zahlung storniert"

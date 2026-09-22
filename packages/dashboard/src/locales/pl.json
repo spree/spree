@@ -2920,6 +2920,10 @@
           "canceled": "Zamówienie anulowane",
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
+          "completed_as_group_few": "Zamówienie sfinalizowane jako {{count}} osobne zamówienia",
+          "completed_as_group_many": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
+          "completed_as_group_one": "Zamówienie sfinalizowane jako {{count}} osobne zamówienie",
+          "completed_as_group_other": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
           "confirmation_sent": "Potwierdzenie wysłane",
           "deleted": "Robocza wersja zamówienia została usunięta",
           "voided": "Płatność unieważniona"
