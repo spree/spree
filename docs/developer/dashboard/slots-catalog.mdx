@@ -250,11 +250,13 @@ function CreateYourStore({ signOut }: NoStoreAccessSlotContext) {
   )
 }
 
-// …or send the user straight to your onboarding app.
-function RedirectToOnboarding({ user }: NoStoreAccessSlotContext) {
+// …or send the user straight to your onboarding app. Keep personal data such
+// as the email out of the URL; the onboarding app reads the signed-in user
+// from its own session.
+function RedirectToOnboarding() {
   useEffect(() => {
-    window.location.assign(`https://platform.example.com/new-store?email=${encodeURIComponent(user.email)}`)
-  }, [user.email])
+    window.location.assign('https://platform.example.com/new-store')
+  }, [])
   return null
 }
 
