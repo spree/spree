@@ -26,6 +26,8 @@ module Spree
             ProductTypes.call(store: store)
             CustomerGroups.call(store: store)
             ReturnsEnvironment.call(store: store)
+            # The marketplace's catch-all rate, at the bottom of the list so
+            # narrower rates added later resolve ahead of it.
             CommissionRates.call(store: store)
             SellerRequirements.call(store: store)
             # Binds to the wholesale channel that Channels creates above.

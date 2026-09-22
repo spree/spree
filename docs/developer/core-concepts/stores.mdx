@@ -107,18 +107,6 @@ If you need one Spree backend to serve **multiple distinct merchant brands** —
 - **Multiple channels under one store** (recommended for most cases) — model each storefront as a Sales Channel. Products are scoped per-channel via publications, orders carry the channel that originated them, and routing/pricing can differ per channel. This is the supported pattern in core Spree.
 - **Multiple isolated stores (tenants) in one app** — full data isolation, only recommended if you're building a SaaS platform or a multi-tenant application. Each store can have different staff members, payment methods, shipping methods, and branding. This is supported by the [Spree Multi Tenant](/developer/multi-tenant/quickstart) extension, which is a separate gem from core Spree.
 
-### Seeding a new store
-
-`db:seed` gives every store its starting data: tax categories, the Wholesale channel and customer group, the admin role, digital delivery, store credit, product types, return and cancellation reasons, the default commission rate, seller requirements, API keys, saved reports and allowed origins. A platform that creates stores as merchants sign up can seed only the new store, so the work does not grow with the number of stores already in the install:
-
-```ruby server/app/services/create_merchant_store.rb
-Spree::Seeds::StoreResources.call(store: store)
-
-Spree::Stores::ProvisionDefaults.call(store: store, country: country, locale: locale, currency: currency)
-```
-
-It is safe to run again on the same store. Run it before `Spree::Stores::ProvisionDefaults`, which builds the market, warehouse, delivery zones and pickup from the merchant's country and currency.
-
 ## Related Documentation
 
 - [Channels](/developer/core-concepts/channels) — Selling surfaces (Online, POS, Wholesale, …)
