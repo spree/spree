@@ -10,7 +10,7 @@ At minimum, set `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` in your hosting plat
 ## Production Build
 
 ```bash
-npm run build
+pnpm build
 npm start
 ```
 
@@ -104,8 +104,8 @@ For any platform that supports Node.js (Render, Railway, Fly.io, AWS, etc.):
 1. Install dependencies and build:
 
 ```bash
-npm ci
-npm run build
+pnpm install --frozen-lockfile
+pnpm build
 ```
 
 2. Start the production server:
@@ -132,13 +132,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
-      - run: npm run build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
 
       # Add your deployment step here
       # Example for Vercel:

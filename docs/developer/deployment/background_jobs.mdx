@@ -34,11 +34,12 @@ production:
 
 ### Marketplace payouts
 
-A marketplace has to schedule one more job, or its sellers are never paid:
+A marketplace settles its sellers on a recurring job, which a new project
+already schedules:
 
 ```yaml config/recurring.yml
 production:
-  sweep_seller_payouts:
+  sweep_due_seller_payouts:
     class: Spree::SellerPayouts::SweepDueJob
     schedule: at 3am every day
 ```
