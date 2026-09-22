@@ -44,9 +44,11 @@ module Spree
           # Empty until a seller is named: capability is per seller, so there is
           # no meaningful answer spanning all of them. A bare ability (no
           # resource) serializes to nothing rather than raising, so the panel
-          # can call `/me` before choosing a seller.
+          # can call `/me` before choosing a seller. Deliberately the core
+          # class, not `Spree.ability_class`: a custom ability may add rules
+          # after `super`, and those must not leak into the no-seller answer.
           def seller_ability
-            return Spree.ability_class.new(nil) if current_seller.nil?
+            return Spree::Ability.new(nil) if current_seller.nil?
 
             current_ability
           end
