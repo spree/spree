@@ -6,18 +6,19 @@ module Spree
     # See docs/plans/5.6-store-channel-context-and-key-binding.md.
     class Channels
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
       WHOLESALE_CODE = 'wholesale'.freeze
 
-      def call
-        Spree::Store.find_each do |store|
-          store.ensure_default_channel
+      private
 
-          store.channels.find_or_create_by!(code: WHOLESALE_CODE) do |channel|
-            channel.name = 'Wholesale'
-            channel.preferred_storefront_access = 'login_required'
-            channel.preferred_guest_checkout = false
-          end
+      def seed(store)
+        store.ensure_default_channel
+
+        store.channels.find_or_create_by!(code: WHOLESALE_CODE) do |channel|
+          channel.name = 'Wholesale'
+          channel.preferred_storefront_access = 'login_required'
+          channel.preferred_guest_checkout = false
         end
       end
     end
