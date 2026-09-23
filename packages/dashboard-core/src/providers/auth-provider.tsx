@@ -96,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // is how every signed-out visit starts.
   const signInGenerationRef = useRef(0)
   const userIdRef = useRef<string | null>(null)
+  const pendingSignInsRef = useRef(0)
 
   const clearRefreshTimer = useCallback(() => {
     if (refreshTimerRef.current) {
@@ -147,11 +148,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearRefreshTimer()
   }, [clearRefreshTimer])
 
+  // A different account (signed in from another tab, or through a host's own
+  // endpoint): drop what was cached for the previous one, permissions above
+  // all, before the new one renders.
+  const clearIfAccountChanged = useCallback(
+    (nextUserId: string) => {
+      if (userIdRef.current && userIdRef.current !== nextUserId) clearSession()
+    },
+    [clearSession],
+  )
+
   const doRefresh = useCallback(async (): Promise<boolean> => {
     const generation = sessionGenerationRef.current
     try {
       const res = await getApiClient().auth.refresh()
       if (generation !== sessionGenerationRef.current) return false
+      clearIfAccountChanged(res.user.id)
       applySession(res.token, res.user)
       return true
     } catch {
@@ -159,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearSession()
       return false
     }
-  }, [applySession, clearSession])
+  }, [applySession, clearSession, clearIfAccountChanged])
 
   const refreshAccessToken = useCallback((): Promise<boolean> => {
     if (refreshPromiseRef.current) return refreshPromiseRef.current
@@ -184,6 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const establish = useCallback(
     async (req: AuthTokens | Promise<AuthTokens>) => {
       const generation = ++signInGenerationRef.current
+      pendingSignInsRef.current += 1
       setIsLoading(true)
       try {
         const res = await req
@@ -192,18 +205,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             '@spree/dashboard-core: superseded by a newer sign-in or a sign-out before the session was established',
           )
         }
-        // A different account: drop what was cached for the previous one
-        // (permissions above all) before the new one renders.
-        if (userIdRef.current && userIdRef.current !== res.user.id) clearSession()
+        clearIfAccountChanged(res.user.id)
         sessionGenerationRef.current += 1
         applySession(res.token, res.user)
         scheduleRefresh()
         return res
       } finally {
-        setIsLoading(false)
+        // Overlapping attempts: stay loading until the last one settles.
+        pendingSignInsRef.current -= 1
+        setIsLoading(pendingSignInsRef.current > 0)
       }
     },
-    [applySession, clearSession, scheduleRefresh],
+    [applySession, clearIfAccountChanged, scheduleRefresh],
   )
 
   const login = useCallback(
@@ -230,12 +243,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     signInGenerationRef.current += 1
+    const sessionGeneration = sessionGenerationRef.current
     try {
       await getApiClient().auth.logout()
     } catch {
       // Server unreachable — clear locally; the row will expire naturally.
     } finally {
-      clearSession()
+      // Skipped when a newer session started while the request was in flight.
+      if (sessionGeneration === sessionGenerationRef.current) clearSession()
     }
   }, [clearSession])
 

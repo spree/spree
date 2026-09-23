@@ -52,6 +52,14 @@ async function mount(refresh: () => Promise<AuthTokens>) {
   })
 }
 
+/** Runs a refresh the way a 401 does, through the handler the provider registered. */
+async function refreshAfterUnauthorized() {
+  const handler = vi.mocked(client.onUnauthorized).mock.calls[0][0]
+  await act(async () => {
+    await handler()
+  })
+}
+
 // Signed out on boot: no refresh cookie yet.
 const signedOut = () => Promise.reject(new Error('401'))
 
@@ -190,6 +198,100 @@ describe('AuthProvider establishSession', () => {
 
     expect(queryClient.getQueryData(['permissions'])).toBeUndefined()
     expect(client.clearTenant).toHaveBeenCalled()
+    expect(auth.user?.id).toBe('admin_2')
+  })
+
+  it('stays loading until the last of overlapping requests settles', async () => {
+    await mount(signedOut)
+    const older = deferred<AuthTokens>()
+    const newer = deferred<AuthTokens>()
+
+    let olderEstablished!: Promise<AuthTokens>
+    let newerEstablished!: Promise<AuthTokens>
+    act(() => {
+      olderEstablished = auth.establishSession(older.promise)
+      newerEstablished = auth.establishSession(newer.promise)
+    })
+    await act(async () => {
+      older.resolve(session)
+      await expect(olderEstablished).rejects.toThrow('superseded')
+    })
+    expect(auth.isLoading).toBe(true)
+
+    await act(async () => {
+      newer.resolve(session)
+      await newerEstablished
+    })
+    expect(auth.isLoading).toBe(false)
+  })
+
+  it('keeps a session that started while a logout request was in flight', async () => {
+    await mount(signedOut)
+    await act(async () => {
+      await auth.establishSession(session)
+    })
+    const logoutRequest = deferred<void>()
+    vi.mocked(client.auth.logout).mockReturnValueOnce(logoutRequest.promise)
+
+    let loggedOut!: Promise<void>
+    act(() => {
+      loggedOut = auth.logout()
+    })
+    const next = { token: 'next-session', user: { id: 'admin_2' } as AdminUser }
+    await act(async () => {
+      await auth.establishSession(next)
+    })
+    await act(async () => {
+      logoutRequest.resolve()
+      await loggedOut
+    })
+
+    expect(auth.isAuthenticated).toBe(true)
+    expect(auth.token).toBe('next-session')
+  })
+})
+
+describe('AuthProvider refresh', () => {
+  it("keeps the same account's cached data across a refresh", async () => {
+    await mount(() => Promise.resolve(session))
+    queryClient.setQueryData(['store'], { id: 'store_1' })
+    vi.mocked(client.auth.refresh).mockResolvedValueOnce({ ...session, token: 'rotated' })
+
+    await refreshAfterUnauthorized()
+
+    expect(auth.token).toBe('rotated')
+    expect(queryClient.getQueryData(['store'])).toEqual({ id: 'store_1' })
+    expect(client.clearTenant).not.toHaveBeenCalled()
+  })
+
+  it("keeps the same account's cached data when the same account signs in again", async () => {
+    await mount(signedOut)
+    await act(async () => {
+      await auth.establishSession(session)
+    })
+    queryClient.setQueryData(['store'], { id: 'store_1' })
+    // The failed boot refresh already cleared once.
+    vi.mocked(client.clearTenant!).mockClear()
+
+    await act(async () => {
+      await auth.establishSession({ ...session, token: 'again' })
+    })
+
+    expect(queryClient.getQueryData(['store'])).toEqual({ id: 'store_1' })
+    expect(client.clearTenant).not.toHaveBeenCalled()
+  })
+
+  it("drops the previous account's cached data when a refresh returns another account", async () => {
+    await mount(() => Promise.resolve(session))
+    queryClient.setQueryData(['permissions'], { rules: ['previous account'] })
+    vi.mocked(client.auth.refresh).mockResolvedValueOnce({
+      token: 'other-tab',
+      user: { id: 'admin_2' } as AdminUser,
+    })
+
+    await refreshAfterUnauthorized()
+
+    expect(queryClient.getQueryData(['permissions'])).toBeUndefined()
     expect(auth.user?.id).toBe('admin_2')
   })
 })
