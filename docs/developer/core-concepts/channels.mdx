@@ -135,13 +135,13 @@ Both controls fall back to the owning [Store](/developer/core-concepts/stores) w
 ```typescript Admin SDK
 // Gate a channel behind sign-in, and require accounts at checkout
 await adminClient.channels.update('ch_wholesale', {
-  storefront_access: 'login_required',
-  guest_checkout: false,
+  preferred_storefront_access: 'login_required',
+  preferred_guest_checkout: false,
 })
 
 // Clear the channel value to inherit the store's default
 await adminClient.channels.update('ch_wholesale', {
-  storefront_access: null,
+  preferred_storefront_access: null,
 })
 ```
 
@@ -149,7 +149,7 @@ await adminClient.channels.update('ch_wholesale', {
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/channels/ch_wholesale' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "storefront_access": "login_required", "guest_checkout": false }'
+  -d '{ "preferred_storefront_access": "login_required", "preferred_guest_checkout": false }'
 ```
 
 </CodeGroup>
