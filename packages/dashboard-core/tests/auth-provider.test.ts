@@ -147,10 +147,34 @@ describe('AuthProvider establishSession', () => {
     })
     await act(async () => {
       request.resolve(session)
-      await expect(established).rejects.toThrow('signed out')
+      await expect(established).rejects.toThrow('superseded')
     })
 
     expect(auth.isAuthenticated).toBe(false)
+  })
+
+  it('keeps the newer session when an older request resolves after it', async () => {
+    await mount(signedOut)
+    const older = deferred<AuthTokens>()
+    const newer = deferred<AuthTokens>()
+
+    let olderEstablished!: Promise<AuthTokens>
+    let newerEstablished!: Promise<AuthTokens>
+    act(() => {
+      olderEstablished = auth.establishSession(older.promise)
+      newerEstablished = auth.establishSession(newer.promise)
+    })
+    await act(async () => {
+      newer.resolve(session)
+      await newerEstablished
+    })
+    await act(async () => {
+      older.resolve({ token: 'older-token', user: { id: 'admin_2' } as AdminUser })
+      await expect(olderEstablished).rejects.toThrow('superseded')
+    })
+
+    expect(auth.token).toBe('jwt-from-host-endpoint')
+    expect(auth.user?.id).toBe('admin_1')
   })
 
   it("drops the previous account's cached data when a different account signs in", async () => {

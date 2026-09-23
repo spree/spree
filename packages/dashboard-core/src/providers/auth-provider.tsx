@@ -90,10 +90,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // flight (the boot refresh racing a host's establishSession, say) can tell
   // its answer is stale and must not sign the new session out or replace it.
   const sessionGenerationRef = useRef(0)
-  // Bumped only by logout: a sign-in request still pending when the user signs
-  // out must not sign them back in. Refresh failures leave it alone — a failed
-  // boot refresh is how every signed-out visit starts.
-  const logoutGenerationRef = useRef(0)
+  // Bumped by every sign-in attempt and by logout: a sign-in request that
+  // resolves after a newer attempt, or after the user signed out, must not
+  // apply its session. Refresh failures leave it alone — a failed boot refresh
+  // is how every signed-out visit starts.
+  const signInGenerationRef = useRef(0)
   const userIdRef = useRef<string | null>(null)
 
   const clearRefreshTimer = useCallback(() => {
@@ -182,12 +183,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // provider's state to settle.
   const establish = useCallback(
     async (req: AuthTokens | Promise<AuthTokens>) => {
-      const logoutGeneration = logoutGenerationRef.current
+      const generation = ++signInGenerationRef.current
       setIsLoading(true)
       try {
         const res = await req
-        if (logoutGeneration !== logoutGenerationRef.current) {
-          throw new Error('@spree/dashboard-core: signed out before the session was established')
+        if (generation !== signInGenerationRef.current) {
+          throw new Error(
+            '@spree/dashboard-core: superseded by a newer sign-in or a sign-out before the session was established',
+          )
         }
         // A different account: drop what was cached for the previous one
         // (permissions above all) before the new one renders.
@@ -226,7 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const logout = useCallback(async () => {
-    logoutGenerationRef.current += 1
+    signInGenerationRef.current += 1
     try {
       await getApiClient().auth.logout()
     } catch {
