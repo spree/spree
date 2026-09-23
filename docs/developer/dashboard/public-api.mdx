@@ -146,6 +146,13 @@ import {
 
 Mount these at the root of your app shell. The shipped app shell does this for you — re-export only if you're composing a custom shell (vendor panel, etc.).
 
+`AuthProvider` signs in through its own `login`, invitation, password reset and setup calls. A host app with a sign-in endpoint of its own — one that responds like `login` (`{ token, user }`) and sets the refresh cookie — hands the result to `establishSession`, and the session starts without a page reload:
+
+```ts
+const { establishSession } = useAuth()
+await establishSession(confirmEmail(token)) // a pending request, or the response itself
+```
+
 ### Vite plugin
 
 ```ts

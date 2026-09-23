@@ -38,6 +38,13 @@ interface AuthContextValue {
    */
   resetPassword: (token: string, params: PasswordResetParams) => Promise<AuthTokens>
   /**
+   * Sign in with a session the host obtained from an endpoint of its own —
+   * one that responds like login and sets the refresh cookie. Pass the
+   * pending request to get `isLoading` while it runs, or the response once it
+   * has arrived. Periodic refresh takes over from there, as after `login`.
+   */
+  establishSession: (session: AuthTokens | Promise<AuthTokens>) => Promise<AuthTokens>
+  /**
    * Merge updated fields into the authenticated user (e.g. after a profile
    * save) so context consumers like the top-bar reflect the change immediately
    * instead of waiting for the next token refresh. No-op when signed out.
@@ -159,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // screen reads the new store's id to land on — don't have to wait for the
   // provider's state to settle.
   const establish = useCallback(
-    async (req: Promise<AuthTokens>) => {
+    async (req: AuthTokens | Promise<AuthTokens>) => {
       setIsLoading(true)
       try {
         const res = await req
@@ -237,6 +244,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         acceptInvitation,
         completeSetup,
         resetPassword,
+        establishSession: establish,
         updateUser,
       }}
     >
