@@ -95,6 +95,8 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       options.mailpitUiPort,
       generateEncryptionKeys(),
     ),
+    // Holds SECRET_KEY_BASE and the encryption keys — owner-only.
+    { mode: 0o600 },
   )
   fs.writeFileSync(
     path.join(projectDir, 'package.json'),

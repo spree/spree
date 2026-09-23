@@ -46,14 +46,46 @@ function assignmentPattern(name: string): RegExp {
   return new RegExp(`^[ \\t]*(?:export[ \\t]+)?${name}[ \\t]*=(.*)$`, 'm')
 }
 
+/**
+ * The effective value of a `.env` assignment, as Docker Compose reads it:
+ * surrounding quotes are dropped, and in an unquoted value a `#` preceded by
+ * whitespace starts a comment (`KEY= # add later` is empty).
+ */
+function envValue(raw: string): string {
+  const trimmed = raw.trim()
+  const quoted = trimmed.match(/^(['"])(.*?)\1/)
+  if (quoted) return quoted[2]
+  return trimmed.replace(/(^|\s)#.*$/, '').trim()
+}
+
 /** The encryption vars `.env` content already assigns a non-empty value. */
 export function configuredEncryptionVars(content: string): EncryptionEnvVar[] {
   return ENCRYPTION_ENV_VARS.filter((name) => {
     const match = content.match(assignmentPattern(name))
     if (!match) return false
-    const value = match[1].trim().replace(/^(['"])(.*)\1$/, '$2')
-    return value.length > 0
+    return envValue(match[1]).length > 0
   })
+}
+
+/**
+ * The Rails encrypted credentials files in the app (relative paths). Keys held
+ * there can't be read without the master key, and env vars take precedence
+ * over them — so generating env keys next to them could shadow keys that
+ * already protect data.
+ */
+export function credentialsFiles(apiDir: string): string[] {
+  const configDir = path.join(apiDir, 'config')
+  const found: string[] = []
+  if (fs.existsSync(path.join(configDir, 'credentials.yml.enc'))) {
+    found.push('config/credentials.yml.enc')
+  }
+  const perEnvDir = path.join(configDir, 'credentials')
+  if (fs.existsSync(perEnvDir)) {
+    for (const entry of fs.readdirSync(perEnvDir)) {
+      if (entry.endsWith('.yml.enc')) found.push(`config/credentials/${entry}`)
+    }
+  }
+  return found
 }
 
 /**

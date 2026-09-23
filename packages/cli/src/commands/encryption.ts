@@ -8,6 +8,7 @@ import {
   APPLICATION_RB_SNIPPET,
   appReadsEncryptionEnv,
   configuredEncryptionVars,
+  credentialsFiles,
   formatEncryptionEnv,
   generateEncryptionKeys,
   withEncryptionKeys,
@@ -47,6 +48,15 @@ export function initEncryption(projectDir: string): void {
   const envPath = path.join(projectDir, '.env')
   const content = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf-8') : ''
   const configured = configuredEncryptionVars(content)
+  const apiDir = findApiDir(projectDir)
+  const ejected = isEjectedProject(projectDir)
+
+  if (ejected && !appReadsEncryptionEnv(path.join(projectDir, apiDir))) {
+    p.log.warn(
+      `${apiDir}/config doesn't read these env vars yet. Add this inside the Application class in ${apiDir}/config/application.rb:\n\n` +
+        pc.dim(APPLICATION_RB_SNIPPET),
+    )
+  }
 
   if (configured.length > 0) {
     p.log.warn(
@@ -59,17 +69,22 @@ export function initEncryption(projectDir: string): void {
     return
   }
 
-  fs.writeFileSync(envPath, withEncryptionKeys(content, generateEncryptionKeys()))
-  p.log.success('Added Active Record encryption keys to .env.')
-
-  const apiDir = findApiDir(projectDir)
-  const ejected = isEjectedProject(projectDir)
-  if (ejected && !appReadsEncryptionEnv(path.join(projectDir, apiDir))) {
+  const credentials = credentialsFiles(path.join(projectDir, apiDir))
+  if (credentials.length > 0) {
     p.log.warn(
-      `${apiDir}/config doesn't read these env vars yet. Add this inside the Application class in ${apiDir}/config/application.rb:\n\n` +
-        pc.dim(APPLICATION_RB_SNIPPET),
+      `${apiDir} has Rails credentials (${credentials.join(', ')}) — leaving .env unchanged.\n` +
+        'If they hold active_record_encryption keys, env vars would take precedence and make\n' +
+        'data encrypted with those keys unreadable. Check with `bin/rails credentials:show`;\n' +
+        'if they hold none, add fresh keys to .env by hand (`spree encryption init --print`).',
     )
+    return
   }
+
+  // .env holds secrets — create it owner-only (an existing file keeps its mode).
+  fs.writeFileSync(envPath, withEncryptionKeys(content, generateEncryptionKeys()), {
+    mode: 0o600,
+  })
+  p.log.success('Added Active Record encryption keys to .env.')
 
   p.note(
     [

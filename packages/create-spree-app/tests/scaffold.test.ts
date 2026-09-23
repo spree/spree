@@ -228,6 +228,9 @@ describe('scaffold (no-start)', () => {
     expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=[A-Za-z0-9]{32}$/m)
     expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=[A-Za-z0-9]{32}$/m)
     expect(env).toContain('SPREE_PORT=4567')
+    if (process.platform !== 'win32') {
+      expect(fs.statSync(path.join(projectDir, '.env')).mode & 0o777).toBe(0o600)
+    }
   })
 
   it('generates valid package.json with project name', async () => {

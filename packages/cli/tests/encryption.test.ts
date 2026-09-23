@@ -6,6 +6,7 @@ import { initEncryption } from '../src/commands/encryption'
 import {
   appReadsEncryptionEnv,
   configuredEncryptionVars,
+  credentialsFiles,
   ENCRYPTION_ENV_VARS,
   formatEncryptionEnv,
   generateEncryptionKeys,
@@ -71,6 +72,17 @@ describe('configuredEncryptionVars', () => {
     expect(configuredEncryptionVars(content)).toEqual([])
   })
 
+  it('treats a whitespace-prefixed inline comment as an empty value', () => {
+    const content =
+      'ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY= # add later\n' +
+      'ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=abc # set\n' +
+      'ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT="a #b"\n'
+    expect(configuredEncryptionVars(content)).toEqual([
+      'ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY',
+      'ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT',
+    ])
+  })
+
   it('detects set values, including export-prefixed ones', () => {
     const content =
       'ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=abc\nexport ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=def\n'
@@ -113,6 +125,29 @@ describe('initEncryption', () => {
     }
   })
 
+  it('creates a missing .env owner-only', () => {
+    const dir = makeTempDir()
+
+    initEncryption(dir)
+
+    const env = fs.readFileSync(path.join(dir, '.env'), 'utf-8')
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=[A-Za-z0-9]{32}$/m)
+    if (process.platform !== 'win32') {
+      expect(fs.statSync(path.join(dir, '.env')).mode & 0o777).toBe(0o600)
+    }
+  })
+
+  it('leaves .env unchanged when the app has Rails credentials', () => {
+    const dir = makeTempDir()
+    fs.mkdirSync(path.join(dir, 'server', 'config'), { recursive: true })
+    fs.writeFileSync(path.join(dir, 'server', 'config', 'credentials.yml.enc'), 'x')
+    fs.writeFileSync(path.join(dir, '.env'), 'SECRET_KEY_BASE=abc\n')
+
+    initEncryption(dir)
+
+    expect(fs.readFileSync(path.join(dir, '.env'), 'utf-8')).toBe('SECRET_KEY_BASE=abc\n')
+  })
+
   it('never overwrites existing keys', () => {
     const dir = makeTempDir()
     const original = 'SECRET_KEY_BASE=abc\nACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=keep-me\n'
@@ -121,6 +156,20 @@ describe('initEncryption', () => {
     initEncryption(dir)
 
     expect(fs.readFileSync(path.join(dir, '.env'), 'utf-8')).toBe(original)
+  })
+})
+
+describe('credentialsFiles', () => {
+  it('lists the app credentials files', () => {
+    const dir = makeTempDir()
+    fs.mkdirSync(path.join(dir, 'config', 'credentials'), { recursive: true })
+    expect(credentialsFiles(dir)).toEqual([])
+    fs.writeFileSync(path.join(dir, 'config', 'credentials.yml.enc'), 'x')
+    fs.writeFileSync(path.join(dir, 'config', 'credentials', 'production.yml.enc'), 'x')
+    expect(credentialsFiles(dir)).toEqual([
+      'config/credentials.yml.enc',
+      'config/credentials/production.yml.enc',
+    ])
   })
 })
 

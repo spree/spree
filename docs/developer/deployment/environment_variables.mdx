@@ -46,7 +46,7 @@ bin/rails db:encryption:init
 - **Rails credentials** — instead of env vars, you can put the values printed by `bin/rails db:encryption:init` under `active_record_encryption` in your encrypted credentials. When both are present, the env vars win.
 
 <Warning>
-Never change or lose the keys once data is encrypted — records encrypted with them become unreadable. To rotate, add the new keys and keep the old ones as [previous keys](https://guides.rubyonrails.org/active_record_encryption.html#rotating-keys) rather than replacing them.
+Never change or lose the keys once data is encrypted — records encrypted with them become unreadable. Rails supports [rotating the primary key](https://guides.rubyonrails.org/active_record_encryption.html#rotating-keys) by adding the new key and keeping the old one, but it doesn't support rotating the deterministic key — and webhook endpoint secrets and gateway customer IDs are encrypted deterministically. Keep `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` unchanged unless you plan a migration that re-encrypts those records.
 </Warning>
 
 ### Enabling encryption on an existing installation
