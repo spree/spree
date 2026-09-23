@@ -25,6 +25,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./api-client": "./src/api-client.ts",
     "./plugin": "./src/plugin.ts",
     "./vite": {
       "types": "./src/vite/index.ts",

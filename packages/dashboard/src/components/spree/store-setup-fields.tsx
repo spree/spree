@@ -1,5 +1,10 @@
 import type { SetupCountry } from '@spree/admin-sdk'
-import { ALL_CURRENCY_CODES, useDisplayName } from '@spree/dashboard-core'
+// Deep imports keep hosts that mount only this form clear of the framework
+// barrel; the i18n import registers the translations the labels use.
+import '@spree/dashboard-core/lib/i18n'
+import { useDisplayName } from '@spree/dashboard-core/hooks/use-display-name'
+import { ALL_CURRENCY_CODES } from '@spree/dashboard-core/lib/currencies'
+import { CountryFlag } from '@spree/dashboard-ui/spree/country-flag'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -9,15 +14,16 @@ import {
   ComboboxList,
   ComboboxSearch,
   ComboboxTriggerPlaceholder,
-  CountryFlag,
-  Input,
-  Label,
+} from '@spree/dashboard-ui/ui/combobox'
+import { Input } from '@spree/dashboard-ui/ui/input'
+import { Label } from '@spree/dashboard-ui/ui/label'
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@spree/dashboard-ui'
+} from '@spree/dashboard-ui/ui/select'
 import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, type FieldErrors, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
