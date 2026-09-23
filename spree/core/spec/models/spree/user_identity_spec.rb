@@ -68,6 +68,16 @@ describe Spree::UserIdentity, type: :model do
       expect(reloaded.access_token).to eq('plain-access-token')
       expect(reloaded.refresh_token).to eq('plain-refresh-token')
     end
+
+    it 'still reads tokens stored before encryption was enabled' do
+      described_class.where(id: identity.id)
+        .update_all("access_token = 'legacy-access-token', refresh_token = 'legacy-refresh-token'")
+
+      reloaded = described_class.find(identity.id)
+
+      expect(reloaded.access_token).to eq('legacy-access-token')
+      expect(reloaded.refresh_token).to eq('legacy-refresh-token')
+    end
   end
 
   describe '.find_or_create_from_oauth' do

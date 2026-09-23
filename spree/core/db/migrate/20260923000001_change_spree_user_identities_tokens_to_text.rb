@@ -5,7 +5,6 @@ class ChangeSpreeUserIdentitiesTokensToText < ActiveRecord::Migration[8.1]
   end
 
   def down
-    change_column :spree_user_identities, :access_token, :string
-    change_column :spree_user_identities, :refresh_token, :string
+    raise ActiveRecord::IrreversibleMigration, 'Encrypted tokens may not fit back into string columns'
   end
 end
