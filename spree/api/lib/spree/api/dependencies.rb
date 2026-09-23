@@ -187,6 +187,7 @@ module Spree
         seller_profile_serializer: 'Spree::Api::V3::Seller::ProfileSerializer',
         seller_policy_serializer: 'Spree::Api::V3::Seller::PolicySerializer',
         seller_team_member_serializer: 'Spree::Api::V3::Seller::TeamMemberSerializer',
+        seller_account_serializer: 'Spree::Api::V3::Seller::AccountSerializer',
         seller_invitation_serializer: 'Spree::Api::V3::Seller::InvitationSerializer',
         seller_product_serializer: 'Spree::Api::V3::Seller::ProductSerializer',
         seller_product_type_serializer: 'Spree::Api::V3::Seller::ProductTypeSerializer',

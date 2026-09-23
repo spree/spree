@@ -56,7 +56,7 @@ export function createSellerApiClient({
     // and 403 them against a seller they may hold no role on.
     clearTenant: forgetSeller,
     fetchPermissions: async () => {
-      const response = await sellerClient().me()
+      const response = await sellerClient().me.get()
 
       // Both shapes, exactly as the operator's dashboard receives them. The
       // framework's `<Can>` reads CanCanCan rules; the key list is what the

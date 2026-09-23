@@ -875,6 +875,10 @@ Spree::Core::Engine.add_routes do
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
         get 'me', to: 'me#show'
+        # Self-service edits to the signed-in person's own account — their
+        # name, photo and panel language. Distinct from `profile`, which is
+        # the seller business they act for.
+        patch 'me', to: 'me#update'
 
         # Singular: the seller in play is always `current_seller`.
         resource :profile, only: [:show, :update], controller: 'profile'

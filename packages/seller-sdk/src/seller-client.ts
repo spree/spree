@@ -1,6 +1,7 @@
 import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
 import type {
+  Account,
   AuthTokens,
   Balance,
   Claim,
@@ -133,14 +134,27 @@ export class SellerClient {
   }
 
   /**
-   * The signed-in seller: who they are, which sellers they may act for, and
+   * The signed-in person: who they are, which sellers they may act for, and
    * what they may do on the selected one.
    *
    * `permission_keys` is empty until a seller is named — capability is per
    * seller, so there is no answer spanning all of them.
    */
-  me = (options?: RequestOptions): Promise<MeResponse> =>
-    this.request<MeResponse>('GET', '/me', options)
+  readonly me = {
+    get: (options?: RequestOptions): Promise<MeResponse> =>
+      this.request<MeResponse>('GET', '/me', options),
+
+    /**
+     * Edits the signed-in person's own account — the name and photo their
+     * team sees, and the panel's language. Not the seller business they act
+     * for: that is `profile.update`.
+     *
+     * `avatar` takes a direct-upload signed id to set the photo, or `null` to
+     * remove it; omitting it leaves the current one alone.
+     */
+    update: (params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
+      this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
+  }
 
   /** The seller's own record, as they maintain it. */
   readonly profile = {
@@ -1670,11 +1684,29 @@ export interface PermissionRule {
 }
 
 export interface MeResponse {
-  user: TeamMember
+  /**
+   * `Account` rather than `TeamMember`: reading your own record also shows
+   * the panel language you chose, which the team list does not publish about
+   * a colleague.
+   */
+  user: Account
   sellers: SellerSummary[]
   /** Empty until a seller is named — capability is per seller. */
   permissions: PermissionRule[]
   permission_keys: string[]
+}
+
+/** What a seller may change on their own account. */
+export interface AccountUpdateParams {
+  first_name?: string
+  last_name?: string
+  /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
+  selected_locale?: string
+  /**
+   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * leave the current one alone.
+   */
+  avatar?: string | null
 }
 
 /** The fields a seller may change on their own record. */
