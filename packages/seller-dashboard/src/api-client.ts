@@ -64,6 +64,10 @@ export function createSellerApiClient({
       // did) left every `<Can>` on the panel answering false — silently.
       return { rules: response.permissions ?? [], keys: response.permission_keys ?? [] }
     },
+    // The account menu's language switcher and the profile dialog both write
+    // through this, so neither reaches for the Admin API from a panel holding
+    // only a seller credential.
+    updateAccount: (params) => sellerClient().me.update(params),
     // The shared address form reads countries through the registered client,
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),
