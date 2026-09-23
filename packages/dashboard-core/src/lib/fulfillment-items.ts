@@ -9,6 +9,7 @@
 /** The line-item fields the grouping reads. */
 export interface GroupableLineItem {
   id: string
+  variant_id?: string | null
   name: string
   options_text?: string | null
   quantity: number
@@ -37,7 +38,10 @@ export interface GroupableFulfillment {
  * line item it descends from, plus how many of its units this group holds.
  */
 export interface FulfillmentItemRow {
-  /** Stable within one group — a line item appears at most once per group. */
+  /**
+   * Stable within one group — a line item appears at most once per group,
+   * plus once per replacement variant an exchange ships against it.
+   */
   key: string
   lineItem: GroupableLineItem | null
   /** Falls back to the fulfillment item's own copy when the line item is gone. */
@@ -94,20 +98,39 @@ export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<s
   return fulfilled
 }
 
-/** Builds a row, preferring the line item's own copy over the fulfillment item's. */
+/**
+ * An exchange ships its replacement against the original line item, so the
+ * unit's variant is the only thing that names what is actually in the box.
+ */
+function isReplacement(
+  lineItem: GroupableLineItem | undefined,
+  item: Pick<GroupableFulfillmentItem, 'variant_id'> | null,
+): boolean {
+  return Boolean(
+    lineItem?.variant_id && item?.variant_id && lineItem.variant_id !== item.variant_id,
+  )
+}
+
+/**
+ * Builds a row, preferring the line item's own copy over the fulfillment
+ * item's — unless the unit is a replacement, whose name, image and price the
+ * line item does not describe.
+ */
 function buildRow(
   key: string,
   lineItem: GroupableLineItem | undefined,
-  fallback: Pick<GroupableFulfillmentItem, 'name' | 'options_text'> | null,
+  fallback: Pick<GroupableFulfillmentItem, 'variant_id' | 'name' | 'options_text'> | null,
   quantity: number,
 ): FulfillmentItemRow {
+  const copy = isReplacement(lineItem, fallback) ? undefined : lineItem
+
   return {
     key,
     lineItem: lineItem ?? null,
-    name: lineItem?.name ?? fallback?.name ?? '',
-    optionsText: lineItem?.options_text ?? fallback?.options_text ?? null,
-    thumbnailUrl: lineItem?.thumbnail_url ?? null,
-    displayPrice: lineItem?.display_price ?? null,
+    name: copy?.name ?? fallback?.name ?? '',
+    optionsText: copy?.options_text ?? fallback?.options_text ?? null,
+    thumbnailUrl: copy?.thumbnail_url ?? null,
+    displayPrice: copy?.display_price ?? null,
     quantity,
   }
 }
@@ -128,7 +151,10 @@ export function fulfillmentItemRows(
   for (const item of fulfillment.fulfillment_items ?? []) {
     // A fulfillment item with no line item still ships; key it by variant so
     // it renders rather than vanishing.
-    const key = item.line_item_id ?? item.variant_id
+    const lineItem = item.line_item_id ? byId.get(item.line_item_id) : undefined
+    const key = isReplacement(lineItem, item)
+      ? `${item.line_item_id}:${item.variant_id}`
+      : (item.line_item_id ?? item.variant_id)
     if (!key) continue
 
     const existing = rows.get(key)
@@ -137,15 +163,7 @@ export function fulfillmentItemRows(
       continue
     }
 
-    rows.set(
-      key,
-      buildRow(
-        key,
-        item.line_item_id ? byId.get(item.line_item_id) : undefined,
-        item,
-        item.quantity,
-      ),
-    )
+    rows.set(key, buildRow(key, lineItem, item, item.quantity))
   }
 
   return [...rows.values()]
