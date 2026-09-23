@@ -169,7 +169,7 @@ The contract is `Spree::OrderRouting::Strategy::Base`. There are no defaults —
 | `#for_sale(fulfillment:)` | A fulfillment has shipped | (side effect) |
 | `#for_release` | An order has been canceled (orders can only be canceled before anything ships) | (side effect) |
 
-The three methods bracket the lifecycle: allocation → sale, or allocation → release. Whatever your algorithm reserves at allocation time, the other two are where you settle or give it back.
+The three methods bracket the lifecycle: allocation → sale, or allocation → release. On a cart, `for_allocation` is a proposal: it runs again on every recalculation, and an abandoned or deleted cart gets no release call. Anything your algorithm holds in an outside system at cart time must therefore be provisional and expire on its own. Settle it in `for_sale` and give it back in `for_release`, which only run for placed orders.
 
 `order` inside a strategy is the purchase being routed: a `Spree::Cart` during checkout, a `Spree::Order` afterwards. Both answer the same questions — `line_items`, `ship_address`, `channel`, `store`, `preferred_stock_location_id` — so most strategies never need to tell them apart. `for_sale` and `for_release` always receive an order.
 
@@ -232,7 +232,7 @@ Notes:
 
 - **Strategies are plain Ruby classes**, not ActiveRecord models. Live under `app/models/` so the autoloader picks them up; or anywhere on the load path if you'd rather organize them as services.
 - **`for_allocation` returns `Spree::Stock::Package` objects.** The cart's or order's `rebuild_fulfillments!` turns those into `Spree::Fulfillment`s by calling `package.to_fulfillment`. Returning fulfillments directly will break the call site.
-- **`for_allocation` runs on every checkout recalculation.** A cart rebuilds its delivery options whenever the address, pickup location, items or market change, so keep the call fast. If your algorithm calls an outside system, cache its answer for the cart's contents rather than calling on every rebuild.
+- **`for_allocation` runs on every checkout recalculation.** A cart rebuilds its delivery options whenever the address, pickup location, items or market change, so keep the call fast. If your algorithm calls an outside system, cache its answer only under a key that includes every input your strategy reads (items, address, pickup location, market), or cache only work that does not decide the final allocation.
 - **Reuse the existing primitives.** When your algorithm only needs to decide the *order* of locations, hand that ranking to `Spree::Stock::Coordinator.new(order).packages(ranked_locations)`. It packs each location, keeps each item within the locations its delivery profile and the channel allow, spills what the first location can't cover to the next, and attaches delivery rates — exactly what the built-in `Rules` strategy does. `Coordinator#stock_locations` returns the candidate locations to rank. For full control, `Spree::Stock::Packer`, `Spree::Stock::Estimator`, and `Spree::Stock::InventoryUnitBuilder` are the lower-level building blocks.
 
 ### Step 2: Register the Strategy
