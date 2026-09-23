@@ -587,11 +587,11 @@ const { data: addresses } = await client.companies.addresses.list('comp_xxx')
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/account/companies' \
   -H 'X-Spree-API-Key: pk_xxx' \
-  -H 'Authorization: Bearer $CUSTOMER_JWT'
+  -H "Authorization: Bearer $CUSTOMER_JWT"
 
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'X-Spree-API-Key: pk_xxx' \
-  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H "Authorization: Bearer $CUSTOMER_JWT" \
   -H 'Content-Type: application/json' \
   -d '{ "company_id": "comp_xxx" }'
 ```
@@ -619,7 +619,7 @@ await client.carts.update(cartId, { po_number: 'PO-2026-0418' })
 ```bash cURL
 curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
   -H 'X-Spree-API-Key: pk_xxx' \
-  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H "Authorization: Bearer $CUSTOMER_JWT" \
   -H 'Content-Type: application/json' \
   -d '{ "po_number": "PO-2026-0418" }'
 
@@ -627,7 +627,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx' \
 # then send the returned signed_id as po_document on a cart update
 curl -X POST 'https://api.mystore.com/api/v3/store/carts/cart_xxx/po_document' \
   -H 'X-Spree-API-Key: pk_xxx' \
-  -H 'Authorization: Bearer $CUSTOMER_JWT' \
+  -H "Authorization: Bearer $CUSTOMER_JWT" \
   -H 'Content-Type: application/json' \
   -d '{
         "blob": {
@@ -655,7 +655,7 @@ const { data: orders } = await client.companies.orders.list('comp_xxx')
 ```bash cURL
 curl 'https://api.mystore.com/api/v3/store/companies/comp_xxx/orders' \
   -H 'X-Spree-API-Key: pk_xxx' \
-  -H 'Authorization: Bearer $CUSTOMER_JWT'
+  -H "Authorization: Bearer $CUSTOMER_JWT"
 ```
 
 </CodeGroup>
@@ -709,6 +709,7 @@ When an order arrives by email or phone, or after a negotiation, your team build
 ```typescript Admin SDK
 const order = await adminClient.orders.create({
   customer_id: 'cust_xxx',
+  company_id: 'comp_xxx',
   channel_id: 'ch_xxx',
   currency: 'EUR',
   po_number: 'PO-2026-0418',
@@ -732,8 +733,10 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/orders' \
   -d '{
         "customer_id": "cust_xxx",
         "company_id": "comp_xxx",
+        "channel_id": "ch_xxx",
         "currency": "EUR",
         "po_number": "PO-2026-0418",
+        "use_customer_default_address": true,
         "items": [
           { "variant_id": "variant_xxx", "quantity": 240 },
           { "variant_id": "variant_yyy", "quantity": 60, "price": "8.75" }
