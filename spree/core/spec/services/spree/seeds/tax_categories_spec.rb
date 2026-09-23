@@ -31,6 +31,15 @@ RSpec.describe Spree::Seeds::TaxCategories do
       expect(@default_store.tax_categories.find_by(is_default: true).name).to eq('Default')
     end
 
+    it 'seeds only the store it is given' do
+      other_store = create(:store)
+
+      described_class.call(store: other_store)
+
+      expect(other_store.tax_categories.pluck(:name)).to match_array(expected_categories.pluck(:name))
+      expect(@default_store.tax_categories).to be_empty
+    end
+
     context 'when TaxCategories already exist' do
       before do
         expected_categories.each do |category_attrs|
