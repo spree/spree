@@ -1846,32 +1846,6 @@
           "label": "税务申报方"
         }
       },
-      "setup": {
-        "country_code": {
-          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。",
-          "label": "国家/地区",
-          "placeholder": "搜索国家/地区"
-        },
-        "currency": {
-          "help": "您的默认货币。随时可添加更多。",
-          "label": "货币",
-          "placeholder": "搜索货币"
-        },
-        "locale": {
-          "help": "您的默认语言。随时可添加更多。",
-          "label": "语言"
-        },
-        "password_confirmation": {
-          "label": "确认密码"
-        },
-        "sample_data": {
-          "help": "在后台添加演示商品、分类、客户和订单，方便您浏览后台。需要几分钟并会下载商品图片。",
-          "label": "加载示例数据"
-        },
-        "store_name": {
-          "label": "商店名称"
-        }
-      },
       "state": {
         "label": "省/州"
       },

@@ -691,6 +691,32 @@
       "quantity": {
         "label": "Ilość"
       },
+      "setup": {
+        "country_code": {
+          "help": "Skąd wysyłasz. Twój sklep może sprzedawać na całym świecie — to ustala tylko początkową walutę, magazyn i strefy dostawy, które później zmienisz.",
+          "label": "Kraj",
+          "placeholder": "Szukaj krajów"
+        },
+        "currency": {
+          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili.",
+          "label": "Waluta",
+          "placeholder": "Szukaj walut"
+        },
+        "locale": {
+          "help": "Twój domyślny język. Kolejne dodasz w każdej chwili.",
+          "label": "Język"
+        },
+        "password_confirmation": {
+          "label": "Potwierdź hasło"
+        },
+        "sample_data": {
+          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
+          "label": "Wczytaj dane przykładowe"
+        },
+        "store_name": {
+          "label": "Nazwa sklepu"
+        }
+      },
       "shipping": {
         "label": "Wysyłka"
       },
