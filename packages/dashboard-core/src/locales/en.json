@@ -436,7 +436,6 @@
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",
-        "more_conditions": "More conditions",
         "operators": {
           "after": "after",
           "before": "before",

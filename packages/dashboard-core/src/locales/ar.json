@@ -434,7 +434,6 @@
         "filter_select_placeholder": "اختر…",
         "filter_text_placeholder": "تصفية…",
         "filter_to_placeholder": "التصفية إلى…",
-        "more_conditions": "شروط إضافية",
         "operators": {
           "after": "بعد",
           "before": "قبل",
