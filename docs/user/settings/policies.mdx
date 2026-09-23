@@ -1,58 +1,65 @@
 ---
 title: "Policies"
-description: "Learn how to set up and manage store policies in Spree Commerce."
+description: "Learn how to write and publish your store's terms, privacy, returns and shipping policies in Spree Commerce."
 ---
 
-Your store policies are an essential part of your eCommerce setup, helping you establish trust, maintain compliance, and communicate clearly with your customers. Spree allows you to easily manage these pages from the Policies tab.
+Your policies are the legal documents customers can read: your terms, your privacy notice, and how returns and shipping work. They matter for trust and for compliance, and in most places you are required to publish at least some of them.
 
-You can create as many custom policy pages as you need, with full control over their content and URL structure.
+Every new store starts with four, already created and ready to write:
 
-The following four standard policies are added to every store by default:
+- **Terms of Service**
+- **Privacy Policy**
+- **Returns Policy**
+- **Shipping Policy**
 
-- Terms of Service
-- Privacy Policy
-- Returns Policy
-- Shipping Policy
+To manage them, navigate to **Settings → Policies**, under the **Store** group.
 
-These can be customized, deleted, or supplemented with additional policies depending on your business needs.
+<Note>Each policy has an address of its own, which Spree's Next.js storefront publishes as a page automatically. A custom or headless storefront reads policies through the API, so where they appear is up to whoever built it.</Note>
 
-## Create a New Policy
+<Warning>The four built-in policies start empty. Writing them is a launch task rather than an optional one, because a customer following a link to a policy you have not written finds nothing there.</Warning>
 
-To create a new policy, navigate to **Settings → Policies** in your Spree dashboard.
+## Reviewing Your Policies
 
-![Spree Commerce policies tab](/docs/images/user/settings/policies/1-policies-tab.png)
+![The Policies list, showing each policy's address and whether it has been written](/docs/images/user/settings/policies/1-policies-overview.png)
 
-Click **New Policy** in the top-right corner to open the policy creation form.
+Each row shows:
 
-![Creating a new store policy in Spree Commerce](/docs/images/user/settings/policies/2-policy-form.png)
+- **Name** - What the policy is called, with its address beneath it.
+- **Content** - A preview of the document. A policy you have not written yet reads **Nothing written yet**.
+- **Updated at** - When it was last changed.
 
-Simply enter data into the following fields:
+Use the search box to find a policy by name. The **Content** column is the quickest way to see at a glance which policies are still outstanding.
 
-- **Name** - displayed title on the storefront.
-- **Slug** - URL identifier (e.g. /policies/custom-warranty).
-- **Content** - enter your policy text using the rich text editor (supports formatting, links, media, etc.).
+## How to Write a Policy
 
-Then, click **Create** to save and publish your new policy.
+Click a policy's row to open it. The panel is titled with the policy's name.
 
-Once published, the policy will be accessible from the storefront and can also be linked in your footer navigation or other relevant areas.
+![The policy editor, with the formatting toolbar and content area](/docs/images/user/settings/policies/2-policy-editor.png)
 
-![Published store policy on Spree storefront](/docs/images/user/settings/policies/3-policy-published.png)
+- **Name** - The title shown at the top of the document.
+- **Slug** - The address for this policy, such as `returns-policy`. Leave it blank and it follows the name.
+- **Content** - The document itself.
 
-## Edit an Existing Policy
+The editor has a formatting toolbar covering **Bold**, **Italic**, **Strikethrough**, bullet and numbered lists, blockquotes, links, images, and undo and redo. Use headings and lists rather than long unbroken paragraphs, because these are documents people scan for one specific answer rather than read end to end.
 
-To edit an existing policy, navigate to **Settings → Policies** and follow these steps:
+Click **Save**. The policy is published immediately.
 
-1. Click on the policy you’d like to update.
-2. Modify the name, slug, or content as needed.
-3. Click **Update** to save your changes.
+<Note>Changing the **Slug** changes a published policy's address, so any link you have shared pointing at the old one stops working. Set it once and leave it.</Note>
 
-Your edits will be reflected immediately on the live storefront.
+## How to Add a Policy
 
-## Delete a Policy
+Click **Add policy** for a document the four built-in ones do not cover, such as a warranty, an accessibility statement or a cookie notice.
 
-To delete an existing policy, navigate to **Settings → Policies** and follow these steps:
+Fill in the **Name**, leave **Slug** blank unless the address needs to differ, write the **Content**, and click **Create policy**.
 
-1. Click on the policy you’d like to delete.
-2. Click **Delete** at  the bottom of the page and confirm.
+## How to Delete a Policy
 
-<Warning>Deleted policies are permanently removed and will no longer be accessible to customers.</Warning>
+Open the row menu and choose **Delete**.
+
+<Warning>Deleting a policy removes it permanently and its address stops working. If you only want to take a document down temporarily, clear its content instead so the address still resolves.</Warning>
+
+## Further Reading
+
+- [<u>Returns & Reasons</u>](/user/settings/returns-and-reasons) - The reasons behind the returns your policy describes
+- [<u>Emails</u>](/user/settings/emails) - Where your support address is set
+- [<u>Store Details</u>](/user/settings/store-details) - Your store's name and regional defaults
