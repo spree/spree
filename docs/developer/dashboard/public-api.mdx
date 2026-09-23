@@ -229,6 +229,17 @@ import { spreeDashboardPlugin } from '@spree/dashboard/vite'  // Vite plugin: Ta
 import '@spree/dashboard/styles.css'                          // the app's CSS entry
 ```
 
+A host app that builds its own sign-in or onboarding screens, rather than mounting `<Dashboard />`, can reuse the dashboard's building blocks one module at a time without pulling in the app shell:
+
+```ts
+import { AuthShell } from '@spree/dashboard/components/spree/auth-shell'              // two-column sign-in layout
+import { StoreSetupFields } from '@spree/dashboard/components/spree/store-setup-fields' // store name, country, language, currency
+import { useAuthProviders, authCallbackErrorKey } from '@spree/dashboard/hooks/use-auth-providers' // password + SSO options, SSO error copy
+import { loginFormSchema, resetPasswordFormSchema } from '@spree/dashboard/schemas/auth' // Zod schemas for the auth forms
+```
+
+Their translations ship with `@spree/dashboard-core`, so they render translated as soon as its i18n instance is loaded.
+
 A few names exist in both re-exported packages — the design system ships a presentational component and the framework wraps it with data (`ResourceCombobox`, `StatusCard`, `Slot`, `DateRange`, `ResourceMultiAutocomplete`). The facade gives you the framework's version, which is the one an application wants. Reach past it when you want the presentational half:
 
 ```ts

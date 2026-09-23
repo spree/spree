@@ -722,6 +722,32 @@
       "quantity": {
         "label": "Cantidad"
       },
+      "setup": {
+        "country_code": {
+          "help": "Desde dónde enviás. Tu tienda puede vender en todo el mundo: esto solo define la moneda, el depósito y las zonas de entrega de inicio, todo editable después.",
+          "label": "País",
+          "placeholder": "Buscar países"
+        },
+        "currency": {
+          "help": "Tu moneda predeterminada. Agregá más cuando quieras.",
+          "label": "Moneda",
+          "placeholder": "Buscar monedas"
+        },
+        "locale": {
+          "help": "Tu idioma predeterminado. Agregá más cuando quieras.",
+          "label": "Idioma"
+        },
+        "password_confirmation": {
+          "label": "Confirmar contraseña"
+        },
+        "sample_data": {
+          "help": "Agrega productos, categorías, clientes y pedidos de demostración en segundo plano para que puedas explorar el dashboard. Tarda unos minutos y descarga imágenes de productos.",
+          "label": "Cargar datos de ejemplo"
+        },
+        "store_name": {
+          "label": "Nombre de la tienda"
+        }
+      },
       "shipping": {
         "label": "Envío"
       },

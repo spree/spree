@@ -31,7 +31,10 @@
       "default": "./dist/vite-plugin/route-collisions.js"
     },
     "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts",
-    "./components/spree/store-setup-fields": "./src/components/spree/store-setup-fields.tsx"
+    "./components/spree/auth-shell": "./src/components/spree/auth-shell.tsx",
+    "./components/spree/store-setup-fields": "./src/components/spree/store-setup-fields.tsx",
+    "./hooks/use-auth-providers": "./src/hooks/use-auth-providers.ts",
+    "./schemas/auth": "./src/schemas/auth.ts"
   },
   "files": [
     "src",

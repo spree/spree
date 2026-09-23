@@ -1851,32 +1851,6 @@
           "label": "Steuer abgeführt von"
         }
       },
-      "setup": {
-        "country_code": {
-          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar.",
-          "label": "Land",
-          "placeholder": "Länder durchsuchen"
-        },
-        "currency": {
-          "help": "Ihre Standardwährung. Jederzeit erweiterbar.",
-          "label": "Währung",
-          "placeholder": "Währungen durchsuchen"
-        },
-        "locale": {
-          "help": "Ihre Standardsprache. Jederzeit erweiterbar.",
-          "label": "Sprache"
-        },
-        "password_confirmation": {
-          "label": "Passwort bestätigen"
-        },
-        "sample_data": {
-          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
-          "label": "Beispieldaten laden"
-        },
-        "store_name": {
-          "label": "Shopname"
-        }
-      },
       "state": {
         "label": "Bundesland"
       },
