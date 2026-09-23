@@ -200,6 +200,13 @@ module Spree
         prune_undeliverable_fulfillments!
         fulfillments.reload
       end
+    rescue StandardError
+      # The savepoint restored the rows, but the loaded associations still hold
+      # the emptied/partial proposals — reset so callers that rescue see the
+      # restored ones.
+      fulfillments.reset
+      fulfillment_items.reset
+      raise
     end
 
     # Drops proposals that found no delivery rates and surfaces a

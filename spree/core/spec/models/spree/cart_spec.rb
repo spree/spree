@@ -566,6 +566,16 @@ describe Spree::Cart, type: :model do
         expect { cart.rebuild_fulfillments! }.to raise_error(StandardError, 'routing down')
         expect(cart.fulfillments.reload.ids).to match_array(previous_ids)
       end
+
+      it 'does not leave the in-memory proposals emptied when the strategy raises' do
+        cart.rebuild_fulfillments!
+        previous_ids = cart.fulfillments.map(&:id)
+        expect(previous_ids).to be_present
+        allow_any_instance_of(Spree::OrderRouting::Strategy::Rules).to receive(:for_allocation).and_raise(StandardError, 'routing down')
+
+        expect { cart.rebuild_fulfillments! }.to raise_error(StandardError, 'routing down')
+        expect(cart.fulfillments.map(&:id)).to match_array(previous_ids)
+      end
     end
   end
 end
