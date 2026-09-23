@@ -75,6 +75,19 @@ RSpec.describe Spree::Export, :job, type: :model do
         export.save!
         expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
       end
+
+      it 'writes a row for a customer with addresses' do
+        customer = create(:customer_with_addresses)
+        export.save!
+        export.generate
+
+        row = CSV.parse(export.attachment.download, headers: true).find { |r| r['Email'] == customer.email }
+        expect(row.to_h).to include(
+          'City' => customer.bill_address.city,
+          'Province Code' => customer.bill_address.state_code,
+          'Country Code' => customer.bill_address.country.iso
+        )
+      end
     end
 
     # Header and value rows are built in different objects, so they have to
