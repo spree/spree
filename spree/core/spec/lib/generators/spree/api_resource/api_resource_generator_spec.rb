@@ -97,20 +97,78 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(Dir[File.join(destination, 'app/controllers/spree/api/v3/admin/*')]).to be_empty
     end
 
-    it 'permits flat params on the Admin controller for full CRUD' do
+    # Overriding permitted_params would drop the attributes extensions add
+    # through Spree::Brand.additional_permitted_attributes.
+    it 'declares writable attributes on the Admin controller without overriding permitted_params' do
       result = run_generator(['Brand', 'name:string', 'active:boolean'])
 
-      expect(result[:admin_controller]).to include('params.permit(:name, :active)')
+      expect(result[:admin_controller]).to include('def resource_permitted_attributes')
+      expect(result[:admin_controller]).to include('[:name, :active]')
+      expect(result[:admin_controller]).not_to include('permitted_params')
     end
 
-    it 'permits flat params on the Store controller only when --writable is set' do
+    it 'declares writable attributes on the Store controller only when --writable is set' do
       read_only = run_generator(['Brand', 'name:string'])
-      expect(read_only[:store_controller]).not_to include('params.permit')
+      expect(read_only[:store_controller]).not_to include('resource_permitted_attributes')
 
       FileUtils.rm_rf(destination)
       FileUtils.mkdir_p(destination)
       writable = run_generator(['Brand', 'name:string', '--writable'])
-      expect(writable[:store_controller]).to include('params.permit')
+      expect(writable[:store_controller]).to include('def resource_permitted_attributes')
+      expect(writable[:store_controller]).not_to include('permitted_params')
+    end
+  end
+
+  describe 'permissions' do
+    let(:initializer_path) { File.join(destination, 'config/initializers/spree.rb') }
+    let(:locale_path) { File.join(destination, 'config/locales/spree_brands.en.yml') }
+
+    it 'registers the scope the Admin controller declares' do
+      result = run_generator(['Brand', 'name:string'])
+
+      expect(result[:admin_controller]).to include('scoped_resource :brands')
+      expect(File.read(initializer_path)).to include(
+        'Spree.permissions.register_scope(:brands, group: :catalog, resources: -> { [Spree::Brand] })'
+      )
+    end
+
+    it 'appends to an existing initializer once, however often it re-runs' do
+      FileUtils.mkdir_p(File.dirname(initializer_path))
+      File.write(initializer_path, "Spree.customer_class = 'Spree::Customer'\n")
+
+      2.times { run_generator(['Brand', 'name:string']) }
+
+      content = File.read(initializer_path)
+      expect(content).to start_with("Spree.customer_class = 'Spree::Customer'\n")
+      expect(content.scan('register_scope(:brands,').size).to eq(1)
+    end
+
+    it 'places the scope in the group passed with --permission-group' do
+      run_generator(['Brand', 'name:string', '--permission-group', 'settings'])
+
+      expect(File.read(initializer_path)).to include('register_scope(:brands, group: :settings,')
+    end
+
+    it 'rejects a group that is not an identifier' do
+      expect {
+        described_class.new(['Brand', 'name:string'], { permission_group: 'catalog; system("x")' }, destination_root: destination).permission_group
+      }.to raise_error(Thor::Error, /--permission-group/)
+    end
+
+    it 'labels the permission for the role editor, and leaves an edited label alone on re-run' do
+      run_generator(['Brand', 'name:string'])
+      expect(YAML.load_file(locale_path).dig('en', 'spree', 'permissions_catalog', 'resources', 'brands', 'label')).to eq('Brands')
+
+      File.write(locale_path, File.read(locale_path).sub('label: Brands', 'label: Our brands'))
+      run_generator(['Brand', 'name:string'])
+      expect(File.read(locale_path)).to include('label: Our brands')
+    end
+
+    it 'registers nothing without an Admin controller' do
+      run_generator(['Brand', 'name:string', '--no-admin'])
+
+      expect(File.exist?(initializer_path)).to be(false)
+      expect(File.exist?(locale_path)).to be(false)
     end
   end
 

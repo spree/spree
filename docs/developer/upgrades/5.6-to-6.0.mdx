@@ -740,7 +740,7 @@ Old initializers fail loudly at boot: the set constants raise `NameError`, and `
 
 ```ruby
 # db/seeds.rb — "roles as code" is plain ActiveRecord now
-Spree::Role.find_or_create_by!(name: 'support')
+Spree::Store.default.roles.find_or_create_by!(name: 'support')
   .update!(permissions: %w[read_orders read_customers])
 ```
 

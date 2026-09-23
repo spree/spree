@@ -25,10 +25,10 @@ In this guide we build `spree_reviews`: customers read product reviews through t
 
 ## Generate the extension
 
-Install the Spree extension generator:
+Install the Spree extension generator. Spree 6 needs version 2.0 or newer — earlier versions generate a Spree 5 scaffold built around the Rails admin:
 
 ```bash
-gem install spree_extension
+gem install spree_extension -v '>= 2.0'
 ```
 
 Run the following command from a directory outside your Spree application:
@@ -37,15 +37,11 @@ Run the following command from a directory outside your Spree application:
 spree-extension create reviews
 ```
 
-This creates a `spree_reviews` directory containing the engine, a gemspec, a test setup and continuous integration configuration. Change to its directory:
+This creates a `spree_reviews` directory containing the engine, a gemspec, a test setup and continuous integration configuration. Its `config/routes.rb` and `config/initializers/spree.rb` come with commented-out Spree 6 examples — API routes, permission scopes, workflow hooks and event subscribers — that the steps below fill in. Change to its directory:
 
 ```bash
 cd spree_reviews
 ```
-
-<Warning>
-  The generated scaffold still declares a dependency on `spree_admin`, the Spree 5 Rails admin, which does not exist in Spree 6. Remove the `spree_admin` lines from both the `.gemspec` and the `Gemfile` before running `bundle install`. The JavaScript, importmap and asset setup in the scaffold is only used by the Spree 5 admin, so you can delete it too.
-</Warning>
 
 ## Add a model
 
@@ -316,15 +312,7 @@ end
 Spree::Product.prepend SpreeReviews::ProductDecorator
 ```
 
-Decorators are not loaded automatically. Load them from your engine:
-
-```ruby lib/spree_reviews/engine.rb
-config.to_prepare do
-  Dir.glob(root.join('app/**/*_decorator*.rb')) do |decorator|
-    Rails.configuration.cache_classes ? require(decorator) : load(decorator)
-  end
-end
-```
+Rails does not load decorators on its own, so the scaffold's engine does it for you: `lib/spree_reviews/engine.rb` loads every `app/**/*_decorator*.rb` file at boot and again on each code reload in development. Name the file with a `_decorator` suffix and there is nothing else to wire up.
 
 ## Add admin screens
 

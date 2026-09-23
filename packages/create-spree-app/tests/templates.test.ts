@@ -194,7 +194,8 @@ describe('readmeContent', () => {
     // The dashboard's dev server IS the admin in Spree 6 — the Rails admin
     // engine is gone, so the README must not point at /admin.
     expect(content).toContain('http://localhost:5173')
-    expect(content).not.toContain('Classic admin')
+    expect(content).not.toMatch(/classic admin/i)
+    expect(content).not.toContain('localhost:3000/admin')
     expect(content).toContain('Seller Panel')
     expect(content).toContain('docs/developer/dashboard')
   })

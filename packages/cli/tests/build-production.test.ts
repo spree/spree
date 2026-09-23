@@ -24,7 +24,8 @@ describe('planProductionBuild', () => {
   })
 
   // The marker the layout-normalizing starter Dockerfile carries.
-  const NORMALIZING_DOCKERFILE = 'FROM alpine AS ctx\n# .spree-custom-dashboard\nFROM ruby\n'
+  const NORMALIZING_DOCKERFILE =
+    'FROM alpine AS ctx\n# touch /dashboard-src/.spree-custom-app\nFROM ruby\n'
 
   function writeDockerfile(content: string) {
     fs.writeFileSync(path.join(projectDir, 'backend', 'Dockerfile'), content)
@@ -55,6 +56,13 @@ describe('planProductionBuild', () => {
       '-t',
       'shop:1',
     ])
+  })
+
+  it('still recognizes the marker from the first layout-normalizing release', () => {
+    writeDockerfile('FROM alpine AS ctx\n# .spree-custom-dashboard\nFROM ruby\n')
+    writeDashboardApp()
+
+    expect(planProductionBuild(projectDir).dashboard).toBe('custom')
   })
 
   it('writes the root .dockerignore when missing, never overwriting', () => {
