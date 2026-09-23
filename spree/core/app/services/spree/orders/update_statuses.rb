@@ -9,13 +9,24 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       PAYMENT_STATUSES = Spree::Order::PAYMENT_STATUSES
+      SETTLED_PAYMENT_STATUSES = %w[paid overcharged].freeze
 
       def call(order:)
+        # Read from the row, not the instance: callers often hold a copy loaded
+        # before another writer settled the order, and it would announce the
+        # payment a second time.
+        was_settled = Spree::Order.where(id: order.id).pick(:payment_status).in?(SETTLED_PAYMENT_STATUSES)
+
         order.update_columns(
           payment_status: payment_status_for(order),
           fulfillment_status: fulfillment_status_for(order),
           updated_at: Time.current
         )
+
+        # Announced from here rather than from the payment, so the payload
+        # already carries the status and payment total it announces.
+        order.publish_event('order.paid') if !was_settled && order.payment_status.in?(SETTLED_PAYMENT_STATUSES)
+
         success(order)
       end
 

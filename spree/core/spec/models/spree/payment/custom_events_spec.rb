@@ -34,24 +34,4 @@ RSpec.describe Spree::Payment::CustomEvents do
       expect(Spree::Events).not_to have_received(:publish).with('payment.paid', anything, anything)
     end
   end
-
-  describe 'order.paid event' do
-    it 'publishes order.paid when payment completes and order is fully paid' do
-      payment.update!(amount: order.total)
-
-      payment.update!(state: 'completed')
-
-      expect(Spree::Events).to have_received(:publish).with('payment.paid', anything, anything)
-      expect(Spree::Events).to have_received(:publish).with('order.paid', anything, anything)
-    end
-
-    it 'does not publish order.paid when order still has outstanding balance' do
-      payment.update!(amount: order.total - 1)
-
-      payment.update!(state: 'completed')
-
-      expect(Spree::Events).to have_received(:publish).with('payment.paid', anything, anything)
-      expect(Spree::Events).not_to have_received(:publish).with('order.paid', anything, anything)
-    end
-  end
 end

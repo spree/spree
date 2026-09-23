@@ -102,9 +102,8 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
       first_party_split.destroy!
     end
 
-    # order.paid is public webhook API, and it is published from the payment's
-    # own after_commit — which runs before the subscriber marks the shares
-    # captured, so the figure it reads has to count this payment's share itself.
+    # order.paid is public webhook API, and a marketplace order must announce
+    # itself paid like any other once its share is captured.
     it 'declares each child paid' do
       published = []
       allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
