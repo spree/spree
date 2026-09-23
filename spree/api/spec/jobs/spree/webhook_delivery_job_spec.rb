@@ -42,6 +42,42 @@ module Spree
       end
     end
 
+    describe 'when the endpoint fails' do
+      before { stub_request(:post, delivery.url).to_return(status: 500, body: 'error') }
+
+      it 'schedules another attempt with the same arguments' do
+        expect { described_class.perform_now(delivery.id, payload_secrets: { 'token' => 'x' }) }.
+          to have_enqueued_job(described_class).with(delivery.id, payload_secrets: { 'token' => 'x' })
+        expect(delivery.reload).to be_failed
+      end
+
+      it 'stops after five attempts without raising' do
+        expect { perform_enqueued_jobs { described_class.perform_later(delivery.id) } }.not_to raise_error
+
+        expect(WebMock).to have_requested(:post, delivery.url).times(5)
+        expect(enqueued_jobs).to be_empty
+      end
+
+      it 'sends again once the endpoint recovers' do
+        stub_request(:post, delivery.url).to_return({ status: 500 }, { status: 200, body: '{}' })
+
+        perform_enqueued_jobs { described_class.perform_later(delivery.id) }
+
+        expect(WebMock).to have_requested(:post, delivery.url).twice
+        expect(delivery.reload).to be_successful
+      end
+
+      it 'does not retry once the endpoint was switched off' do
+        webhook_endpoint.update!(active: false)
+        job = described_class.new(delivery.id)
+        job.executions = 1
+
+        job.perform_now
+
+        expect(WebMock).not_to have_requested(:post, delivery.url)
+      end
+    end
+
     describe 'queue' do
       it 'uses the webhooks queue' do
         expect(described_class.new.queue_name).to eq(Spree.queues.webhooks.to_s)
