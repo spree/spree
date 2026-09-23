@@ -1,6 +1,6 @@
 ---
 title: Environment Variables
-description: Reference for Spree deployment environment variables — database, web server, background jobs, SMTP, file storage, and application settings.
+description: Reference for Spree deployment environment variables — database, secrets and encryption keys, web server, background jobs, SMTP, file storage, and application settings.
 ---
 
 Spree uses environment variables for all deployment configuration. No secrets or credentials are stored in the codebase.
@@ -14,7 +14,62 @@ These two variables are all a production deployment strictly needs:
 | `DATABASE_URL` | Database connection URL — see [Database Configuration](/developer/deployment/database) | `postgres://user:pass@localhost:5432/spree` |
 | `SECRET_KEY_BASE` | Secret used to encrypt sessions and cookies. Generate with `openssl rand -hex 64` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
 
-You'll almost always want to set [`RAILS_HOST`](#urls-and-hosts) too — without it, generated URLs point at `localhost`.
+You'll almost always want to set [`RAILS_HOST`](#urls-and-hosts) too — without it, generated URLs point at `localhost`, and the three [Active Record encryption](#active-record-encryption) keys — without them, secrets Spree stores are kept in plain text.
+
+## Active Record encryption
+
+Spree encrypts sensitive values at rest with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html): webhook endpoint signing secrets, payment gateway customer IDs, and the OAuth tokens stored on user identities. It does so only when encryption keys are configured — without them, these values are stored in plain text and a production app logs a warning at boot.
+
+| Variable | Description |
+| --- | --- |
+| `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY` | Key for (non-deterministic) encrypted attributes |
+| `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` | Key for deterministic encrypted attributes — the ones Spree looks records up by, such as webhook signing secrets and gateway customer IDs |
+| `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` | Salt for deriving the encryption keys |
+
+Set all three. Each is a random string — generate a set with any of:
+
+<CodeGroup>
+
+```bash Spree CLI
+spree encryption init           # writes a set to your project's .env (never overwrites existing keys)
+spree encryption init --print   # prints a fresh set, e.g. for your hosting provider
+```
+
+```bash Without Spree CLI
+bin/rails db:encryption:init
+```
+
+</CodeGroup>
+
+- **New projects** — `create-spree-app` generates the keys into `.env`, and the [Render Blueprint](/developer/deployment/render) generates them for production.
+- **Production** — use a separate set of keys from development and store it in your secret manager as a backup.
+- **Rails credentials** — instead of env vars, you can put the values printed by `bin/rails db:encryption:init` under `active_record_encryption` in your encrypted credentials. When both are present, the env vars win.
+
+<Warning>
+Never change or lose the keys once data is encrypted — records encrypted with them become unreadable. Rails supports [rotating the primary key](https://guides.rubyonrails.org/active_record_encryption.html#rotating-keys) by adding the new key and keeping the old one, but it doesn't support rotating the deterministic key — and webhook endpoint secrets and gateway customer IDs are encrypted deterministically. Keep `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` unchanged unless you plan a migration that re-encrypts those records.
+</Warning>
+
+### Enabling encryption on an existing installation
+
+Records written before the keys were set are stored in plain text. OAuth tokens on user identities stay readable and are encrypted on their next write. Webhook endpoint secrets and gateway customer IDs are not readable in plain text once encryption is on, so enable encryption with plaintext support first, then encrypt the existing rows:
+
+1. Allow reading and looking up plaintext rows in `config/application.rb`:
+
+   ```ruby
+   config.active_record.encryption.support_unencrypted_data = true
+   config.active_record.encryption.extend_queries = true
+   ```
+
+2. Set the three keys ([see above](#active-record-encryption)) and deploy.
+3. Encrypt the existing rows from a Rails console (`spree console` or `bin/rails console`):
+
+   ```ruby
+   [Spree::WebhookEndpoint, Spree::GatewayCustomer, Spree::UserIdentity].each { |model| model.find_each(&:encrypt) }
+   ```
+
+4. Remove the two settings from step 1 and deploy again.
+
+Apps created from an older `spree-starter` also need `config/application.rb` to read the env vars — see the [5.6 to 6.0 upgrade guide](/developer/upgrades/5.6-to-6.0#enable-active-record-encryption).
 
 ## URLs and Hosts
 

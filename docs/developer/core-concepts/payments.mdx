@@ -662,7 +662,7 @@ Maps a Spree customer to their provider-specific customer profile. This enables 
 | `payment_method_id` | The gateway this customer belongs to | `1` |
 | `customer_id` | The Spree customer | `42` |
 
-A customer has at most one record per payment method, and `profile_id` is encrypted with Active Record Encryption where it is configured.
+A customer has at most one record per payment method, and `profile_id` is encrypted with [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) where it is configured.
 
 <Note>
   This one is internal — the API does not expose it. It is listed here because

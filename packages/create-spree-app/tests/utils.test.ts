@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   detectPackageManager,
+  generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
   runCommand,
@@ -48,6 +49,21 @@ describe('generateSecretKeyBase', () => {
     const key1 = generateSecretKeyBase()
     const key2 = generateSecretKeyBase()
     expect(key1).not.toBe(key2)
+  })
+})
+
+describe('generateEncryptionKeys', () => {
+  it('returns 32-character alphanumeric values like db:encryption:init', () => {
+    const keys = generateEncryptionKeys()
+    for (const value of Object.values(keys)) {
+      expect(value).toMatch(/^[A-Za-z0-9]{32}$/)
+    }
+  })
+
+  it('generates distinct values', () => {
+    const keys = generateEncryptionKeys()
+    expect(new Set(Object.values(keys)).size).toBe(3)
+    expect(generateEncryptionKeys().primaryKey).not.toBe(keys.primaryKey)
   })
 })
 

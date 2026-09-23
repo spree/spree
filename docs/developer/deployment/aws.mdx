@@ -49,6 +49,11 @@ services:
     environment:
       DATABASE_URL: postgres://spree:YOUR_PASSWORD@your-db.abc123.eu-west-1.rds.amazonaws.com:5432/spree_production
       SECRET_KEY_BASE: generate-with-openssl-rand-hex-64
+      # Active Record encryption — generate with `spree encryption init --print`
+      # or `bin/rails db:encryption:init`; never change them once data is encrypted
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: ...
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: ...
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: ...
       RAILS_HOST: store.example.com
       # Uploads to S3 (recommended) — see /developer/deployment/assets
       # AWS_REGION: eu-west-1

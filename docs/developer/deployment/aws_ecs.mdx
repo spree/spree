@@ -222,6 +222,9 @@ Create the following secrets in AWS Secrets Manager:
 |---|---|---|
 | `spree/database-url` | `DATABASE_URL` | PostgreSQL connection URL |
 | `spree/secret-key-base` | `SECRET_KEY_BASE` | Generate with `bin/rails secret` |
+| `spree/ar-encryption-primary-key` | `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY` | [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) keys — generate all three with `bin/rails db:encryption:init` (or `spree encryption init --print`). Never change them once data is encrypted |
+| `spree/ar-encryption-deterministic-key` | `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` | Generated together with the primary key |
+| `spree/ar-encryption-key-derivation-salt` | `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` | Generated together with the primary key |
 
 Optional secrets for email delivery, file storage, and error tracking:
 
@@ -294,6 +297,18 @@ One task definition runs the whole app — the web server also runs background j
         {
           "name": "SECRET_KEY_BASE",
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-primary-key"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-deterministic-key"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-key-derivation-salt"
         }
       ],
       "logConfiguration": {
@@ -353,6 +368,18 @@ Switches to [split mode](/developer/deployment/quickstart#web-and-worker): backg
         {
           "name": "SECRET_KEY_BASE",
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-primary-key"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-deterministic-key"
+        },
+        {
+          "name": "ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/ar-encryption-key-derivation-salt"
         }
       ],
       "logConfiguration": {
