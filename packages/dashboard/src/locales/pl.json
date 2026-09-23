@@ -574,7 +574,7 @@
         "settings_label": "Ustawienia kalkulatora"
       },
       "create_line_items_action_editor": {
-        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka za darmo.",
         "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
         "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
         "variant_label": "Dodaj wariant"

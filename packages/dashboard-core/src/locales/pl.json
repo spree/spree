@@ -1916,7 +1916,7 @@
         },
         "create_line_items": {
           "name": "Utwórz pozycje zamówienia",
-          "description": "Dodaje do koszyka określoną ilość wariantu"
+          "description": "Dodaje do koszyka określoną ilość wariantu za darmo"
         },
         "free_shipping": {
           "name": "Darmowa wysyłka",

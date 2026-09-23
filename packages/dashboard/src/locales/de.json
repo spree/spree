@@ -564,7 +564,7 @@
         "settings_label": "Kalkulator-Einstellungen"
       },
       "create_line_items_action_editor": {
-        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb hinzugefügt.",
+        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb kostenlos hinzugefügt.",
         "empty": "Noch keine Varianten. Suchen Sie unten, um eine hinzuzufügen.",
         "search_placeholder": "Varianten nach Name oder SKU suchen…",
         "variant_label": "Variante hinzufügen"

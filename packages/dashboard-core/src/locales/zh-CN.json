@@ -1886,7 +1886,7 @@
         },
         "create_line_items": {
           "name": "创建订单项",
-          "description": "向购物车填充指定数量的变体"
+          "description": "将指定数量的变体免费加入购物车"
         },
         "free_shipping": {
           "name": "免运费",
