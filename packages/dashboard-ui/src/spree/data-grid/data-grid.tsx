@@ -241,7 +241,11 @@ function DataGridShell<T>({
             className,
           )}
           aria-label={ariaLabel}
-          onBlurCapture={(e) => {
+          // Bubble phase, never capture: React dispatches the two phases from
+          // separate native listeners and renders queued updates between
+          // them, so clearing `editing` here first would re-render the cell
+          // out of edit mode before its own blur commits the typed value.
+          onBlur={(e) => {
             // A cell unmounting mid-commit is not the merchant leaving the
             // grid: `relatedTarget` is null there, and the dialog's focus
             // trap then claims the focus a frame later. Take it back on the
