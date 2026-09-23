@@ -8,7 +8,7 @@
 <% end %>
 
 <% order.fulfillments.group_by { |f| f.selected_delivery_rate.try(:name) }.each do |name, shipments| %>
-  <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
+  <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:cost), currency: order.currency) %>
 <% end %>
 
 <% if order.additional_tax_total != 0 %>
