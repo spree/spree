@@ -50,6 +50,8 @@ describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleD
     let(:order_3) { create(:order, customer: user, created_by: create(:admin_user), store: store) }
 
     it 'returns correct order' do
+      allow(Spree::Deprecation).to receive(:warn)
+
       Timecop.scale(3600) do
         order_1
         order_2
