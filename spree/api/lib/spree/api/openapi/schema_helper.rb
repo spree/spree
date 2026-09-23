@@ -250,8 +250,8 @@ module Spree
         #
         # The seller branch has no API-key credential, so its AuthResponse is
         # neither the store's nor the admin's: signing in returns the JWT, the
-        # team member who signed in, and the sellers they may act for — the
-        # panel cannot make another request until it has picked one.
+        # person who signed in, and the sellers they may act for — the panel
+        # cannot make another request until it has picked one.
         def seller_schemas
           schemas = common_schemas
 
@@ -259,7 +259,10 @@ module Spree
             type: :object,
             properties: {
               token: { type: :string, description: 'JWT access token, `seller_api` audience' },
-              user: { '$ref' => '#/components/schemas/TeamMember' },
+              # `Account`, not `TeamMember`: the panel adopts the signed-in
+              # person's saved language from this payload, which is what
+              # carries the choice to a second browser.
+              user: { '$ref' => '#/components/schemas/Account' },
               sellers: {
                 type: :array,
                 description: 'The sellers this user may act for. Pick one and send its `id` as `X-Spree-Seller-Id` on every subsequent request.',
@@ -309,7 +312,10 @@ module Spree
               type: :object,
               description: 'The signed-in user, the sellers they may act for, and what they may do on the selected one',
               properties: {
-                user: { '$ref' => '#/components/schemas/TeamMember' },
+                # `Account`, not `TeamMember`: the person reading their own
+                # record also sees the panel language they chose, which the
+                # team list does not publish about a colleague.
+                user: { '$ref' => '#/components/schemas/Account' },
                 sellers: { type: :array, items: { '$ref' => '#/components/schemas/SellerMeSummary' } },
                 permissions: { type: :array, items: { '$ref' => '#/components/schemas/PermissionRule' } },
                 permission_keys: {

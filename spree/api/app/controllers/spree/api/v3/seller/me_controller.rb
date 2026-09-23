@@ -20,11 +20,32 @@ module Spree
             render json: me_response
           end
 
+          # Self-service update of the signed-in person's own account — the
+          # name and photo their team sees, and the panel's language. It
+          # operates on `current_user` directly, so it needs no per-record
+          # authorization, and no seller role either: this is theirs whichever
+          # seller they are acting for.
+          #
+          # Distinct from PATCH /profile, which writes the seller business.
+          # `avatar` accepts an ActiveStorage direct-upload signed id to set
+          # the photo, or `null` to remove it.
+          def update
+            if current_user.update(permitted_params)
+              render json: me_response
+            else
+              render_validation_error(current_user.errors)
+            end
+          end
+
           private
+
+          def permitted_params
+            params.permit(:selected_locale, :first_name, :last_name, :avatar)
+          end
 
           def me_response
             {
-              user: Spree.api.seller_team_member_serializer.new(current_user, params: serializer_params).to_h,
+              user: Spree.api.seller_account_serializer.new(current_user, params: serializer_params).to_h,
               sellers: serialized_sellers,
               # Both shapes, exactly as the admin `/me`: the panel's `<Can>`
               # reads CanCanCan rules, the key gate reads keys. Sending only

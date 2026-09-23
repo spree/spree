@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { MeResponse } from '@spree/admin-sdk'
 import {
   ImageUploadField,
   i18n,
@@ -29,29 +28,39 @@ import {
   Skeleton,
   toastManager,
 } from '@spree/dashboard-ui'
+import type { MeResponse } from '@spree/seller-sdk'
 import { useEffect, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useProfile, useUpdateProfile } from '../../hooks/use-profile'
-import { getAvailableUiLocales } from '../../i18n-setup'
-import { type MeFormValues, meFormSchema, meToForm, meToParams } from '../../schemas/me'
+import { useAccount, useUpdateAccount } from '../hooks/use-account'
+import { getAvailableUiLocales } from '../i18n'
+import {
+  type AccountFormValues,
+  accountFormSchema,
+  accountToForm,
+  accountToParams,
+} from '../schemas/account'
 
-// The language the dashboard is currently displaying — persisted in
-// localStorage and applied by i18next at boot. Used as the profile language
-// fallback when the account has no saved `selected_locale`, so the picker
-// reflects what the user actually sees (and a save persists it) instead of
-// initializing to an empty value that matches no option and renders blank.
+// The language the panel is currently displaying — persisted in localStorage
+// and applied by i18next at boot. Used as the fallback when the account has no
+// saved `selected_locale`, so the picker reflects what the person actually
+// sees (and a save persists it) rather than starting empty and matching no
+// option.
 function currentUiLocale(): string {
-  const available = getAvailableUiLocales().map((l) => l.code)
+  const available = getAvailableUiLocales().map((locale) => locale.code)
   const active = i18n.resolvedLanguage ?? i18n.language
   return active && available.includes(active) ? active : 'en'
 }
 
 /**
- * Edit-profile dialog for the signed-in admin. Opened from the top-bar user
- * menu — the profile has no page of its own.
+ * Edit-account dialog for the signed-in person — their name, photo and the
+ * panel's language. Opened from the sidebar's account menu; it has no page of
+ * its own.
+ *
+ * Not to be confused with the profile page, which is the seller business they
+ * act for. This is theirs, and follows them between sellers.
  */
-export function ProfileDialog({
+export function AccountDialog({
   open,
   onOpenChange,
 }: {
@@ -59,20 +68,20 @@ export function ProfileDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
-  // The dialog is mounted on every store page; don't fetch until it opens.
-  const { data: me, isLoading, error, refetch } = useProfile(open)
+  // Mounted on every page of the panel; don't fetch until it opens.
+  const { data: me, isLoading, error, refetch } = useAccount(open)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('admin.pages.profile.title')}</DialogTitle>
-          <DialogDescription>{t('admin.pages.profile.subtitle')}</DialogDescription>
+          <DialogTitle>{t('account.title')}</DialogTitle>
+          <DialogDescription>{t('account.subtitle')}</DialogDescription>
         </DialogHeader>
         {error ? (
           <DialogBody>
             <ErrorState
-              title={t('admin.pages.profile.load_failed_title')}
+              title={t('account.load_failed_title')}
               description={error instanceof Error ? error.message : undefined}
               onRetry={() => refetch()}
             />
@@ -85,17 +94,17 @@ export function ProfileDialog({
             <Skeleton className="h-9 w-full" />
           </DialogBody>
         ) : (
-          // Mount the form only once `me` is loaded so `useForm` initializes
-          // with concrete string defaults — keeps the inputs/Select controlled
-          // from the first render.
-          <ProfileForm me={me} onOpenChange={onOpenChange} />
+          // Mount the form only once the account has loaded, so `useForm`
+          // initializes with concrete string defaults — that keeps the inputs
+          // and the Select controlled from their first render.
+          <AccountForm me={me} onOpenChange={onOpenChange} />
         )}
       </DialogContent>
     </Dialog>
   )
 }
 
-function ProfileForm({
+function AccountForm({
   me,
   onOpenChange,
 }: {
@@ -104,46 +113,44 @@ function ProfileForm({
 }) {
   const { t } = useTranslation()
   const { updateUser } = useAuth()
-  const updateMutation = useUpdateProfile()
+  const updateMutation = useUpdateAccount()
 
-  const form = useForm<MeFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(meFormSchema) as any,
-    defaultValues: meToForm(me, currentUiLocale()),
+  const form = useForm<AccountFormValues>({
+    resolver: zodResolver(accountFormSchema),
+    defaultValues: accountToForm(me, currentUiLocale()),
   })
 
-  // Re-baseline from the refetched profile after a save (e.g. to surface the
-  // newly-persisted avatar_url as the server image), unless the admin has
-  // unsaved edits in flight.
+  // Re-baseline from the refetched account after a save (to surface the
+  // newly-persisted photo as the server image), unless there are unsaved
+  // edits in flight.
   useEffect(() => {
     if (form.formState.isDirty) return
-    form.reset(meToForm(me, currentUiLocale()))
+    form.reset(accountToForm(me, currentUiLocale()))
   }, [me, form])
 
-  // Release the picked avatar's object URL when it's replaced or the dialog
-  // unmounts. ImageUploadField hands the blob URL to the form (its caller), so
-  // the form owns revoking it — otherwise form.reset() (re-baseline above) or a
-  // close drops it without freeing the blob. Double-revokes (the field also
-  // revokes on replace/remove) are harmless no-ops.
+  // Release the picked photo's object URL when it is replaced or the dialog
+  // unmounts. `ImageUploadField` hands the blob URL to the form, so the form
+  // owns revoking it — otherwise a `reset` (the re-baseline above) or a close
+  // drops the reference without freeing the blob. Double revokes are harmless.
   const avatarPreviewUrl = form.watch('avatar_preview_url')
   useEffect(() => {
     if (!avatarPreviewUrl) return
     return () => URL.revokeObjectURL(avatarPreviewUrl)
   }, [avatarPreviewUrl])
 
-  const onSubmit = async (values: MeFormValues) => {
+  const onSubmit = async (values: AccountFormValues) => {
     try {
-      const updated = await updateMutation.mutateAsync(meToParams(values))
-      // Reflect the new name/locale/avatar in the auth context (top-bar, etc.)
-      // immediately instead of waiting for the next token refresh.
+      const updated = await updateMutation.mutateAsync(accountToParams(values))
+      // Reflect the new name and photo in the auth context (the sidebar's
+      // account row) straight away, rather than waiting for a token refresh.
       updateUser(updated.user)
-      toastManager.add({ type: 'success', title: t('admin.messages.profile_updated') })
-      // Closing unmounts the form, so the avatar state doesn't need preserving
-      // across the save — the reopened dialog re-hydrates from the mutation
-      // response that `useUpdateProfile` writes into the cache.
+      toastManager.add({ type: 'success', title: t('account.saved') })
+      // Closing unmounts the form, so the avatar state needs no preserving
+      // across the save — reopening re-hydrates from the mutation response
+      // that `useUpdateAccount` writes into the cache.
       form.reset({ ...values, avatar_signed_id: null })
       onOpenChange(false)
-      // Apply a changed admin language by reloading in the new language.
+      // A changed language takes effect by reloading in it.
       const code = values.selected_locale
       if (code && code !== i18n.language) switchLocale(code)
     } catch (err) {
@@ -153,11 +160,11 @@ function ProfileForm({
     }
   }
 
-  // Admin-UI language options come from the dashboard's own shipped locale
-  // bundles (see getAvailableUiLocales) — NOT the backend. The picker is hidden
-  // when fewer than two languages are installed (nothing to choose).
+  // The panel's own shipped locale bundles, not the backend — those are what
+  // it can actually display. Hidden when fewer than two are installed, since
+  // there is then nothing to choose.
   const localeOptions = useMemo(
-    () => getAvailableUiLocales().map((l) => ({ value: l.code, label: l.name })),
+    () => getAvailableUiLocales().map((locale) => ({ value: locale.code, label: locale.name })),
     [],
   )
   const showLanguagePicker = localeOptions.length >= 2
@@ -168,15 +175,15 @@ function ProfileForm({
     <form onSubmit={form.handleSubmit(onSubmit)} className="contents">
       <DialogBody className="flex flex-col gap-4">
         {errors.root?.message && (
-          <p className="text-sm text-destructive" role="alert">
+          <p className="text-destructive text-sm" role="alert">
             {errors.root.message}
           </p>
         )}
         <ImageUploadField
           square
           serverUrl={me.user.avatar_url}
-          label={t('admin.fields.profile.avatar.label')}
-          help={t('admin.fields.profile.avatar.help')}
+          label={t('account.avatar')}
+          help={t('account.avatar_help')}
           value={{
             signedId: form.watch('avatar_signed_id'),
             previewUrl: form.watch('avatar_preview_url'),
@@ -189,27 +196,23 @@ function ProfileForm({
           }}
         />
         <Field>
-          <FieldLabel htmlFor="profile-email">{t('admin.fields.profile.email.label')}</FieldLabel>
+          <FieldLabel htmlFor="account-email">{t('account.email')}</FieldLabel>
           {/* Email is identity-bound; PATCH /me does not accept it. */}
-          <Input id="profile-email" type="email" value={me.user.email} disabled />
+          <Input id="account-email" type="email" value={me.user.email} disabled />
         </Field>
         <Field>
-          <FieldLabel htmlFor="profile-first-name">
-            {t('admin.fields.profile.first_name.label')}
-          </FieldLabel>
+          <FieldLabel htmlFor="account-first-name">{t('account.first_name')}</FieldLabel>
           <Input
-            id="profile-first-name"
+            id="account-first-name"
             aria-invalid={!!errors.first_name || undefined}
             {...form.register('first_name')}
           />
           <FieldError errors={[errors.first_name]} />
         </Field>
         <Field>
-          <FieldLabel htmlFor="profile-last-name">
-            {t('admin.fields.profile.last_name.label')}
-          </FieldLabel>
+          <FieldLabel htmlFor="account-last-name">{t('account.last_name')}</FieldLabel>
           <Input
-            id="profile-last-name"
+            id="account-last-name"
             aria-invalid={!!errors.last_name || undefined}
             {...form.register('last_name')}
           />
@@ -221,24 +224,22 @@ function ProfileForm({
             control={form.control}
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel htmlFor="profile-language">
-                  {t('admin.fields.profile.selected_locale.label')}
-                </FieldLabel>
+                <FieldLabel htmlFor="account-language">{t('account.language')}</FieldLabel>
                 <Select
                   items={localeOptions as never}
                   value={field.value}
                   onValueChange={field.onChange}
                 >
                   <SelectTrigger
-                    id="profile-language"
+                    id="account-language"
                     aria-invalid={!!fieldState.error || undefined}
                   >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {localeOptions.map((o) => (
-                      <SelectItem key={o.value} value={o.value}>
-                        {o.label}
+                    {localeOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -256,13 +257,12 @@ function ProfileForm({
           onClick={() => onOpenChange(false)}
           disabled={isSubmitting}
         >
-          {t('admin.actions.cancel')}
+          {t('common.cancel')}
         </Button>
-        {/* Gated on `isDirty` to match `FormActions` (what the page this
-            replaced used) — without it a pristine Save PATCHes and toasts
-            success having changed nothing. */}
+        {/* Gated on `isDirty`: without it a pristine Save sends a PATCH and
+            toasts success having changed nothing. */}
         <Button type="submit" disabled={!isDirty || isSubmitting}>
-          {isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
+          {isSubmitting ? t('account.saving') : t('common.save')}
         </Button>
       </DialogFooter>
     </form>

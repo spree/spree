@@ -63,3 +63,54 @@ describe('i18n initialization ordering', () => {
     expect(i18n.resolvedLanguage ?? i18n.language).toBe('pl')
   })
 })
+
+/**
+ * A person's saved language is shared by every panel they sign in to, and
+ * panels ship different languages. `sessionLocale` decides what a new session
+ * switches to, given what the panel declared it can display.
+ */
+describe('sessionLocale', () => {
+  async function load(declared?: string[]) {
+    vi.resetModules()
+    vi.stubGlobal('localStorage', {
+      getItem: () => null,
+      setItem: () => undefined,
+      removeItem: () => undefined,
+    })
+    const mod = await import('../src/lib/i18n')
+    if (declared) mod.setUiLocales(declared)
+    return mod
+  }
+
+  it('adopts the saved language when the panel ships it', async () => {
+    const { sessionLocale } = await load(['en', 'de'])
+
+    expect(sessionLocale('de', 'en')).toBe('de')
+  })
+
+  it('stays put when the page is already in the saved language', async () => {
+    const { sessionLocale } = await load(['en', 'de'])
+
+    expect(sessionLocale('de', 'de')).toBeNull()
+  })
+
+  it('ignores a saved language the panel does not ship', async () => {
+    const { sessionLocale, isUiLocale } = await load(['en', 'de'])
+
+    expect(isUiLocale('es')).toBe(false)
+    expect(sessionLocale('es', 'de')).toBeNull()
+  })
+
+  it('returns to English when neither the saved nor the booted language is shipped', async () => {
+    const { sessionLocale } = await load(['en', 'de'])
+
+    expect(sessionLocale('es', 'es')).toBe('en')
+  })
+
+  it('accepts every language until a panel declares its own', async () => {
+    const { sessionLocale, isUiLocale } = await load()
+
+    expect(isUiLocale('es')).toBe(true)
+    expect(sessionLocale('es', 'en')).toBe('es')
+  })
+})

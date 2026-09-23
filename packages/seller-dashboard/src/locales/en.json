@@ -12,6 +12,20 @@
     "subtitle": "You were invited as {{email}}. Set a password to finish.",
     "title": "Join the team"
   },
+  "account": {
+    "avatar": "Photo",
+    "avatar_help": "Shown next to your name across the panel. Square images look best.",
+    "email": "Email",
+    "first_name": "First name",
+    "language": "Language",
+    "last_name": "Last name",
+    "load_failed_title": "Couldn't load your profile",
+    "save_failed": "Couldn't save your profile",
+    "saved": "Profile updated",
+    "saving": "Saving…",
+    "subtitle": "Manage your personal details and panel language.",
+    "title": "Profile"
+  },
   "admin": {
     "actions": {
       "actions_menu": "Actions",
