@@ -4256,6 +4256,7 @@
         "denied": "Odrzucona",
         "fulfilled": "Wysłany",
         "open": "Otwarta",
+        "partially_refunded": "Częściowo zwrócony",
         "received": "Otrzymany",
         "refunded": "Zwrócony",
         "requested": "Zgłoszony",

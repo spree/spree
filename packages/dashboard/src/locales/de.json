@@ -4202,6 +4202,7 @@
         "denied": "Abgelehnt",
         "fulfilled": "Versandt",
         "open": "Offen",
+        "partially_refunded": "Teilweise erstattet",
         "received": "Erhalten",
         "refunded": "Erstattet",
         "requested": "Angefragt",

@@ -523,6 +523,7 @@
         "requested": "Requested",
         "approved": "Approved",
         "received": "Received",
+        "partially_refunded": "Partially refunded",
         "refunded": "Refunded",
         "fulfilled": "Fulfilled",
         "open": "Open",

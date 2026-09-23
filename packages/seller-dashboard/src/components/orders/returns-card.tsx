@@ -28,7 +28,9 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Refunded and canceled returns are finished; offering a menu on them would
 // open onto nothing.
-const ACTIONABLE = ['requested', 'approved', 'received']
+const ACTIONABLE = ['requested', 'approved', 'received', 'partially_refunded']
+// A return can be refunded in steps, so a partial refund leaves it refundable.
+const REFUNDABLE = ['received', 'partially_refunded']
 
 /**
  * Goods coming back on this order.
@@ -112,7 +114,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                             {t('orders.post_sale.returns.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {REFUNDABLE.includes(returnRecord.status) && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             {t('orders.post_sale.returns.refund')}
                           </DropdownMenuItem>

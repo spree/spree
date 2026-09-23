@@ -188,7 +188,9 @@ module Spree
 
       # Everything still in flight, not just the first step: an approved return
       # still needs receiving and refunding, so it is as much outstanding work
-      # as one nobody has looked at. Terminal statuses drop out.
+      # as one nobody has looked at. Terminal statuses drop out, and so does a
+      # partially refunded return: someone has already settled it, often short
+      # on purpose (a restocking fee), and it would otherwise count forever.
       OPEN_RETURN_STATUSES = %w[requested approved received].freeze
       OPEN_EXCHANGE_STATUSES = %w[requested approved received].freeze
       OPEN_CLAIM_STATUSES = %w[open approved].freeze

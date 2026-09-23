@@ -12,7 +12,7 @@ RSpec.describe Spree::HasStatus do
   end
 
   it 'declares the valid values and a default' do
-    expect(model.statuses).to eq(%w[requested approved received refunded canceled])
+    expect(model.statuses).to eq(%w[requested approved received partially_refunded refunded canceled])
     expect(model.default_status).to eq('requested')
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Spree::HasStatus do
     it 'inserts after a named status' do
       model.add_status(:inspecting, after: :received)
 
-      expect(model.statuses).to eq(%w[requested approved received inspecting refunded canceled])
+      expect(model.statuses).to eq(%w[requested approved received inspecting partially_refunded refunded canceled])
     end
 
     it 'accepts a record carrying the added status' do

@@ -48,7 +48,7 @@ On top of that, meaningful business moments get their own events:
 | `payment.completed` / `payment.voided` | A payment succeeded / was released |
 | `fulfillment.fulfilled` / `fulfillment.canceled` | A parcel went out / was stood down |
 | `product.out_of_stock` / `product.back_in_stock` | Availability flipped |
-| `return.received` / `return.refunded` | A return arrived / was refunded |
+| `return.received` / `return.refunded` | A return arrived / was refunded (published for every refund, including partial ones) |
 | `import.completed` | An import finished |
 
 For the full list of events and their payloads, see [Webhook Events & Payloads](/api-reference/webhooks-events).

@@ -40,7 +40,9 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
-const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+const RETURN_ACTIONABLE = ['requested', 'approved', 'received', 'partially_refunded']
+// A return can be refunded in steps, so a partial refund leaves it refundable.
+const RETURN_REFUNDABLE = ['received', 'partially_refunded']
 
 /** "Product — Small / Blue", falling back to the SKU or the raw id. */
 function variantLabel(line: ReturnLineItem): string {
@@ -132,7 +134,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                             {t('admin.pages.orders.detail.returns.actions.receive')}
                           </DropdownMenuItem>
                         )}
-                        {returnRecord.status === 'received' && (
+                        {RETURN_REFUNDABLE.includes(returnRecord.status) && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
                             <BanknoteIcon className="size-4" />
                             {t('admin.pages.orders.detail.returns.actions.refund')}
@@ -319,7 +321,7 @@ function ReturnLabel({
 
 function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
-  const received = ['received', 'refunded'].includes(status)
+  const received = ['received', 'partially_refunded', 'refunded'].includes(status)
 
   return (
     <div className="flex items-center justify-between text-sm">

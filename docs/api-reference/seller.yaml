@@ -21523,6 +21523,7 @@ components:
             - requested
             - approved
             - received
+            - partially_refunded
             - refunded
             - canceled
           - type: string
