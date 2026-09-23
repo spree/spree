@@ -19,7 +19,7 @@ import { type NavEntry, resolveNavLabel, useNavEntries } from '../lib/nav-regist
 import type { ActionName, SubjectName } from '../lib/permissions'
 import { type Permissions, usePermissions } from '../providers/permission-provider'
 import { useOptionalStore } from '../providers/store-provider'
-import { type NavItem, NavMain } from './nav-main'
+import { NavBottom, type NavItem, NavMain } from './nav-main'
 import { SidebarSearch } from './sidebar-search'
 import { SidebarUser } from './sidebar-user'
 import { StoreSwitcher } from './store-switcher'
@@ -146,6 +146,7 @@ export function AppSidebar({
   const { i18n } = useTranslation()
   const { storeId } = useParams({ strict: false }) as { storeId?: string }
   const { navItems, bottomItems, isLoading } = useNavItems(tenantId ?? storeId ?? 'default')
+  const { isMobile } = useSidebar()
 
   return (
     <Sidebar collapsible="icon" variant="inset" side={primarySidebarSide(i18n.language)} {...props}>
@@ -173,8 +174,21 @@ export function AppSidebar({
             Keyed on `isLoading` alone, not on an empty list: entries without a
             `subject` (Home, Getting Started) skip the permission filter, so the
             list is never actually empty and a length check would never fire. */}
-        {isLoading ? <NavSkeleton /> : <NavMain items={navItems} bottomItems={bottomItems} />}
+        {isLoading ? (
+          <NavSkeleton />
+        ) : (
+          <>
+            <NavMain items={navItems} />
+            {/* Pinned to the foot of a full-height drawer, Settings would sit
+                alone below a screen of empty space, so on a phone it follows
+                the list. */}
+            {isMobile && <NavBottom items={bottomItems} className="mb-2" />}
+          </>
+        )}
       </SidebarContent>
+      {/* Outside the scroll area on desktop, so Settings stays in reach and the
+          list fades out above it rather than scrolling it away. */}
+      {!isLoading && !isMobile && <NavBottom items={bottomItems} className="py-2" />}
       <SidebarFooter className="hidden md:flex">
         <SidebarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
       </SidebarFooter>

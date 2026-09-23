@@ -22,7 +22,10 @@ export function MetadataCard({ metadata, title, emptyTitle, emptyDescription }: 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>
+          <BracesIcon className="size-4" />
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {entries.length === 0 ? (

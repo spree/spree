@@ -52,14 +52,21 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
+  BanknoteIcon,
   DownloadIcon,
+  EyeIcon,
   FilmIcon,
+  FolderTreeIcon,
+  ImageIcon,
   ImagePlusIcon,
   LibraryIcon,
   Loader2Icon,
   PencilIcon,
   PlayIcon,
+  ReceiptTextIcon,
+  SearchIcon,
   TrashIcon,
+  WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
@@ -118,9 +125,6 @@ export function GeneralCard({
   const { errors } = form.formState
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_basics')}</CardTitle>
-      </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>
           <FieldLabel htmlFor="product-name">{t('admin.fields.name.label')}</FieldLabel>
@@ -204,7 +208,10 @@ export function PricesCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle>{t('admin.common.prices')}</CardTitle>
+        <CardTitle>
+          <BanknoteIcon className="size-4" />
+          {t('admin.common.prices')}
+        </CardTitle>
         {currencies.length > 1 && (
           <Select value={currency} onValueChange={setCurrency}>
             <SelectTrigger size="sm" className="w-24">
@@ -220,12 +227,11 @@ export function PricesCard({
           </Select>
         )}
       </CardHeader>
-      {/* `p-0` like every other card holding a table: the grid draws its own
-          cell borders to the card's edges, and padding here insets it into a
-          floating block with a gutter on all four sides. */}
-      <CardContent className="p-0">
+      <CardContent>
         {currencyResolved ? (
-          <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
+          <div className="border rounded overflow-hidden">
+            <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
+          </div>
         ) : (
           <div className="m-3 h-24 animate-pulse rounded-md bg-muted" />
         )}
@@ -504,7 +510,10 @@ export function MediaCard({
     <>
       <Card className="scroll-mt-[calc(var(--spacing-header-height)+1.5rem)]">
         <CardHeader>
-          <CardTitle>{t('admin.pages.products.section_media')}</CardTitle>
+          <CardTitle>
+            <ImageIcon className="size-4" />
+            {t('admin.pages.products.section_media')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {(items.length > 0 || pending.length > 0) && (
@@ -771,11 +780,16 @@ export function InventoryCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_inventory')}</CardTitle>
+        <CardTitle>
+          <WarehouseIcon className="size-4" />
+          {t('admin.pages.products.section_inventory')}
+        </CardTitle>
         {actions && <CardAction>{actions}</CardAction>}
       </CardHeader>
-      <CardContent className="p-0">
-        <InventorySection form={form} stockLocationHref={stockLocationHref} />
+      <CardContent>
+        <div className="border rounded overflow-hidden">
+          <InventorySection form={form} stockLocationHref={stockLocationHref} />
+        </div>
       </CardContent>
     </Card>
   )
@@ -804,7 +818,10 @@ export function SEOCard({ form, product }: FormCardProps & { product?: Product }
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_seo')}</CardTitle>
+        <CardTitle>
+          <SearchIcon className="size-4" />
+          {t('admin.pages.products.section_seo')}
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="rounded-lg border border-border p-4 space-y-1">
@@ -892,6 +909,7 @@ export function StatusCard({
       control={form.control as Control<ProductFormValues>}
       name="status"
       title={t('admin.fields.status.label')}
+      icon={<EyeIcon className="size-4" />}
       label={t('admin.fields.status.label')}
       disabled={awaitingDecision}
       description={awaitingDecision ? t('admin.pages.products.status_under_review') : undefined}
@@ -978,7 +996,10 @@ export function CategorizationCard({ form }: FormCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.pages.products.section_categorization')}</CardTitle>
+        <CardTitle>
+          <FolderTreeIcon className="size-4" />
+          {t('admin.pages.products.section_categorization')}
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {client.productTypes && (
@@ -1132,7 +1153,10 @@ export function TaxCard({ form }: FormCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.fields.tax.label')}</CardTitle>
+        <CardTitle>
+          <ReceiptTextIcon className="size-4" />
+          {t('admin.fields.tax.label')}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Field>

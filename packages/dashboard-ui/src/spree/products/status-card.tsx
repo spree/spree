@@ -19,6 +19,7 @@ export function StatusCard<TFieldValues extends FieldValues>({
   control,
   name,
   title,
+  icon,
   label,
   options,
   disabled,
@@ -28,6 +29,7 @@ export function StatusCard<TFieldValues extends FieldValues>({
   control: Control<TFieldValues>
   name: Path<TFieldValues>
   title: string
+  icon?: React.ReactNode
   label: string
   options: StatusOption[]
   disabled?: boolean
@@ -42,7 +44,10 @@ export function StatusCard<TFieldValues extends FieldValues>({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>
+          {icon}
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <Field>

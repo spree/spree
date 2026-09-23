@@ -293,7 +293,7 @@ function DataGridShell<T>({
                     // The table-level classes zero this cell's own top and
                     // bottom borders: a border sits outside the padding box and
                     // the shadow inside, so leaving both draws two rules at rest.
-                    className="h-8 bg-muted px-3 text-left font-medium shadow-[inset_0_-1px_0_0_var(--border)]"
+                    className="h-8 bg-muted px-3 text-left font-medium text-nowrap shadow-[inset_0_-1px_0_0_var(--border)]"
                   >
                     {header.isPlaceholder
                       ? null

@@ -16,7 +16,7 @@ import {
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { FileIcon, Loader2Icon, UploadIcon, XIcon } from '@spree/dashboard-ui/icons'
+import { FileDownIcon, FileIcon, Loader2Icon, UploadIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { useCallback, useRef, useState } from 'react'
 import type { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -117,7 +117,10 @@ export function DigitalFilesFormCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.digital_assets.title')}</CardTitle>
+        <CardTitle>
+          <FileDownIcon className="size-4" />
+          {t('admin.digital_assets.title')}
+        </CardTitle>
         {!empty && (
           <CardAction>
             <Button
@@ -156,8 +159,8 @@ export function DigitalFilesFormCard({
             <p className="text-muted-foreground text-sm">{t('admin.digital_assets.drop_hint')}</p>
           </button>
         ) : (
-          <div className="overflow-hidden rounded-md border border-border">
-            <Table className="border-collapse [&_td]:rounded-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border">
+          <div className="overflow-hidden rounded-xl border border-border-subtle">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>
