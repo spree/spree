@@ -33,7 +33,11 @@ module Spree
         run_hooks :before_refund
 
         if internal_refund?
-          ApplicationRecord.transaction do
+          # Store credit reserves nothing before it is written, so two refunds
+          # at once would both fit the balance read above. The return's row
+          # lock serializes them and the balance is re-read inside it.
+          return_record.with_lock do
+            step :resolve_amount
             step :issue_store_credit
             step :mark_refunded
           end

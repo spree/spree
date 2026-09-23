@@ -31,6 +31,8 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 const ACTIONABLE = ['requested', 'approved', 'received', 'partially_refunded']
 // A return can be refunded in steps, so a partial refund leaves it refundable.
 const REFUNDABLE = ['received', 'partially_refunded']
+// Once goods have arrived the return can only be refunded, not canceled.
+const CANCELLABLE = ['requested', 'approved']
 
 /**
  * Goods coming back on this order.
@@ -119,13 +121,17 @@ export function ReturnsCard({ order }: { order: Order }) {
                             {t('orders.post_sale.returns.refund')}
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() => handleCancel(returnRecord)}
-                        >
-                          {t('orders.post_sale.cancel')}
-                        </DropdownMenuItem>
+                        {CANCELLABLE.includes(returnRecord.status) && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => handleCancel(returnRecord)}
+                            >
+                              {t('orders.post_sale.cancel')}
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   )}

@@ -235,6 +235,20 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(Spree::StoreCredit.where(originator: return_record).count).to eq(1)
       end
 
+      it 'refuses store credit when a concurrent refund took the balance after it was first read' do
+        Spree.hooks.register('returns.refund.before_refund') do |flow|
+          create(:store_credit, store: return_record.store, customer: return_record.order.customer,
+                                amount: part, currency: return_record.currency, originator: flow.return_record)
+        end
+
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: return_record.refund_total,
+                                             refund_method: 'store_credit')
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_balance)
+        expect(Spree::StoreCredit.where(originator: return_record).pluck(:amount)).to eq([part])
+      end
+
       it 'refuses a return that is already fully refunded' do
         Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
 
