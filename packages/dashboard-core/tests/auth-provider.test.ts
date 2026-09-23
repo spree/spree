@@ -224,31 +224,6 @@ describe('AuthProvider establishSession', () => {
     })
     expect(auth.isLoading).toBe(false)
   })
-
-  it('keeps a session that started while a logout request was in flight', async () => {
-    await mount(signedOut)
-    await act(async () => {
-      await auth.establishSession(session)
-    })
-    const logoutRequest = deferred<void>()
-    vi.mocked(client.auth.logout).mockReturnValueOnce(logoutRequest.promise)
-
-    let loggedOut!: Promise<void>
-    act(() => {
-      loggedOut = auth.logout()
-    })
-    const next = { token: 'next-session', user: { id: 'admin_2' } as AdminUser }
-    await act(async () => {
-      await auth.establishSession(next)
-    })
-    await act(async () => {
-      logoutRequest.resolve()
-      await loggedOut
-    })
-
-    expect(auth.isAuthenticated).toBe(true)
-    expect(auth.token).toBe('next-session')
-  })
 })
 
 describe('AuthProvider refresh', () => {
@@ -279,6 +254,35 @@ describe('AuthProvider refresh', () => {
 
     expect(queryClient.getQueryData(['store'])).toEqual({ id: 'store_1' })
     expect(client.clearTenant).not.toHaveBeenCalled()
+  })
+
+  it('ends signed out when a refresh returns another account while logout is pending', async () => {
+    await mount(() => Promise.resolve(session))
+    const logoutRequest = deferred<void>()
+    vi.mocked(client.auth.logout).mockReturnValueOnce(logoutRequest.promise)
+    const refresh = deferred<AuthTokens>()
+    vi.mocked(client.auth.refresh).mockReturnValueOnce(refresh.promise)
+
+    const handler = vi.mocked(client.onUnauthorized).mock.calls[0][0]
+    let refreshed!: Promise<boolean>
+    act(() => {
+      refreshed = handler()
+    })
+    let loggedOut!: Promise<void>
+    act(() => {
+      loggedOut = auth.logout()
+    })
+    await act(async () => {
+      refresh.resolve({ token: 'other-tab', user: { id: 'admin_2' } as AdminUser })
+      await refreshed
+    })
+    await act(async () => {
+      logoutRequest.resolve()
+      await loggedOut
+    })
+
+    expect(auth.isAuthenticated).toBe(false)
+    expect(auth.user).toBeNull()
   })
 
   it("drops the previous account's cached data when a refresh returns another account", async () => {

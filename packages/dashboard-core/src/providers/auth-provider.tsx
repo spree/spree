@@ -242,15 +242,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const logout = useCallback(async () => {
+    // Logout wins: any sign-in or refresh still in flight is discarded.
     signInGenerationRef.current += 1
-    const sessionGeneration = sessionGenerationRef.current
+    sessionGenerationRef.current += 1
     try {
       await getApiClient().auth.logout()
     } catch {
       // Server unreachable — clear locally; the row will expire naturally.
     } finally {
-      // Skipped when a newer session started while the request was in flight.
-      if (sessionGeneration === sessionGenerationRef.current) clearSession()
+      clearSession()
     }
   }, [clearSession])
 
