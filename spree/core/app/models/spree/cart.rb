@@ -36,6 +36,7 @@ module Spree
     include Spree::Purchase::Validations
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
+    include Spree::Purchase::OrderRouting
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -167,7 +168,9 @@ module Spree
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
-    # the current items/address; nothing here touches a completed cart.
+    # the current items/address through the channel's order routing strategy,
+    # the same one staff-built orders use; nothing here touches a completed
+    # cart.
     def rebuild_fulfillments!
       return if completed?
 
@@ -185,7 +188,8 @@ module Spree
       # inverse_of it), so a collection assignment sees the rows as already
       # present, writes none of them, and the cart ends up with no proposals at
       # all.
-      Spree::Stock::Coordinator.new(self).fulfillments.each do |fulfillment|
+      order_routing_strategy.for_allocation.each do |package|
+        fulfillment = package.to_fulfillment
         fulfillment.address_id = ship_address_id
         fulfillment.order = nil
         fulfillments << fulfillment

@@ -2,7 +2,7 @@ module Spree
   module Orders
     # Shared fulfillment-building step for admin order Create / Update.
     #
-    # Rebuilds fulfillments from scratch (Stock::Coordinator), then layers in
+    # Rebuilds fulfillments from scratch (order routing), then layers in
     # tax, costs, and free-shipping promotions so totals reflect delivery
     # before payment is requested. Without this, draft orders would expose
     # delivery_total: 0.0 until completion is attempted — which is too late.

@@ -59,6 +59,7 @@ module Spree
         end
 
         external_step :notify_fulfillment_providers
+        external_step :notify_routing_strategy
         external_step :settle_payments
         external_step :void_tax
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
@@ -136,6 +137,16 @@ module Spree
         order.fulfillments.each do |fulfillment|
           Spree.fulfillment_stand_down_service.call(fulfillment: fulfillment)
         end
+      end
+
+      # Tells the order's routing strategy its allocation is released, once the
+      # cancellation has committed. The order stays canceled either way, so a
+      # strategy whose outside system fails is reported rather than allowed to
+      # stop the payments from being settled.
+      def notify_routing_strategy
+        order.order_routing_strategy.for_release
+      rescue StandardError, NotImplementedError => e
+        Rails.error.report(e, handled: true, context: { order_id: order.id }, source: 'spree.orders.cancel')
       end
 
       # Gateway I/O. Payments fully covered by a gift card are only voided,

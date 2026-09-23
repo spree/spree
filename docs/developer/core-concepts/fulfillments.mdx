@@ -7,6 +7,8 @@ description: How Spree models getting items to the customer — fulfillments, de
 
 A fulfillment is one batch of items going to the customer by one method — a parcel from a warehouse, a digital download, or an order waiting at a pickup counter. An order gets one fulfillment per combination of stock location and delivery method, so an order sourced from two warehouses has two.
 
+Which stock location sources each item is decided by [order routing](/developer/how-to/custom-order-routing) — the channel's routing rules, or a custom strategy. Storefront checkout and orders built by staff are routed the same way, and a placed order keeps the fulfillments its checkout proposed.
+
 The word is deliberately broader than "shipment". A digital download has no carrier, no address and no package, and click-and-collect ships nowhere at all — a fulfillment covers all of them without dragging along fields that make no sense for most.
 
 ```mermaid

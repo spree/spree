@@ -30,14 +30,26 @@ module Spree
         end
 
         # One query for the entire location × variant matrix instead of
-        # N variants × M locations stock_level lookups.
+        # N variants × M locations stock_level lookups. The reducer asks again
+        # for every place in its ranking, each time about a subset of the
+        # locations it asked about first, so the matrix is read once per
+        # allocation rather than once per location.
         def stock_level_counts(variant_ids, locations)
           return {} if variant_ids.empty? || locations.empty?
 
-          Spree::StockLevel
-            .where(stock_location_id: locations.map(&:id), variant_id: variant_ids)
+          location_ids = locations.map(&:id)
+          cached = @stock_level_counts
+          if cached && cached[:variant_ids] == variant_ids && (location_ids - cached[:location_ids]).empty?
+            return cached[:counts]
+          end
+
+          counts = Spree::StockLevel
+            .where(stock_location_id: location_ids, variant_id: variant_ids)
             .pluck(:stock_location_id, :variant_id, :count_on_hand, :allocated_count)
             .each_with_object({}) { |(loc_id, var_id, on_hand, allocated), h| h[[loc_id, var_id]] = on_hand - allocated }
+
+          @stock_level_counts = { variant_ids: variant_ids, location_ids: location_ids, counts: counts }
+          counts
         end
       end
     end
