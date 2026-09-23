@@ -288,10 +288,10 @@ module SpreeReviews
 end
 ```
 
-Subscribers are not discovered automatically. Register them from the engine:
+Subscribers are not discovered automatically. Register them in the extension's initializer — `bin/rails g spree:subscriber` adds the line for you:
 
-```ruby lib/spree_reviews/engine.rb
-config.after_initialize do
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
   Spree.subscribers << SpreeReviews::ReviewRequestSubscriber
 end
 ```
