@@ -51,6 +51,14 @@ RSpec.describe Spree::HasNumber do
       expect(create(:order).number).to eq('R-FREE-1')
     end
 
+    # The unique index spans the whole table, so another store's record of a
+    # sibling STI type holds the number just the same.
+    it 'skips a number another store holds under a sibling subclass' do
+      taken = create(:customer_import, store: create(:store)).number
+
+      expect(create(:product_import, store: create(:store)).number).not_to eq(taken)
+    end
+
     it 'gives up rather than looping forever' do
       taken = create(:order).number
       generator = instance_double(Spree::NumberGenerators::Sequential)

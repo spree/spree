@@ -125,15 +125,17 @@ module Spree
 
         # Which products this import may resolve an existing row onto.
         #
-        # A seller's import reaches only that seller's own products. The
-        # ability cannot answer this: it grants capability, never tenancy —
-        # a seller holding `write_products` gets `can :manage, Spree::Product`,
-        # the whole class (see Spree::Ability). On the API that is safe because
-        # the controller scope-fetches through `current_seller`; a background
-        # row processor has no controller, so the narrowing has to happen here
-        # or a CSV naming another seller's slug would edit their product.
+        # The import's own store's products, and for a seller's import only
+        # that seller's. The ability cannot answer either: it grants
+        # capability, never tenancy — a seller holding `write_products` gets
+        # `can :manage, Spree::Product`, the whole class (see Spree::Ability),
+        # and an admin of two stores reaches both. On the API that is safe because
+        # the controller scope-fetches through `current_store` and
+        # `current_seller`; a background row processor has no controller, so
+        # the narrowing has to happen here or a CSV naming another store's or
+        # seller's slug would edit their product.
         def product_scope
-          scope = Spree::Product.accessible_by(import.current_ability, :manage)
+          scope = store.products.accessible_by(import.current_ability, :manage)
           seller.present? ? scope.where(seller_id: seller.id) : scope
         end
 
@@ -237,7 +239,7 @@ module Spree
         def prepare_tax_category
           tax_category_name = attributes['tax_category'].strip
           cached_lookup(:tax_category, tax_category_name) do
-            Spree::TaxCategory.find_by(name: tax_category_name)
+            store.tax_categories.find_by(name: tax_category_name)
           end
         end
 
@@ -302,13 +304,17 @@ module Spree
         def find_or_create_option_type!(label)
           cached_lookup(:option_type, label) do
             begin
-              Spree::OptionType.search_by_name(label).first || Spree::OptionType.create!(label: label)
+              store_option_types.search_by_name(label).first || store_option_types.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              Spree::OptionType.search_by_name(label).first!
+              store_option_types.search_by_name(label).first!
             end
           end
+        end
+
+        def store_option_types
+          Spree::OptionType.for_store(store)
         end
 
         def find_or_create_option_value!(option_type, label)

@@ -239,6 +239,17 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
     end
 
+    # Slugs are unique across the installation, so the row cannot claim it —
+    # but it must never resolve onto the other store's product either.
+    context "when another store's product has that slug" do
+      let!(:foreign_product) { create(:product, slug: 'denim-shirt', name: 'Old Name', store: create(:store)) }
+
+      it "refuses the row rather than editing the other store's product" do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Slug/)
+        expect(foreign_product.reload.name).to eq('Old Name')
+      end
+    end
+
     context 'when tags are not present' do
       it 'does not enqueue AssignTagsJob' do
         row_data['tags'] = nil
@@ -290,6 +301,18 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(size_option_type).to be_present
       expect(color_option_type.option_values.find_by(label: 'Blue')).to be_present
       expect(size_option_type.option_values.find_by(label: 'XS')).to be_present
+    end
+
+    context 'when another store has an option type with the same name' do
+      let!(:foreign_fabric) { create(:option_type, name: 'fabric', label: 'Fabric', store: create(:store)) }
+      let(:row_data) { super().merge('option3_name' => 'Fabric', 'option3_value' => 'Cotton') }
+
+      it "creates the option type in the import's store" do
+        fabric = variant.option_values.find_by(label: 'Cotton').option_type
+
+        expect(fabric).not_to eq(foreign_fabric)
+        expect(fabric.store).to eq(store)
+      end
     end
 
     context 'when a concurrent worker has already created the option type/value' do
@@ -1048,6 +1071,25 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'does not assign a tax category' do
+        expect(product.default_variant.tax_category).to be_nil
+      end
+    end
+
+    context 'when the named tax category belongs to another store' do
+      let!(:foreign_tax) { create(:tax_category, name: 'Clothing', store: create(:store)) }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'test-product',
+          'name' => 'Test Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing'
+        )
+      end
+
+      it 'does not reach across stores' do
         expect(product.default_variant.tax_category).to be_nil
       end
     end

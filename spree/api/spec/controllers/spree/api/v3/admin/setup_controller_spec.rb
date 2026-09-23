@@ -144,9 +144,9 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.default_currency).to eq('EUR')
       end
 
-      it 'queues the sample data load only when asked to' do
+      it 'queues the sample data load into the adopted store only when asked to' do
         expect { post :create, params: valid_params.merge(sample_data: true) }
-          .to have_enqueued_job(Spree::SampleData::LoadJob)
+          .to have_enqueued_job(Spree::SampleData::LoadJob).with(@default_store.id)
       end
 
       it 'does not queue sample data by default' do

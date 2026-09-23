@@ -2,7 +2,7 @@
 # Shopify-style delivery methods on the Domestic and International zones.
 # The free international method showcases delivery-method rules — free
 # above a spend threshold, hidden below it.
-store = Spree::Store.default
+store = Spree::Current.store
 
 # The zones are created from the store's country at first-run setup, so an
 # install that has not been set up yet has none. Provision them here from
