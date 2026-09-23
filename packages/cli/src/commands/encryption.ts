@@ -80,10 +80,7 @@ export function initEncryption(projectDir: string): void {
     return
   }
 
-  // .env holds secrets — create it owner-only (an existing file keeps its mode).
-  fs.writeFileSync(envPath, withEncryptionKeys(content, generateEncryptionKeys()), {
-    mode: 0o600,
-  })
+  writeEnvAtomically(envPath, withEncryptionKeys(content, generateEncryptionKeys()))
   p.log.success('Added Active Record encryption keys to .env.')
 
   p.note(
@@ -99,4 +96,23 @@ export function initEncryption(projectDir: string): void {
     ].join('\n'),
     'Next steps',
   )
+}
+
+/**
+ * Writes via a same-directory temp file + rename, so a failed write never
+ * truncates the existing .env (and its SECRET_KEY_BASE). A new .env is created
+ * owner-only; an existing one keeps its mode. Symlinks are followed.
+ */
+function writeEnvAtomically(envPath: string, contents: string): void {
+  const target = fs.existsSync(envPath) ? fs.realpathSync(envPath) : envPath
+  const mode = fs.existsSync(target) ? fs.statSync(target).mode & 0o777 : 0o600
+  const tmp = path.join(path.dirname(target), `.${path.basename(target)}.${process.pid}.tmp`)
+  fs.writeFileSync(tmp, contents, { mode, flag: 'wx' })
+  try {
+    fs.chmodSync(tmp, mode)
+    fs.renameSync(tmp, target)
+  } catch (error) {
+    fs.rmSync(tmp, { force: true })
+    throw error
+  }
 }

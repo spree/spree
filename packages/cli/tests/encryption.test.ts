@@ -137,6 +137,21 @@ describe('initEncryption', () => {
     }
   })
 
+  it('keeps an existing .env mode and leaves no temp file behind', () => {
+    const dir = makeTempDir()
+    const envPath = path.join(dir, '.env')
+    fs.writeFileSync(envPath, 'SECRET_KEY_BASE=abc\n', { mode: 0o640 })
+    fs.chmodSync(envPath, 0o640)
+
+    initEncryption(dir)
+
+    expect(fs.readFileSync(envPath, 'utf-8')).toMatch(/^SECRET_KEY_BASE=abc$/m)
+    expect(fs.readdirSync(dir)).toEqual(['.env'])
+    if (process.platform !== 'win32') {
+      expect(fs.statSync(envPath).mode & 0o777).toBe(0o640)
+    }
+  })
+
   it('leaves .env unchanged when the app has Rails credentials', () => {
     const dir = makeTempDir()
     fs.mkdirSync(path.join(dir, 'server', 'config'), { recursive: true })
