@@ -19,7 +19,33 @@ module Spree
 
         delegate :eligible?, to: :promotion
 
-        # Adds a line item to the Order if the promotion is eligible
+        # @return [Symbol]
+        def discount_scope
+          :line_item
+        end
+
+        # The gift is rarely the product the rules name ("buy a coffee maker,
+        # get a free tote"), so the rules decide whether the promotion applies
+        # and this action decides which lines it pays for.
+        #
+        # @param _order [Spree::Order, Spree::Cart]
+        # @param line_item [Spree::LineItem]
+        # @return [Boolean]
+        def applies_to_line_item?(_order, line_item)
+          gifted_quantity_of(line_item).positive?
+        end
+
+        # Covers the gifted units of the line at their own price, leaving any
+        # further units of the same variant the shopper bought themselves to be
+        # paid for.
+        #
+        # @param line_item [Spree::LineItem]
+        # @return [BigDecimal] never positive
+        def compute_amount(line_item)
+          line_item.price * gifted_quantity_of(line_item) * -1
+        end
+
+        # Tops the order up to the promised quantity and discounts it.
         #
         # This doesn't play right with Add to Cart events because at the moment
         # the item was added to cart the promo may not be eligible. However it
@@ -32,46 +58,25 @@ module Spree
         #   - Customer increases item quantity to 5 (order total goes to $50)
         #   - Now the order is eligible for the promo and the action should perform
         #
-        # Another complication is when the same line item created by the promo
-        # is also added to cart on a separate action.
-        #
-        # e.g.
-        #   - Promo adds 1 item A to cart if order total greater then $30
-        #   - Customer add 2 items B to cart, current order total is $40
-        #   - This action performs adding item A to cart since order is eligible
-        #   - Customer changes his mind and updates item B quantity to 1
-        #   - At this point order is no longer eligible and one might expect
-        #     that item A should be removed
-        #
-        # It doesn't remove items from the order here because there's no way
-        # it can know whether that item was added via this promo action or if
-        # it was manually populated somewhere else. In that case the item
-        # needs to be manually removed from the order by the customer
+        # A shopper who already has the gift variant is given theirs free rather
+        # than a duplicate, so the promotion still applies when it has nothing
+        # to add.
         def perform(options = {})
           order = options[:order]
           return unless eligible? order
 
-          action_taken = false
-          promotion_action_line_items.each do |item|
-            current_quantity = order.quantity_of(item.variant)
-            next unless current_quantity < item.quantity && item_available?(item)
+          added = add_missing_line_items(order)
 
-            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_workflow : Spree.order_add_item_service
-            line_item = add_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
-                                                         variant: item.variant,
-                                                         quantity: item.quantity - current_quantity).value
-            action_taken = true if line_item.try(:valid?)
-          end
-          action_taken
+          apply_via_adjuster(options) || added
         end
 
         # Called by promotion handler when a promotion is removed
         # This will find any line item matching the ones defined in the PromotionAction
         # and remove the same quantity as was added by the PromotionAction.
-        # Should help to prevent some of cases listed above the #perform method
         def revert(options = {})
           order = options[:order]
           return if eligible?(order)
+          return unless order.promotions.include?(promotion)
 
           action_taken = false
           promotion_action_line_items.each do |item|
@@ -89,12 +94,48 @@ module Spree
         end
 
         # Checks that there's enough stock to add the line item to the order
-        def item_available?(item)
+        #
+        # @param item [Spree::PromotionActionLineItem]
+        # @param quantity [Integer] units wanted, defaulting to the whole gift
+        # @return [Boolean]
+        def item_available?(item, quantity = item.quantity)
           quantifier = Spree::Stock::Quantifier.new(item.variant)
-          quantifier.can_supply? item.quantity
+          quantifier.can_supply? quantity
         end
 
         private
+
+        # How many units of this line the promotion pays for — never more than
+        # the line holds, so a shopper buying three of a variant gifted once
+        # still pays for two. `quantity` is nullable and written by `upsert_all`,
+        # which skips validation, so a missing or negative one gifts nothing
+        # rather than raising or turning the discount into a surcharge.
+        #
+        # @param line_item [Spree::LineItem]
+        # @return [Integer]
+        def gifted_quantity_of(line_item)
+          gifted = promotion_action_line_items.detect { |item| item.variant_id == line_item.variant_id }
+          return 0 if gifted.nil?
+
+          [[line_item.quantity, gifted.quantity.to_i].min, 0].max
+        end
+
+        def add_missing_line_items(order)
+          added_results = promotion_action_line_items.map do |item|
+            missing = item.quantity.to_i - order.quantity_of(item.variant)
+            next false unless missing.positive? && item_available?(item, missing)
+
+            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_workflow : Spree.order_add_item_service
+            result = add_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
+                                      variant: item.variant,
+                                      quantity: missing)
+            result.success?
+          end
+
+          order.line_items.reload if added_results.any?
+
+          added_results.any?
+        end
 
         def promotion_variants_scope
           promotion.store.variants
