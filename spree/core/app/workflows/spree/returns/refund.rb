@@ -95,16 +95,13 @@ module Spree
       end
 
       def issue_store_credit
-        credit = Spree::StoreCredit.create!(
-          store: return_record.store,
-          customer: return_record.order.customer,
+        @refunds = issue_refund_store_credit(
+          order: return_record.order,
           amount: @amount_to_refund,
-          currency: return_record.currency,
-          created_by: refunder,
-          originator: return_record,
-          memo: "Return #{return_record.number}"
+          record: return_record,
+          memo: "Return #{return_record.number}",
+          refunder: refunder
         )
-        @refunds = [credit]
       end
 
       # Each refund row commits, then Refund#perform! credits it at the

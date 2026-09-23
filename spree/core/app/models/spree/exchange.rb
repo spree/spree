@@ -32,6 +32,7 @@ module Spree
     has_many :exchange_line_items, class_name: 'Spree::ExchangeLineItem',
                                    dependent: :destroy, inverse_of: :exchange
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
+    has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
 
     validates :exchange_line_items, presence: true, on: :create
 

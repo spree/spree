@@ -110,6 +110,16 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::StoreCredit.find_by(originator: claim)).to be_present
     end
 
+    # Credit writes no refund row, so unless it names the order it settles the
+    # order goes on reading `paid` on money the customer already has back.
+    it 'leaves the order showing what the credit gave back' do
+      Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+      expect(Spree::StoreCredit.find_by(originator: claim).refunded_order).to eq(order)
+      expect { order.update_statuses! }.to change { order.reload.payment_status }.
+        from('paid').to('partially_refunded')
+    end
+
     it 'refuses to refund more than the customer paid' do
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', amount: 10_000)
 

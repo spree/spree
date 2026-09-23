@@ -143,6 +143,9 @@ RSpec.describe 'Spree::Exchanges workflows' do
         result = Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
 
         expect(result).to be_success
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(Spree::StoreCredit.find_by(originator: cheap_exchange).refunded_order).to eq(cheap_exchange.order)
       end
     end
   end
