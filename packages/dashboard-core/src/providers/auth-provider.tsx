@@ -86,6 +86,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Serialize concurrent refresh calls so StrictMode/HMR/401-retry don't double-rotate.
   const refreshPromiseRef = useRef<Promise<boolean> | null>(null)
+  // Bumped whenever a session starts or ends, so a refresh that was already in
+  // flight (the boot refresh racing a host's establishSession, say) can tell
+  // its answer is stale and must not sign the new session out or replace it.
+  const sessionGenerationRef = useRef(0)
+  // Bumped only by logout: a sign-in request still pending when the user signs
+  // out must not sign them back in. Refresh failures leave it alone — a failed
+  // boot refresh is how every signed-out visit starts.
+  const logoutGenerationRef = useRef(0)
+  const userIdRef = useRef<string | null>(null)
 
   const clearRefreshTimer = useCallback(() => {
     if (refreshTimerRef.current) {
@@ -96,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const applySession = useCallback((accessToken: string, authUser: AdminUser) => {
     getApiClient().setToken(accessToken)
+    userIdRef.current = authUser.id
     setToken(accessToken)
     setUser(authUser)
     // The account's saved admin language is the source of truth across devices.
@@ -115,6 +125,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const clearSession = useCallback(() => {
+    sessionGenerationRef.current += 1
+    userIdRef.current = null
     const client = getApiClient()
     client.setToken('')
     // The tenant header is session state too — the store on the admin panel,
@@ -135,11 +147,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clearRefreshTimer])
 
   const doRefresh = useCallback(async (): Promise<boolean> => {
+    const generation = sessionGenerationRef.current
     try {
       const res = await getApiClient().auth.refresh()
+      if (generation !== sessionGenerationRef.current) return false
       applySession(res.token, res.user)
       return true
     } catch {
+      if (generation !== sessionGenerationRef.current) return false
       clearSession()
       return false
     }
@@ -167,9 +182,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // provider's state to settle.
   const establish = useCallback(
     async (req: AuthTokens | Promise<AuthTokens>) => {
+      const logoutGeneration = logoutGenerationRef.current
       setIsLoading(true)
       try {
         const res = await req
+        if (logoutGeneration !== logoutGenerationRef.current) {
+          throw new Error('@spree/dashboard-core: signed out before the session was established')
+        }
+        // A different account: drop what was cached for the previous one
+        // (permissions above all) before the new one renders.
+        if (userIdRef.current && userIdRef.current !== res.user.id) clearSession()
+        sessionGenerationRef.current += 1
         applySession(res.token, res.user)
         scheduleRefresh()
         return res
@@ -177,7 +200,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false)
       }
     },
-    [applySession, scheduleRefresh],
+    [applySession, clearSession, scheduleRefresh],
   )
 
   const login = useCallback(
@@ -203,6 +226,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 
   const logout = useCallback(async () => {
+    logoutGenerationRef.current += 1
     try {
       await getApiClient().auth.logout()
     } catch {
