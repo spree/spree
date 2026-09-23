@@ -33,10 +33,13 @@ module Spree
       locale.present? && I18n.available_locales.map(&:to_s).include?(locale.to_s)
     end
 
-    # The dashboard SPA passes a validated redirect URL; the token is appended as
-    # a query param, falling back to the store URL.
+    # The dashboard passes a validated redirect URL when its origin is allowed.
+    # Without it the dashboard origin is resolved server-side: the store URL has
+    # no reset page, so a link there cannot reset an admin password.
     def password_reset_url(token, store, redirect_url)
-      append_token(redirect_url.presence || store.formatted_url, token)
+      target = redirect_url.presence || "#{Spree::Stores::DashboardUrl.call(store: store)}/reset-password"
+
+      append_token(target, token)
     end
   end
 end

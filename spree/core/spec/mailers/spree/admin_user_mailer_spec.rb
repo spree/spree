@@ -25,6 +25,14 @@ describe Spree::AdminUserMailer, type: :mailer do
       expect(message.body.encoded).to include("https://admin.example.com/reset-password?token=#{token}")
     end
 
+    it 'falls back to the dashboard reset page, not the store URL' do
+      allow(Spree::Stores::DashboardUrl).to receive(:call).with(store: store).and_return('https://admin.example.com')
+
+      message = described_class.password_reset_email(admin_user, token, store)
+
+      expect(message.body.encoded).to include("https://admin.example.com/reset-password?token=#{token}")
+    end
+
     context 'when the admin has a dashboard language set' do
       around do |example|
         previous = I18n.available_locales
