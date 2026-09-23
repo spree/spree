@@ -30,7 +30,7 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 
 1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks:
    - **URL:** `https://your-storefront.com/api/webhooks/spree`
-   - **Events:** `order.completed`, `order.canceled`, `order.shipped`, `customer.password_reset_requested`, `newsletter_subscriber.subscription_requested`
+   - **Events:** `order.placed`, `order.canceled`, `order.fulfilled`, `customer.password_reset_requested`
 
 2. **Configure the storefront** with the webhook secret and email provider:
 
@@ -49,14 +49,13 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 
 | Event | Email |
 |-------|-------|
-| `order.completed` | Order confirmation with items, totals, addresses |
+| `order.placed` | Order confirmation with items, totals, addresses |
 | `order.canceled` | Cancellation notice |
-| `order.shipped` | Shipping notification with tracking link |
+| `order.fulfilled` | Shipping notification with tracking link |
 | `customer.password_reset_requested` | Password reset link |
-| `newsletter_subscriber.subscription_requested` | Newsletter double opt-in confirmation link |
 
 <Note>
-  The storefront listens for `order.completed` and `order.shipped`, the names these events had before Spree 6.0. Spree 6.0 still sends them alongside the new names, `order.placed` and `order.fulfilled`, but stops in Spree 6.1. Before upgrading to 6.1, switch the storefront handlers and your webhook endpoint subscriptions to the new names.
+  Spree 6.0 also sends the pre-6.0 names `order.completed` and `order.shipped` as deprecated aliases until 6.1. Subscribe the endpoint to the new names only — subscribing to both makes Spree deliver both events.
 </Note>
 
 #### Custom Frameworks
