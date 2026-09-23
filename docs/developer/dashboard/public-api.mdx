@@ -125,6 +125,15 @@ import { adminClient } from '@spree/dashboard-core'
 
 The shared `@spree/admin-sdk` instance configured for the host's API URL. Use this everywhere instead of constructing your own.
 
+The package entry point loads the whole framework — every registry, component and translation. A small host app that builds its own screens and only needs the client and sign-in can import from subpaths instead, which keeps the rest out of its bundle:
+
+```ts
+import { adminClient } from '@spree/dashboard-core/client'          // the SDK instance alone
+import { setApiClient } from '@spree/dashboard-core/api-client'     // registers the client the providers use
+import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
+import { useAuth } from '@spree/dashboard-core/hooks/use-auth'
+```
+
 ### Providers
 
 ```ts
