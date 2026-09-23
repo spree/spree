@@ -40,6 +40,24 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
         payment_session_id: payment_session.id
       )
     end
+    context 'when the payment method belongs to another store' do
+      let(:other_store) { create(:store) }
+      let(:payment_method) { create(:bogus_payment_method, store: other_store) }
+      let(:order) { create(:order_with_line_items, store: other_store) }
+
+      it 'handles the webhook in that store' do
+        handled_in = nil
+        allow_any_instance_of(Spree::Payments::HandleWebhook).to receive(:call) { handled_in = Spree::Current.store }
+
+        described_class.perform_now(
+          payment_method_id: payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+
+        expect(handled_in).to eq(other_store)
+      end
+    end
   end
 
   describe 'queue' do
