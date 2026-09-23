@@ -125,6 +125,11 @@
         "title": "Welcome back"
       },
       "logout": "Sign out",
+      "no_store_access": {
+        "description": "You're signed in, but your account isn't a member of any store yet. Ask a store administrator to invite you, or sign in with a different account.",
+        "signed_in_as": "Signed in as {{email}}",
+        "title": "You don't have access to any store"
+      },
       "reset_password": {
         "confirm_password_label": "Confirm new password",
         "error": "Something went wrong. Please try again.",

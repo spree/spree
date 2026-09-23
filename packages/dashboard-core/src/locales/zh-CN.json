@@ -125,6 +125,11 @@
         "title": "欢迎回来"
       },
       "logout": "退出登录",
+      "no_store_access": {
+        "description": "您已登录，但您的账户尚未加入任何店铺。请联系店铺管理员邀请您，或使用其他账户登录。",
+        "signed_in_as": "当前登录账户：{{email}}",
+        "title": "您无权访问任何店铺"
+      },
       "reset_password": {
         "confirm_password_label": "确认新密码",
         "error": "出了点问题，请重试。",

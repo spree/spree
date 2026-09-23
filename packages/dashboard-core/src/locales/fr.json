@@ -125,6 +125,11 @@
         "title": "Bon retour"
       },
       "logout": "Se déconnecter",
+      "no_store_access": {
+        "description": "Vous êtes connecté, mais votre compte n'est encore membre d'aucune boutique. Demandez à un administrateur de boutique de vous inviter, ou connectez-vous avec un autre compte.",
+        "signed_in_as": "Connecté en tant que {{email}}",
+        "title": "Vous n'avez accès à aucune boutique"
+      },
       "reset_password": {
         "confirm_password_label": "Confirmer le nouveau mot de passe",
         "error": "Une erreur s'est produite. Veuillez réessayer.",

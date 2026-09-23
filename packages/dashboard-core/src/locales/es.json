@@ -1696,6 +1696,11 @@
         "title": "Bienvenido de nuevo"
       },
       "logout": "Cerrar sesión",
+      "no_store_access": {
+        "description": "Iniciaste sesión, pero tu cuenta todavía no pertenece a ninguna tienda. Pedile a un administrador de la tienda que te invite o iniciá sesión con otra cuenta.",
+        "signed_in_as": "Sesión iniciada como {{email}}",
+        "title": "No tenés acceso a ninguna tienda"
+      },
       "reset_password": {
         "confirm_password_label": "Confirmar nueva contraseña",
         "error": "Algo salió mal. Volvé a intentar.",

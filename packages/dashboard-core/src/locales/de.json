@@ -125,6 +125,11 @@
         "title": "Willkommen zurück"
       },
       "logout": "Abmelden",
+      "no_store_access": {
+        "description": "Sie sind angemeldet, aber Ihr Konto gehört noch keinem Store an. Bitten Sie einen Store-Administrator um eine Einladung oder melden Sie sich mit einem anderen Konto an.",
+        "signed_in_as": "Angemeldet als {{email}}",
+        "title": "Sie haben keinen Zugriff auf einen Store"
+      },
       "reset_password": {
         "confirm_password_label": "Neues Passwort bestätigen",
         "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
