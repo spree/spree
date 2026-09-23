@@ -292,6 +292,12 @@ Completing a cart moves real money, so Spree is careful about it:
 
 **Totals are worked out at the last moment.** The amount charged is calculated when the cart is completed, not taken from an earlier request — so a price or promotion that changed while the customer was reviewing can't lead to the wrong charge.
 
+**The order keeps what the cart collected.** The customer, addresses, items, notes, purchase order number, tax identifier and the cart's `metadata` are all copied onto the order. When a checkout is split into one order per seller, every one of those orders receives the same copy. After that the cart and the order are independent — changing one never changes the other.
+
+<Warning>
+  A customer can write a cart's `metadata` through the Store API, so once it is copied onto the order, treat those keys as customer input. Do not keep anything there that your own code later trusts, such as a fraud or approval flag.
+</Warning>
+
 If a cart can't be completed you get told why — a payment failure, or unmet [requirements](#checkout-requirements) — and the cart is left alone so the customer can fix it and try again.
 
 ## Abandoned carts

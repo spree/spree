@@ -207,6 +207,13 @@ module Spree
       # typed money lines re-pointed, fulfillments + selected rates, address
       # copies); money records (payments, sessions, reservations, coupon
       # codes) re-point — external transaction references must never fork.
+      #
+      # The cart's metadata is copied whole: storefronts and checkout
+      # requirements keep what they collected about the purchase there, and it
+      # has to outlive the cart. The order is new at this point, so there is
+      # nothing on it to merge with — the cart's hash simply becomes the
+      # order's. A deep copy, so a later edit to either record can never reach
+      # the other through a shared nested hash.
       def create_draft_order!(cart)
         order = nil
         ApplicationRecord.transaction do
@@ -228,6 +235,7 @@ module Spree
             po_number: cart.po_number,
             gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
+            metadata: cart.metadata.to_h.deep_dup,
             ship_address: cart.ship_address&.snapshot,
             bill_address: cart.bill_address&.snapshot
           )
