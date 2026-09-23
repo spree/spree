@@ -137,7 +137,9 @@ Writes a discount on each fulfillment covering its delivery cost. The row is kep
 
 ### Free items (`CreateLineItems`)
 
-Adds specified products to the cart when the promotion is eligible, checking stock first. Items are not removed automatically if eligibility is lost — customers remove them manually.
+Adds specified products to the cart when the promotion is eligible, checking stock first, and discounts them to zero. A customer who already has the gift in their cart gets theirs free rather than a duplicate; any further copies they bought stay paid for. The gift is taken back when the promotion stops applying.
+
+No second action is needed to make the gift free — pairing this with an order discount set to the gift's price discounts it twice.
 
 **Use case:** "Free gift with purchase", "Spend $100 get a free sample".
 

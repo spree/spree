@@ -391,6 +391,16 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 - **Customers are emailed their download links** when the order is placed, from the new `Spree::DigitalAssetMailer` in the optional `spree_emails` gem. Hosts that already send their own download email should either suppress it (`send_consumer_transactional_emails`) or drop their own. The dashboard's order page can re-send it.
 - **Digital assets are managed through the Admin API and dashboard**, and signed-in customers can list everything they have bought at `GET /api/v3/store/customers/me/digital_links`.
 
+## Free-gift promotions price their own gift
+
+The `Create line items` promotion action now discounts the items it adds down to zero. It used to add them at their full price and leave the discounting to you.
+
+<Warning>
+  **Delete the second action if you paired one with it.** The old guidance was to add a whole-order discount set to the gift's price to pay for the gift. That discount still applies, so a promotion configured the old way now discounts twice — the gift is free *and* the order discount comes off. Open each promotion using `Create line items`, and remove the accompanying `Create whole-order adjustment` that exists only to cancel out the gift.
+</Warning>
+
+Two further changes come with it. A customer who already has the gift variant in their cart now gets theirs free rather than a second copy being added, and the promotion applies where it previously did nothing at all. And a gift is only taken back out of the cart for promotions actually applied to that order, so a customer who bought the gift variant themselves without qualifying keeps it.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
