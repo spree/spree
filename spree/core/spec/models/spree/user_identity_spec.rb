@@ -10,6 +10,13 @@ describe Spree::UserIdentity, type: :model do
       expect(identity.errors[:provider]).to include('is not included in the list')
     end
 
+    it 'accepts a provider registered only for the Seller API' do
+      Spree.seller_authentication_strategies.add(:seller_sso, Class.new)
+      expect(build(:user_identity, provider: 'seller_sso')).to be_valid
+    ensure
+      Spree.seller_authentication_strategies.remove(:seller_sso)
+    end
+
     describe 'uniqueness validation' do
       let(:user) { create(:user) }
       let!(:existing_identity) do
@@ -36,6 +43,30 @@ describe Spree::UserIdentity, type: :model do
         different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email', uid: '12345')
         expect(different_user_type).to be_valid
       end
+    end
+  end
+
+  describe 'token encryption' do
+    let(:identity) do
+      create(:user_identity, access_token: 'plain-access-token', refresh_token: 'plain-refresh-token')
+    end
+
+    it 'stores the OAuth tokens encrypted' do
+      raw = described_class.connection.select_one(
+        described_class.where(id: identity.id).select(:access_token, :refresh_token).to_sql
+      )
+
+      expect(raw['access_token']).to be_present
+      expect(raw['access_token']).not_to include('plain-access-token')
+      expect(raw['refresh_token']).to be_present
+      expect(raw['refresh_token']).not_to include('plain-refresh-token')
+    end
+
+    it 'reads the OAuth tokens back decrypted' do
+      reloaded = described_class.find(identity.id)
+
+      expect(reloaded.access_token).to eq('plain-access-token')
+      expect(reloaded.refresh_token).to eq('plain-refresh-token')
     end
   end
 

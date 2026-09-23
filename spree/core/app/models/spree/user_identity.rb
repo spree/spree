@@ -9,15 +9,15 @@ module Spree
 
     validates :provider, inclusion: {
       in: lambda { |_record|
-        (Spree.store_authentication_strategies.keys + Spree.admin_authentication_strategies.keys).uniq.map(&:to_s)
+        (
+          Spree.store_authentication_strategies.keys +
+          Spree.admin_authentication_strategies.keys +
+          Spree.seller_authentication_strategies.keys
+        ).uniq.map(&:to_s)
       }
     }
 
-    # Store provider-specific data
-    # info: JSON field with provider-specific data (name, avatar, etc)
-    # access_token: encrypted OAuth access token
-    # refresh_token: encrypted OAuth refresh token
-    # expires_at: token expiration timestamp
+    encrypts :access_token, :refresh_token if Rails.configuration.active_record.encryption.include?(:primary_key)
 
     # Find or create user from OAuth data
     def self.find_or_create_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
