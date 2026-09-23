@@ -51,5 +51,9 @@ const CALLBACK_ERROR_KEYS: Record<string, string> = {
  * login page with. Unknown codes fall back to the generic message.
  */
 export function authCallbackErrorKey(code: string): string {
-  return CALLBACK_ERROR_KEYS[code] ?? 'admin.auth.login.sso_failed'
+  // `code` comes from the URL, so `constructor` or `__proto__` must not resolve
+  // to an inherited property.
+  return Object.hasOwn(CALLBACK_ERROR_KEYS, code)
+    ? CALLBACK_ERROR_KEYS[code]
+    : 'admin.auth.login.sso_failed'
 }
