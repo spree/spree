@@ -259,7 +259,7 @@ To add your own step or requirement, see
     const order = await client.carts.complete(cartId)
     ```
 
-    You get back an [Order](/developer/core-concepts/orders).
+    You get back an [Order](/developer/core-concepts/orders) — or, in a marketplace where the cart held several sellers' goods, an [order group](/developer/core-concepts/sellers#one-checkout-several-sellers) holding one order per seller. Tell them apart with `isOrderGroup` from `@spree/sdk`.
   </Step>
 </Steps>
 

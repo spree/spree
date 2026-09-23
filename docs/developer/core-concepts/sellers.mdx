@@ -261,6 +261,15 @@ A back office must handle it too: an order raised from the admin divides the sam
 
 <CodeGroup>
 
+```typescript Store SDK
+import { isOrderGroup } from '@spree/sdk'
+
+const result = await client.carts.complete(cartId, { spreeToken: cart.token })
+
+// One order per seller when the cart held several sellers' goods.
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
 ```typescript Admin SDK
 import { isOrderGroup } from '@spree/admin-sdk'
 

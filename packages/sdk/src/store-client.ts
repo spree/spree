@@ -40,6 +40,7 @@ import type {
   Market,
   NewsletterSubscriber,
   Order,
+  OrderGroup,
   OrderListParams,
   Payment,
   PaymentSession,
@@ -503,11 +504,13 @@ export class StoreClient {
 
     /**
      * Complete the cart and finalize the purchase.
-     * Returns an Order (not Cart).
+     * Returns an Order (not Cart). In a marketplace, a cart holding several
+     * sellers' goods divides into one order per seller, and the group it
+     * produced is what comes back — narrow the result with `isOrderGroup`.
      * @param cartId - Cart prefixed ID
      */
-    complete: (cartId: string, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('POST', `/carts/${cartId}/complete`, options),
+    complete: (cartId: string, options?: RequestOptions): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('POST', `/carts/${cartId}/complete`, options),
 
     /**
      * Nested resource: Line items
