@@ -38,7 +38,7 @@ Spree.dependencies do |dependencies|
   # dependencies.cart_add_item_service = 'MyNewAwesomeService'
 end
 
-# Spree::Api::Dependencies.storefront_cart_serializer = 'MyRailsApp::CartSerializer'
+# Spree.api.cart_serializer = 'MyRailsApp::CartSerializer'
 
 # uncomment lines below to add your own custom business logic
 # such as promotions, shipping methods, etc
@@ -58,8 +58,8 @@ Rails.application.config.after_initialize do
   # Spree.promotions.rules << Spree::Promotions::Rules::OnlyForVIPCustomers
   # Spree.promotions.actions << Spree::Promotions::Actions::GiftWithPurchase
 
-  # Taxon rules
-  # Spree.taxon_rules << Spree::TaxonRules::ProductsWithColor
+  # Collection rules
+  # Rails.application.config.spree.collection_rules << Spree::CollectionRules::ProductsWithColor
 
   # Exports
   # Spree.export_types << Spree::Exports::Payments
@@ -68,7 +68,7 @@ Rails.application.config.after_initialize do
   # Staff roles and their permissions are managed as data — in the dashboard
   # (Settings → Roles), via the Admin API, or in db/seeds.rb:
   #
-  #   Spree::Role.find_or_create_by!(name: 'support')
+  #   Spree::Store.default.roles.find_or_create_by!(name: 'support')
   #     .update!(permissions: %w[read_orders read_customers])
   #
   # Extensions can register additional permission resources:

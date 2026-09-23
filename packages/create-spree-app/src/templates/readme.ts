@@ -77,8 +77,7 @@ ${pm} run dev
 \`\`\`
 
 Open http://localhost:${DASHBOARD_PORT} and sign in with the admin email and
-password you chose during the first run. The classic admin remains at
-http://localhost:${port}/admin.
+password you chose during the first run.
 
 When you deploy, the production image builds your dashboard and serves it at
 \`/dashboard\` on the same origin as the API (\`${run} spree build --production\`).
@@ -143,7 +142,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 |---------|-------------|
 | \`spree generate model Brand name:string slug:string:uniq\` | Generate a new database model |
 | \`spree generate api_resource Brand name:string slug:string:uniq\` | Generate a new Spree API resource |
-| \`spree generate subscriber OmsOrderSync order.completed\` | Generate a new event subscriber |
+| \`spree generate subscriber OmsOrderSync order.placed\` | Generate a new event subscriber |
 | \`spree generate migration AddPositionToSpreeBrands position:integer\` | Generate a new database migration |
 
 ### Admin API

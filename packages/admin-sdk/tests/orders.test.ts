@@ -247,10 +247,10 @@ describe('orders', () => {
       await createTestClient().orders.refunds.create('order_abc123', {
         payment_id: 'pay_1',
         amount: '5.00',
-        refund_reason_id: 'refrsn_1',
+        refund_reason_id: 'rr_1',
       })
 
-      expect(body).toEqual({ payment_id: 'pay_1', amount: '5.00', refund_reason_id: 'refrsn_1' })
+      expect(body).toEqual({ payment_id: 'pay_1', amount: '5.00', refund_reason_id: 'rr_1' })
     })
   })
 

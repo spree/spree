@@ -233,7 +233,7 @@ spree generate subscriber OmsOrderSync order.placed              # runs spree:su
 spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 
-`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, and routes.
+`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
 ### `spree migrate`
 

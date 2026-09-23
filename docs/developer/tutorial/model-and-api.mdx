@@ -28,6 +28,8 @@ The generator reports what it created:
     create  spec/factories/spree/brand_factory.rb
     create  spec/controllers/spree/api/v3/store/brands_controller_spec.rb
     create  spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
+    append  config/initializers/spree.rb
+    create  config/locales/spree_brands.en.yml
 
 ✓ Generated Spree::Brand API resource
 
@@ -57,7 +59,7 @@ Attributes follow the familiar `name:type:index` form, with the Spree convention
 | `active:boolean` | A boolean column with a default |
 | `user:belongs_to` | A reference with the class name resolved |
 
-Useful flags: `--paranoid` for soft delete, `--custom-fields` for [custom fields](/developer/core-concepts/metafields) support, `--writable` to give the Store API create, update and destroy as well, and `--no-store` or `--no-admin` to generate only one side. Run the generator with `--help` for the full list.
+Useful flags: `--paranoid` for soft delete, `--custom-fields` for [custom fields](/developer/core-concepts/metafields) support, `--writable` to give the Store API create, update and destroy as well, `--permission-group` to choose where the brand permissions appear in the role editor (`catalog` by default), and `--no-store` or `--no-admin` to generate only one side. Run the generator with `--help` for the full list.
 
 ## Step 2: What you got
 
@@ -78,8 +80,10 @@ The Store API is read-only by default — a shopper cannot create a brand. Pass 
 
 **Brands belong to a store.** Every resource you generate is scoped to one, because commerce data — catalog, configuration, orders — is always per-store. A new record picks up its store automatically, and a field marked unique is unique *within* a store, so two stores can each have a brand called `wilson`. Only genuinely global reference data, like countries, opts out with `--no-store-scoped`.
 
+**Access to the Admin API is a permission.** The generator registers `read_brands` and `write_brands` in `config/initializers/spree.rb`, so you can grant them to a staff role in **Settings → Roles** or to a secret API key, and labels them for the role editor in `config/locales/spree_brands.en.yml`. Until you grant them, only store admins and full-access keys reach the endpoint. See [Permissions](/developer/customization/permissions).
+
 <Warning>
-  One decision is still yours: **authorization**. Give the resource a permission rule before exposing it, and read lookups through the store (`current_store.brands`) rather than the whole table. Scoping by association is the cheapest defence against one store reading another's records — filtering by role is not a substitute.
+  Read lookups through the store (`current_store.brands`) rather than the whole table. Scoping by association is the cheapest defence against one store reading another's records — a permission decides *whether* someone may read brands, not *which* ones.
 </Warning>
 
 ## Step 3: Try it

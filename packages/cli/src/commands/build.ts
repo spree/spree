@@ -151,10 +151,11 @@ export function planProductionBuild(
 
   const hasDashboard = fs.existsSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'))
 
-  // The layout-normalizing Dockerfile leaves a distinctive marker; without
-  // it, root context would break the build (the old file expects the Rails
-  // app at the context root), so fall back to the old API-directory context.
-  if (!fs.readFileSync(dockerfile, 'utf-8').includes('.spree-custom-dashboard')) {
+  // The layout-normalizing Dockerfile leaves a distinctive marker
+  // (`.spree-custom-app`; `.spree-custom-dashboard` in its first release);
+  // without it, root context would break the build (the old file expects the
+  // Rails app at the context root), so fall back to the old API-directory context.
+  if (!/\.spree-custom-(app|dashboard)\b/.test(fs.readFileSync(dockerfile, 'utf-8'))) {
     return {
       args: ['build', apiPath, '-f', dockerfile, '-t', imageTag],
       imageTag,
