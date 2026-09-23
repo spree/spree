@@ -44,8 +44,10 @@ export function variantToFormValues(variant: PanelVariant, position: number): Va
     preorder_ships_at: variant.preorder_ships_at ?? null,
     backorder_limit: variant.backorder_limit ?? null,
     tax_category_id: variant.tax_category_id ?? null,
+    // Base prices only: this array is posted back as the variant's base
+    // prices, so a price-list row taken in here returns as the shop price.
     prices: (variant.prices ?? [])
-      .filter((p) => p.currency != null)
+      .filter((p) => p.currency != null && p.price_list_id == null)
       .map((p) => ({
         currency: p.currency as string,
         // Keep amounts as the canonical decimal strings the API returns.
