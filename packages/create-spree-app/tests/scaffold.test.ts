@@ -210,7 +210,7 @@ describe('scaffold (no-start)', () => {
     expect(compose).toContain('- bundle_cache:/usr/local/bundle')
   })
 
-  it('generates .env with SECRET_KEY_BASE and PORT', async () => {
+  it('generates .env with SECRET_KEY_BASE, encryption keys and PORT', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -224,6 +224,9 @@ describe('scaffold (no-start)', () => {
 
     const env = fs.readFileSync(path.join(projectDir, '.env'), 'utf-8')
     expect(env).toMatch(/SECRET_KEY_BASE=.{128}/)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=[A-Za-z0-9]{32}$/m)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=[A-Za-z0-9]{32}$/m)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=[A-Za-z0-9]{32}$/m)
     expect(env).toContain('SPREE_PORT=4567')
   })
 

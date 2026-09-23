@@ -54,6 +54,11 @@ services:
     environment:
       DATABASE_URL: postgres://postgres@postgres:5432/spree_production
       SECRET_KEY_BASE: change-me-to-a-real-secret
+      # Active Record encryption — generate with `spree encryption init --print`
+      # or `bin/rails db:encryption:init`; never change them once data is encrypted
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: change-me
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: change-me
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: change-me
       RAILS_FORCE_SSL: "false"
       RAILS_ASSUME_SSL: "false"
       # Public host used in generated URLs (images/attachments in API
@@ -93,6 +98,10 @@ Background jobs run inside the web container by default. When job load deserves 
     environment:
       DATABASE_URL: postgres://postgres@postgres:5432/spree_production
       SECRET_KEY_BASE: change-me-to-a-real-secret
+      # the same encryption keys as web
+      ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY: change-me
+      ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY: change-me
+      ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT: change-me
       RAILS_HOST: localhost:3000
     command: bin/jobs
 ```
@@ -103,6 +112,7 @@ Background jobs run inside the web container by default. When job load deserves 
 | --- | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@host:5432/spree` |
 | `SECRET_KEY_BASE` | Secret key for session encryption | Generate with `bin/rails secret` |
+| `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY`, `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` | Keys Spree encrypts secrets at rest with — see [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption). Never change them once data is encrypted | Generate with `spree encryption init --print` or `bin/rails db:encryption:init` |
 | `RAILS_HOST` | Public host used in generated URLs — image/attachment URLs in API responses, email links | `store.example.com` |
 | `SOLID_QUEUE_IN_PUMA` | Run background jobs inside the web container (default `true`); set `false` when running a dedicated worker | `true` |
 

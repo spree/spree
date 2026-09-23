@@ -184,6 +184,45 @@ bundle exec rake spree:upgrade:migrate_country_state_codes
 
 Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses for one release.
 
+## Enable Active Record encryption
+
+Spree encrypts webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
+
+**1. Make the app read the keys.** Projects created from `spree-starter` read them from the `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` env vars, falling back to the `active_record_encryption` entry in Rails credentials. If your `config/application.rb` predates this, add inside the `Application` class:
+
+```ruby config/application.rb
+%i[primary_key deterministic_key key_derivation_salt].each do |key|
+  value = ENV["ACTIVE_RECORD_ENCRYPTION_#{key.upcase}"].presence ||
+    credentials.dig(:active_record_encryption, key).presence
+  config.active_record.encryption[key] = value if value
+end
+```
+
+Setting the keys in `config.active_record.encryption` (rather than only in credentials) matters: Spree checks that configuration when it decides whether to encrypt webhook secrets and gateway customer IDs.
+
+**2. Generate keys for development and production** — a separate set for each environment:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree encryption init           # adds a set to your project's .env (never overwrites existing keys)
+spree encryption init --print   # prints a set for your production host
+```
+
+```bash Without Spree CLI
+bin/rails db:encryption:init    # prints a set; put it in env vars or encrypted credentials
+```
+
+</CodeGroup>
+
+Recreate the containers so they pick up the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
+
+<Warning>
+Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
+</Warning>
+
+**3. Encrypt existing rows.** Rows written before the keys were set are plain text. OAuth tokens on user identities stay readable and are encrypted on their next write. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+
 ## The Cart/Order split
 
 The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:

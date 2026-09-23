@@ -21,6 +21,7 @@ import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
   dlxCommand,
+  generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
   isDockerRunning,
@@ -87,7 +88,13 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.writeFileSync(
     path.join(projectDir, '.env'),
-    envContent(generateSecretKeyBase(), port, options.mailpitSmtpPort, options.mailpitUiPort),
+    envContent(
+      generateSecretKeyBase(),
+      port,
+      options.mailpitSmtpPort,
+      options.mailpitUiPort,
+      generateEncryptionKeys(),
+    ),
   )
   fs.writeFileSync(
     path.join(projectDir, 'package.json'),

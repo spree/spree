@@ -195,6 +195,17 @@ spree api-key create --name "Admin" --type secret --scopes read_all     # Admin 
 spree api-key revoke <id>                              # Revoke a key
 ```
 
+### `spree encryption init`
+
+Generate [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) keys — Spree encrypts webhook signing secrets, payment gateway customer IDs and OAuth tokens with them. New projects already have keys; use this for projects created before they were generated at setup.
+
+```bash
+spree encryption init            # Add ACTIVE_RECORD_ENCRYPTION_* keys to the project's .env
+spree encryption init --print    # Print a fresh set without writing anything (e.g. for your hosting provider)
+```
+
+It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment), and back the keys up in your secret manager.
+
 ### `spree api`
 
 Call the Admin API with generic `get`/`post`/`patch`/`delete` commands — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
