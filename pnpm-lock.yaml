@@ -358,6 +358,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@types/spark-md5':
+        specifier: ^3.0.5
+        version: 3.0.5
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -401,9 +404,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      '@types/spark-md5':
-        specifier: ^3.0.5
-        version: 3.0.5
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.26)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
