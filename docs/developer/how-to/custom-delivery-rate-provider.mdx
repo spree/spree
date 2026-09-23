@@ -158,7 +158,7 @@ Rails.application.config.after_initialize do
 end
 ```
 
-Register inside `after_initialize`: Spree sets up its own integrations list after your initializers run, so an entry added at the top level of the file would be dropped.
+Register inside `after_initialize`: the provider class lives in your application, and Rails cannot load application classes while initializer files are still running. Spree keeps anything registered earlier, so a class-name string such as the integration also works at the top level of the file.
 
 Registration is what makes a provider selectable: Spree validates `rate_provider` against this list, so a typo fails when the method is saved rather than deep inside checkout.
 
