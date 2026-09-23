@@ -204,6 +204,7 @@ export interface RefundCreateParams {
   payment_id: string
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
   amount: string | number
+  /** Refund reason ID (`refrsn_…`). Omitted → the store's first refund reason. */
   refund_reason_id?: string
 }
 

@@ -337,6 +337,7 @@ import type {
   ReasonCreateParams,
   ReasonUpdateParams,
   ReceivableCloseParams,
+  RefundCreateParams,
   ResourceTypeDefinition,
   ReturnCreateParams,
   ReturnReceiveParams,
@@ -2135,13 +2136,7 @@ export class AdminClient {
 
       create: (
         orderId: string,
-        params: {
-          payment_id: string
-          /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-          amount: string | number
-          reason_id?: string
-          refund_reason_id?: string
-        },
+        params: RefundCreateParams,
         options?: RequestOptions,
       ): Promise<Refund> =>
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),

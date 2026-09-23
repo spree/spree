@@ -234,6 +234,24 @@ describe('orders', () => {
 
       expect(body).toEqual({ payment_id: 'pay_1', amount: 10 })
     })
+
+    it('sends the reason as refund_reason_id, the param the API reads', async () => {
+      let body: Record<string, unknown> | null = null
+      server.use(
+        http.post(`${API_PREFIX}/orders/order_abc123/refunds`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json(sampleRefund, { status: 201 })
+        }),
+      )
+
+      await createTestClient().orders.refunds.create('order_abc123', {
+        payment_id: 'pay_1',
+        amount: '5.00',
+        refund_reason_id: 'refrsn_1',
+      })
+
+      expect(body).toEqual({ payment_id: 'pay_1', amount: '5.00', refund_reason_id: 'refrsn_1' })
+    })
   })
 
   describe('nested gift cards & store credits', () => {
