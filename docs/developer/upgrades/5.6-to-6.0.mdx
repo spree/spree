@@ -403,6 +403,20 @@ one. An order whose every parcel was recalled now reads
 `fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
 order reads `canceled`.
 
+## Payment source IDs use the `psrc_` prefix
+
+`Spree::PaymentSource` shared the `ps_` prefix with `Spree::PaymentSession`,
+so the same string could name either record. Payment sources now use
+`psrc_`. The encoded part of the ID doesn't change, only the prefix. The only
+place a payment source's ID shows up is the `source_id` of a payment backed by
+a non-card payment source (wallets, bank redirects and similar). If you stored
+one of those values, swap `ps_` for `psrc_`. Payment session IDs stay `ps_`.
+
+Class-level `decode_prefixed_id` (for example `Spree::Product.decode_prefixed_id`)
+now returns `nil` for an ID with another model's prefix, the same as
+`find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
+really need to decode any prefix.
+
 ## Removed in 6.0
 
 These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.

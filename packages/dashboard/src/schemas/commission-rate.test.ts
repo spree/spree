@@ -29,7 +29,7 @@ describe('commissionRateToFormValues', () => {
   it('seeds seller and category pickers from prefixed top-level ids', () => {
     const rate = commissionRateStub([
       {
-        id: 'crule_1',
+        id: 'comrule_1',
         type: 'seller_rule',
         commission_rate_id: 'crate_1',
         preferences: { seller_ids: [42] },
@@ -41,7 +41,7 @@ describe('commissionRateToFormValues', () => {
         category_ids: null,
       },
       {
-        id: 'crule_2',
+        id: 'comrule_2',
         type: 'category_rule',
         commission_rate_id: 'crate_1',
         preferences: { category_ids: [7] },
