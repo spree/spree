@@ -1238,7 +1238,7 @@
             "Spree::Order": "Orders",
             "Spree::Product": "Products",
             "Spree::Taxon": "Categories",
-            "Spree::User": "Customers",
+            "Spree::Customer": "Customers",
             "Spree::Variant": "Variants"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."

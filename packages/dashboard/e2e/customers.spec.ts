@@ -378,6 +378,15 @@ test.describe('customers', () => {
     await page.getByRole('dialog').getByRole('button', { name: /^add$/i }).click()
 
     await expect(page.getByText(/added tags to 2 customers/i)).toBeVisible({ timeout: 15_000 })
+
+    // The new tag is offered by the list's Tags filter.
+    await gotoIndex(page, CUSTOMERS_PATH(creds.store_id), CTA)
+    await page.getByRole('button', { name: /add filter/i }).click()
+    await page
+      .locator('[data-slot="filter-panel-item"]')
+      .getByText(/^tags$/i)
+      .click()
+    await expect(page.getByText(tagName, { exact: true })).toBeVisible({ timeout: 15_000 })
   })
 
   // The detail page's Customer Groups card edits one customer's membership by

@@ -2549,6 +2549,8 @@ export type CustomFieldOwnerType =
   | 'Spree::Product'
   | 'Spree::Variant'
   | 'Spree::Order'
+  | 'Spree::Customer'
+  /** @deprecated Use `'Spree::Customer'` — removed in Spree 6.1. */
   | 'Spree::User'
   | 'Spree::Category'
   | 'Spree::Collection'

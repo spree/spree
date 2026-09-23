@@ -1256,7 +1256,7 @@
             "Spree::Order": "Zamówienia",
             "Spree::Product": "Produkty",
             "Spree::Taxon": "Kategorie",
-            "Spree::User": "Klienci",
+            "Spree::Customer": "Klienci",
             "Spree::Variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."

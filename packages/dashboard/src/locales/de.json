@@ -1238,7 +1238,7 @@
             "Spree::Order": "Bestellungen",
             "Spree::Product": "Produkte",
             "Spree::Taxon": "Kategorien",
-            "Spree::User": "Kunden",
+            "Spree::Customer": "Kunden",
             "Spree::Variant": "Varianten"
           },
           "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
