@@ -4230,6 +4230,7 @@
         "denied": "مرفوضة",
         "fulfilled": "تم الشحن",
         "open": "مفتوحة",
+        "partially_refunded": "مسترد جزئيًا",
         "received": "تم الاستلام",
         "refunded": "تم الاسترداد",
         "requested": "مطلوب",

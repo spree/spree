@@ -23,7 +23,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    has_status :requested, :approved, :received, :refunded, :canceled,
+    has_status :requested, :approved, :received, :partially_refunded, :refunded, :canceled,
                default: :requested
 
     belongs_to :store, class_name: 'Spree::Store'
@@ -115,7 +115,7 @@ module Spree
     #
     # @return [Boolean]
     def counted?
-      received? || refunded?
+      received? || partially_refunded? || refunded?
     end
 
     # What the customer is owed for the items being returned.

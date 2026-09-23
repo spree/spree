@@ -59,7 +59,7 @@ module Spree
           failure(owner, Spree.t('fulfillments.errors.cannot_purchase_label')) unless owner.unfulfilled?
           failure(owner, Spree.t('fulfillments.errors.order_draft')) if owner.order&.draft?
         when Spree::Return
-          failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
+          failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.counted? || owner.canceled?
         end
       end
 

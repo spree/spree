@@ -197,6 +197,78 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result.error.value).to eq(:refund_exceeds_balance)
     end
 
+    context 'in more than one step' do
+      let(:part) { (return_record.refund_total / 3).round(2) }
+
+      it 'leaves the return partially refunded and open to another refund' do
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: part,
+                                             refund_method: 'store_credit')
+
+        expect(result).to be_success
+        expect(result.value).to be_partially_refunded
+        expect(result.value).to be_counted
+        expect(result.value.refundable_total).to eq(return_record.refund_total - part)
+      end
+
+      it 'marks the return refunded once a later refund covers the rest' do
+        Spree::Returns::Refund.call(return_record: return_record, amount: part, refund_method: 'store_credit')
+
+        result = Spree::Returns::Refund.call(return_record: return_record.reload, refund_method: 'store_credit')
+
+        expect(result).to be_success
+        expect(result.value).to be_refunded
+        expect(result.value.refunded_total).to eq(return_record.refund_total)
+        expect(Spree::StoreCredit.where(originator: return_record).pluck(:amount)).
+          to contain_exactly(part, return_record.refund_total - part)
+      end
+
+      it 'refuses a later refund above what is still owed' do
+        Spree::Returns::Refund.call(return_record: return_record, amount: part, refund_method: 'store_credit')
+
+        result = Spree::Returns::Refund.call(return_record: return_record.reload,
+                                             amount: return_record.refund_total - part + 0.01,
+                                             refund_method: 'store_credit')
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_balance)
+        expect(return_record.reload).to be_partially_refunded
+        expect(Spree::StoreCredit.where(originator: return_record).count).to eq(1)
+      end
+
+      it 'refuses store credit when a concurrent refund took the balance after it was first read' do
+        Spree.hooks.register('returns.refund.before_refund') do |flow|
+          create(:store_credit, store: return_record.store, customer: return_record.order.customer,
+                                amount: part, currency: return_record.currency, originator: flow.return_record)
+        end
+
+        result = Spree::Returns::Refund.call(return_record: return_record, amount: return_record.refund_total,
+                                             refund_method: 'store_credit')
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:refund_exceeds_balance)
+        expect(Spree::StoreCredit.where(originator: return_record).pluck(:amount)).to eq([part])
+      end
+
+      it 'refuses a return that is already fully refunded' do
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        result = Spree::Returns::Refund.call(return_record: return_record.reload, amount: 1,
+                                             refund_method: 'store_credit')
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq(:not_received)
+      end
+
+      it 'publishes return.refunded for every step' do
+        allow(return_record).to receive(:publish_event).and_call_original
+
+        Spree::Returns::Refund.call(return_record: return_record, amount: part, refund_method: 'store_credit')
+        Spree::Returns::Refund.call(return_record: return_record.reload, refund_method: 'store_credit')
+
+        expect(return_record).to have_received(:publish_event).with('return.refunded').twice
+      end
+    end
+
     context 'to store credit' do
       it 'issues credit inside the transaction and marks the return refunded' do
         result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
@@ -279,7 +351,7 @@ RSpec.describe 'Spree::Returns workflows' do
 
       # A partial refund must not hand the provider the returned lines with no
       # word of how little went back: crediting their full tax would reclaim tax
-      # the merchant kept, and a return is marked refunded only once.
+      # the merchant kept.
       it 'tells the provider how much was actually refunded' do
         order = return_record.order
         provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)

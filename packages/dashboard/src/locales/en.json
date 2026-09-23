@@ -4202,6 +4202,7 @@
         "denied": "Denied",
         "fulfilled": "Fulfilled",
         "open": "Open",
+        "partially_refunded": "Partially refunded",
         "received": "Received",
         "refunded": "Refunded",
         "requested": "Requested",

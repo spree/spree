@@ -5,7 +5,7 @@ module Spree
   #
   #   class Spree::Return < Spree.base_class
   #     include Spree::HasStatus
-  #     has_status :requested, :approved, :received, :refunded, :canceled,
+  #     has_status :requested, :approved, :received, :partially_refunded, :refunded, :canceled,
   #                default: :requested
   #   end
   #

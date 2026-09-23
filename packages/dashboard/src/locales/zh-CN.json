@@ -4192,6 +4192,7 @@
         "denied": "已拒绝",
         "fulfilled": "已发货",
         "open": "待处理",
+        "partially_refunded": "部分退款",
         "received": "已收到",
         "refunded": "已退款",
         "requested": "已申请",

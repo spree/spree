@@ -41,7 +41,7 @@ erDiagram
 
 | Record | Statuses |
 |---|---|
-| **Return** | `requested` → `approved` → `received` → `refunded`, or `canceled` |
+| **Return** | `requested` → `approved` → `received` → `partially_refunded` → `refunded`, or `canceled` |
 | **Exchange** | `requested` → `approved` → `received` → `fulfilled`, or `canceled` |
 | **Claim** | `open` → `approved` → `resolved`, or `denied` / `canceled` |
 
@@ -119,6 +119,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
 Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit.
+
+You can refund a return in more than one step — for example, part to store credit and the rest to the card, or some now and the rest after inspection. A refund for less than the return is still owed leaves it `partially_refunded`, and it becomes `refunded` once nothing is left owing. No refund can go above what is still owed. Each refund publishes `return.refunded`.
 
 ### Where the goods come back to
 

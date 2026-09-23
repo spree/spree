@@ -5834,6 +5834,7 @@
         "denied": "Denegado",
         "fulfilled": "Cumplido",
         "open": "Abierto",
+        "partially_refunded": "Reembolsado parcialmente",
         "received": "Recibido",
         "refunded": "Reembolsado",
         "requested": "Solicitado",

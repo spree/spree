@@ -81,7 +81,14 @@ defineTable<Return>('returns', {
       default: true,
       render: (r) => numberCell(r),
     },
-    statusColumn(['requested', 'approved', 'received', 'refunded', 'canceled']),
+    statusColumn([
+      'requested',
+      'approved',
+      'received',
+      'partially_refunded',
+      'refunded',
+      'canceled',
+    ]),
     orderColumn<Return>(),
     {
       key: 'display_refund_total',

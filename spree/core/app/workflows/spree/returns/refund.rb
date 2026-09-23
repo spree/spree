@@ -15,9 +15,11 @@ module Spree
       # Refunds created by this run — hook handlers read them.
       attr_reader :refunds
 
-      # @param return_record [Spree::Return] must be received
+      # @param return_record [Spree::Return] must be received or partially
+      #   refunded
       # @param amount [BigDecimal, Numeric, nil] defaults to what the return
-      #   is still owed
+      #   is still owed; less than that leaves it partially refunded, open to
+      #   another refund for the rest
       # @param refund_method [String] 'original_payment' or 'store_credit'
       # @param refunder [Object, nil] who is issuing it (see Spree.actor_classes)
       def perform(return_record:, amount: nil, refund_method: 'original_payment', refunder: nil)
@@ -31,7 +33,11 @@ module Spree
         run_hooks :before_refund
 
         if internal_refund?
-          ApplicationRecord.transaction do
+          # Store credit reserves nothing before it is written, so two refunds
+          # at once would both fit the balance read above. The return's row
+          # lock serializes them and the balance is re-read inside it.
+          return_record.with_lock do
+            step :resolve_amount
             step :issue_store_credit
             step :mark_refunded
           end
@@ -79,7 +85,7 @@ module Spree
                            message: Spree.t('errors.messages.invalid_refund_method'))
           failure(return_record)
         end
-        failure(return_record, :not_received) unless return_record.received?
+        failure(return_record, :not_received) unless return_record.received? || return_record.partially_refunded?
       end
 
       # Only what actually came back is refundable — a customer who sent two of
@@ -87,11 +93,11 @@ module Spree
       # default and the ceiling, so a caller naming an amount cannot ask for
       # more than a caller who names none would get.
       def resolve_amount
-        refundable = return_record.refundable_total.to_d
-        @amount_to_refund = amount ? amount.to_d : refundable
+        @refundable = return_record.refundable_total.to_d
+        @amount_to_refund = amount ? amount.to_d : @refundable
 
         failure(return_record, :nothing_to_refund) unless @amount_to_refund.positive?
-        failure(return_record, :refund_exceeds_balance) if @amount_to_refund > refundable
+        failure(return_record, :refund_exceeds_balance) if @amount_to_refund > @refundable
       end
 
       def issue_store_credit
@@ -117,8 +123,14 @@ module Spree
         failure(return_record, :no_refundable_payments) if @refunds.empty?
       end
 
+      # Fully refunded only once nothing is left owing — a return can be paid
+      # back in steps (part to store credit, part to the card, the rest after
+      # inspection). Measured by what was actually issued, since the payments
+      # can hold less than was asked for.
       def mark_refunded
-        return_record.update!(status: 'refunded', refunded_at: Time.current)
+        still_owed = @refundable - @refunds.sum(&:amount)
+        return_record.update!(status: still_owed.positive? ? 'partially_refunded' : 'refunded',
+                              refunded_at: Time.current)
       end
     end
   end
