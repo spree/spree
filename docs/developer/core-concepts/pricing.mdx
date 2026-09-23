@@ -98,6 +98,12 @@ spree api post /prices/bulk_upsert -d '{
 
 </CodeGroup>
 
+`?expand=variants.prices` returns every price a variant has, Price List amounts
+and quantity breaks included; each row carries its `price_list_id`, which is
+`null` for a base price. Writing `prices` back on a variant sets **base prices
+only** — a currency left out is removed — so filter the rows you read before
+sending them back. To write what a Price List charges, use `/prices`.
+
 ## Price Lists
 
 Price Lists allow you to create different pricing strategies based on various conditions. This enables advanced pricing scenarios like:
