@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
@@ -106,13 +107,24 @@ export function initEncryption(projectDir: string): void {
 function writeEnvAtomically(envPath: string, contents: string): void {
   const target = fs.existsSync(envPath) ? fs.realpathSync(envPath) : envPath
   const mode = fs.existsSync(target) ? fs.statSync(target).mode & 0o777 : 0o600
-  const tmp = path.join(path.dirname(target), `.${path.basename(target)}.${process.pid}.tmp`)
-  fs.writeFileSync(tmp, contents, { mode, flag: 'wx' })
+  // Random suffix: a stale file from an earlier crashed run (or a reused PID)
+  // can't collide with this one.
+  const suffix = crypto.randomBytes(6).toString('hex')
+  const tmp = path.join(path.dirname(target), `.${path.basename(target)}.${suffix}.tmp`)
+  let created = false
   try {
+    const fd = fs.openSync(tmp, 'wx', mode)
+    created = true
+    try {
+      fs.writeFileSync(fd, contents)
+    } finally {
+      fs.closeSync(fd)
+    }
     fs.chmodSync(tmp, mode)
     fs.renameSync(tmp, target)
   } catch (error) {
-    fs.rmSync(tmp, { force: true })
+    // Only remove a temp file this call created.
+    if (created) fs.rmSync(tmp, { force: true })
     throw error
   }
 }
