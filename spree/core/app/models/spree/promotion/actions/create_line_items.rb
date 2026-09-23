@@ -28,11 +28,11 @@ module Spree
         # get a free tote"), so the rules decide whether the promotion applies
         # and this action decides which lines it pays for.
         #
-        # @param _order [Spree::Order, Spree::Cart]
+        # @param order [Spree::Order, Spree::Cart]
         # @param line_item [Spree::LineItem]
         # @return [Boolean]
-        def applies_to_line_item?(_order, line_item)
-          gifted_quantity_of(line_item).positive?
+        def applies_to_line_item?(order, line_item)
+          gifted_item?(line_item) && qualifies_beyond_the_gift?(order)
         end
 
         # Covers the gifted units of the line at their own price, leaving any
@@ -64,6 +64,7 @@ module Spree
         def perform(options = {})
           order = options[:order]
           return unless eligible? order
+          return unless qualifies_beyond_the_gift?(order)
 
           added = add_missing_line_items(order)
 
@@ -104,6 +105,26 @@ module Spree
         end
 
         private
+
+        # Whether this line holds a variant the promotion gives away.
+        def gifted_item?(line_item)
+          gifted_quantity_of(line_item).positive?
+        end
+
+        # A gift cannot be the thing that qualifies the order for the promotion
+        # giving it away: a rule naming the gift's own product would otherwise
+        # hand the item over to anyone who put it in their cart. The order has
+        # to hold a line the rules count with units this action is not already
+        # covering. A promotion with no rules qualifies on anything, so there is
+        # nothing for the gift to stand in for.
+        def qualifies_beyond_the_gift?(order)
+          return true if promotion.promotion_rules.empty?
+
+          order.line_items.any? do |line_item|
+            promotion.line_item_actionable?(order, line_item) &&
+              gifted_quantity_of(line_item) < line_item.quantity
+          end
+        end
 
         # How many units of this line the promotion pays for — never more than
         # the line holds, so a shopper buying three of a variant gifted once

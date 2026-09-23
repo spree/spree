@@ -140,6 +140,51 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       expect(cart.total).to eq(20)
     end
 
+    context 'when the rules name the gift\'s own product' do
+      before { create(:promotion_rule_product, promotion: promotion).products << gift.product }
+
+      it 'refuses the gift when the only qualifying line is the gift itself' do
+        Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
+        promotion.reload
+
+        expect(promotion.activate(order: cart)).to be(false)
+        expect(gift_line_item.discounts).to be_empty
+        expect(cart.reload.total).to eq(15)
+      end
+
+      # The gift stops being free the moment it is the only thing qualifying,
+      # and is not re-added, so the shopper can take it out themselves.
+      it 'stops paying for the gift when the qualifying line goes' do
+        qualifying = create(:variant, price: 20)
+        promotion.promotion_rules.first.products << qualifying.product
+        Spree.cart_add_item_workflow.call(cart: cart, variant: qualifying, quantity: 1)
+        promotion.reload
+        promotion.activate(order: cart)
+        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+
+        Spree.cart_remove_item_service.call(cart: cart, variant: qualifying, quantity: 1)
+
+        expect(gift_line_item.discounts).to be_empty
+        expect(cart.reload.total).to eq(15)
+      end
+
+      it 'gifts one once the shopper holds more than the gift covers' do
+        Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 3)
+        promotion.reload
+
+        promotion.activate(order: cart)
+        Spree.cart_recalculate_totals_workflow.call(cart: cart)
+
+        expect(gift_line_item.quantity).to eq(3)
+        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+
+        cart.reload
+        expect(cart.item_total).to eq(45)
+        expect(cart.discount_total).to eq(-15)
+        expect(cart.total).to eq(30)
+      end
+    end
+
     it "discounts the shopper's own copy instead of adding a second one" do
       Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
 
