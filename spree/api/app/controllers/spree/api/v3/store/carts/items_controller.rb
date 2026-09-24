@@ -97,12 +97,15 @@ module Spree
             end
 
             # Extension attributes ride in `options`, which is how AddItem
-            # forwards per-line-item values onto the record.
+            # forwards per-line-item values onto the record. Only those reach
+            # it: anything else in `options` is internal to AddItem (the
+            # fulfillment an admin pins a line to) and not the shopper's to set.
             def item_options
-              keys = Spree::LineItem.additional_permitted_attributes.flat_map { |a| a.is_a?(Hash) ? a.keys : a }
-              extras = permitted_params.to_h.slice(*keys.map(&:to_s)).symbolize_keys
+              keys = Spree::LineItem.additional_permitted_attributes.flat_map { |a| a.is_a?(Hash) ? a.keys : a }.map(&:to_s)
 
-              (permitted_params[:options] || {}).to_h.symbolize_keys.merge(extras)
+              (permitted_params[:options] || {}).to_h.slice(*keys).
+                merge(permitted_params.to_h.slice(*keys)).
+                symbolize_keys
             end
 
             def permitted_params
