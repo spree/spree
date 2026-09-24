@@ -122,7 +122,7 @@ module Spree
           end
 
           def permitted_params
-            attrs = normalize_params(
+            normalize_params(
               params.permit(
                 :name, :description, :position,
                 :starts_at, :ends_at, :match_policy,
@@ -132,24 +132,6 @@ module Spree
                 prices: [:id, :variant_id, :currency, :min_quantity, :amount, :compare_at_amount]
               )
             )
-            reject_foreign_variants(attrs)
-          end
-
-          # The price rows resolve variant ids with no store scoping, so a
-          # list in this store could otherwise be populated with another
-          # store's variants. Drop any id that isn't in the current store
-          # before assignment.
-          def reject_foreign_variants(attrs)
-            if attrs[:prices].present?
-              incoming = Array(attrs[:prices])
-              store_variant_ids = current_store.variants.where(id: incoming.map { |r| r[:variant_id] }.compact).
-                                  pluck(:id).map(&:to_s).to_set
-              attrs[:prices] = incoming.select do |row|
-                row[:variant_id].blank? || store_variant_ids.include?(row[:variant_id].to_s)
-              end
-            end
-
-            attrs
           end
 
           private
