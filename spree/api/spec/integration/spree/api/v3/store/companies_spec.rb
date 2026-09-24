@@ -140,9 +140,11 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Adds a person to the node by email. An email that already belongs to a customer of
-        this store becomes a membership immediately (a `cmem_...` id); any other email
-        becomes an invitation (a `cinv_...` id) and the invite email goes out.
+        Invites a person to the node by email (a `cinv_...` id) and sends the invite email.
+        This is an invitation even when the email already belongs to a customer: they join
+        by accepting the emailed token, which proves they own the address and agree to join.
+        The response is the same either way, so it does not reveal whether the email has an
+        account.
       DESC
 
       sdk_example 'companies/members-create'
@@ -155,7 +157,7 @@ RSpec.describe 'Company Self-Service API', type: :request, swagger_doc: 'api-ref
         required: ['customer_email']
       }
 
-      response '201', 'member added or invitation sent' do
+      response '201', 'invitation sent' do
         let!(:membership) { create(:company_membership, company: company, customer: user) }
         let!(:colleague) { create(:customer, email: 'colleague@acme.test') }
         let(:company_id) { company.prefixed_id }

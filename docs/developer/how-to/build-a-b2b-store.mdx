@@ -135,7 +135,9 @@ A delivery site is an address, not a node. Ten warehouses do not mean ten compan
 
 ### Add the buyers
 
-People join a company by email. An existing customer becomes a member immediately. An unknown email receives an invitation that is valid for 30 days, and accepting it creates their account and their membership in one step. The ID prefix tells you which happened: `cmem_` for a membership, `cinv_` for an invitation.
+People join a company by email. When staff add someone through the Admin API, an existing customer becomes a member immediately, and an unknown email receives an invitation. The ID prefix tells you which happened: `cmem_` for a membership, `cinv_` for an invitation.
+
+When a member adds a colleague from the storefront, the colleague always receives an invitation, even if they already have an account. Anyone can type an email address, so joining requires accepting the emailed invitation, which proves the person owns that address. An invitation is valid for 30 days. Accepting it creates the account and the membership in one step, or links an existing signed-in customer whose email matches.
 
 <CodeGroup>
 
@@ -146,8 +148,8 @@ const result = await adminClient.companies.memberships.create('comp_xxx', {
 ```
 
 ```typescript Store SDK
-// A member can add colleagues from the storefront in the same way
-const result = await client.companies.members.create('comp_xxx', {
+// A member invites colleagues from the storefront; they join by accepting
+const invitation = await client.companies.members.create('comp_xxx', {
   customer_email: 'colleague@acme.example',
 })
 ```
