@@ -384,6 +384,20 @@ module Spree
             end
           end
 
+          context 'when a draft order holds the code' do
+            let(:draft_order) { create(:order_with_line_items, line_items_count: 3, store: store) }
+
+            before { coupon_code.apply_order!(draft_order) }
+
+            it 'keeps the code on the draft order' do
+              subject.apply
+
+              expect([subject.status_code, subject.error]).to eq([:coupon_code_used, Spree.t(:coupon_code_used)])
+              expect(coupon_code.reload.holder).to eq(draft_order)
+              expect(order.reload.total).to eq(130)
+            end
+          end
+
           describe '#remove' do
             before do
               subject.apply

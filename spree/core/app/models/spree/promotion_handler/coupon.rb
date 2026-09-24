@@ -239,18 +239,18 @@ module Spree
       end
 
       # A single-use code is spent only when an order is placed with it, so a
-      # code sitting on another open cart or draft order is taken from it
-      # rather than refused: whoever presents it now gets the discount, and
-      # whoever places an order first keeps the code. A holder in the middle of
-      # checkout keeps it, since its totals are fixed and money may already be
-      # at the gateway.
+      # code sitting on another open cart is taken from it rather than
+      # refused: whoever presents it now gets the discount, and whoever places
+      # an order first keeps the code. A cart in the middle of checkout keeps
+      # it, and so does a draft order, since its totals are fixed and money
+      # may already be at the gateway.
       #
       # The holder is locked before the code, the same order checkout takes
       # them in, so the two serialize instead of deadlocking.
       #
       # @return [Boolean] false when the code can no longer be claimed
       def claim_coupon_code(discount, coupon_code)
-        record = Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)
+        record = Spree::CouponCode.find_by(promotion_id: discount.promotion_id, code: coupon_code)
         return true if record.nil?
 
         holder = record.holder
@@ -259,7 +259,7 @@ module Spree
         Spree::CouponCode.transaction do
           holder&.lock!
           record.lock!
-          next false if record.used? || !same_holder?(record.holder, holder) || checkout_in_progress?(holder)
+          next false if record.used? || !same_holder?(record.holder, holder) || !releasable?(holder)
 
           release_coupon_code(holder, coupon_code) if holder
           record.apply_order!(order)
@@ -271,12 +271,10 @@ module Spree
         self.class.new(holder, enable_gift_cards: false).remove(coupon_code)
       end
 
-      def checkout_in_progress?(holder)
-        case holder
-        when Spree::Cart then holder.completed_at.present? || holder.completion_claimed?
-        when Spree::Order then holder.completed_at.present? || holder.cart&.completion_claimed? || false
-        else false
-        end
+      def releasable?(holder)
+        return true if holder.nil?
+
+        holder.is_a?(Spree::Cart) && holder.completed_at.nil? && !holder.completion_claimed?
       end
 
       def same_record?(holder, other)
