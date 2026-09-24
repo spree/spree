@@ -25,7 +25,9 @@ module Spree
                 )
               end
 
-              unless payment_method.available_for_order?(@cart)
+              # Store credit passes the lookup above but has its own endpoint, so
+              # it is never among the methods the cart offers.
+              unless @cart.payment_methods.include?(payment_method)
                 return render_error(
                   code: 'payment_method_unavailable',
                   message: Spree.t('api.v3.payments.method_unavailable'),
