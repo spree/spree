@@ -51,13 +51,22 @@ Spree's built-in tax engine handles the rates you configure per country or state
 - **Distance-selling thresholds** - "Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order."
 - **Proportional delivery tax** - "Delivery is taxed at the single rate its delivery method names, not split across the rates of the goods being delivered. A basket mixing tax rates collects the wrong amount on delivery."
 
-<Warning>If any of these apply to where you sell, connect a tax provider such as Stripe Tax or Avalara AvaTax rather than relying on the built-in engine. See [<u>Tax Rates</u>](/user/settings/tax-rates) for how to attach one to a rate.</Warning>
+<Warning>If any of these apply to where you sell, connect a tax provider and then select it in **Tax engine** on every market it affects. Connecting a provider does not change anything on its own, and a market left on the built-in engine keeps calculating tax with it.</Warning>
+
+<Note>Tax rates and their calculators are configuration for the built-in engine, and do not decide which engine a market uses. Setting a rate's calculator does not move that market off the built-in engine. See [<u>Tax Rates</u>](/user/settings/tax-rates) for what rates do.</Note>
 
 ## How to Edit a Market
 
 Click a market's row to open it. The panel carries the same controls as the creation form, with chosen locales and countries shown as removable chips.
 
-Changing a market's currency changes the currency every price in that region is held in, so check your price lists before switching it on a live store.
+### Changing a market's currency
+
+Changing the currency does not convert the prices you already have. It changes which currency the market's prices are read from, and nothing is carried across:
+
+- Products need a **base price** in the new currency.
+- Price list entries for that market appear with empty prices until you fill them in.
+
+<Warning>Set the base prices and any price list prices in the new currency before switching a live market. A product with no price in the market's currency is hidden from the storefront, unless **Show products without a price** is turned on in [<u>Store Details</u>](/user/settings/store-details).</Warning>
 
 ## How to Delete a Market
 
