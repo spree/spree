@@ -6,9 +6,8 @@ const client = createClient({
 })
 
 // region:example
-// An existing customer joins immediately (cmem_…); anyone else is emailed an
-// invitation (cinv_…).
-const member = await client.companies.members.create(
+// Always an emailed invitation (cinv_…), even for an existing customer.
+const invitation = await client.companies.members.create(
   'comp_86Rf07xd4z',
   { customer_email: 'colleague@acme.test' },
   { token: '<token>' },
@@ -16,4 +15,4 @@ const member = await client.companies.members.create(
 
 // endregion:example
 
-export { member }
+export { invitation }

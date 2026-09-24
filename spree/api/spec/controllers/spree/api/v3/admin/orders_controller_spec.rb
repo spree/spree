@@ -246,6 +246,37 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    # A gift card code is spendable, and gift cards are their own permission.
+    context 'with a key that reads orders but not gift cards' do
+      let(:orders_key) { create(:api_key, :secret, store: store, scopes: ['read_orders']) }
+      let(:headers) { { 'x-spree-api-key' => orders_key.plaintext_token } }
+      let(:gift_card) { create(:gift_card, store: store, code: 'secretcode1234') }
+
+      before { order.update_column(:gift_card_id, gift_card.id) }
+
+      it 'masks the gift card code' do
+        subject
+
+        expect(json_response['gift_card']['code']).to eq('**********1234')
+        expect(response.body).not_to include('SECRETCODE1234')
+      end
+
+      it 'does not expand the customer or payments' do
+        get :show, params: { id: order.prefixed_id, expand: 'customer,payments' }, as: :json
+
+        expect(json_response).not_to have_key('customer')
+        expect(json_response).not_to have_key('payments')
+      end
+    end
+
+    it 'shows the full gift card code to a caller who can read gift cards' do
+      order.update_column(:gift_card_id, create(:gift_card, store: store, code: 'fullcode9999').id)
+
+      subject
+
+      expect(json_response['gift_card']['code']).to eq('FULLCODE9999')
+    end
   end
 
   describe 'POST #create' do

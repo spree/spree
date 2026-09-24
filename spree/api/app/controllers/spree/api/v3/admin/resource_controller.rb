@@ -17,6 +17,7 @@ module Spree
           # include.
           include Spree::Api::V3::Admin::Concerns::ExternalReferences
           include Spree::Api::V3::Admin::ValidationDetails
+          include Spree::Api::V3::Admin::EmbedPermissions
 
           protected
 

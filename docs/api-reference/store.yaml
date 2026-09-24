@@ -1615,6 +1615,8 @@ paths:
                     default: true
                     country_codes:
                     - US
+                    country_isos:
+                    - US
                     supported_locales:
                     - en
                 - id: cart_gbHJdmfrXB
@@ -1733,6 +1735,8 @@ paths:
                     tax_inclusive: false
                     default: true
                     country_codes:
+                    - US
+                    country_isos:
                     - US
                     supported_locales:
                     - en
@@ -1884,6 +1888,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -2085,6 +2091,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -2282,6 +2290,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -2611,6 +2621,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -2926,6 +2938,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -3121,6 +3135,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -3320,6 +3336,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -3607,6 +3625,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -3851,6 +3871,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -4084,6 +4106,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -4304,6 +4328,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -4535,6 +4561,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -4687,6 +4715,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -5396,6 +5426,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
               schema:
@@ -5582,6 +5614,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -5889,6 +5923,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -7014,6 +7050,8 @@ paths:
                     default: true
                     country_codes:
                     - US
+                    country_isos:
+                    - US
                     supported_locales:
                     - en
                 meta:
@@ -7335,6 +7373,8 @@ paths:
                   tax_inclusive: false
                   default: true
                   country_codes:
+                  - US
+                  country_isos:
                   - US
                   supported_locales:
                   - en
@@ -8955,6 +8995,8 @@ paths:
                   default: true
                   country_codes:
                   - US
+                  country_isos:
+                  - US
                   supported_locales:
                   - en
                   - es
@@ -8971,6 +9013,9 @@ paths:
                   tax_inclusive: true
                   default: false
                   country_codes:
+                  - DE
+                  - FR
+                  country_isos:
                   - DE
                   - FR
                   supported_locales:
@@ -9060,6 +9105,9 @@ paths:
                 country_codes:
                 - DE
                 - FR
+                country_isos:
+                - DE
+                - FR
                 supported_locales:
                 - de
                 - en
@@ -9141,6 +9189,9 @@ paths:
                 tax_inclusive: true
                 default: false
                 country_codes:
+                - DE
+                - FR
+                country_isos:
                 - DE
                 - FR
                 supported_locales:
@@ -10570,9 +10621,11 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |
-        Adds a person to the node by email. An email that already belongs to a customer of
-        this store becomes a membership immediately (a `cmem_...` id); any other email
-        becomes an invitation (a `cinv_...` id) and the invite email goes out.
+        Invites a person to the node by email (a `cinv_...` id) and sends the invite email.
+        This is an invitation even when the email already belongs to a customer: they join
+        by accepting the emailed token, which proves they own the address and agree to join.
+        The response is the same either way, so it does not reveal whether the email has an
+        account.
       x-codeSamples:
       - lang: javascript
         label: Spree SDK
@@ -10584,9 +10637,8 @@ paths:
             publishableKey: '<api-key>',
           })
 
-          // An existing customer joins immediately (cmem_…); anyone else is emailed an
-          // invitation (cinv_…).
-          const member = await client.companies.members.create(
+          // Always an emailed invitation (cinv_…), even for an existing customer.
+          const invitation = await client.companies.members.create(
             'comp_86Rf07xd4z',
             { customer_email: 'colleague@acme.test' },
             { token: '<token>' },
@@ -10604,14 +10656,15 @@ paths:
           type: string
       responses:
         '201':
-          description: member added or invitation sent
+          description: invitation sent
           content:
             application/json:
               example:
-                id: cmem_gbHJdmfrXB
-                company_id: comp_UkLWZg9DAJ
-                customer_id: cust_gbHJdmfrXB
+                id: cinv_UkLWZg9DAJ
                 email: colleague@acme.test
+                expires_at: '2026-02-14T12:00:00.000Z'
+                company_id: comp_UkLWZg9DAJ
+                status: pending
       requestBody:
         content:
           application/json:
@@ -10936,7 +10989,6 @@ paths:
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
-                    digital_links: []
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
                     number: R1001-F1
@@ -11079,6 +11131,8 @@ paths:
                     tax_inclusive: false
                     default: true
                     country_codes:
+                    - US
+                    country_isos:
                     - US
                     supported_locales:
                     - en
@@ -13668,7 +13722,6 @@ components:
       - compare_at_amount
       - thumbnail_url
       - option_values
-      - digital_links
       x-typelizer: true
     Locale:
       type: object
@@ -13706,6 +13759,10 @@ components:
           type: array
           items:
             type: string
+        country_isos:
+          type: array
+          items:
+            type: string
         supported_locales:
           type: array
           items:
@@ -13722,6 +13779,7 @@ components:
       - tax_inclusive
       - default
       - country_codes
+      - country_isos
       - supported_locales
       x-typelizer: true
     MediaEvent:

@@ -81,6 +81,18 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
         expect(price_filter[:max]).to be_a(Numeric)
         expect(price_filter[:currency]).to eq(currency)
       end
+
+      # The range is public; a price list's rows belong to its own audience.
+      it 'leaves price-list prices out of the range' do
+        price_list = create(:price_list, store: store)
+        create(:price, variant: product1.master, price_list: price_list, amount: 0.5, currency: currency)
+        create(:price, variant: product2.master, price_list: price_list, amount: 9_999, currency: currency)
+
+        price_filter = result[:filters].find { |f| f[:type] == 'price_range' }
+
+        expect(price_filter[:min]).to be > 0.5
+        expect(price_filter[:max]).to be < 9_999
+      end
     end
 
     describe 'availability filter' do

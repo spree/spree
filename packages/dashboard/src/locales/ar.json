@@ -5141,7 +5141,8 @@
       "errors": {
         "failed_to_remove": "فشل في إزالة الموظفين",
         "failed_to_resend": "فشلت إعادة إرسال الدعوة",
-        "failed_to_revoke": "فشل في إلغاء الدعوة"
+        "failed_to_revoke": "فشل في إلغاء الدعوة",
+        "failed_to_copy_link": "تعذّر نسخ رابط الدعوة"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

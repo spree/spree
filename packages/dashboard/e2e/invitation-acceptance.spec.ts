@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { invitationAcceptancePath, login } from './helpers'
 
 test.describe('invitation lifecycle', () => {
   test('admin invites a teammate and the invitee signs up via the link', async ({
@@ -19,9 +19,9 @@ test.describe('invitation lifecycle', () => {
     await page.getByLabel(/role/i).click()
     await page.getByRole('option').first().click()
 
-    // API wait justified per CLAUDE.md: `acceptance_url` is normally
-    // emailed, not surfaced in the admin UI, so there's no DOM signal to
-    // pull the link from.
+    // API wait justified per CLAUDE.md: the acceptance link is normally
+    // emailed, and the copy action puts it on the clipboard, so there's no DOM
+    // signal to pull it from.
     const [createResponse] = await Promise.all([
       page.waitForResponse(
         (res) =>
@@ -32,10 +32,13 @@ test.describe('invitation lifecycle', () => {
       ),
       page.getByRole('button', { name: /send invitation/i }).click(),
     ])
-    const invitation = (await createResponse.json()) as { acceptance_url: string }
-    expect(invitation.acceptance_url).toMatch(/\/accept-invitation\//)
-    // Tolerate either path-only (test env, admin_url unset) or absolute URL.
-    const acceptancePath = invitation.acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+    const invitation = (await createResponse.json()) as { id: string }
+    const acceptancePath = await invitationAcceptancePath(
+      page,
+      creds,
+      `/api/v3/admin/invitations/${invitation.id}`,
+    )
+    expect(acceptancePath).toMatch(/\/accept-invitation\//)
 
     await page.getByRole('button', { name: /user menu/i }).click()
     await page.getByRole('menuitem', { name: /log out/i }).click()

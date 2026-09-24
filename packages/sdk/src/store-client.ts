@@ -1287,20 +1287,19 @@ export class StoreClient {
         ),
 
       /**
-       * Adds a person by email: an existing customer becomes a member
-       * immediately, anyone else gets an emailed invitation — check the
-       * returned id prefix (`cmem_` vs `cinv_`).
+       * Invites a person by email. Even an existing customer joins only by
+       * accepting the emailed invitation, so this always returns the
+       * invitation.
        */
       create: (
         companyId: string,
         params: { customer_email: string },
         options?: RequestOptions,
-      ): Promise<CompanyMembership | CompanyInvitation> =>
-        this.request<CompanyMembership | CompanyInvitation>(
-          'POST',
-          `/companies/${companyId}/members`,
-          { ...options, body: params },
-        ),
+      ): Promise<CompanyInvitation> =>
+        this.request<CompanyInvitation>('POST', `/companies/${companyId}/members`, {
+          ...options,
+          body: params,
+        }),
 
       /** Withdraws the member's standing. The customer account is untouched. */
       delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>

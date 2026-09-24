@@ -240,6 +240,15 @@ RSpec.describe Spree::Export, :job, type: :model do
       expect(headers).to include('Notes')
     end
 
+    # Which orders land in the file would otherwise answer whether a buyer's
+    # email matches the condition, one guess per export.
+    it "ignores a condition on the buyer's email" do
+      export = create(:order_export, store: store, seller: seller, user: nil,
+                                     search_params: { email_start: 'zzz' }.to_json)
+
+      expect(export.records_to_export).to include(order)
+    end
+
     it "leaves the operator's own export untouched" do
       expect(operator_export.csv_headers).to include('Email')
       expect(rows_for(operator_export).first['Email']).to eq(order.email)

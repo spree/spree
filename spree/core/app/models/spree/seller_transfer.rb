@@ -112,7 +112,9 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[amount currency kind status provider reference created_at seller_id order_id payout_id]
-    self.whitelisted_ransackable_associations = %w[seller order payout refund]
+    # No `order`: filtering through it reaches the buyer's email and address,
+    # which a payouts-only caller may not read. `order_id` covers the lookup.
+    self.whitelisted_ransackable_associations = %w[seller payout refund]
 
     extend Spree::DisplayMoney
     money_methods :amount

@@ -5172,7 +5172,8 @@
       "errors": {
         "failed_to_remove": "Nie udało się usunąć personelu",
         "failed_to_resend": "Nie udało się ponownie wysłać zaproszenia",
-        "failed_to_revoke": "Nie udało się cofnąć zaproszenia"
+        "failed_to_revoke": "Nie udało się cofnąć zaproszenia",
+        "failed_to_copy_link": "Nie udało się skopiować linku zaproszenia"
       },
       "invite": {
         "email_placeholder": "wspolpracownik@przyklad.com",

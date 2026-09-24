@@ -40,6 +40,19 @@ RSpec.describe Spree::Api::V3::Admin::CommissionLinesController, type: :controll
       expect(row['display_total']).to eq('$12.10')
     end
 
+    # The order page lists an order's commission by its id; filtering through
+    # the order itself would reach the buyer, which a commissions-only caller
+    # may not read.
+    it 'filters by the order id but not through the order' do
+      get :index, params: { q: { order_id_eq: order.prefixed_id, order_email_start: 'zzz' } }, as: :json
+
+      expect(json_response['data'].map { |row| row['id'] }).to eq([commission_line.prefixed_id])
+
+      get :index, params: { q: { order_id_eq: create(:order, store: store).prefixed_id } }, as: :json
+
+      expect(json_response['data']).to be_empty
+    end
+
     it "hides another marketplace's commission" do
       other_store = create(:store)
       other = create(:commission_line,

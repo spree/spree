@@ -58,7 +58,9 @@ module Spree
     scope :owed, -> { where(status: %w[pending processing]) }
 
     self.whitelisted_ransackable_attributes = %w[amount currency status provider reference period_start period_end created_at seller_id]
-    self.whitelisted_ransackable_associations = %w[seller transfers]
+    # No `transfers`: they lead on to the order and its buyer, which a
+    # payouts-only caller may not read.
+    self.whitelisted_ransackable_associations = %w[seller]
 
     extend Spree::DisplayMoney
     money_methods :amount

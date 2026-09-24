@@ -170,6 +170,17 @@ module Spree
       order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
+    # A seller never sees the buyer's email, and a company member filtering the
+    # company's orders must not learn a colleague's; the risk flag and coupon
+    # are back-office data. `search` matches on the email too.
+    self.private_ransackable_attributes = {
+      store: %w[email considered_risky coupon_code],
+      seller: %w[email considered_risky coupon_code]
+    }
+    self.private_ransackable_scopes = {
+      store: %w[search multi_search],
+      seller: %w[search multi_search]
+    }
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer

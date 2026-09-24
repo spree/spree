@@ -55,6 +55,20 @@ module Spree
 
     private
 
+    # Resolves ids, prefixed or raw, through the promotion's store, so another
+    # store's record raises instead of being linked. A rule built before its
+    # promotion is known passes the ids through; its validation checks them.
+    #
+    # @param ids [Array<String, Integer>]
+    # @param scope [ActiveRecord::Relation, nil] the store's records
+    # @return [Array<Integer>]
+    def ids_within_store(ids, scope)
+      ids = Array(ids).reject(&:blank?)
+      return ids if scope.nil?
+
+      ids.map { |id| Spree::PrefixedId.prefixed_id?(id) ? scope.find_by_param!(id).id : scope.find(id).id }
+    end
+
     def eligibility_error_message(key, options = {})
       Spree.t(key, Hash[scope: [:eligibility_errors, :messages]].merge(options))
     end

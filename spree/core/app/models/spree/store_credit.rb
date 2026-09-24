@@ -113,6 +113,8 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
     self.whitelisted_ransackable_associations = %w[customer created_by]
     self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
+    # Staff notes and who issued the credit are back-office data.
+    self.private_ransackable_attributes = { store: %w[memo created_by_id] }
 
     # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
     # opted out of here and done inside each scope instead.

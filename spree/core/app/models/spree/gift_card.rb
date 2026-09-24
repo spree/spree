@@ -146,6 +146,15 @@ module Spree
       code.upcase
     end
 
+    # The code with all but its last four characters hidden — for a reader who
+    # may see which card paid for an order but must not be able to spend it.
+    #
+    # @return [String]
+    def masked_code
+      visible = display_code.last(4)
+      ('*' * [display_code.length - visible.length, 0].max) + visible
+    end
+
     # Checks if the gift card is expired
     # @return [Boolean]
     def expired?

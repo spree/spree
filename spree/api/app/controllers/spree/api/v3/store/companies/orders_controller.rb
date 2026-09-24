@@ -20,6 +20,12 @@ module Spree
               current_store.orders.complete.
                 where(company_id: @parent.self_and_descendants.select(:id))
             end
+
+            # These are other members' orders: gift card codes and download
+            # links are the buyer's credentials, not the company's.
+            def serializer_params
+              super.merge(hide_credentials: true)
+            end
           end
         end
       end

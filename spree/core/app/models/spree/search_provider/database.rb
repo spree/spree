@@ -7,6 +7,14 @@ module Spree
         'best_selling' => :by_best_selling
       }.freeze
 
+      # @param store [Spree::Store]
+      # @param audience [Symbol, nil] who filters: `:store` (shoppers) limits
+      #   filters to what the storefront may query; `nil` is the back office
+      def initialize(store, audience: :store)
+        super(store)
+        @audience = audience
+      end
+
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
         filters = filters.is_a?(Hash) ? filters.dup : {}
         option_value_ids = filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids)
@@ -72,7 +80,7 @@ module Spree
 
         ransack_filters = sanitize_filters(filters)
         if ransack_filters.present?
-          search = scope.ransack(ransack_filters)
+          search = scope.ransack(ransack_filters, auth_object: @audience)
           scope = search.result(distinct: true)
         end
 
@@ -127,7 +135,7 @@ module Spree
             end
           }.join(',')
 
-          scope.ransack(s: ransack_sort).result
+          scope.ransack({ s: ransack_sort }, auth_object: @audience).result
         end
       end
 

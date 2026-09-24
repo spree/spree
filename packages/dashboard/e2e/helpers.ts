@@ -407,3 +407,28 @@ export async function createInTransitTransfer(
 
   return transfer
 }
+
+/**
+ * The path an invitee opens to accept an invitation. The link carries the
+ * invitation's token, so the listing never includes it; this fetches it the way
+ * the "copy link" action does. `invitationPath` is the invitation's API path,
+ * e.g. `/api/v3/admin/invitations/inv_x` or `/api/v3/admin/sellers/seller_x/invitations/inv_x`.
+ */
+export async function invitationAcceptancePath(
+  page: Page,
+  session: E2ELoginSession,
+  invitationPath: string,
+): Promise<string> {
+  const res = await page.request.get(`${invitationPath}/acceptance_link`, {
+    headers: {
+      'X-Spree-Store-Id': session.store_id,
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  })
+  if (!res.ok()) {
+    throw new Error(`Acceptance link request failed with ${res.status()}: ${await res.text()}`)
+  }
+  const { acceptance_url } = (await res.json()) as { acceptance_url: string }
+  // Tolerate either path-only (no app origin configured) or an absolute URL.
+  return acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+}

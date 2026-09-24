@@ -30,14 +30,18 @@ RSpec.describe Spree::Api::V3::Store::Companies::MembersController, type: :contr
   end
 
   describe 'POST #create' do
-    it 'adds an existing customer as a member immediately' do
+    # A member typing an address cannot vouch that it is the person they
+    # mean, so even an existing customer joins only by accepting the emailed
+    # token — and the response does not reveal that the email has an account.
+    it 'invites an existing customer rather than adding them' do
       buyer = create(:customer, email: 'colleague@example.com')
 
       post :create, params: { company_id: company.prefixed_id, customer_email: 'colleague@example.com' }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['id']).to start_with('cmem_')
-      expect(company.memberships.reload.map(&:customer)).to include(buyer)
+      expect(json_response['id']).to start_with('cinv_')
+      expect(company.memberships.reload.map(&:customer)).not_to include(buyer)
+      expect(company.invitations.sole.email).to eq('colleague@example.com')
     end
 
     it 'invites an unknown email, recording the inviter' do

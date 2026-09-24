@@ -19,6 +19,16 @@ describe Spree::AdminUserMailer, type: :mailer do
       expect(message.body.encoded).to include("token=#{token}")
     end
 
+    # The token must never land on a storefront, which is where the store URL
+    # points.
+    it 'falls back to the dashboard reset page' do
+      allow(Spree::Stores::DashboardUrl).to receive(:call).with(store: store).and_return('https://admin.example.com')
+
+      message = described_class.password_reset_email(admin_user, token, store)
+
+      expect(message.body.encoded).to include("https://admin.example.com/reset-password?token=#{token}")
+    end
+
     it 'prefers the redirect URL when the API validated one (dashboard SPA)' do
       message = described_class.password_reset_email(admin_user, token, store, redirect_url: 'https://admin.example.com/reset-password')
 

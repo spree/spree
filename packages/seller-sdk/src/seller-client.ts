@@ -15,6 +15,7 @@ import type {
   Import,
   ImportRow,
   Invitation,
+  InvitationAcceptanceLink,
   Order,
   PackageType,
   Payout,
@@ -304,6 +305,10 @@ export class SellerClient {
     /** Withdraws an offer that has not been accepted. */
     revoke: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/invitations/${id}`, options),
+
+    /** The link a colleague opens to join; it carries the invitation's token. */
+    acceptanceLink: (id: string, options?: RequestOptions): Promise<InvitationAcceptanceLink> =>
+      this.request<InvitationAcceptanceLink>('GET', `/invitations/${id}/acceptance_link`, options),
   }
 
   /**

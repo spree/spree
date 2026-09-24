@@ -11,7 +11,11 @@ module Spree
             # POST /api/v3/store/carts/:cart_id/payments
             # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer)
             def create
-              payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
+              # The same methods the cart offers: a disabled or staff-only
+              # method (an offline one marks the order paid) must not be
+              # reachable by naming its id.
+              payment_method = current_store.payment_methods.active.storefront_visible.
+                               find_by_prefix_id!(params[:payment_method_id])
 
               if payment_method.session_required?
                 return render_error(

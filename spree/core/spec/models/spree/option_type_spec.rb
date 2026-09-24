@@ -244,4 +244,20 @@ describe Spree::OptionType, type: :model do
     end
   end
 
+  # Option types are store-owned; a product must not pick up another store's.
+  describe 'attaching to a product' do
+    let(:product) { create(:product) }
+
+    it "refuses another store's option type" do
+      foreign = create(:option_type, store: create(:store))
+
+      expect(Spree::ProductOptionType.new(product: product, option_type: foreign)).not_to be_valid
+    end
+
+    it "accepts the product's own store's option type" do
+      own = create(:option_type, store: product.store)
+
+      expect(Spree::ProductOptionType.new(product: product, option_type: own)).to be_valid
+    end
+  end
 end

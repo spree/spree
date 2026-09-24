@@ -3,6 +3,8 @@ module Spree
     # Opens an exchange request: items coming back, and what should go out
     # in their place.
     class Create < Spree::Workflow
+      include Spree::Returns::ReturnableQuantity
+
       hooks :validate, :after_create
 
       attr_reader :exchange
@@ -55,9 +57,18 @@ module Spree
 
           { fulfillment_item: fulfillment_item, new_variant: new_variant, quantity: quantity }
         end
+
+        # The credit an exchange pays out is priced on these quantities, so
+        # they can never exceed what was shipped and not yet sent back.
+        ensure_returnable_quantities(@normalized_items, action: 'exchanged')
       end
 
       def build_exchange
+        # Again under the order's row lock, so two requests racing for the same
+        # units cannot both pass the check above.
+        Spree::Order.lock.find(order.id)
+        ensure_returnable_quantities(@normalized_items, action: 'exchanged')
+
         @exchange = order.exchanges.new(
           store: order.store,
           stock_location: stock_location || default_stock_location,

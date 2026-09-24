@@ -93,6 +93,36 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
     end
   end
 
+  path '/api/v3/admin/invitations/{invitation_id}/acceptance_link' do
+    let(:invitation_id) { invitation.prefixed_id }
+
+    get 'Get an invitation acceptance link' do
+      tags 'Staff'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Returns the link the invitee opens to accept a pending invitation. The link carries the ' \
+                  'invitation token, so it needs write access to staff and the right to grant the invitation\'s ' \
+                  'role; invitation listings never include it.'
+      admin_scope :write, :staff
+
+      admin_sdk_example 'invitations/acceptance-link'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :invitation_id, in: :path, type: :string, required: true
+
+      response '200', 'acceptance link found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema '$ref' => '#/components/schemas/InvitationAcceptanceLink'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['acceptance_url']).to include('/accept-invitation/')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/invitations/{id}/resend' do
     let(:id) { invitation.prefixed_id }
 

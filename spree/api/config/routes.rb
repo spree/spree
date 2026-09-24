@@ -273,6 +273,7 @@ Spree::Core::Engine.add_routes do
           member do
             patch :resend
           end
+          resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
         resources :api_keys, only: [:index, :show, :create, :update, :destroy] do
           collection do
@@ -590,6 +591,7 @@ Spree::Core::Engine.add_routes do
             member do
               patch :resend
             end
+            resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end
 
           # What this seller submitted about the requirements, and the
@@ -900,6 +902,7 @@ Spree::Core::Engine.add_routes do
           member do
             patch :resend
           end
+          resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
 
         resources :products, only: [:index, :show, :create, :update, :destroy] do

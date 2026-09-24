@@ -23,13 +23,13 @@ module Spree
           #   flow leaves it off (its gate is `manage Invitation`).
           # @return [Boolean] true if the request was rejected (caller should return)
           def reject_unauthorized_role_grant!(role_ids, require_role_management: false)
-            return false if role_ids.blank?
-
             # The management gate runs whenever a role mutation is attempted —
-            # before resolving ids — so passing unknown ids can't slip the
-            # reconciliation (which would still remove the user's current roles)
-            # past a caller without role-management authority.
+            # before resolving ids, and even for an empty list — so passing
+            # unknown ids, or none at all, can't slip the reconciliation (which
+            # would still remove the user's current roles) past a caller
+            # without role-management authority.
             return true if require_role_management && reject_without_role_management!
+            return false if role_ids.blank?
 
             roles = current_store.roles.where(id: role_ids.map(&:to_s)).to_a
             return false if roles.empty?
@@ -38,6 +38,30 @@ module Spree
             return true if reject_privilege_escalating_grant!(roles)
 
             false
+          end
+
+          # Removing a role is bounded like granting it: a caller may only take
+          # away authority they could hand out, so a staff member who can
+          # manage staff cannot strip the admin role from the store's owners.
+          # The store also keeps at least one admin, whoever asks.
+          #
+          # @param user [Object] whose roles are being removed
+          # @param roles [Array<Spree::Role>] the store roles being removed
+          # @return [Boolean] true if the request was rejected (caller should return)
+          def reject_unauthorized_role_removal!(user, roles)
+            return false if roles.empty?
+
+            if roles.any?(&:admin?)
+              return deny_role_grant!('You cannot remove the admin role.') unless caller_holds_admin_role?
+              return deny_role_grant!('The store must keep at least one admin.') if last_admin?(user)
+            end
+
+            return false if caller_holds_admin_role?
+
+            beyond_own = roles.reject { |role| excess_permission_keys(role.permissions).empty? }
+            return false if beyond_own.empty?
+
+            deny_role_grant!("You cannot remove roles beyond your own privileges: #{beyond_own.map(&:name).join(', ')}")
           end
 
           # Rejects granting permission keys beyond the caller's own — used by
@@ -123,6 +147,11 @@ module Spree
               else
                 []
               end
+          end
+
+          def last_admin?(user)
+            admin_roles = current_store.roles.select(&:admin?)
+            Spree::RoleUser.where(role: admin_roles).where.not(user: user).none?
           end
 
           def caller_holds_admin_role?

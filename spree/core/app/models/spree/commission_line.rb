@@ -61,8 +61,10 @@ module Spree
     scope :for_line_items, -> { where.not(line_item_id: nil) }
     scope :for_fulfillments, -> { where.not(fulfillment_id: nil) }
 
-    self.whitelisted_ransackable_attributes = %w[amount tax_amount total currency kind rate]
-    self.whitelisted_ransackable_associations = %w[order seller commission_rate]
+    self.whitelisted_ransackable_attributes = %w[amount tax_amount total currency kind rate order_id]
+    # No `order`: filtering through it reaches the buyer's email and address,
+    # which a commissions-only caller may not read. `order_id` covers the lookup.
+    self.whitelisted_ransackable_associations = %w[seller commission_rate]
 
     extend Spree::DisplayMoney
     money_methods :amount, :tax_amount, :total

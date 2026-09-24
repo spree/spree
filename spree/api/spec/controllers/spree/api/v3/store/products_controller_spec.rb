@@ -122,6 +122,32 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       )
     end
 
+    # The storefront may filter by tag, category and collection, never by
+    # back-office values (cost price, price-list prices, channel codes): each
+    # such filter answers a yes/no question about data it cannot read.
+    context 'with filters on back-office data' do
+      it 'ignores them' do
+        get :index, params: { q: { default_variant_cost_price_lt: -1, variants_prices_amount_lt: -1, channels_code_eq: 'nope' } }
+
+        expect(json_response['meta']['count']).to eq(2)
+      end
+
+      it 'ignores a sort through the variants' do
+        get :index, params: { sort: 'variants_cost_price' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['meta']['count']).to eq(2)
+      end
+
+      it 'still filters by tag' do
+        product.update!(tag_list: ['sale'])
+
+        get :index, params: { q: { tags_name_cont: 'sale' } }
+
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product.prefixed_id])
+      end
+    end
+
     it 'respects max limit limit' do
       get :index, params: { limit: 500 }
 
