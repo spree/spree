@@ -27,6 +27,10 @@ dist-ssr
 # Playwright
 /test-results/
 /playwright-report/
+/playwright-report-first-run/
+/test-results-first-run/
 /playwright/.cache/
 /e2e/.credentials.json
 /e2e/.rails.pid
+/e2e/.first-run.json
+/e2e/.first-run-rails.pid

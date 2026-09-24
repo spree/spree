@@ -1,9 +1,12 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { execa } from 'execa'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { addApp, ensureDashboardDevEnv } from '../src/commands/add.js'
 import type { ProjectContext } from '../src/types.js'
+
+vi.mock('execa', () => ({ execa: vi.fn(async () => ({})) }))
 
 // The two apps `spree add` scaffolds. Both go through addApp, so the same
 // battery runs against each — the seller panel is not a second-class path.
@@ -76,6 +79,20 @@ describe.each(APPS)('addApp — $dir', (app) => {
     // gitignore.template restored to its real name
     expect(fs.existsSync(path.join(dashboardDir, '.gitignore'))).toBe(true)
     expect(fs.existsSync(path.join(dashboardDir, 'gitignore.template'))).toBe(false)
+  })
+
+  // The template's route file comes from the monorepo, so the first dev
+  // start would rewrite it and reload the page the new merchant is on.
+  it('generates the route file for the installed packages right after installing', async () => {
+    vi.mocked(execa).mockClear()
+    await addApp(ctx(), app, { template: templateDir, install: true, quiet: true })
+
+    const appDir = path.join(projectDir, 'apps', app.dir)
+    const calls = vi.mocked(execa).mock.calls
+    expect(calls[0]).toEqual(['pnpm', ['install'], { cwd: appDir }])
+    expect(calls[1][0]).toBe('node')
+    expect((calls[1][1] as string[]).join(' ')).toContain("resolveConfig({}, 'serve')")
+    expect(calls[1][2]).toMatchObject({ cwd: appDir, reject: false })
   })
 
   it('is a no-op when the app directory already exists', async () => {

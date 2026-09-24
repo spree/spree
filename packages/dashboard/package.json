@@ -53,6 +53,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:first-run": "playwright test -c playwright.first-run.config.ts",
     "test:e2e:install": "playwright install chromium",
     "prepublishOnly": "tsup"
   },
