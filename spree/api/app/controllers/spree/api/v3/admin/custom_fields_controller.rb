@@ -109,17 +109,22 @@ module Spree
             end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category')
           end
 
-          # Returns the first segment whose `<segment>_id` is present in params,
+          # Returns the first segment whose `<segment>_id` is in the route,
           # paired with its class and the raw id value, or nil. Memoized — read
           # by both `set_parent` and `scoped_resource_name`.
+          #
+          # Read from the path only: a `store_id` or `refund_id` added to the
+          # query string or body must not switch the parent to a type that is
+          # never routed here and has no store scope to narrow it.
           def parent_lookup
             return @parent_lookup if defined?(@parent_lookup)
 
-            match = parent_route_map.find { |segment, _| params[:"#{segment}_id"].present? }
+            route_params = request.path_parameters
+            match = parent_route_map.find { |segment, _| route_params[:"#{segment}_id"].present? }
             @parent_lookup =
               if match
                 segment, klass_name = match
-                ParentLookup.new(klass_name.constantize, params[:"#{segment}_id"], segment)
+                ParentLookup.new(klass_name.constantize, route_params[:"#{segment}_id"], segment)
               end
           end
         end
