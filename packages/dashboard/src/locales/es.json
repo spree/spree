@@ -5535,7 +5535,8 @@
       "errors": {
         "failed_to_remove": "No se pudo quitar al staff",
         "failed_to_resend": "No se pudo reenviar la invitación",
-        "failed_to_revoke": "No se pudo revocar la invitación"
+        "failed_to_revoke": "No se pudo revocar la invitación",
+        "failed_to_copy_link": "No se pudo copiar el enlace de invitación"
       },
       "invite": {
         "email_placeholder": "compañero@example.com",

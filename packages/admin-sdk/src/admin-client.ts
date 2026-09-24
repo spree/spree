@@ -439,6 +439,7 @@ import type {
   ImportRow,
   Integration,
   Invitation,
+  InvitationAcceptanceLink,
   LineItem,
   Locale,
   Market,
@@ -3146,6 +3147,18 @@ export class AdminClient {
       /** Sends the email again; refused once the offer has lapsed. */
       resend: (sellerId: string, id: string, options?: RequestOptions): Promise<Invitation> =>
         this.request<Invitation>('PATCH', `/sellers/${sellerId}/invitations/${id}/resend`, options),
+
+      /** The link that joins the seller's team; needs write access to sellers. */
+      acceptanceLink: (
+        sellerId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<InvitationAcceptanceLink> =>
+        this.request<InvitationAcceptanceLink>(
+          'GET',
+          `/sellers/${sellerId}/invitations/${id}/acceptance_link`,
+          options,
+        ),
     },
 
     /** What this seller submitted about the requirements, and its decisions. */
@@ -5628,6 +5641,13 @@ export class AdminClient {
     /** Issues a fresh token + email for a pending invitation. */
     resend: (id: string, options?: RequestOptions): Promise<Invitation> =>
       this.request<Invitation>('PATCH', `/invitations/${id}/resend`, options),
+
+    /**
+     * The acceptance link of a pending invitation. It carries the token, so it
+     * needs write access to staff and the right to grant the invitation's role.
+     */
+    acceptanceLink: (id: string, options?: RequestOptions): Promise<InvitationAcceptanceLink> =>
+      this.request<InvitationAcceptanceLink>('GET', `/invitations/${id}/acceptance_link`, options),
   }
 
   // ============================================

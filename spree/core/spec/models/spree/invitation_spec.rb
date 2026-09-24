@@ -147,5 +147,22 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation).not_to receive(:publish_event)
       invitation.resend!
     end
+
+    # A link that leaked with the earlier email must stop working.
+    it 'rotates the token' do
+      expect { invitation.resend! }.to change { invitation.reload.token }
+    end
+
+    it 'keeps the token of an expired invitation' do
+      invitation.update_column(:expires_at, 1.day.ago)
+
+      expect { invitation.resend! }.not_to change { invitation.reload.token }
+    end
+  end
+
+  describe '#acceptance_url' do
+    it 'carries the invitation and its token' do
+      expect(invitation.acceptance_url).to include("/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}")
+    end
   end
 end

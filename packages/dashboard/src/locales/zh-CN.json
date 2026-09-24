@@ -5097,7 +5097,8 @@
       "errors": {
         "failed_to_remove": "移除员工失败",
         "failed_to_resend": "重新发送邀请失败",
-        "failed_to_revoke": "撤销邀请失败"
+        "failed_to_revoke": "撤销邀请失败",
+        "failed_to_copy_link": "复制邀请链接失败"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

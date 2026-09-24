@@ -97,10 +97,22 @@ module Spree
       true
     end
 
-    # Resends the invitation email if the invitation is pending and not expired
+    # The link that accepts this invitation. It carries the token, which is the
+    # only credential acceptance asks for, so hand it only to a caller who could
+    # have sent the invitation themselves.
+    #
+    # @return [String] an absolute URL when the app's origin is configured, otherwise a path
+    def acceptance_url
+      Rails.application.routes.url_helpers.admin_invitation_acceptance_url(self)
+    end
+
+    # Resends the invitation email if the invitation is pending and not expired.
+    # The token is rotated first, so a link that leaked with the earlier email
+    # stops working.
     def resend!
       return if expired? || deleted? || accepted?
 
+      regenerate_token
       publish_event('invitation.resent')
     end
 

@@ -5108,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Échec du retrait du membre du personnel",
         "failed_to_resend": "Échec du renvoi de l'invitation",
-        "failed_to_revoke": "Échec de la révocation de l'invitation"
+        "failed_to_revoke": "Échec de la révocation de l'invitation",
+        "failed_to_copy_link": "Impossible de copier le lien d'invitation"
       },
       "invite": {
         "email_placeholder": "collegue@exemple.com",

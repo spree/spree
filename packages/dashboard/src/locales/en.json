@@ -5108,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Failed to remove staff",
         "failed_to_resend": "Failed to resend invitation",
-        "failed_to_revoke": "Failed to revoke invitation"
+        "failed_to_revoke": "Failed to revoke invitation",
+        "failed_to_copy_link": "Failed to copy invitation link"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

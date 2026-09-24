@@ -5108,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Mitarbeiter konnte nicht entfernt werden",
         "failed_to_resend": "Einladung konnte nicht erneut gesendet werden",
-        "failed_to_revoke": "Einladung konnte nicht zurückgezogen werden"
+        "failed_to_revoke": "Einladung konnte nicht zurückgezogen werden",
+        "failed_to_copy_link": "Einladungslink konnte nicht kopiert werden"
       },
       "invite": {
         "email_placeholder": "teammitglied@beispiel.com",

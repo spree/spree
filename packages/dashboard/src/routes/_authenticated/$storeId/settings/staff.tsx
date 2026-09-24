@@ -1,6 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type AdminUser, type Invitation, type Role, SpreeError } from '@spree/admin-sdk'
-import { getInitials, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  getInitials,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -71,6 +77,7 @@ import { z } from 'zod/v4'
 import {
   useCreateInvitation,
   useDeleteInvitation,
+  useInvitationAcceptanceLink,
   useInvitations,
   useRemoveStaff,
   useResendInvitation,
@@ -301,15 +308,25 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   const resendMutation = useResendInvitation()
   const deleteMutation = useDeleteInvitation()
   const confirm = useConfirm()
+  const acceptanceLink = useInvitationAcceptanceLink()
+  const { permissions } = usePermissions()
   const { copy } = useCopyToClipboard()
 
   async function handleCopyLink() {
-    // Path-only when `Spree::Config[:admin_url]` is unset; resolve against the SPA's origin.
-    const url = invitation.acceptance_url.startsWith('/')
-      ? `${window.location.origin}${invitation.acceptance_url}`
-      : invitation.acceptance_url
-    await copy(url)
-    toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
+    try {
+      const { acceptance_url } = await acceptanceLink.mutateAsync(invitation.id)
+      // Path-only when no dashboard origin is configured; resolve against the SPA's origin.
+      const url = acceptance_url.startsWith('/')
+        ? `${window.location.origin}${acceptance_url}`
+        : acceptance_url
+      await copy(url)
+      toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
+    } catch (err) {
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('admin.staff.errors.failed_to_copy_link'),
+      })
+    }
   }
 
   async function handleResend() {
@@ -385,6 +402,8 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               key: 'copy-link',
               label: t('admin.staff.actions.copy_invitation_link'),
               icon: <LinkIcon className="size-4" />,
+              visible: permissions.can('update', Subject.Invitation),
+              disabled: acceptanceLink.isPending,
               onSelect: handleCopyLink,
             },
             {
