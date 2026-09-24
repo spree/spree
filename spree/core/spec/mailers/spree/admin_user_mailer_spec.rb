@@ -55,12 +55,15 @@ describe Spree::AdminUserMailer, type: :mailer do
           to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
-      it 'sends nothing and logs what to fix when the reset link is plain http' do
-        allow(Spree::Stores::DashboardUrl).to receive(:without_store_fallback).with(store: store).and_return('http://admin.example.com')
+      it 'sends nothing and logs what to fix when the reset link is not a full https address' do
+        allow(Spree::Stores::DashboardUrl).to receive(:without_store_fallback).with(store: store).and_return('http://admin.example.com', 'https:admin.example.com')
 
         expect { described_class.password_reset_email(admin_user, token, store).deliver_now }.
           not_to change { ActionMailer::Base.deliveries.count }
-        expect(Rails.logger).to have_received(:error).with(/not https/)
+
+        expect { described_class.password_reset_email(admin_user, token, store).deliver_now }.
+          not_to change { ActionMailer::Base.deliveries.count }
+        expect(Rails.logger).to have_received(:error).with(/not https/).twice
       end
     end
 

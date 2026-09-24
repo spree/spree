@@ -58,7 +58,8 @@ module Spree
     end
 
     def https_url?(url)
-      URI.parse(url).scheme == 'https'
+      uri = URI.parse(url)
+      uri.scheme == 'https' && uri.host.present?
     rescue URI::InvalidURIError
       false
     end
