@@ -28,8 +28,7 @@ describe Spree::SellerUserMailer, type: :mailer do
     end
 
     # The point of the separate mailer: without a redirect URL the link must
-    # still open the seller panel. The storefront fallback the admin mailer
-    # uses would land a seller on a page that cannot reset anything.
+    # still open the seller panel, not the staff dashboard or the storefront.
     it 'falls back to the seller panel origin, not the store URL' do
       allow(Spree::Sellers::PanelUrl).to receive(:call).with(store: store).and_return('https://sellers.example.com')
 
