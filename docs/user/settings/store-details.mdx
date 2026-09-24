@@ -1,66 +1,147 @@
 ---
 title: "Store Details"
-description: "Learn how to configure your store's core settings in Spree Commerce."
+description: "Learn how to configure your store's name, formats, checkout access, order numbering, stock handling and catalog defaults in Spree Commerce."
 ---
 
-The Store Details section is where you define your store's identity and core operational
-preferences — from its name and logo to timezones, units of measurement, and how digital
-downloads are handled.
+Store settings are the store-wide defaults that everything else falls back on. They decide how your store reads to customers, how orders are numbered, when money is taken, whether stock is counted, and what shoppers can see before signing in.
 
-To configure these settings, navigate to **Settings → Store Details** in the admin dashboard.
+Most of these are set once during setup and rarely touched again. The exceptions are worth knowing, because a few of them change how every future order behaves.
 
-## Name & Logo
+To configure these settings, navigate to **Settings → Store**, under the **Store** group.
 
-![Name and Logo settings in Spree Commerce](/docs/images/user/settings/store-details/1-name-and-logo.png)
+![The Store settings page, showing the sections it is divided into](/docs/images/user/settings/store-details/1-store-settings.png)
 
-- **Name** — the public-facing name of your store, displayed in headers, footers, and other
-  storefront areas.
-- **Logo** — upload a store logo (recommended size: 240x240 px). This image is used only in
-  the admin dashboard.
+<Note>The page is one long scroll divided into titled sections, with a single **Save** button at the top. It stays greyed out until you change something, and it saves the whole page rather than one section.</Note>
 
-## Currencies & Countries
+## General
 
-<Note>Currency, locale, and regional settings are now managed in **Settings → Markets**. See [<u>Markets</u>](https://spreecommerce.org/docs/user/settings/markets) for full details.</Note>
+The name your business trades under. It is the one setting on this page that customers see everywhere, so it is worth getting right before you open.
 
-## Standards & Formats
+- **Store name** - What your store is called. This appears in the dashboard, in emails and on the storefront.
 
-![Standards and Formats settings in Spree Commerce](/docs/images/user/settings/store-details/2-standards-and-formats.png)
+## Standards and Formats
 
-Here you can set the timezone, unit system, and weight units to match your region and business
-preferences:
+How the store reads and measures. These affect what your team sees in the dashboard and the units products are described in, so set them to match how your business already works rather than where your customers are.
 
-- **Timezone** — set your store's timezone for accurate timestamps and order data.
-- **Unit system** — choose between imperial and metric. This affects how weights and measures
-  are displayed across your storefront:
-  - Imperial system
-  - Metric system
-- **Weight unit** — choose the default unit for product weights:
-  - Pound (lb) — imperial system
-  - Ounce (oz) — imperial system
-  - Kilogram (kg) — metric system
-  - Gram (g) — metric system
+- **Admin language** - The language your team sees in the dashboard. This does not change the storefront.
+- **Timezone** - The timezone dates and times are shown in across the dashboard.
+- **Unit system** - **Metric** or **Imperial**, used for product dimensions.
+- **Weight unit** - **Kilogram (kg)** or **Gram (g)** for Metric, or **Pound (lb)** or **Ounce (oz)** for Imperial.
 
-## Phone & Address
+## Storefront Access
 
-![Phone and Address settings in Spree Commerce](/docs/images/user/settings/store-details/3-phone-and-address.png)
+Who can see your store before signing in, and whether they can buy without an account. This is the difference between an open retail shop and a trade store where prices are only shown to approved customers.
 
-Enter your store's contact details here:
+![The Storefront access section, with the access level and guest checkout settings](/docs/images/user/settings/store-details/2-storefront-access.png)
 
-- **Phone** — your store's contact phone number.
-- **Address** — your business address.
+- **Storefront access** - The store-wide default for anonymous visitors:
+  - **Public** - Anyone can browse and see prices.
+  - **Prices hidden** - Visitors must sign in to see prices. Guests must sign in to check out.
+  - **Login required** - Visitors must sign in to browse at all.
+- **Guest checkout** - Whether shoppers can check out without creating an account.
 
-## Digital Assets
+<Note>Both settings are defaults that a sales channel can override. If you change one here and a storefront does not behave as expected, check that channel's own settings rather than changing this again.</Note>
 
-![Digital Assets settings in Spree Commerce](/docs/images/user/settings/store-details/4-digital-assets.png)
+The two restricted options do different things, and the difference matters:
 
-Here you can control how digital products (e.g., downloads) are handled after purchase:
+- **Prices hidden** is how most wholesale and trade stores work. A visitor can browse the range and see what you sell, but not what it costs, until you have approved their account.
+- **Login required** goes further and closes the catalogue as well. A visitor sees nothing at all until they sign in, so choose it only when the range itself is confidential.
 
-- **Limit digital links download days** — set how long download links remain active after
-  purchase (in days).
-- **Limit digital links download count** — restrict the number of times a download link can
-  be used per purchase.
+## Addresses
+
+What customers are asked for when entering an address. Every extra field is one more thing between a shopper and a completed order, so only ask for what you will actually use.
+
+- **Company field** - Show a company field on address forms during checkout. Worth turning on if you sell to businesses.
+- **Require phone number** - Make a phone number mandatory on customer addresses. Some carriers need one for delivery.
+
+## Order Numbers
+
+How orders and other numbered documents are referenced. These are the numbers your team quotes on the phone and customers quote back in emails, so readability matters more than you might think.
+
+![The Order numbers section, showing the format options and a live preview](/docs/images/user/settings/store-details/3-order-numbers.png)
+
+- **Numbering format**:
+  - **Sequential** - Counts up from a starting number. Easier to read back over the phone, and easier to sort.
+  - **Random** - Unpredictable digits, so your numbers do not reveal how many orders your store has taken.
+- **Prefix** and **Suffix** - Text wrapped around the number, such as an `R` prefix.
+- **Start numbering at** - The number to begin counting from.
+- **Preview** - Shows what the next number will look like as you change the settings above.
+
+<Warning>**Start numbering at** only works before your first order. Once any order exists the field is permanently disabled, because numbers already issued never change. Set it during setup or not at all.</Warning>
+
+These settings apply to future orders only.
+
+## Payments
+
+When money moves, and which address decides the tax. The charging setting has the widest reach of anything on this page, because it applies to every payment method unless one overrides it.
+
+![The Payments section, showing when customers are charged and the tax address setting](/docs/images/user/settings/store-details/4-payments.png)
+
+- **When to charge customers** - The default for every payment method:
+  - **At checkout** - Take the money as soon as the order is placed.
+  - **On dispatch** - Reserve the amount at checkout and take it when the goods go out.
+  - **Manually** - Reserve the amount at checkout and let staff take it later.
+- **Tax by shipping address** - Calculate tax from the customer's shipping address. Turn this off to tax by the billing address instead.
+
+<Note>An individual payment method can override **When to charge customers**. See [<u>Payment Methods</u>](/user/settings/payments) for when that is worth doing.</Note>
+
+## Inventory
+
+How stock is counted and reserved. These settings decide whether Spree keeps track of quantities at all, whether a unit is held while someone checks out, and when your team is warned that something is running low.
+
+![The Inventory section, with stock tracking and the low stock threshold](/docs/images/user/settings/store-details/5-inventory.png)
+
+- **Track stock levels** - Count on-hand quantities. Turn this off to treat every product as always available, which suits made-to-order goods or services.
+- **Hold stock during checkout** - Reserve items while a shopper checks out, so the same unit cannot be sold twice.
+- **Low stock threshold** - A tracked variant with this many units or fewer counts as low stock on the home screen. Set it to 0 to turn the warning off.
+
+<Warning>Turning off **Track stock levels** stops Spree counting stock for every product in the store. If only some products are always available, leave tracking on and set those products as backorderable instead.</Warning>
+
+## Pricing Source
+
+Where prices are answered from. Most stores price from their own catalog and never change this, but a business running an ERP or a contract-pricing system can have that system answer instead.
+
+- **Prices come from** - **Spree (built in)** prices from your catalog and price lists. An external system can answer instead.
+
+This is for stores running an ERP or contract-pricing system that already holds the authoritative prices. Setting it up is developer work, and the section links to the documentation for building a provider.
+
+## Inventory Source
+
+Where stock levels are answered from. As with pricing, this exists for stores whose warehouse or ERP system is the authority on stock rather than Spree.
+
+- **Stock levels come from** - **Spree (built in)** uses your own stock records. An external system can answer instead.
+
+An external source is asked when an item is added to a cart and again at checkout. Product listings always show your own stock records, so a shopper browsing sees Spree's figures either way.
+
+## Catalog
+
+Three switches covering how products behave across the store. Each one is small on its own, but the price history switch has a legal dimension worth reading before you skip past it.
+
+![The Catalog section, with the three product switches](/docs/images/user/settings/store-details/6-catalog.png)
+
+- **Show products without a price** - List products that have no price in the shopper's currency. Leave it off to hide anything unpriced rather than showing a product nobody can buy.
+- **Record price history** - Keep past prices so the storefront can show the lowest price of the last 30 days.
+- **Allow duplicate SKUs** - Let more than one variant share the same SKU.
+
+<Note>**Record price history** exists for EU price indication rules, which require a discount to be shown against the lowest price of the previous 30 days. Turn it on before you start discounting, because it only keeps prices from the moment it is enabled.</Note>
+
+## Digital Downloads
+
+Defaults for how long a download link works and how often it can be used. These apply to every digital product you sell, and an individual file can override them where something needs tighter or looser limits.
+
+![The Digital downloads section, with the download and expiry limits](/docs/images/user/settings/store-details/7-digital-downloads.png)
+
+- **Limit number of downloads** - Off means buyers can download as often as they like.
+- **Downloads allowed** - How many downloads each buyer gets.
+- **Limit download period** - Off means download links never expire.
+- **Days available** - How many days a link stays valid.
 
 ## Saving Changes
 
-After making any updates, click **Update** at the bottom of the page to save your store
-settings, otherwise any changes you've made will not be saved.
+Click **Save** at the top of the page. The button is greyed out until something has changed, and it saves every section at once, so you can work down the page and save once at the end.
+
+## Further Reading
+
+- [<u>Payment Methods</u>](/user/settings/payments) - Overriding when customers are charged, per method
+- [<u>Sales Channels</u>](/user/settings/sales-channels) - Overriding storefront access and guest checkout per channel
+- [<u>Inventory</u>](/user/inventory/stock-levels) - The stock figures the tracking settings produce
