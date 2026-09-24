@@ -173,6 +173,43 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(shipment.reload.stock_location).not_to eq(foreign_stock_location)
     end
 
+    # Moving a parcel is checked like creating or splitting one: the target
+    # location must be one this staff member may see, not just any of the store's.
+    context 'as staff who can manage fulfillments but not stock locations' do
+      let(:limited_role) do
+        create(:role, name: 'fulfillment_only', resource: store,
+                      permissions: %w[read_orders write_orders read_fulfillments write_fulfillments])
+      end
+      let(:limited_admin) do
+        create(:admin_user, :without_admin_role).tap { |user| user.spree_roles << limited_role }
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(limited_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+      let(:other_location) { create(:stock_location, store: store, name: 'Back office') }
+
+      it 'refuses a stock location it cannot see' do
+        patch :update, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          stock_location_id: other_location.prefixed_id
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+        expect(shipment.reload.stock_location).not_to eq(other_location)
+      end
+
+      it 'still updates the rest of the fulfillment' do
+        patch :update, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          tracking: '1Z999AA10123456784'
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     it 'updates fulfillment tracking' do
       patch :update, params: {
         order_id: order.prefixed_id,
