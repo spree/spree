@@ -5083,7 +5083,11 @@
       "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
       "title": "Configurer Spree",
       "welcome_description": "Suivez la liste ci-dessous pour ouvrir {{store}}.",
-      "welcome_title": "Bienvenue, votre boutique est prête !"
+      "welcome_title": "Bienvenue, votre boutique est prête !",
+      "rate_limited_title": "Trop de tentatives",
+      "rate_limited_message": "La configuration a été vérifiée trop souvent en peu de temps. Patientez une minute, puis réessayez.",
+      "check_failed_title": "Impossible de vérifier la configuration",
+      "check_failed_message": "Le serveur est injoignable pour vérifier si cette installation doit être configurée. Vérifiez qu'il est démarré, puis réessayez."
     },
     "staff": {
       "actions": {

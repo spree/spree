@@ -5147,7 +5147,11 @@
       "subtitle": "Utwórz konto administratora i opisz swój sklep. Wszystko tutaj możesz później zmienić.",
       "title": "Skonfiguruj Spree",
       "welcome_description": "Przejdź przez poniższą listę, aby otworzyć sklep {{store}}.",
-      "welcome_title": "Witamy, Twój sklep jest gotowy!"
+      "welcome_title": "Witamy, Twój sklep jest gotowy!",
+      "rate_limited_title": "Zbyt wiele prób",
+      "rate_limited_message": "Konfiguracja była sprawdzana zbyt często w krótkim czasie. Odczekaj minutę i spróbuj ponownie.",
+      "check_failed_title": "Nie udało się sprawdzić konfiguracji",
+      "check_failed_message": "Nie udało się połączyć z serwerem, aby sprawdzić, czy ta instalacja wymaga konfiguracji. Upewnij się, że działa, i spróbuj ponownie."
     },
     "staff": {
       "actions": {

@@ -5083,7 +5083,11 @@
       "subtitle": "Erstellen Sie Ihr Administratorkonto und beschreiben Sie Ihren Shop. Alles hier lässt sich später ändern.",
       "title": "Spree einrichten",
       "welcome_description": "Arbeiten Sie die folgende Checkliste ab, um {{store}} zu eröffnen.",
-      "welcome_title": "Willkommen, Ihr Shop ist startklar!"
+      "welcome_title": "Willkommen, Ihr Shop ist startklar!",
+      "rate_limited_title": "Zu viele Versuche",
+      "rate_limited_message": "Die Einrichtung wurde in kurzer Zeit zu oft abgefragt. Warte eine Minute und versuche es dann erneut.",
+      "check_failed_title": "Einrichtung konnte nicht geprüft werden",
+      "check_failed_message": "Der Server war nicht erreichbar, um zu prüfen, ob diese Installation eingerichtet werden muss. Stelle sicher, dass er läuft, und versuche es erneut."
     },
     "staff": {
       "actions": {
