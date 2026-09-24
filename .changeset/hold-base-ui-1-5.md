@@ -1,6 +1,7 @@
 ---
 "@spree/dashboard-ui": patch
 "@spree/dashboard": patch
+"@spree/seller-dashboard": patch
 ---
 
 Held Base UI at 1.5.0 so a scaffolded dashboard starts.

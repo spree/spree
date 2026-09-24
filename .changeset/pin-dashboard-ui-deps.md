@@ -1,6 +1,7 @@
 ---
 "@spree/dashboard-ui": patch
 "@spree/dashboard": patch
+"@spree/seller-dashboard": patch
 ---
 
 Pinned every `@spree/dashboard-ui` dependency to an exact version.
