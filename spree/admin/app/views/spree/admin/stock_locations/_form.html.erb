@@ -15,6 +15,21 @@
 <div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
+      <%= Spree.t(:inventory) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_check_box :propagate_all_variants, label: Spree.t('admin.stock_locations_form.propagate_all_variants_label') %>
+    <small class="text-muted text-xs d-block"><%= Spree.t('admin.stock_locations_form.propagate_all_variants_hint') %></small>
+    <div class="mt-2">
+      <%= f.spree_check_box :backorderable_default, label: Spree.t('admin.stock_locations_form.backorderable_default_label') %>
+      <small class="text-muted text-xs d-block"><%= Spree.t('admin.stock_locations_form.backorderable_default_hint') %></small>
+    </div>
+  </div>
+</div>
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title">
       <%= Spree.t(:address) %>
     </h5>
   </div>
