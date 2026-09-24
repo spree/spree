@@ -53,7 +53,8 @@ erDiagram
 | `tracking` / `tracking_url` | The first consignment's tracking number and link, summarised for convenience |
 | `deliveries` | Every consignment this batch travels as — see [consignments](#where-the-parcel-actually-is) |
 | `labels` | Postage bought or uploaded for it |
-| `cost` / `display_cost` | Delivery cost for this fulfillment |
+| `cost` / `display_cost` | Delivery cost for this fulfillment — the selected rate's price, unless staff [set it by hand](#delivery-cost) |
+| `cost_source` | `manual` when staff set the cost by hand, otherwise `null`. Admin API only |
 | `delivery_rates` | The options the customer can choose from |
 | `selected_delivery_rate_id` | The chosen option |
 | `fulfilled_at` | When it went out |
@@ -315,6 +316,43 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/f
 ```
 
 </CodeGroup>
+
+### Delivery cost
+
+A fulfillment's cost normally follows its selected delivery rate, and is
+worked out again whenever the order is re-quoted. Splitting a fulfillment
+does the same: the new one is quoted its own rate, so an order that was paid
+in full can end up owing a second delivery charge.
+
+To charge something else, set the cost by hand. A cost set this way stays put
+when the order is re-quoted, when the fulfillment moves to another stock
+location, and when its delivery rate changes. Send `null` to go back to the
+selected rate's price. Only staff can do this; the seller panel and Seller API
+cannot change what the customer pays for delivery.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Take the charge a split added off a paid order
+await adminClient.orders.fulfillments.update('or_xxx', 'ful_xxx', { cost: '0.00' })
+
+// Go back to the delivery rate's price
+await adminClient.orders.fulfillments.update('or_xxx', 'ful_xxx', { cost: null })
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments/ful_xxx' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "cost": "0.00" }'
+```
+
+</CodeGroup>
+
+The order total and payment status follow straight away, so zeroing the split
+parcel on a paid order returns it to `paid`. A parcel that has already shipped
+or been delivered keeps its cost when anything is re-quoted, but staff can
+still set it by hand.
 
 ## How delivery is set up
 
