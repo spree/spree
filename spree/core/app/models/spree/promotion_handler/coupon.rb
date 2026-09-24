@@ -80,8 +80,7 @@ module Spree
           clear_persisted_coupon_code(coupon_code)
 
           if promotion.multi_codes?
-            coupon_code = promotion.coupon_codes.find_by(order: order)
-            coupon_code&.remove_from_order
+            promotion.coupon_codes.held_by(order).first&.remove_from_order
           else
             promotion.touch
           end
@@ -217,7 +216,10 @@ module Spree
         end
 
         if discount || created_line_items
-          handle_coupon_code(discount, coupon_code) if discount
+          if discount && !claim_coupon_code(discount, coupon_code)
+            release_coupon_code(order, coupon_code)
+            return set_error_code :coupon_code_used
+          end
 
           order.recalculate_totals!
           set_success_code :coupon_code_applied
@@ -236,8 +238,53 @@ module Spree
         end
       end
 
-      def handle_coupon_code(discount, coupon_code)
-        Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)&.apply_order!(order)
+      # A single-use code is spent only when an order is placed with it, so a
+      # code sitting on another open cart or draft order is taken from it
+      # rather than refused: whoever presents it now gets the discount, and
+      # whoever places an order first keeps the code. A holder in the middle of
+      # checkout keeps it, since its totals are fixed and money may already be
+      # at the gateway.
+      #
+      # The holder is locked before the code, the same order checkout takes
+      # them in, so the two serialize instead of deadlocking.
+      #
+      # @return [Boolean] false when the code can no longer be claimed
+      def claim_coupon_code(discount, coupon_code)
+        record = Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)
+        return true if record.nil?
+
+        holder = record.holder
+        holder = nil if holder && same_record?(holder, order)
+
+        Spree::CouponCode.transaction do
+          holder&.lock!
+          record.lock!
+          next false if record.used? || !same_holder?(record.holder, holder) || checkout_in_progress?(holder)
+
+          release_coupon_code(holder, coupon_code) if holder
+          record.apply_order!(order)
+        end
+      end
+
+      # Gift cards are turned off so a holder paying with one keeps it.
+      def release_coupon_code(holder, coupon_code)
+        self.class.new(holder, enable_gift_cards: false).remove(coupon_code)
+      end
+
+      def checkout_in_progress?(holder)
+        case holder
+        when Spree::Cart then holder.completed_at.present? || holder.completion_claimed?
+        when Spree::Order then holder.completed_at.present? || holder.cart&.completion_claimed? || false
+        else false
+        end
+      end
+
+      def same_record?(holder, other)
+        holder.class == other.class && holder.id == other.id
+      end
+
+      def same_holder?(current, expected)
+        current.nil? || same_record?(current, expected || order)
       end
 
       # Whether the coupon handler should also handle gift card codes.

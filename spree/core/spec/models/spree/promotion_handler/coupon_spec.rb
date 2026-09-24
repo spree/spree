@@ -323,7 +323,7 @@ module Spree
             subject.apply
             expect(subject.success).to be_present
 
-            expect(coupon_code.reload).to be_used
+            expect(coupon_code.reload).to be_unused
             expect(coupon_code.order).to eq(order)
 
             order.line_items.each do |line_item|
@@ -347,6 +347,40 @@ module Spree
 
               expect(subject.success).to be_nil
               expect(subject.error).to eq Spree.t(:coupon_code_used)
+            end
+          end
+
+          context 'when an abandoned cart holds the code' do
+            let(:cart) { create(:cart_with_line_items, line_items_count: 3, store: store) }
+
+            before do
+              cart.coupon_code = coupon_code.code
+              Coupon.new(cart).apply
+            end
+
+            it 'moves the code and its discount to the order presenting it' do
+              expect(cart.reload.discount_total).to be_negative
+
+              subject.apply
+
+              expect(subject.success).to be_present
+              expect(coupon_code.reload).to be_unused
+              expect(coupon_code.holder).to eq(order)
+              expect(order.reload.total).to eq(100)
+
+              expect(cart.reload.discount_total).to be_zero
+              expect(cart.read_attribute(:coupon_code)).to be_nil
+            end
+
+            it 'keeps the code on a cart that is checking out' do
+              cart.update_columns(completing_at: Time.current)
+
+              subject.apply
+
+              expect(subject.error).to eq Spree.t(:coupon_code_used)
+              expect(coupon_code.reload.holder).to eq(cart)
+              expect(order.reload.total).to eq(130)
+              expect(order.promotions).to be_empty
             end
           end
 
