@@ -2802,6 +2802,10 @@
           "create_title": "Ajouter une expédition",
           "delete_label": "Supprimer l'étiquette",
           "deliveries_title": "Suivi",
+          "delivery_cost": "Frais de livraison",
+          "delivery_cost_help": "Un prix saisi ici est conservé lorsque le colis est recalculé, déplacé ou change de mode de livraison.",
+          "delivery_cost_placeholder": "Prix du mode de livraison",
+          "delivery_cost_reverting": "Le prix du mode de livraison s'appliquera à l'enregistrement.",
           "delivery_method": "Mode de livraison",
           "document_kinds": {
             "certificate_of_origin": "Certificat d'origine",
@@ -2822,6 +2826,7 @@
           "label_refunded": "Remboursé",
           "label_title": "Étiquette d'expédition",
           "label_uploaded": "Téléversée",
+          "manual_cost": "Manuel",
           "mark_delivered": "Marquer comme livré",
           "mark_delivery_delivered": "Marquer comme arrivé",
           "move_and_requote": "Déplacer et recalculer",

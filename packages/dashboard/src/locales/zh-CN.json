@@ -2795,6 +2795,10 @@
           "create_title": "添加发货单",
           "delete_label": "删除面单",
           "deliveries_title": "物流跟踪",
+          "delivery_cost": "配送费用",
+          "delivery_cost_help": "在此设置的价格在包裹重新报价、移动或更换配送方式时保持不变。",
+          "delivery_cost_placeholder": "配送方式的价格",
+          "delivery_cost_reverting": "保存后将改用配送方式的价格。",
           "delivery_method": "配送方式",
           "document_kinds": {
             "certificate_of_origin": "原产地证书",
@@ -2815,6 +2819,7 @@
           "label_refunded": "已退款",
           "label_title": "运输面单",
           "label_uploaded": "已上传",
+          "manual_cost": "手动",
           "mark_delivered": "标记为已送达",
           "mark_delivery_delivered": "标记为已送达",
           "move_and_requote": "移动并重新报价",

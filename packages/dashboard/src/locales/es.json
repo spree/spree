@@ -2542,6 +2542,10 @@
           "create_title": "Agregar cumplimiento",
           "delete_label": "Eliminar etiqueta",
           "deliveries_title": "Seguimientos",
+          "delivery_cost": "Coste de envío",
+          "delivery_cost_help": "Un precio fijado aquí se mantiene cuando el paquete se vuelve a cotizar, se traslada o cambia de método de envío.",
+          "delivery_cost_placeholder": "Precio del método de envío",
+          "delivery_cost_reverting": "Al guardar se aplicará el precio del método de envío.",
           "delivery_method": "Método de entrega",
           "document_kinds": {
             "certificate_of_origin": "Certificado de origen",
@@ -2562,6 +2566,7 @@
           "label_refunded": "Reembolsado",
           "label_title": "Etiqueta de envío",
           "label_uploaded": "Subida",
+          "manual_cost": "Manual",
           "mark_delivered": "Marcar como entregado",
           "mark_delivery_delivered": "Marcar llegado",
           "move_and_requote": "Mover y recotizar",

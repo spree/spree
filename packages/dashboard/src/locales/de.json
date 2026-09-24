@@ -2802,6 +2802,10 @@
           "create_title": "Sendung hinzufügen",
           "delete_label": "Etikett löschen",
           "deliveries_title": "Sendungsverfolgung",
+          "delivery_cost": "Versandkosten",
+          "delivery_cost_help": "Ein hier festgelegter Preis bleibt erhalten, wenn das Paket neu berechnet, verschoben oder einer anderen Versandart zugeordnet wird.",
+          "delivery_cost_placeholder": "Preis der Versandart",
+          "delivery_cost_reverting": "Beim Speichern gilt wieder der Preis der Versandart.",
           "delivery_method": "Versandart",
           "document_kinds": {
             "certificate_of_origin": "Ursprungszeugnis",
@@ -2822,6 +2826,7 @@
           "label_refunded": "Erstattet",
           "label_title": "Versandetikett",
           "label_uploaded": "Hochgeladen",
+          "manual_cost": "Manuell",
           "mark_delivered": "Als zugestellt markieren",
           "mark_delivery_delivered": "Als angekommen markieren",
           "move_and_requote": "Verschieben und neu berechnen",

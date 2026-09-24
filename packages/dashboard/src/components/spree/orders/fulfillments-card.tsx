@@ -562,6 +562,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           is still pending. */}
       {(fulfillment.delivery_method ||
         fulfillment.unpriced ||
+        fulfillment.cost_source === 'manual' ||
         Number.parseFloat(fulfillment.cost) > 0) && (
         <CardContent className="flex items-center justify-between border-b border-border-subtle py-3 text-sm">
           <span className="text-muted-foreground">
@@ -573,7 +574,12 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               fulfillment.delivery_method?.name ??
               t('admin.pages.orders.detail.no_delivery_method')}
           </span>
-          <span>{fulfillment.display_cost}</span>
+          <span className="flex items-center gap-2">
+            {fulfillment.cost_source === 'manual' && (
+              <Badge variant="secondary">{t('admin.orders.detail.fulfillments.manual_cost')}</Badge>
+            )}
+            {fulfillment.display_cost}
+          </span>
         </CardContent>
       )}
 
