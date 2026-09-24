@@ -34,6 +34,7 @@ import i18n from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
+import { variantLabel } from '../../lib/variant-label'
 import { ShippingDocuments } from './orders/shipping-documents'
 import { ShippingLabelRow } from './orders/shipping-label-row'
 import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
@@ -41,15 +42,6 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 // Statuses that still offer an action; refunded and canceled are done and
 // would render a menu button that opens onto nothing.
 const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
-
-/** "Product — Small / Blue", falling back to the SKU or the raw id. */
-function variantLabel(line: ReturnLineItem): string {
-  const variant = line.variant
-  if (!variant) return line.variant_id ?? ''
-
-  const parts = [variant.product_name, variant.options_text].filter(Boolean)
-  return parts.length > 0 ? parts.join(' — ') : (variant.sku ?? line.variant_id ?? '')
-}
 
 /**
  * Returns on an order. Each status change is a distinct action rather than an
@@ -323,7 +315,7 @@ function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string 
 
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="truncate">{variantLabel(line)}</span>
+      <span className="truncate">{variantLabel(line.variant, line.variant_id)}</span>
       <span className="flex items-center gap-2 text-muted-foreground">
         {received && line.received_quantity !== line.quantity && (
           <Badge variant="outline">
@@ -362,7 +354,7 @@ function ReceiveDialog({
     <ReturnReceiveDialog
       lines={(returnRecord.return_line_items ?? []).map((line) => ({
         id: line.id,
-        label: variantLabel(line),
+        label: variantLabel(line.variant, line.variant_id),
         quantity: line.quantity,
       }))}
       onClose={onClose}
