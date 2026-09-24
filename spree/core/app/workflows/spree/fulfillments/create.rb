@@ -26,6 +26,8 @@ module Spree
     # `failure`, which rolls the locked transaction back instead of
     # returning from inside it.
     class Create < Spree::Workflow
+      include Spree::Fulfillments::CostParsing
+
       hooks :validate, :get_provider_data, :after_create
 
       # The created fulfillment, and provider payload contributed by
@@ -86,10 +88,10 @@ module Spree
         failure(nil, Spree.t('fulfillments.errors.invalid_status'))
       end
 
-      # parse_cost returns a failure Result for an unparseable value; step
-      # raises on a failure Result, so this aborts the flow.
+      # Blank counts as omitted; anything else that is not an amount aborts
+      # the flow.
       def parse_requested_cost
-        @requested_cost = parse_cost(cost)
+        @requested_cost = parse_cost(cost) unless cost.blank?
       end
 
       def ensure_order_fulfillable
@@ -313,23 +315,6 @@ module Spree
 
         fulfillment.update_columns(cost: effective_cost) if effective_cost.positive?
         fulfillment.add_delivery_method(method, true) if method
-      end
-
-      # Strict decimal parsing (same semantics as Shipment#cost=, which the
-      # update_columns freeze path bypasses) — the lenient LocalizedNumber
-      # would turn garbage into 0, and 0 is a legal cost here.
-      #
-      # @return [BigDecimal, Numeric, nil] nil when no cost was given (blank
-      #   counts as omitted); a failure Result for malformed or negative input
-      def parse_cost(cost)
-        return if cost.blank?
-
-        parsed = cost.is_a?(String) ? BigDecimal(cost.strip) : cost
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost')) if parsed.negative?
-
-        parsed
-      rescue ArgumentError
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost'))
       end
 
       # Registers an externally-completed fulfillment: backorders are filled

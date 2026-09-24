@@ -40,6 +40,134 @@ RSpec.describe Spree::Fulfillments::Update do
     end
   end
 
+  describe 'cost' do
+    let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 2) }
+    let(:other_location) do
+      create(:stock_location, store: store, name: "Warehouse #{SecureRandom.hex(3)}",
+                              propagate_all_variants: true, backorderable_default: true)
+    end
+
+    def update(**arguments)
+      described_class.call(fulfillment: fulfillment, **arguments)
+    end
+
+    # The split quotes the parcel that breaks off its own rate, so an order
+    # paid in full owes more than it paid. Pricing that parcel at nothing is
+    # how staff put it right.
+    it 'lets staff zero the charge a split added, and the order reads paid again' do
+      paid_total = order.total
+      fulfillment.transfer_to_location(order.line_items.first.variant, 1, fulfillment.stock_location).run!
+      split_off = order.reload.fulfillments.max_by(&:id)
+      expect(order.total).to be > paid_total
+
+      result = described_class.call(fulfillment: split_off, cost: '0')
+
+      expect(result).to be_success
+      expect(split_off.reload.cost).to eq(0)
+      expect(split_off.cost_source).to eq(Spree::Fulfillment::MANUAL_COST_SOURCE)
+      expect(order.reload.total).to eq(paid_total)
+      expect(order.payment_status).to eq('paid')
+    end
+
+    it 'charges a higher price, and the paid order owes the difference' do
+      paid_total = order.total
+      difference = BigDecimal('150.00') - fulfillment.cost
+
+      result = update(cost: '150.00')
+
+      expect(result).to be_success
+      expect(fulfillment.reload.cost).to eq(BigDecimal('150.00'))
+      expect(fulfillment).to be_cost_overridden
+      expect(order.reload.delivery_total).to eq(BigDecimal('150.00'))
+      expect(order.total).to eq(paid_total + difference)
+      expect(order.payment_status).to eq('partially_paid')
+    end
+
+    it 'charges a lower price, and the paid order reads overcharged' do
+      paid_total = order.total
+      difference = fulfillment.cost - BigDecimal('7.25')
+
+      update(cost: '7.25')
+
+      expect(fulfillment.reload.cost).to eq(BigDecimal('7.25'))
+      expect(order.reload.total).to eq(paid_total - difference)
+      expect(order.payment_status).to eq('overcharged')
+    end
+
+    it 'keeps the cost through a rate change' do
+      update(cost: '7.25')
+      other_rate = fulfillment.delivery_rates.create!(delivery_method: create(:delivery_method, store: store), cost: 25)
+
+      update(fulfillment_attributes: { selected_delivery_rate_id: other_rate.id })
+
+      expect(fulfillment.reload.selected_delivery_rate).to eq(other_rate)
+      expect(fulfillment.cost).to eq(BigDecimal('7.25'))
+    end
+
+    it 'keeps the cost through a move to another origin, which re-quotes every rate' do
+      update(cost: '0')
+
+      update(fulfillment_attributes: { stock_location_id: other_location.id })
+
+      expect(fulfillment.reload.stock_location).to eq(other_location)
+      expect(fulfillment.cost).to eq(0)
+    end
+
+    it 'leaves the cost alone when the update does not name one' do
+      update(cost: '12.50')
+
+      update(fulfillment_attributes: { tracking: 'DPD-1' })
+
+      expect(fulfillment.reload.cost).to eq(BigDecimal('12.50'))
+      expect(fulfillment).to be_cost_overridden
+    end
+
+    it 'hands the parcel back to its rate on an explicit nil' do
+      rate_cost = fulfillment.selected_delivery_rate.cost
+      update(cost: '0')
+
+      result = update(cost: nil)
+
+      expect(result).to be_success
+      expect(fulfillment.reload.cost).to eq(rate_cost)
+      expect(fulfillment.cost_source).to be_nil
+      expect(order.reload.delivery_total).to eq(rate_cost)
+    end
+
+    it 'restates the new rate when a revert arrives with one' do
+      update(cost: '0')
+      other_rate = fulfillment.delivery_rates.create!(delivery_method: create(:delivery_method, store: store), cost: 25)
+
+      update(fulfillment_attributes: { selected_delivery_rate_id: other_rate.id }, cost: nil)
+
+      expect(fulfillment.reload.cost).to eq(25)
+      expect(order.reload.delivery_total).to eq(25)
+    end
+
+    # A parcel that has left is frozen against re-quotes, not against staff.
+    it 'lets staff price a parcel that has already shipped' do
+      fulfillment.update_columns(status: 'fulfilled')
+
+      update(cost: '0')
+
+      expect(fulfillment.reload.cost).to eq(0)
+    end
+
+    it 'refuses a cost that is not an amount, and writes nothing' do
+      # The last is more than the cost column holds, which would otherwise
+      # fail the write with a database error.
+      ['', '-1', '12 boxes', 'NaN', '123456789012'].each do |value|
+        result = update(cost: value, fulfillment_attributes: { tracking: 'DPD-2' })
+
+        expect(result).not_to be_success, "expected #{value.inspect} to be refused"
+        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+      end
+
+      expect(fulfillment.reload.cost_source).to be_nil
+      expect(fulfillment.tracking).not_to eq('DPD-2')
+    end
+  end
+
   describe 'hooks' do
     before { Spree.hooks.clear! }
     after { Spree.hooks.clear! }

@@ -16,6 +16,9 @@ module Spree
 
     publishes_lifecycle_events
 
+    # The +cost_source+ value marking a delivery cost staff set by hand.
+    MANUAL_COST_SOURCE = 'manual'.freeze
+
     with_options inverse_of: :fulfillments do
       belongs_to :address, class_name: 'Spree::Address', optional: true
       belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
@@ -207,11 +210,12 @@ module Spree
     money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total, :discount_total
 
     # True while the shipping price is still the forwarder's to quote — the
-    # selected rate is a freight rate carrying logistics instead of an amount.
+    # selected rate is a freight rate carrying logistics instead of an amount,
+    # and staff have not priced the parcel themselves.
     #
     # @return [Boolean]
     def unpriced?
-      selected_delivery_rate&.unpriced? || false
+      (selected_delivery_rate&.unpriced? && !cost_overridden?) || false
     end
 
     # An unpriced fulfillment's cost is zero only because nobody has priced
@@ -251,6 +255,15 @@ module Spree
     def cost=(value)
       value = value.blank? ? nil : BigDecimal(value.strip) if value.is_a?(String)
       super
+    end
+
+    # Whether staff set this parcel's delivery cost. An overridden cost is
+    # never restated from a delivery rate — only an explicit revert through
+    # Spree::Fulfillments::Update clears it.
+    #
+    # @return [Boolean]
+    def cost_overridden?
+      cost_source == MANUAL_COST_SOURCE
     end
 
     def digital?
@@ -748,7 +761,12 @@ module Spree
       shipping_labels.active.last
     end
 
+    # Restates the cost from the selected delivery rate. Every re-quote reaches
+    # the cost through here, so this one guard protects a cost staff set and
+    # the charge of a parcel that has already left.
     def update_amounts
+      return if cost_overridden? || fulfilled_or_delivered?
+
       if selected_delivery_rate && cost != selected_delivery_rate.cost
         # Typed adjustment columns are refreshed by the order recalculation.
         update_columns(cost: selected_delivery_rate.cost, updated_at: Time.current)
