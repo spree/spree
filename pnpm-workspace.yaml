@@ -55,6 +55,11 @@ overrides:
   # scaffold boot test.
   '@base-ui/react': 1.8.0
   '@base-ui/utils': 0.4.0
+  # react-redux 9.2.0 (transitive via recharts, whose range is 8.x || 9.x)
+  # published without the provenance 9.1.0 had, so trustPolicy: no-downgrade
+  # refuses it. 9.3.0 carries provenance again and is in range. Drop this once
+  # recharts resolves 9.3+ on its own.
+  react-redux: 9.3.0
   esbuild: ^0.28.1
   vite: ^8.0.16
   js-yaml: ^4.3.2
