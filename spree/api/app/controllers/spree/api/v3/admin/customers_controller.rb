@@ -223,20 +223,6 @@ module Spree
             false
           end
 
-          # Mirrors the key gate's two principals: a secret key carries scopes,
-          # a signed-in staffer carries their roles' catalog keys.
-          #
-          # @param key [String]
-          # @return [Boolean]
-          def holds_permission?(key)
-            return current_api_key.has_scope?(key) if scope_limited_principal?
-
-            ability = current_ability
-            return true unless ability.respond_to?(:permission_keys)
-
-            ability.permission_keys.include?(key)
-          end
-
           # `export` maps to `:show`; `anonymize` is a destructive write, so it
           # maps to `:destroy` rather than `:update` — a role that may correct
           # a customer's name should not thereby be able to erase their history.

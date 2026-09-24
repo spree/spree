@@ -86,6 +86,31 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    # Orders and store credits have their own permissions; a role cleared for
+    # customers alone must not read them through `?expand=`.
+    context 'with a key that reads customers only' do
+      let(:customers_key) { create(:api_key, :secret, store: store, scopes: ['read_customers']) }
+      let(:headers) { { 'x-spree-api-key' => customers_key.plaintext_token } }
+
+      it 'drops expansions into orders and store credits' do
+        create(:completed_order_with_totals, store: store, user: customer)
+
+        get :show, params: { id: customer.prefixed_id, expand: 'orders.payments,store_credits' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response).not_to have_key('orders')
+        expect(json_response).not_to have_key('store_credits')
+      end
+    end
+
+    it 'expands orders for a caller who can read them' do
+      create(:completed_order_with_totals, store: store, user: customer)
+
+      get :show, params: { id: customer.prefixed_id, expand: 'orders' }, as: :json
+
+      expect(json_response['orders']).to be_present
+    end
   end
 
   describe 'POST #create' do
