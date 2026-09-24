@@ -127,15 +127,24 @@ RSpec.describe Spree::OrderStatusSubscriber do
       expect(announced).to eq([{ 'payment_status' => 'paid', 'payment_total' => order.total }])
     end
 
-    # Two settlements recomputing the same order at once must not both
-    # announce it — the second finds the row already settled.
-    it 'does not announce an order that another run already settled' do
-      create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+    # A run holding a copy from before the order settled must neither write
+    # its older status back over paid nor let a later run announce it again.
+    it 'announces the order once when a stale copy recomputes after it settled' do
+      Spree::Events.disable do
+        create(:payment, order: order, cart: nil, amount: order.total - 1, status: 'completed')
+      end
+      Spree::Orders::UpdateStatuses.call(order: order)
       stale_copy = Spree::Order.find(order.id)
 
+      Spree::Events.disable do
+        create(:payment, order: order, cart: nil, amount: 1, status: 'completed')
+      end
       Spree::Orders::UpdateStatuses.call(order: order)
       Spree::Orders::UpdateStatuses.call(order: stale_copy)
+      Spree::Orders::UpdateStatuses.call(order: order)
 
+      expect(stale_copy.payment_status).to eq('paid')
+      expect(order.reload.payment_status).to eq('paid')
       expect(announced.size).to eq(1)
     end
 

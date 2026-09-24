@@ -12,14 +12,26 @@ module Spree
       SETTLED_PAYMENT_STATUSES = %w[paid overcharged].freeze
 
       def call(order:)
-        payment_status = payment_status_for(order)
-        settled_now = payment_status.in?(SETTLED_PAYMENT_STATUSES) && claim_settlement(order, payment_status)
+        settled_now = false
 
-        order.update_columns(
-          payment_status: payment_status,
-          fulfillment_status: fulfillment_status_for(order),
-          updated_at: Time.current
-        )
+        # Derived and written under the order's row lock, so two runs cannot
+        # interleave: one that derived before another settled the order would
+        # otherwise write its older status back and let a later run announce
+        # the payment a second time. The status is read from the locked row
+        # rather than reloaded, which would discard what the caller has not
+        # saved yet.
+        Spree::Order.transaction do
+          committed_status = Spree::Order.where(id: order.id).lock.pick(:payment_status)
+          payment_status = payment_status_for(order)
+
+          order.update_columns(
+            payment_status: payment_status,
+            fulfillment_status: fulfillment_status_for(order),
+            updated_at: Time.current
+          )
+
+          settled_now = settled?(payment_status) && !settled?(committed_status)
+        end
 
         # Announced from here rather than from the payment, so the payload
         # already carries the status and payment total it announces.
@@ -30,15 +42,8 @@ module Spree
 
       private
 
-      # Writes a settled status only over an unsettled one, so of two runs
-      # settling the same order at once — or one holding a copy loaded before
-      # another settled it — exactly one sees its write land and announces it.
-      def claim_settlement(order, payment_status)
-        row = Spree::Order.where(id: order.id)
-
-        row.where.not(payment_status: SETTLED_PAYMENT_STATUSES).
-          or(row.where(payment_status: nil)).
-          update_all(payment_status: payment_status).positive?
+      def settled?(payment_status)
+        payment_status.in?(SETTLED_PAYMENT_STATUSES)
       end
 
       # Money is quantized to currency precision before comparing, and
