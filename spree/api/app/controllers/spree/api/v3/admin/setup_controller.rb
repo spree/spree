@@ -41,7 +41,7 @@ module Spree
           # POST /api/v3/admin/auth/setup
           # Body: { setup_token, email, password, password_confirmation?,
           #         first_name?, last_name?, store_name, country_code,
-          #         locale?, currency? }
+          #         locale?, currency?, sample_data? }
           # Currency defaults to the country's own; an unknown code is refused
           # rather than ignored, since the token is spent in the same request.
           def create
@@ -62,6 +62,10 @@ module Spree
               user = Spree.admin_user_class.create!(admin_user_params)
               adopt_default_store(user, store)
             end
+
+            # Outside the lock: the loader needs the admin committed, and it
+            # runs for minutes, so it is queued rather than awaited.
+            Spree::SampleData::LoadJob.perform_later(store.id) if sample_data_requested?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)
@@ -165,6 +169,10 @@ module Spree
               message: 'Setup is not available',
               status: :not_found
             )
+          end
+
+          def sample_data_requested?
+            ActiveModel::Type::Boolean.new.cast(params[:sample_data]) == true
           end
 
           def admin_user_params

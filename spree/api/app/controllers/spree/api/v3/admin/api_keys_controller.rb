@@ -47,7 +47,7 @@ module Spree
             @resource = find_resource
             authorize!(:update, @resource)
 
-            @resource.revoke!(try_spree_current_user)
+            @resource.revoke!(current_actor)
             render json: serialize_resource(@resource)
           end
 
@@ -90,7 +90,7 @@ module Spree
           # happens in `before_validation :generate_token` on the model.
           def build_resource
             scope.new(permitted_params).tap do |key|
-              key.created_by = try_spree_current_user
+              key.created_by = current_actor
             end
           end
 

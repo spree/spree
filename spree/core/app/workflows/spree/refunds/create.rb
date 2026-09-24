@@ -19,7 +19,7 @@ module Spree
       #   creditable balance
       # @param reason [Spree::RefundReason, nil] defaults to the store's
       #   return-processing reason
-      # @param refunder [Object, nil] the admin issuing the refund
+      # @param refunder [Object, nil] who is issuing it (see Spree.actor_classes)
       # @param originator [Object, nil] what triggered the refund — a
       #   Spree::Return, Exchange or Claim; nil for a manual refund
       # @param order [Spree::Order, nil] which order is being put right.

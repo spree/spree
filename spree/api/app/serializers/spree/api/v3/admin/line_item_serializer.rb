@@ -20,7 +20,11 @@ module Spree
                    cost_price: [:string, nullable: true],
                    tax_category_id: [:string, nullable: true],
                    price_source: [:string, nullable: true],
-                   catalog_price: [:string, nullable: true]
+                   catalog_price: [:string, nullable: true],
+                   price_list_id: [:string, nullable: true],
+                   price_list_name: [:string, nullable: true],
+                   catalog_id: [:string, nullable: true],
+                   catalog_name: [:string, nullable: true]
 
           # price_source is operational provenance — admin-only, never on the
           # store serializer.
@@ -31,6 +35,29 @@ module Spree
           # once per line on a read path that must stay provider-free.
           attribute :catalog_price do |line_item|
             line_item.variant&.amount_in(line_item.currency)&.to_s
+          end
+
+          # Which agreement priced this line. The list id is stamped on the
+          # row and never re-resolved (the same reason `catalog_price` above
+          # is a base price); the catalog is whichever one owns that list
+          # now, so moving a list between catalogs re-labels past orders.
+          # Empty on a shop-price or hand-negotiated line. Names ride along
+          # beside the ids so a page of lines does not cost a request each to
+          # label, as `company_name` already does.
+          attribute :price_list_id do |line_item|
+            line_item.price_list&.prefixed_id
+          end
+
+          attribute :price_list_name do |line_item|
+            line_item.price_list&.name
+          end
+
+          attribute :catalog_id do |line_item|
+            line_item.price_list&.catalog&.prefixed_id
+          end
+
+          attribute :catalog_name do |line_item|
+            line_item.price_list&.catalog&.name
           end
 
           attribute :cost_price do |line_item|

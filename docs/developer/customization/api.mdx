@@ -5,7 +5,7 @@ description: Add new Store API endpoints, customize existing JSON responses with
 
 Before you start customizing Spree API endpoints, make sure you reviewed all existing API endpoints in the [Spree API docs](/api-reference/admin-api/endpoints).
 
-For a step-by-step walkthrough of adding a complete new resource (model, serializer, controller, routes), see the [API tutorial](/developer/tutorial/admin-api).
+For a step-by-step walkthrough of adding a complete new resource (model, serializer, controller, routes), see the [API tutorial](/developer/tutorial/model-and-api).
 
 ## Customizing JSON Responses
 
@@ -35,7 +35,7 @@ Restart the server and the Product API will include your new attribute.
 
 ### Adding an Association
 
-Let's say you've created a `Spree::Brand` model that belongs to `Product` (see the [tutorial](/developer/tutorial/admin-api) for the full example).
+Let's say you've created a `Spree::Brand` model that belongs to `Product` (see the [tutorial](/developer/tutorial/model-and-api) for the full example).
 
 Create a serializer for the new model:
 
@@ -141,7 +141,7 @@ The base `ResourceController` provides:
 | Pagination | [Pagy](https://github.com/ddnexus/pagy) — `?page=2&limit=25` |
 | Filtering | [Ransack](https://github.com/activerecord-hackery/ransack) — `?q[name_cont]=nike` |
 | Sorting | JSON:API style — `?sort=-name` |
-| Authorization | [CanCanCan](https://github.com/CanCanCommunity/cancancan) |
+| Authorization | Ownership scoping — `scope` decides what the caller can see (Admin API controllers add the `scoped_resource` permission gate) |
 | Prefixed IDs | Stripe-style — `brand_k5nR8xLq` |
 
 Override these methods to customize:

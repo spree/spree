@@ -10,9 +10,9 @@
 #
 # Categories are attached afterwards by product_type_categories.rb — the import
 # is what creates them, so there is nothing to link to at this point.
-store = Spree::Store.default
+store = Spree::Current.store
 
-color_option_type = Spree::OptionType.find_by(name: 'color')
+color_option_type = Spree::OptionType.for_store(store).find_by(name: 'color')
 
 definitions = store.custom_field_definitions.where(
   namespace: 'custom',

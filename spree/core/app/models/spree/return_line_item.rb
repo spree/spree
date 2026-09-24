@@ -19,6 +19,25 @@ module Spree
 
     delegate :order, :currency, to: :return
 
+    # What this line refunds. Once the warehouse has counted, only the units
+    # that arrived are paid for — a customer who announced three and sent two
+    # is owed two — and before the count there is nothing to go on but the
+    # announced quantity.
+    #
+    # Rounded to the currency, because this is the ceiling a refund is checked
+    # against as well as the figure the dialog offers: a third of $29.99 taken
+    # three times is not $29.99 until it is.
+    #
+    # @return [BigDecimal]
+    def refund_amount
+      return pre_tax_amount unless self.return.counted?
+      return 0.to_d if quantity.to_i.zero?
+
+      Spree::Money::Rounding.to_currency(
+        (pre_tax_amount / quantity) * received_quantity.to_i, currency
+      )
+    end
+
     def display_pre_tax_amount
       Spree::Money.new(pre_tax_amount, currency: currency)
     end

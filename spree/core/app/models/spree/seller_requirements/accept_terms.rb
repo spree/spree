@@ -14,7 +14,11 @@ module Spree
       # drift. A seller agreement that is not the shopper-facing document
       # is written here instead.
       preference :terms_body, :text, default: nil, nullable: true
-      preference :terms_effective_from, :string, default: nil
+      # `:date`, so the dashboard renders a date picker rather than a text box
+      # an operator can type a malformed date into. The value stays a
+      # `yyyy-MM-dd` string on the wire and in storage — see `effective_from`
+      # for why the timezone is applied on read rather than at coercion.
+      preference :terms_effective_from, :date, default: nil
       # A published copy of the same terms, for a marketplace that also
       # hosts them on a public page. Optional — the panel renders the
       # body above; this is the "open the full document" link.

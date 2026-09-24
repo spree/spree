@@ -27,6 +27,28 @@ module Spree
           end
         end
 
+        # Declares the wire form of an `acted_by` association: the actor's
+        # prefixed id, the kind of actor it is, and the expansion. Both
+        # halves read off the columns, so naming an actor costs no query and
+        # the id and the kind always describe the same row (see
+        # docs/plans/6.0-action-actors.md).
+        #
+        # Declare the matching `typelize` entries alongside, as with any
+        # other attribute.
+        def self.actor_attributes(*names)
+          names.each do |name|
+            attribute(:"#{name}_id") { |object| object.acted_by_prefixed_id(name) }
+
+            attribute(:"#{name}_type") do |object|
+              Spree::Base.polymorphic_api_type(object.acted_by_type(name))
+            end
+
+            one name,
+                resource: proc { Spree.api.admin_actor_serializer },
+                if: proc { expand?(name.to_s) }
+          end
+        end
+
         # Plain decimal notation. BigDecimal renders 0.06 as "0.6e-1", which
         # is what a client would otherwise print beside a unit.
         #

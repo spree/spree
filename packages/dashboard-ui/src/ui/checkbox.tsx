@@ -25,7 +25,7 @@ function Checkbox({
       disabled={disabled}
       name={name}
       className={cn(
-        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border bg-card align-[-3px] outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out',
+        'peer relative inline-block size-4 shrink-0 cursor-pointer rounded-[4px] border border-border shadow-xs bg-card align-[-3px] outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out',
         // The 16px box is the right *visual* size in a dense table, but on its
         // own it is a 16px target — under the 24px WCAG 2.2 asks for, on the
         // control every bulk action starts from. A pseudo-element extends the

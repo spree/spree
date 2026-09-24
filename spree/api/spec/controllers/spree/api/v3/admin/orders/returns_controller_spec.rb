@@ -71,6 +71,29 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['memo']).to eq('Updated')
       expect(json_response['status']).to eq('requested')
     end
+
+    it "refuses another store's reason or warehouse" do
+      return_record = create_return
+      other_store = create(:store)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id,
+                               reason_id: create(:return_reason, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id,
+                               stock_location_id: create(:stock_location, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "sets the store's own reason" do
+      return_record = create_return
+      reason = create(:return_reason, store: store)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id, reason_id: reason.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(return_record.reload.reason).to eq(reason)
+    end
   end
 
   describe 'PATCH #approve' do
@@ -186,6 +209,21 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    # A workflow rejects with a symbol. The operator has to be told what went
+    # wrong, not handed `refund_exceeds_balance`.
+    it 'explains a refund larger than the return is owed' do
+      patch :refund, params: {
+        order_id: order.prefixed_id,
+        id: return_record.prefixed_id,
+        amount: '10000.00',
+        refund_method: 'store_credit'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['message']).to eq(Spree.t(:refund_exceeds_balance))
+      expect(json_response['error']['message']).not_to include('refund_exceeds_balance')
     end
   end
 

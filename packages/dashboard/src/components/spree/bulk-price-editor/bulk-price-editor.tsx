@@ -150,8 +150,8 @@ export function BulkPriceEditor({
   const filterKey = useMemo(() => stableFilterKey(sanitizedFilter), [sanitizedFilter])
 
   // Format the grid in the currency's market locale (e.g. EUR → `de`, comma
-  // decimal). The same locale normalizes amounts to canonical form on save (see
-  // `save`), so what the merchant types matches what the API receives. Falls
+  // decimal). The same locale normalizes each typed amount to canonical form as the
+  // cell commits (see `handleChange`), so the grid shows what Save sends. Falls
   // back to `en` (canonical period-decimal), NOT the UI language — money
   // formatting/parsing must never depend on the dashboard's language.
   const marketLocale = localeForCurrency(currency) || 'en'
@@ -346,6 +346,10 @@ export function BulkPriceEditor({
     return out
   }, [data, breaksByVariant, draftRungs])
 
+  // A toast cannot be seen from in here: the viewport sits below the overlay
+  // layer on purpose, so it never covers a sheet's footer buttons. Refusals
+  // render in the grid's own header instead.
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [edits, setEdits] = useState<Map<string, CellEdit>>(() => new Map())
   // Keys already written to the server, kept in `edits` until the refetch
   // carries their values — see the release effect below.
@@ -361,12 +365,11 @@ export function BulkPriceEditor({
     setEdits(new Map())
     setSavedPending(new Set())
     setDraftRungs([])
+    setSaveError(null)
   }, [priceListId, currency, filterKey])
 
   // Releases a saved edit once the refetched row agrees with it, so the cell
   // hands over to server data without ever showing the value it replaced.
-  // Compared on the canonical decimal, since the edit holds the merchant's
-  // locale-formatted input.
   useEffect(() => {
     if (savedPending.size === 0) return
 
@@ -382,8 +385,7 @@ export function BulkPriceEditor({
       const baseline = baselineRows.find((row) => (row.priceId ?? row.id) === key)
       if (!baseline) continue
 
-      const saved = normalizeMoneyInput(edit.amount ?? '', marketLocale || 'en')
-      if ((baseline.amount ?? '') === (saved === '' ? '' : saved)) settled.push(key)
+      if ((baseline.amount ?? null) === edit.amount) settled.push(key)
     }
     if (settled.length === 0) return
 
@@ -397,7 +399,7 @@ export function BulkPriceEditor({
       for (const key of settled) out.delete(key)
       return out
     })
-  }, [baselineRows, edits, savedPending, marketLocale])
+  }, [baselineRows, edits, savedPending])
 
   // Hands a saved draft over to the row the server now returns, once that row
   // has actually arrived. Doing this on save instead would blank the rung for
@@ -461,28 +463,26 @@ export function BulkPriceEditor({
 
   const handleChange = useCallback(
     (rowId: string, field: 'amount' | 'compareAt', next: string | null) => {
+      setSaveError(null)
       // Typing a price into the trailing blank row is what creates the rung.
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
+      // Normalized on commit, from the currency's market locale, so an edit
+      // holds the same canonical `"1234.56"` the API returns. The cell then
+      // shows exactly what Save will send (docs/plans/5.5-client-side-money-normalization.md).
+      const canonical = normalizeMoneyInput(next, marketLocale) || null
 
       setEdits((prev) => {
         // A draft rung has no stored row, so it is found by its own id.
         const baseline = baselineRows.find((r) => (r.priceId ?? r.id) === rowId)
         if (!baseline?.variantId) return prev
-        // Baseline is the API's canonical decimal (`12.50`); the cell
-        // ships the user's raw locale-formatted input (`12,50`). Seed the
-        // baseline in display form so an untouched field naturally matches
-        // when the other field is edited — otherwise an edit to `compareAt`
-        // alone would falsely mark `amount` dirty under a comma-decimal locale.
-        const displayBaseAmount = baseline.amount ? baseline.amount.replace('.', decimal) : null
-        const displayBaseCompare = baseline.compareAt
-          ? baseline.compareAt.replace('.', decimal)
-          : null
+        const baseAmount = baseline.amount ?? null
+        const baseCompare = baseline.compareAt ?? null
         const current = prev.get(targetId) ?? {
           variantId: baseline.variantId,
           minQuantity: baseline.minQuantity,
-          amount: displayBaseAmount,
-          compareAt: displayBaseCompare,
+          amount: baseAmount,
+          compareAt: baseCompare,
         }
         // An edit already holding a quantity keeps it: the merchant may have
         // typed the quantity first, and the baseline still says what the
@@ -491,16 +491,16 @@ export function BulkPriceEditor({
         const merged = {
           ...current,
           minQuantity: prev.get(targetId)?.minQuantity ?? baseline.minQuantity,
-          [field]: next,
+          [field]: canonical,
           // Blanking the price of a rung the server already has is how it is
           // deleted, the same as the row's remove control. On a rung that was
           // never stored there is nothing to delete — it is simply unfinished,
           // and the save refuses it rather than reporting a removal.
           ...(field === 'amount'
-            ? { removing: !next && baseline.priceId ? (true as const) : undefined }
+            ? { removing: !canonical && baseline.priceId ? (true as const) : undefined }
             : {}),
         }
-        if (merged.amount === displayBaseAmount && merged.compareAt === displayBaseCompare) {
+        if (merged.amount === baseAmount && merged.compareAt === baseCompare) {
           const out = new Map(prev)
           out.delete(targetId)
           return out
@@ -510,7 +510,7 @@ export function BulkPriceEditor({
         return out
       })
     },
-    [baselineRows, decimal, promoteBlankRow],
+    [baselineRows, marketLocale, promoteBlankRow],
   )
 
   // The plus on the blank row does the same thing a keystroke does — it is
@@ -524,6 +524,7 @@ export function BulkPriceEditor({
 
   const changeTierQuantity = useCallback(
     (rowId: string, value: string) => {
+      setSaveError(null)
       const promoted = promoteBlankRow(rowId)
       const targetId = promoted ?? rowId
 
@@ -559,6 +560,7 @@ export function BulkPriceEditor({
 
   const removeTier = useCallback(
     (rowId: string) => {
+      setSaveError(null)
       // A draft rung has nothing stored to remove; a saved one is cleared by
       // sending a blank amount, which the bulk endpoint reads as "delete this".
       if (rowId.startsWith('draft:')) {
@@ -614,27 +616,17 @@ export function BulkPriceEditor({
       return edit != null && !edit.removing && Boolean(edit.minQuantity) && !edit.amount
     })
     if (incomplete) {
-      toastManager.add({
-        type: 'error',
-        title: t('admin.pages.products.price_lists.edit_prices.tier_needs_price', {
+      setSaveError(
+        t('admin.pages.products.price_lists.edit_prices.tier_needs_price', {
           quantity: edits.get(incomplete)?.minQuantity ?? '',
         }),
-      })
+      )
       return false
     }
     // Ship the unique-key triple `(variant_id, currency, price_list_id)`
     // — that's what the server upserts on. `id` is not used by the bulk
     // endpoint; we already have the lookup columns on screen so there's
     // no point making the server backfill them.
-    // Normalize each amount from the grid's display locale (the currency's
-    // market locale, e.g. EUR → `de`) into the canonical `"1234.56"` the API
-    // expects. The server is never asked to parse comma-vs-period — see
-    // docs/plans/5.5-client-side-money-normalization.md.
-    const toCanonical = (v: string | null) => {
-      if (v == null) return null
-      const normalized = normalizeMoneyInput(v, marketLocale || 'en')
-      return normalized === '' ? null : normalized
-    }
     const payload: PriceBulkUpsertRow[] = savedKeys.flatMap((priceId) => {
       const edit = edits.get(priceId) as CellEdit
       const row: PriceBulkUpsertRow = {
@@ -643,10 +635,10 @@ export function BulkPriceEditor({
         ...(priceListId ? { price_list_id: priceListId } : {}),
         // Absent on a variant's own price, which is the ladder's bottom rung.
         ...(edit.minQuantity ? { min_quantity: Number(edit.minQuantity) } : {}),
-        amount: toCanonical(edit.amount),
+        amount: edit.amount,
         // A break carries no compare-at; sending one would claim a former
         // price for a contracted figure.
-        ...(edit.minQuantity ? {} : { compare_at_amount: toCanonical(edit.compareAt) }),
+        ...(edit.minQuantity ? {} : { compare_at_amount: edit.compareAt }),
       }
       // A rung whose quantity moved is an insert at the new one, since that
       // is what the endpoint keys on — so the row it left behind is cleared
@@ -663,6 +655,7 @@ export function BulkPriceEditor({
         },
       ]
     })
+    setSaveError(null)
     try {
       const res = await bulkUpsertAsync({ prices: payload })
       toastManager.add({
@@ -680,16 +673,17 @@ export function BulkPriceEditor({
       setSavedPending((prev) => new Set([...prev, ...savedKeys]))
       return true
     } catch (err) {
-      const message =
+      setSaveError(
         err instanceof Error
           ? err.message
-          : t('admin.pages.products.price_lists.edit_prices.save_failed')
-      toastManager.add({ type: 'error', title: message })
+          : t('admin.pages.products.price_lists.edit_prices.save_failed'),
+      )
       return false
     }
-  }, [edits, savedPending, currency, priceListId, bulkUpsertAsync, marketLocale, t])
+  }, [edits, savedPending, currency, priceListId, bulkUpsertAsync, t])
 
   const discard = useCallback(() => {
+    setSaveError(null)
     setEdits(new Map())
     setSavedPending(new Set())
     setDraftRungs([])
@@ -771,6 +765,7 @@ export function BulkPriceEditor({
         tierRemove: t('admin.pages.products.price_lists.tiers.remove_short'),
         tierQuantity: t('admin.pages.products.price_lists.tiers.quantity'),
       }}
+      error={saveError}
     />
   )
 }

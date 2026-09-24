@@ -17,20 +17,10 @@ module Spree
 
           # POST /api/v3/admin/password_resets
           def create
-            redirect_url = params[:redirect_url]
-
-            # Validate redirect_url against allowed origins (secure by default).
-            # If no allowed origins are configured, redirect_url is silently ignored
-            # to prevent open redirect / token exfiltration attacks.
-            if redirect_url.present?
-              unless current_store.allowed_origins.exists? && current_store.allowed_origin?(redirect_url)
-                redirect_url = nil
-              end
-            end
-
             user = Spree.admin_user_class.find_by(email: params[:email])
 
             if user
+              redirect_url = trusted_redirect_url(user)
               token = user.generate_token_for(:password_reset)
               event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
               event_payload[:redirect_url] = redirect_url if redirect_url.present?
@@ -70,6 +60,36 @@ module Spree
           end
 
           private
+
+          # The emailed link carries the reset token, so it may only point at
+          # the dashboard — never at a storefront origin, which anyone who can
+          # edit a store's allowed origins could add — and only when the
+          # account belongs to the store the request names. Anything else is
+          # ignored and the email links to the dashboard's own reset page.
+          #
+          # @return [String, nil]
+          def trusted_redirect_url(user)
+            redirect_url = params[:redirect_url].presence
+            return if redirect_url.blank?
+            return unless same_origin?(redirect_url, Spree::Stores::DashboardUrl.call(store: current_store))
+            return unless staff_of_current_store?(user)
+
+            redirect_url
+          end
+
+          def same_origin?(url, other)
+            first = URI.parse(url.to_s)
+            second = URI.parse(other.to_s)
+            first.host.present? && [first.scheme, first.host, first.port] == [second.scheme, second.host, second.port]
+          rescue URI::InvalidURIError
+            false
+          end
+
+          def staff_of_current_store?(user)
+            return false unless user.respond_to?(:spree_roles)
+
+            user.spree_roles.for_resource(current_store).exists?
+          end
 
           def auth_response(user)
             {

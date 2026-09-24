@@ -353,6 +353,39 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with marketplace params' do
+      let(:params) do
+        {
+          preferred_auto_approve_sellers: true,
+          preferred_auto_approve_seller_products: true,
+          preferred_send_seller_transactional_emails: false,
+          preferred_default_commission_tax_rate: 0.23
+        }
+      end
+
+      it 'updates the marketplace settings' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_auto_approve_sellers).to eq(true)
+        expect(store.preferred_auto_approve_seller_products).to eq(true)
+        expect(store.preferred_send_seller_transactional_emails).to eq(false)
+        expect(store.preferred_default_commission_tax_rate).to eq(0.23)
+      end
+    end
+
+    # The rate is a fraction, so a percentage typed straight in would bill
+    # more tax than fee.
+    context 'with a commission tax rate above 1' do
+      let(:params) { { preferred_default_commission_tax_rate: 23 } }
+
+      it 'returns a validation error' do
+        subject
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+      end
+    end
+
     # Existing API clients keep working for one release; the model maps the
     # old names onto capture_method.
     context 'with the deprecated capture params' do

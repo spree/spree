@@ -4,6 +4,10 @@
       "delete_image": "Usuń obraz",
       "edit_media": "Edytuj multimedia"
     },
+    "actors": {
+      "api_key": "Klucz API",
+      "unnamed": "Bez nazwy"
+    },
     "allowed_origins": {
       "add_cta": "Dodaj dozwolone źródło",
       "create_description": "Przeglądarki wczytane z tego źródła mogą wywoływać API administratora. Lista dozwolonych źródeł CORS oraz sesja cookie administratora opierają się na tej liście — utrzymuj ją zwięzłą.",
@@ -30,10 +34,10 @@
         "never_used": "Nigdy",
         "revoked": "Unieważniony"
       },
-      "by_email": "przez {{email}}",
       "create_key_cta": "Utwórz klucz",
       "create_sheet_description": "Wybierz typ klucza, a następnie zakresy, których może używać.",
       "create_sheet_title": "Utwórz klucz API",
+      "created_by": "przez {{actor}}",
       "delete_confirm": {
         "message": "Spowoduje to trwałe usunięcie klucza. Jeśli możesz chcieć przywrócić dostęp później, lepiej unieważnij klucz.",
         "title": "Usunąć klucz?"
@@ -118,7 +122,7 @@
         "message": "{{name}} przestanie obowiązywać. Odbiorcy wrócą do cen sklepowych, a zawartość katalogu zostanie zachowana."
       },
       "delete_confirm": {
-        "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
+        "message": "To usunie {{name}} wraz z przypisaniami oraz cennikiem i zawartymi w nim cenami. Produkty pozostaną w sklepie. Tej operacji nie można cofnąć.",
         "title": "Usunąć katalog?"
       },
       "detach_warning": "Zapis usunie cennik tego katalogu wraz z zawartymi w nim cenami. Ta grupa odbiorców będzie płacić zwykłe ceny.",
@@ -570,7 +574,7 @@
         "settings_label": "Ustawienia kalkulatora"
       },
       "create_line_items_action_editor": {
-        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka za darmo.",
         "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
         "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
         "variant_label": "Dodaj wariant"
@@ -1252,7 +1256,7 @@
             "Spree::Order": "Zamówienia",
             "Spree::Product": "Produkty",
             "Spree::Taxon": "Kategorie",
-            "Spree::User": "Klienci",
+            "Spree::Customer": "Klienci",
             "Spree::Variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
@@ -1865,28 +1869,6 @@
           "label": "Podatek rozlicza"
         }
       },
-      "setup": {
-        "country_code": {
-          "help": "Skąd wysyłasz. Twój sklep może sprzedawać na całym świecie — to ustala tylko początkową walutę, magazyn i strefy dostawy, które później zmienisz.",
-          "label": "Kraj",
-          "placeholder": "Szukaj krajów"
-        },
-        "currency": {
-          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili.",
-          "label": "Waluta",
-          "placeholder": "Szukaj walut"
-        },
-        "locale": {
-          "help": "Twój domyślny język. Kolejne dodasz w każdej chwili.",
-          "label": "Język"
-        },
-        "password_confirmation": {
-          "label": "Potwierdź hasło"
-        },
-        "store_name": {
-          "label": "Nazwa sklepu"
-        }
-      },
       "state": {
         "label": "Region"
       },
@@ -1937,6 +1919,10 @@
         "address_requires_phone": {
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
+        },
+        "always_include_confirm_step": {
+          "help": "Zawsze pokazuj klientom końcowy krok weryfikacji przed złożeniem zamówienia, nawet jeśli żadna metoda płatności tego nie wymaga.",
+          "label": "Zawsze pokazuj krok potwierdzenia"
         },
         "capture_method": {
           "help": "Domyślne ustawienie dla każdej metody płatności. Pojedyncza metoda płatności może je nadpisać.",
@@ -2129,7 +2115,10 @@
           "minimum": {
             "label": "Minimalna wypłata",
             "help": "Poniżej tej kwoty saldo przechodzi na następny okres zamiast zostać wypłacone. Zero wypłaca każdą należność."
-          }
+          },
+          "provider_needs_connection": "Połącz {{name}}, aby go używać",
+          "provider_connect_hint": "{{name}} wypłaca sprzedawcom pieniądze przez swoją metodę płatności, która nie jest jeszcze aktywna w tym sklepie.",
+          "provider_connect_link": "Skonfiguruj ją w Metodach płatności"
         },
         "limit_digital_download_count": {
           "help": "Wyłączone oznacza, że kupujący mogą pobierać dowolną liczbę razy.",
@@ -2155,6 +2144,23 @@
         "preferred_default_package_weight": {
           "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
           "label": "Domyślna waga paczki"
+        },
+        "auto_approve_sellers": {
+          "label": "Zatwierdzaj sprzedawców automatycznie",
+          "help": "Sprzedawca zaczyna sprzedawać zaraz po ukończeniu swojej listy, bez weryfikacji przez nikogo."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publikuj produkty sprzedawców automatycznie",
+          "help": "Produkt sprzedawcy trafia do sprzedaży zaraz po zgłoszeniu, bez weryfikacji przez nikogo."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Wysyłaj e-maile do sprzedawców",
+          "help": "Wysyła sprzedawcom e-maile o zatwierdzeniu, produktach i wypłatach. Wyłącz, jeśli piszesz do sprzedawców samodzielnie. Nie wpływa to na e-maile do klientów."
+        },
+        "default_commission_tax_rate": {
+          "label": "Domyślny podatek od prowizji",
+          "help": "Naliczany od Twojej prowizji, gdy ani stawka prowizji, ani dostawca podatków nie podaje własnej stawki. Zostaw 0, jeśli Twoja prowizja nie jest opodatkowana.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2755,6 +2761,8 @@
           "cancel_shipment_message": "Anulować tę realizację?",
           "capture_message": "Pobrać tę płatność?",
           "complete_message": "Sfinalizować teraz to zamówienie robocze?",
+          "delete_message": "Usunąć roboczą wersję zamówienia {{number}}? Tej operacji nie można cofnąć.",
+          "delete_title": "Usunąć roboczą wersję zamówienia?",
           "remove_gift_card_message": "Usunąć tę kartę podarunkową z zamówienia?",
           "remove_item_message": "Usunąć tę pozycję z zamówienia?",
           "remove_store_credit_message": "Usunąć kredyt sklepowy z zamówienia?",
@@ -2782,7 +2790,8 @@
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
           "complete_failed": "Nie udało się sfinalizować zamówienia",
-          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia"
+          "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
+          "delete_failed": "Nie udało się usunąć zamówienia"
         },
         "fulfillments": {
           "add_delivery": "Dodaj numer przesyłki",
@@ -2885,7 +2894,12 @@
           "canceled": "Zamówienie anulowane",
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
+          "completed_as_group_few": "Zamówienie sfinalizowane jako {{count}} osobne zamówienia",
+          "completed_as_group_many": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
+          "completed_as_group_one": "Zamówienie sfinalizowane jako {{count}} osobne zamówienie",
+          "completed_as_group_other": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
           "confirmation_sent": "Potwierdzenie wysłane",
+          "deleted": "Robocza wersja zamówienia została usunięta",
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
@@ -2912,6 +2926,7 @@
           "shared_help": "Zapłacone raz za koszyk obejmujący kilku sprzedawców. To zamówienie ma w nim udział.",
           "load_error": "Nie udało się wczytać płatności tego zamówienia."
         },
+        "priced_by": "Cena z {{name}}",
         "purchase_order": {
           "document": "Dokument zamówienia zakupu",
           "document_help": "Plik PDF, obraz lub dokument Word, do 10 MB.",
@@ -4011,12 +4026,18 @@
           },
           "title": "Webhooki"
         },
-        "payouts": {
-          "title": "Wypłaty",
-          "subtitle": "Jak i kiedy ten marketplace płaci swoim sprzedawcom."
-        },
         "package_types": {
           "add_sheet_title": "Dodaj rodzaj opakowania"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Jak ten marketplace płaci sprzedawcom, jak sprzedawcy do niego dołączają, co od Ciebie dostają i jaki podatek obejmuje Twoją prowizję.",
+          "payouts_title": "Wypłaty",
+          "payouts_description": "Jak i kiedy ten marketplace płaci swoim sprzedawcom. Sprzedawca może mieć własny harmonogram i własną kwotę minimalną.",
+          "admission_title": "Zatwierdzanie sprzedawców",
+          "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
+          "communication_title": "Komunikacja",
+          "commission_tax_title": "Podatek od prowizji"
         }
       },
       "staff": {
@@ -5063,9 +5084,9 @@
         "tax_categories": "Klasy podatkowe przypisane do produktów",
         "tax_rates": "Stawki stosowane według rynku i regionu",
         "webhooks": "Adresy powiadamiane o zdarzeniach",
-        "payouts": "Kto płaci Twoim sprzedawcom, jak często i od jakiej kwoty",
         "package_types": "Kartony, palety i kontenery",
-        "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować"
+        "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
       },
       "groups": {
         "audit": "Audyt",
@@ -5101,9 +5122,12 @@
         "tax_categories": "Kategorie podatkowe",
         "tax_rates": "Stawki podatku",
         "webhooks": "Webhooki",
-        "payouts": "Wypłaty",
         "package_types": "Rodzaje opakowań",
-        "suppliers": "Dostawcy"
+        "suppliers": "Dostawcy",
+        "marketplace": "Ustawienia"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {
@@ -5121,7 +5145,9 @@
       "required_notice_message": "Nie istnieje żadne konto administratora. Użyj linku konfiguracyjnego z wyniku instalacji, aby je utworzyć.",
       "required_notice_title": "Ta instalacja nie została jeszcze skonfigurowana",
       "subtitle": "Utwórz konto administratora i opisz swój sklep. Wszystko tutaj możesz później zmienić.",
-      "title": "Skonfiguruj Spree"
+      "title": "Skonfiguruj Spree",
+      "welcome_description": "Przejdź przez poniższą listę, aby otworzyć sklep {{store}}.",
+      "welcome_title": "Witamy, Twój sklep jest gotowy!"
     },
     "staff": {
       "actions": {
@@ -5146,7 +5172,8 @@
       "errors": {
         "failed_to_remove": "Nie udało się usunąć personelu",
         "failed_to_resend": "Nie udało się ponownie wysłać zaproszenia",
-        "failed_to_revoke": "Nie udało się cofnąć zaproszenia"
+        "failed_to_revoke": "Nie udało się cofnąć zaproszenia",
+        "failed_to_copy_link": "Nie udało się skopiować linku zaproszenia"
       },
       "invite": {
         "email_placeholder": "wspolpracownik@przyklad.com",
@@ -5951,6 +5978,8 @@
       "builder": {
         "metrics": "Metryki",
         "no_metrics": "Wybierz co najmniej jedną metrykę.",
+        "one_family_only": "Jeden raport obejmuje jedną grupę wskaźników. Wybór wskaźnika z innej grupy przełącza raport na tę grupę.",
+        "switches_family": "Przełącza ten raport na {{family}}",
         "group_by": "Grupuj według",
         "none": "Brak (tylko sumy)",
         "grain": "Interwał",

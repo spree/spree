@@ -73,7 +73,7 @@ export function dependabotContent(hasStorefront: boolean, hasDashboard = false):
 
   if (hasDashboard) {
     ecosystems.push({
-      comment: 'React Dashboard (Developer Preview)',
+      comment: 'React Dashboard',
       ecosystem: 'npm',
       directory: '/apps/dashboard',
       group: 'dashboard',

@@ -1,12 +1,74 @@
 ---
 title: Events
-description: Publish lifecycle events for FAQs and react to them — subscribers inside the app, webhooks for systems outside it.
+description: Publish lifecycle events for Brands and react to them — subscribers inside your Spree app, outbound webhooks for systems you do not deploy code into.
 ---
 
-Features rarely live alone — something usually needs to know when data changes. This chapter publishes lifecycle events for FAQs and consumes them both ways.
+Features rarely live alone. A search index needs to know when a brand is renamed; a PIM wants to hear about new ones. In Spree the integration surface is the **events system**: models publish events as things happen, and you react without touching core code.
 
-## What this chapter covers
+There are two ways to consume an event, and they serve different audiences:
 
-- Publishing lifecycle events from the model
-- A subscriber reacting inside the application
-- Delivering the event to an external system as a webhook
+| Mechanism | Code lives | Best for |
+|---|---|---|
+| **Subscriber** | In your Spree app | Calling external APIs with your own client code, internal side effects, anything needing app context |
+| **Webhook** | In the external system | Letting a third party receive HTTP callbacks — no backend code in your app, endpoints managed from the dashboard |
+
+## Step 1: Publish lifecycle events
+
+Core models publish `*.created`, `*.updated` and `*.deleted` automatically. Your models do too, with one line:
+
+```ruby server/app/models/spree/brand.rb
+publishes_lifecycle_events
+```
+
+Now `brand.created`, `brand.updated` and `brand.deleted` fire after the matching transaction commits. The payload is the record serialized with the v3 serializer you generated in step 1 — the events system resolves it by naming convention. Every consumer sees the same JSON shape your API serves, which is the point: one contract, not two.
+
+## Step 2: React inside the app
+
+Generate a subscriber:
+
+```bash
+spree generate subscriber BrandSync brand.created brand.updated
+```
+
+This creates the subscriber, a spec stub, and — crucially — **registers it** in `config/initializers/spree.rb`. Subscribers are not auto-discovered: one that never gets appended to `Spree.subscribers` is a silent no-op, which is why the generator owns that step. Re-runs are idempotent.
+
+Fill in the handler:
+
+```ruby server/app/subscribers/brand_sync_subscriber.rb
+def handle(event)
+  SearchIndexer.upsert_brand(id: event.payload['id'], name: event.payload['name'])
+end
+```
+
+Two things worth understanding:
+
+- **The payload is the record, already serialized.** It is the same JSON your API returns, so `event.payload['name']` is there without a database query. IDs in it are public ones (`brand_k5nR8xLq`); when you do need the full record, look it up with `Spree::Brand.find_by_prefix_id(event.payload['id'])` rather than treating the id as a row number.
+- **Subscribers run asynchronously by default.** Each `handle` call is an ActiveJob, so a slow third-party API never blocks the request that triggered it. Pass `subscribes_to 'brand.created', async: false` only when you genuinely need it synchronous.
+
+Restart the server, rename a brand in the dashboard, and watch the job run.
+
+## Step 3: Publish a custom event
+
+Lifecycle events cover persistence. Custom events express *domain* moments — something meaningful happened, not just a row changed:
+
+```ruby
+brand.publish_event('brand.featured')
+```
+
+The payload defaults to the serializer output; pass your own hash as a second argument when the event needs different data. Subscribers consume it exactly like any built-in event.
+
+## Step 4: Deliver to external systems with webhooks
+
+When the consumer is a system you do not deploy your own code into, use a webhook instead. In the dashboard go to **Settings → Webhooks**, add an endpoint URL, and select the events to deliver — `brand.created` and anything else publishing in your store.
+
+Each delivery is an HTTP POST carrying the event name and the same serialized payload. The endpoint's **signing secret is shown once when you create it**: store it in the receiving system and verify every request against it, so the receiver can prove the call came from your store.
+
+Failed deliveries are retried with increasing delays, and the dashboard shows the delivery history per endpoint, which is where to look when a third party says they never received something.
+
+<Tip>
+  Webhooks need no code in your app at all. Reach for a subscriber only when the reaction needs application context or credentials you would rather not hand to a third party. See [events](/developer/core-concepts/events) and [webhooks](/developer/core-concepts/webhooks).
+</Tip>
+
+## Next step
+
+The feature is complete across every layer. Now prove it works: [Testing](/developer/tutorial/testing).

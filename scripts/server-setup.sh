@@ -9,6 +9,7 @@
 #   2. Clone spree-starter into server/
 #   3. Write server/.env with SPREE_PATH=.. (for the native bin/dev path —
 #      Docker edge flow overrides via compose env) + a fresh SECRET_KEY_BASE
+#      and Active Record encryption keys
 #   4. Build @spree/cli so `pnpm exec spree …` works in server/
 #   5. Start the edge stack and wait for it to finish booting. The edge web
 #      boot command (scripts/docker-compose.edge.yml) does the heavy lifting
@@ -36,12 +37,17 @@ step() { printf '\n→ %s\n' "$1"; }
 
 bash "$ROOT/scripts/server-teardown.sh" --no-hint
 
-step "Cloning spree-starter into server/ (branch: ${SPREE_STARTER_BRANCH:-6-0-dev})"
-git clone --depth 1 --branch "${SPREE_STARTER_BRANCH:-6-0-dev}" https://github.com/spree/spree-starter.git "$SERVER_DIR"
+step "Cloning spree-starter into server/${SPREE_STARTER_BRANCH:+ (branch: $SPREE_STARTER_BRANCH)}"
+git clone --depth 1 ${SPREE_STARTER_BRANCH:+--branch "$SPREE_STARTER_BRANCH"} https://github.com/spree/spree-starter.git "$SERVER_DIR"
 rm -rf "$SERVER_DIR/.git" "$SERVER_DIR/.gitignore"
 
-step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE)"
-printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)" > "$SERVER_DIR/.env"
+step "Writing server/.env (SPREE_PATH + SECRET_KEY_BASE + Active Record encryption keys)"
+{
+  printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)"
+  printf 'ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=%s\n' "$(openssl rand -hex 16)"
+  printf 'ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=%s\n' "$(openssl rand -hex 16)"
+  printf 'ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=%s\n' "$(openssl rand -hex 16)"
+} > "$SERVER_DIR/.env"
 
 step "Building @spree/cli (so the spree CLI works in server/)"
 # Through turbo, which builds workspace deps first (build dependsOn ^build) —

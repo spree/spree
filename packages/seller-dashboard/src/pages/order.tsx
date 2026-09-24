@@ -37,10 +37,12 @@ export function OrderPage() {
   if (isError) return <RetryableError onRetry={() => refetch()} />
   if (!order) return <CenteredMessage>{t('orders.not_found')}</CenteredMessage>
 
-  const cancelable = order.status !== 'canceled'
   // Nothing can come back from an order that never went out, so the post-sale
   // cards would only render empty with a disabled button.
   const placed = !!order.completed_at
+  // Only a placed order can be cancelled — offering it on a draft gives the
+  // seller an action the backend always refuses.
+  const cancelable = placed && order.status !== 'canceled'
 
   return (
     <>

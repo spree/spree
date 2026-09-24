@@ -4,6 +4,10 @@
       "delete_image": "删除图片",
       "edit_media": "编辑媒体"
     },
+    "actors": {
+      "api_key": "API 密钥",
+      "unnamed": "未命名"
+    },
     "allowed_origins": {
       "add_cta": "添加允许的来源",
       "create_description": "从该来源加载的浏览器可以调用管理 API。CORS 允许列表和管理后台 Cookie 会话都依赖此列表——请保持精简。",
@@ -30,10 +34,10 @@
         "never_used": "从未使用",
         "revoked": "已撤销"
       },
-      "by_email": "由 {{email}}",
       "create_key_cta": "创建密钥",
       "create_sheet_description": "选择密钥类型，然后选择它可以使用的权限范围。",
       "create_sheet_title": "创建 API key",
+      "created_by": "由 {{actor}}",
       "delete_confirm": {
         "message": "此操作将永久删除密钥。如果以后可能需要恢复访问权限，建议改用撤销。",
         "title": "删除密钥？"
@@ -116,7 +120,7 @@
         "message": "{{name}} 将停止生效。其受众将回到店铺价格，目录中的所有内容都会保留。"
       },
       "delete_confirm": {
-        "message": "这将删除 {{name}} 及其分配。产品和价格表不受影响。",
+        "message": "这将删除 {{name}}、其分配，以及它的价目表和其中的价格。产品仍保留在您的商店中。此操作无法撤销。",
         "title": "删除目录？"
       },
       "detach_warning": "保存后将删除此目录的价目表及其中的价格。此受众将支付正常价格。",
@@ -558,7 +562,7 @@
         "settings_label": "计算器设置"
       },
       "create_line_items_action_editor": {
-        "description": "当促销符合条件时，这些商品会加入购物车。",
+        "description": "当促销符合条件时，这些商品会免费加入购物车。",
         "empty": "尚无变体。请在下方搜索以添加。",
         "search_placeholder": "按名称或 SKU 搜索变体…",
         "variant_label": "添加变体"
@@ -1229,7 +1233,7 @@
             "Spree::Order": "订单",
             "Spree::Product": "商品",
             "Spree::Taxon": "分类",
-            "Spree::User": "客户",
+            "Spree::Customer": "客户",
             "Spree::Variant": "变体"
           },
           "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
@@ -1842,28 +1846,6 @@
           "label": "税务申报方"
         }
       },
-      "setup": {
-        "country_code": {
-          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。",
-          "label": "国家/地区",
-          "placeholder": "搜索国家/地区"
-        },
-        "currency": {
-          "help": "您的默认货币。随时可添加更多。",
-          "label": "货币",
-          "placeholder": "搜索货币"
-        },
-        "locale": {
-          "help": "您的默认语言。随时可添加更多。",
-          "label": "语言"
-        },
-        "password_confirmation": {
-          "label": "确认密码"
-        },
-        "store_name": {
-          "label": "商店名称"
-        }
-      },
       "state": {
         "label": "省/州"
       },
@@ -1914,6 +1896,10 @@
         "address_requires_phone": {
           "help": "将电话号码设为客户地址的必填项。",
           "label": "要求填写电话号码"
+        },
+        "always_include_confirm_step": {
+          "help": "在下单前始终为顾客提供最终确认步骤，即使没有任何支付方式要求该步骤。",
+          "label": "始终显示确认步骤"
         },
         "capture_method": {
           "help": "所有支付方式的默认设置。单个支付方式可覆盖此设置。",
@@ -2106,7 +2092,10 @@
           "minimum": {
             "label": "最低付款额",
             "help": "低于此金额时，卖家余额结转至下一周期而不发放。设为零则支付所有应付款项。"
-          }
+          },
+          "provider_needs_connection": "连接 {{name}} 后即可使用",
+          "provider_connect_hint": "{{name}} 通过其付款方式向卖家付款，而该付款方式尚未在本店启用。",
+          "provider_connect_link": "前往「付款方式」设置"
         },
         "limit_digital_download_count": {
           "help": "关闭后，买家可以不限次数下载。",
@@ -2132,6 +2121,23 @@
         "preferred_default_package_weight": {
           "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。",
           "label": "默认包裹重量"
+        },
+        "auto_approve_sellers": {
+          "label": "自动通过卖家审核",
+          "help": "卖家完成清单后立即开始销售，无需任何人审核。"
+        },
+        "auto_approve_seller_products": {
+          "label": "自动发布卖家商品",
+          "help": "卖家提交后商品立即上架销售，无需任何人审核。"
+        },
+        "send_seller_transactional_emails": {
+          "label": "向卖家发送邮件",
+          "help": "向卖家发送关于审核、商品和付款的邮件。如果你自行联系卖家，可以关闭。不影响发给顾客的邮件。"
+        },
+        "default_commission_tax_rate": {
+          "label": "佣金默认税率",
+          "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2724,6 +2730,8 @@
           "cancel_shipment_message": "取消此履约单吗？",
           "capture_message": "捕获此付款吗？",
           "complete_message": "现在完成此草稿订单吗？",
+          "delete_message": "删除订单草稿 {{number}}？此操作无法撤销。",
+          "delete_title": "删除订单草稿？",
           "remove_gift_card_message": "从订单中移除此礼品卡吗？",
           "remove_item_message": "从订单中移除此商品吗？",
           "remove_store_credit_message": "从订单中移除商店积分吗？",
@@ -2751,7 +2759,8 @@
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
           "complete_failed": "完成订单失败",
-          "confirmation_send_failed": "发送确认失败"
+          "confirmation_send_failed": "发送确认失败",
+          "delete_failed": "删除订单失败"
         },
         "fulfillments": {
           "add_delivery": "添加运单号",
@@ -2851,7 +2860,10 @@
           "canceled": "订单已取消",
           "captured": "付款已收取",
           "completed": "订单已完成",
+          "completed_as_group_one": "订单已完成，拆分为 {{count}} 个独立订单",
+          "completed_as_group_other": "订单已完成，拆分为 {{count}} 个独立订单",
           "confirmation_sent": "确认信息已发送",
+          "deleted": "订单草稿已删除",
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
@@ -2878,6 +2890,7 @@
           "shared_help": "该购物车横跨多个卖家，只支付了一次。本订单占其中一部分。",
           "load_error": "无法加载此订单的付款信息。"
         },
+        "priced_by": "定价来自 {{name}}",
         "purchase_order": {
           "document": "采购订单文件",
           "document_help": "PDF、图片或 Word 文件，最大 10 MB。",
@@ -3949,12 +3962,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "付款",
-          "subtitle": "本平台如何以及何时向卖家付款。"
-        },
         "package_types": {
           "add_sheet_title": "添加包装类型"
+        },
+        "marketplace": {
+          "title": "平台",
+          "subtitle": "本平台如何向卖家付款、卖家如何加入、会收到你的哪些通知，以及你的佣金要缴多少税。",
+          "payouts_title": "付款",
+          "payouts_description": "本平台如何以及何时向卖家付款。卖家也可以使用自己的付款周期和最低金额。",
+          "admission_title": "卖家审核",
+          "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
+          "communication_title": "沟通",
+          "commission_tax_title": "佣金税"
         }
       },
       "staff": {
@@ -4990,9 +5009,9 @@
         "tax_categories": "分配给商品的税务类别",
         "tax_rates": "按市场和地区适用的税率",
         "webhooks": "事件发生时接收通知的端点",
-        "payouts": "由谁向卖家付款、多久一次，以及值得发放的最低金额",
         "package_types": "纸箱、外箱、托盘与集装箱",
-        "suppliers": "你从谁那里采购库存，以及如何联系他们"
+        "suppliers": "你从谁那里采购库存，以及如何联系他们",
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
       },
       "groups": {
         "audit": "审计",
@@ -5028,9 +5047,12 @@
         "tax_categories": "税收类别",
         "tax_rates": "税率",
         "webhooks": "Webhooks",
-        "payouts": "付款",
         "package_types": "包装类型",
-        "suppliers": "供应商"
+        "suppliers": "供应商",
+        "marketplace": "设置"
+      },
+      "breadcrumbs": {
+        "marketplace": "平台"
       }
     },
     "setup": {
@@ -5048,7 +5070,9 @@
       "required_notice_message": "尚无管理员账户。请使用安装输出中的设置链接创建。",
       "required_notice_title": "此安装尚未完成设置",
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
-      "title": "设置 Spree"
+      "title": "设置 Spree",
+      "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
+      "welcome_title": "欢迎，您的商店已就绪！"
     },
     "staff": {
       "actions": {
@@ -5073,7 +5097,8 @@
       "errors": {
         "failed_to_remove": "移除员工失败",
         "failed_to_resend": "重新发送邀请失败",
-        "failed_to_revoke": "撤销邀请失败"
+        "failed_to_revoke": "撤销邀请失败",
+        "failed_to_copy_link": "复制邀请链接失败"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",
@@ -5872,6 +5897,8 @@
       "builder": {
         "metrics": "指标",
         "no_metrics": "请至少选择一个指标。",
+        "one_family_only": "一个报表只涵盖一个指标组。选择其他组中的指标会将报表切换到该组。",
+        "switches_family": "将此报表切换到{{family}}",
         "group_by": "分组依据",
         "none": "无（仅汇总）",
         "grain": "时间粒度",

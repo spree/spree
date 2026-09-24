@@ -164,6 +164,21 @@ module Spree
         end
       end
 
+      context 'when the cart carries metadata' do
+        before { cart.update!(metadata: { 'gift_message' => 'Happy birthday' }) }
+
+        it 'carries it onto every child order' do
+          expect(group.orders.size).to eq(3)
+          group.orders.each do |order|
+            expect(order.reload.metadata).to eq('gift_message' => 'Happy birthday')
+          end
+        end
+
+        it 'carries it onto the group' do
+          expect(group.reload.metadata).to eq('gift_message' => 'Happy birthday')
+        end
+      end
+
       it 'computes each child’s totals from its own rows' do
         group.orders.each do |order|
           expect(order.total).to be > 0
@@ -531,6 +546,15 @@ module Spree
         group.orders.each do |order|
           expect(order.payment_splits.sum(:captured_amount)).to eq(order.total)
           expect(order.payment_status).to eq('paid')
+        end
+      end
+
+      it 'leaves each child reporting its share as paid' do
+        group.orders.each do |order|
+          expect(order.reload.payment_total).to eq(order.total)
+          expect(order.amount_due).to be_zero
+          expect(order.outstanding_balance).to be_zero
+          expect(order).to be_paid
         end
       end
 

@@ -32,12 +32,15 @@ export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'
     },
     dependencies: {
       // The floor matches the CLI behavior this scaffold relies on (the
-      // --quiet delegation, dev co-run, first-run setup) — an older resolve
-      // would reject the flags and silently drop the dashboard phase.
+      // --quiet delegation, dev co-run, first-run setup, and `spree add
+      // seller-dashboard`) — an older resolve rejects the flags and silently
+      // drops an admin app. Bump it in lockstep with any new CLI capability
+      // the scaffold calls, or the scaffold asks for something the pinned CLI
+      // has never heard of.
       // SPREE_CLI_VERSION overrides the spec for testing unreleased CLIs —
       // a range, or a `file:`/`link:` path to a packed tarball / checkout
       // (mirrors the starter Dockerfile's ARG of the same name).
-      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^2.4.4',
+      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^3.0.0',
       '@spree/docs': 'latest',
     },
   }

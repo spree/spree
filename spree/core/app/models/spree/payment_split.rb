@@ -34,6 +34,12 @@ module Spree
     validates :order_id, uniqueness: { scope: [:payment_id, *spree_base_uniqueness_scope] }
 
     #
+    # Callbacks
+    #
+    after_save :refresh_order_payment_total, if: :settled_money_moved?
+    after_destroy :refresh_order_payment_total, if: :held_settled_money?
+
+    #
     # Scopes
     #
     self.whitelisted_ransackable_attributes = %w[currency authorized_amount captured_amount refunded_amount]
@@ -85,6 +91,24 @@ module Spree
     #   reserved by a parcel, and not yet confirmed by the gateway
     def capture_in_flight?
       claimed_amount.positive?
+    end
+
+    private
+
+    # Here rather than at each of the five writers that move a share, because a
+    # column refreshed at five call sites will eventually be refreshed at four.
+    def refresh_order_payment_total
+      order&.refresh_payment_total!
+    end
+
+    # Reserving money or moving an authorisation reports no differently, and
+    # locking the order for it would invert {Spree::Payment#carry_splits_to}.
+    def settled_money_moved?
+      saved_change_to_captured_amount? || saved_change_to_refunded_amount?
+    end
+
+    def held_settled_money?
+      captured_amount.positive? || refunded_amount.positive?
     end
   end
 end

@@ -1,5 +1,6 @@
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it } from 'vitest'
+import { isOrderGroup } from '../src'
 import { API_PREFIX, createTestClient, paginated } from './helpers'
 import { server } from './mocks/server'
 
@@ -233,6 +234,24 @@ describe('orders', () => {
 
       expect(body).toEqual({ payment_id: 'pay_1', amount: 10 })
     })
+
+    it('sends the reason as refund_reason_id, the param the API reads', async () => {
+      let body: Record<string, unknown> | null = null
+      server.use(
+        http.post(`${API_PREFIX}/orders/order_abc123/refunds`, async ({ request }) => {
+          body = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json(sampleRefund, { status: 201 })
+        }),
+      )
+
+      await createTestClient().orders.refunds.create('order_abc123', {
+        payment_id: 'pay_1',
+        amount: '5.00',
+        refund_reason_id: 'rr_1',
+      })
+
+      expect(body).toEqual({ payment_id: 'pay_1', amount: '5.00', refund_reason_id: 'rr_1' })
+    })
   })
 
   describe('nested gift cards & store credits', () => {
@@ -274,6 +293,41 @@ describe('orders', () => {
 
       await createTestClient().orders.storeCredits.remove('order_abc123')
       expect(hit).toBe(true)
+    })
+  })
+  // An order holding several sellers' goods divides on completion, and the
+  // group it produced is what comes back.
+  describe('complete', () => {
+    it('answers with the order when it holds one seller', async () => {
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/complete`, () =>
+          HttpResponse.json(sampleOrder),
+        ),
+      )
+
+      const result = await createTestClient().orders.complete('order_abc123')
+
+      expect(isOrderGroup(result)).toBe(false)
+      expect(result.id).toBe('order_abc123')
+    })
+
+    it('answers with the group when the order divided', async () => {
+      server.use(
+        http.patch(`${API_PREFIX}/orders/order_abc123/complete`, () =>
+          HttpResponse.json({
+            id: 'ogrp_abc123',
+            number: 'R123456789',
+            seller_count: 2,
+            orders: [sampleOrder, { ...sampleOrder, id: 'order_def456' }],
+          }),
+        ),
+      )
+
+      const result = await createTestClient().orders.complete('order_abc123')
+
+      expect(isOrderGroup(result)).toBe(true)
+      if (!isOrderGroup(result)) throw new Error('expected a group')
+      expect(result.orders.map((child) => child.id)).toEqual(['order_abc123', 'order_def456'])
     })
   })
 })

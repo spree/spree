@@ -5,12 +5,13 @@ interface PromptFlags {
   directory?: string
   noStorefront?: boolean
   reactDashboard?: boolean
-  noSampleData?: boolean
   noStart?: boolean
   packageManager?: PackageManager
 }
 
-export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptions, 'port'>> {
+export async function runPrompts(
+  flags: PromptFlags,
+): Promise<Omit<ScaffoldOptions, 'port' | 'mailpitSmtpPort' | 'mailpitUiPort'>> {
   const directory =
     flags.directory ??
     ((await p.text({
@@ -44,34 +45,18 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
     storefront = storefrontResult
   }
 
-  // Deliberately not prompted: the React Dashboard is a work-in-progress
-  // Developer Preview, and a yes/no prompt reads as a recommendation. It's
-  // opt-in via --react-dashboard (or later via `spree add dashboard`) until
-  // it's ready for prime time.
-  const dashboard = flags.reactDashboard ?? false
-
-  let sampleData: boolean
-  if (flags.noSampleData !== undefined) {
-    sampleData = !flags.noSampleData
-  } else {
-    const sampleResult = await p.confirm({
-      message: 'Include sample data? (products, categories, images)',
-      initialValue: true,
-    })
-
-    if (p.isCancel(sampleResult)) {
-      p.cancel('Setup cancelled.')
-      process.exit(0)
-    }
-    sampleData = sampleResult
-  }
+  // Always scaffolded, never prompted: from Spree 6 the React Dashboard IS
+  // the admin (the Rails admin engine is gone), so a project without one has
+  // no back office at all. The marketplace Seller Panel ships alongside it so
+  // the pair stays consistent with what the starter's Docker image bakes.
+  const dashboard = true
 
   let start: boolean
   if (flags.noStart !== undefined) {
     start = !flags.noStart
   } else {
     const startResult = await p.confirm({
-      message: 'Start services now? (requires Docker)',
+      message: 'Start services now? Requires Docker - will start Spree server and PostgreSQL',
       initialValue: true,
     })
 
@@ -86,7 +71,6 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
     directory,
     storefront,
     dashboard,
-    sampleData,
     start,
     packageManager: flags.packageManager ?? 'npm',
   }

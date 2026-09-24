@@ -5,6 +5,7 @@ module Spree
         class ProductsController < ResourceController
           include Spree::Api::V3::HttpCaching
           include Spree::Api::V3::Store::SearchProviderSupport
+          include Spree::Api::V3::Store::StorefrontProducts
 
           protected
 
@@ -28,19 +29,12 @@ module Spree
             end
           end
 
+          # Catalog narrowing for the buyer: their company's effective
+          # catalogs, their group's, or the channel default — union of
+          # assortments, resolved in one place
+          # (docs/plans/6.0-b2b-companies-and-catalogs.md).
           def scope
-            base = super.available(Time.current, Spree::Current.currency, include_preorderable: true)
-
-            # Catalog narrowing for the buyer: their company's effective
-            # catalogs, their group's, or the channel default — union of
-            # assortments, resolved in one place
-            # (docs/plans/6.0-b2b-companies-and-catalogs.md).
-            Spree.products_for_context_service.call(
-              store: current_store,
-              channel: current_channel,
-              customer: current_user,
-              base: base
-            ).value
+            storefront_products(super)
           end
 
           # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them

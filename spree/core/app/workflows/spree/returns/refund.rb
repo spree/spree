@@ -19,7 +19,7 @@ module Spree
       # @param amount [BigDecimal, Numeric, nil] defaults to what the return
       #   is still owed
       # @param refund_method [String] 'original_payment' or 'store_credit'
-      # @param refunder [Object, nil] the admin issuing it
+      # @param refunder [Object, nil] who is issuing it (see Spree.actor_classes)
       def perform(return_record:, amount: nil, refund_method: 'original_payment', refunder: nil)
         super
 
@@ -52,9 +52,8 @@ module Spree
       # original supply date rather than today's — the rate that applied then is
       # the rate to credit back.
       #
-      # Only lines that actually arrived are credited, matching what
-      # +received_total+ refunds: a customer who announced three items and sent
-      # two must not have tax credited on the third.
+      # Only lines that actually arrived are credited: a customer who announced
+      # three items and sent two must not have tax credited on the third.
       #
       # The refunded amount goes with them, because it can be less than those
       # lines are worth — a restocking fee, or an agreed part-refund. Without it
@@ -64,7 +63,7 @@ module Spree
       # follows — so raising failed a refund that had gone through, and lost the
       # event with it.
       def refund_tax
-        received = return_record.return_line_items.select { |line| line.received_quantity.to_i.positive? }
+        received = return_record.return_line_items.select { |line| line.refund_amount.positive? }
         return if received.empty?
 
         order = return_record.order
@@ -89,34 +88,26 @@ module Spree
         failure(return_record, :not_received) unless return_record.received?
       end
 
-      # Only what actually came back is refundable — a customer who sent two
-      # of three items gets two items' worth.
+      # Only what actually came back is refundable — a customer who sent two of
+      # three items gets two items' worth. One figure serves as both the
+      # default and the ceiling, so a caller naming an amount cannot ask for
+      # more than a caller who names none would get.
       def resolve_amount
-        @amount_to_refund = (amount || received_total).to_d
+        refundable = return_record.refundable_total.to_d
+        @amount_to_refund = amount ? amount.to_d : refundable
 
         failure(return_record, :nothing_to_refund) unless @amount_to_refund.positive?
-        failure(return_record, :refund_exceeds_balance) if @amount_to_refund > return_record.refundable_total.to_d
-      end
-
-      def received_total
-        return_record.return_line_items.sum do |line|
-          next 0 if line.quantity.to_i.zero?
-
-          (line.pre_tax_amount / line.quantity) * line.received_quantity.to_i
-        end
+        failure(return_record, :refund_exceeds_balance) if @amount_to_refund > refundable
       end
 
       def issue_store_credit
-        credit = Spree::StoreCredit.create!(
-          store: return_record.store,
-          customer: return_record.order.customer,
+        @refunds = issue_refund_store_credit(
+          order: return_record.order,
           amount: @amount_to_refund,
-          currency: return_record.currency,
-          created_by: refunder,
-          originator: return_record,
-          memo: "Return #{return_record.number}"
+          record: return_record,
+          memo: "Return #{return_record.number}",
+          refunder: refunder
         )
-        @refunds = [credit]
       end
 
       # Each refund row commits, then Refund#perform! credits it at the

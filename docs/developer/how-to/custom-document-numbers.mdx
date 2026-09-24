@@ -7,7 +7,7 @@ description: Change the shape of order, return and other document numbers — fr
 
 Every order, return, exchange, claim, stock transfer, import and export carries a **document number** — the short, human-readable reference a merchant reads out on a support call and a customer quotes in an email. Orders look like `R1001`, returns like `RET1001`.
 
-Numbers are separate from IDs. Every record also has a prefixed ID (`order_86Rf07xd4z`) which is what the API uses and what you should reference in code. The number exists purely so people can read, say and type it.
+Numbers are separate from IDs. Every record also has a prefixed ID (`or_86Rf07xd4z`) which is what the API uses and what you should reference in code. The number exists purely so people can read, say and type it.
 
 There are two ways to change it. Merchants can reshape **order numbers** from the dashboard without any code. Developers can replace the generator for **any** document type when the settings are not enough.
 
@@ -22,7 +22,7 @@ There are two ways to change it. Merchants can reshape **order numbers** from th
 | Suffix | Ends each order number. Empty by default. |
 | Start numbering at | The first order number. Defaults to `1001`. |
 
-Sequential numbering counts up: `R1001`, `R1002`, `R1003`. Random numbering produces nine unpredictable digits, which is what Spree did before 6.0. The trade-off is worth stating to merchants: sequential numbers are far easier to read back over the phone, but a customer who orders twice can see how many orders you took in between. Random numbers give that away nothing, at the cost of legibility.
+Sequential numbering counts up: `R1001`, `R1002`, `R1003`. Random numbering produces nine unpredictable digits. The trade-off is worth stating to merchants: sequential numbers are far easier to read back over the phone, but a customer who orders twice can see how many orders you took in between. Random numbers reveal nothing about that, at the cost of legibility.
 
 Two rules apply to every change:
 
@@ -141,9 +141,9 @@ This is not configurable and there is no generator to register. If you need a di
 
 Two changes matter.
 
-**Numbers are sequential by default.** Stores upgrading from 5.x keep every existing number untouched, but new documents get sequential numbers starting at 1001. To keep the old behavior, set the store's numbering format to **Random** in Settings → Store → Order numbers.
+**Numbers are sequential by default.** Existing numbers are never rewritten, and new documents get sequential numbers starting at 1001. To keep the old behavior, set the store's numbering format to **Random** in Settings → Store → Order numbers.
 
-**`Spree::Core::NumberGenerator` is deprecated.** Models using it still work through Spree 6.0 and log a deprecation warning. Replace it with the concern:
+**`Spree::Core::NumberGenerator` is deprecated.** Models using it still work and log a deprecation warning, but will stop working in a future release. Replace it with the concern:
 
 ```ruby
 # before

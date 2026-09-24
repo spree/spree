@@ -120,7 +120,7 @@ The registries are global singletons, so a key collision is the consumer's probl
 - **Namespace locale keys** — `admin.acme_brands.title` not `admin.brands.title`.
 - **Namespace API paths** — your Rails engine should mount under `/api/v3/admin/acme/...`, not `/api/v3/admin/brands` (which collides with core Brands if it ever ships).
 
-The dashboard logs a warning in dev mode when two registry entries share a key. That's the consumer's signal that two plugins are stepping on each other — and it falls back to "last-registered wins", which is rarely what either plugin wanted.
+Registering a key that already exists throws at boot, with a message naming the conflict. That is deliberate: a silently shadowed entry would leave the consumer with a plugin that half works, where a failure at startup points straight at the two plugins stepping on each other.
 
 ## Distribution channels
 

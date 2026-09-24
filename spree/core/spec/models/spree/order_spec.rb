@@ -1825,6 +1825,70 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe 'legacy checkout-step bridges' do
+    # Checkout steps moved to Spree::Cart in 6.0. These warn instead of
+    # raising NoMethodError, and report a checkout that is already finished.
+    let(:order) { create(:completed_order_with_totals) }
+
+    it 'reports the applicable steps from #checkout_steps with a deprecation warning' do
+      expect(Spree::Deprecation).to receive(:warn).with(/checkout_steps is deprecated/)
+
+      expect(order.checkout_steps).to eq(%w[address delivery payment complete])
+    end
+
+    it "reports 'complete' from #current_checkout_step with a deprecation warning" do
+      expect(Spree::Deprecation).to receive(:warn).with(/current_checkout_step/)
+
+      expect(order.current_checkout_step).to eq('complete')
+    end
+
+    it "excludes 'complete' from #final_checkout_step with a deprecation warning" do
+      expect(Spree::Deprecation).to receive(:warn).with(/final_checkout_step/)
+
+      expect(order.final_checkout_step).to eq('payment')
+    end
+
+    it "treats every step bar 'complete' as done in #completed_checkout_steps with a deprecation warning" do
+      expect(Spree::Deprecation).to receive(:warn).with(/completed_checkout_steps/)
+
+      expect(order.completed_checkout_steps).to eq(%w[address delivery payment])
+    end
+
+    describe '#has_checkout_step?' do
+      it 'answers for an applicable step with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/has_checkout_step\?/)
+
+        expect(order.has_checkout_step?('payment')).to be(true)
+      end
+
+      it 'answers false for a step this order never had' do
+        expect(Spree::Deprecation).to receive(:warn).with(/has_checkout_step\?/)
+
+        expect(order.has_checkout_step?('confirm')).to be(false)
+      end
+
+      it 'answers false for a blank step' do
+        expect(Spree::Deprecation).to receive(:warn).with(/has_checkout_step\?/)
+
+        expect(order.has_checkout_step?(nil)).to be(false)
+      end
+    end
+
+    describe '#checkout_step_index' do
+      it 'reports the position with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/checkout_step_index/)
+
+        expect(order.checkout_step_index('delivery')).to eq(1)
+      end
+
+      it 'reports 0 for an unknown step, as the cart does' do
+        expect(Spree::Deprecation).to receive(:warn).with(/checkout_step_index/)
+
+        expect(order.checkout_step_index('nope')).to eq(0)
+      end
+    end
+  end
+
   describe 'legacy proposal-rebuild bridges' do
     it 'delegates #create_proposed_fulfillments to #rebuild_fulfillments! with a deprecation warning' do
       order = create(:order)

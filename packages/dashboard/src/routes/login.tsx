@@ -8,7 +8,7 @@ import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AuthShell } from '../components/spree/auth-shell'
-import { useAuthProviders } from '../hooks/use-auth-providers'
+import { authCallbackErrorKey, useAuthProviders } from '../hooks/use-auth-providers'
 import { type LoginFormValues, loginFormSchema } from '../schemas/auth'
 
 /** Error code the SSO callback redirects back with when it rejects a sign-in. */
@@ -77,7 +77,7 @@ function SetupRequiredNotice() {
     <div className="grid gap-2 rounded-md border p-4">
       <p className="font-medium text-sm">{t('admin.setup.required_notice_title')}</p>
       <p className="text-sm text-muted-foreground">{t('admin.setup.required_notice_message')}</p>
-      <Link to="/setup" className="text-sm underline underline-offset-4">
+      <Link to="/setup" className="link text-sm">
         {t('admin.setup.required_notice_link')}
       </Link>
     </div>
@@ -184,7 +184,7 @@ function PasswordLoginForm() {
           </Button>
           <Link
             to="/forgot-password"
-            className="col-start-2 row-start-1 justify-self-end self-center text-sm underline-offset-4 hover:underline"
+            className="link col-start-2 row-start-1 justify-self-end self-center text-sm"
           >
             {t('admin.auth.forgot_password.link')}
           </Link>
@@ -239,27 +239,8 @@ function ProvidersUnavailable() {
   )
 }
 
-/**
- * Server error codes (`ERROR_CODES` in the Admin API) to their copy. A rejected
- * SSO sign-in is not a failed credential check — the person proved who they are
- * to the identity provider — so each code says what actually needs to happen.
- * Unknown codes fall back to the generic message.
- */
-const CALLBACK_ERROR_KEYS: Record<string, string> = {
-  account_not_provisioned: 'admin.auth.login.account_not_provisioned',
-  invalid_oauth_state: 'admin.auth.login.invalid_oauth_state',
-  invalid_provider: 'admin.auth.login.sso_failed',
-  authentication_failed: 'admin.auth.login.sso_failed',
-  // Temporary and self-clearing — say so, rather than implying the provider is broken.
-  rate_limit_exceeded: 'admin.auth.login.rate_limit_exceeded',
-}
-
 function CallbackError({ code }: { code: string }) {
   const { t } = useTranslation()
 
-  return (
-    <p className="text-sm text-destructive">
-      {t(CALLBACK_ERROR_KEYS[code] ?? 'admin.auth.login.sso_failed')}
-    </p>
-  )
+  return <p className="text-sm text-destructive">{t(authCallbackErrorKey(code))}</p>
 }

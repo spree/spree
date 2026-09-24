@@ -5,6 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
+import { PLUGIN_PEER_RANGES } from '../lib/plugin-peer-ranges.js'
 import { render, type TemplateVars } from '../lib/template.js'
 
 const TEMPLATE_RELATIVE_PATH = '../../templates/plugin'
@@ -396,6 +397,7 @@ function buildVars(a: Answers): TemplateVars {
     author_email: a.authorEmail,
     license: a.license,
     year: String(new Date().getFullYear()),
+    ...PLUGIN_PEER_RANGES,
   }
 }
 

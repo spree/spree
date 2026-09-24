@@ -106,8 +106,8 @@ describe('custom fields', () => {
       expect(echoed).toEqual({ parent: 'products', parent_id: 'prod_1' })
     })
 
-    it('routes Spree::User to /customers (not /users)', async () => {
-      const accessor = client.customFields('Spree::User', 'cus_1')
+    it('routes Spree::Customer to /customers', async () => {
+      const accessor = client.customFields('Spree::Customer', 'cus_1')
       const result = await accessor.list()
       expect(result.data[0].id).toBe('cf_1')
       const echoed = (result.data[0] as { _route?: { parent: string; parent_id: string } })._route

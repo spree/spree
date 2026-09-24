@@ -81,7 +81,10 @@ module Spree
           if errors.is_a?(ActiveModel::Errors)
             render_validation_error(errors)
           else
-            render_service_error(error)
+            # The unwrapped value, so a workflow's rejection symbol reaches
+            # the branch that translates it rather than the one that prints
+            # the wrapper.
+            render_service_error(errors)
           end
         end
 
@@ -93,10 +96,26 @@ module Spree
 
         alias try_spree_current_user spree_current_user
 
-        # CanCanCan ability
+        # Who performed this request, for the associations that record it —
+        # `canceler`, `approver`, `created_by` and their siblings. Answers the
+        # signed-in user here; the Admin branch prefers the authenticating
+        # secret key, because a key-made write must record the key rather than
+        # nobody (see docs/plans/6.0-action-actors.md).
+        #
+        # Deliberately not `current_api_key || current_user` at this level: on
+        # a Store API request the key is the storefront's publishable one, and
+        # a customer's own action is not the storefront's.
+        #
+        # @return [Object, nil] a member of Spree.actor_classes
+        def current_actor
+          try_spree_current_user
+        end
+
+        # CanCanCan ability, built from the swappable
+        # `Spree::Dependencies.ability_class` (Spree::Ability by default).
         # @return [Spree::Ability]
         def current_ability
-          @current_ability ||= Spree::Ability.new(current_user, ability_options)
+          @current_ability ||= Spree.ability_class.new(current_user, ability_options)
         end
 
         # Options passed to the CanCanCan ability

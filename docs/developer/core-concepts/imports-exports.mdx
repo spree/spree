@@ -46,8 +46,8 @@ const exportJob = await adminClient.exports.create({
 
 // Poll until it's done
 const status = await adminClient.exports.get(exportJob.id)
-status.status       // "pending" → "processing" → "completed"
-status.download_url // available once completed
+status.done         // true once the file is ready
+status.download_url // available once done
 ```
 
 ```bash CLI
@@ -66,7 +66,7 @@ An export can carry the same filters as the listing it came from, so "export wha
 ```typescript Admin SDK
 await adminClient.exports.create({
   type: 'orders',
-  filters: { completed_at_gteq: '2026-01-01' },
+  search_params: { completed_at_gteq: '2026-01-01' },
 })
 ```
 
@@ -74,7 +74,7 @@ await adminClient.exports.create({
 curl -X POST 'https://api.mystore.com/api/v3/admin/exports' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "type": "orders", "filters": { "completed_at_gteq": "2026-01-01" } }'
+  -d '{ "type": "orders", "search_params": { "completed_at_gteq": "2026-01-01" } }'
 ```
 
 </CodeGroup>
@@ -115,8 +115,8 @@ Importing has an extra step, because a file from somewhere else won't have Spree
 
     status.status         // "processing" → "completed"
     status.rows_count     // total
-    status.processed_count
-    status.failed_count
+    status.completed_rows_count
+    status.failed_rows_count
     ```
   </Step>
 </Steps>
@@ -176,9 +176,12 @@ Imports and exports emit [events](/developer/core-concepts/events) as they progr
 
 | Event | When |
 |---|---|
+| `import.created` | An import has been uploaded |
+| `import.progress` | A batch of rows has been processed |
 | `import.completed` | Every row has been attempted |
-| `import.failed` | The import could not run |
-| `export.completed` | The file is ready to download |
+| `export.created` | An export has been requested (generation starts in the background) |
+
+There is no event when an export's file is ready — poll the export until `done` is `true`.
 
 ## Permissions
 

@@ -46,6 +46,7 @@ module Spree
                                :reports,
                                :translatable_resources,
                                :taggable_types,
+                               :actor_classes,
                                :custom_fields,
                                :reporting,
                                :analytics_events,
@@ -89,6 +90,12 @@ module Spree
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
       end
 
+      # Runs after initializers so an explicitly assigned preference — which
+      # wins over the environment — is never rejected for a stale env var.
+      config.after_initialize do
+        Spree::Core::Configuration.validate_env!(Spree::Config)
+      end
+
       # I18n's config lives in fiber/thread-local storage that survives across
       # requests on reused server threads, so a request that never assigns its
       # own locale would render in whatever locale the previous request on the
@@ -106,6 +113,13 @@ module Spree
         app.config.spree.subscribers = []
       end
 
+      # Seeded before application initializers so an extension registering an
+      # actor class has something to append to. The defaults are unioned in
+      # after initialization, where Spree.admin_user_class is finally known.
+      initializer 'spree.register.actor_classes', before: :load_config_initializers do |app|
+        app.config.spree.actor_classes = []
+      end
+
       initializer 'spree.register.calculators', before: :after_initialize do |app|
       end
 
@@ -120,6 +134,14 @@ module Spree
 
       initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
         app.config.spree.line_item_comparison_hooks = Set.new
+      end
+
+      # The one eligibility rule core ships: a per-market return window,
+      # bypassed by staff. Registered before application initializers so a
+      # store can unregister it in its own initializer.
+      initializer 'spree.returns.register_eligibility_validator', before: :load_config_initializers do
+        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
       end
 
       initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
@@ -535,6 +557,19 @@ module Spree
           Spree.customer_class.to_s
         ]
 
+        # Models that may be recorded as having performed an action — the
+        # vocabulary an `acted_by` association's `*_type` column is validated
+        # against. Extend in an app initializer to register an App or bot
+        # class, which must include Spree::Actor:
+        #   Rails.application.config.spree.actor_classes << 'MyApp::App'.
+        #
+        # Unioned rather than assigned, so what an initializer registered
+        # above survives.
+        Rails.application.config.spree.actor_classes |= [
+          Spree.admin_user_class.to_s,
+          'Spree::ApiKey'
+        ]
+
         Rails.application.config.spree.custom_fields.types = [
           Spree::CustomFields::ShortText,
           Spree::CustomFields::LongText,
@@ -672,14 +707,6 @@ module Spree
         app.config.after_initialize do
           Spree::Events.activate!
         end
-      end
-
-      # The one eligibility rule core ships: a per-market return window,
-      # bypassed by staff. Registered after application initializers so a
-      # store can unregister it in its own initializer.
-      initializer 'spree.returns.register_eligibility_validator', after: :load_config_initializers do
-        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
-        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
       end
 
       # A hook registered against a key no workflow declares would never fire

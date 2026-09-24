@@ -58,6 +58,10 @@ module Spree
             # validations (docs/plans/6.0-volume-pricing.md). Each branch is
             # guarded on the key its own failure carries, so a failure mode the
             # service grows later is not reported under one of these names.
+            #
+            # `I18n.t` rather than `Spree.t` for these: the models raise them
+            # under `activerecord.errors`, and `Spree.t` would scope the lookup
+            # to `spree.` and miss the key.
             if (invalid = result.error&.value.try(:[], :invalid_quantities))
               return render_error(
                 code: 'invalid_min_quantity',
@@ -70,21 +74,48 @@ module Spree
             if (negative = result.error&.value.try(:[], :invalid_amounts))
               return render_error(
                 code: 'invalid_amount',
-                message: Spree.t('activerecord.errors.models.spree/price_list.attributes.base.negative_price').upcase_first,
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.negative_price').upcase_first,
                 status: :unprocessable_content,
                 details: { rows: negative }
+              )
+            end
+
+            if (misplaced = result.error&.value.try(:[], :quantities_on_base_prices))
+              return render_error(
+                code: 'quantity_on_base_price',
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.quantity_on_base_price').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: misplaced }
+              )
+            end
+
+            if (duplicates = result.error&.value.try(:[], :duplicate_quantities))
+              return render_error(
+                code: 'duplicate_min_quantity',
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.duplicate_quantity').upcase_first,
+                status: :unprocessable_content,
+                details: { rows: duplicates }
               )
             end
 
             if (over_cap = result.error&.value.try(:[], :over_cap))
               return render_error(
                 code: 'too_many_breaks',
-                message: Spree.t(
+                message: I18n.t(
                   'activerecord.errors.models.spree/price.attributes.min_quantity.too_many_breaks',
                   count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT
                 ).upcase_first,
                 status: :unprocessable_content,
                 details: { ladders: over_cap }
+              )
+            end
+
+            if (rising = result.error&.value.try(:[], :rising_ladders))
+              return render_error(
+                code: 'price_rises_with_quantity',
+                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.price_rises_with_quantity').upcase_first,
+                status: :unprocessable_content,
+                details: { ladders: rising }
               )
             end
 

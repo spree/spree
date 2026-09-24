@@ -1,24 +1,67 @@
 ---
 title: "Tutorial: Build a Custom Feature"
-description: Build Product FAQs end to end — a custom model, an Admin API endpoint, a dashboard plugin, a Store API endpoint, and storefront rendering through the TypeScript SDK.
+description: Build a complete Brands feature in Spree — model and API from one generator, a dashboard plugin, storefront rendering, events, and tests.
 ---
 
-This tutorial builds one complete feature — **Product FAQs**, questions and answers attached to products — through every layer of a Spree 6 application. By the end you will have a custom model, back-office management in the dashboard, and customer-facing display on the storefront.
+This tutorial builds one complete feature — **Brands**, a manufacturer or label attached to products — through every layer of a Spree application. By the end you will have a custom model with its own Store and Admin API, brand management in the dashboard, brands rendered on the storefront, other systems reacting to brand changes, and tests covering all of it.
 
-## The two tracks
+It is written for **both backend and frontend developers**. The backend code you write is minimal and mostly generated — Spree's generators produce convention-correct models, controllers and serializers, and the TypeScript SDK gives you typed access from your storefront. Most of what you write by hand is TypeScript.
 
-The tutorial is organized so you only build what your feature needs:
+## What you'll build
 
-| Track | Chapters | Build this when |
-|---|---|---|
-| Foundation | [Model](/developer/tutorial/model) | Always |
-| **A — manage it in the dashboard** | [Admin API](/developer/tutorial/admin-api) → [Dashboard plugin](/developer/tutorial/dashboard-plugin) | The feature is operated by staff — internal tooling, back-office data |
-| **B — expose it on the storefront** | [Store API](/developer/tutorial/store-api) → [Storefront](/developer/tutorial/storefront) | Customers see the feature |
-| Finishing | [Events](/developer/tutorial/events) → [Testing](/developer/tutorial/testing) | Always |
+- A `Spree::Brand` model with a Store API and an Admin API — one generator command
+- A brands screen in the dashboard: a list page, navigation and a card on the product page
+- Brands on the storefront, fetched through `@spree/sdk` with generated types
+- Lifecycle events other systems subscribe to, in the app or over webhooks
+- Specs for the model and both APIs, plus an end-to-end pass
 
-An internal tool is Track A alone. A storefront feature over existing data is Track B alone. Product FAQs need both: staff write the answers, customers read them.
+## The five steps
+
+<CardGroup cols={2}>
+  <Card title="1. Models & API" icon="database" href="/developer/tutorial/model-and-api">
+    Generate the model, migration, Store and Admin controllers, serializers and routes in one command
+  </Card>
+  <Card title="2. Dashboard" icon="gauge" href="/developer/tutorial/dashboard">
+    Scaffold the back-office UI with the CLI — a table, a form, navigation and a product slot
+  </Card>
+  <Card title="3. Storefront" icon="store" href="/developer/tutorial/storefront">
+    Regenerate SDK types and render brands on the product page in the Next.js storefront
+  </Card>
+  <Card title="4. Events" icon="zap" href="/developer/tutorial/events">
+    Publish lifecycle events and consume them with subscribers and outbound webhooks
+  </Card>
+  <Card title="5. Testing" icon="flask-vial" href="/developer/tutorial/testing">
+    Model and request specs, dashboard plugin tests, and one end-to-end check
+  </Card>
+</CardGroup>
+
+The order is deliberate. Step 1 gives every later step something real to talk to: the dashboard plugin calls the Admin API, the storefront calls the Store API, and the events in step 4 reuse the serializer the same generator produced.
 
 ## Before you start
 
-- A running Spree application — see the [quickstart](/developer/getting-started/quickstart)
-- The AI tooling set up — the [agent skills and MCP server](/developer/agentic/overview) make every step of this tutorial faster
+You need a running Spree application. The fastest path is [create-spree-app](/developer/create-spree-app/quickstart), a Docker-based project with the [Spree CLI](/developer/cli/quickstart) and nothing to install locally:
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+**Every command in this tutorial runs from the root of that project**, through the `spree` CLI. Nothing needs installing on your machine — the CLI routes each command into the right container.
+
+The project it creates has this shape, and the paths in every chapter are relative to its root:
+
+```
+my-store/
+├── server/          # the Server app — models, API, specs
+├── apps/
+│   ├── dashboard/   # the admin SPA (React)
+│   └── storefront/  # the Next.js storefront
+└── docker-compose.yml
+```
+
+<Note>
+  **create-spree-app projects:** run `spree eject` once before starting. Fresh projects use a prebuilt Docker image; ejecting switches to the development setup that mounts your app into the container, so the files the generators create land in your project and reload as you edit them.
+</Note>
+
+<Tip>
+  Using an AI coding agent? Install the [Spree agent skills](/developer/agentic/agent-skills) (`npx skills add spree/agent-skills`) and connect the [docs MCP server](/developer/agentic/mcp) before starting. Your agent will know the conventions this tutorial teaches and can follow along with you. See [AI-assisted development](/developer/agentic/overview).
+</Tip>

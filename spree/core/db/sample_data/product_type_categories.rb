@@ -5,7 +5,7 @@
 # categories — before it there is nothing to link to. Seeding is additive and
 # only applies to products created from here on, so linking after the fact
 # changes nothing about the imported catalog.
-store = Spree::Store.default
+store = Spree::Current.store
 
 categories_by_type = {
   'Kitchen Appliance' => 'Kitchen',

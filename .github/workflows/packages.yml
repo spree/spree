@@ -262,9 +262,26 @@ jobs:
             echo "published=false" >> $GITHUB_OUTPUT
           fi
 
+      # @spree/sdk is the one package with a stable `latest` that real
+      # storefronts already depend on (`^1.2.1` = the 5.x Store API). A 6.0
+      # prerelease published without a tag would land on `latest` and be
+      # resolved by every one of them on their next install, so the tag is
+      # load-bearing here rather than a nicety.
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if echo "$PACKAGE_VERSION" | grep -qE '^0\.'; then
+            echo "tag=next" >> $GITHUB_OUTPUT
+          elif echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public
+        run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
 
   release-admin-sdk:
     name: "Admin SDK - Release"
@@ -333,12 +350,12 @@ jobs:
 
   release-cli:
     name: "CLI - Release"
-    # Gated on release-dashboard: the CLI tarball embeds the dashboard-starter
-    # template with floating ranges floored at the @spree/dashboard{,-ui,-core}
+    # Gated on release-dashboard and release-seller: the CLI tarball embeds the
+    # dashboard-starter AND seller-dashboard-starter templates with floating
+    # ranges floored at the @spree/dashboard{,-ui,-core} and @spree/seller-*
     # versions being released — publishing it before those versions exist on
-    # npm would ship a scaffold whose install fails until the dashboard
-    # release lands.
-    needs: [check, release-dashboard]
+    # npm would ship a scaffold whose install fails until they land.
+    needs: [check, release-dashboard, release-seller]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -455,6 +472,11 @@ jobs:
           npm install -g npm@latest --prefix="$HOME/.npm-global"
           echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
 
+      # As in the seller job: prepublishOnly compiles the Vite-plugin entries
+      # with tsup, so the workspace dependency graph must be built first.
+      - name: Build
+        run: pnpm turbo build --filter=@spree/dashboard
+
       - name: Publish unpublished versions (dependency order)
         run: |
           set -euo pipefail
@@ -475,9 +497,74 @@ jobs:
             cd ../..
           done
 
+  # The seller packages mirror the admin pair above: @spree/seller-sdk is the
+  # Seller API client, @spree/seller-dashboard the panel built on it. They
+  # publish on the same pre-1.0 `next` scheme, in dependency order, and must
+  # land before release-cli — the CLI tarball embeds the seller-dashboard
+  # starter with ranges floored at these versions.
+  release-seller:
+    name: "Seller packages - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+
+      # Each package's prepublishOnly runs tsup while packing, and tsup bundles
+      # its workspace dependencies from their dist/ — @spree/seller-sdk pulls
+      # in the private @spree/sdk-core, which nothing has built yet in a fresh
+      # checkout. Build the graph first; `--filter` follows ^build, exactly as
+      # the SDK and CLI release jobs do.
+      - name: Build
+        run: pnpm turbo build --filter=@spree/seller-sdk --filter=@spree/seller-dashboard
+
+      - name: Publish unpublished versions (dependency order)
+        run: |
+          set -euo pipefail
+          for pkg in seller-sdk seller-dashboard; do
+            cd "packages/$pkg"
+            NAME=$(node -p "require('./package.json').name")
+            VERSION=$(node -p "require('./package.json').version")
+            if npm view "$NAME@$VERSION" version 2>/dev/null; then
+              echo "$NAME@$VERSION already published — skipping."
+            else
+              if echo "$VERSION" | grep -qE '^0\.'; then TAG=next
+              elif echo "$VERSION" | grep -qE '[-]'; then TAG=beta
+              else TAG=latest
+              fi
+              echo "Publishing $NAME@$VERSION with tag $TAG..."
+              pnpm publish --provenance --access public --tag "$TAG" --no-git-checks
+            fi
+            cd ../..
+          done
+
   # The dashboard-starter template is NOT distributed via a template repo:
   # `@spree/cli` and `create-spree-app` embed it at build time
-  # (scripts/sync-dashboard-starter.mjs renders packages/dashboard-starter
+  # (scripts/sync-starter.mjs renders packages/dashboard-starter
   # with floating ranges floored at the released versions into their
   # templates/ dir), so scaffolds install the newest dashboard release even
   # from an older CLI, and never anything older than the template was built
@@ -535,6 +622,18 @@ jobs:
             echo "published=false" >> $GITHUB_OUTPUT
           fi
 
+      # Stable today, but a prerelease must never become the default for
+      # `npx create-spree-app` — the entry point every new project runs.
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && npm publish --provenance --access public
+        run: pnpm build && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}

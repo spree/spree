@@ -49,7 +49,10 @@ module Spree
                    store_owner_notification_delivered: :boolean,
                    internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    approver_id: [:string, nullable: true],
+                   approver_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    canceler_id: [:string, nullable: true], created_by_id: [:string, nullable: true],
+                   canceler_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    customer_id: [:string, nullable: true],
                    preferred_stock_location_id: [:string, nullable: true],
                    canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true],
@@ -128,13 +131,10 @@ module Spree
             order.internal_note.presence
           end
 
-          attribute :approver_id do |order|
-            order.approver&.prefixed_id
-          end
-
-          attribute :canceler_id do |order|
-            order.canceler&.prefixed_id
-          end
+          # Who approved, cancelled and opened it — a member of staff, or the
+          # API key an integration called with. An order cancelled through a
+          # secret key names the key.
+          actor_attributes :approver, :canceler, :created_by
 
           attribute :cancel_reason_id do |order|
             order.cancel_reason&.prefixed_id
@@ -145,10 +145,6 @@ module Spree
           # row.
           attribute :cancel_reason_name do |order|
             order.cancel_reason&.name
-          end
-
-          attribute :created_by_id do |order|
-            order.created_by&.prefixed_id
           end
 
           attribute :customer_id do |order|
@@ -189,22 +185,9 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 
-          # Staff actors, not customers — these point at Spree.admin_user_class.
-          one :approver,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('approver') }
-
-          one :canceler,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('canceler') }
-
           one :cancel_reason,
               resource: proc { Spree.api.admin_order_cancellation_reason_serializer },
               if: proc { expand?('cancel_reason') }
-
-          one :created_by,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('created_by') }
 
 
           many :returns,

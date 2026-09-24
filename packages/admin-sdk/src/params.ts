@@ -56,6 +56,8 @@ export interface StoreUpdateParams {
   preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
+  /** Always advertise a confirmation step in checkout, even when no payment method requires one. */
+  preferred_always_include_confirm_step?: boolean
   /** Shows a company field on address forms. */
   preferred_company_field_enabled?: boolean
   /** Makes a phone number mandatory on customer addresses. */
@@ -118,6 +120,14 @@ export interface StoreUpdateParams {
   preferred_payout_provider?: string
   preferred_default_payouts_schedule_interval?: string
   preferred_default_minimum_payout_amount?: number
+  /** Admits a seller as soon as they finish onboarding, with no operator review. */
+  preferred_auto_approve_sellers?: boolean
+  /** Puts a seller's product on sale the moment they submit it, with no review. */
+  preferred_auto_approve_seller_products?: boolean
+  /** When false, transactional seller emails (approval, payouts, etc.) are suppressed. */
+  preferred_send_seller_transactional_emails?: boolean
+  /** Tax charged on commission as a fraction (0.23 is 23%), when neither the rate nor the tax provider names one. */
+  preferred_default_commission_tax_rate?: number
 }
 
 export interface OptionValueParams {
@@ -194,6 +204,7 @@ export interface RefundCreateParams {
   payment_id: string
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
   amount: string | number
+  /** Refund reason ID (`rr_…`). Omitted → the store's first refund reason. */
   refund_reason_id?: string
 }
 
@@ -499,6 +510,11 @@ export interface OrderCreateParams {
   /** Channel ID. Defaults to the store primary channel when omitted. */
   channel_id?: string
   /**
+   * Company ID. Makes the order a company purchase, with that company's
+   * catalog prices and tax treatment.
+   */
+  company_id?: string
+  /**
    * Stock Location ID to prefer for fulfillment. Order Routing's built-in
    * `PreferredLocation` rule reads this and ranks the location first;
    * routing falls back to the next rule when the preferred location can't
@@ -550,6 +566,11 @@ export interface OrderUpdateParams {
    * order currently carries.
    */
   po_document?: string | null
+  /**
+   * Company ID. See {@link OrderCreateParams.company_id}. Null makes the draft
+   * a plain customer order again.
+   */
+  company_id?: string | null
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   /**
@@ -1341,6 +1362,12 @@ export interface SetupParams {
    * store's currency.
    */
   country_code: string
+  /**
+   * Load the demo catalog, customers and orders in the background once the
+   * admin account exists. The load takes minutes and downloads product
+   * images, so the response does not wait for it.
+   */
+  sample_data?: boolean
   /** Storefront locale. Defaults to the country's own language. */
   locale?: string
   /**
@@ -2532,6 +2559,8 @@ export type CustomFieldOwnerType =
   | 'Spree::Product'
   | 'Spree::Variant'
   | 'Spree::Order'
+  | 'Spree::Customer'
+  /** @deprecated Use `'Spree::Customer'` — removed in Spree 6.1. */
   | 'Spree::User'
   | 'Spree::Category'
   | 'Spree::Collection'

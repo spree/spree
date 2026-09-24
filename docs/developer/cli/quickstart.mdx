@@ -11,7 +11,7 @@ The Spree CLI (`@spree/cli`) does two things from your terminal:
 
 ```bash
 spree dev                                                  # boot the project
-spree api get /orders -q status_eq=complete --limit 10     # query the Admin API
+spree api get /orders -q status_eq=placed --limit 10     # query the Admin API
 spree api post /products -d '{"name":"Classic Tee","prices":[{"currency":"USD","amount":"29.99"}]}'  # create a resource
 spree api endpoints --search refund                        # discover endpoints, offline
 ```
@@ -195,6 +195,17 @@ spree api-key create --name "Admin" --type secret --scopes read_all     # Admin 
 spree api-key revoke <id>                              # Revoke a key
 ```
 
+### `spree encryption init`
+
+Generate [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) keys — Spree encrypts webhook signing secrets, payment gateway customer IDs and OAuth tokens with them. New projects already have keys; use this for projects created before they were generated at setup.
+
+```bash
+spree encryption init            # Add ACTIVE_RECORD_ENCRYPTION_* keys to the project's .env
+spree encryption init --print    # Print a fresh set without writing anything (e.g. for your hosting provider)
+```
+
+It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment), and back the keys up in your secret manager.
+
 ### `spree api`
 
 Call the Admin API with generic `get`/`post`/`patch`/`delete` commands — zero-config inside a project (a read-only key is minted on first use), env vars or profiles for remote stores. See [Admin API from the CLI](/developer/cli/admin-api) for the full guide.
@@ -229,11 +240,11 @@ Run a generator inside the container. Bare generator names are auto-prefixed wit
 ```bash
 spree generate model Brand name:string slug:string:uniq          # runs spree:model
 spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
-spree generate subscriber OmsOrderSync order.completed           # runs spree:subscriber — event subscriber + registration
+spree generate subscriber OmsOrderSync order.placed              # runs spree:subscriber — event subscriber + registration
 spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
 ```
 
-`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, and routes.
+`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
 ### `spree migrate`
 

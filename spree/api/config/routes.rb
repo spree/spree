@@ -273,6 +273,7 @@ Spree::Core::Engine.add_routes do
           member do
             patch :resend
           end
+          resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
         resources :api_keys, only: [:index, :show, :create, :update, :destroy] do
           collection do
@@ -590,6 +591,7 @@ Spree::Core::Engine.add_routes do
             member do
               patch :resend
             end
+            resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end
 
           # What this seller submitted about the requirements, and the
@@ -879,6 +881,10 @@ Spree::Core::Engine.add_routes do
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
         get 'me', to: 'me#show'
+        # Self-service edits to the signed-in person's own account — their
+        # name, photo and panel language. Distinct from `profile`, which is
+        # the seller business they act for.
+        patch 'me', to: 'me#update'
 
         # Singular: the seller in play is always `current_seller`.
         resource :profile, only: [:show, :update], controller: 'profile'
@@ -900,6 +906,7 @@ Spree::Core::Engine.add_routes do
           member do
             patch :resend
           end
+          resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
 
         resources :products, only: [:index, :show, :create, :update, :destroy] do

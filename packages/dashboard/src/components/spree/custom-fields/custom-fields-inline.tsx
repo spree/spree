@@ -60,7 +60,13 @@ import {
   Textarea,
   toastManager,
 } from '@spree/dashboard-ui'
-import { Loader2Icon, PencilIcon, PlusIcon, TagIcon } from '@spree/dashboard-ui/icons'
+import {
+  Loader2Icon,
+  PencilIcon,
+  PlusIcon,
+  SquareTextIcon,
+  TagIcon,
+} from '@spree/dashboard-ui/icons'
 import { Link, useParams } from '@tanstack/react-router'
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -448,7 +454,10 @@ export function CustomFieldsInlineCard() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle>{t('admin.components.custom_fields.section_title')}</CardTitle>
+        <CardTitle>
+          <SquareTextIcon className="size-4" />
+          {t('admin.components.custom_fields.section_title')}
+        </CardTitle>
         {!isLoading && hasDefinitions && <EditableHeaderActions />}
       </CardHeader>
       <CardContent>

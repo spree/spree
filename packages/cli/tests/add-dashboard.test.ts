@@ -2,15 +2,34 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { addDashboard, ensureDashboardDevEnv } from '../src/commands/add.js'
+import { addApp, ensureDashboardDevEnv } from '../src/commands/add.js'
 import type { ProjectContext } from '../src/types.js'
+
+// The two apps `spree add` scaffolds. Both go through addApp, so the same
+// battery runs against each — the seller panel is not a second-class path.
+const APPS = [
+  {
+    dir: 'dashboard',
+    template: 'dashboard-starter',
+    templateEnvVar: 'SPREE_DASHBOARD_TEMPLATE',
+    port: 5173,
+    label: 'Dashboard',
+  },
+  {
+    dir: 'seller-dashboard',
+    template: 'seller-dashboard-starter',
+    templateEnvVar: 'SPREE_SELLER_DASHBOARD_TEMPLATE',
+    port: 5174,
+    label: 'Seller Panel',
+  },
+] as const
 
 /**
  * Exercises the local-directory template path (the same code `--template
- * <path>` and SPREE_DASHBOARD_TEMPLATE hit). The git-clone path is the same
+ * <path>` and the template env vars hit). The git-clone path is the same
  * function with a URL — covered by the smoke flow, not unit-testable offline.
  */
-describe('addDashboard', () => {
+describe.each(APPS)('addApp — $dir', (app) => {
   let projectDir: string
   let templateDir: string
 
@@ -40,10 +59,10 @@ describe('addDashboard', () => {
     fs.rmSync(templateDir, { recursive: true, force: true })
   })
 
-  it('copies the template into apps/dashboard and writes .env.local with the project port', async () => {
-    await addDashboard(ctx(), { template: templateDir, install: false })
+  it('copies the template into the app directory and writes .env.local with the project port', async () => {
+    await addApp(ctx(), app, { template: templateDir, install: false })
 
-    const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
+    const dashboardDir = path.join(projectDir, 'apps', app.dir)
     expect(fs.existsSync(path.join(dashboardDir, 'package.json'))).toBe(true)
     expect(fs.existsSync(path.join(dashboardDir, 'src', 'main.tsx'))).toBe(true)
     expect(fs.existsSync(path.join(dashboardDir, 'node_modules'))).toBe(false)
@@ -59,21 +78,21 @@ describe('addDashboard', () => {
     expect(fs.existsSync(path.join(dashboardDir, 'gitignore.template'))).toBe(false)
   })
 
-  it('is a no-op when apps/dashboard already exists', async () => {
-    await addDashboard(ctx(), { template: templateDir, install: false })
-    const marker = path.join(projectDir, 'apps', 'dashboard', 'src', 'custom.ts')
+  it('is a no-op when the app directory already exists', async () => {
+    await addApp(ctx(), app, { template: templateDir, install: false })
+    const marker = path.join(projectDir, 'apps', app.dir, 'src', 'custom.ts')
     fs.writeFileSync(marker, '// user file\n')
 
-    await addDashboard(ctx(), { template: templateDir, install: false })
+    await addApp(ctx(), app, { template: templateDir, install: false })
     expect(fs.existsSync(marker)).toBe(true)
   })
 
   it('recovers a missing .env.local without touching anything else', async () => {
-    await addDashboard(ctx(), { template: templateDir, install: false })
-    const envPath = path.join(projectDir, 'apps', 'dashboard', '.env.local')
+    await addApp(ctx(), app, { template: templateDir, install: false })
+    const envPath = path.join(projectDir, 'apps', app.dir, '.env.local')
     fs.rmSync(envPath)
 
-    await addDashboard(ctx(), { template: templateDir, install: false })
+    await addApp(ctx(), app, { template: templateDir, install: false })
     expect(fs.readFileSync(envPath, 'utf-8')).toContain('http://localhost:3999')
   })
 })

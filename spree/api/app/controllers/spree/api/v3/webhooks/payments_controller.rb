@@ -4,7 +4,6 @@ module Spree
       module Webhooks
         class PaymentsController < ActionController::API
           include ActionController::RateLimiting
-          include Spree::Core::ControllerHelpers::Store
 
           # Must render — instance_exec'd in a before_action, where only
           # render/redirect halts the chain.
@@ -24,7 +23,12 @@ module Spree
           # Verifies the webhook signature synchronously (returns 401 if invalid),
           # then enqueues async processing and returns 200 immediately.
           def create
-            payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
+            # By id alone: providers call back without an API key or store
+            # header, so the request cannot name the store — the record does.
+            # The signature check below, against the record's own secret, is
+            # what authenticates the request.
+            payment_method = Spree::PaymentMethod.find_by_prefix_id!(params[:payment_method_id])
+            Spree::Current.store = payment_method.store
 
             # Signature verification must be synchronous — invalid = 401
             result = payment_method.parse_webhook_event(request.raw_post, request.headers)

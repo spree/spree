@@ -6,12 +6,12 @@ title: Metadata
 
 Metadata provides simple, unstructured key-value storage on Spree resources — similar to [Stripe's metadata](https://docs.stripe.com/api/metadata). It's ideal for storing integration IDs, tracking data, or any arbitrary information that doesn't need validation or admin UI.
 
-Metadata is a **permanent, first-class system** in Spree. It is designed to coexist alongside [Metafields](/developer/core-concepts/metafields) (structured, typed, admin-managed). The two systems serve different purposes and are not interchangeable — think of it as **metadata for machines, metafields for humans**.
+Metadata is a **permanent, first-class system** in Spree. It is designed to coexist alongside [Custom Fields](/developer/core-concepts/metafields) (structured, typed, admin-managed). The two systems serve different purposes and are not interchangeable — think of it as **metadata for machines, custom fields for humans**.
 
 Metadata is **write-only** in the Store API — you can set it when creating or updating resources, but it is never returned in Store API responses. It is visible in Admin API responses for administrative use.
 
 <Info>
-For structured, type-safe custom attributes with admin UI support, use [Metafields](/developer/core-concepts/metafields) instead.
+For structured, type-safe custom attributes with admin UI support, use [Custom Fields](/developer/core-concepts/metafields) instead.
 </Info>
 
 ## Store API
@@ -188,14 +188,14 @@ Metadata updates use **merge semantics** — existing keys are preserved, new ke
 { "source": "mobile_app", "campaign": "winter", "new_key": "value" }
 ```
 
-## Metadata vs Metafields
+## Metadata vs Custom Fields
 
 Spree has two permanent, complementary systems for custom data. They are not interchangeable and neither is going away.
 
-| | Metadata | [Metafields](/developer/core-concepts/metafields) |
+| | Metadata | [Custom Fields](/developer/core-concepts/metafields) |
 |---|---|---|
 | **Purpose** | Developer escape hatch — integration data, sync state, ad-hoc flags | Merchant-defined structured attributes with admin UI |
-| **Schema** | Schemaless JSON — no definition required | Defined via MetafieldDefinitions (typed, validated) |
+| **Schema** | Schemaless JSON — no definition required | Defined via CustomFieldDefinitions (typed, validated) |
 | **Validation** | None — accepts any JSON-serializable data | Type-specific (text, number, boolean, rich text, JSON) |
 | **Visibility** | Write-only in Store API, readable in Admin API | Configurable (front-end, back-end, both) |
 | **Admin UI** | JSON preview only | Dedicated management forms |
@@ -210,7 +210,7 @@ Spree has two permanent, complementary systems for custom data. They are not int
 - Any write-and-forget data that only needs to be read by backend systems
 - Syncing state with external integrations (webhooks, ETL pipelines)
 
-### When to use metafields
+### When to use custom fields
 
 - Custom product specifications shown to customers (material, dimensions, certifications)
 - Admin-managed fields with validation and type safety
@@ -230,20 +230,20 @@ The Store API currently supports writing metadata on:
 ## Deprecation: public_metadata
 
 <Warning>
-`public_metadata` is deprecated and will be removed in Spree 6.0. Use `metadata` instead.
+`public_metadata` is deprecated. Use `metadata` instead.
 </Warning>
 
-The `public_metadata` column was never exposed in Store API responses and in practice served the same purpose as `private_metadata`. It will be removed in Spree 6.0 and calling `public_metadata=` will emit a deprecation warning.
+The `public_metadata` column was never exposed in Store API responses and in practice served the same purpose as `private_metadata`. Calling `public_metadata=` emits a deprecation warning.
 
-Always use the single `metadata` accessor for all schemaless key-value storage. If you need data visible to customers on the storefront, use [Metafields](/developer/core-concepts/metafields) instead.
+Always use the single `metadata` accessor for all schemaless key-value storage. If you need data visible to customers on the storefront, use [Custom Fields](/developer/core-concepts/metafields) instead.
 
 ```ruby
-# Deprecated — will be removed in 6.0
+# Deprecated — use `metadata` instead
 order.public_metadata = { 'gift_message' => 'Happy Birthday!' }
 
 # Use metadata for internal storage
 order.metadata = { 'gift_message' => 'Happy Birthday!' }
 
-# Use metafields for customer-visible structured data
-order.set_metafield('custom.gift_message', 'Happy Birthday!')
+# Use custom fields for customer-visible structured data
+order.set_custom_field('custom.gift_message', 'Happy Birthday!')
 ```

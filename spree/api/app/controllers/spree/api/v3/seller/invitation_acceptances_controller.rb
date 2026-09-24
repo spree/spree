@@ -94,7 +94,10 @@ module Spree
           end
 
           def authenticate_existing(user)
-            return user if user.valid_password?(params[:password].to_s)
+            # Under the login lockout: otherwise this is an unthrottled way to
+            # guess an existing account's password with an invitation token.
+            verdict = Spree::Authentication::Lockout.check(user) { user.valid_password?(params[:password].to_s) }
+            return user if verdict == :valid
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:authentication_failed],
@@ -127,7 +130,7 @@ module Spree
           def auth_response(user)
             {
               token: generate_jwt(user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_SELLER),
-              user: Spree.api.seller_team_member_serializer.new(
+              user: Spree.api.seller_account_serializer.new(
                 user, params: { store: @invitation.store }
               ).to_h,
               sellers: serialized_sellers(user)

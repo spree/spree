@@ -9,6 +9,7 @@ module Spree
   class StockReceipt < Spree.base_class
     has_prefix_id :sr
 
+    include Spree::ActedBy
     include Spree::SingleStoreResource
     has_spree_number prefix: 'SR'
     include Spree::NumberIdentifier
@@ -17,7 +18,7 @@ module Spree
     publishes_lifecycle_events
 
     belongs_to :receivable, polymorphic: true, inverse_of: :stock_receipts
-    belongs_to :received_by, class_name: Spree.admin_user_class.to_s, optional: true
+    acted_by :received_by
 
     has_many :items, class_name: 'Spree::StockReceiptItem', inverse_of: :stock_receipt,
                      dependent: :destroy
@@ -29,8 +30,12 @@ module Spree
 
     normalizes :reference, with: ->(value) { value.strip.presence }
 
+    # `received_by_type` sits beside its id because ids are per-table: filtering
+    # on the id alone would match the admin user and the API key that happen to
+    # share that number.
     self.whitelisted_ransackable_attributes = %w[number reference received_at receivable_type
-                                                 receivable_id received_by_id created_at]
+                                                 receivable_id received_by_id received_by_type
+                                                 created_at]
 
     # @return [Integer] units this delivery put on the shelf
     def quantity_accepted_total

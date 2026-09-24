@@ -13,7 +13,7 @@
     <%= render 'spree/shared/purchased_items_table/summary_row',
                label: Spree.t(:shipping),
                sub: name,
-               value: Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
+               value: Spree::Money.new(shipments.sum(&:cost), currency: order.currency) %>
   <% end %>
   <% if order.additional_tax_total != 0 %>
     <%= render 'spree/shared/purchased_items_table/summary_row',

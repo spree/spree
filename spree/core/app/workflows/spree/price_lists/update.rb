@@ -65,6 +65,12 @@ module Spree
             price_list.errors.add(:base, :negative_price)
           elsif refusal[:invalid_quantities].present?
             price_list.errors.add(:base, :invalid_quantity)
+          elsif refusal[:quantities_on_base_prices].present?
+            price_list.errors.add(:base, :quantity_on_base_price)
+          elsif refusal[:duplicate_quantities].present?
+            price_list.errors.add(:base, :duplicate_quantity)
+          elsif refusal[:rising_ladders].present?
+            price_list.errors.add(:base, :price_rises_with_quantity)
           else
             price_list.errors.add(:base, :too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
           end
@@ -80,7 +86,18 @@ module Spree
         touch_variants(variant_ids)
       end
 
+      # Rows are written with upsert_all, which checks nothing, so a variant
+      # outside the list's store is dropped here rather than trusted to every
+      # caller to filter first.
       def price_rows
+        rows = raw_price_rows
+        store_variant_ids = price_list.store.variants.where(id: rows.map { |row| row[:variant_id] }).
+                            pluck(:id).map(&:to_s).to_set
+
+        rows.select { |row| store_variant_ids.include?(row[:variant_id].to_s) }
+      end
+
+      def raw_price_rows
         Array(@prices).filter_map do |raw|
           row = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h.with_indifferent_access : raw.with_indifferent_access
 

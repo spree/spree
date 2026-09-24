@@ -75,6 +75,14 @@ vi.mock('../src/dashboard', () => ({
   scaffoldDashboard: vi.fn(),
 }))
 
+// `spree init` is shelled out to; the scaffold only decides its arguments.
+vi.mock('execa', () => ({ execa: vi.fn() }))
+
+vi.mock('../src/utils', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('../src/utils')>()
+  return { ...mod, isDockerRunning: vi.fn(async () => true) }
+})
+
 vi.mock('../src/server', () => ({
   downloadServer: vi.fn(async (projectDir: string) => {
     // Simulate what downloadServer does: create server/ with compose files
@@ -113,7 +121,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -127,30 +134,26 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
   })
 
-  it('enables the wholesale portal in the storefront env only with sample data', async () => {
-    const { writeStorefrontEnv } = await import('../src/storefront')
+  // Sample data must never ride along with first-run setup: setup configures
+  // the store through the dashboard, and the sample-data import needs an admin
+  // that setup has not created yet. `spree init` also mints credentials.json
+  // BEFORE loading sample data, so a failure there leaves a project that later
+  // runs read as "already set up" and can never finish setup.
+  it('runs first-run setup with sample data opted out', async () => {
+    const { execa } = await import('execa')
+    vi.mocked(execa).mockClear()
 
     await scaffold({
       directory: getTempProjectDir(),
-      storefront: true,
-      dashboard: false,
-      sampleData: true,
-      start: false,
-      packageManager: 'npm',
+      storefront: false,
+      dashboard: true,
+      start: true,
+      packageManager: 'pnpm',
       port: 3000,
     })
-    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, true)
 
-    await scaffold({
-      directory: getTempProjectDir(),
-      storefront: true,
-      dashboard: false,
-      sampleData: false,
-      start: false,
-      packageManager: 'npm',
-      port: 3000,
-    })
-    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, false)
+    const init = vi.mocked(execa).mock.calls.find(([, args]) => (args as string[])?.[1] === 'init')
+    expect(init?.[1]).toEqual(['spree', 'init', '--no-sample-data'])
   })
 
   it('copies docker-compose.yml from server template', async () => {
@@ -160,7 +163,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -179,7 +181,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -197,7 +198,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -210,14 +210,13 @@ describe('scaffold (no-start)', () => {
     expect(compose).toContain('- bundle_cache:/usr/local/bundle')
   })
 
-  it('generates .env with SECRET_KEY_BASE and PORT', async () => {
+  it('generates .env with SECRET_KEY_BASE, encryption keys and PORT', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 4567,
@@ -225,7 +224,13 @@ describe('scaffold (no-start)', () => {
 
     const env = fs.readFileSync(path.join(projectDir, '.env'), 'utf-8')
     expect(env).toMatch(/SECRET_KEY_BASE=.{128}/)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=[A-Za-z0-9]{32}$/m)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=[A-Za-z0-9]{32}$/m)
+    expect(env).toMatch(/^ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=[A-Za-z0-9]{32}$/m)
     expect(env).toContain('SPREE_PORT=4567')
+    if (process.platform !== 'win32') {
+      expect(fs.statSync(path.join(projectDir, '.env')).mode & 0o777).toBe(0o600)
+    }
   })
 
   it('generates valid package.json with project name', async () => {
@@ -235,7 +240,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: true,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -255,7 +259,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: true,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 4567,
@@ -279,7 +282,6 @@ describe('scaffold (no-start)', () => {
       directory: projectDir,
       storefront: false,
       dashboard: false,
-      sampleData: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
@@ -304,7 +306,6 @@ describe('scaffold (no-start)', () => {
     await expect(
       scaffold({
         directory: projectDir,
-        sampleData: false,
         start: false,
         packageManager: 'npm',
         port: 3000,

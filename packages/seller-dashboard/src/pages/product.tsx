@@ -28,7 +28,18 @@ import { ProductStatusCard } from '../components/product-status-card'
 import { RetryableError } from '../components/retryable-error'
 
 /** Everything the form edits, in one request. */
-const PRODUCT_EXPAND = 'variants,media,default_variant,submission'
+const PRODUCT_EXPAND = [
+  'variants',
+  'variants.prices',
+  'variants.stock_levels',
+  'variants.stock_levels.stock_location',
+  'default_variant',
+  'default_variant.prices',
+  'default_variant.stock_levels',
+  'default_variant.stock_levels.stock_location',
+  'media',
+  'submission',
+].join(',')
 
 /**
  * One product, created or edited.

@@ -255,6 +255,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
               }}
               onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
               deleteLabel={t('admin.catalogs.detail.delete_label')}
+              deleteConfirmTitle={t('admin.catalogs.delete_confirm.title')}
+              deleteConfirmMessage={t('admin.catalogs.delete_confirm.message', {
+                name: catalog.name,
+              })}
               actions={
                 canEdit ? (
                   <>

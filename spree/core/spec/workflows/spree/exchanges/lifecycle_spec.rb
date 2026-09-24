@@ -26,6 +26,30 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(result.value.exchange_line_items.count).to eq(1)
     end
 
+    # The credit an exchange pays is priced on its quantity, so a quantity
+    # above what shipped would pay for goods nobody bought.
+    it 'refuses more units than were shipped' do
+      result = Spree::Exchanges::Create.call(
+        order: order,
+        items: [{ fulfillment_item: fulfillment_item, new_variant: replacement, quantity: fulfillment_item.quantity + 1 }]
+      )
+
+      expect(result).to be_failure
+      expect(order.reload.exchanges).to be_empty
+    end
+
+    it 'refuses units that were already returned' do
+      Spree::Returns::Create.call(order: order, items: [{ fulfillment_item: fulfillment_item, quantity: fulfillment_item.quantity }])
+
+      expect(create_exchange).to be_failure
+    end
+
+    it 'refuses a single request naming the same units twice' do
+      item = { fulfillment_item: fulfillment_item, new_variant: replacement, quantity: fulfillment_item.quantity }
+
+      expect(Spree::Exchanges::Create.call(order: order, items: [item, item])).to be_failure
+    end
+
     it 'refuses a replacement that cannot be sold' do
       allow_any_instance_of(Spree::Variant).to receive(:purchasable?).and_return(false)
 
@@ -139,10 +163,24 @@ RSpec.describe 'Spree::Exchanges workflows' do
         expect(result.error.value[:base].join).to include('original_payment')
       end
 
+      # Only the units that came back are replaced, so only they are credited.
+      it 'credits only the units that were received' do
+        line = cheap_exchange.exchange_line_items.first
+        line.update_columns(quantity: 2, received_quantity: 1)
+        per_unit = (line.line_item.amount / line.line_item.quantity) - line.new_variant.price_in(line.currency).amount
+
+        Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
+
+        expect(Spree::StoreCredit.find_by(originator: cheap_exchange).amount).to eq(per_unit)
+      end
+
       it 'accepts store credit' do
         result = Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
 
         expect(result).to be_success
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(Spree::StoreCredit.find_by(originator: cheap_exchange).refunded_order).to eq(cheap_exchange.order)
       end
     end
   end

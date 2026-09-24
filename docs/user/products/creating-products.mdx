@@ -168,11 +168,11 @@ If your shipping methods rely on product size or weight, this section is critica
   You can change the default unit system (metric vs imperial) in **Settings → Store Details → Standards & Formats**.
 </Note>
 
-## Product Metafields
+## Product Custom Fields
 
-Product Metafields let you add custom data fields to a product beyond Spree's built-in fields — useful for technical specs, care instructions, supplier notes, or anything else specific to your catalog. For example, a clothing product might have a **Material** metafield set to "100% Organic Cotton," or an electronics product might have a **Voltage** metafield set to "110–240V."
+Product Custom Fields let you add custom data fields to a product beyond Spree's built-in fields — useful for technical specs, care instructions, supplier notes, or anything else specific to your catalog. For example, a clothing product might have a **Material** custom field set to "100% Organic Cotton," or an electronics product might have a **Voltage** custom field set to "110–240V."
 
-See [<u>Product Metafields</u>](/user/manage-products/product-metafields) to learn how to create metafield definitions and add values to your products.
+See [<u>Product Custom Fields</u>](/user/manage-products/product-metafields) to learn how to create custom field definitions and add values to your products.
 
 ## Tax
 
@@ -235,7 +235,7 @@ After an order is placed, customers can access their files in three ways:
 
 Internally, each download is served via `GET /api/v3/store/digitals/{token}`. The token alone authorizes the download — no API key or login is required — which is why download limits and expiry exist.
 
-For more on the digital product model, see the [Digital Products](/use-case/digital-products/admin-capabilities) overview.
+For more on selling digital products, see the [Digital Products](/developer/how-to/sell-digital-products) guide.
 
 ## Save Changes
 

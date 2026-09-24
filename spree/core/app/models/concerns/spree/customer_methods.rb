@@ -64,7 +64,14 @@ module Spree
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :customer_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
       has_many :orders, foreign_key: :customer_id, class_name: 'Spree::Order'
-      has_many :carts, -> { incomplete }, foreign_key: :customer_id, class_name: 'Spree::Order'
+      # Open carts only. Since the Cart/Order split a cart lives on its own
+      # table and never becomes an order row, so an incomplete Order is a
+      # backoffice draft, not a cart. Completed carts stay behind as read-only
+      # audit records of a checkout and are reached through the order.
+      # No cascade on destroy, like #orders: a cart can be mid-checkout with
+      # money authorized against it, and erasure goes through
+      # Spree::Customers::Anonymize, which scrubs carts explicitly.
+      has_many :carts, -> { incomplete }, foreign_key: :customer_id, class_name: 'Spree::Cart', dependent: nil
       has_many :completed_orders, -> { complete }, foreign_key: :customer_id, class_name: 'Spree::Order'
       has_many :store_credits, class_name: 'Spree::StoreCredit', foreign_key: :customer_id, dependent: :destroy
       # Everything the customer has bought and can download. Scoped to completed
@@ -272,11 +279,20 @@ module Spree
     end
 
     # Returns the last incomplete spree order for the current store
+    # @deprecated Carts are {Spree::Cart} since 6.0, so an incomplete order is
+    #   a backoffice draft rather than the customer's cart. Use
+    #   +carts.where(store: store)+ for carts, or +orders.drafts+ for drafts.
+    #   Removed in Spree 6.1.
     # @param [Spree::Store] store
     # @param [Hash] options
     # @option options [Array<Symbol>] :includes
     # @return [Spree::Order]
     def last_incomplete_spree_order(store, options = {})
+      Spree::Deprecation.warn(
+        'Spree::CustomerMethods#last_incomplete_spree_order is deprecated and will be removed in Spree 6.1. ' \
+        'Carts are Spree::Cart since 6.0 and this returns draft orders; use #carts for the customer\'s carts.'
+      )
+
       orders.where(store: store).incomplete.not_canceled.
         includes(options[:includes]).
         order('created_at DESC').

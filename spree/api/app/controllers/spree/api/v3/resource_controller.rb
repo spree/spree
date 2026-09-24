@@ -176,8 +176,23 @@ module Spree
         def build_resource
           resource = resource_scope.new
           resource.assign_attributes(permitted_params) if create_workflow.nil?
-          resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
+          resource.created_by = creator_for(resource) if resource.respond_to?(:created_by_id)
           resource
+        end
+
+        # The actor to stamp on a new record, or nil when this model cannot
+        # hold it. `created_by` is polymorphic on the order operations and
+        # still admin-user-only elsewhere until 6.1, so a key-authenticated
+        # create of a gift card records nobody rather than raising — the same
+        # thing it recorded before keys became actors.
+        def creator_for(resource)
+          actor = current_actor
+          return actor if actor.nil?
+
+          association = resource.class.reflect_on_association(:created_by)
+          return actor if association.nil? || association.polymorphic?
+
+          actor.is_a?(association.klass) ? actor : nil
         end
 
         # The relation a new record is built on: a nested resource's parent
@@ -239,12 +254,22 @@ module Spree
 
           @search = scope.includes(collection_includes).
                     preload_associations_lazily.
-                    ransack(ransack_params)
+                    ransack(ransack_params, auth_object: ransack_auth_object)
           result = @search.result(distinct: collection_distinct?)
           pagy_options = { limit: limit, page: page }
           result = apply_collection_sort(result)
           @pagy, @collection = pagy(result, **pagy_options)
           @collection
+        end
+
+        # Who is filtering, as Ransack's auth object. Nil is the back office,
+        # which may use every allowlisted attribute; the Store and Seller
+        # branches name themselves so the models narrow what they may reach
+        # (see Spree::RansackableAttributes). Covers sorting too.
+        #
+        # @return [Symbol, nil]
+        def ransack_auth_object
+          nil
         end
 
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)

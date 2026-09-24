@@ -15,9 +15,9 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
   "peerDependencies": {
     "react": "^19",
     "react-dom": "^19",
-    "@spree/dashboard-core": "^0.10.0",
-    "@spree/dashboard-ui": "^0.10.0",
-    "@spree/admin-sdk": "^0.6.0",
+    "@spree/dashboard-core": "^1.0.0-beta.3",
+    "@spree/dashboard-ui": "^1.0.0-beta.3",
+    "@spree/admin-sdk": "^1.0.0-beta.2",
     "i18next": "^26",
     "react-i18next": "^17",
     "@tanstack/react-query": "^5",
@@ -27,13 +27,13 @@ Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don
 }
 ```
 
-Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One Developer Preview caveat: for `0.x` versions, `^` only allows patch-level drift (`^0.10.0` matches `0.10.x`, not `0.11.0`), so expect to bump your `@spree/dashboard-*` peers alongside dashboard releases until 1.0. `spree plugin new` scaffolds these ranges for you, matched to the current release.
+Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One pre-release caveat: a range like `^1.0.0-beta.3` accepts later `1.0.0` betas and every stable `1.x` release, but not betas of other versions — so keep your `@spree/dashboard-*` peers in step with the dashboard until 1.0 ships. `spree plugin new` scaffolds ranges starting at the admin SDK and dashboard versions released alongside your `@spree/cli`.
 
 `dependencies` is for things your plugin *uses* that the host *doesn't* — small utilities (e.g., `clsx`, `date-fns` if you need a specific version, your own helper packages). When in doubt, peer-dep it. The trade-off is "user has to install one more thing" vs. "user has two copies of React" — always pay the first cost.
 
 ## Choose what to publish
 
-The scaffold's `package.json` ships TS source by default. Two options:
+The scaffold's `package.json` ships TS source by default, and its `build` script type-checks that source. Two options:
 
 ### Option A — Ship pre-built JS
 
@@ -70,7 +70,7 @@ Pick A if you're going to npm in earnest. Pick B for internal-only packages used
 
 ## Side-effects flag
 
-The plugin's whole purpose is side effects (`defineDashboardPlugin` registers stuff at module-load time). **Tell bundlers not to tree-shake it:**
+The plugin's whole purpose is side effects (`defineDashboardPlugin` registers stuff at module-load time). **Tell bundlers not to tree-shake it.** The scaffold lists its source entry, `./src/index.tsx`; add the `dist/` entries if you ship pre-built JS:
 
 ```json
 {
@@ -133,7 +133,7 @@ Set `"private": false` and remove the `"publishConfig.access": "restricted"` if 
 
 ## Avoiding lock-step releases
 
-Your plugin should compile against a **range** of dashboard versions. Run the build against the lowest supported version locally (`pnpm add -D @spree/dashboard-core@6.0.0`) and add a CI matrix job that bumps to the next minor and rebuilds. That's the cheapest way to catch "I depended on something that doesn't exist in 6.0.0".
+Your plugin should compile against a **range** of dashboard versions. Run the build against the lowest version your peer range allows (for example `pnpm add -D @spree/dashboard-core@1.0.0-beta.3`) and add a CI matrix job that bumps to the next minor and rebuilds. That's the cheapest way to catch "I depended on something the oldest supported dashboard doesn't have".
 
 ## Reference
 

@@ -9,12 +9,12 @@ The storefront ships two test layers: fast unit/integration tests with Vitest, a
 
 ```bash
 npm test            # one-shot
-npm run test:watch  # watch mode
+pnpm test:watch  # watch mode
 ```
 
 ## End-to-end (Playwright)
 
-The E2E suite drives a browser against a real Spree backend. `npm run e2e:up` boots the backend — Postgres, Redis, and the official `ghcr.io/spree/spree:latest` image from `e2e-backend/docker-compose.yml` — then seeds it and mints an API key through the official [`@spree/cli`](/developer/cli/quickstart) (`spree seed`, `spree sample-data`, `spree api-key create`), installed as a dev dependency. No `create-spree-app` setup is required.
+The E2E suite drives a browser against a real Spree backend. `pnpm e2e:up` boots the backend — Postgres, Redis, and the official `ghcr.io/spree/spree:latest` image from `e2e-backend/docker-compose.yml` — then seeds it and mints an API key through the official [`@spree/cli`](/developer/cli/quickstart) (`spree seed`, `spree sample-data`, `spree api-key create`), installed as a dev dependency. No `create-spree-app` setup is required.
 
 ```bash
 # 1. Export a Stripe test-mode key pair from your own Stripe sandbox.
@@ -26,16 +26,16 @@ export STRIPE_SECRET_KEY=sk_test_…
 
 # 2. Boot Spree + Postgres + Redis, seed sample data, register a Stripe
 #    payment gateway, mint a publishable key, and write .env.e2e.
-npm run e2e:up
+pnpm e2e:up
 
 # 3. Run the suite. Playwright boots `next dev` against .env.e2e.
-npm run test:e2e
+pnpm test:e2e
 
 # Optional: interactive UI mode.
-npm run test:e2e:ui
+pnpm test:e2e:ui
 
 # Tear everything down.
-npm run e2e:down
+pnpm e2e:down
 ```
 
 The checkout test pays with card `4242 4242 4242 4242` through Stripe's [test mode](https://docs.stripe.com/keys). PaymentIntents land in whichever Stripe test account owns the keys you exported.
@@ -57,8 +57,8 @@ The E2E stack reads a `SPREE_IMAGE` env var and falls back to the stock image wh
 If you already publish a customized Spree image:
 
 ```bash
-SPREE_IMAGE=ghcr.io/your-org/your-spree:latest npm run e2e:up
-npm run test:e2e
+SPREE_IMAGE=ghcr.io/your-org/your-spree:latest pnpm e2e:up
+pnpm test:e2e
 ```
 
 ### A `create-spree-app` project's backend
@@ -67,13 +67,13 @@ A project scaffolded with [`create-spree-app`](/developer/create-spree-app/quick
 
 ```bash
 # From the project root — build the customized backend image
-docker build -t project-spree:e2e ./backend
+docker build -t project-spree:e2e ./server
 
 # From apps/storefront — run E2E against it
 cd apps/storefront
-SPREE_IMAGE=project-spree:e2e npm run e2e:up
-npm run test:e2e
-npm run e2e:down
+SPREE_IMAGE=project-spree:e2e pnpm e2e:up
+pnpm test:e2e
+pnpm e2e:down
 ```
 
 <Note>
@@ -82,4 +82,4 @@ npm run e2e:down
 
 ### Interactive / manual
 
-To click through the storefront against a running backend (no E2E harness), point it there directly: set `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` in `.env.local` (see [Environment Variables](/developer/storefront/nextjs/environment-variables)) and run `npm run dev`.
+To click through the storefront against a running backend (no E2E harness), point it there directly: set `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` in `.env.local` (see [Environment Variables](/developer/storefront/nextjs/environment-variables)) and run `pnpm dev`.

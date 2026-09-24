@@ -1,119 +1,108 @@
 ---
-title: "Payments"
-description: "Learn how to view, add, edit, and remove payment methods in Spree."
+title: "Payment Methods"
+description: "Learn how to set up the ways customers can pay in Spree Commerce, and control when their money is taken."
 ---
 
-Payments are a vital part of any e-commerce store. Spree offers a flexible and modular system for managing payment methods, supporting both out-of-the-box and third-party options. 
+A payment method is a way for a customer to pay, and the provider that handles it. Most stores need more than one, because different customers pay differently and not every method suits every order.
 
-<Warning>
-  Not all payment methods are available by default - most require the installation of additional gems by a developer before they can be used in the admin interface.
-</Warning>
+A typical setup might pair a card gateway for everyday retail with one or two methods your team uses on back-office orders. A business customer placing a large order may need to pay on invoice rather than by card, and a shop with a counter may take payment in person. Each of those is its own payment method, and each can be shown to customers or kept for staff only.
 
-To manage payments, navigate to the Payments tab of the Settings menu.
+To manage payment methods, navigate to **Settings → Payment methods**, under the **Selling** group.
 
-![](/images/user/settings/payments/1.payments.png)
+<Note>Stripe is included with Spree out of the box, so you can take card payments by connecting an account rather than installing anything first.</Note>
 
-## Payment Methods Overview
+## Reviewing Your Payment Methods
 
-![](/images/user/settings/payments/2.payments_overview.png)
+![The Payment methods list, showing each method's provider, storefront visibility and status](/docs/images/user/settings/payments/1-payments-methods-overview.png)
 
-Here you can see a list of enabled payment methods, and a list of available payment methods:
+Each row shows:
 
-### Enabled Payment Methods
+- **Name** - What the method is called, with its customer-facing description beneath.
+- **Provider** - What handles the payment behind the scenes.
+- **Storefront** - **Visible** if customers can choose it, **Admin only** if it is reserved for staff.
+- **Status** - Whether the method is active or disabled.
 
-![](/images/user/settings/payments/4.enabled_payment_methods.png)
+The order of this list is the order customers see at checkout. Drag the handle on any row to move it, and put your most-used method at the top.
 
-Enabled methods are those that are configured and can be used by customers on checkout.
+## How to Add a Payment Method
 
-You can easily modify the display settings of enabled payment methods by changing the visibility and active status.
+Click **Add payment method**. A panel opens, and the first thing to choose is the provider.
 
-![](/images/user/settings/payments/3.payments_display.png)
+![The Add payment method panel, with the provider dropdown and visibility settings](/docs/images/user/settings/payments/2-add-payment-method.png)
 
-### Available Payment Methods
+### Choosing a provider
 
-![](/images/user/settings/payments/5.available_payment_methods.png)
+The **Provider** decides what actually processes the payment, and which settings appear afterwards. There are two kinds.
 
-Available payment methods are those that have been installed, but have not been configured yet.
+**Third-party providers**, such as Stripe, connect to an outside payment processor. They need credentials from that provider, which you enter in the same panel while creating the method.
 
-### Default Payment Methods
+**Built-in methods** need no credentials because nothing is being processed elsewhere:
 
-By default, the following payment methods are available in Spree:
+- **Check** - Records that a customer will pay by cheque or bank transfer. The order is created and your team marks it paid when the money arrives.
+- **Store Credit** - Lets customers pay with credit already on their account.
+- **Custom Payment Source Method** - A generic method for payment arrangements handled outside Spree, such as an account customer paying on invoice.
+- **Bogus** - A test method that simulates payments without moving money. Use it to try a checkout end to end, and keep it **Admin only** so customers never see it.
 
-- **Store Credits**: allow customers to pay using store credits issued by the admin, enabled by default
-- **Offsite Payment**: labelled as "Check", not enabled by default
+### Provider configuration
 
-### Third-Party Payment Methods
+Third-party providers need credentials before they will work. The fields differ by provider, and they appear in the panel as soon as you choose one.
 
-Additional payment gateways (e.g., Stripe) can be made available by having your developers install the relevant gems. For example, Stripe gateway is free to use, but requires adding the [<u>spree_stripe</u>](https://github.com/spree/spree_stripe) gem to your store's codebase before it becomes available in the admin interface.
+![The Provider configuration section, with the credential fields a provider needs](/docs/images/user/settings/payments/3-provider-configuration.png)
 
-For more information about our native Stripe integration, see Integrations → Stripe Gateway.
+Enter the keys from your provider's own dashboard. Stored credentials are not shown back to you afterwards, and each has a **Replace** button for rotating a key later.
 
-Once a payment method has been installed, it appears in the Available Payment Methods list. From there, it can be added, configured, or removed as needed.
+Built-in methods have no configuration section, because nothing is being processed elsewhere.
 
-## Add a Payment Method
+### Naming and visibility
 
-To add a payment method, click Add on the corresponding row in the Available Payment Methods list. This will direct you to the payment method creation form for that method.
+These settings decide how a method is displayed:
 
-![](/images/user/settings/payments/6.add_payment_method.png)
+- **Name** - What customers see at checkout, such as "Credit card" or "Pay by invoice".
+- **Description** - The customer-facing description shown at checkout, useful for explaining what happens next on anything other than a card payment.
+- **Visible on storefront** - On by default. When off, only staff see this option, which is what you want for methods used on back-office orders and manual entry.
+- **Active** - On by default. Inactive methods are hidden from checkout entirely.
 
-Depending on the payment method you’re adding, the sections displayed in the form may differ. The following example covers Stripe which has 2 distinct sections:
+<Note>**Visible on storefront** and **Active** do different jobs. Turning off **Visible on storefront** keeps a method available to your team; turning off **Active** withdraws it from everyone.</Note>
 
-### Payment Provider Settings
+### When to charge customers
 
-![](/images/user/settings/payments/7.payment_provider_settings.png)
+This decides the moment a customer's money actually moves. Every method inherits the store default unless you override it here.
 
-Simply enter the required credentials into their respective fields.
+| Option | What happens |
+|---|---|
+| **Use the store setting** | Follows the store default, with the inherited value named in brackets. |
+| **At checkout** | Takes the money as soon as the order is placed. |
+| **On dispatch** | Reserves the amount at checkout and takes it when the goods go out. |
+| **Manually** | Reserves the amount at checkout and lets staff take it later. |
 
-<Note>
-  This section only applies to third-party payment methods.
-</Note>
+Which one suits depends on how quickly you fulfil:
 
-<Warning>
-  Different payment providers may require different credentials to be entered.
-</Warning>
+**At checkout** is the simplest and suits stores shipping in-stock goods promptly. The money is in before you pack, and reconciliation is straightforward because every order has a payment against it.
 
-### Display Settings
+**On dispatch** suits made-to-order goods, pre-orders and anything with a wait, where charging weeks before a customer receives anything invites complaints and refunds. The amount is reserved at checkout so you know the card is good, and taken when the parcel leaves.
 
-![](/images/user/settings/payments/8.display_settings.png)
+**Manually** suits orders that need a person to decide, such as a business order awaiting approval, a quote being finalised, or an order shipping in parts. Staff take the payment when they are ready.
 
-Display settings can be configured for all payment methods whether default or third-party.
+<Warning>Reserved amounts do not hold indefinitely. Card authorisations expire after a period set by the card network, so **On dispatch** and **Manually** need the order fulfilled or the payment taken within that window, or the reservation lapses and has to be retaken.</Warning>
 
-There are four fields to configure:
+Click **Create payment method** when you are done.
 
-- **Name**: The name displayed on the storefront
-- **Display**: Where the method is available for use
-  - On both the admin panel & storefront
-  - Only on storefront
-  - Only on admin panel
-- **Auto Capture**: Determines whether payment is captured automatically at the time of authorization. Use the app default or override it per method.
-- **Status**: Toggle whether the payment method is available for use in orders. Inactive methods are hidden but not deleted.
+## How to Edit a Payment Method
 
-### Create
+Open the row menu and choose **Edit** to update the name, description, visibility, status or credentials. The edit panel shows the provider in its subtitle rather than as a dropdown.
 
-Once you’ve entered all the required fields, click Create to add the payment method.
+The provider cannot be changed once a method exists. If you need a different provider, create a new method and disable the old one.
 
-The method will now be listed in your store’s enabled payment methods and will be available to users on checkout (provided it is active and visible).
+<Warning>Test a new payment method with a real checkout before making it visible to customers. A method with wrong credentials still appears at checkout and fails when a customer tries to use it.</Warning>
 
-## Edit a Payment Method
+## How to Delete a Payment Method
 
-To edit a payment method, click on the corresponding row in the enabled payment methods list. This will direct you to the edit form for that method.
+Open the row menu and choose **Delete**. Spree confirms that the method will no longer be available at checkout.
 
-![](/images/user/settings/payments/9.edit_payment_method.png)
+<Note>Disabling a method is usually better than deleting it. Turning **Active** off withdraws it from checkout while keeping it attached to the orders that used it.</Note>
 
-Feel free to update any of the display settings for the payment method, but be very cautious when editing payment provider settings.
+## Further Reading
 
-<Warning>
-  Swapping payment provider accounts on an active store can disrupt payment processing and lead to failed transactions or reporting inconsistencies. Ensure all pending payments are settled and test the new account thoroughly in a staging environment before applying changes in production.
-</Warning>
-
-## Delete a Payment Method
-
-To remove a payment method, simply open the edit form as shown above and click Delete.
-
-<Warning>
-  Once a payment method is associated with an order, it cannot be deleted.
-</Warning>
-
-<Note>
-  Deleting a payment method moves it from the enabled payment methods list back into the available payments list. It does not uninstall the associated gem. A developer would need to remove it from the codebase if complete deactivation is desired.
-</Note>
+- [<u>Store Details</u>](/user/settings/store-details) - The store-wide default for when customers are charged
+- [<u>Processing Orders</u>](/user/orders/processing-orders) - Taking a payment that was reserved rather than captured
+- [<u>Issue Store Credits</u>](/user/loyalty/store-credits) - Adding credit that the Store Credit method can spend

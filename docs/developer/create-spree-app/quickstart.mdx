@@ -18,7 +18,7 @@ The CLI walks you through an interactive setup:
 
 Once complete, your store is running at [http://localhost:3000](http://localhost:3000) — setup pulls the latest Spree image, seeds the database, and configures API keys, then prints a summary with your admin credentials and keys. If you skipped starting services, the first `pnpm dev` completes setup automatically.
 
-The **React Dashboard** (Developer Preview of the next-generation admin) is available with the `--react-dashboard` flag, or later via `spree add dashboard`.
+The **dashboard** and the marketplace **seller panel** are included in every project — there is no flag to add them.
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 
 | Flag | Description |
 |------|-------------|
-| `--react-dashboard` | Include the React Dashboard (Developer Preview — also available later via `spree add dashboard`) |
+| `--react-dashboard` | No-op — the dashboard is always included. Kept so existing scripts keep working |
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--no-sample-data` | Skip loading sample products and categories |
 | `--no-start` | Don't start Docker services after scaffolding |
@@ -56,28 +56,31 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 
 ```text
 my-store/
+├── server/                   # The Spree API — a full Rails app from spree/spree-starter
+│   ├── app/                  # Your models, controllers, serializers and jobs
+│   ├── config/
+│   ├── Dockerfile            # Also builds the production image (API + dashboard)
+│   └── Gemfile
+├── apps/
+│   ├── dashboard/            # Admin dashboard (React)
+│   │   └── .env.local        # Dev proxy target — no credentials
+│   ├── seller-dashboard/     # Seller panel, for marketplaces (React)
+│   └── storefront/           # Next.js storefront (unless --no-storefront)
+│       └── .env.local        # API URL + publishable key
+├── .env                      # SECRET_KEY_BASE, encryption keys, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
+├── .spree/                   # CLI credentials — gitignored, created on first run
 ├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Meilisearch
 ├── docker-compose.dev.yml    # Alternative: build from local server/
 ├── render.yaml               # Render Blueprint — one Docker service built from this repo
-├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
 ├── .dockerignore             # Keeps the production build context to sources
 ├── .gitignore
-├── package.json              # Convenience scripts
-├── README.md
-├── server/                  # Full Rails app — the Spree API (from spree/spree-starter)
-│   ├── Gemfile
-│   ├── Dockerfile            # Also builds the production image (API + dashboard)
-│   ├── config/
-│   ├── app/
-│   └── ...
-└── apps/
-    ├── storefront/           # Next.js storefront (unless --no-storefront)
-    │   ├── .env.local        # API URL + API key
-    │   └── ...
-    └── dashboard/            # React Dashboard (with --react-dashboard)
-        ├── .env.local        # Dev proxy target — no credentials
-        └── ...
+├── package.json              # Scripts and the pinned @spree/cli
+├── AGENTS.md                 # Instructions for coding agents
+├── CLAUDE.md                 # Project layout and conventions
+└── README.md                 # How to run everything
 ```
+
+**`server/` is the only part that is Spree's.** The apps under `apps/` are ordinary Vite and Next.js projects you own — restyle, restructure or replace them without forking anything. Each carries its own instructions (`server/CLAUDE.md`, `apps/dashboard/AGENTS.md`), which is also what a coding agent reads.
 
 ### What's in docker-compose.yml
 
@@ -124,14 +127,9 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 
 ### Admin Dashboard
 
-Open [http://localhost:3000/admin](http://localhost:3000/admin) and log in with:
+The dashboard runs as its own dev server: `spree dev` starts it alongside the API at [http://localhost:5173](http://localhost:5173), live-reloading from `apps/dashboard/`. See the [dashboard docs](/developer/dashboard/overview).
 
-| | |
-|---|---|
-| **Email** | `spree@example.com` |
-| **Password** | `spree123` |
-
-With `--react-dashboard`, the React Dashboard's dev server is the admin instead: `spree dev` starts it alongside the API at [http://localhost:5173](http://localhost:5173) — same credentials, live-reloading from `apps/dashboard/` (the classic admin remains at `/admin`). See the [React Dashboard docs](/developer/dashboard/overview).
+No default admin account is created. On the first run, `spree dev` opens a one-time setup link where you create the admin account. If you missed it, print it again with `spree rails spree:setup:token`.
 
 ### Store API
 
@@ -143,7 +141,7 @@ If you included the storefront, start it in a separate terminal:
 
 ```bash
 cd my-store/apps/storefront
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3001](http://localhost:3001) to see your store.

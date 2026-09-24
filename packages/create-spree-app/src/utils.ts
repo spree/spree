@@ -41,6 +41,40 @@ export function generateSecretKeyBase(): string {
   return crypto.randomBytes(64).toString('hex')
 }
 
+const ALPHANUMERIC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+/**
+ * A random alphanumeric string — the format `bin/rails db:encryption:init`
+ * prints (`SecureRandom.alphanumeric(32)` per value).
+ */
+export function randomAlphanumeric(length = 32): string {
+  let result = ''
+  for (let i = 0; i < length; i++) {
+    result += ALPHANUMERIC[crypto.randomInt(ALPHANUMERIC.length)]
+  }
+  return result
+}
+
+export interface EncryptionKeys {
+  primaryKey: string
+  deterministicKey: string
+  keyDerivationSalt: string
+}
+
+/**
+ * Active Record encryption keys for the scaffolded app. Spree encrypts webhook
+ * signing keys, gateway customer ids and OAuth tokens at rest only when these
+ * are set; spree-starter reads them from ACTIVE_RECORD_ENCRYPTION_* env vars.
+ * Keep the same helper in @spree/cli (`spree encryption init`) in sync.
+ */
+export function generateEncryptionKeys(): EncryptionKeys {
+  return {
+    primaryKey: randomAlphanumeric(),
+    deterministicKey: randomAlphanumeric(),
+    keyDerivationSalt: randomAlphanumeric(),
+  }
+}
+
 export function installCommand(pm: PackageManager): string {
   return pm === 'yarn' ? 'yarn' : `${pm} install`
 }

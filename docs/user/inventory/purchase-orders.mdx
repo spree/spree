@@ -1,66 +1,170 @@
 ---
 title: "Purchase Orders"
-description: "Order stock from a supplier, track what is on its way, and receive it into a warehouse."
+description: "Learn how to order stock from a supplier, track what is on its way, and receive it into a warehouse."
 ---
 
-A purchase order is how you buy stock from a supplier. It records what you asked for, what it costs, which warehouse it is coming to and when it was promised — then, as deliveries arrive, what actually turned up.
+A purchase order is how you buy stock from a supplier. It records what you asked for, how many, what each unit costs, which warehouse it is coming to and when it was promised. As deliveries arrive, it also records what actually turned up.
 
-Buying from a supplier is different from moving stock you already own. If goods are travelling between your own warehouses, use a [Stock Transfer](/user/inventory/stock-transfers) instead — it has no supplier, no cost per unit and no promised date.
+Purchase orders and [<u>stock transfers</u>](/user/inventory/stock-transfers) look similar, and both add units to your **Incoming** figure. The difference is where the stock comes from. A transfer moves stock you already own from one of your warehouses to another, so the total you own never changes. A purchase order brings stock in from outside your business, which is why it carries the things that only exist between two companies: a supplier, a cost per unit, a currency, and dates you have agreed with them.
 
-To manage purchase orders, open **Purchase Orders** under Inventory.
+That makes a purchase order your record of what you are owed. Once an order is placed, the units show as on their way so nobody reorders them by mistake, and the cost you paid follows the stock into your history, so you can answer what your inventory actually cost you later on.
 
-## Creating one
+To manage purchase orders, navigate to **Purchase orders** in the admin dashboard.
 
-Click **New Purchase Order** and fill in:
+<Warning>You can only raise a purchase order against a supplier that already exists. If the **Supplier** box offers nothing, add the supplier first. See [<u>Suppliers</u>](/user/inventory/suppliers).</Warning>
 
-| Field | What it means |
-|---|---|
-| Supplier | Who you are buying from — a [Supplier](/user/inventory/suppliers) you have set up |
-| Deliver to | The warehouse the goods are coming to |
-| Currency | What the line costs are priced in |
-| Expected | The day the supplier promised |
-| Supplier reference | The supplier's own order number, so you can match paperwork later |
-| Notes | Anything your team needs to know |
+## Reviewing Your Purchase Orders
 
-Then add lines — a product variant, how many, and what each unit costs.
+The list shows everything you have on order from suppliers, and what has already arrived.
 
-<Note>
-The currency is fixed once the order is opened, because every line cost is priced in it. Choose it before you mark the order as ordered.
-</Note>
+![The Purchase orders list showing orders at different stages, with supplier, totals and expected dates](/docs/images/user/inventory/purchase-orders/1-purchase-orders-overview.png)
 
-## The lifecycle
+Each row shows:
 
-A purchase order moves through a few states, and each one means something specific for your stock figures.
+- **Number** - The reference Spree gives each order.
+- **Status** - Where the order has got to. See [How to Place the Order](#how-to-place-the-order) for what each one means.
+- **Supplier** - Who the order was placed with.
+- **Received / ordered** - Two figures in one column: how many units have been counted in, against how many were ordered.
+- **Total** - What the order comes to.
+- **Expected** - The day the supplier promised.
+
+Two filters answer the questions you will ask most often:
+
+- **Status** separates drafts you are still building from orders that are out with a supplier and orders that have landed.
+- **Overdue** finds orders that have passed the day they were promised, so you know who to chase.
+
+You can also filter by **Supplier**, or by **Past cancel-by** to find orders you said you would not accept after a certain day. Use the search box to find an order by its number or by the supplier's own reference.
+
+**Import** and **Export** sit at the top of this list, and are covered at the end of this page.
+
+## How to Create a Purchase Order
+
+Click **New purchase order** in the top-right corner. The form has **Items** on the left and **Details** on the right.
+
+![The new purchase order form, showing the Items panel and the Details fields](/docs/images/user/inventory/purchase-orders/2-new-purchase-order.png)
+
+Fill in the Details:
+
+- **Supplier** - Who you are buying from. Only suppliers already on record appear here.
+- **Deliver to** - The warehouse the goods are coming to.
+- **Currency** - What the line costs are priced in.
+- **Expected** - The day the supplier promised to deliver.
+- **Cancel by** - The day after which you no longer want the goods.
+- **Supplier reference** - The supplier's own order number, so paperwork matches later.
+- **Notes** - Anything your team needs to know.
+
+Then click **Add a product**, tick what you are buying, and set how many units and what each unit costs.
+
+Click **Create draft** when you are done.
+
+<Warning>Set the **Currency** before you place the order. It is fixed once the order is opened, because every line cost is priced in it, and nothing on the creation form warns you about this.</Warning>
+
+<Note>**Create draft** orders nothing. The units do not count as on their way until you mark the order as ordered.</Note>
+
+### Expected and Cancel by
+
+Both are dates, both are optional, and they answer different questions.
+
+- **Expected** is the day the supplier promised to deliver. It is what the **Overdue** filter measures against, so an order past its expected date shows as overdue and is worth chasing.
+- **Cancel by** is the day after which the goods are no longer any use to you. Seasonal stock is the clearest case: a delivery of Christmas lines arriving in January is worth nothing, however apologetic the supplier is. It is what the **Past cancel-by** filter measures against.
+
+Setting **Expected** is worth doing on every order, because without it you have no way of telling which orders are late. **Cancel by** only matters where a late delivery would genuinely be refused.
+
+## How to Place the Order
+
+Open the draft and click **Mark as ordered** once you have actually placed it with the supplier. Spree confirms with *"The lines are frozen once the order goes to [supplier]. Ordered stock still does not count as available until it arrives."*
+
+![A purchase order showing its details, items, and the buttons that move it through its lifecycle](/docs/images/user/inventory/purchase-orders/3-purchase-order-detail.png)
+
+That is the moment the units start showing in the **Incoming** column on your [<u>Inventory</u>](/user/inventory/stock-levels) page. Use **Back to draft** if you sent it too early.
+
+An order moves through six statuses:
 
 | Status | What it means |
 |---|---|
-| Draft | Being put together. Nothing has been ordered and stock is unaffected |
-| Ordered | Sent to the supplier. The units now count as **incoming** on the Inventory page |
-| Partially received | Some deliveries have arrived, more are expected |
-| Received | Everything ordered has arrived |
-| Over-received | More arrived than was ordered — worth checking before you close it |
-| Cancelled | Called off. Anything still outstanding stops counting as incoming |
+| **Draft** | Being put together. Nothing has been ordered and stock is unaffected. |
+| **Ordered** | Sent to the supplier. The units now count as **Incoming**. |
+| **Partially received** | Some deliveries have arrived, more are expected. |
+| **Received** | Everything ordered has arrived. |
+| **Over-received** | More arrived than was ordered. Worth checking before you close it. |
+| **Cancelled** | Called off. Anything still outstanding stops counting as incoming. |
 
-Use **Mark as ordered** once the order is placed with the supplier. That is the moment the goods start showing as on their way. **Back to draft** reverses it if you sent it too early.
+<Note>Once an order has gone to a supplier its lines are a matter of record between two businesses, so they can no longer be edited. Cancel the order if it should not stand.</Note>
 
-## Receiving a delivery
+## How to Receive a Delivery
 
-When goods arrive, click **Receive**. Each delivery is recorded as its own stock receipt — numbered, dated, and carrying the packing-slip reference — so an order that arrives in three shipments has three receipts against it.
+Once an order is marked as ordered it is ready to receive against, so there is no separate screen to open. Record what arrived on the order itself, then commit it.
 
-For each line, record what you accepted. If something was refused — damaged, wrong item, short — record that too, with a reason. Accepted units are added to the destination warehouse's on-hand count and stop being counted as incoming.
+![A purchase order ready to receive, with accepted and rejected quantities against each line](/docs/images/user/inventory/purchase-orders/4-receive-delivery.png)
 
-Because each receipt is kept separately, the order's history shows what arrived when, rather than one final number.
+1. Open the order. Each line shows what was ordered and how much is still outstanding.
+2. Set **Received on**, which defaults to now.
+3. Enter the **Delivery note**, meaning the packing slip or delivery note number that came with the goods.
+4. Add any **Notes** about the state the delivery arrived in.
+5. Work down the lines and record how many units you accepted and how many you rejected.
+6. Click **Receive** to commit the delivery.
 
-## Closing an order short
+Count what is physically in front of you rather than what the paperwork claims, because this is the figure that lands on the warehouse's shelf.
 
-Sometimes a supplier simply will not send the rest. **Close short** finishes the order with less than you ordered and asks for a reason. The order is marked received and noted as closed short, and the outstanding units stop counting as incoming — so your inventory figures stop promising stock that is not coming.
+<Note>**Receive** is the button that commits what you have entered. Nothing is added to your stock until you click it.</Note>
 
-## Importing and exporting
+### Accepting and rejecting units
 
-Purchase orders export to CSV, one row per line — the file you send a supplier.
+Each line is counted in two parts. Record how many units you **accepted**, meaning the ones going onto the shelf, and how many you **rejected**, meaning the ones you are refusing. Rejected units need a reason:
 
-They import from one too. Rows sharing a reference become a single draft order, naming the [supplier](/user/inventory/suppliers), warehouse and SKU by name. A name that does not exist fails that row rather than quietly creating something, so a typo is visible instead of becoming a new supplier.
+- **Damaged** - The units arrived broken, crushed or otherwise unsaleable.
+- **Expired** - The units are past their date and cannot be sold on.
+- **Wrong item** - What turned up is not what you ordered.
+- **Other** - Anything the first three do not cover. Use the notes to say what happened.
 
-## What it costs you
+Only accepted units are added to the warehouse's on-hand count.
 
-Stock received through a purchase order carries what the units cost into the stock history. That is what makes "what did this inventory cost us" answerable later, without reconstructing it from supplier invoices.
+<Note>A rejection on a purchase order is a claim against your supplier, not a loss. The record of what you refused and why is what you need when asking for a credit or a replacement, so it is worth being specific in the notes.</Note>
+
+### Receiving in batches
+
+You do not have to receive a whole order at once. If a supplier ships across several days or several pallets, record what has arrived and click **Receive**. Spree logs that as its own delivery and moves the order to **Partially received**, leaving the rest outstanding.
+
+Each time more arrives, enter the next batch's quantities against the lines and click **Receive** again. Every batch is recorded separately, so an order that arrived in three shipments has three deliveries against it and the history shows exactly what came when.
+
+![The deliveries recorded against a purchase order, one for each shipment counted in](/docs/images/user/inventory/purchase-orders/5-purchase-order-deliveries.png)
+
+The order stays **Partially received** until everything ordered has been counted in, at which point it becomes **Received**. If more turns up than you ordered, it becomes **Over-received**, which is worth querying with the supplier before you close it.
+
+### Stock movements
+
+At the bottom of every order, **Stock movements for this order** lists each change the order has made to your stock figures, in the order they happened.
+
+![The stock movements recorded against a purchase order as each delivery is counted in](/docs/images/user/inventory/purchase-orders/6-stock-movements.png)
+
+This is also where the cost of your stock is recorded. Units received through a purchase order carry what they cost into your stock history, which is what makes "what did this inventory cost us" answerable later without digging through supplier invoices.
+
+## How to Close an Order Short
+
+Sometimes a supplier will not send the rest. Click **Close short** and give a reason.
+
+What arrived stays on the shelf, the units still owed are written off, and the order is marked received, so your inventory figures stop promising stock that is not coming.
+
+## How to Cancel a Purchase Order
+
+**Cancel order** calls off whatever is still outstanding. Units already received stay on the shelf, and only the outstanding balance stops counting as incoming.
+
+<Warning>Purchase orders cannot be deleted. Once an order has gone to a supplier its lines are a matter of record between two businesses, so cancelling is the only way to stand it down.</Warning>
+
+## Importing and Exporting
+
+Purchase orders can be imported and exported, using their respective buttons in the top right corner of the screen.
+
+**Export** produces a CSV of the purchase orders currently shown in your list, with one row for each product on an order. The order's number, supplier, destination and dates repeat on every row.
+
+**Import** works the same way in reverse, and is the quicker route when you are raising a large order or bringing existing orders across from another system. Rows sharing a reference become a single draft order, naming the supplier, warehouse and SKU by name.
+
+<Note>Imported names must match records that already exist. A supplier name that does not match what's in the system fails that row.</Note>
+
+Imported orders arrive as drafts, so nothing is on order until you open each one and mark it as ordered.
+
+## Further Reading
+
+- [<u>Suppliers</u>](/user/inventory/suppliers) - The suppliers you order from
+- [<u>Inventory</u>](/user/inventory/stock-levels) - Where received stock lands
+- [<u>Stock Transfers</u>](/user/inventory/stock-transfers) - Moving stock you already own

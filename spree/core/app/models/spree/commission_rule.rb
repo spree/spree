@@ -16,7 +16,7 @@ module Spree
   class CommissionRule < Spree.base_class
     include Spree::PreferenceSchema
 
-    has_prefix_id :crule
+    has_prefix_id :comrule
 
     # Retired rather than deleted, with its rate or on its own as an operator
     # edits a rate's conditions. A commission line is a settlement record, and

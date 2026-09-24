@@ -4,7 +4,11 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :applicable_catalog_groups, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
+    # Latch for the cross-store leak tripwire — see #store= below. Lives here
+    # so it clears exactly when the store context does, which Rails does per
+    # request and per job.
+    attribute :store_scope_guard_armed
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -15,6 +19,17 @@ module Spree
     # @return [Hash]
     def provider_cache
       super || (self.provider_cache = {})
+    end
+
+    # Declaring a store context arms the cross-store leak tripwire for the
+    # rest of this unit of work — a request, a job, a webhook — so the guard
+    # follows the context rather than a list of entry points
+    # (docs/plans/6.0-store-context-and-first-run-setup.md). Work that never
+    # declares a store is left alone: it reads the default store through the
+    # fallback below, which is not a scoping claim to check.
+    def store=(value)
+      Spree::StoreScopeGuard.arm! if value
+      super
     end
 
     # Returns the current store, falling back to the default store.
@@ -103,22 +118,33 @@ module Spree
     # @param channel [Spree::Channel, nil]
     # @return [Array<Spree::Catalog>]
     def catalogs_for(company: nil, user: nil, channel: nil)
-      channel ||= self.channel
-      # Normalized before the key is built, not just before the query: the
-      # key is an id, so an admin and a customer sharing one would otherwise
-      # share an entry and whichever resolved first would decide for both.
-      # Only a customer has customer-group catalogs to resolve.
-      user = nil unless user.is_a?(Spree.customer_class)
+      key = catalog_memo_key(company: company, user: user, channel: channel)
+      applicable_catalogs[key] ||= catalog_groups_for(company: company, user: user, channel: channel).flatten
+    end
 
-      key = [store&.id, company&.id, user&.id, channel&.id]
-      applicable_catalogs[key] ||= Spree::Catalog.for_context(
-        store: store, company: company, user: user, channel: channel
+    # The same catalogs grouped by precedence rank, which is what pricing
+    # walks ({Spree::Catalog.groups_for_company}). The resolved form — the
+    # flat set above is a cached flattening of it, never a second resolution.
+    #
+    # @param company [Spree::Company, nil]
+    # @param user [Object, nil]
+    # @param channel [Spree::Channel, nil]
+    # @return [Array<Array<Spree::Catalog>>]
+    def catalog_groups_for(company: nil, user: nil, channel: nil)
+      key = catalog_memo_key(company: company, user: user, channel: channel)
+      applicable_catalog_groups[key] ||= Spree::Catalog.groups_for_context(
+        store: store, company: company, user: normalized_catalog_user(user), channel: channel || self.channel
       )
     end
 
     # @return [Hash]
     def applicable_catalogs
       super || (self.applicable_catalogs = {})
+    end
+
+    # @return [Hash]
+    def applicable_catalog_groups
+      super || (self.applicable_catalog_groups = {})
     end
 
     # The quantity-rule resolver for a buyer in this request, keyed the same
@@ -133,8 +159,7 @@ module Spree
     # @param channel [Spree::Channel, nil]
     # @return [Spree::Catalogs::ResolveQuantityRules]
     def quantity_rules_resolver_for(company: nil, user: nil, channel: nil)
-      channel ||= self.channel
-      key = [store&.id, company&.id, user&.id, channel&.id]
+      key = catalog_memo_key(company: company, user: user, channel: channel)
       quantity_rules_resolvers[key] ||= Spree::Catalogs::ResolveQuantityRules.new(
         catalogs_for(company: company, user: user, channel: channel)
       )
@@ -176,6 +201,7 @@ module Spree
     # @return [void]
     def reset_catalog_memos
       self.applicable_catalogs = nil
+      self.applicable_catalog_groups = nil
       self.quantity_rules_resolvers = nil
       self.standing_companies = nil
       self.price_lists = nil
@@ -193,6 +219,23 @@ module Spree
           channel: channel
         )
       end
+    end
+
+    private
+
+    # One key for every buyer-derived memo, so they cannot drift apart.
+    #
+    # @return [Array]
+    def catalog_memo_key(company: nil, user: nil, channel: nil)
+      [store&.id, company&.id, normalized_catalog_user(user)&.id, (channel || self.channel)&.id]
+    end
+
+    # Normalized before the key is built, not just before the query: the key
+    # is an id, so an admin and a customer sharing one would share an entry.
+    #
+    # @return [Object, nil]
+    def normalized_catalog_user(user)
+      user if user.is_a?(Spree.customer_class)
     end
   end
 end

@@ -91,6 +91,7 @@ paths:
                   full_name: Jan Cummerata
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 1
@@ -157,6 +158,7 @@ paths:
                   full_name: Magdalen Hayes
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 3
@@ -244,7 +246,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=RgGhNP1euUCS75Nc3V1Y7YQF"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -302,6 +303,7 @@ paths:
                   full_name: Robin Ellis
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 44
@@ -418,9 +420,10 @@ paths:
                   full_name: Ariana Wiza
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 78
+                  name: Seller 81
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -487,10 +490,11 @@ paths:
                   full_name: Nadia Effertz
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 53
-                  slug: seller-53
+                  name: Seller 54
+                  slug: seller-54
                   status: approved
                 permissions:
                 - allow: true
@@ -708,6 +712,94 @@ paths:
                   message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update your account
+      tags:
+      - Account
+      security:
+      - bearer_auth: []
+      description: |
+        Edits the signed-in person's own account — the name and photo their team
+        sees, and the language their panel displays.
+
+        This is the person, not the business: the seller they act for is
+        `PATCH /profile`. Like `GET /me` it answers without
+        `X-Spree-Seller-Id`, because the account is the same whichever seller
+        they are acting for.
+
+        `avatar` takes an ActiveStorage direct-upload signed id to set the
+        photo, or `null` to remove it; omit it to leave the current one alone.
+        `email` is identity-bound and cannot be changed here.
+      parameters: []
+      responses:
+        '200':
+          description: account updated
+          content:
+            application/json:
+              example:
+                user:
+                  id: adm_UkLWZg9DAJ
+                  email: kala@rosenbaummoen.info
+                  first_name: Ada
+                  last_name: Lovelace
+                  full_name: Ada Lovelace
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  avatar_url:
+                  selected_locale:
+                sellers:
+                - id: sel_UkLWZg9DAJ
+                  name: Seller 56
+                  slug: seller-56
+                  status: approved
+                permissions: []
+                permission_keys: []
+              schema:
+                "$ref": "#/components/schemas/SellerMeResponse"
+        '422':
+          description: the photo is not a web image
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Avatar has an invalid content type (authorized content
+                    types are PNG, JPG, GIF, WEBP)
+                  details:
+                    avatar:
+                    - has an invalid content type (authorized content types are PNG,
+                      JPG, GIF, WEBP)
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: Ada
+                last_name:
+                  type: string
+                  example: Lovelace
+                selected_locale:
+                  type: string
+                  example: de
+                  description: Panel display language, as a code the panel ships.
+                avatar:
+                  type: string
+                  nullable: true
+                  description: Direct-upload signed id, or `null` to remove the photo.
   "/api/v3/seller/countries":
     get:
       summary: List countries
@@ -1603,17 +1695,17 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: BR
-                    name: Brestskaya voblasts' (be) Brestskaya oblast' (ru)
+                    name: Brest
                   - abbr: HO
-                    name: Homyel'skaya voblasts' (be) Gomel'skaya oblast' (ru)
+                    name: Homel
                   - abbr: HR
-                    name: Hrodzenskaya voblasts' (be) Grodnenskaya oblast' (ru)
+                    name: Hrodna
                   - abbr: MA
-                    name: Mahilyowskaya voblasts' (be) Mogilevskaya oblast' (ru)
+                    name: Magileu
                   - abbr: MI
-                    name: Minskaya voblasts' (be) Minskaya oblast' (ru)
+                    name: Minsk Region
                   - abbr: VI
-                    name: Vitsyebskaya voblasts' (be) Vitebskaya oblast' (ru)
+                    name: Vitebsk
                   - abbr: HM
                     name: Мінск
                 - iso: BE
@@ -1623,31 +1715,31 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: VAN
-                    name: Antwerpen (nl)
-                  - abbr: WBR
-                    name: Brabant Wallon (fr)
+                    name: Antwerp
                   - abbr: BRU
                     name: Brussels
-                  - abbr: WHT
-                    name: Hainaut (fr)
-                  - abbr: VLI
-                    name: Limburg (nl)
-                  - abbr: WLG
-                    name: Liège (fr)
-                  - abbr: WLX
-                    name: Luxembourg (fr)
-                  - abbr: WNA
-                    name: Namur (fr)
                   - abbr: VOV
-                    name: Oost-Vlaanderen (nl)
+                    name: East Flanders
                   - abbr: VBR
-                    name: Vlaams Brabant (nl)
+                    name: Flemish Brabant
+                  - abbr: WHT
+                    name: Hainaut
+                  - abbr: VLI
+                    name: Limburg
+                  - abbr: WLG
+                    name: Liège
+                  - abbr: WLX
+                    name: Luxembourg
+                  - abbr: WNA
+                    name: Namur
                   - abbr: VLG
                     name: Vlaams Gewest
                   - abbr: WAL
                     name: Wallonië
+                  - abbr: WBR
+                    name: Walloon Brabant
                   - abbr: VWV
-                    name: West-Vlaanderen (nl)
+                    name: West Flanders
                 - iso: BZ
                   iso3: BLZ
                   name: Belize
@@ -2478,6 +2570,8 @@ paths:
                     name: Hubei
                   - abbr: HN
                     name: Hunan
+                  - abbr: NM
+                    name: Inner Mongolia
                   - abbr: JS
                     name: Jiangsu
                   - abbr: JX
@@ -2486,8 +2580,6 @@ paths:
                     name: Jilin
                   - abbr: LN
                     name: Liaoning
-                  - abbr: NM
-                    name: Nei Mongol (mn)
                   - abbr: NX
                     name: Ningxia
                   - abbr: QH
@@ -7071,7 +7163,7 @@ paths:
                   - abbr: BRR
                     name: Berrechid
                   - abbr: BOD
-                    name: Boujdour (EH)
+                    name: Boujdour
                   - abbr: BOM
                     name: Boulemane
                   - abbr: '05'
@@ -7086,8 +7178,6 @@ paths:
                     name: Chichaoua
                   - abbr: CHT
                     name: Chtouka-Ait Baha
-                  - abbr: '12'
-                    name: Dakhla-Oued Ed-Dahab (EH)
                   - abbr: DRI
                     name: Driouch
                   - abbr: '08'
@@ -7099,7 +7189,7 @@ paths:
                   - abbr: ERR
                     name: Errachidia
                   - abbr: ESM
-                    name: Es Smara (EH)
+                    name: Es Semara
                   - abbr: ESI
                     name: Essaouira
                   - abbr: FAH
@@ -7139,7 +7229,7 @@ paths:
                   - abbr: LAR
                     name: Larache
                   - abbr: LAA
-                    name: Laâyoune* (EH)
+                    name: Laâyoune
                   - abbr: '11'
                     name: Laâyoune-Sakia El Hamra (EH-partial)
                   - abbr: MAR
@@ -7163,7 +7253,7 @@ paths:
                   - abbr: OUA
                     name: Ouarzazate
                   - abbr: OUD
-                    name: Oued ed Dahab (EH)
+                    name: Oued Ed-Dahab
                   - abbr: OUZ
                     name: Ouezzane
                   - abbr: OUJ
@@ -7194,6 +7284,8 @@ paths:
                     name: Skhirate-Témara
                   - abbr: '09'
                     name: Souss-Massa
+                  - abbr: '12'
+                    name: Tadla-Azilal
                   - abbr: TNT
                     name: Tan-Tan
                   - abbr: TNG
@@ -7935,7 +8027,7 @@ paths:
                   - abbr: JK
                     name: Azad Kashmir
                   - abbr: BA
-                    name: Baluchistan (en)
+                    name: Balochistan
                   - abbr: GB
                     name: Gilgit-Baltistan
                   - abbr: IS
@@ -7945,7 +8037,7 @@ paths:
                   - abbr: PB
                     name: Punjab
                   - abbr: SD
-                    name: Sind (en)
+                    name: Sindh
                 - iso: PW
                   iso3: PLW
                   name: Palau
@@ -10184,57 +10276,57 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: AG
-                    name: Aargau (de)
+                    name: Aargau
                   - abbr: AR
-                    name: Appenzell Ausserrhoden (de)
+                    name: Appenzell Ausserrhoden
                   - abbr: AI
-                    name: Appenzell Innerrhoden (de)
+                    name: Appenzell Innerrhoden
                   - abbr: BL
-                    name: Basel-Landschaft (de)
+                    name: Basel-Landschaft
                   - abbr: BS
-                    name: Basel-Stadt (de)
+                    name: Basel-Stadt
                   - abbr: BE
-                    name: Bern (de)
+                    name: Bern
                   - abbr: FR
-                    name: Fribourg (fr)
+                    name: Fribourg
                   - abbr: GE
-                    name: Genève (fr)
+                    name: Geneva
                   - abbr: GL
-                    name: Glarus (de)
+                    name: Glarus
                   - abbr: GR
-                    name: Graubünden (de)
+                    name: Graubünden
                   - abbr: JU
-                    name: Jura (fr)
+                    name: Jura
                   - abbr: LU
-                    name: Luzern (de)
+                    name: Lucerne
                   - abbr: NE
-                    name: Neuchâtel (fr)
+                    name: Neuchâtel
                   - abbr: NW
-                    name: Nidwalden (de)
+                    name: Nidwalden
                   - abbr: OW
-                    name: Obwalden (de)
-                  - abbr: SG
-                    name: Sankt Gallen (de)
+                    name: Obwalden
                   - abbr: SH
-                    name: Schaffhausen (de)
+                    name: Schaffhausen
                   - abbr: SZ
-                    name: Schwyz (de)
+                    name: Schwyz
                   - abbr: SO
-                    name: Solothurn (de)
+                    name: Solothurn
+                  - abbr: SG
+                    name: St. Gallen
                   - abbr: TG
-                    name: Thurgau (de)
+                    name: Thurgau
                   - abbr: TI
-                    name: Ticino (it)
+                    name: Ticino
                   - abbr: UR
-                    name: Uri (de)
+                    name: Uri
                   - abbr: VS
-                    name: Valais (fr)
+                    name: Valais
                   - abbr: VD
-                    name: Vaud (fr)
+                    name: Vaud
                   - abbr: ZG
-                    name: Zug (de)
+                    name: Zug
                   - abbr: ZH
-                    name: Zürich (de)
+                    name: Zürich
                 - iso: SY
                   iso3: SYR
                   name: Syrian Arab Republic
@@ -12334,7 +12426,7 @@ paths:
                 data:
                 - id: dm_UkLWZg9DAJ
                   name: My courier
-                  code: UPS_GROUND
+                  code: UPS_GROUND_73
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12356,7 +12448,7 @@ paths:
                     currency: USD
                 - id: dm_gbHJdmfrXB
                   name: Marketplace post
-                  code: UPS_GROUND
+                  code: UPS_GROUND_74
                   estimated_transit_business_days_min:
                   estimated_transit_business_days_max:
                   digital: false
@@ -12535,7 +12627,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My courier
-                code: UPS_GROUND
+                code: UPS_GROUND_79
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -12574,7 +12666,7 @@ paths:
               example:
                 id: dm_UkLWZg9DAJ
                 name: My express courier
-                code: UPS_GROUND
+                code: UPS_GROUND_81
                 estimated_transit_business_days_min:
                 estimated_transit_business_days_max:
                 digital: false
@@ -13559,8 +13651,8 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 2043250
-                  slug: product-2043250
+                  name: Product 2053250
+                  slug: product-2053250
                   meta_title:
                   meta_description:
                   meta_keywords:
@@ -13803,8 +13895,8 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 2076710
-                slug: product-2076710
+                name: Product 2086710
+                slug: product-2086710
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13883,7 +13975,7 @@ paths:
               example:
                 id: prod_UkLWZg9DAJ
                 name: Hand-thrown mug, large
-                slug: product-2108212
+                slug: product-2118212
                 meta_title:
                 meta_description:
                 meta_keywords:
@@ -13996,8 +14088,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 98
-                slug: seller-98
+                name: Seller 101
+                slug: seller-101
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14070,7 +14162,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-100
+                slug: seller-103
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14537,7 +14629,6 @@ paths:
                   expires_at: '2026-01-29T12:00:00.000Z'
                   accepted_at:
                   status: pending
-                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=gybGAXxVP79yKWNTZLAC94ui"
               schema:
                 type: object
                 properties:
@@ -14547,6 +14638,40 @@ paths:
                       "$ref": "#/components/schemas/Invitation"
                 required:
                 - data
+  "/api/v3/seller/invitations/{invitation_id}/acceptance_link":
+    parameters:
+    - name: invitation_id
+      in: path
+      description: Invitation ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get an invitation acceptance link
+      tags:
+      - Team
+      security:
+      - bearer_auth: []
+      description: |
+        The link a colleague opens to join the team. It carries the invitation's
+        token, so the listing never includes it; fetch it when someone asks to
+        copy the link.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: acceptance link found
+          content:
+            application/json:
+              example:
+                id: inv_UkLWZg9DAJ
+                acceptance_url: http://www.example.com:3000/accept-invitation/inv_UkLWZg9DAJ?token=7La4K2PLxW8oLoXjmz46QYEJ
+              schema:
+                "$ref": "#/components/schemas/InvitationAcceptanceLink"
   "/api/v3/seller/invitations/{id}/resend":
     parameters:
     - name: id
@@ -14583,7 +14708,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3uJFfKUSiHtnc9TGAXMJUXsB"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -14705,7 +14829,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3K6BfBtHGFeQgToPE45qUDWE"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -14818,10 +14941,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--3f2ad28104b46cb96632d095e0988286db71eabd
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--484d46dd60be3523918976c0cc622ec8eb33a9be
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--5126cb202a4e0cdc0b7adc65de495e3a09aa56f1
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -14883,8 +15006,12 @@ paths:
               example:
                 data:
                 - currency: USD
+                  settlement_currency: USD
+                  converted: false
                   earned: '40.0'
                   display_earned: "$40.00"
+                  payable: '40.0'
+                  display_payable: "$40.00"
                   paid: '15.0'
                   display_paid: "$15.00"
                   balance: '25.0'
@@ -15665,7 +15792,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 81
                   stock_location_name: Vernie Lehner
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -15673,13 +15800,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1859315
-                    sku: SKU-251
+                    name: Product 1869315
+                    sku: SKU-252
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 81
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -15772,7 +15899,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 82
                 stock_location_name: Mirta Herman
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15780,13 +15907,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 186961
-                  sku: SKU-252
+                  name: Product 187961
+                  sku: SKU-253
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 82
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15886,7 +16013,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 83
                 stock_location_name: Eugena Schultz
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15894,13 +16021,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1873170
-                  sku: SKU-253
+                  name: Product 1883170
+                  sku: SKU-254
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 83
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -15980,7 +16107,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 fulfillment_type: shipping
-                delivery_method_name: UPS Ground
+                delivery_method_name: UPS Ground 84
                 stock_location_name: Karyn Moore
                 stock_location_id: sloc_UkLWZg9DAJ
                 fulfillment_items:
@@ -15988,13 +16115,13 @@ paths:
                   quantity: 1
                   line_item_id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
-                  name: Product 1887276
-                  sku: SKU-254
+                  name: Product 1897276
+                  sku: SKU-255
                   options_text: ''
                 selected_delivery_rate_id: dr_gbHJdmfrXB
                 delivery_rates:
                 - id: dr_gbHJdmfrXB
-                  name: UPS Ground
+                  name: UPS Ground 84
                   selected: true
                   cost: '10.0'
                   total: '10.0'
@@ -16183,7 +16310,7 @@ paths:
                   cancel_note:
                   items:
                   - id: li_UkLWZg9DAJ
-                    name: Product 19095
+                    name: Product 19195
                     options_text: ''
                     quantity: 1
                     currency: USD
@@ -16192,7 +16319,7 @@ paths:
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
-                    sku: SKU-256
+                    sku: SKU-257
                     thumbnail_url:
                   fulfillments:
                   - id: ful_UkLWZg9DAJ
@@ -16205,7 +16332,7 @@ paths:
                     created_at: '2026-01-15T12:00:00.000Z'
                     updated_at: '2026-01-15T12:00:00.000Z'
                     fulfillment_type: shipping
-                    delivery_method_name: UPS Ground
+                    delivery_method_name: UPS Ground 86
                     stock_location_name: Roseline Roberts
                     stock_location_id: sloc_UkLWZg9DAJ
                     fulfillment_items:
@@ -16213,13 +16340,13 @@ paths:
                       quantity: 1
                       line_item_id: li_UkLWZg9DAJ
                       variant_id: variant_UkLWZg9DAJ
-                      name: Product 19095
-                      sku: SKU-256
+                      name: Product 19195
+                      sku: SKU-257
                       options_text: ''
                     selected_delivery_rate_id: dr_gbHJdmfrXB
                     delivery_rates:
                     - id: dr_gbHJdmfrXB
-                      name: UPS Ground
+                      name: UPS Ground 86
                       selected: true
                       cost: '10.0'
                       total: '10.0'
@@ -16248,7 +16375,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 165 Lovely Street
+                    address1: 167 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16270,7 +16397,7 @@ paths:
                     first_name: John
                     last_name: Doe
                     full_name: John Doe
-                    address1: 164 Lovely Street
+                    address1: 166 Lovely Street
                     address2: Northwest
                     postal_code: '10118'
                     city: New York
@@ -16384,7 +16511,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1919755
+                  name: Product 1929755
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16393,7 +16520,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-257
+                  sku: SKU-258
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16406,7 +16533,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 87
                   stock_location_name: Woodrow Hand
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16414,13 +16541,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1919755
-                    sku: SKU-257
+                    name: Product 1929755
+                    sku: SKU-258
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 87
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16449,7 +16576,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 167 Lovely Street
+                  address1: 169 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16471,7 +16598,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 166 Lovely Street
+                  address1: 168 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16581,7 +16708,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1946554
+                  name: Product 1956554
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16590,7 +16717,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-260
+                  sku: SKU-261
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16603,7 +16730,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 90
                   stock_location_name: Ricky Kutch
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16611,13 +16738,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1946554
-                    sku: SKU-260
+                    name: Product 1956554
+                    sku: SKU-261
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 90
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16646,7 +16773,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 173 Lovely Street
+                  address1: 175 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16668,7 +16795,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 172 Lovely Street
+                  address1: 174 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -16785,7 +16912,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1955038
+                  name: Product 1965038
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -16794,7 +16921,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-261
+                  sku: SKU-262
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -16807,7 +16934,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 91
                   stock_location_name: Rudy Mosciski
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -16815,13 +16942,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1955038
-                    sku: SKU-261
+                    name: Product 1965038
+                    sku: SKU-262
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 91
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -16862,7 +16989,7 @@ paths:
                   state_code: NY
                   quick_checkout: false
                   is_default_billing: false
-                  is_default_shipping: true
+                  is_default_shipping: false
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
@@ -16872,7 +16999,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 174 Lovely Street
+                  address1: 176 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17052,7 +17179,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1973962
+                  name: Product 1983962
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17061,7 +17188,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-263
+                  sku: SKU-264
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17074,7 +17201,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 93
                   stock_location_name: Kecia Pollich
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17082,13 +17209,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1973962
-                    sku: SKU-263
+                    name: Product 1983962
+                    sku: SKU-264
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 93
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17117,7 +17244,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 179 Lovely Street
+                  address1: 181 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17139,7 +17266,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 178 Lovely Street
+                  address1: 180 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17225,7 +17352,7 @@ paths:
                 cancel_note:
                 items:
                 - id: li_UkLWZg9DAJ
-                  name: Product 1985749
+                  name: Product 1995749
                   options_text: ''
                   quantity: 1
                   currency: USD
@@ -17234,7 +17361,7 @@ paths:
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
-                  sku: SKU-264
+                  sku: SKU-265
                   thumbnail_url:
                 fulfillments:
                 - id: ful_UkLWZg9DAJ
@@ -17247,7 +17374,7 @@ paths:
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
                   fulfillment_type: shipping
-                  delivery_method_name: UPS Ground
+                  delivery_method_name: UPS Ground 94
                   stock_location_name: Ophelia Hartmann
                   stock_location_id: sloc_UkLWZg9DAJ
                   fulfillment_items:
@@ -17255,13 +17382,13 @@ paths:
                     quantity: 1
                     line_item_id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
-                    name: Product 1985749
-                    sku: SKU-264
+                    name: Product 1995749
+                    sku: SKU-265
                     options_text: ''
                   selected_delivery_rate_id: dr_gbHJdmfrXB
                   delivery_rates:
                   - id: dr_gbHJdmfrXB
-                    name: UPS Ground
+                    name: UPS Ground 94
                     selected: true
                     cost: '10.0'
                     total: '10.0'
@@ -17290,7 +17417,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 181 Lovely Street
+                  address1: 183 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -17312,7 +17439,7 @@ paths:
                   first_name: John
                   last_name: Doe
                   full_name: John Doe
-                  address1: 180 Lovely Street
+                  address1: 182 Lovely Street
                   address2: Northwest
                   postal_code: '10118'
                   city: New York
@@ -18025,7 +18152,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: Only 1 of Product 2147120 can be returned
+                  message: Only 1 of Product 2157120 can be returned
       requestBody:
         content:
           application/json:
@@ -18238,7 +18365,7 @@ paths:
               example:
                 error:
                   code: processing_error
-                  message: refund_exceeds_balance
+                  message: That is more than the amount still refundable.
       requestBody:
         content:
           application/json:
@@ -18625,6 +18752,9 @@ paths:
                   updated_at: '2026-01-15T12:00:00.000Z'
                   amount: '42.0'
                   display_amount: "$42.00"
+                  settled_amount: '42.0'
+                  settled_currency: USD
+                  converted: false
                   order_id: or_UkLWZg9DAJ
                   payout_id:
                   reversed_from_id:
@@ -18689,6 +18819,9 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 amount: '42.0'
                 display_amount: "$42.00"
+                settled_amount: '42.0'
+                settled_currency: USD
+                converted: false
                 order_id: or_UkLWZg9DAJ
                 payout_id:
                 reversed_from_id:
@@ -18843,7 +18976,7 @@ components:
           type: string
           description: JWT access token, `seller_api` audience
         user:
-          "$ref": "#/components/schemas/TeamMember"
+          "$ref": "#/components/schemas/Account"
         sellers:
           type: array
           description: The sellers this user may act for. Pick one and send its `id`
@@ -19114,7 +19247,7 @@ components:
         may do on the selected one
       properties:
         user:
-          "$ref": "#/components/schemas/TeamMember"
+          "$ref": "#/components/schemas/Account"
         sellers:
           type: array
           items:
@@ -19557,14 +19690,56 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+        selected_locale:
+          type: string
+          nullable: true
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - full_name
+      - created_at
+      - avatar_url
+      - selected_locale
+      x-typelizer: true
     Balance:
       type: object
       properties:
         currency:
           type: string
+        settlement_currency:
+          type: string
+        converted:
+          type: boolean
         earned:
           type: string
         display_earned:
+          type: string
+        payable:
+          type: string
+        display_payable:
           type: string
         paid:
           type: string
@@ -19580,8 +19755,12 @@ components:
           type: string
       required:
       - currency
+      - settlement_currency
+      - converted
       - earned
       - display_earned
+      - payable
+      - display_payable
       - paid
       - display_paid
       - balance
@@ -20379,6 +20558,17 @@ components:
       - sample_row
       - mappings
       x-typelizer: true
+    InvitationAcceptanceLink:
+      type: object
+      properties:
+        id:
+          type: string
+        acceptance_url:
+          type: string
+      required:
+      - id
+      - acceptance_url
+      x-typelizer: true
     Invitation:
       type: object
       properties:
@@ -20403,8 +20593,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        acceptance_url:
-          type: string
       required:
       - id
       - email
@@ -20412,7 +20600,6 @@ components:
       - expires_at
       - accepted_at
       - status
-      - acceptance_url
       x-typelizer: true
     Media:
       type: object
@@ -21865,6 +22052,14 @@ components:
           type: string
         display_amount:
           type: string
+        settled_amount:
+          type: string
+          nullable: true
+        settled_currency:
+          type: string
+          nullable: true
+        converted:
+          type: boolean
         order_id:
           type: string
           nullable: true
@@ -21888,6 +22083,9 @@ components:
       - updated_at
       - amount
       - display_amount
+      - settled_amount
+      - settled_currency
+      - converted
       - order_id
       - payout_id
       - reversed_from_id

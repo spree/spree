@@ -18,7 +18,7 @@ Add an "Analytics" item to the dashboard sidebar.
 **Step 1.** Open `src/plugins.ts` — the starter ships this file already wired up — and register a nav entry:
 
 ```tsx
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 import { BarChartIcon } from 'lucide-react'
 
 defineDashboardPlugin({
@@ -43,8 +43,7 @@ Clicking it lands on a "Page not found" screen — we registered the nav entry b
 **Step 3.** Create the page component at `src/pages/analytics.tsx`:
 
 ```tsx
-import { PageHeader } from '@spree/dashboard-core'
-import { ResourceLayout } from '@spree/dashboard-ui'
+import { PageHeader, ResourceLayout } from '@spree/dashboard'
 
 export function AnalyticsPage() {
   return (
@@ -59,7 +58,7 @@ export function AnalyticsPage() {
 **Step 4.** Register the route in `src/plugins.ts`:
 
 ```tsx
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin } from '@spree/dashboard'
 import { BarChartIcon } from 'lucide-react'
 import { AnalyticsPage } from './pages/analytics'
 
@@ -82,7 +81,7 @@ defineDashboardPlugin({
 Save. Click "Analytics" — your page renders inside the dashboard chrome, at `/<store id>/analytics`.
 
 <Warning>
-Every `key` must be unique, including against the built-ins (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
+Every `key` must be unique, including against the built-ins (`getting-started`, `home`, `orders`, `products`, `inventory`, `customers`, `sellers`, `loyalty`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
 </Warning>
 
 ## What just happened

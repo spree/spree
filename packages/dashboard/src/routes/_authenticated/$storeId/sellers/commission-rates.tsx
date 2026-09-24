@@ -55,7 +55,13 @@ import { PlusIcon, Trash2Icon, TriangleAlertIcon } from '@spree/dashboard-ui/ico
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
+import {
+  Controller,
+  type FieldPath,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { commissionRuleSubjectPicker } from '../../../../components/spree/commission-rule-subjects'
@@ -738,7 +744,13 @@ function CommissionRulesField({ form }: { form: UseFormReturn<CommissionRateForm
                 <DropdownMenuItem
                   key={type.type}
                   onClick={() =>
-                    rulesArray.append({ type: type.type, preferences: {}, product_ids: [] })
+                    rulesArray.append({
+                      type: type.type,
+                      preferences: {},
+                      product_ids: [],
+                      seller_ids: [],
+                      category_ids: [],
+                    })
                   }
                 >
                   {typeLabel('commission_rule', type.type, type.name)}
@@ -828,11 +840,11 @@ function CommissionRuleRow({
       {picker && associationField ? (
         <Controller
           control={form.control}
-          name={`rules.${index}.product_ids`}
+          name={`rules.${index}.${associationField}` as FieldPath<CommissionRateFormValues>}
           render={({ field }) => (
             <ResourceMultiAutocomplete
               {...picker(`commission-rule-${ruleType?.type}`)}
-              value={field.value ?? []}
+              value={(field.value ?? []) as string[]}
               onChange={field.onChange}
             />
           )}

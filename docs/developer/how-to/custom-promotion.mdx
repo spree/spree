@@ -62,7 +62,7 @@ end
 The `options` hash passed to `eligible?` can include `:user`, `:email`, and other context from the checkout flow.
 
 <Warning>
-Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and in Spree 6 a cart is its own model rather than an unfinished order. A rule guarding on `Spree::Order` alone silently never applies during checkout — the promotion just appears not to work. Every built-in rule accepts both.
+Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and a cart is its own model rather than an unfinished order. A rule that isn't applicable is skipped rather than failed, so a rule guarding on `Spree::Order` alone is silently ignored during checkout — its condition is never checked and the promotion applies as if the rule weren't there. Every built-in rule accepts both.
 </Warning>
 
 #### Using Preferences
@@ -154,7 +154,7 @@ module Spree
         private
 
         def matches_brand?(line_item)
-          brand = line_item.product.get_metafield('details.brand')&.value
+          brand = line_item.product.get_custom_field('details.brand')&.value
           preferred_brand_names.include?(brand)
         end
       end
@@ -264,7 +264,7 @@ Like rules, registered actions surface automatically in the dashboard's promotio
 
 ## Custom Adjusters
 
-Not every charge or reduction is a promotion. A gift wrap fee, a payment surcharge, or loyalty pricing has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee](/developer/core-concepts/fees) or [Discount](/developer/core-concepts/discounts) rows.
+Not every charge or reduction is a promotion. A gift wrap fee or a payment surcharge has no rules, no coupon codes, and no competition — it just needs to be on the order whenever it applies. That's an **adjuster**: a class invoked on every recalculation that owns a family of [Fee](/developer/core-concepts/fees) rows.
 
 ```ruby server/app/models/my_app/adjusters/gift_wrap.rb
 module MyApp
@@ -290,11 +290,11 @@ Rails.application.config.after_initialize do
 end
 ```
 
-The contract is one method: `update`. It runs on every recalculation, so it must be idempotent — write the rows that should exist, remove the ones that shouldn't (that's why the example uses `find_or_initialize_by` keyed by `kind` rather than `create`). The `order` it receives is the cart during checkout and the order after placement, and rows attach to it either way.
+The contract is one method: `update`. It runs on every recalculation, so it must be idempotent — write the rows that should exist, remove the ones that shouldn't (that's why the example uses `find_or_initialize_by` keyed by `kind` rather than `create`). The `order` it receives is the cart during checkout. Adjusters don't run once an order is placed — a placed order's discount, fee and tax rows are frozen and only re-summed, so post-placement changes go through the admin discount and fee endpoints.
 
 There's no totals bookkeeping to do: after all adjusters run, Spree re-sums the typed rows into the order totals and the tax provider estimates tax on the result — a fee you write here gets taxed in the same pass, like any other fee.
 
-Custom discounts work the same way, writing `order.discounts` rows with your own `kind` (e.g. `'loyalty'`). Use a kind other than `'promotion'` — promotion rows belong to the promotion engine, which removes any it didn't write itself.
+Discount rows are limited to two kinds, `promotion` and `manual`, and promotion rows belong to the promotion engine, which removes any it didn't write itself. Reductions that need rules, codes or stacking are best modeled as a [custom promotion action](#custom-promotion-actions); note that the order's `discount_total` counts promotion discounts only.
 
 ## Testing
 

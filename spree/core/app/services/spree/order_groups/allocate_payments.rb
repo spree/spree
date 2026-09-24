@@ -87,6 +87,9 @@ module Spree
           next if split.persisted?
 
           share = Spree::Money::Rounding.from_minor_units(shares[index], currency)
+          # So re-summing its payment total on save reuses this instance rather
+          # than loading a second copy of the row per share.
+          split.order = order
           split.currency = payment.currency
           split.authorized_amount = share
           split.captured_amount = captured ? share : 0

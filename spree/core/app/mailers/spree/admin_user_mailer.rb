@@ -34,9 +34,9 @@ module Spree
     end
 
     # The dashboard SPA passes a validated redirect URL; the token is appended as
-    # a query param, falling back to the store URL.
+    # a query param, falling back to the dashboard's own reset page.
     def password_reset_url(token, store, redirect_url)
-      append_token(redirect_url.presence || store.formatted_url, token)
+      append_token(redirect_url.presence || "#{Spree::Stores::DashboardUrl.call(store: store)}/reset-password", token)
     end
   end
 end

@@ -26,6 +26,34 @@ module Spree
     # Ransack configuration
     self.whitelisted_ransackable_attributes = %w[event_name response_code execution_time success delivered_at created_at]
 
+    # Event subjects whose permission is not found by class name alone.
+    PAYLOAD_SUBJECT_CLASSES = {
+      'cart' => 'Spree::Order',
+      'customer' => -> { Spree.customer_class },
+      'newsletter_subscriber' => -> { Spree.customer_class }
+    }.freeze
+
+    # Event subjects whose payload holds no record of anyone's data.
+    PUBLIC_PAYLOAD_SUBJECTS = %w[webhook].freeze
+
+    # The catalog key a caller needs to read this delivery's payload. The
+    # payload is the full record the event is about — an order's addresses, a
+    # customer's email — so reading the log is no wider than reading the
+    # record. A subject no permission scope covers falls back to customer
+    # access, since an unknown payload may hold personal data.
+    #
+    # @return [String, nil] nil when anyone who can read the log may see it
+    def payload_permission_key
+      subject = event_name.to_s.split('.').first.to_s
+      return if PUBLIC_PAYLOAD_SUBJECTS.include?(subject)
+
+      source = PAYLOAD_SUBJECT_CLASSES[subject]
+      klass = source.respond_to?(:call) ? source.call : (source || "Spree::#{subject.camelize}").to_s.safe_constantize
+      scope = Spree.permissions.scope_for_resource(klass)
+
+      scope ? "read_#{scope.name}" : 'read_customers'
+    end
+
     # Check if the delivery was successful
     #
     # @return [Boolean]

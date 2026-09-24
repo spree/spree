@@ -156,11 +156,16 @@ module Spree
           end
 
           def association_fields_for(klass)
-            return [] unless klass.respond_to?(:additional_permitted_attributes)
+            case klass.api_type
+            when 'seller_rule' then ['seller_ids']
+            when 'category_rule' then ['category_ids']
+            else
+              return [] unless klass.respond_to?(:additional_permitted_attributes)
 
-            klass.additional_permitted_attributes.flat_map do |attribute|
-              attribute.is_a?(Hash) ? attribute.keys : attribute
-            end.map(&:to_s)
+              klass.additional_permitted_attributes.flat_map do |attribute|
+                attribute.is_a?(Hash) ? attribute.keys : attribute
+              end.map(&:to_s)
+            end
           end
         end
       end

@@ -23,6 +23,7 @@ module Spree
 
     extend Spree::DisplayMoney
 
+    include Spree::ActedBy
     include Spree::SingleStoreResource
     include Spree::SanitizableRichText
     include Spree::Purchase::Channel
@@ -91,6 +92,54 @@ module Spree
       order
     end
 
+    # Checkout-step introspection belongs to Spree::Cart
+    # ({Spree::Purchase::CheckoutSteps}) since 6.0 — an order is past checkout
+    # by definition. These bridges answer for an upgrader reaching for the
+    # Spree 5 API on an order, rather than raising NoMethodError.
+    #
+    # The step list is data-driven, so it stays accurate here: the registry
+    # computes it from the record's own predicates, all of which Order carries.
+    # Where the checkout stands within that list is not, which is why the
+    # readers below report a finished checkout.
+
+    # @deprecated Checkout steps belong to Spree::Cart; removed in 6.1.
+    def checkout_steps
+      Spree::Deprecation.warn('Spree::Order#checkout_steps is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def has_checkout_step?(step)
+      Spree::Deprecation.warn('Spree::Order#has_checkout_step? is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      step.present? && Spree::Checkout::Registry.step_names_for(self).include?(step.to_s)
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def checkout_step_index(step)
+      Spree::Deprecation.warn('Spree::Order#checkout_step_index is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).index(step).to_i
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. An order has no
+    #   outstanding step, so this is always 'complete'.
+    def current_checkout_step
+      Spree::Deprecation.warn("Spree::Order#current_checkout_step is deprecated and will be removed in Spree 6.1. An order is past checkout, so this is always 'complete'.")
+      'complete'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1.
+    def final_checkout_step
+      Spree::Deprecation.warn('Spree::Order#final_checkout_step is deprecated and will be removed in Spree 6.1. Checkout steps belong to Spree::Cart — ask the cart before it is completed.')
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }.last || 'address'
+    end
+
+    # @deprecated See {#checkout_steps}; removed in 6.1. Every step is behind
+    #   an order, so this is the whole list bar 'complete'.
+    def completed_checkout_steps
+      Spree::Deprecation.warn("Spree::Order#completed_checkout_steps is deprecated and will be removed in Spree 6.1. An order is past checkout, so every step bar 'complete' is behind it.")
+      Spree::Checkout::Registry.step_names_for(self).reject { |step| step == 'complete' }
+    end
+
     # Standardized column names (renamed in 6.0); legacy readers stay as
     # aliases one release.
     alias_attribute :promo_total, :discount_total
@@ -121,6 +170,17 @@ module Spree
       order_group_id po_number
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
+    # A seller never sees the buyer's email, and a company member filtering the
+    # company's orders must not learn a colleague's; the risk flag and coupon
+    # are back-office data. `search` matches on the email too.
+    self.private_ransackable_attributes = {
+      store: %w[email considered_risky coupon_code],
+      seller: %w[email considered_risky coupon_code]
+    }
+    self.private_ransackable_scopes = {
+      store: %w[search multi_search],
+      seller: %w[search multi_search]
+    }
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer
@@ -169,9 +229,7 @@ module Spree
     # Whose sale this is. Nil on the operator's own goods, including the
     # first-party child of a mixed marketplace checkout.
     belongs_to :seller, class_name: 'Spree::Seller', optional: true
-    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
-    belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
+    acted_by :created_by, :approver, :canceler
     belongs_to :cancel_reason, class_name: 'Spree::OrderCancellationReason', optional: true, inverse_of: :orders
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
@@ -195,6 +253,11 @@ module Spree
     # checkout names the one child being refunded. Keyed on that column rather
     # than walked through payments, which a grouped order does not own.
     has_many :refunds, class_name: 'Spree::Refund', inverse_of: :order, dependent: :nullify
+    # The other half of what this order gave back. A refund paid as store
+    # credit writes no Spree::Refund row, so anything measuring what the
+    # customer got back has to add the two ledgers.
+    has_many :store_credit_refunds, class_name: 'Spree::StoreCredit', inverse_of: :refunded_order,
+                                    foreign_key: :refunded_order_id, dependent: :nullify
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
@@ -286,12 +349,8 @@ module Spree
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
     scope :not_shipped, -> { where(fulfillment_status: %w[unfulfilled partial]) }
     scope :shipped, -> { where(fulfillment_status: %w[fulfilled delivered shipped]) }
-    scope :refunded, lambda {
-      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
-    }
-    scope :partially_refunded, lambda {
-      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
-    }
+    scope :refunded, -> { where(payment_status: 'refunded') }
+    scope :partially_refunded, -> { where(payment_status: 'partially_refunded') }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
@@ -699,12 +758,8 @@ module Spree
 
     # What has been captured against this order, net of refunds.
     #
-    # An order placed in a split checkout owns no payments, so its own
-    # +payment_total+ stays at zero however much the customer paid — the
-    # figure comes from its share of the group's payments instead, the same
-    # way {Spree::Orders::UpdateStatuses} derives +payment_status+. The
-    # group's own total will not do: once one seller has been captured and
-    # another has not, no proportion of it describes either.
+    # Read from the share rows rather than the +payment_total+ they are summed
+    # into, since a caller about to move money needs what they say now.
     #
     # @return [BigDecimal]
     def net_captured_total
@@ -1089,10 +1144,11 @@ module Spree
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.customer_class, nil] the user who approved the order
+    # @param actor [Object, nil] who approved it — an admin user or an API
+    #   key (see Spree.actor_classes)
     # @return [Spree::ServiceModule::Result]
-    def approved_by(user = nil)
-      Spree.order_approve_service.call(order: self, approver: user)
+    def approved_by(actor = nil)
+      Spree.order_approve_service.call(order: self, approver: actor)
     end
 
     def approved?
@@ -1199,6 +1255,21 @@ module Spree
     end
 
     private
+
+    # An order placed in a split checkout owns no payments, so its money is
+    # the sum of its shares of the group's instead — the same source
+    # {Spree::Orders::UpdateStatuses} derives payment_status from.
+    #
+    # @return [Arel::Nodes::NamedFunction]
+    def settled_payments_arel
+      return super unless grouped?
+
+      splits = Spree::PaymentSplit.arel_table
+      net = splits.project(splits[:captured_amount].sum - splits[:refunded_amount].sum).
+            where(splits[:order_id].eq(id))
+
+      Arel::Nodes::NamedFunction.new('COALESCE', [Arel::Nodes::Grouping.new(net), Arel.sql('0')])
+    end
 
     def ensure_can_be_deleted
       return true if can_be_deleted?

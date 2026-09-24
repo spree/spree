@@ -14,7 +14,7 @@ It's the full version of the [custom form field recipe](/developer/dashboard/rec
 
 ## First: should this be a custom field instead?
 
-**Default to a [custom field definition](/developer/dashboard/recipes/custom-form-field#path-a-custom-field-definition--no-code).** It needs zero code — declare the field, and the product form renders and saves it. That covers most plugin data and everything merchants define themselves.
+**Default to a [custom field definition](/developer/dashboard/recipes/custom-form-field#path-a-custom-field-definition-no-code).** It needs zero code — declare the field, and the product form renders and saves it. That covers most plugin data and everything merchants define themselves.
 
 Graduate to a real database column only when the attribute needs **list operations or database guarantees**:
 
@@ -33,7 +33,7 @@ Four small pieces — each one unlocks a specific frontend capability. In a host
 **The column** (with an index — you're adding it *because* it will be queried):
 
 ```ruby
-class AddLeadTimeDaysToSpreeProducts < ActiveRecord::Migration[7.2]
+class AddLeadTimeDaysToSpreeProducts < ActiveRecord::Migration[8.1]
   def change
     add_column :spree_products, :lead_time_days, :integer
     add_index :spree_products, :lead_time_days
@@ -58,22 +58,8 @@ Spree.api.admin_product_serializer = 'Admin::ProductSerializer'
 **The permitted param** — makes it *writable* (the form's Save ships it in the same PATCH as core fields). The read and write names must match:
 
 ```ruby
-# app/controllers/spree/api/v3/admin/products_controller_decorator.rb
-module Spree
-  module Api
-    module V3
-      module Admin
-        module ProductsControllerDecorator
-          def permitted_params
-            super.merge(params.permit(:lead_time_days))
-          end
-        end
-
-        ProductsController.prepend(ProductsControllerDecorator)
-      end
-    end
-  end
-end
+# config/initializers/spree.rb
+Spree::Product.additional_permitted_attributes += [:lead_time_days]
 ```
 
 **The Ransack allowlist** — makes it *filterable and sortable*. Both the list's sort param and every filter predicate go through Ransack, and Ransack refuses attributes that aren't allowlisted:
@@ -89,8 +75,8 @@ Add a Rails validation while you're here (`validates :lead_time_days, numericali
 
 ```tsx
 // src/plugins.ts (or a plugin's entry module)
-import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
-import { LeadTimeCard } from './fields/lead-time-card'
+import { defineDashboardPlugin, i18n } from '@spree/dashboard'
+import { LeadTimeCard } from './slots/lead-time-card'
 import en from './locales/en.json'
 
 i18n.addResourceBundle('en', 'translation', en, true, true)
@@ -124,9 +110,8 @@ defineDashboardPlugin({
 The form widget binds to the host form — no `<form>` of its own, no save button:
 
 ```tsx
-// src/fields/lead-time-card.tsx
-import { useHostForm } from '@spree/dashboard-core'
-import { Card, CardContent, CardHeader, CardTitle, Field, FieldError, FieldLabel, Input } from '@spree/dashboard-ui'
+// src/slots/lead-time-card.tsx
+import { Card, CardContent, CardHeader, CardTitle, Field, FieldError, FieldLabel, Input, useHostForm } from '@spree/dashboard'
 import { useTranslation } from 'react-i18next'
 
 export function LeadTimeCard() {
@@ -210,4 +195,3 @@ Two `ColumnDef` extras worth knowing: `ransackAttribute` points the predicate so
 - [Custom form field recipe](/developer/dashboard/recipes/custom-form-field) — the form layer in isolation, and the custom-field-definition path
 - [Tables](/developer/dashboard/customization/tables) — the full `ColumnDef` and table registry API
 - [Backend integration](/developer/dashboard/customization/backend) — serializers, permitted params, error mapping
-- [Decorators](/developer/customization/decorators) — the `prepend` pattern used for the controller

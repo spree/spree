@@ -73,7 +73,7 @@ const profiles = await adminClient.deliveryProfiles.list()
 
 // Ship a product as a download
 await adminClient.products.update('prod_xxx', {
-  delivery_profile_id: 'dp_digital',
+  delivery_profile_id: 'fp_digital',
 })
 ```
 
@@ -86,7 +86,7 @@ curl 'https://api.mystore.com/api/v3/admin/delivery_profiles' \
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_xxx' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "delivery_profile_id": "dp_digital" }'
+  -d '{ "delivery_profile_id": "fp_digital" }'
 ```
 
 </CodeGroup>
@@ -163,7 +163,8 @@ otherwise every parcel is quoted light.
 
 Package types are that vocabulary: the box parcels ship in, and for wholesale,
 the cartons products are packed into and the pallets or containers an order
-leaves on.
+leaves on. How those cartons and pallets roll up into a quote is
+[freight](/developer/core-concepts/freight).
 
 <CodeGroup>
 
@@ -199,6 +200,12 @@ Measurements are optional individually, which is how a merchant records what
 they know. A box with no dimensions still contributes its weight; a box with
 nothing measured contributes nothing, and dimensional pricing has nothing to
 work from.
+
+`dimensions_unit` and `weight_unit` are optional too. A row that names neither
+is read in whatever the store's own units are, so a store trading in inches and
+pounds reads inches and pounds. A row that names them keeps them, which is how
+one store can mix units — a carton measured in centimetres sits beside a pallet
+measured in feet. Variant dimensions work the same way.
 
 <Note>
 Deleting the default box is refused, and so is switching its flag off when
@@ -262,6 +269,7 @@ box of their own with all three dimensions and a weight recorded. See
 
 ## Related
 
+- [Freight](/developer/core-concepts/freight) — cartons, pallets and wholesale shipping
 - [Fulfillments](/developer/core-concepts/fulfillments) — what happens to the parcel afterwards
 - [Calculators](/developer/core-concepts/calculators) — how a price is worked out
 - [EasyPost](/integrations/shipping/easypost) — live carrier rates and labels

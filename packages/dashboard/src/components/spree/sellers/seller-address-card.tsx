@@ -2,7 +2,6 @@ import type { Seller } from '@spree/admin-sdk'
 import { AddressFormDialog } from '@spree/dashboard-core'
 import {
   AddressBlock,
-  AddressMap,
   Badge,
   Button,
   Card,
@@ -21,11 +20,8 @@ type AddressKey = 'billing_address' | 'returns_address'
 
 /**
  * One of a seller's two addresses — where they are invoiced, and where
- * customer returns go — with the map the legacy admin showed beside it.
- *
- * A returns address is what a shopper is told to post to, and a billing
- * address is what a commission invoice is addressed to, so both are worth
- * seeing on a map rather than trusting as typed.
+ * customer returns go. A returns address is what a shopper is told to post
+ * to, and a billing address is what a commission invoice is addressed to.
  *
  * Only the billing address is editable here. A seller's returns address is
  * derived from their default stock location, so it is written through that
@@ -75,11 +71,8 @@ export function SellerAddressCard({
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {address ? (
-            <>
-              {/* No title: the card header already names it. */}
-              <AddressBlock address={address} />
-              <AddressMap address={address} label={seller.name} />
-            </>
+            // No title: the card header already names it.
+            <AddressBlock address={address} />
           ) : (
             <p className="py-4 text-center text-muted-foreground text-sm">
               {t('admin.sellers.address.not_provided_by_seller')}

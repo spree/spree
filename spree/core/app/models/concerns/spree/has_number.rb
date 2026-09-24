@@ -99,9 +99,10 @@ module Spree
 
     # Advisory only — a concurrent writer can take the number between this
     # check and the insert, which is what the unique-index rescue below is
-    # for. Unscoped because the index is global.
+    # for. Checked on the base class, unscoped, because the index is global —
+    # it spans every STI subclass and soft-deleted row.
     def number_taken?(candidate)
-      self.class.unscoped.exists?(number: candidate)
+      self.class.base_class.unscoped.exists?(number: candidate)
     end
 
     # Last line of defence. The pre-check and the uniqueness validation both

@@ -113,6 +113,20 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(created.created_by_id).to eq(admin_user.id)
     end
 
+    # `created_by` on a gift card still points at admin users only — it
+    # converts to a polymorphic actor in 6.1 — so a key-authenticated create
+    # records nobody rather than raising on the type mismatch.
+    context 'when a secret API key made the call' do
+      let(:headers) { api_key_headers }
+
+      it 'creates the gift card without an actor' do
+        expect { post :create, params: create_params, as: :json }.to change(Spree::GiftCard, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::GiftCard.last.created_by_id).to be_nil
+      end
+    end
+
     it 'attaches a customer when customer_id is passed as a prefixed ID' do
       customer = create(:user, email: 'buyer@example.com')
 
@@ -123,6 +137,42 @@ RSpec.describe Spree::Api::V3::Admin::GiftCardsController, type: :controller do
       expect(json_response['customer']['email']).to eq('buyer@example.com')
     end
 
+    # The id is resolved through the caller's ability, never looked up raw
+    # across every customer.
+    it 'refuses a raw integer customer id' do
+      customer = create(:user)
+
+      post :create, params: create_params.merge(customer_id: customer.id), as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # Attaching a customer embeds their record in the response, so a key
+    # cleared only for gift cards must not be able to read customers this way.
+    context 'with a key that holds gift cards but not customers' do
+      let(:gift_card_key) { create(:api_key, :secret, store: store, scopes: ['write_gift_cards']) }
+      let(:headers) { { 'x-spree-api-key' => gift_card_key.plaintext_token } }
+
+      it 'refuses to attach a customer' do
+        customer = create(:user, email: 'secret@example.com')
+
+        expect {
+          post :create, params: create_params.merge(customer_id: customer.prefixed_id, expand: 'customer'), as: :json
+        }.not_to change(Spree::GiftCard, :count)
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).not_to include('secret@example.com')
+      end
+
+      it 'does not embed the customer through expand' do
+        gift_card.update!(customer: create(:user, email: 'secret@example.com'))
+
+        get :show, params: { id: gift_card.prefixed_id, expand: 'customer' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response).not_to have_key('customer')
+      end
+    end
 
     it 'returns 422 when amount is missing' do
       post :create, params: { currency: 'USD' }, as: :json

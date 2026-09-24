@@ -62,7 +62,7 @@ Note the difference between `value` and `amount`. `value` is the rule — "10 pe
 
 ## Reading discounts on an order
 
-Whatever produced them, the rows read the same way:
+The Store API summarizes the promotions applied to a cart or order under `discounts` — one entry per promotion, with its name, code and total amount. The individual discount rows, including manual ones, are read through the Admin API (`GET /api/v3/admin/orders/{id}/discounts`).
 
 <CodeGroup>
 
@@ -72,10 +72,10 @@ const cart = await client.carts.get(cartId)
 cart.display_discount_total // "-$12.00"
 
 cart.discounts.forEach((discount) => {
-  discount.label          // "Summer Sale"
-  discount.kind           // "promotion" or "manual"
+  discount.name           // "Summer Sale"
   discount.code           // "SUMMER20", when a code was used
   discount.display_amount // "-$12.00"
+  discount.promotion_id   // "promo_xxx"
 })
 ```
 

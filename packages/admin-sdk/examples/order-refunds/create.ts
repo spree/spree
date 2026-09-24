@@ -9,7 +9,7 @@ const client = createAdminClient({
 const refund = await client.orders.refunds.create('or_UkLWZg9DAJ', {
   payment_id: 'pay_UkLWZg9DAJ',
   amount: '5.00',
-  refund_reason_id: 'refrsn_UkLWZg9DAJ',
+  refund_reason_id: 'rr_UkLWZg9DAJ',
 })
 
 // endregion:example

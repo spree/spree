@@ -3,7 +3,7 @@
 # type stamps it at creation. The one thing a CSV row cannot carry is the file
 # buyers download, so that is all this step does: attach a PDF to the imported
 # product's default variant.
-store = Spree::Store.default
+store = Spree::Current.store
 
 product = Spree::Product.find_by(store: store, slug: 'the-spree-commerce-handbook')
 

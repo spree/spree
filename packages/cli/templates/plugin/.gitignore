@@ -3,13 +3,6 @@ dist/
 .DS_Store
 *.log
 
-# Rails engine
-engine/Gemfile.lock
-engine/tmp/
-engine/log/
-engine/spec/dummy/
-engine/coverage/
-
 # IDE
 .idea/
 .vscode/

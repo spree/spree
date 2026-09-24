@@ -1,5 +1,4 @@
 import {
-  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -279,20 +278,25 @@ function NavItemContent({
   )
 }
 
-export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?: NavItem[] }) {
-  const routerState = useRouterState()
-  const currentPath = routerState.location.pathname
-  const { state, isMobile, setOpenMobile } = useSidebar()
-  const isCollapsed = state === 'collapsed'
-  // Close the drawer as the link is tapped. Done here rather than in an effect
-  // watching the path: this tree renders *inside* the Sheet, so it remounts on
-  // every open and an effect could not tell "just opened" from "just navigated".
-  const handleLinkTap = useCallback(
+// Close the drawer as the link is tapped. Done here rather than in an effect
+// watching the path: this tree renders *inside* the Sheet, so it remounts on
+// every open and an effect could not tell "just opened" from "just navigated".
+function useCloseDrawerOnLinkTap() {
+  const { isMobile, setOpenMobile } = useSidebar()
+  return useCallback(
     (event: React.MouseEvent) => {
       if (isMobile && (event.target as HTMLElement).closest('a')) setOpenMobile(false)
     },
     [isMobile, setOpenMobile],
   )
+}
+
+export function NavMain({ items }: { items: NavItem[] }) {
+  const routerState = useRouterState()
+  const currentPath = routerState.location.pathname
+  const { state, isMobile } = useSidebar()
+  const isCollapsed = state === 'collapsed'
+  const handleLinkTap = useCloseDrawerOnLinkTap()
   // One controller for the whole rail so only a single hover menu is ever open.
   const hoverMenu = useHoverMenuController()
 
@@ -325,35 +329,44 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
           ))}
         </SidebarMenu>
       </SidebarGroup>
+    </div>
+  )
+}
 
-      {bottomItems && bottomItems.length > 0 && (
-        // `mt-auto` pins Settings to the foot of the desktop rail. In a
-        // full-height drawer that strands it alone below a screen of empty
-        // space, so on mobile it simply follows the list.
-        <SidebarGroup className={cn('mb-2', !isMobile && 'mt-auto')}>
-          <SidebarMenu>
-            {bottomItems.map((item) => {
-              const isActive =
-                currentPath === item.url ||
-                (item.url !== '/' && isPathWithin(currentPath, item.url))
+/** The entries kept apart from the main list — Settings, and anything registered beside it. */
+export function NavBottom({ items, className }: { items: NavItem[]; className?: string }) {
+  const currentPath = useRouterState().location.pathname
+  const isCollapsed = useSidebar().state === 'collapsed'
+  const handleLinkTap = useCloseDrawerOnLinkTap()
 
-              return (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
-                    {/* `aria-label` for the same reason as the main nav above:
-                        collapsed mode hides the label, and Settings lives here
-                        — the one place the rail is collapsed by default. */}
-                    <Link to={item.url} aria-label={isCollapsed ? item.title : undefined}>
-                      <NavIcon icon={item.icon} isActive={isActive} />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
-      )}
+  if (items.length === 0) return null
+
+  return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: delegated link taps only
+    // biome-ignore lint/a11y/useKeyWithClickEvents: links keep their own keyboard behaviour
+    <div onClick={handleLinkTap} className="contents">
+      <SidebarGroup className={className}>
+        <SidebarMenu>
+          {items.map((item) => {
+            const isActive =
+              currentPath === item.url || (item.url !== '/' && isPathWithin(currentPath, item.url))
+
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
+                  {/* `aria-label` for the same reason as the main nav: collapsed
+                      mode hides the label, and Settings lives here — the one
+                      place the rail is collapsed by default. */}
+                  <Link to={item.url} aria-label={isCollapsed ? item.title : undefined}>
+                    <NavIcon icon={item.icon} isActive={isActive} />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          })}
+        </SidebarMenu>
+      </SidebarGroup>
     </div>
   )
 }

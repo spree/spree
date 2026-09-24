@@ -191,4 +191,34 @@ describe Spree::Promotion::Rules::Product, type: :model do
       expect(rule.reload.updated_at).to be > original_updated_at
     end
   end
+
+  # Linked products are served back with their admin data, so a product from
+  # another store must never be linked.
+  context 'when given a product from another store' do
+    let(:promotion) { create(:promotion) }
+    let(:foreign_product) { create(:product, store: create(:store)) }
+
+    it 'rejects the foreign ID' do
+      persisted = described_class.create!(promotion: promotion)
+
+      expect { persisted.product_ids = [foreign_product.id] }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { persisted.product_ids = [foreign_product.prefixed_id] }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'is invalid when built before its promotion is known' do
+      built = described_class.new(product_ids: [foreign_product.id])
+      built.promotion = promotion
+
+      expect(built).not_to be_valid
+    end
+
+    it "accepts the promotion store's own product" do
+      own = create(:product, store: promotion.store)
+      persisted = described_class.create!(promotion: promotion)
+
+      persisted.product_ids = [own.prefixed_id]
+
+      expect(persisted.reload.products).to eq([own])
+    end
+  end
 end

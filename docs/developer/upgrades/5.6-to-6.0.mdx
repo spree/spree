@@ -1,7 +1,6 @@
 ---
 title: Upgrading to Spree 6.0
 description: Guide to upgrading a Spree 5.6 application to Spree 6.0
-hidden: true
 ---
 
 <Info>
@@ -41,7 +40,14 @@ bundle exec rake spree:upgrade
 
 </CodeGroup>
 
-Skipping versions and re-running are both safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
+Before running `bundle update`, update your `Gemfile`: the Rails admin (`spree_admin`) and Rails storefront (`spree_storefront`) are not part of Spree 6.0. Remove both and add `spree_dashboard`, which serves the new React admin dashboard at `/dashboard`.
+
+```ruby
+# Gemfile
+gem 'spree_dashboard'
+```
+
+Re-running is safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated. It also runs every data backfill from earlier upgrades (5.4 → 5.5 and 5.5 → 5.6), so any you missed along the way are caught up. That does not remove the requirement above: upgrade your application to 5.6 first.
 
 ## What the upgrade does
 
@@ -61,7 +67,7 @@ Every order that never completed and was never canceled becomes a `Spree::Cart` 
 bundle exec rake spree:migrate_adjustments_to_typed_rows
 ```
 
-Rebuilds `spree_adjustments` into `Spree::TaxLine`, `Spree::Discount` and `Spree::Fee` rows. Orders whose typed sums do not reconcile with the stored totals are left untouched and flagged (`private_metadata['typed_adjustments_frozen']`) for manual review instead of silently changing money.
+Rebuilds `spree_adjustments` into `Spree::TaxLine`, `Spree::Discount` and `Spree::Fee` rows. Orders whose typed sums do not reconcile with the stored totals are left untouched and flagged (`metadata['typed_adjustments_frozen']`) for manual review instead of silently changing money.
 
 ### Backfill fulfillment and delivery naming
 
@@ -99,14 +105,14 @@ Category and collection descriptions, policy bodies, and order and customer inte
 
 Run this **after** two earlier steps, both load-bearing: the categories step re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them, and the customers step populates `spree_customers` — a note is copied onto the customer row it belongs to, so running before those rows exist would treat every legacy customer note as orphaned and skip it for good. Following the manifest order handles this for you.
 
-Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not. The exceptions are `script` and `style`, which are removed along with their contents — a script body would otherwise reappear as visible text.
+Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br`, links and images. Tables, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not. The exceptions are `script` and `style`, which are removed along with their contents — a script body would otherwise reappear as visible text.
 
 If your descriptions rely on richer markup, permit it in an initializer **before** running the task and before saving anything under 6.0:
 
 ```ruby
 # config/initializers/spree.rb
-Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td img]
-Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
+Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td]
+Spree::RichTextSanitizer.allowed_attributes += %w[colspan rowspan]
 ```
 
 The Action Text rows are left in place as a rollback path and are dropped with the tables in 6.1.
@@ -142,6 +148,81 @@ bundle exec rake spree:stock:recount_levels
 
 `spree_stock_levels` gains `reserved_count` (units held by checkouts in progress) and `incoming_count` (units on their way on a purchase order placed with a supplier or a transfer in transit). Both are kept by the workflows that change them and start at zero on an existing install; this recomputes them from active reservations and open documents and prints every level it corrected. Until it runs, the dashboard's Inventory page shows zero reserved and incoming for stock that predates the upgrade. Safe to re-run at any time.
 
+### Name who performed past actions
+
+```bash
+bundle exec rake spree:upgrade:backfill_actor_types
+```
+
+Orders, refunds, returns, exchanges, claims and stock receipts remember who
+cancelled, approved, created or received them. In 6.0 that can be a member of
+staff **or an API key**, so each id column — `canceler_id`, `approver_id`,
+`created_by_id`, `refunder_id`, `received_by_id` — gained a type column beside
+it (`canceler_type`, and so on) naming which kind of actor the id points at.
+
+Rows written before the upgrade carry an id and an empty type; this task fills
+the type in. Until it runs they still read as the staff member they always
+were, with a deprecation warning. Safe to re-run at any time.
+
+### Move users onto the Customer and AdminUser models
+
+```bash
+bundle exec rake spree:upgrade:migrate_users_to_customers
+```
+
+Copies your legacy Devise customer table (default `spree_users`) into `spree_customers`, keeping the same ids, and carries existing passwords over so customers and staff can keep signing in. The source table is left in place as a safety net.
+
+<Warning>
+  Passwords carry over only if your application **never configured a Devise pepper**. The task stops if it finds one. Because Devise is no longer loaded in 6.0, the task usually cannot check for itself — it stops until you confirm no pepper was used by re-running it with `CONFIRM_NO_PEPPER=true`. If you did use a pepper, single sign-on, or a non-bcrypt password format, skip this step and keep your own customer model by setting `Spree.customer_class`.
+</Warning>
+
+### Name countries and states by ISO code
+
+```bash
+bundle exec rake spree:upgrade:migrate_country_state_codes
+```
+
+Countries and states are no longer database records in 6.0. Addresses, delivery zone members, market countries, stock locations and stores now name them by ISO code (`country_code`, `state_code`), and this task fills those columns from the old `country_id` / `state_id` references. The old `country_iso` / `state_abbr` names still work on addresses for one release.
+
+## Enable Active Record encryption
+
+Spree encrypts webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
+
+**1. Make the app read the keys.** Projects created from `spree-starter` read them from the `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` env vars, falling back to the `active_record_encryption` entry in Rails credentials. If your `config/application.rb` predates this, add inside the `Application` class:
+
+```ruby config/application.rb
+%i[primary_key deterministic_key key_derivation_salt].each do |key|
+  value = ENV["ACTIVE_RECORD_ENCRYPTION_#{key.upcase}"].presence ||
+    credentials.dig(:active_record_encryption, key).presence
+  config.active_record.encryption[key] = value if value
+end
+```
+
+Setting the keys in `config.active_record.encryption` (rather than only in credentials) matters: Spree checks that configuration when it decides whether to encrypt webhook secrets and gateway customer IDs.
+
+**2. Generate keys for development and production** — a separate set for each environment:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree encryption init           # adds a set to your project's .env (never overwrites existing keys)
+spree encryption init --print   # prints a set for your production host
+```
+
+```bash Without Spree CLI
+bin/rails db:encryption:init    # prints a set; put it in env vars or encrypted credentials
+```
+
+</CodeGroup>
+
+Recreate the containers so they pick up the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
+
+<Warning>
+Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
+</Warning>
+
+**3. Encrypt existing rows.** Rows written before the keys were set are plain text. OAuth tokens on user identities stay readable and are encrypted on their next write. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+
 ## The Cart/Order split
 
 The single biggest change. What used to be one `Spree::Order` living through checkout and beyond is now two models:
@@ -169,16 +250,16 @@ The replacement model:
 
 ```ruby
 # config/initializers/spree.rb
-Rails.application.config.to_prepare do
-  Spree::Checkout::Registry.add_requirement(
-    step: :payment,
-    field: :po_number,
-    message: 'PO number is required',
-    satisfied: ->(cart) { cart.metadata['po_number'].present? },
-    applicable: ->(cart) { cart.customer.present? }
-  )
-end
+Spree::Checkout::Registry.add_requirement(
+  step: :payment,
+  field: :po_number,
+  message: 'PO number is required',
+  satisfied: ->(cart) { cart.metadata['po_number'].present? },
+  applicable: ->(cart) { cart.customer.present? }
+)
 ```
+
+  Register at the top level of the initializer, not inside `to_prepare`: the registry is never reset, so a `to_prepare` block would add the requirement again on every code reload in development.
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
@@ -200,7 +281,7 @@ Behavior to review:
 
 Transition-triggered recalculation is gone with the machine. Instead:
 
-- **`Spree::Carts::RecalculateTotals`** is the single totals seam: money inputs, typed-row regeneration (promotions via the winner-only adjuster, tax via `Spree.tax_provider`), folding and one persist. It runs on the writes that matter — item changes, address/market changes (which also re-price items and rebuild delivery proposals) — not on step transitions.
+- **`Spree::Carts::RecalculateTotals`** is the single totals seam: money inputs, typed-row regeneration (promotions via the winner-only adjuster, tax via the market's tax provider, falling back to `Spree.default_tax_provider`), folding and one persist. It runs on the writes that matter — item changes, address/market changes (which also re-price items and rebuild delivery proposals) — not on step transitions.
 - Promotion eligibility is evaluated against **current** totals in the same recalculation — a cart crossing a coupon threshold gets the discount on that recalculation, not the next one.
 - **Completed orders are money-frozen.** Typed rows are never regenerated post-placement; recalculation only re-sums them. Post-placement money edits go through the explicit admin services (`Orders::Discounts::*`, `Orders::Fees::*`), which write rows and re-sum.
 - `Spree::OrderUpdater` and `Spree::CartUpdater` remain as deprecated shells — every method warns and runs the full recalculation. Removed in 6.1.
@@ -280,9 +361,16 @@ Core ships exactly one policy rule — a return window read from `market.preferr
 Replace it by swapping the handler:
 
 ```ruby
+# config/initializers/spree.rb
 Spree.hooks.unregister('returns.create.validate', 'Spree::Returns::EligibilityValidator')
 Spree.hooks.register('returns.create.validate', 'MyStore::ReturnPolicy')
+
+# The same validator guards exchanges — swap it there too if your policy should cover them:
+Spree.hooks.unregister('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
+Spree.hooks.register('exchanges.create.validate', 'MyStore::ReturnPolicy')
 ```
+
+Core registers the default validator before your initializers load, so the swap works at the top level of an initializer.
 
 A handler receives the workflow (so it can read `order`, `items`, `created_by`, `order.market`) and calls `workflow.reject!(message)` to veto. Every one of the fifteen transitions has a leading `validate` hook, so the same seam gates approving, receiving and refunding.
 
@@ -303,6 +391,16 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 - **Customers are emailed their download links** when the order is placed, from the new `Spree::DigitalAssetMailer` in the optional `spree_emails` gem. Hosts that already send their own download email should either suppress it (`send_consumer_transactional_emails`) or drop their own. The dashboard's order page can re-send it.
 - **Digital assets are managed through the Admin API and dashboard**, and signed-in customers can list everything they have bought at `GET /api/v3/store/customers/me/digital_links`.
 
+## Free-gift promotions price their own gift
+
+The `Create line items` promotion action now discounts the items it adds down to zero. It used to add them at their full price and leave the discounting to you.
+
+<Warning>
+  **Delete the second action if you paired one with it.** The old guidance was to add a whole-order discount set to the gift's price to pay for the gift. That discount still applies, so a promotion configured the old way now discounts twice — the gift is free *and* the order discount comes off. Open each promotion using `Create line items`, and remove the accompanying `Create whole-order adjustment` that exists only to cancel out the gift.
+</Warning>
+
+Two further changes come with it. A customer who already has the gift variant in their cart now gets theirs free rather than a second copy being added, and the promotion applies where it previously did nothing at all. And a gift is only taken back out of the cart for promotions actually applied to that order, so a customer who bought the gift variant themselves without qualifying keeps it.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
@@ -314,7 +412,7 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 | `carts_complete_service` | `carts_complete_workflow` | `Spree::Carts::Complete` |
 | `order_cancel_service` | `order_cancel_workflow` | `Spree::Orders::Cancel` |
 | `order_complete_service` | `order_complete_workflow` | `Spree::Orders::Complete` |
-| `shipment_update_service` | `fulfillment_update_service` | `Spree::Fulfillments::Update` |
+| `shipment_update_service`, `fulfillment_update_service` | `fulfillment_update_workflow` | `Spree::Fulfillments::Update` |
 
 New seams with no legacy counterpart:
 
@@ -355,6 +453,20 @@ recover from a mistaken cancellation too — a new fulfillment, never a revived
 one. An order whose every parcel was recalled now reads
 `fulfillment_status: unfulfilled` rather than `canceled`; only a canceled
 order reads `canceled`.
+
+## Payment source IDs use the `psrc_` prefix
+
+`Spree::PaymentSource` shared the `ps_` prefix with `Spree::PaymentSession`,
+so the same string could name either record. Payment sources now use
+`psrc_`. The encoded part of the ID doesn't change, only the prefix. The only
+place a payment source's ID shows up is the `source_id` of a payment backed by
+a non-card payment source (wallets, bank redirects and similar). If you stored
+one of those values, swap `ps_` for `psrc_`. Payment session IDs stay `ps_`.
+
+Class-level `decode_prefixed_id` (for example `Spree::Product.decode_prefixed_id`)
+now returns `nil` for an ID with another model's prefix, the same as
+`find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
+really need to decode any prefix.
 
 ## Removed in 6.0
 
@@ -578,7 +690,7 @@ to `Spree::Base`.
 
 `Spree::StateChange` and `Spree::LogEntry` are removed — the models, the `state_changes` associations on `Order`, `Payment` and `Fulfillment`, the `log_entries` associations on `Payment` and `Refund`, and everything that wrote to them. Both were write-only: nothing in Spree read the rows back, and the admin screens that displayed them are gone.
 
-**Events are the audit trail now.** Instead of querying state-change rows, subscribe to the lifecycle events that already fire on every meaningful transition: `order.placed`, `order.canceled`, `payment.completed`, `payment.voided`, `fulfillment.ready`, `fulfillment.fulfilled`, `fulfillment.canceled`, `fulfillment.resumed`, and the rest. If you need a persistent history, write it from a subscriber.
+**Events are the audit trail now.** Instead of querying state-change rows, subscribe to the lifecycle events that already fire on every meaningful transition: `order.placed`, `order.canceled`, `payment.completed`, `payment.voided`, `fulfillment.fulfilled`, `fulfillment.delivered`, `fulfillment.canceled`, and the rest. If you need a persistent history, write it from a subscriber.
 
 **Gateway responses are no longer stored in your database.** `LogEntry` kept every gateway response as serialized YAML. For transaction forensics, use your payment provider's dashboard — `Payment#gateway_dashboard_payment_url` links straight to the transaction — or `Spree::PaymentSession`, which holds the gateway-side state for session-based providers.
 
@@ -617,7 +729,8 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Spree::PresentationTranslatable` | `Spree::LabelTranslatable` |
 | `Spree::WishedItem`, `Wishlist#wished_items`, `#wished_items_count` | `Spree::WishlistItem`, `#wishlist_items`, `#wishlist_items_count` (class and table renamed; the `wi_` prefixed IDs are unchanged, so client-held IDs keep resolving) |
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
-| `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
+| `Fulfillment#ship`, `#ship!` | `Spree.fulfillment_fulfill_workflow.call(fulfillment:)` (`Spree::Fulfillments::Fulfill`) |
+| `Fulfillment#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
 | `Order#create_proposed_shipments` / `#create_proposed_fulfillments` | `#rebuild_fulfillments!` (Cart ships with the new name only) |
 | `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
@@ -676,7 +789,7 @@ Old initializers fail loudly at boot: the set constants raise `NameError`, and `
 
 ```ruby
 # db/seeds.rb — "roles as code" is plain ActiveRecord now
-Spree::Role.find_or_create_by!(name: 'support')
+Spree::Store.default.roles.find_or_create_by!(name: 'support')
   .update!(permissions: %w[read_orders read_customers])
 ```
 

@@ -40,6 +40,7 @@ import type {
   Market,
   NewsletterSubscriber,
   Order,
+  OrderGroup,
   OrderListParams,
   Payment,
   PaymentSession,
@@ -503,11 +504,13 @@ export class StoreClient {
 
     /**
      * Complete the cart and finalize the purchase.
-     * Returns an Order (not Cart).
+     * Returns an Order (not Cart). In a marketplace, a cart holding several
+     * sellers' goods divides into one order per seller, and the group it
+     * produced is what comes back — narrow the result with `isOrderGroup`.
      * @param cartId - Cart prefixed ID
      */
-    complete: (cartId: string, options?: RequestOptions): Promise<Order> =>
-      this.request<Order>('POST', `/carts/${cartId}/complete`, options),
+    complete: (cartId: string, options?: RequestOptions): Promise<Order | OrderGroup> =>
+      this.request<Order | OrderGroup>('POST', `/carts/${cartId}/complete`, options),
 
     /**
      * Nested resource: Line items
@@ -1284,20 +1287,19 @@ export class StoreClient {
         ),
 
       /**
-       * Adds a person by email: an existing customer becomes a member
-       * immediately, anyone else gets an emailed invitation — check the
-       * returned id prefix (`cmem_` vs `cinv_`).
+       * Invites a person by email. Even an existing customer joins only by
+       * accepting the emailed invitation, so this always returns the
+       * invitation.
        */
       create: (
         companyId: string,
         params: { customer_email: string },
         options?: RequestOptions,
-      ): Promise<CompanyMembership | CompanyInvitation> =>
-        this.request<CompanyMembership | CompanyInvitation>(
-          'POST',
-          `/companies/${companyId}/members`,
-          { ...options, body: params },
-        ),
+      ): Promise<CompanyInvitation> =>
+        this.request<CompanyInvitation>('POST', `/companies/${companyId}/members`, {
+          ...options,
+          body: params,
+        }),
 
       /** Withdraws the member's standing. The customer account is untouched. */
       delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>

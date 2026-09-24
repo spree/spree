@@ -19,7 +19,7 @@ module Spree
 
           # PATCH .../claims/:id/approve
           def approve
-            run_workflow(Spree.claim_approve_workflow, approver: try_spree_current_user)
+            run_workflow(Spree.claim_approve_workflow, approver: current_actor)
           end
 
           # PATCH .../claims/:id/resolve — a refund, a replacement, or both.
@@ -29,7 +29,7 @@ module Spree
                          refund_method: params[:refund_method] || 'store_credit',
                          amount: params[:amount],
                          replacement_line_item_ids: replacement_line_item_ids,
-                         resolver: try_spree_current_user)
+                         resolver: current_actor)
           end
 
           # PATCH .../claims/:id/deny

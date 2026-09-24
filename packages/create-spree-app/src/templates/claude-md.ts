@@ -4,12 +4,14 @@ import { runCommand } from '../utils.js'
 export function agentsMdContent(): string {
   return `# Agent Instructions
 
-See [CLAUDE.md](./CLAUDE.md) for full project instructions and conventions.
+See [CLAUDE.md](./CLAUDE.md) for the project layout and where each part is
+documented. Each application carries its own instructions — read the one for
+the directory you are working in before changing anything there.
 
 ## Spree-specific agent skills
 
 For deeper Spree-specific guidance (API conventions, the data model, event system,
-testing patterns, security, deployment, the 6.0 React dashboard, the Next.js
+testing patterns, security, deployment, the React dashboard, the Next.js
 storefront, etc.), install the official skill set:
 
 \`\`\`bash
@@ -47,7 +49,8 @@ export function rootClaudeMdContent(
   }
 
   if (hasDashboard) {
-    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA (Developer Preview) |')
+    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA |')
+    lines.push('| `apps/seller-dashboard/` | Seller Panel — marketplace seller SPA |')
   }
 
   lines.push(
@@ -65,8 +68,8 @@ export function rootClaudeMdContent(
 
   if (hasDashboard) {
     lines.push(
-      '- **React Dashboard work** (admin SPA, React, TypeScript): See `apps/dashboard/README.md`',
-      '  and https://spreecommerce.org/docs/developer/dashboard/overview',
+      '- **Dashboard work** (admin SPA, React, TypeScript): See `apps/dashboard/AGENTS.md`',
+      '- **Seller Panel work** (marketplace seller SPA): See `apps/seller-dashboard/AGENTS.md`',
     )
   }
 
@@ -81,7 +84,7 @@ export function rootClaudeMdContent(
     '├── developer/',
     '│   ├── core-concepts/     # Products, orders, payments, inventory, etc.',
     '│   ├── customization/     # Decorators, extensions, configuration, dependencies',
-    '│   ├── admin/             # Admin panel customization',
+    '│   ├── dashboard/         # React dashboard: customization, recipes, plugins',
     '│   ├── storefront/        # Storefront building guides',
     '│   ├── sdk/               # TypeScript SDK documentation',
     '│   └── tutorial/          # Step-by-step tutorials',
@@ -103,7 +106,7 @@ export function rootClaudeMdContent(
     '',
     '```bash',
     `${run} spree api get products                      # list products`,
-    `${run} spree api get "orders?q[state_eq]=complete" # Ransack filters`,
+    `${run} spree api get "orders?q[status_eq]=complete" # Ransack filters`,
     `${run} spree api endpoints                         # every endpoint + its required scope`,
     `${run} spree api schema "POST /products"           # request/response schema for an operation`,
     '```',

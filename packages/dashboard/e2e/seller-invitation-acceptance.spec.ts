@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { invitationAcceptancePath, login } from './helpers'
 
 // The seller panel is its own app on its own origin (see playwright.config.ts),
 // so this spec drives two: the operator's dashboard through `baseURL`, and the
@@ -26,10 +26,9 @@ test.describe('seller invitation lifecycle', () => {
     await page.locator('#invite-email').fill(inviteeEmail)
 
     // API wait justified per CLAUDE.md: the acceptance link is emailed rather
-    // than shown, so no DOM signal carries it. Read off the team card's own
-    // refetch, which the SPA makes with its access token — a bare
-    // `page.request` call carries no session, since the token is held in
-    // memory rather than in a cookie.
+    // than shown, so no DOM signal carries it. The new invitation's id comes
+    // off the team card's own refetch; its link is then fetched with the
+    // login's access token.
     const [listResponse] = await Promise.all([
       page.waitForResponse(
         (res) =>
@@ -44,8 +43,12 @@ test.describe('seller invitation lifecycle', () => {
     // The invitation appears on the seller's team card once it is sent.
     await expect(page.getByText(inviteeEmail)).toBeVisible({ timeout: 15_000 })
 
-    const { data } = (await listResponse.json()) as { data: Array<{ acceptance_url: string }> }
-    const acceptancePath = data[0].acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+    const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
+    const acceptancePath = await invitationAcceptancePath(
+      page,
+      creds,
+      `${new URL(listResponse.url()).pathname}/${data[0].id}`,
+    )
     expect(acceptancePath).toMatch(/\/accept-invitation\//)
 
     // A fresh context so the operator's refresh cookie never reaches the panel.

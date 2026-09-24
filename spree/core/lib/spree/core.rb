@@ -636,6 +636,25 @@ module Spree
     Rails.application.config.spree.taggable_types = value
   end
 
+  # Class-name strings for the models that may be recorded as having performed
+  # an action — what an `acted_by` association's `*_type` column is allowed to
+  # hold. The admin user class and `Spree::ApiKey` ship registered; an
+  # extension adds its own App or bot class in an initializer:
+  #
+  #   Spree.actor_classes << 'MyApp::App'
+  #
+  # A class listed here includes {Spree::Actor}, so a timeline can name it.
+  # See docs/plans/6.0-action-actors.md.
+  #
+  # @return [Array<String>]
+  def self.actor_classes
+    Rails.application.config.spree.actor_classes
+  end
+
+  def self.actor_classes=(value)
+    Rails.application.config.spree.actor_classes = value
+  end
+
 
   # Registry of the Getting Started onboarding tasks shown on the admin
   # dashboard. See {Spree::SetupTasks} for the extension API.
@@ -913,6 +932,14 @@ require 'spree/analytics'
 require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
+
+# Not autoloaded from app/: the registry keeps registered steps in
+# class-level state, which a reload would discard.
+require 'spree/checkout/step'
+require 'spree/checkout/requirement'
+require 'spree/checkout/registry'
+require 'spree/checkout/default_requirements'
+require 'spree/checkout/requirements'
 
 require 'spree/core/controller_helpers/store'
 

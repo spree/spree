@@ -1,3 +1,82 @@
+## 2026-09-23: The free-gift action prices its own gift, and covers the copy the shopper already has
+
+**Context:** The `Create line items` action added its variant at full price and wrote no discount, so the promotion raised the bill: a cart of 2 x $89.99 became $269.97 when an automatic gift promotion applied, with no line saying why, and the shopper could not delete the gift because every recalculation put it back (V-3666). The action was the only one describing itself in the docs without saying how the money worked - "Free items", "free items in the cart", "Free gift with purchase" - while `discount_scope` answered nil, which is what excluded it from `Spree::Adjusters::Promotion`. The documented workaround, pairing it with an order discount set to the gift's price, was tested and fails three ways: the order-level amount prorates across every line, so the gift reads as an $8.57 purchase and the $20 item beside it as $11.43; the discount still pays out when the gift is out of stock, because `Promotion#activate` maps over actions independently ($20 cart, $15 off, no gift); and the compensation competes for the order group under 6.0 winner-only, so a larger promotion deletes it and the bill goes back up ($2.00 to $17.00 on entering a free-gift coupon).
+
+**Decision:** The action prices what it adds. `CreateLineItems#discount_scope` is `:line_item` and `#compute_amount` returns `-price * gifted_quantity`, where gifted quantity is the configured quantity capped at what the line holds - so a shopper buying three of a variant gifted once still pays for two. The gift's discount is not narrowed by the promotion's rules: `PromotionAction#applies_to_line_item?` is a new seam defaulting to `promotion.line_item_actionable?`, which `CreateLineItems` overrides with "is this one of my gift variants". Without it the rules decide the gift line, and the ordinary shape of the offer - buy a coffee maker, get a tote - has a gift the rules never name. A shopper who already holds the gift variant gets theirs free rather than a duplicate, which also settles the reported half where `perform` returned false, `activate` therefore returned false, and the promotion refused to attach at all while `eligible?` was true.
+
+Rejected: a configurable gift price, which is what the issue's "or to the configured amount" asks for. It needs a column on `spree_promotion_action_line_items` and an editor field, and free is what every surface already promises. Rejected: leaving the price alone and rewriting the descriptions to say the action charges, the issue's other option - it would have to retract "free items in the cart" from the overview sentence defining what promotions do. Rejected: keeping the gift discount out of the winner-only competition entirely; it wins on its own line anyway, being the whole of it, and a bigger line-level promotion displacing it only ever makes the shopper pay less.
+
+**Consequences:** `revert` now runs only when the promotion is actually joined to the order. It was deleting the gift variant from the cart of any shopper who had bought one themselves and did not qualify, on every recalculation, because the handler deactivates every promotion in scope whether or not it ever applied. What it still cannot do is tell a unit it gave from a unit the shopper bought, so a shopper whose own copy was made free loses that copy when the offer lapses; closing that needs the gifted quantity recorded per line, which no table holds. Installs that followed the old documented recipe now discount twice - the gift is free and the compensating order discount still fires, $20 of goods for $5 in the tested case - so the upgrade note is to delete the compensating action; the docs that taught it are corrected here. The gift still reappears when a shopper deletes it under an automatic promotion, now at zero, so it is no longer a charge but still an item they did not ask for. `types_for_discount_scope(:line_item)` gains the action, which had been listing `CreateItemAdjustments` twice.
+
+**Plans amended:** `6.0-6.1-split-adjustments.md` (the Discount section's per-action notes).
+
+## 2026-09-22: Store credit names the order it puts right, so payment status counts both ledgers
+
+**Context:** An order refunded to store credit went on reading `paid`. Reproduced on `main`: order R1016, total $99.99, one $89.99 line returned and refunded as credit — the return reported `refunded_total` $89.99 and `refundable_total` $0.00 while the order reported `payment_status: paid` and nothing given back. A claim behaves the same, and lands there by default, since the claim resolve dialog and `ClaimActions#resolve` both default to `store_credit` where the return side defaults to `original_payment` (V-3660). The cause was a decision applied in one place and not the other: the 2026-08-11 ruling that store credit is its own ledger and never writes a `Spree::Refund` row taught `Return#refunded_total` to sum both, but `Orders::UpdateStatuses#money_for` still counted refund rows alone. V-3561 was closed on the strength of the original-payment half working.
+
+**Decision:** A store credit issued as a refund names the order it settles, in a nullable `spree_store_credits.refunded_order_id` — the same argument as `spree_refunds.order_id` (2026-08-20), which exists because a refund reached its order through its payment and a split checkout has no such payment to ask. Named `refunded_order` rather than `order` because this table already answers `orders` with the orders a credit went on to pay for, and a credit that settles one order and is spent on another is ordinary. `Orders::UpdateStatuses` adds that sum to the refunded figure in both branches, ordinary and grouped, so `refunded` in the derivation means what the customer got back rather than what left a gateway. The three `issue_store_credit` copies in `Returns::Refund`, `Claims::Resolve` and `Exchanges::Fulfill` become one `issue_refund_store_credit` in `Refunds::OrderPayments`, beside the gateway half — three copies drifting apart is what let one rule be applied to the ledger and not to the order. `OrderStatusSubscriber` gains the `store_credit.*` events, which are the only announcement a credit-settled claim makes — including `deleted`, so it resolves paranoid records with deleted ones included rather than losing the row that just went.
+
+Rejected: walking `order.returns/claims/exchanges` to their credits, which needs three indexed queries on a path that runs on every payment, fulfillment and refund event, and counts no originator an extension adds. Also rejected: netting credit out of `payment_total`. That column is what came in through payments, the money is still with the store, and moving it would take `paid?` and `outstanding_balance` with it.
+
+**Consequences:** `payment_status` moves on orders that were reading `paid`, which is the point. No backfill ships with it, in the migration or as an upgrade step. There is nothing to backfill: Spree 5 never set `originator` on a reimbursement's credit — that chain linked through `spree_reimbursement_credits`, and `migrate_returns` re-points refunds only — so no credit on an upgraded install carries a return, claim or exchange originator. The only rows a backfill could reach are a 6.0 beta tester's, and one console line fixes those. The `refunded` and `partially_refunded` Ransack scopes now read the derived column instead of re-summing refund rows through a join, which is what stored statuses are for; they had no callers and would otherwise have contradicted the column beside them. A credit for part of an order reads `partially_refunded`; one covering everything captured reads `refunded`. `payment_total` deliberately does not move, so a fully credit-refunded order shows `payment_status: refunded` beside a `payment_total` equal to its total — two columns answering two questions, and the second is the honest one for money that never left. The two roles a store credit plays stay in separate tables — credit as payment is `spree_payments.source`, credit as refund is this column — so nothing counts one as the other. Left alone, all pre-existing and none of them made worse here: `Order#order_refunded?` and `#partially_refunded?` count refund rows only and have the same blind spot, but nothing reads them; a claim's gateway refund is still stamped with the "Return processing" reason rather than the claim's own; `SellerTransferReversalSubscriber` hangs off `refund.created`, so a marketplace seller is never clawed back for a refund paid as credit, against its own comment that "every one of those funnels its money movement through a refund"; and `Payment#credit_allowed` counts refund rows alone, so credit does not reduce gateway headroom and the same money can be handed back twice through two post-sale records. The last two are money defects worth their own issues.
+
+**Plans amended:** `6.0-returns-exchanges-claims.md` (the `Return#refunded_total` replacement bullet), `6.0-cart-order-split.md` (the derive-then-persist rules).
+
+## 2026-09-22: The form that writes base prices filters for them itself; the variant `prices` expand stays whole
+
+**Context:** Saving a product in the dashboard destroyed prices nobody had touched. On a store with a second market and a sale list, Save rewrote the USD shop price from $549.99 to the list's $329.99 and soft-deleted the EUR price outright; with a volume ladder on the same list the shop price became the 50-unit rate of $249.99, a 55% cut charged to every single-unit customer (V-3661). `expand=variants.prices` serves every row a variant has — base rows, price-list rows and every quantity break — and `variantToFormValues` took the lot, dropping `price_list_id` as it went. The card then showed the first row of the picked currency, whichever kind the database happened to return first, so which currency was destroyed and which was overwritten varied between saves. The form posts that array back under the same key, where `Spree::Variant#prices=` reads every entry as a base price; a null-amount placeholder, which is how a price list records membership (2026-09-08), arrived as a blank amount and took `set_price`'s delete branch.
+
+**Decision:** The form filters. `variantToFormValues` keeps only rows with a null `price_list_id`, so what the product form holds is what it is entitled to write. It lives in `@spree/dashboard-core`, which both the operator dashboard and the seller panel build their product form from, so one filter covers both panels.
+
+Rejected: scoping the serializers' `many :prices` to base rows, which was built and reverted on review. `expand=variants.prices` means "this variant's prices" to every client, not "the subset one form may write", and narrowing a published read to protect one writer takes the price-list amounts and quantity breaks away from everyone else reading them in a single call. The rule it breaks is the general one: a read contract is not the place to encode a writer's constraint. Also rejected: hardening `Spree::Variant#prices=` against duplicate currencies, which treats the symptom. Whether a payload naming one currency twice should be a 422, and whether a blank amount should keep meaning "delete this price", are both still open.
+
+**Consequences:** No API change, no serializer change, no generated types move — the fix is four lines of TypeScript and a `price_list_id` on the panel's price type. The Prices card now shows the shop price rather than whichever row sorted first. Any *other* client that reads `variants.prices` and posts it back still meets the same trap, and the setter is what would have to refuse it; that is the open question above rather than something the read should have absorbed.
+
+This is the 2026-09-07 sweep ("a column that changes row identity is not finished at the writers") reaching a reader it missed — but the reader is in the dashboard, not the API. The rule to carry forward: when a form hydrates from a collection it will post back, it owes that collection a filter, because the setter on the other side cannot tell which rows the form was entitled to touch.
+
+**Plans amended:** `6.0-volume-pricing.md` (Notes from the build — the reader list).
+
+## 2026-09-18: A return is owed what the warehouse counted, and the line works that out
+
+**Context:** A return requested for three units and received as two offered the merchant a refund of all three. The dashboard pre-fills the refund dialog from `refundable_total` and always submits what is in the box, so the workflow's own correct default (`amount || received_total`) was never reached, and the only ceiling was the same announced-quantity figure — nothing refused it. On a $269.97 order line the customer was paid $89.99 too much and the seller clawed back $242.97 where $161.98 was owed, because `SellerTransfers::Reverse` scales the seller's share by the refund amount. Reproduced from a clean install, then twice more here: identical orders refunded with and without an `amount` came out $269.97 and $179.98 (V-3654). The same received-based arithmetic existed in three places — `Returns::Refund#received_total`, `Return#refunded_line_amounts` and nowhere else that anyone reading `refund_total` would find — which is how the offered figure and the owed figure came to disagree.
+
+**Decision:** `Spree::ReturnLineItem#refund_amount` is the single answer to what a line refunds, and `Return#refund_total` / `#refunded_line_amounts` are plain sums over it — the shape `Claim#refund_total` already had over `ClaimLineItem#refund_amount`. Before the warehouse has counted, the line is worth the announced quantity, since nothing better exists to quote; once it has, only the units that arrived are paid for. "Counted" is `Return#counted?` — `received? || refunded?`, so the figure does not revert when the return moves on — read from the status and not from `received_at`, which `migrate_returns.rake` never writes: keying off the timestamp would have left every store upgraded from the 5.x return chain with the original bug intact. The derived share is rounded to the currency through `Spree::Money::Rounding.to_currency`, because this figure is now an enforced ceiling as well as a display: a third of $29.99 taken three times is $29.9900000000000000000000000000001 in BigDecimal, which would refuse a full refund of a fully received return, and a third of $10.00 taken three times is $9.9999999999999999999999999999999, which the dashboard would prefill into the amount box verbatim. `pre_tax_amount` keeps its meaning untouched as what the announced units are worth — it is stored history, and receiving must not rewrite it. `Returns::Refund` drops its private `received_total` and takes `refundable_total` as both its default and its ceiling, so the amount a caller may name is the amount a caller who names none would get.
+
+Rejected: correcting only the dialog's pre-fill, which leaves the Admin API, the seller panel and every integration able to over-refund; and having `Returns::Receive` overwrite `pre_tax_amount` at receipt, which fixes every reader for free but destroys the record of what the customer announced.
+
+**Consequences:** No API shape changes and no dashboard change at all — both panels already read `refundable_total`, and it is now right. The values move: after a partial receipt `refund_total`, `display_refund_total` and `refundable_total` all drop to what arrived, on the Admin, Seller and Store serializers alike, so the returns card and the customer's own return page stop quoting a figure nobody will be paid. An over-large amount is now a 422 `refund_exceeds_balance` where it used to succeed, which is a behaviour change for any integration that was passing the announced total deliberately. The seller clawback needed no change: it scales off the refund, so a correct refund makes it correct. The phantom outstanding balance on a refunded order (V-3562) is untouched and still open.
+
+**Plans amended:** `6.0-returns-exchanges-claims.md` (Return and ReturnLineItem snippets, the `Returns::Refund` workflow row).
+## 2026-09-17: Seller attribution belongs to the one finalize home, so an admin-raised order divides like a checkout
+
+**Context:** An order raised from the admin charged a seller commission and credited that seller nothing. Reproduced from a clean install: a $549.99 order for a seller's product completed `paid`, wrote a commission line of $82.50 against the seller by name, and left `orders.seller_id` NULL — so `SellerTransfers::Create` halted on the blank column and the seller's own order list never showed the sale. A mixed basket commissioned both sellers and divided into nothing. The cause is that the stamp and the split were steps in `Carts::Complete`, while commission is charged off `order.placed`, published by `Orders::Complete` — the home `6.0-cart-order-split.md` designates for everything that happens when an order becomes placed, "serving both checkout and admin/B2B drafts". Two halves of one money path read two different columns, for exactly the orders that skip the cart. The 2026-08-21 entry on single-seller checkouts is the same oversight one level down: it fixed the case, not the cause (V-3643).
+
+**Decision:** Attribution moves into `Spree::Orders::Complete`, which owns it alone. It partitions by seller after payment and before placement, then either stamps one seller onto the order or divides it into a group, apportions the payment and places the siblings the division produced. `Carts::Complete` no longer divides anything: its FINALIZE phase makes one call and reads the group back off the result, losing two steps and its per-child loop. An intermediate shape put the logic in a service both workflows called; it was removed as shallow indirection, and two homes for one decision was the shape that caused this bug. `Carts::SplitBySeller` takes `cart:` as optional — `build_group` was its only cart-coupled method and the order carries every fact it read. The admin completion endpoint answers with the group when one was made, following the Store API, and the dashboard redirects to the orders list filtered to that group.
+
+Rejected: refusing to complete a multi-seller admin order. A customer asking a merchant to place an order spanning sellers is ordinary trade, and refusing would have left merchants hand-raising one order per seller with separate payments and reference numbers. The risk that argued for refusing — the six silent defects in post-placement money paths recorded on 2026-08-21 — does not apply, because those paths key on `order_group_id` and not on how the group was made, so an admin-raised group inherits every one of their fixes.
+
+**Consequences:** `PATCH /api/v3/admin/orders/:id/complete` may now answer with an order group instead of an order; `@spree/admin-sdk` types it `Order | OrderGroup` and exports `isOrderGroup` to narrow it, since the payload carries no type discriminator of its own. An admin order spanning sellers now produces child orders numbered off the group (`R1007-1`), which is a visible change to what an operator gets back. Two adjacent defects were found and deliberately left: `Orders::AddItem` never calls `Orders::BuildFulfillments`, so create-then-add-items leaves an order with no fulfillments that can never be fulfilled (and therefore never credits its seller, which fires on `order.fulfilled`); and `Admin::Orders::PaymentsController` scopes to the order's own payments, so its index is empty for a grouped child and `show`/`capture`/`void` answer 404 — `Admin::Orders::RefundsController` reads `settlement_payments` and shows the shape a fix would take. Both are pre-existing and reach split checkouts too. The sibling fault, a grouped child reporting `payment_total: 0` beside a correct `payment_status: paid`, was fixed separately in #14673.
+
+**Plans amended:** `6.0-multi-vendor-marketplace.md` (Constraints on Current Work, Resolved Decisions), `6.0-cart-order-split.md` (the Gates line).
+
+## 2026-09-16: Two catalogs on one company charge the best of them, and every order line says which agreement priced it
+
+**Context:** Nothing stopped an operator assigning a second catalog to a company — the audience picker offered the company again with no warning — and once both were active the buyer was charged from whichever catalog sorted first, not the cheaper one. Reported against a company holding a 5%-off catalog and a contract catalog with a quantity break: at 24 units the buyer paid $2,280.00 where the company's other agreement said $1,200.00, and reversing the two catalogs' order reversed the outcome (V-3635). The tie-break was the documented design — `Catalog#position`, which is the order of the store-wide catalogs screen — so a merchant dragging that list to tidy it changed what companies paid, with no screen anywhere listing a company's catalogs to show it had happened.
+
+**Decision:** Precedence between nodes is real and unchanged: a division's own agreement still answers over its parent's, cheaper or not, because someone negotiated it. Precedence *within* a node is not real, so it is gone — catalogs assigned to the same company node rank equally and the buyer pays the **best price any of them gives**. Equal amounts keep list order, so the answer stays stable. `Spree::Catalog.groups_for_company` / `groups_for_context` / `groups_for_buyer` return the catalogs grouped by assigning node and the flat `for_*` readers are derived from them, so visibility and quantity terms keep the union they always had while pricing alone sees the rank boundaries. `Spree::Current` memoizes the grouped form and derives the flat set from it, so the two cannot disagree about one buyer. Position keeps ordering the catalogs screen and nothing else.
+
+Rejected: refusing the second assignment, which would delete a shipped feature (two catalogs on one company is how an operator unions two assortments) and invalidate stores already doing it; and warning the operator while leaving the money alone, which does not stop the overcharge. Best-price is also the rule a merchant can state in one sentence to the buyer they overcharged.
+
+**Consequences:** The admin line-item serializer gains `price_list_id`, `price_list_name`, `catalog_id` and `catalog_name`, and the dashboard's order item rows link to the agreement that priced them. This is read off the price list the line was stamped with at pricing time, never re-resolved — so it reports what the buyer was actually charged from rather than what would apply today, and it keeps the order read path provider-free (2026-08-30, which is why `catalog_price` on the same serializer is a base price). Provenance stays admin-only, off the store serializers, like `price_source`. The orders controller preloads `line_items: { price_list: :catalog }` so a page of orders does not pay two queries per line.
+
+Deliberately not done: an **effective-price view** on the company or customer page — what a named buyer would pay for a product before any order exists. Raised on the issue after the fix was scoped, with figures: one variant offered at $111.11 by a company catalog, $329.99 by a standalone list and $549.99 as the shop price, with no screen anywhere reconciling the three (the customer page shows groups only, the company page no pricing at all). It is a real gap and a larger one than the original report's "show which catalog applies". The link added above answers only after the fact. A preview needs a new admin endpoint taking company-or-customer plus variant and quantity — the quantity matters, since a break can reverse which agreement wins — and cards on two dashboard pages. `Spree::Pricing::Context` already takes exactly those inputs and the storefront resolves through it per variant, so this is a new surface over an existing resolver, not a second one; the provider-free rule it must respect is about order and listing serializers, not a deliberate preview call. Held out so an urgent money fix is not gated on a feature.
+
+The same walk confirmed the tier order — company catalog, then standalone lists by their own rules, then shop price — is consistent and worth preserving. It is: best-price applies only within one node, never across tiers, and a test over that scenario charges $111.11 at every quantity.
+
+The same first-wins shape remains in `Catalogs::ResolveQuantityRules`, where the fields are minimums and multiples rather than money and "best" has no obvious meaning; V-3592 is the same class of problem on commission rates and is untouched here.
+
+**Plans amended:** `6.0-b2b-companies-and-catalogs.md` (Key Decisions, the `Catalog#position` note, and Pricing).
+
 ## 2026-09-12: Reporting scopes money to one currency and never converts; counts are not scoped at all
 
 **Context:** Every sales and payments base filtered `currency` unconditionally, so a multi-currency store could not ask how many orders it took — only how many were priced in one currency. That is a wrong answer rather than a partial one. The wider question of cross-currency totals came up at the same time, so both were settled together after looking at how other platforms handle it.
@@ -699,10 +778,13 @@ test failure, not a review comment — wrap genuinely global lookups in
 existence checks are exempt (they are dominated by loads from already-scoped
 rows and uniqueness validations) — exemption is NOT proof of scoping, so a
 lookup fed a request-derived id still requires `current_store` fetching even
-though the guard stays silent on it; and only the v3 controller surface is
-watched — jobs, webhooks and callbacks are a future extension, ideally keyed
-off `Spree::Current.store` assignment rather than per-entry-point
-registration. A new `Rails.cache` call without a store-scoped key fails the
+though the guard stays silent on it. Coverage follows the store context
+rather than the entry point (extended 2026-08-14): declaring a store through
+`Spree::Current#store=` arms the guard for that unit of work, so jobs,
+webhook controllers and console scripts are watched without registering
+each one, while work that never declares a store stays unguarded — reading
+the default store through the fallback is not a scoping claim worth
+checking. A new `Rails.cache` call without a store-scoped key fails the
 core suite until scoped or reviewed onto the allowlist, and a store-owned
 model with an unscoped `acts_as_list` fails it too (positions would bleed
 across stores — the bug PaymentMethod shipped with, fixed alongside three
@@ -5602,3 +5684,169 @@ backed by an index) and that key on its Ransack allowlist, or it cannot be
 declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
+
+
+## 2026-09-15 — Admin MCP ships in 6.0 over a core agent-tool registry; the assistant follows it
+
+Plan: `6.0-mcp-server.md`. Supersedes the "No MCP in 6.0" decision in
+`6.0-dashboard-assistant.md` (2026-08-20) and executes the future-lanes table
+in `5.5-admin-api-cli.md`, whose CLI-first precondition is met now that
+`spree api` has shipped.
+
+**Decision.** The tool registry the assistant branch built
+(`{name, description, params schema, permission key, mutating flag,
+executor}`) moves into `spree_core` as `Spree::AgentTool` /
+`Spree.agent_tools`, beside `Spree.integrations` and `Spree.reporting`, so an
+extension registers a tool without depending on any adapter gem. A new
+optional gem `spree_mcp` mounts the official `mcp` Ruby gem's Streamable HTTP
+transport at `/api/v3/admin/mcp`, authenticates with secret keys and offers
+only the tools the key's scopes permit. The assistant rebases onto the same
+registry afterwards. No new `spree_ai` or `spree_agents` gem.
+
+**Catalog shape.** Never one tool per endpoint. Generic reads and generic
+writes over a resource map derived from the admin controllers, with writable
+schemas read from the generated `admin.yaml`; reporting tools over
+`Spree.reporting`; a short list of task tools only where a job crosses
+records. Writes are scope-gated and confirmed by the MCP client; the
+server-side approval gate stays an assistant feature.
+
+**Consequences for other work.** New admin controllers must declare
+`model_class`, `serializer_class` and `scoped_resource`, and expose their
+workflow through `create_workflow` / `update_workflow`, or the generic tools
+cannot see them. Tool results must stay compact because they land in the
+model's context. No new tools under `Spree::Assistant::Tools`.
+
+
+## 2026-09-16 — Workflows are the agent write tools; exposure is an allowlist in core
+
+Plan: `6.0-mcp-server.md`. Refines the 2026-09-15 entry above.
+
+Reviewing the orders and products controllers showed that the Admin API has
+no direct record writes left on its write paths: the base controller calls
+the declared `create_workflow` / `update_workflow`, every member action calls
+a registered workflow, and a workflow's `perform` keyword signature with its
+YARD `@param` block is a machine-readable contract.
+
+**Decision.** Each exposed workflow is one agent tool with a schema derived
+from `perform`; no hand-written task tools. Exposure is
+`Spree.agent_tools.expose_workflows(<dependency key> => <permission>)` in
+`spree_core`, keyed by `Spree::Dependencies` key so a host app's replacement
+workflow keeps the tool. Generic `create_resource` / `update_resource` /
+`delete_resource` exist only for resources whose controller declares no
+workflow and refuse the rest. Tier 1 services still called from controllers
+are not adapted; they are promoted to workflows over time.
+
+**Consequences for other work.** A new back-office write is a workflow plus
+an allowlist entry in the same PR. `perform` parameters need typed YARD
+docs; record parameters must be models the resource map knows; principal
+parameters keep the established names so they are injected, never accepted
+from a caller. A contract spec fails when an admin controller invokes a
+workflow that is neither exposed nor explicitly excluded.
+
+
+## 2026-09-16 — The API key is an actor; "who did this" associations become polymorphic
+
+Plan: `6.0-action-actors.md`, shipping before `6.0-mcp-server.md`.
+
+Every association that records who performed an action (`canceler`,
+`approver`, `created_by`, `refunder`, `received_by`, …) pointed at the admin
+user class only, so a write made with a secret API key — a warehouse
+connector, an integration, soon any MCP client — recorded nobody.
+
+**Decision.** Those associations are declared with `acted_by`, which makes
+them polymorphic over `Spree.actor_classes` (the admin user class and
+`Spree::ApiKey`; extensions register more). The Admin API passes
+`current_actor` — the signed-in admin or the authenticating key — to
+workflows in place of the user. 6.0 converts the order operations (orders,
+refunds, returns, exchanges, claims, stock receipts: 8 columns on 6 tables);
+the remaining 13 convert in 6.1. Serializers expose `<name>_type` beside
+`<name>_id`. A transitional reader resolves un-backfilled rows through the
+admin user class with a deprecation warning until 6.1. Rejected: user-bound
+personal keys (platforms are retiring them; a connector is not a person) and
+waiting for OAuth (leaves 6.0 key writes unattributed). OAuth, when it comes,
+resolves a token to one of these two actor kinds.
+
+**Consequences for other work.** New "who did this" associations use
+`acted_by`, never `belongs_to … class_name: Spree.admin_user_class`;
+ownership associations that gate visibility (`Import#user`, `Export#user`,
+`SavedReport#user`) keep the plain form. Controllers pass `current_actor`,
+not `try_spree_current_user`, for actor keywords. Workflow principal
+parameters stay `[Object, nil]` and are assigned, not inspected.
+
+**Amended the same day, at implementation.** Three points the design left
+open. An expanded actor serializes as `{ id, type, label }` through a new
+`ActorSerializer`, not through the admin user serializer — the order
+serializer already expanded `approver`/`canceler`/`created_by` as people and
+the dashboard read `full_name || email` off them, which no key can answer.
+`ApiKeySerializer#created_by_email` calls `.email` on the already-polymorphic
+`created_by`, so it gains `created_by_type` and `created_by_label` and the
+api-keys controller passes `current_actor`; the plan had said to leave that
+file alone, which left a 500 waiting for the first key-creates-key call.
+`current_actor` is defined on `Api::V3::BaseController` (answering the user)
+and overridden in `AdminAuthentication` to prefer `current_api_key`, because
+the post-sale concerns are shared with the JWT-only seller panel while a
+publishable Store API key must never become an actor.
+
+## 2026-09-16 — Update checks and usage telemetry are one daily heartbeat, on by default
+
+Plan: `6.0-telemetry-and-update-check.md`.
+
+The 5.x update banner went with the `spree_admin` engine, and 6.0 had no
+replacement and no usage reporting from servers or the CLI.
+
+**Decision.** `Spree::UpdateCheck` in core asks spreecloud.io once a day
+from a job, never inline in a request, and the same request is the usage
+heartbeat: the four 5.x query keys (`version`, `environment`, `url`,
+`install_id`) stay frozen, and stack fields plus order-of-magnitude size
+buckets sit beside them. The dashboard reads `GET /api/v3/admin/updates`
+(JWT admins with `manage` on the store only; secret keys get 404) and shows
+a banner through an `AppShell` `banner` slot the seller panel leaves empty.
+`@spree/cli` and `create-spree-app` send one event per command. Both
+channels are on by default; `SPREE_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1`
+reduces the heartbeat to `version` and silences the CLI,
+`SPREE_UPDATE_CHECK_DISABLED=1` stops the request entirely. Rejected: exact
+counts (business data next to a store URL), folding the status into `/me`
+(reaches admins who cannot manage the store), opt-in by default (no banner
+for most installs, 5.x regression).
+
+**Consequences for other work.** The running Spree version, gem list or
+environment must not appear in any other Admin API response. A new outbound
+call from core is cached, run from a job, short-timeout, failure-cached.
+Env-backed booleans read through `Spree::Config` must be cast: the `env:`
+option on `preference` returns the raw string. Cross-page notices go through
+the `AppShell` `banner` slot, nowhere else.
+## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
+
+Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.
+
+Creating a store asks the same four questions wherever it happens — name,
+country, currency, language — and provisions the same things from the
+answers. Two flows ask them:
+
+- **Self-hosted:** account setup, then store setup. No email confirmation.
+- **Hosted signup:** account setup, then confirmation (instant with an OAuth
+  provider), then store setup.
+
+Only the middle step differs, so the store step is shared rather than
+reimplemented.
+
+**Frontend.** The four fields live in `StoreSetupFields`, exported from
+`@spree/dashboard` at `./components/spree/store-setup-fields`. It is headless
+about submission: the caller owns the form, the countries query and what
+happens on submit, because those genuinely differ (a one-time setup token
+versus an authenticated session). The country drives the currency and
+language defaults, and both stay editable.
+
+**Backend.** `Spree::Stores::ProvisionDefaults` is the one provisioning path,
+already called by the first-run setup endpoint. Anything else that creates a
+store calls it too, rather than hand-rolling a subset: it builds the default
+market, the warehouse, the delivery zones, the package type and pickup, and a
+store missing those cannot ship. The earlier hosted sandbox created only a
+market, which is why its stores could not fulfil.
+
+**Consequences for other work.** A new flow that creates a store mounts
+`StoreSetupFields` and calls `ProvisionDefaults`; it does not write its own
+country picker or its own provisioning. `ProvisionDefaults` previously
+documented exactly two callers — that list grows as flows are added, but the
+rule it protects stands: never wire it to a settings screen, since re-running
+it against a configured store is a data reset.

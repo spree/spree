@@ -57,7 +57,7 @@ Customers can open a return or a claim on their own order and follow its progres
 // Request a return — items refer to units that shipped, not cart line items
 const returnRequest = await client.orders.returns.create('or_xxx', {
   items: [{ fulfillment_item_id: 'fi_xxx', quantity: 1 }],
-  reason_id: 'rsn_xxx',
+  reason_id: 'rar_xxx',
   memo: 'Too small',
 })
 
@@ -82,7 +82,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/returns' \
 
 </CodeGroup>
 
-Claim types are `damaged`, `missing`, `wrong_item` and `other` out of the box, and a store can add its own.
+Claim reasons are records each store owns. New stores are seeded with *Arrived damaged*, *Never arrived*, *Wrong item sent*, *Missing item from order* and *Item not as described*, and merchants can add, rename or remove their own.
 
 ## Processing a return
 
@@ -172,9 +172,9 @@ What to do about a claim is decided when you resolve it, not when the customer o
 <CodeGroup>
 
 ```typescript Admin SDK
-await adminClient.orders.claims.approve('or_xxx', 'clm_xxx')
+await adminClient.orders.claims.approve('or_xxx', 'claim_xxx')
 
-await adminClient.orders.claims.resolve('or_xxx', 'clm_xxx', {
+await adminClient.orders.claims.resolve('or_xxx', 'claim_xxx', {
   resolution: 'refund_and_replacement',   // or 'refund', 'replacement'
   refund_method: 'store_credit',
   replacement_line_item_ids: ['li_xxx'],
@@ -182,10 +182,10 @@ await adminClient.orders.claims.resolve('or_xxx', 'clm_xxx', {
 ```
 
 ```bash cURL
-curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/clm_xxx/approve' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_xxx/approve' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/clm_xxx/resolve' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_xxx/resolve' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -252,7 +252,7 @@ curl 'https://api.mystore.com/api/v3/admin/claims?q[created_at_gt]=2026-08-01' \
 
 ## Return policy
 
-Spree ships no built-in return window. Whether a customer may open a return is store policy, and it's checked when the return is created — so you can hold customers to a 30-day window while letting staff make an exception for a good customer, and vary the rule by market where local law requires it.
+Spree ships one built-in rule: a return window, counted from when the order was placed and set per market (30 days by default). Whether a customer may open a return is store policy, and it's checked when the return is created — so you can hold customers to that window while letting staff make an exception for a good customer, and vary the rule by market where local law requires it.
 
 Set the return window per market, or express a more specific rule in your own application. See [Configuration](/developer/customization/configuration) and [Services & Workflows](/developer/customization/workflows).
 

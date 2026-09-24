@@ -42,7 +42,7 @@ created_primary_server=0
 
 if [ ! -d server ]; then
   echo "▸ Cloning spree-starter into server/"
-  git clone --depth 1 --branch 6-0-dev https://github.com/spree/spree-starter.git server
+  git clone --depth 1 https://github.com/spree/spree-starter.git server
   rm -rf server/.git server/.gitignore
 
   # Adopt the primary checkout's migration set (and its schema snapshot) before
@@ -97,6 +97,16 @@ fi
 if ! grep -q '^RAILS_PROTOCOL=' server/.env; then
   printf 'RAILS_PROTOCOL=%s\n' 'https' >> server/.env
 fi
+
+# Active Record encryption keys, so Spree's encrypted columns (webhook signing
+# keys, gateway customer ids, OAuth tokens) are encrypted in dev like they are
+# in a scaffolded project. Per worktree: the seeded template holds no encrypted
+# rows. Only added when missing — changing them makes encrypted rows unreadable.
+for key in PRIMARY_KEY DETERMINISTIC_KEY KEY_DERIVATION_SALT; do
+  if ! grep -q "^ACTIVE_RECORD_ENCRYPTION_${key}=" server/.env; then
+    printf 'ACTIVE_RECORD_ENCRYPTION_%s=%s\n' "$key" "$(openssl rand -hex 16)" >> server/.env
+  fi
+done
 
 # Mail goes to Mailpit, as it does in the starter's Docker stack. Without
 # SMTP_HOST the starter falls back to a delivery method that does not exist,

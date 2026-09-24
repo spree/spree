@@ -4,6 +4,10 @@
       "delete_image": "Supprimer l'image",
       "edit_media": "Modifier le média"
     },
+    "actors": {
+      "api_key": "Clé API",
+      "unnamed": "Sans nom"
+    },
     "allowed_origins": {
       "add_cta": "Ajouter une origine autorisée",
       "create_description": "Les navigateurs chargés depuis cette origine peuvent appeler l'API admin. La liste blanche CORS et la session par cookie admin reposent toutes deux sur cette liste — restez restrictif.",
@@ -30,10 +34,10 @@
         "never_used": "Jamais",
         "revoked": "Révoquée"
       },
-      "by_email": "par {{email}}",
       "create_key_cta": "Créer la clé",
       "create_sheet_description": "Choisissez un type de clé, puis sélectionnez les portées qu'elle peut utiliser.",
       "create_sheet_title": "Créer une clé API",
+      "created_by": "par {{actor}}",
       "delete_confirm": {
         "message": "Cela supprime définitivement la clé. Préférez la révocation si vous pourriez avoir besoin de rétablir l'accès ultérieurement.",
         "title": "Supprimer la clé ?"
@@ -116,7 +120,7 @@
         "message": "{{name}} cesse de s’appliquer. Son audience revient aux prix boutique et tout le contenu du catalogue est conservé."
       },
       "delete_confirm": {
-        "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
+        "message": "Cela supprime {{name}}, ses affectations et sa liste de prix avec les prix qu’elle contient. Les produits restent dans votre boutique. Cette action est irréversible.",
         "title": "Supprimer le catalogue ?"
       },
       "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",
@@ -560,7 +564,7 @@
         "settings_label": "Paramètres du calculateur"
       },
       "create_line_items_action_editor": {
-        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés au panier.",
+        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés gratuitement au panier.",
         "empty": "Aucune variante pour l'instant. Recherchez ci-dessous pour en ajouter une.",
         "search_placeholder": "Rechercher des variantes par nom ou SKU…",
         "variant_label": "Ajouter une variante"
@@ -1234,7 +1238,7 @@
             "Spree::Order": "Commandes",
             "Spree::Product": "Produits",
             "Spree::Taxon": "Catégories",
-            "Spree::User": "Clients",
+            "Spree::Customer": "Clients",
             "Spree::Variant": "Variantes"
           },
           "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
@@ -1847,28 +1851,6 @@
           "label": "Taxe reversée par"
         }
       },
-      "setup": {
-        "country_code": {
-          "help": "D'où vous expédiez. Votre boutique peut vendre dans le monde entier — ceci définit seulement la devise, l'entrepôt et les zones de livraison de départ, tous modifiables ensuite.",
-          "label": "Pays",
-          "placeholder": "Rechercher un pays"
-        },
-        "currency": {
-          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Devise",
-          "placeholder": "Rechercher une devise"
-        },
-        "locale": {
-          "help": "Votre langue par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Langue"
-        },
-        "password_confirmation": {
-          "label": "Confirmer le mot de passe"
-        },
-        "store_name": {
-          "label": "Nom de la boutique"
-        }
-      },
       "state": {
         "label": "Région"
       },
@@ -1919,6 +1901,10 @@
         "address_requires_phone": {
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
+        },
+        "always_include_confirm_step": {
+          "help": "Proposer toujours aux clients une étape de vérification finale avant de valider la commande, même lorsqu’aucun moyen de paiement ne l’exige.",
+          "label": "Toujours afficher l’étape de confirmation"
         },
         "capture_method": {
           "help": "La valeur par défaut pour tous les moyens de paiement. Un moyen de paiement peut la remplacer.",
@@ -2111,7 +2097,10 @@
           "minimum": {
             "label": "Paiement minimum",
             "help": "En dessous, le solde du vendeur est reporté à la période suivante. Zéro paie tout ce qui est dû."
-          }
+          },
+          "provider_needs_connection": "Connectez {{name}} pour l’utiliser",
+          "provider_connect_hint": "{{name}} paie les vendeurs via son moyen de paiement, qui n’est pas encore actif sur cette boutique.",
+          "provider_connect_link": "Configurez-le dans Moyens de paiement"
         },
         "limit_digital_download_count": {
           "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
@@ -2137,6 +2126,23 @@
         "preferred_default_package_weight": {
           "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver.",
           "label": "Poids de colis par défaut"
+        },
+        "auto_approve_sellers": {
+          "label": "Valider les vendeurs automatiquement",
+          "help": "Un vendeur commence à vendre dès qu’il termine sa liste, sans que personne ne l’examine."
+        },
+        "auto_approve_seller_products": {
+          "label": "Publier les produits des vendeurs automatiquement",
+          "help": "Le produit d’un vendeur est mis en vente dès qu’il le soumet, sans que personne ne l’examine."
+        },
+        "send_seller_transactional_emails": {
+          "label": "Envoyer des e-mails aux vendeurs",
+          "help": "Envoie aux vendeurs les e-mails sur la validation, les produits et les paiements. Désactivez si vous écrivez vous-même à vos vendeurs. Les e-mails clients ne sont pas concernés."
+        },
+        "default_commission_tax_rate": {
+          "label": "Taxe par défaut sur la commission",
+          "help": "Appliquée à votre commission quand ni le taux de commission ni votre fournisseur de taxes n’indique son propre taux. Laissez 0 si votre commission n’est pas taxée.",
+          "suffix": "%"
         }
       },
       "store_credit": {
@@ -2731,6 +2737,8 @@
           "cancel_shipment_message": "Annuler cet envoi ?",
           "capture_message": "Capturer ce paiement ?",
           "complete_message": "Finaliser cette commande brouillon maintenant ?",
+          "delete_message": "Supprimer la commande brouillon {{number}} ? Cette action est irréversible.",
+          "delete_title": "Supprimer la commande brouillon ?",
           "remove_gift_card_message": "Retirer cette carte cadeau de la commande ?",
           "remove_item_message": "Retirer cet article de la commande ?",
           "remove_store_credit_message": "Retirer l'avoir de la commande ?",
@@ -2758,7 +2766,8 @@
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
           "complete_failed": "Échec de la finalisation de la commande",
-          "confirmation_send_failed": "Échec de l'envoi de la confirmation"
+          "confirmation_send_failed": "Échec de l'envoi de la confirmation",
+          "delete_failed": "Échec de la suppression de la commande"
         },
         "fulfillments": {
           "add_delivery": "Ajouter un suivi",
@@ -2859,7 +2868,10 @@
           "canceled": "Commande annulée",
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
+          "completed_as_group_one": "Commande finalisée en {{count}} commande distincte",
+          "completed_as_group_other": "Commande finalisée en {{count}} commandes distinctes",
           "confirmation_sent": "Confirmation envoyée",
+          "deleted": "Commande brouillon supprimée",
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",
@@ -2886,6 +2898,7 @@
           "shared_help": "Payé en une fois pour un panier réparti entre plusieurs vendeurs. Cette commande en détient une part.",
           "load_error": "Impossible de charger les paiements de cette commande."
         },
+        "priced_by": "Tarifé par {{name}}",
         "purchase_order": {
           "document": "Document de bon de commande",
           "document_help": "Fichier PDF, image ou Word, jusqu’à 10 Mo.",
@@ -3959,12 +3972,18 @@
           },
           "title": "Webhooks"
         },
-        "payouts": {
-          "title": "Paiements",
-          "subtitle": "Comment et quand cette marketplace paie ses vendeurs."
-        },
         "package_types": {
           "add_sheet_title": "Ajouter un type d'emballage"
+        },
+        "marketplace": {
+          "title": "Marketplace",
+          "subtitle": "Comment cette marketplace paie ses vendeurs, comment les vendeurs la rejoignent, ce qu’ils reçoivent de vous et la taxe sur votre commission.",
+          "payouts_title": "Versements",
+          "payouts_description": "Comment et quand cette marketplace paie ses vendeurs. Un vendeur peut avoir sa propre fréquence et son propre minimum.",
+          "admission_title": "Validation des vendeurs",
+          "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
+          "communication_title": "Communication",
+          "commission_tax_title": "Taxe sur la commission"
         }
       },
       "staff": {
@@ -5001,9 +5020,9 @@
         "tax_categories": "Classes de taxe attribuées aux produits",
         "tax_rates": "Taux appliqués par marché et région",
         "webhooks": "Points de terminaison notifiés lors d'événements",
-        "payouts": "Qui paie vos vendeurs, à quelle fréquence et à partir de quel montant",
         "package_types": "Cartons, palettes et conteneurs",
-        "suppliers": "À qui vous achetez votre stock, et comment les joindre"
+        "suppliers": "À qui vous achetez votre stock, et comment les joindre",
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
       },
       "groups": {
         "audit": "Audit",
@@ -5039,9 +5058,12 @@
         "tax_categories": "Catégories de taxe",
         "tax_rates": "Taux de taxe",
         "webhooks": "Webhooks",
-        "payouts": "Paiements",
         "package_types": "Types d'emballage",
-        "suppliers": "Fournisseurs"
+        "suppliers": "Fournisseurs",
+        "marketplace": "Paramètres"
+      },
+      "breadcrumbs": {
+        "marketplace": "Marketplace"
       }
     },
     "setup": {
@@ -5059,7 +5081,9 @@
       "required_notice_message": "Aucun compte administrateur n'existe. Utilisez le lien de configuration affiché lors de l'installation pour en créer un.",
       "required_notice_title": "Cette installation n'est pas encore configurée",
       "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
-      "title": "Configurer Spree"
+      "title": "Configurer Spree",
+      "welcome_description": "Suivez la liste ci-dessous pour ouvrir {{store}}.",
+      "welcome_title": "Bienvenue, votre boutique est prête !"
     },
     "staff": {
       "actions": {
@@ -5084,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Échec du retrait du membre du personnel",
         "failed_to_resend": "Échec du renvoi de l'invitation",
-        "failed_to_revoke": "Échec de la révocation de l'invitation"
+        "failed_to_revoke": "Échec de la révocation de l'invitation",
+        "failed_to_copy_link": "Impossible de copier le lien d'invitation"
       },
       "invite": {
         "email_placeholder": "collegue@exemple.com",
@@ -5885,6 +5910,8 @@
       "builder": {
         "metrics": "Indicateurs",
         "no_metrics": "Choisissez au moins un indicateur.",
+        "one_family_only": "Un rapport couvre un seul groupe de mesures. Choisir une mesure d'un autre groupe fait basculer le rapport vers ce groupe.",
+        "switches_family": "Fait basculer ce rapport vers {{family}}",
         "group_by": "Regrouper par",
         "none": "Aucun (totaux uniquement)",
         "grain": "Intervalle",

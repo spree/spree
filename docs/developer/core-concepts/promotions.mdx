@@ -137,7 +137,9 @@ Writes a discount on each fulfillment covering its delivery cost. The row is kep
 
 ### Free items (`CreateLineItems`)
 
-Adds specified products to the cart when the promotion is eligible, checking stock first. Items are not removed automatically if eligibility is lost — customers remove them manually.
+Adds specified products to the cart when the promotion is eligible, checking stock first, and discounts them to zero. A customer who already has the gift in their cart gets theirs free rather than a duplicate; any further copies they bought stay paid for. The gift is taken back when the promotion stops applying.
+
+No second action is needed to make the gift free — pairing this with an order discount set to the gift's price discounts it twice.
 
 **Use case:** "Free gift with purchase", "Spend $100 get a free sample".
 
@@ -211,7 +213,7 @@ Deleting a promotion doesn't disturb the orders that used it. Their discount row
 Coupon codes track promotion usage and can be single-use or multi-use.
 
 - **Single code** — set the `code` attribute on the promotion; `usage_limit` controls how many times it can be redeemed.
-- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`).
+- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`). A code is used up only when an order is placed with it. Applying it to a cart just holds it there, and a shopper who presents a code held by an abandoned cart takes it over, so an unfinished checkout never burns a code.
 
 Customers apply codes on the cart via the Store API:
 

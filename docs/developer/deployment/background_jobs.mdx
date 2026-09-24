@@ -23,7 +23,21 @@ Every deployment ships [Mission Control](https://github.com/rails/mission_contro
 
 ## Recurring Jobs
 
-Scheduled work — releasing expired stock reservations, pruning price history, queue housekeeping — is defined in `config/recurring.yml`, Solid Queue's built-in cron. Add your own:
+Scheduled work is defined in `config/recurring.yml`, Solid Queue's built-in cron. A new project already schedules everything Spree needs:
+
+| Schedule | Job | What it does |
+|---|---|---|
+| Every minute | `Spree::StockReservations::ExpireJob` | Releases checkout stock reservations whose hold expired |
+| Every 5 minutes | `Spree::Orders::FinalizeStaleDraftsJob` | Finishes orders whose payment succeeded but whose completion never committed; never refunds |
+| Hourly | `Spree::Carts::ReapExpiredJob` | Deletes abandoned carts past their expiry; carts with a live payment are kept |
+| Hourly | `Spree::Collections::RegenerateTimeBasedJob` | Refreshes automatic collections with time-based rules, such as "available on" |
+| Daily | `spree:price_history:prune` task | Deletes price history older than each store's retention period (EU Omnibus) |
+| Daily | `Spree::SellerPayouts::SweepDueJob` | Settles marketplace sellers who are due a payout (see below) |
+| Hourly | `Spree::SellerTransfers::ExecutePendingDueJob` | Retries seller earnings a payout provider refused |
+
+The marketplace jobs do nothing on a store with no sellers, so keep them enabled. If your project predates any of these, copy the missing entries from the [starter's `config/recurring.yml`](https://github.com/spree/spree-starter/blob/main/config/recurring.yml).
+
+Add your own:
 
 ```yaml config/recurring.yml
 production:
@@ -34,11 +48,12 @@ production:
 
 ### Marketplace payouts
 
-A marketplace has to schedule one more job, or its sellers are never paid:
+A marketplace settles its sellers on a recurring job, which a new project
+already schedules:
 
 ```yaml config/recurring.yml
 production:
-  sweep_seller_payouts:
+  sweep_due_seller_payouts:
     class: Spree::SellerPayouts::SweepDueJob
     schedule: at 3am every day
 ```
@@ -81,21 +96,27 @@ Configure the queues with weights — Sidekiq's equivalent of Solid Queue's poll
   - [spree_events, 3]
   - [spree_exports, 3]
   - [spree_images, 3]
+  - [spree_stock_reservations, 5]
   - [spree_products, 3]
-  - [spree_reports, 3]
   - [spree_variants, 3]
-  - [spree_taxons, 3]
-  - [spree_stock_location_stock_items, 3]
+  - [spree_categories, 3]
+  - [spree_collections, 3]
+  - [spree_stock_location_stock_levels, 3]
   - [spree_coupon_codes, 3]
   - [spree_addresses, 3]
   - [spree_gift_cards, 3]
   - [spree_webhooks, 3]
   - [spree_api_keys, 3]
   - [spree_search, 3]
+  - [spree_tax_identifiers, 3]
+  - [spree_payouts, 3]
+  - [spree_data_requests, 1]
   - [active_storage_transform, 3]
   - [active_storage_analysis, 1]
   - [active_storage_purge, 1]
 ```
+
+Unlike Solid Queue, Sidekiq has no catch-all queue: a job on a queue missing from this list never runs. Every queue name you assign with `Spree.queues` in `config/initializers/spree.rb` must appear here. Any `Spree.queues` entry you don't assign uses `default`.
 
 Move the `config/recurring.yml` schedules to sidekiq-cron (it auto-loads `config/schedule.yml`):
 
@@ -103,6 +124,37 @@ Move the `config/recurring.yml` schedules to sidekiq-cron (it auto-loads `config
 expire_stock_reservations:
   cron: "* * * * *"
   class: Spree::StockReservations::ExpireJob
+finalize_stale_draft_orders:
+  cron: "*/5 * * * *"
+  class: Spree::Orders::FinalizeStaleDraftsJob
+reap_expired_carts:
+  cron: "7 * * * *"
+  class: Spree::Carts::ReapExpiredJob
+regenerate_time_based_collections:
+  cron: "17 * * * *"
+  class: Spree::Collections::RegenerateTimeBasedJob
+prune_price_history:
+  cron: "0 4 * * *"
+  class: PrunePriceHistoryJob
+sweep_due_seller_payouts:
+  cron: "0 3 * * *"
+  class: Spree::SellerPayouts::SweepDueJob
+execute_pending_seller_transfers:
+  cron: "27 * * * *"
+  class: Spree::SellerTransfers::ExecutePendingDueJob
+```
+
+sidekiq-cron schedules jobs, not commands, so price history pruning needs a small job that runs the task:
+
+```ruby app/jobs/prune_price_history_job.rb
+require 'rake'
+
+class PrunePriceHistoryJob < ApplicationJob
+  def perform
+    Rails.application.load_tasks unless Rake::Task.task_defined?('spree:price_history:prune')
+    Rake::Task['spree:price_history:prune'].tap(&:reenable).invoke
+  end
+end
 ```
 
 The `/jobs` dashboard is Solid Queue-specific — mount [Sidekiq's Web UI](https://github.com/sidekiq/sidekiq/wiki/Monitoring) instead:

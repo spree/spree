@@ -28,7 +28,7 @@ const carts = await client.carts.list();
 await client.carts.delete(cartId, { spreeToken: cart.token });
 
 // Associate guest cart with authenticated user
-// (after user logs in, merge their guest cart with their account)
+// (after user logs in, assign the guest cart to their account — carts are not merged)
 await client.carts.associate(cartId, {
   token: jwtToken,         // User's JWT token
   spreeToken: cart.token,  // Guest cart token
@@ -112,8 +112,8 @@ await client.carts.update(cartId, {
     city: 'New York',
     postal_code: '10001',
     phone: '+1 555 123 4567',
-    country_iso: 'US',
-    state_abbr: 'NY',
+    country_code: 'US',
+    state_code: 'NY',
   },
   billing_address_id: 'addr_xxx', // Or use existing address by ID
 }, { spreeToken: cart.token });
@@ -122,8 +122,25 @@ await client.carts.update(cartId, {
 ### Complete Checkout
 
 ```typescript
-await client.carts.complete(cartId, { spreeToken: cart.token });
+import { isOrderGroup } from '@spree/sdk';
+
+const result = await client.carts.complete(cartId, { spreeToken: cart.token });
 ```
+
+Completing a cart usually returns one order. In a [marketplace](/developer/core-concepts/sellers#one-checkout-several-sellers), a cart holding several sellers' goods divides into one order per seller, and the response is the **order group** that ties them together: one purchase, one payment, combined totals, and the per-seller orders in `orders`. Use `isOrderGroup` to tell the two apart:
+
+```typescript
+if (isOrderGroup(result)) {
+  // One purchase, shown to the customer under the group's number and total.
+  console.log(result.number, result.display_total);
+  // How it will arrive: one order per seller, each with its own items and delivery.
+  result.orders.forEach((order) => console.log(order.number, order.items));
+} else {
+  console.log(result.number, result.display_total);
+}
+```
+
+A storefront that never sells through more than one seller always gets an order back, but checking costs nothing and keeps the confirmation page working if sellers are added later.
 
 ### Fulfillments
 
@@ -177,7 +194,7 @@ The cart and order responses break the amount the customer pays into these total
 ### Get a Completed Order
 
 ```typescript
-const order = await client.orders.get('R123456789', {
+const order = await client.orders.get('or_xxx', { // prefixed order ID (or the cart ID)
   expand: ['items', 'fulfillments'],
 }, { spreeToken: cart.token });
 ```

@@ -11,15 +11,21 @@ This recipe builds a "Loyalty status" card for the customer detail page: read-on
 ## The component
 
 ```tsx
-// src/widgets/loyalty-status-card.tsx
+// src/slots/loyalty-status-card.tsx
 import { useQuery } from '@tanstack/react-query'
-import { adminClient, usePermissions, useStore } from '@spree/dashboard-core'
 import {
+  adminClient,
   Badge,
-  Card, CardContent, CardHeader, CardTitle,
-  Empty, EmptyDescription,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Empty,
+  EmptyDescription,
   Skeleton,
-} from '@spree/dashboard-ui'
+  usePermissions,
+  useStore,
+} from '@spree/dashboard'
 import { Trophy } from 'lucide-react'
 
 interface LoyaltyRecord {
@@ -94,8 +100,8 @@ Worth noting:
 
 ```ts
 // src/plugins.ts (in your dashboard app)
-import { defineDashboardPlugin } from '@spree/dashboard-core'
-import { LoyaltyStatusCard } from './widgets/loyalty-status-card'
+import { defineDashboardPlugin } from '@spree/dashboard'
+import { LoyaltyStatusCard } from './slots/loyalty-status-card'
 
 defineDashboardPlugin({
   slots: {

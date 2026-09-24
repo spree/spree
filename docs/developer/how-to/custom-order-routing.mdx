@@ -9,14 +9,14 @@ import { Since } from '/snippets/since.mdx';
 
 ## Overview
 
-Order routing decides which [Stock Location](/developer/core-concepts/inventory#stock-locations) fulfills an order at checkout. Spree gives you two extension points:
+Order routing decides which [Stock Location](/developer/core-concepts/inventory#stock-locations) fulfills an order when Spree builds the order's fulfillments (`Order#rebuild_fulfillments!`) — orders created or edited by staff through the Admin API or dashboard, and items added to an order after it was placed. Storefront checkout does not go through it: a cart builds its fulfillments with `Spree::Stock::Coordinator`, and completing checkout copies them onto the order. Spree gives you two extension points:
 
 - **Rules** — add a new signal to the existing rules-walking algorithm (proximity, customer tier, refrigerated SKUs, day-of-week dispatch).
 - **Strategies** — replace the algorithm entirely (delegate to a warehouse management system, run an ML model, call an optimization solver).
 
 This guide covers both. Most extensions are rules — they compose with the built-ins and don't require rewriting the pipeline.
 
-Before starting, make sure you understand [how order routing works in Spree](/developer/core-concepts/fulfillments#order-routing).
+Before starting, make sure you understand how [fulfillments](/developer/core-concepts/fulfillments) and [stock locations](/developer/core-concepts/inventory) work in Spree.
 
 | If the answer is "yes" | Pick |
 |---|---|
@@ -160,8 +160,8 @@ The contract is `Spree::OrderRouting::Strategy::Base`. There are no defaults —
 
 | Method | When it fires | Returns |
 |---|---|---|
-| `#for_allocation` | Cart → checkout transition (`Order#create_proposed_shipments`) | `Array<Spree::Stock::Package>` |
-| `#for_sale(fulfillment:)` | A shipment ships | (side effect) |
+| `#for_allocation` | The order's fulfillments are built (`Order#rebuild_fulfillments!`) | `Array<Spree::Stock::Package>` |
+| `#for_sale(fulfillment:)` | A fulfillment ships | (side effect) |
 | `#for_release` | An in-flight order is canceled before shipping | (side effect) |
 | `#for_cancellation` | A shipped order is canceled (return) | (side effect) |
 
@@ -206,10 +206,11 @@ module Acme
 
       def build_package(assignment)
         location = Spree::StockLocation.find_by!(code: assignment.location_code)
-        units = order.inventory_units.where(variant_id: assignment.variant_ids).to_a
+        units = Spree::Stock::InventoryUnitBuilder.new(order).units
+                  .select { |unit| assignment.variant_ids.include?(unit.variant_id) }
 
-        package = Spree::Stock::Packer.new(location, units, Spree.stock_splitters).packages.first
-        package.shipping_rates = Spree::Stock::Estimator.new(order).shipping_rates(package)
+        package = Spree::Stock::Packer.new(location, units, Spree.stock_splitters, owner: order).packages.first
+        package.delivery_rates = Spree::Stock::Estimator.new(order).delivery_rates(package)
         package
       end
 
@@ -224,8 +225,8 @@ end
 Notes:
 
 - **Strategies are plain Ruby classes**, not ActiveRecord models. Live under `app/models/` so the autoloader picks them up; or anywhere on the load path if you'd rather organize them as services.
-- **`for_allocation` returns `Spree::Stock::Package` objects.** The order's `create_proposed_shipments` turns those into `Shipment`s by calling `package.to_shipment`. Returning shipments directly will break the call site.
-- **Reuse the existing primitives.** `Spree::Stock::Packer`, `Spree::Stock::Estimator`, and `Spree::Stock::InventoryUnitBuilder` handle packing, rate estimation, and inventory unit construction. Custom strategies are about the location decision, not re-implementing the packing pipeline.
+- **`for_allocation` returns `Spree::Stock::Package` objects.** The order's `rebuild_fulfillments!` turns those into `Spree::Fulfillment`s by calling `package.to_fulfillment`. Returning fulfillments directly will break the call site.
+- **Reuse the existing primitives.** `Spree::Stock::Packer`, `Spree::Stock::Estimator`, and `Spree::Stock::InventoryUnitBuilder` handle packing, delivery rate estimation, and building the units to pack. Custom strategies are about the location decision, not re-implementing the packing pipeline.
 
 ### Step 2: Register the Strategy
 
@@ -259,7 +260,7 @@ Resolution order: `channel.preferred_order_routing_strategy` → `store.preferre
 
 ### Step 3: Test the Strategy
 
-Strategy tests are integration tests — build an order, instantiate the strategy, exercise the four methods, assert on the resulting shipments and mocked side effects.
+Strategy tests are integration tests — build an order, instantiate the strategy, exercise the four methods, assert on the resulting packages and mocked side effects.
 
 ```ruby spec/models/acme/oms/strategy_spec.rb
 require 'rails_helper'
@@ -294,15 +295,15 @@ end
 
 - **Forgetting the lifecycle hooks.** `for_release` and `for_cancellation` raise `NotImplementedError` by default. If your algorithm doesn't need post-allocation hooks, override them as no-ops explicitly.
 - **Ignoring inventory.** Even custom strategies should query `Spree::StockLocation.active` and respect the order's reserved units. Hardcoding `Spree::StockLocation.first` will work in tests and break in production.
-- **Side effects in `for_sale` / `for_release`.** These fire from state-machine callbacks where the order may already be partially mutated. Treat the methods as side-effect endpoints; pull what you need from the `order` and `fulfillment` arguments — don't reload state mid-call.
+- **Side effects in `for_sale` / `for_release`.** These fire while the order or fulfillment is changing status, so the order may already be partially mutated. Treat the methods as side-effect endpoints; pull what you need from the `order` and `fulfillment` arguments — don't reload state mid-call.
 
 ## Coexistence with Stock Reservations
 
-Stock reservations and order routing are independent systems in 5.5 — they make decisions at different times and protect different invariants.
+Stock reservations and order routing are independent systems — they make decisions at different times and protect different invariants.
 
 | Concern | Reservation system | Order routing |
 |---|---|---|
-| **When it fires** | Cart mutation (add item, change qty, enter checkout) | Cart → checkout transition |
+| **When it fires** | Cart changes during checkout (add item, change quantity); released when the order is placed | When an order's fulfillments are built (`Order#rebuild_fulfillments!`) |
 | **What it decides** | How many units of a variant are held for this cart | Which `StockLocation` fulfills the order |
 | **Granularity** | Per-variant | Per-order |
 
@@ -311,7 +312,7 @@ Stock reservations and order routing are independent systems in 5.5 — they mak
 What this means for you when writing custom rules and strategies:
 
 - **Don't read `StockReservation` from inside a routing rule's `#rank`.** The reservations were created against arbitrary stock_items at cart time and don't reflect the routing decision.
-- **Don't relocate reservations from a custom strategy's `for_allocation`.** That's the path 6.0 codifies; doing it ad-hoc in 5.5 races against the cart services that own reservation lifecycle.
+- **Don't relocate reservations from a custom strategy's `for_allocation`.** Reservations belong to the cart workflows that create and release them; moving them from a strategy races against those workflows.
 - **`AvailabilityValidator` is the safety net.** If a routing decision picks a location that's actually short on stock, the validator catches it before the order completes.
 
 ## Next Steps

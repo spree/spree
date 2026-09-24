@@ -12,6 +12,9 @@ module Spree
         attribute :filters do |result|
           result.filters.filter_map do |filter|
             filter_type = filter[:type]
+            # A price range is prices; a gated guest sees none.
+            next if filter_type == 'price_range' && params[:hide_prices]
+
             serializer_class = case filter_type
                                when 'price_range'
                                  Spree.api.product_filter_price_range_serializer

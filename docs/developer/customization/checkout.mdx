@@ -1,0 +1,126 @@
+---
+title: Customizing Checkout
+description: Add your own checkout step or requirement, and reorder or remove the built-in ones.
+---
+
+Spree does not run your checkout — your storefront does. What Spree owns is the list
+of things a cart still needs, which it reports on cart reads and enforces when you
+complete one. Adding to that list is how you make checkout require something of your
+own.
+
+<Note>
+  For what a cart reports and how to read it, see
+  [Carts](/developer/core-concepts/carts#checkout-requirements). This page is about
+  adding to it.
+</Note>
+
+## Requirements are the gate, steps are a label
+
+Two things are easy to confuse:
+
+- A **requirement** is enforced. It appears on cart reads while unmet, and completing
+  a cart recomputes the list and refuses if anything is outstanding.
+- A **step** is descriptive. It exists so a storefront can render a progress
+  indicator. Nothing on the server checks which step a customer is on.
+
+So a requirement is what you reach for when something must be true before an order
+exists. A step is only worth adding when your checkout genuinely has a stage the
+built-in five don't describe.
+
+## Adding a requirement
+
+When the flow is unchanged and you only need one more condition:
+
+```ruby server/config/initializers/spree.rb
+Spree::Checkout::Registry.add_requirement(
+  step: :address,
+  field: :vat_number,
+  message: 'VAT number is required for business orders',
+  satisfied: ->(cart) { cart.metadata['vat_number'].present? }
+)
+```
+
+While `satisfied:` returns false the cart reports the requirement and refuses to
+complete. Its `code` is derived as `<field>_required` — `vat_number_required` here.
+
+The storefront satisfies it by writing the value into the cart's `metadata`. When the
+cart is completed, its `metadata` is copied onto the order — onto every order if the
+checkout is split between sellers — so the VAT number is still there after placement as
+`order.metadata['vat_number']`.
+
+Pass `applicable:` to scope it. It is checked before `satisfied:`, so a requirement
+that doesn't apply never appears at all:
+
+```ruby
+applicable: ->(cart) { cart.customer&.company.present? }
+```
+
+`message` is stored verbatim — wrap it in `Spree.t` yourself if it needs translating.
+
+## Adding a step
+
+A step bundles its own requirements and says when it is satisfied:
+
+```ruby server/config/initializers/spree.rb
+Spree::Checkout::Registry.register_step(
+  name: :loyalty,
+  before: :payment,
+  satisfied: ->(cart) { cart.metadata['loyalty_number'].present? },
+  requirements: ->(cart) {
+    [{ step: 'loyalty', field: 'loyalty_number',
+       message: 'Loyalty number is required' }]
+  }
+)
+```
+
+The step now shows up in the cart's `current_step` and `completed_steps`, its
+requirements appear in `requirements` while unsatisfied, and completion refuses the
+cart until they are met.
+
+Each lambda receives the cart. Placement is controlled by two keywords:
+
+| Keyword | Effect |
+|---|---|
+| `before:` / `after:` | Place the step next to an existing one. `before:` wins if both are given |
+| `applicable:` | Whether the step exists for this cart at all — checked before `satisfied:` |
+
+An unanchored step lands immediately before `complete`. An anchor naming a step this
+particular cart doesn't have — `before: :payment` on a free cart — falls back to the
+same place.
+
+Unlike an added requirement, a step's `requirements:` lambda may set its own `code:`.
+
+## Reordering or removing built-in steps
+
+```ruby server/config/initializers/spree.rb
+# Drop a step from the reported list
+Spree::Checkout::Registry.base_steps.delete('confirm')
+
+# Or change when one applies
+Spree::Checkout::Registry.base_steps['payment'] = ->(cart) { cart.total > 0 }
+
+# Or reorder wholesale — known names keep their own applicability
+Spree::Checkout::Registry.base_step_names = %w[address payment delivery complete]
+```
+
+<Warning>
+  Removing a step removes it from the reported list. It does **not** remove the
+  requirements filed under it — dropping `payment` does not let an unpaid cart
+  complete. Requirements and steps are separate on purpose.
+</Warning>
+
+## Prefer a requirement to a workflow hook
+
+A [workflow hook](/developer/customization/workflows) on `carts.complete.validate`
+can also reject a cart, and there are cases for it — anything needing a network call, or a
+decision that only makes sense at the moment of completion.
+
+For anything a customer has to fix, a requirement is better: it is reported on every
+cart read, so the storefront can show it while they can still act, rather than failing
+at the last step with an error they have to interpret.
+
+## Related
+
+- [Carts](/developer/core-concepts/carts) — reading requirements and completing a cart
+- [Custom fields](/developer/core-concepts/metafields) — storing your own data on a cart
+- [Services & Workflows](/developer/customization/workflows) — hooks that run during completion

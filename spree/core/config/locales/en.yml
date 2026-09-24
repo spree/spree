@@ -375,6 +375,8 @@ en:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/price:
           attributes:
+            amount:
+              leaves_a_rising_ladder: would leave the price from %{quantity} units at %{amount}, above the %{floor} a buyer pays below that quantity
             min_quantity:
               requires_price_list: quantity breaks can only be set on a price list
               too_many_breaks: a variant can carry at most %{count} quantity breaks on one price list
@@ -385,9 +387,12 @@ en:
         spree/price_list:
           attributes:
             base:
+              duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
               negative_price: a price cannot be below zero
               nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
+              price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it
+              quantity_on_base_price: a shop price applies at every quantity, so it cannot start at one. Remove the quantity, or pick a price list to put the break on.
             ends_at:
               must_be_after_starts_at: must be after starts at
             price_adjustment_percentage:
@@ -1103,6 +1108,7 @@ en:
         store_is_already_set: Store is already set
         unknown_custom_field_type: 'is not a known custom field type (expected one of: %{types})'
         unknown_scopes: 'contains unknown scopes: %{scopes}'
+        unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
       services:
         get_shipping_rates:
@@ -1537,6 +1543,7 @@ en:
     price_list_import_invalid_amount: "%{column} must be a number like 16.50, got %{value}."
     price_list_import_invalid_quantity: min_quantity must be a whole number of units, got %{value}.
     price_list_import_no_price_list: This import is not attached to a price list.
+    price_list_import_price_rises_with_quantity: The price from %{quantity} units must not be above %{floor}, what a buyer pays below that quantity. A file is applied a row at a time, so list the higher quantities first when lowering a whole ladder.
     price_list_import_sku_required: SKU is required.
     price_list_import_too_many_breaks: A variant can carry at most %{count} quantity breaks on one price list.
     price_list_import_unknown_sku: No product in this store has the SKU %{sku}.
@@ -1571,7 +1578,7 @@ en:
         description: Creates a promotion credit adjustment on a line item
         name: Create per-line-item adjustment
       create_line_items:
-        description: Populates the cart with the specified quantity of variant
+        description: Adds the specified quantity of a variant to the cart free of charge
         name: Create line items
       free_shipping:
         description: Makes all shipments for the order free

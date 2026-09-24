@@ -1,5 +1,79 @@
 # @spree/cli
 
+## 3.0.2
+
+### Patch Changes
+
+- [#14644](https://github.com/spree/spree/pull/14644) [`6723b99`](https://github.com/spree/spree/commit/6723b99bdf8453f6e3a2a6666211f69d658f566e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree init` says where sample data comes from. A run that seeds no admin (no `--admin-email`) cannot load sample data, since its imports need an owner, so init now points at the setup screen's own "Load sample data" option instead of skipping silently. The `--admin-email` and `--no-sample-data` help text says which flags belong to scripted installs.
+
+- [#14667](https://github.com/spree/spree/pull/14667) [`53008b4`](https://github.com/spree/spree/commit/53008b4a30eeca633206e726f0303f1f8c0673d3) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Scaffold dashboards with the layout they grow into, and the packages their first import needs.
+
+  A new dashboard app shipped four files and no structure to follow, so the first customization had nowhere obvious to go. Both starters now carry the layout the dashboard uses internally — `pages/`, `hooks/`, `tables/`, `schemas/` and `locales/`, one file per resource — documented in the README, with an `AGENTS.md` covering the conventions a coding agent cannot infer.
+
+  They also gain `@spree/dashboard-core` and `@spree/dashboard-ui` as direct dependencies. Both were installed already but only as transitive ones, so under pnpm an import of either failed until you added it by hand.
+
+## 3.0.1
+
+### Patch Changes
+
+- Fixed first-run setup failing partway through, and scaffolded both admin apps.
+
+  Several failures could leave a new project unusable: minting the CLI's API key raised "Name has already been taken" on any re-run, so a setup interrupted for any reason could never be completed; Mailpit's ports were not probed like the web port, so another Spree project or a local mail catcher failed `docker compose up` with a raw Docker daemon error; sample data was loaded before first-run setup created an admin to own it, aborting the run; and a failed key mint reported that the stack was not running, sending operators after a stack that was running fine.
+
+  Scaffolds also create `apps/seller-dashboard` alongside `apps/dashboard` (`spree add seller-dashboard` adds it to an existing project). The React Dashboard is the admin in Spree 6, so it is no longer opt-in behind a flag, and first-run setup no longer prompts for an admin email and password — the account is created on the dashboard's own setup screen, which the browser opens automatically.
+
+## 3.0.0
+
+### Major Changes
+
+- [#14385](https://github.com/spree/spree/pull/14385) [`464df81`](https://github.com/spree/spree/commit/464df815f2b305b21c47ecaa722d35f52ae6a1f1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Dropped the legacy Rails admin from the CLI.
+
+  `spree_admin` is removed in Spree 6.0, so the CLI no longer references it:
+
+  - `spree dev` and `spree eject` no longer compile the admin Tailwind stylesheet or start its watcher — the `spree:admin:tailwindcss:build` and `spree:admin:tailwindcss:watch` rake tasks went with the gem.
+  - `spree dev`, `spree init` and `spree open` no longer point at `http://localhost:<port>/admin`, which now 404s. With a dashboard app present they open its Vite dev server; without one they open the store, and the summary card says to run `spree add dashboard`.
+
+  Admin UI now ships as the React dashboard. Run it with `spree dev` (co-runs the dashboard dev server) or add it with `spree add dashboard`. Projects ejected before this release can delete the orphaned `backend/app/assets/builds/spree/admin/` directory.
+
+- [#14431](https://github.com/spree/spree/pull/14431) [`aab4b5c`](https://github.com/spree/spree/commit/aab4b5ca517d2ef559a5ba292965d66bd2d6f38d) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree init` asks who the admin is instead of seeding a known account.
+
+  Spree 6.0 stops seeding `spree@example.com` / `spree123`, so the CLI no longer prints or assumes those credentials:
+
+  - `spree init` prompts for an admin email and password, or takes `--admin-email` / `--admin-password`. Both are validated before Docker starts, rather than failing minutes into the run, and passing only one is rejected.
+  - A non-interactive run without those flags (CI, a piped invocation) creates **no admin**. The seed prints a one-time setup link instead, and the summary card shows it — open it to create the first account in the dashboard. `--open` goes straight there.
+  - Sample data is skipped on that path, since its import needs an admin to own it. Load it after setup with `spree sample-data`.
+  - `spree dev` names the admin email `spree init` seeded; when no account was seeded it points at the setup link rather than guessing an address.
+  - The exported `DEFAULT_ADMIN_EMAIL` and `DEFAULT_ADMIN_PASSWORD` constants are gone.
+
+  Scripted installs that relied on the old credentials must now pass `--admin-email` and `--admin-password`.
+
+### Minor Changes
+
+- Added the marketplace Seller Panel to project scaffolding and deployment.
+
+  `spree add seller-dashboard` scaffolds the panel into `apps/seller-dashboard/`, and `create-spree-app` now creates both admin apps. The CLI bundles the seller-panel starter template alongside the dashboard one, so the Spree starter's Docker image can bake both and serve the panel at `/sellers`.
+
+### Patch Changes
+
+- [#14417](https://github.com/spree/spree/pull/14417) [`7e35951`](https://github.com/spree/spree/commit/7e35951361a6cee7b735640b0228710928719fee) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Rich-text fields read as plain text plus HTML.
+
+  Spree 6.0 stores rich text as sanitized HTML in plain text columns instead of Action Text. The write params are unchanged — `description` and `internal_note` still take the value, and that value is HTML.
+
+  What changed is the read side:
+
+  - `internal_note_html` is now readable on `Order`, and `internal_note` (plain text) on `Customer`. Previously the order serializer returned only plain text and the customer serializer only HTML; both now return the pair.
+  - `description` returns tag-stripped plain text, with the markup under `description_html`. Hydrate an editor from `description_html`, not `description`.
+
+  The field stores HTML, so send markup — a plain-text value with newlines in it renders as one run-on line.
+
+- [#14376](https://github.com/spree/spree/pull/14376) [`a52a6da`](https://github.com/spree/spree/commit/a52a6da42f5c456e889f8bba12ee7194934289b1) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Admin API additions from the 6.0 core rewrite:
+
+  - `deliveryMethods.rules` CRUD and `deliveryMethods.ruleTypes()` — delivery method eligibility rules (item total, weight).
+  - `orders.discountCodes.create/delete` — apply and remove coupon codes on draft orders with the storefront's pending semantics.
+  - `expand=cart` on orders returns the originating cart (new admin `Cart` type); the embedded promotion summaries moved from the `discounts` key to `applied_promotions` (the `discounts` name stays reserved for the typed money rows at `/orders/:id/discounts`).
+  - Delivery methods accept `stock_location_ids` for pickup; delivery zones, delivery methods and stock locations are store-scoped.
+  - `Order` gains `cart_id` and `coupon_code`; `DeliveryZone.members` requires `expand=members`.
+
 ## 2.4.9
 
 ### Patch Changes

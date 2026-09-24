@@ -24,6 +24,12 @@ module Spree
         Spree.subscribers << Spree::WebhookEventSubscriber
       end
 
+      # Runs after initializers so an explicitly assigned preference — which
+      # wins over the environment — is never rejected for a stale env var.
+      config.after_initialize do
+        Spree::Api::Configuration.validate_env!(Spree::Api::Config)
+      end
+
       # Warn in production if no dedicated JWT secret key is configured
       config.after_initialize do
         next unless Rails.env.production?

@@ -58,6 +58,18 @@ RSpec.describe Spree::Translations::Batch do
       expect { batch.process! }.to raise_error(described_class::EntryError)
     end
 
+    # Neither a store nor an option value can be found through a `stores` or
+    # `option_values` association, so both have to be narrowed explicitly.
+    it "raises EntryError for another store's store or option value" do
+      other_store = create(:store)
+      foreign_value = create(:option_value, option_type: create(:option_type, store: other_store))
+
+      [entry('store', other_store, 'de' => { 'name' => 'X' }),
+       entry('option_value', foreign_value, 'de' => { 'label' => 'X' })].each do |foreign|
+        expect { described_class.new([foreign], store: store).process! }.to raise_error(described_class::EntryError)
+      end
+    end
+
     it 'raises EmptyError when there are no entries' do
       expect { described_class.new([]).process! }.to raise_error(described_class::EmptyError)
     end

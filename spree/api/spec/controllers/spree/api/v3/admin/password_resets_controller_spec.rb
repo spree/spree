@@ -42,6 +42,43 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
         expect(payload).not_to have_key(:redirect_url)
       end
     end
+
+    # The link carries the reset token, so only the dashboard may receive it:
+    # a storefront origin can be added by anyone who edits allowed origins.
+    context 'with the dashboard hosted at a known origin' do
+      before do
+        allow(Spree::Stores::DashboardUrl).to receive(:call).and_return('https://admin.example.com')
+        allow(Spree::Events).to receive(:publish)
+      end
+
+      it 'keeps a redirect_url on the dashboard origin' do
+        post :create, params: { email: 'admin@example.com', redirect_url: 'https://admin.example.com/reset-password' }
+
+        expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
+          expect(payload[:redirect_url]).to eq('https://admin.example.com/reset-password')
+        end
+      end
+
+      it 'ignores a redirect_url on an allowed storefront origin' do
+        create(:allowed_origin, store: store, origin: 'https://attacker.example.com')
+
+        post :create, params: { email: 'admin@example.com', redirect_url: 'https://attacker.example.com/reset' }
+
+        expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
+          expect(payload).not_to have_key(:redirect_url)
+        end
+      end
+
+      it 'ignores a redirect_url for an account that is not staff of the store' do
+        create(:admin_user, :without_admin_role, email: 'outsider@example.com')
+
+        post :create, params: { email: 'outsider@example.com', redirect_url: 'https://admin.example.com/reset-password' }
+
+        expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
+          expect(payload).not_to have_key(:redirect_url)
+        end
+      end
+    end
   end
 
   describe 'PATCH #update' do

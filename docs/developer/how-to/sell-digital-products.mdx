@@ -3,7 +3,7 @@ title: Sell Digital Products
 description: Digital goods in Spree — a digital delivery profile, instant fulfillment without a shipping address, and delivering files or entitlements after payment.
 ---
 
-Digital products skip the warehouse: no stock to reserve, no address to collect, no carrier to call. In Spree 6 that behavior comes from the product's delivery profile — assign a digital profile and checkout, fulfillment and the customer experience adapt. This guide walks through selling an uploaded file end to end.
+Digital products skip the warehouse: no stock to reserve, no address to collect, no carrier to call. That behavior comes from the product's delivery profile — assign a digital profile and checkout, fulfillment and the customer experience adapt. This guide walks through selling an uploaded file end to end.
 
 For the concepts behind each piece — assets, links, allowances, providers — see [Products → Digital products](/developer/core-concepts/products#digital-products). This page is the practical walkthrough.
 
@@ -34,7 +34,7 @@ await adminClient.products.update('prod_86Rf07xd4z', {
 curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "delivery_profile_id": "dp_digital" }'
+  -d '{ "delivery_profile_id": "fp_digital" }'
 ```
 
 </CodeGroup>

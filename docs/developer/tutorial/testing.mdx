@@ -1,13 +1,123 @@
 ---
 title: Testing
-description: Test the feature at every layer — model and request specs with RSpec, dashboard plugin tests with Vitest, and an end-to-end check with Playwright.
+description: Test the Brands feature — running the generated backend specs, unit-testing the dashboard logic you wrote, and one Playwright pass through the browser.
 ---
 
-Each layer of the feature gets the test that suits it: fast Ruby specs for the model and both API endpoints, component tests for the plugin, and one end-to-end pass proving the whole path works.
+Most of the backend is generated, so most of the testing worth doing is on the code you wrote yourself — which is mostly in the dashboard. This chapter covers the backend briefly, spends longer on the dashboard, and ends with one browser pass proving the layers are actually connected.
 
-## What this chapter covers
+## The backend
 
-- Model and factory setup
-- Request specs for the Admin and Store API endpoints
-- Dashboard plugin tests with Vitest
-- An end-to-end Playwright spec: create an FAQ in the dashboard, see it on the storefront
+Your project arrives with a fully configured testing environment for backend testing. The generator wrote all the files needed for running API tests:
+
+```text
+server/spec/controllers/spree/api/v3/store/brands_controller_spec.rb
+server/spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
+```
+
+You can now run them, a directory or a single file at a time:
+
+```bash
+spree rspec spec/controllers/spree/api/v3/
+spree rspec spec/models/spree/brand_spec.rb
+```
+
+## The dashboard
+
+This is where most of your own code lives, so it is where most of your tests belong. Vitest and Playwright come configured, so there is nothing to set up:
+
+```bash
+cd apps/dashboard && pnpm test
+```
+
+### What is worth a unit test
+
+Not components. Rendering a card to assert it shows a brand name tests React, not your feature, and breaks every time the markup moves. Test the **logic between the UI and the API** — the parts with decisions in them.
+
+Query keys are the clearest example. Every key must be scoped to the current store, or one store's rows leak into another after a switch. That is a rule a test can hold you to:
+
+```ts apps/dashboard/src/brands/client.test.ts
+import { withStoreScope } from '@spree/dashboard'
+import { QueryClient } from '@tanstack/react-query'
+import { describe, expect, it } from 'vitest'
+import { brandInvalidations } from './client'
+
+const STORE = 'store_abc123'
+
+describe('brand cache invalidation', () => {
+  it('refreshes the brand list without touching another store', () => {
+    const client = new QueryClient()
+    client.setQueryData(withStoreScope(['brands'], STORE), [])
+    client.setQueryData(withStoreScope(['brands'], 'store_other'), [])
+
+    for (const key of brandInvalidations()) {
+      client.invalidateQueries({ queryKey: withStoreScope(key, STORE) })
+    }
+
+    const stale = client.getQueryCache().getAll().filter((q) => q.state.isInvalidated)
+    expect(stale).toHaveLength(1)
+  })
+})
+```
+
+Driving a real `QueryClient` means the assertion goes through TanStack's own prefix matching rather than a hand-rolled key comparison — so it stays true if the matching rules change.
+
+The same applies to anything else with a decision in it: a function mapping form values to an API payload, a permission predicate deciding whether a nav entry shows, a filter translating table state into Ransack params. Each is a pure function, each is a two-line test.
+
+### What is not worth a unit test
+
+- **Components.** Asserting a card renders text is testing React.
+- **`BrandsClient.list` itself.** It is a one-line wrapper around `adminClient.request`. A test would mock the thing it wraps and assert the mock was called — proving nothing about whether the endpoint exists.
+- **Anything the compiler already catches.** A wrong prop type is a build failure, not a test case.
+
+That second one is worth dwelling on: the question "does `/brands` actually return brands" cannot be answered by a unit test at all. It needs the real API, which is the next section.
+
+## End to end, through the browser
+
+Everything above tests a layer in isolation. One Playwright spec proves the layers are actually connected — a brand created through the Admin API reaches the dashboard screen you built:
+
+```ts apps/dashboard/e2e/brands.spec.ts
+import { expect, test } from '@playwright/test'
+import { createBrand, login } from './helpers'
+
+test('a brand appears on the brands screen', async ({ page }) => {
+  const name = `Wilson ${Date.now()}`
+  await createBrand({ name, slug: `wilson-${Date.now()}` })
+
+  await login(page)
+  await page.getByRole('link', { name: /brands/i }).click()
+
+  await expect(page.getByRole('cell', { name })).toBeVisible()
+})
+```
+
+Navigating from the sidebar rather than calling `page.goto('/brands')` keeps the spec honest about the real path, which is store-scoped (`/:storeId/brands`) and would otherwise have to be hardcoded.
+
+Once you add a create form, replace the API call with the form itself — filling it and asserting the new row is the stronger test, because it covers the write path too.
+
+Two conventions matter here:
+
+- **Drive the UI, assert on the UI.** Fill labels, click buttons, check visible text. Avoid waiting on API responses — `expect(...).toBeVisible()` polls until the condition holds, which covers nearly every case and keeps the test from breaking when the API shape changes.
+- **Suffix names with `Date.now()`.** Specs share a database, and a fixed name collides with whatever an earlier run left behind.
+
+## What to run before you push
+
+Run what you changed, not everything:
+
+```bash
+spree rspec spec/models/spree/brand_spec.rb   # the backend
+cd apps/dashboard && pnpm test                # the dashboard
+```
+
+Keep the full suite and the end-to-end pass for continuous integration, where waiting costs you nothing.
+
+## You're done
+
+You have built one feature through every layer of Spree:
+
+- A model with a Store API and an Admin API, generated in one command
+- A dashboard screen giving staff a place to manage it
+- Storefront pages rendering it through typed SDK calls
+- Lifecycle events other systems react to
+- Tests at each layer, plus one pass across all of them
+
+From here: [customization reference](/developer/customization/quickstart) for extending core models and workflows, [dashboard customization](/developer/dashboard/customization/quickstart) for deeper plugin work, and [core concepts](/developer/core-concepts/architecture) for how the rest of the platform fits together.

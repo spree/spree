@@ -1,10 +1,14 @@
 ---
 title: Permissions
 sidebarTitle: Permissions
-description: How to hide UI behind CanCanCan permissions in your customisations — and why hiding is never the same as authorising.
+description: How to hide UI behind the current admin's permissions in your customisations — and why hiding is never the same as authorising.
 ---
 
-The dashboard exposes the current admin's CanCanCan abilities to every component via the `usePermissions()` hook. The registry surfaces — nav entries, settings entries, custom routes — also accept a `subject` shortcut, and nav entries take a generic `if` predicate that reads from `permissions`.
+<Note>
+Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
+</Note>
+
+The dashboard exposes the current admin's permissions to every component via the `usePermissions()` hook: the catalog keys their role holds on the current store (`read_orders`, `write_products`, …) and the class-level ability rules the server compiles from those keys. The registry surfaces — nav entries, settings entries, custom routes — also accept a `subject` shortcut, and nav entries take a generic `if` predicate that reads from `permissions`.
 
 ## Two layers
 
@@ -13,9 +17,9 @@ UI gating is for **UX**. Backend authorization is for **security**. They are not
 | Layer | Where | What it does |
 |---|---|---|
 | UI gating | Dashboard registries (`subject`, `if`) | Hides menu items, columns, buttons — keeps the interface tidy |
-| Authorization | Rails API controllers (CanCanCan, scopes) | Refuses the request when the user doesn't have permission |
+| Authorization | Rails API controllers (per-controller `read_*`/`write_*` key gate, record-level checks) | Refuses the request when the user doesn't have permission |
 
-**Always rely on the backend for security.** Hiding a button is a hint to the user, not a wall. A user with browser dev tools (or the API token) can always hit the endpoint directly — your `authorize!` call is what stops them.
+**Always rely on the backend for security.** Hiding a button is a hint to the user, not a wall. A user with browser dev tools (or the API token) can always hit the endpoint directly — the API's permission check is what stops them.
 
 ## The `permissions` object
 
@@ -85,10 +89,10 @@ Use it for combined checks (permission + store state), feature flags, multi-acti
 
 ## Inside components
 
-Use the `usePermissions()` hook — it returns `{ permissions, rules, isLoading }`:
+Use the `usePermissions()` hook — it returns `{ permissions, rules, permissionKeys, isLoading, refresh }`. `permissionKeys` is the flat key list (the same vocabulary as the role editor and API-key scopes), for when `permissionKeys.includes('read_orders')` reads better than a subject check:
 
 ```tsx
-import { usePermissions } from '@spree/dashboard-core'
+import { usePermissions } from '@spree/dashboard'
 
 function ReportsPage() {
   const { permissions } = usePermissions()
@@ -108,4 +112,4 @@ If your customization introduces a new model on the backend, register it as a pe
 ## Reference
 
 - [`Permissions` interface](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/providers/permission-provider.tsx)
-- [CanCanCan docs](https://github.com/CanCanCommunity/cancancan) — the Ruby ability definition language
+- [Customize Permissions](/developer/customization/permissions) — the backend permission catalog and `register_scope`

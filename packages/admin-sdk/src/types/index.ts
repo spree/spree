@@ -17,6 +17,7 @@ export type {
   TaxExemptionReasonCodeGroup,
 } from './fulfillment-providers'
 // Admin-specific generated types
+export type { default as Actor } from './generated/Actor'
 export type { default as Address } from './generated/Address'
 export type { default as AdminUser } from './generated/AdminUser'
 export type { default as AllowedOrigin } from './generated/AllowedOrigin'
@@ -78,6 +79,7 @@ export type { default as ImportMapping } from './generated/ImportMapping'
 export type { default as ImportRow } from './generated/ImportRow'
 export type { default as Integration } from './generated/Integration'
 export type { default as Invitation } from './generated/Invitation'
+export type { default as InvitationAcceptanceLink } from './generated/InvitationAcceptanceLink'
 export type { default as LineItem } from './generated/LineItem'
 export type { default as Market } from './generated/Market'
 export type { default as Media } from './generated/Media'

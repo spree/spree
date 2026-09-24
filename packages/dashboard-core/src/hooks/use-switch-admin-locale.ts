@@ -1,6 +1,6 @@
 import { toastManager } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
-import { adminClient } from '../client'
+import { getApiClient } from '../api-client'
 import { i18n, markGenuineLocaleChoice, switchLocale } from '../lib/i18n'
 import { useAuth } from './use-auth'
 
@@ -36,8 +36,17 @@ export function useSwitchAdminLocale() {
   return async (code: string): Promise<void> => {
     // Already adopted on the account AND on screen — nothing to do.
     if (code === user?.selected_locale && code === i18n.language) return
+    // Resolved OUTSIDE the try: `getApiClient` throws a named error when no
+    // client is registered, and that is a misconfigured host rather than a
+    // failed save — caught below it would surface as "we could not save your
+    // language", which sends the reader looking in the wrong place.
+    //
+    // Through the registered client rather than `adminClient`: this hook runs
+    // in the account menu, which both panels mount, and a seller's language
+    // change sent to the Admin API is a request they hold no credential for.
+    const { updateAccount } = getApiClient()
     try {
-      const { user: updated } = await adminClient.me.update({ selected_locale: code })
+      const { user: updated } = await updateAccount({ selected_locale: code })
       updateUser(updated)
       if (code !== i18n.language) {
         // Displayed language changes — persist the genuine choice + reload.

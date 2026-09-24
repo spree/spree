@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'A complete open source e-commerce solution'
-  s.description = 'A complete open source e-commerce solution with multi-store, multi-currency and multi-language capabilities'
+  s.summary     = 'Open Source B2B eCommerce and Marketplace platform'
+  s.description = 'Open Source Platform for DTC, B2B Commerce, Marketplaces & Omnichannel. REST APIs, TypeScript SDKs, and production-ready Next.js storefront. Self-host it. Own your data. No vendor lock-in. Zero platform fees.'
   s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.2'
 
-  s.files        = Dir['README.md', 'lib/**/*']
+  s.files        = Dir['LICENSE', 'README.md', 'lib/**/*']
   s.require_path = 'lib'
   s.requirements << 'none'
 

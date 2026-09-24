@@ -1,4 +1,4 @@
-import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
+import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import type { PackageManager } from '../types.js'
 import { globalAddCommand, runCommand, storefrontPm } from '../utils.js'
 
@@ -40,11 +40,10 @@ Wait for the services to be healthy, then open:
 
 ${
   hasDashboard
-    ? `- **Admin Dashboard (React, Developer Preview):** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
-  - You choose the admin email and password during the first run
-  - Classic admin: http://localhost:${port}/admin (same credentials)`
-    : `- **Admin Dashboard:** http://localhost:${port}/admin
-  - You choose the admin email and password during the first run`
+    ? `- **Admin Dashboard:** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
+  - The first run opens a setup link where you create the admin account
+- **Seller Panel (marketplace):** http://localhost:${SELLER_DASHBOARD_PORT} — run it with \`cd apps/seller-dashboard && pnpm dev\``
+    : `- **Admin Dashboard:** run \`spree add dashboard\` to scaffold it`
 }
 - **Store API:** http://localhost:${port}/api/v3/store
 `
@@ -66,7 +65,7 @@ Open http://localhost:${STOREFRONT_PORT}
 
   if (hasDashboard) {
     content += `
-### The React Dashboard (Developer Preview)
+### The React Dashboard
 
 \`apps/dashboard/\` is your admin — a customizable React SPA (plugins, your
 own pages, table tweaks) with live reload. \`spree dev\` starts it
@@ -78,8 +77,7 @@ ${pm} run dev
 \`\`\`
 
 Open http://localhost:${DASHBOARD_PORT} and sign in with the admin email and
-password you chose during the first run. The classic admin remains at
-http://localhost:${port}/admin.
+password you chose during the first run.
 
 When you deploy, the production image builds your dashboard and serves it at
 \`/dashboard\` on the same origin as the API (\`${run} spree build --production\`).
@@ -144,7 +142,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 |---------|-------------|
 | \`spree generate model Brand name:string slug:string:uniq\` | Generate a new database model |
 | \`spree generate api_resource Brand name:string slug:string:uniq\` | Generate a new Spree API resource |
-| \`spree generate subscriber OmsOrderSync order.completed\` | Generate a new event subscriber |
+| \`spree generate subscriber OmsOrderSync order.placed\` | Generate a new event subscriber |
 | \`spree generate migration AddPositionToSpreeBrands position:integer\` | Generate a new database migration |
 
 ### Admin API
@@ -153,7 +151,7 @@ Project setup mints a read-only secret key into \`.spree/credentials.json\` (git
 
 \`\`\`bash
 ${run} spree api get products
-${run} spree api get "orders?q[state_eq]=complete"
+${run} spree api get "orders?q[status_eq]=complete"
 ${run} spree api endpoints          # list endpoints + required scopes
 ${run} spree api status             # show resolved credentials + server reachability
 \`\`\`

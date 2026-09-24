@@ -1,0 +1,197 @@
+---
+title: Models & API
+sidebarTitle: Models & API
+description: Generate the Brand model, migration, Store and Admin API controllers, serializers and routes with a single spree:api_resource command.
+---
+
+Every feature starts with a model and the API that exposes it. They arrive together: `spree:api_resource` generates the model, its migration, a customer-facing Store API, a back-office Admin API, serializers, routes, a factory and controller specs in one command.
+
+This matters for the rest of the tutorial. The dashboard plugin in step 2 talks to the Admin API, the storefront in step 3 talks to the Store API, and the events in step 4 reuse the serializer generated here. Getting this step right makes the other four mostly configuration.
+
+## Step 1: Generate the resource
+
+A brand has a name, a slug for friendly URLs, and an active flag:
+
+```bash
+spree generate api_resource Brand name:string:index slug:string:uniq active:boolean
+```
+
+The generator reports what it created:
+
+```text
+    create  app/models/spree/brand.rb
+    create  db/migrate/XXXXXXXXXXXXXX_create_spree_brands.rb
+    create  app/controllers/spree/api/v3/store/brands_controller.rb
+    create  app/controllers/spree/api/v3/admin/brands_controller.rb
+    create  app/serializers/spree/api/v3/brand_serializer.rb
+    create  app/serializers/spree/api/v3/admin/brand_serializer.rb
+    create  spec/factories/spree/brand_factory.rb
+    create  spec/controllers/spree/api/v3/store/brands_controller_spec.rb
+    create  spec/controllers/spree/api/v3/admin/brands_controller_spec.rb
+    append  config/initializers/spree.rb
+    create  config/locales/spree_brands.en.yml
+
+✓ Generated Spree::Brand API resource
+
+  Prefixed ID:  brand_xxxxxxxxxx
+  Store API:    /api/v3/store/brands  (read-only)
+  Admin API:    /api/v3/admin/brands  (full CRUD)
+```
+
+Apply the migration:
+
+```bash
+spree migrate
+```
+
+<Info>
+  Every command in this tutorial runs from the root of your [create-spree-app](/developer/create-spree-app/quickstart) project. `spree` routes each one into the right container, so generators write into `server/` and nothing needs installing on your machine.
+</Info>
+
+### The field syntax
+
+Attributes follow the familiar `name:type:index` form, with the Spree conventions applied for you:
+
+| You write | You get |
+|---|---|
+| `name:string:index` | A non-null string column with an index |
+| `slug:string:uniq` | A string column with a unique index |
+| `active:boolean` | A boolean column with a default |
+| `user:belongs_to` | A reference with the class name resolved |
+
+Useful flags: `--paranoid` for soft delete, `--custom-fields` for [custom fields](/developer/core-concepts/metafields) support, `--writable` to give the Store API create, update and destroy as well, `--permission-group` to choose where the brand permissions appear in the role editor (`catalog` by default), and `--no-store` or `--no-admin` to generate only one side. Run the generator with `--help` for the full list.
+
+## Step 2: What you got
+
+You do not need to read the generated code to use it. The command produced a complete, convention-correct API, and the contract it gives you is this:
+
+| Surface | Endpoint | Who calls it | Default access |
+|---|---|---|---|
+| Store API | `/api/v3/store/brands` | Storefronts, mobile apps | Read-only |
+| Admin API | `/api/v3/admin/brands` | Dashboard, integrations, scripts | Full CRUD |
+
+Three conventions are worth knowing, because every later step depends on them:
+
+- **Public IDs, never database IDs.** Records are addressed as `brand_k5nR8xLq`. The API accepts and returns that form everywhere.
+- **Two serializers, one inheriting the other.** The Store serializer carries public fields only; the Admin serializer extends it and adds `created_at` and `updated_at`. Add a public field once and both surfaces get it. This is why customers never see back-office data by accident.
+- **Filtering is allowlisted.** `name`, `slug` and `active` are queryable because the generator listed them. Anything not on that list is rejected, so a caller cannot filter by a column you did not intend to expose.
+
+The Store API is read-only by default — a shopper cannot create a brand. Pass `--writable` if a resource genuinely needs customer writes, as carts and addresses do.
+
+**Brands belong to a store.** Every resource you generate is scoped to one, because commerce data — catalog, configuration, orders — is always per-store. A new record picks up its store automatically, and a field marked unique is unique *within* a store, so two stores can each have a brand called `wilson`. Only genuinely global reference data, like countries, opts out with `--no-store-scoped`.
+
+**Access to the Admin API is a permission.** The generator registers `read_brands` and `write_brands` in `config/initializers/spree.rb`, so you can grant them to a staff role in **Settings → Roles** or to a secret API key, and labels them for the role editor in `config/locales/spree_brands.en.yml`. Until you grant them, only store admins and full-access keys reach the endpoint. See [Permissions](/developer/customization/permissions).
+
+<Warning>
+  Read lookups through the store (`current_store.brands`) rather than the whole table. Scoping by association is the cheapest defence against one store reading another's records — a permission decides *whether* someone may read brands, not *which* ones.
+</Warning>
+
+## Step 3: Try it
+
+Create a brand through the Admin API. You need a secret key from **Settings → API keys** in the dashboard:
+
+```bash
+curl -X POST "http://localhost:3000/api/v3/admin/brands" \
+  -H "X-Spree-API-Key: sk_YOUR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Wilson", "slug": "wilson", "active": true }'
+```
+
+```json
+{
+  "id": "brand_k5nR8xLq",
+  "name": "Wilson",
+  "slug": "wilson",
+  "active": true,
+  "created_at": "2026-01-15T10:30:00Z",
+  "updated_at": "2026-01-15T10:30:00Z"
+}
+```
+
+Note the flat request body. API v3 takes no `{ "brand": { ... } }` wrapper around the attributes, and the response identifies the record as `brand_k5nR8xLq` rather than by a database ID.
+
+Now read it back from the Store API, using a publishable key from the same settings page:
+
+```bash
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+  "http://localhost:3000/api/v3/store/brands"
+```
+
+```json
+{
+  "data": [
+    { "id": "brand_k5nR8xLq", "name": "Wilson", "slug": "wilson", "active": true }
+  ],
+  "meta": { "count": 1, "page": 1, "pages": 1 }
+}
+```
+
+The same record, minus the timestamps. That difference is the serializer split doing its job: customers get public fields, staff get the operational ones.
+
+Filtering works through the allowlist:
+
+```bash
+curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
+  "http://localhost:3000/api/v3/store/brands?q[name_cont]=wil"
+```
+
+<Tip>
+  Prefer TypeScript? The same call through the SDK is `client.request('GET', '/brands')` — step 3 covers the typed client in full.
+</Tip>
+
+## Connect brands to products
+
+A brand on its own is a list. Adding a `brand_id` to products is what makes it useful in steps 2 and 3:
+
+```bash
+spree generate migration AddBrandToSpreeProducts brand:belongs_to
+spree migrate
+```
+
+Then connect the two models. Extending a core model like `Spree::Product` is the one place this step needs backend code — a [decorator](/developer/customization/decorators) adds behavior to a core class without forking it. The generator writes the file:
+
+```bash
+spree generate model_decorator Product
+```
+
+Add one line inside the generated `prepended` block:
+
+```ruby server/app/models/spree/product_decorator.rb
+base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
+```
+
+And the matching line in `app/models/spree/brand.rb`, which is your own file:
+
+```ruby
+has_many :products, class_name: 'Spree::Product', dependent: :nullify
+```
+
+`optional: true` lets a product exist without a brand. `dependent: :nullify` means deleting a brand clears the reference rather than deleting the products that carried it — almost always what you want for a label attached to a catalog.
+
+Two more lines make the association usable from the API. The product serializer has to expose it, or the storefront cannot read a product's brand:
+
+```ruby server/app/serializers/spree/api/v3/product_serializer_decorator.rb
+attribute(:brand_id) { |product| product.brand&.prefixed_id }
+has_one :brand, serializer: Spree::Api::V3::BrandSerializer
+```
+
+The model has to allow filtering by it, or `?q[brand_id_eq]=…` is rejected:
+
+```ruby server/app/models/spree/product_decorator.rb
+base.whitelisted_ransackable_attributes |= %w[brand_id]
+base.whitelisted_ransackable_associations |= %w[brand]
+```
+
+The allowlist is deliberate: every entry is a query any caller can run, so add only what the storefront needs.
+
+Finally, the Admin API has to accept `brand_id` on write, or the picker you build in step 2 will appear to work and save nothing. Extensions append to the model's list rather than replacing it:
+
+```ruby server/config/initializers/spree.rb
+Spree::Product.additional_permitted_attributes += [:brand_id]
+```
+
+Always `+=`, never `=` — assigning would drop whatever another extension added.
+
+## Next step
+
+The data and both APIs are live. Now give staff a way to manage brands: [Dashboard](/developer/tutorial/dashboard).

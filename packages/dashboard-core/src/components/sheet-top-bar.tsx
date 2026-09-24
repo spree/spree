@@ -34,7 +34,7 @@ export function SheetTopBar({
   if (!collapsed) return null
 
   return (
-    <div className="hidden min-h-8 items-center gap-2 px-4 pt-3 md:flex lg:px-6">
+    <div className="hidden min-h-8 items-center gap-2 px-4 pt-3 md:flex">
       {!inSettings && (
         <SidebarTrigger className="-ms-1 shrink-0 text-muted-foreground hover:bg-accent hover:text-foreground" />
       )}

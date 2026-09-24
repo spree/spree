@@ -8,7 +8,8 @@ module Spree
           typelize memo: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    stock_location_id: [:string, nullable: true],
-                   created_by_id: [:string, nullable: true]
+                   created_by_id: [:string, nullable: true],
+                   created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind']
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
@@ -16,9 +17,7 @@ module Spree
             exchange.stock_location&.prefixed_id
           end
 
-          attribute :created_by_id do |exchange|
-            exchange.created_by&.prefixed_id
-          end
+          actor_attributes :created_by
 
           many :exchange_line_items,
                resource: proc { Spree.api.admin_exchange_line_item_serializer },
