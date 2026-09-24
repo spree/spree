@@ -23,6 +23,16 @@ module Spree
         expect(order.item_total).to eq(remaining)
         expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
       end
+
+      it 'keeps the line item when the recalculation fails' do
+        failed = Spree::ServiceModule::Result.new(false, order, 'recalculation failed')
+        allow(Spree::Orders::Recalculate).to receive(:call).and_return(failed)
+
+        result = described_class.call(order: order, line_item: line_item)
+
+        expect(result).to eq(failed)
+        expect(order.line_items.reload).to include(line_item)
+      end
     end
 
     # Draft-order edits apply whole or fail; only carts get the cart

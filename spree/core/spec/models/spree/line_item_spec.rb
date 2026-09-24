@@ -198,6 +198,23 @@ describe Spree::LineItem, type: :model do
         expect { line_item.destroy! }.to change { stock_level.reload.allocated_count }.by(-line_item.quantity)
         expect(fulfillment.fulfillment_items.where(line_item_id: line_item.id)).to be_empty
       end
+
+      context 'with its units split across two fulfillments' do
+        let(:other_location) { create(:stock_location, propagate_all_variants: true, backorderable_default: true) }
+        let(:other_stock_level) { other_location.stock_level(line_item.variant) }
+
+        before do
+          perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob) { other_location }
+          line_item.update!(quantity: 2)
+          fulfillment.transfer_to_location(line_item.variant, 1, other_location).run!
+        end
+
+        it 'releases the allocation held at each stock level' do
+          expect { line_item.reload.destroy! }.
+            to change { stock_level.reload.allocated_count }.by(-1).
+            and change { other_stock_level.reload.allocated_count }.by(-1)
+        end
+      end
     end
 
     # Regression test for: destroying a line item on a completed order whose

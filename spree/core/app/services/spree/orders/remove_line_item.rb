@@ -9,13 +9,22 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, line_item:, options: {})
-        ActiveRecord::Base.transaction do
-          result = Spree::Carts::RemoveLineItem.call(cart: order, line_item: line_item, options: options)
-          return result if result.failure?
+        result = nil
 
-          Spree::Orders::Recalculate.call(order: order)
-          result
+        # requires_new: callers already hold the order's row lock, and a
+        # rollback in a joined transaction would be swallowed.
+        ActiveRecord::Base.transaction(requires_new: true) do
+          result = Spree::Carts::RemoveLineItem.call(cart: order, line_item: line_item, options: options)
+          next if result.failure?
+
+          recalculation = Spree::Orders::Recalculate.call(order: order)
+          next if recalculation.success?
+
+          result = recalculation
+          raise ActiveRecord::Rollback
         end
+
+        result
       end
     end
   end
