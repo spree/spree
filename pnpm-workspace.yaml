@@ -44,6 +44,17 @@ allowBuilds:
 # fixes here. Revisit when the upstream dependents pull the fixes in on
 # their own and these become no-ops.
 overrides:
+  # Base UI is pinned exactly, not caret-ranged. `@base-ui/react` carries an
+  # exact `@base-ui/utils` dependency, and 0.3.0 of that package introduced a
+  # `useStore` helper importing `useSyncExternalStore` by name from the
+  # CommonJS `use-sync-external-store` shim. Vite converts that during
+  # prebundling for an ordinary dependency, but dashboard-ui ships source, so
+  # an installed copy reaches the browser with the named CJS import intact and
+  # every scaffolded app fails to boot. The monorepo lockfile hid this; only
+  # fresh installs floated onto the newer Base UI. Bump deliberately, with a
+  # scaffold boot test.
+  '@base-ui/react': 1.8.0
+  '@base-ui/utils': 0.4.0
   esbuild: ^0.28.1
   vite: ^8.0.16
   js-yaml: ^4.3.2
