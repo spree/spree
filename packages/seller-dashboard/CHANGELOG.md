@@ -1,5 +1,15 @@
 # @spree/seller-dashboard
 
+## 1.0.0-beta.8
+
+### Patch Changes
+
+- [#14746](https://github.com/spree/spree/pull/14746) [`3ad9173`](https://github.com/spree/spree/commit/3ad917373f1fc309d10db464dee746b7264a9818) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The setup screen no longer says an installation is already set up when it simply could not check. A rate-limited check shows "Too many attempts" and a failed one shows "Couldn't check setup", each with a retry button; "Setup is not available" now appears only when the server confirms setup is done. The setup status is also no longer re-checked every time the browser tab regains focus.
+
+- Updated dependencies []:
+  - @spree/dashboard-core@1.0.0-beta.8
+  - @spree/dashboard-ui@1.0.0-beta.8
+
 ## 1.0.0-beta.7
 
 ### Patch Changes
