@@ -1293,7 +1293,7 @@
         },
         "create_line_items": {
           "name": "Crear líneas de pedido",
-          "description": "Completa el carrito con la cantidad especificada de la variante"
+          "description": "Agrega al carrito la cantidad especificada de la variante de forma gratuita"
         },
         "free_shipping": {
           "name": "Envío gratis",

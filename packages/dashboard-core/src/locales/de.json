@@ -1912,7 +1912,7 @@
         },
         "create_line_items": {
           "name": "Bestellpositionen erstellen",
-          "description": "Fügt dem Warenkorb die angegebene Menge der Variante hinzu"
+          "description": "Fügt dem Warenkorb die angegebene Menge der Variante kostenlos hinzu"
         },
         "free_shipping": {
           "name": "Kostenloser Versand",

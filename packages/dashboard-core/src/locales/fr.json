@@ -1912,7 +1912,7 @@
         },
         "create_line_items": {
           "name": "Créer des lignes d'article",
-          "description": "Ajoute au panier la quantité spécifiée de la variante"
+          "description": "Ajoute gratuitement au panier la quantité spécifiée de la variante"
         },
         "free_shipping": {
           "name": "Livraison gratuite",

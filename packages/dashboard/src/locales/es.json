@@ -5389,7 +5389,7 @@
         "settings_label": "Configuración de la calculadora"
       },
       "create_line_items_action_editor": {
-        "description": "Cuando la promoción califica, estos artículos se agregan al carrito.",
+        "description": "Cuando la promoción califica, estos artículos se agregan al carrito de forma gratuita.",
         "empty": "Todavía no hay variantes. Buscá abajo para agregar una.",
         "search_placeholder": "Buscar variantes por nombre o SKU…",
         "variant_label": "Agregar variante"

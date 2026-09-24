@@ -37,6 +37,17 @@ module Spree
       false
     end
 
+    # Whether this action's line-level discount may land on +line_item+.
+    # Promotion rules narrow it by default; an action that creates its own
+    # lines answers for itself.
+    #
+    # @param order [Spree::Order, Spree::Cart]
+    # @param line_item [Spree::LineItem]
+    # @return [Boolean]
+    def applies_to_line_item?(order, line_item)
+      promotion.line_item_actionable?(order, line_item)
+    end
+
     # Returns true if the promotion action is a free shipping action
     #
     # @return [Boolean]
@@ -53,7 +64,7 @@ module Spree
     def self.types_for_discount_scope(scope)
       case scope
       when :line_item
-        %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateItemAdjustments]
+        %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateLineItems]
       when :fulfillment
         %w[Spree::Promotion::Actions::FreeShipping Spree::Promotion::Actions::FreeShipping]
       when :order

@@ -113,7 +113,7 @@ module Spree
       def line_item_candidates(line_item)
         @line_item_candidates ||= {}
         @line_item_candidates[line_item.id] ||= discount_actions(:line_item).filter_map do |action|
-          next unless action.promotion.line_item_actionable?(order, line_item)
+          next unless action.applies_to_line_item?(order, line_item)
 
           amount = action.compute_amount(line_item)
           next if amount.zero?
