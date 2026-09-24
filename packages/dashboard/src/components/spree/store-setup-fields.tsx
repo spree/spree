@@ -1,10 +1,10 @@
 import type { SetupCountry } from '@spree/admin-sdk'
-// Deep imports keep hosts that mount only this form clear of the framework
-// barrel; the i18n import registers the translations the labels use.
-import '@spree/dashboard-core/lib/i18n'
-import { useDisplayName } from '@spree/dashboard-core/hooks/use-display-name'
-import { ALL_CURRENCY_CODES } from '@spree/dashboard-core/lib/currencies'
-import { CountryFlag } from '@spree/dashboard-ui/spree/country-flag'
+// Barrel imports only. Deep imports here (`@spree/dashboard-ui/ui/select` and
+// friends) make Vite prebundle each subpath as its own dependency in an
+// installed app, which leaves Base UI's CommonJS shim unconverted and stops
+// the dashboard from starting. The monorepo cannot show this: its workspace
+// links are treated as source.
+import { ALL_CURRENCY_CODES, useDisplayName } from '@spree/dashboard-core'
 import {
   Combobox,
   ComboboxButtonTrigger,
@@ -14,16 +14,15 @@ import {
   ComboboxList,
   ComboboxSearch,
   ComboboxTriggerPlaceholder,
-} from '@spree/dashboard-ui/ui/combobox'
-import { Input } from '@spree/dashboard-ui/ui/input'
-import { Label } from '@spree/dashboard-ui/ui/label'
-import {
+  CountryFlag,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@spree/dashboard-ui/ui/select'
+} from '@spree/dashboard-ui'
 import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, type FieldErrors, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
