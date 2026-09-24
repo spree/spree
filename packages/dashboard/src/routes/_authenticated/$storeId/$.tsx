@@ -12,7 +12,7 @@
  */
 import { matchPluginRoute, usePermissions, usePluginRoutes } from '@spree/dashboard-core'
 import { ErrorState } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, type ErrorComponentProps } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authenticated/$storeId/$')({
@@ -22,12 +22,12 @@ export const Route = createFileRoute('/_authenticated/$storeId/$')({
   errorComponent: PluginRouteError,
 })
 
-function PluginRouteError({ error }: { error: Error }) {
+function PluginRouteError({ error }: ErrorComponentProps) {
   const { t } = useTranslation()
   return (
     <ErrorState
       title={t('admin.errors.plugin_route_title', { defaultValue: 'This page failed to render' })}
-      description={error.message}
+      error={error}
     />
   )
 }
