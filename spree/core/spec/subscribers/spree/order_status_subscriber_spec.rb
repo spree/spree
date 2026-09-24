@@ -127,6 +127,18 @@ RSpec.describe Spree::OrderStatusSubscriber do
       expect(announced).to eq([{ 'payment_status' => 'paid', 'payment_total' => order.total }])
     end
 
+    # Two settlements recomputing the same order at once must not both
+    # announce it — the second finds the row already settled.
+    it 'does not announce an order that another run already settled' do
+      create(:payment, order: order, cart: nil, amount: order.total, status: 'completed')
+      stale_copy = Spree::Order.find(order.id)
+
+      Spree::Orders::UpdateStatuses.call(order: order)
+      Spree::Orders::UpdateStatuses.call(order: stale_copy)
+
+      expect(announced.size).to eq(1)
+    end
+
     it 'stays quiet while a balance is outstanding' do
       create(:payment, order: order, cart: nil, amount: order.total - 1, status: 'pending').capture!
 

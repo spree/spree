@@ -12,25 +12,34 @@ module Spree
       SETTLED_PAYMENT_STATUSES = %w[paid overcharged].freeze
 
       def call(order:)
-        # Read from the row, not the instance: callers often hold a copy loaded
-        # before another writer settled the order, and it would announce the
-        # payment a second time.
-        was_settled = Spree::Order.where(id: order.id).pick(:payment_status).in?(SETTLED_PAYMENT_STATUSES)
+        payment_status = payment_status_for(order)
+        settled_now = payment_status.in?(SETTLED_PAYMENT_STATUSES) && claim_settlement(order, payment_status)
 
         order.update_columns(
-          payment_status: payment_status_for(order),
+          payment_status: payment_status,
           fulfillment_status: fulfillment_status_for(order),
           updated_at: Time.current
         )
 
         # Announced from here rather than from the payment, so the payload
         # already carries the status and payment total it announces.
-        order.publish_event('order.paid') if !was_settled && order.payment_status.in?(SETTLED_PAYMENT_STATUSES)
+        order.publish_event('order.paid') if settled_now
 
         success(order)
       end
 
       private
+
+      # Writes a settled status only over an unsettled one, so of two runs
+      # settling the same order at once — or one holding a copy loaded before
+      # another settled it — exactly one sees its write land and announces it.
+      def claim_settlement(order, payment_status)
+        row = Spree::Order.where(id: order.id)
+
+        row.where.not(payment_status: SETTLED_PAYMENT_STATUSES).
+          or(row.where(payment_status: nil)).
+          update_all(payment_status: payment_status).positive?
+      end
 
       # Money is quantized to currency precision before comparing, and
       # granted refunds are subtracted from the target total — the two rules
