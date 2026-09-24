@@ -1,0 +1,26 @@
+<% fulfillment_groups = @order_group.fulfillment_groups %>
+<% unfulfilled_line_items = @order_group.unfulfilled_line_items(fulfillment_groups) %>
+<%= Spree.t('order_group_mailer.confirm_email.dear_customer', name: name_for(@order_group)) %>
+
+<%= Spree.t('order_group_mailer.confirm_email.instructions', number: @order_group.number) %>
+<% if fulfillment_groups.many? %>
+<%= Spree.t('order_group_mailer.confirm_email.arriving_separately', count: fulfillment_groups.size) %>
+<% end %>
+<%= render 'spree/shared/po_number', order: @order_group %>
+<% fulfillment_groups.each_with_index do |fulfillment_group, index| %>
+============================================================
+<%= render 'spree/shared/fulfillment_group_section',
+           fulfillment_group: fulfillment_group,
+           position: index + 1,
+           count: fulfillment_groups.size %>
+<% end %>
+<% if unfulfilled_line_items.any? %>
+============================================================
+<%= Spree.t('order_group_mailer.nothing_to_ship') %>
+<% unfulfilled_line_items.each do |item| %>
+  <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text -%> (<%= item.quantity %>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
+<% end %>
+<% end %>
+<%= render 'spree/shared/purchase_totals', order_group: @order_group %>
+<%= Spree.t('order_group_mailer.confirm_email.thanks') %>
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>

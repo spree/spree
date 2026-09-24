@@ -427,8 +427,8 @@ module Spree
       # that workflow can give both of them.
       #
       # It answers with the group when the basket divided, and the first of
-      # its children is the order this checkout carries on with: that is the
-      # one holding the confirmation email.
+      # its children is the order this checkout carries on with. No child holds
+      # the confirmation: the customer is confirmed from the group.
       def complete_orders
         result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
         failure(cart, code: 'completion_failed', message: result.error) if result.failure?
@@ -455,7 +455,7 @@ module Spree
       # otherwise. The single answer to "which orders came out of here", so
       # placement and tax filing can never disagree about the set.
       def placed_orders
-        order_group.present? ? order_group.orders.to_a : [order]
+        order_group.present? ? order_group.orders.to_a.sort_by(&:id) : [order]
       end
 
       def complete_cart

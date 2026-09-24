@@ -1,0 +1,22 @@
+base_locale: en
+
+data:
+  yaml:
+    write:
+      # do not wrap lines at 80 characters
+      line_width: -1
+
+  # Core's keys are read but never written here: the mailers and their
+  # templates share the vocabulary every Spree surface uses (shipping, tax,
+  # promotion) and only own the copy of the emails themselves.
+  external:
+    - "<%= File.expand_path('../core/config/locales', Dir.pwd) %>/%{locale}.yml"
+
+# Find translate calls
+search:
+  paths:
+    - 'app'
+    - 'lib'
+
+# The PatternMapper for Spree.t
+<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>

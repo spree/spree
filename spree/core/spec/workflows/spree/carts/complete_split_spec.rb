@@ -572,6 +572,51 @@ module Spree
       end
     end
 
+    # One purchase, one confirmation — and no child order is the purchase, so
+    # none of them sends it. The customer's email hangs off the group instead
+    # (Spree::OrderGroupEmailSubscriber).
+    describe 'the confirmation' do
+      let(:cart) { cart_for(nil, seller, other_seller) }
+
+      # Asserted on the payload rather than the records: notify_customer is an
+      # in-memory flag, and the group reloads its children after placing them.
+      it 'places every child silently', :events do
+        placements = []
+        allow(Spree::Events).to receive(:publish) do |name, payload, *|
+          placements << payload if name == 'order.placed'
+        end
+
+        described_class.call(cart: cart)
+
+        expect(placements.size).to eq(3)
+        expect(placements.map { |payload| payload[:notify_customer] }).to all(be false)
+      end
+
+      # The old shape marked the first child confirmed and left the customer
+      # with an email covering a fraction of what they paid.
+      it 'leaves no child claiming it confirmed the purchase' do
+        group = described_class.call(cart: cart).value
+
+        expect(group.orders.map(&:confirmation_delivered)).to all(be false)
+      end
+
+      it 'announces the purchase once, whatever the children', :events do
+        events = []
+        allow(Spree::Events).to receive(:publish) { |name, *| events << name }
+
+        described_class.call(cart: cart)
+
+        expect(events.count('order_group.completed')).to eq(1)
+      end
+
+      it 'leaves a checkout that did not split to send its own' do
+        order = described_class.call(cart: cart_for(seller, seller)).value
+
+        expect(order).to be_a(Spree::Order)
+        expect(order.notify_customer).to be_nil
+      end
+    end
+
     # The commission engine listens for order.placed, which every child
     # publishes on its own — so a split checkout charges each seller with no
     # marketplace code in the commission engine at all.
