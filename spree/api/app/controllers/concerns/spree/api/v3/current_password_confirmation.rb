@@ -13,12 +13,20 @@ module Spree
 
         private
 
+        # Runs under the login lockout, so a stolen session cannot use this
+        # check to guess the password: misses count towards the lockout, and a
+        # locked account is refused even with the right password.
+        #
         # @return [Boolean] whether `current_password` matches the signed-in
         #   account. False when the parameter is missing — an absent password
         #   is not a correct one.
         def valid_current_password?
           return false if params[:current_password].blank?
 
+          Spree::Authentication::Lockout.check(current_user) { current_password_matches? } == :valid
+        end
+
+        def current_password_matches?
           if current_user.respond_to?(:valid_password?)
             current_user.valid_password?(params[:current_password])
           elsif current_user.respond_to?(:authenticate)
