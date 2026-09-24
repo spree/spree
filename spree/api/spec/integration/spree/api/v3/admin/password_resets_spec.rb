@@ -18,9 +18,10 @@ RSpec.describe 'Admin Password Resets API', type: :request, swagger_doc: 'api-re
         whether or not the email matches an account, to prevent enumeration.
 
         `redirect_url` is where the emailed link should point (the reset token
-        is appended as a `token` query param). It must match one of the store's
-        allowed origins — otherwise it is silently ignored and the server-side
-        default is used. The email is delivered by Spree itself via the
+        is appended as a `token` query param). It is honoured only on the
+        dashboard's origin and for an account that is staff of the store —
+        otherwise it is silently ignored and the link opens the dashboard's
+        reset page. The email is delivered by Spree itself via the
         `admin_user.password_reset_requested` event; this event is never
         forwarded to webhook endpoints.
       DESC

@@ -862,8 +862,9 @@ export class AdminClient {
     /**
      * Public (unauthenticated) request for a password reset email. Always
      * resolves (202) whether or not the email matches an account, to prevent
-     * enumeration. The emailed link points at `redirect_url` (validated against
-     * the store's allowed origins) with the reset token appended as `?token=`.
+     * enumeration. The emailed link points at `redirect_url` when it is on the
+     * dashboard's origin and the account is staff of the store, otherwise at the
+     * dashboard's reset page, with the reset token appended as `?token=`.
      */
     requestPasswordReset: (
       params: PasswordResetRequestParams,
