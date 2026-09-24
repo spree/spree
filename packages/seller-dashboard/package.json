@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-dashboard",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "license": "MIT",
   "type": "module",
   "description": "Spree marketplace seller panel — the seller-facing counterpart to the admin dashboard.",
