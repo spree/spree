@@ -39,17 +39,33 @@ module Spree
         failure(order, :no_items_to_claim) if items.blank?
       end
 
+      # Bounded by what earlier claims left: each claim can pay out what was
+      # paid for its units, so claiming the same units again would pay twice.
+      # A denied or canceled claim settled nothing and frees its units.
       def normalize_items
+        requested = Hash.new(0)
+
         @normalized_items = items.map do |item|
           line_item = item[:line_item]
           quantity = item[:quantity].to_i
 
           failure(order, :invalid_quantity) unless quantity.positive?
           failure(order, :item_not_on_order) unless line_item&.order_id == order.id
-          failure(order, :invalid_quantity) if quantity > line_item.quantity.to_i
+          failure(order, :invalid_quantity) if quantity > claimable_quantity_for(line_item) - requested[line_item.id]
 
+          requested[line_item.id] += quantity
           item.merge(line_item: line_item, quantity: quantity)
         end
+      end
+
+      def claimable_quantity_for(line_item)
+        claimed = Spree::ClaimLineItem.
+                  joins(:claim).
+                  where(line_item_id: line_item.id).
+                  where.not(Spree::Claim.table_name => { status: %w[denied canceled] }).
+                  sum(:quantity)
+
+        line_item.quantity.to_i - claimed
       end
 
       def build_claim

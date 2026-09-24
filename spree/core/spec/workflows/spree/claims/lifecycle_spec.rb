@@ -39,6 +39,21 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result).to be_failure
     end
 
+    # Each claim can pay out what its units cost, so claiming the same units
+    # again would pay for them twice.
+    it 'refuses units an earlier claim already covers' do
+      Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: line_item.quantity }])
+
+      expect(create_claim).to be_failure
+    end
+
+    it 'frees the units of a denied claim' do
+      earlier = Spree::Claims::Create.call(order: order, items: [{ line_item: line_item, quantity: line_item.quantity }]).value
+      earlier.update!(status: 'denied')
+
+      expect(create_claim).to be_success
+    end
+
     it 'lets a validate handler gate self-service claims' do
       Spree.hooks.register('claims.create.validate') { |flow| flow.reject!('claims disabled') }
 
