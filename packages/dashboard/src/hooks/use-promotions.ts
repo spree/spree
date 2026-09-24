@@ -58,6 +58,7 @@ export function useDeletePromotion() {
     invalidate: [['promotions']],
     successMessage: i18n.t('admin.messages.promotion_deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
+    showValidationErrors: true,
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('promotions', id) })
     },

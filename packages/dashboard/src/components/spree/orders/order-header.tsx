@@ -51,6 +51,7 @@ export function OrderHeader({ order }: { order: Order }) {
     // divided.
     successMessage: false,
     errorMessage: t('admin.orders.detail.errors.complete_failed'),
+    showValidationErrors: true,
     onSuccess: (result) => {
       if (!isOrderGroup(result)) {
         toastManager.add({ type: 'success', title: t('admin.orders.detail.messages.completed') })

@@ -62,6 +62,7 @@ export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []
     invalidate: [['stock-levels', id], ...extraInvalidate],
     successMessage: i18n.t('admin.stock_levels.messages.stock_updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    showValidationErrors: true,
     onSuccess: (updated) => {
       queryClient.setQueriesData<{ data: StockLevel[] }>(
         { queryKey: buildKey('stock-levels') },
