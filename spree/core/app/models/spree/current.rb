@@ -38,6 +38,26 @@ module Spree
       super || Spree::Store.default
     end
 
+    # Runs the block in +store+ from a clean context: nothing a previous store
+    # resolved (channel, market, currency, integrations, pricing) carries in,
+    # and nothing resolved inside leaks out. For work that walks several
+    # stores in one unit of work, such as an installation-wide sweep job; a
+    # request or a single-store job assigns #store once instead.
+    #
+    # The store scope guard stays armed afterwards, like any other store
+    # declaration in this unit of work.
+    #
+    # @param store [Spree::Store]
+    # @return [Object] the block's result
+    def with_store(store)
+      previous = attributes
+      self.attributes = {}
+      self.store = store
+      yield
+    ensure
+      self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)
+    end
+
     def channel
       super || (self.channel = store&.default_channel)
     end

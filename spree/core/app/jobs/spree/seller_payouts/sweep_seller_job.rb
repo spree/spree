@@ -17,6 +17,8 @@ module Spree
       def perform(seller_id)
         seller = Spree::Seller.find_by(id: seller_id)
         return if seller.nil?
+
+        Spree::Current.store = seller.store
         return if seller.resolved_payouts_schedule_interval == 'manual'
 
         currencies_owed(seller).each do |currency|
