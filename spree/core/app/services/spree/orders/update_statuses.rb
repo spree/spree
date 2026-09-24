@@ -102,7 +102,7 @@ module Spree
           ]
         end
 
-        splits = order.payment_splits.to_a
+        splits = order.payment_splits.reload.to_a
         captured = splits.sum(&:captured_amount)
 
         # Authorized means still to draw: what the shares allow, less what has
