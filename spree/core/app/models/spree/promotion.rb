@@ -317,7 +317,7 @@ module Spree
 
     def code_for_order(order)
       if multi_codes?
-        coupon_codes.find_by(order: order)&.code
+        coupon_codes.held_by(order).first&.code
       else
         code
       end
