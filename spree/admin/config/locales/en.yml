@@ -507,6 +507,11 @@ en:
         tracking_url_token_help: will be replaced with the tracking number.
       show_json: Show JSON
       sign_ups: Sign-ups
+      stock_locations_form:
+        backorderable_default_hint: Default for "Continue selling when out of stock" on inventory records created at this location, including the auto-created ones.
+        backorderable_default_label: New inventory records allow backorders
+        propagate_all_variants_hint: Every newly created variant gets an inventory record at this location, whichever tool creates it — admin, API or import. When off, a variant created without explicit stock has no inventory record at all and cannot be sold.
+        propagate_all_variants_label: Automatically stock new variants
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:
