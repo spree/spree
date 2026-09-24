@@ -1,5 +1,7 @@
 # @spree/dashboard-core
 
+## 1.0.0-beta.5
+
 ## 1.0.0-beta.4
 
 ### Minor Changes
