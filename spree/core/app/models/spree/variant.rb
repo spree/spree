@@ -605,8 +605,11 @@ module Spree
     # @param opt_type_position [Integer] the position of the option type
     # @return [void]
     def set_option_value(opt_name, opt_value, opt_type_position = nil)
-      option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
+      # The product's own store: option types are store-owned, and matching one
+      # by name elsewhere would attach and extend another store's type.
+      option_type = Spree::OptionType.for_store(product.store).where(name: opt_name.parameterize).first_or_initialize do |o|
         o.name = o.label = opt_name
+        o.store = product.store
         o.save!
       end
 

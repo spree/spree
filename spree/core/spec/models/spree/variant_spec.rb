@@ -506,6 +506,17 @@ describe Spree::Variant, type: :model do
         expect(multi_variant.option_value('media_type')).to eql 'CD'
       end
 
+      it "never attaches another store's option type of the same name" do
+        foreign = create(:option_type, name: 'media_type', store: create(:store))
+
+        multi_variant.set_option_value('media_type', 'DVD')
+
+        option_type = multi_variant.option_values.first.option_type
+        expect(option_type).not_to eq(foreign)
+        expect(option_type.store).to eq(multi_variant.product.store)
+        expect(foreign.option_values).to be_empty
+      end
+
       it 'does not duplicate associated option values when set multiple times' do
         multi_variant.set_option_value('media_type', 'CD')
 
