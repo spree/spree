@@ -187,6 +187,19 @@ describe Spree::LineItem, type: :model do
       expect { line_item.destroy }.to change { line_item.inventory_units.count }.from(1).to(0)
     end
 
+    context 'on a placed order holding allocated stock' do
+      let(:order) { create(:completed_order_with_totals, line_items_count: 2, store: store) }
+      let(:fulfillment) { order.fulfillments.first }
+      let(:stock_level) { fulfillment.stock_location.stock_level(line_item.variant) }
+
+      before { fulfillment.stock_location.allocate(line_item.variant, line_item.quantity, fulfillment) }
+
+      it 'releases the allocation of the removed units' do
+        expect { line_item.destroy! }.to change { stock_level.reload.allocated_count }.by(-line_item.quantity)
+        expect(fulfillment.fulfillment_items.where(line_item_id: line_item.id)).to be_empty
+      end
+    end
+
     # Regression test for: destroying a line item on a completed order whose
     # inventory units had already been cleared was leaving an orphan inventory
     # unit on the shipment with `line_item_id` pointing to the just-destroyed

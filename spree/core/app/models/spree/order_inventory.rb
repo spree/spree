@@ -158,7 +158,12 @@ module Spree
         shipment.stock_location.release(variant, released, shipment) if released.positive?
       end
 
-      shipment.destroy if shipment.fulfillment_items.sum(:quantity).zero?
+      if shipment.fulfillment_items.sum(:quantity).zero?
+        shipment.destroy
+        # A later add on the same order must not target the destroyed
+        # fulfillment still cached in the association.
+        order.fulfillments.reset
+      end
 
       removed_quantity
     end
