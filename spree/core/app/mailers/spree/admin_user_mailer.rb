@@ -7,7 +7,8 @@ module Spree
       @user = admin_user
       @current_store = store
       @reset_url = password_reset_url(token, store, redirect_url)
-      return log_missing_dashboard_url(admin_user) if @reset_url.nil?
+      problem = reset_url_problem(@reset_url)
+      return log_unsent(admin_user, problem) if problem
 
       with_store_locale(store, preferred_locale(admin_user, store)) do
         mail(
@@ -44,14 +45,28 @@ module Spree
       append_token("#{dashboard_url}/reset-password", token) if dashboard_url.present?
     end
 
+    # Every reset link must open the dashboard's reset page over https, since it
+    # carries the token. Development and test run on plain http.
+    def reset_url_problem(url)
+      if url.nil?
+        'the dashboard address is unknown. Set SPREE_DASHBOARD_URL (or the dashboard_url preference), ' \
+          "or add the dashboard's origin to the store's allowed origins."
+      elsif !Rails.env.local? && !https_url?(url)
+        'its reset link is not https. Use an https dashboard address in SPREE_DASHBOARD_URL ' \
+          "(or the dashboard_url preference) and in the store's allowed origins."
+      end
+    end
+
+    def https_url?(url)
+      URI.parse(url).scheme == 'https'
+    rescue URI::InvalidURIError
+      false
+    end
+
     # Skipping rather than raising keeps the forgot-password response identical
     # for known and unknown emails.
-    def log_missing_dashboard_url(admin_user)
-      Rails.logger.error(
-        "[Spree] Password reset email for admin user #{admin_user.id} was not sent: the dashboard " \
-        'address is unknown. Set SPREE_DASHBOARD_URL (or the dashboard_url preference), or add ' \
-        "the dashboard's origin to the store's allowed origins."
-      )
+    def log_unsent(admin_user, problem)
+      Rails.logger.error("[Spree] Password reset email for admin user #{admin_user.id} was not sent: #{problem}")
     end
   end
 end
