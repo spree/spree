@@ -219,7 +219,9 @@ module Spree
                                 [scope, params]
                               end
 
-      filtered_scope.ransack(params).result
+      # A seller's export filters as the seller's own listings do, so a
+      # condition on data the seller cannot read (the buyer's email) is ignored.
+      filtered_scope.ransack(params, auth_object: seller_id.present? ? :seller : nil).result
     end
 
     # `search_params` as a Hash — whether it is still the Hash a caller

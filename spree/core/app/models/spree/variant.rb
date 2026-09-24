@@ -330,6 +330,7 @@ module Spree
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
                                              available_at_stock_location)
+    self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)

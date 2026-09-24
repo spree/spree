@@ -254,12 +254,22 @@ module Spree
 
           @search = scope.includes(collection_includes).
                     preload_associations_lazily.
-                    ransack(ransack_params)
+                    ransack(ransack_params, auth_object: ransack_auth_object)
           result = @search.result(distinct: collection_distinct?)
           pagy_options = { limit: limit, page: page }
           result = apply_collection_sort(result)
           @pagy, @collection = pagy(result, **pagy_options)
           @collection
+        end
+
+        # Who is filtering, as Ransack's auth object. Nil is the back office,
+        # which may use every allowlisted attribute; the Store and Seller
+        # branches name themselves so the models narrow what they may reach
+        # (see Spree::RansackableAttributes). Covers sorting too.
+        #
+        # @return [Symbol, nil]
+        def ransack_auth_object
+          nil
         end
 
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)

@@ -33,6 +33,15 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(numbers).not_to include(theirs.number)
     end
 
+    # The buyer's email is hidden from sellers, and the buyer's other orders
+    # belong to other sellers; a filter on either answers a yes/no question
+    # about them, so it is ignored.
+    it 'ignores filters on the buyer and the buyer\'s other orders' do
+      get :index, params: { q: { email_start: 'zzz', customer_orders_total_gt: 1_000_000, search: 'zzz' } }, as: :json
+
+      expect(json_response['data'].map { |row| row['number'] }).to eq([mine.number])
+    end
+
     # A draft carrying its cart is a checkout still in flight; it is nobody's
     # order yet and must not appear in a seller's list.
     it 'leaves out a checkout still in flight' do
