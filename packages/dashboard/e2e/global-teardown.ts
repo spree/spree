@@ -3,5 +3,5 @@ import { rmIfExists, stopRails } from './rails'
 
 export default async function globalTeardown() {
   rmIfExists(ASYNC_JOBS_INITIALIZER)
-  stopRails(RAILS_PID_FILE)
+  await stopRails(RAILS_PID_FILE)
 }

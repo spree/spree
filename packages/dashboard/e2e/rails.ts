@@ -1,5 +1,6 @@
 import { type ChildProcess, spawn, spawnSync } from 'node:child_process'
 import { readFileSync, unlinkSync, writeFileSync } from 'node:fs'
+import { createServer } from 'node:net'
 import { resolve } from 'node:path'
 import { E2E_DIR } from './paths'
 
@@ -37,12 +38,38 @@ export function runRailsBootstrap(ruby: string, env: NodeJS.ProcessEnv): string 
   return jsonMatch[0]
 }
 
-async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
-  const start = Date.now()
-  while (Date.now() - start < timeoutMs) {
+// Anything already listening on the port would answer the readiness probe
+// long before Rails boots, handing the suite someone else's database.
+async function assertPortFree(port: string): Promise<void> {
+  await new Promise<void>((resolvePromise, reject) => {
+    const probe = createServer()
+    probe.once('error', () =>
+      reject(new Error(`Port ${port} is already in use — stop whatever is listening on it`)),
+    )
+    probe.listen(Number(port), () => probe.close(() => resolvePromise()))
+  })
+}
+
+// A server that exits before answering fails the start instead of timing out.
+async function waitForServer(
+  url: string,
+  serverProcess: ChildProcess,
+  timeoutMs = 30_000,
+): Promise<void> {
+  let exitCode: number | null = null
+  serverProcess.once('exit', (code) => {
+    exitCode = code ?? -1
+  })
+
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    if (exitCode !== null)
+      throw new Error(`Rails exited with code ${exitCode} before ${url} answered`)
     try {
-      const res = await fetch(url)
-      if (res.status < 500) return
+      const res = await fetch(url, {
+        signal: AbortSignal.timeout(Math.max(deadline - Date.now(), 1)),
+      })
+      if (exitCode === null && res.status < 500) return
     } catch {
       /* not ready */
     }
@@ -52,6 +79,8 @@ async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
 }
 
 export async function startRails(port: string, env: NodeJS.ProcessEnv, pidFile: string) {
+  await assertPortFree(port)
+
   const serverProcess: ChildProcess = spawn(
     'bundle',
     ['exec', 'spec/dummy/bin/rails', 'server', '-p', port, '-e', 'test'],
@@ -65,10 +94,21 @@ export async function startRails(port: string, env: NodeJS.ProcessEnv, pidFile: 
 
   if (serverProcess.pid) writeFileSync(pidFile, String(serverProcess.pid))
 
-  await waitForServer(`http://localhost:${port}/api/v3/admin/me`)
+  await waitForServer(`http://localhost:${port}/api/v3/admin/me`, serverProcess)
 }
 
-export function stopRails(pidFile: string) {
+function isRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Waits for the server to exit, so a run started straight after this one
+// cannot find the old server still holding its port or database.
+export async function stopRails(pidFile: string, timeoutMs = 15_000) {
   let pid: number
   try {
     pid = Number.parseInt(readFileSync(pidFile, 'utf-8'), 10)
@@ -82,6 +122,12 @@ export function stopRails(pidFile: string) {
   } catch {
     // Process already dead.
   }
+
+  const deadline = Date.now() + timeoutMs
+  while (isRunning(pid) && Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 200))
+  }
+  if (isRunning(pid)) process.kill(pid, 'SIGKILL')
 
   rmIfExists(pidFile)
 }
