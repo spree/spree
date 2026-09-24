@@ -192,11 +192,12 @@ module Spree
         raise SellerScopeUnavailable, model_class unless model_class.respond_to?(:for_seller)
 
         scope = scope.for_seller(seller)
-        # A draft is either a checkout in flight or the operator's working
-        # document, and is not this seller's sale — the same exclusion every
-        # endpoint on the seller branch applies.
-        scope = scope.not_drafts if model_class.respond_to?(:not_drafts)
       end
+
+      # A draft is either a checkout in flight or the operator's working
+      # document, not a sale — the orders list and every seller endpoint leave
+      # drafts out too.
+      scope = scope.not_drafts if model_class.respond_to?(:not_drafts)
 
       # A staff-created export only contains what its creator may read; a
       # userless export (console, system jobs) is unfiltered.

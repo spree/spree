@@ -176,6 +176,12 @@ RSpec.describe Spree::Export, :job, type: :model do
       it 'spans the store' do
         expect(export.scope).to include(sellers_order)
       end
+
+      it 'leaves out drafts' do
+        draft = create(:order, store: store, status: 'draft', cart: nil)
+
+        expect(export.scope).not_to include(draft)
+      end
     end
   end
 
