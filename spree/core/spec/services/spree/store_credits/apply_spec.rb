@@ -174,7 +174,7 @@ describe Spree::StoreCredits::Apply, type: :service do
 
         described_class.call(order: order.reload)
 
-        by_credit = order.reload.payments.store_credits.checkout.group(:source_id).sum(:amount)
+        by_credit = order.reload.payments.store_credits.checkout.to_a.group_by(&:source_id).transform_values { |payments| payments.sum(&:amount) }
         expect(by_credit[store_credit.id]).to eq(30)
         expect(by_credit.values.sum).to eq(45)
       end

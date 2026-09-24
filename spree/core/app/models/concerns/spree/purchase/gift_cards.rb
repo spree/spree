@@ -56,6 +56,9 @@ module Spree
         return remove_gift_card unless total.positive?
 
         gift_card.with_lock do
+          # A locking read: a plain reload can return the transaction's older
+          # snapshot, and a resize committed since would be applied again.
+          payment.lock!
           new_amount = [gift_card.spendable_amount + payment.amount, total].min
           next if payment.amount == new_amount
 
