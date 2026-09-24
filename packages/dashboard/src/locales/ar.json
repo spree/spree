@@ -1256,7 +1256,7 @@
             "Spree::Order": "الطلبات",
             "Spree::Product": "المنتجات",
             "Spree::Taxon": "الفئات",
-            "Spree::User": "العملاء",
+            "Spree::Customer": "العملاء",
             "Spree::Variant": "المتغيرات"
           },
           "read_only_help": "لا يمكن تغيير المالك بعد وجود قيم لهذا الحقل."

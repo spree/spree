@@ -48,7 +48,7 @@ export const DEFAULT_RESOURCE_TYPES = [
   'Spree::Product',
   'Spree::Variant',
   'Spree::Order',
-  'Spree::User',
+  'Spree::Customer',
   // Category custom-field definitions are stored under Spree::Taxon (the API
   // exposes taxons as categories — the custom_fields controller maps the
   // category route segment to the Spree::Taxon class). Listing Spree::Category

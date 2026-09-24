@@ -85,13 +85,13 @@ export interface ResourceFilterConfig<R extends { id: string } = { id: string }>
 
 /**
  * Models that `TagCombobox` can target for tag autocomplete. The three
- * first-class taggables (Product, User, Order) get autocomplete hints, but
+ * first-class taggables (Product, Customer, Order) get autocomplete hints, but
  * the union is open — apps can pass any Ruby class string the backend's
  * `TagsController#allowed_taggable_types` accepts (override that method
  * server-side to extend). Use `Subject.Product` etc. to avoid stringly-typed
  * callsites for the built-ins.
  */
-export type TaggableType = 'Spree::Product' | 'Spree::User' | 'Spree::Order' | (string & {})
+export type TaggableType = 'Spree::Product' | 'Spree::Customer' | 'Spree::Order' | (string & {})
 
 /**
  * Column definition. Discriminated union on `filterType`:

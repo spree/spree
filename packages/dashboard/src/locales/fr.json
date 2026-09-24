@@ -1238,7 +1238,7 @@
             "Spree::Order": "Commandes",
             "Spree::Product": "Produits",
             "Spree::Taxon": "Catégories",
-            "Spree::User": "Clients",
+            "Spree::Customer": "Clients",
             "Spree::Variant": "Variantes"
           },
           "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."

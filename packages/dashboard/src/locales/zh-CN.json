@@ -1233,7 +1233,7 @@
             "Spree::Order": "订单",
             "Spree::Product": "商品",
             "Spree::Taxon": "分类",
-            "Spree::User": "客户",
+            "Spree::Customer": "客户",
             "Spree::Variant": "变体"
           },
           "read_only_help": "一旦此字段存在值，所属对象便无法更改。"

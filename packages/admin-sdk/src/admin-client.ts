@@ -515,6 +515,8 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   'Spree::Product': '/products',
   'Spree::Variant': '/variants',
   'Spree::Order': '/orders',
+  'Spree::Customer': '/customers',
+  // Pre-6.0 customer class name, kept so existing callers still resolve.
   'Spree::User': '/customers',
   'Spree::Category': '/categories',
   'Spree::Collection': '/collections',
@@ -4526,7 +4528,7 @@ export class AdminClient {
         this.request<void>('DELETE', `/customers/${customerId}/store_credits/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::User']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Customer']),
   }
 
   // ============================================
