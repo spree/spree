@@ -115,6 +115,43 @@ test.describe('product prices — single variant', () => {
     ).toHaveValue(/^12[.,]50?$/)
   })
 
+  // `fillGridCell` leaves a cell with a scripted `blur()`. A merchant leaves it
+  // by clicking somewhere else, which the browser dispatches differently — and
+  // that path used to drop the value the cell was showing.
+  test('keeps price and stock edits left by clicking elsewhere', async ({ page }) => {
+    const creds = await login(page)
+
+    const productName = `E2E Click Away ${Date.now()}`
+    await createProduct(page, creds.store_id, productName)
+
+    const price = pricesCard(page).getByRole('textbox', { name: /^price for default$/i })
+    await price.dblclick()
+    await price.fill('19.99')
+    await page.getByLabel(/^name$/i).click()
+    await expect(price).toHaveValue(/^19[.,]99$/)
+
+    const onHand = inventoryCard(page)
+      .getByRole('textbox', { name: /^on hand at /i })
+      .first()
+    await onHand.dblclick()
+    await onHand.fill('12')
+    // Still in edit mode when Save is clicked.
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 30_000,
+    })
+
+    await page.reload()
+    await expect(
+      pricesCard(page).getByRole('textbox', { name: /^price for default$/i }),
+    ).toHaveValue(/^19[.,]99$/)
+    await expect(
+      inventoryCard(page)
+        .getByRole('textbox', { name: /^on hand at /i })
+        .first(),
+    ).toHaveValue('12')
+  })
+
   // Multi-currency + localized. The inline Prices card switches currency via
   // its header selector; each currency's prices ride the SAME product PATCH.
   // Enter a USD price (period) and a EUR price comma-decimal (`34,56`), save
