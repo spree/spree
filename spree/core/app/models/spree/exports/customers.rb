@@ -3,8 +3,8 @@ module Spree
     class Customers < Spree::Export
       def scope_includes
         [
-          { bill_address: :state },
-          { ship_address: :state },
+          :bill_address,
+          :ship_address,
           { custom_fields: :custom_field_definition }
         ]
       end
