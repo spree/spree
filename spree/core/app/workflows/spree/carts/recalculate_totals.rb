@@ -40,6 +40,7 @@ module Spree
         step :fold_typed_rows
         step :refresh_grand_total
         step :persist_totals
+        step :resize_gift_card_payment unless money_frozen?
 
         success(cart)
       end
@@ -173,6 +174,10 @@ module Spree
           columns[:commission_total] = cart.commission_total
         end
         cart.update_columns(columns)
+      end
+
+      def resize_gift_card_payment
+        cart.recalculate_gift_card
       end
 
       def money_frozen?
