@@ -1,5 +1,13 @@
 # @spree/dashboard-ui
 
+## 1.0.0-beta.4
+
+### Patch Changes
+
+- [#14730](https://github.com/spree/spree/pull/14730) [`6742c1a`](https://github.com/spree/spree/commit/6742c1a868acc124b1773be8db187c7f512aa040) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Fixed the Edit prices grid on a market with a comma decimal saving a typed `19.50` as 1950. A period followed by anything other than three digits is now read as a decimal point, and the grid shows exactly the amount it will save.
+
+- [#14729](https://github.com/spree/spree/pull/14729) [`61f902f`](https://github.com/spree/spree/commit/61f902f57228177e2944207f88508e235a030c9e) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - A spreadsheet cell being edited now keeps its value when you leave it by clicking somewhere else, the same as leaving it with Tab or Enter. Before, a price, compare-at price or stock count typed on the product form was dropped when you clicked into another field or pressed Save.
+
 ## 1.0.0-beta.3
 
 ## 1.0.0-beta.2
