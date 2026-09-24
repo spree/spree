@@ -17,8 +17,10 @@ module Spree
                  expired: :boolean,
                  active: :boolean
 
+        # A bearer credential: masked when the order is shown to someone other
+        # than its buyer (a company's other members).
         attribute :code do |gift_card|
-          gift_card.display_code
+          params[:hide_credentials] ? gift_card.masked_code : gift_card.display_code
         end
 
         attribute :status do |gift_card|
