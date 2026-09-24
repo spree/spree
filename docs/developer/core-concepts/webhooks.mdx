@@ -12,7 +12,7 @@ Webhooks are built on top of Spree's [event system](/developer/core-concepts/eve
 - **Multi-store support** - Each store has its own webhook endpoints
 - **Event filtering** - Subscribe to specific events or patterns with wildcards
 - **Secure delivery** - HMAC-SHA256 signatures for payload verification
-- **Failure handling** - Failed deliveries are recorded and can be re-sent, and an endpoint that keeps failing is disabled
+- **Failure handling** - Failed deliveries are retried automatically and can be re-sent by hand, and an endpoint that keeps failing is disabled
 - **Full audit trail** - Track every delivery attempt with response codes and timing
 
 ## How Webhooks Work
@@ -275,7 +275,9 @@ end
 
 ### Failed Deliveries
 
-Spree sends each delivery once. Any response other than 2xx — including a timeout or a connection error — marks the delivery as failed, and Spree does not send it again on its own. To send a failed delivery again, re-send it from the delivery log (see below).
+Any response other than 2xx — including a timeout or a connection error — marks the delivery as failed. Spree then sends it again, waiting longer before each try, up to 5 attempts in total over about six minutes. The delivery log shows the outcome of the latest attempt. Retries stop as soon as the endpoint is turned off.
+
+Every attempt carries the same event `id`, so use it to ignore an event your receiver has already processed. To send a delivery again after the retries run out, re-send it from the delivery log (see below).
 
 If an endpoint fails 15 deliveries in a row, Spree disables it and emails the store staff. Fix the endpoint, then turn it back on by marking it active again.
 
