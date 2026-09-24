@@ -142,6 +142,18 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(result.error.value).to eq(:refund_exceeds_paid)
     end
 
+    # Store credit writes no refund row, so without a ceiling on the order
+    # every settlement could each give back the full amount paid.
+    it 'refuses store credit beyond what the order can still give back' do
+      create(:store_credit, store: store, customer: order.customer, refunded_order: order, amount: order.total)
+
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_exceeds_paid)
+      expect(Spree::StoreCredit.find_by(originator: claim)).to be_nil
+    end
+
     it 'ships a replacement' do
       claim = create(:approved_claim, store: store, order: order, send_replacement: true)
       claim.claim_line_items.each { |line| line.variant.stock_levels.first&.set_count_on_hand(10) }

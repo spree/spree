@@ -39,6 +39,8 @@ module Spree
       # @return [Array<Spree::StoreCredit>] the one credit written, shaped like
       #   {#refund_order_payments} so both branches answer the same way
       def issue_refund_store_credit(order:, amount:, record:, memo:, refunder: nil)
+        failure(record, :refund_exceeds_paid) if amount.to_d > store_creditable_amount(order)
+
         [
           Spree::StoreCredit.create!(
             store: record.store,
@@ -51,6 +53,23 @@ module Spree
             memo: memo
           )
         ]
+      end
+
+      # What the order can still give back as store credit: what its payments
+      # can still refund, less credit already issued against it. Credit writes
+      # no refund row, so without the second half every return, claim and
+      # exchange on one order could each hand back the full amount paid.
+      #
+      # The order row is locked first, so two settlements racing on one order
+      # cannot both read the same headroom.
+      #
+      # @param order [Spree::Order]
+      # @return [BigDecimal]
+      def store_creditable_amount(order)
+        Spree::Order.lock.find(order.id)
+
+        refundable_shares(order).values.sum(0.to_d) -
+          Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
       end
 
       # Puts `amount` back on `order`, oldest payment first, until it is
