@@ -117,6 +117,32 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(original.reload.address1).to eq(original_line)
     end
 
+    # The correction is this order's, not the buyer's account: their default
+    # addresses and address book serve every later checkout.
+    it "leaves the buyer's default addresses and address book alone" do
+      customer = mine.customer
+      defaults = [customer.ship_address_id, customer.bill_address_id]
+      book_size = customer.addresses.count
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { address1: '9 Corrected Way' },
+        billing_address: { address1: '4 Invoice Street' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      customer.reload
+      expect([customer.ship_address_id, customer.bill_address_id]).to eq(defaults)
+      expect(customer.addresses.count).to eq(book_size)
+      expect(mine.reload.ship_address.owner).to be_nil
+    end
+
+    it 'refuses an address the correction leaves invalid' do
+      patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '' } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'corrects the billing address' do
       patch :address, params: {
         id: mine.prefixed_id,
