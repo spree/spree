@@ -41,19 +41,25 @@ RSpec.describe Spree::OrderGroupEmailSubscriber do
       subscriber.send(:send_confirmation_email, mock_event(group))
     end
 
-    it 'sends nothing when the store has customer receipts switched off' do
+    # Matches the single-order subscriber: turning customer receipts off must
+    # not stop the store hearing about its own sales (spree/spree#14724).
+    it 'still tells the store when customer receipts are switched off' do
       store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: false))
 
       expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
+      expect(Spree::OrderGroupMailer).to receive(:store_owner_notification_email).
+        and_return(double(deliver_later: true))
 
       subscriber.send(:send_confirmation_email, mock_event(group))
     end
 
     # An operator completing a draft quietly says so on the group event, which
-    # is the only thing that reaches this subscriber.
-    it 'sends nothing when the completion asked to stay silent' do
+    # is the only thing that reaches this subscriber. It silences the customer
+    # and not the store, which is a different audience.
+    it 'does not confirm the customer when the completion asked to stay silent' do
       expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
-      expect(Spree::OrderGroupMailer).not_to receive(:store_owner_notification_email)
+      expect(Spree::OrderGroupMailer).to receive(:store_owner_notification_email).
+        and_return(double(deliver_later: true))
 
       subscriber.send(:send_confirmation_email,
                       double('Event', payload: { 'id' => group.prefixed_id, 'notify_customer' => false }))
