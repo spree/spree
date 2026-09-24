@@ -1194,10 +1194,11 @@ module Spree
     end
 
     # Only the product's own store's locations — a new variant must not grow
-    # stock items in every other store's warehouses.
+    # stock items in every other store's warehouses — and of those, a seller's
+    # location only stocks what that seller sells.
     def create_stock_levels
       locations = product&.store ? product.store.stock_locations : StockLocation.all
-      locations.where(propagate_all_variants: true).each do |stock_location|
+      locations.where(propagate_all_variants: true, seller_id: [nil, resolved_seller_id].uniq).each do |stock_location|
         stock_location.propagate_variant(self)
       end
     end

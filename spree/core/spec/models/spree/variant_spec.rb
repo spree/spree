@@ -116,6 +116,16 @@ describe Spree::Variant, type: :model do
       create(:variant, product: product)
     end
 
+    it "does not propagate into another seller's location" do
+      seller = create(:seller, store: product.store)
+      location = create(:stock_location, store: product.store, seller: seller, propagate_all_variants: true)
+
+      # Not the factory: it seeds every location itself.
+      variant = product.variants.create!(sku: 'SELLER-PROPAGATION')
+
+      expect(location.stock_levels.where(variant_id: variant.id)).to be_empty
+    end
+
     context 'stock location has disable propagate all variants' do
       before { Spree::StockLocation.update_all propagate_all_variants: false }
 
