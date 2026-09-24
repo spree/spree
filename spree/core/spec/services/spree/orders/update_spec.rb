@@ -290,6 +290,24 @@ module Spree
             expect(order.customer_note).to eq('whatever')
           end
         end
+
+        # A placed order's fulfillments carry the stock it promised, so an
+        # edit adjusts them in place instead of replacing them.
+        context 'when the order is placed and items change' do
+          let(:params) { { items: [{ variant_id: variant.prefixed_id, quantity: 3 }] } }
+
+          before { order.update_columns(status: 'placed', completed_at: Time.current) }
+
+          it 'keeps the fulfillments and puts the new units on them' do
+            old_shipment_ids = order.shipments.map(&:id)
+
+            expect(subject).to be_success
+
+            order.reload
+            expect(order.shipments.map(&:id)).to match_array(old_shipment_ids)
+            expect(order.fulfillments.first.fulfillment_items.sum(:quantity)).to eq(3)
+          end
+        end
       end
 
       describe 'final totals refresh' do
