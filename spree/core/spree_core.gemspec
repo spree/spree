@@ -47,10 +47,10 @@ Gem::Specification.new do |s|
   # restores JSON attributes through that path, so on json 3 any rollback
   # touching a JSON column raises ArgumentError. Rails' bug, not ours — unpin
   # once activesupport passes those options as keywords.
-  s.add_dependency 'json', '< 3'
+  s.add_dependency 'json', '< 4'
   s.add_dependency 'jwt', '~> 3.1'
-  s.add_dependency 'money', '~> 6.13'
-  s.add_dependency 'monetize', '~> 1.9'
+  s.add_dependency 'money', '>= 6.13', '< 8.0'
+  s.add_dependency 'monetize', '>= 1.9', '< 3.0'
   s.add_dependency 'name_of_person', '~> 1.1'
   s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'ostruct'
@@ -65,8 +65,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'tracking_number'
   s.add_dependency 'validates_zipcode'
   s.add_dependency 'valvat', '~> 2.0'
-  s.add_dependency 'image_processing', '~> 1.2'
-  s.add_dependency 'active_storage_validations', '>= 1.3', '< 4'
+  s.add_dependency 'image_processing', '>= 1.2', '< 3.0'
+  s.add_dependency 'active_storage_validations', '>= 1.3', '< 5'
   s.add_dependency 'mobility', '~> 1.3', '>= 1.3.2'
   s.add_dependency 'mobility-ransack', '~> 1.2'
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
