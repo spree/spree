@@ -446,7 +446,7 @@ module Spree
     end
 
     def verify_order_inventory_before_destroy
-      Spree::OrderInventory.new(order, self).verify(target_fulfillment, removing: true)
+      Spree::OrderInventory.new(order, self).verify(nil, removing: true)
       fulfillment_items.reset
     end
 

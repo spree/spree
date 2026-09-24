@@ -19,7 +19,9 @@ module Spree
 
         described_class.call(order: order, line_item: line_item)
 
-        expect(order.reload.item_total).to eq(remaining)
+        order.reload
+        expect(order.item_total).to eq(remaining)
+        expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
       end
     end
 
