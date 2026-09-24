@@ -134,6 +134,22 @@ RSpec.describe Spree::OrderEmailSubscriber do
     end
   end
 
+  describe 'the store owner on a divided checkout' do
+    let(:group) { create(:order_group, store: store) }
+    let(:order) { create(:completed_order_with_totals, store: store, order_group: group) }
+
+    # Each child publishes its own order.placed, so without this the operator
+    # hears about one purchase once per seller. The group's own notification
+    # covers it.
+    it 'is left to the group rather than told per child' do
+      allow(Spree::OrderMailer).to receive(:confirm_email).and_return(double(deliver_later: true))
+
+      expect(Spree::OrderMailer).not_to receive(:store_owner_notification_email)
+
+      subscriber.send(:send_confirmation_email, mock_event(order))
+    end
+  end
+
   describe 'order.resend_confirmation_email event' do
     it 'sends the order confirmation again, marked as a re-send' do
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id, true).

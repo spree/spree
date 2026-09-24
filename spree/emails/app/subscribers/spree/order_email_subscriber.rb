@@ -55,6 +55,9 @@ module Spree
     end
 
     def send_store_owner_notification(order)
+      # A divided checkout tells the store about the purchase once, from the
+      # group, rather than once per seller order.
+      return if order.grouped?
       return if order.store_owner_notification_delivered?
       return if order.store.new_order_notifications_email.blank?
 
