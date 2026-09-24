@@ -42,6 +42,18 @@ module Spree
               params[:webhook_endpoint_id]
             )
           end
+
+          # The payload is the record the event is about, so it is shown only
+          # to a caller who could read that record; the webhooks permission
+          # alone sees the delivery's status and response.
+          def serializer_params
+            super.merge(
+              payload_visible: lambda { |delivery|
+                key = delivery.payload_permission_key
+                key.nil? || holds_permission?(key)
+              }
+            )
+          end
         end
       end
     end
