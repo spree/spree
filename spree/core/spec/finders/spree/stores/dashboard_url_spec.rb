@@ -35,6 +35,10 @@ RSpec.describe Spree::Stores::DashboardUrl do
       expect(subject).to eq(store.formatted_url)
       expect(subject).not_to include('localhost:5173')
     end
+
+    it 'reports no dashboard address when the fallback is skipped' do
+      expect(described_class.without_store_fallback(store: store)).to be_nil
+    end
   end
 
   # The bundled dashboard is a fact about the deployment, so it outranks the
@@ -67,6 +71,13 @@ RSpec.describe Spree::Stores::DashboardUrl do
         and_return(host: 'localhost', port: 3000)
 
       expect(subject).to eq('http://localhost:3000/dashboard')
+    end
+
+    it 'defaults to https in production when no protocol is configured' do
+      allow(Rails.application.routes).to receive(:default_url_options).and_return(host: 'shop.example.com')
+      allow(Rails.env).to receive_messages(development?: false, test?: false)
+
+      expect(subject).to eq('https://shop.example.com/dashboard')
     end
   end
 

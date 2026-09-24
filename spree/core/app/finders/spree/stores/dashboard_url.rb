@@ -23,13 +23,20 @@ module Spree
       # @param store [Spree::Store, nil] store whose URL ends the fallback chain
       # @return [String] origin without a trailing slash, e.g. +https://admin.shop.com+
       def self.call(store: nil)
+        without_store_fallback(store: store) || (store&.formatted_url).to_s.chomp('/')
+      end
+
+      # Steps 1-4 only: nil when the store's own URL is all that is left, for
+      # links that cannot work there (the admin password reset page).
+      # @param store [Spree::Store, nil]
+      # @return [String, nil] origin without a trailing slash
+      def self.without_store_fallback(store: nil)
         base = Spree::Config[:dashboard_url].presence ||
                legacy_admin_url ||
                mounted_dashboard_url(store) ||
-               (Rails.env.development? ? 'http://localhost:5173' : nil) ||
-               store&.formatted_url
+               (Rails.env.development? ? 'http://localhost:5173' : nil)
 
-        base.to_s.chomp('/')
+        base&.chomp('/')
       end
 
       # Reads the deprecated `admin_url` without tripping its warning on every
@@ -66,7 +73,7 @@ module Spree
         options = Rails.application.routes.default_url_options
         return store&.formatted_url if options[:host].blank?
 
-        protocol = options[:protocol].presence || 'http'
+        protocol = options[:protocol].presence || (Rails.env.development? || Rails.env.test? ? 'http' : 'https')
         port = options[:port]
         host = "#{protocol}://#{options[:host]}"
         port.present? ? "#{host}:#{port}" : host

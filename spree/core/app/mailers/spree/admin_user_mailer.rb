@@ -7,6 +7,7 @@ module Spree
       @user = admin_user
       @current_store = store
       @reset_url = password_reset_url(token, store, redirect_url)
+      return log_missing_dashboard_url(admin_user) if @reset_url.nil?
 
       with_store_locale(store, preferred_locale(admin_user, store)) do
         mail(
@@ -34,12 +35,23 @@ module Spree
     end
 
     # The dashboard passes a validated redirect URL when its origin is allowed.
-    # Without it the dashboard origin is resolved server-side: the store URL has
-    # no reset page, so a link there cannot reset an admin password.
+    # Without it the dashboard origin is resolved server-side, never from the
+    # store URL: that has no reset page, so a link there cannot reset anything.
     def password_reset_url(token, store, redirect_url)
-      target = redirect_url.presence || "#{Spree::Stores::DashboardUrl.call(store: store)}/reset-password"
+      return append_token(redirect_url, token) if redirect_url.present?
 
-      append_token(target, token)
+      dashboard_url = Spree::Stores::DashboardUrl.without_store_fallback(store: store)
+      append_token("#{dashboard_url}/reset-password", token) if dashboard_url.present?
+    end
+
+    # Skipping rather than raising keeps the forgot-password response identical
+    # for known and unknown emails.
+    def log_missing_dashboard_url(admin_user)
+      Rails.logger.error(
+        "[Spree] Password reset email for admin user #{admin_user.id} was not sent: the dashboard " \
+        'address is unknown. Set SPREE_DASHBOARD_URL (or the dashboard_url preference), or add ' \
+        "the dashboard's origin to the store's allowed origins."
+      )
     end
   end
 end
