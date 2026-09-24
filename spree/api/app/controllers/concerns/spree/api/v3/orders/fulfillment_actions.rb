@@ -135,9 +135,17 @@ module Spree
           end
 
           # The attributes handed to the update workflow. The workflow assigns
-          # ids raw, so a branch that must narrow one resolves it here first.
+          # ids raw, so the stock location is resolved through the current
+          # store first; a branch that must narrow it further overrides this.
           def update_attributes
-            permitted_params.to_h
+            attributes = permitted_params.to_h
+
+            if attributes['stock_location_id'].present?
+              attributes['stock_location_id'] =
+                current_store.stock_locations.find_by_prefix_id!(attributes['stock_location_id']).id
+            end
+
+            attributes
           end
 
           # What may be split out of this parcel, and where the split half

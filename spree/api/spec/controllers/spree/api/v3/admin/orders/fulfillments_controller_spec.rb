@@ -9,6 +9,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
   let!(:order) { create(:order_ready_to_ship, store: store) }
   let!(:shipment) { order.fulfillments.first }
 
+  let(:foreign_stock_location) { create(:stock_location, store: create(:store)) }
+
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
@@ -148,7 +150,29 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
   end
 
+  describe 'POST #create with a stock location of another store' do
+    it 'is not found' do
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: foreign_stock_location.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'PATCH #update' do
+    it 'refuses a stock location of another store' do
+      patch :update, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        stock_location_id: foreign_stock_location.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(shipment.reload.stock_location).not_to eq(foreign_stock_location)
+    end
+
     it 'updates fulfillment tracking' do
       patch :update, params: {
         order_id: order.prefixed_id,
@@ -359,6 +383,20 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:ok), "Expected 200 but got #{response.status}: #{response.body}"
       expect(json_response['data']).to be_an(Array)
+    end
+
+    it 'refuses a stock location of another store' do
+      variant = shipment.inventory_units.first.variant
+
+      patch :split, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        variant_id: variant.prefixed_id,
+        quantity: 1,
+        stock_location_id: foreign_stock_location.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

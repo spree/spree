@@ -71,6 +71,29 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['memo']).to eq('Updated')
       expect(json_response['status']).to eq('requested')
     end
+
+    it "refuses another store's reason or warehouse" do
+      return_record = create_return
+      other_store = create(:store)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id,
+                               reason_id: create(:return_reason, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id,
+                               stock_location_id: create(:stock_location, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "sets the store's own reason" do
+      return_record = create_return
+      reason = create(:return_reason, store: store)
+
+      patch :update, params: { order_id: order.prefixed_id, id: return_record.prefixed_id, reason_id: reason.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(return_record.reload.reason).to eq(reason)
+    end
   end
 
   describe 'PATCH #approve' do
