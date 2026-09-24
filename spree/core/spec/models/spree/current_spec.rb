@@ -290,6 +290,29 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '.with_store' do
+    let(:store) { create(:store, default_currency: 'GBP') }
+    let(:other_store) { create(:store, default_currency: 'PLN') }
+
+    it 'runs the block in the store and restores the previous context afterwards' do
+      described_class.store = store
+      described_class.currency = 'EUR'
+
+      inside = described_class.with_store(other_store) { [described_class.store, described_class.currency] }
+
+      expect(inside).to eq([other_store, 'PLN'])
+      expect([described_class.store, described_class.currency]).to eq([store, 'EUR'])
+    end
+
+    # A sweep walks stores one after another in the same job, so what one
+    # store resolved must not answer for the next.
+    it "does not carry one store's resolved context into the next" do
+      described_class.with_store(store) { described_class.channel }
+
+      expect(described_class.with_store(other_store) { described_class.channel }).to eq(other_store.default_channel)
+    end
+  end
+
   describe '.reset' do
     let(:store) { create(:store) }
     let(:country) { create(:country) }

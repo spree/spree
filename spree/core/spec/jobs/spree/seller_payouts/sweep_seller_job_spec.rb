@@ -16,6 +16,17 @@ RSpec.describe Spree::SellerPayouts::SweepSellerJob do
     expect { described_class.perform_now(seller.id) }.to change { Spree::SellerPayout.count }.by(1)
   end
 
+  it "settles a seller in the seller's own store" do
+    other_seller = create(:seller, :approved, store: create(:store))
+    earn(40, seller: other_seller)
+    settled_in = []
+    allow(Spree.seller_payout_sweep_workflow).to receive(:call) { settled_in << Spree::Current.store }
+
+    described_class.perform_now(other_seller.id)
+
+    expect(settled_in).to eq([other_seller.store])
+  end
+
   it 'leaves a seller who has earned nothing' do
     expect { described_class.perform_now(seller.id) }.not_to change { Spree::SellerPayout.count }
   end
