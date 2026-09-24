@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-ui",
   "license": "MIT",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Spree Dashboard design system — shadcn primitives, headless composed components, and design tokens. Source-only package; consumers compile via their own Vite/Tailwind setup. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
