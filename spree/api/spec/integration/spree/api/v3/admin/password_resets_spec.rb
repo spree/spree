@@ -36,7 +36,7 @@ RSpec.describe 'Admin Password Resets API', type: :request, swagger_doc: 'api-re
           redirect_url: {
             type: :string,
             example: 'https://admin.your-store.com/reset-password',
-            description: 'Must match an allowed origin of the store; ignored otherwise.'
+            description: 'Honoured only on the dashboard origin, for an account that is staff of the store; ignored otherwise.'
           }
         },
         required: %w[email]

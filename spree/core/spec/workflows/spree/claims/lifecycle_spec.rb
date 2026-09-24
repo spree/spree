@@ -154,6 +154,18 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::StoreCredit.find_by(originator: claim)).to be_nil
     end
 
+    # A refund to the card must not follow credit that already gave the
+    # order's money back.
+    it 'refuses a card refund beyond what store credit left on the order' do
+      create(:store_credit, store: store, customer: order.customer, refunded_order: order, amount: order.total)
+
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'original_payment')
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_exceeds_paid)
+      expect(Spree::Refund.where(originator: claim)).to be_empty
+    end
+
     it 'ships a replacement' do
       claim = create(:approved_claim, store: store, order: order, send_replacement: true)
       claim.claim_line_items.each { |line| line.variant.stock_levels.first&.set_count_on_hand(10) }

@@ -137,6 +137,14 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(mine.reload.ship_address.owner).to be_nil
     end
 
+    # A label names an address-book entry; the order's copy has no book.
+    it 'drops an address-book label from the correction' do
+      patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '9 Corrected Way', label: 'Home' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.ship_address.label).to be_nil
+    end
+
     it 'refuses an address the correction leaves invalid' do
       patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '' } }, as: :json
 

@@ -9,8 +9,8 @@ module Spree
         #   location may stock; always narrowed to it, so no caller can seed rows
         #   for another store's or another seller's variants
         def call(stock_location:, variants_scope: nil)
-          variants_scope = propagatable_variants(stock_location, variants_scope)
-          prepared_stock_levels = variants_scope.ids.map do |variant_id|
+          variant_ids = propagatable_variants(stock_location, variants_scope).ids
+          prepared_stock_levels = variant_ids.map do |variant_id|
             Hash[
               'stock_location_id', stock_location.id,
               'variant_id', variant_id,
@@ -21,7 +21,8 @@ module Spree
           end
           if prepared_stock_levels.any?
             stock_location.stock_levels.insert_all(prepared_stock_levels)
-            variants_scope.touch_all
+            # By id: MySQL refuses an UPDATE whose own table appears in a subquery.
+            Spree::Variant.where(id: variant_ids).touch_all
           end
         end
 

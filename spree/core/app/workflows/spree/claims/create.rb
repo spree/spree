@@ -43,18 +43,27 @@ module Spree
       # paid for its units, so claiming the same units again would pay twice.
       # A denied or canceled claim settled nothing and frees its units.
       def normalize_items
-        requested = Hash.new(0)
-
         @normalized_items = items.map do |item|
           line_item = item[:line_item]
           quantity = item[:quantity].to_i
 
           failure(order, :invalid_quantity) unless quantity.positive?
           failure(order, :item_not_on_order) unless line_item&.order_id == order.id
-          failure(order, :invalid_quantity) if quantity > claimable_quantity_for(line_item) - requested[line_item.id]
 
-          requested[line_item.id] += quantity
           item.merge(line_item: line_item, quantity: quantity)
+        end
+
+        ensure_claimable_quantities
+      end
+
+      def ensure_claimable_quantities
+        requested = Hash.new(0)
+
+        @normalized_items.each do |item|
+          line_item = item[:line_item]
+          failure(order, :invalid_quantity) if item[:quantity] > claimable_quantity_for(line_item) - requested[line_item.id]
+
+          requested[line_item.id] += item[:quantity]
         end
       end
 
@@ -69,6 +78,11 @@ module Spree
       end
 
       def build_claim
+        # Again under the order's row lock, so two requests racing for the same
+        # units cannot both pass the check above.
+        Spree::Order.lock.find(order.id)
+        ensure_claimable_quantities
+
         @claim = order.claims.new(
           store: order.store,
           reason: reason,

@@ -143,7 +143,9 @@ module Spree
           end
 
           def corrected_address(address, sent)
-            (address&.snapshot || Spree::Address.new).tap { |copy| copy.assign_attributes(sent.to_h) }
+            # No label: an address-book label means nothing on an order's copy,
+            # and labels are unique per owner, which an ownerless copy lacks.
+            (address&.snapshot || Spree::Address.new).tap { |copy| copy.assign_attributes(sent.to_h.except('label', :label)) }
           end
 
           def address_permitted_keys

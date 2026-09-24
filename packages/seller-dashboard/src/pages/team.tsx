@@ -334,7 +334,10 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
           ).toString()
         : acceptance_url
 
-      await copy(url)
+      if (!(await copy(url))) {
+        toastManager.add({ type: 'error', title: t('common.error') })
+        return
+      }
       toastManager.add({ type: 'success', title: t('team.messages.link_copied') })
     } catch (err) {
       toastManager.add({

@@ -177,7 +177,10 @@ module Spree
       store: %w[email considered_risky coupon_code],
       seller: %w[email considered_risky coupon_code]
     }
-    self.private_ransackable_scopes = { seller: %w[search multi_search] }
+    self.private_ransackable_scopes = {
+      store: %w[search multi_search],
+      seller: %w[search multi_search]
+    }
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer

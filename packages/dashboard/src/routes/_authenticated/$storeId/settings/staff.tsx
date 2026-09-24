@@ -319,7 +319,10 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       const url = acceptance_url.startsWith('/')
         ? `${window.location.origin}${acceptance_url}`
         : acceptance_url
-      await copy(url)
+      if (!(await copy(url))) {
+        toastManager.add({ type: 'error', title: t('admin.staff.errors.failed_to_copy_link') })
+        return
+      }
       toastManager.add({ type: 'success', title: t('admin.staff.actions.invitation_link_copied') })
     } catch (err) {
       toastManager.add({

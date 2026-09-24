@@ -64,6 +64,11 @@ module Spree
       end
 
       def build_exchange
+        # Again under the order's row lock, so two requests racing for the same
+        # units cannot both pass the check above.
+        Spree::Order.lock.find(order.id)
+        ensure_returnable_quantities(@normalized_items, action: 'exchanged')
+
         @exchange = order.exchanges.new(
           store: order.store,
           stock_location: stock_location || default_stock_location,
