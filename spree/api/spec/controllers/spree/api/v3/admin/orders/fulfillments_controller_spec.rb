@@ -234,6 +234,59 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(shipment.reload.selected_shipping_rate).to eq(new_rate)
     end
 
+    context 'with a cost' do
+      def patch_cost(**params)
+        patch :update, params: { order_id: order.prefixed_id, id: shipment.prefixed_id, **params }, as: :json
+      end
+
+      it 'overrides the delivery cost' do
+        patch_cost(cost: '0')
+
+        expect(response).to have_http_status(:ok), response.body
+        expect(json_response['cost']).to eq('0.0')
+        expect(json_response['cost_source']).to eq('manual')
+        expect(order.reload.delivery_total).to eq(0)
+      end
+
+      it 'hands the parcel back to its rate on an explicit null' do
+        patch_cost(cost: '0')
+
+        patch_cost(cost: nil)
+
+        expect(response).to have_http_status(:ok), response.body
+        expect(json_response['cost_source']).to be_nil
+        expect(shipment.reload.cost).to eq(shipment.selected_delivery_rate.cost)
+      end
+
+      it 'leaves an override alone when the request does not name a cost' do
+        patch_cost(cost: '4.50')
+
+        patch_cost(tracking: 'DPD-7')
+
+        expect(json_response['cost']).to eq('4.5')
+        expect(json_response['cost_source']).to eq('manual')
+      end
+
+      it 'refuses a cost that is not an amount' do
+        patch_cost(cost: 'free')
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(shipment.reload.cost_source).to be_nil
+      end
+
+      # Strong parameters drop an object to nil, and nil means "revert".
+      it 'refuses a cost sent as an object rather than reverting the override' do
+        patch_cost(cost: '0')
+
+        patch_cost(cost: { amount: '0' })
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(shipment.reload.cost_source).to eq('manual')
+        expect(shipment.cost).to eq(0)
+      end
+    end
+
     it 'ignores a state parameter' do
       original_state = shipment.state
 

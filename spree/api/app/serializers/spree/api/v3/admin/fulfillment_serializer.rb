@@ -18,9 +18,10 @@ module Spree
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
                    adjustment_total: :string,
-                   pre_tax_amount: :string
+                   pre_tax_amount: :string,
+                   cost_source: [:string, nullable: true, enum: [Spree::Fulfillment::MANUAL_COST_SOURCE]]
 
-          attributes :metadata, :adjustment_total, :pre_tax_amount,
+          attributes :metadata, :adjustment_total, :pre_tax_amount, :cost_source,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :order_id do |fulfillment|

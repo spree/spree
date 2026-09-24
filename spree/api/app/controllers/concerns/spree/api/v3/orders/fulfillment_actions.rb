@@ -19,7 +19,7 @@ module Spree
           def update
             with_order_lock do
               result = Spree.fulfillment_update_workflow.call(
-                fulfillment: @resource, fulfillment_attributes: update_attributes
+                fulfillment: @resource, fulfillment_attributes: update_attributes, **update_workflow_options
               )
 
               if result.success?
@@ -112,6 +112,13 @@ module Spree
           # Extra keywords the branch's own fulfil accepts — forcing past a
           # guard is the operator's call, so the seller adds nothing.
           def fulfill_workflow_options
+            {}
+          end
+
+          # Extra keywords the branch's own update accepts — what the customer
+          # is charged for delivery is the operator's call, so the seller adds
+          # nothing.
+          def update_workflow_options
             {}
           end
 

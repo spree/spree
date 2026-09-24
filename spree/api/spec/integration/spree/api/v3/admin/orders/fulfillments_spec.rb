@@ -166,7 +166,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       consumes 'application/json'
       produces 'application/json'
       security [{ api_key: [], bearer_auth: [] }]
-      description 'Updates a fulfillment (tracking, delivery rate).'
+      description 'Updates a fulfillment (tracking, delivery rate, delivery cost).'
       admin_scope :write, :fulfillments
 
       admin_sdk_example 'order-fulfillments/update'
@@ -183,18 +183,31 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         properties: {
           tracking: { type: :string, example: '1Z999AA10123456784',
                       description: 'Carrier tracking number, or a full https:// tracking link served back as tracking_url unchanged' },
-          selected_delivery_rate_id: { type: :string, description: 'Delivery rate ID (dr_...) to select' }
+          selected_delivery_rate_id: { type: :string, description: 'Delivery rate ID (dr_...) to select' },
+          cost: { type: :string, nullable: true, example: '0.00',
+                  description: 'Delivery cost set by hand. No re-quote, rate change or move to another stock location changes it afterwards. Send null to go back to the selected delivery rate\'s price; omit to leave the cost as it is.' }
         }
       }
 
       response '200', 'shipment updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { tracking: '1Z999AA10123456784' } }
+        let(:body) { { tracking: '1Z999AA10123456784', cost: '0.00' } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['tracking']).to eq('1Z999AA10123456784')
+          expect(data['cost']).to eq('0.0')
+          expect(data['cost_source']).to eq('manual')
         end
+      end
+
+      response '422', 'invalid delivery cost' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { cost: '-5' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
       end
     end
   end

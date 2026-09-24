@@ -92,6 +92,19 @@ module Spree
               { force: fulfill_params[:force].to_b }
             end
 
+            # cost is tri-state — absent leaves the charge alone, an amount
+            # overrides it, an explicit null hands the parcel back to its rate —
+            # so it is forwarded only when the request carried the key. Kept out
+            # of permitted_params, which the workflow assigns to the record raw.
+            def update_workflow_options
+              return {} unless params.key?(:cost)
+              return { cost: nil } if params[:cost].nil?
+
+              # permit drops a value that is not a scalar to nil, which would
+              # read as a revert; blank is refused as an invalid cost instead.
+              { cost: params.permit(:cost)[:cost] || '' }
+            end
+
             # The whole catalogue, and any warehouse this staff member may
             # see: an operator ships anything the store sells.
             def variant_for_split
