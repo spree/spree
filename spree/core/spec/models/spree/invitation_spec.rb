@@ -52,12 +52,21 @@ RSpec.describe Spree::Invitation, type: :model do
 
     # Resolved at validation, not on initialize: the caller's own resource is
     # not assigned yet when the record is instantiated.
-    it 'defaults the resource and its admin role before validation' do
+    it 'defaults the resource before validation' do
       invitation = build(:invitation)
       invitation.valid?
 
       expect(invitation.resource).to eq(Spree::Store.current)
-      expect(invitation.role).to eq(Spree::Role.default_admin_role)
+    end
+
+    # Defaulting to the admin role let anyone allowed to invite staff hand out
+    # admin by leaving the role out.
+    it 'never defaults the role' do
+      invitation = build(:invitation, role: nil)
+
+      expect(invitation).not_to be_valid
+      expect(invitation.role).to be_nil
+      expect(invitation.errors[:role]).to be_present
     end
 
     it 'follows an explicitly assigned resource' do
@@ -146,6 +155,23 @@ RSpec.describe Spree::Invitation, type: :model do
 
       expect(invitation).not_to receive(:publish_event)
       invitation.resend!
+    end
+
+    # A link that leaked with the earlier email must stop working.
+    it 'rotates the token' do
+      expect { invitation.resend! }.to change { invitation.reload.token }
+    end
+
+    it 'keeps the token of an expired invitation' do
+      invitation.update_column(:expires_at, 1.day.ago)
+
+      expect { invitation.resend! }.not_to change { invitation.reload.token }
+    end
+  end
+
+  describe '#acceptance_url' do
+    it 'carries the invitation and its token' do
+      expect(invitation.acceptance_url).to include("/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}")
     end
   end
 end

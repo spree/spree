@@ -29,7 +29,7 @@ https://spreecommerce.org/docs/developer/core-concepts/orders.md
 The full developer documentation also ships as an npm package, so agents working in your repository can `Read` doc files locally — no network round-trips, works offline, and version-pinned to what you installed:
 
 ```bash
-npm install --save-dev @spree/docs
+pnpm add -D @spree/docs
 ```
 
 ```text
@@ -40,7 +40,8 @@ node_modules/@spree/docs/dist/
 │   ├── customization/       # decorators, dependencies, events, …
 │   ├── storefront/          # Next.js storefront guides
 │   ├── sdk/                 # TypeScript SDK docs
-│   ├── admin/               # admin customization, form builder, components
+│   ├── dashboard/           # React admin dashboard customization and plugins
+│   ├── providers/           # tax, delivery, payment, search and other providers
 │   └── how-to/              # focused guides
 └── api-reference/
     └── store.yaml           # the full Store API OpenAPI spec

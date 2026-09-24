@@ -1,0 +1,165 @@
+---
+title: Theming
+description: Restyle the dashboard by overriding its design tokens — colours, radius, fonts and the type scale — without forking a single component.
+---
+
+The dashboard is styled entirely from CSS custom properties. Components read
+tokens rather than hard-coded colours, so changing a token restyles everything
+that uses it — you never fork a component to recolour it.
+
+## Where your styles go
+
+Your app's `src/styles.css` imports the Spree stylesheet. Anything below that
+import wins, because it lands later at the same specificity:
+
+```css src/styles.css
+@import "@spree/dashboard/styles.css";
+
+:root {
+  --primary: oklch(0.55 0.22 264);
+  --radius: 0.25rem;
+}
+```
+
+That is the whole mechanism. No build config, no plugin, no component overrides.
+
+<Note>
+  The seller panel works the same way — its starter imports
+  `@spree/seller-dashboard/styles.css`, and the same tokens apply.
+</Note>
+
+## Dark mode
+
+Every token has a dark counterpart under `.dark`. A theme is only complete when
+you set both:
+
+```css src/styles.css
+@import "@spree/dashboard/styles.css";
+
+:root {
+  --primary: oklch(0.55 0.22 264);
+}
+
+.dark {
+  --primary: oklch(0.72 0.19 264);
+}
+```
+
+<Warning>
+  The theme provider decides *mode* — light, dark or system — and toggles a
+  `.dark` class. It holds no colours. Override only `:root` and your theme
+  breaks the moment someone switches to dark.
+</Warning>
+
+## The tokens
+
+### Surfaces and text
+
+| Token | What it colours |
+|---|---|
+| `--background` / `--foreground` | The page, and text on it |
+| `--card` / `--card-foreground` | Cards, and text on them |
+| `--popover` / `--popover-foreground` | Menus, dropdowns, popovers |
+| `--muted` / `--muted-foreground` | Recessed surfaces and secondary text |
+
+### Brand and interaction
+
+| Token | What it colours |
+|---|---|
+| `--primary` / `--primary-foreground` | Primary buttons and calls to action |
+| `--secondary` / `--secondary-foreground` | Secondary buttons |
+| `--accent` / `--accent-foreground` | Hovered rows, selected items |
+| `--accent-hover`, `--accent-strong`, `--accent-strong-hover` | Deeper accent steps |
+| `--link` / `--link-hover` | Inline text links |
+| `--ring` | Focus rings |
+
+### Status
+
+`--destructive` and `--destructive-foreground` for dangerous actions, plus four
+status families used by badges and callouts — each with `-bg`, `-border` and
+`-fg`:
+
+`--status-green-*`, `--status-amber-*`, `--status-red-*`, `--status-blue-*`
+
+### Borders and structure
+
+| Token | What it colours |
+|---|---|
+| `--border` | The default border, aliasing `--border-base` |
+| `--border-card`, `--border-subtle`, `--border-control` | Cards, dividers, inputs |
+| `--input` | Input borders |
+| `--radius` | Corner radius everywhere |
+
+### Sidebar
+
+The sidebar has its own family so you can give the chrome a different tone from
+the content: `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`,
+`--sidebar-accent` and its hover steps, `--sidebar-border`, `--sidebar-ring`.
+
+### Charts
+
+`--chart-1` through `--chart-5`, in series order.
+
+## Tokens defined from other tokens
+
+Several tokens alias another rather than naming their own colour:
+
+```css
+--primary: var(--foreground);
+--popover: var(--card);
+--accent: var(--secondary);
+--muted: var(--background);
+```
+
+So overriding one base token cascades. Setting `--foreground` alone also moves
+primary buttons, because that is where `--primary` points. Override the alias
+directly when you want them to diverge.
+
+## Fonts and the type scale
+
+Typography is set in a `@theme inline` block and overridden the same way:
+
+```css src/styles.css
+@import "@spree/dashboard/styles.css";
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --text-base: 0.9375rem;
+}
+```
+
+The dashboard's scale is deliberately smaller than Tailwind's default, because
+admin screens are dense. Raising `--text-base` raises everything built on it.
+
+## Using tokens in your own pages
+
+Tailwind maps every token through `@theme inline`, so utilities follow your
+values with no extra work:
+
+```tsx
+<div className="bg-card text-card-foreground border-border rounded-lg border">
+  <p className="text-muted-foreground">Follows your theme.</p>
+</div>
+```
+
+Use the utilities rather than raw `var(--token)` — a page built from
+`bg-card` and `text-muted-foreground` inherits every future change, including
+dark mode.
+
+For inline text links there is a `.link` class carrying the canonical treatment:
+
+```tsx
+<Link to="/$storeId/settings/store" params={{ storeId }} className="link">
+  Store settings
+</Link>
+```
+
+It is for links in prose and help text. A link that is really a table row, a
+breadcrumb, a nav item or a button rendered as an anchor carries its own
+styling, and `.link` would fight it.
+
+## Related
+
+- [Dashboard overview](/developer/dashboard/overview) — the three packages and what each is for
+- [Translations](/developer/dashboard/customization/translations) — the other half of white-labelling
+- [Slots](/developer/dashboard/customization/slots) — adding your own UI to existing screens

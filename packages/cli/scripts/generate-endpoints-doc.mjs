@@ -33,7 +33,13 @@ function requiredScope(operation) {
   const token = raw.match(/^`([a-z_]+)`$/)
   if (token) return `\`${token[1]}\``
   // Free-form note (e.g. exports resolve their scope per type) — keep it short.
-  return `*${raw.replaceAll('`', '').split(' — ')[0]}*`
+  // Escape angle brackets — the page is MDX, where `<resource>` parses as a JSX tag.
+  const note = raw
+    .replaceAll('`', '')
+    .split(' — ')[0]
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+  return `*${note}*`
 }
 
 const groups = new Map()

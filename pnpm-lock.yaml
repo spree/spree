@@ -250,8 +250,8 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0(typescript@6.0.3)
       lucide-react:
-        specifier: ^1.14.0
-        version: 1.14.0(react@19.2.6)
+        specifier: ^1.47.0
+        version: 1.47.0(react@19.2.6)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -358,6 +358,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@types/spark-md5':
+        specifier: ^3.0.5
+        version: 3.0.5
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -368,8 +371,8 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0(typescript@6.0.3)
       lucide-react:
-        specifier: ^1.14.0
-        version: 1.14.0(react@19.2.6)
+        specifier: ^1.47.0
+        version: 1.47.0(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -401,9 +404,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      '@types/spark-md5':
-        specifier: ^3.0.5
-        version: 3.0.5
       tsup:
         specifier: ^8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.26)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
@@ -429,8 +429,8 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0(typescript@6.0.3)
       lucide-react:
-        specifier: ^1.14.0
-        version: 1.14.0(react@19.2.6)
+        specifier: ^1.47.0
+        version: 1.47.0(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -587,8 +587,8 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0(typescript@6.0.3)
       lucide-react:
-        specifier: ^1.14.0
-        version: 1.14.0(react@19.2.6)
+        specifier: ^1.47.0
+        version: 1.47.0(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -720,8 +720,8 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0(typescript@6.0.3)
       lucide-react:
-        specifier: ^0.545.0
-        version: 0.545.0(react@19.2.6)
+        specifier: ^1.47.0
+        version: 1.47.0(react@19.2.6)
       react-hook-form:
         specifier: ^7.65.0
         version: 7.75.0(react@19.2.6)
@@ -3567,13 +3567,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.545.0:
-    resolution: {integrity: sha512-7r1/yUuflQDSt4f1bpn5ZAocyIxcTyVyBBChSVtBKn5M+392cPmI5YJMWOJKk/HUWGm5wg83chlAZtCcGbEZtw==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  lucide-react@1.14.0:
-    resolution: {integrity: sha512-+1mdWcfSJVUsaTIjN9zoezmUhfXo5l0vP7ekBMPo3jcS/aIkxHnXqAPsByszMZx/Y8oQBRJxJx5xg+RH3urzxA==}
+  lucide-react@1.47.0:
+    resolution: {integrity: sha512-o8C23aXpNQypRY73W7fW02EyvWJinEMXgKeGjFoKym0zj3Q73hD97A1IQps1g8C14HTGsOpZL0Am+xjfgFZAbg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -7204,11 +7199,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.545.0(react@19.2.6):
-    dependencies:
-      react: 19.2.6
-
-  lucide-react@1.14.0(react@19.2.6):
+  lucide-react@1.47.0(react@19.2.6):
     dependencies:
       react: 19.2.6
 

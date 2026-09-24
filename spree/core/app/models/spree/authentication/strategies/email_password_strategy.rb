@@ -11,19 +11,11 @@ module Spree
 
           user = find_user_by_email(email)
           return failure('Invalid email or password') unless user
-          return failure('Account temporarily locked. Try again later.') if user.respond_to?(:locked?) && user.locked?
 
-          if validate_password(user, password)
-            # Require the full lockout contract before touching the counter — a
-            # custom customer_class may implement one hook but not the other.
-            if user.respond_to?(:failed_attempts) && user.respond_to?(:reset_failed_attempts!) &&
-               user.failed_attempts.to_i.positive?
-              user.reset_failed_attempts!
-            end
-            success(user)
-          else
-            user.record_failed_attempt! if user.respond_to?(:record_failed_attempt!)
-            failure('Invalid email or password')
+          case Spree::Authentication::Lockout.check(user) { validate_password(user, password) }
+          when :locked then failure('Account temporarily locked. Try again later.')
+          when :valid then success(user)
+          else failure('Invalid email or password')
           end
         rescue => e
           Rails.logger.error "EmailPasswordStrategy authentication failed: #{e.message}"

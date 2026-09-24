@@ -99,6 +99,33 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
         expect(target.reload.spree_admin?(store)).to be(false)
       end
 
+      # Removal is bounded like granting: a staff manager cannot strip the
+      # owners' admin role and lock them out.
+      it 'forbids removing a store owner' do
+        owner = create(:admin_user)
+
+        delete :destroy, params: { id: owner.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(owner.reload.spree_admin?(store)).to be(true)
+      end
+
+      it 'forbids clearing an owner\'s roles' do
+        owner = create(:admin_user)
+
+        patch :update, params: { id: owner.prefixed_id, role_ids: [] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(owner.reload.spree_admin?(store)).to be(true)
+      end
+
+      it 'still removes a member it could have added' do
+        delete :destroy, params: { id: target.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(target.role_users.where(role: store.roles)).not_to exist
+      end
+
       it 'forbids assigning a role whose permissions exceed its own' do
         owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 
@@ -117,6 +144,24 @@ RSpec.describe Spree::Api::V3::Admin::AdminUsersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(target.reload.spree_admin?(store)).to be(true)
+      end
+
+      it 'refuses removing the last admin' do
+        Spree::RoleUser.where(role: admin_role).where.not(user: admin_user).destroy_all
+
+        delete :destroy, params: { id: admin_user.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(admin_user.reload.spree_admin?(store)).to be(true)
+      end
+
+      it 'removes an admin while another remains' do
+        other_admin = create(:admin_user)
+
+        delete :destroy, params: { id: other_admin.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(other_admin.reload.spree_admin?(store)).to be(false)
       end
     end
   end

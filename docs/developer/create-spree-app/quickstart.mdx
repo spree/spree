@@ -67,7 +67,7 @@ my-store/
 │   ├── seller-dashboard/     # Seller panel, for marketplaces (React)
 │   └── storefront/           # Next.js storefront (unless --no-storefront)
 │       └── .env.local        # API URL + publishable key
-├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
+├── .env                      # SECRET_KEY_BASE, encryption keys, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
 ├── .spree/                   # CLI credentials — gitignored, created on first run
 ├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Meilisearch
 ├── docker-compose.dev.yml    # Alternative: build from local server/
@@ -127,14 +127,9 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 
 ### Admin Dashboard
 
-Open [http://localhost:3000/admin](http://localhost:3000/admin) and log in with:
+The dashboard runs as its own dev server: `spree dev` starts it alongside the API at [http://localhost:5173](http://localhost:5173), live-reloading from `apps/dashboard/`. See the [dashboard docs](/developer/dashboard/overview).
 
-| | |
-|---|---|
-| **Email** | `spree@example.com` |
-| **Password** | `spree123` |
-
-The dashboard runs as its own dev server: `spree dev` starts it alongside the API at [http://localhost:5173](http://localhost:5173), with the same credentials, live-reloading from `apps/dashboard/`. See the [dashboard docs](/developer/dashboard/overview).
+No default admin account is created. On the first run, `spree dev` opens a one-time setup link where you create the admin account. If you missed it, print it again with `spree rails spree:setup:token`.
 
 ### Store API
 
@@ -146,7 +141,7 @@ If you included the storefront, start it in a separate terminal:
 
 ```bash
 cd my-store/apps/storefront
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3001](http://localhost:3001) to see your store.

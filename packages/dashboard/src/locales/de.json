@@ -120,7 +120,7 @@
         "message": "{{name}} gilt nicht mehr. Die Zielgruppe zahlt wieder die Ladenpreise; alle Inhalte des Katalogs bleiben erhalten."
       },
       "delete_confirm": {
-        "message": "Dies löscht {{name}} und seine Zuweisungen. Produkte und Preislisten bleiben unberührt.",
+        "message": "Dies löscht {{name}}, seine Zuweisungen und seine Preisliste mit den darin enthaltenen Preisen. Die Produkte bleiben in Ihrem Shop. Dies kann nicht rückgängig gemacht werden.",
         "title": "Katalog löschen?"
       },
       "detach_warning": "Beim Speichern werden die Preisliste dieses Katalogs und die darin enthaltenen Preise entfernt. Diese Zielgruppe zahlt dann normale Preise.",
@@ -564,7 +564,7 @@
         "settings_label": "Kalkulator-Einstellungen"
       },
       "create_line_items_action_editor": {
-        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb hinzugefügt.",
+        "description": "Wenn die Promotion greift, werden diese Artikel dem Warenkorb kostenlos hinzugefügt.",
         "empty": "Noch keine Varianten. Suchen Sie unten, um eine hinzuzufügen.",
         "search_placeholder": "Varianten nach Name oder SKU suchen…",
         "variant_label": "Variante hinzufügen"
@@ -1238,7 +1238,7 @@
             "Spree::Order": "Bestellungen",
             "Spree::Product": "Produkte",
             "Spree::Taxon": "Kategorien",
-            "Spree::User": "Kunden",
+            "Spree::Customer": "Kunden",
             "Spree::Variant": "Varianten"
           },
           "read_only_help": "Der Eigentümer kann nicht mehr geändert werden, sobald Werte für dieses Feld vorhanden sind."
@@ -1849,32 +1849,6 @@
         "tax_remittance": {
           "help": "Wer die Verbrauchsteuer auf die Verkäufe dieses Verkäufers abführt.",
           "label": "Steuer abgeführt von"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar.",
-          "label": "Land",
-          "placeholder": "Länder durchsuchen"
-        },
-        "currency": {
-          "help": "Ihre Standardwährung. Jederzeit erweiterbar.",
-          "label": "Währung",
-          "placeholder": "Währungen durchsuchen"
-        },
-        "locale": {
-          "help": "Ihre Standardsprache. Jederzeit erweiterbar.",
-          "label": "Sprache"
-        },
-        "password_confirmation": {
-          "label": "Passwort bestätigen"
-        },
-        "sample_data": {
-          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
-          "label": "Beispieldaten laden"
-        },
-        "store_name": {
-          "label": "Shopname"
         }
       },
       "state": {
@@ -2894,6 +2868,8 @@
           "canceled": "Auftrag storniert",
           "captured": "Zahlung eingezogen",
           "completed": "Auftrag abgeschlossen",
+          "completed_as_group_one": "Auftrag als {{count}} separater Auftrag abgeschlossen",
+          "completed_as_group_other": "Auftrag als {{count}} separate Aufträge abgeschlossen",
           "confirmation_sent": "Bestätigung gesendet",
           "deleted": "Auftragsentwurf gelöscht",
           "voided": "Zahlung storniert"
@@ -5132,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Mitarbeiter konnte nicht entfernt werden",
         "failed_to_resend": "Einladung konnte nicht erneut gesendet werden",
-        "failed_to_revoke": "Einladung konnte nicht zurückgezogen werden"
+        "failed_to_revoke": "Einladung konnte nicht zurückgezogen werden",
+        "failed_to_copy_link": "Einladungslink konnte nicht kopiert werden"
       },
       "invite": {
         "email_placeholder": "teammitglied@beispiel.com",

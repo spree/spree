@@ -7,7 +7,7 @@ import type {
 } from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { getApiClient, type PanelSession } from '../api-client'
-import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
+import { ADMIN_LOCALE_STORAGE_KEY, sessionLocale, switchLocale } from '../lib/i18n'
 import { queryClient } from '../lib/query-client'
 
 interface AuthContextValue {
@@ -95,12 +95,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Compare against the persisted choice (not the live i18n.language): if they
     // already agree, the page booted in the right language and no reload is
     // needed — this also prevents a reload loop on the periodic token refresh.
-    const code = authUser.selected_locale
     const stored =
       typeof localStorage !== 'undefined'
         ? (localStorage.getItem(ADMIN_LOCALE_STORAGE_KEY) ?? 'en')
         : 'en'
-    if (code && code !== stored) switchLocale(code)
+    const target = sessionLocale(authUser.selected_locale, stored)
+    if (target) switchLocale(target)
   }, [])
 
   const updateUser = useCallback((changes: Partial<AdminUser>) => {

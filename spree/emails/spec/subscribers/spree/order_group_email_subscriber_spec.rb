@@ -49,6 +49,16 @@ RSpec.describe Spree::OrderGroupEmailSubscriber do
       subscriber.send(:send_confirmation_email, mock_event(group))
     end
 
+    # An operator completing a draft quietly says so on the group event, which
+    # is the only thing that reaches this subscriber.
+    it 'sends nothing when the completion asked to stay silent' do
+      expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
+      expect(Spree::OrderGroupMailer).not_to receive(:store_owner_notification_email)
+
+      subscriber.send(:send_confirmation_email,
+                      double('Event', payload: { 'id' => group.prefixed_id, 'notify_customer' => false }))
+    end
+
     it 'ignores a group it cannot find' do
       expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
 

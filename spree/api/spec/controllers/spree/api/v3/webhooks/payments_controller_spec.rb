@@ -7,19 +7,6 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
   let(:payment_method) { create(:bogus_payment_method) }
 
   describe 'POST #create' do
-    context 'when resolving the current store' do
-      before do
-        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(nil)
-        request.host = store.url
-      end
-
-      it 'sets current_store from the request' do
-        post :create, params: { payment_method_id: payment_method.prefixed_id }
-
-        expect(controller.current_store).to eq(store)
-      end
-    end
-
     context 'when webhook event is unsupported' do
       before do
         allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event).and_return(nil)
@@ -53,14 +40,45 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
       end
     end
 
-    context 'when payment method belongs to a different store' do
+    # Providers call back without an API key or store header, so the request
+    # host names the default store — the payment method decides the store.
+    context 'when the payment method belongs to another store' do
       let(:other_store) { create(:store) }
       let(:other_payment_method) { create(:bogus_payment_method, store: other_store) }
+      let(:order) { create(:order_with_line_items, store: other_store) }
+      let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: other_payment_method) }
+      let(:handled_in) { [] }
 
-      it 'returns not found' do
-        post :create, params: { payment_method_id: other_payment_method.prefixed_id }
+      before do
+        request.host = store.url
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event) do
+          handled_in << Spree::Current.store
+          { action: :captured, payment_session: payment_session, metadata: {} }
+        end
+      end
 
-        expect(response).to have_http_status(:not_found)
+      it 'processes the webhook in that store' do
+        expect {
+          post :create, params: { payment_method_id: other_payment_method.prefixed_id }
+        }.to have_enqueued_job(Spree::Payments::HandleWebhookJob).with(
+          payment_method_id: other_payment_method.id,
+          action: 'captured',
+          payment_session_id: payment_session.id
+        )
+
+        expect(response).to have_http_status(:ok)
+        expect(handled_in).to eq([other_store])
+      end
+
+      it 'returns unauthorized when the signature does not verify' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:parse_webhook_event)
+          .and_raise(Spree::PaymentMethod::WebhookSignatureError)
+
+        expect {
+          post :create, params: { payment_method_id: other_payment_method.prefixed_id }
+        }.not_to have_enqueued_job(Spree::Payments::HandleWebhookJob)
+
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 

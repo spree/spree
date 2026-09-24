@@ -1223,7 +1223,7 @@
             "Spree::Order": "Pedidos",
             "Spree::Product": "Productos",
             "Spree::Taxon": "Categorías",
-            "Spree::User": "Clientes",
+            "Spree::Customer": "Clientes",
             "Spree::Variant": "Variantes"
           },
           "read_only_help": "El propietario no se puede cambiar una vez que existen valores para este campo."
@@ -1834,32 +1834,6 @@
         "tax_remittance": {
           "help": "Quién declara el impuesto al consumidor sobre las ventas de este vendedor.",
           "label": "Impuesto declarado por"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Desde dónde enviás. Tu tienda puede vender en todo el mundo: esto solo define la moneda, el depósito y las zonas de entrega de inicio, todo editable después.",
-          "label": "País",
-          "placeholder": "Buscar países"
-        },
-        "currency": {
-          "help": "Tu moneda predeterminada. Agregá más cuando quieras.",
-          "label": "Moneda",
-          "placeholder": "Buscar monedas"
-        },
-        "locale": {
-          "help": "Tu idioma predeterminado. Agregá más cuando quieras.",
-          "label": "Idioma"
-        },
-        "password_confirmation": {
-          "label": "Confirmar contraseña"
-        },
-        "sample_data": {
-          "help": "Agrega productos, categorías, clientes y pedidos de demostración en segundo plano para que puedas explorar el dashboard. Tarda unos minutos y descarga imágenes de productos.",
-          "label": "Cargar datos de ejemplo"
-        },
-        "store_name": {
-          "label": "Nombre de la tienda"
         }
       },
       "state": {
@@ -2634,6 +2608,8 @@
           "canceled": "Pedido cancelado",
           "captured": "Pago capturado",
           "completed": "Pedido completado",
+          "completed_as_group_one": "Pedido completado como {{count}} pedido separado",
+          "completed_as_group_other": "Pedido completado como {{count}} pedidos separados",
           "confirmation_sent": "Confirmación enviada",
           "deleted": "Pedido borrador eliminado",
           "voided": "Pago anulado"
@@ -3046,7 +3022,7 @@
         "message": "{{name}} deja de aplicar. Su audiencia vuelve a los precios de la tienda, y todo lo que contiene el catálogo se conserva."
       },
       "delete_confirm": {
-        "message": "Esto elimina {{name}} y sus asignaciones. Los productos y las listas de precios no se ven afectados.",
+        "message": "Esto elimina {{name}}, sus asignaciones y su lista de precios con los precios que contiene. Los productos siguen en tu tienda. Esta acción no se puede deshacer.",
         "title": "¿Eliminar catálogo?"
       },
       "detach_warning": "Al guardar, se quitará la lista de precios de este catálogo y los precios que contiene. Esta audiencia pagará los precios normales.",
@@ -5413,7 +5389,7 @@
         "settings_label": "Configuración de la calculadora"
       },
       "create_line_items_action_editor": {
-        "description": "Cuando la promoción califica, estos artículos se agregan al carrito.",
+        "description": "Cuando la promoción califica, estos artículos se agregan al carrito de forma gratuita.",
         "empty": "Todavía no hay variantes. Buscá abajo para agregar una.",
         "search_placeholder": "Buscar variantes por nombre o SKU…",
         "variant_label": "Agregar variante"
@@ -5559,7 +5535,8 @@
       "errors": {
         "failed_to_remove": "No se pudo quitar al staff",
         "failed_to_resend": "No se pudo reenviar la invitación",
-        "failed_to_revoke": "No se pudo revocar la invitación"
+        "failed_to_revoke": "No se pudo revocar la invitación",
+        "failed_to_copy_link": "No se pudo copiar el enlace de invitación"
       },
       "invite": {
         "email_placeholder": "compañero@example.com",

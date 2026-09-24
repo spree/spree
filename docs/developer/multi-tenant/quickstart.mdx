@@ -29,7 +29,7 @@ All data is fully isolated besides the staff users, which can manage multiple te
 ## Prerequisites
 
 * You need to be on Spree 5.1+, we recommend using [CLI](/developer/getting-started) to setup your Spree application.
-* You need to set 2 environment variables in your `backend` directory:
+* You need to set 2 environment variables in your `server` directory:
   * `KEYGEN_ACCOUNT_ID`
   * `KEYGEN_LICENSE_KEY`
 * Both PostgreSQL and MySQL are supported
@@ -92,7 +92,7 @@ spree eject
     ```yaml docker-compose.yml
     x-app: &app
       build:
-        context: ./backend
+        context: ./server
         dockerfile: Dockerfile
         target: dev
         secrets: # [!code ++]

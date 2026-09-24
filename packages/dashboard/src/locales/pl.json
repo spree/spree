@@ -122,7 +122,7 @@
         "message": "{{name}} przestanie obowiązywać. Odbiorcy wrócą do cen sklepowych, a zawartość katalogu zostanie zachowana."
       },
       "delete_confirm": {
-        "message": "To usunie {{name}} wraz z przypisaniami. Produkty i cenniki pozostaną nietknięte.",
+        "message": "To usunie {{name}} wraz z przypisaniami oraz cennikiem i zawartymi w nim cenami. Produkty pozostaną w sklepie. Tej operacji nie można cofnąć.",
         "title": "Usunąć katalog?"
       },
       "detach_warning": "Zapis usunie cennik tego katalogu wraz z zawartymi w nim cenami. Ta grupa odbiorców będzie płacić zwykłe ceny.",
@@ -574,7 +574,7 @@
         "settings_label": "Ustawienia kalkulatora"
       },
       "create_line_items_action_editor": {
-        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka za darmo.",
         "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
         "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
         "variant_label": "Dodaj wariant"
@@ -1256,7 +1256,7 @@
             "Spree::Order": "Zamówienia",
             "Spree::Product": "Produkty",
             "Spree::Taxon": "Kategorie",
-            "Spree::User": "Klienci",
+            "Spree::Customer": "Klienci",
             "Spree::Variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
@@ -1867,32 +1867,6 @@
         "tax_remittance": {
           "help": "Kto odprowadza podatek konsumencki od sprzedaży tego sprzedawcy.",
           "label": "Podatek rozlicza"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Skąd wysyłasz. Twój sklep może sprzedawać na całym świecie — to ustala tylko początkową walutę, magazyn i strefy dostawy, które później zmienisz.",
-          "label": "Kraj",
-          "placeholder": "Szukaj krajów"
-        },
-        "currency": {
-          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili.",
-          "label": "Waluta",
-          "placeholder": "Szukaj walut"
-        },
-        "locale": {
-          "help": "Twój domyślny język. Kolejne dodasz w każdej chwili.",
-          "label": "Język"
-        },
-        "password_confirmation": {
-          "label": "Potwierdź hasło"
-        },
-        "sample_data": {
-          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
-          "label": "Wczytaj dane przykładowe"
-        },
-        "store_name": {
-          "label": "Nazwa sklepu"
         }
       },
       "state": {
@@ -2920,6 +2894,10 @@
           "canceled": "Zamówienie anulowane",
           "captured": "Płatność pobrana",
           "completed": "Zamówienie sfinalizowane",
+          "completed_as_group_few": "Zamówienie sfinalizowane jako {{count}} osobne zamówienia",
+          "completed_as_group_many": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
+          "completed_as_group_one": "Zamówienie sfinalizowane jako {{count}} osobne zamówienie",
+          "completed_as_group_other": "Zamówienie sfinalizowane jako {{count}} osobnych zamówień",
           "confirmation_sent": "Potwierdzenie wysłane",
           "deleted": "Robocza wersja zamówienia została usunięta",
           "voided": "Płatność unieważniona"
@@ -5194,7 +5172,8 @@
       "errors": {
         "failed_to_remove": "Nie udało się usunąć personelu",
         "failed_to_resend": "Nie udało się ponownie wysłać zaproszenia",
-        "failed_to_revoke": "Nie udało się cofnąć zaproszenia"
+        "failed_to_revoke": "Nie udało się cofnąć zaproszenia",
+        "failed_to_copy_link": "Nie udało się skopiować linku zaproszenia"
       },
       "invite": {
         "email_placeholder": "wspolpracownik@przyklad.com",

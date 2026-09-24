@@ -101,10 +101,10 @@ await adminClient.sellers.suspend('sel_xxx', { reason: 'Unresolved delivery comp
 curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/invite' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/approve' \
   -H 'X-Spree-API-Key: sk_xxx'
 
-curl -X POST 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/suspend' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/sellers/sel_xxx/suspend' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "reason": "Unresolved delivery complaints" }'
@@ -215,7 +215,7 @@ curl -X POST 'https://marketplace.example.com/api/v3/seller/products' \
   -H 'Content-Type: application/json' \
   -d '{ "name": "Handmade Vase" }'
 
-curl -X POST 'https://marketplace.example.com/api/v3/seller/products/prod_xxx/submit' \
+curl -X PATCH 'https://marketplace.example.com/api/v3/seller/products/prod_xxx/submit' \
   -H 'Authorization: Bearer $SELLER_JWT' \
   -H 'X-Spree-Seller-Id: sel_xxx'
 ```
@@ -255,7 +255,37 @@ Two details worth knowing:
 
 <Warning>
 A storefront must handle the possibility of an order group. Completing a cart may yield one order or several, and a customer's order history should show the group as one purchase rather than confronting them with three orders they don't remember placing separately.
+
+A back office must handle it too: an order raised from the admin divides the same way, so completing one may answer with a group instead of an order.
 </Warning>
+
+<CodeGroup>
+
+```typescript Store SDK
+import { isOrderGroup } from '@spree/sdk'
+
+const result = await client.carts.complete(cartId, { spreeToken: cart.token })
+
+// One order per seller when the cart held several sellers' goods.
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
+```typescript Admin SDK
+import { isOrderGroup } from '@spree/admin-sdk'
+
+const result = await client.orders.complete('or_UkLWZg9DAJ')
+
+// One order per seller when the order held several sellers' goods.
+const orders = isOrderGroup(result) ? result.orders : [result]
+```
+
+```bash cURL
+curl -X PATCH https://your-store.com/api/v3/admin/orders/or_UkLWZg9DAJ/complete \
+  -H "X-Spree-API-Key: sk_xxx" \
+  -H "Content-Type: application/json"
+```
+
+</CodeGroup>
 
 ### One confirmation, and it describes the purchase
 
@@ -334,19 +364,23 @@ The scheduler is the host app's. Two jobs fan out per seller and the interval lo
 | `Spree::SellerPayouts::SweepDueJob` | daily | settles every seller who is due |
 | `Spree::SellerTransfers::ExecutePendingDueJob` | hourly | retries earnings a provider refused — usually a passing thing |
 
+A project created with `create-spree-app` schedules both already, in
+`server/config/recurring.yml`. They are a cheap no-op on a store with no
+sellers, so there is nothing to turn off if you are not running a marketplace.
+
 <Warning>
-  **You have to schedule these yourself** — a new project does not ship them, so
-  a marketplace that skips this step never pays a seller. Add both to your
-  scheduler; with Solid Queue that is `server/config/recurring.yml`:
+  On an existing project, or one using a scheduler of its own, check both are
+  scheduled — a marketplace that never runs the sweep never pays a seller, and
+  nothing reports the omission.
 
 ```yaml server/config/recurring.yml
 production:
   sweep_due_seller_payouts:
     class: Spree::SellerPayouts::SweepDueJob
-    schedule: every day at 3am
+    schedule: at 3am every day
   execute_pending_seller_transfers:
     class: Spree::SellerTransfers::ExecutePendingDueJob
-    schedule: every hour
+    schedule: every hour at minute 27
 ```
 </Warning>
 

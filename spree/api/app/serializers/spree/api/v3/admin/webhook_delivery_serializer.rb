@@ -19,7 +19,7 @@ module Spree
                    response_body: [:string, nullable: true],
                    success: [:boolean, nullable: true],
                    delivered_at: [:string, nullable: true],
-                   payload: 'Record<string, unknown>',
+                   payload: ['Record<string, unknown>', nullable: true],
                    webhook_endpoint_id: :string,
                    webhook_endpoint_url: :string
 
@@ -29,8 +29,12 @@ module Spree
                      delivered_at: :iso8601
 
           # Redacted again on read: deliveries written before payload redaction
-          # shipped still hold live credentials in the column.
+          # shipped still hold live credentials in the column. Null when the
+          # caller cannot read the record the event is about.
           attribute :payload do |delivery|
+            visible = params[:payload_visible]
+            next nil if visible && !visible.call(delivery)
+
             Spree::WebhookPayloadRedaction.split(delivery.payload).first
           end
 

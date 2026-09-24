@@ -1,0 +1,852 @@
+{
+  "accept_invitation": {
+    "failed": "无法接受该邀请。邀请可能已过期，或密码有误。",
+    "first_name": "名字",
+    "invalid_link": "此链接缺少令牌。请从邀请邮件中打开链接。",
+    "last_name": "姓氏",
+    "not_found": "此邀请已失效。请让邀请你的人重新发送一份。",
+    "password": "密码",
+    "password_confirmation": "确认密码",
+    "submit": "接受邀请",
+    "submitting": "正在接受…",
+    "subtitle": "你以 {{email}} 的身份受邀。设置密码即可完成。",
+    "title": "加入团队"
+  },
+  "account": {
+    "avatar": "照片",
+    "avatar_help": "在面板中显示在您的姓名旁边。方形图片效果最佳。",
+    "email": "邮箱",
+    "first_name": "名字",
+    "language": "语言",
+    "last_name": "姓氏",
+    "load_failed_title": "无法加载您的个人资料",
+    "save_failed": "无法保存您的个人资料",
+    "saved": "个人资料已更新",
+    "saving": "保存中…",
+    "subtitle": "管理您的个人详细信息和面板语言。",
+    "title": "个人资料"
+  },
+  "admin": {
+    "actions": {
+      "actions_menu": "操作",
+      "cancel": "取消",
+      "delete": "删除",
+      "edit": "编辑",
+      "save": "保存",
+      "saving": "正在保存…"
+    },
+    "common": {
+      "loading": "加载中…",
+      "no_results": "无结果"
+    },
+    "components": {
+      "export_button": {
+        "all": {
+          "description": "忽略筛选条件，导出你的全部记录。"
+        }
+      }
+    },
+    "fields": {
+      "tax_identifier": {
+        "kind": {
+          "help": "这是哪一类登记号。它必须与已注册的校验器匹配，因此拼写很重要。",
+          "label": "类型",
+          "required": "请选择或输入登记类型"
+        },
+        "value": {
+          "label": "号码",
+          "placeholder": "DE123456789",
+          "required": "请输入登记号码"
+        }
+      }
+    },
+    "orders": {
+      "detail": {
+        "cancel": {
+          "description": "取消原因和备注会记录在订单上，相关款项也会结清。",
+          "keep_order": "保留订单",
+          "no_reason": "未填写原因",
+          "note_label": "备注",
+          "note_placeholder": "仅内部人员可见",
+          "notify_customer": "邮件通知客户",
+          "reason_label": "原因",
+          "refund_payments": "为客户退款",
+          "refund_payments_help": "已收取的款项会退回。未请款的授权无论如何都会释放。"
+        },
+        "fulfillments": {
+          "add_tracking_title": "添加物流单号",
+          "carrier_auto": "自动识别",
+          "carrier_label": "承运商",
+          "carrier_search": "搜索承运商",
+          "delivery_method": "配送方式",
+          "edit_description": "更改此发货单的发货地点和承运的配送方式。",
+          "edit_title": "编辑发货单",
+          "edit_tracking_title": "编辑物流单号",
+          "move_and_requote": "移动并重新报价",
+          "no_rates": "此发货单没有可用的配送方式报价。",
+          "rates_pending_origin": "保存新的发货地址后即可查看可用的配送方式。",
+          "ships_from": "发货地",
+          "tracking_description": "承运商的物流单号，或完整的物流查询链接。",
+          "upload_label_cost": "邮资费用",
+          "upload_label_description": "登记你在别处购买的面单，让包裹拥有对应的文件、物流单号和费用记录。",
+          "upload_label_file": "面单文件",
+          "upload_label_title": "上传面单"
+        },
+        "section_customer_note": "特殊说明",
+        "section_internal_note": "内部备注"
+      },
+      "fulfill": {
+        "empty": "此发货单中没有可发货的商品。",
+        "include_item": "发货 {{name}}",
+        "notify_customer": "向客户发送发货通知",
+        "of_units": "共 {{count}} 件",
+        "partial_hint": "你勾选的数量会转入一个新的发货单并立即发出，其余仍保留在当前发货单中。",
+        "quantity_for": "{{name}} 的发货数量",
+        "submit": "发货",
+        "tracking_label": "物流单号",
+        "tracking_placeholder": "物流单号或链接",
+        "units_selected": "待发数量"
+      }
+    },
+    "pages": {
+      "orders": {
+        "detail": {
+          "actions": {
+            "cancel": "取消订单"
+          },
+          "claims": {
+            "actions": {
+              "create": "新建申诉",
+              "resolve": "处理"
+            },
+            "create_title": "新建申诉",
+            "refund_amount": "退款金额",
+            "replacement_items": "为以下商品发送替换件",
+            "resolution": "处理方式",
+            "resolutions": {
+              "refund": "退款",
+              "refund_and_replacement": "退款并换货",
+              "replacement": "换货"
+            },
+            "resolve_title": "处理申诉"
+          },
+          "dialogs": {
+            "cancel_title": "取消订单？"
+          },
+          "returns": {
+            "actions": {
+              "receive": "接收商品",
+              "refund": "退款"
+            },
+            "create_title": "新建退货",
+            "location": "退回至",
+            "location_default": "默认退货地点",
+            "location_no_returns": "{{name}}（不接受退货）",
+            "memo": "备注",
+            "reason": "原因",
+            "receive_title": "接收退货商品",
+            "received_quantity": "已接收",
+            "refund_amount": "金额",
+            "refund_method": "退款至",
+            "refund_methods": {
+              "original_payment": "原支付方式",
+              "store_credit": "店铺余额"
+            },
+            "refund_title": "退货退款",
+            "resellable": "可再次销售"
+          }
+        }
+      }
+    },
+    "settings_nav": {
+      "descriptions": {
+        "delivery_methods": "你的商品如何送达客户",
+        "package_types": "你用于打包订单的纸箱和容器",
+        "policies": "条款、隐私、退货和配送文件",
+        "stock_locations": "存放库存的仓库和自提点",
+        "team": "有权访问此卖家的人员"
+      }
+    },
+    "settings_page": {
+      "description": "管理发货、法律文件和你的团队。"
+    },
+    "tax_identifiers": {
+      "add_cta": "添加登记号",
+      "add_title": "添加税务登记",
+      "checked_prefix": "已核验",
+      "delete_confirm": {
+        "message": "{{value}} 将被移除。已下单的订单仍保留开票时使用的号码。",
+        "title": "删除此登记号？"
+      },
+      "dialog_description": "发票上显示的增值税号或工商登记号。它是实现欧盟 B2B 反向征收的前提。",
+      "edit_title": "编辑税务登记",
+      "empty": "尚无税务登记记录",
+      "kinds": {
+        "au_abn": "澳大利亚商业号码",
+        "ch_vat": "瑞士增值税号",
+        "eu_vat": "欧盟增值税号",
+        "gb_vat": "英国增值税号",
+        "us_ein": "美国 EIN"
+      },
+      "messages": {
+        "created": "登记号已添加",
+        "deleted": "登记号已删除",
+        "updated": "登记号已更新",
+        "validation_failed": "无法核验该号码",
+        "validation_requested": "正在向登记机构核验该号码"
+      },
+      "not_validatable": "没有可核验此类号码的登记机构，因此按录入内容存档。",
+      "select_kind": "选择类型",
+      "title": "税务登记",
+      "validate_action": "向登记机构核验",
+      "validation_status": {
+        "not_checked": "未核验",
+        "pending": "核验中",
+        "unavailable": "登记机构不可用",
+        "unsupported": "无法核验",
+        "unverified": "无效",
+        "verified": "已核验"
+      }
+    }
+  },
+  "app": {
+    "name": "卖家中心"
+  },
+  "common": {
+    "actions": "操作",
+    "apply": "应用",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "error": "出了点问题。",
+    "loading": "加载中…",
+    "no_results": "无结果",
+    "remove": "移除",
+    "retry": "重试",
+    "save": "保存",
+    "saving": "正在保存…"
+  },
+  "delivery_methods": {
+    "add": "添加配送方式",
+    "columns": {
+      "name": "名称",
+      "owner": "归属",
+      "visibility": "可见性"
+    },
+    "conditions": {
+      "add": "添加条件",
+      "description": "不设条件时，此方式会在所有可配送的订单上提供。",
+      "remove": "移除条件"
+    },
+    "delete_confirm": {
+      "message": "{{name}} 将被移除。已使用它发货的订单仍保留原有记录。",
+      "title": "删除配送方式？"
+    },
+    "description": "订单如何送达客户，以及客户需要支付多少运费。",
+    "empty": {
+      "description": "添加一种配送方式，或使用此市场共享给卖家的方式。",
+      "title": "尚无配送方式"
+    },
+    "fields": {
+      "admin_name": "内部名称",
+      "calculator": "计价方式",
+      "delivery_profile": "商品类别",
+      "delivery_zone": "配送范围",
+      "name": "名称",
+      "storefront_visible": "在结账时显示"
+    },
+    "messages": {
+      "deleted": "配送方式已删除",
+      "saved": "配送方式已保存"
+    },
+    "owner": {
+      "marketplace": "市场",
+      "mine": "你的"
+    },
+    "search_placeholder": "按名称搜索…",
+    "sections": {
+      "conditions": "适用条件",
+      "goods": "配送的商品",
+      "price": "费用"
+    },
+    "sheet": {
+      "description": "买家会在结账时选择它，请用你向他们介绍时的说法来命名。",
+      "new_title": "新建配送方式"
+    },
+    "title": "配送方式",
+    "visibility": {
+      "hidden": "隐藏",
+      "storefront": "店铺前台"
+    },
+    "zone": {
+      "everywhere": "此类商品可达的所有地区"
+    }
+  },
+  "earnings": {
+    "balance": {
+      "converted": "以 {{currency}} 赚取，以你自己的货币支付",
+      "earned": "已赚取",
+      "empty": "你的订单完成发货后，所得收入会显示在这里。",
+      "load_error": "无法加载你的余额。",
+      "owed": "应付给你（{{currency}}）",
+      "paid": "已打款",
+      "payable": "应付给你",
+      "pending": "打款途中",
+      "title": "余额"
+    },
+    "columns": {
+      "amount": "金额",
+      "date": "日期",
+      "kind": "类型",
+      "order": "订单",
+      "status": "状态"
+    },
+    "kinds": {
+      "earning": "销售",
+      "refund_reversal": "退款"
+    },
+    "search_placeholder": "按编号搜索",
+    "statuses": {
+      "completed": "已完成",
+      "failed": "失败",
+      "pending": "待处理",
+      "processing": "处理中",
+      "unresolved": "待核查"
+    },
+    "subtitle": "你的销售赚了多少，以及与市场的结算情况。",
+    "title": "收入",
+    "transfers": {
+      "empty": "暂无收入。",
+      "title": "收入"
+    }
+  },
+  "forgot_password": {
+    "back_to_login": "返回登录",
+    "email": "邮箱",
+    "failed": "请求发送失败。请稍后重试。",
+    "sent_subtitle": "如果该地址对应一个卖家账户，重置链接已在发送途中。链接会很快过期。",
+    "sent_title": "请查收邮件",
+    "submit": "发送重置链接",
+    "submitting": "正在发送…",
+    "subtitle": "输入你的邮箱，我们会发送一个链接供你设置新密码。",
+    "title": "忘记密码？"
+  },
+  "home": {
+    "products": "商品",
+    "selling_no": "你的商品尚未上架销售。",
+    "selling_title": "销售状态",
+    "selling_yes": "你的商品已上架销售。",
+    "setup_cta": "继续设置",
+    "setup_description": "已完成 {{done}}/{{total}} — 全部完成即可开始销售。",
+    "setup_title": "完成设置",
+    "status": "状态",
+    "subtitle": "你在此市场的当前状况。",
+    "team": "团队成员",
+    "title": "你好，{{name}}"
+  },
+  "login": {
+    "email": "邮箱",
+    "failed": "该邮箱和密码与任何卖家账户都不匹配。",
+    "forgot_password": "忘记密码？",
+    "no_seller": "此账户未在本市场经营卖家店铺。",
+    "password": "密码",
+    "submit": "登录",
+    "submitting": "正在登录…",
+    "subtitle": "管理你的店铺、团队和打款。",
+    "title": "登录卖家中心"
+  },
+  "nav": {
+    "delivery_methods": "配送方式",
+    "earnings": "收入",
+    "home": "首页",
+    "legal": "法律",
+    "onboarding": "设置",
+    "orders": "订单",
+    "package_types": "包装类型",
+    "payouts": "打款",
+    "policies": "政策",
+    "products": "商品",
+    "profile": "资料",
+    "settings": "设置",
+    "sign_out": "退出登录",
+    "team": "团队"
+  },
+  "onboarding": {
+    "accept_terms": "接受条款",
+    "awaiting_payout_provider": "等待收款服务商完成对你资料的审核。",
+    "awaiting_review": "等待市场审核。",
+    "confirm": "确认",
+    "connect_payout_account": "设置收款方式",
+    "document_help": "PDF 或文件的图片。",
+    "document_label": "文件",
+    "done": "此项已完成。",
+    "go": "前往",
+    "note_placeholder": "市场需要了解的其他信息（选填）",
+    "optional": "选填",
+    "payout_account_rejected": "请联系你的收款服务商",
+    "progress_count": "已完成 {{done}}/{{total}}",
+    "progress_title": "你的进度",
+    "read_terms": "阅读条款",
+    "ready": "所有必填项均已完成。",
+    "remaining_other": "还有 {{count}} 项待完成才能提交",
+    "status": {
+      "complete": "已完成",
+      "pending": "审核中",
+      "rejected": "需要重新查看"
+    },
+    "submit": "提交审核",
+    "submit_document": "提交审核",
+    "submitted": "已提交审核",
+    "submitted_requirement": "已提交",
+    "submitting": "正在提交…",
+    "subtitle": "此市场要求你在开始销售前完成的事项。",
+    "terms_accepted": "条款已接受",
+    "title": "设置",
+    "under_review": "市场正在审核你的申请。有结果时我们会邮件通知你。"
+  },
+  "orders": {
+    "address_edit": {
+      "billing_title": "编辑账单地址",
+      "shipping_title": "编辑收货地址"
+    },
+    "billing_address": "账单地址",
+    "columns": {
+      "fulfillment": "发货",
+      "number": "订单",
+      "payment": "付款",
+      "placed": "下单时间",
+      "quantity": "数量",
+      "total": "合计"
+    },
+    "customer": {
+      "title": "客户"
+    },
+    "customer_note": "客户留言",
+    "earnings": {
+      "not_settled": "尚未打款",
+      "payout": "打款",
+      "title": "你的收入",
+      "view_payout": "查看打款"
+    },
+    "empty": "暂无订单。客户下单后会显示在这里。",
+    "fulfill": "标记为已发货",
+    "fulfillment_statuses": {
+      "backorder": "缺货待发",
+      "canceled": "已取消",
+      "delivered": "已送达",
+      "fulfilled": "已发货",
+      "partial": "部分发货",
+      "unfulfilled": "未发货"
+    },
+    "fulfillments": {
+      "add_delivery": "添加物流单号",
+      "add_tracking": "添加物流单号",
+      "cancel": "取消包裹",
+      "cancel_message": "商品会重新回到库存，承运商的取件也会撤销。",
+      "cancel_title": "取消此包裹？",
+      "carrier_status_available_for_pickup": "可自提",
+      "carrier_status_delivered": "已送达",
+      "carrier_status_failure": "投递失败",
+      "carrier_status_in_transit": "运输中",
+      "carrier_status_out_for_delivery": "派送中",
+      "carrier_status_pending": "等待承运商",
+      "carrier_status_pre_transit": "已生成面单",
+      "carrier_status_return_to_sender": "退回寄件人",
+      "carrier_status_unknown": "状态未知",
+      "confirm_delete_delivery": "移除此物流单号？",
+      "confirm_delete_label": "移除此面单？文件将被删除且无法再次打印。",
+      "confirm_split": "此操作立即生效。",
+      "delete_label": "移除面单",
+      "empty": "此订单没有需要寄出的商品。",
+      "free": "免费",
+      "label_cost": "费用 {{amount}}",
+      "label_title": "运输面单",
+      "label_uploaded": "已上传",
+      "packing_slip_title": "装箱单 — 订单 {{number}}",
+      "print_label": "打印面单",
+      "print_packing_slip": "打印装箱单",
+      "ship_to": "收货地址",
+      "ships_from_label": "发货地",
+      "split": "拆分",
+      "split_description": "把此包裹中的部分商品移到单独的包裹中。",
+      "split_item": "商品",
+      "split_quantity": "移出数量",
+      "split_title": "拆分此包裹",
+      "split_would_empty": "全部移出会使此包裹变空。",
+      "splitting": "正在拆分…",
+      "title": "发货单",
+      "upload_label": "上传面单"
+    },
+    "items": "商品",
+    "not_found": "找不到该订单。",
+    "payment": {
+      "authorized": "已授权",
+      "captured": "已请款",
+      "refundable": "可退金额",
+      "refunded": "已退款",
+      "share_help": "此订单中客户付款里属于你的部分。",
+      "title": "付款"
+    },
+    "payment_statuses": {
+      "authorized": "已授权",
+      "none": "未付款",
+      "overcharged": "多收款",
+      "paid": "已付款",
+      "partially_paid": "部分付款",
+      "partially_refunded": "部分退款",
+      "refunded": "已退款",
+      "voided": "已作废"
+    },
+    "post_sale": {
+      "approve": "批准",
+      "cancel": "取消",
+      "claims": {
+        "cancel_message": "客户会收到不再继续处理的通知。",
+        "cancel_title": "取消此申诉？",
+        "create": "新建申诉",
+        "deny": "驳回",
+        "deny_message": "客户会收到申诉未被支持的通知。",
+        "deny_title": "驳回此申诉？",
+        "empty": "此订单没有任何反馈记录。",
+        "resolve": "处理",
+        "title": "申诉"
+      },
+      "exchanges": {
+        "cancel_message": "客户会收到不再继续处理的通知。",
+        "cancel_title": "取消此换货？",
+        "fulfill": "寄出替换件",
+        "price_difference": "差价：{{amount}}",
+        "receive": "接收",
+        "title": "换货"
+      },
+      "reason": "原因",
+      "returns": {
+        "cancel_message": "客户会收到不再继续处理的通知。",
+        "cancel_title": "取消此退货？",
+        "create": "新建退货",
+        "empty": "此订单没有退回的商品。",
+        "not_resellable": "不可再次销售",
+        "partially_received": "已接收 {{received}}/{{quantity}}",
+        "receive": "接收",
+        "refund": "退款",
+        "refund_total": "退款合计：{{amount}}",
+        "title": "退货"
+      },
+      "statuses": {
+        "approved": "已批准",
+        "canceled": "已取消",
+        "denied": "已驳回",
+        "fulfilled": "已发货",
+        "open": "处理中",
+        "received": "已接收",
+        "refunded": "已退款",
+        "requested": "已申请",
+        "resolved": "已处理"
+      }
+    },
+    "search_placeholder": "按订单号搜索…",
+    "shipping_address": "收货地址",
+    "ships_from": "由 {{name}} 发货",
+    "summary": {
+      "adjustments": "调整",
+      "cancel_note": "取消备注",
+      "cancel_reason": "取消原因",
+      "canceled_at": "取消时间",
+      "commission_fee": "市场佣金",
+      "commission_tax": "市场佣金税费",
+      "commission_total": "市场佣金合计",
+      "completed_at": "完成时间",
+      "created_at": "创建时间",
+      "currency": "币种",
+      "item_total": "商品",
+      "outstanding_balance": "未结金额",
+      "payment_total": "付款合计",
+      "promotions": "促销",
+      "shipping": "运费",
+      "subtotal": "小计",
+      "tax_additional": "税费（价外）",
+      "tax_included": "税费（含税）",
+      "tax_total": "税费",
+      "title": "汇总",
+      "total": "合计"
+    },
+    "title": "订单",
+    "tracking_label": "物流单号"
+  },
+  "payouts": {
+    "columns": {
+      "amount": "金额",
+      "date": "日期",
+      "earnings": "收入",
+      "reference": "编号",
+      "status": "状态"
+    },
+    "detail": {
+      "covers_empty": "此次打款不包含任何收入。",
+      "covers_error": "无法加载此次打款涵盖的收入。",
+      "covers_other": "包含 {{count}} 笔收入",
+      "period": "结算周期",
+      "settlement": "打款"
+    },
+    "empty": "暂无打款记录。",
+    "not_found": "找不到该打款记录。",
+    "search_placeholder": "按编号搜索",
+    "subtitle": "市场已向你支付的金额，以及正在打款途中的金额。",
+    "title": "打款"
+  },
+  "policies": {
+    "add": "添加政策",
+    "columns": {
+      "name": "名称",
+      "updated": "更新时间"
+    },
+    "delete_confirm": {
+      "message": "{{name}} 将被移除。如果市场要求该政策，你的入驻流程会再次将其显示为未完成。",
+      "title": "删除政策？"
+    },
+    "description": "买家在你店铺页面上看到的法律文件。",
+    "empty": {
+      "description": "发布此市场向你索取的文件。",
+      "title": "尚无政策"
+    },
+    "fields": {
+      "body": "内容",
+      "name": "名称"
+    },
+    "messages": {
+      "deleted": "政策已删除",
+      "saved": "政策已保存"
+    },
+    "required": {
+      "description": "此市场要求你提供这些政策后才会批准你入驻。",
+      "title": "市场要求",
+      "write": "去撰写"
+    },
+    "search_placeholder": "按名称搜索…",
+    "sheet": {
+      "description": "买家会在你的店铺页面上阅读此内容。",
+      "new_title": "新建政策"
+    },
+    "title": "政策"
+  },
+  "products": {
+    "add": "添加商品",
+    "add_images": "添加图片",
+    "add_variant": "添加变体",
+    "archive": "归档",
+    "archive_confirm_description": "它会下架，并从你的在售列表中移除。",
+    "archive_confirm_title": "归档此商品？",
+    "bulk": {
+      "delete_confirm_description": "这会把 {n} 个商品从你的商品库中移除，买家将不再看到它们。",
+      "delete_confirm_title": "删除所选商品？",
+      "delete_failed": "无法删除这些商品。",
+      "deleted": "已删除 {n} 个商品",
+      "set_status_action": "设置状态",
+      "skipped_other": "有 {{count}} 个未做改动。{{message}}",
+      "skipped_refused": "市场不允许它们变更状态。打开其中一个查看原因。",
+      "skipped_submit": "只有草稿商品和市场要求你修改的商品才能提交。",
+      "status_dialog_description": "在你修改期间把这些商品下架，或永久归档。是否上架销售由市场决定 — 请改为提交审核。",
+      "status_dialog_title": "设置状态",
+      "status_update_failed": "无法更新这些商品。",
+      "status_updated": "已更新 {n} 个商品",
+      "submit_confirm_description": "市场将审核 {n} 个商品，并决定是否将其上架销售。",
+      "submit_confirm_title": "提交所选商品审核？",
+      "submit_failed": "无法提交这些商品。",
+      "submitted": "已提交 {n} 个商品审核"
+    },
+    "columns": {
+      "name": "商品",
+      "price": "价格",
+      "status": "状态"
+    },
+    "custom_fields": "商品详情",
+    "details": "详情",
+    "empty": "暂无商品。添加一个即可开始销售。",
+    "fields": {
+      "alt": "替代文本",
+      "categories": "分类",
+      "categories_placeholder": "搜索分类…",
+      "collections": "专辑",
+      "collections_placeholder": "搜索专辑…",
+      "country_of_origin": "原产国",
+      "country_of_origin_placeholder": "例如 PL",
+      "description": "描述",
+      "hs_code": "HS 编码",
+      "hs_code_placeholder": "例如 9405.20",
+      "meta_description": "元描述",
+      "meta_keywords": "元关键词",
+      "meta_title": "页面标题",
+      "name": "名称",
+      "option": "选项",
+      "option_name": "选项",
+      "option_value": "值",
+      "price": "价格",
+      "price_in": "价格（{{currency}}）",
+      "price_placeholder": "留空则保持当前价格",
+      "product_type": "商品类型",
+      "product_type_placeholder": "选择类型",
+      "sku": "SKU",
+      "slug": "URL 别名",
+      "status": "状态",
+      "stock": "库存",
+      "weight": "重量"
+    },
+    "media": "媒体",
+    "media_remove_confirm_description": "保存后它会从商品中移除。",
+    "media_remove_confirm_title": "移除此图片？",
+    "new_title": "新建商品",
+    "not_found": "找不到该商品。",
+    "organization": "归类",
+    "rejection_reason": "原因：{{reason}}",
+    "saved": "商品已保存",
+    "search_placeholder": "按名称搜索…",
+    "seo": "搜索引擎展示",
+    "shipping": "配送与海关",
+    "status_help": {
+      "active": "已上架，买家可以看到。",
+      "archived": "已下架，并已从你的在售列表中移除。",
+      "draft": "只有你能看到。准备好后提交给市场审核。",
+      "proposed": "等待市场审核。你仍然可以修改。",
+      "rejected": "市场要求修改。修改后请重新提交。"
+    },
+    "status_updated": "状态已更新",
+    "statuses": {
+      "active": "在售",
+      "archived": "已归档",
+      "draft": "草稿",
+      "proposed": "审核中",
+      "rejected": "需要修改"
+    },
+    "submit_for_review": "提交审核",
+    "take_down": "下架",
+    "take_down_confirm_description": "买家将不再看到它。你之后可以重新提交。",
+    "take_down_confirm_title": "下架此商品？",
+    "title": "商品",
+    "uploading": "正在上传 {{count}} 个文件…",
+    "uploading_plural": "正在上传 {{count}} 个文件…",
+    "variant_remove_confirm_description": "保存后它会从商品中移除。",
+    "variant_remove_confirm_title": "移除此变体？",
+    "variants": "变体",
+    "variants_empty": "此商品按上述价格作为单一款式销售。添加变体即可按尺码、颜色等选项销售。"
+  },
+  "profile": {
+    "about": "简介",
+    "add_address": "添加地址",
+    "address_filled": "已添加",
+    "address_missing": "未添加",
+    "address_not_provided": "尚无地址。",
+    "at_a_glance": "概览",
+    "billing_address": "账单地址",
+    "billing_email": "账单邮箱",
+    "business_details": "企业信息",
+    "contact_email": "联系邮箱",
+    "edit": "编辑",
+    "edit_title": "编辑你的资料",
+    "joined": "加入时间",
+    "legal_name": "法定名称",
+    "minimum_payout": "最低打款金额",
+    "name": "名称",
+    "no_about": "你还没有填写简介。",
+    "not_provided": "未提供",
+    "on_holiday_notice": "休假模式已开启，你的商品可见但无法购买。",
+    "operator_managed": "由市场设置",
+    "payout_schedule": "打款周期",
+    "products_count": "商品",
+    "registration_number": "注册号",
+    "returns_address": "退货地址",
+    "save": "保存修改",
+    "saved": "资料已保存",
+    "saving": "正在保存…",
+    "section_contact": "联系方式",
+    "section_settlement": "打款与税务",
+    "section_standing": "账户状态",
+    "select_tax_identifier_kind": "选择或输入登记类型",
+    "status_help": {
+      "approved": "你已获批准，可以在此市场销售。",
+      "canceled": "此卖家账户已关闭。",
+      "invited": "你已收到邀请。完成设置即可提交申请。",
+      "onboarding": "逐项完成清单，然后提交审核。",
+      "pending": "市场尚未开始处理你的申请。",
+      "ready_for_review": "市场正在审核你的申请。",
+      "rejected": "你的申请未被接受。请联系市场了解详情。",
+      "suspended": "销售已暂停。请联系市场了解详情。"
+    },
+    "subtitle": "你的店铺如何展示你，以及市场如何联系你。",
+    "tax_identifier_kind": "登记类型",
+    "tax_identifier_kinds": {
+      "au_abn": "澳大利亚商业号码",
+      "ch_vat": "瑞士增值税号",
+      "eu_vat": "欧盟增值税号",
+      "gb_vat": "英国增值税号",
+      "us_ein": "美国 EIN"
+    },
+    "tax_remittance": "税款申报方",
+    "team_count": "团队成员",
+    "vat_number": "增值税号",
+    "vat_status": {
+      "pending": "我们正在核验此号码。",
+      "unavailable": "无法连接登记机构 — 我们会稍后重试。",
+      "unsupported": "此号码按录入内容存档，我们无法自动核验。",
+      "unverified": "此号码无法通过核验。"
+    }
+  },
+  "reset_password": {
+    "failed": "该链接无法使用。它可能已过期，或密码未被接受。",
+    "invalid_link": "此链接缺少令牌。请从重置邮件中打开链接。",
+    "mismatch": "两次输入的密码必须一致。",
+    "password": "新密码",
+    "password_confirmation": "确认新密码",
+    "request_new_link": "重新申请链接",
+    "submit": "修改密码",
+    "submitting": "正在保存…",
+    "subtitle": "设置一个新密码以完成登录。",
+    "title": "设置新密码"
+  },
+  "seller_picker": {
+    "status": "状态",
+    "subtitle": "你经营多个卖家店铺，请选择要管理的一个。",
+    "title": "选择卖家"
+  },
+  "seller_switcher": {
+    "label": "切换卖家"
+  },
+  "team": {
+    "actions": {
+      "copy_link": "复制邀请链接",
+      "remove": "移除",
+      "resend": "重新发送邀请",
+      "revoke": "撤销"
+    },
+    "confirm": {
+      "remove_message": "{{name}} 将立即失去此卖家店铺的访问权限。",
+      "remove_title": "移除成员",
+      "revoke_message": "发给 {{email}} 的邀请将失效。",
+      "revoke_title": "撤销邀请"
+    },
+    "empty": "团队中还没有成员",
+    "empty_description": "邀请同事加入，他们接受后会显示在这里。",
+    "invitations_section": "待接受的邀请",
+    "invite_cta": "邀请成员",
+    "invite_description": "他们会收到一封带有加入此卖家店铺链接的邮件。",
+    "invite_email": "邮箱",
+    "invite_email_placeholder": "colleague@example.com",
+    "invite_sending": "正在发送…",
+    "invite_submit": "发送邀请",
+    "invite_title": "邀请同事",
+    "members_section": "成员",
+    "messages": {
+      "invited": "邀请已发送",
+      "link_copied": "邀请链接已复制",
+      "removed": "成员已移除",
+      "resent": "邀请已重新发送",
+      "revoked": "邀请已撤销"
+    },
+    "subtitle": "可以登录并管理此卖家店铺的人员。",
+    "table": {
+      "email": "邮箱",
+      "expires": "过期时间",
+      "member": "成员"
+    },
+    "title": "你的团队"
+  }
+}

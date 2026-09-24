@@ -52,6 +52,10 @@ module Spree
           end
 
           # PATCH /api/v3/admin/orders/:id/complete
+          #
+          # An order holding several sellers' goods divides into one order per
+          # seller, so the group is what comes back — the orders it produced
+          # are nested inside it.
           def complete
             with_order_lock do
               result = Spree.order_complete_service.call(
@@ -61,7 +65,7 @@ module Spree
               )
 
               if result.success?
-                render json: serialize_resource(@resource.reload)
+                render json: serialize_completion(result.value)
               else
                 render_service_error(@resource.errors.presence || result.error, code: ERROR_CODES[:order_cannot_complete])
               end
@@ -147,6 +151,28 @@ module Spree
 
           def serializer_class
             Spree.api.admin_order_serializer
+          end
+
+          # Completion answers with whatever it produced: one order, or the
+          # group a multi-seller order divided into.
+          #
+          # The group is rendered whole rather than through `filter_fields`: a
+          # `fields` list names an order's attributes, and narrowing a group by
+          # it can drop the very keys that say it is one.
+          def serialize_completion(record)
+            return serialize_resource(record.reload) unless record.is_a?(Spree::OrderGroup)
+
+            Spree.api.admin_order_group_serializer.new(completed_group(record), params: serializer_params).to_h
+          end
+
+          # Every child is rendered in full, so its associations are loaded once
+          # here rather than per order.
+          def completed_group(group)
+            Spree::OrderGroup.includes(
+              :customer, :ship_address, :bill_address,
+              { payments: %i[payment_method source] },
+              { orders: [:seller, :market, :gift_card, :customer, { line_items: { variant: :prices } }] }
+            ).find(group.id)
           end
 
           # Override scope — Order uses SingleStoreResource (for_store).

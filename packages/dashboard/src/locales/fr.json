@@ -120,7 +120,7 @@
         "message": "{{name}} cesse de s’appliquer. Son audience revient aux prix boutique et tout le contenu du catalogue est conservé."
       },
       "delete_confirm": {
-        "message": "Cela supprime {{name}} et ses affectations. Les produits et listes de prix ne sont pas affectés.",
+        "message": "Cela supprime {{name}}, ses affectations et sa liste de prix avec les prix qu’elle contient. Les produits restent dans votre boutique. Cette action est irréversible.",
         "title": "Supprimer le catalogue ?"
       },
       "detach_warning": "L’enregistrement supprimera la liste de prix de ce catalogue et les prix qu’elle contient. Cette audience paiera les prix normaux.",
@@ -564,7 +564,7 @@
         "settings_label": "Paramètres du calculateur"
       },
       "create_line_items_action_editor": {
-        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés au panier.",
+        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés gratuitement au panier.",
         "empty": "Aucune variante pour l'instant. Recherchez ci-dessous pour en ajouter une.",
         "search_placeholder": "Rechercher des variantes par nom ou SKU…",
         "variant_label": "Ajouter une variante"
@@ -1238,7 +1238,7 @@
             "Spree::Order": "Commandes",
             "Spree::Product": "Produits",
             "Spree::Taxon": "Catégories",
-            "Spree::User": "Clients",
+            "Spree::Customer": "Clients",
             "Spree::Variant": "Variantes"
           },
           "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
@@ -1849,32 +1849,6 @@
         "tax_remittance": {
           "help": "Qui déclare la taxe à la consommation sur les ventes de ce vendeur.",
           "label": "Taxe reversée par"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "D'où vous expédiez. Votre boutique peut vendre dans le monde entier — ceci définit seulement la devise, l'entrepôt et les zones de livraison de départ, tous modifiables ensuite.",
-          "label": "Pays",
-          "placeholder": "Rechercher un pays"
-        },
-        "currency": {
-          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Devise",
-          "placeholder": "Rechercher une devise"
-        },
-        "locale": {
-          "help": "Votre langue par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Langue"
-        },
-        "password_confirmation": {
-          "label": "Confirmer le mot de passe"
-        },
-        "sample_data": {
-          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
-          "label": "Charger des données d’exemple"
-        },
-        "store_name": {
-          "label": "Nom de la boutique"
         }
       },
       "state": {
@@ -2894,6 +2868,8 @@
           "canceled": "Commande annulée",
           "captured": "Paiement capturé",
           "completed": "Commande finalisée",
+          "completed_as_group_one": "Commande finalisée en {{count}} commande distincte",
+          "completed_as_group_other": "Commande finalisée en {{count}} commandes distinctes",
           "confirmation_sent": "Confirmation envoyée",
           "deleted": "Commande brouillon supprimée",
           "voided": "Paiement annulé"
@@ -5132,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Échec du retrait du membre du personnel",
         "failed_to_resend": "Échec du renvoi de l'invitation",
-        "failed_to_revoke": "Échec de la révocation de l'invitation"
+        "failed_to_revoke": "Échec de la révocation de l'invitation",
+        "failed_to_copy_link": "Impossible de copier le lien d'invitation"
       },
       "invite": {
         "email_placeholder": "collegue@exemple.com",

@@ -301,7 +301,7 @@ module Spree
           end
 
           def search_provider
-            @search_provider ||= Spree::SearchProvider::Database.new(current_store)
+            @search_provider ||= Spree::SearchProvider::Database.new(current_store, audience: nil)
           end
 
           # Tag changes can flip automatic-collection matches, and `Tags::Bulk*`

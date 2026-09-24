@@ -7,6 +7,18 @@ RSpec.describe Spree::Seeds::All do
     expect { subject }.not_to raise_error
   end
 
+  it 'seeds every store' do
+    other_store = create(:store)
+
+    subject
+
+    [@default_store, other_store].each do |store|
+      expect(store.tax_categories).to exist
+      expect(store.saved_reports).to exist
+      expect(store.api_keys).to exist
+    end
+  end
+
   # CI seeds a fresh app and re-seeds on rerun; a seed whose finder includes
   # mutable attributes stops matching once anything edits them and then tries
   # to create a duplicate.

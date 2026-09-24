@@ -32,6 +32,22 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['total_quantity']).to eq(1)
     end
 
+    # `options` could once replace the checked variant after it was priced,
+    # buying an expensive item at a cheap one's price.
+    it 'ignores a variant or quantity sent in options' do
+      expensive = create(:variant, product: product, price: 2000)
+
+      post :create, params: {
+        cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 1,
+        options: { variant_id: expensive.id, quantity: 50 }
+      }
+
+      expect(response).to have_http_status(:created)
+      line_item = order.reload.line_items.first
+      expect(line_item.variant).to eq(variant)
+      expect(line_item.quantity).to eq(1)
+    end
+
     # A completion attempt fixed the cart's totals and is off at the gateway —
     # a mutation landing in that window would complete the cart with different
     # totals than the ones being charged.

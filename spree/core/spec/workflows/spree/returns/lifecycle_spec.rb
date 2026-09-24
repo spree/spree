@@ -206,6 +206,9 @@ RSpec.describe 'Spree::Returns workflows' do
         credit = Spree::StoreCredit.find_by(originator: return_record)
         expect(credit).to be_present
         expect(credit.amount).to eq(return_record.refund_total)
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(credit.refunded_order).to eq(return_record.order)
       end
 
       it 'credits only the lines that actually arrived' do
@@ -300,6 +303,9 @@ RSpec.describe 'Spree::Returns workflows' do
         before do
           return_record.return_line_items.first.
             update!(quantity: 3, received_quantity: 2, pre_tax_amount: 269.97)
+          # Store credit is capped at what the order paid, so the order has to
+          # have paid for the three units this return now claims.
+          return_record.order.payments.completed.first.update_column(:amount, 500)
         end
 
         it 'credits only what arrived when the caller names no amount' do

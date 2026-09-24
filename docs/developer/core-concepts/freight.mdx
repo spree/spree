@@ -14,7 +14,7 @@ Four pieces make that work, and none of them disturb retail shipping:
 
 | Piece | Question it answers |
 |---|---|
-| **Carton details** on a product | How do these units pack? |
+| **Carton details** on a variant | How do these units pack? |
 | **Freight summary** on a cart or order | How big is the whole load? |
 | **Volume and company rules** on a delivery method | Which shipment tier is this? |
 | **Unpriced rates** | What does a buyer see before a price exists? |
@@ -35,7 +35,8 @@ weight**.
 
 The geometry lives on a shared carton, because merchants reuse a handful of
 standard sizes across hundreds of products and one edit should fix all of
-them. What varies per product stays on the product:
+them. What varies per product is set on each variant (the product's only variant
+for products without options):
 
 | Field | What it says |
 |---|---|

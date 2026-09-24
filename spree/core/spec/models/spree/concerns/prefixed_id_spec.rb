@@ -111,6 +111,32 @@ RSpec.describe Spree::PrefixedId do
     end
   end
 
+  describe '.decode_prefixed_id (class-level)' do
+    let(:product) { create(:product) }
+
+    it 'decodes its own prefixed ID' do
+      expect(Spree::Product.decode_prefixed_id(product.prefixed_id)).to eq(product.id)
+    end
+
+    it "rejects another model's prefixed ID with the same numeric payload" do
+      expect(Spree::Variant.decode_prefixed_id(Spree::Product.prefixed_id_for(product.id))).to be_nil
+    end
+  end
+
+  describe 'prefix registry' do
+    it 'gives every model a unique prefix' do
+      Rails.application.eager_load!
+
+      prefixed_roots = ActiveRecord::Base.descendants.select do |klass|
+        klass < Spree::PrefixedId && !klass.abstract_class? && klass._prefix_id_prefix.present?
+      end.map(&:base_class).uniq
+
+      duplicates = prefixed_roots.group_by(&:_prefix_id_prefix).select { |_, classes| classes.many? }
+
+      expect(duplicates.transform_values { |classes| classes.map(&:name).sort }).to eq({})
+    end
+  end
+
   describe '.find_by_param' do
     it 'finds by prefixed ID' do
       variant = create(:variant)

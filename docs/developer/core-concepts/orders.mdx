@@ -5,7 +5,7 @@ description: How Spree models orders — a permanent record created by completin
 
 ## Overview
 
-An order is a placed purchase. It's created by completing a [Cart](/developer/core-concepts/carts) and holds its own copy of everything the customer agreed to — items, prices, taxes, discounts and delivery.
+An order is a placed purchase. It's created by completing a [Cart](/developer/core-concepts/carts) and holds its own copy of everything the customer agreed to — items, prices, taxes, discounts and delivery. Anything your storefront stored in the cart's `metadata` is copied onto the order too, including onto every order of a checkout split between sellers.
 
 ```mermaid
 erDiagram
@@ -144,11 +144,11 @@ await adminClient.orders.cancel('or_grouped_xxx', {
 })
 
 // Take an authorized payment
-await adminClient.orders.payments.capture('or_xxx', 'pay_xxx')
+await adminClient.orders.payments.capture('or_xxx', 'py_xxx')
 
 // Refund against a specific payment
 await adminClient.orders.refunds.create('or_xxx', {
-  payment_id: 'pay_xxx',
+  payment_id: 'py_xxx',
   amount: '25.00',
 })
 ```

@@ -120,7 +120,7 @@
         "message": "{{name}} stops applying. Its audience goes back to the shop prices, and everything the catalog holds is kept."
       },
       "delete_confirm": {
-        "message": "This deletes {{name}} and its assignments. Products and price lists are not affected.",
+        "message": "This deletes {{name}}, its assignments, and its price list with the prices in it. The products stay in your store. This cannot be undone.",
         "title": "Delete catalog?"
       },
       "detach_warning": "Saving will remove this catalog’s price list and the prices in it. This audience will pay normal prices.",
@@ -564,7 +564,7 @@
         "settings_label": "Calculator settings"
       },
       "create_line_items_action_editor": {
-        "description": "When the promotion qualifies, these items are added to the cart.",
+        "description": "When the promotion qualifies, these items are added to the cart free of charge.",
         "empty": "No variants yet. Search below to add one.",
         "search_placeholder": "Search variants by name or SKU…",
         "variant_label": "Add variant"
@@ -1238,7 +1238,7 @@
             "Spree::Order": "Orders",
             "Spree::Product": "Products",
             "Spree::Taxon": "Categories",
-            "Spree::User": "Customers",
+            "Spree::Customer": "Customers",
             "Spree::Variant": "Variants"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."
@@ -1849,32 +1849,6 @@
         "tax_remittance": {
           "help": "Who accounts for consumer tax on this seller’s sales.",
           "label": "Tax remitted by"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later.",
-          "label": "Country",
-          "placeholder": "Search countries"
-        },
-        "currency": {
-          "help": "Your default currency. Add more anytime.",
-          "label": "Currency",
-          "placeholder": "Search currencies"
-        },
-        "locale": {
-          "help": "Your default language. Add more anytime.",
-          "label": "Language"
-        },
-        "password_confirmation": {
-          "label": "Confirm password"
-        },
-        "sample_data": {
-          "help": "Adds demo products, categories, customers and orders in the background so you can explore the dashboard. Takes a few minutes and downloads product images.",
-          "label": "Load sample data"
-        },
-        "store_name": {
-          "label": "Store name"
         }
       },
       "state": {
@@ -2894,6 +2868,8 @@
           "canceled": "Order canceled",
           "captured": "Payment captured",
           "completed": "Order completed",
+          "completed_as_group_one": "Order completed as {{count}} separate order",
+          "completed_as_group_other": "Order completed as {{count}} separate orders",
           "confirmation_sent": "Confirmation sent",
           "deleted": "Draft order deleted",
           "voided": "Payment voided"
@@ -5132,7 +5108,8 @@
       "errors": {
         "failed_to_remove": "Failed to remove staff",
         "failed_to_resend": "Failed to resend invitation",
-        "failed_to_revoke": "Failed to revoke invitation"
+        "failed_to_revoke": "Failed to revoke invitation",
+        "failed_to_copy_link": "Failed to copy invitation link"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

@@ -15,6 +15,15 @@ describe Spree::Companies::AddMember do
       expect(result.value.customer).to eq(customer)
     end
 
+    # The token proves the invitee owns the address; a member typing an email
+    # cannot vouch for that.
+    it 'invites instead when acceptance is required' do
+      result = described_class.call(company: company, email: 'buyer@example.com', require_acceptance: true)
+
+      expect(result.value).to be_a(Spree::CompanyInvitation)
+      expect(company.memberships).to be_empty
+    end
+
     it 'refuses a duplicate membership' do
       create(:company_membership, company: company, customer: customer)
 

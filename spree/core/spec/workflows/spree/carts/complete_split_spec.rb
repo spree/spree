@@ -126,6 +126,21 @@ module Spree
         end
       end
 
+      context 'when the cart carries metadata' do
+        before { cart.update!(metadata: { 'gift_message' => 'Happy birthday' }) }
+
+        it 'carries it onto every child order' do
+          expect(group.orders.size).to eq(3)
+          group.orders.each do |order|
+            expect(order.reload.metadata).to eq('gift_message' => 'Happy birthday')
+          end
+        end
+
+        it 'carries it onto the group' do
+          expect(group.reload.metadata).to eq('gift_message' => 'Happy birthday')
+        end
+      end
+
       it 'computes each child’s totals from its own rows' do
         group.orders.each do |order|
           expect(order.total).to be > 0
@@ -563,10 +578,18 @@ module Spree
     describe 'the confirmation' do
       let(:cart) { cart_for(nil, seller, other_seller) }
 
-      it 'places every child silently' do
-        group = described_class.call(cart: cart).value
+      # Asserted on the payload rather than the records: notify_customer is an
+      # in-memory flag, and the group reloads its children after placing them.
+      it 'places every child silently', :events do
+        placements = []
+        allow(Spree::Events).to receive(:publish) do |name, payload, *|
+          placements << payload if name == 'order.placed'
+        end
 
-        expect(group.orders.map(&:notify_customer)).to all(be false)
+        described_class.call(cart: cart)
+
+        expect(placements.size).to eq(3)
+        expect(placements.map { |payload| payload[:notify_customer] }).to all(be false)
       end
 
       # The old shape marked the first child confirmed and left the customer

@@ -32,10 +32,13 @@ RSpec.describe Spree::Api::V3::Seller::InvitationsController, type: :controller 
       expect(json_response['data'].pluck('email')).to include('pending@example.com')
     end
 
-    it 'carries a link the panel can hand to a colleague' do
+    # The link is served on its own endpoint, so the listing never carries
+    # the token.
+    it 'does not expose the acceptance token' do
       get :index, as: :json
 
-      expect(json_response['data'].first['acceptance_url']).to include(invitation.prefixed_id)
+      expect(json_response['data'].first).not_to have_key('acceptance_url')
+      expect(response.body).not_to include(invitation.token)
     end
 
     # An accepted invitation is a team member, and the panel lists those

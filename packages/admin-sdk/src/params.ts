@@ -204,6 +204,7 @@ export interface RefundCreateParams {
   payment_id: string
   /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
   amount: string | number
+  /** Refund reason ID (`rr_…`). Omitted → the store's first refund reason. */
   refund_reason_id?: string
 }
 
@@ -509,6 +510,11 @@ export interface OrderCreateParams {
   /** Channel ID. Defaults to the store primary channel when omitted. */
   channel_id?: string
   /**
+   * Company ID. Makes the order a company purchase, with that company's
+   * catalog prices and tax treatment.
+   */
+  company_id?: string
+  /**
    * Stock Location ID to prefer for fulfillment. Order Routing's built-in
    * `PreferredLocation` rule reads this and ranks the location first;
    * routing falls back to the next rule when the preferred location can't
@@ -560,6 +566,11 @@ export interface OrderUpdateParams {
    * order currently carries.
    */
   po_document?: string | null
+  /**
+   * Company ID. See {@link OrderCreateParams.company_id}. Null makes the draft
+   * a plain customer order again.
+   */
+  company_id?: string | null
   /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   /**
@@ -2538,6 +2549,8 @@ export type CustomFieldOwnerType =
   | 'Spree::Product'
   | 'Spree::Variant'
   | 'Spree::Order'
+  | 'Spree::Customer'
+  /** @deprecated Use `'Spree::Customer'` — removed in Spree 6.1. */
   | 'Spree::User'
   | 'Spree::Category'
   | 'Spree::Collection'

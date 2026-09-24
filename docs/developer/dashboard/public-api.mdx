@@ -84,7 +84,7 @@ import {
 ```ts
 import {
   useAuth,            // current admin user
-  usePermissions,     // CanCanCan abilities
+  usePermissions,     // current admin's permissions
   useStore,           // current store
   useCommandPalette,  // ⌘K palette open/close state
   useGlobalSearch,    // global search query state
@@ -124,6 +124,15 @@ import { adminClient } from '@spree/dashboard-core'
 ```
 
 The shared `@spree/admin-sdk` instance configured for the host's API URL. Use this everywhere instead of constructing your own.
+
+The package entry point loads the whole framework — every registry, component and translation. A small host app that builds its own screens and only needs the client and sign-in can import from subpaths instead, which keeps the rest out of its bundle:
+
+```ts
+import { adminClient } from '@spree/dashboard-core/client'          // the SDK instance alone
+import { setApiClient } from '@spree/dashboard-core/api-client'     // registers the client the providers use
+import { AuthProvider } from '@spree/dashboard-core/providers/auth-provider'
+import { useAuth } from '@spree/dashboard-core/hooks/use-auth'
+```
 
 ### Providers
 
@@ -219,6 +228,17 @@ Two subpath entries complete the surface:
 import { spreeDashboardPlugin } from '@spree/dashboard/vite'  // Vite plugin: Tailwind, discovery, route composition
 import '@spree/dashboard/styles.css'                          // the app's CSS entry
 ```
+
+A host app that builds its own sign-in or onboarding screens, rather than mounting `<Dashboard />`, can reuse the dashboard's building blocks one module at a time without pulling in the app shell:
+
+```ts
+import { AuthShell } from '@spree/dashboard/components/spree/auth-shell'              // two-column sign-in layout
+import { StoreSetupFields } from '@spree/dashboard/components/spree/store-setup-fields' // store name, country, language, currency
+import { useAuthProviders, authCallbackErrorKey } from '@spree/dashboard/hooks/use-auth-providers' // password + SSO options, SSO error copy
+import { loginFormSchema, resetPasswordFormSchema } from '@spree/dashboard/schemas/auth' // Zod schemas for the auth forms
+```
+
+Their translations ship with `@spree/dashboard-core`, so they render translated as soon as its i18n instance is loaded.
 
 A few names exist in both re-exported packages — the design system ships a presentational component and the framework wraps it with data (`ResourceCombobox`, `StatusCard`, `Slot`, `DateRange`, `ResourceMultiAutocomplete`). The facade gives you the framework's version, which is the one an application wants. Reach past it when you want the presentational half:
 

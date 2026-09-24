@@ -111,15 +111,19 @@ module Spree
       end
     end
 
-    context 'pass valid params hash in options' do
-      let(:options) { { quantity: 2, variant_id: variant.id } }
-      let(:execute) { subject.call(cart: cart, variant: variant, quantity: nil, options: options) }
+    # The variant and quantity are checked and priced before the line is
+    # built; an `options` value replacing them would sell something else at
+    # the checked item's price.
+    context 'options naming another variant' do
+      let(:expensive_variant) { create(:variant, price: 2000) }
+      let(:options) { { variant_id: expensive_variant.id, id: 999 } }
+      let(:execute) { subject.call(cart: cart, variant: variant, quantity: 1, options: options) }
 
-      it 'takes the quantity from options' do
+      it 'keeps the checked variant and its price' do
         expect(execute).to be_success
-        expect(cart.line_items.count).to eq 1
         line_item = cart.line_items.first
-        expect(line_item.quantity).to eq 2
+        expect(line_item.variant).to eq(variant)
+        expect(line_item.price).to eq(20)
       end
     end
 
@@ -128,10 +132,10 @@ module Spree
         let(:options) { { quantity: 2 } }
         let(:execute) { subject.call(cart: cart, variant: variant, quantity: 3, options: options) }
 
-        it 'takes value from options' do
+        it 'takes the checked quantity, not the one in options' do
           expect(execute).to be_success
           line_item = cart.line_items.first
-          expect(line_item.quantity).to eq 2
+          expect(line_item.quantity).to eq 3
         end
       end
 

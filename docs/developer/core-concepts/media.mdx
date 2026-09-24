@@ -29,7 +29,7 @@ Every file in a store is in the library, whether or not it's currently placed on
 const { data: media } = await adminClient.media.list()
 
 // Where is this file being used?
-const { data: usage } = await adminClient.media.usage('med_xxx')
+const { data: usage } = await adminClient.media.usage('media_xxx')
 ```
 
 ```bash cURL
@@ -38,7 +38,7 @@ curl 'https://api.mystore.com/api/v3/admin/media' \
   -H 'X-Spree-API-Key: sk_xxx'
 
 # Where is this file being used?
-curl 'https://api.mystore.com/api/v3/admin/media/med_xxx/usage' \
+curl 'https://api.mystore.com/api/v3/admin/media/media_xxx/usage' \
   -H 'X-Spree-API-Key: sk_xxx'
 ```
 
@@ -61,7 +61,7 @@ Placing a library file on a product creates a **new media row that shares the sa
 
 ```typescript Admin SDK
 await adminClient.products.media.create('prod_xxx', {
-  source_media_id: 'med_xxx',
+  source_media_id: 'media_xxx',
   alt: 'Worn over a navy jumper',
   position: 2,
 })
@@ -71,7 +71,7 @@ await adminClient.products.media.create('prod_xxx', {
 curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_xxx/media' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "source_media_id": "med_xxx", "alt": "Worn over a navy jumper", "position": 2 }'
+  -d '{ "source_media_id": "media_xxx", "alt": "Worn over a navy jumper", "position": 2 }'
 ```
 
 </CodeGroup>
@@ -90,19 +90,19 @@ A file in use can't be deleted by accident:
 
 ```typescript Admin SDK
 // Returns 422 with the list of places it's used
-await adminClient.media.delete('med_xxx')
+await adminClient.media.delete('media_xxx')
 
 // Remove it from everywhere, then delete
-await adminClient.media.delete('med_xxx', { detach: true })
+await adminClient.media.delete('media_xxx', { detach: true })
 ```
 
 ```bash cURL
 # Returns 422 with the list of places it is used
-curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/med_xxx' \
+curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/media_xxx' \
   -H 'X-Spree-API-Key: sk_xxx'
 
 # Remove it from everywhere, then delete
-curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/med_xxx?detach=true' \
+curl -X DELETE 'https://api.mystore.com/api/v3/admin/media/media_xxx?detach=true' \
   -H 'X-Spree-API-Key: sk_xxx'
 ```
 
@@ -290,8 +290,8 @@ const video = await client.products.media.create('prod_86Rf07xd4z', {
 ```
 
 ```bash cURL
-curl -X POST 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media' \
-  -H 'X-Spree-API-Key: pk_xxx' \
+curl -X POST 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "media_type": "video",
@@ -314,8 +314,8 @@ await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
 ```
 
 ```bash cURL
-curl -X PATCH 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
-  -H 'X-Spree-API-Key: pk_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "poster_signed_id": "SIGNED_POSTER_BLOB_ID" }'
 ```
@@ -352,8 +352,8 @@ await client.products.media.update('prod_86Rf07xd4z', 'media_k5nR8xLq', {
 ```
 
 ```bash cURL
-curl -X PATCH 'https://api.mystore.com/api/v3/store/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
-  -H 'X-Spree-API-Key: pk_xxx' \
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/products/prod_86Rf07xd4z/media/media_k5nR8xLq' \
+  -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{ "focal_point_x": 0.25, "focal_point_y": 0.4 }'
 ```

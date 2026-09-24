@@ -7,6 +7,9 @@ module Spree
     # may still need to process payments). Idempotent: an already-placed
     # order halts successfully, so interrupted completions replay safely.
     class Complete < Spree::Workflow
+      # Set only when the order divided between sellers.
+      attr_reader :order_group
+
       # @param order [Spree::Order]
       # @param payment_pending [Boolean] when true the order places without
       #   processing payments (B2B / invoice-later). With no payment rows the
@@ -15,17 +18,29 @@ module Spree
       #   rollup work's call (docs/plans/6.0-b2b-wholesale-shipping.md phase 7)
       # @param notify_customer [Boolean, nil] admin drafts pass false to
       #   complete silently; nil (checkout) leaves customer notification on
+      # @return [Spree::ServiceModule::Result] value is the order, or the
+      #   Spree::OrderGroup when it divided between sellers
       def perform(order:, payment_pending: false, notify_customer: nil)
         super
 
         order.notify_customer = notify_customer unless notify_customer.nil?
 
-        halt!(order) if order.completed?
+        # Replaying finishes what an interrupted division started — a sibling
+        # left in draft is an order nobody will ever ship — and answers with
+        # what the first run produced, rather than reporting one seller's order
+        # where it first reported the whole purchase.
+        if order.completed?
+          @order_group = order.order_group
+          step :complete_sibling_orders
+          halt!(order_group || order)
+        end
+
         step :ensure_not_canceled
 
         order.with_lock do
           unless order.reload.placed?
             step :process_payments unless payment_pending || !order.payment_required?
+            step :split_by_seller
             step :finalize_fulfillments
             step :place_order
             step :use_coupon_codes
@@ -39,8 +54,9 @@ module Spree
         step :release_stock_reservations
         step :update_statuses
         step :publish_order_placed
+        step :complete_sibling_orders
 
-        success(order)
+        success(order_group || order)
       end
 
       private
@@ -54,6 +70,56 @@ module Spree
 
         failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
         failure(order, Spree.t(:payment_processing_failed)) unless payment_covered?
+      end
+
+      # Files the sale under whoever made it, dividing the order into one per
+      # seller when it holds several sellers' goods.
+      #
+      # Here because this is the one home both entry points share. Commission
+      # is charged from the line item's seller while the ledger credits the
+      # order's, so an order that skipped this — as one raised from the admin
+      # used to — is charged for and credited to nobody.
+      #
+      # Runs after payment so the money is settled once against the whole
+      # basket, and before placement so each seller's order is placed in its
+      # own right.
+      def split_by_seller
+        # A sibling arrives already divided.
+        return if order.order_group_id.present?
+
+        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
+        return if partitions.empty?
+        return stamp_seller(partitions.first.seller_id) if partitions.one?
+
+        # The cart travels with it: the group becomes what that cart completed
+        # into, and the row carrying its id is the replay anchor.
+        result = Spree::Carts::SplitBySeller.call(order: order, partitions: partitions, cart: order.cart)
+        failure(order, result.error) if result.failure?
+
+        # The division adopts this very order as the group's first child and
+        # reloads it, so it stays the row this workflow locked and the object
+        # carrying the caller's notify_customer, which a freshly loaded one
+        # would not.
+        @order_group = result.value
+        # No child order is the purchase, this one included, so the customer is
+        # confirmed from the group instead and every child places silently.
+        @notify_customer_of_purchase = order.notify_customer
+        order.notify_customer = false
+        step :allocate_payment_splits
+      end
+
+      # Nothing to divide, but the sale still belongs to whoever made it: an
+      # order entirely from one seller is that seller's, and the column is what
+      # their own order list reads.
+      def stamp_seller(seller_id)
+        return if order.seller_id == seller_id
+
+        order.update_columns(seller_id: seller_id, updated_at: Time.current)
+      end
+
+      def allocate_payment_splits
+        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
+        failure(order, result.error) if result.failure?
       end
 
       # Typed adjustment rows are frozen once completed — the totals
@@ -158,6 +224,37 @@ module Spree
         payload = order.event_payload.merge(notify_customer: order.notify_customer)
         order.publish_event('order.placed', payload)
         order.publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
+      end
+
+      # Places the orders the division produced beside this one.
+      #
+      # They place without processing payments, because the money was taken
+      # against the whole basket before the division and the group now holds
+      # it, and silently, as every child of a division does. Only the ones
+      # still in draft, so a replay finishes an interrupted division instead of
+      # re-placing what already went out.
+      def complete_sibling_orders
+        return if order_group.nil?
+
+        pending = order_group.orders.where.not(id: order.id).where(status: 'draft').order(:id)
+        pending.each { |sibling| place_sibling(sibling) }
+
+        # The division loaded these children before placing them, and the rows
+        # just placed are not those objects — anything reading the group now
+        # would see drafts that no longer exist.
+        order_group.orders.reset
+
+        return unless order_group.orders.all?(&:placed?)
+
+        order_group.publish_event(
+          'order_group.completed',
+          order_group.event_payload.merge(notify_customer: @notify_customer_of_purchase)
+        )
+      end
+
+      def place_sibling(sibling)
+        result = Spree.order_complete_workflow.call(order: sibling, payment_pending: true, notify_customer: false)
+        failure(order, result.error) if result.failure?
       end
 
       def payment_covered?

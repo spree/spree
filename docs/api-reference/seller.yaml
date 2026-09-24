@@ -91,6 +91,7 @@ paths:
                   full_name: Jan Cummerata
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 1
@@ -157,6 +158,7 @@ paths:
                   full_name: Magdalen Hayes
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 3
@@ -244,7 +246,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=RgGhNP1euUCS75Nc3V1Y7YQF"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -302,6 +303,7 @@ paths:
                   full_name: Robin Ellis
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
                   name: Seller 44
@@ -418,9 +420,10 @@ paths:
                   full_name: Ariana Wiza
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 78
+                  name: Seller 81
                   status: approved
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
@@ -487,10 +490,11 @@ paths:
                   full_name: Nadia Effertz
                   created_at: '2026-01-15T12:00:00.000Z'
                   avatar_url:
+                  selected_locale:
                 sellers:
                 - id: sel_UkLWZg9DAJ
-                  name: Seller 53
-                  slug: seller-53
+                  name: Seller 54
+                  slug: seller-54
                   status: approved
                 permissions:
                 - allow: true
@@ -708,6 +712,94 @@ paths:
                   message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update your account
+      tags:
+      - Account
+      security:
+      - bearer_auth: []
+      description: |
+        Edits the signed-in person's own account — the name and photo their team
+        sees, and the language their panel displays.
+
+        This is the person, not the business: the seller they act for is
+        `PATCH /profile`. Like `GET /me` it answers without
+        `X-Spree-Seller-Id`, because the account is the same whichever seller
+        they are acting for.
+
+        `avatar` takes an ActiveStorage direct-upload signed id to set the
+        photo, or `null` to remove it; omit it to leave the current one alone.
+        `email` is identity-bound and cannot be changed here.
+      parameters: []
+      responses:
+        '200':
+          description: account updated
+          content:
+            application/json:
+              example:
+                user:
+                  id: adm_UkLWZg9DAJ
+                  email: kala@rosenbaummoen.info
+                  first_name: Ada
+                  last_name: Lovelace
+                  full_name: Ada Lovelace
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  avatar_url:
+                  selected_locale:
+                sellers:
+                - id: sel_UkLWZg9DAJ
+                  name: Seller 56
+                  slug: seller-56
+                  status: approved
+                permissions: []
+                permission_keys: []
+              schema:
+                "$ref": "#/components/schemas/SellerMeResponse"
+        '422':
+          description: the photo is not a web image
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Avatar has an invalid content type (authorized content
+                    types are PNG, JPG, GIF, WEBP)
+                  details:
+                    avatar:
+                    - has an invalid content type (authorized content types are PNG,
+                      JPG, GIF, WEBP)
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: Ada
+                last_name:
+                  type: string
+                  example: Lovelace
+                selected_locale:
+                  type: string
+                  example: de
+                  description: Panel display language, as a code the panel ships.
+                avatar:
+                  type: string
+                  nullable: true
+                  description: Direct-upload signed id, or `null` to remove the photo.
   "/api/v3/seller/countries":
     get:
       summary: List countries
@@ -1603,17 +1695,17 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: BR
-                    name: Brestskaya voblasts' (be) Brestskaya oblast' (ru)
+                    name: Brest
                   - abbr: HO
-                    name: Homyel'skaya voblasts' (be) Gomel'skaya oblast' (ru)
+                    name: Homel
                   - abbr: HR
-                    name: Hrodzenskaya voblasts' (be) Grodnenskaya oblast' (ru)
+                    name: Hrodna
                   - abbr: MA
-                    name: Mahilyowskaya voblasts' (be) Mogilevskaya oblast' (ru)
+                    name: Magileu
                   - abbr: MI
-                    name: Minskaya voblasts' (be) Minskaya oblast' (ru)
+                    name: Minsk Region
                   - abbr: VI
-                    name: Vitsyebskaya voblasts' (be) Vitebskaya oblast' (ru)
+                    name: Vitebsk
                   - abbr: HM
                     name: Мінск
                 - iso: BE
@@ -1623,31 +1715,31 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: VAN
-                    name: Antwerpen (nl)
-                  - abbr: WBR
-                    name: Brabant Wallon (fr)
+                    name: Antwerp
                   - abbr: BRU
                     name: Brussels
-                  - abbr: WHT
-                    name: Hainaut (fr)
-                  - abbr: VLI
-                    name: Limburg (nl)
-                  - abbr: WLG
-                    name: Liège (fr)
-                  - abbr: WLX
-                    name: Luxembourg (fr)
-                  - abbr: WNA
-                    name: Namur (fr)
                   - abbr: VOV
-                    name: Oost-Vlaanderen (nl)
+                    name: East Flanders
                   - abbr: VBR
-                    name: Vlaams Brabant (nl)
+                    name: Flemish Brabant
+                  - abbr: WHT
+                    name: Hainaut
+                  - abbr: VLI
+                    name: Limburg
+                  - abbr: WLG
+                    name: Liège
+                  - abbr: WLX
+                    name: Luxembourg
+                  - abbr: WNA
+                    name: Namur
                   - abbr: VLG
                     name: Vlaams Gewest
                   - abbr: WAL
                     name: Wallonië
+                  - abbr: WBR
+                    name: Walloon Brabant
                   - abbr: VWV
-                    name: West-Vlaanderen (nl)
+                    name: West Flanders
                 - iso: BZ
                   iso3: BLZ
                   name: Belize
@@ -2478,6 +2570,8 @@ paths:
                     name: Hubei
                   - abbr: HN
                     name: Hunan
+                  - abbr: NM
+                    name: Inner Mongolia
                   - abbr: JS
                     name: Jiangsu
                   - abbr: JX
@@ -2486,8 +2580,6 @@ paths:
                     name: Jilin
                   - abbr: LN
                     name: Liaoning
-                  - abbr: NM
-                    name: Nei Mongol (mn)
                   - abbr: NX
                     name: Ningxia
                   - abbr: QH
@@ -7071,7 +7163,7 @@ paths:
                   - abbr: BRR
                     name: Berrechid
                   - abbr: BOD
-                    name: Boujdour (EH)
+                    name: Boujdour
                   - abbr: BOM
                     name: Boulemane
                   - abbr: '05'
@@ -7086,8 +7178,6 @@ paths:
                     name: Chichaoua
                   - abbr: CHT
                     name: Chtouka-Ait Baha
-                  - abbr: '12'
-                    name: Dakhla-Oued Ed-Dahab (EH)
                   - abbr: DRI
                     name: Driouch
                   - abbr: '08'
@@ -7099,7 +7189,7 @@ paths:
                   - abbr: ERR
                     name: Errachidia
                   - abbr: ESM
-                    name: Es Smara (EH)
+                    name: Es Semara
                   - abbr: ESI
                     name: Essaouira
                   - abbr: FAH
@@ -7139,7 +7229,7 @@ paths:
                   - abbr: LAR
                     name: Larache
                   - abbr: LAA
-                    name: Laâyoune* (EH)
+                    name: Laâyoune
                   - abbr: '11'
                     name: Laâyoune-Sakia El Hamra (EH-partial)
                   - abbr: MAR
@@ -7163,7 +7253,7 @@ paths:
                   - abbr: OUA
                     name: Ouarzazate
                   - abbr: OUD
-                    name: Oued ed Dahab (EH)
+                    name: Oued Ed-Dahab
                   - abbr: OUZ
                     name: Ouezzane
                   - abbr: OUJ
@@ -7194,6 +7284,8 @@ paths:
                     name: Skhirate-Témara
                   - abbr: '09'
                     name: Souss-Massa
+                  - abbr: '12'
+                    name: Tadla-Azilal
                   - abbr: TNT
                     name: Tan-Tan
                   - abbr: TNG
@@ -7935,7 +8027,7 @@ paths:
                   - abbr: JK
                     name: Azad Kashmir
                   - abbr: BA
-                    name: Baluchistan (en)
+                    name: Balochistan
                   - abbr: GB
                     name: Gilgit-Baltistan
                   - abbr: IS
@@ -7945,7 +8037,7 @@ paths:
                   - abbr: PB
                     name: Punjab
                   - abbr: SD
-                    name: Sind (en)
+                    name: Sindh
                 - iso: PW
                   iso3: PLW
                   name: Palau
@@ -10184,57 +10276,57 @@ paths:
                   zipcode_required: true
                   states:
                   - abbr: AG
-                    name: Aargau (de)
+                    name: Aargau
                   - abbr: AR
-                    name: Appenzell Ausserrhoden (de)
+                    name: Appenzell Ausserrhoden
                   - abbr: AI
-                    name: Appenzell Innerrhoden (de)
+                    name: Appenzell Innerrhoden
                   - abbr: BL
-                    name: Basel-Landschaft (de)
+                    name: Basel-Landschaft
                   - abbr: BS
-                    name: Basel-Stadt (de)
+                    name: Basel-Stadt
                   - abbr: BE
-                    name: Bern (de)
+                    name: Bern
                   - abbr: FR
-                    name: Fribourg (fr)
+                    name: Fribourg
                   - abbr: GE
-                    name: Genève (fr)
+                    name: Geneva
                   - abbr: GL
-                    name: Glarus (de)
+                    name: Glarus
                   - abbr: GR
-                    name: Graubünden (de)
+                    name: Graubünden
                   - abbr: JU
-                    name: Jura (fr)
+                    name: Jura
                   - abbr: LU
-                    name: Luzern (de)
+                    name: Lucerne
                   - abbr: NE
-                    name: Neuchâtel (fr)
+                    name: Neuchâtel
                   - abbr: NW
-                    name: Nidwalden (de)
+                    name: Nidwalden
                   - abbr: OW
-                    name: Obwalden (de)
-                  - abbr: SG
-                    name: Sankt Gallen (de)
+                    name: Obwalden
                   - abbr: SH
-                    name: Schaffhausen (de)
+                    name: Schaffhausen
                   - abbr: SZ
-                    name: Schwyz (de)
+                    name: Schwyz
                   - abbr: SO
-                    name: Solothurn (de)
+                    name: Solothurn
+                  - abbr: SG
+                    name: St. Gallen
                   - abbr: TG
-                    name: Thurgau (de)
+                    name: Thurgau
                   - abbr: TI
-                    name: Ticino (it)
+                    name: Ticino
                   - abbr: UR
-                    name: Uri (de)
+                    name: Uri
                   - abbr: VS
-                    name: Valais (fr)
+                    name: Valais
                   - abbr: VD
-                    name: Vaud (fr)
+                    name: Vaud
                   - abbr: ZG
-                    name: Zug (de)
+                    name: Zug
                   - abbr: ZH
-                    name: Zürich (de)
+                    name: Zürich
                 - iso: SY
                   iso3: SYR
                   name: Syrian Arab Republic
@@ -13996,8 +14088,8 @@ paths:
             application/json:
               example:
                 id: sel_UkLWZg9DAJ
-                name: Seller 98
-                slug: seller-98
+                name: Seller 101
+                slug: seller-101
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14070,7 +14162,7 @@ paths:
               example:
                 id: sel_UkLWZg9DAJ
                 name: Acme Supplies
-                slug: seller-100
+                slug: seller-103
                 about: ''
                 about_html: ''
                 logo_url:
@@ -14537,7 +14629,6 @@ paths:
                   expires_at: '2026-01-29T12:00:00.000Z'
                   accepted_at:
                   status: pending
-                  acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=gybGAXxVP79yKWNTZLAC94ui"
               schema:
                 type: object
                 properties:
@@ -14547,6 +14638,40 @@ paths:
                       "$ref": "#/components/schemas/Invitation"
                 required:
                 - data
+  "/api/v3/seller/invitations/{invitation_id}/acceptance_link":
+    parameters:
+    - name: invitation_id
+      in: path
+      description: Invitation ID
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get an invitation acceptance link
+      tags:
+      - Team
+      security:
+      - bearer_auth: []
+      description: |
+        The link a colleague opens to join the team. It carries the invitation's
+        token, so the listing never includes it; fetch it when someone asks to
+        copy the link.
+      parameters:
+      - name: X-Spree-Seller-Id
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: acceptance link found
+          content:
+            application/json:
+              example:
+                id: inv_UkLWZg9DAJ
+                acceptance_url: http://www.example.com:3000/accept-invitation/inv_UkLWZg9DAJ?token=7La4K2PLxW8oLoXjmz46QYEJ
+              schema:
+                "$ref": "#/components/schemas/InvitationAcceptanceLink"
   "/api/v3/seller/invitations/{id}/resend":
     parameters:
     - name: id
@@ -14583,7 +14708,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3uJFfKUSiHtnc9TGAXMJUXsB"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '404':
@@ -14705,7 +14829,6 @@ paths:
                 expires_at: '2026-01-29T12:00:00.000Z'
                 accepted_at:
                 status: pending
-                acceptance_url: "/accept-invitation/inv_UkLWZg9DAJ?token=3K6BfBtHGFeQgToPE45qUDWE"
               schema:
                 "$ref": "#/components/schemas/Invitation"
         '422':
@@ -14818,10 +14941,10 @@ paths:
             application/json:
               example:
                 direct_upload:
-                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--84b12e983ef99a420e514d015b34f26a6a0716bb
+                  url: http://www.example.com/rails/active_storage/disk/eyJfcmFpbHMiOnsiZGF0YSI6eyJrZXkiOiJuem5oOGdra3VxendvbDc1ODBxNHNwZmpmMjVxIiwiY29udGVudF90eXBlIjoiYXBwbGljYXRpb24vcGRmIiwiY29udGVudF9sZW5ndGgiOjUxMjM0LCJjaGVja3N1bSI6IlZqaHowNGxRdUVHdXY0bkR2aHNhTlE9PSIsInNlcnZpY2VfbmFtZSI6InRlc3QifSwiZXhwIjoiMjAyNi0wMS0xNVQxMjowNTowMC4wMDBaIiwicHVyIjoiYmxvYl90b2tlbiJ9fQ==--484d46dd60be3523918976c0cc622ec8eb33a9be
                   headers:
                     Content-Type: application/pdf
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--eb68ae07452e9cb6221bea98b59480e0daa5afac
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
               schema:
                 "$ref": "#/components/schemas/DirectUploadResponse"
       requestBody:
@@ -16866,7 +16989,7 @@ paths:
                   state_code: NY
                   quick_checkout: false
                   is_default_billing: false
-                  is_default_shipping: true
+                  is_default_shipping: false
                   state_abbr: NY
                   country_iso: US
                   state_name: New York
@@ -18853,7 +18976,7 @@ components:
           type: string
           description: JWT access token, `seller_api` audience
         user:
-          "$ref": "#/components/schemas/TeamMember"
+          "$ref": "#/components/schemas/Account"
         sellers:
           type: array
           description: The sellers this user may act for. Pick one and send its `id`
@@ -19124,7 +19247,7 @@ components:
         may do on the selected one
       properties:
         user:
-          "$ref": "#/components/schemas/TeamMember"
+          "$ref": "#/components/schemas/Account"
         sellers:
           type: array
           items:
@@ -19566,6 +19689,40 @@ components:
       - display_amount
       - display_compare_at_amount
       - price_list_id
+      x-typelizer: true
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+        selected_locale:
+          type: string
+          nullable: true
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - full_name
+      - created_at
+      - avatar_url
+      - selected_locale
       x-typelizer: true
     Balance:
       type: object
@@ -20401,6 +20558,17 @@ components:
       - sample_row
       - mappings
       x-typelizer: true
+    InvitationAcceptanceLink:
+      type: object
+      properties:
+        id:
+          type: string
+        acceptance_url:
+          type: string
+      required:
+      - id
+      - acceptance_url
+      x-typelizer: true
     Invitation:
       type: object
       properties:
@@ -20425,8 +20593,6 @@ components:
           - type: string
           description: The values listed are the built-in ones; extensions may add
             more.
-        acceptance_url:
-          type: string
       required:
       - id
       - email
@@ -20434,7 +20600,6 @@ components:
       - expires_at
       - accepted_at
       - status
-      - acceptance_url
       x-typelizer: true
     Media:
       type: object

@@ -9,15 +9,19 @@ module Spree
 
     validates :provider, inclusion: {
       in: lambda { |_record|
-        (Spree.store_authentication_strategies.keys + Spree.admin_authentication_strategies.keys).uniq.map(&:to_s)
+        (
+          Spree.store_authentication_strategies.keys +
+          Spree.admin_authentication_strategies.keys +
+          Spree.seller_authentication_strategies.keys
+        ).uniq.map(&:to_s)
       }
     }
 
-    # Store provider-specific data
-    # info: JSON field with provider-specific data (name, avatar, etc)
-    # access_token: encrypted OAuth access token
-    # refresh_token: encrypted OAuth refresh token
-    # expires_at: token expiration timestamp
+    # Keys may come from config or from encrypted credentials. Rows written before
+    # encryption was enabled stay readable and are encrypted on their next write.
+    if ActiveRecord::Encryption.config.has_primary_key?
+      encrypts :access_token, :refresh_token, support_unencrypted_data: true
+    end
 
     # Find or create user from OAuth data
     def self.find_or_create_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)

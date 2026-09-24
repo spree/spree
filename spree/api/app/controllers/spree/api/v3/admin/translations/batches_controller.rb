@@ -39,7 +39,7 @@ module Spree
               raw = params[:translations]
               return render_empty_batch_error unless raw.is_a?(Array) && raw.any?
 
-              batch = Spree::Translations::Batch.new(batch_params)
+              batch = Spree::Translations::Batch.new(batch_params, store: current_store)
               return unless require_batch_scopes!(batch)
 
               records = batch.process! { |record| authorize!(:update, record) }

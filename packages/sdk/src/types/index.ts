@@ -38,6 +38,7 @@ export type {
   OptionType,
   OptionValue,
   Order,
+  OrderGroup,
   Payment,
   PaymentMethod,
   PaymentSession,

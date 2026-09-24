@@ -50,7 +50,7 @@ module Spree
       end
 
       def taken?(record, candidate)
-        record.class.unscoped.exists?(number: candidate)
+        record.class.base_class.unscoped.exists?(number: candidate)
       end
 
       def next_free_value(record, from)
@@ -58,7 +58,7 @@ module Spree
 
         loop do
           candidates = (value + 1..value + SCAN_BATCH_SIZE).index_by { |v| compose(record, v) }
-          taken = record.class.unscoped.where(number: candidates.keys).pluck(:number)
+          taken = record.class.base_class.unscoped.where(number: candidates.keys).pluck(:number)
           free = (candidates.keys - taken).first
 
           return candidates.fetch(free) if free

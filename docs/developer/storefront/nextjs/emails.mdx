@@ -16,19 +16,23 @@ Email templates are React components in `src/lib/emails/`:
 
 | File | Event | Description |
 |------|-------|-------------|
-| `order-confirmation.tsx` | `order.completed` | Items, totals, addresses, delivery method |
+| `order-confirmation.tsx` | `order.placed` | Items, totals, addresses, delivery method |
 | `order-canceled.tsx` | `order.canceled` | Cancellation notice with items |
-| `shipment-shipped.tsx` | `order.shipped` | Tracking number and link |
+| `shipment-shipped.tsx` | `order.fulfilled` | Tracking number and link |
 | `password-reset.tsx` | `customer.password_reset_requested` | Reset button and fallback link |
 
 Customize a template by editing its file directly — they use `@react-email/components` for email-safe layout primitives.
+
+<Note>
+  Spree 6.0 also sends the pre-6.0 names `order.completed` and `order.shipped` as deprecated aliases until 6.1. Subscribe the endpoint to the new names only — subscribing to both makes Spree deliver both events.
+</Note>
 
 ## Previewing
 
 Run the storefront in development and open [http://localhost:3001/dev/emails](http://localhost:3001/dev/emails):
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Each template renders with sample data via `@react-email/render`. The route is gated to non-production environments.
@@ -55,9 +59,9 @@ import { createWebhookHandler } from '@/lib/spree/webhooks'
 const handler = createWebhookHandler({
   secret: process.env.SPREE_WEBHOOK_SECRET!,
   handlers: {
-    'order.completed': handleOrderCompleted,
+    'order.placed': handleOrderPlaced,
     'order.canceled': handleOrderCanceled,
-    'order.shipped': handleOrderShipped,
+    'order.fulfilled': handleOrderFulfilled,
     'customer.password_reset_requested': handlePasswordReset,
   },
 })
@@ -68,11 +72,11 @@ To add a new email type:
 1. Create a template in `src/lib/emails/`.
 2. Add a handler function in `src/lib/webhooks/handlers.ts`.
 3. Register the event in `route.ts`.
-4. Subscribe to the event in **Spree Admin → Settings → Developers → Webhooks**.
+4. Subscribe to the event in **Spree Admin → Settings → Developer → Webhooks**.
 
 ## Setup
 
-1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks. Subscribe to `order.completed`, `order.canceled`, `order.shipped`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
+1. **Create a webhook endpoint** in Spree Admin → Settings → Developer → Webhooks. Subscribe to `order.placed`, `order.canceled`, `order.fulfilled`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
 
 2. **Receive webhooks locally.** Expose the storefront with a public URL so Spree can reach it — the simplest option is a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/):
 

@@ -207,6 +207,13 @@ module Spree
       # typed money lines re-pointed, fulfillments + selected rates, address
       # copies); money records (payments, sessions, reservations, coupon
       # codes) re-point — external transaction references must never fork.
+      #
+      # The cart's metadata is copied whole: storefronts and checkout
+      # requirements keep what they collected about the purchase there, and it
+      # has to outlive the cart. The order is new at this point, so there is
+      # nothing on it to merge with — the cart's hash simply becomes the
+      # order's. A deep copy, so a later edit to either record can never reach
+      # the other through a shared nested hash.
       def create_draft_order!(cart)
         order = nil
         ApplicationRecord.transaction do
@@ -228,6 +235,7 @@ module Spree
             po_number: cart.po_number,
             gift_card: cart.gift_card,
             last_ip_address: cart.last_ip_address,
+            metadata: cart.metadata.to_h.deep_dup,
             ship_address: cart.ship_address&.snapshot,
             bill_address: cart.bill_address&.snapshot
           )
@@ -407,83 +415,28 @@ module Spree
       # resumes like any other finalize failure.
       def finalize!(cart, order)
         @order = order
-        step :split_by_seller
-        step :allocate_payment_splits
         step :complete_orders
         step :complete_cart
         step :mark_coupon_codes_used
         external_step :commit_tax
       end
 
-      # Divides the paid draft order into one order per seller, under a group.
-      # A cart of one partition — all first-party, or all one seller — is left
-      # exactly as it is: no group, no splits, and the order it already built
-      # is the order the customer gets.
+      # Places what the checkout produced, through the order-side workflow
+      # that owns placement — including dividing the basket between sellers,
+      # which an order raised from the admin needs just as much and which only
+      # that workflow can give both of them.
       #
-      # The draft order built in PREPARE becomes the group's first child rather
-      # than being replaced. It is the record the payment was taken against and
-      # the row carrying the unique cart_id that makes completion replayable,
-      # so it is kept and narrowed to its own partition; the remaining
-      # partitions become new siblings beside it.
-      def split_by_seller
-        @order_group = cart.order_group
-        return if order_group.present?
-        return if order.placed?
+      # It answers with the group when the basket divided, and the first of
+      # its children is the order this checkout carries on with. No child holds
+      # the confirmation: the customer is confirmed from the group.
+      def complete_orders
+        result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
+        failure(cart, code: 'completion_failed', message: result.error) if result.failure?
 
-        partitions = Spree::Carts::PartitionBySeller.call(purchase: order).value
-
-        if partitions.one?
-          # Nothing to divide, but the sale still belongs to whoever made it:
-          # a basket entirely from one seller is that seller's order, and the
-          # column is what their own order list reads.
-          order.update_columns(seller_id: partitions.first.seller_id) if order.seller_id != partitions.first.seller_id
-          return
-        end
-
-        return if partitions.empty?
-
-        result = Spree::Carts::SplitBySeller.call(cart: cart, order: order, partitions: partitions)
-        failure(cart, code: 'split_failed', message: result.error) if result.failure?
+        return unless result.value.is_a?(Spree::OrderGroup)
 
         @order_group = result.value
-        # Ordered, because the hook handlers and the replay path read this one
-        # as "the" order of the checkout — which child that is must not depend
-        # on how the rows come back. It carries no confirmation: the purchase
-        # is confirmed from the group.
         @order = order_group.orders.order(:id).first
-      end
-
-      def allocate_payment_splits
-        return if order_group.nil?
-
-        result = Spree::OrderGroups::AllocatePayments.call(group: order_group)
-        failure(cart, code: 'split_failed', message: result.error) if result.failure?
-      end
-
-      # Places what the checkout produced — the children of a split, or the one
-      # order otherwise. Each child publishes its own order.placed, which is
-      # what gets every seller their own commission lines with no marketplace
-      # code in the commission engine.
-      #
-      # A split checkout's payments were already taken against the whole basket
-      # and moved onto the group, so the children place without processing them
-      # again. Every child also places *silently*: one purchase means one
-      # confirmation, and no child order is the purchase — each holds a single
-      # seller's items, delivery and total. The group event below is what the
-      # customer's confirmation hangs off.
-      def complete_orders
-        split = order_group.present?
-
-        placed_orders.each do |child|
-          result = Spree.order_complete_workflow.call(
-            order: child,
-            payment_pending: split,
-            notify_customer: split ? false : nil
-          )
-          failure(cart, code: 'completion_failed', message: result.error) if result.failure?
-        end
-
-        order_group&.publish_event('order_group.completed')
       end
 
       # Tells the tax engine the sale is final. A no-op for the built-in

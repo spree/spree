@@ -7,6 +7,8 @@ module Spree
     # regional consumer rights. That policy is the most-customized rule in
     # commerce and deliberately does not live in core.
     class Create < Spree::Workflow
+      include Spree::Returns::ReturnableQuantity
+
       hooks :validate, :after_create
 
       # The created return — hook handlers read it (nil while :validate runs).
@@ -48,7 +50,7 @@ module Spree
       end
 
       # Quantities are validated against what is actually still returnable —
-      # units already returned on an earlier request must not come back twice.
+      # units already returned or exchanged must not come back twice.
       def normalize_items
         @normalized_items = items.map do |item|
           fulfillment_item = item[:fulfillment_item]
@@ -57,26 +59,18 @@ module Spree
           failure(order, :invalid_quantity) unless quantity.positive?
           failure(order, :item_not_on_order) unless fulfillment_item&.order_id == order.id
 
-          available = returnable_quantity_for(fulfillment_item)
-          if quantity > available
-            failure(order, "Only #{available} of #{fulfillment_item.variant.name} can be returned")
-          end
-
           { fulfillment_item: fulfillment_item, quantity: quantity }
         end
-      end
 
-      def returnable_quantity_for(fulfillment_item)
-        already_requested = Spree::ReturnLineItem.
-          joins(:return).
-          where(fulfillment_item_id: fulfillment_item.id).
-          where.not(spree_returns: { status: 'canceled' }).
-          sum(:quantity)
-
-        fulfillment_item.quantity.to_i - already_requested
+        ensure_returnable_quantities(@normalized_items, action: 'returned')
       end
 
       def build_return
+        # Again under the order's row lock, so two requests racing for the same
+        # units cannot both pass the check above.
+        Spree::Order.lock.find(order.id)
+        ensure_returnable_quantities(@normalized_items, action: 'returned')
+
         @return_record = order.returns.new(
           store: order.store,
           stock_location: stock_location || default_stock_location,

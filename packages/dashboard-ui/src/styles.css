@@ -153,7 +153,7 @@
      sheet rather than a surface floating above it, so its edge only has to
      suggest where the region ends. Used by `CardContent`'s frame; a dialog or
      the sheet itself must keep --border, or the shell loses its outline. */
-  --border-card: color-mix(in srgb, var(--border-base) 50%, transparent);
+  --border-card: color-mix(in srgb, var(--border-base) 60%, transparent);
   /* Dividers *inside* a container — card header/footer splits, dialog and
      sheet separators, table row rules.
 
@@ -171,9 +171,9 @@
      3.11:1 on the page ground, the lightest step that clears the minimum on
      both.
 
-     No form control uses this. Fields, selects, comboboxes, checkboxes and
-     radios all take `--border` with `--shadow-xs`, the same pair the outline
-     button wears, so every bordered control on a card reads as one family.
+     No form control uses this. Fields, selects and comboboxes take `--border`
+     with `--shadow-control`; checkboxes and radios, too small to carry that
+     lift, keep `--shadow-xs` like the outline button.
 
      A tinted fill on fields was tried and reverted. Disabled fields are
      `--muted`, so any resting tint either collides with that meaning or (as
@@ -431,6 +431,10 @@
      recovers over about 2px and nothing spreads above it or to the sides, so
      this is purely directional, with no ambient layer. */
   --shadow-xs: 0 0px 1px 0 rgb(0 0 0 / 0.05);
+  /* A form field's resting lift. Heavier than --shadow-xs and weighted to the
+     bottom edge only, so the field reads as a slightly raised well without a
+     tinted fill — the fill stays on the card colour (see --border-control). */
+  --shadow-control: 0 0.5px 1px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 

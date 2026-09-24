@@ -24,7 +24,7 @@ function SellerEntry() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['seller', 'me'],
-    queryFn: () => sellerClient().me(),
+    queryFn: () => sellerClient().me.get(),
   })
 
   const sellers = data?.sellers ?? []

@@ -13,6 +13,7 @@ module Spree
 
           include Spree::Api::V3::ScopedAuthorization
           include Spree::Api::V3::Admin::ValidationDetails
+          include Spree::Api::V3::Admin::EmbedPermissions
         end
       end
     end

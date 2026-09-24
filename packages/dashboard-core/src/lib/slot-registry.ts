@@ -1,3 +1,4 @@
+import type { AdminUser } from '@spree/admin-sdk'
 import type { ComponentType } from 'react'
 import { useSyncExternalStore } from 'react'
 
@@ -24,6 +25,23 @@ export interface SlotEntry<TContext = unknown> {
   position?: number
   /** Visibility predicate. Receives the merged context. */
   if?: (ctx: TContext & SlotAmbientContext) => boolean
+}
+
+// ============================================================================
+// Built-in slot names shared with plugins
+// ============================================================================
+
+/**
+ * The screen a signed-in admin sees when they hold a role on no store — not
+ * yet invited to one, or removed from all of them. Registering an entry
+ * replaces the built-in message, for example to render a different call to
+ * action or send the user elsewhere from an effect.
+ */
+export const NO_STORE_ACCESS_SLOT = 'no_store_access'
+
+export interface NoStoreAccessSlotContext {
+  user: AdminUser
+  signOut: () => Promise<void>
 }
 
 // ============================================================================

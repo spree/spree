@@ -109,7 +109,6 @@ erDiagram
 - **Payment Setup Session** manages saving payment methods for future use without an immediate charge (e.g., Stripe SetupIntent)
 - **Source** is polymorphic - can be a Credit Card, Payment Source (for alternative methods like Klarna, iDEAL), or Store Credit
 - **Gateway Customer** stores the provider-specific customer profile (e.g., Stripe Customer ID)
-- **Log Entries** record gateway responses for debugging
 - **Refunds** track money returned to customers
 
 ## Payment Methods
@@ -620,7 +619,7 @@ cannot start one from your storefront:
 await adminClient.orders.refunds.create(orderId, {
   payment_id: 'py_abc123',
   amount: '25.00',
-  reason_id: 'rr_xyz789',
+  refund_reason_id: 'rr_xyz789',
 })
 ```
 
@@ -663,7 +662,7 @@ Maps a Spree customer to their provider-specific customer profile. This enables 
 | `payment_method_id` | The gateway this customer belongs to | `1` |
 | `customer_id` | The Spree customer | `42` |
 
-A customer has at most one record per payment method, and `profile_id` is encrypted with Active Record Encryption where it is configured.
+A customer has at most one record per payment method, and `profile_id` is encrypted with [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) where it is configured.
 
 <Note>
   This one is internal — the API does not expose it. It is listed here because

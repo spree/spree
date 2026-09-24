@@ -62,6 +62,13 @@ RSpec.describe Spree::OrderEmailSubscriber do
 
       it 'does not send confirmation email' do
         expect(Spree::OrderMailer).not_to receive(:confirm_email)
+        allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true))
+
+        subscriber.send(:send_confirmation_email, mock_event(order))
+      end
+
+      it 'still sends store owner notification email' do
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return(double(deliver_later: true))
 
         subscriber.send(:send_confirmation_email, mock_event(order))
       end
@@ -87,8 +94,16 @@ RSpec.describe Spree::OrderEmailSubscriber do
     end
 
     context 'when notify_customer is false in payload' do
+      before { allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true)) }
+
       it 'does not send confirmation email' do
         expect(Spree::OrderMailer).not_to receive(:confirm_email)
+
+        subscriber.send(:send_confirmation_email, mock_event(order, notify_customer: false))
+      end
+
+      it 'still sends store owner notification email' do
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id)
 
         subscriber.send(:send_confirmation_email, mock_event(order, notify_customer: false))
       end

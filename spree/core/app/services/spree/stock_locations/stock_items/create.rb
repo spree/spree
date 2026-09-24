@@ -10,7 +10,7 @@ module Spree
         # @param stock_location [Spree::StockLocation]
         # @param variants_scope [ActiveRecord::Relation]
         # @return [Spree::ServiceModule::Base::Result]
-        def call(stock_location:, variants_scope: Spree::Variant)
+        def call(stock_location:, variants_scope: nil)
           Spree::Deprecation.warn('Spree::StockLocations::StockItems::Create is deprecated and will be removed in Spree 6.1. Use Spree::StockLocations::StockLevels::Create instead.')
           Spree::StockLocations::StockLevels::Create.call(stock_location: stock_location, variants_scope: variants_scope)
         end

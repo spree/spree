@@ -30,7 +30,12 @@ RSpec.describe 'Seller team management', type: :request do
     get '/api/v3/seller/invitations', headers: headers
     pending = json['data'].first
     expect(pending['email']).to eq('hire@example.com')
-    expect(pending['acceptance_url']).to be_present
+    expect(pending).not_to have_key('acceptance_url')
+
+    # The link is fetched on demand, so the listing never carries the token.
+    get "/api/v3/seller/invitations/#{pending['id']}/acceptance_link", headers: headers
+    expect(response).to have_http_status(:ok)
+    expect(json['acceptance_url']).to include(Spree::Invitation.find_by(email: 'hire@example.com').token)
 
     patch "/api/v3/seller/invitations/#{pending['id']}/resend", headers: headers
     expect(response).to have_http_status(:ok)

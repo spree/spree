@@ -17,6 +17,7 @@ module Spree
     def send_confirmation_email(event)
       order_group = find_order_group(event)
       return unless order_group
+      return if event.payload['notify_customer'] == false
       return unless order_group.store.prefers_send_consumer_transactional_emails?
 
       # Completion is replayable, and a resumed finalize re-publishes this

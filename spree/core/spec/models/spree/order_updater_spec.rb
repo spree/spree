@@ -218,6 +218,36 @@ module Spree
         end
       end
 
+      # A refund paid as store credit writes no Spree::Refund row, so an order
+      # settled that way used to read `paid` on money already given back.
+      context 'refunded to store credit' do
+        before { create(:payment, order: order, amount: order_total, status: 'completed') }
+
+        it 'is partially_refunded when part of it came back as credit' do
+          create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order_total - 1)
+
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('partially_refunded')
+        end
+
+        it 'is refunded when all of it came back as credit' do
+          create(:store_credit, refunded_order: order, store: order.store, customer: order.customer, amount: order_total)
+
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('refunded')
+        end
+
+        it 'ignores credit that settles no order' do
+          create(:store_credit, store: order.store, customer: order.customer, amount: order_total)
+
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('paid')
+        end
+      end
+
       context 'order is canceled' do
         before { order.update_columns(status: 'canceled') }
 

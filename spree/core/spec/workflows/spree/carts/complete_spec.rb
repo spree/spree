@@ -383,6 +383,31 @@ module Spree
       end
     end
 
+    describe 'cart metadata' do
+      it 'carries the cart metadata onto the order' do
+        ready_cart.update!(metadata: { 'gift_message' => 'Happy birthday', 'delivery' => { 'window' => 'am' } })
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.reload.metadata).to eq('gift_message' => 'Happy birthday', 'delivery' => { 'window' => 'am' })
+      end
+
+      it 'gives the order its own copy rather than sharing the cart hash' do
+        ready_cart.update!(metadata: { 'delivery' => { 'window' => 'am' } })
+
+        order = described_class.call(cart: ready_cart).value
+        order.metadata['delivery']['window'] = 'pm'
+
+        expect(ready_cart.metadata['delivery']['window']).to eq('am')
+      end
+
+      it 'leaves the order metadata empty when the cart has none' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.reload.metadata).to eq({})
+      end
+    end
+
     describe 'the buyer purchase order' do
       it 'carries the reference onto the order' do
         ready_cart.update!(po_number: 'PO-4471')

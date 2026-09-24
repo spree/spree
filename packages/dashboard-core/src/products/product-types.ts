@@ -44,6 +44,7 @@ export interface PanelVariant {
     amount?: string | null
     currency?: string | null
     compare_at_amount?: string | null
+    price_list_id?: string | null
   }>
   cost_price?: string | null
   cost_currency?: string | null

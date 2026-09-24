@@ -1,4 +1,6 @@
-color = Spree::OptionType.find_or_initialize_by(name: 'color')
+store = Spree::Current.store
+
+color = Spree::OptionType.for_store(store).find_or_initialize_by(name: 'color')
 color.label = 'Color'
 color.kind = 'color_swatch'
 color.save!
@@ -15,7 +17,7 @@ color.save!
 # sells only new goods should not find this on a fresh install. A marketplace
 # that wants its sellers to describe condition the same way loads it, or
 # creates its own.
-condition = Spree::OptionType.find_or_initialize_by(name: 'condition')
+condition = Spree::OptionType.for_store(store).find_or_initialize_by(name: 'condition')
 condition.label = 'Condition'
 condition.kind = 'buttons'
 condition.filterable = true

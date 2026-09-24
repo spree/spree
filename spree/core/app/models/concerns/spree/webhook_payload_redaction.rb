@@ -24,7 +24,11 @@ module Spree
     # Payment session secrets are gateway-agnostic: `external_client_secret` is
     # a core column and `external_data` is a free-form provider hash, so every
     # provider that stores a confirmation credential there is covered.
+    #
+    # `token` is the guest cart credential (`X-Spree-Token`), which a placed
+    # order inherits; with it anyone can read and change the cart.
     SENSITIVE_PAYLOAD_KEYS = %w[
+      token
       reset_token
       unsubscribe_token
       verification_token
@@ -33,6 +37,13 @@ module Spree
       client_secret
       ephemeral_key_secret
     ].freeze
+
+    # A gift card's `code` is what a shopper redeems, so it is spendable by
+    # whoever reads it. Only a gift card's own `code` is redacted — promotion,
+    # country and channel codes elsewhere in a payload are not credentials.
+    GIFT_CARD_CODE_KEY = 'code'
+    GIFT_CARD_NODE = 'gift_card'
+    GIFT_CARD_EVENT_PREFIX = 'gift_card.'
 
     REDACTION_PLACEHOLDER = '[REDACTED]'
 
@@ -59,9 +70,10 @@ module Spree
     #   keyed by their dotted path under `data`
     def self.split(payload)
       secrets = {}
+      gift_card_event = event_name_of(payload).start_with?(GIFT_CARD_EVENT_PREFIX)
 
       redacted = transform_data_hashes(payload) do |data|
-        redact(data, [ROOT_SEGMENT], secrets)
+        redact(data, [ROOT_SEGMENT], secrets, gift_card_event)
       end
 
       secrets.empty? ? [payload, {}] : [redacted, secrets]
@@ -83,20 +95,20 @@ module Spree
     # Walks a hash replacing sensitive values, recording each one against its
     # path so two secrets sharing a key name (`client_secret` at the top level
     # and inside `external_data`) cannot overwrite one another.
-    def self.redact(node, path, secrets)
+    def self.redact(node, path, secrets, gift_card_event = false)
       if node.is_a?(Array)
-        return node.each_with_index.map { |element, index| redact(element, path + [index.to_s], secrets) }
+        return node.each_with_index.map { |element, index| redact(element, path + [index.to_s], secrets, gift_card_event) }
       end
       return node unless node.is_a?(Hash)
 
       node.to_h do |key, value|
         key_path = path + [key.to_s]
 
-        if sensitive?(key, value)
+        if sensitive?(key, value) || gift_card_code?(key, value, path, gift_card_event)
           secrets[secret_key_for(key_path)] = value
           [key, REDACTION_PLACEHOLDER]
         else
-          [key, redact(value, key_path, secrets)]
+          [key, redact(value, key_path, secrets, gift_card_event)]
         end
       end
     end
@@ -128,10 +140,32 @@ module Spree
     private_class_method :restore
 
     def self.sensitive?(key, value)
-      SENSITIVE_PAYLOAD_KEYS.include?(key.to_s) && value.present? &&
-        !value.is_a?(Hash) && !value.is_a?(Array)
+      SENSITIVE_PAYLOAD_KEYS.include?(key.to_s) && scalar?(value)
     end
     private_class_method :sensitive?
+
+    # The `code` of a gift card: at the root of a gift card event's data, or
+    # on a `gift_card` node nested in another record (an order or cart that
+    # has one applied).
+    def self.gift_card_code?(key, value, path, gift_card_event)
+      return false unless key.to_s == GIFT_CARD_CODE_KEY && scalar?(value)
+      return true if gift_card_event && path == [ROOT_SEGMENT]
+
+      path.last == GIFT_CARD_NODE
+    end
+    private_class_method :gift_card_code?
+
+    def self.scalar?(value)
+      value.present? && !value.is_a?(Hash) && !value.is_a?(Array)
+    end
+    private_class_method :scalar?
+
+    def self.event_name_of(payload)
+      return '' unless payload.is_a?(Hash)
+
+      (payload[:name] || payload['name']).to_s
+    end
+    private_class_method :event_name_of
 
     # Applies +block+ to every `data` hash on the payload.
     #

@@ -51,11 +51,23 @@ module Spree
       # Negative price difference means the replacements cost less than what
       # came back, so the customer is owed the difference.
       def credit_due?
-        exchange.price_difference.to_d.negative?
+        settled_difference.negative?
       end
 
       def credit_amount
-        exchange.price_difference.to_d.abs
+        settled_difference.abs
+      end
+
+      # The difference on the units that actually came back — the same units
+      # the replacements are shipped for. Priced on the requested quantity, an
+      # exchange that asked for more than arrived would pay credit for goods
+      # nobody returned.
+      def settled_difference
+        @settled_difference ||= exchange.exchange_line_items.sum(0.to_d) do |line|
+          next 0.to_d if line.quantity.to_i.zero?
+
+          line.price_difference.to_d / line.quantity.to_i * line.received_quantity.to_i
+        end
       end
 
       def ensure_fulfillable
@@ -112,17 +124,13 @@ module Spree
       end
 
       def issue_store_credit
-        @refunds = [
-          Spree::StoreCredit.create!(
-            store: exchange.store,
-            customer: exchange.order.customer,
-            amount: credit_amount,
-            currency: exchange.currency,
-            created_by: refunder,
-            originator: exchange,
-            memo: "Exchange #{exchange.number}"
-          )
-        ]
+        @refunds = issue_refund_store_credit(
+          order: exchange.order,
+          amount: credit_amount,
+          record: exchange,
+          memo: "Exchange #{exchange.number}",
+          refunder: refunder
+        )
       end
 
       def refund_at_gateway

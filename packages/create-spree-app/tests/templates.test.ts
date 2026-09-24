@@ -6,19 +6,32 @@ import { gitignoreContent } from '../src/templates/gitignore'
 import { rootPackageJsonContent } from '../src/templates/package-json'
 import { readmeContent } from '../src/templates/readme'
 
+const keys = {
+  primaryKey: 'pk-value',
+  deterministicKey: 'dk-value',
+  keyDerivationSalt: 'salt-value',
+}
+
 describe('envContent', () => {
+  it('includes the Active Record encryption keys', () => {
+    const content = envContent('any', 3000, 1025, 8025, keys)
+    expect(content).toContain('ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=pk-value\n')
+    expect(content).toContain('ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=dk-value\n')
+    expect(content).toContain('ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=salt-value\n')
+  })
+
   it('includes the provided secret key', () => {
-    const content = envContent('my-secret-123', 3000, 1025, 8025)
+    const content = envContent('my-secret-123', 3000, 1025, 8025, keys)
     expect(content).toContain('SECRET_KEY_BASE=my-secret-123')
   })
 
   it('includes SPREE_PORT', () => {
-    const content = envContent('any', 3000, 1025, 8025)
+    const content = envContent('any', 3000, 1025, 8025, keys)
     expect(content).toContain('SPREE_PORT=3000')
   })
 
   it('uses custom port value', () => {
-    const content = envContent('any', 4567, 1025, 8025)
+    const content = envContent('any', 4567, 1025, 8025, keys)
     expect(content).toContain('SPREE_PORT=4567')
   })
 
@@ -26,7 +39,7 @@ describe('envContent', () => {
   // local mail catcher takes them. The scaffold probes them and writes the
   // result, so compose never falls back to a default nobody checked was free.
   it('pins the probed Mailpit ports', () => {
-    const content = envContent('any', 3000, 1026, 8026)
+    const content = envContent('any', 3000, 1026, 8026, keys)
 
     expect(content).toContain('MAILPIT_SMTP_PORT=1026')
     expect(content).toContain('MAILPIT_UI_PORT=8026')
@@ -194,7 +207,8 @@ describe('readmeContent', () => {
     // The dashboard's dev server IS the admin in Spree 6 — the Rails admin
     // engine is gone, so the README must not point at /admin.
     expect(content).toContain('http://localhost:5173')
-    expect(content).not.toContain('Classic admin')
+    expect(content).not.toMatch(/classic admin/i)
+    expect(content).not.toContain('localhost:3000/admin')
     expect(content).toContain('Seller Panel')
     expect(content).toContain('docs/developer/dashboard')
   })

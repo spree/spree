@@ -51,7 +51,7 @@ module Spree
     # Callbacks
     #
     after_initialize :set_defaults, if: :new_record?
-    before_validation :set_role_and_resource, if: :new_record?
+    before_validation :set_resource, if: :new_record?
     before_validation :set_invitee_from_email, on: :create
     after_commit :publish_invitation_created_event, on: :create, unless: :skip_email
 
@@ -97,10 +97,22 @@ module Spree
       true
     end
 
-    # Resends the invitation email if the invitation is pending and not expired
+    # The link that accepts this invitation. It carries the token, which is the
+    # only credential acceptance asks for, so hand it only to a caller who could
+    # have sent the invitation themselves.
+    #
+    # @return [String] an absolute URL when the app's origin is configured, otherwise a path
+    def acceptance_url
+      Rails.application.routes.url_helpers.admin_invitation_acceptance_url(self)
+    end
+
+    # Resends the invitation email if the invitation is pending and not expired.
+    # The token is rotated first, so a link that leaked with the earlier email
+    # stops working.
     def resend!
       return if expired? || deleted? || accepted?
 
+      regenerate_token
       publish_event('invitation.resent')
     end
 
@@ -123,10 +135,11 @@ module Spree
     # A role names what it governs, so the invitation follows it — one carrying
     # another resource's role would grant access somewhere the inviter never
     # named. Resolved at validation rather than on initialize, since a caller's
-    # own `resource` is not assigned yet when the record is instantiated.
-    def set_role_and_resource
+    # own `resource` is not assigned yet when the record is instantiated. The
+    # role is never defaulted: the inviter names it, and the controller checks
+    # they may grant it.
+    def set_resource
       self.resource ||= role&.resource || Spree::Store.current
-      self.role ||= Spree::Role.default_admin_role(resource)
     end
 
     def invitee_is_not_inviter

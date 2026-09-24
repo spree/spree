@@ -21,6 +21,7 @@ import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
   dlxCommand,
+  generateEncryptionKeys,
   generateSecretKeyBase,
   installCommand,
   isDockerRunning,
@@ -87,7 +88,15 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.writeFileSync(
     path.join(projectDir, '.env'),
-    envContent(generateSecretKeyBase(), port, options.mailpitSmtpPort, options.mailpitUiPort),
+    envContent(
+      generateSecretKeyBase(),
+      port,
+      options.mailpitSmtpPort,
+      options.mailpitUiPort,
+      generateEncryptionKeys(),
+    ),
+    // Holds SECRET_KEY_BASE and the encryption keys — owner-only.
+    { mode: 0o600 },
   )
   fs.writeFileSync(
     path.join(projectDir, 'package.json'),
@@ -206,13 +215,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     // summary already leads with it (served at /dashboard, plus the
     // customize command).
   } else {
-    printSuccessWithoutDocker(
-      projectName,
-      storefrontReady,
-      dashboardReady,
-      port,
-      options.packageManager,
-    )
+    printSuccessWithoutDocker(projectName, storefrontReady, dashboardReady, options.packageManager)
   }
 }
 
@@ -220,7 +223,6 @@ function printSuccessWithoutDocker(
   projectName: string,
   hasStorefront: boolean,
   hasDashboard: boolean,
-  port: number,
   pm: PackageManager,
 ): void {
   const run = runCommand(pm)
@@ -244,7 +246,8 @@ function printSuccessWithoutDocker(
 
   // With the React Dashboard chosen, its dev server IS the admin — and
   // `spree dev` co-runs it with the API, so the URL is live the moment the
-  // stack is up. One admin block; the classic admin gets a one-line pointer.
+  // stack is up. Without it there is no admin to open yet — Spree 6 has no
+  // Rails admin — so point at the command that adds one.
   if (hasDashboard) {
     lines.push(
       '',
@@ -258,8 +261,8 @@ function printSuccessWithoutDocker(
     lines.push(
       '',
       `${pc.bold('Admin Dashboard')}`,
-      `  http://localhost:${port}/admin`,
-      `  ${pc.dim("# you'll create the admin account on first run")}`,
+      `  ${run} spree add dashboard`,
+      `  ${pc.dim('# scaffolds the React admin into apps/dashboard/')}`,
       '',
     )
   }

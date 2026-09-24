@@ -83,10 +83,11 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
         expect(json_response['id']).to start_with('cart_')
       end
 
-      it 'marks the coupon code as used' do
+      it 'holds the coupon code for the cart without using it up' do
         post :create, params: { cart_id: order.prefixed_id, code: 'multi1' }
 
-        expect(coupon_code.reload.state).to eq('used')
+        expect(coupon_code.reload.state).to eq('unused')
+        expect(coupon_code.cart).to eq(order)
       end
     end
 

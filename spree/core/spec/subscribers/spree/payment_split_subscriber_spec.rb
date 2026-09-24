@@ -51,6 +51,26 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
     expect(seller_order.reload.payment_status).to eq('partially_refunded')
   end
 
+  # A child order owns no payments, so its share is the only thing that can
+  # say what it gave back — and credit never touches the share.
+  it 'reports a credit refund against one child and leaves the sibling alone' do
+    Spree::Orders::UpdateStatuses.call(order: first_party_order)
+
+    create(:store_credit, refunded_order: seller_order, store: store,
+                          customer: seller_order.customer, amount: 40)
+
+    expect(seller_order.reload.payment_status).to eq('refunded')
+    expect(first_party_order.reload.payment_status).to eq('paid')
+  end
+
+  it 'counts a credit refund alongside a gateway refund on the same child' do
+    refund!(seller_order, 10)
+    create(:store_credit, refunded_order: seller_order, store: store,
+                          customer: seller_order.customer, amount: 30)
+
+    expect(seller_order.reload.payment_status).to eq('refunded')
+  end
+
   it 'totals several refunds on one order rather than counting the last' do
     refund!(seller_order, 10)
     refund!(seller_order, 5)

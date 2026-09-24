@@ -170,6 +170,22 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
+  context 'when a promotion makes shipping free' do
+    before do
+      fulfillment = order.fulfillments.first
+      fulfillment.update_columns(cost: 5, discount_total: -5)
+      order.discounts.create!(fulfillment: fulfillment, amount: -5, kind: 'promotion', label: 'Free Shipping')
+    end
+
+    it 'shows the shipping cost before the discount, so the lines add up to the total' do
+      body = described_class.confirm_email(order).text_part.body.to_s
+
+      expect(body).to match(/Free Shipping -\$5\.00/)
+      expect(body).to match(/#{Spree.t(:shipping)}: .*\$5\.00/)
+      expect(body).not_to match(/#{Spree.t(:shipping)}: .*\$0\.00/)
+    end
+  end
+
   context 'displays unit costs from line item' do
     # Regression test for #2772
 

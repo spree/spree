@@ -125,6 +125,11 @@
         "title": "Willkommen zurück"
       },
       "logout": "Abmelden",
+      "no_store_access": {
+        "description": "Sie sind angemeldet, aber Ihr Konto gehört noch keinem Store an. Bitten Sie einen Store-Administrator um eine Einladung oder melden Sie sich mit einem anderen Konto an.",
+        "signed_in_as": "Angemeldet als {{email}}",
+        "title": "Sie haben keinen Zugriff auf einen Store"
+      },
       "reset_password": {
         "confirm_password_label": "Neues Passwort bestätigen",
         "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
@@ -429,7 +434,6 @@
         "filter_select_placeholder": "Auswählen…",
         "filter_text_placeholder": "Filtern…",
         "filter_to_placeholder": "Filtern auf…",
-        "more_conditions": "Weitere Bedingungen",
         "operators": {
           "after": "nach",
           "before": "vor",
@@ -685,6 +689,32 @@
       },
       "quantity": {
         "label": "Menge"
+      },
+      "setup": {
+        "country_code": {
+          "help": "Von wo Sie versenden. Ihr Shop kann weltweit verkaufen — dies legt nur Startwährung, Lager und Liefergebiete fest, alle später änderbar.",
+          "label": "Land",
+          "placeholder": "Länder durchsuchen"
+        },
+        "currency": {
+          "help": "Ihre Standardwährung. Jederzeit erweiterbar.",
+          "label": "Währung",
+          "placeholder": "Währungen durchsuchen"
+        },
+        "locale": {
+          "help": "Ihre Standardsprache. Jederzeit erweiterbar.",
+          "label": "Sprache"
+        },
+        "password_confirmation": {
+          "label": "Passwort bestätigen"
+        },
+        "sample_data": {
+          "help": "Fügt im Hintergrund Demo-Produkte, Kategorien, Kunden und Bestellungen hinzu, damit Sie das Dashboard erkunden können. Dauert einige Minuten und lädt Produktbilder herunter.",
+          "label": "Beispieldaten laden"
+        },
+        "store_name": {
+          "label": "Shopname"
+        }
       },
       "shipping": {
         "label": "Versand"
@@ -1882,7 +1912,7 @@
         },
         "create_line_items": {
           "name": "Bestellpositionen erstellen",
-          "description": "Fügt dem Warenkorb die angegebene Menge der Variante hinzu"
+          "description": "Fügt dem Warenkorb die angegebene Menge der Variante kostenlos hinzu"
         },
         "free_shipping": {
           "name": "Kostenloser Versand",
