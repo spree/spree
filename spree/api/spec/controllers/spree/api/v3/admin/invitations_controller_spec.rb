@@ -53,6 +53,15 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
         expect(Spree::Invitation.last.role).to eq(staff_role)
       end
 
+      # Leaving the role out used to fall back to the admin role.
+      it 'refuses an invitation without a role' do
+        expect {
+          post :create, params: { email: 'attacker@evil.com' }, as: :json
+        }.not_to change(Spree::Invitation, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
       it 'forbids inviting into a role whose permissions exceed its own' do
         owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 

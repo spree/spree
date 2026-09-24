@@ -52,12 +52,21 @@ RSpec.describe Spree::Invitation, type: :model do
 
     # Resolved at validation, not on initialize: the caller's own resource is
     # not assigned yet when the record is instantiated.
-    it 'defaults the resource and its admin role before validation' do
+    it 'defaults the resource before validation' do
       invitation = build(:invitation)
       invitation.valid?
 
       expect(invitation.resource).to eq(Spree::Store.current)
-      expect(invitation.role).to eq(Spree::Role.default_admin_role)
+    end
+
+    # Defaulting to the admin role let anyone allowed to invite staff hand out
+    # admin by leaving the role out.
+    it 'never defaults the role' do
+      invitation = build(:invitation, role: nil)
+
+      expect(invitation).not_to be_valid
+      expect(invitation.role).to be_nil
+      expect(invitation.errors[:role]).to be_present
     end
 
     it 'follows an explicitly assigned resource' do
