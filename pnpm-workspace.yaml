@@ -44,17 +44,21 @@ allowBuilds:
 # fixes here. Revisit when the upstream dependents pull the fixes in on
 # their own and these become no-ops.
 overrides:
-  # Base UI is pinned exactly, not caret-ranged. `@base-ui/react` carries an
-  # exact `@base-ui/utils` dependency, and 0.3.0 of that package introduced a
-  # `useStore` helper importing `useSyncExternalStore` by name from the
-  # CommonJS `use-sync-external-store` shim. Vite converts that during
-  # prebundling for an ordinary dependency, but dashboard-ui ships source, so
-  # an installed copy reaches the browser with the named CJS import intact and
-  # every scaffolded app fails to boot. The monorepo lockfile hid this; only
-  # fresh installs floated onto the newer Base UI. Bump deliberately, with a
-  # scaffold boot test.
-  '@base-ui/react': 1.8.0
-  '@base-ui/utils': 0.4.0
+  # Base UI is held at 1.5.0 deliberately, not merely pinned. @base-ui/react
+  # 1.6.0 moved to @base-ui/utils 0.3.x, which added a `useStore` helper
+  # importing `useSyncExternalStore` by NAME from the CommonJS
+  # `use-sync-external-store` shim. Vite converts CommonJS while prebundling a
+  # dependency, but @spree/dashboard-ui ships source: in this repo it is a
+  # workspace link Vite crawls as app source, while an installed copy sits in
+  # node_modules and is not crawled, so that file reaches the browser with the
+  # named CommonJS import intact and the dashboard dies with a SyntaxError
+  # before rendering. 1.5.0 pins utils 0.2.9, which has no such file.
+  #
+  # Only a scaffolded app reproduces this — the monorepo cannot, because of
+  # the workspace link. Verify any bump by scaffolding a project, never by
+  # running the starter here.
+  '@base-ui/react': 1.5.0
+  '@base-ui/utils': 0.2.9
   # react-redux 9.2.0 (transitive via recharts, whose range is 8.x || 9.x)
   # published without the provenance 9.1.0 had, so trustPolicy: no-downgrade
   # refuses it. 9.3.0 carries provenance again and is in range. Drop this once
