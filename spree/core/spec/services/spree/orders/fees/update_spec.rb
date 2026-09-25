@@ -25,6 +25,19 @@ module Spree
           expect(result).to be_failure
         end.not_to change { order.reload.total }
       end
+
+      context 'when the order has been paid in full' do
+        before do
+          create(:payment, amount: order.total, order: order, status: 'completed')
+          order.update_statuses!
+        end
+
+        it 'reads partially paid once the fee raises the total' do
+          expect do
+            described_class.call(order: order, fee: fee, attributes: { amount: 6 })
+          end.to change { order.reload.payment_status }.from('paid').to('partially_paid')
+        end
+      end
     end
   end
 end

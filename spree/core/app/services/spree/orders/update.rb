@@ -30,6 +30,7 @@ module Spree
           end
 
           @order.recalculate_totals!
+          @order.update_statuses!
         end
 
         success(@order.reload)

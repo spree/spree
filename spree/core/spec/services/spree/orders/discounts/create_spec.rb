@@ -88,6 +88,19 @@ module Spree
           expect(result.error.to_s).to eq(Spree.t('errors.messages.discount_value_type_invalid'))
         end
       end
+
+      context 'when the order has been paid in full' do
+        before do
+          create(:payment, amount: order.total, order: order, status: 'completed')
+          order.update_statuses!
+        end
+
+        it 'reads overcharged once the total falls below what was paid' do
+          expect do
+            described_class.call(order: order, label: 'Goodwill', value: 3, line_item: line_item)
+          end.to change { order.reload.payment_status }.from('paid').to('overcharged')
+        end
+      end
     end
   end
 end
