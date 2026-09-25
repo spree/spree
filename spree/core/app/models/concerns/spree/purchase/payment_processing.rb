@@ -31,11 +31,15 @@ module Spree
         payments.pending
       end
 
-      # Active front-end payment methods available for this record.
+      # Active front-end payment methods available for this record. Store
+      # credit is never one of them: it is applied through its own endpoint
+      # before the buyer chooses how to pay the rest.
       #
       # @return [Array<Spree::PaymentMethod>]
       def payment_methods
-        store.payment_methods.active.storefront_visible.select { |payment_method| payment_method.available_for_order?(self) }
+        store.payment_methods.active.storefront_visible.select do |payment_method|
+          !payment_method.store_credit? && payment_method.available_for_order?(self)
+        end
       end
 
       # Free checkouts have no money to collect.

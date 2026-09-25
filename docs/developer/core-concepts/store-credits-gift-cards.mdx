@@ -419,6 +419,8 @@ Store Credits and Gift Cards work differently at checkout:
 - **Store Credits** - Require a customer account; applied from the customer's balance
 - **Gift Cards** - Can be used by anyone (guests included); applied directly to the order via code
 
+Both are applied before the customer chooses how to pay, and neither appears among the cart's payment methods. An order uses one or the other, never both. A gift card covers as much of the total as its balance allows and keeps up as the total changes. See the [cart & checkout SDK guide](/developer/sdk/store/cart-checkout) for the calls.
+
 ### Checkout Flow
 
 ```mermaid

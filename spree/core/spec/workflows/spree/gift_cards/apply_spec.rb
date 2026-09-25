@@ -4,7 +4,7 @@ RSpec.describe Spree::GiftCards::Apply do
   subject { described_class.call(gift_card: gift_card, order: order) }
 
   let(:store) { Spree::Store.default }
-  let(:order) { create(:order, store: store, customer: order_user) }
+  let(:order) { create(:order_with_totals, store: store, customer: order_user, line_items_price: 30) }
   let(:order_user) { create(:user) }
 
   let(:gift_card) { create(:gift_card, amount: 50, store: store, customer: gift_card_user) }
@@ -14,7 +14,6 @@ RSpec.describe Spree::GiftCards::Apply do
 
   before do
     order.update_column(:total, 30)
-    order.update_column(:shipment_total, 10)
   end
 
   it 'applies the gift card to an order' do
@@ -110,7 +109,7 @@ RSpec.describe Spree::GiftCards::Apply do
     let(:users) { Array.new(5) { create(:user) } }
     let(:orders) do
       users.map do |user|
-        order = create(:order, store: store, customer: user)
+        order = create(:order_with_totals, store: store, customer: user, line_items_price: 80)
         order.update_columns(total: 80, item_total: 80)
         order
       end
@@ -173,7 +172,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when the gift card is already held by another open cart' do
-    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let(:other_cart) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 50) }
 
     before do
       other_cart.update_column(:total, 50)
@@ -224,7 +223,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when a hold no longer carries this card' do
-    let!(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let!(:other_cart) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 50) }
     let!(:replacement_card) { create(:gift_card, amount: 50, store: store) }
 
     before do
@@ -253,8 +252,8 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when several carts hold the card' do
-    let!(:first_hold) { create(:cart, store: store, customer: order_user) }
-    let!(:second_hold) { create(:cart, store: store, customer: order_user) }
+    let!(:first_hold) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 10) }
+    let!(:second_hold) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 10) }
 
     # Applying twice would move the card rather than leave both holding it,
     # so the second hold is attached directly — the state this workflow has
@@ -299,7 +298,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when a hold claims completion after the list is gathered' do
-    let!(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let!(:other_cart) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 50) }
 
     before do
       other_cart.update_column(:total, 50)
@@ -324,7 +323,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'lock ordering' do
-    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let(:other_cart) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 50) }
 
     before do
       other_cart.update_column(:total, 50)
@@ -369,7 +368,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when the other cart is mid-completion' do
-    let(:other_cart) { create(:cart, store: store, customer: order_user) }
+    let(:other_cart) { create(:cart_with_line_items, store: store, customer: order_user, line_items_price: 50) }
 
     before do
       other_cart.update_column(:total, 50)
@@ -400,7 +399,7 @@ RSpec.describe Spree::GiftCards::Apply do
   context 'when a draft order from an in-flight checkout holds the card' do
     let(:completing_cart) { create(:cart, store: store, customer: order_user) }
     let!(:draft_order) do
-      create(:order, store: store, customer: order_user, cart: completing_cart, status: 'draft').tap do |draft|
+      create(:order_with_totals, store: store, customer: order_user, cart: completing_cart, status: 'draft', line_items_price: 50).tap do |draft|
         draft.update_column(:total, 50)
         expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: draft)).to be_success
       end
@@ -429,7 +428,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
   context 'when the gift card is held by a completed order' do
     let!(:completed_order) do
-      create(:order, store: store, customer: order_user).tap do |other|
+      create(:order_with_totals, store: store, customer: order_user, line_items_price: 50).tap do |other|
         other.update_column(:total, 50)
         expect(Spree.gift_card_apply_workflow.call(gift_card: gift_card, order: other)).to be_success
         other.update_column(:completed_at, Time.current)
@@ -446,7 +445,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
   context 'when the order belongs to a non-default store' do
     let(:other_store) { create(:store, default: false) }
-    let(:order) { create(:order, store: other_store, customer: order_user) }
+    let(:order) { create(:order_with_totals, store: other_store, customer: order_user, line_items_price: 30) }
     let(:gift_card) { create(:gift_card, amount: 50, store: other_store, customer: gift_card_user) }
 
     it 'applies the gift card to the order' do

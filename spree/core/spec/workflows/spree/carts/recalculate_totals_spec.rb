@@ -120,6 +120,77 @@ module Spree
         expect { described_class.call(cart: cart) }.not_to raise_error
         expect(described_class.call(cart: cart)).to be_success
       end
+
+      # Totals move without the items changing (delivery, a coupon, tax), and
+      # nothing else resizes the card's payment to follow them.
+      context 'with a gift card paying towards it' do
+        let(:gift_card) { create(:gift_card, amount: 100, store: store) }
+        let(:line_item) { cart.line_items.first }
+        let(:gift_card_payment) { cart.reload.payments.store_credits.checkout.first }
+
+        before do
+          create(:store_credit_payment_method)
+          cart.apply_gift_card(gift_card)
+        end
+
+        it 'grows the gift card payment when the total rises' do
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.amount).to eq(cart.reload.total)
+          expect(gift_card.reload.amount_used).to eq(cart.total)
+        end
+
+        it 'shrinks it and returns the difference to the card when the total falls' do
+          line_item.update_column(:price, 5)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.amount).to eq(cart.reload.total)
+          expect(gift_card.reload.amount_used).to eq(cart.total)
+        end
+
+        it 'releases the card and restores its balance when nothing is left to pay' do
+          line_item.update_column(:price, 0)
+
+          described_class.call(cart: cart)
+
+          expect(cart.reload.gift_card).to be_nil
+          expect(cart.payments.store_credits.checkout).to be_empty
+          expect(gift_card.reload.amount_used).to eq(0)
+        end
+
+        it 'draws no more from a card that has expired since it was applied' do
+          paid = gift_card_payment.amount
+          gift_card.update_column(:expires_at, 1.day.ago)
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.reload.amount).to eq(paid)
+          expect(gift_card.reload.amount_used).to eq(paid)
+        end
+
+        it 'keeps what the card already pays when its amount is lowered below that' do
+          paid = gift_card_payment.amount
+          gift_card.update_column(:amount, 1)
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.reload.amount).to eq(paid)
+        end
+
+        it 'leaves a resized payment that completion can still take' do
+          line_item.update_column(:price, 25)
+          described_class.call(cart: cart)
+
+          gift_card_payment.purchase!
+
+          expect(gift_card_payment.reload).to be_completed
+        end
+      end
     end
   end
 end

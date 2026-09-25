@@ -117,6 +117,12 @@ describe Spree::StoreCredits::Apply, type: :service do
         expect(order.payments.where(status: 'invalid').count).to eq(0)
       end
 
+      it 'records no new eligibility event when the amount has not changed' do
+        eligible_events = store_credit.store_credit_events.where(action: Spree::StoreCredit::ELIGIBLE_ACTION)
+
+        expect { described_class.call(order: order.reload) }.not_to(change { eligible_events.count })
+      end
+
       it 'adjusts amount when order total changes' do
         order.update_column(:total, 300)
 
@@ -125,6 +131,68 @@ describe Spree::StoreCredits::Apply, type: :service do
 
         expect(order.payments.store_credits.checkout.count).to eq(1)
         expect(order.payments.store_credits.checkout.first.amount).to eq(300)
+      end
+
+      # Regression: completion takes a store credit payment against the event
+      # recorded for its amount, so a payment resized after creation could no
+      # longer be taken ("Could not find store credit").
+      it 'can still take the payment after its amount changes' do
+        order.update_column(:total, 300)
+
+        described_class.call(order: order.reload)
+        payment = order.reload.payments.store_credits.checkout.first
+        payment.purchase!
+
+        expect(payment.reload).to be_completed
+        expect(store_credit.reload.amount_used).to eq(300)
+      end
+    end
+
+    # Regression: a payment not yet taken reserves nothing from its credit, but
+    # the resize counted it twice, so re-applying a credit smaller than the new
+    # total claimed more than it held and completion then failed.
+    context 'when re-applied after the total grows past the credit' do
+      let(:store_credit) { create(:store_credit, amount: 30, store: store) }
+      let(:order) { create(:order, customer: store_credit.customer, total: 40, store: store) }
+
+      before do
+        order.update_column(:total, 40)
+        described_class.call(order: order)
+        order.update_column(:total, 45)
+      end
+
+      it 'never takes more than the credit holds' do
+        described_class.call(order: order.reload)
+
+        payments = order.reload.payments.store_credits.checkout
+        expect(payments.count).to eq(1)
+        expect(payments.sum(:amount)).to eq(30)
+      end
+
+      it 'draws the rest from another credit rather than the same one twice' do
+        create(:store_credit, customer: store_credit.customer, amount: 100, store: store)
+
+        described_class.call(order: order.reload)
+
+        by_credit = order.reload.payments.store_credits.checkout.to_a.group_by(&:source_id).transform_values { |payments| payments.sum(&:amount) }
+        expect(by_credit[store_credit.id]).to eq(30)
+        expect(by_credit.values.sum).to eq(45)
+      end
+    end
+
+    context 'when a gift card is applied to the order' do
+      let(:store_credit) { create(:store_credit, amount: 500, store: store) }
+      let(:order) do
+        create(:order, customer: store_credit.customer, total: order_total, store: store,
+                       gift_card: create(:gift_card, store: store))
+      end
+
+      before { order.update_column(:total, order_total) }
+
+      it 'refuses, since a gift card and store credit are not combined on one order' do
+        expect(subject).not_to be_success
+        expect(subject.error.to_s).to eq("You can't apply store credit after you applied a gift card.")
+        expect(order.reload.payments.store_credits).to be_empty
       end
     end
 
@@ -209,6 +277,41 @@ describe Spree::StoreCredits::Apply, type: :service do
       expect(payments.count).to eq(1)
       expect(payments.first.source.currency).to eq(mixed_order.currency)
       expect(payments.first.amount).to eq(30)
+    end
+  end
+
+  # Regression: applying a gift card issues the customer a store credit that
+  # backs the card's payment on that one order. Drawing store credit for another
+  # order spent that balance a second time, leaving the gift card's own order
+  # unable to complete.
+  context 'when the customer holds a store credit issued by a gift card' do
+    let(:gift_card_customer) { create(:customer) }
+    let(:gift_card_order) { create(:order_with_line_items, store: store, customer: gift_card_customer) }
+
+    before do
+      create(:store_credit_payment_method)
+      gift_card_order.update_columns(total: 100, item_total: 100, payment_total: 0)
+      create(:store_credit, customer: gift_card_customer, amount: 80, store: store,
+                            originator: create(:gift_card, amount: 100, store: store), created_at: 2.days.ago)
+    end
+
+    it "draws only against the customer's own store credit" do
+      create(:store_credit, customer: gift_card_customer, amount: 30, store: store, created_at: 1.day.ago)
+
+      described_class.call(order: gift_card_order)
+
+      payments = gift_card_order.reload.payments.store_credits
+      expect(payments.count).to eq(1)
+      expect(payments.first.source.originator).to be_nil
+      expect(payments.first.amount).to eq(30)
+    end
+
+    it 'refuses when the customer has no store credit of their own' do
+      result = described_class.call(order: gift_card_order)
+
+      expect(result).not_to be_success
+      expect(result.error.to_s).to eq('User does not have any Store Credits available')
+      expect(gift_card_order.reload.payments.store_credits).to be_empty
     end
   end
 end

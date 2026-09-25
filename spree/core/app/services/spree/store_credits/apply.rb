@@ -13,7 +13,10 @@ module Spree
         # credit payment for a negative amount.
         remaining_total = [amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance, 0].max
 
-        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.customer&.store_credits&.any?
+        # Mirrors Spree::GiftCards::Apply, which refuses a gift card once store
+        # credit is in use: the two are never combined on one order.
+        return failure(nil, Spree.t(:store_credit_using_gift_card_error)) if @order.gift_card.present?
+        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless spendable_store_credits.exists?
 
         ApplicationRecord.transaction do
           existing = @order.payments.store_credits.where(status: :checkout)
@@ -40,12 +43,10 @@ module Spree
       # creating unnecessary invalid payment records on every recalculation.
       def update_existing_payments(payments, remaining_total)
         payments.each do |payment|
-          credit = payment.source
-          available = credit.amount_remaining + payment.amount
-          new_amount = [available, remaining_total].min
+          new_amount = store_credit_amount(payment.source, remaining_total)
 
           if new_amount.positive?
-            payment.update_column(:amount, new_amount)
+            payment.update_store_credit_amount!(new_amount)
             remaining_total -= new_amount
           else
             payment.invalidate!
@@ -53,19 +54,14 @@ module Spree
         end
 
         # If there's still remaining total, apply from additional store credits
-        apply_store_credits(remaining_total) if remaining_total.positive?
+        apply_store_credits(remaining_total, except: payments.map(&:source_id)) if remaining_total.positive?
       end
 
-      def apply_store_credits(remaining_total)
+      def apply_store_credits(remaining_total, except: [])
         payment_method = Spree::PaymentMethod::StoreCredit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
-        # Only credits in the order's own currency: an older credit in another
-        # currency would be drawn against first and, being unusable, either
-        # overshoot the allowed amount or persist a payment that fails later
-        # at authorization. This matches what the order already counts as
-        # available (Purchase::StoreCredits#total_available_store_credit).
-        @order.customer.store_credits.for_store(@order.store).where(currency: @order.currency).oldest_first.each do |credit|
+        spendable_store_credits.where.not(id: except).oldest_first.each do |credit|
           break unless remaining_total.positive?
           next if credit.amount_remaining.zero?
 
@@ -73,6 +69,12 @@ module Spree
           create_store_credit_payment(payment_method, credit, amount_to_take)
           remaining_total -= amount_to_take
         end
+      end
+
+      def spendable_store_credits
+        return Spree::StoreCredit.none unless @order.customer
+
+        @order.customer.store_credits.without_gift_card.for_store(@order.store).where(currency: @order.currency)
       end
 
       def create_store_credit_payment(payment_method, credit, amount)
