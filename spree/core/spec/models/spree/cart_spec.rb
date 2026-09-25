@@ -395,6 +395,17 @@ describe Spree::Cart, type: :model do
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
     let(:ship_address) { create(:address, country: country, state: state) }
     let(:cart) { create(:cart_with_line_items, store: store, ship_address: ship_address, email: 'buyer@example.com') }
+    let(:express) do
+      create(:shipping_method, name: 'Express').tap do |method|
+        method.calculator.preferred_amount = 15
+        method.calculator.save
+      end
+    end
+
+    def choose(delivery_method)
+      fulfillment = cart.fulfillments.reload.first
+      fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: delivery_method).id
+    end
 
     describe '#rebuild_fulfillments!' do
       it 'builds cart-owned proposals from the current items and address' do
@@ -404,6 +415,39 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.map(&:order_id).uniq).to eq([nil])
         expect(cart.fulfillments.first.address_id).to eq(ship_address.id)
         expect(cart.fulfillments.first.delivery_rates).to be_present
+      end
+
+      it 'prices each proposal at its selected rate' do
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.cost).to eq(5)
+        expect(fulfillment.reload.cost).to eq(5)
+      end
+
+      it 'keeps the delivery method the customer chose' do
+        express
+        cart.rebuild_fulfillments!
+        choose(express)
+
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(express)
+        expect(fulfillment.cost).to eq(15)
+      end
+
+      it 'falls back to the default when the chosen method is no longer offered' do
+        express
+        cart.rebuild_fulfillments!
+        choose(express)
+        express.destroy
+
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(shipping_method)
+        expect(fulfillment.cost).to eq(5)
       end
 
       it 'is idempotent and never touches a completed cart' do
@@ -460,6 +504,17 @@ describe Spree::Cart, type: :model do
         expect(completed).not_to receive(:rebuild_fulfillments!)
         completed.ensure_updated_fulfillments
       end
+
+      it 'keeps the chosen delivery and its price when an item is added after the address' do
+        express
+        cart.recalculate_for_address_change!
+        choose(express)
+
+        Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+
+        expect(cart.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(express)
+        expect(cart.reload.delivery_total).to eq(15)
+      end
     end
 
     describe '#recalculate_for_address_change!' do
@@ -469,6 +524,20 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.reload).to be_present
         expect(cart.reload.delivery_total).to be > 0
         expect(cart.total).to eq(cart.item_total + cart.delivery_total + cart.adjustment_total)
+      end
+
+      # A guest's address edit updates the row in place, so its id alone cannot
+      # tell a new destination from the old one.
+      it 'starts from the default rate when the address is edited in place' do
+        express
+        cart.recalculate_for_address_change!
+        choose(express)
+        cart.ship_address.update!(address1: '5 Edited Way')
+
+        cart.recalculate_for_address_change!
+
+        expect(cart.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
+        expect(cart.reload.delivery_total).to eq(5)
       end
 
       # The re-price used to be computed into memory and dropped: nothing here

@@ -941,7 +941,15 @@ module Spree
       fully_fulfilled?
     end
 
-    def rebuild_fulfillments!
+    # @param keep_selection [Boolean] false when the destination changed, so
+    #   the new proposals start from the default rate
+    def rebuild_fulfillments!(keep_selection: true)
+      # A placed order's delivery was charged at placement; re-pricing it
+      # belongs to the post-placement edit path, not to a rebuild.
+      unless completed?
+        previous_selections = keep_selection ? fulfillments.selected_rates_by_stock_location : {}
+      end
+
       discounts.for_fulfillments.delete_all
       tax_lines.for_fulfillments.delete_all
       fees.for_fulfillments.delete_all
@@ -956,7 +964,10 @@ module Spree
       fulfillment_items.on_hand_or_backordered.delete_all
 
       self.fulfillments = order_routing_strategy.for_allocation.map do |package|
-        package.to_fulfillment.tap { |fulfillment| fulfillment.address_id = ship_address_id }
+        package.to_fulfillment.tap do |fulfillment|
+          fulfillment.address_id = ship_address_id
+          fulfillment.carry_over_selection(previous_selections.fetch(fulfillment.stock_location_id, [])) if previous_selections
+        end
       end
     end
 
@@ -1053,13 +1064,13 @@ module Spree
       ::Spree::PromotionHandler::Cart.new(self).activate
     end
 
-    # Drops stale fulfillments so they are rebuilt from current items.
+    # Rebuilds stale fulfillments from the current items, keeping the chosen
+    # rates. The first ones are Spree::Orders::BuildFulfillments' to build.
     def ensure_updated_fulfillments
       if fulfillments.any? && !completed?
-        fulfillments.destroy_all
-        update_column(:delivery_total, 0)
+        rebuild_fulfillments!
 
-        # Manually publish update event since update_column bypasses callbacks
+        # Nothing here saves the order, so its update event is published by hand.
         publish_event('order.updated')
       end
     end
