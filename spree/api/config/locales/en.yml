@@ -61,4 +61,5 @@ en:
         payments:
           method_unavailable: This payment method is not available for this order.
           session_required: This payment method requires a payment session. Use the payment sessions endpoint instead.
+          store_credits_endpoint_required: Store credit cannot be created as a payment here. Apply it with POST /carts/{cart_id}/store_credits instead.
       wrong_shipment_target: target shipment is the same as original shipment

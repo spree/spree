@@ -205,6 +205,46 @@ describe Spree::Payment, type: :model do
           it { is_expected.to be(true) }
         end
       end
+
+      context 'with a store credit payment method' do
+        let(:order) { create(:order, store: store, total: 55) }
+        let(:payment_method) { create(:store_credit_payment_method, store: store) }
+        let(:payment) do
+          build(:payment, order: order, amount: payment_amount, payment_method: payment_method, source: source)
+        end
+
+        let!(:larger_credit) { create(:store_credit, customer: order.customer, store: store, amount: 45) }
+        let!(:smaller_credit) { create(:store_credit, customer: order.customer, store: store, amount: 20) }
+
+        context 'when the amount fits the credit backing the payment' do
+          let(:source) { smaller_credit }
+          let(:payment_amount) { 20 }
+
+          it { is_expected.to be(true) }
+        end
+
+        context 'when the amount exceeds the credit backing the payment' do
+          let(:source) { smaller_credit }
+          let(:payment_amount) { 55 }
+
+          it 'is invalid, since a credit cannot be drawn past its own balance' do
+            subject
+
+            expect(payment.errors.full_messages).to include('Amount is greater than the allowed maximum amount of 20.0')
+          end
+        end
+
+        context 'when a larger credit exists but does not back the payment' do
+          let(:source) { smaller_credit }
+          let(:payment_amount) { 45 }
+
+          it 'is invalid' do
+            subject
+
+            expect(payment.errors.full_messages).to include('Amount is greater than the allowed maximum amount of 20.0')
+          end
+        end
+      end
     end
   end
 
