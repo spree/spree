@@ -9,17 +9,42 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       PAYMENT_STATUSES = Spree::Order::PAYMENT_STATUSES
+      SETTLED_PAYMENT_STATUSES = %w[paid overcharged].freeze
 
       def call(order:)
-        order.update_columns(
-          payment_status: payment_status_for(order),
-          fulfillment_status: fulfillment_status_for(order),
-          updated_at: Time.current
-        )
+        settled_now = false
+
+        # Derived and written under the order's row lock, so two runs cannot
+        # interleave: one that derived before another settled the order would
+        # otherwise write its older status back and let a later run announce
+        # the payment a second time. The status is read from the locked row
+        # rather than reloaded, which would discard what the caller has not
+        # saved yet.
+        Spree::Order.transaction do
+          committed_status = Spree::Order.where(id: order.id).lock.pick(:payment_status)
+          payment_status = payment_status_for(order)
+
+          order.update_columns(
+            payment_status: payment_status,
+            fulfillment_status: fulfillment_status_for(order),
+            updated_at: Time.current
+          )
+
+          settled_now = settled?(payment_status) && !settled?(committed_status)
+        end
+
+        # Announced from here rather than from the payment, so the payload
+        # already carries the status and payment total it announces.
+        order.publish_event('order.paid') if settled_now
+
         success(order)
       end
 
       private
+
+      def settled?(payment_status)
+        payment_status.in?(SETTLED_PAYMENT_STATUSES)
+      end
 
       # Money is quantized to currency precision before comparing, and
       # granted refunds are subtracted from the target total — the two rules
@@ -77,7 +102,7 @@ module Spree
           ]
         end
 
-        splits = order.payment_splits.to_a
+        splits = order.payment_splits.reload.to_a
         captured = splits.sum(&:captured_amount)
 
         # Authorized means still to draw: what the shares allow, less what has

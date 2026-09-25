@@ -154,9 +154,9 @@ module Spree
       end
 
       def create_draft_order
-        # Reloaded because the copier writes the totals with update_columns,
-        # which leaves this instance holding the zeros it was built with —
-        # and the payment decision immediately below is made against them.
+        # Reloaded because the copier re-points payments with update_all,
+        # which this instance's cached associations know nothing of — and the
+        # payment decision immediately below is made against them.
         @order = create_draft_order!(cart).reload
       end
 
@@ -214,6 +214,11 @@ module Spree
       # nothing on it to merge with — the cart's hash simply becomes the
       # order's. A deep copy, so a later edit to either record can never reach
       # the other through a shared nested hash.
+      #
+      # The totals go in with the insert rather than after the copy: the
+      # order.created event is serialised at commit from a copy of the row that
+      # a copied record loaded along the way, which a later write never
+      # reaches — so it announced every order at zero.
       def create_draft_order!(cart)
         order = nil
         ApplicationRecord.transaction do
@@ -237,19 +242,7 @@ module Spree
             last_ip_address: cart.last_ip_address,
             metadata: cart.metadata.to_h.deep_dup,
             ship_address: cart.ship_address&.snapshot,
-            bill_address: cart.bill_address&.snapshot
-          )
-          order.save!
-
-          line_item_map = copy_line_items!(cart, order)
-          fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
-          copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
-          copy_promotions!(cart, order)
-          copy_tax_identifier!(cart, order)
-          copy_po_document!(cart, order)
-          repoint_money_records!(cart, order)
-
-          order.update_columns(
+            bill_address: cart.bill_address&.snapshot,
             item_total: cart.item_total,
             total_quantity: cart.total_quantity,
             adjustment_total: cart.adjustment_total,
@@ -263,6 +256,15 @@ module Spree
             total: cart.total,
             payment_total: cart.payment_total
           )
+          order.save!
+
+          line_item_map = copy_line_items!(cart, order)
+          fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
+          copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
+          copy_promotions!(cart, order)
+          copy_tax_identifier!(cart, order)
+          copy_po_document!(cart, order)
+          repoint_money_records!(cart, order)
         end
         order
       end

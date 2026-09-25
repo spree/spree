@@ -45,6 +45,17 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
     expect(first_party_split.reload.refunded_amount).to eq(0)
   end
 
+  # The status is derived under the order's lock, so it has to read the shares
+  # as they stand then, not as the caller happened to load them earlier.
+  it 'derives the status from the shares as they stand, not as loaded' do
+    seller_order.payment_splits.load
+    Spree::PaymentSplit.where(id: seller_split.id).update_all(refunded_amount: 40)
+
+    Spree::Orders::UpdateStatuses.call(order: seller_order)
+
+    expect(seller_order.reload.payment_status).to eq('refunded')
+  end
+
   it 'reports a part refund as partially refunded' do
     refund!(seller_order, 10)
 
@@ -102,9 +113,8 @@ RSpec.describe Spree::PaymentSplitSubscriber, :events, type: :model do
       first_party_split.destroy!
     end
 
-    # order.paid is public webhook API, and it is published from the payment's
-    # own after_commit — which runs before the subscriber marks the shares
-    # captured, so the figure it reads has to count this payment's share itself.
+    # order.paid is public webhook API, and a marketplace order must announce
+    # itself paid like any other once its share is captured.
     it 'declares each child paid' do
       published = []
       allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
