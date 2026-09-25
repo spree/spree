@@ -5834,3 +5834,25 @@ country picker or its own provisioning. `ProvisionDefaults` previously
 documented exactly two callers — that list grows as flows are added, but the
 rule it protects stands: never wire it to a settings screen, since re-running
 it against a configured store is a data reset.
+
+
+## 2026-09-16 — The MCP server ships as one pull request, not a registry PR then an adapter PR
+
+Plan: `6.0-mcp-server.md`. Refines that plan's "Order of operations", which
+proposed extracting the agent-tool registry into `spree_core` on its own
+branch, merging it, and only then branching `spree_mcp` from `main`.
+
+**Decision.** Migration Path steps 1 to 5 — the core registry, the reporting
+tools, the workflow tools with their allowlist and generic record writes, the
+`spree_mcp` gem, and the documentation — ship in one branch. A registry-only
+pull request would ask reviewers to judge a contract with no caller, and the
+follow-up would re-open every shape question with the first already merged.
+The commits follow the plan's phase order so the history still reads as the
+staged migration.
+
+**Consequences for other work.** The `feat/dash-assistant` branch is read but
+never written by this work: its files are copied across with `git checkout` so
+blame follows the code, and deleting the originals and repointing the RubyLLM
+adapter at `Spree.agent_tools` remains that branch's own step. Until it does,
+the registry classes exist in both places, and the constraint against adding
+tools under `Spree::Assistant::Tools` stands.

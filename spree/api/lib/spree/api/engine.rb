@@ -2,6 +2,8 @@ require 'rails/engine'
 
 require_relative 'dependencies'
 require_relative 'configuration'
+require_relative 'agent_write_schemas'
+require_relative 'agent_resource_map'
 
 module Spree
   module Api
@@ -17,6 +19,16 @@ module Spree
       initializer 'spree.api.request_size_limit' do |app|
         require_relative 'middleware/request_size_limit'
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
+      end
+
+      # The resources agents may read and write are derived from the admin
+      # controllers themselves (see Spree::Api::AgentResourceMap). Marked
+      # stale on every reload rather than rebuilt: deriving it eager-loads the
+      # application, and doing that on each file save would turn Spree's
+      # development reload from lazy into fully eager for everyone, whether or
+      # not they run an agent client. The first caller pays instead.
+      config.to_prepare do
+        Spree::Api::AgentResourceMap.stale!
       end
 
       # Add API event subscribers
