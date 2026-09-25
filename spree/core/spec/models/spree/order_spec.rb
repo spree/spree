@@ -828,20 +828,36 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order_with_line_items) }
 
     context 'when order has shipments and is not completed' do
+      let(:express) do
+        create(:shipping_method, name: 'Express').tap do |method|
+          method.calculator.preferred_amount = 15
+          method.calculator.save
+        end
+      end
+
       before do
+        express
         order.rebuild_fulfillments!
+        fulfillment = order.fulfillments.first
+        fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
       end
 
-      it 'destroys all shipments' do
-        expect(order.shipments).to be_present
+      it 'rebuilds them, keeping the chosen rate and its price' do
+        previous_ids = order.fulfillments.ids
+
         order.ensure_updated_fulfillments
-        expect(order.reload.shipments).to be_empty
+
+        fulfillment = order.fulfillments.reload.first
+        expect(previous_ids).not_to include(fulfillment.id)
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(express)
+        expect(fulfillment.cost).to eq(15)
       end
 
-      it 'resets shipment_total to 0' do
-        order.update_column(:shipment_total, 10.0)
-        order.ensure_updated_fulfillments
-        expect(order.reload.shipment_total).to eq(0)
+      it 'keeps delivery when an item is added to the draft' do
+        Spree.order_add_item_service.call(order: order, variant: order.line_items.first.variant, quantity: 1)
+
+        expect(order.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(express)
+        expect(order.reload.delivery_total).to eq(15)
       end
 
       context 'events', :events do

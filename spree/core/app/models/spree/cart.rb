@@ -168,8 +168,14 @@ module Spree
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
     # the current items/address; nothing here touches a completed cart.
-    def rebuild_fulfillments!
+    #
+    # @param keep_selection [Boolean] false when the destination changed: a
+    #   choice made for one address is not a choice for another, and before an
+    #   address is known the only rate on offer is a pickup default
+    def rebuild_fulfillments!(keep_selection: true)
       return if completed?
+
+      previous_selections = keep_selection ? fulfillments.selected_rates_by_stock_location : {}
 
       discounts.for_fulfillments.delete_all
       tax_lines.for_fulfillments.delete_all
@@ -188,6 +194,7 @@ module Spree
       Spree::Stock::Coordinator.new(self).fulfillments.each do |fulfillment|
         fulfillment.address_id = ship_address_id
         fulfillment.order = nil
+        fulfillment.carry_over_selection(previous_selections.fetch(fulfillment.stock_location_id, []))
         fulfillments << fulfillment
       end
       prune_undeliverable_fulfillments!
@@ -251,8 +258,7 @@ module Spree
       raise Spree::Pricing::PriceResolution::ProviderUnavailable, result.error.to_s if result.failure?
 
       Spree::Carts::PriceItems.apply(result.value)
-      rebuild_fulfillments!
-      set_fulfillments_cost
+      rebuild_fulfillments!(keep_selection: false)
       recalculate_totals!
     end
 

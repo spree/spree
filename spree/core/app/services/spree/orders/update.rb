@@ -25,9 +25,9 @@ module Spree
 
           process_items(items_param) if items_param
 
-          if items_param || @order.ship_address_id != ship_address_id_before
-            build_fulfillments
-          end
+          # An address row edited in place keeps its id, so its saved changes count too.
+          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_changes?
+          build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
 
           @order.recalculate_totals!
         end
@@ -70,8 +70,8 @@ module Spree
         propagate_step_failure!(result, fallback: 'Failed to update items on order') if result.failure?
       end
 
-      def build_fulfillments
-        result = Spree::Orders::BuildFulfillments.call(order: @order)
+      def build_fulfillments(keep_selection:)
+        result = Spree::Orders::BuildFulfillments.call(order: @order, keep_selection: keep_selection)
         propagate_step_failure!(result, fallback: 'Failed to build shipments') if result.failure?
       end
 
