@@ -95,6 +95,16 @@ module Spree
           described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
         end
 
+        # Processing items reloads the cart, which forgets what the save changed.
+        it 'rebuilds delivery proposals when the pickup intent arrives with items' do
+          expect(cart).to receive(:recalculate_for_address_change!).with(keep_selection: false)
+
+          described_class.call(cart: cart, params: {
+            preferred_stock_location_id: pickup_location.prefixed_id,
+            items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+          })
+        end
+
         it 'rebuilds delivery proposals when the pickup intent is cleared' do
           cart.update!(preferred_stock_location_id: pickup_location.id)
 
@@ -402,6 +412,24 @@ module Spree
 
                   cart.reload
                   expect(cart.ship_address_id).to eq(address_id)
+                  expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to eq(standard)
+                  expect(cart.delivery_total).to eq(5)
+                end
+              end
+
+              context 'with the street changed and an item added in the same request' do
+                let(:params) do
+                  {
+                    shipping_address: edited_address.merge(address1: '5 Edited Way'),
+                    items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+                  }
+                end
+
+                it 'starts from the default rate' do
+                  expect(subject).to be_success
+
+                  cart.reload
+                  expect(cart.line_items.first.quantity).to eq(2)
                   expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to eq(standard)
                   expect(cart.delivery_total).to eq(5)
                 end

@@ -16,6 +16,9 @@ module Spree
           assign_default_addresses
 
           cart.save!
+          # Read before the items: processing them reloads the cart, which forgets what this save changed.
+          @destination_changed = destination_changed?
+          @new_delivery_destination = new_delivery_destination?
 
           process_items
           try_advance
@@ -246,8 +249,8 @@ module Spree
       def try_advance
         return if cart.complete?
 
-        if @address_invalidated || destination_changed?
-          cart.recalculate_for_address_change!(keep_selection: !new_delivery_destination?)
+        if @address_invalidated || @destination_changed
+          cart.recalculate_for_address_change!(keep_selection: !@new_delivery_destination)
         else
           cart.recalculate_totals!
         end
