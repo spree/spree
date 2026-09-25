@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'spree_core', s.version
-  s.add_dependency 'stripe', '>= 10.1', '< 19'
+  s.add_dependency 'stripe', '>= 10.1', '< 20'
 
   s.add_development_dependency 'vcr'
 end
