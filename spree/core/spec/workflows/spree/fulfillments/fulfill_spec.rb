@@ -34,6 +34,33 @@ module Spree
       end
     end
 
+    # The routing strategy that allocated the order hears about the sale once
+    # the dispatch is committed — an order management system integration
+    # settles its own allocation there.
+    describe 'order routing strategy' do
+      let(:strategy) { instance_double(Spree::OrderRouting::Strategy::Rules) }
+
+      before { allow_any_instance_of(Spree::Order).to receive(:order_routing_strategy).and_return(strategy) }
+
+      it 'tells the strategy which fulfillment shipped, after it is fulfilled' do
+        status_when_told = nil
+        allow(strategy).to receive(:for_sale) { |fulfillment:| status_when_told = fulfillment.reload.status }
+
+        expect(subject.call(fulfillment: fulfillment)).to be_success
+
+        expect(strategy).to have_received(:for_sale).with(fulfillment: fulfillment)
+        expect(status_when_told).to eq('fulfilled')
+      end
+
+      it 'reports a failing strategy without undoing the dispatch' do
+        allow(strategy).to receive(:for_sale).and_raise(StandardError, 'OMS unavailable')
+        expect(Rails.error).to receive(:report).with(an_instance_of(StandardError), hash_including(source: 'spree.fulfillments.fulfill'))
+
+        expect(subject.call(fulfillment: fulfillment)).to be_success
+        expect(fulfillment.reload).to be_fulfilled
+      end
+    end
+
     describe 'fulfilling a subset' do
       # Two units of each line item, so shipping one unit leaves a remainder
       # both within that line item and across the order.

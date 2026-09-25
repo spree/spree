@@ -82,6 +82,7 @@ module Spree
         end
 
         step :roll_up_order_status
+        external_step :notify_routing_strategy
 
         run_hooks :after_fulfill
         success(@fulfillment.reload)
@@ -348,6 +349,18 @@ module Spree
 
       def roll_up_order_status
         @fulfillment.order&.update_statuses!
+      end
+
+      # Tells the order's routing strategy the allocation has been sold, once
+      # the dispatch has committed. The parcel has left by then, so a strategy
+      # whose outside system fails is reported rather than allowed to undo it.
+      def notify_routing_strategy
+        order = @fulfillment.order
+        return if order.nil?
+
+        order.order_routing_strategy.for_sale(fulfillment: @fulfillment)
+      rescue StandardError, NotImplementedError => e
+        Rails.error.report(e, handled: true, context: { fulfillment_id: @fulfillment.id }, source: 'spree.fulfillments.fulfill')
       end
     end
   end

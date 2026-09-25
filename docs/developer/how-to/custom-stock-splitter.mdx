@@ -205,7 +205,7 @@ Practical implications:
 
 - **Splitter output feeds the Prioritizer.** A splitter that produces 3 packages from one location adds 3 candidates to the Prioritizer's pool. The Prioritizer keeps each unit in the highest-ranked package that still has it on hand and prunes empties.
 - **Splitters can produce backordered-only packages.** That's fine — the `Backordered` splitter is the canonical example. The Prioritizer treats backordered packages as a fallback after exhausting on-hand options across all higher-ranked locations.
-- **A splitter can't see which location ranked higher.** It runs per-location with no awareness of the rank. If you need rank-aware splitting (rare), do it in a custom strategy's `build_packages`, not a splitter.
+- **A splitter can't see which location ranked higher.** It runs per-location with no awareness of the rank. If you need rank-aware splitting (rare), do it in a custom strategy, not a splitter.
 
 ## Next Steps
 

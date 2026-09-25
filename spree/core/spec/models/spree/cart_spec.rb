@@ -487,5 +487,95 @@ describe Spree::Cart, type: :model do
         ).amount)
       end
     end
+
+    # Storefront checkout picks fulfillment locations through the same order
+    # routing strategy staff-built orders use, so the merchant's routing rules
+    # and a custom strategy decide where a customer's goods ship from.
+    describe 'order routing' do
+      let!(:counter) do
+        create(:stock_location, name: 'Counter', country: country, state: state, propagate_all_variants: false)
+      end
+
+      let(:counter_strategy) do
+        Class.new(Spree::OrderRouting::Strategy::Base) do
+          def for_allocation
+            Spree::Stock::Coordinator.new(order).packages([Spree::StockLocation.find_by!(name: 'Counter')])
+          end
+
+          def for_sale(fulfillment:); end
+          def for_release; end
+        end
+      end
+
+      around do |example|
+        registered = Spree.order_routing.strategies.dup
+        example.run
+        Spree.order_routing.strategies.replace(registered)
+      end
+
+      before do
+        stub_const('CounterStrategy', counter_strategy)
+        Spree.order_routing.strategies << CounterStrategy
+
+        stock_location.update!(default: true)
+        cart.line_items.each do |line_item|
+          [stock_location, counter].each do |location|
+            location.stock_level_or_create(line_item.variant).update!(count_on_hand: 10)
+          end
+        end
+      end
+
+      def fulfillment_locations
+        cart.fulfillments.map(&:stock_location).uniq
+      end
+
+      it 'follows the routing rules' do
+        cart.rebuild_fulfillments!
+        expect(fulfillment_locations).to eq([stock_location])
+
+        cart.update!(preferred_stock_location: counter)
+        cart.rebuild_fulfillments!
+
+        expect(fulfillment_locations).to eq([counter])
+      end
+
+      it 'uses the strategy chosen on the store' do
+        allow(cart.store).to receive(:preferred_order_routing_strategy).and_return('CounterStrategy')
+
+        cart.rebuild_fulfillments!
+
+        expect(fulfillment_locations).to eq([counter])
+        expect(cart.fulfillments.first.delivery_rates).to be_present
+      end
+
+      it "lets the cart's channel override the store's strategy" do
+        allow(cart.store).to receive(:preferred_order_routing_strategy).and_return('Spree::OrderRouting::Strategy::Rules')
+        cart.channel.update!(preferred_order_routing_strategy: 'CounterStrategy')
+
+        cart.rebuild_fulfillments!
+
+        expect(fulfillment_locations).to eq([counter])
+      end
+
+      it 'keeps the previous proposals when the strategy raises' do
+        cart.rebuild_fulfillments!
+        previous_ids = cart.fulfillments.ids
+        expect(previous_ids).to be_present
+        allow_any_instance_of(Spree::OrderRouting::Strategy::Rules).to receive(:for_allocation).and_raise(StandardError, 'routing down')
+
+        expect { cart.rebuild_fulfillments! }.to raise_error(StandardError, 'routing down')
+        expect(cart.fulfillments.reload.ids).to match_array(previous_ids)
+      end
+
+      it 'does not leave the in-memory proposals emptied when the strategy raises' do
+        cart.rebuild_fulfillments!
+        previous_ids = cart.fulfillments.map(&:id)
+        expect(previous_ids).to be_present
+        allow_any_instance_of(Spree::OrderRouting::Strategy::Rules).to receive(:for_allocation).and_raise(StandardError, 'routing down')
+
+        expect { cart.rebuild_fulfillments! }.to raise_error(StandardError, 'routing down')
+        expect(cart.fulfillments.map(&:id)).to match_array(previous_ids)
+      end
+    end
   end
 end
