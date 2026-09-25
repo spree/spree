@@ -26,7 +26,10 @@ module Spree
     def verify(shipment = nil, is_updated: false, removing: false)
       return unless order.completed? || shipment.present?
 
-      units_count = fulfillment_items.reload.sum(&:quantity)
+      # A replacement sent by an exchange or claim stands in for a unit the
+      # quantity already paid for, so only a line being destroyed counts it.
+      units = fulfillment_items.reload
+      units_count = (removing ? units : units.reject(&:replacement?)).sum(&:quantity)
       line_item_changed = is_updated ? !line_item.saved_changes? : !line_item.changed?
 
       if removing
@@ -67,12 +70,12 @@ module Spree
 
     def remove_all_units(quantity, target_fulfillment = nil)
       if target_fulfillment.present?
-        remove_from_shipment(target_fulfillment, quantity)
+        remove_from_shipment(target_fulfillment, quantity, include_replacements: true)
       else
         order.fulfillments.each do |shipment|
           break if quantity.zero?
 
-          quantity -= remove_from_shipment(shipment, quantity)
+          quantity -= remove_from_shipment(shipment, quantity, include_replacements: true)
         end
       end
     end
@@ -120,10 +123,12 @@ module Spree
       quantity
     end
 
-    def remove_from_shipment(shipment, quantity)
+    def remove_from_shipment(shipment, quantity, include_replacements: false)
       return 0 if quantity.zero? || shipment.fulfilled?
 
-      shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:status)
+      shipment_units = shipment.inventory_units_for_item(line_item, variant).reject do |unit|
+        unit.shipped? || (unit.replacement? && !include_replacements)
+      end.sort_by(&:status)
 
       removed_quantity = 0
       removed_backordered = 0

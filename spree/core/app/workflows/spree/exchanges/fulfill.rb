@@ -9,6 +9,7 @@ module Spree
     # authorization is not something core should do silently.
     class Fulfill < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Fulfillments::Replacements
 
       hooks :validate, :before_settle, :after_fulfill
 
@@ -85,42 +86,15 @@ module Spree
       # Only lines that actually came back are replaced — a customer who
       # returned two of three items gets two replacements.
       def build_replacement_fulfillments
-        units = exchange.exchange_line_items.filter_map do |line|
+        items = exchange.exchange_line_items.filter_map do |line|
           next if line.received_quantity.to_i.zero?
 
-          exchange.order.fulfillment_items.new(
-            variant: line.new_variant,
-            quantity: line.received_quantity,
-            line_item: line.line_item,
-            order: exchange.order,
-            status: 'on_hand'
-          )
+          { variant: line.new_variant, quantity: line.received_quantity, line_item: line.line_item }
         end
 
-        failure(exchange, :nothing_to_fulfill) if units.empty?
+        failure(exchange, :nothing_to_fulfill) if items.empty?
 
-        @fulfillments = Spree::Stock::Coordinator.new(exchange.order, units).fulfillments
-        if @fulfillments.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
-          failure(exchange, :replacement_out_of_stock)
-        end
-
-        exchange.order.fulfillments += @fulfillments
-        exchange.order.save!
-        @fulfillments.each { |fulfillment| allocate_replacement_stock(fulfillment) }
-      end
-
-      # The replacement is promised the moment it exists, exactly as placement
-      # promises an order's own fulfillments. Without this the fulfillment holds
-      # nothing, and dispatch then writes no movement at all — an unallocated
-      # fulfillment is indistinguishable from one created before typed
-      # movements, so the goods would leave the shelf untouched and unrecorded.
-      def allocate_replacement_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
-        end
+        @fulfillments = build_replacements(exchange, items)
       end
 
       def issue_store_credit
