@@ -69,6 +69,7 @@ function SetupRequiredNotice() {
     gcTime: 0,
     staleTime: 0,
     refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
   })
 
   if (!status.data?.setup_required) return null

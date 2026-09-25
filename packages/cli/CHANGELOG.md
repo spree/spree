@@ -1,5 +1,19 @@
 # @spree/cli
 
+## 3.1.0
+
+### Minor Changes
+
+- [#14710](https://github.com/spree/spree/pull/14710) [`36df7c7`](https://github.com/spree/spree/commit/36df7c72be7b41d46c29bb0445244e18fedecae0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New `spree encryption init` command adds Active Record encryption keys (`ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `_DETERMINISTIC_KEY`, `_KEY_DERIVATION_SALT`) to an existing project's `.env`, so Spree encrypts webhook signing secrets, payment gateway customer IDs and OAuth tokens at rest instead of storing them in plain text. It never overwrites keys that are already set. `spree encryption init --print` only prints a fresh set, for your production host.
+
+### Patch Changes
+
+- [#14703](https://github.com/spree/spree/pull/14703) [`9e41f7d`](https://github.com/spree/spree/commit/9e41f7da03a9fd87050a78033620225922574d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree plugin new` now scaffolds a dashboard plugin that installs against the current dashboard. Its `@spree/admin-sdk` and `@spree/dashboard-*` peer ranges come from the versions released alongside the CLI, instead of old `0.x` ranges no published package matched. The plugin package also gains a `build` script, so `pnpm build` at the plugin root no longer fails, and a `sideEffects` entry so bundlers never drop the import that registers the plugin. The generated README no longer describes an `engine/` directory the CLI does not create.
+
+  `spree build --production` builds from the project root again with the current starter Dockerfile, so a customized `apps/dashboard` is included in the image instead of being left out.
+
+- [#14697](https://github.com/spree/spree/pull/14697) [`f43bed2`](https://github.com/spree/spree/commit/f43bed2cdbfb35df3d9d5d10d3b6c3cc13e7f168) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `spree upgrade` no longer reminds you to schedule `Spree::StockReservations::ExpireJob`, a Spree 5.5 step that every 5.6 installation has already done. The "Next steps" panel now points you at your scheduled jobs and behavior changes in the upgrade guide and links to a page that exists. `spree upgrade --plan` now lists the same data backfills a real run executes after the Spree gems are bumped, instead of nothing.
+
 ## 3.0.2
 
 ### Patch Changes

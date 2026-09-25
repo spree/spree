@@ -19,6 +19,19 @@ module Spree
         end.to change { order.reload.total }.by(2).and change { order.discounts.count }.by(-1)
       end
 
+      context 'when the order has been paid in full' do
+        before do
+          create(:payment, amount: order.total, order: order, status: 'completed')
+          order.update_statuses!
+        end
+
+        it 'reads partially paid once the total rises above what was paid' do
+          expect do
+            described_class.call(order: order, discount: discount)
+          end.to change { order.reload.payment_status }.from('paid').to('partially_paid')
+        end
+      end
+
       it 'refuses promotion-sourced rows' do
         discount.update_columns(kind: 'promotion')
 

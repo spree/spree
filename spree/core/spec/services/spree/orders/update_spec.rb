@@ -89,6 +89,14 @@ module Spree
           expect(order.reload.email).not_to eq('gbp@example.com')
           expect(order.line_items.count).to eq(0)
         end
+
+        it 'rolls back the entire update when the caller holds the order lock' do
+          result = nil
+          order.with_lock { result = described_class.call(order: order, params: params) }
+
+          expect(result).to be_failure
+          expect(order.reload.email).not_to eq('gbp@example.com')
+        end
       end
 
       context 'with invalid variant in items' do
@@ -306,6 +314,13 @@ module Spree
             order.reload
             expect(order.shipments.map(&:id)).to match_array(old_shipment_ids)
             expect(order.fulfillments.first.fulfillment_items.sum(:quantity)).to eq(3)
+          end
+
+          it 'measures what has been paid against the new total' do
+            create(:payment, amount: order.total, order: order, status: 'completed')
+            order.update_statuses!
+
+            expect { subject }.to change { order.reload.payment_status }.from('paid').to('partially_paid')
           end
         end
       end

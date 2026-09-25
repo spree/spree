@@ -44,6 +44,27 @@ allowBuilds:
 # fixes here. Revisit when the upstream dependents pull the fixes in on
 # their own and these become no-ops.
 overrides:
+  # Base UI is pinned exactly, never caret-ranged: @spree/dashboard-ui ships
+  # source, so whatever a consumer installs is compiled into their app by
+  # their own Vite. A floating range means a scaffolded project builds against
+  # a version nobody here tested.
+  #
+  # 1.8.0 resolves @base-ui/utils 0.4.0. Do not move below it: utils 0.2.x and
+  # 0.3.x ship esm/store/useStore.js, which imports useSyncExternalStore BY
+  # NAME from the CommonJS use-sync-external-store shim. Vite converts
+  # CommonJS while prebundling an ordinary dependency, but an installed
+  # dashboard-ui is source Vite does not crawl, so that file reaches the
+  # browser unconverted and the dashboard dies with a SyntaxError. 0.4.0
+  # dropped that ESM variant. Verify any change by installing the published
+  # packages into the dashboard-starter template — the workspace symlink in
+  # this repo hides the difference.
+  '@base-ui/react': 1.8.0
+  '@base-ui/utils': 0.4.0
+  # react-redux 9.2.0 (transitive via recharts, whose range is 8.x || 9.x)
+  # published without the provenance 9.1.0 had, so trustPolicy: no-downgrade
+  # refuses it. 9.3.0 carries provenance again and is in range. Drop this once
+  # recharts resolves 9.3+ on its own.
+  react-redux: 9.3.0
   esbuild: ^0.28.1
   vite: ^8.0.16
   js-yaml: ^4.3.2

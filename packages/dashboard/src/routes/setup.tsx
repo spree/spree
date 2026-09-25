@@ -73,13 +73,32 @@ function SetupLoader({
     gcTime: 0,
     staleTime: 0,
     refetchOnMount: 'always',
+    // Fresh on every visit, but not on every tab switch — each refetch spends
+    // the per-caller request budget this unauthenticated endpoint sits under.
+    refetchOnWindowFocus: false,
   })
 
   if (status.isPending) {
     return <div className="py-12 text-center text-muted-foreground">{t('admin.setup.loading')}</div>
   }
 
-  if (status.isError || !status.data?.setup_required) {
+  // Only a definite answer from the server means setup is closed. A failed
+  // check (rate limited, backend down) must not tell a new merchant their
+  // installation is already set up.
+  if (status.isError) {
+    const rateLimited = (status.error as SpreeError).status === 429
+    return (
+      <SetupUnavailable
+        title={t(rateLimited ? 'admin.setup.rate_limited_title' : 'admin.setup.check_failed_title')}
+        message={t(
+          rateLimited ? 'admin.setup.rate_limited_message' : 'admin.setup.check_failed_message',
+        )}
+        onRetry={() => status.refetch()}
+      />
+    )
+  }
+
+  if (!status.data?.setup_required) {
     return (
       <SetupUnavailable
         title={t('admin.setup.not_available_title')}
@@ -284,13 +303,28 @@ function SetupForm({
   )
 }
 
-function SetupUnavailable({ title, message }: { title: string; message: string }) {
+function SetupUnavailable({
+  title,
+  message,
+  onRetry,
+}: {
+  title: string
+  message: string
+  onRetry?: () => void
+}) {
   const { t } = useTranslation()
 
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-2xl font-bold">{title}</h1>
       <p className="text-sm text-muted-foreground">{message}</p>
+      {onRetry && (
+        <div>
+          <Button type="button" variant="outline" size="sm" onClick={onRetry}>
+            {t('admin.common.retry')}
+          </Button>
+        </div>
+      )}
       <p className="text-sm text-muted-foreground">
         <Link to="/login" className="link">
           {t('admin.setup.back_to_login')}

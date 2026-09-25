@@ -4,7 +4,9 @@ module Spree
     # Derive-then-persist: statuses are recomputed from payment/refund/
     # fulfillment records and stored in indexed columns so admin filtering
     # keeps working. Triggered from payment/refund/fulfillment/return event
-    # subscribers — never inline from controllers.
+    # subscribers, and by each edit service that moves an order's total
+    # (fees, discounts, items) once it has re-summed — no event announces
+    # that change. Never inline from controllers.
     class UpdateStatuses
       prepend Spree::ServiceModule::Base
 

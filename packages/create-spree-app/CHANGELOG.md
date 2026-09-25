@@ -1,5 +1,15 @@
 # create-spree-app
 
+## 2.1.0
+
+### Minor Changes
+
+- [#14710](https://github.com/spree/spree/pull/14710) [`36df7c7`](https://github.com/spree/spree/commit/36df7c72be7b41d46c29bb0445244e18fedecae0) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - New projects get Active Record encryption keys: the generated `.env` now includes `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT`, so webhook signing secrets, payment gateway customer IDs and OAuth tokens are encrypted at rest out of the box instead of being stored in plain text.
+
+### Patch Changes
+
+- [#14703](https://github.com/spree/spree/pull/14703) [`9e41f7d`](https://github.com/spree/spree/commit/9e41f7da03a9fd87050a78033620225922574d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The generated README and the closing summary no longer point at a Rails admin at `/admin`, which Spree 6 does not have; without the React Dashboard, the summary shows the command that adds it. The subscriber example uses `order.placed` rather than the deprecated `order.completed`. The relocated `render.yaml` always builds `server/Dockerfile`, whether the starter's Blueprint was written for this layout or for deploying the starter on its own.
+
 ## 2.0.2
 
 ### Patch Changes

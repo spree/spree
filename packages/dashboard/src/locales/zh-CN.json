@@ -5072,7 +5072,11 @@
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
       "title": "设置 Spree",
       "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
-      "welcome_title": "欢迎，您的商店已就绪！"
+      "welcome_title": "欢迎，您的商店已就绪！",
+      "rate_limited_title": "尝试次数过多",
+      "rate_limited_message": "短时间内检查设置的次数过多。请等待一分钟后重试。",
+      "check_failed_title": "无法检查设置",
+      "check_failed_message": "无法连接服务器以检查此安装是否需要设置。请确认服务器正在运行，然后重试。"
     },
     "staff": {
       "actions": {

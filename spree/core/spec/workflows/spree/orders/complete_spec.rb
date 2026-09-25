@@ -227,6 +227,33 @@ module Spree
         draft.reload
       end
 
+      # The group event is what confirms the customer, so an operator
+      # completing a draft quietly must not be answered with an email.
+      it 'carries a silent completion onto the group event', :events do
+        draft = draft_for(seller, other_seller)
+        payloads = []
+        allow(Spree::Events).to receive(:publish) do |name, payload, *|
+          payloads << payload if name == 'order_group.completed'
+        end
+
+        described_class.call(order: draft, notify_customer: false)
+
+        expect(payloads.size).to eq(1)
+        expect(payloads.first[:notify_customer]).to be false
+      end
+
+      it 'leaves an ordinary division free to confirm the purchase', :events do
+        draft = draft_for(seller, other_seller)
+        payloads = []
+        allow(Spree::Events).to receive(:publish) do |name, payload, *|
+          payloads << payload if name == 'order_group.completed'
+        end
+
+        described_class.call(order: draft)
+
+        expect(payloads.first[:notify_customer]).to be_nil
+      end
+
       it 'stamps a single seller onto the order' do
         draft = draft_for(seller, seller)
 

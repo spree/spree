@@ -5083,7 +5083,11 @@
       "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
       "title": "Set up Spree",
       "welcome_description": "Work through the checklist below to open {{store}} for business.",
-      "welcome_title": "Welcome, your store is now ready!"
+      "welcome_title": "Welcome, your store is now ready!",
+      "rate_limited_title": "Too many attempts",
+      "rate_limited_message": "Setup was checked too many times in a short period. Wait a minute, then try again.",
+      "check_failed_title": "Couldn't check setup",
+      "check_failed_message": "The server couldn't be reached to check whether this installation needs setup. Make sure it is running, then try again."
     },
     "staff": {
       "actions": {

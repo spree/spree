@@ -5695,7 +5695,11 @@
       "subtitle": "Creá tu cuenta de administrador y contanos sobre tu tienda. Todo esto se puede cambiar después.",
       "title": "Configurar Spree",
       "welcome_description": "Avanzá por la lista de control de abajo para abrir {{store}} al público.",
-      "welcome_title": "¡Bienvenido, tu tienda ya está lista!"
+      "welcome_title": "¡Bienvenido, tu tienda ya está lista!",
+      "rate_limited_title": "Demasiados intentos",
+      "rate_limited_message": "La configuración se ha consultado demasiadas veces en poco tiempo. Espera un minuto y vuelve a intentarlo.",
+      "check_failed_title": "No se pudo comprobar la configuración",
+      "check_failed_message": "No se pudo contactar con el servidor para comprobar si esta instalación necesita configurarse. Asegúrate de que está en marcha y vuelve a intentarlo."
     },
     "tax_rates": {
       "add_cta": "Agregar tasa de impuesto",
