@@ -2820,6 +2820,10 @@
           "create_title": "إضافة شحنة",
           "delete_label": "حذف الملصق",
           "deliveries_title": "التتبع",
+          "delivery_cost": "تكلفة التوصيل",
+          "delivery_cost_help": "يبقى السعر المحدد هنا عند إعادة تسعير الطرد أو نقله أو تغيير طريقة توصيله.",
+          "delivery_cost_placeholder": "سعر طريقة التوصيل",
+          "delivery_cost_reverting": "سيُطبَّق سعر طريقة التوصيل عند الحفظ.",
           "delivery_method": "طريقة التوصيل",
           "document_kinds": {
             "certificate_of_origin": "شهادة المنشأ",
@@ -2840,6 +2844,7 @@
           "label_refunded": "تم الاسترداد",
           "label_title": "ملصق الشحن",
           "label_uploaded": "مرفوع",
+          "manual_cost": "يدوي",
           "mark_delivered": "وضع علامة كمُسلَّم",
           "mark_delivery_delivered": "وضع علامة وصل",
           "move_and_requote": "نقل وإعادة التسعير",

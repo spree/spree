@@ -2826,6 +2826,10 @@
           "create_title": "Dodaj przesyłkę",
           "delete_label": "Usuń etykietę",
           "deliveries_title": "Śledzenie",
+          "delivery_cost": "Koszt dostawy",
+          "delivery_cost_help": "Cena ustawiona tutaj pozostaje, gdy przesyłka zostanie ponownie wyceniona, przeniesiona lub otrzyma inną metodę dostawy.",
+          "delivery_cost_placeholder": "Cena metody dostawy",
+          "delivery_cost_reverting": "Po zapisaniu zostanie zastosowana cena metody dostawy.",
           "delivery_method": "Sposób dostawy",
           "document_kinds": {
             "certificate_of_origin": "Świadectwo pochodzenia",
@@ -2846,6 +2850,7 @@
           "label_refunded": "Zwrócono",
           "label_title": "Etykieta wysyłkowa",
           "label_uploaded": "Wgrana",
+          "manual_cost": "Ręcznie",
           "mark_delivered": "Oznacz jako dostarczone",
           "mark_delivery_delivered": "Oznacz jako dostarczoną",
           "move_and_requote": "Przenieś i przelicz",

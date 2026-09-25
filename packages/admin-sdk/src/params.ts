@@ -257,8 +257,18 @@ export interface FulfillmentUpdateParams {
    */
   tracking_carrier?: string
   selected_delivery_rate_id?: string
-  /** Move the fulfillment to another origin (sloc_...); re-prices it against that location's rates. */
+  /**
+   * Move the fulfillment to another origin (sloc_...); re-quotes it against
+   * that location's rates. A cost set by hand is kept.
+   */
   stock_location_id?: string
+  /**
+   * Delivery cost set by hand, as a plain decimal string or number, e.g.
+   * `'0.00'` for a parcel the customer should not pay for again. No re-quote,
+   * rate change or move changes it afterwards. `null` goes back to the
+   * selected delivery rate's price; omit to leave the cost as it is.
+   */
+  cost?: string | number | null
 }
 
 /**

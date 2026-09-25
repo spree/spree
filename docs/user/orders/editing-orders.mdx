@@ -78,7 +78,21 @@ To change fulfillment location:
 
 This will split the order into multiple shipments, each with its own shipping cost.
 
-<Warning>If shipping costs change, you’ll need to update the payment accordingly.</Warning>
+<Warning>If shipping costs change, you'll need to update the payment accordingly — or [change the delivery cost](#change-the-delivery-cost) of the new shipment.</Warning>
+
+## Change the Delivery Cost
+
+Each shipment is charged the price of its delivery method. You can charge a different amount instead — for example, when you split a paid order into two shipments and don't want the customer to pay for delivery twice.
+
+To change a shipment's delivery cost:
+
+1. In the **Fulfillments** section, open the shipment's **Actions** menu and choose **Edit**
+2. Enter the amount in **Delivery cost** — enter 0 to make it free. Left empty, the shipment is charged its delivery method's price
+3. Click **Save**
+
+The order total and payment status update straight away. A shipment with a cost you set shows a **Manual** label, and keeps that cost even if you later change its delivery method or where it ships from.
+
+To go back to the delivery method's price, open **Edit** again, clear **Delivery cost**, and click **Save**.
 
 ## Change Shipping Method
 

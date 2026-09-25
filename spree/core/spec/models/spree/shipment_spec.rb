@@ -783,6 +783,41 @@ describe Spree::Shipment, type: :model do
       shipment.order.recalculate_totals!
       expect(shipment.reload.adjustment_total).to eq(5)
     end
+
+    it 'leaves a cost staff set alone' do
+      shipment.update_columns(cost: 0, cost_source: Spree::Fulfillment::MANUAL_COST_SOURCE)
+
+      shipment.update_amounts
+
+      expect(shipment.reload.cost).to eq(0)
+    end
+
+    it 'leaves the cost of a parcel that has left alone' do
+      shipment.update_columns(status: 'delivered')
+
+      shipment.update_amounts
+
+      expect(shipment.reload.cost).to eq(100)
+    end
+  end
+
+  describe '#unpriced?' do
+    let(:shipment) { create(:shipment) }
+
+    before { shipment.selected_delivery_rate.update_columns(unpriced: true, cost: 0) }
+
+    it 'is true while the forwarder has yet to quote' do
+      expect(shipment.unpriced?).to be(true)
+    end
+
+    # Otherwise the parcel would keep reading "quoted after review" while the
+    # order charges the price staff set.
+    it 'is false once staff have priced the parcel' do
+      shipment.update_columns(cost: 180, cost_source: Spree::Fulfillment::MANUAL_COST_SOURCE)
+
+      expect(shipment.unpriced?).to be(false)
+      expect(shipment.display_cost.to_s).to eq('$180.00')
+    end
   end
 
   context 'changes shipping rate via general update' do
@@ -1004,9 +1039,6 @@ describe Spree::Shipment, type: :model do
 
     before do
       perform_enqueued_jobs(only: Spree::StockLocations::StockLevels::CreateJob)
-      shipping_method = order.fulfillments.first.shipping_method
-      shipping_method.calculator.preferences[:amount] = order.fulfillments.first.cost
-      shipping_method.calculator.save!
     end
 
     it 'creates new shipment for same order' do
@@ -1025,21 +1057,26 @@ describe Spree::Shipment, type: :model do
       expect(new_shipment.stock_location).not_to eq(shipment.stock_location)
     end
 
-    it 'sets proper costs for new shipment' do
+    # A second parcel is a second shipment: it is quoted its own rate, and
+    # staff who want it free override the cost afterwards.
+    it 'quotes the new shipment its own rate' do
       shipment = order.fulfillments.first
-      shipment.transfer_to_location(variant, 1, shipment.stock_location)
+      shipment.transfer_to_location(variant, 1, shipment.stock_location).run!
 
       new_shipment = order.reload.shipments.last
-      # Cost must be the same since both come from the same stock location
-      expect(new_shipment.cost).to eq(shipment.cost)
+
+      expect(new_shipment).not_to eq(shipment)
+      expect(new_shipment.cost).to be_positive
+      expect(new_shipment.cost).to eq(new_shipment.selected_delivery_rate.cost)
     end
 
-    it 'updates `order.shipment_total` to the sum of shipments cost' do
+    it 'updates `order.delivery_total` to the sum of shipments cost' do
       shipment = order.fulfillments.first
-      shipment.transfer_to_location(variant, 1, shipment.stock_location)
+      shipment.transfer_to_location(variant, 1, shipment.stock_location).run!
 
       order.reload
-      expect(order.shipment_total).to eq(order.shipments.sum(&:cost))
+      expect(order.shipments.count).to eq(2)
+      expect(order.delivery_total).to eq(order.shipments.sum(&:cost))
     end
   end
 

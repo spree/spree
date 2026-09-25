@@ -111,6 +111,19 @@ RSpec.describe Spree::Api::V3::Seller::Orders::FulfillmentsController, type: :co
       expect(fulfillment.tracking_url).to include('TRACK123')
     end
 
+    # What the customer is charged for delivery is the operator's call.
+    it 'ignores a cost' do
+      original_cost = fulfillment.cost
+
+      patch :update, params: {
+        order_id: order.prefixed_id, id: fulfillment.prefixed_id, cost: '0'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(fulfillment.reload.cost).to eq(original_cost)
+      expect(fulfillment.cost_source).to be_nil
+    end
+
     # A seller picking from a different shelf than the split assumed needs to
     # say so, and the rate requotes from there.
     it 'moves the parcel to another of the seller’s shelves' do

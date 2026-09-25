@@ -260,6 +260,18 @@ module Spree
           expect(execute.success?).to eq(true)
           expect(fulfillment.reload.cost).to eq(fulfillment.selected_shipping_rate.cost)
         end
+
+        # Creating a parcel re-quotes every pending one on the order; a cost
+        # staff set must not be quietly undone by that.
+        it 'leaves the cost of a sibling priced by hand alone' do
+          source_shipment.update_columns(cost: BigDecimal('3.33'), cost_source: Spree::Fulfillment::MANUAL_COST_SOURCE)
+          params.delete(:cost)
+          params[:items] = [{ line_item: line_items.first, quantity: 1 }]
+
+          expect(execute.success?).to eq(true)
+          expect(source_shipment.reload.cost).to eq(BigDecimal('3.33'))
+          expect(source_shipment.selected_delivery_rate.cost).not_to eq(BigDecimal('3.33'))
+        end
       end
 
       it 'rejects a negative cost' do

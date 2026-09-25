@@ -2802,6 +2802,10 @@
           "create_title": "Add fulfillment",
           "delete_label": "Delete label",
           "deliveries_title": "Tracking",
+          "delivery_cost": "Delivery cost",
+          "delivery_cost_help": "A price set here stays when the parcel is re-quoted, moved or given another delivery method.",
+          "delivery_cost_placeholder": "Delivery method's price",
+          "delivery_cost_reverting": "The delivery method's price applies when you save.",
           "delivery_method": "Delivery method",
           "document_kinds": {
             "certificate_of_origin": "Certificate of origin",
@@ -2822,6 +2826,7 @@
           "label_refunded": "Refunded",
           "label_title": "Shipping label",
           "label_uploaded": "Uploaded",
+          "manual_cost": "Manual",
           "mark_delivered": "Mark as delivered",
           "mark_delivery_delivered": "Mark arrived",
           "move_and_requote": "Move and re-quote",
