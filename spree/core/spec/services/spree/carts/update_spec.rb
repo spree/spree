@@ -95,6 +95,16 @@ module Spree
           described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
         end
 
+        # Processing items reloads the cart, which forgets what the save changed.
+        it 'rebuilds delivery proposals when the pickup intent arrives with items' do
+          expect(cart).to receive(:recalculate_for_address_change!).with(keep_selection: false)
+
+          described_class.call(cart: cart, params: {
+            preferred_stock_location_id: pickup_location.prefixed_id,
+            items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+          })
+        end
+
         it 'rebuilds delivery proposals when the pickup intent is cleared' do
           cart.update!(preferred_stock_location_id: pickup_location.id)
 
@@ -353,6 +363,76 @@ module Spree
               it 'builds delivery proposals once the address arrives' do
                 expect(subject).to be_success
                 expect(cart.reload.fulfillments).to be_present
+              end
+            end
+
+            # A guest's edit updates the address row in place, so only the
+            # fields a quote reads can tell a new destination from a correction.
+            context 'when a guest who chose a rate edits the address' do
+              let!(:standard) { create(:shipping_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) } }
+              let!(:express) { create(:shipping_method, name: 'Express', store: store).tap { |method| method.calculator.update!(preferred_amount: 15) } }
+              let(:cart) do
+                create(:cart_with_line_items, store: store, customer: nil, email: 'guest@example.com',
+                                              ship_address: create(:address, country: country, state: state),
+                                              bill_address: create(:address, country: country, state: state))
+              end
+              let(:edited_address) do
+                cart.ship_address.attributes.slice(*%w[first_name last_name address1 city postal_code country_code state_code phone]).symbolize_keys
+              end
+
+              before do
+                cart.recalculate_for_address_change!
+                fulfillment = cart.fulfillments.reload.first
+                fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
+                cart.reload
+              end
+
+              context 'with only the phone number corrected' do
+                let(:params) { { shipping_address: edited_address.merge(phone: '555-0000') } }
+
+                it 'keeps the chosen rate' do
+                  address_id = cart.ship_address_id
+
+                  expect(subject).to be_success
+
+                  cart.reload
+                  expect(cart.ship_address_id).to eq(address_id)
+                  expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to eq(express)
+                  expect(cart.delivery_total).to eq(15)
+                end
+              end
+
+              context 'with the street changed' do
+                let(:params) { { shipping_address: edited_address.merge(address1: '5 Edited Way') } }
+
+                it 'starts from the default rate' do
+                  address_id = cart.ship_address_id
+
+                  expect(subject).to be_success
+
+                  cart.reload
+                  expect(cart.ship_address_id).to eq(address_id)
+                  expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to eq(standard)
+                  expect(cart.delivery_total).to eq(5)
+                end
+              end
+
+              context 'with the street changed and an item added in the same request' do
+                let(:params) do
+                  {
+                    shipping_address: edited_address.merge(address1: '5 Edited Way'),
+                    items: [{ variant_id: cart.line_items.first.variant.prefixed_id, quantity: 2 }]
+                  }
+                end
+
+                it 'starts from the default rate' do
+                  expect(subject).to be_success
+
+                  cart.reload
+                  expect(cart.line_items.first.quantity).to eq(2)
+                  expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to eq(standard)
+                  expect(cart.delivery_total).to eq(5)
+                end
               end
             end
           end

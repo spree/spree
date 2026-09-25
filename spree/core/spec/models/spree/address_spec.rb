@@ -763,6 +763,20 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#saved_change_to_destination?' do
+    let(:address) { create(:address) }
+
+    it 'ignores a change to who receives the parcel' do
+      address.update!(phone: '555-0000', first_name: 'Other')
+      expect(address.saved_change_to_destination?).to be(false)
+    end
+
+    it 'reports a change to where the parcel goes' do
+      address.update!(address1: '5 Edited Way')
+      expect(address.saved_change_to_destination?).to be(true)
+    end
+  end
+
   describe '#to_s' do
     let(:address) { create(:address) }
 

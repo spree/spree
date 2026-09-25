@@ -535,6 +535,40 @@ describe Spree::Shipment, type: :model do
       expect(shipment.shipping_method).to eq shipping_method1
     end
 
+    context 'carry_over_selection' do
+      let(:digital_method) { create(:shipping_method) }
+
+      def proposal(*rates)
+        Spree::Fulfillment.new(delivery_rates: rates.map { |method, cost, selected| Spree::DeliveryRate.new(delivery_method: method, cost: cost, selected: selected) })
+      end
+
+      # One stock location can ship a digital item and a physical one as two
+      # proposals, each with its own choice to keep.
+      it 'gives each proposal the earlier choice it is quoted for' do
+        physical = proposal([shipping_method1, 10, true], [shipping_method2, 20, false])
+        digital = proposal([digital_method, 0, true])
+        candidates = [Spree::DeliveryRate.new(delivery_method: digital_method, cost: 0),
+                      Spree::DeliveryRate.new(delivery_method: shipping_method2, cost: 20)]
+
+        physical.carry_over_selection(candidates)
+        digital.carry_over_selection(candidates)
+
+        expect(physical.delivery_rates.find(&:selected).delivery_method).to eq(shipping_method2)
+        expect(physical.cost).to eq(20)
+        expect(digital.delivery_rates.find(&:selected).delivery_method).to eq(digital_method)
+        expect(candidates).to be_empty
+      end
+
+      it 'prices the default rate when no earlier choice fits' do
+        physical = proposal([shipping_method1, 10, true], [shipping_method2, 20, false])
+
+        physical.carry_over_selection([])
+
+        expect(physical.delivery_rates.find(&:selected).delivery_method).to eq(shipping_method1)
+        expect(physical.cost).to eq(10)
+      end
+    end
+
     context 'refresh_rates' do
       let(:mock_estimator) { double('estimator', delivery_rates: shipping_rates) }
 

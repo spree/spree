@@ -27,6 +27,10 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(first_name last_name company address1 address2 city state postal_code country phone)
 
+    # The columns a delivery quote reads. A change to anything else (a phone
+    # number, the recipient's name) leaves the parcel going where it was.
+    DESTINATION_FIELDS = %w(address1 address2 city state_code postal_code country_code).freeze
+
     # Beyond identity and ownership, three groups are excluded because they
     # cannot tell two addresses apart. Latitude and longitude are derived from
     # the address, so an entry whose geocoding has already run would otherwise
@@ -377,6 +381,12 @@ module Spree
 
     def value_attributes
       attributes.except(*EXCLUDED_KEYS_FOR_COMPARISON)
+    end
+
+    # @return [Boolean] whether the last save moved this address somewhere
+    #   else, as opposed to correcting who receives the parcel
+    def saved_change_to_destination?
+      saved_changes.keys.intersect?(DESTINATION_FIELDS)
     end
 
     # A country alone doesn't make an address — a new one is pre-filled with the

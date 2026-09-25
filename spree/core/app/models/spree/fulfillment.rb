@@ -92,6 +92,18 @@ module Spree
 
     delegate :store, :currency, to: :owner
 
+    # What a rebuild hands to {#carry_over_selection}, read before the old
+    # proposals and their rates are deleted. Grouped rather than keyed by
+    # location: one location can ship several proposals (a digital item beside
+    # a physical one, stock on hand beside a backorder), each with its own choice.
+    #
+    # @return [Hash{Integer => Array<Spree::DeliveryRate>}] the selected rates
+    #   of each stock location's proposals
+    def self.selected_rates_by_stock_location
+      includes(:selected_delivery_rate).group_by(&:stock_location_id).
+        transform_values { |proposals| proposals.filter_map(&:selected_delivery_rate) }
+    end
+
     # The exactly-one owner of this fulfillment — the cart during checkout,
     # the order after completion. New code must read +owner+, never assume
     # +order+.
@@ -543,34 +555,13 @@ module Spree
 
       # StockEstimator.new assignment below will replace the current delivery_method
       original_shipping_method_id = delivery_method.try(:id)
-      # A carrier method quotes several rates (one per service), so the
-      # method id alone no longer identifies the customer's choice — capture
-      # the selected rate's carrier service too.
       original_selection = selected_delivery_rate
-      original_carrier = original_selection&.carrier
-      original_service_level = original_selection&.service_level
 
       self.delivery_rates = Stock::Estimator.new(owner).
                             delivery_rates(to_package, audience)
 
       if delivery_method
-        # Keep the previously chosen carrier service when it is still quoted,
-        # then the previously chosen method, then the estimator's own pick
-        # (the cheapest rate, already flagged selected) rather than leaving
-        # the fulfillment unselected.
-        selected_rate =
-          if original_shipping_method_id && original_carrier
-            delivery_rates.detect do |rate|
-              rate.delivery_method_id == original_shipping_method_id &&
-                rate.carrier == original_carrier &&
-                rate.service_level == original_service_level
-            end
-          end
-        selected_rate ||=
-          if original_shipping_method_id
-            delivery_rates.detect { |rate| rate.delivery_method_id == original_shipping_method_id }
-          end
-        selected_rate ||= delivery_rates.detect(&:selected)
+        selected_rate = successor_rate(original_shipping_method_id, original_selection)
 
         save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
@@ -755,6 +746,25 @@ module Spree
       end
     end
 
+    # Carries the customer's choice onto a freshly built, unsaved proposal:
+    # takes the first of +candidates+ whose method this proposal is quoted for,
+    # selects the rate standing for it and prices the proposal at it, so a
+    # rebuild neither resets the choice nor drops its cost. The rate taken is
+    # removed from +candidates+, leaving the rest to this proposal's siblings.
+    #
+    # @param candidates [Array<Spree::DeliveryRate>] the rates selected on the
+    #   proposals this stock location had before the rebuild
+    # @return [void]
+    def carry_over_selection(candidates)
+      quoted_method_ids = delivery_rates.map(&:delivery_method_id)
+      previous_rate = candidates.find { |rate| quoted_method_ids.include?(rate.delivery_method_id) }
+      candidates.delete(previous_rate)
+
+      choice = successor_rate(previous_rate&.delivery_method_id, previous_rate)
+      delivery_rates.each { |rate| rate.selected = rate == choice }
+      self.cost = choice&.cost || 0
+    end
+
     # @deprecated No-op since 6.0; removed in 6.1.
     #
     # This re-derived the status from the order's payment state on every order
@@ -791,6 +801,21 @@ module Spree
     end
 
     private
+
+    # The previously chosen carrier service when it is still quoted, then the
+    # previously chosen method, then the estimator's own pick - a carrier
+    # method quotes one rate per service, so the method alone does not
+    # identify the choice.
+    def successor_rate(delivery_method_id, previous_rate)
+      same_method = delivery_method_id ? delivery_rates.select { |rate| rate.delivery_method_id == delivery_method_id } : []
+      same_service = if previous_rate&.carrier
+                       same_method.detect do |rate|
+                         rate.carrier == previous_rate.carrier && rate.service_level == previous_rate.service_level
+                       end
+                     end
+
+      same_service || same_method.first || delivery_rates.detect(&:selected)
+    end
 
     # @return [Boolean] whether this parcel's order shares its payment with
     #   others placed in the same checkout

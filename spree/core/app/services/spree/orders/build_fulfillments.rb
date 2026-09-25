@@ -17,13 +17,14 @@ module Spree
     class BuildFulfillments
       prepend Spree::ServiceModule::Base
 
-      def call(order:)
+      # @param keep_selection [Boolean] false when the destination changed
+      def call(order:, keep_selection: true)
         return success(order) if order.completed?
         return success(order) unless order.ship_address_id.present?
         return success(order) unless order.line_items.any?
         return success(order) unless order.delivery_step_required?
 
-        order.rebuild_fulfillments!
+        order.rebuild_fulfillments!(keep_selection: keep_selection)
         order.create_shipment_tax_charge!
         order.set_fulfillments_cost
         order.apply_free_shipping_promotions
