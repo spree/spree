@@ -238,6 +238,19 @@ module Spree
               expect(order.delivery_total).to eq(5)
             end
           end
+
+          context 'and only the recipient phone is edited' do
+            let(:params) { { shipping_address: { id: initial_address.id, phone: '555-0000' } } }
+
+            it 'keeps the chosen rate' do
+              expect(subject).to be_success
+
+              order.reload
+              expect(order.ship_address.phone).to eq('555-0000')
+              expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(express)
+              expect(order.delivery_total).to eq(15)
+            end
+          end
         end
 
         # The admin controller sends the public names; the column names and the

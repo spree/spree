@@ -65,6 +65,15 @@ module Spree
           cart.saved_change_to_preferred_stock_location_id?
       end
 
+      # Whether the chosen delivery belongs to a place the cart no longer
+      # ships to. A market change or a corrected phone number keeps the
+      # choice, quoted again.
+      def new_delivery_destination?
+        cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_preferred_stock_location_id? ||
+          cart.ship_address&.saved_change_to_destination? || false
+      end
+
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
@@ -238,7 +247,7 @@ module Spree
         return if cart.complete?
 
         if @address_invalidated || destination_changed?
-          cart.recalculate_for_address_change!
+          cart.recalculate_for_address_change!(keep_selection: !new_delivery_destination?)
         else
           cart.recalculate_totals!
         end

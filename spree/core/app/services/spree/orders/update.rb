@@ -25,8 +25,8 @@ module Spree
 
           process_items(items_param) if items_param
 
-          # An address row edited in place keeps its id, so its saved changes count too.
-          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_changes?
+          # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
+          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
           build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
 
           @order.recalculate_totals!
