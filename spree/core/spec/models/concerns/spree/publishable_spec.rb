@@ -226,13 +226,13 @@ RSpec.describe Spree::Publishable, events: true do
 
   describe '#event_prefix' do
     before do
-      stub_const('Spree::Product', publishable_class)
+      stub_const('Spree::TestProduct', publishable_class)
     end
 
     it 'returns the model name element' do
-      instance = Spree::Product.new
+      instance = Spree::TestProduct.new
 
-      expect(instance.event_prefix).to eq('product')
+      expect(instance.event_prefix).to eq('test_product')
     end
   end
 

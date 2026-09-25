@@ -100,15 +100,30 @@ module Spree
         pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
       end
 
-      private
-
       # The resolver is swappable, so what it returns is host code. An entry
       # whose per-line overrides cannot name their line is not a narrower claim
       # but a wider one — the provider would read it as the whole order being
       # exempt — so it is dropped rather than trusted. Charging tax is the safe
       # direction: under-exempting surfaces as a customer query, over-exempting
       # is tax the merchant owes and never collected.
+      #
+      # Public because a provider filing the sale needs the same evidence core
+      # hands it as an +estimate+ argument: an external engine commits its
+      # document after placement, and resolving again there could file an
+      # exemption the estimate never applied.
+      #
+      # A placed order answers from its frozen snapshot for that reason, the way
+      # +resolved_tax_identifier+ does. Resolving live months later is not the
+      # same evidence: a certificate lapses on its own date with nothing written
+      # to it, can be revoked, and goes with its company when that is deleted —
+      # so a credit for an exempt sale would be filed as a consumer refund and
+      # declare tax the sale never collected. Orders placed before the snapshot
+      # existed have none, and still resolve live.
+      #
+      # @return [Array]
       def usable_exemptions
+        return frozen_tax_exemptions if frozen_tax_exemptions?
+
         resolved = Array(Spree.tax_resolve_exemptions_service.new.call(order: self).value)
 
         resolved.select do |exemption|
@@ -125,6 +140,22 @@ module Spree
           )
           false
         end
+      end
+
+      private
+
+      # Carts always resolve live — a buyer's certificates legitimately change
+      # while they shop, and the cart is priced again each time.
+      #
+      # Only nil is an absent snapshot. An empty one records that the sale found
+      # no claim, and reading that as absent would let a certificate added later
+      # explain a sale it was never part of.
+      def frozen_tax_exemptions?
+        is_a?(Spree::Order) && completed? && !applied_tax_exemptions.nil?
+      end
+
+      def frozen_tax_exemptions
+        Array(applied_tax_exemptions).map { |snapshot| Spree::TaxExemption.from_snapshot(snapshot) }
       end
 
       # Read through the legal entity, never the node — a division holds no

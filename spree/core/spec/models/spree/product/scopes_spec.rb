@@ -169,15 +169,12 @@ describe 'Product scopes', type: :model do
       create_list(:product, 3, categories: [create(:category)])
     end
 
+    # Products sharing a minimum position have no defined order between them.
     it 'orders products by ascending taxons minimum position' do
-      expect(ordered_products).to eq(
-        [
-          product_2, product_5, # position: 1
-          product_4,            # position: 2
-          product_6, product_3, # position: 3
-          product_1             # position: 4
-        ]
-      )
+      products = ordered_products.to_a
+
+      expect(products.first(2)).to contain_exactly(product_2, product_5)
+      expect(products.drop(2)).to eq([product_4, product_6, product_3, product_1])
     end
   end
 

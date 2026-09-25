@@ -13,7 +13,7 @@ module Spree
           typelize type: [:string, comment: 'Rule type. Built-in: item_total_rule, weight_rule, excluded_products_rule, channel_rule, volume_rule, company_rule. Extensions may register more.'],
                    active: :boolean,
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>"
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>"
 
           attributes :active
 
