@@ -307,6 +307,13 @@ module Spree
             expect(order.shipments.map(&:id)).to match_array(old_shipment_ids)
             expect(order.fulfillments.first.fulfillment_items.sum(:quantity)).to eq(3)
           end
+
+          it 'measures what has been paid against the new total' do
+            create(:payment, amount: order.total, order: order, status: 'completed')
+            order.update_statuses!
+
+            expect { subject }.to change { order.reload.payment_status }.from('paid').to('partially_paid')
+          end
         end
       end
 

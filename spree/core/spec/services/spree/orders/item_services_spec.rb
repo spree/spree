@@ -159,4 +159,21 @@ RSpec.describe 'draft order item services' do
       expect(add_result.error.to_s).to include('placed order')
     end
   end
+
+  describe 'on an order that has been paid in full' do
+    before do
+      Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 1)
+      order.update_columns(status: 'placed', completed_at: Time.current)
+      create(:payment, amount: order.reload.total, order: order, status: 'completed')
+      order.update_statuses!
+    end
+
+    it 'measures what has been paid against the total a quantity change leaves' do
+      line_item = order.line_items.sole
+
+      expect do
+        Spree::Orders::UpdateItem.call(order: order, line_item: line_item, quantity: 2)
+      end.to change { order.reload.payment_status }.from('paid').to('partially_paid')
+    end
+  end
 end
