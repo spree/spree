@@ -73,9 +73,11 @@ module Spree
 
     # Order-side only: a cart's fulfillment items are built by the Stock
     # Coordinator and copied at completion, so `owner` would be wrong here.
-    # Removing an item from a placed order must drain its units and restock —
-    # `removing: true` keeps verify from re-adding units mid-destroy.
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order.present? }
+    # Removing an item from a placed order must drain its units and release
+    # their allocation — `removing: true` keeps verify from re-adding units
+    # mid-destroy. Prepended so it runs before the `fulfillment_items`
+    # cascade: once the units are gone there is nothing left to release.
+    before_destroy :verify_order_inventory_before_destroy, prepend: true, if: -> { order.present? }
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -444,7 +446,8 @@ module Spree
     end
 
     def verify_order_inventory_before_destroy
-      Spree::OrderInventory.new(order, self).verify(target_fulfillment, removing: true)
+      Spree::OrderInventory.new(order, self).verify(nil, removing: true)
+      fulfillment_items.reset
     end
 
     def update_adjustments
