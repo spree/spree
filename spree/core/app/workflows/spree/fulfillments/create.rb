@@ -231,7 +231,8 @@ module Spree
               status: unit.status,
               variant_id: unit.variant_id,
               line_item_id: unit.line_item_id,
-              order_id: order.id
+              order_id: order.id,
+              replacement: unit.replacement
             )
             target.pending = unit.pending
             # The quantity column has a database default of 1, so a fresh

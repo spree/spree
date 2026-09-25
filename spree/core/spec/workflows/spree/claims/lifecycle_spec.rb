@@ -174,6 +174,9 @@ RSpec.describe 'Spree::Claims workflows' do
 
       expect(result).to be_success
       expect(result.value).to be_resolved
+      # Flagged, and packed once — not also saved loose beside the packed copy.
+      expect(order.fulfillment_items.reload.where(replacement: true).sum(:quantity)).to eq(claim.claim_line_items.sum(:quantity))
+      expect(order.fulfillment_items.where(fulfillment_id: nil)).to be_empty
     end
   end
 
