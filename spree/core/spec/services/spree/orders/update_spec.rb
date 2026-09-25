@@ -89,6 +89,14 @@ module Spree
           expect(order.reload.email).not_to eq('gbp@example.com')
           expect(order.line_items.count).to eq(0)
         end
+
+        it 'rolls back the entire update when the caller holds the order lock' do
+          result = nil
+          order.with_lock { result = described_class.call(order: order, params: params) }
+
+          expect(result).to be_failure
+          expect(order.reload.email).not_to eq('gbp@example.com')
+        end
       end
 
       context 'with invalid variant in items' do
