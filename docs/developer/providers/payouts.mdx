@@ -136,7 +136,7 @@ Rails.application.config.after_initialize do
 end
 ```
 
-Register inside `after_initialize`: Spree sets up its own integrations list after your initializers run, so an entry added at the top level of the file would be dropped.
+Register inside `after_initialize`: the provider class lives in your application, and Rails cannot load application classes while initializer files are still running. Spree keeps anything registered earlier, so a class-name string such as the integration also works at the top level of the file.
 
 The operator then picks it under **Settings → Marketplace**, which is the store's `payout_provider` preference. The picker is built from the registry, so your provider appears alongside the built-in one and reports whether the store can use it today:
 

@@ -907,6 +907,7 @@ require 'spree/number_generators/registry'
 require 'spree/migrations'
 require 'spree/translation_migrations'
 require 'spree/validators'
+require 'spree/authentication/strategy_registry'
 require 'spree/core/engine'
 
 require 'spree/i18n'

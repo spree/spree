@@ -95,7 +95,7 @@ Rails.application.config.after_initialize do
 end
 ```
 
-Spree assigns its default chain in its own `after_initialize`, which runs after your initializer files — so a splitter appended at the top level of the file, or in a `to_prepare` block, is overwritten at boot. Registering in `after_initialize` runs after Spree's defaults. The chain holds the class loaded at boot, so restart the server in development after changing the splitter.
+Register inside `after_initialize`: the splitter lives in your application, and Rails cannot load application classes while initializer files are still running. Spree's default splitters always come first in the chain, and yours run after them wherever you register it. The chain holds the class loaded at boot, so restart the server in development after changing the splitter.
 
 #### Replacing the Whole Chain
 
