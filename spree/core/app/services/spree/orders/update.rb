@@ -15,7 +15,10 @@ module Spree
         items_param = @params.delete(:items)
         address_params = extract_address_params
 
-        ApplicationRecord.transaction do
+        # requires_new: the rescue below sits outside the block, so joining a
+        # caller's open transaction (the API's order lock) would let it commit
+        # the half-applied edit.
+        ApplicationRecord.transaction(requires_new: true) do
           ship_address_id_before = @order.ship_address_id
           assign_addresses(address_params)
 
@@ -30,6 +33,7 @@ module Spree
           end
 
           @order.recalculate_totals!
+          @order.update_statuses!
         end
 
         success(@order.reload)
