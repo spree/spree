@@ -139,13 +139,6 @@ module Spree
         [[limit.to_i, 1].max, MAX_LIMIT].min
       end
 
-      def unknown_resource(resource)
-        {
-          error: "Unknown resource #{resource.inspect}",
-          available: Spree::AgentTools::ResourceMap.available_for(context).map(&:key)
-        }
-      end
-
       def forbidden(entry)
         { error: "You do not have permission to read #{entry.key}." }
       end
