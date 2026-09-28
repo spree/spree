@@ -97,10 +97,32 @@ module Spree
 
         # A line the client can show beside its confirmation prompt, and the
         # model can read without parsing the structured payload.
+        #
+        # The payload itself is NOT repeated here: it already travels as
+        # structured content, and a client that renders both would put every
+        # record into the model's context twice — on exactly the results the
+        # design requires to stay compact. Without a summary this says what
+        # came back, and the structured half carries it.
         def text_for(result)
           return result.to_s unless result.is_a?(Hash)
 
-          result[:summary].presence || JSON.generate(result)
+          result[:summary].presence || describe(result)
+        end
+
+        # A sentence about a payload that carries no summary of its own: what
+        # it holds, so the model knows whether to read the structured content
+        # rather than having to.
+        def describe(result)
+          count = result[:count] || result[:row_count] || Array(result[:records] || result[:rows]).size
+          total = result[:total]
+
+          if total && count
+            "Found #{total} #{'match'.pluralize(total)}#{", returning #{count}" if total != count}."
+          elsif count.to_i.positive?
+            "Returned #{count} #{'result'.pluralize(count)}."
+          else
+            "Returned #{result.keys.map(&:to_s).to_sentence}."
+          end
         end
       end
     end

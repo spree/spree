@@ -139,6 +139,29 @@ RSpec.describe Spree::Mcp::Server do
       expect(response.dig('result', 'isError')).to be(false)
     end
 
+    # A result travels as structured content; repeating it as text would put
+    # every record into the model's context twice, on exactly the payloads
+    # the design requires to stay compact.
+    it 'does not repeat the payload as text' do
+      create(:product, store: store, name: 'Context Budget')
+
+      response = call('tools/call', name: 'search_resources', arguments: { 'resource' => 'products' })
+      text = response.dig('result', 'content', 0, 'text').to_s
+      structured = JSON.generate(response.dig('result', 'structuredContent'))
+
+      expect(structured).to include('Context Budget')
+      expect(text).not_to include('Context Budget')
+      expect(text.length).to be < structured.length
+    end
+
+    it 'says what a payload holds when the tool offers no summary' do
+      create_list(:product, 2, store: store)
+
+      response = call('tools/call', name: 'search_resources', arguments: { 'resource' => 'products' })
+
+      expect(response.dig('result', 'content', 0, 'text')).to match(/Found \d+ match/)
+    end
+
     it 'returns structured content from a read tool' do
       create(:product, store: store, name: 'Rotary Shaver 9000')
 
