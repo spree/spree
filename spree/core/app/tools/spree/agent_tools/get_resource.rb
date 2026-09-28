@@ -12,7 +12,7 @@ module Spree
 
       def call(resource:, id:)
         entry = Spree::AgentTools::ResourceMap.find(resource)
-        return { error: "Unknown resource #{resource.inspect}" } if entry.nil?
+        return unknown_resource(resource) if entry.nil?
         return { error: "You do not have permission to read #{entry.key}." } unless context.permitted?(entry.permission)
 
         record = find_record(entry, id)
