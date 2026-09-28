@@ -7,14 +7,20 @@ import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
-import { detectProject, readSampleDataFromEnv } from '../context.js'
+import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
 import {
   dashboardDevRunnable,
   hasDashboardApp,
   startDashboardDevServer,
   warnDashboardNotRunnable,
 } from '../dashboard-server.js'
-import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
+import {
+  dockerCompose,
+  prepareDatabase,
+  primeBundleVolume,
+  rakeTask,
+  streamLogs,
+} from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
@@ -74,6 +80,15 @@ export async function runFirstRunSetup(flags: {
   await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
 
   const s = p.spinner()
+  // The prebuilt image prepares its database in its entrypoint; the dev
+  // compose of an ejected project does not, and its app server exits
+  // without one.
+  if (isEjectedProject(ctx.projectDir)) {
+    s.start('Preparing the development database...')
+    await prepareDatabase(ctx.projectDir)
+    s.stop('Development database ready.')
+  }
+
   s.start('Starting Docker services...')
   // Prime the shared bundle_cache volume with web alone so the up below
   // doesn't race the cold-volume copy-up. stdio: 'ignore' keeps the spinner
