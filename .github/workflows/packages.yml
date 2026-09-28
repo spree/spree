@@ -189,6 +189,16 @@ jobs:
           E2E_PREVIEW: "1"
         run: pnpm test:e2e --shard=${{ matrix.shard }}/4
 
+      # First-run setup needs a stack with no admin, which the main suite's
+      # never has — it brings up its own Rails and database. One shard is
+      # enough; it runs even when the main suite failed.
+      - name: Run first-run setup E2E tests
+        if: ${{ !cancelled() && matrix.shard == 1 }}
+        working-directory: packages/dashboard
+        env:
+          E2E_PREVIEW: "1"
+        run: pnpm test:e2e:first-run
+
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v7
@@ -197,6 +207,8 @@ jobs:
           path: |
             packages/dashboard/playwright-report/
             packages/dashboard/test-results/
+            packages/dashboard/playwright-report-first-run/
+            packages/dashboard/test-results-first-run/
           retention-days: 14
 
   # Stable single-status roll-up of the shard matrix, keeping the check name
