@@ -144,6 +144,56 @@ Some things are deliberately out of reach, whatever scopes the key holds.
 - **Files.** Media uploads, import files and label downloads. The protocol carries text and structured data.
 - **Order editing.** Adding line items, discounts and fees to an existing order still runs through paths that are not yet workflows. Cancelling, refunding and fulfilling all work today.
 
+## Adding your own tools
+
+The catalog is a registry in `spree_core`, so an extension or a host application adds to it without depending on the MCP gem. Two kinds of thing to add.
+
+**A back-office operation you already have as a workflow.** Name its `Spree::Dependencies` key and the permission that should gate it:
+
+```ruby server/config/initializers/spree.rb
+Spree.agent_tools.expose_workflows(supplier_sync_workflow: 'write_purchasing')
+```
+
+That is the whole change. The tool's name comes from the workflow's own key (`suppliers.sync` becomes `suppliers_sync`), its description from the class's leading comment, and its parameters from `perform`'s signature and the YARD `@param` lines above it — so the tool and the workflow cannot drift apart. Two rules the derivation relies on: every parameter needs an `@param` with a type, and a parameter naming a record must be typed as a model the agent can already read.
+
+**Something that is not a workflow** — a lookup against another system, a report of your own. Subclass `Spree::AgentTool` and register the class by name:
+
+```ruby app/tools/my_shop/agent_tools/supplier_stock.rb
+module MyShop
+  module AgentTools
+    # Asks the supplier's API what they hold, so a merchant can ask before
+    # committing to a purchase order.
+    class SupplierStock < Spree::AgentTool
+      tool_name 'supplier_stock'
+      description 'Current stock at a supplier, by SKU.'
+      permission 'read_purchasing'
+
+      param :sku, description: 'The SKU to look up', required: true
+
+      def call(sku:)
+        stock = MyShop::SupplierApi.stock_for(sku, store: context.store)
+        return { error: "No supplier carries #{sku}." } if stock.nil?
+
+        { summary: "#{sku}: #{stock} available", sku: sku, available: stock }
+      end
+    end
+  end
+end
+```
+
+```ruby server/config/initializers/spree.rb
+Spree.agent_tools << 'MyShop::AgentTools::SupplierStock'
+```
+
+Four things worth knowing when you write one:
+
+- **Registration is by name, not by class**, so your edits to a description or a parameter take effect on the next request rather than needing a restart.
+- **`context` is who is asking**: `context.store` is always the caller's store, and `context.principal` is the admin or the API key — pass it to anything that records who acted.
+- **A refusal is `{ error: '…' }`**, not an exception. The model reads that text and corrects itself, so write it as an instruction rather than a stack trace.
+- **Keep the result small.** It lands in the model's context. Return a `summary` line plus the few fields that answer the question, and let the caller ask for more.
+
+A tool is offered only to a credential holding its `permission`, so a key that cannot read purchasing never learns `supplier_stock` exists.
+
 ## Choosing between this and the CLI
 
 If your agent has a shell, the [`spree api` CLI](/developer/cli/admin-api) is usually the better tool: it reaches every endpoint, handles bulk work, and its output can be piped into other commands. This server is for agents that cannot shell out, and for conversational work where a job-shaped tool beats composing raw HTTP calls.

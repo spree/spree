@@ -35,7 +35,7 @@ module Spree
       # @return [Array(ResourceMap::Entry, nil), Array(nil, Hash)]
       def writable_entry(key)
         entry = ResourceMap.find(key)
-        return [nil, { error: "Unknown resource #{key.inspect}." }] if entry.nil?
+        return [nil, unknown_resource(key)] if entry.nil?
 
         unless entry.generic_writes?
           return [nil, { error: refusal_for(entry) }]
