@@ -4,6 +4,10 @@ module SpreeVies
   class Engine < Rails::Engine
     engine_name 'spree_vies'
 
+    config.to_prepare do
+      Spree::TaxIdentifiers::ValidateJob.prepend(SpreeVies::CheckGuard)
+    end
+
     config.after_initialize do
       # Core registers a format-only validator for EU VAT numbers. This one keeps
       # that check and adds the registry lookup, so installing the gem is what

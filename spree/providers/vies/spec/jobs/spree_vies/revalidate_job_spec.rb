@@ -9,8 +9,8 @@ RSpec.describe SpreeVies::RevalidateJob do
 
     described_class.perform_now
 
-    expect(SpreeVies::ValidateJob).to have_been_enqueued.with(stale.id).exactly(:once)
-    expect(SpreeVies::ValidateJob).not_to have_been_enqueued.with(fresh.id)
+    expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(stale.id).exactly(:once)
+    expect(Spree::TaxIdentifiers::ValidateJob).not_to have_been_enqueued.with(fresh.id)
 
     expect(stale.reload.validation_status).to eq('verified')
   end

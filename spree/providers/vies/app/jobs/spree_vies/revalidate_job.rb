@@ -17,7 +17,7 @@ module SpreeVies
 
     def queue_checks(step)
       SpreeVies::Validator.due_for_check.find_each(start: step.cursor) do |tax_identifier|
-        SpreeVies::ValidateJob.perform_later(tax_identifier.id)
+        Spree::TaxIdentifiers::ValidateJob.perform_later(tax_identifier.id)
         step.advance! from: tax_identifier.id
       end
     end

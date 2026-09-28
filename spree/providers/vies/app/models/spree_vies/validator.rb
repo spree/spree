@@ -132,7 +132,7 @@ module SpreeVies
       return if attempts > MAX_ATTEMPTS
 
       wait = [FIRST_RETRY * (2**(attempts - 1)), LAST_RETRY].min
-      SpreeVies::ValidateJob.set(wait: [wait, cool_off_remaining].max).perform_later(@tax_identifier.id)
+      Spree::TaxIdentifiers::ValidateJob.set(wait: [wait, cool_off_remaining].max).perform_later(@tax_identifier.id)
     end
 
     def cool_off_remaining

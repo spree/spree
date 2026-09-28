@@ -78,7 +78,7 @@ RSpec.describe SpreeVies::Validator do
     before { stub_vies(:ms_unavailable) }
 
     it 'records the number as unavailable, never as unverified, and asks again later' do
-      expect { validate }.to have_enqueued_job(SpreeVies::ValidateJob).with(tax_identifier.id)
+      expect { validate }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob).with(tax_identifier.id)
 
       expect(tax_identifier.validation_status).to eq('unavailable')
       expect(tax_identifier.validation_evidence).to include('registry' => 'vies', 'attempts' => 1)
@@ -89,14 +89,14 @@ RSpec.describe SpreeVies::Validator do
       tax_identifier.update_columns(validation_evidence: { 'attempts' => 2 })
 
       Timecop.freeze do
-        expect { validate }.to have_enqueued_job(SpreeVies::ValidateJob).at(20.minutes.from_now)
+        expect { validate }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob).at(20.minutes.from_now)
       end
     end
 
     it 'stops retrying after the last attempt' do
       tax_identifier.update_columns(validation_evidence: { 'attempts' => described_class::MAX_ATTEMPTS })
 
-      expect { validate }.not_to have_enqueued_job(SpreeVies::ValidateJob)
+      expect { validate }.not_to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
       expect(tax_identifier.validation_status).to eq('unavailable')
     end
 
@@ -147,7 +147,7 @@ RSpec.describe SpreeVies::Validator do
       other = create(:tax_identifier, value: 'DE123456788')
 
       expect { Spree::TaxIdentifiers::Validate.call(tax_identifier: other) }
-        .to have_enqueued_job(SpreeVies::ValidateJob).with(other.id)
+        .to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob).with(other.id)
 
       expect(a_request(:post, vies_url)).to have_been_made.once
       expect(other.reload.validation_status).to eq('unavailable')
