@@ -132,6 +132,22 @@ class AgentTool
       context.permitted?(permission)
     end
 
+    # A resource the map does not hold, answered with the ones it does.
+    #
+    # Every tool that takes a resource key refuses the same way: naming what is
+    # available is what lets the model correct itself in one step instead of
+    # guessing again, and a caller only ever sees resources its own credential
+    # may read.
+    #
+    # @param key [String]
+    # @return [Hash]
+    def unknown_resource(key)
+      {
+        error: "Unknown resource #{key.to_s.inspect}. Call describe_resource for the list.",
+        available: Spree::AgentTools::ResourceMap.available_for(context).map(&:key)
+      }
+    end
+
     protected
 
     # Refuses unless this admin may take `action` on `record`.
