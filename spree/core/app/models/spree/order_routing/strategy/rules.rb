@@ -2,84 +2,47 @@ module Spree
   module OrderRouting
     module Strategy
       # Default order routing strategy: walks Spree::OrderRoutingRule rows in
-      # priority order, runs the Reducer to fully rank eligible locations,
-      # packs each location, and lets Spree::Stock::Prioritizer distribute
-      # inventory units across packages so units that the top-ranked
-      # location can't cover spill over to subsequent locations.
+      # priority order, runs the Reducer to fully rank the candidate
+      # locations, and hands that ranking to Spree::Stock::Coordinator, which
+      # packs each location and lets the Prioritizer spill units the
+      # top-ranked location can't cover over to the next ones.
+      #
+      # The Coordinator keeps owning which locations are candidates at all and
+      # which items each one may pack (delivery profile coverage, the channel's
+      # served locations), so routing only ever reorders origins that are
+      # already allowed.
       #
       # See docs/plans/6.0-order-routing.md.
       class Rules < Base
         def for_allocation
-          locations = eligible_locations
+          locations = coordinator.stock_locations
           return [] if locations.empty?
 
-          ordered = Spree::OrderRouting::Strategy::Reducer
-            .new(applicable_rules.to_a, order: order)
+          ranked = Spree::OrderRouting::Strategy::Reducer
+            .new(applicable_rules, order: order)
             .rank_all(locations)
-          return [] if ordered.empty?
+          return [] if ranked.empty?
 
-          packages = build_packages(ordered)
-          packages = prioritize_packages(packages)
-          estimate_rates(packages)
+          coordinator.packages(ranked)
         end
 
-        # Stock decrement / restock today happens via Spree::Shipment's state
-        # machine (after_ship / after_cancel). The strategy methods below are
-        # part of the contract for the future reservation + typed-movement
-        # phase — see 6.0-stock-reservations.md and 6.0-typed-stock-movements.md.
-        # In 5.5 they are no-ops; the existing model callbacks already do the
-        # right thing.
+        # The fulfillment and order workflows write the stock movements for
+        # dispatch and cancellation themselves, so the rules strategy has
+        # nothing to add at these points.
         def for_sale(fulfillment:); end
         def for_release; end
-        def for_cancellation; end
 
         private
 
         def applicable_rules
-          order.channel.order_routing_rules.active.ordered
+          channel = order.channel || order.store.default_channel
+          return [] if channel.nil?
+
+          channel.order_routing_rules.active.ordered.to_a
         end
 
-        def eligible_locations
-          order.store.stock_locations.active
-            .joins(:stock_levels)
-            .where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids })
-            .distinct
-            .to_a
-        end
-
-        def requested_variant_ids
-          inventory_units.map(&:variant_id).uniq
-        end
-
-        def inventory_units
-          @inventory_units ||= Spree::Stock::InventoryUnitBuilder.new(order).units
-        end
-
-        # Pack each ranked location independently. Packages are emitted in
-        # rank order so the Prioritizer's first-package-wins-on-hand logic
-        # honors the routing decision.
-        def build_packages(locations)
-          locations.flat_map do |location|
-            Spree::Stock::Packer.new(location, inventory_units, Spree.stock_splitters, owner: order).packages
-          end
-        end
-
-        # Prioritizer's Adjuster distributes each inventory_unit across
-        # packages: the first package with on-hand stock fulfills the unit,
-        # and downstream packages have that unit removed. Packages whose
-        # items all get stripped are pruned. Rank only decides between origins
-        # that can reach the destination — the Prioritizer demotes the rest.
-        def prioritize_packages(packages)
-          Spree::Stock::Prioritizer.new(packages, estimator: estimator).prioritized_packages
-        end
-
-        def estimate_rates(packages)
-          packages.each { |pkg| pkg.delivery_rates = estimator.delivery_rates(pkg) }
-          packages
-        end
-
-        def estimator
-          @estimator ||= Spree::Stock::Estimator.new(order)
+        def coordinator
+          @coordinator ||= Spree::Stock::Coordinator.new(order)
         end
       end
     end

@@ -517,7 +517,15 @@ Single-store installations notice nothing. **A multi-store installation ends up 
 
 A store or channel still carrying `preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
 
-`Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
+`Spree::Stock::Coordinator` itself stays — the `Rules` strategy packs through it, and exchanges and claims still use it directly.
+
+### Storefront checkout follows order routing
+
+In 5.x a cart built its delivery options straight from `Spree::Stock::Coordinator`, so routing rules and custom strategies only affected orders built by staff. Carts now go through the same strategy as orders — the channel's `preferred_order_routing_strategy`, falling back to the store's. A customer's items ship from the locations your routing rules prefer, and a customer's chosen pickup location is preferred by the `preferred_location` rule.
+
+If you wrote a custom strategy, it now also runs during checkout, where `order` is a `Spree::Cart`. It runs on every checkout recalculation, so keep it fast.
+
+**BREAKING — `for_cancellation` is removed from the strategy contract.** Spree never called it, and orders cannot be canceled after they ship; returns handle restocking. `for_sale(fulfillment:)` is now called after a fulfillment ships, and `for_release` after an order is canceled. Both run once the change is saved and are for telling an outside system — Spree writes the stock movements itself. A `for_cancellation` method left on your strategy is simply never called.
 
 ### `belongs_to` is required by default
 

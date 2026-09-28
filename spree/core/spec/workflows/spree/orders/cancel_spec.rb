@@ -9,6 +9,33 @@ module Spree
 
     let(:result) { subject.call(order: order, canceler: user) }
 
+    # The routing strategy that allocated the order hears that the
+    # allocation is released once the cancellation is committed.
+    describe 'order routing strategy' do
+      let(:order) { create(:order_ready_to_ship, line_items_count: 1) }
+      let(:strategy) { instance_double(Spree::OrderRouting::Strategy::Rules) }
+
+      before { allow_any_instance_of(Spree::Order).to receive(:order_routing_strategy).and_return(strategy) }
+
+      it 'tells the strategy the allocation is released, after the order is canceled' do
+        status_when_told = nil
+        allow(strategy).to receive(:for_release) { status_when_told = order.reload.status }
+
+        expect(result).to be_success
+
+        expect(strategy).to have_received(:for_release).once
+        expect(status_when_told).to eq('canceled')
+      end
+
+      it 'reports a failing strategy and still settles the cancellation' do
+        allow(strategy).to receive(:for_release).and_raise(StandardError, 'OMS unavailable')
+        expect(Rails.error).to receive(:report).with(an_instance_of(StandardError), hash_including(source: 'spree.orders.cancel'))
+
+        expect(result).to be_success
+        expect(order.reload).to be_canceled
+      end
+    end
+
     # Cancelling the order cancels its fulfillments through the fulfillment
     # workflow rather than reimplementing the restock, so extension hooks and
     # guards registered there apply to an order cancellation too.

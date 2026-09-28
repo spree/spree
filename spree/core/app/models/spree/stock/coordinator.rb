@@ -21,14 +21,18 @@ module Spree
         fulfillments
       end
 
-      def packages
-        packages = build_packages
+      # @param locations [Array<Spree::StockLocation>] the origins to pack,
+      #   most preferred first — an order routing strategy passes its ranking
+      #   here. Defaults to every candidate in the store's own order.
+      # @return [Array<Spree::Stock::Package>]
+      def packages(locations = stock_locations)
+        packages = build_packages(locations: locations)
         packages = prioritize_packages(packages)
         packages = estimate_packages(packages)
       end
 
-      def build_packages(packages = [])
-        stock_locations_with_requested_variants.each do |stock_location|
+      def build_packages(packages = [], locations: stock_locations)
+        locations.each do |stock_location|
           units = allocatable_units_for(stock_location)
           next if units.empty?
 
@@ -39,12 +43,17 @@ module Spree
         packages
       end
 
-      private
-
-      def stock_locations_with_requested_variants
-        order.store.stock_locations.active.joins(:stock_levels).
-          where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids }).distinct
+      # The origins allocation may draw from: the store's active locations
+      # that stock something requested and that the order's channel serves.
+      #
+      # @return [Array<Spree::StockLocation>]
+      def stock_locations
+        @stock_locations ||= order.store.stock_locations.active.joins(:stock_levels).
+                             where(Spree::StockLevel.table_name => { variant_id: requested_variant_ids }).
+                             distinct.to_a.select { |stock_location| channel_serves?(stock_location) }
       end
+
+      private
 
       # An item may only be allocated from locations its delivery profile
       # covers — a profile narrowed to the cold-storage warehouse never packs

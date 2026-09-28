@@ -36,6 +36,7 @@ module Spree
     include Spree::Purchase::Validations
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
+    include Spree::Purchase::OrderRouting
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -167,31 +168,45 @@ module Spree
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
-    # the current items/address; nothing here touches a completed cart.
+    # the current items/address through the channel's order routing strategy,
+    # the same one staff-built orders use; nothing here touches a completed
+    # cart.
     def rebuild_fulfillments!
       return if completed?
 
-      discounts.for_fulfillments.delete_all
-      tax_lines.for_fulfillments.delete_all
-      fees.for_fulfillments.delete_all
+      # A savepoint, so a strategy that raises leaves the previous proposals
+      # in place even when the caller rescues inside its own transaction.
+      transaction(requires_new: true) do
+        discounts.for_fulfillments.delete_all
+        tax_lines.for_fulfillments.delete_all
+        fees.for_fulfillments.delete_all
 
-      fulfillment_ids = fulfillments.map(&:id)
-      DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
-      fulfillments.delete_all
-      fulfillment_items.reset
+        fulfillment_ids = fulfillments.map(&:id)
+        DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
+        fulfillments.delete_all
+        fulfillment_items.reset
 
-      # Appended rather than assigned: setting `cart` on each proposal already
-      # files it under this cart's `fulfillments` (the association is
-      # inverse_of it), so a collection assignment sees the rows as already
-      # present, writes none of them, and the cart ends up with no proposals at
-      # all.
-      Spree::Stock::Coordinator.new(self).fulfillments.each do |fulfillment|
-        fulfillment.address_id = ship_address_id
-        fulfillment.order = nil
-        fulfillments << fulfillment
+        # Appended rather than assigned: setting `cart` on each proposal already
+        # files it under this cart's `fulfillments` (the association is
+        # inverse_of it), so a collection assignment sees the rows as already
+        # present, writes none of them, and the cart ends up with no proposals at
+        # all.
+        order_routing_strategy.for_allocation.each do |package|
+          fulfillment = package.to_fulfillment
+          fulfillment.address_id = ship_address_id
+          fulfillment.order = nil
+          fulfillments << fulfillment
+        end
+        prune_undeliverable_fulfillments!
+        fulfillments.reload
       end
-      prune_undeliverable_fulfillments!
-      fulfillments.reload
+    rescue StandardError
+      # The savepoint restored the rows, but the loaded associations still hold
+      # the emptied/partial proposals — reset so callers that rescue see the
+      # restored ones.
+      fulfillments.reset
+      fulfillment_items.reset
+      raise
     end
 
     # Drops proposals that found no delivery rates and surfaces a

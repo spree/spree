@@ -52,4 +52,34 @@ RSpec.describe Spree::OrderRouting::Strategy::Rules, type: :model do
       expect(packages.map(&:stock_location)).to all(eq(default_loc))
     end
   end
+
+  # Rules only reorder the origins allocation is allowed to use — a
+  # preference must never pull goods from a location the channel does not
+  # serve, or that the item's delivery profile does not ship from.
+  describe '#for_allocation (allowed origins)' do
+    before { order.update!(preferred_stock_location: preferred_loc) }
+
+    it 'never allocates from a location the channel does not serve' do
+      channel = create(:channel, store: store)
+      channel.stock_locations = [default_loc]
+      order.update!(channel: channel)
+
+      packages = subject.for_allocation
+      expect(packages.map(&:stock_location)).to all(eq(default_loc))
+    end
+
+    it 'never allocates from a location outside the delivery profile' do
+      store.default_delivery_profile.default_origin_group.stock_locations = [default_loc]
+
+      packages = subject.for_allocation
+      expect(packages.map(&:stock_location)).to all(eq(default_loc))
+    end
+  end
+
+  describe 'lifecycle hooks' do
+    it 'has nothing to add when a fulfillment ships or an order is canceled' do
+      expect(subject.for_sale(fulfillment: build(:fulfillment))).to be_nil
+      expect(subject.for_release).to be_nil
+    end
+  end
 end

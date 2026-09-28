@@ -88,6 +88,8 @@ A stock location is somewhere stock physically sits: a warehouse, a shop, a thir
 | `pickup_enabled` | Whether customers can collect here |
 | `returns_enabled` | Whether customers can bring returns here |
 
+When a store has more than one location, [order routing](/developer/how-to/custom-order-routing) decides which one ships each item — at checkout and for orders built by staff alike. By default it prefers the location chosen for the order (a customer's pickup counter, or one staff picked), then the location that can cover the most of the order on its own, then the `default` one.
+
 <CodeGroup>
 
 ```typescript Admin SDK

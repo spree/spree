@@ -174,29 +174,31 @@ describe Spree::UserMethods do
     end
 
     it 'is case-insensitive across email and name' do
-      mixed = create(:user, email: 'Greg.Smith@Example.COM', first_name: 'Greg', last_name: 'Smith')
+      # Deliberately not a FFaker name: the file-level `another_user` gets a random
+      # FFaker name/email, and common names (e.g. Smith, Greg) would also match.
+      mixed = create(:user, email: 'Zorblax.Quimbleton@Example.COM', first_name: 'Zorblax', last_name: 'Quimbleton')
 
-      expect(Spree.customer_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
-      expect(Spree.customer_class.search('greg.smith@example.com')).to eq([mixed])
-      expect(Spree.customer_class.search('gReG.SmItH')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG')).to eq([mixed])
-      expect(Spree.customer_class.search('SMITH')).to eq([mixed])
-      expect(Spree.customer_class.search('greg smith')).to eq([mixed])
-      expect(Spree.customer_class.search('GREG SMITH')).to eq([mixed])
+      expect(Spree.customer_class.search('ZORBLAX.QUIMBLETON@EXAMPLE.COM')).to eq([mixed])
+      expect(Spree.customer_class.search('zorblax.quimbleton@example.com')).to eq([mixed])
+      expect(Spree.customer_class.search('zOrBlAx.QuImBlEtOn')).to eq([mixed])
+      expect(Spree.customer_class.search('ZORBLAX')).to eq([mixed])
+      expect(Spree.customer_class.search('QUIMBLETON')).to eq([mixed])
+      expect(Spree.customer_class.search('zorblax quimbleton')).to eq([mixed])
+      expect(Spree.customer_class.search('ZORBLAX QUIMBLETON')).to eq([mixed])
     end
 
     it 'returns users based on the first name' do
       expect(Spree.customer_class.search('joh')).to include(user_1, user_5)
       expect(Spree.customer_class.search('jan')).to include(user_2)
       expect(Spree.customer_class.search('jan')).not_to include(user_1, user_3, user_4, user_5)
-      expect(Spree.customer_class.search('greg')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('zorblax')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the last name' do
       expect(Spree.customer_class.search('do')).to include(user_1, user_5)
       expect(Spree.customer_class.search('moe')).to include(user_3)
       expect(Spree.customer_class.search('moe')).not_to include(user_1, user_2, user_4, user_5)
-      expect(Spree.customer_class.search('smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('quimbleton')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the full name' do
@@ -206,7 +208,7 @@ describe Spree::UserMethods do
       expect(Spree.customer_class.search('mary moe')).to include(user_3)
       expect(Spree.customer_class.search('mary moe')).not_to include(user_1, user_2, user_4, user_5)
       expect(Spree.customer_class.search('jane moe')).to include(user_2, user_3)
-      expect(Spree.customer_class.search('greg smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('zorblax quimbleton')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
   end
 
