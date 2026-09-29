@@ -1,9 +1,9 @@
 ---
 title: Emails
-description: Spree sends transactional email over plain SMTP, configured entirely by environment variable — any provider works, and none of them needs a gem, an adapter or an integration.
+description: Spree sends transactional email over plain SMTP, configured entirely by environment variable — any provider works, and none of them needs anything installed.
 ---
 
-Every transactional email Spree sends — order confirmations, shipping notifications, password resets, staff invitations — goes out through Action Mailer over SMTP. There is no email provider gem, no adapter class and no integration to install. You give Spree an SMTP host and credentials through environment variables, and it sends.
+Every transactional email Spree sends — order confirmations, shipping notifications, password resets, staff invitations — goes out over SMTP. There is nothing to install and no integration to connect: you give Spree an SMTP host and credentials through environment variables, and it sends.
 
 This makes email the one provider category that is **not** configured per store in the admin. Payment gateways, tax engines and search each hold their credentials as a [store integration](/developer/providers/overview); email is infrastructure for the whole deployment, so it lives in the environment alongside the database URL.
 
@@ -28,7 +28,7 @@ SMTP_FROM_ADDRESS=orders@yourstore.com
 | `SMTP_USERNAME` | — | The SMTP user. Optional: when it is absent Spree connects without authenticating |
 | `SMTP_PASSWORD` | — | The SMTP password, sent only when a username is set |
 | `SMTP_FROM_ADDRESS` | — | The default From address on outgoing mail |
-| `RAILS_HOST` | `example.com` | The public host used to build links inside emails — see [environment variables](/developer/deployment/environment_variables#urls-and-hosts) |
+| `SPREE_HOST` | `example.com` | The public host used to build links inside emails — see [environment variables](/developer/deployment/environment_variables#urls-and-hosts) |
 
 Two details are worth knowing because they decide whether a provider will accept your connection at all:
 
