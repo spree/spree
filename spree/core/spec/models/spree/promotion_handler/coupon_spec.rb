@@ -369,7 +369,16 @@ module Spree
               expect(order.reload.total).to eq(100)
 
               expect(cart.reload.discount_total).to be_zero
+              expect(cart.promotions).to be_empty
+            end
+
+            it 'tells the cart that lost the code on its next read' do
+              subject.apply
+
+              cart.reload.remove_unavailable_coupon_code!
+
               expect(cart.read_attribute(:coupon_code)).to be_nil
+              expect(cart.warnings).to contain_exactly(code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable))
             end
 
             it 'keeps the code on a cart that is checking out' do

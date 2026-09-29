@@ -47,6 +47,7 @@ module Spree
 
         cart.with_lock do
           step :guard_concurrent_completion
+          step :guard_coupon_code
           step :recalculate_in_lock
           step :verify_expected_total
           step :validate_cart
@@ -111,6 +112,14 @@ module Spree
 
       def guard_concurrent_completion
         failure(cart, code: 'completion_in_progress') if cart.completion_claimed?
+      end
+
+      # A batch code another cart has taken no longer discounts this one, so
+      # the shopper would be charged more than the total they last saw.
+      def guard_coupon_code
+        return unless cart.coupon_code_taken?
+
+        failure(cart, code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable))
       end
 
       # In-lock recalculation — the totals about to be charged are computed

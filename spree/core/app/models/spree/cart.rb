@@ -281,5 +281,30 @@ module Spree
       cart
     end
 
+    # Whether the batch coupon code this cart entered has since been used, or
+    # taken by another cart or order.
+    #
+    # @return [Boolean]
+    def coupon_code_taken?
+      code = read_attribute(:coupon_code)
+      return false if code.blank?
+
+      record = Spree::CouponCode.where(promotion_id: store.promotions.select(:id)).find_by(code: code)
+      record.present? && (record.used? || (record.holder.present? && record.cart_id != id))
+    end
+
+    # Drops an entered batch coupon code that has gone to another cart or
+    # order, and warns the shopper, who otherwise sees the discount vanish.
+    #
+    # @return [Spree::Cart]
+    def remove_unavailable_coupon_code!
+      return self unless coupon_code_taken?
+
+      existing_warnings = warnings
+      Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
+      self.warnings = existing_warnings | [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }]
+      self
+    end
+
   end
 end

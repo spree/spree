@@ -323,6 +323,15 @@ module Spree
       end
     end
 
+    # A batch code discounts only the cart or order holding it, which is what
+    # keeps each generated code to a single order.
+    #
+    # @param order [Spree::Cart, Spree::Order]
+    # @return [Boolean]
+    def code_held_by?(order)
+      !multi_codes? || coupon_codes.held_by(order).exists?
+    end
+
     private
 
     # Counts distinct checkouts behind a set of discount rows.

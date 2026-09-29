@@ -61,7 +61,7 @@ module Spree
       def eligible_promotions
         @eligible_promotions ||= begin
           promotions = (order.promotions.includes(:promotion_actions).to_a + extra_promotions + coupon_promotions).uniq(&:id)
-          promotions.select { |promotion| promotion.eligible?(order) }
+          promotions.select { |promotion| promotion.code_held_by?(order) && promotion.eligible?(order) }
         end
       end
 
@@ -70,7 +70,8 @@ module Spree
       # recalculation where the cart first qualifies, and deactivates the
       # same way (Shopify-parity for cart-level discount codes). In-memory
       # assignments deliberately don't participate: unsaved codes belong to
-      # the explicit PromotionHandler::Coupon path.
+      # the explicit PromotionHandler::Coupon path. A batch code counts only
+      # while this owner holds it (see #eligible_promotions).
       def coupon_promotions
         return [] unless order.class.respond_to?(:column_names) && order.class.column_names.include?('coupon_code')
 
