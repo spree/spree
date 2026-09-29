@@ -1,0 +1,22 @@
+---
+subject: "{% assign endpoint_name = endpoint.name | default: endpoint.url %}{{ 'webhook_mailer.endpoint_disabled.subject' | t: endpoint_name: endpoint_name }}"
+---
+{% assign endpoint_name = endpoint.name | default: endpoint.url %}
+{% assign disabled_at = endpoint.disabled_at | date: '%Y-%m-%d %H:%M %Z' %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'webhook_mailer.endpoint_disabled.heading' | t }}</mj-text>
+    <mj-text mj-class="lead">{{ 'webhook_mailer.endpoint_disabled.message' | t: endpoint_name: endpoint_name }}</mj-text>
+  </mj-column>
+</mj-section>
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-table css-class="summary">
+      {% render 'spree/shared/summary_row', label: 'webhook_mailer.endpoint_disabled.url_label', value: endpoint.url, translate: true %}
+      {% if endpoint.name != blank %}{% render 'spree/shared/summary_row', label: 'webhook_mailer.endpoint_disabled.name_label', value: endpoint.name, translate: true %}{% endif %}
+      {% render 'spree/shared/summary_row', label: 'webhook_mailer.endpoint_disabled.reason_label', value: endpoint.disabled_reason, translate: true %}
+      {% render 'spree/shared/summary_row', label: 'webhook_mailer.endpoint_disabled.disabled_at_label', value: disabled_at, translate: true %}
+    </mj-table>
+    <mj-text mj-class="body" padding="48px 0 0">{{ 'webhook_mailer.endpoint_disabled.instructions' | t }}</mj-text>
+  </mj-column>
+</mj-section>
