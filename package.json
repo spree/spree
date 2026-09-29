@@ -6,6 +6,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",

@@ -54,7 +54,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "generate:zod": "tsx scripts/generate-zod.ts",
+    "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "console": "tsx console.ts",
@@ -99,6 +99,7 @@
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
+    "yaml": "^2.8.4",
     "zod": "^4.4.3"
   },
   "peerDependencies": {
