@@ -1,0 +1,18 @@
+---
+subject: "{{ store.name }} {{ 'customer_mailer.data_export_email.subject' | t }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'customer_mailer.data_export_email.action' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'customer_mailer.data_export_email.greeting' | t }}</mj-text>
+    <mj-text mj-class="lead">{{ 'customer_mailer.data_export_email.instructions' | t }}</mj-text>
+    {% if download_url %}
+      <mj-button href="{{ download_url }}">{{ 'customer_mailer.data_export_email.action' | t }}</mj-button>
+    {% endif %}
+    {% if expires_at %}
+      {% assign expires_on = expires_at | date: 'long' %}
+      <mj-text mj-class="note">{{ 'customer_mailer.data_export_email.expiry_notice' | t: date: expires_on }}</mj-text>
+    {% endif %}
+    <mj-text mj-class="note" padding="16px 0 0">{{ 'customer_mailer.data_export_email.ignore_notice' | t }}</mj-text>
+  </mj-column>
+</mj-section>

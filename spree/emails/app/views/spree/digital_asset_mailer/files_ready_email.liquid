@@ -1,0 +1,25 @@
+---
+subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'digital_asset_mailer.files_ready_email.subject' | t }} #{{ order.number }}"
+---
+{% assign customer = 'customer' | t %}
+{% assign customer_name = order.customer_name | default: customer %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'digital_asset_mailer.files_ready_email.subject' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'digital_asset_mailer.files_ready_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'digital_asset_mailer.files_ready_email.instructions' | t: number: order.number }}</mj-text>
+  </mj-column>
+</mj-section>
+<mj-section padding="32px 0 0">
+  <mj-column>
+    {% for download in downloads %}
+      <mj-text mj-class="body" padding="8px 0 0">
+        <a href="{{ download.url }}">{{ download.filename }}</a>
+        {% if download.expires_at %}
+          {% assign expires_on = download.expires_at | date: 'long' %}
+          <br /><span style="font-size: 12px;">{{ 'digital_asset_mailer.files_ready_email.available_until' | t: date: expires_on }}</span>
+        {% endif %}
+      </mj-text>
+    {% endfor %}
+  </mj-column>
+</mj-section>

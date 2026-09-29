@@ -1,0 +1,21 @@
+{%- comment -%}
+  One real parcel of a purchase: the goods it carries and what it cost to
+  deliver. A purchase arriving in one parcel is not numbered.
+  Arguments: group, position, count.
+{%- endcomment -%}
+{%- assign shipping_label = 'shipping' | t -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">
+      {%- if count > 1 -%}{{ 'order_group_mailer.delivery_numbered' | t: position: position, count: count }}{%- else -%}{{ 'order_group_mailer.delivery' | t }}{%- endif -%}
+    </mj-text>
+    {%- if group.seller_names.size > 0 -%}
+      {%- assign sellers = group.seller_names | join: ', ' -%}
+      <mj-text mj-class="note" align="left" padding="0 0 16px">{{ 'order_group_mailer.sold_by' | t: sellers: sellers }}</mj-text>
+    {%- endif -%}
+    {% render 'spree/shared/line_item' for group.items as item %}
+    <mj-table css-class="summary" padding="16px 0 0">
+      {% render 'spree/shared/summary_row', label: shipping_label, sub: group.name, value: group.display_cost %}
+    </mj-table>
+  </mj-column>
+</mj-section>

@@ -1,42 +1,37 @@
 module Spree
   class OrderMailer < BaseMailer
-    helper Spree::MailHelper
-
     def confirm_email(order, resend = false)
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
-      current_store = @order.store
-      with_store_locale(current_store, @order.locale) do
-        subject = order_email_subject(current_store, Spree.t('order_mailer.confirm_email.subject'), @order.number, resend: resend)
-        mail(to: @order.email, subject: subject, store_url: current_store.storefront_url)
-      end
+      deliver_order_email(to: @order.email, locale: @order.locale, resend: resend)
     end
 
     def store_owner_notification_email(order)
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
-      current_store = @order.store
-      with_store_locale(current_store) do
-        subject = Spree.t('order_mailer.store_owner_notification_email.subject', store_name: current_store.name)
-        mail(to: current_store.new_order_notifications_email, subject: subject, store_url: current_store.storefront_url)
-      end
+      deliver_order_email(to: current_store.new_order_notifications_email)
     end
 
     def cancel_email(order, resend = false)
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
-      current_store = @order.store
-      with_store_locale(current_store, @order.locale) do
-        subject = order_email_subject(current_store, Spree.t('order_mailer.cancel_email.subject'), @order.number, resend: resend)
-        mail(to: @order.email, subject: subject, store_url: current_store.storefront_url)
-      end
+      deliver_order_email(to: @order.email, locale: @order.locale, resend: resend)
     end
 
     def payment_link_email(order_id)
       @order = Spree::Order.incomplete.not_canceled.find(order_id)
       @current_store = @order.store
+      # Carries the order token, so it is built here and never serialized.
       @checkout_payment_url = URI.join(@current_store.storefront_url, "/checkout/#{@order.token}/payment").to_s
 
-      with_store_locale(@current_store, @order.locale) do
-        mail(to: @order.email, subject: Spree.t('order_mailer.payment_link_email.subject', number: @order.number),
-             store_url: @current_store.storefront_url)
+      deliver_order_email(to: @order.email, locale: @order.locale, payment_url: @checkout_payment_url)
+    end
+
+    private
+
+    def deliver_order_email(to:, locale: nil, **assigns)
+      with_store_locale(current_store, locale) do
+        mail_template(
+          { order: email_data(@order, Spree::Emails::OrderSerializer, currency: @order.currency), resend: false }.merge(assigns),
+          to: to, currency: @order.currency, store_url: current_store.storefront_url
+        )
       end
     end
   end

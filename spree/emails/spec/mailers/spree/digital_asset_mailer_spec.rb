@@ -23,7 +23,7 @@ describe Spree::DigitalAssetMailer, type: :mailer do
   end
 
   it 'links every purchased file with an absolute url' do
-    body = message.body.encoded
+    body = email_body(message)
 
     expect(body).to include(digital_link.filename.to_s)
     expect(body).to match(%r{https?://[^"\s]+/api/v3/store/digital_links/#{digital_link.token}})

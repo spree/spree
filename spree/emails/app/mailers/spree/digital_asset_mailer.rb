@@ -1,8 +1,5 @@
 module Spree
   class DigitalAssetMailer < BaseMailer
-    helper Spree::MailHelper
-    helper Spree::DigitalAssetHelper
-
     # Sent once an order's downloads are ready. Kept separate from the order
     # confirmation so it can be re-sent on its own, and so a storefront that
     # replaces the confirmation email does not silently lose the links.
@@ -13,17 +10,28 @@ module Spree
       @digital_links = @order.digital_links.includes(digital_asset: { attachment_attachment: :blob })
       return if @digital_links.empty?
 
-      current_store = @order.store
       @download_host = current_store.formatted_url
       with_store_locale(current_store, @order.locale) do
-        subject = order_email_subject(
-          current_store,
-          Spree.t('digital_asset_mailer.files_ready_email.subject'),
-          @order.number,
-          resend: resend
+        mail_template(
+          { order: email_data(@order, Spree::Emails::OrderSerializer, currency: @order.currency),
+            downloads: downloads, resend: resend },
+          template: 'spree/digital_asset_mailer/files_ready_email',
+          to: @order.email, currency: @order.currency, store_url: current_store.storefront_url
         )
-        mail(to: @order.email, subject: subject, store_url: current_store.storefront_url,
-             template_path: 'spree/digital_asset_mailer', template_name: 'files_ready_email')
+      end
+    end
+
+    private
+
+    # Download URLs carry each link's bearer token, so they are built here
+    # rather than serialized. They point at the backend, not the storefront.
+    def downloads
+      @digital_links.map do |digital_link|
+        {
+          filename: digital_link.filename.to_s,
+          url: Spree::Api::DigitalLinkUrls.download_url(digital_link, @download_host),
+          expires_at: digital_link.expires_at&.iso8601
+        }
       end
     end
   end

@@ -1,0 +1,14 @@
+---
+subject: "{{ 'order_mailer.payment_link_email.subject' | t: number: order.number }}"
+---
+{% assign customer = 'customer' | t %}
+{% assign customer_name = order.customer_name | default: customer %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'order_mailer.payment_link_email.subject' | t: number: order.number }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'order_mailer.confirm_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'order_mailer.payment_link_email.message' | t: store_name: store.name }}</mj-text>
+    <mj-button href="{{ payment_url }}">{{ 'order_mailer.payment_link_email.pay_for_order' | t }}</mj-button>
+    <mj-text mj-class="note">{{ 'order_mailer.payment_link_email.message_copy_link' | t }}<br /><a href="{{ payment_url }}">{{ payment_url }}</a></mj-text>
+  </mj-column>
+</mj-section>

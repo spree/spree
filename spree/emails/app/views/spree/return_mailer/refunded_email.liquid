@@ -1,0 +1,20 @@
+---
+subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'return_mailer.refunded_email.subject' | t }} #{{ order.number }}"
+---
+{% assign customer = 'customer' | t %}
+{% assign customer_name = order.customer_name | default: customer %}
+{% assign heading = 'return_mailer.refunded_email.returned_items' | t %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'return_mailer.refunded_email.subject' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'return_mailer.refunded_email.instructions' | t: number: order.number }}</mj-text>
+  </mj-column>
+</mj-section>
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ 'return_mailer.refunded_email.refund_summary' | t }}</mj-text>
+    <mj-text mj-class="body" padding="0" font-weight="500" color="#332C2C">{{ 'return_mailer.refunded_email.total_refunded' | t: total: return.display_refunded_total }}</mj-text>
+  </mj-column>
+</mj-section>
+{% render 'spree/shared/order_summary', heading: heading, purchase: order, items: return.returned_items, totals: false %}

@@ -12,40 +12,36 @@ module Spree
   # email unchanged, and a storefront replacing one document should not have to
   # inherit the other.
   class OrderGroupMailer < BaseMailer
-    helper Spree::MailHelper
-
     # @param order_group [Spree::OrderGroup, Integer, String] record or id
     # @param resend [Boolean] prefixes the subject, for an admin re-send
     def confirm_email(order_group, resend = false)
       @order_group = find_order_group(order_group)
-      # Assigned rather than left to BaseMailer#current_store, which memoizes
-      # off @order and would otherwise fall back to the default store — the
-      # wrong store's name, logo and footer on a multi-store install.
-      @current_store = @order_group.store
-
-      with_store_locale(@current_store, @order_group.locale) do
-        subject = order_email_subject(
-          @current_store, Spree.t('order_group_mailer.confirm_email.subject'), @order_group.number, resend: resend
-        )
-        mail(to: @order_group.email, subject: subject, store_url: @current_store.storefront_url)
-      end
+      deliver_order_group_email(to: @order_group.email, locale: @order_group.locale, resend: resend)
     end
 
     def store_owner_notification_email(order_group)
       @order_group = find_order_group(order_group)
-      @current_store = @order_group.store
-
-      with_store_locale(@current_store) do
-        subject = Spree.t('order_group_mailer.store_owner_notification_email.subject', store_name: @current_store.name)
-        mail(to: @current_store.new_order_notifications_email, subject: subject,
-             store_url: @current_store.storefront_url)
-      end
+      deliver_order_group_email(to: @order_group.store.new_order_notifications_email)
     end
 
     private
 
     def find_order_group(order_group)
       order_group.respond_to?(:id) ? order_group : Spree::OrderGroup.find(order_group)
+    end
+
+    def deliver_order_group_email(to:, locale: nil, resend: false)
+      # Assigned rather than left to BaseMailer#current_store, which memoizes
+      # off @order and would otherwise fall back to the default store — the
+      # wrong store's name, logo and footer on a multi-store install.
+      @current_store = @order_group.store
+
+      with_store_locale(@current_store, locale) do
+        mail_template(
+          { order_group: email_data(@order_group, Spree::Emails::OrderGroupSerializer, currency: @order_group.currency), resend: resend },
+          to: to, currency: @order_group.currency, store_url: @current_store.storefront_url
+        )
+      end
     end
   end
 end
