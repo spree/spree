@@ -120,7 +120,7 @@ describe('prepareDatabase', () => {
     expect(mockExeca).toHaveBeenCalledTimes(1)
     expect(mockExeca).toHaveBeenCalledWith(
       'docker',
-      ['compose', 'run', '--rm', 'web', 'bin/rails', 'db:prepare'],
+      ['compose', 'run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'],
       { cwd: '/proj', stdio: 'pipe' },
     )
   })

@@ -190,7 +190,9 @@ export async function dockerComposeRun(
 // a one-off container instead (it starts and health-waits postgres, no Puma)
 // before the app server is brought up. Being the only container that mounts a
 // cold bundle_cache volume, it also wins the copy-up uncontended, so no
-// separate primeBundleVolume is needed after it.
+// separate primeBundleVolume is needed after it. `--build` makes it use the
+// current Dockerfile rather than a dev image left over from an earlier eject,
+// and the `up -d` that follows reuses that image.
 //
 // stdio defaults to piped so a spinner caller stays clean and a failure still
 // carries compose's output on the thrown error.
@@ -198,7 +200,7 @@ export async function prepareDatabase(
   projectDir: string,
   options?: { stdio?: ExecaOptions['stdio'] },
 ): Promise<void> {
-  await dockerCompose(['run', '--rm', 'web', 'bin/rails', 'db:prepare'], projectDir, {
+  await dockerCompose(['run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'], projectDir, {
     stdio: options?.stdio ?? 'pipe',
   })
 }
