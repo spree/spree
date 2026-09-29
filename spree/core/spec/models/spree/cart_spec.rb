@@ -515,6 +515,35 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(express)
         expect(cart.reload.delivery_total).to eq(15)
       end
+
+      context 'with a discount code applied' do
+        def apply_code_and_add_item(promotion)
+          cart.recalculate_for_address_change!
+          cart.coupon_code = promotion.code
+          Spree::PromotionHandler::Coupon.new(cart).apply
+
+          Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+          cart.reload
+        end
+
+        it 'keeps both the order discount and the delivery charge' do
+          apply_code_and_add_item(create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10))
+
+          expect(cart.delivery_total).to eq(5)
+          expect(cart.discount_total).to eq(-10)
+          expect(cart.total).to eq(cart.item_total + 5 - 10)
+        end
+
+        # The rebuild deletes the old proposal's discount, so free shipping has
+        # to be written again against the new proposal's cost.
+        it 'keeps a free-shipping code covering the whole delivery charge' do
+          apply_code_and_add_item(create(:free_shipping_promotion))
+
+          expect(cart.delivery_total).to eq(5)
+          expect(cart.discount_total).to eq(-5)
+          expect(cart.total).to eq(cart.item_total)
+        end
+      end
     end
 
     describe '#recalculate_for_address_change!' do
