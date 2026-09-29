@@ -28,7 +28,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       customer_id: 144,
       last_ip_address: '0.0.0.0',
       number: 'R1444',
-      ship_total: '12.44'.to_d,
+      delivery_total: '12.44'.to_d,
       additional_tax_total: '1.53'.to_d,
       item_total: '15.11'.to_d,
       discount_total: '2.57'.to_d,
