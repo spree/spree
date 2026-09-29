@@ -3,6 +3,7 @@ import {
   FIXTURE_LEDGER_SELLER,
   FIXTURE_SELLER_PASSWORD,
   FIXTURE_SELLER_USER_EMAIL,
+  FIXTURE_SELLER_WRITER_EMAIL,
   SELLER_PANEL,
   sellerLogin,
 } from './helpers'
@@ -79,5 +80,27 @@ test.describe('seller panel — home', () => {
         timeout: 15_000,
       })
     }
+  })
+})
+
+test.describe('seller panel — setup', () => {
+  test('accepting the marketplace terms ticks that step off', async ({ page }) => {
+    await sellerLogin(page, FIXTURE_SELLER_WRITER_EMAIL)
+    await page
+      .getByRole('link', { name: /^setup/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /^setup$/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    const step = page.getByRole('button', { name: /accept terms/i })
+    await expect(step).toBeVisible({ timeout: 15_000 })
+    // Opens on the first outstanding step, which is usually this one.
+    if ((await step.getAttribute('aria-expanded')) !== 'true') await step.click()
+    await page.getByRole('button', { name: /accept the terms/i }).click()
+
+    await expect(page.getByText(/terms accepted/i)).toBeVisible({ timeout: 15_000 })
+    await expect(step.getByText(/^done$/i)).toBeVisible({ timeout: 15_000 })
   })
 })
