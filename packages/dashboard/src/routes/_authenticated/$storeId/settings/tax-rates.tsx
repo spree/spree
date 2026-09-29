@@ -378,6 +378,7 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
           control={form.control}
           render={({ field }) => (
             <CountryCombobox
+              id="country_code"
               value={field.value}
               onValueChange={(iso) => {
                 field.onChange(iso)
@@ -400,6 +401,7 @@ function TaxRateFormFields({ form }: { form: UseFormReturn<TaxRateFormValues> })
             control={form.control}
             render={({ field }) => (
               <StateCombobox
+                id="state_code"
                 countryCode={countryCode}
                 value={field.value}
                 onValueChange={field.onChange}

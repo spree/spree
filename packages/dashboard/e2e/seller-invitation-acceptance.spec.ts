@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { invitationAcceptancePath, login } from './helpers'
+import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
 
 // The seller panel is its own app on its own origin (see playwright.config.ts),
 // so this spec drives two: the operator's dashboard through `baseURL`, and the
 // panel by absolute URL.
-const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 
 test.describe('seller invitation lifecycle', () => {
   test('an invited seller accepts and lands in their own panel', async ({ page, browser }) => {
