@@ -178,6 +178,21 @@ export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
  */
 export const FIXTURE_LEDGER_OWED_AMOUNT = '75.0'
 
+/**
+ * Seller panel accounts. `FIXTURE_SELLER_USER_EMAIL` runs the ledger seller, so
+ * the panel's read-only screens have a sale and payouts to show;
+ * `FIXTURE_SELLER_WRITER_EMAIL` runs `FIXTURE_PANEL_SELLER`, which the specs
+ * that edit a profile, policy or team may change without moving what another
+ * spec reads.
+ */
+export const FIXTURE_SELLER_USER_EMAIL = 'e2e-ledger-seller@example.com'
+export const FIXTURE_SELLER_WRITER_EMAIL = 'e2e-panel-seller@example.com'
+export const FIXTURE_SELLER_PASSWORD = 'spree123'
+export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
+
+/** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
+export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
@@ -240,6 +255,28 @@ export async function login(page: Page): Promise<E2ELoginSession> {
   // doubles as the refresh-complete barrier.
   await expect(page).toHaveURL(new RegExp(`/${creds.store_id}`), { timeout: 15_000 })
   return { ...creds, accessToken }
+}
+
+/**
+ * The seller panel's counterpart to `login`: signs in through the Seller API,
+ * then opens the panel and waits until it has settled on the seller's own
+ * home — the same single-use refresh-cookie race `login` guards against.
+ *
+ * @returns The seller panel URL of the seller's home, e.g. `.../sel_x`.
+ */
+export async function sellerLogin(
+  page: Page,
+  email: string = FIXTURE_SELLER_USER_EMAIL,
+): Promise<string> {
+  const res = await page.request.post(`${SELLER_PANEL}/api/v3/seller/auth/login`, {
+    data: { email, password: FIXTURE_SELLER_PASSWORD },
+  })
+  if (!res.ok()) {
+    throw new Error(`Seller API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  await page.goto(SELLER_PANEL)
+  await expect(page).toHaveURL(/\/sel_[^/]+$/, { timeout: 20_000 })
+  return page.url()
 }
 
 /**

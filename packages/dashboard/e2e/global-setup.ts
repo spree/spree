@@ -25,6 +25,7 @@ import {
   FIXTURE_LEDGER_OWED_AMOUNT,
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
   FIXTURE_LEDGER_SELLER,
+  FIXTURE_PANEL_SELLER,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -33,6 +34,9 @@ import {
   FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
+  FIXTURE_SELLER_PASSWORD,
+  FIXTURE_SELLER_USER_EMAIL,
+  FIXTURE_SELLER_WRITER_EMAIL,
   FIXTURE_SUPPLIER,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_PRODUCT,
@@ -129,6 +133,15 @@ const BOOTSTRAP_RUBY = [
   `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
   `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+  // Seller panel accounts. One runs the ledger seller, whose sale and payouts
+  // give the read-only panel screens something to show; the other runs a
+  // seller of its own that the specs editing a profile, policy or team may
+  // change freely. One seller each, so neither lands on the seller picker.
+  `seller_user = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_USER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Lee'; u.last_name = 'Ledger' }`,
+  'ledger_seller.add_user(seller_user)',
+  `panel_seller = s.sellers.where(name: '${FIXTURE_PANEL_SELLER}').first_or_create!`,
+  `seller_writer = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_WRITER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Pat'; u.last_name = 'Panel' }`,
+  'panel_seller.add_user(seller_writer)',
   // Inventory operations: a second warehouse to transfer into, a stocked
   // product to send, and a supplier to order from. A transfer cannot be
   // created from its own screens without two warehouses.
