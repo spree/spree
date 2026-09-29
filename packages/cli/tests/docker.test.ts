@@ -114,11 +114,21 @@ describe('dockerComposeRun', () => {
 describe('prepareDatabase', () => {
   afterEach(() => mockExeca.mockReset())
 
-  it('runs db:prepare in a one-off web container, never exec', async () => {
+  it('waits for a healthy postgres, then runs db:prepare in a one-off web container', async () => {
     await prepareDatabase('/proj')
 
-    expect(mockExeca).toHaveBeenCalledTimes(1)
-    expect(mockExeca).toHaveBeenCalledWith(
+    expect(mockExeca).toHaveBeenCalledTimes(2)
+    expect(mockExeca).toHaveBeenNthCalledWith(
+      1,
+      'docker',
+      ['compose', 'up', '-d', '--wait', 'postgres'],
+      {
+        cwd: '/proj',
+        stdio: 'pipe',
+      },
+    )
+    expect(mockExeca).toHaveBeenNthCalledWith(
+      2,
       'docker',
       ['compose', 'run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'],
       { cwd: '/proj', stdio: 'pipe' },
