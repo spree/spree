@@ -9,6 +9,8 @@ export const OrderLineItemSchema = z.object({
   currency: z.string(),
   price: z.string().nullable(),
   display_price: z.string().nullable(),
+  discounted_amount: z.string().nullable(),
+  display_discounted_amount: z.string().nullable(),
   total: z.string().nullable(),
   display_total: z.string().nullable(),
   variant_id: z.string().nullable(),
