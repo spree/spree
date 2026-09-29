@@ -52,9 +52,10 @@ module Spree
         # happened: an add a stock check already approved must not be
         # second-guessed in the same request, and an external inventory
         # provider makes that contradiction routine, since the provider
-        # answers the write while the sweep reads Spree's own rows.
+        # answers the write while the sweep reads Spree's own rows. A batch
+        # coupon code another cart has taken goes the same way.
         def sweep_unbuyable_lines!
-          @cart = @cart.remove_out_of_stock_items!
+          @cart = @cart.remove_out_of_stock_items!.remove_unavailable_coupon_code!
         end
 
         # Render what the checkout produced (for the complete action).
