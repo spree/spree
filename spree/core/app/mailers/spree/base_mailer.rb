@@ -50,7 +50,7 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-      Spree::Emails::LegacyTemplates.warn_unstyled(self) unless @_rendering_template || self.class._layout
+      Spree::Emails::LegacyTemplates.warn_unstyled(self) if relied_on_spree_layout?(headers)
 
       if @_store_locale_active
         super
@@ -136,6 +136,14 @@ module Spree
     end
 
     private
+
+    # Whether this `mail` call used to be wrapped in Spree's ERB layout: its
+    # own ERB views, with no layout of its own to use instead.
+    def relied_on_spree_layout?(headers)
+      return false if @_rendering_template || headers.key?(:body) || self.class._layout
+
+      !lookup_context.exists?(mailer_name, ['layouts'])
+    end
 
     def in_store_locale(&block)
       @_store_locale_active ? yield : with_store_locale(current_store, &block)

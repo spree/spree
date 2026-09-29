@@ -1,6 +1,6 @@
 namespace :spree do
   namespace :emails do
-    desc 'Writes the email template variable reference (PATH defaults to the monorepo docs page)'
+    desc 'Writes the email template variable reference (PATH_TO_REFERENCE defaults to the monorepo docs page)'
     task variable_reference: :environment do
       require 'spree/emails/variable_reference'
 

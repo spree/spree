@@ -543,9 +543,6 @@ module Spree
       allowed_origins.any? { |allowed_origin| allowed_origin.matches?(url) }
     end
 
-    # Returns the states available for checkout for the store
-    # @param country [Spree::Country] the country to get the states for
-    # @return [Array<Spree::State>]
     # The logo emails show: the dedicated mailer logo, else the store logo.
     #
     # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
@@ -561,6 +558,9 @@ module Spree
       customer_support_email.presence || mail_from_address
     end
 
+    # Returns the states available for checkout for the store
+    # @param country [Spree::Country] the country to get the states for
+    # @return [Array<Spree::State>]
     def states_available_for_checkout(country)
       country.states.to_a
     end

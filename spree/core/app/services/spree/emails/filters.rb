@@ -24,22 +24,23 @@ module Spree
 
       # Formats a date in the store's time zone, never the server's. Takes a
       # named format from the locale's `date.formats` (`long`, `short`,
-      # `default`), or a strftime pattern.
+      # `default`), or a strftime pattern. A date with no time of day, such as
+      # "2026-12-31", is shown as that day in every zone.
       #
       # @example {{ order.completed_at | date: 'long' }}
       # @example {{ 'now' | date: '%Y' }}
       # @return [String]
       def date(input, format = 'default')
-        time = parse_time(input)
-        return input.to_s if time.nil?
+        value = parse_time(input)
+        return input.to_s if value.nil?
 
-        time = time.in_time_zone(time_zone)
+        value = value.in_time_zone(time_zone) unless value.instance_of?(Date)
         format = format.to_s
 
-        return time.strftime(format) if format.include?('%')
+        return value.strftime(format) if format.include?('%')
 
         format = 'default' unless I18n.exists?("date.formats.#{format}")
-        I18n.l(time.to_date, format: format.to_sym)
+        I18n.l(value.to_date, format: format.to_sym)
       end
 
       # Translates one of Spree's own keys, with interpolation.
@@ -61,13 +62,24 @@ module Spree
         input.to_s.html_safe
       end
 
+      # Trimming whitespace cannot break escaped HTML, so text captured from
+      # the template — already escaped — stays marked safe rather than being
+      # escaped a second time when printed.
+      %i[strip lstrip rstrip strip_newlines].each do |name|
+        define_method(name) do |input|
+          output = super(input)
+          input.try(:html_safe?) ? output.to_s.html_safe : output
+        end
+      end
+
       private
 
       def parse_time(input)
         case input
         when Time, DateTime, ActiveSupport::TimeWithZone then input
-        when Date then input.in_time_zone(time_zone)
+        when Date then input
         when 'now', 'today' then Time.current
+        when /\A\d{4}-\d{2}-\d{2}\z/ then Date.iso8601(input)
         when String then Time.iso8601(input)
         end
       rescue ArgumentError

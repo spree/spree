@@ -64,6 +64,12 @@ describe Spree::Emails::Renderer do
       expect(email.html).to include('Hi O&#39;Brien &amp; Co')
     end
 
+    it 'keeps captured text escaped once after trimming it' do
+      email = render(section('{% capture greeting %} Hi {{ name }} {% endcapture %}{{ greeting | strip }}'), { name: 'Smith & Co' })
+
+      expect(email.html).to include('Hi Smith &amp; Co')
+    end
+
     it 'escapes what cycle writes' do
       email = render(section("{% cycle name, 'x' %}"), { name: payload })
 
@@ -127,6 +133,12 @@ describe Spree::Emails::Renderer do
       email = render(section('x'), { at: '2026-01-01T20:00:00Z' }, subject: "{{ at | date: '%Y-%m-%d %H:%M' }} {{ at | date: 'long' }}")
 
       expect(email.subject).to eq('2026-01-02 09:00 January 02, 2026')
+    end
+
+    it 'formats a date with no time of day as that day' do
+      allow(store).to receive(:preferred_timezone).and_return('Pacific/Honolulu')
+
+      expect(render(section('x'), { on: '2026-12-31' }, subject: "{{ on | date: 'long' }}").subject).to eq('December 31, 2026')
     end
   end
 end

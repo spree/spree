@@ -49,8 +49,10 @@
     <mj-wrapper background-color="#F6F6F6" padding="56px 24px">
       <mj-section padding="0 0 32px">
         <mj-column>
-          {% if store.logo_url %}
-            <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" {% if store.logo_width %}width="{{ store.logo_width }}px" {% endif %}height="32px" padding="0" />
+          {% if store.logo_url and store.logo_width %}
+            <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" width="{{ store.logo_width }}px" height="32px" padding="0" />
+          {% elsif store.logo_url %}
+            <mj-text><a href="{{ store.url }}"><img src="{{ store.logo_url }}" alt="{{ store.name }}" height="32" style="height: 32px; width: auto; border: 0;" /></a></mj-text>
           {% else %}
             <mj-text font-size="22px" font-weight="700" color="#332C2C" text-transform="uppercase"><a href="{{ store.url }}" style="color: #332C2C; text-decoration: none;">{{ store.name }}</a></mj-text>
           {% endif %}

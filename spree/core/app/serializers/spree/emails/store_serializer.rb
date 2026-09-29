@@ -15,15 +15,11 @@ module Spree
         spree_image_url(store.email_logo, height: LOGO_HEIGHT)
       end
 
-      # The width the logo shows at, from its proportions. Analyzing an
-      # unanalyzed logo here keeps a wide logo from being squashed square.
+      # The width the logo shows at, from its proportions. Nil until the file
+      # has been analyzed, when the layout lets the width follow the height.
       attribute :logo_width do |store|
-        logo = store.email_logo
-        next unless logo
-
-        logo.analyze unless logo.analyzed?
-        width, height = logo.metadata.values_at('width', 'height').map(&:to_f)
-        height.positive? ? (LOGO_HEIGHT * width / height).round : nil
+        width, height = store.email_logo&.metadata.to_h.values_at('width', 'height').map(&:to_f)
+        (LOGO_HEIGHT * width / height).round if height.to_f.positive?
       end
     end
   end

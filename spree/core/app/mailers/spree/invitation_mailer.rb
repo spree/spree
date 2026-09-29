@@ -37,7 +37,9 @@ module Spree
       if spree_routes.respond_to?(:admin_invitation_url)
         spree_routes.admin_invitation_url(invitation, token: invitation.token, host: invitation.store.formatted_url)
       else
-        invitation.acceptance_url
+        # Built with the mailer's own URL options, as the view built it before.
+        ensure_default_action_mailer_url_host
+        main_app.admin_invitation_acceptance_url(invitation)
       end
     end
   end

@@ -670,9 +670,6 @@ module Spree
       Products::Duplicator.call(product: self)
     end
 
-    # determine if product is available.
-    # deleted products and products with status different than active
-    # are not available
     # The product's page on the storefront, relative to the storefront URL.
     #
     # @return [String]
@@ -680,6 +677,9 @@ module Spree
       "/products/#{slug}"
     end
 
+    # determine if product is available.
+    # deleted products and products with status different than active
+    # are not available
     def available?
       active? && !deleted? && (available_on.nil? || available_on <= Time.current)
     end
