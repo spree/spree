@@ -199,6 +199,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_x
 
 A replacement creates a new [fulfillment](/developer/core-concepts/fulfillments) on the original order, so the customer doesn't have to place a second one.
 
+The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is.
+
 ## Exchanges
 
 An exchange works like a return, but ends by sending different items instead of refunding:
