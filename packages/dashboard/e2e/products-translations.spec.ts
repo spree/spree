@@ -123,7 +123,7 @@ test.describe('product translations', () => {
       'Höhenverstellbarer Standventilator mit 40cm Rotordurchmesser',
     )
 
-    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /^import$/i)
     await coverageSearch(page).fill(name)
     await page.getByRole('button', { name }).click()
 
@@ -141,7 +141,7 @@ test.describe('product translations', () => {
     await createProduct(page, creds.store_id, name)
     const productUrl = page.url()
 
-    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /^import$/i)
     await coverageSearch(page).fill(name)
     await expect(page.getByRole('row', { name: new RegExp(name) })).toBeVisible({ timeout: 15_000 })
 
@@ -151,7 +151,7 @@ test.describe('product translations', () => {
     await page.getByRole('button', { name: /^save product$/i }).click()
     await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 15_000 })
 
-    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /^import$/i)
     await coverageSearch(page).fill(renamed)
     await expect(page.getByRole('row', { name: new RegExp(renamed) })).toBeVisible({
       timeout: 15_000,
@@ -164,7 +164,7 @@ test.describe('product translations', () => {
     const name = `E2E Coverage ${suffix}`
     await createProduct(page, creds.store_id, name)
 
-    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /import/i)
+    await gotoIndex(page, TRANSLATIONS_PATH(creds.store_id), /^import$/i)
     await coverageSearch(page).fill(name)
     const row = page.getByRole('row', { name: new RegExp(name) })
     await expect(row).toBeVisible({ timeout: 15_000 })

@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
 
-
 /**
  * Creates a seller, invites someone, and accepts on the panel — returning the
  * signed-in seller page. The invitation flow has its own spec; this is the
