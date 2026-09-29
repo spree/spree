@@ -34,6 +34,26 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 
 **Plans amended:** `6.0-core-rewrite-tasks.md` (the "Coupon code wired fully" bullet).
 
+## 2026-09-29: Liquid and MJML emails move into 6.0, with ERB overrides bridged for one release
+
+**Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid.
+
+**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0. A host app or extension that still has an ERB file at an email's path keeps getting it rendered unchanged, with a deprecation warning; the old ERB layout, shared partials and mailer helpers stay in the gems for that one release under `app/views/spree/legacy_mailer/`, and 6.1 deletes them. A template carries its subject as YAML front matter rather than a body tag, so it maps straight onto a subject column when templates move to the database.
+
+**Consequences:** Two email designs ship side by side in 6.0. Overriding only a shared ERB partial (the header or footer) stops having an effect; Spree logs each such file at boot, naming its Liquid replacement.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (renamed from `6.1-liquid-mjml-emails.md`; target, bridge and subject decisions).
+
+## 2026-09-25: Emails render through Liquid and MJML, reading serializers, not views
+
+**Context:** Transactional emails are the last HTML Spree renders through Rails views: 61 ERB templates across 16 mailers, which call model methods, helpers and even database queries from the view. The longer-term direction is to shrink Rails in the stack, and to let merchants edit email templates from the dashboard later. ERB can do neither safely: it runs arbitrary Ruby and exists only in Ruby.
+
+**Decision:** Every email template becomes Liquid written in MJML. Liquid fills in the data, then MJML (the `mrml` gem, no Node) compiles it to email-safe HTML, on every email. Liquid was picked over Handlebars (Vendure, Saleor) because it's the only template language with first-class engines in both Ruby and TypeScript, and it was built for untrusted templates. Templates read hashes from email serializers: `spree_emails` serializers inherit the v3 Store serializers for customer emails, and core serializers serve back-office emails. `alba` moves into `spree_core` for that, together with its setup. Output is HTML-escaped by default, tokens are built by mailers and never serialized, templates keep their Rails view paths (which become their keys), the text part is generated from the HTML, and copy keeps its `Spree.t` keys through a `t` filter. Rejected: React Email, Maizzle and other build-time tools (the file you write isn't the file that runs, so merchant editing needs Node); plain HTML tables (fragile markup maintained by hand); widening the public Store serializers for email-only fields.
+
+**Consequences:** Renaming a mailer or one of its methods becomes a breaking change, because the view path is what apps override. Email views must stop calling models and helpers now, so the conversion stays mechanical. Merchant editing, database-stored templates and previews are a later plan built on the resolver chain this one ships.
+
+**Plans amended:** none. `6.0-liquid-mjml-emails.md` is the new plan.
+
 ## 2026-09-25: Replacement units are flagged, so an order edit counts only what was bought
 
 **Context:** Raising the quantity of an exchanged line on a placed order deleted the line's original fulfillment and its delivery charge (V-3707). Reproduced on `main`: order R1001, one Stainless kettle at $79.99 plus $5.00 Standard delivery, exchanged for Matte Black; raising the line to 2 answered 200, deleted the $5.00 fulfillment with its Stainless unit, took `delivery_total` from 5.0 to 0.0, and released the Stainless allocation instead of adding one. There were two causes. `Exchanges::Fulfill` and `Claims::Resolve` built their replacement units through `order.fulfillment_items.new`; the stock coordinator packs a copy of each, and the order's next save persisted the original as well, so every replacement left a second unit on the line with no fulfillment. `Spree::OrderInventory#verify` then counted every unit on the line against its quantity, found three units for a quantity of two, and removed the one it could reach, the original. With the stray unit gone the edit still added nothing, because the replacement counted as a unit the line already held. The 6.0 returns rebuild had removed `exchanged_unit?` and `original_return_item`, so nothing told a replacement apart from a unit the customer bought.
