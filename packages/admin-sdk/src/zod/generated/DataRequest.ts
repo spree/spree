@@ -16,7 +16,7 @@ export const DataRequestSchema = z.object({
   updated_at: z.string(),
   customer_id: z.string().nullable(),
   requested_by_id: z.string().nullable(),
-  customer: z.lazy(() => CustomerSchema).optional(),
+  get customer() { return CustomerSchema.optional(); },
 });
 
 export type DataRequest = z.infer<typeof DataRequestSchema>;

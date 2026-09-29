@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { AddressSchema } from './Address';
 import { CompanyMembershipSchema } from './CompanyMembership';
 
-export const CompanySchema: z.ZodObject<any> = z.object({
+export const CompanySchema = z.object({
   id: z.string(),
   name: z.string(),
   kind: z.string(),
@@ -16,7 +16,7 @@ export const CompanySchema: z.ZodObject<any> = z.object({
   updated_at: z.string(),
   children_count: z.number(),
   members_count: z.number(),
-  children: z.array(z.lazy(() => CompanySchema)).optional(),
+  get children() { return z.array(CompanySchema).optional(); },
   addresses: z.array(AddressSchema).optional(),
   memberships: z.array(CompanyMembershipSchema).optional(),
 });

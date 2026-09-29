@@ -22,13 +22,13 @@ export const PromotionRuleSchema = z.object({
   customer_ids: z.array(z.string()).nullable(),
   option_value_ids: z.array(z.string()).nullable(),
   products: z.array(ProductSchema).optional(),
-  categories: z.array(z.lazy(() => CategorySchema)).optional(),
-  customers: z.array(z.lazy(() => CustomerSchema)).optional(),
-  customer_groups: z.array(z.lazy(() => CustomerGroupSchema)).optional(),
-  countries: z.array(z.lazy(() => CountrySchema)).optional(),
+  get categories() { return z.array(CategorySchema).optional(); },
+  get customers() { return z.array(CustomerSchema).optional(); },
+  get customer_groups() { return z.array(CustomerGroupSchema).optional(); },
+  get countries() { return z.array(CountrySchema).optional(); },
   channels: z.array(ChannelSchema).optional(),
-  markets: z.array(z.lazy(() => MarketSchema)).optional(),
-  option_values: z.array(z.lazy(() => OptionValueSchema)).optional(),
+  get markets() { return z.array(MarketSchema).optional(); },
+  get option_values() { return z.array(OptionValueSchema).optional(); },
 });
 
 export type PromotionRule = z.infer<typeof PromotionRuleSchema>;

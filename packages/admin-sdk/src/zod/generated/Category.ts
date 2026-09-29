@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { CustomFieldSchema } from './CustomField';
 
-export const CategorySchema: z.ZodObject<any> = z.object({
+export const CategorySchema = z.object({
   id: z.string(),
   name: z.string(),
   permalink: z.string(),
@@ -20,9 +20,9 @@ export const CategorySchema: z.ZodObject<any> = z.object({
   is_root: z.boolean(),
   is_child: z.boolean(),
   is_leaf: z.boolean(),
-  parent: z.lazy(() => CategorySchema).optional(),
-  children: z.array(z.lazy(() => CategorySchema)).optional(),
-  ancestors: z.array(z.lazy(() => CategorySchema)).optional(),
+  get parent() { return CategorySchema.optional(); },
+  get children() { return z.array(CategorySchema).optional(); },
+  get ancestors() { return z.array(CategorySchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
   external_references: z.record(z.string(), z.string()),
   translations: z.record(z.string(), z.record(z.string(), z.union([z.string(), z.number()]).nullable())).optional(),

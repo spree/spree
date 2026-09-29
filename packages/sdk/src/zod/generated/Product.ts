@@ -41,7 +41,7 @@ export const ProductSchema = z.object({
   default_variant: VariantSchema.optional(),
   option_types: z.array(OptionTypeSchema).optional(),
   option_values: z.array(OptionValueSchema).optional(),
-  categories: z.array(z.lazy(() => CategorySchema)).optional(),
+  get categories() { return z.array(CategorySchema).optional(); },
   custom_fields: z.array(CustomFieldSchema).optional(),
   prior_price: PriceHistorySchema.nullable().optional(),
 });

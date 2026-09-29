@@ -9,7 +9,7 @@ import { ShippingLabelSchema } from './ShippingLabel';
 import { StockLocationSchema } from './StockLocation';
 import { TaxLineSchema } from './TaxLine';
 
-export const FulfillmentSchema: z.ZodObject<any> = z.object({
+export const FulfillmentSchema = z.object({
   id: z.string(),
   number: z.string(),
   tracking: z.string().nullable(),
@@ -50,7 +50,7 @@ export const FulfillmentSchema: z.ZodObject<any> = z.object({
   labels: z.array(ShippingLabelSchema),
   provider_generates_labels: z.boolean(),
   fulfillment_items: z.array(FulfillmentItemSchema).optional(),
-  order: z.lazy(() => OrderSchema).optional(),
+  get order() { return OrderSchema.optional(); },
 });
 
 export type Fulfillment = z.infer<typeof FulfillmentSchema>;

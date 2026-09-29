@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { VariantSchema } from './Variant';
 
-export const PriceSchema: z.ZodObject<any> = z.object({
+export const PriceSchema = z.object({
   id: z.string(),
   amount: z.string().nullable(),
   amount_in_cents: z.number().nullable(),
@@ -16,7 +16,7 @@ export const PriceSchema: z.ZodObject<any> = z.object({
   variant_id: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
-  variant: z.lazy(() => VariantSchema).optional(),
+  get variant() { return VariantSchema.optional(); },
 });
 
 export type Price = z.infer<typeof PriceSchema>;

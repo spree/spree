@@ -62,7 +62,7 @@ export const CartSchema = z.object({
   items: z.array(LineItemSchema),
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
-  market: z.lazy(() => MarketSchema).nullable(),
+  get market() { return MarketSchema.nullable(); },
   completed_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),

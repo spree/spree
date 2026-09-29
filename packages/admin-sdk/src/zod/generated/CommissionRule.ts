@@ -15,7 +15,7 @@ export const CommissionRuleSchema = z.object({
   seller_ids: z.array(z.string()).nullable(),
   category_ids: z.array(z.string()).nullable(),
   sellers: z.array(SellerSchema).optional(),
-  categories: z.array(z.lazy(() => CategorySchema)).optional(),
+  get categories() { return z.array(CategorySchema).optional(); },
 });
 
 export type CommissionRule = z.infer<typeof CommissionRuleSchema>;

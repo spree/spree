@@ -8,7 +8,7 @@ import { PriceHistorySchema } from './PriceHistory';
 import { SellerSchema } from './Seller';
 import { StockLevelSchema } from './StockLevel';
 
-export const VariantSchema: z.ZodObject<any> = z.object({
+export const VariantSchema = z.object({
   id: z.string(),
   product_id: z.string(),
   sku: z.string().nullable(),
@@ -31,13 +31,13 @@ export const VariantSchema: z.ZodObject<any> = z.object({
   order_multiple: z.number().nullable(),
   purchase_unit: z.string().nullable(),
   units_per_carton: z.number().nullable(),
-  price: z.lazy(() => PriceSchema),
-  original_price: z.lazy(() => PriceSchema).nullable(),
+  get price() { return PriceSchema; },
+  get original_price() { return PriceSchema.nullable(); },
   seller_id: z.string().nullable(),
   seller: SellerSchema.optional(),
   primary_media: MediaSchema.optional(),
   media: z.array(MediaSchema).optional(),
-  option_values: z.array(z.lazy(() => OptionValueSchema)),
+  get option_values() { return z.array(OptionValueSchema); },
   custom_fields: z.array(CustomFieldSchema).optional(),
   prior_price: PriceHistorySchema.nullable().optional(),
   external_references: z.record(z.string(), z.string()),
@@ -64,8 +64,8 @@ export const VariantSchema: z.ZodObject<any> = z.object({
   total_on_hand: z.number().nullable(),
   product_name: z.string(),
   delivery_profile_id: z.string().nullable(),
-  prices: z.array(z.lazy(() => PriceSchema)).optional(),
-  stock_levels: z.array(z.lazy(() => StockLevelSchema)).optional(),
+  get prices() { return z.array(PriceSchema).optional(); },
+  get stock_levels() { return z.array(StockLevelSchema).optional(); },
 });
 
 export type Variant = z.infer<typeof VariantSchema>;

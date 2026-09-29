@@ -8,7 +8,7 @@ import { PaymentSplitSchema } from './PaymentSplit';
 import { RefundSchema } from './Refund';
 import { StoreCreditSchema } from './StoreCredit';
 
-export const PaymentSchema: z.ZodObject<any> = z.object({
+export const PaymentSchema = z.object({
   id: z.string(),
   payment_method_id: z.string(),
   response_code: z.string().nullable(),
@@ -18,7 +18,7 @@ export const PaymentSchema: z.ZodObject<any> = z.object({
   display_amount: z.string(),
   source_type: z.string().nullable(),
   source_id: z.string().nullable(),
-  source: z.union([CreditCardSchema, z.lazy(() => StoreCreditSchema), PaymentSourceSchema]).nullable(),
+  get source() { return z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(); },
   payment_method: PaymentMethodSchema.optional(),
   metadata: z.record(z.string(), z.unknown()),
   avs_response: z.string().nullable(),
@@ -28,8 +28,8 @@ export const PaymentSchema: z.ZodObject<any> = z.object({
   updated_at: z.string(),
   captured_amount: z.string(),
   order_id: z.string().nullable(),
-  order: z.lazy(() => OrderSchema).optional(),
-  refunds: z.array(z.lazy(() => RefundSchema)).optional(),
+  get order() { return OrderSchema.optional(); },
+  get refunds() { return z.array(RefundSchema).optional(); },
   payment_splits: z.array(PaymentSplitSchema).optional(),
 });
 

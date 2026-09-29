@@ -13,7 +13,7 @@ export const ReturnLineItemSchema = z.object({
   variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
   fulfillment_item_id: z.string().nullable(),
-  variant: z.lazy(() => VariantSchema).optional(),
+  get variant() { return VariantSchema.optional(); },
   created_at: z.string(),
   updated_at: z.string(),
   line_item: LineItemSchema.optional(),

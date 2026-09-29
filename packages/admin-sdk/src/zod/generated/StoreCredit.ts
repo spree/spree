@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { AdminUserSchema } from './AdminUser';
 import { CustomerSchema } from './Customer';
 
-export const StoreCreditSchema: z.ZodObject<any> = z.object({
+export const StoreCreditSchema = z.object({
   id: z.string(),
   amount: z.string(),
   amount_used: z.string(),
@@ -23,7 +23,7 @@ export const StoreCreditSchema: z.ZodObject<any> = z.object({
   created_by_id: z.string().nullable(),
   originator_type: z.string().nullable(),
   originator_id: z.string().nullable(),
-  customer: z.lazy(() => CustomerSchema).optional(),
+  get customer() { return CustomerSchema.optional(); },
   created_by: AdminUserSchema.optional(),
 });
 

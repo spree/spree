@@ -1,5 +1,6 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import type { ZodType } from 'zod'
 
@@ -28,7 +29,10 @@ const referencedName = (reference?: string) => reference?.split('/').pop()
  * what the API actually returns.
  */
 function openApiExamples(api: 'store' | 'admin' | 'seller'): OpenApiExample[] {
-  const specPath = path.resolve(import.meta.dirname, `../../../docs/api-reference/${api}.yaml`)
+  const specPath = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    `../../../docs/api-reference/${api}.yaml`,
+  )
   const spec = parse(readFileSync(specPath, 'utf8'))
   const examples: OpenApiExample[] = []
 
@@ -79,7 +83,13 @@ export function rejectedExamples(
 
   for (const { endpoint, schemaName, record } of openApiExamples(api)) {
     const schema = schemas[`${schemaName}Schema`] as ZodType | undefined
-    if (!schema) continue
+    if (!schema) {
+      // Response wrappers that exist only in the API reference have no generated
+      // type; a record that does have one must have a schema too.
+      const typePath = path.resolve(process.cwd(), `src/types/generated/${schemaName}.ts`)
+      if (existsSync(typePath)) rejections.push(`${endpoint} → ${schemaName}: no generated schema`)
+      continue
+    }
 
     checked++
     const result = schema.safeParse(record)

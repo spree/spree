@@ -7,7 +7,7 @@ import { RefundSchema } from './Refund';
 import { ReturnReasonSchema } from './ReturnReason';
 import { StockLocationSchema } from './StockLocation';
 
-export const ExchangeSchema: z.ZodObject<any> = z.object({
+export const ExchangeSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
@@ -29,9 +29,9 @@ export const ExchangeSchema: z.ZodObject<any> = z.object({
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
   created_by: ActorSchema.optional(),
-  order: z.lazy(() => OrderSchema).optional(),
+  get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
-  refunds: z.array(z.lazy(() => RefundSchema)).optional(),
+  get refunds() { return z.array(RefundSchema).optional(); },
 });
 
 export type Exchange = z.infer<typeof ExchangeSchema>;

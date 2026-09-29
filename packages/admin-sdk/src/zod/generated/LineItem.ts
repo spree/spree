@@ -38,7 +38,7 @@ export const LineItemSchema = z.object({
   compare_at_amount: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
   seller: SellerSchema.optional(),
-  option_values: z.array(z.lazy(() => OptionValueSchema)),
+  get option_values() { return z.array(OptionValueSchema); },
   digital_links: z.array(DigitalLinkSchema),
   tax_lines: z.array(TaxLineSchema).optional(),
   metadata: z.record(z.string(), z.unknown()),
@@ -52,7 +52,7 @@ export const LineItemSchema = z.object({
   catalog_name: z.string().nullable(),
   cost_price: z.string().nullable(),
   tax_category_id: z.string().nullable(),
-  variant: z.lazy(() => VariantSchema).optional(),
+  get variant() { return VariantSchema.optional(); },
   tax_category: TaxCategorySchema.optional(),
 });
 

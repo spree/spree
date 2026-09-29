@@ -73,7 +73,7 @@ export const CartSchema = z.object({
   shipping_address: AddressSchema.nullable(),
   payment_methods: z.array(PaymentMethodSchema),
   gift_card: GiftCardSchema.nullable(),
-  market: z.lazy(() => MarketSchema).nullable(),
+  get market() { return MarketSchema.nullable(); },
 });
 
 export type Cart = z.infer<typeof CartSchema>;

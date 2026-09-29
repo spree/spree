@@ -13,10 +13,10 @@ export const PriceRuleSchema = z.object({
   price_list_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
   preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown() })),
-  markets: z.array(z.lazy(() => MarketSchema)).optional(),
-  customer_groups: z.array(z.lazy(() => CustomerGroupSchema)).optional(),
+  get markets() { return z.array(MarketSchema).optional(); },
+  get customer_groups() { return z.array(CustomerGroupSchema).optional(); },
   channels: z.array(ChannelSchema).optional(),
-  customers: z.array(z.lazy(() => CustomerSchema)).optional(),
+  get customers() { return z.array(CustomerSchema).optional(); },
 });
 
 export type PriceRule = z.infer<typeof PriceRuleSchema>;

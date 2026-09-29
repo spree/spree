@@ -13,10 +13,10 @@ export const ClaimLineItemSchema = z.object({
   variant_id: z.string().nullable(),
   replacement_variant_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
-  variant: z.lazy(() => VariantSchema).optional(),
+  get variant() { return VariantSchema.optional(); },
   created_at: z.string(),
   updated_at: z.string(),
-  replacement_variant: z.lazy(() => VariantSchema).optional(),
+  get replacement_variant() { return VariantSchema.optional(); },
 });
 
 export type ClaimLineItem = z.infer<typeof ClaimLineItemSchema>;

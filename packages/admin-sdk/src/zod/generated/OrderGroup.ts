@@ -18,7 +18,7 @@ export const OrderGroupSchema = z.object({
   completed_at: z.string().nullable(),
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
-  orders: z.array(z.lazy(() => OrderSchema)),
+  get orders() { return z.array(OrderSchema); },
   customer_id: z.string().nullable(),
   cart_id: z.string().nullable(),
   seller_count: z.number(),
@@ -27,7 +27,7 @@ export const OrderGroupSchema = z.object({
   store_owner_notification_delivered: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-  payments: z.array(z.lazy(() => PaymentSchema)),
+  get payments() { return z.array(PaymentSchema); },
 });
 
 export type OrderGroup = z.infer<typeof OrderGroupSchema>;

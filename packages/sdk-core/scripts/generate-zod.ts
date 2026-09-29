@@ -36,18 +36,56 @@ function parseTypeFile(content: string): ParsedType | null {
     i++
   }
   if (depth !== 0) return null
-  const body = content.slice(typeStart + 1, i - 1)
+  const body = content
+    .slice(typeStart + 1, i - 1)
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '')
   const fields: FieldDef[] = []
-  const fieldRegex = /^\s+(\w+)(\?)?\s*:\s*(.+?)\s*;?\s*$/gm
-  for (const match of body.matchAll(fieldRegex)) {
+  for (const declaration of topLevelDeclarations(body)) {
+    const match = declaration.match(/^(\w+)(\?)?\s*:\s*([\s\S]+)$/)
+    if (!match) continue
     fields.push({
       name: match[1],
-      type: match[3].replace(/;$/, '').trim(),
+      type: match[3].replace(/\s+/g, ' ').trim(),
       optional: match[2] === '?',
     })
   }
 
   return { typeName, fields }
+}
+
+/**
+ * Splits a type body into its own field declarations, keeping a field whose
+ * type spans several lines (a nested object, a multi-line union) in one piece.
+ */
+function topLevelDeclarations(body: string): string[] {
+  const declarations: string[] = []
+  let current = ''
+  let depth = 0
+
+  const flush = () => {
+    if (current.trim()) declarations.push(current.trim())
+    current = ''
+  }
+
+  for (let index = 0; index < body.length; index++) {
+    const character = body[index]
+    if ('{<(['.includes(character)) depth++
+    else if ('}>)]'.includes(character)) depth--
+
+    if (depth === 0 && character === ';') {
+      flush()
+    } else if (depth === 0 && character === '\n') {
+      const continuesOnNextLine = /[|:]\s*$/.test(current) || /^\s*\|/.test(body.slice(index + 1))
+      if (continuesOnNextLine) current += ' '
+      else flush()
+    } else {
+      current += character
+    }
+  }
+  flush()
+
+  return declarations
 }
 
 // Named enums (`Enums.ts`) are open string unions, so they validate as plain strings.
@@ -83,6 +121,7 @@ function parseTypeExpression(source: string): TypeNode {
   }
 
   function parseUnion(): TypeNode {
+    if (peek() === '|') position++
     const members = [parsePostfix()]
     while (peek() === '|') {
       position++
@@ -182,7 +221,7 @@ function nodeToZod(node: TypeNode, referencedTypes: Set<string>, cyclicTypes: Se
       if (enumTypeNames.has(node.name)) return 'z.string()'
       if (!generatedTypeNames.has(node.name)) return 'z.any()'
       referencedTypes.add(node.name)
-      return cyclicTypes.has(node.name) ? `z.lazy(() => ${node.name}Schema)` : `${node.name}Schema`
+      return `${node.name}Schema`
     case 'array':
       return `z.array(${nodeToZod(node.element, referencedTypes, cyclicTypes)})`
     case 'record':
@@ -230,23 +269,27 @@ function generateZodFile(parsed: ParsedType, cyclicTypes: Set<string>): string {
   const fieldLines: string[] = []
 
   for (const field of parsed.fields) {
-    let zodExpr = typeToZod(field.type, referencedTypes, cyclicTypes)
+    const fieldReferences = new Set<string>()
+    let zodExpr = typeToZod(field.type, fieldReferences, cyclicTypes)
     if (field.optional) zodExpr += '.optional()'
-    fieldLines.push(`  ${field.name}: ${zodExpr},`)
+    for (const reference of fieldReferences) referencedTypes.add(reference)
+
+    // A field reaching back into a reference cycle is a getter, so the schema it
+    // points at is read on first parse rather than while the modules load.
+    const closesCycle = [...fieldReferences].some((reference) => cyclicTypes.has(reference))
+    fieldLines.push(
+      closesCycle
+        ? `  get ${field.name}() { return ${zodExpr}; },`
+        : `  ${field.name}: ${zodExpr},`,
+    )
   }
 
-  // Don't import self-references (self-referencing types use z.lazy)
   const refImports = Array.from(referencedTypes)
     .filter((ref) => ref !== parsed.typeName)
     .sort()
     .map((ref) => `import { ${ref}Schema } from './${ref}';`)
 
-  const isCyclic = cyclicTypes.has(parsed.typeName)
-
-  // For cyclic types, add explicit type annotation to break circular inference
-  const schemaDecl = isCyclic
-    ? `export const ${parsed.typeName}Schema: z.ZodObject<any> = z.object({`
-    : `export const ${parsed.typeName}Schema = z.object({`
+  const schemaDecl = `export const ${parsed.typeName}Schema = z.object({`
 
   const lines: string[] = [
     '// This file is auto-generated. Do not edit directly.',
@@ -356,7 +399,7 @@ function main(): void {
   const cyclicTypes = detectCyclicTypes(parsedTypes)
   if (cyclicTypes.size > 0) {
     console.log(`Detected circular dependencies: ${Array.from(cyclicTypes).join(', ')}`)
-    console.log('Using z.lazy() for these references.\n')
+    console.log('Using getters for these references.\n')
   }
 
   const generatedNames: string[] = []

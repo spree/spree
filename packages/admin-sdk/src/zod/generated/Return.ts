@@ -9,7 +9,7 @@ import { ReturnReasonSchema } from './ReturnReason';
 import { ShippingLabelSchema } from './ShippingLabel';
 import { StockLocationSchema } from './StockLocation';
 
-export const ReturnSchema: z.ZodObject<any> = z.object({
+export const ReturnSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
@@ -33,9 +33,9 @@ export const ReturnSchema: z.ZodObject<any> = z.object({
   created_by: ActorSchema.optional(),
   refunded_total: z.string(),
   refundable_total: z.string(),
-  order: z.lazy(() => OrderSchema).optional(),
+  get order() { return OrderSchema.optional(); },
   stock_location: StockLocationSchema.optional(),
-  refunds: z.array(z.lazy(() => RefundSchema)).optional(),
+  get refunds() { return z.array(RefundSchema).optional(); },
   documents: z.array(z.object({ kind: z.string(), url: z.string() })),
   labels: z.array(ShippingLabelSchema),
   deliveries: z.array(DeliverySchema),

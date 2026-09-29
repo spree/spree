@@ -6,7 +6,7 @@ import { ClaimReasonSchema } from './ClaimReason';
 import { OrderSchema } from './Order';
 import { RefundSchema } from './Refund';
 
-export const ClaimSchema: z.ZodObject<any> = z.object({
+export const ClaimSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
@@ -28,8 +28,8 @@ export const ClaimSchema: z.ZodObject<any> = z.object({
   created_by_id: z.string().nullable(),
   created_by_type: z.string().nullable(),
   created_by: ActorSchema.optional(),
-  order: z.lazy(() => OrderSchema).optional(),
-  refunds: z.array(z.lazy(() => RefundSchema)).optional(),
+  get order() { return OrderSchema.optional(); },
+  get refunds() { return z.array(RefundSchema).optional(); },
 });
 
 export type Claim = z.infer<typeof ClaimSchema>;

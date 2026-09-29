@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { StockLocationSchema } from './StockLocation';
 import { VariantSchema } from './Variant';
 
-export const StockLevelSchema: z.ZodObject<any> = z.object({
+export const StockLevelSchema = z.object({
   id: z.string(),
   count_on_hand: z.number(),
   backorderable: z.boolean(),
@@ -25,7 +25,7 @@ export const StockLevelSchema: z.ZodObject<any> = z.object({
   allocated_count: z.number(),
   available_count: z.number(),
   stock_location: StockLocationSchema.optional(),
-  variant: z.lazy(() => VariantSchema).optional(),
+  get variant() { return VariantSchema.optional(); },
 });
 
 export type StockLevel = z.infer<typeof StockLevelSchema>;

@@ -669,7 +669,7 @@ When changing Alba serializers, run the full pipeline:
 
 ```bash
 cd spree/api && bundle exec rake typelizer:generate    # 1. TS types from serializers
-pnpm generate:zod                                        # 2. Zod schemas from TS types (Store, Admin, Seller SDKs)
+cd ../.. && pnpm generate:zod                           # 2. Zod schemas from TS types (Store, Admin, Seller SDKs)
 cd spree/api && bundle exec rspec spec/integration/     # 3. Integration tests
 bundle exec rake rswag:specs:swaggerize                 # 4. OpenAPI spec
 cd packages/sdk && pnpm test                             # 5. SDK tests

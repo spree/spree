@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { OptionValueSchema } from './OptionValue';
 
-export const OptionTypeSchema: z.ZodObject<any> = z.object({
+export const OptionTypeSchema = z.object({
   id: z.string(),
   name: z.string(),
   label: z.string(),
@@ -13,7 +13,7 @@ export const OptionTypeSchema: z.ZodObject<any> = z.object({
   filterable: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-  option_values: z.array(z.lazy(() => OptionValueSchema)).optional(),
+  get option_values() { return z.array(OptionValueSchema).optional(); },
 });
 
 export type OptionType = z.infer<typeof OptionTypeSchema>;

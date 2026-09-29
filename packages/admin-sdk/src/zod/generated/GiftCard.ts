@@ -5,7 +5,7 @@ import { CustomerSchema } from './Customer';
 import { GiftCardBatchSchema } from './GiftCardBatch';
 import { OrderSchema } from './Order';
 
-export const GiftCardSchema: z.ZodObject<any> = z.object({
+export const GiftCardSchema = z.object({
   id: z.string(),
   code: z.string(),
   status: z.string(),
@@ -25,10 +25,10 @@ export const GiftCardSchema: z.ZodObject<any> = z.object({
   updated_at: z.string(),
   customer_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
-  customer: z.lazy(() => CustomerSchema).optional(),
+  get customer() { return CustomerSchema.optional(); },
   created_by: AdminUserSchema.optional(),
   gift_card_batch: GiftCardBatchSchema.optional(),
-  orders: z.array(z.lazy(() => OrderSchema)).optional(),
+  get orders() { return z.array(OrderSchema).optional(); },
 });
 
 export type GiftCard = z.infer<typeof GiftCardSchema>;

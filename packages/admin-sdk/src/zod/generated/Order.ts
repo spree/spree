@@ -21,7 +21,7 @@ import { ReturnSchema } from './Return';
 import { SellerSchema } from './Seller';
 import { StockLocationSchema } from './StockLocation';
 
-export const OrderSchema: z.ZodObject<any> = z.object({
+export const OrderSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
   withdrawal_period_ends_at: z.string().nullable(),
@@ -69,12 +69,12 @@ export const OrderSchema: z.ZodObject<any> = z.object({
   display_store_credit_total: z.string(),
   covered_by_store_credit: z.boolean(),
   items: z.array(LineItemSchema).optional(),
-  fulfillments: z.array(z.lazy(() => FulfillmentSchema)).optional(),
-  payments: z.array(z.lazy(() => PaymentSchema)).optional(),
+  get fulfillments() { return z.array(FulfillmentSchema).optional(); },
+  get payments() { return z.array(PaymentSchema).optional(); },
   billing_address: AddressSchema.nullable().optional(),
   shipping_address: AddressSchema.nullable().optional(),
-  gift_card: z.lazy(() => GiftCardSchema).nullable(),
-  market: z.lazy(() => MarketSchema).nullable(),
+  get gift_card() { return GiftCardSchema.nullable(); },
+  get market() { return MarketSchema.nullable(); },
   external_references: z.record(z.string(), z.string()),
   status: z.string(),
   last_ip_address: z.string().nullable(),
@@ -121,11 +121,11 @@ export const OrderSchema: z.ZodObject<any> = z.object({
   channel: ChannelSchema.optional(),
   preferred_stock_location: StockLocationSchema.optional(),
   payment_methods: z.array(PaymentMethodSchema).optional(),
-  customer: z.lazy(() => CustomerSchema).optional(),
+  get customer() { return CustomerSchema.optional(); },
   cancel_reason: OrderCancellationReasonSchema.optional(),
-  returns: z.array(z.lazy(() => ReturnSchema)).optional(),
-  exchanges: z.array(z.lazy(() => ExchangeSchema)).optional(),
-  claims: z.array(z.lazy(() => ClaimSchema)).optional(),
+  get returns() { return z.array(ReturnSchema).optional(); },
+  get exchanges() { return z.array(ExchangeSchema).optional(); },
+  get claims() { return z.array(ClaimSchema).optional(); },
   freight_summary: FreightSummarySchema.nullable(),
 });
 

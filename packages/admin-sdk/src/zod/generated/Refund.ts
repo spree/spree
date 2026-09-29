@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ActorSchema } from './Actor';
 import { PaymentSchema } from './Payment';
 
-export const RefundSchema: z.ZodObject<any> = z.object({
+export const RefundSchema = z.object({
   id: z.string(),
   transaction_id: z.string().nullable(),
   amount: z.string().nullable(),
@@ -17,7 +17,7 @@ export const RefundSchema: z.ZodObject<any> = z.object({
   refunder_id: z.string().nullable(),
   refunder_type: z.string().nullable(),
   refunder: ActorSchema.optional(),
-  payment: z.lazy(() => PaymentSchema).optional(),
+  get payment() { return PaymentSchema.optional(); },
 });
 
 export type Refund = z.infer<typeof RefundSchema>;
