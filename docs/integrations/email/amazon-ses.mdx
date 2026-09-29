@@ -56,7 +56,7 @@ Verifying a domain is required regardless of sandbox status: even in production,
 Every new SES account starts in the **sandbox**, per region, and the restrictions make a live store impossible:
 
 - You can send only **to verified addresses and domains**, so real customers never receive anything.
-- A maximum of **200 messages per 24 hours**.
+- A maximum of **200 recipients per rolling 24-hour period** — a message to several recipients counts once for each of them.
 - A maximum of **1 message per second**.
 
 To request production access, open the SES console, go to **Account dashboard**, and choose **Request production access**. You describe your mail as transactional, give your website URL, and confirm you handle bounces and complaints. AWS responds within 24 hours. Verifying your domain first helps the request get approved faster.

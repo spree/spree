@@ -31,11 +31,15 @@ Resend also accepts ports 25 and 2587 for STARTTLS. Ports 465 and 2465 are impli
 
 Go to **Domains → Add Domain**, enter your sending domain, and add the records Resend generates at your DNS host:
 
-- **DKIM and SPF** as `TXT` records, which prove the mail is really yours.
-- An **MX or CNAME** record for the sending subdomain.
-- A **DMARC** record, which Resend recommends adding once the domain verifies.
+- **DKIM**, which proves the mail is really yours.
+- **SPF**, plus a record on the sending subdomain that routes bounces back to Resend.
 
-Copy the values exactly as Resend generates them. Once the domain shows as verified, set `SMTP_FROM_ADDRESS` to an address on it.
+Create each one with the **type Resend displays**. Older domains are given `TXT`
+and `MX` records for SPF, where domains added after August 2026 may get `CNAME`
+records instead — so copy what the dashboard shows rather than assuming a type.
+On older domains both SPF records must be right or SPF does not verify at all.
+
+Once the domain shows as verified, set `SMTP_FROM_ADDRESS` to an address on it. A verified domain already passes SPF and DKIM; **DMARC** is not needed to verify, but is worth adding afterwards.
 
 <Warning>
 **Until you verify a domain, you can only email yourself.** An unverified account sends from `onboarding@resend.dev`, and Resend restricts that test sender to the address on your own Resend account — anything else is refused with "You can only send testing emails to your own email address". A store in this state appears to work while no customer ever receives an order confirmation, so verify your domain before going live.
