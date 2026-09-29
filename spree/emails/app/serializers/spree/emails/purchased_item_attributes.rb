@@ -5,6 +5,7 @@ module Spree
     # parcel item serializers.
     module PurchasedItemAttributes
       extend ActiveSupport::Concern
+      include Spree::ImagesHelper
 
       included do
         attribute :sku do |item|
@@ -21,11 +22,7 @@ module Spree
         end
 
         attribute :image_url do |item|
-          line_item = purchased_line_item(item)
-          media = line_item.variant&.primary_media || line_item.product&.primary_media
-          next unless media&.attached? && media.variable?
-
-          Rails.application.routes.url_helpers.cdn_image_url(media.variant(:small))
+          spree_image_url(purchased_line_item(item).variant&.thumbnail, variant: :small)
         end
       end
 

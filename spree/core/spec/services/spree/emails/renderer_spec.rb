@@ -58,6 +58,18 @@ describe Spree::Emails::Renderer do
       expect(email.html.scan('&lt;a href=').size).to eq(2)
     end
 
+    it 'escapes captured text once' do
+      email = render(section('{% capture greeting %}Hi {{ name }}{% endcapture %}{{ greeting }}'), { name: "O'Brien & Co" })
+
+      expect(email.html).to include('Hi O&#39;Brien &amp; Co')
+    end
+
+    it 'escapes what cycle writes' do
+      email = render(section("{% cycle name, 'x' %}"), { name: payload })
+
+      expect(email.html).not_to include('<a href="https://evil.test">')
+    end
+
     it 'escapes what a partial outputs' do
       write('spree/shared/_greeting.liquid', '{{ who }}')
 

@@ -48,12 +48,13 @@ describe Spree::Emails::TemplateResolver do
   end
 
   describe Spree::Emails::LegacyTemplates do
-    it "lists the app's ERB email views Spree no longer renders" do
+    it "lists the app's ERB overrides of Spree's emails, and nothing of the app's own" do
       write(app_views, 'spree/order_mailer/confirm_email.html.erb')
       write(app_views, 'spree/shared/_base_mailer_footer.html.erb')
-      write(app_views, 'spree/products/show.html.erb')
+      write(app_views, 'spree/custom_mailer/welcome_email.html.erb')
+      write(app_views, 'spree/shared/_banner.html.erb')
 
-      expect(described_class.ignored_overrides(app_views)).to eq(
+      expect(described_class.ignored_overrides(app_views, [gem_views])).to eq(
         %w[spree/order_mailer/confirm_email.html.erb spree/shared/_base_mailer_footer.html.erb]
       )
     end

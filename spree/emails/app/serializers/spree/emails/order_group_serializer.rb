@@ -41,6 +41,10 @@ module Spree
 
       many :line_items, key: :items, resource: Spree::Emails::LineItemSerializer
 
+      # Every child order in full is what the webhook payload carries; the
+      # email reads the purchase-wide fields above instead.
+      many :orders, resource: proc { Spree.api.order_serializer }, if: proc { false }
+
       many :fulfillment_groups, resource: Spree::Emails::FulfillmentGroupSerializer
 
       # What no parcel carries — a download, an emailed gift card.

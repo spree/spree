@@ -10,20 +10,45 @@ module Spree
       # Only active inside a Spree email render; any other Liquid the host app
       # runs is untouched.
       module EscapedOutput
-        def render_to_output_buffer(context, output)
-          return super unless context.respond_to?(:escape_output) && context.escape_output
-
-          write_escaped(render(context), output)
-          output
+        def self.active?(context)
+          context.respond_to?(:escape_output) && context.escape_output
         end
 
-        private
+        # `{{ value }}` and `{% echo value %}`.
+        module Variable
+          def render_to_output_buffer(context, output)
+            return super unless EscapedOutput.active?(context)
 
-        def write_escaped(value, output)
-          case value
-          when nil then nil
-          when Array then value.each { |item| write_escaped(item, output) }
-          else output << ERB::Util.html_escape(Liquid::Utils.to_s(value))
+            write_escaped(render(context), output)
+            output
+          end
+
+          private
+
+          def write_escaped(value, output)
+            case value
+            when nil then nil
+            when Array then value.each { |item| write_escaped(item, output) }
+            else output << ERB::Util.html_escape(Liquid::Utils.to_s(value))
+            end
+          end
+        end
+
+        # A captured block was escaped as it rendered, so it is kept as safe
+        # HTML rather than escaped a second time when printed.
+        module Capture
+          def render(context)
+            output = super
+            EscapedOutput.active?(context) ? output.html_safe : output
+          end
+        end
+
+        # `{% cycle %}` writes its values straight to the output.
+        module Cycle
+          def render_to_output_buffer(context, output)
+            return super unless EscapedOutput.active?(context)
+
+            output << ERB::Util.html_escape(super(context, +''))
           end
         end
       end
@@ -31,4 +56,6 @@ module Spree
   end
 end
 
-Liquid::Variable.prepend(Spree::Core::Emails::EscapedOutput)
+Liquid::Variable.prepend(Spree::Core::Emails::EscapedOutput::Variable)
+Liquid::Capture.prepend(Spree::Core::Emails::EscapedOutput::Capture)
+Liquid::Cycle.prepend(Spree::Core::Emails::EscapedOutput::Cycle)

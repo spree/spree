@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class StoreSerializer < BaseSerializer
+      include Spree::ImagesHelper
+
       LOGO_HEIGHT = 32
 
       attributes :name, :address, :mail_from_address, :default_currency, :default_locale
@@ -12,31 +14,22 @@ module Spree
       end
 
       attribute :logo_url do |store|
-        logo = logo_for(store)
-        next unless logo
-
-        variant = logo.variant(format: 'webp', saver: Spree::Media::WEBP_SAVER_OPTIONS, resize_to_limit: [nil, LOGO_HEIGHT * 3])
-        Rails.application.routes.url_helpers.cdn_image_url(variant)
+        spree_image_url(store.email_logo, height: LOGO_HEIGHT)
       end
 
+      # The width the logo shows at, from its proportions. Analyzing an
+      # unanalyzed logo here keeps a wide logo from being squashed square.
       attribute :logo_width do |store|
-        logo = logo_for(store)
+        logo = store.email_logo
         next unless logo
 
-        width = logo.metadata['width'].to_f
-        height = logo.metadata['height'].to_f
-        height.positive? ? (LOGO_HEIGHT * width / height).round : LOGO_HEIGHT
+        logo.analyze unless logo.analyzed?
+        width, height = logo.metadata.values_at('width', 'height').map(&:to_f)
+        height.positive? ? (LOGO_HEIGHT * width / height).round : nil
       end
 
       attribute :logo_height do |store|
-        LOGO_HEIGHT if logo_for(store)
-      end
-
-      private
-
-      def logo_for(store)
-        logo = store.mailer_logo.attached? ? store.mailer_logo : store.logo
-        logo if logo.attached? && logo.variable?
+        LOGO_HEIGHT if store.email_logo
       end
     end
   end

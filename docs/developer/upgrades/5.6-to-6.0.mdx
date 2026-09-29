@@ -732,7 +732,7 @@ Other changes that come with it:
 - **The mailer view helpers moved to `spree_legacy_emails`.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are only available with that gem installed. Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`.
 - **Every email has a plain-text part**, generated from the HTML. Seven emails that had none now have one.
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
-- **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own views renders as before. If those views use Spree's ERB layout or shared partials, add `spree_legacy_emails` or move the mailer to `mail_template` with a Liquid template.
+- **Your own mailers lose Spree's email layout.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views still sends, but those views are no longer wrapped in Spree's header, logo and footer, because that layout moved to `spree_legacy_emails`. Spree logs a deprecation warning the first time each such email renders. Move the mailer to `mail_template` with a Liquid template, or add `spree_legacy_emails` until you do.
 
 ## Deprecated in 6.0, removed in 6.1
 

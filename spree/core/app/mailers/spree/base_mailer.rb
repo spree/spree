@@ -50,6 +50,7 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
+      Spree::Emails::LegacyTemplates.warn_unstyled(self) unless @_rendering_template || self.class._layout
 
       if @_store_locale_active
         super
@@ -75,13 +76,16 @@ module Spree
     # @param headers [Hash] mail headers (`to:`, `store_url:`, ...)
     # @return [Mail::Message]
     def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", currency: nil, **headers)
+      @_rendering_template = true
       in_store_locale do
         resolver = Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
         email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
         renderer = Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: currency)
 
         if email_template.erb?
-          mail_legacy_template(email_template, renderer.render_subject(resolver.find_liquid(template), assigns), headers)
+          liquid_template = resolver.find_liquid(template)
+          subject = liquid_template ? renderer.render_subject(liquid_template, assigns) : headers[:subject]
+          mail_legacy_template(email_template, subject, headers)
         else
           email = renderer.render(email_template, assigns)
 

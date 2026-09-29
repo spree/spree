@@ -15,7 +15,8 @@ module Spree
         group.sellers.map(&:name)
       end
 
-      many :manifest, key: :items, resource: Spree::Emails::ParcelItemSerializer
+      many :manifest, key: :items, source: proc { manifest.select(&:line_item) },
+                     resource: Spree::Emails::ParcelItemSerializer
     end
   end
 end

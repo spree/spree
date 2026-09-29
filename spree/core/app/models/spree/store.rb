@@ -526,6 +526,14 @@ module Spree
     # leak into customer emails), otherwise falls back to formatted_url.
     #
     # @return [String] e.g. "https://myshop.com"
+    # The logo emails show: the dedicated mailer logo, else the store logo.
+    #
+    # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
+    def email_logo
+      logo = mailer_logo.attached? ? mailer_logo : self.logo
+      logo if logo.attached? && logo.variable?
+    end
+
     def storefront_url
       preferred_storefront_url.presence ||
         allowed_origins.order(:created_at).reject(&:loopback?).first&.origin ||

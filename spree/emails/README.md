@@ -8,33 +8,17 @@ Spree Emails provides transactional email templates and mailers for Spree Commer
 
 This gem includes:
 
-- **Order Mailer** - Order confirmation and cancellation emails
-- **Shipment Mailer** - Shipping and delivery notifications
-- **Reimbursement Mailer** - Refund notifications
-- **Event Subscribers** - Automatic email triggers on store events
-- **Email Templates** - Customizable HTML and text templates
+- **Mailers** for order confirmation, cancellation and payment links, multi-seller purchase confirmations, fulfillment notices, refunds, digital downloads, customer password resets and data exports, newsletter confirmation, company invitations and seller status changes
+- **Event subscribers** that send them when store events happen
+- **Liquid templates** written in MJML, one per email, that you can override
+
+Staff emails (password resets, invitations, import and export results, disabled webhooks) live in `spree_core` and render the same way.
 
 ## Installation
 
 ```bash
 bundle add spree_emails
 ```
-
-## Email Types
-
-### Order Emails
-
-- **Order Confirmation** - Sent when an order is completed
-- **Order Cancellation** - Sent when an order is cancelled
-
-### Shipment Emails
-
-- **Shipment Notification** - Sent when a shipment is shipped
-- **Delivery Confirmation** - Sent when tracking shows delivered
-
-### Reimbursement Emails
-
-- **Refund Notification** - Sent when a reimbursement is processed
 
 ## Configuration
 
@@ -69,72 +53,43 @@ config.action_mailer.smtp_settings = {
 
 ## Customization
 
-### Overriding Templates
+### Overriding templates
 
-Copy email templates to your application:
+Every email renders from a Liquid template at its Rails view path. To change one, create the file at the same path in your app — for example `app/views/spree/order_mailer/confirm_email.liquid` — starting from the copy in this gem's `app/views`. The layout around every email is `app/views/layouts/spree/base_mailer.liquid`.
 
-```bash
-# Copy all email templates
-cp -r $(bundle show spree_emails)/app/views/spree/mailer app/views/spree/
+Templates read plain data from serializers, never models: see the [email templates guide](https://spreecommerce.org/docs/developer/customization/emails) for the layout, partials, filters and escaping, and the [variable reference](https://spreecommerce.org/docs/developer/customization/email-variables) for what each template receives.
 
-# Or copy specific templates
-cp $(bundle show spree_emails)/app/views/spree/mailer/order_mailer/confirm_email.html.erb \
-   app/views/spree/mailer/order_mailer/
-```
+ERB overrides from before Spree 6.0 render only with the `spree_legacy_emails` gem installed, which is removed in 6.1.
 
-### Template Structure
+### Adding new email types
 
-```
-app/views/spree/mailer/
-├── order_mailer/
-│   ├── confirm_email.html.erb
-│   ├── confirm_email.text.erb
-│   ├── cancel_email.html.erb
-│   └── cancel_email.text.erb
-├── shipment_mailer/
-│   ├── shipped_email.html.erb
-│   └── shipped_email.text.erb
-└── reimbursement_mailer/
-    ├── reimbursement_email.html.erb
-    └── reimbursement_email.text.erb
-```
-
-### Custom Mailer
-
-Create custom mailers by extending Spree's base mailer:
-
-```ruby
-# app/mailers/spree/order_mailer_decorator.rb
-module Spree
-  module OrderMailerDecorator
-    def confirm_email(order, resend = false)
-      @custom_data = fetch_custom_data(order)
-      super
-    end
-
-    private
-
-    def fetch_custom_data(order)
-      # Custom logic
-    end
-  end
-end
-
-Spree::OrderMailer.prepend(Spree::OrderMailerDecorator)
-```
-
-### Adding New Email Types
+Extend Spree's base mailer and render a Liquid template at the action's view path, passing the data it needs:
 
 ```ruby
 # app/mailers/spree/custom_mailer.rb
 module Spree
   class CustomMailer < BaseMailer
-    def welcome_email(user)
-      @user = user
-      mail(to: @user.email, subject: 'Welcome to our store!')
+    def welcome_email(customer, store)
+      @current_store = store
+
+      with_store_locale(@current_store) do
+        mail_template({ customer: email_data(customer, Spree.api.customer_serializer) }, to: customer.email)
+      end
     end
   end
 end
+```
+
+```liquid
+<!-- app/views/spree/custom_mailer/welcome_email.liquid -->
+---
+subject: "Welcome to {{ store.name }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">Welcome, {{ customer.first_name }}!</mj-text>
+  </mj-column>
+</mj-section>
 ```
 
 ## Event Integration
@@ -152,7 +107,7 @@ module MyApp
       user = Spree.customer_class.find_by(id: user_id)
       return unless user
 
-      Spree::CustomMailer.welcome_email(user).deliver_later
+      Spree::CustomMailer.welcome_email(user, Spree::Store.default).deliver_later
     end
   end
 end
