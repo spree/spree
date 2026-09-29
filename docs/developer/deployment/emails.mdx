@@ -95,6 +95,8 @@ Set the following environment variables on the **Spree backend** to enable email
 
 When `SMTP_HOST` is not set, emails are printed to the Rails log instead of being sent.
 
+Any SMTP provider works, since there is no provider-specific gem or adapter. For how the configuration behaves and what to weigh when choosing between providers, see [Emails](/developer/providers/emails). Step-by-step setup for each one: [Resend](/integrations/email/resend), [Postmark](/integrations/email/postmark), [SendGrid](/integrations/email/sendgrid), [Mailgun](/integrations/email/mailgun) and [Amazon SES](/integrations/email/amazon-ses).
+
 ### Provider Examples
 
 <Tabs>

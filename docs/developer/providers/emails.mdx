@@ -1,0 +1,93 @@
+---
+title: Emails
+description: Spree sends transactional email over plain SMTP, configured entirely by environment variable — any provider works, and none of them needs a gem, an adapter or an integration.
+---
+
+Every transactional email Spree sends — order confirmations, shipping notifications, password resets, staff invitations — goes out through Action Mailer over SMTP. There is no email provider gem, no adapter class and no integration to install. You give Spree an SMTP host and credentials through environment variables, and it sends.
+
+This makes email the one provider category that is **not** configured per store in the admin. Payment gateways, tax engines and search each hold their credentials as a [store integration](/developer/providers/overview); email is infrastructure for the whole deployment, so it lives in the environment alongside the database URL.
+
+For what Spree sends, when, and how a storefront can take the customer-facing mail over instead, see [Sending out Emails](/developer/deployment/emails).
+
+## Configuration
+
+Set these on the Spree backend:
+
+```bash
+SMTP_HOST=smtp.resend.com
+SMTP_PORT=587
+SMTP_USERNAME=resend
+SMTP_PASSWORD=re_your_api_key
+SMTP_FROM_ADDRESS=orders@yourstore.com
+```
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `SMTP_HOST` | — | The provider's SMTP server. **Setting this is what turns on SMTP delivery** — leave it unset and nothing is configured |
+| `SMTP_PORT` | `587` | The port to connect on |
+| `SMTP_USERNAME` | — | The SMTP user. Optional: when it is absent Spree connects without authenticating |
+| `SMTP_PASSWORD` | — | The SMTP password, sent only when a username is set |
+| `SMTP_FROM_ADDRESS` | — | The default From address on outgoing mail |
+| `RAILS_HOST` | `example.com` | The public host used to build links inside emails — see [environment variables](/developer/deployment/environment_variables#urls-and-hosts) |
+
+Two details are worth knowing because they decide whether a provider will accept your connection at all:
+
+- **STARTTLS is always attempted.** Spree upgrades the connection to TLS whenever the server offers it, which is what every provider below expects on port 587. It does not open a connection that is implicitly TLS from the first byte, so a provider's "SSL" port — usually 465 — is the wrong choice here. Use the STARTTLS port.
+- **Authentication is optional, and plain when used.** Credentials are sent only if `SMTP_USERNAME` is set, which is how the quickstart delivers to a local mail catcher with no account at all. When it is set, Spree authenticates with the `plain` mechanism over the encrypted connection — the one every provider below documents for SMTP.
+
+<Note>
+  `SMTP_FROM_ADDRESS` sets the application-wide default. Merchants can override the From and Reply-To addresses per store in the admin under **Settings → Emails** — see the [email settings guide](/user/settings/emails).
+</Note>
+
+## Choosing a provider
+
+Any service that speaks SMTP works. Because the integration is identical, the choice is about everything *around* sending rather than anything in Spree:
+
+- **Deliverability and reputation.** Whether mail lands in the inbox is mostly the provider's IP reputation plus your domain authentication, not your code.
+- **Domain authentication.** Every provider will ask you to prove you own your sending domain with DNS records. This is the single highest-value thing you can do for deliverability, and it is not optional in practice.
+- **Sending limits and pricing.** Free and trial tiers are usually capped by volume, and several restrict *who* you may send to until you verify a domain.
+- **Bounces and complaints.** Spree does not process bounce notifications. Handling a hard bounce or a spam complaint is the provider's dashboard and webhooks, which differ a lot between them.
+- **Analytics.** Open and click tracking, message logs and retention are provider features.
+
+<CardGroup cols={2}>
+  <Card title="Resend" href="/integrations/email/resend" icon="mail">
+    Developer-focused and quick to set up.
+  </Card>
+  <Card title="Postmark" href="/integrations/email/postmark" icon="mail">
+    Built around transactional mail and fast delivery.
+  </Card>
+  <Card title="SendGrid" href="/integrations/email/sendgrid" icon="mail">
+    Long-established, high volume.
+  </Card>
+  <Card title="Mailgun" href="/integrations/email/mailgun" icon="mail">
+    Flexible routing, US and EU regions.
+  </Card>
+  <Card title="Amazon SES" href="/integrations/email/amazon-ses" icon="mail">
+    Cheapest at scale if you already run on AWS.
+  </Card>
+</CardGroup>
+
+## Verifying delivery
+
+After setting the variables and restarting the application, send a real message rather than trusting the configuration:
+
+1. Trigger an email — inviting a staff member under **Settings → Users** is the quickest, since it needs no order.
+2. Check the provider's own activity or message log. This is the honest answer: it tells you whether the provider accepted the message, and whether it then bounced.
+3. If nothing arrives, read the application logs. An SMTP rejection surfaces there with the provider's own error text, which normally names the cause — an unverified sender, a bad credential, or a sandbox restriction.
+
+The most common failures are not configuration mistakes in Spree:
+
+| Symptom | Usual cause |
+| --- | --- |
+| Emails are written to the log instead of sent | `SMTP_HOST` is not set, so SMTP delivery was never switched on |
+| Authentication fails | The username is not what the provider expects — several want a fixed literal rather than your account email |
+| The provider rejects the sender | `SMTP_FROM_ADDRESS` is a domain you have not authenticated with that provider |
+| Mail is accepted but never arrives | A new account restricted to verified recipients, or mail landing in spam because the domain is not authenticated |
+
+<Note>
+**Every provider restricts new accounts**, so a first test email that never arrives is usually the account, not your configuration. Amazon SES starts in a sandbox that only reaches verified addresses, Postmark reviews accounts before they can mail customers, Mailgun's sandbox reaches five named recipients, and Resend only emails you until a domain is verified. Authenticate your domain and clear the provider's restriction before treating a missing email as a bug.
+</Note>
+
+## Local development
+
+In development nothing is delivered externally. Emails are captured by [Mailpit](https://mailpit.axllent.org), which you read at `http://localhost:8025`. To exercise a real provider locally, set `SMTP_HOST` and the rest in `.env` — but point `SMTP_FROM_ADDRESS` at a domain you have authenticated, or the provider will reject it.

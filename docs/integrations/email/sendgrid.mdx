@@ -1,0 +1,48 @@
+---
+title: SendGrid
+description: Send Spree's transactional emails through Twilio SendGrid over SMTP — the username is always the literal string `apikey`, with your API key as the password.
+---
+
+[Twilio SendGrid](https://sendgrid.com) is one of the longest-established email platforms, built for high volume with detailed analytics and a mature deliverability toolset. It suits stores already sending a lot of mail, or teams that want SendGrid's reporting alongside its API.
+
+Spree talks to SendGrid over plain SMTP, so there is nothing to install — see [Emails](/developer/providers/emails) for how the configuration works.
+
+## Configuration
+
+```bash
+SMTP_HOST=smtp.sendgrid.net
+SMTP_PORT=587
+SMTP_USERNAME=apikey
+SMTP_PASSWORD=SG.your_api_key
+SMTP_FROM_ADDRESS=orders@yourstore.com
+```
+
+<Note>
+The username is the **literal string `apikey`**, exactly as written above — not your SendGrid username, and not the key itself. SendGrid's own wording: "This setting is the exact string `apikey` and not the API key itself." Your API key goes in the password field, used as-is: the Base64 encoding SendGrid mentions elsewhere applies to testing by hand with `openssl`, not to an application connecting over SMTP.
+</Note>
+
+SendGrid recommends port 587, which avoids the rate limiting and connection blocking some ISPs and hosting providers apply to port 25.
+
+## Getting an API key
+
+1. In the SendGrid dashboard go to **Settings → API Keys** and choose **Create API Key**.
+2. Give it **Mail Send** permission — that is all Spree needs, and a restricted key limits the damage if it leaks.
+3. Copy the key immediately; it is shown only once.
+
+## Authenticating your domain
+
+Go to **Settings → Sender Authentication** and complete **Domain Authentication**. SendGrid generates CNAME records to add at your DNS host, covering DKIM signing and the return path. Once verified, set `SMTP_FROM_ADDRESS` to an address on that domain.
+
+<Warning>
+SendGrid rejects mail from senders it cannot verify. Authenticating the whole domain is the right choice for a store, because every address on it can then send. Single Sender Verification exists for one-off addresses, but it does not scale to a store's From, reply-to and notification addresses.
+</Warning>
+
+## Account plans
+
+SendGrid **retired its free plans in 2025**. New accounts now start on a 60-day trial that allows up to 100 emails per day, and when the trial ends any integration using the account's API keys stops sending until you move to a paid plan. Plan for a paid plan before launch rather than discovering the cutoff when order confirmations stop.
+
+## Related
+
+- [Emails](/developer/providers/emails) — the SMTP variables and how to verify delivery
+- [Sending out Emails](/developer/deployment/emails) — what Spree sends and when
+- [SendGrid SMTP documentation](https://www.twilio.com/docs/sendgrid/for-developers/sending-email/getting-started-smtp)
