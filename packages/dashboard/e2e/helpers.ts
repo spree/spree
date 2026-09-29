@@ -443,3 +443,59 @@ export async function invitationAcceptancePath(
   // Tolerate either path-only (no app origin configured) or an absolute URL.
   return acceptance_url.replace(/^https?:\/\/[^/]+/, '')
 }
+
+/**
+ * A placed, paid and shipped order for the fixture customer, built through the
+ * API — returns and claims can only be raised against goods that left. Paid
+ * with store credit, because that is the payment method every seeded store
+ * has; it also saves spec time over driving checkout.
+ */
+export async function createShippedOrder(page: Page, accessToken: string, quantity = 2) {
+  const headers = { Authorization: `Bearer ${accessToken}` }
+  const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
+    const res = await page.request[method](path, { headers, data })
+    expect(res.ok(), `${method.toUpperCase()} ${path}: ${await res.text()}`).toBeTruthy()
+    return res.json()
+  }
+
+  const customers = await request(
+    'get',
+    `/api/v3/admin/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+  )
+  const customerId = customers.data[0].id
+  const variants = await request('get', `/api/v3/admin/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`)
+  const address = {
+    first_name: 'Promo',
+    last_name: 'Customer',
+    address1: '1 Main St',
+    city: 'Los Angeles',
+    country_code: 'US',
+    state_code: 'CA',
+    postal_code: '90001',
+    phone: '5555555555',
+  }
+
+  const order = await request('post', '/api/v3/admin/orders', {
+    customer_id: customerId,
+    items: [{ variant_id: variants.data[0].id, quantity }],
+    shipping_address: address,
+    billing_address: address,
+  })
+  await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
+    amount: order.total,
+    currency: order.currency,
+    memo: `E2E payment for ${order.number}`,
+  })
+  await request('post', `/api/v3/admin/orders/${order.id}/store_credits`)
+  await request('patch', `/api/v3/admin/orders/${order.id}/complete`)
+
+  const fulfillments = await request('get', `/api/v3/admin/orders/${order.id}/fulfillments`)
+  for (const fulfillment of fulfillments.data) {
+    await request(
+      'patch',
+      `/api/v3/admin/orders/${order.id}/fulfillments/${fulfillment.id}/fulfill`,
+    )
+  }
+
+  return order as { id: string; number: string }
+}
