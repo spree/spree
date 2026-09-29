@@ -401,6 +401,8 @@ The `Create line items` promotion action now discounts the items it adds down to
 
 Two further changes come with it. A customer who already has the gift variant in their cart now gets theirs free rather than a second copy being added, and the promotion applies where it previously did nothing at all. And a gift is only taken back out of the cart for promotions actually applied to that order, so a customer who bought the gift variant themselves without qualifying keeps it.
 
+A gift also no longer counts toward spend thresholds or toward the amount a percentage-off order discount is taken from. That includes the gift promotion's own threshold, so a "spend over a set amount, get a gift" promotion now takes the gift back once the paid items fall below the threshold.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
