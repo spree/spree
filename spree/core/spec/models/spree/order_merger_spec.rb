@@ -158,8 +158,8 @@ module Spree
     end
 
     context 'merging an order with a gift card' do
-      let(:order_1) { create(:order, total: 20) }
-      let(:order_2) { create(:order, gift_card: gift_card, total: 20) }
+      let(:order_1) { create(:order_with_totals, total: 20, line_items_price: 20) }
+      let(:order_2) { create(:order_with_totals, gift_card: gift_card, total: 20, line_items_price: 20) }
       let(:gift_card) { create(:gift_card, amount: 20, amount_used: 20) }
       let(:store_credit_payment_method) { create(:store_credit_payment_method) }
       let(:store_credit) { create(:store_credit, originator: gift_card, amount: 20) }

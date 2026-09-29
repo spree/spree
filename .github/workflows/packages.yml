@@ -60,6 +60,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The pre-commit hook regenerates schemas, but it can be skipped or not
+      # installed, so a commit can still carry types without matching schemas.
+      - name: Check Zod schemas are up to date
+        run: |
+          pnpm generate:zod
+          if [ -n "$(git status --porcelain -- 'packages/*/src/zod/generated/*')" ]; then
+            git status --short -- 'packages/*/src/zod/generated/*'
+            git diff -- 'packages/*/src/zod/generated/*'
+            echo "::error::Zod schemas are out of date. Run 'pnpm generate:zod' and commit the result."
+            exit 1
+          fi
+
       - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
 
   sdk-integration:
@@ -189,6 +201,16 @@ jobs:
           E2E_PREVIEW: "1"
         run: pnpm test:e2e --shard=${{ matrix.shard }}/4
 
+      # First-run setup needs a stack with no admin, which the main suite's
+      # never has — it brings up its own Rails and database. One shard is
+      # enough; it runs even when the main suite failed.
+      - name: Run first-run setup E2E tests
+        if: ${{ !cancelled() && matrix.shard == 1 }}
+        working-directory: packages/dashboard
+        env:
+          E2E_PREVIEW: "1"
+        run: pnpm test:e2e:first-run
+
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v7
@@ -197,6 +219,8 @@ jobs:
           path: |
             packages/dashboard/playwright-report/
             packages/dashboard/test-results/
+            packages/dashboard/playwright-report-first-run/
+            packages/dashboard/test-results-first-run/
           retention-days: 14
 
   # Stable single-status roll-up of the shard matrix, keeping the check name

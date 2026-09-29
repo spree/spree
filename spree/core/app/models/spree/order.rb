@@ -1341,22 +1341,11 @@ module Spree
     def collect_payment_methods
       Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
-      store.payment_methods.active.storefront_visible.select { |pm| pm.available_for_order?(self) }
+      payment_methods
     end
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
     end
-
-    def recalculate_store_credit_payment
-      recalculate_totals! if using_store_credit?
-
-      if gift_card.present?
-        recalculate_gift_card
-      elsif using_store_credit?
-        Spree.store_credit_apply_service.call(order: self)
-      end
-    end
-
   end
 end

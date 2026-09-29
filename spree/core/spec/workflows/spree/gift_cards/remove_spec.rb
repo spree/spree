@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::GiftCards::Remove do
   subject { described_class.call(order: order) }
 
-  let(:order) { create(:order) }
+  let(:order) { create(:order_with_totals, line_items_price: 30) }
 
   let(:gift_card) { create(:gift_card, amount: 50, store: Spree::Store.default) }
 
@@ -13,7 +13,6 @@ RSpec.describe Spree::GiftCards::Remove do
   before do
     Spree::Config[:geocode_addresses] = false
     order.update_column(:total, 30)
-    order.update_column(:shipment_total, 10)
   end
 
   after do

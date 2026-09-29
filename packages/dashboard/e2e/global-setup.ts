@@ -1,5 +1,4 @@
-import { type ChildProcess, spawn, spawnSync } from 'node:child_process'
-import { unlinkSync, writeFileSync } from 'node:fs'
+import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
   FIXTURE_BULK_CATEGORY,
@@ -26,6 +25,7 @@ import {
   FIXTURE_LEDGER_OWED_AMOUNT,
   FIXTURE_LEDGER_PAYOUT_AMOUNT,
   FIXTURE_LEDGER_SELLER,
+  FIXTURE_PANEL_SELLER,
   FIXTURE_PROMO_CUSTOMER_EMAIL,
   FIXTURE_PROMO_CUSTOMER_FIRST_NAME,
   FIXTURE_PROMO_CUSTOMER_FULL_NAME,
@@ -34,15 +34,18 @@ import {
   FIXTURE_PROMO_SKU,
   FIXTURE_PROMO_TAXON,
   FIXTURE_PROMO_TAXON_PERMALINK,
+  FIXTURE_SELLER_PASSWORD,
+  FIXTURE_SELLER_USER_EMAIL,
+  FIXTURE_SELLER_WRITER_EMAIL,
   FIXTURE_SUPPLIER,
   FIXTURE_TRANSFER_DESTINATION,
   FIXTURE_TRANSFER_PRODUCT,
   FIXTURE_TRANSFER_SKU,
   FIXTURE_TRANSFER_SOURCE,
 } from './helpers'
-import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
+import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, RAILS_PID_FILE } from './paths'
+import { API_GEM_DIR, rmIfExists, runRailsBootstrap, startRails } from './rails'
 
-const API_GEM_DIR = resolve(E2E_DIR, '../../../spree/api')
 const PORT = process.env.E2E_RAILS_PORT || '3010'
 // Mirrors `spec/dummy/config/database.yml`.
 const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
@@ -130,6 +133,15 @@ const BOOTSTRAP_RUBY = [
   `ledger_seller.seller_payouts.where(amount: ${FIXTURE_LEDGER_OWED_AMOUNT}).first_or_create!(store: s, currency: s.default_currency, provider: Spree::PayoutProvider::System.provider_key, status: 'pending')`,
   `ledger_order = s.orders.where(seller: ledger_seller).first || Spree::Order.create!(store: s, seller: ledger_seller, currency: s.default_currency, email: 'e2e-ledger@example.com', status: 'placed', completed_at: Time.current)`,
   `ledger_seller.seller_transfers.first_or_create!(store: s, order: ledger_order, payout: ledger_payout, amount: ${FIXTURE_LEDGER_PAYOUT_AMOUNT}, currency: s.default_currency, kind: 'earning', provider: Spree::PayoutProvider::System.provider_key, status: 'completed')`,
+  // Seller panel accounts. One runs the ledger seller, whose sale and payouts
+  // give the read-only panel screens something to show; the other runs a
+  // seller of its own that the specs editing a profile, policy or team may
+  // change freely. One seller each, so neither lands on the seller picker.
+  `seller_user = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_USER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Lee'; u.last_name = 'Ledger' }`,
+  'ledger_seller.add_user(seller_user)',
+  `panel_seller = s.sellers.where(name: '${FIXTURE_PANEL_SELLER}').first_or_create!`,
+  `seller_writer = Spree.admin_user_class.where(email: '${FIXTURE_SELLER_WRITER_EMAIL}').first_or_create! { |u| u.password = '${FIXTURE_SELLER_PASSWORD}'; u.password_confirmation = '${FIXTURE_SELLER_PASSWORD}'; u.first_name = 'Pat'; u.last_name = 'Panel' }`,
+  'panel_seller.add_user(seller_writer)',
   // Inventory operations: a second warehouse to transfer into, a stocked
   // product to send, and a supplier to order from. A transfer cannot be
   // created from its own screens without two warehouses.
@@ -156,30 +168,6 @@ const BOOTSTRAP_RUBY = [
   'puts JSON.generate(api_url: "http://localhost:#{port}", admin_email: admin.email, admin_password: "spree123", store_id: s.prefixed_id, store_name: s.name)',
 ].join('; ')
 
-function rmIfExists(path: string) {
-  try {
-    unlinkSync(path)
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
-  }
-}
-
-async function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
-  const start = Date.now()
-  while (Date.now() - start < timeoutMs) {
-    try {
-      const res = await fetch(url)
-      if (res.status < 500) return
-    } catch {
-      /* not ready */
-    }
-    await new Promise((r) => setTimeout(r, 500))
-  }
-  throw new Error(`Server did not start within ${timeoutMs}ms at ${url}`)
-}
-
-let serverProcess: ChildProcess | null = null
-
 export default async function globalSetup() {
   rmIfExists(TEST_SQLITE)
 
@@ -197,36 +185,8 @@ export default async function globalSetup() {
     ].join('\n'),
   )
 
-  // Pass the script via argv to sidestep shell quoting (the Ruby contains
-  // both single and double quotes).
-  const result = spawnSync('bundle', ['exec', 'spec/dummy/bin/rails', 'runner', BOOTSTRAP_RUBY], {
-    cwd: API_GEM_DIR,
-    encoding: 'utf-8',
-    timeout: 120_000,
-    maxBuffer: 10 * 1024 * 1024,
-    env: RAILS_ENV,
-  })
-  if (result.status !== 0) {
-    throw new Error(`Bootstrap runner failed:\n${result.stderr}\n${result.stdout}`)
-  }
-  const jsonMatch = result.stdout.match(/\{.*\}\s*$/)
-  if (!jsonMatch) {
-    throw new Error(`Failed to parse credentials from runner output:\n${result.stdout}`)
-  }
-  writeFileSync(CREDENTIALS_FILE, jsonMatch[0])
+  const credentials = runRailsBootstrap(BOOTSTRAP_RUBY, RAILS_ENV)
+  writeFileSync(CREDENTIALS_FILE, credentials)
 
-  serverProcess = spawn(
-    'bundle',
-    ['exec', 'spec/dummy/bin/rails', 'server', '-p', PORT, '-e', 'test'],
-    { cwd: API_GEM_DIR, stdio: ['ignore', 'pipe', 'pipe'], env: RAILS_ENV },
-  )
-
-  serverProcess.stderr?.on('data', (data: Buffer) => {
-    const msg = data.toString()
-    if (msg.includes('Error') || msg.includes('error')) console.error('[rails]', msg)
-  })
-
-  if (serverProcess.pid) writeFileSync(RAILS_PID_FILE, String(serverProcess.pid))
-
-  await waitForServer(`http://localhost:${PORT}/api/v3/admin/me`)
+  await startRails(PORT, RAILS_ENV, RAILS_PID_FILE)
 }

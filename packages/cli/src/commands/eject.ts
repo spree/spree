@@ -4,7 +4,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { detectProject, findApiDir } from '../context.js'
-import { dockerCompose, dockerComposeExec, primeBundleVolume } from '../docker.js'
+import { dockerCompose, prepareDatabase } from '../docker.js'
 
 // Switch the project from the prebuilt-image compose to the bind-mounted
 // dev compose. Source under the API directory becomes live in the container —
@@ -33,9 +33,7 @@ export function registerEjectCommand(program: Command) {
         process.exit(1)
       }
 
-      // Replace docker-compose.yml with the dev version. The dev compose has
-      // `build:` defined, so `up -d` below will build on first invocation —
-      // no separate explicit build step needed.
+      // Replace docker-compose.yml with the dev version.
       //
       // Projects scaffolded before create-spree-app 1.0.3 shipped a dev
       // compose that bind-mounts the project root (`.:/rails`) instead of
@@ -45,19 +43,29 @@ export function registerEjectCommand(program: Command) {
         composeContent = composeContent.replace('- .:/rails', `- ./${apiDir}:/rails`)
         fs.writeFileSync(devCompose, composeContent)
       }
+      // Older dev composes check postgres over the unix socket, which the
+      // image's temporary init server also answers on a brand-new volume —
+      // so dependants started against a server that was about to restart.
+      // Only the real server listens on TCP.
+      if (composeContent.includes('test: pg_isready -U postgres')) {
+        composeContent = composeContent.replace(
+          'test: pg_isready -U postgres',
+          'test: pg_isready -h 127.0.0.1 -U postgres',
+        )
+        fs.writeFileSync(devCompose, composeContent)
+      }
       fs.writeFileSync(path.join(ctx.projectDir, 'docker-compose.yml'), composeContent)
 
       console.log(`\n${pc.bold(`Switching to dev compose (bind-mounts ./${apiDir})...`)}\n`)
-      // Prime the shared bundle_cache volume with web alone so the parallel up
-      // below doesn't race the cold-volume copy-up (web + worker → "file exists").
-      await primeBundleVolume(ctx.projectDir)
-      await dockerCompose(['up', '-d'], ctx.projectDir, { stdio: 'inherit' })
 
-      // The dev image bypasses bin/docker-entrypoint (which runs db:prepare
-      // in the prebuilt image), and the dev environment uses its own
-      // spree_development database — make sure it exists and is migrated.
-      console.log(`\n${pc.bold('Preparing the development database...')}\n`)
-      await dockerComposeExec(['bin/rails', 'db:prepare'], ctx.projectDir, { tty: false })
+      // The dev environment uses its own spree_development database, and the
+      // app server exits when it is missing — create and migrate it first.
+      // The dev compose has `build:` defined, so this first `run` also builds
+      // the image — no separate explicit build step needed.
+      console.log(`${pc.bold('Preparing the development database...')}\n`)
+      await prepareDatabase(ctx.projectDir, { stdio: 'inherit' })
+
+      await dockerCompose(['up', '-d'], ctx.projectDir, { stdio: 'inherit' })
 
       p.note(
         [

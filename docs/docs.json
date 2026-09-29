@@ -877,6 +877,17 @@
                           "integrations/analytics/google-tag-manager",
                           "integrations/marketing/klaviyo"
                         ]
+                      },
+                      {
+                        "group": "Emails",
+                        "pages": [
+                          "developer/providers/emails",
+                          "integrations/email/resend",
+                          "integrations/email/postmark",
+                          "integrations/email/sendgrid",
+                          "integrations/email/mailgun",
+                          "integrations/email/amazon-ses"
+                        ]
                       }
                     ],
                     "icon": "plug"

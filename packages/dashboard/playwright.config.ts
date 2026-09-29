@@ -18,6 +18,8 @@ const PREVIEW = process.env.E2E_PREVIEW === '1'
 
 export default defineConfig({
   testDir: './e2e',
+  // Needs a stack with no admin — see playwright.first-run.config.ts.
+  testIgnore: 'first-run/**',
   // Sequential per machine — the global Rails server + SQLite test DB are
   // shared across specs, and the suite mutates server state (store settings,
   // the admin profile, creating + accepting invitations), so concurrent

@@ -94,6 +94,17 @@ module Spree
       amount - amount_used - amount_authorized
     end
 
+    # What the card can still give towards an order: nothing once it has
+    # expired, been redeemed or been cancelled, and never less than zero,
+    # since an admin can lower the amount below what is already in use.
+    #
+    # @return [BigDecimal]
+    def spendable_amount
+      return BigDecimal('0') if expired? || redeemed? || canceled?
+
+      [amount_remaining, 0].max
+    end
+
     delegate :email, to: :customer, prefix: true, allow_nil: true
 
     def self.json_api_columns

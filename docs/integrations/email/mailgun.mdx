@@ -1,0 +1,53 @@
+---
+title: Mailgun
+description: Send Spree's transactional emails through Mailgun over SMTP — per-domain credentials, separate US and EU regions, and a sandbox that only emails people you name.
+---
+
+[Mailgun](https://www.mailgun.com) is a long-established email API with flexible routing and a choice of US or EU infrastructure. The EU region makes it a common pick for stores that need their email data to stay in Europe.
+
+Spree talks to Mailgun over plain SMTP, so there is nothing to install — see [Emails](/developer/providers/emails) for how the configuration works.
+
+## Configuration
+
+```bash
+SMTP_HOST=smtp.mailgun.org
+SMTP_PORT=587
+SMTP_USERNAME=postmaster@mg.yourstore.com
+SMTP_PASSWORD=your_smtp_password
+SMTP_FROM_ADDRESS=orders@yourstore.com
+```
+
+The username is a full address at your Mailgun sending domain, usually the `postmaster@` mailbox Mailgun creates for you.
+
+**Pick the right region.** Mailgun runs the US and EU as separate infrastructure, and an account in one is invisible to the other:
+
+| Region | SMTP host |
+| --- | --- |
+| US | `smtp.mailgun.org` |
+| EU | `smtp.eu.mailgun.org` |
+
+Mailgun listens on ports 25, 587 and 2525 for STARTTLS, and 465 for implicit TLS, which Spree does not use. Mailgun recommends 587, since some ISPs block or throttle port 25.
+
+## Getting SMTP credentials
+
+Credentials are set per domain, not per account:
+
+1. In the Mailgun dashboard, open your sending domain's settings.
+2. Find its **SMTP credentials**.
+3. Copy the username, and reset the password to reveal a new one.
+
+Because each domain has its own credentials, make sure the ones you use match the domain in `SMTP_FROM_ADDRESS`.
+
+## Authenticating your domain
+
+Add your sending domain under **Sending → Domains**. Mailgun asks for TXT records for SPF and DKIM, and CNAME records for tracking. Most setups use a subdomain such as `mg.yourstore.com`, which keeps Mailgun's records away from your main domain's mail. Once the domain verifies, set `SMTP_FROM_ADDRESS` to an address on it.
+
+<Warning>
+**The sandbox domain only emails people you list.** Every new account gets a `sandbox….mailgun.org` domain that can send only to **authorized recipients**, capped at five addresses, each of which must accept an invitation. It is for testing — a store using the sandbox silently fails to reach every customer. Add and verify your own domain, and point `SMTP_HOST`, the credentials and `SMTP_FROM_ADDRESS` at it before taking orders.
+</Warning>
+
+## Related
+
+- [Emails](/developer/providers/emails) — the SMTP variables and how to verify delivery
+- [Sending out Emails](/developer/deployment/emails) — what Spree sends and when
+- [Mailgun SMTP documentation](https://documentation.mailgun.com/docs/mailgun/user-manual/sending-messages/send-smtp)
