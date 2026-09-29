@@ -38,9 +38,9 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 
 **Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid.
 
-**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0. A host app or extension that still has an ERB file at an email's path keeps getting it rendered unchanged, with a deprecation warning; the old ERB layout, shared partials and mailer helpers stay in the gems for that one release under `app/views/spree/legacy_mailer/`, and 6.1 deletes them. A template carries its subject as YAML front matter rather than a body tag, so it maps straight onto a subject column when templates move to the database.
+**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0, core's back-office emails included. The old ERB templates, layout, shared partials and mailer helpers move unchanged into a new optional `spree_legacy_emails` gem; an app that installs it keeps its ERB emails and ERB overrides rendering as before, with a deprecation warning, and 6.1 deletes the gem. A template carries its subject as YAML front matter rather than a body tag, so it maps straight onto a subject column when templates move to the database.
 
-**Consequences:** Two email designs ship side by side in 6.0. Overriding only a shared ERB partial (the header or footer) stops having an effect; Spree logs each such file at boot, naming its Liquid replacement.
+**Consequences:** Core and `spree_emails` carry only Liquid. Without the legacy gem, a host app's ERB email is not rendered; Spree logs each such file at boot, naming its Liquid replacement and the gem that keeps it working.
 
 **Plans amended:** `6.0-liquid-mjml-emails.md` (renamed from `6.1-liquid-mjml-emails.md`; target, bridge and subject decisions).
 
