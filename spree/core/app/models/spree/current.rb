@@ -51,11 +51,14 @@ module Spree
     # @return [Object] the block's result
     def with_store(store)
       previous = attributes
-      self.attributes = {}
-      self.store = store
-      yield
-    ensure
-      self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)
+
+      begin
+        self.attributes = {}
+        self.store = store
+        yield
+      ensure
+        self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)
+      end
     end
 
     def channel
