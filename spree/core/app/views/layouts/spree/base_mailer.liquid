@@ -1,0 +1,70 @@
+<mjml lang="{{ locale }}">
+  <mj-head>
+    <mj-title>{{ subject }}</mj-title>
+    <mj-attributes>
+      <mj-all font-family="Inter, Helvetica, Arial, sans-serif" />
+      <mj-section padding="0" />
+      <mj-column padding="0" />
+      <mj-text padding="0" color="#726A6A" font-size="14px" line-height="1.6" align="center" />
+      <mj-button background-color="#FFFFFF" border="1px solid #E8E9E9" border-radius="8px" color="#1F2222" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
+      <mj-table padding="0" color="#726A6A" font-size="14px" line-height="1.6" />
+      <mj-class name="heading" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="#332C2C" css-class="heading" />
+      <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="#332C2C" />
+      <mj-class name="lead" padding="12px 0 0" />
+      <mj-class name="note" padding="24px 0 0" font-size="13px" css-class="note" />
+      <mj-class name="section-heading" padding="48px 0 16px" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
+      <mj-class name="body" padding="16px 0 0" align="left" />
+      <mj-class name="footer" padding="12px 0 0" font-size="11px" line-height="1.5" />
+    </mj-attributes>
+    <mj-style>
+      @font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
+      @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
+      @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
+      a { color: #332C2C; }
+      .hero > table { max-width: 420px; margin: 0 auto; }
+      .note a { color: #726A6A; word-break: break-all; }
+      .footer a { color: #726A6A; }
+      .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
+      .item_image { padding: 8px; width: 96px; }
+      .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
+      .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
+      .item_info { padding: 8px 16px 8px 8px; }
+      .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; text-decoration: none; }
+      .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
+      .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
+      .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
+      .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; }
+      .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A; }
+      .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: #332C2C; }
+      .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
+      .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: #332C2C; }
+      .summary_total .summary_value { font-weight: 600; }
+      @media only screen and (max-width: 600px) {
+        .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
+      }
+    </mj-style>
+  </mj-head>
+  <mj-body background-color="#FFFFFF" width="640px">
+    <mj-wrapper background-color="#F6F6F6" padding="56px 24px">
+      <mj-section padding="0 0 32px">
+        <mj-column>
+          {% if store.logo_url %}
+            <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" width="{{ store.logo_width }}px" height="{{ store.logo_height }}px" padding="0" />
+          {% else %}
+            <mj-text font-size="22px" font-weight="700" color="#332C2C" text-transform="uppercase"><a href="{{ store.url }}" style="color: #332C2C; text-decoration: none;">{{ store.name }}</a></mj-text>
+          {% endif %}
+        </mj-column>
+      </mj-section>
+      {{ content_for_layout }}
+    </mj-wrapper>
+    <mj-section padding="64px 24px">
+      <mj-column>
+        <mj-text font-size="13px" line-height="1.5" css-class="footer"><a href="{{ store.url }}" style="font-weight: 500; text-decoration: none;">{{ store.name }}</a></mj-text>
+        {% if store.address != blank %}<mj-text mj-class="footer">{{ store.address }}</mj-text>{% endif %}
+        {% if store.support_email != blank %}<mj-text mj-class="footer" css-class="footer"><a href="mailto:{{ store.support_email }}">{{ store.support_email }}</a></mj-text>{% endif %}
+        <mj-text mj-class="footer" padding="20px 0 0">&copy; {{ 'now' | date: '%Y' }} {{ store.name }}</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

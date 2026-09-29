@@ -95,6 +95,10 @@ module Spree
         Spree::Core::Configuration.validate_env!(Spree::Config)
       end
 
+      config.after_initialize do
+        Spree::Emails::LegacyTemplates.warn_ignored_overrides
+      end
+
       # I18n's config lives in fiber/thread-local storage that survives across
       # requests on reused server threads, so a request that never assigns its
       # own locale would render in whatever locale the previous request on the

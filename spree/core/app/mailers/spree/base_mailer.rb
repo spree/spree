@@ -1,7 +1,5 @@
 module Spree
   class BaseMailer < ActionMailer::Base
-    helper Spree::ImagesHelper
-
     default from: -> { from_address }, reply_to: -> { reply_to_address }
 
     def current_store
@@ -65,10 +63,50 @@ module Spree
 
     protected
 
-    # The "<store> <subject> #<number>" subject line shared by customer-facing
-    # order emails, with the optional [RESEND] prefix.
-    def order_email_subject(store, subject, number, resend: false)
-      "#{resend ? "[#{Spree.t(:resend).upcase}] " : ''}#{store.name} #{subject} ##{number}"
+    # Renders the current action's email from its Liquid template and builds
+    # the message. The template's front matter supplies the subject, and the
+    # plain-text part is generated from the HTML unless a `.text.liquid` sits
+    # next to the template.
+    #
+    # @param assigns [Hash] the template's variables — serializer output and
+    #   mailer-built values such as token-carrying URLs, never models
+    # @param template [String] the template key, defaults to the action's view path
+    # @param currency [String, nil] what the `money` filter formats in
+    # @param headers [Hash] mail headers (`to:`, `store_url:`, ...)
+    # @return [Mail::Message]
+    def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", currency: nil, **headers)
+      in_store_locale do
+        resolver = Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
+        email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
+        renderer = Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: currency)
+
+        if email_template.erb?
+          mail_legacy_template(email_template, renderer.render_subject(resolver.find_liquid(template), assigns), headers)
+        else
+          email = renderer.render(email_template, assigns)
+
+          mail(headers.merge(subject: email.subject)) do |format|
+            format.text { render plain: email.text, layout: false }
+            format.html { render html: email.html.html_safe, layout: false }
+          end
+        end
+      end
+    end
+
+    # A record as its template reads it: the serializer's JSON, the same data
+    # a renderer outside Ruby would receive. Download links and other bearer
+    # tokens stay out; the mailer builds any URL that carries one.
+    #
+    # @param object [Object, nil] the record
+    # @param serializer [Class] an email serializer
+    # @param params [Hash] serializer params, over the email's store, currency and locale
+    # @return [Hash, nil]
+    def email_data(object, serializer, **params)
+      return if object.nil?
+
+      params = { store: current_store, currency: current_store.default_currency, locale: I18n.locale.to_s,
+                 hide_credentials: true }.merge(params)
+      JSON.parse(serializer.new(object, params: params).serialize)
     end
 
     # URI-based merge preserves existing query params and fragments so the token
@@ -85,6 +123,19 @@ module Spree
     end
 
     private
+
+    def in_store_locale(&block)
+      @_store_locale_active ? yield : with_store_locale(current_store, &block)
+    end
+
+    # An ERB view at the email's path: the host app's own override, or the
+    # `spree_legacy_emails` gem. Rendered the way every email was before 6.0.
+    def mail_legacy_template(template, subject, headers)
+      Spree::Emails::LegacyTemplates.warn_rendered(template)
+
+      mail(headers.merge(subject: subject, template_path: File.dirname(template.key),
+                         template_name: File.basename(template.key)))
+    end
 
     # this ensures that ActionMailer::Base.default_url_options[:host] is always set
     # this is only a fail-safe solution if developer didn't set this in environment files
