@@ -41,7 +41,7 @@ module Spree
           def create
             result = Spree::Carts::Create.call(
               params: permitted_params.merge(
-                user: current_user,
+                customer: current_user,
                 store: current_store,
                 channel: current_channel,
                 currency: current_currency,
