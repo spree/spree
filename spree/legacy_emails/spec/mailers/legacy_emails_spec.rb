@@ -18,10 +18,11 @@ describe 'ERB emails', type: :mailer do
     expect(Spree::OrderMailer.confirm_email(order).subject).to eq("#{store.name} Order Confirmation ##{order.number}")
   end
 
-  it 'warns that ERB emails are deprecated' do
-    Spree::OrderMailer.confirm_email(order).message
+  it 'warns once that ERB emails are deprecated' do
+    Spree::Emails::LegacyTemplates.instance_variable_set(:@warned, nil)
+    2.times { Spree::OrderMailer.confirm_email(order).message }
 
-    expect(Spree::Deprecation).to have_received(:warn).with(/spree\/order_mailer\/confirm_email/).at_most(:once)
+    expect(Spree::Deprecation).to have_received(:warn).with(/spree\/order_mailer\/confirm_email/).once
   end
 
   context 'when the app has ported the email to Liquid' do

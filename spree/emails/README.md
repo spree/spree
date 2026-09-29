@@ -80,8 +80,9 @@ module Spree
 end
 ```
 
+And its template, `app/views/spree/custom_mailer/welcome_email.liquid` (the front matter must open the file):
+
 ```liquid
-<!-- app/views/spree/custom_mailer/welcome_email.liquid -->
 ---
 subject: "Welcome to {{ store.name }}"
 ---
