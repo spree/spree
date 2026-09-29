@@ -13,6 +13,15 @@ pre-commit:
         git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/
         git add packages/admin-sdk/src/types/generated/ packages/admin-sdk/src/zod/generated/
         git add packages/seller-sdk/src/types/generated/ packages/seller-sdk/src/zod/generated/
+    zod:
+      # Types regenerated or edited without a serializer change, and changes to
+      # the generator itself, still need fresh schemas.
+      glob:
+        - "packages/*/src/types/generated/*.ts"
+        - "packages/sdk-core/scripts/generate-zod.ts"
+      run: |
+        pnpm generate:zod
+        git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
 
 pre-push:
   commands:

@@ -60,6 +60,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # The pre-commit hook regenerates schemas, but it can be skipped or not
+      # installed, so a commit can still carry types without matching schemas.
+      - name: Check Zod schemas are up to date
+        run: |
+          pnpm generate:zod
+          if [ -n "$(git status --porcelain -- 'packages/*/src/zod/generated/*')" ]; then
+            git status --short -- 'packages/*/src/zod/generated/*'
+            git diff -- 'packages/*/src/zod/generated/*'
+            echo "::error::Zod schemas are out of date. Run 'pnpm generate:zod' and commit the result."
+            exit 1
+          fi
+
       - run: pnpm turbo lint typecheck test build --cache-dir=.turbo
 
   sdk-integration:
