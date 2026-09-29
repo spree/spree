@@ -30,7 +30,7 @@ export const FulfillmentSchema = z.object({
   fulfillment_type: z.string(),
   fulfilled_at: z.string().nullable(),
   delivered_at: z.string().nullable(),
-  items: z.array(z.object({ item_id: z.any() })),
+  items: z.array(z.object({ item_id: z.string(), variant_id: z.string(), quantity: z.number() })),
   deliveries: z.array(DeliverySchema),
   delivery_method: DeliveryMethodSchema,
   stock_location: StockLocationSchema,

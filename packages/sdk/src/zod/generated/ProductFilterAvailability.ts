@@ -4,7 +4,7 @@ import { ProductFilterAvailabilityOptionSchema } from './ProductFilterAvailabili
 
 export const ProductFilterAvailabilitySchema = z.object({
   id: z.string(),
-  type: z.any(),
+  type: z.literal('availability'),
   options: z.array(ProductFilterAvailabilityOptionSchema),
 });
 
