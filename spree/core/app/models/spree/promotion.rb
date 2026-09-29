@@ -106,6 +106,27 @@ module Spree
         where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
     end
 
+    # The promotion a purchase's PERSISTED coupon code names, which keeps it in
+    # candidacy even before it ever applied — the discount activates on the
+    # exact recalculation where the cart first qualifies, and deactivates the
+    # same way (Shopify-parity for cart-level discount codes). In-memory
+    # assignments deliberately don't participate: unsaved codes belong to
+    # the explicit PromotionHandler::Coupon path.
+    #
+    # @param purchase [Spree::Cart, Spree::Order]
+    # @return [Array<Spree::Promotion>] empty, or the one promotion
+    def self.held_by_saved_coupon_code(purchase)
+      return [] unless purchase.class.respond_to?(:column_names) && purchase.class.column_names.include?('coupon_code')
+
+      code = purchase.read_attribute(:coupon_code)
+      return [] if code.blank?
+
+      promotion = purchase.store.promotions.active.with_coupon_code(code)
+      return [] if promotion.nil? || promotion.usage_limit_exceeded?(purchase)
+
+      [promotion]
+    end
+
     def self.order_activatable?(promotable)
       # Carts have no cancellation concept — only placed orders can be canceled.
       promotable && !promotable.completed? && !(promotable.is_a?(Spree::Order) && promotable.canceled?)
@@ -278,9 +299,9 @@ module Spree
       checkouts_credited(credits)
     end
 
-    def line_item_actionable?(order, line_item)
-      if eligible? order
-        rules = eligible_rules(order)
+    def line_item_actionable?(order, line_item, options = {})
+      if eligible?(order, options)
+        rules = eligible_rules(order, options)
         if rules.blank?
           true
         else
