@@ -710,6 +710,30 @@ Nothing in 5.6 could reach it: there was no API endpoint and no admin screen, so
 
 If you subclassed `Spree::Report` in your own application, that class no longer has a superclass and will raise on boot. Move the question to one of the two replacements above.
 
+## Emails render from Liquid templates
+
+Every transactional email now renders from a Liquid template written in MJML instead of an ERB view. Templates read serializer data rather than models, keep their Rails view paths, carry their subject line, and get a plain-text version generated from the HTML. See [Email Templates](/developer/customization/emails) for how they work.
+
+**If your app overrides no emails, there is nothing to do.** The emails look the same.
+
+**If your app overrides emails with ERB**, those files stop rendering unless you add the `spree_legacy_emails` gem, which keeps them working through 6.0 with a deprecation warning and is removed in 6.1. Spree lists every ERB email view it ignores in the log at boot. Port each one to the `.liquid` file at the same path:
+
+| ERB view (removed) | Liquid template |
+| --- | --- |
+| `layouts/spree/base_mailer.html.erb`, `spree/shared/_base_mailer_header`, `_base_mailer_footer`, `_base_mailer_stylesheets`, `_mailer_logo`, `_purchased_items_styles` | `layouts/spree/base_mailer.liquid` |
+| `spree/shared/_mailer_hero`, `_mailer_button` | MJML tags in each template (`mj-class="heading"`, `<mj-button>`) |
+| `spree/shared/_order_summary_section`, `_purchased_items_table`, `purchased_items_table/*` | `spree/shared/_order_summary.liquid`, `_line_item.liquid`, `_purchase_totals.liquid`, `_summary_row.liquid` |
+| `spree/shared/_fulfillment_group_section`, `_purchase_totals` | `spree/shared/_fulfillment_group.liquid`, `_purchase_totals.liquid` |
+| `spree/<mailer>/<email>.html.erb` and `.text.erb`, for every mailer | `spree/<mailer>/<email>.liquid`, plus an optional `<email>.text.liquid` |
+
+Other changes that come with it:
+
+- **Subjects moved into the templates.** Each template's front matter holds its subject. `Spree::BaseMailer#order_email_subject` is removed.
+- **The mailer view helpers moved to `spree_legacy_emails`.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are only available with that gem installed. Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`.
+- **Every email has a plain-text part**, generated from the HTML. Seven emails that had none now have one.
+- **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
+- **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own views renders as before. If those views use Spree's ERB layout or shared partials, add `spree_legacy_emails` or move the mailer to `mail_template` with a Liquid template.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
@@ -764,6 +788,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted for one release) |
 | `PermittedAttributes.digital_attributes` | `.digital_asset_attributes` |
 | `GET /api/v3/store/digitals/:token` | `GET /api/v3/store/digital_links/:token` (old path keeps working) |
+| ERB email views (with the `spree_legacy_emails` gem) | Liquid email templates at the same paths — see [Emails render from Liquid templates](#emails-render-from-liquid-templates) |
 
 ## Meilisearch moved to its own gem
 

@@ -1,0 +1,133 @@
+---
+title: Email Templates
+sidebarTitle: Emails
+description: Change what Spree's transactional emails say and look like, with Liquid templates written in MJML.
+---
+
+Every email Spree sends — order confirmations, shipping notices, password resets, staff invitations — renders from a **Liquid** template written in **MJML**. Liquid fills in the data; MJML turns a dozen layout tags into the nested tables, inline styles and Outlook workarounds that email clients need, and makes the email stack on phones.
+
+To change an email, you copy its template into your app and edit it. Nothing else changes: Spree still picks the recipient, the language and the sender, and delivers the email through your [SMTP provider](/developer/providers/emails).
+
+<Note>
+  Templates read plain data — the same fields the [Store API](/api-reference/store-api/introduction) returns, plus what only an email needs — never Ruby objects. The same template can later run outside Ruby, and merchants will be able to edit templates safely from the dashboard.
+</Note>
+
+## Where templates live
+
+A template sits at its email's path with a `.liquid` extension. To override one, create the file at the same path in your app:
+
+| Email | Template |
+| --- | --- |
+| Order confirmation | `server/app/views/spree/order_mailer/confirm_email.liquid` |
+| Shipping notification | `server/app/views/spree/fulfillment_mailer/fulfilled_email.liquid` |
+| Customer password reset | `server/app/views/spree/customer_mailer/password_reset_email.liquid` |
+| The layout around every email | `server/app/views/layouts/spree/base_mailer.liquid` |
+
+The path is also the template's name, for example `spree/order_mailer/confirm_email`. [Email Template Variables](/developer/customization/email-variables) lists every template and the data it receives.
+
+Start from Spree's own template rather than a blank file: customer emails are in [`spree/emails/app/views`](https://github.com/spree/spree/tree/main/spree/emails/app/views/spree) and staff emails and the layout in [`spree/core/app/views`](https://github.com/spree/spree/tree/main/spree/core/app/views) on GitHub.
+
+Your file wins as soon as it exists. There is nothing to register and no server restart.
+
+## Anatomy of a template
+
+```liquid server/app/views/spree/order_mailer/confirm_email.liquid
+---
+subject: "{{ store.name }} {{ 'order_mailer.confirm_email.subject' | t }} #{{ order.number }}"
+---
+{% assign customer = 'customer' | t %}
+{% assign customer_name = order.customer_name | default: customer %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">Thanks for your order!</mj-text>
+    <mj-text mj-class="greeting">Hi {{ customer_name }},</mj-text>
+    <mj-button href="{{ store.url }}/account/orders/{{ order.number }}">View your order</mj-button>
+  </mj-column>
+</mj-section>
+{% assign heading = 'order_mailer.confirm_email.order_summary' | t: number: order.number %}
+{% render 'spree/shared/order_summary', heading: heading, purchase: order, items: order.items, totals: true %}
+```
+
+- **The subject** is the `subject` line at the top, and it is Liquid too.
+- **The body** is a list of MJML sections. The layout wraps it with the store's logo and footer.
+- **Copy** either comes from Spree's translations through the `t` filter, which keeps one template working in every language, or is written straight into the template for a single-language store.
+
+The layout defines named styles you can use through `mj-class`: `heading`, `greeting`, `lead`, `note`, `section-heading` and `body`. For the MJML tags themselves, see the [MJML documentation](https://documentation.mjml.io).
+
+## Partials
+
+Pull a shared piece in with `{% render %}`. The name maps to a file with a leading underscore, as Rails partials do: `'spree/shared/line_item'` is `app/views/spree/shared/_line_item.liquid`. A partial only sees the values you pass it.
+
+| Partial | Arguments | What it renders |
+| --- | --- | --- |
+| `spree/shared/order_summary` | `heading`, `purchase`, `items`, `totals` | A headed list of purchased items, with the order's totals when `totals` is true |
+| `spree/shared/line_item` | `item` | One purchased item: thumbnail, name, options, quantity and amount |
+| `spree/shared/purchase_totals` | `purchase` | Subtotal, discounts, delivery, tax, gift card, fees and total |
+| `spree/shared/fulfillment_group` | `group`, `position`, `count` | One parcel of a multi-seller purchase |
+| `spree/shared/summary_row` | `label`, `value`, `sub`, `total`, `translate` | One label and amount row inside an `<mj-table css-class="summary">` |
+
+Override a partial the same way as a template, by creating the file at its path in your app. Every email that uses it changes.
+
+## Filters
+
+Besides [Liquid's standard filters](https://shopify.github.io/liquid/filters/abs/), templates have these. The names follow Shopify's where they mean the same thing.
+
+| Filter | Example | Result |
+| --- | --- | --- |
+| `money` | `{{ '10.5' \| money }}` | `$10.50`, in the email's currency |
+| `money_with_currency` | `{{ '10.5' \| money_with_currency }}` | `$10.50 USD` |
+| `date` | `{{ order.completed_at \| date: 'long' }}` | A date in the store's time zone. Takes a named format (`short`, `long`, `default`) or a `strftime` pattern such as `'%Y-%m-%d'` |
+| `t` | `{{ 'order_mailer.confirm_email.dear_customer' \| t: name: customer_name }}` | A Spree translation, with its placeholders filled in |
+| `raw` | `{{ product.description_html \| raw }}` | Prints the value without escaping. See below |
+
+Most amounts already arrive formatted, as `display_total`, `display_amount` and the like, so `money` is only needed for a raw amount.
+
+## Escaping
+
+Everything a template prints is HTML-escaped. A customer who types `<a href="https://evil.test">Click to verify</a>` as their name sees that text in the email, not a live link — and so does the store owner reading the new-order notification.
+
+`raw` turns escaping off for one value. Only use it for HTML that was cleaned when it was saved, such as a product's rich-text description. Never use it on a name, an address or a note.
+
+## The plain-text version
+
+Spree builds each email's plain-text version from its HTML, writing links as `label (url)`, so the two can never drift apart. To write the text by hand instead, add a `.text.liquid` file next to the template:
+
+```liquid server/app/views/spree/order_mailer/confirm_email.text.liquid
+Thanks for your order {{ order.number }}, {{ order.customer_name }}.
+
+Total: {{ order.display_total }}
+```
+
+Nothing is escaped in the text version.
+
+## Mistakes surface in development
+
+In development and test, a variable that does not exist raises an error instead of printing nothing, so `{{ order.nubmer }}` fails your spec rather than sending a blank. In production it prints nothing. A template that loops endlessly fails that one email instead of stalling your background jobs.
+
+To look at every email with real data, open the mailer previews at `/rails/mailers` on your Spree server.
+
+## Upgrading from ERB templates
+
+Before Spree 6.0, emails were ERB views. They moved to Liquid in 6.0, and each ERB file maps to the Liquid file at the same path — `spree/order_mailer/confirm_email.html.erb` becomes `spree/order_mailer/confirm_email.liquid`. The shared header, footer and stylesheet partials are now the single `layouts/spree/base_mailer.liquid` layout. See the [6.0 upgrade guide](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) for the full list.
+
+If your app overrides emails with ERB, add the `spree_legacy_emails` gem to keep them rendering unchanged while you port them:
+
+```ruby server/Gemfile
+gem 'spree_legacy_emails'
+```
+
+With the gem installed, an email renders from the first of:
+
+1. your app's `.liquid` template,
+2. an ERB view at the same path — yours or the gem's,
+3. Spree's own `.liquid` template.
+
+So you can port one email at a time. Each ERB email logs a deprecation warning the first time it renders. The gem is removed in Spree 6.1.
+
+Without the gem, Spree ignores ERB email views and lists each ignored file in the log when the app boots.
+
+## Related
+
+- [Email Template Variables](/developer/customization/email-variables) — every template and the data it receives
+- [Sending out Emails](/developer/deployment/emails) — which emails Spree sends, and handing customer emails to your storefront
+- [Emails provider setup](/developer/providers/emails) — SMTP configuration

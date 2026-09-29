@@ -112,6 +112,7 @@ The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live insi
 | `api` | `spree_api` | REST APIs |
 | `dashboard` | `spree_dashboard` | Serves a built React dashboard and seller panel from your Rails server |
 | `emails` | `spree_emails` | Transactional emails (optional) |
+| `legacy_emails` | `spree_legacy_emails` | The pre-6.0 ERB emails, kept for one release (optional, deprecated, removed in 6.1) |
 | `opentelemetry` | `spree_opentelemetry` | OpenTelemetry tracing (optional) |
 | `providers/stripe` | `spree_stripe` | Stripe payments (optional) |
 | `providers/easypost` | `spree_easypost` | EasyPost delivery rates and shipping labels (optional) |
@@ -137,7 +138,7 @@ bundle exec rake test_app
 bundle exec rspec
 ```
 
-Replace `core` with `api`, `dashboard`, `emails`, `opentelemetry`, or a provider path such as `providers/stripe` to test other engines.
+Replace `core` with `api`, `dashboard`, `emails`, `legacy_emails`, `opentelemetry`, or a provider path such as `providers/stripe` to test other engines.
 
 By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
 
