@@ -1,0 +1,6 @@
+eval_gemfile('../common_spree_dependencies.rb')
+
+gem 'spree', path: '../'
+gem 'spree_emails', path: '../emails'
+
+gemspec

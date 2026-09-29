@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
+          for project in core api emails legacy_emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
+          for project in core api emails legacy_emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -129,6 +129,8 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs (tiny suite)
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # legacy_emails: the pre-6.0 ERB emails, kept for one release (removed in 6.1)
+          - { project: legacy_emails, shard: 1, total_shards: 1, procs: 2 }
           # providers: 1 runner × 2 procs — every provider gem shares a lane.
           # The suites are small, so a runner each cost more in queue time than
           # they saved. This is also the only job with the Meilisearch service,
@@ -290,6 +292,8 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # legacy_emails: the pre-6.0 ERB emails, kept for one release (removed in 6.1)
+          - { project: legacy_emails, shard: 1, total_shards: 1, procs: 2 }
           # providers: 1 runner × 2 procs — every provider gem shares a lane.
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
