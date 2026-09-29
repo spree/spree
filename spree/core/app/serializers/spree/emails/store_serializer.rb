@@ -9,9 +9,7 @@ module Spree
 
       attribute :url, &:storefront_url
 
-      attribute :support_email do |store|
-        store.customer_support_email.presence || store.mail_from_address
-      end
+      attribute :support_email, &:support_email_address
 
       attribute :logo_url do |store|
         spree_image_url(store.email_logo, height: LOGO_HEIGHT)
@@ -26,10 +24,6 @@ module Spree
         logo.analyze unless logo.analyzed?
         width, height = logo.metadata.values_at('width', 'height').map(&:to_f)
         height.positive? ? (LOGO_HEIGHT * width / height).round : nil
-      end
-
-      attribute :logo_height do |store|
-        LOGO_HEIGHT if store.email_logo
       end
     end
   end

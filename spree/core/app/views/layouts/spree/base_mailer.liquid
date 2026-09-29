@@ -50,7 +50,7 @@
       <mj-section padding="0 0 32px">
         <mj-column>
           {% if store.logo_url %}
-            <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" {% if store.logo_width %}width="{{ store.logo_width }}px" {% endif %}height="{{ store.logo_height }}px" padding="0" />
+            <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" {% if store.logo_width %}width="{{ store.logo_width }}px" {% endif %}height="32px" padding="0" />
           {% else %}
             <mj-text font-size="22px" font-weight="700" color="#332C2C" text-transform="uppercase"><a href="{{ store.url }}" style="color: #332C2C; text-decoration: none;">{{ store.name }}</a></mj-text>
           {% endif %}

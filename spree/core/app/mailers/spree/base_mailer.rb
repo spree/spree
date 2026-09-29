@@ -39,7 +39,7 @@ module Spree
     end
 
     def reply_to_address
-      current_store.customer_support_email.presence || current_store.mail_from_address
+      current_store.support_email_address
     end
 
     def money(amount, currency = nil)
@@ -72,15 +72,14 @@ module Spree
     # @param assigns [Hash] the template's variables — serializer output and
     #   mailer-built values such as token-carrying URLs, never models
     # @param template [String] the template key, defaults to the action's view path
-    # @param currency [String, nil] what the `money` filter formats in
     # @param headers [Hash] mail headers (`to:`, `store_url:`, ...)
     # @return [Mail::Message]
-    def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", currency: nil, **headers)
+    def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", **headers)
       @_rendering_template = true
       in_store_locale do
         resolver = Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
         email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
-        renderer = Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: currency)
+        renderer = Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: email_currency)
 
         if email_template.erb?
           liquid_template = resolver.find_liquid(template)
@@ -95,6 +94,15 @@ module Spree
           end
         end
       end
+    ensure
+      @_rendering_template = false
+    end
+
+    # The currency an email's amounts are in: its order's, else the store's.
+    #
+    # @return [String]
+    def email_currency
+      (@order || @order_group)&.currency || current_store.default_currency
     end
 
     # A record as its template reads it: the serializer's JSON, the same data
@@ -108,7 +116,8 @@ module Spree
     def email_data(object, serializer, **params)
       return if object.nil?
 
-      params = { store: current_store, currency: current_store.default_currency, locale: I18n.locale.to_s,
+      params = { store: current_store, currency: email_currency, locale: I18n.locale.to_s,
+                 storefront_url: current_store.storefront_url.to_s.chomp('/'),
                  hide_credentials: true }.merge(params)
       JSON.parse(serializer.new(object, params: params).serialize)
     end

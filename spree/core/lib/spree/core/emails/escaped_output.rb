@@ -7,14 +7,15 @@ module Spree
       # would escape a value once when assigned and again when printed, and
       # turn assigned numbers and lists into strings.
       #
-      # Only active inside a Spree email render; any other Liquid the host app
-      # runs is untouched.
+      # Switched on by the `escape_output` register, which Liquid hands down to
+      # every partial, so any other Liquid the host app runs is untouched.
       module EscapedOutput
         def self.active?(context)
-          context.respond_to?(:escape_output) && context.escape_output
+          context.registers[:escape_output]
         end
 
-        # `{{ value }}` and `{% echo value %}`.
+        # `{{ value }}` and `{% echo value %}`. Variables are not tags, so this
+        # is the one place Liquid itself has to be extended.
         module Variable
           def render_to_output_buffer(context, output)
             return super unless EscapedOutput.active?(context)
@@ -36,7 +37,7 @@ module Spree
 
         # A captured block was escaped as it rendered, so it is kept as safe
         # HTML rather than escaped a second time when printed.
-        module Capture
+        class Capture < Liquid::Capture
           def render(context)
             output = super
             EscapedOutput.active?(context) ? output.html_safe : output
@@ -44,7 +45,7 @@ module Spree
         end
 
         # `{% cycle %}` writes its values straight to the output.
-        module Cycle
+        class Cycle < Liquid::Cycle
           def render_to_output_buffer(context, output)
             return super unless EscapedOutput.active?(context)
 
@@ -57,5 +58,3 @@ module Spree
 end
 
 Liquid::Variable.prepend(Spree::Core::Emails::EscapedOutput::Variable)
-Liquid::Capture.prepend(Spree::Core::Emails::EscapedOutput::Capture)
-Liquid::Cycle.prepend(Spree::Core::Emails::EscapedOutput::Cycle)

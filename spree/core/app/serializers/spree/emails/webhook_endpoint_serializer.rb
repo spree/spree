@@ -4,6 +4,10 @@ module Spree
     class WebhookEndpointSerializer < BaseSerializer
       attributes :name, :url, :disabled_reason
 
+      attribute :display_name do |endpoint|
+        endpoint.name.presence || endpoint.url
+      end
+
       attribute :disabled_at do |endpoint|
         endpoint.disabled_at&.iso8601
       end

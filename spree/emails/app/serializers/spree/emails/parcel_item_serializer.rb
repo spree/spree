@@ -16,6 +16,14 @@ module Spree
 
       attributes :quantity
 
+      attribute :sku do |item|
+        item.line_item.sku
+      end
+
+      attribute :options_text do |item|
+        item.line_item.options_text
+      end
+
       attribute :display_price do |item|
         item.line_item.display_price.to_s
       end

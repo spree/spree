@@ -13,10 +13,9 @@ module Spree
       @download_host = current_store.formatted_url
       with_store_locale(current_store, @order.locale) do
         mail_template(
-          { order: email_data(@order, Spree::Emails::OrderSerializer, currency: @order.currency),
+          { order: email_data(@order, Spree::Emails::OrderSerializer),
             downloads: downloads, resend: resend },
-          template: 'spree/digital_asset_mailer/files_ready_email',
-          to: @order.email, currency: @order.currency, store_url: current_store.storefront_url
+          to: @order.email, store_url: current_store.storefront_url
         )
       end
     end

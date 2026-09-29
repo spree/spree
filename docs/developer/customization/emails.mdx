@@ -35,12 +35,10 @@ Your file wins as soon as it exists. There is nothing to register and no server 
 ---
 subject: "{{ store.name }} {{ 'order_mailer.confirm_email.subject' | t }} #{{ order.number }}"
 ---
-{% assign customer = 'customer' | t %}
-{% assign customer_name = order.customer_name | default: customer %}
 <mj-section>
   <mj-column css-class="hero">
     <mj-text mj-class="heading">Thanks for your order!</mj-text>
-    <mj-text mj-class="greeting">Hi {{ customer_name }},</mj-text>
+    <mj-text mj-class="greeting">Hi {{ order.customer_name }},</mj-text>
     <mj-button href="{{ store.url }}/account/orders/{{ order.number }}">View your order</mj-button>
   </mj-column>
 </mj-section>
@@ -77,7 +75,7 @@ Besides [Liquid's standard filters](https://shopify.github.io/liquid/filters/abs
 | `money` | `{{ '10.5' \| money }}` | `$10.50`, in the email's currency |
 | `money_with_currency` | `{{ '10.5' \| money_with_currency }}` | `$10.50 USD` |
 | `date` | `{{ order.completed_at \| date: 'long' }}` | A date in the store's time zone. Takes a named format (`short`, `long`, `default`) or a `strftime` pattern such as `'%Y-%m-%d'` |
-| `t` | `{{ 'order_mailer.confirm_email.dear_customer' \| t: name: customer_name }}` | A Spree translation, with its placeholders filled in |
+| `t` | `{{ 'order_mailer.confirm_email.dear_customer' \| t: name: order.customer_name }}` | A Spree translation, with its placeholders filled in |
 | `raw` | `{{ product.description_html \| raw }}` | Prints the value without escaping. See below |
 
 Most amounts already arrive formatted, as `display_total`, `display_amount` and the like, so `money` is only needed for a raw amount.

@@ -526,14 +526,6 @@ module Spree
     # leak into customer emails), otherwise falls back to formatted_url.
     #
     # @return [String] e.g. "https://myshop.com"
-    # The logo emails show: the dedicated mailer logo, else the store logo.
-    #
-    # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
-    def email_logo
-      logo = mailer_logo.attached? ? mailer_logo : self.logo
-      logo if logo.attached? && logo.variable?
-    end
-
     def storefront_url
       preferred_storefront_url.presence ||
         allowed_origins.order(:created_at).reject(&:loopback?).first&.origin ||
@@ -554,6 +546,21 @@ module Spree
     # Returns the states available for checkout for the store
     # @param country [Spree::Country] the country to get the states for
     # @return [Array<Spree::State>]
+    # The logo emails show: the dedicated mailer logo, else the store logo.
+    #
+    # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
+    def email_logo
+      logo = mailer_logo.attached? ? mailer_logo : self.logo
+      logo if logo.attached? && logo.variable?
+    end
+
+    # The address customers are told to write to: the support address, else the sender address.
+    #
+    # @return [String, nil]
+    def support_email_address
+      customer_support_email.presence || mail_from_address
+    end
+
     def states_available_for_checkout(country)
       country.states.to_a
     end

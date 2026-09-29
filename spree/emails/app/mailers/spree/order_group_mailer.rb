@@ -38,8 +38,8 @@ module Spree
 
       with_store_locale(@current_store, locale) do
         mail_template(
-          { order_group: email_data(@order_group, Spree::Emails::OrderGroupSerializer, currency: @order_group.currency), resend: resend },
-          to: to, currency: @order_group.currency, store_url: @current_store.storefront_url
+          { order_group: email_data(@order_group, Spree::Emails::OrderGroupSerializer), resend: resend },
+          to: to, store_url: @current_store.storefront_url
         )
       end
     end

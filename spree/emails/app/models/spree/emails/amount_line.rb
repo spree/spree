@@ -5,10 +5,13 @@ module Spree
     class AmountLine
       include ActiveModel::Model
       include ActiveModel::Attributes
+      extend Spree::DisplayMoney
 
       attribute :label, :string
       attribute :amount, :decimal
       attribute :currency, :string
+
+      money_methods :amount
 
       # Sums records sharing a label into one line each.
       #
@@ -23,11 +26,6 @@ module Spree
           sum = rows.sum { |row| row.public_send(amount).to_d }
           new(label: name, amount: sum, currency: currency) if keep_zero || !sum.zero?
         end
-      end
-
-      # @return [String]
-      def display_amount
-        Spree::Money.new(amount, currency: currency).to_s
       end
     end
   end

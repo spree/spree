@@ -23,6 +23,8 @@ module Spree
         def environment
           @environment ||= Liquid::Environment.build(error_mode: :strict) do |environment|
             environment.register_filter(Spree::Emails::Filters)
+            environment.register_tag('capture', Spree::Core::Emails::EscapedOutput::Capture)
+            environment.register_tag('cycle', Spree::Core::Emails::EscapedOutput::Cycle)
           end
         end
       end
@@ -40,8 +42,8 @@ module Spree
       # @param assigns [Hash] the template's variables
       # @return [Spree::Emails::RenderedEmail]
       def render(template, assigns = {})
-        assigns = base_assigns.merge(assigns.deep_stringify_keys)
-        subject = render_subject(template, assigns)
+        assigns = prepare(assigns)
+        subject = subject_for(template, assigns)
         body = render_liquid(template.body, assigns)
         layout = @resolver.find_liquid(LAYOUT) || raise(ArgumentError, "Missing email layout #{LAYOUT}.liquid")
         mjml = render_liquid(layout.body, assigns.merge('subject' => subject, 'content_for_layout' => body.html_safe))
@@ -56,12 +58,18 @@ module Spree
       # @param assigns [Hash]
       # @return [String]
       def render_subject(template, assigns = {})
-        assigns = base_assigns.merge(assigns.deep_stringify_keys)
-
-        render_liquid(template.subject.to_s, assigns, escape: false).squish
+        subject_for(template, prepare(assigns))
       end
 
       private
+
+      def prepare(assigns)
+        base_assigns.merge(assigns.deep_stringify_keys)
+      end
+
+      def subject_for(template, assigns)
+        render_liquid(template.subject.to_s, assigns, escape: false).squish
+      end
 
       def render_text(template, assigns, html)
         text_template = @resolver.find_text(template.key)
@@ -74,11 +82,11 @@ module Spree
         context = Spree::Emails::LiquidContext.build(
           environment: self.class.environment,
           environments: [assigns],
-          registers: { store: @store, currency: @currency, file_system: Spree::Emails::FileSystem.new(@resolver) },
+          registers: { store: @store, currency: @currency, escape_output: escape,
+                       file_system: Spree::Emails::FileSystem.new(@resolver) },
           resource_limits: Liquid::ResourceLimits.new(RESOURCE_LIMITS),
           rethrow_errors: true
         )
-        context.escape_output = escape
         context.strict_variables = strict?
         context.strict_filters = true
 

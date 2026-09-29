@@ -57,14 +57,14 @@ Each object's fields, and the fields of the objects nested in it.
 
 ### `store`
 
-- `store`: `id`, `name`, `address`, `mail_from_address`, `default_currency`, `default_locale`, `url`, `support_email`, `logo_url`, `logo_width`, `logo_height`
+- `store`: `id`, `name`, `address`, `mail_from_address`, `default_currency`, `default_locale`, `url`, `support_email`, `logo_url`, `logo_width`
 
 ### `order`
 
 - `order`: `id`, `market_id`, `withdrawal_period_ends_at`, `within_withdrawal_period`, `cart_id`, `channel_id`, `company_id`, `company_name`, `po_document_filename`, `po_document_byte_size`, `number`, `email`, `customer_note`, `po_number`, `currency`, `locale`, `total_quantity`, `coupon_code`, `fulfillment_status`, `payment_status`, `completed_at`, `item_total`, `display_item_total`, `adjustment_total`, `display_adjustment_total`, `discount_total`, `display_discount_total`, `tax_total`, `display_tax_total`, `included_tax_total`, `display_included_tax_total`, `additional_tax_total`, `display_additional_tax_total`, `total`, `display_total`, `gift_card_total`, `display_gift_card_total`, `amount_due`, `display_amount_due`, `delivery_total`, `display_delivery_total`, `fee_total`, `display_fee_total`, `store_credit_total`, `display_store_credit_total`, `covered_by_store_credit`, `customer_name`, `display_total_minus_store_credits`
 - `order.discounts`: `id`, `promotion_id`, `name`, `description`, `code`, `amount`, `display_amount`
 - `order.fees`: `id`, `label`, `kind`, `line_item_id`, `fulfillment_id`, `amount`, `display_amount`
-- `order.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `thumbnail_url`, `sku`, `url`, `image_url`, `display_amount`
+- `order.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `display_amount`
 - `order.items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
 - `order.fulfillments`: `id`, `number`, `tracking`, `tracking_url`, `pickup_point_data`, `selected_delivery_rate_id`, `unpriced`, `cost`, `display_cost`, `total`, `display_total`, `discount_total`, `display_discount_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `tax_total`, `display_tax_total`, `status`, `fulfillment_type`, `fulfilled_at`, `delivered_at`, `items`
 - `order.fulfillments.deliveries`: `id`, `tracking_number`, `carrier`, `carrier_name`, `service`, `status`, `tracking_url`, `estimated_delivery_at`, `delivered_at`
@@ -79,24 +79,24 @@ Each object's fields, and the fields of the objects nested in it.
 - `order.market`: `id`, `name`, `currency`, `default_locale`, `tax_inclusive`, `default`, `country_codes`, `country_isos`, `supported_locales`
 - `order.promotion_discounts`: `label`, `display_amount`, `amount`
 - `order.manual_discounts`: `label`, `display_amount`, `amount`
-- `order.delivery_lines`: `label`, `display_amount`, `amount`
 - `order.fee_lines`: `label`, `display_amount`, `amount`
+- `order.delivery_lines`: `label`, `display_amount`, `amount`
 
 ### `order_group`
 
-- `order_group`: `id`, `number`, `email`, `currency`, `total`, `display_total`, `item_total`, `display_item_total`, `fulfillment_status`, `payment_status`, `completed_at`, `po_number`, `customer_name`, `order_count`, `display_delivery_total`, `delivery_total`, `additional_tax_total`, `display_additional_tax_total`, `gift_card_total`, `display_gift_card_total`, `display_total_minus_store_credits`
+- `order_group`: `id`, `number`, `email`, `currency`, `total`, `display_total`, `item_total`, `display_item_total`, `fulfillment_status`, `payment_status`, `completed_at`, `customer_name`, `display_total_minus_store_credits`, `po_number`, `order_count`, `display_delivery_total`, `delivery_total`, `additional_tax_total`, `display_additional_tax_total`, `gift_card_total`, `display_gift_card_total`
 - `order_group.billing_address`: `id`, `label`, `first_name`, `last_name`, `full_name`, `address1`, `address2`, `postal_code`, `city`, `phone`, `company`, `country_name`, `country_code`, `state_text`, `state_code`, `quick_checkout`, `is_default_billing`, `is_default_shipping`, `state_abbr`, `country_iso`, `state_name`
 - `order_group.shipping_address`: `id`, `label`, `first_name`, `last_name`, `full_name`, `address1`, `address2`, `postal_code`, `city`, `phone`, `company`, `country_name`, `country_code`, `state_text`, `state_code`, `quick_checkout`, `is_default_billing`, `is_default_shipping`, `state_abbr`, `country_iso`, `state_name`
-- `order_group.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `thumbnail_url`, `sku`, `url`, `image_url`, `display_amount`
+- `order_group.items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `display_amount`
 - `order_group.items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
-- `order_group.fulfillment_groups`: `name`, `display_cost`, `seller_names`
-- `order_group.fulfillment_groups.items`: `id`, `sku`, `options_text`, `url`, `image_url`, `name`, `quantity`, `display_price`, `display_amount`
-- `order_group.unfulfilled_items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `thumbnail_url`, `sku`, `url`, `image_url`, `display_amount`
-- `order_group.unfulfilled_items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
 - `order_group.promotion_discounts`: `label`, `display_amount`, `amount`
 - `order_group.manual_discounts`: `label`, `display_amount`, `amount`
-- `order_group.delivery_lines`: `label`, `display_amount`, `amount`
 - `order_group.fee_lines`: `label`, `display_amount`, `amount`
+- `order_group.fulfillment_groups`: `name`, `display_cost`, `seller_names`
+- `order_group.fulfillment_groups.items`: `id`, `url`, `image_url`, `name`, `quantity`, `sku`, `options_text`, `display_price`, `display_amount`
+- `order_group.unfulfilled_items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `display_amount`
+- `order_group.unfulfilled_items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
+- `order_group.delivery_lines`: `label`, `display_amount`, `amount`
 
 ### `fulfillment`
 
@@ -107,12 +107,12 @@ Each object's fields, and the fields of the objects nested in it.
 - `fulfillment.delivery_rates`: `id`, `delivery_method_id`, `name`, `selected`, `cost`, `total`, `additional_tax_total`, `included_tax_total`, `tax_total`, `carrier`, `service_level`, `estimated_delivery_date`, `unpriced`, `display_cost`, `display_total`, `display_additional_tax_total`, `display_included_tax_total`, `display_tax_total`
 - `fulfillment.delivery_rates.freight_summary`: `total_units`, `total_cartons`, `total_pallets`, `total_volume`, `total_weight`, `complete`
 - `fulfillment.delivery_rates.delivery_method`: `id`, `name`, `code`, `estimated_transit_business_days_min`, `estimated_transit_business_days_max`, `digital`, `pickup`, `pickup_point`
-- `fulfillment.manifest_items`: `id`, `sku`, `options_text`, `url`, `image_url`, `name`, `quantity`, `display_price`, `display_amount`
+- `fulfillment.manifest_items`: `id`, `url`, `image_url`, `name`, `quantity`, `sku`, `options_text`, `display_price`, `display_amount`
 
 ### `return`
 
 - `return`: `id`, `number`, `status`, `order_id`, `reason_id`, `refund_total`, `display_refund_total`, `approved_at`, `received_at`, `refunded_at`, `canceled_at`, `display_refunded_total`
-- `return.returned_items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `thumbnail_url`, `sku`, `url`, `image_url`, `display_amount`
+- `return.returned_items`: `id`, `variant_id`, `seller_id`, `preorder`, `preorder_ships_at`, `quantity`, `currency`, `name`, `slug`, `options_text`, `price`, `display_price`, `total`, `display_total`, `adjustment_total`, `display_adjustment_total`, `additional_tax_total`, `display_additional_tax_total`, `included_tax_total`, `display_included_tax_total`, `discount_total`, `display_discount_total`, `pre_tax_amount`, `display_pre_tax_amount`, `discounted_amount`, `display_discounted_amount`, `display_compare_at_amount`, `compare_at_amount`, `url`, `image_url`, `sku`, `display_amount`
 - `return.returned_items.option_values`: `id`, `option_type_id`, `name`, `label`, `position`, `color_code`, `option_type_name`, `option_type_label`, `image_url`
 
 ### `customer`
@@ -152,4 +152,4 @@ Each object's fields, and the fields of the objects nested in it.
 
 ### `endpoint`
 
-- `endpoint`: `id`, `name`, `url`, `disabled_reason`, `disabled_at`
+- `endpoint`: `id`, `name`, `url`, `disabled_reason`, `display_name`, `disabled_at`

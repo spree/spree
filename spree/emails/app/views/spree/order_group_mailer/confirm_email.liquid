@@ -1,13 +1,11 @@
 ---
 subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'order_group_mailer.confirm_email.subject' | t }} #{{ order_group.number }}"
 ---
-{% assign customer = 'customer' | t %}
-{% assign customer_name = order_group.customer_name | default: customer %}
 {% assign parcel_count = order_group.fulfillment_groups.size %}
 <mj-section>
   <mj-column css-class="hero">
     <mj-text mj-class="heading">{{ 'order_group_mailer.confirm_email.subject' | t }}</mj-text>
-    <mj-text mj-class="greeting">{{ 'order_group_mailer.confirm_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'order_group_mailer.confirm_email.dear_customer' | t: name: order_group.customer_name }}</mj-text>
     <mj-text mj-class="lead">{{ 'order_group_mailer.confirm_email.instructions' | t: number: order_group.number }}</mj-text>
     {%- comment -%}Counted from the parcels, never from the orders the checkout divided into: several sellers shipping out of one warehouse send one box.{%- endcomment -%}
     {% if parcel_count > 1 %}

@@ -1,17 +1,15 @@
 {%- comment -%}
   Every figure of an order or a purchase, once. Arguments: purchase.
 {%- endcomment -%}
-{%- assign promotion_label = 'promotion' | t -%}
-{%- assign shipping_label = 'shipping' | t -%}
 {%- assign tax_total = purchase.additional_tax_total | plus: 0 -%}
 {%- assign gift_card_total = purchase.gift_card_total | plus: 0 -%}
 <mj-table css-class="summary" padding="16px 0 0">
   {% render 'spree/shared/summary_row', label: 'order_mailer.subtotal', translate: true, value: purchase.display_item_total %}
   {%- for line in purchase.promotion_discounts -%}
-    {% render 'spree/shared/summary_row', label: promotion_label, sub: line.label, value: line.display_amount %}
+    {% render 'spree/shared/summary_row', label: 'promotion', translate: true, sub: line.label, value: line.display_amount %}
   {%- endfor -%}
   {%- for line in purchase.delivery_lines -%}
-    {% render 'spree/shared/summary_row', label: shipping_label, sub: line.label, value: line.display_amount %}
+    {% render 'spree/shared/summary_row', label: 'shipping', translate: true, sub: line.label, value: line.display_amount %}
   {%- endfor -%}
   {%- if tax_total != 0 -%}
     {% render 'spree/shared/summary_row', label: 'tax', translate: true, value: purchase.display_additional_tax_total %}

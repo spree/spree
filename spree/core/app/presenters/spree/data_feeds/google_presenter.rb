@@ -72,7 +72,7 @@ module Spree
         xml['g'].item_group_id product.id
         xml['g'].title format_title(product, variant)
         xml['g'].description plain_description(product).presence || format_title(product, variant)
-        xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
+        xml['g'].link "#{store.storefront_url}#{product.storefront_path}"
         xml['g'].image_link image_url
         xml['g'].price "#{variant.amount_in(feed_currency)} #{feed_currency}"
         xml['g'].availability availability(product)

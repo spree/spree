@@ -1,13 +1,11 @@
 ---
 subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'fulfillment_mailer.fulfilled_email.subject' | t }} #{{ order.number }}"
 ---
-{% assign customer = 'customer' | t %}
-{% assign customer_name = order.customer_name | default: customer %}
 {% assign heading = 'fulfillment_mailer.fulfilled_email.fulfillment_summary' | t %}
 <mj-section>
   <mj-column css-class="hero">
     <mj-text mj-class="heading">{{ 'fulfillment_mailer.fulfilled_email.subject' | t }}</mj-text>
-    <mj-text mj-class="greeting">{{ 'fulfillment_mailer.fulfilled_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'fulfillment_mailer.fulfilled_email.dear_customer' | t: name: order.customer_name }}</mj-text>
     <mj-text mj-class="lead">{{ 'fulfillment_mailer.fulfilled_email.instructions' | t: number: order.number }}</mj-text>
     {% if fulfillment.delivery_method_name != blank %}
       <mj-text mj-class="lead">{{ 'fulfillment_mailer.fulfilled_email.delivery_method' | t: delivery_method: fulfillment.delivery_method_name }}</mj-text>

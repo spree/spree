@@ -673,6 +673,13 @@ module Spree
     # determine if product is available.
     # deleted products and products with status different than active
     # are not available
+    # The product's page on the storefront, relative to the storefront URL.
+    #
+    # @return [String]
+    def storefront_path
+      "/products/#{slug}"
+    end
+
     def available?
       active? && !deleted? && (available_on.nil? || available_on <= Time.current)
     end

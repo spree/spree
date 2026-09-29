@@ -1,13 +1,11 @@
 ---
 subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'return_mailer.refunded_email.subject' | t }} #{{ order.number }}"
 ---
-{% assign customer = 'customer' | t %}
-{% assign customer_name = order.customer_name | default: customer %}
 {% assign heading = 'return_mailer.refunded_email.returned_items' | t %}
 <mj-section>
   <mj-column css-class="hero">
     <mj-text mj-class="heading">{{ 'return_mailer.refunded_email.subject' | t }}</mj-text>
-    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: customer_name }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'return_mailer.refunded_email.dear_customer' | t: name: order.customer_name }}</mj-text>
     <mj-text mj-class="lead">{{ 'return_mailer.refunded_email.instructions' | t: number: order.number }}</mj-text>
   </mj-column>
 </mj-section>

@@ -29,8 +29,8 @@ module Spree
     def deliver_order_email(to:, locale: nil, **assigns)
       with_store_locale(current_store, locale) do
         mail_template(
-          { order: email_data(@order, Spree::Emails::OrderSerializer, currency: @order.currency), resend: false }.merge(assigns),
-          to: to, currency: @order.currency, store_url: current_store.storefront_url
+          { order: email_data(@order, Spree::Emails::OrderSerializer), resend: false }.merge(assigns),
+          to: to, store_url: current_store.storefront_url
         )
       end
     end

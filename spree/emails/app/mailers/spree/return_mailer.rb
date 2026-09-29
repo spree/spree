@@ -10,11 +10,11 @@ module Spree
       with_store_locale(current_store, @order.locale) do
         mail_template(
           {
-            return: email_data(@return, Spree::Emails::ReturnSerializer, currency: @order.currency),
-            order: email_data(@order, Spree::Emails::OrderSerializer, currency: @order.currency),
+            return: email_data(@return, Spree::Emails::ReturnSerializer),
+            order: email_data(@order, Spree::Emails::OrderSerializer),
             resend: resend
           },
-          to: @order.email, currency: @order.currency, store_url: current_store.storefront_url
+          to: @order.email, store_url: current_store.storefront_url
         )
       end
     end

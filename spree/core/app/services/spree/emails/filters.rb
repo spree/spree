@@ -19,8 +19,7 @@ module Spree
       def money_with_currency(amount, currency = nil)
         return '' if amount.blank?
 
-        currency = currency.presence || @context.registers[:currency]
-        "#{Spree::Money.new(amount, currency: currency)} #{currency}"
+        Spree::Money.new(amount, currency: currency.presence || @context.registers[:currency], with_currency: true).to_s
       end
 
       # Formats a date in the store's time zone, never the server's. Takes a
