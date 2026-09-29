@@ -53,9 +53,7 @@ module Spree
     end
 
     def default_pre_tax_amount
-      return 0 if line_item.nil? || line_item.quantity.to_i.zero?
-
-      (line_item.amount / line_item.quantity) * quantity.to_i
+      line_item&.discounted_amount_for(quantity) || 0
     end
   end
 end

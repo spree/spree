@@ -116,12 +116,23 @@ RSpec.describe Spree::Return do
     let(:return_record) { create(:return, store: store) }
     let(:line) { return_record.return_line_items.first }
 
-    # Refunding the list price would give back more than the customer paid
-    # on a discounted line.
-    it 'defaults the refundable amount to the paid share of the line' do
-      line_item = line.line_item
+    context 'when the line was discounted' do
+      let(:order) { create(:shipped_order, store: store) }
+      let(:return_record) { create(:return, order: order, store: store) }
+      let(:line_item) { order.line_items.first }
 
-      expect(line.pre_tax_amount).to eq(line_item.amount / line_item.quantity)
+      # Refunding the list price would give back more than the customer paid.
+      it 'defaults the refundable amount to what the customer paid after the discount' do
+        line_item.update_columns(price: 10, taxable_adjustment_total: -2)
+
+        expect(line.pre_tax_amount).to eq(8)
+      end
+
+      it 'refunds nothing for a unit the customer got for free' do
+        line_item.update_columns(price: 10, taxable_adjustment_total: -10)
+
+        expect(line.pre_tax_amount).to eq(0)
+      end
     end
 
     it 'requires a positive quantity' do
