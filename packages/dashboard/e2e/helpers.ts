@@ -284,6 +284,17 @@ export async function openRowMenu(page: Page, rowText: string) {
 }
 
 /**
+ * Wait for every toast to leave. Toasts stack over the bottom-right corner,
+ * where the last row's action menu sits, and a toast under the pointer pauses
+ * its own timer — so the pointer is moved away first, or a click aimed at that
+ * row can wait on it forever.
+ */
+export async function waitForToastsToClear(page: Page) {
+  await page.mouse.move(0, 0)
+  await expect(page.locator('[role="status"][data-type]')).toHaveCount(0, { timeout: 15_000 })
+}
+
+/**
  * Click a bulk action by name. The `<BulkActionBar>` measures available width
  * and pushes overflowing actions into a "More actions" dropdown — at the
  * Playwright viewport (1280px) most rows show 4–5 inline actions and the rest

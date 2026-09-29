@@ -38,7 +38,7 @@ import {
 import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { customFieldDefinitionAutocompleteProps } from '../../../../hooks/use-custom-field-definitions'
@@ -238,9 +238,11 @@ function CreateRequirementSheet({
           )}
           <FieldGroup>
             <Field>
-              <FieldLabel>{t('admin.seller_requirements.fields.kind.label')}</FieldLabel>
+              <FieldLabel htmlFor="seller-requirement-kind">
+                {t('admin.seller_requirements.fields.kind.label')}
+              </FieldLabel>
               <Select items={selectItems} value={type} onValueChange={handleTypeChange}>
-                <SelectTrigger disabled={isLoading}>
+                <SelectTrigger id="seller-requirement-kind" disabled={isLoading}>
                   <SelectValue
                     placeholder={t('admin.seller_requirements.fields.kind.placeholder')}
                   />
@@ -497,12 +499,13 @@ function RequirementFields({
       <Field>
         {/* A kind that can appear more than once has nothing else to tell it
             apart by, so its label is the operator's own wording. */}
-        <FieldLabel>
+        <FieldLabel htmlFor="seller-requirement-name">
           {kindEntry.allow_multiple
             ? t('admin.seller_requirements.fields.name.label_required')
             : t('admin.seller_requirements.fields.name.label')}
         </FieldLabel>
         <Input
+          id="seller-requirement-name"
           value={values.name}
           onChange={(event) => onChange.setName(event.target.value)}
           placeholder={typeLabel('seller_requirement', kindEntry.type, kindEntry.name)}
@@ -513,8 +516,11 @@ function RequirementFields({
       </Field>
 
       <Field>
-        <FieldLabel>{t('admin.seller_requirements.fields.description.label')}</FieldLabel>
+        <FieldLabel htmlFor="seller-requirement-description">
+          {t('admin.seller_requirements.fields.description.label')}
+        </FieldLabel>
         <Textarea
+          id="seller-requirement-description"
           value={values.description}
           onChange={(event) => onChange.setDescription(event.target.value)}
           placeholder={t('admin.seller_requirements.fields.description.placeholder')}
@@ -581,13 +587,17 @@ function SettingSwitch({
   value: boolean
   onChange: (value: boolean) => void
 }) {
+  const id = useId()
+
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex flex-col">
-        <span className="font-medium text-sm">{label}</span>
+        <label htmlFor={id} className="font-medium text-sm">
+          {label}
+        </label>
         <span className="text-muted-foreground text-xs">{description}</span>
       </div>
-      <Switch checked={value} onCheckedChange={onChange} />
+      <Switch id={id} checked={value} onCheckedChange={onChange} />
     </div>
   )
 }

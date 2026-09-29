@@ -102,4 +102,16 @@ test.describe('gift cards', () => {
 
     await expect(rowButton(page, code)).toHaveCount(0, { timeout: 15_000 })
   })
+
+  // Gift cards used to live under Promotions; bookmarks to the old address
+  // must keep working, filters included.
+  test('the old promotions address opens the gift cards list', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(`/${creds.store_id}/promotions/gift-cards?new=true`)
+
+    await expect(page).toHaveURL(new RegExp(`${GIFT_CARDS_PATH(creds.store_id)}\\?new=true`), {
+      timeout: 15_000,
+    })
+    await expect(page.getByRole('heading', { name: /new gift card/i })).toBeVisible()
+  })
 })
