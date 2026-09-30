@@ -76,6 +76,13 @@ describe Spree::Emails::Renderer do
       expect(email.html).to include('Hi Smith &amp; Co &amp; &lt;b&gt;more&lt;/b&gt;')
     end
 
+    it 'never trusts captured text a filter decoded into markup' do
+      email = render(section('{% capture note %}{{ text }}{% endcapture %}{{ note | url_decode }}'), { text: '%3Cb%3Ebold%3C%2Fb%3E' })
+
+      expect(email.html).to include('&lt;b&gt;bold&lt;/b&gt;')
+      expect(email.html).not_to include('<b>bold</b>')
+    end
+
     it 'escapes what cycle writes' do
       email = render(section("{% cycle name, 'x' %}"), { name: payload })
 
