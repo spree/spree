@@ -716,7 +716,7 @@ Every transactional email now renders from a Liquid template written in MJML ins
 
 **If your app overrides no emails, there is nothing to do.** The emails look the same.
 
-**If your app overrides Spree's emails with ERB**, those files are no longer used. Spree lists each one in the log at boot. Port each to the `.liquid` file at the same path:
+**If your app overrides Spree's emails with ERB**, those files are no longer used and Spree sends its default design instead, without a warning. Look for them under `app/views/spree/*_mailer/` and `app/views/spree/shared/`, and port each to the `.liquid` file at the same path:
 
 | ERB view (removed) | Liquid template |
 | --- | --- |
