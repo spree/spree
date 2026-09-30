@@ -27,7 +27,7 @@ The path is also the template's name, for example `spree/order_mailer/confirm_em
 
 Start from Spree's own template rather than a blank file: customer emails are in [`spree/emails/app/views`](https://github.com/spree/spree/tree/main/spree/emails/app/views/spree) and staff emails and the layout in [`spree/core/app/views`](https://github.com/spree/spree/tree/main/spree/core/app/views) on GitHub.
 
-Your file wins as soon as it exists. There is nothing to register and no server restart.
+Your file wins as soon as it exists, and edits to it show on the next email without a restart. There is nothing to register. The one exception: Rails only reads `server/app/views` if the folder existed when the app started, so restart once after creating that folder. API-only apps often start without it.
 
 ## Anatomy of a template
 
