@@ -154,7 +154,7 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
     delete 'Remove an item' do
       tags 'Orders'
       security [api_key: [], bearer_auth: []]
-      description 'Removes an item from the order.'
+      description 'Removes an item from the order and recalculates its totals. Returns 422 when the removal is refused.'
       admin_scope :write, :orders
 
       admin_sdk_example 'order-items/delete'
@@ -171,6 +171,21 @@ RSpec.describe 'Admin Order Line Items API', type: :request, swagger_doc: 'api-r
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         run_test!
+      end
+
+      response '422', 'removal refused' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        before { Spree.hooks.register('orders.upsert_items.validate') { |flow| flow.reject!('Order is locked') } }
+        after { Spree.hooks.clear! }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['message']).to eq('Order is locked')
+          expect(order.line_items.reload).to include(line_item)
+        end
       end
     end
   end
