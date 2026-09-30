@@ -118,7 +118,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
-Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing.
+Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing. Refunding a return that is owed nothing completes it with no money moved and no refund email; an amount of zero is refused on any return the customer is still owed money on.
 
 ### Where the goods come back to
 
