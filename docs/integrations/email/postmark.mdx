@@ -1,0 +1,49 @@
+---
+title: Postmark
+description: Send Spree's transactional emails through Postmark over SMTP — the Server API Token is both username and password, and transactional mail has its own stream.
+---
+
+[Postmark](https://postmarkapp.com) specialises in transactional email and is known for fast, reliable delivery. It keeps transactional and bulk mail strictly apart, which is a good fit for a store whose email is entirely order confirmations, shipping notices and password resets.
+
+Spree talks to Postmark over plain SMTP, so there is nothing to install — see [Emails](/developer/providers/emails) for how the configuration works.
+
+## Configuration
+
+```bash
+SMTP_HOST=smtp.postmarkapp.com
+SMTP_PORT=587
+SMTP_USERNAME=your_server_api_token
+SMTP_PASSWORD=your_server_api_token
+SMTP_FROM_ADDRESS=orders@yourstore.com
+```
+
+<Note>
+The **Server API Token goes in both the username and the password field** — the same value twice. This looks like a mistake but is exactly what Postmark documents.
+</Note>
+
+Postmark accepts ports 25, 587 and 2525, all using STARTTLS. Use 587 unless your host blocks it, in which case 2525 is the usual fallback. Postmark has **no implicit-TLS port** — setting `SMTP_PORT=465` out of habit produces a connection that hangs rather than a clear error.
+
+## Getting a Server API Token
+
+1. In the Postmark dashboard, open the server you want to send from.
+2. Go to the **API Tokens** tab and copy the **Server API Token**.
+
+Tokens are per server, so mail from each server is tracked and rate-limited separately. A separate server for staging keeps test mail out of your production activity log.
+
+## Message streams
+
+Postmark separates **transactional** streams from **broadcast** streams, and keeps their reputations apart. Mail sent through `smtp.postmarkapp.com` with a Server API Token goes to the default transactional stream unless a header says otherwise, which is what a Spree store wants — there is nothing to configure. Broadcast mail uses a different host, `smtp-broadcasts.postmarkapp.com`, which Spree does not need.
+
+## Authenticating your domain
+
+Go to **Sender Signatures → Add Domain**, then add the DKIM and Return-Path records Postmark generates at your DNS host. Once verified, set `SMTP_FROM_ADDRESS` to an address on that domain.
+
+<Warning>
+**New Postmark accounts are reviewed before they can send to customers.** Until the account is approved you can only send to domains you have added and verified, which behaves much like a sandbox: real customer addresses are refused. Approval usually takes under a day on weekdays, and only the account owner can request it. Ask as soon as you create the account rather than on launch day, and be ready to describe what your store sends — Postmark enforces its transactional-only policy more strictly than most providers.
+</Warning>
+
+## Related
+
+- [Emails](/developer/providers/emails) — the SMTP variables and how to verify delivery
+- [Sending out Emails](/developer/deployment/emails) — what Spree sends and when
+- [Postmark SMTP documentation](https://postmarkapp.com/developer/user-guide/send-email-with-smtp)

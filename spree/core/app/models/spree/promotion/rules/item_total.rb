@@ -1,5 +1,5 @@
 # A rule to apply to an order greater than (or greater than or equal to)
-# a specific amount
+# a specific amount. Free gifts do not count toward it.
 module Spree
   class Promotion
     module Rules
@@ -16,8 +16,8 @@ module Spree
           promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
-        def eligible?(order, _options = {})
-          item_total = order.item_total
+        def eligible?(order, options = {})
+          item_total = order.item_total - order.gift_amount(promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false))
 
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal(preferred_amount_min.to_s))
 

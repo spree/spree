@@ -401,6 +401,8 @@ The `Create line items` promotion action now discounts the items it adds down to
 
 Two further changes come with it. A customer who already has the gift variant in their cart now gets theirs free rather than a second copy being added, and the promotion applies where it previously did nothing at all. And a gift is only taken back out of the cart for promotions actually applied to that order, so a customer who bought the gift variant themselves without qualifying keeps it.
 
+A gift also no longer counts toward spend thresholds or toward the amount a percentage-off order discount is taken from. That includes the gift promotion's own threshold, so a "spend over a set amount, get a gift" promotion now takes the gift back once the paid items fall below the threshold.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
@@ -712,13 +714,15 @@ If you subclassed `Spree::Report` in your own application, that class no longer 
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
 
+Before 6.0 a cart was an incomplete order, so extensions written for 5.x (payment gateways in particular) call these names on carts. The rows marked *Order and Cart* are answered by `Spree::Cart` as well as `Spree::Order`, with the same warning.
+
 | Deprecated | Use instead |
 |---|---|
 | `Order#finalize!` | `Spree.order_complete_workflow` |
 | `Order#updater`, `Spree::OrderUpdater`, `Spree::CartUpdater` | `#recalculate_totals!` / `#update_statuses!` |
-| `Order#shipping_discount` | `#fulfillment_discount` |
-| `Order#special_instructions` | `#customer_note` (column renamed) |
-| `Order#promo_total`, `#item_count`, `#ship_total` | `#discount_total`, `#total_quantity`, `#delivery_total` (columns renamed) |
+| `Order#shipping_discount` (Order and Cart) | `#fulfillment_discount` |
+| `Order#special_instructions` (Order and Cart) | `#customer_note` (column renamed) |
+| `Order#promo_total`, `#item_count`, `#ship_total`, `#shipment_total` (Order and Cart) | `#discount_total`, `#total_quantity`, `#delivery_total` (columns renamed) |
 | `LineItem#promo_total`, `Fulfillment#promo_total` | `#discount_total` (columns renamed) |
 | `Address#firstname`, `#lastname`, `#zipcode` | `#first_name`, `#last_name`, `#postal_code` (columns renamed) |
 | `Address.normalize_zipcode`, `#normalized_zipcode` | `.normalize_postal_code`, `#normalized_postal_code` |
@@ -732,10 +736,15 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Fulfillment#ship`, `#ship!` | `Spree.fulfillment_fulfill_workflow.call(fulfillment:)` (`Spree::Fulfillments::Fulfill`) |
 | `Fulfillment#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
-| `Order#create_proposed_shipments` / `#create_proposed_fulfillments` | `#rebuild_fulfillments!` (Cart ships with the new name only) |
+| `Order#create_proposed_shipments` / `#create_proposed_fulfillments` (Order and Cart) | `#rebuild_fulfillments!` |
+| `#user`, `#user=`, `#user_id`, `#associate_user!` (Order and Cart) | `#customer`, `#customer=`, `#customer_id`, `#associate_customer!` |
+| `#shipments`, `#set_shipments_cost`, `#ensure_updated_shipments`, `#display_shipment_total` (Order and Cart) | `#fulfillments`, `#set_fulfillments_cost`, `#ensure_updated_fulfillments`, `#display_delivery_total` |
+| `#update_with_updater!` (Order and Cart) | `#recalculate_totals!` |
+| `#available_payment_methods`, `#collect_payment_methods`, `#collect_frontend_payment_methods` (Order and Cart) | `#payment_methods` |
+| `#all_line_items` (Order and Cart) | `#line_items` |
 | `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
-| `Order#delivery_required?` | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
-| `Order#requires_ship_address?` | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
+| `Order#delivery_required?` (Order and Cart) | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
+| `Order#requires_ship_address?` (Order and Cart) | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
 | `requirements[].field` / `.code` `shipping_method` (Store API) | `delivery_method` / `delivery_method_required` — no bridge; clients keying off the delivery requirement must switch both tokens |
 | `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
 | `order.completed` event | `order.placed` |

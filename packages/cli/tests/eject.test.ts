@@ -4,7 +4,7 @@ import path from 'node:path'
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
 import { registerEjectCommand } from '../src/commands/eject'
-import { dockerCompose, dockerComposeExec, primeBundleVolume } from '../src/docker'
+import { dockerCompose, prepareDatabase } from '../src/docker'
 
 const COMPOSE_DEV_STALE = `x-app: &app
   build:
@@ -18,11 +18,18 @@ services:
   web:
     <<: *app
     command: ["bin/rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+  postgres:
+    image: postgres:18-alpine
+    healthcheck:
+      test: pg_isready -U postgres
 volumes:
   bundle_cache:
 `
 
-const COMPOSE_DEV_FIXED = COMPOSE_DEV_STALE.replace('- .:/rails', '- ./backend:/rails')
+const COMPOSE_DEV_FIXED = COMPOSE_DEV_STALE.replace('- .:/rails', '- ./backend:/rails').replace(
+  'pg_isready -U postgres',
+  'pg_isready -h 127.0.0.1 -U postgres',
+)
 
 let projectDir: string
 
@@ -34,8 +41,7 @@ vi.mock('../src/context', () => ({
 
 vi.mock('../src/docker', () => ({
   dockerCompose: vi.fn().mockResolvedValue(undefined),
-  dockerComposeExec: vi.fn().mockResolvedValue(undefined),
-  primeBundleVolume: vi.fn().mockResolvedValue(undefined),
+  prepareDatabase: vi.fn().mockResolvedValue(undefined),
 }))
 
 function makeProject(devComposeContent: string, apiDir = 'server'): string {
@@ -100,30 +106,28 @@ describe('spree eject', () => {
     expect(dev).toBe(COMPOSE_DEV_FIXED)
   })
 
-  it('brings the stack up and prepares the development database', async () => {
+  it('switches the postgres healthcheck to TCP in both compose files', async () => {
     projectDir = makeProject(COMPOSE_DEV_STALE)
 
     await runEject()
 
-    expect(dockerCompose).toHaveBeenCalledWith(['up', '-d'], projectDir, { stdio: 'inherit' })
-    expect(dockerComposeExec).toHaveBeenCalledWith(['bin/rails', 'db:prepare'], projectDir, {
-      tty: false,
-    })
+    for (const file of ['docker-compose.yml', 'docker-compose.dev.yml']) {
+      const content = fs.readFileSync(path.join(projectDir, file), 'utf-8')
+      expect(content).toContain('test: pg_isready -h 127.0.0.1 -U postgres')
+    }
   })
 
-  it('primes the bundle volume with web before the parallel up', async () => {
+  it('prepares the development database before starting the app server', async () => {
     projectDir = makeProject(COMPOSE_DEV_STALE)
 
     await runEject()
 
-    expect(primeBundleVolume).toHaveBeenCalledWith(projectDir)
-    // The primer must run before the parallel `up -d` so web wins the
-    // cold-volume copy-up uncontended (no web/worker "file exists" race).
-    const primeOrder = (primeBundleVolume as Mock).mock.invocationCallOrder[0]
-    const upCall = (dockerCompose as Mock).mock.calls.findIndex(
-      ([args]) => Array.isArray(args) && args.join(' ') === 'up -d',
+    expect(prepareDatabase).toHaveBeenCalledWith(projectDir, { stdio: 'inherit' })
+    expect(dockerCompose).toHaveBeenCalledWith(['up', '-d'], projectDir, { stdio: 'inherit' })
+    // Puma exits when spree_development is missing, so the database must
+    // exist before `up -d` starts it.
+    expect((prepareDatabase as Mock).mock.invocationCallOrder[0]).toBeLessThan(
+      (dockerCompose as Mock).mock.invocationCallOrder[0],
     )
-    expect(upCall).toBeGreaterThanOrEqual(0)
-    expect(primeOrder).toBeLessThan((dockerCompose as Mock).mock.invocationCallOrder[upCall])
   })
 })

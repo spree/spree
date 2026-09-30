@@ -1,30 +1,7 @@
-import { readFileSync, unlinkSync } from 'node:fs'
 import { ASYNC_JOBS_INITIALIZER, RAILS_PID_FILE } from './paths'
+import { rmIfExists, stopRails } from './rails'
 
 export default async function globalTeardown() {
-  try {
-    unlinkSync(ASYNC_JOBS_INITIALIZER)
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
-  }
-
-  let pid: number
-  try {
-    pid = Number.parseInt(readFileSync(RAILS_PID_FILE, 'utf-8'), 10)
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === 'ENOENT') return
-    throw e
-  }
-
-  try {
-    process.kill(pid, 'SIGTERM')
-  } catch {
-    // Process already dead.
-  }
-
-  try {
-    unlinkSync(RAILS_PID_FILE)
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
-  }
+  rmIfExists(ASYNC_JOBS_INITIALIZER)
+  await stopRails(RAILS_PID_FILE)
 }

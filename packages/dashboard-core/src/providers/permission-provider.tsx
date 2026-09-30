@@ -121,7 +121,13 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   // forever. Depend on the tenant id (a string) and rebuild the key inside.
   const tenantId = useTenantId()
   const refresh = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: [PERMISSIONS_RESOURCE, tenantId] })
+    const permissionsKey = [PERMISSIONS_RESOURCE, tenantId]
+    // A refresh asks for the rules as they stand now. A first fetch still in
+    // flight was sent before — in the seller panel, before any seller was
+    // chosen — and with nothing cached TanStack hands that same fetch back
+    // rather than starting another, so it is cancelled first.
+    await queryClient.cancelQueries({ queryKey: permissionsKey })
+    await queryClient.invalidateQueries({ queryKey: permissionsKey })
   }, [queryClient, tenantId])
 
   const permissions = useMemo(

@@ -10,9 +10,37 @@ module Spree
         line_items.sum(:quantity)
       end
 
+      # What promotion calculators take a share of: the line amounts less the
+      # free gifts, so a gift never enlarges a percentage off the order.
+      #
       # @return [BigDecimal]
       def amount
-        line_items.sum(BigDecimal('0'), &:amount)
+        line_items.sum(BigDecimal('0'), &:amount) - gift_amount
+      end
+
+      # The list price of the units gift promotions give away. The gift keeps
+      # its price on its line and is paid for by a discount, so anything
+      # measuring what the shopper spends has to take it out.
+      #
+      # @param promotion [Spree::Promotion, nil] the promotion doing the
+      #   measuring; its own gifts are always taken out, since a gift cannot
+      #   be what qualifies the promotion giving it away
+      # @param own_gift_only [Boolean] true while deciding whether another
+      #   promotion gives its gift, so two gift promotions with spend
+      #   thresholds do not each wait on the other
+      # @return [BigDecimal]
+      def gift_amount(promotion: nil, own_gift_only: false)
+        return BigDecimal('0') if line_items.empty?
+
+        excluded_gift_promo_actions = gift_promo_actions(promotion, own_gift_only).select do |action|
+          action.promotion_id == promotion&.id || action.gives_away?(self)
+        end
+        return BigDecimal('0') if excluded_gift_promo_actions.empty?
+
+        line_items.sum(BigDecimal('0')) do |line_item|
+          gifted_quantity = excluded_gift_promo_actions.sum { |action| action.gifted_quantity_of(line_item) }
+          line_item.price * [gifted_quantity, line_item.quantity].min
+        end
       end
 
       # Re-sums what the customer has actually paid, and nothing else. A
@@ -77,6 +105,26 @@ module Spree
       end
 
       private
+
+      # Other promotions' gifts are looked for among the promotions a
+      # recalculation writes discounts for, so a gift leaves the measure
+      # exactly when its discount can be written.
+      def gift_promo_actions(promotion, own_gift_only)
+        own = promotion ? promotion.actions.grep(Spree::Promotion::Actions::CreateLineItems) : []
+        return own if own_gift_only
+
+        discounting_ids = promotion_ids + Spree::Promotion.held_by_saved_coupon_code(self).map(&:id)
+        return own if discounting_ids.empty?
+
+        gifting_cart_variants = Spree::PromotionActionLineItem.
+                                where(variant_id: line_items.map(&:variant_id)).
+                                select(:promotion_action_id)
+        others = Spree::Promotion::Actions::CreateLineItems.
+                 where(promotion_id: discounting_ids, id: gifting_cart_variants).
+                 includes(:promotion, :promotion_action_line_items)
+
+        (own + others.to_a).uniq(&:id)
+      end
 
       # Completed payments less their refunds, as a scalar subquery so the
       # sum and the write are one statement.

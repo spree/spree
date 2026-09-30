@@ -4,7 +4,7 @@ import { ProductFilterOptionValueSchema } from './ProductFilterOptionValue';
 
 export const ProductFilterOptionSchema = z.object({
   id: z.string(),
-  type: z.any(),
+  type: z.literal('option'),
   name: z.string(),
   label: z.string(),
   kind: z.string(),

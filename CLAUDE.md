@@ -670,17 +670,17 @@ When changing Alba serializers, run the full pipeline:
 
 ```bash
 cd spree/api && bundle exec rake typelizer:generate    # 1. TS types from serializers
-cd packages/sdk && pnpm generate:zod                     # 2. Zod schemas from TS types
+cd ../.. && pnpm generate:zod                           # 2. Zod schemas from TS types (Store, Admin, Seller SDKs)
 cd spree/api && bundle exec rspec spec/integration/     # 3. Integration tests
 bundle exec rake rswag:specs:swaggerize                 # 4. OpenAPI spec
 cd packages/sdk && pnpm test                             # 5. SDK tests
 ```
 
 - TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
-- Zod schemas → `packages/sdk/src/zod/generated/`
+- Zod schemas → `src/zod/generated/` in each SDK, exported as `@spree/sdk/zod`, `@spree/admin-sdk/zod` and `@spree/seller-sdk/zod`. Each SDK's `zod-schemas.test.ts` validates them against the responses recorded in `docs/api-reference/*.yaml`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
 
-A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
+A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. It also regenerates the Zod schemas when generated types or the generator change, and CI fails when committed schemas don't match the types. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
 
 ### Changesets & Versioning
 

@@ -97,7 +97,7 @@ module Spree
           index.zero? ? order.status : nil,
           index.zero? ? order.currency : nil,
           index.zero? ? order.item_total.to_f : nil,
-          index.zero? ? order.shipment_total.to_f : nil,
+          index.zero? ? order.delivery_total.to_f : nil,
           index.zero? ? order.tax_total.to_f : nil,
           index.zero? ? order.included_tax_total.positive? : nil,
           index.zero? ? (order.discount_total.negative? || line_item.discount_total.negative?) : nil,
