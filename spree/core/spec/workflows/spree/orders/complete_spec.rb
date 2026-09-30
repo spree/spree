@@ -148,8 +148,8 @@ module Spree
       let(:order) { create(:order_with_line_items, store: store) }
 
       it 'publishes order.placed with the deprecated order.completed alias' do
-        expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer)).at_least(:once)
-        expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer), { deprecated_alias_of: 'order.placed' }).at_least(:once)
+        expect(order).to receive(:publish_event).with('order.placed', kind_of(Hash), hash_including(:notify_customer)).at_least(:once)
+        expect(order).to receive(:publish_event).with('order.completed', kind_of(Hash), hash_including(:notify_customer, deprecated_alias_of: 'order.placed')).at_least(:once)
         allow(order).to receive(:publish_event).with(anything)
         allow(order).to receive(:publish_event).with(anything, anything)
 
@@ -231,27 +231,27 @@ module Spree
       # completing a draft quietly must not be answered with an email.
       it 'carries a silent completion onto the group event', :events do
         draft = draft_for(seller, other_seller)
-        payloads = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          payloads << payload if name == 'order_group.completed'
+        metadatas = []
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          metadatas << metadata if name == 'order_group.completed'
         end
 
         described_class.call(order: draft, notify_customer: false)
 
-        expect(payloads.size).to eq(1)
-        expect(payloads.first[:notify_customer]).to be false
+        expect(metadatas.size).to eq(1)
+        expect(metadatas.first[:notify_customer]).to be false
       end
 
       it 'leaves an ordinary division free to confirm the purchase', :events do
         draft = draft_for(seller, other_seller)
-        payloads = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          payloads << payload if name == 'order_group.completed'
+        metadatas = []
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          metadatas << metadata if name == 'order_group.completed'
         end
 
         described_class.call(order: draft)
 
-        expect(payloads.first[:notify_customer]).to be_nil
+        expect(metadatas.first[:notify_customer]).to be_nil
       end
 
       it 'stamps a single seller onto the order' do
