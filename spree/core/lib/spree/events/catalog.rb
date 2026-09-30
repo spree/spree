@@ -103,12 +103,19 @@ module Spree
 
       # Whether an event may be forwarded to webhook endpoints. An undeclared
       # event may, so a production store keeps delivering it while the missing
-      # declaration is only logged.
+      # declaration is only logged. A miss loads every model first: where
+      # classes load lazily, the model declaring `webhook: false` may not be
+      # loaded in the process delivering webhooks yet.
       #
       # @param name [String]
       # @return [Boolean]
       def webhook?(name)
-        find(name)&.webhook? != false
+        entry = find(name)
+        unless entry
+          load!
+          entry = find(name)
+        end
+        entry.nil? || entry.webhook?
       end
 
       # @param name [String]
