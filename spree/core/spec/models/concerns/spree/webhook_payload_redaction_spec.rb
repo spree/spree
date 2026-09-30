@@ -268,4 +268,31 @@ describe Spree::WebhookPayloadRedaction do
 
     expect(described_class.merge(*described_class.split(original))).to eq(original)
   end
+
+  describe '.redacted?' do
+    it 'is true when a nested slot under data holds the placeholder' do
+      payload, = described_class.split(
+        'name' => 'order.completed',
+        'data' => { 'id' => 'or_1', 'gift_card' => { 'code' => 'SPEND-ME' } }
+      )
+
+      expect(described_class.redacted?(payload)).to be(true)
+    end
+
+    it 'is true for a placeholder inside an array under symbol-keyed data' do
+      expect(described_class.redacted?(data: { items: [{ token: placeholder }] })).to be(true)
+    end
+
+    it 'is false when nothing was redacted' do
+      expect(described_class.redacted?('name' => 'order.placed', 'data' => { 'id' => 'or_1' })).to be(false)
+    end
+
+    it 'ignores the placeholder outside data' do
+      expect(described_class.redacted?('metadata' => { 'note' => placeholder }, 'data' => {})).to be(false)
+    end
+
+    it 'is false for a non-hash payload' do
+      expect(described_class.redacted?(nil)).to be(false)
+    end
+  end
 end

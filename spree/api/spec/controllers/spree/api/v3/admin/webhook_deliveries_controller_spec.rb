@@ -161,5 +161,25 @@ RSpec.describe Spree::Api::V3::Admin::WebhookDeliveriesController, type: :contro
       expect(new_delivery.payload).to eq(failed_delivery.payload)
       expect(new_delivery.event_name).to eq(failed_delivery.event_name)
     end
+
+    context 'when the payload had credentials redacted' do
+      before do
+        failed_delivery.update_columns(
+          event_name: 'customer.password_reset_requested',
+          payload: {
+            'name' => 'customer.password_reset_requested',
+            'data' => { 'email' => 'jane@example.com', 'reset_token' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER }
+          }
+        )
+      end
+
+      it 'refuses with a message saying why, and queues nothing' do
+        expect { subject }.not_to change { endpoint.webhook_deliveries.count }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('webhook_delivery_not_redeliverable')
+        expect(json_response['error']['message']).to eq(Spree.t(:webhook_delivery_redacted_payload_not_redeliverable))
+      end
+    end
   end
 end

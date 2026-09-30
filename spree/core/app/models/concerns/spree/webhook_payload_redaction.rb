@@ -92,6 +92,27 @@ module Spree
       end
     end
 
+    # Whether a persisted payload had credentials withheld from it — any slot
+    # under `data` still holds {REDACTION_PLACEHOLDER}. Such a payload cannot
+    # be sent again as-is: the withheld values never reached the database.
+    #
+    # @param payload [Hash] a payload as persisted
+    # @return [Boolean]
+    def self.redacted?(payload)
+      return false unless payload.is_a?(Hash)
+
+      [payload[:data], payload['data']].any? { |data| holds_placeholder?(data) }
+    end
+
+    def self.holds_placeholder?(node)
+      case node
+      when Hash then node.each_value.any? { |value| holds_placeholder?(value) }
+      when Array then node.any? { |value| holds_placeholder?(value) }
+      else node == REDACTION_PLACEHOLDER
+      end
+    end
+    private_class_method :holds_placeholder?
+
     # Walks a hash replacing sensitive values, recording each one against its
     # path so two secrets sharing a key name (`client_secret` at the top level
     # and inside `external_data`) cannot overwrite one another.
