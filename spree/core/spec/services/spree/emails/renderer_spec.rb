@@ -6,7 +6,7 @@ describe Spree::Emails::Renderer do
   let(:store) { @default_store }
   let(:views) { Pathname.new(Dir.mktmpdir) }
   let(:resolver) do
-    Spree::Emails::TemplateResolver.new([views, Spree::Core::Engine.root.join('app/views')], app_view_path: views, legacy: false)
+    Spree::Emails::TemplateResolver.new([views, Spree::Core::Engine.root.join('app/views')])
   end
 
   after { FileUtils.remove_entry(views) }

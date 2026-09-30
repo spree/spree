@@ -104,25 +104,33 @@ In development and test, a variable that does not exist raises an error instead 
 
 To look at every email with real data, open the mailer previews at `/rails/mailers` on your Spree server.
 
-## Upgrading from ERB templates
+## Your own mailers
 
-Before Spree 6.0, emails were ERB views. They moved to Liquid in 6.0, and each ERB file maps to the Liquid file at the same path — `spree/order_mailer/confirm_email.html.erb` becomes `spree/order_mailer/confirm_email.liquid`. The shared header, footer and stylesheet partials are now the single `layouts/spree/base_mailer.liquid` layout. See the [6.0 upgrade guide](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) for the full list.
+A mailer that inherits `Spree::BaseMailer` and renders its own ERB views with `mail` keeps working. Spree wraps its HTML in the same layout as every other email, so it carries the store's logo, header and footer. The `spree/shared/mailer_hero` and `spree/shared/mailer_button` partials are still there for those views.
 
-If your app overrides emails with ERB, add the `spree_legacy_emails` gem to keep them rendering unchanged while you port them:
+To give a new email the same data contract as Spree's own, render it from a Liquid template instead:
 
-```ruby server/Gemfile
-gem 'spree_legacy_emails'
+```ruby server/app/mailers/spree/welcome_mailer.rb
+module Spree
+  class WelcomeMailer < BaseMailer
+    def welcome_email(customer, store)
+      @current_store = store
+
+      with_store_locale(store) do
+        mail_template({ customer: email_data(customer, Spree.api.customer_serializer) }, to: customer.email)
+      end
+    end
+  end
+end
 ```
 
-With the gem installed, an email renders from the first of:
+The template goes at `server/app/views/spree/welcome_mailer/welcome_email.liquid`. `email_data` serializes a record the way templates read it; pass a URL that carries a token as its own variable rather than serializing it.
 
-1. your app's `.liquid` template,
-2. an ERB view at the same path — yours or the gem's,
-3. Spree's own `.liquid` template.
+## Upgrading from ERB templates
 
-So you can port one email at a time. Each ERB email logs a deprecation warning the first time it renders. The gem is removed in Spree 6.1.
+Before Spree 6.0, emails were ERB views. Each ERB file maps to the Liquid file at the same path: `spree/order_mailer/confirm_email.html.erb` becomes `spree/order_mailer/confirm_email.liquid`. The shared header, footer and stylesheet partials are now the single `layouts/spree/base_mailer.liquid` layout. See the [6.0 upgrade guide](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) for the full list.
 
-Without the gem, Spree ignores ERB email views and lists each ignored file in the log when the app boots.
+An ERB override of one of Spree's emails is no longer used. When the app boots, Spree lists each such file in the log, so an upgrade never silently falls back to the default design without telling you.
 
 ## Related
 

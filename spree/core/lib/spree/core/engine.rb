@@ -96,7 +96,7 @@ module Spree
       end
 
       config.after_initialize do
-        Spree::Emails::LegacyTemplates.warn_ignored_overrides
+        Spree::Emails::ErbOverrides.warn
       end
 
       # I18n's config lives in fiber/thread-local storage that survives across

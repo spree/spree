@@ -716,12 +716,11 @@ Every transactional email now renders from a Liquid template written in MJML ins
 
 **If your app overrides no emails, there is nothing to do.** The emails look the same.
 
-**If your app overrides emails with ERB**, those files stop rendering unless you add the `spree_legacy_emails` gem, which keeps them working through 6.0 with a deprecation warning and is removed in 6.1. Spree lists every ERB email view it ignores in the log at boot. Port each one to the `.liquid` file at the same path:
+**If your app overrides Spree's emails with ERB**, those files are no longer used. Spree lists each one in the log at boot. Port each to the `.liquid` file at the same path:
 
 | ERB view (removed) | Liquid template |
 | --- | --- |
-| `layouts/spree/base_mailer.html.erb`, `spree/shared/_base_mailer_header`, `_base_mailer_footer`, `_base_mailer_stylesheets`, `_mailer_logo`, `_purchased_items_styles` | `layouts/spree/base_mailer.liquid` |
-| `spree/shared/_mailer_hero`, `_mailer_button` | MJML tags in each template (`mj-class="heading"`, `<mj-button>`) |
+| `spree/shared/_base_mailer_header`, `_base_mailer_footer`, `_base_mailer_stylesheets`, `_mailer_logo`, `_purchased_items_styles` | `layouts/spree/base_mailer.liquid` |
 | `spree/shared/_order_summary_section`, `_purchased_items_table`, `purchased_items_table/*` | `spree/shared/_order_summary.liquid`, `_line_item.liquid`, `_purchase_totals.liquid`, `_summary_row.liquid` |
 | `spree/shared/_fulfillment_group_section`, `_purchase_totals` | `spree/shared/_fulfillment_group.liquid`, `_purchase_totals.liquid` |
 | `spree/<mailer>/<email>.html.erb` and `.text.erb`, for every mailer | `spree/<mailer>/<email>.liquid`, plus an optional `<email>.text.liquid` |
@@ -729,10 +728,10 @@ Every transactional email now renders from a Liquid template written in MJML ins
 Other changes that come with it:
 
 - **Subjects moved into the templates.** Each template's front matter holds its subject. `Spree::BaseMailer#order_email_subject` is removed.
-- **The mailer view helpers moved to `spree_legacy_emails`.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are only available with that gem installed. Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`.
+- **The mailer view helpers are removed.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are gone. Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`, and `Spree::Product#storefront_path` gives a product's storefront path.
 - **Every email has a plain-text part**, generated from the HTML. Seven emails that had none now have one.
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
-- **Your own mailers lose Spree's email layout.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views still sends, but those views are no longer wrapped in Spree's header, logo and footer, because that layout moved to `spree_legacy_emails`. Spree logs a deprecation warning the first time each such email renders. Move the mailer to `mail_template` with a Liquid template, or add `spree_legacy_emails` until you do.
+- **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
 
 ## Deprecated in 6.0, removed in 6.1
 
@@ -788,7 +787,6 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted for one release) |
 | `PermittedAttributes.digital_attributes` | `.digital_asset_attributes` |
 | `GET /api/v3/store/digitals/:token` | `GET /api/v3/store/digital_links/:token` (old path keeps working) |
-| ERB email views (with the `spree_legacy_emails` gem) | Liquid email templates at the same paths — see [Emails render from Liquid templates](#emails-render-from-liquid-templates) |
 
 ## Meilisearch moved to its own gem
 

@@ -1,7 +1,6 @@
 module Spree
   module Emails
-    # One email template file found on disk: a Liquid template with optional
-    # front matter, or a deprecated ERB override.
+    # One Liquid email template on disk, with optional front matter.
     class Template
       FRONT_MATTER = /\A---\s*\n(.*?)\n---\s*(?:\n|\z)/m
 
@@ -12,11 +11,6 @@ module Spree
       def initialize(key:, path:)
         @key = key
         @path = path
-      end
-
-      # @return [Boolean] whether this is an ERB view rather than a Liquid template
-      def erb?
-        path.end_with?('.erb')
       end
 
       # @return [String, nil] the subject line as Liquid, read from the front matter

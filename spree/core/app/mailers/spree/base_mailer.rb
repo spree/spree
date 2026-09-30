@@ -1,5 +1,7 @@
 module Spree
   class BaseMailer < ActionMailer::Base
+    helper Spree::ImagesHelper
+
     default from: -> { from_address }, reply_to: -> { reply_to_address }
 
     def current_store
@@ -48,9 +50,19 @@ module Spree
     end
     helper_method :money
 
+    # Wraps HTML a mailer rendered from its own ERB views in the Liquid email
+    # layout, so every email a Spree mailer sends carries the store's logo,
+    # header and footer. Called by `layouts/spree/base_mailer.html.erb`.
+    #
+    # @param html [String] the rendered view
+    # @return [ActiveSupport::SafeBuffer]
+    def render_in_email_layout(html)
+      email_renderer.wrap(html, subject: message.subject).html_safe
+    end
+    helper_method :render_in_email_layout
+
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-      Spree::Emails::LegacyTemplates.warn_unstyled(self) if relied_on_spree_layout?(headers)
 
       if @_store_locale_active
         super
@@ -75,27 +87,15 @@ module Spree
     # @param headers [Hash] mail headers (`to:`, `store_url:`, ...)
     # @return [Mail::Message]
     def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", **headers)
-      @_rendering_template = true
       in_store_locale do
-        resolver = Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
-        email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
-        renderer = Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: email_currency)
+        email_template = email_resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
+        email = email_renderer.render(email_template, assigns)
 
-        if email_template.erb?
-          liquid_template = resolver.find_liquid(template)
-          subject = liquid_template ? renderer.render_subject(liquid_template, assigns) : headers[:subject]
-          mail_legacy_template(email_template, subject, headers)
-        else
-          email = renderer.render(email_template, assigns)
-
-          mail(headers.merge(subject: email.subject)) do |format|
-            format.text { render plain: email.text, layout: false }
-            format.html { render html: email.html.html_safe, layout: false }
-          end
+        mail(headers.merge(subject: email.subject)) do |format|
+          format.text { render plain: email.text, layout: false }
+          format.html { render html: email.html.html_safe, layout: false }
         end
       end
-    ensure
-      @_rendering_template = false
     end
 
     # The currency an email's amounts are in: its order's, else the store's.
@@ -137,25 +137,16 @@ module Spree
 
     private
 
-    # Whether this `mail` call used to be wrapped in Spree's ERB layout: its
-    # own ERB views, with no layout of its own to use instead.
-    def relied_on_spree_layout?(headers)
-      return false if @_rendering_template || headers.key?(:body) || self.class._layout
+    def email_resolver
+      @email_resolver ||= Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
+    end
 
-      !lookup_context.exists?(mailer_name, ['layouts'])
+    def email_renderer
+      Spree::Emails::Renderer.new(resolver: email_resolver, store: current_store, currency: email_currency)
     end
 
     def in_store_locale(&block)
       @_store_locale_active ? yield : with_store_locale(current_store, &block)
-    end
-
-    # An ERB view at the email's path: the host app's own override, or the
-    # `spree_legacy_emails` gem. Rendered the way every email was before 6.0.
-    def mail_legacy_template(template, subject, headers)
-      Spree::Emails::LegacyTemplates.warn_rendered(template)
-
-      mail(headers.merge(subject: subject, template_path: File.dirname(template.key),
-                         template_name: File.basename(template.key)))
     end
 
     # this ensures that ActionMailer::Base.default_url_options[:host] is always set

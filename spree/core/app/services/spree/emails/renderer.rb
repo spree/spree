@@ -45,11 +45,21 @@ module Spree
         assigns = prepare(assigns)
         subject = subject_for(template, assigns)
         body = render_liquid(template.body, assigns)
-        layout = @resolver.find_liquid(LAYOUT) || raise(ArgumentError, "Missing email layout #{LAYOUT}.liquid")
-        mjml = render_liquid(layout.body, assigns.merge('subject' => subject, 'content_for_layout' => body.html_safe))
-        html = MRML.to_html(mjml)
+        html = render_layout(body, assigns.merge('subject' => subject))
 
         Spree::Emails::RenderedEmail.new(subject: subject, html: html, text: render_text(template, assigns, html))
+      end
+
+      # Wraps HTML a mailer rendered some other way — its own ERB views — in
+      # the email layout, so it carries the store's logo, header and footer.
+      #
+      # @param html [String] the email's body, trusted as rendered
+      # @param subject [String, nil]
+      # @return [String] the finished email HTML
+      def wrap(html, subject: nil)
+        body = %(<mj-section><mj-column><mj-text align="left">#{html}</mj-text></mj-column></mj-section>)
+
+        render_layout(body, prepare('subject' => subject.to_s))
       end
 
       # The subject is plain text for a mail header, so it is not HTML-escaped.
@@ -62,6 +72,12 @@ module Spree
       end
 
       private
+
+      def render_layout(body, assigns)
+        layout = @resolver.find(LAYOUT) || raise(ArgumentError, "Missing email layout #{LAYOUT}.liquid")
+
+        MRML.to_html(render_liquid(layout.body, assigns.merge('content_for_layout' => body.html_safe)))
+      end
 
       def prepare(assigns)
         base_assigns.merge(assigns.deep_stringify_keys)

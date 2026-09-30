@@ -36,13 +36,15 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 
 ## 2026-09-29: Liquid and MJML emails move into 6.0, with ERB overrides bridged for one release
 
-**Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid.
+## 2026-09-29: Liquid and MJML emails move into 6.0, and ERB email overrides are dropped
 
-**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0, core's back-office emails included. The old ERB templates, layout, shared partials and mailer helpers move unchanged into a new optional `spree_legacy_emails` gem; an app that installs it keeps its ERB emails and ERB overrides rendering as before, with a deprecation warning, and 6.1 deletes the gem. A template carries its subject as YAML front matter rather than a body tag, so it maps straight onto a subject column when templates move to the database.
+**Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid. A bridge that kept ERB overrides rendering through 6.0 was built first, as a `spree_legacy_emails` gem, and then removed the same day.
 
-**Consequences:** Core and `spree_emails` carry only Liquid. Without the legacy gem, a host app's ERB email is not rendered; Spree logs each such file at boot, naming its Liquid replacement and the gem that keeps it working.
+**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0, core's back-office emails included. ERB overrides of Spree's own emails are dropped with no bridge: 6.0 is a major release, the ERB emails were only rebuilt in 5.6, and the bridge cost a gem, a CI lane, an ERB step in the template lookup and a 6.1 cleanup. Custom mailers that render their own ERB views keep working: core keeps a one-line ERB layout that wraps them in the Liquid layout, plus the `mailer_hero` and `mailer_button` partials. A template carries its subject as YAML front matter, which maps straight onto a subject column when templates move to the database.
 
-**Plans amended:** `6.0-liquid-mjml-emails.md` (renamed from `6.1-liquid-mjml-emails.md`; target, bridge and subject decisions).
+**Consequences:** An app that overrode one of Spree's emails in ERB must port it to Liquid; Spree lists each such file in the log at boot. The mailer view helpers (`name_for`, `spree_storefront_resource_url` and the fulfillment and digital asset helpers) are removed.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (renamed from `6.1-liquid-mjml-emails.md`; target, override and subject decisions).
 
 ## 2026-09-25: Emails render through Liquid and MJML, reading serializers, not views
 

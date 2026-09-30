@@ -12,8 +12,38 @@ class FromProbeMailer < Spree::BaseMailer
   end
 end
 
+CUSTOM_MAILER_VIEWS = Dir.mktmpdir
+
+class CustomViewsProbeMailer < Spree::BaseMailer
+  prepend_view_path CUSTOM_MAILER_VIEWS
+
+  def welcome_email
+    mail(to: 'probe@example.com', subject: 'Welcome aboard')
+  end
+end
+
 describe Spree::BaseMailer, type: :mailer do
   let!(:store) { @default_store }
+
+  describe 'a mailer rendering its own ERB views' do
+    before do
+      FileUtils.mkdir_p(File.join(CUSTOM_MAILER_VIEWS, 'custom_views_probe_mailer'))
+      File.write(File.join(CUSTOM_MAILER_VIEWS, 'custom_views_probe_mailer/welcome_email.html.erb'), <<~ERB)
+        <%= render layout: 'spree/shared/mailer_hero' do %>
+          <h1>Welcome</h1>
+          <%= render 'spree/shared/mailer_button', url: 'https://example.com/start', label: 'Get started' %>
+        <% end %>
+      ERB
+    end
+
+    let(:html) { CustomViewsProbeMailer.welcome_email.html_part&.decoded || CustomViewsProbeMailer.welcome_email.body.decoded }
+
+    it "wraps them in Spree's email layout, as before 6.0" do
+      expect(html).to include('Welcome', 'Get started', 'https://example.com/start')
+      expect(html).to include(store.name, store.support_email_address)
+      expect(html).not_to include('<mj-')
+    end
+  end
 
   describe '#from_address' do
     subject(:mailer) { described_class.new }
