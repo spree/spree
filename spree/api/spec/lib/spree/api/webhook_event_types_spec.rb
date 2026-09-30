@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::WebhookEventTypes do
   end
 
   it 'has a dashboard label for every event group, in every language' do
-    groups = Spree::Events.catalog.all.map(&:group).uniq
+    groups = Spree::Events.catalog.webhook_events.map(&:group).uniq
 
     Dir[monorepo_root.join('packages/dashboard/src/locales/*.json')].each do |file|
       labels = JSON.parse(File.read(file)).dig('admin', 'pages', 'settings', 'webhooks', 'event_groups')

@@ -127,15 +127,17 @@ module Spree
       #   the permission key needed to point a webhook endpoint at it; such an
       #   event reaches only endpoints that name it outright
       # @param deprecated_alias_of [String, nil] the event this one duplicates
+      # @param webhook [Boolean] false for an event no webhook endpoint may
+      #   receive, even one subscribed to `*`
       # @return [void]
       #
       # @example
       #   publishes_event :canceled, serializer: 'Spree::Api::V3::OrderCanceledEventSerializer'
       #   publishes_event 'customer.password_reset_requested', serializer: '...', credential: 'write_customers'
-      def publishes_event(name, serializer: nil, credential: nil, deprecated_alias_of: nil)
+      def publishes_event(name, serializer: nil, credential: nil, deprecated_alias_of: nil, webhook: true)
         Spree::Events.catalog.declare(
           self, name,
-          serializer: serializer, credential: credential, deprecated_alias_of: deprecated_alias_of
+          serializer: serializer, credential: credential, deprecated_alias_of: deprecated_alias_of, webhook: webhook
         )
       end
 

@@ -21,7 +21,8 @@ module Spree
       # @!attribute credential_permission [String, nil] for an event carrying a live
       #   credential, the permission needed to point a webhook endpoint at it
       # @!attribute deprecated_alias_of [String, nil] the event this one duplicates, when deprecated
-      Entry = Data.define(:name, :model_name, :serializer_name, :credential_permission, :deprecated_alias_of) do
+      # @!attribute webhook [Boolean] false for an event never forwarded to webhook endpoints
+      Entry = Data.define(:name, :model_name, :serializer_name, :credential_permission, :deprecated_alias_of, :webhook) do
         # The resource segment of the name, used to group events for display.
         #
         # @return [String] e.g. `order` for `order.placed`
@@ -36,6 +37,8 @@ module Spree
         def credential?
           credential_permission.present?
         end
+
+        alias_method :webhook?, :webhook
 
         # @return [Boolean]
         def deprecated?
@@ -67,7 +70,8 @@ module Spree
       # @param model [Class] the model whose record is the payload
       # @param name [Symbol, String] an action or a full event name
       # @param options [Hash] `serializer:`, `credential:` (the permission key
-      #   required to receive it), `deprecated_alias_of:`
+      #   required to receive it), `deprecated_alias_of:`, `webhook:` (false to
+      #   never forward it to webhook endpoints)
       # @return [void]
       def declare(model, name, **options)
         # A named class is keyed by its name so a reloaded class replaces its
@@ -88,6 +92,23 @@ module Spree
       def all
         load!
         @sorted ||= entries.values.sort_by(&:name)
+      end
+
+      # Events a webhook endpoint can subscribe to.
+      #
+      # @return [Array<Entry>]
+      def webhook_events
+        all.select(&:webhook?)
+      end
+
+      # Whether an event may be forwarded to webhook endpoints. An undeclared
+      # event may, so a production store keeps delivering it while the missing
+      # declaration is only logged.
+      #
+      # @param name [String]
+      # @return [Boolean]
+      def webhook?(name)
+        find(name)&.webhook? != false
       end
 
       # @param name [String]
@@ -151,7 +172,8 @@ module Spree
           full_name = name.include?('.') ? name : "#{model.event_prefix}.#{name}"
           result[full_name] ||= Entry.new(
             name: full_name, model_name: model.name, serializer_name: options[:serializer],
-            credential_permission: options[:credential], deprecated_alias_of: options[:deprecated_alias_of]
+            credential_permission: options[:credential], deprecated_alias_of: options[:deprecated_alias_of],
+            webhook: options.fetch(:webhook, true)
           )
         end
       end

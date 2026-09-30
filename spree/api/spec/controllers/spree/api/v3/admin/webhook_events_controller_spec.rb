@@ -12,8 +12,16 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEventsController, type: :controller
       get :index, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].pluck('name')).to eq(Spree::Events.catalog.all.map(&:name))
-      expect(json_response['meta']['count']).to eq(Spree::Events.catalog.all.size)
+      expect(json_response['data'].pluck('name')).to eq(Spree::Events.catalog.webhook_events.map(&:name))
+      expect(json_response['meta']['count']).to eq(Spree::Events.catalog.webhook_events.size)
+    end
+
+    it 'leaves out events no webhook may receive' do
+      get :index, as: :json
+
+      expect(json_response['data'].pluck('name')).not_to include(
+        'admin_user.password_reset_requested', 'seller_user.password_reset_requested'
+      )
     end
 
     it 'marks credential events with the permission they need, and deprecated aliases with their replacement' do

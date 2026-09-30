@@ -6038,3 +6038,10 @@ record's Store serializer or a dedicated event serializer, never a hash.
 Facts that are not part of the record go in `metadata`. Webhook payloads must
 not switch to Admin serializers. `WEBHOOK_EVENT_GROUPS` in the dashboard is
 frozen until it is replaced by the catalog endpoint.
+
+**Addendum (2026-09-30).** Credential rules live in the catalog too.
+`customer.password_reset_requested` is a credential event: it reaches only an
+endpoint that names it, and naming it needs `write_customers`. The staff and
+seller reset requests are declared `webhook: false` and never reach any
+webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
+subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.

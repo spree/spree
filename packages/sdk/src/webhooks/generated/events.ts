@@ -64,8 +64,6 @@ export interface WebhookRecordReference {
  */
 export interface WebhookEventMap {
   'admin_user.password_reset': WebhookRecordReference
-  /** Carries a live credential: delivered only to endpoints that name this event. */
-  'admin_user.password_reset_requested': PasswordResetRequestedEvent
   'cart.created': Cart
   'cart.deleted': Cart
   'cart.updated': Cart
@@ -264,8 +262,6 @@ export interface WebhookEventMap {
   'seller_requirement_submission.updated': WebhookRecordReference
   'seller_requirement_submission.waived': WebhookRecordReference
   'seller_user.password_reset': WebhookRecordReference
-  /** Carries a live credential: delivered only to endpoints that name this event. */
-  'seller_user.password_reset_requested': PasswordResetRequestedEvent
   /** @deprecated Use `fulfillment.canceled` instead. */
   'shipment.canceled': Fulfillment
   /** @deprecated Use `fulfillment.fulfilled` instead. */
