@@ -406,8 +406,8 @@ To regenerate manually (useful when iterating on serializers before committing):
 ```bash
 cd server
 pnpm exec spree rake typelizer:generate     # regenerate TS types
-cd ../packages/sdk
-pnpm generate:zod                            # regenerate Zod schemas
+cd ..
+pnpm generate:zod                            # regenerate Zod schemas for every SDK
 ```
 
 If you'd rather avoid the Docker round-trip and have Ruby on your host, the native equivalent works too:

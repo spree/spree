@@ -36,6 +36,7 @@ module Spree
     include Spree::Purchase::Validations
     include Spree::Purchase::Totals
     include Spree::Purchase::Lifecycle
+    include Spree::Purchase::DeprecatedAliases
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -54,16 +55,7 @@ module Spree
                   :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
                   :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
 
-    alias display_promo_total display_discount_total
-    alias display_ship_total display_delivery_total
-    alias_attribute :ship_total, :delivery_total
-
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
-    # Order-parity aliases — shared Cart/Order code (services, Purchase
-    # concerns) reads #user; the cart column is customer_id.
-    alias_method :user, :customer
-    alias_method :user=, :customer=
-    alias_attribute :user_id, :customer_id
     # Codes are stored stripped + lowercased so lookups stay case-insensitive;
     # normalizes also applies to finder values.
     normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
@@ -87,6 +79,8 @@ module Spree
       end
     end
     has_many :fulfillment_items, through: :fulfillments, class_name: 'Spree::FulfillmentItem'
+    # Legacy name (5.x carts were orders) — removed in 6.1
+    has_many :shipments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', inverse_of: :cart, deprecated: true
     has_many :order_promotions, class_name: 'Spree::OrderPromotion', inverse_of: :cart, dependent: :destroy
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :cart, dependent: :destroy
@@ -168,8 +162,14 @@ module Spree
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
     # the current items/address; nothing here touches a completed cart.
-    def rebuild_fulfillments!
+    #
+    # @param keep_selection [Boolean] false when the destination changed: a
+    #   choice made for one address is not a choice for another, and before an
+    #   address is known the only rate on offer is a pickup default
+    def rebuild_fulfillments!(keep_selection: true)
       return if completed?
+
+      previous_selections = keep_selection ? fulfillments.selected_rates_by_stock_location : {}
 
       discounts.for_fulfillments.delete_all
       tax_lines.for_fulfillments.delete_all
@@ -188,6 +188,7 @@ module Spree
       Spree::Stock::Coordinator.new(self).fulfillments.each do |fulfillment|
         fulfillment.address_id = ship_address_id
         fulfillment.order = nil
+        fulfillment.carry_over_selection(previous_selections.fetch(fulfillment.stock_location_id, []))
         fulfillments << fulfillment
       end
       prune_undeliverable_fulfillments!
@@ -229,7 +230,6 @@ module Spree
         updated_at: Time.current
       )
     end
-    alias set_shipments_cost set_fulfillments_cost
 
     def ensure_updated_fulfillments
       rebuild_fulfillments! unless completed?
@@ -238,7 +238,11 @@ module Spree
     # Re-prices, re-taxes and rebuilds delivery proposals — the
     # recalculation-on-write replacement for transition-triggered rebuilds.
     # Called by Carts::Update after address/market changes.
-    def recalculate_for_address_change!
+    #
+    # @param keep_selection [Boolean] true when the parcel still goes where it
+    #   did (a market change, a corrected phone number), so the chosen
+    #   delivery is kept and quoted again
+    def recalculate_for_address_change!(keep_selection: false)
       # One provider round for the whole cart, and persisted: a per-item loop
       # would ask an external pricing system once per line, and nothing here
       # saves the line items — rebuild_fulfillments! and recalculate_totals!
@@ -251,8 +255,7 @@ module Spree
       raise Spree::Pricing::PriceResolution::ProviderUnavailable, result.error.to_s if result.failure?
 
       Spree::Carts::PriceItems.apply(result.value)
-      rebuild_fulfillments!
-      set_fulfillments_cost
+      rebuild_fulfillments!(keep_selection: keep_selection)
       recalculate_totals!
     end
 

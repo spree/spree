@@ -106,8 +106,8 @@ module Spree
     end
 
     def get_desired_shipment_inventory_unit(state)
-      desired_shipment.fulfillment_items.find_or_create_by(status: state, variant: variant) do |unit|
-        current_shipment_unit = current_shipment_units.first
+      current_shipment_unit = current_shipment_units.first
+      desired_shipment.fulfillment_items.find_or_create_by(status: state, variant: variant, replacement: current_shipment_unit&.replacement || false) do |unit|
         unit.variant_id = current_shipment_unit.variant_id
         unit.order_id = current_shipment_unit.order_id
         unit.line_item_id = current_shipment_unit.line_item_id

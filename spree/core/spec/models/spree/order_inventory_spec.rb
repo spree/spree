@@ -130,6 +130,31 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
+  # What a claim sends is often the same variant as what was bought, so only
+  # the flag tells the two apart.
+  context 'when the line holds a replacement unit' do
+    let(:shipment) { order.fulfillments.first }
+
+    before do
+      line_item.update!(quantity: 2)
+      create(:fulfillment_item, fulfillment: shipment, variant: line_item.variant, line_item: line_item, order: order, replacement: true)
+    end
+
+    it 'does not count the replacement toward the quantity' do
+      line_item.update!(quantity: 3)
+
+      expect(line_item.fulfillment_items.reload.reject(&:replacement?).sum(&:quantity)).to eq(3)
+    end
+
+    it 'keeps the replacement when the quantity falls' do
+      line_item.update!(quantity: 1)
+
+      units = line_item.fulfillment_items.reload
+      expect(units.reject(&:replacement?).sum(&:quantity)).to eq(1)
+      expect(units.select(&:replacement?).sum(&:quantity)).to eq(1)
+    end
+  end
+
   context 'when order has too many inventory units' do
     before do
       line_item.quantity = 3

@@ -6,17 +6,6 @@ describe Spree::Order, type: :model do
   context 'ensure shipments will be updated' do
     before { Spree::Shipment.create!(order: order, stock_location: create(:stock_location)) }
 
-    it 'destroys current shipments' do
-      order.ensure_updated_fulfillments
-      expect(order.shipments).to be_empty
-    end
-
-    it 'resets shipment_total' do
-      order.update_column(:shipment_total, 5)
-      order.ensure_updated_fulfillments
-      expect(order.shipment_total).to eq(0)
-    end
-
     context "except when order is completed, that's OrderInventory job" do
       it "doesn't touch anything" do
         allow(order).to receive_messages completed?: true

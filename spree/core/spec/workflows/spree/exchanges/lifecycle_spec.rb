@@ -144,6 +144,37 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(replacement.stock_movements.allocated.sum(:quantity)).to eq(1)
     end
 
+    # The coordinator packs a copy of each unit it is handed, so the unit
+    # handed to it must not be saved as well.
+    it 'flags the replacement and leaves no unit outside a fulfillment' do
+      line = exchange.exchange_line_items.first
+      line.new_variant.stock_levels.first&.set_count_on_hand(10)
+
+      Spree::Exchanges::Fulfill.call(exchange: exchange)
+      units = exchange.order.fulfillment_items.reload.where(variant: line.new_variant)
+
+      expect(units.sum(:quantity)).to eq(1)
+      expect(units).to all(have_attributes(replacement: true, fulfillment_id: be_present))
+    end
+
+    it 'adds a unit when the exchanged line is raised afterwards' do
+      line = exchange.exchange_line_items.first
+      line_item = line.line_item
+      [line.new_variant, line_item.variant].each { |variant| variant.stock_levels.first&.set_count_on_hand(10) }
+      Spree::Exchanges::Fulfill.call(exchange: exchange)
+      original_fulfillments = exchange.order.fulfillments.reload.to_a
+      quantity = line_item.reload.quantity + 1
+
+      result = Spree::Orders::Update.call(
+        order: exchange.order.reload,
+        params: { items: [{ variant_id: line_item.variant_id, quantity: quantity }] }
+      )
+
+      expect(result).to be_success
+      expect(line_item.fulfillment_items.reload.reject(&:replacement?).sum(&:quantity)).to eq(quantity)
+      expect(exchange.order.fulfillments.reload).to include(*original_fulfillments)
+    end
+
     # The guard only matters when money moves: a cheaper replacement owes the
     # customer the difference, and an unrecognised method would otherwise fall
     # through to the gateway instead of store credit.

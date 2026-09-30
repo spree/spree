@@ -20,7 +20,7 @@ module Spree
       def base_scope
         Spree::Cart.incomplete.
           where.not(id: Spree::PaymentSession.where(status: %w[pending processing]).select(:cart_id)).
-          where.not(id: Spree::Payment.where.not(state: Spree::Payment::INVALID_STATES).where.not(cart_id: nil).select(:cart_id))
+          where.not(id: Spree::Payment.valid.where.not(cart_id: nil).select(:cart_id))
       end
 
       def empty_scope
@@ -36,7 +36,7 @@ module Spree
       end
 
       def reap(scope)
-        scope.in_batches(of: 200, &:destroy_all)
+        each_store_of(scope) { |carts| carts.in_batches(of: 200, &:destroy_all) }
       end
     end
   end

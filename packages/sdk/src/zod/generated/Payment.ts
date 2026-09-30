@@ -1,6 +1,9 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CreditCardSchema } from './CreditCard';
 import { PaymentMethodSchema } from './PaymentMethod';
+import { PaymentSourceSchema } from './PaymentSource';
+import { StoreCreditSchema } from './StoreCredit';
 
 export const PaymentSchema = z.object({
   id: z.string(),
@@ -12,7 +15,7 @@ export const PaymentSchema = z.object({
   display_amount: z.string().nullable(),
   source_type: z.string().nullable(),
   source_id: z.string().nullable(),
-  source: z.any(),
+  source: z.union([CreditCardSchema, StoreCreditSchema, PaymentSourceSchema]).nullable(),
   payment_method: PaymentMethodSchema,
 });
 

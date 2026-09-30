@@ -4,14 +4,14 @@ module Spree
   describe Carts::Create do
     subject { described_class }
 
-    let(:user) { create :user }
+    let(:customer) { create :user }
     let(:store) { create :store, default_currency: 'EUR' }
     let(:currency) { 'USD' }
     let(:metadata) { { prop1: 2 } }
     let(:expected) { Spree::Cart.first }
 
     context 'create an order' do
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency, metadata: metadata } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency, metadata: metadata } }
       let(:value) { execute.value }
 
       it do
@@ -23,14 +23,14 @@ module Spree
     end
 
     context 'create an order with store currency' do
-      let(:execute) { subject.call params: { user: user, store: store } }
+      let(:execute) { subject.call params: { customer: customer, store: store } }
       let(:value) { execute.value }
 
       it do
         expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value).to eq expected
-        expect(expected.customer).to eq user
+        expect(expected.customer).to eq customer
         expect(expected.store).to eq store
         expect(expected.currency).to eq 'EUR'
         expect(expected.token).to be_present
@@ -38,7 +38,7 @@ module Spree
     end
 
     context 'create an order with locale' do
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency, locale: 'fr' } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency, locale: 'fr' } }
       let(:value) { execute.value }
 
       before do
@@ -53,7 +53,7 @@ module Spree
     end
 
     context 'create an order with default locale from Spree::Current' do
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency } }
       let(:value) { execute.value }
 
       before do
@@ -69,7 +69,7 @@ module Spree
 
     context 'create an order with market from Spree::Current' do
       let(:market) { create(:market, store: store) }
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency } }
       let(:value) { execute.value }
 
       before do
@@ -84,7 +84,7 @@ module Spree
 
     context 'create an order with explicit market' do
       let(:market) { create(:market, store: store) }
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency, market: market } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency, market: market } }
       let(:value) { execute.value }
 
       it 'uses the explicit market' do
@@ -93,9 +93,20 @@ module Spree
       end
     end
 
+    context 'with the legacy user param' do
+      it 'assigns the customer with a deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/Pass customer: instead/)
+
+        result = subject.call(params: { user: customer, store: store })
+
+        expect(result).to be_success
+        expect(result.value.customer).to eq customer
+      end
+    end
+
     context 'returns failure when no store is passed' do
       let!(:default_store) { create :store, default: true }
-      let(:execute) { subject.call params: { user: user, store: nil } }
+      let(:execute) { subject.call params: { customer: customer, store: nil } }
       let(:value) { execute.value }
 
       it do
@@ -122,7 +133,7 @@ module Spree
         ]
       end
 
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency, items: items } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency, items: items } }
       let(:value) { execute.value }
 
       it 'creates order with line items' do
@@ -142,7 +153,7 @@ module Spree
       end
 
       let(:items) { [{ variant_id: variant.prefixed_id }] }
-      let(:execute) { subject.call params: { user: user, store: store, currency: currency, items: items } }
+      let(:execute) { subject.call params: { customer: customer, store: store, currency: currency, items: items } }
 
       it 'defaults quantity to 1' do
         expect(execute).to be_success
