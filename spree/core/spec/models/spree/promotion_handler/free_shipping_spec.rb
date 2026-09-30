@@ -39,12 +39,19 @@ module Spree
         let!(:action) { Spree::Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
         it 'does adjust the shipment when applied to order' do
+          promotion.coupon_codes.first.apply_order!(order)
           order.promotions << promotion
 
           expect { subject.activate }.to change { shipment.discounts.count }
         end
 
         it 'does not adjust the shipment when not applied to order' do
+          expect { subject.activate }.not_to change { shipment.discounts.count }
+        end
+
+        it 'does not adjust the shipment when the order does not hold a code' do
+          order.promotions << promotion
+
           expect { subject.activate }.not_to change { shipment.discounts.count }
         end
       end

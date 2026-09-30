@@ -25,6 +25,19 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['total_quantity']).to eq(2)
     end
 
+    it 'drops a batch coupon code another cart has taken, with a warning' do
+      promotion = create(:promotion, :with_line_item_adjustment, code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store)
+      coupon_code = promotion.coupon_codes.first
+      coupon_code.update!(cart: create(:cart, store: store))
+      order.update_columns(coupon_code: coupon_code.code)
+
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['coupon_code']).to be_nil
+      expect(json_response['warnings'].map { |warning| warning['code'] }).to include('coupon_code_unavailable')
+    end
+
     it 'defaults quantity to 1' do
       post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
 

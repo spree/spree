@@ -21,6 +21,7 @@ module Spree
                 )
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart(status: :created)
                 else
                   render_result_error(result)
@@ -56,6 +57,7 @@ module Spree
                   )
 
                   if result.success?
+                    sweep_unavailable_coupon_code!
                     render_cart
                   else
                     render_result_error(result)
@@ -67,6 +69,7 @@ module Spree
                     @line_item.update!(metadata: @line_item.metadata.merge(permitted_params[:metadata].to_h))
                   end
 
+                  sweep_unavailable_coupon_code!
                   render_cart
                 end
               end
@@ -83,6 +86,7 @@ module Spree
                 )
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart
                 else
                   render_result_error(result)

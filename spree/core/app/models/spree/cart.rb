@@ -284,5 +284,43 @@ module Spree
       cart
     end
 
+    # Whether this cart shows a batch coupon code it does not hold — used,
+    # taken by another cart or order, or given up by one — and so can never
+    # discount it.
+    #
+    # @return [Boolean]
+    def coupon_code_unavailable?
+      code = read_attribute(:coupon_code)
+      return false if code.blank?
+
+      record = Spree::CouponCode.where(promotion_id: store.promotions.select(:id)).find_by(code: code)
+      record.present? && record.cart_id != id
+    end
+
+    # Drops an entered batch coupon code this cart no longer holds, and warns
+    # the shopper, who otherwise sees the discount vanish.
+    #
+    # @return [Spree::Cart]
+    def remove_unavailable_coupon_code!
+      return self unless coupon_code_unavailable?
+
+      # The lock refuses unsaved attributes and reloads the cart, so this
+      # request's warnings are set aside and put back.
+      existing_warnings = warnings
+      clear_attribute_changes([:warnings])
+      removed = with_lock do
+        # Checked under the lock, as the completion claim itself is: a
+        # completing cart's code sits on its draft order while the payment
+        # runs, and a failed payment hands it back.
+        next false if completion_claimed? || !coupon_code_unavailable?
+
+        Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
+        true
+      end
+      self.warnings = existing_warnings
+      self.warnings |= [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }] if removed
+      self
+    end
+
   end
 end

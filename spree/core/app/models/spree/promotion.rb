@@ -111,7 +111,8 @@ module Spree
     # exact recalculation where the cart first qualifies, and deactivates the
     # same way (Shopify-parity for cart-level discount codes). In-memory
     # assignments deliberately don't participate: unsaved codes belong to
-    # the explicit PromotionHandler::Coupon path.
+    # the explicit PromotionHandler::Coupon path. A batch code counts only
+    # while the purchase holds it (see #eligible?).
     #
     # @param purchase [Spree::Cart, Spree::Order]
     # @return [Array<Spree::Promotion>] empty, or the one promotion
@@ -223,7 +224,7 @@ module Spree
 
     # called anytime order.recalculate_totals! happens
     def eligible?(promotable, options = {})
-      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
+      return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable) || !code_held_by?(promotable)
 
       !!eligible_rules(promotable, options)
     end
@@ -345,6 +346,13 @@ module Spree
     end
 
     private
+
+    # A batch code discounts only the cart or order holding it, which is what
+    # keeps each generated code to a single order. A cart's line item has no
+    # order, and the adjuster has asked with the cart before pricing its lines.
+    def code_held_by?(order)
+      !multi_codes? || order.nil? || coupon_codes.held_by(order).exists?
+    end
 
     # Counts distinct checkouts behind a set of discount rows.
     #
