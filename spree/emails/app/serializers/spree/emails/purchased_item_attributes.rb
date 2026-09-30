@@ -10,7 +10,7 @@ module Spree
       included do
         attribute :url do |item|
           product = purchased_line_item(item).product
-          "#{params[:storefront_url]}#{product.storefront_path}" if product
+          "#{params[:storefront_url]}/products/#{product.slug}" if product
         end
 
         attribute :image_url do |item|
