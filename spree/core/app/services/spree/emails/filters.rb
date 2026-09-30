@@ -50,7 +50,7 @@ module Spree
       def t(key, options = {})
         interpolations = options.to_h.except('scope', 'default', :scope, :default).transform_keys(&:to_sym)
 
-        Spree.t(key.to_s, **interpolations).to_s
+        I18n.t(key.to_s, **interpolations, scope: :spree).to_s
       end
 
       # Marks a value as trusted HTML, so it is output without escaping. Only
