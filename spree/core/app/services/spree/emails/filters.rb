@@ -1,7 +1,7 @@
 module Spree
   module Emails
     # The filters email templates can use, in addition to Liquid's standard
-    # set. Names follow Shopify's where the meaning is the same, because that
+    # set. Names follow common Liquid conventions where the meaning is the same,
     # is the Liquid most developers and agents already know.
     module Filters
       # @example {{ line_item.price | money }}
