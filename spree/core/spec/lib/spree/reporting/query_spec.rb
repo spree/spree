@@ -87,6 +87,18 @@ RSpec.describe Spree::Reporting::Query do
       expect(previous.first.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-06 00:00:00')
       expect(previous.last.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-19 23:59:59')
     end
+
+    it 'shifts a range of whole calendar months by the same number of months' do
+      query = described_class.new(store: store, params: { metrics: %w[orders], time_range: { since: '2026-07-01', until: '2026-09-30' } })
+
+      previous = query.previous_time_range
+      expect(previous.first.strftime('%F %T')).to eq('2026-04-01 00:00:00')
+      expect(previous.last.strftime('%F %T')).to eq('2026-06-30 23:59:59')
+
+      query = described_class.new(store: store, params: { metrics: %w[orders], time_range: { since: '2026-03-01', until: '2026-03-31' } })
+      expect(query.previous_time_range.first.to_date.to_s).to eq('2026-02-01')
+      expect(query.previous_time_range.last.to_date.to_s).to eq('2026-02-28')
+    end
   end
 
   describe 'time presets' do
@@ -705,9 +717,12 @@ RSpec.describe Spree::Reporting::Query do
 
     context 'with a quarter-to-date style range at month grain' do
       # Range: the 1st of the month before last → today, spanning three
-      # calendar months with the current one partial. Each month bucket must
-      # compare with the month three back, never with a month inside the
-      # current period.
+      # calendar months. Each month bucket must compare with the month three
+      # back, never with a neighbour. Frozen on the last day of a quarter,
+      # where the range is three whole months and a plain day shift would
+      # start the previous period on March 31.
+      around { |example| Timecop.freeze(Time.zone.parse('2026-09-30 12:00')) { example.run } }
+
       let(:from) { 2.months.ago.beginning_of_month.to_date }
       let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: (from + 45).in_time_zone.change(hour: 12)) }
       let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: ((from + 45) << 3).in_time_zone.change(hour: 12)) }
