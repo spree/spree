@@ -285,6 +285,7 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :allowed_origins
+        resources :webhook_events, only: [:index]
         resources :webhook_endpoints do
           member do
             post :send_test
