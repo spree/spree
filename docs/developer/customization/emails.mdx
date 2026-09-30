@@ -23,7 +23,7 @@ A template sits at its email's path with a `.liquid` extension. To override one,
 | Customer password reset | `server/app/views/spree/customer_mailer/password_reset_email.liquid` |
 | The layout around every email | `server/app/views/layouts/spree/base_mailer.liquid` |
 
-The path is also the template's name, for example `spree/order_mailer/confirm_email`. [Email Template Variables](/developer/customization/email-variables) lists every template and the data it receives.
+The path is also the template's name, for example `spree/order_mailer/confirm_email`. [Email Template Variables](/developer/customization/email-variables) lists every customer email's template and the data it receives.
 
 Start from Spree's own template rather than a blank file: customer emails are in [`spree/emails/app/views`](https://github.com/spree/spree/tree/main/spree/emails/app/views/spree) and staff emails and the layout in [`spree/core/app/views`](https://github.com/spree/spree/tree/main/spree/core/app/views) on GitHub.
 
@@ -128,7 +128,7 @@ The template goes at `server/app/views/spree/welcome_mailer/welcome_email.liquid
 
 ## Related
 
-- [Email Template Variables](/developer/customization/email-variables) — every template and the data it receives
+- [Email Template Variables](/developer/customization/email-variables) — every customer email and the data it receives
 - [Upgrading from 5.6 to 6.0](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) — moving ERB email overrides to Liquid
 - [Sending out Emails](/developer/deployment/emails) — which emails Spree sends, and handing customer emails to your storefront
 - [Emails provider setup](/developer/providers/emails) — SMTP configuration
