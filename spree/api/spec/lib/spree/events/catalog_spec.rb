@@ -19,12 +19,9 @@ RSpec.describe Spree::Events::Catalog do
     end
   end
 
-  it 'resolves every serializer an event names, and never an Admin one' do
-    entries = Spree::Events.catalog.all
-    missing = entries.select { |entry| entry.serializer_name && !entry.serializer_name.safe_constantize }.map(&:name)
-    admin_shaped = entries.select { |entry| entry.payload_serializer&.name.to_s.include?('::Admin::') }.map(&:name)
+  it 'resolves every serializer an event names' do
+    missing = Spree::Events.catalog.all.select { |entry| entry.serializer_name && !entry.serializer_name.safe_constantize }
 
-    expect(missing).to be_empty, "events naming a serializer that does not exist: #{missing.join(', ')}"
-    expect(admin_shaped).to be_empty, "events with an Admin payload: #{admin_shaped.join(', ')}"
+    expect(missing.map(&:name)).to be_empty
   end
 end

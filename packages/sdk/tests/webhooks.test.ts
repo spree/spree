@@ -1,6 +1,13 @@
 import { createHmac } from 'node:crypto'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { verifyWebhookSignature, type WebhookEvent } from '../src/webhooks'
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
+import type { Order, PasswordResetRequestedEvent } from '../src/types/generated'
+import {
+  constructWebhookEvent,
+  verifyWebhookSignature,
+  type WebhookEvent,
+  WebhookVerificationError,
+} from '../src/webhooks'
+import { OrderSchema, PasswordResetRequestedEventSchema, webhookEventSchemas } from '../src/zod'
 
 function sign(payload: string, secret: string, timestamp: number): string {
   return createHmac('sha256', secret).update(`${timestamp}.${payload}`).digest('hex')
@@ -108,15 +115,85 @@ describe('WebhookEvent type', () => {
     expect(event.name).toBe('order.placed')
   })
 
-  it('defaults data to unknown', () => {
-    const event: WebhookEvent = {
+  it('narrows data by event name', () => {
+    const event = {
       id: 'evt_456',
-      name: 'custom.event',
+      name: 'customer.password_reset_requested',
       created_at: '2026-01-15T12:00:00Z',
-      data: { anything: 'goes' },
-      metadata: { spree_version: '5.4.0' },
-    }
+      data: { email: 'test@example.com', reset_token: 'token', store_id: 'store_1' },
+      metadata: { spree_version: '6.0.0' },
+    } as WebhookEvent
 
-    expect(event.id).toBe('evt_456')
+    if (event.name === 'customer.password_reset_requested') {
+      expectTypeOf(event.data).toEqualTypeOf<PasswordResetRequestedEvent>()
+      expect(event.data.reset_token).toBe('token')
+    }
+  })
+
+  it('narrows up front to the named events', () => {
+    expectTypeOf<WebhookEvent<'order.placed'>['data']>().toEqualTypeOf<Order>()
+    expectTypeOf<WebhookEvent<'order.placed'>['name']>().toEqualTypeOf<'order.placed'>()
+  })
+})
+
+describe('constructWebhookEvent', () => {
+  const secret = 'test_secret_key_abc123'
+  const body = JSON.stringify({
+    id: 'evt_789',
+    name: 'order.placed',
+    created_at: '2026-01-15T12:00:00Z',
+    data: { id: 'or_1', number: 'R123' },
+    metadata: { spree_version: '6.0.0', notify_customer: true },
+  })
+
+  function headersFor(payload: string, signingSecret = secret) {
+    const timestamp = Math.floor(Date.now() / 1000)
+    return {
+      'X-Spree-Webhook-Signature': sign(payload, signingSecret, timestamp),
+      'X-Spree-Webhook-Timestamp': String(timestamp),
+    }
+  }
+
+  it('returns the event of a genuine request', () => {
+    const event = constructWebhookEvent(body, headersFor(body), secret)
+
+    expect(event.name).toBe('order.placed')
+    expect(event.metadata.notify_customer).toBe(true)
+  })
+
+  it('reads a Fetch Headers object', () => {
+    const event = constructWebhookEvent(body, new Headers(headersFor(body)), secret)
+
+    expect(event.id).toBe('evt_789')
+  })
+
+  it('refuses a request signed with another secret', () => {
+    expect(() => constructWebhookEvent(body, headersFor(body, 'wrong_secret'), secret)).toThrow(
+      WebhookVerificationError,
+    )
+  })
+
+  it('refuses a request without signature headers', () => {
+    expect(() => constructWebhookEvent(body, {}, secret)).toThrow(
+      /Missing X-Spree-Webhook-Signature/,
+    )
+  })
+
+  it('validates data with the schema for its event', () => {
+    const parse = vi.fn((data: unknown) => ({ ...(data as object), parsed: true }))
+
+    const event = constructWebhookEvent(body, headersFor(body), secret, {
+      schemas: { 'order.placed': { parse } },
+    })
+
+    expect(parse).toHaveBeenCalledWith({ id: 'or_1', number: 'R123' })
+    expect(event.data).toMatchObject({ parsed: true })
+  })
+
+  it('declares a schema for every event', () => {
+    expect(webhookEventSchemas['order.placed']).toBe(OrderSchema)
+    expect(webhookEventSchemas['customer.password_reset_requested']).toBe(
+      PasswordResetRequestedEventSchema,
+    )
   })
 })
