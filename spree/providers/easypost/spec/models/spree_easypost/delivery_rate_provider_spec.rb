@@ -244,6 +244,44 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(shipment_service).to have_received(:create).once
       expect(other_estimates.size).to eq(2)
     end
+
+    # An order split into several packages from one stock location: each
+    # package ships its own parcel, so each must be quoted on its own. The
+    # cache used to key on the location and owner only, handing the second
+    # package the first one's rates.
+    describe 'split packages from one stock location' do
+      let(:order) { create(:order_with_line_items, store: store, line_items_count: 2) }
+      let(:fulfillment) { order.fulfillments.first }
+      let(:packages) do
+        order.line_items.first.variant.update!(weight: 1)
+        order.line_items.last.variant.update!(weight: 20)
+
+        fulfillment.to_package.contents.group_by(&:variant).values.map do |items|
+          Spree::Stock::Package.new(fulfillment.stock_location, items).tap { |split| split.owner = order }
+        end
+      end
+
+      it 'quotes each package with its own contents' do
+        allow(shipment_service).to receive(:create) do |params|
+          rate = double(carrier: 'UPS', service: 'Ground', rate: params[:parcel][:weight].to_s, currency: 'USD',
+                        delivery_date: nil, id: "rate_#{params[:parcel][:weight]}", shipment_id: 'shp')
+          double(rates: [rate])
+        end
+
+        light, heavy = packages.sort_by(&:weight).map { |split| provider.estimates(split).first }
+
+        expect(shipment_service).to have_received(:create).twice
+        expect(light.cost).not_to eq(heavy.cost)
+        expect(light.metadata['easypost_rate_id']).not_to eq(heavy.metadata['easypost_rate_id'])
+      end
+
+      it 'still reuses the quote for the same package' do
+        packages.each { |split| provider.estimates(split) }
+        packages.each { |split| provider.estimates(split) }
+
+        expect(shipment_service).to have_received(:create).twice
+      end
+    end
   end
 end
 

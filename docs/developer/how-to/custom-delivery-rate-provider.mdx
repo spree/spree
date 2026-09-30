@@ -93,13 +93,19 @@ module SpreeAcmeCarrier
     # One API call serves every delivery method sharing this provider within
     # a request — carriers return all services in one response, so quoting
     # five methods should not mean five round-trips.
+    #
+    # Key the cache on everything the request sends, not on the location and
+    # order: an order split into several packages from one stock location
+    # would otherwise get the first package's rates for every package.
+    # Digesting the payload itself keeps the key complete as the request grows.
     def quotes_for(package)
-      key = [:acme_quotes, store.id, package.stock_location.id, package.order.id]
-      Spree::Current.provider_cache[key] ||= integration.client.rates(
-        from: package.stock_location,
-        to: package.order.ship_address,
-        parcel: { weight: package.weight }
-      )
+      request = {
+        from: package.stock_location.slice(:address1, :city, :zipcode, :country_id),
+        to: package.owner.ship_address.slice(:address1, :city, :zipcode, :country_id),
+        parcel: { weight: package.weight.to_f }
+      }
+      key = [:acme_quotes, store.id, Digest::SHA256.hexdigest(request.to_json)]
+      Spree::Current.provider_cache[key] ||= integration.client.rates(**request)
     end
   end
 end
