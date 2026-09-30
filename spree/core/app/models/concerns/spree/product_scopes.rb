@@ -156,7 +156,8 @@ module Spree
           where(Spree::ProductCategory.table_name => { category_id: taxon_ids }).
           select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
           group("#{Product.table_name}.id").
-          order(Arel.sql("#{min_position_sql} ASC"))
+          # Ties fall back to id, so the order holds across queries and pages.
+          order(Arel.sql("#{min_position_sql} ASC"), arel_table[:id].asc)
       }
 
       scope :with_option_value, ->(option, value) {
