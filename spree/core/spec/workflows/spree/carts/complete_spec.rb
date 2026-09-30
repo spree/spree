@@ -626,6 +626,17 @@ module Spree
         expect(ready_cart.reload.order).to be_nil
         expect(ready_cart.discounts.where(promotion_id: promotion.id)).to be_present
       end
+
+      it 'refuses a cart showing a code it gave up, rather than naming it on the order' do
+        promotion = create(:promotion_with_item_adjustment, adjustment_rate: 2, kind: :coupon_code, store: store, multi_codes: true, number_of_codes: 1)
+        ready_cart.update_columns(coupon_code: promotion.coupon_codes.first.code)
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('coupon_code_unavailable')
+        expect(ready_cart.reload.order).to be_nil
+      end
     end
   end
 end

@@ -107,14 +107,18 @@ describe 'coupon code retry on recalculation' do
       expect(replacement.reload.holder).to eq(cart)
     end
 
-    it 'does not treat a code nobody holds as taken' do
-      cart.update!(coupon_code: coupon_code.code)
+    it 'treats a saved code the cart does not hold as unavailable, whoever holds it' do
+      apply_code(cart)
 
-      expect(cart.coupon_code_taken?).to be(false)
+      expect(cart.coupon_code_unavailable?).to be(false)
 
       coupon_code.update!(cart: other_cart)
 
-      expect(cart.coupon_code_taken?).to be(true)
+      expect(cart.coupon_code_unavailable?).to be(true)
+
+      coupon_code.remove_from_order
+
+      expect(cart.coupon_code_unavailable?).to be(true)
     end
 
     it 'lets the shopper remove a code saved before the cart qualified' do
