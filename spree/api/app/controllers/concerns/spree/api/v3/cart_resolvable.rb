@@ -57,9 +57,9 @@ module Spree
           @cart = @cart.remove_out_of_stock_items!
         end
 
-        # Drops a batch coupon code another cart has taken since the customer
-        # last looked. Writes need no such sweep: the lost code already earns
-        # no discount, and checkout refuses it.
+        # Drops a batch coupon code the cart no longer holds. Unlike the line
+        # sweep this runs after writes too, since an API client may rely on
+        # write responses alone to learn why its discount went.
         def sweep_unavailable_coupon_code!
           @cart = @cart.remove_unavailable_coupon_code!
         end

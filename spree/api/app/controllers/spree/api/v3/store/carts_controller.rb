@@ -71,6 +71,7 @@ module Spree
               )
 
               if result.success?
+                sweep_unavailable_coupon_code!
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])

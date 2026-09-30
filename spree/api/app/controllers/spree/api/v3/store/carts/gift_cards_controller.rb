@@ -18,6 +18,7 @@ module Spree
                 result = @cart.apply_gift_card(gift_card)
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart(status: :created)
                 else
                   render_service_error(result.error)
@@ -31,6 +32,7 @@ module Spree
                 result = @cart.remove_gift_card
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart
                 else
                   render_service_error(result.error)

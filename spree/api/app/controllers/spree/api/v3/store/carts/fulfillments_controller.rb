@@ -36,6 +36,7 @@ module Spree
 
                 recalculate
 
+                sweep_unavailable_coupon_code!
                 render_cart
               end
             end
