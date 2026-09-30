@@ -10,6 +10,15 @@ module Spree
       let(:delivery) { create(:webhook_delivery, :pending, webhook_endpoint: webhook_endpoint) }
       let(:secret_key) { webhook_endpoint.secret_key }
 
+      # The Net::HTTP connections a delivery opens on its direct path.
+      def capture_http_connections
+        connections = []
+        allow(Net::HTTP).to receive(:new).and_wrap_original do |original, *args|
+          original.call(*args).tap { |http| connections << http }
+        end
+        connections
+      end
+
       describe '.call' do
         context 'when the payload had credentials withheld from the log' do
           let(:delivery) do
@@ -331,6 +340,36 @@ module Spree
             described_class.call(delivery: delivery, secret_key: secret_key)
 
             expect(WebMock).to have_requested(:post, delivery.url).with(headers: { 'traceparent' => '00-trace-01' })
+          end
+
+          # SsrfFilter connects without a proxy; the direct path must too, or an
+          # egress proxy from the environment would carry in-cluster traffic.
+          it 'ignores a proxy configured in the environment' do
+            stub_const('ENV', ENV.to_h.merge('http_proxy' => 'http://proxy.example:3128').except('no_proxy', 'NO_PROXY'))
+            connections = capture_http_connections
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(connections.sole.proxy?).to be false
+          end
+        end
+
+        context 'when the endpoint is an allowed IPv6 address' do
+          let(:webhook_endpoint) do
+            create(:webhook_endpoint, store: store, url: 'http://[::1]/api/webhooks/spree')
+          end
+
+          before do
+            allow(Spree::Api::Config).to receive(:webhooks_allowed_internal_hosts).and_return(['::1'])
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+          end
+
+          it 'connects to the address without its URL brackets' do
+            connections = capture_http_connections
+
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(connections.sole.address).to eq('::1')
           end
         end
 

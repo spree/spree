@@ -47,7 +47,7 @@ module Spree
     # @param url [String]
     # @return [Boolean]
     def self.allowed_internal_host?(url)
-      host = URI.parse(url.to_s).host&.downcase
+      host = URI.parse(url.to_s).hostname&.downcase
       return false if host.blank?
 
       allowed_internal_hosts.any? do |entry|

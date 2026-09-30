@@ -65,6 +65,12 @@ describe Spree::WebhookEndpoint, type: :model do
           expect(webhook_endpoint).to be_valid
         end
 
+        it 'matches an IPv6 address without its URL brackets' do
+          stub_const('Spree::Api::Config', double(webhooks_allowed_internal_hosts: ['::1']))
+          webhook_endpoint.url = 'http://[::1]/api/webhooks/spree'
+          expect(webhook_endpoint).to be_valid
+        end
+
         it 'rejects a host that only ends with the suffix text' do
           webhook_endpoint.url = 'http://evil-svc.cluster.local/api/webhooks/spree'
           expect(webhook_endpoint).not_to be_valid

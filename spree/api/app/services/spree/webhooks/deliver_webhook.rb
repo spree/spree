@@ -95,7 +95,9 @@ module Spree
         # (Spree::Api::Config.webhooks_allowed_internal_hosts).
         if Rails.env.development? || Spree::WebhookEndpoint.allowed_internal_host?(@delivery.url)
           uri = URI.parse(@delivery.url)
-          http = Net::HTTP.new(uri.host, uri.port)
+          # No proxy, as SsrfFilter: an egress proxy from the environment would
+          # carry this in-cluster (or localhost) request out of the network.
+          http = Net::HTTP.new(uri.hostname, uri.port, nil)
           http.use_ssl = uri.scheme == 'https'
           http_options.each { |k, v| http.send(:"#{k}=", v) }
 
