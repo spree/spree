@@ -30,7 +30,11 @@ module Spree
         run_hooks :validate
         run_hooks :before_refund
 
-        if internal_refund?
+        # Nothing is owed (a free gift sent back), so the return closes
+        # without a refund row, store credit or tax credit.
+        if @amount_to_refund.zero?
+          step :mark_refunded
+        elsif internal_refund?
           ApplicationRecord.transaction do
             step :issue_store_credit
             step :mark_refunded
@@ -40,7 +44,7 @@ module Spree
           step :mark_refunded
         end
 
-        external_step :refund_tax
+        external_step :refund_tax unless @amount_to_refund.zero?
         run_hooks :after_refund
         return_record.publish_event('return.refunded')
         success(return_record.reload)
@@ -85,12 +89,15 @@ module Spree
       # Only what actually came back is refundable — a customer who sent two of
       # three items gets two items' worth. One figure serves as both the
       # default and the ceiling, so a caller naming an amount cannot ask for
-      # more than a caller who names none would get.
+      # more than a caller who names none would get. Zero is accepted only when
+      # zero is owed, so a return the customer is owed money on cannot be
+      # closed without paying them.
       def resolve_amount
         refundable = return_record.refundable_total.to_d
         @amount_to_refund = amount ? amount.to_d : refundable
 
-        failure(return_record, :nothing_to_refund) unless @amount_to_refund.positive?
+        failure(return_record, :refund_amount_negative) if @amount_to_refund.negative?
+        failure(return_record, :refund_amount_required) if @amount_to_refund.zero? && refundable.positive?
         failure(return_record, :refund_exceeds_balance) if @amount_to_refund > refundable
       end
 

@@ -17,12 +17,14 @@ import {
   type RefundMethod,
   ReturnReceiveDialog,
   ReturnRefundDialog,
+  returnOwesNothing,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
 import {
   BanknoteIcon,
   CheckCircleIcon,
+  ClipboardCheckIcon,
   EllipsisVerticalIcon,
   PackageCheckIcon,
   PlusIcon,
@@ -126,8 +128,17 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                         )}
                         {returnRecord.status === 'received' && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
-                            <BanknoteIcon className="size-4" />
-                            {t('admin.pages.orders.detail.returns.actions.refund')}
+                            {returnOwesNothing(returnRecord.refundable_total) ? (
+                              <>
+                                <ClipboardCheckIcon className="size-4" />
+                                {t('admin.pages.orders.detail.returns.actions.complete')}
+                              </>
+                            ) : (
+                              <>
+                                <BanknoteIcon className="size-4" />
+                                {t('admin.pages.orders.detail.returns.actions.refund')}
+                              </>
+                            )}
                           </DropdownMenuItem>
                         )}
                         {['requested', 'approved'].includes(returnRecord.status) && (

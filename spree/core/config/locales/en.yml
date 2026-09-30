@@ -1593,6 +1593,8 @@ en:
     reference: Reference
     refund: Refund
     refund_amount: Refund Amount
+    refund_amount_negative: The refund amount cannot be negative.
+    refund_amount_required: Enter an amount greater than zero, because the customer is still owed money on this return.
     refund_exceeds_balance: That is more than the amount still refundable.
     refunds: Refunds
     register: Register

@@ -155,9 +155,12 @@
             "resellable": "Resellable",
             "actions": {
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "complete": "Complete return"
             },
             "refund_title": "Refund return",
+            "complete_title": "Complete return",
+            "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_amount": "Amount",
             "refund_method": "Refund to",
             "refund_methods": {

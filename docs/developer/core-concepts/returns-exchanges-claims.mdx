@@ -118,7 +118,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/returns/ret_xx
 
 Receiving takes the quantities the warehouse actually counted, because partial and damaged returns are normal rather than exceptional. A customer says three items are coming; two arrive; one of those can't be sold again. Only resellable goods go back into stock.
 
-Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit.
+Leave `items` out to receive everything as requested. Refunds default to whatever the return is still owed, and can go back to the original payment method or to store credit. A returned item is worth what the customer paid for it after discounts, not its list price, so a free gift sent back refunds nothing. Refunding a return that is owed nothing completes it with no money moved and no refund email; an amount of zero is refused on any return the customer is still owed money on.
 
 ### Where the goods come back to
 
@@ -200,6 +200,8 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_x
 A replacement creates a new [fulfillment](/developer/core-concepts/fulfillments) on the original order, so the customer doesn't have to place a second one.
 
 The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is.
+
+A claim never refunds more than the customer paid for the claimed items after discounts. Each claim line reports that ceiling as `paid_amount`.
 
 ## Exchanges
 

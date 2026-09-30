@@ -3338,7 +3338,8 @@
               "approve": "Approve",
               "create": "New return",
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "complete": "Complete return"
             },
             "buy_label": "Buy return label",
             "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
@@ -3367,6 +3368,8 @@
               "store_credit": "Store credit"
             },
             "refund_title": "Refund return",
+            "complete_title": "Complete return",
+            "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_total": "Refund total",
             "resellable": "Resellable",
             "returning_to": "Returning to {{name}}"

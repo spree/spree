@@ -16316,6 +16316,8 @@ paths:
                     currency: USD
                     price: '10.0'
                     display_price: "$10.00"
+                    discounted_amount: '10.0'
+                    display_discounted_amount: "$10.00"
                     total: '10.0'
                     display_total: "$10.00"
                     variant_id: variant_UkLWZg9DAJ
@@ -16517,6 +16519,8 @@ paths:
                   currency: USD
                   price: '10.0'
                   display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
@@ -16714,6 +16718,8 @@ paths:
                   currency: USD
                   price: '10.0'
                   display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
@@ -16918,6 +16924,8 @@ paths:
                   currency: USD
                   price: '10.0'
                   display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
@@ -17185,6 +17193,8 @@ paths:
                   currency: USD
                   price: '10.0'
                   display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
@@ -17358,6 +17368,8 @@ paths:
                   currency: USD
                   price: '10.0'
                   display_price: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
                   total: '10.0'
                   display_total: "$10.00"
                   variant_id: variant_UkLWZg9DAJ
@@ -20714,6 +20726,12 @@ components:
         display_price:
           type: string
           nullable: true
+        discounted_amount:
+          type: string
+          nullable: true
+        display_discounted_amount:
+          type: string
+          nullable: true
         total:
           type: string
           nullable: true
@@ -20737,6 +20755,8 @@ components:
       - currency
       - price
       - display_price
+      - discounted_amount
+      - display_discounted_amount
       - total
       - display_total
       - variant_id

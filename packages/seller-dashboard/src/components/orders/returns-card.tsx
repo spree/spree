@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
   ReturnReceiveDialog,
   ReturnRefundDialog,
+  returnOwesNothing,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -114,7 +115,9 @@ export function ReturnsCard({ order }: { order: Order }) {
                         )}
                         {returnRecord.status === 'received' && (
                           <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
-                            {t('orders.post_sale.returns.refund')}
+                            {returnOwesNothing(returnRecord.refundable_total)
+                              ? t('admin.pages.orders.detail.returns.actions.complete')
+                              : t('orders.post_sale.returns.refund')}
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />

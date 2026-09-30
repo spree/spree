@@ -3376,7 +3376,8 @@
               "approve": "Zatwierdź",
               "create": "Nowy zwrot",
               "receive": "Przyjmij produkty",
-              "refund": "Zwróć płatność"
+              "refund": "Zwróć płatność",
+              "complete": "Zakończ zwrot"
             },
             "buy_label": "Kup etykietę zwrotną",
             "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
@@ -3405,6 +3406,8 @@
               "store_credit": "Kredyt sklepowy"
             },
             "refund_title": "Zwrot płatności",
+            "complete_title": "Zakończ zwrot",
+            "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "refund_total": "Kwota zwrotu",
             "resellable": "Nadaje się do sprzedaży",
             "returning_to": "Zwrot do {{name}}"

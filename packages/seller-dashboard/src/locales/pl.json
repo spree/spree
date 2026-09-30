@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "Przyjmij pozycje",
-              "refund": "Zwrot pieniędzy"
+              "refund": "Zwrot pieniędzy",
+              "complete": "Zakończ zwrot"
             },
             "create_title": "Nowy zwrot",
             "location": "Zwrot do",
@@ -153,6 +154,8 @@
               "store_credit": "Kredyt sklepowy"
             },
             "refund_title": "Zwrot pieniędzy za zwrot",
+            "complete_title": "Zakończ zwrot",
+            "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "resellable": "Do ponownej sprzedaży"
           }
         }

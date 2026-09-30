@@ -19,11 +19,13 @@ module Spree
                    variant_id: [:string, nullable: true],
                    thumbnail_url: [:string, nullable: true],
                    price: [:string, nullable: true], display_price: [:string, nullable: true],
+                   discounted_amount: [:string, nullable: true], display_discounted_amount: [:string, nullable: true],
                    total: [:string, nullable: true], display_total: [:string, nullable: true]
 
           attributes :name, :options_text, :quantity, :currency
 
-          money_attributes :price, :display_price, :total, :display_total
+          money_attributes :price, :display_price, :discounted_amount, :display_discounted_amount,
+                           :total, :display_total
 
           attribute :variant_id do |line_item|
             line_item.variant&.prefixed_id
