@@ -23,16 +23,28 @@ module SpreeStripe
         Spree::PaymentSessions::Stripe
       end
 
+      # Hands back the owner's open session, re-priced, when there is one:
+      # every open intent can be paid on its own, so a second one (another
+      # tab, a reloaded checkout) would charge the buyer twice. An open
+      # session that no longer fits is canceled before its replacement opens.
+      #
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentSessions::Stripe]
+      # @raise [Spree::Core::GatewayError] when the open session has already
+      #   been paid
       def create_payment_session(order:, amount: nil, external_data: {})
         total = amount.presence || order.total_minus_store_credits
         amount_in_cents = Spree::Money.new(total, currency: order.currency).cents
 
         raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.zero_amount') if amount_in_cents.zero?
 
-        gateway_customer = fetch_or_create_customer(order: order)
         stripe_payment_method_id = external_data[:stripe_payment_method_id] || external_data['stripe_payment_method_id']
+
+        open_session = order.payment_sessions.where(payment_method: self).active.order(:created_at).last
+        reused_session = open_session && reuse_payment_session(open_session, order, total, stripe_payment_method_id)
+        return reused_session if reused_session
+
+        gateway_customer = fetch_or_create_customer(order: order)
 
         response = create_payment_intent(
           amount_in_cents, order,
@@ -110,6 +122,23 @@ module SpreeStripe
         payment_session
       end
 
+      # Stripe refuses once money has moved, and that refusal is raised so the
+      # session is never shown as canceled while its money stands. An intent
+      # already canceled at Stripe, or unknown to the account the keys now
+      # reach, can no longer be paid, so its session is canceled all the same.
+      #
+      # @param payment_session [Spree::PaymentSessions::Stripe]
+      # @return [Boolean] whether the session was canceled
+      # @raise [Spree::Core::GatewayError] when Stripe refuses
+      def cancel_payment_session(payment_session:)
+        protect_from_error { cancel_payment_intent(payment_session.external_id) }
+        payment_session.cancel
+      rescue Spree::Core::GatewayError => error
+        raise error unless payment_intent_unpayable?(payment_session.external_id)
+
+        payment_session.cancel
+      end
+
       def retrieve_payment_intent(payment_intent_id)
         send_request { |opts| Stripe::PaymentIntent.retrieve({ id: payment_intent_id, expand: ['payment_method'] }, opts) }
       end
@@ -169,6 +198,55 @@ module SpreeStripe
       end
 
       private
+
+      def reuse_payment_session(payment_session, order, total, stripe_payment_method_id)
+        return payment_session if payment_session_fits?(payment_session, order, stripe_payment_method_id) &&
+                                  reprice_payment_session(payment_session, total)
+
+        # Stripe would cancel an authorization or a debit in flight; a payment
+        # the buyer has already made is never dropped to make way for another.
+        payment_intent = find_payment_intent(payment_session.external_id)
+        if payment_intent && payment_intent_accepted?(payment_intent)
+          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+        end
+
+        cancel_payment_session(payment_session: payment_session)
+        nil
+      end
+
+      # The intent's Stripe customer, currency and card are fixed when it opens.
+      def payment_session_fits?(payment_session, order, stripe_payment_method_id)
+        payment_session.customer_id == order.customer_id &&
+          payment_session.currency == order.currency &&
+          payment_session.external_data.to_h['stripe_payment_method_id'] == stripe_payment_method_id
+      end
+
+      def reprice_payment_session(payment_session, total)
+        # Ephemeral keys expire after an hour, and the mobile payment sheet
+        # cannot list saved cards without a live one.
+        ephemeral_key = payment_session.customer_external_id.presence &&
+                        create_ephemeral_key(payment_session.customer_external_id).params['secret']
+
+        update_payment_session(payment_session: payment_session, amount: total,
+                               external_data: { 'ephemeral_key_secret' => ephemeral_key }.compact)
+        true
+      rescue Spree::Core::GatewayError
+        false
+      end
+
+      # nil when the account the keys now reach has no such intent.
+      def find_payment_intent(payment_intent_id)
+        retrieve_payment_intent(payment_intent_id)
+      rescue Stripe::InvalidRequestError => error
+        raise Spree::Core::GatewayError, error.message unless error.code == 'resource_missing'
+      rescue Stripe::StripeError => error
+        raise Spree::Core::GatewayError, error.message
+      end
+
+      def payment_intent_unpayable?(payment_intent_id)
+        payment_intent = find_payment_intent(payment_intent_id)
+        payment_intent.nil? || payment_intent.status == 'canceled'
+      end
 
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentResponse]
