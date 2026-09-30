@@ -215,7 +215,7 @@ Deleting a promotion doesn't disturb the orders that used it. Their discount row
 Coupon codes track promotion usage and can be single-use or multi-use.
 
 - **Single code** — set the `code` attribute on the promotion; `usage_limit` controls how many times it can be redeemed.
-- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`). A code is used up only when an order is placed with it. Applying it to a cart just holds it there, even before the cart qualifies, and only the cart holding a code gets its discount. A shopper who presents a code held by an abandoned cart takes it over, so an unfinished checkout never burns a code. The cart that lost it gets a `coupon_code_unavailable` warning the next time it is read, and placing an order with a code that has been taken is refused rather than charged more than the shopper was shown.
+- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`). A code is used up only when an order is placed with it. Applying it to a cart just holds it there, even before the cart qualifies, and only the cart holding a code gets its discount. A shopper who presents a code held by an abandoned cart takes it over, so an unfinished checkout never burns a code. The cart that lost it drops the code and gets a `coupon_code_unavailable` warning on its next Store API request that reads or changes the cart, and placing an order with a code that has been taken is refused rather than charged more than the shopper was shown.
 
 Customers apply codes on the cart via the Store API:
 
