@@ -720,6 +720,22 @@ RSpec.describe Spree::Reporting::Query do
         expect(bucket[:metrics][:orders][:value]).to eq(1)
         expect(bucket[:metrics][:orders][:previous]).to eq(1)
       end
+
+      # July 1 – September 30 is 92 days, one more than April – June, so the
+      # previous period opens on March 31. That one-day March bucket must not
+      # push July onto March and August onto April.
+      it 'ignores the day the previous period spills into the month before' do
+        create(:completed_order_with_totals, store: store, completed_at: '2026-08-15 12:00'.in_time_zone)
+        create(:completed_order_with_totals, store: store, completed_at: '2026-05-15 12:00'.in_time_zone)
+
+        result = run(metrics: %w[orders], dimensions: [{ name: 'completed_at', grain: 'month' }],
+                     compare: 'previous_period', time_range: { since: '2026-07-01', until: '2026-09-30' })
+
+        may_orders = store.orders.complete.where(completed_at: '2026-05-01'.in_time_zone..'2026-05-31'.in_time_zone.end_of_day).count
+        august = result.rows.find { |row| row[:dimensions][:completed_at] == '2026-08-01' }
+        expect(may_orders).to be_positive
+        expect(august[:metrics][:orders][:previous]).to eq(may_orders)
+      end
     end
 
     context 'with a range that is not whole weeks' do

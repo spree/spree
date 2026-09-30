@@ -649,11 +649,26 @@ module Spree
         # its partial first bucket with the previous period's partial first
         # bucket. A bucket past the end of the previous list has no
         # counterpart and pairs with nothing rather than wrapping around.
+        #
+        # The one exception: an equal-day shift can carry the previous period's
+        # start across the bucket edge the current period starts on. July 1 to
+        # September 30 is 92 days, so the previous period opens on March 31 with
+        # a one-day March bucket; left in, every month would pair one early.
         def bucket_pairs(grain)
           current = expected_buckets(query.time_range, grain)
           previous = expected_buckets(query.previous_time_range, grain)
 
+          if opens_mid_bucket?(query.previous_time_range, previous, grain) &&
+             !opens_mid_bucket?(query.time_range, current, grain)
+            previous = previous.drop(1)
+          end
+
           current.each_with_index.to_h { |bucket, position| [bucket, previous[position]] }
+        end
+
+        def opens_mid_bucket?(range, buckets, grain)
+          start = range.first.in_time_zone(query.time_zone)
+          buckets.first != (grain == :hour ? start.strftime(HOUR_BUCKET_FORMAT) : start.to_date.to_s)
         end
 
         # SQL already ordered/limited the pushdown case; this re-sort is a
