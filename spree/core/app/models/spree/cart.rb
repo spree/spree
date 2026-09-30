@@ -304,9 +304,21 @@ module Spree
     def remove_unavailable_coupon_code!
       return self unless coupon_code_unavailable?
 
+      # The lock refuses unsaved attributes and reloads the cart, so this
+      # request's warnings are set aside and put back.
       existing_warnings = warnings
-      Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
-      self.warnings = existing_warnings | [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }]
+      clear_attribute_changes([:warnings])
+      removed = with_lock do
+        # Checked under the lock, as the completion claim itself is: a
+        # completing cart's code sits on its draft order while the payment
+        # runs, and a failed payment hands it back.
+        next false if completion_claimed? || !coupon_code_unavailable?
+
+        Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
+        true
+      end
+      self.warnings = existing_warnings
+      self.warnings |= [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }] if removed
       self
     end
 

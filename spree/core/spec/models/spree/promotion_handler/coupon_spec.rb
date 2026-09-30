@@ -374,11 +374,26 @@ module Spree
 
             it 'tells the cart that lost the code on its next read' do
               subject.apply
+              cart.reload.warnings = [{ code: 'line_item_removed' }]
 
-              cart.reload.remove_unavailable_coupon_code!
+              cart.remove_unavailable_coupon_code!
 
               expect(cart.read_attribute(:coupon_code)).to be_nil
-              expect(cart.warnings).to contain_exactly(code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable))
+              expect(cart.warnings).to contain_exactly(
+                { code: 'line_item_removed' },
+                { code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }
+              )
+            end
+
+            it 'leaves the code alone while the cart is completing' do
+              cart.reload.update_columns(completing_at: Time.current)
+              Spree::CouponCode.where(cart_id: cart.id).update_all(order_id: order.id, cart_id: nil)
+
+              cart.remove_unavailable_coupon_code!
+
+              expect(cart.read_attribute(:coupon_code)).to eq(coupon_code.code)
+              expect(cart.discount_total).to be_negative
+              expect(cart.warnings).to be_empty
             end
 
             it 'keeps the code on a cart that is checking out' do
