@@ -126,14 +126,9 @@ end
 
 The template goes at `server/app/views/spree/welcome_mailer/welcome_email.liquid`. `email_data` serializes a record the way templates read it; pass a URL that carries a token as its own variable rather than serializing it.
 
-## Upgrading from ERB templates
-
-Before Spree 6.0, emails were ERB views. Each ERB file maps to the Liquid file at the same path: `spree/order_mailer/confirm_email.html.erb` becomes `spree/order_mailer/confirm_email.liquid`. The shared header, footer and stylesheet partials are now the single `layouts/spree/base_mailer.liquid` layout. See the [6.0 upgrade guide](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) for the full list.
-
-An ERB override of one of Spree's emails is no longer used, so the default design goes out instead. Port each one to Liquid when you upgrade.
-
 ## Related
 
 - [Email Template Variables](/developer/customization/email-variables) — every template and the data it receives
+- [Upgrading from 5.6 to 6.0](/developer/upgrades/5.6-to-6.0#emails-render-from-liquid-templates) — moving ERB email overrides to Liquid
 - [Sending out Emails](/developer/deployment/emails) — which emails Spree sends, and handing customer emails to your storefront
 - [Emails provider setup](/developer/providers/emails) — SMTP configuration

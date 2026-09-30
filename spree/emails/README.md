@@ -59,7 +59,7 @@ Every email renders from a Liquid template at its Rails view path. To change one
 
 Templates read plain data from serializers, never models: see the [email templates guide](https://spreecommerce.org/docs/developer/customization/emails) for the layout, partials, filters and escaping, and the [variable reference](https://spreecommerce.org/docs/developer/customization/email-variables) for what each template receives.
 
-An ERB override of one of these emails from before Spree 6.0 is no longer used, so port it to Liquid when you upgrade. Mailers of your own that render ERB views keep working, wrapped in the same layout.
+Mailers of your own that render ERB views keep working, wrapped in the same layout.
 
 ### Adding new email types
 
