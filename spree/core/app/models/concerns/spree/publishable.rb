@@ -224,7 +224,7 @@ module Spree
     #   e.g. the reset token of a password reset request
     # @return [Hash]
     def event_payload_for(event_name, **params)
-      serializer = Spree::Events.catalog.find(event_name)&.payload_serializer
+      serializer = Spree::Events.catalog.find(event_name)&.serializer_name&.safe_constantize
       build_event_payload(serializer || event_serializer_class, params)
     end
 

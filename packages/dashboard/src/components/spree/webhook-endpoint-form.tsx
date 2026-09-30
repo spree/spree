@@ -9,10 +9,11 @@ import {
   Input,
   Switch,
 } from '@spree/dashboard-ui'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useWebhookEventCatalog } from '../../hooks/use-webhook-endpoints'
+import { translatedLabel } from '../../lib/translated-label'
 import type { WebhookEndpointFormValues } from '../../schemas/webhook-endpoint'
 
 /**
@@ -103,19 +104,19 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
   const [customEvent, setCustomEvent] = useState('')
   const { data: catalog } = useWebhookEventCatalog()
   const events = catalog?.data ?? []
-  const declared = events.map((event) => event.name)
-  const customEvents = value.filter((event) => !declared.includes(event))
+  const subscribed = new Set(value)
+  const declared = new Set(events.map((event) => event.name))
+  const customEvents = value.filter((event) => !declared.has(event))
 
   // A deprecated event is offered only to an endpoint still subscribed to it,
   // so it can be swapped for its replacement but never newly picked.
-  const groups = useMemo(() => {
-    const byGroup = new Map<string, typeof events>()
-    for (const event of events) {
-      if (event.deprecated && !value.includes(event.name)) continue
-      byGroup.set(event.group, [...(byGroup.get(event.group) ?? []), event])
-    }
-    return [...byGroup.entries()]
-  }, [events, value])
+  const groups = new Map<string, typeof events>()
+  for (const event of events) {
+    if (event.deprecated && !subscribed.has(event.name)) continue
+    const group = groups.get(event.group)
+    if (group) group.push(event)
+    else groups.set(event.group, [event])
+  }
 
   function toggle(event: string) {
     onChange(value.includes(event) ? value.filter((e) => e !== event) : [...value, event])
@@ -136,12 +137,10 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
           : t('admin.pages.settings.webhooks.events_count', { count: value.length })}
       </div>
       <div className="flex max-h-72 flex-col gap-4 overflow-y-auto p-3">
-        {groups.map(([group, groupEvents]) => (
+        {[...groups].map(([group, groupEvents]) => (
           <div key={group} className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              {t(`admin.pages.settings.webhooks.event_groups.${group}`, {
-                defaultValue: group.replaceAll('_', ' '),
-              })}
+              {translatedLabel('admin.pages.settings.webhooks.event_groups', group)}
             </span>
             <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
               {groupEvents.map((event) => {
@@ -154,7 +153,7 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
                   >
                     <Checkbox
                       id={checkboxId}
-                      checked={value.includes(event.name)}
+                      checked={subscribed.has(event.name)}
                       onCheckedChange={() => toggle(event.name)}
                     />
                     <span className="font-mono text-xs">{event.name}</span>
