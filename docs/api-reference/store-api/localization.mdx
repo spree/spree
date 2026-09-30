@@ -136,6 +136,16 @@ Each value is resolved in the following order:
 The locale and currency must be supported by the current store. If an unsupported value is provided, the API falls back to the store's default.
 </Note>
 
+### Caching
+
+Cacheable guest responses (products, categories, collections, markets, locales, currencies, policies, sellers) are sent with `Cache-Control: public` and:
+
+```
+Vary: Accept, X-Spree-Api-Key, Authorization, X-Spree-Country, X-Spree-Currency, X-Spree-Locale, X-Spree-Channel
+```
+
+A CDN or shared cache therefore stores one copy per country, currency, locale and channel, so a visitor in one market never receives another market's prices. The `country`, `currency` and `locale` query parameters are part of the URL, so they are cached separately without needing `Vary`. Responses to signed-in customers are `Cache-Control: private, no-store`.
+
 ## Translated Content
 
 When a locale is set, all translatable fields are returned in the requested language. This includes product names, descriptions, category names, and other content managed through [translations](/developer/core-concepts/translations).

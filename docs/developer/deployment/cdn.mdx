@@ -6,6 +6,10 @@ description: >-
 
 To improve performance of your Spree application, we recommend using a CDN (Content Delivery Network) to cache images and static files.
 
+<Note>
+If you also cache Store API responses at the CDN, the cache key must include every header in the response's `Vary` header — see [HTTP caching of Store API responses](/developer/deployment/caching#http-caching-of-store-api-responses).
+</Note>
+
 We recommend using [Cloudflare](https://www.cloudflare.com/) as your CDN provider. It's free and simple to set up.
 
 After setting up your Cloudflare account and adding your domain name to Cloudflare, you will need to set your cache settings.
