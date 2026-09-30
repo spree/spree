@@ -14,27 +14,14 @@ module Spree
     # rule that keeps credential-carrying events off wildcard webhook endpoints.
     class Catalog
       # One declared event.
-      class Entry
-        # @return [String] the full event name, e.g. `order.placed`
-        attr_reader :name
-        # @return [String] the declaring model's class name
-        attr_reader :model_name
-        # @return [String, nil] the event name this one duplicates, when deprecated
-        attr_reader :deprecated_alias_of
-        # @return [String, nil] for an event carrying a live credential, the
-        #   permission needed to point a webhook endpoint at it
-        attr_reader :credential_permission
-        # @return [String, nil] the serializer named in the declaration, if any
-        attr_reader :serializer_name
-
-        def initialize(name:, model_name:, serializer: nil, credential: nil, deprecated_alias_of: nil)
-          @name = name
-          @model_name = model_name
-          @serializer_name = serializer
-          @credential_permission = credential
-          @deprecated_alias_of = deprecated_alias_of
-        end
-
+      #
+      # @!attribute name [String] the full event name, e.g. `order.placed`
+      # @!attribute model_name [String] the declaring model's class name
+      # @!attribute serializer_name [String, nil] the serializer named in the declaration, if any
+      # @!attribute credential_permission [String, nil] for an event carrying a live
+      #   credential, the permission needed to point a webhook endpoint at it
+      # @!attribute deprecated_alias_of [String, nil] the event this one duplicates, when deprecated
+      Entry = Data.define(:name, :model_name, :serializer_name, :credential_permission, :deprecated_alias_of) do
         # The resource segment of the name, used to group events for display.
         #
         # @return [String] e.g. `order` for `order.placed`
@@ -68,8 +55,6 @@ module Spree
 
       def initialize
         @declarations = {}
-        @entries = nil
-        @loaded = false
       end
 
       # Declare an event for a model. A bare action (`:placed`) is prefixed with
@@ -88,7 +73,7 @@ module Spree
         # A named class is keyed by its name so a reloaded class replaces its
         # stale copy; an anonymous one (a spec's `Class.new`) by the class.
         @declarations[[model.name || model, name.to_s]] = options
-        @entries = nil
+        @entries = @sorted = nil
       end
 
       # @param name [String]
@@ -102,7 +87,7 @@ module Spree
       # @return [Array<Entry>]
       def all
         load!
-        entries.values.sort_by(&:name)
+        @sorted ||= entries.values.sort_by(&:name)
       end
 
       # @param name [String]
@@ -111,11 +96,14 @@ module Spree
         find(name)&.credential? || false
       end
 
-      # Events whose payload carries a live credential.
+      # Events whose payload carries a live credential, optionally only those
+      # among the given names.
       #
+      # @param names [Array<String>, nil]
       # @return [Array<Entry>]
-      def credential_events
-        all.select(&:credential?)
+      def credential_events(names = nil)
+        events = all.select(&:credential?)
+        names ? events.select { |entry| names.include?(entry.name) } : events
       end
 
       # Checks that an event about to be published is declared. Raises
@@ -126,10 +114,13 @@ module Spree
       def verify_declared!(name)
         return if find(name)
 
-        # A class declared before it had a name is only listed once it has one.
-        @entries = nil
-        load!
-        return if find(name)
+        # A class declared before it had a name is only listed once it has one,
+        # so a miss rebuilds once — and only while anonymous declarations exist.
+        if !@loaded || @declarations.each_key.any? { |model_key, _| model_key.is_a?(Class) }
+          @entries = @sorted = nil
+          load!
+          return if find(name)
+        end
 
         message = "Spree event #{name.inspect} is not declared. Declare it with `publishes_event` on the model whose record is the payload."
         raise UndeclaredEventError, message if Spree::Events.raise_on_undeclared_events
@@ -146,7 +137,6 @@ module Spree
 
         @loaded = true
         Rails.application.eager_load! unless Rails.application.config.eager_load
-        @entries = nil
       end
 
       private
@@ -159,7 +149,10 @@ module Spree
           # A parent and its subclass can declare the same name; the parent,
           # declared first, stays the owner.
           full_name = name.include?('.') ? name : "#{model.event_prefix}.#{name}"
-          result[full_name] ||= Entry.new(name: full_name, model_name: model.name, **options)
+          result[full_name] ||= Entry.new(
+            name: full_name, model_name: model.name, serializer_name: options[:serializer],
+            credential_permission: options[:credential], deprecated_alias_of: options[:deprecated_alias_of]
+          )
         end
       end
     end

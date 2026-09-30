@@ -11,9 +11,6 @@ module Spree
     include Spree::StockLevel::CustomEvents
 
     publishes_lifecycle_events
-    publishes_event 'stock_item.created', deprecated_alias_of: 'stock_level.created'
-    publishes_event 'stock_item.updated', deprecated_alias_of: 'stock_level.updated'
-    publishes_event 'stock_item.deleted', deprecated_alias_of: 'stock_level.deleted'
 
     with_options inverse_of: :stock_levels do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'

@@ -1,15 +1,16 @@
 module Spree
   module Api
     # Renders the event catalog ({Spree::Events.catalog}) into the typed event
-    # map `@spree/sdk/webhooks` exports and the matching Zod schema map, so a webhook consumer's `event.name` check narrows
-    # `event.data` to the record the event carries.
+    # map `@spree/sdk/webhooks` exports and the matching Zod schema map, so a
+    # webhook consumer's `event.name` check narrows `event.data` to the record
+    # the event carries.
     #
     # Run by `rake typelizer:generate`; `webhook_event_types_spec.rb` fails when
     # the committed files no longer match the catalog.
     class WebhookEventTypes
       # The payload of an event whose record has no Store serializer.
       RECORD_REFERENCE = 'WebhookRecordReference'.freeze
-      SERIALIZER_NAMESPACE = 'Spree::Api::V3::'.freeze
+      BACK_OFFICE_SERIALIZER = /\ASpree::Api::V3::\w+::/
       HEADER = "// This file is auto-generated from Spree's event catalog by `rake typelizer:generate`. Do not edit directly.\n".freeze
 
       FILES = {
@@ -20,13 +21,6 @@ module Spree
       # @param catalog [Spree::Events::Catalog]
       def initialize(catalog = Spree::Events.catalog)
         @catalog = catalog
-      end
-
-      # The Store SDK type name of every serializer a webhook payload uses.
-      #
-      # @return [Array<String>]
-      def payload_type_names
-        entries.map { |entry| type_name(entry) }.uniq.sort - [RECORD_REFERENCE]
       end
 
       # @return [Hash{Symbol => String}] file contents keyed like {FILES}
@@ -54,19 +48,35 @@ module Spree
         @entries ||= catalog.all
       end
 
+      def payload_type_names
+        @payload_type_names ||= type_names.values.uniq.sort - [RECORD_REFERENCE]
+      end
+
       def type_name(entry)
+        type_names.fetch(entry.name)
+      end
+
+      def type_names
+        @type_names ||= entries.to_h { |entry| [entry.name, resolve_type_name(entry)] }
+      end
+
+      # Named the way the Store SDK's type writer names it. A back-office shape
+      # stays behind the Admin API even when a Store-level class inherits it
+      # (docs/plans/6.0-typed-webhook-events.md).
+      def resolve_type_name(entry)
         serializer = entry.payload_serializer
         return RECORD_REFERENCE unless serializer
 
-        # A back-office shape stays behind the Admin API even when a Store-level
-        # class inherits it (docs/plans/6.0-typed-webhook-events.md).
-        store_level = serializer.ancestors.grep(Class).all? do |ancestor|
-          !ancestor.name.to_s.start_with?(SERIALIZER_NAMESPACE) ||
-            !ancestor.name.delete_prefix(SERIALIZER_NAMESPACE).include?('::')
+        back_office = serializer.ancestors.grep(Class).any? { |ancestor| ancestor.name.to_s.match?(BACK_OFFICE_SERIALIZER) }
+        if back_office || store_writer.reject_class.call(serializer: serializer)
+          raise ArgumentError, "#{entry.name} is built by #{serializer.name}, which is not a Store API serializer"
         end
-        raise ArgumentError, "#{entry.name} is built by #{serializer.name}, which is not a Store API serializer" unless store_level
 
-        serializer.name.delete_prefix(SERIALIZER_NAMESPACE).delete_suffix('Serializer')
+        store_writer.serializer_name_mapper.call(serializer)
+      end
+
+      def store_writer
+        Typelizer.configuration.writers.fetch(:store)
       end
 
       def types_source

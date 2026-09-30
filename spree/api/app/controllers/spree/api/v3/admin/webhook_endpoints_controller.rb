@@ -91,8 +91,7 @@ module Spree
           end
 
           def requested_credential_events
-            requested = Array(permitted_params[:subscriptions])
-            Spree::Events.catalog.credential_events.select { |entry| requested.include?(entry.name) }
+            Spree::Events.catalog.credential_events(Array(permitted_params[:subscriptions]))
           end
 
           def repointed_credential_events

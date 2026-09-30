@@ -76,7 +76,7 @@ module Spree
     #
     # @return [Array<Spree::Events::Catalog::Entry>]
     def credential_subscriptions
-      Spree::Events.catalog.credential_events.select { |entry| subscriptions.to_a.include?(entry.name) }
+      Spree::Events.catalog.credential_events(subscriptions.to_a)
     end
 
     # Returns all events this endpoint is subscribed to
