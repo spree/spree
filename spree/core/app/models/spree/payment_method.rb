@@ -136,6 +136,20 @@ module Spree
       raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
     end
 
+    # Cancels a session nobody is going to complete, so the provider can no
+    # longer take money against it. Called for the sessions left pending when
+    # an order is placed. The default leaves the session untouched: a
+    # gateway that cannot cancel at the provider must not report as canceled
+    # a session that can still be paid.
+    #
+    # @param payment_session [Spree::PaymentSession]
+    # @return [Boolean] whether the session was canceled
+    # @raise [Spree::Core::GatewayError] when the provider refuses, e.g. the
+    #   session has already been paid
+    def cancel_payment_session(payment_session:)
+      false
+    end
+
     # Parses an incoming webhook payload from the payment provider.
     # Override in gateway subclasses to implement provider-specific webhook parsing.
     #

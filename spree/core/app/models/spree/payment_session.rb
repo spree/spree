@@ -28,6 +28,7 @@ module Spree
 
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
+    scope :unused, -> { pending.where.missing(:payment) }
 
     before_validation :set_defaults_from_order, on: :create
 
