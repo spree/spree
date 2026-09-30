@@ -1,3 +1,13 @@
+## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
+
+**Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
+
+**Decision:** Each store can edit its customer emails, and the shared layout and partials those emails use. Staff emails in core, store-owner notifications and seller emails stay as Spree's files and never read a store's edited layout or partials, so a template edit can never break a staff password reset. Edits are saved as drafts and go live when published; publishing renders the template with sample data under strict variables (every customer email, for the layout or a partial) and refuses anything that does not render. Published templates are store-scoped rows found before the files in the template lookup, one version for every language (`locale = 'any'`, never NULL, so the unique index holds) with optional per-language versions. History is an append-only revisions table next to the live row. Preview renders on the server through the same renderer customers' emails use, with the store's latest matching record or one the merchant picks. Test emails go only to the signed-in admin. Branding (colors, fonts) lives in store preferences, independent of template code. Templates are their own permission resource, `email_templates`. The editor is CodeMirror 6 in `@spree/dashboard-ui`.
+
+**Consequences:** A bad layout or partial edit reaches every email, which is why publishing validates them all. Renaming an email key or a partial argument now breaks stores that customized it; keys need a data migration and partial arguments may only be added. Changing a default template shows an "updated by Spree" notice to every store that customized it.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (its deferred editing work now points to `6.0-email-template-editor.md`).
+
 ## 2026-09-30: A return owed nothing completes at zero
 
 **Context:** Once a returned free gift was valued at what the customer paid for it (entry below), its return could never be closed. Reproduced on R1009: a Tee with a free pink Polo, the Polo returned alone, approved and received with a refund total of $0.00. `Returns::Refund` refused any amount that was not positive ("There is nothing left to refund on this return."), and `Returns::Cancel` only accepts requested or approved returns, so the return sat at `received` for good. It kept counting in the dashboard's open-returns counter and the open filter, the customer's return page never showed it finished, and `return.refunded` never reached webhooks. Any return whose refund works out to zero was caught the same way, including one where nothing that arrived was worth anything. Money was never at stake.
@@ -33,18 +43,6 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 **Consequences:** A shopper who saves a batch code below the minimum now blocks nobody. Anyone presenting it takes it over, as with any held code. A takeover recalculates the losing cart at once, so the checkout refusal is what that shopper sees only if they place the order with no other cart request in between. A code saved on a cart before this change is held by nobody, so that cart's next response drops it with the same warning even though the code is free; the shopper can enter it again. Orders already placed on the affected builds keep their discount, because placed orders never re-run promotions. Their codes still read `unused`, but `spree_orders.coupon_code` records which code each used, so they can be found. No backfill ships. Left alone, both pre-existing: every checkout refusal that carries a code (`payment_failed`, `cart_changed`, now `coupon_code_unavailable`) reaches the Store API as the error hash's text rather than its message; and a single-code promotion's `usage_limit` counts placed orders only, so open carts can pass it together (not tested).
 
 **Plans amended:** `6.0-core-rewrite-tasks.md` (the "Coupon code wired fully" bullet).
-
-## 2026-09-29: Liquid and MJML emails move into 6.0, with ERB overrides bridged for one release
-
-## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
-
-**Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
-
-**Decision:** Each store can edit its customer emails, and the shared layout and partials those emails use. Staff emails in core, store-owner notifications and seller emails stay as Spree's files and never read a store's edited layout or partials, so a template edit can never break a staff password reset. Edits are saved as drafts and go live when published; publishing renders the template with sample data under strict variables (every customer email, for the layout or a partial) and refuses anything that does not render. Published templates are store-scoped rows found before the files in the template lookup, one version for every language (`locale = 'any'`, never NULL, so the unique index holds) with optional per-language versions. History is an append-only revisions table next to the live row. Preview renders on the server through the same renderer customers' emails use, with the store's latest matching record or one the merchant picks. Test emails go only to the signed-in admin. Branding (colors, fonts) lives in store preferences, independent of template code. Templates are their own permission resource, `email_templates`. The editor is CodeMirror 6 in `@spree/dashboard-ui`.
-
-**Consequences:** A bad layout or partial edit reaches every email, which is why publishing validates them all. Renaming an email key or a partial argument now breaks stores that customized it; keys need a data migration and partial arguments may only be added. Changing a default template shows an "updated by Spree" notice to every store that customized it.
-
-**Plans amended:** `6.0-liquid-mjml-emails.md` (its deferred editing work now points to `6.0-email-template-editor.md`).
 
 ## 2026-09-29: Liquid and MJML emails move into 6.0, and ERB email overrides are dropped
 
