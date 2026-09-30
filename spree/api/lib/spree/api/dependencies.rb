@@ -38,7 +38,7 @@ module Spree
            channel order_routing_rule product_publication market delivery_method delivery_method_service
            stock_location stock_reservation delivery_rate freight_summary freight_summary_line payment_method
            credit_card store_credit store_credit_event customer_group payment_source digital_asset digital_link
-           store setup_task api_key allowed_origin webhook_endpoint webhook_delivery invitation
+           store setup_task api_key allowed_origin webhook_endpoint webhook_event webhook_delivery invitation
            invitation_acceptance_link role permission export saved_report import import_row import_mapping promotion
            promotion_action promotion_rule coupon_code price_adjustment_tier price_list price_rule
            resource_translations].freeze

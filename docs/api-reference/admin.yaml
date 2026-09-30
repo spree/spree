@@ -28296,6 +28296,1559 @@ paths:
                 reason:
                   type: string
                   example: Investigating elevated 5xx rate
+  "/api/v3/admin/webhook_events":
+    get:
+      summary: List webhook events
+      tags:
+      - Webhooks
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns every event a webhook endpoint can subscribe to, including
+        those installed extensions declare. Credential events reach only endpoints
+        that name them, and subscribing to one needs the permission listed; deprecated
+        events name their replacement.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const { data: events } = await client.webhookEvents.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /webhook_events
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: events returned
+          content:
+            application/json:
+              example:
+                data:
+                - name: admin_user.password_reset
+                  group: admin_user
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: admin_user.password_reset_requested
+                  group: admin_user
+                  credential_permission: write_staff
+                  credential: true
+                  deprecated: false
+                  replaced_by:
+                - name: cart.created
+                  group: cart
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: cart.deleted
+                  group: cart
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: cart.updated
+                  group: cart
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: catalog.created
+                  group: catalog
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: catalog.deleted
+                  group: catalog
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: catalog.updated
+                  group: catalog
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.approved
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.canceled
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.created
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.deleted
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.denied
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.opened
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.resolved
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: claim.updated
+                  group: claim
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company.created
+                  group: company
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company.deleted
+                  group: company
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company.updated
+                  group: company
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company_invitation.accepted
+                  group: company_invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company_invitation.created
+                  group: company_invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company_invitation.deleted
+                  group: company_invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company_invitation.revoked
+                  group: company_invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: company_invitation.updated
+                  group: company_invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: customer.anonymized
+                  group: customer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: customer.password_reset
+                  group: customer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: customer.password_reset_requested
+                  group: customer
+                  credential_permission: write_customers
+                  credential: true
+                  deprecated: false
+                  replaced_by:
+                - name: data_request.completed
+                  group: data_request
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: data_request.created
+                  group: data_request
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: data_request.deleted
+                  group: data_request
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: data_request.updated
+                  group: data_request
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: delivery.created
+                  group: delivery
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: delivery.deleted
+                  group: delivery
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: delivery.updated
+                  group: delivery
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital.created
+                  group: digital
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: digital_asset.created
+                - name: digital.deleted
+                  group: digital
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: digital_asset.deleted
+                - name: digital.updated
+                  group: digital
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: digital_asset.updated
+                - name: digital_asset.created
+                  group: digital_asset
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_asset.deleted
+                  group: digital_asset
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_asset.updated
+                  group: digital_asset
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_link.created
+                  group: digital_link
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_link.deleted
+                  group: digital_link
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_link.downloaded
+                  group: digital_link
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: digital_link.updated
+                  group: digital_link
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.approved
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.canceled
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.created
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.deleted
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.fulfilled
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.received
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.requested
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: exchange.updated
+                  group: exchange
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: export.created
+                  group: export
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: export.deleted
+                  group: export
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: export.updated
+                  group: export
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.canceled
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.created
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.deleted
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.delivered
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.fulfilled
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: fulfillment.updated
+                  group: fulfillment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.canceled
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.created
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.deleted
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.partially_redeemed
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.redeemed
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card.updated
+                  group: gift_card
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card_batch.created
+                  group: gift_card_batch
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card_batch.deleted
+                  group: gift_card_batch
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: gift_card_batch.updated
+                  group: gift_card_batch
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import.completed
+                  group: import
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import.created
+                  group: import
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import.deleted
+                  group: import
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import.progress
+                  group: import
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import.updated
+                  group: import
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import_row.completed
+                  group: import_row
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: import_row.failed
+                  group: import_row
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: invitation.accepted
+                  group: invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: invitation.created
+                  group: invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: invitation.resent
+                  group: invitation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: line_item.created
+                  group: line_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: line_item.deleted
+                  group: line_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: line_item.updated
+                  group: line_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: media.created
+                  group: media
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: media.deleted
+                  group: media
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: media.updated
+                  group: media
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.created
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.deleted
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.subscription_requested
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.unsubscribe_requested
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.updated
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: newsletter_subscriber.verified
+                  group: newsletter_subscriber
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.approved
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.canceled
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.completed
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: order.placed
+                - name: order.created
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.deleted
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.delivered
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.fulfilled
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.paid
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.placed
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.resend_confirmation_email
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.resend_digital_links_email
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.shipped
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order.updated
+                  group: order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_group.completed
+                  group: order_group
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_group.created
+                  group: order_group
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_group.deleted
+                  group: order_group
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_group.resend_confirmation_email
+                  group: order_group
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: order_group.updated
+                  group: order_group
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.captured
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.completed
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.created
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.deleted
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.paid
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.refunded
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.updated
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment.voided
+                  group: payment
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.canceled
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.completed
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.created
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.deleted
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.expired
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.failed
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.processing
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_session.updated
+                  group: payment_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.canceled
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.completed
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.created
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.deleted
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.expired
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.failed
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.processing
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: payment_setup_session.updated
+                  group: payment_setup_session
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: price.created
+                  group: price
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: price.deleted
+                  group: price
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: price.updated
+                  group: price
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.activated
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.approved
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.archived
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.back_in_stock
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.created
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.deleted
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.drafted
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.out_of_stock
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.proposed
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.rejected
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product.updated
+                  group: product
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product_submission.created
+                  group: product_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product_submission.deleted
+                  group: product_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: product_submission.updated
+                  group: product_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: promotion.created
+                  group: promotion
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: promotion.deleted
+                  group: promotion
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: promotion.updated
+                  group: promotion
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.canceled
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.created
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.deleted
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.draft
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.ordered
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.over_received
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.partially_received
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.received
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: purchase_order.updated
+                  group: purchase_order
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: refund.created
+                  group: refund
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: refund.deleted
+                  group: refund
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: refund.updated
+                  group: refund
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.approved
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.canceled
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.created
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.deleted
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.received
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.refunded
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.requested
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: return.updated
+                  group: return
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: saved_report.created
+                  group: saved_report
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: saved_report.deleted
+                  group: saved_report
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: saved_report.updated
+                  group: saved_report
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.approved
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.created
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.deleted
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.invited
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.onboarding_reopened
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.onboarding_started
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.rejected
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.submitted_for_review
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.suspended
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller.updated
+                  group: seller
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_payout.completed
+                  group: seller_payout
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.accepted
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.created
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.deleted
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.rejected
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.updated
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_requirement_submission.waived
+                  group: seller_requirement_submission
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_user.password_reset
+                  group: seller_user
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: seller_user.password_reset_requested
+                  group: seller_user
+                  credential_permission: write_sellers
+                  credential: true
+                  deprecated: false
+                  replaced_by:
+                - name: shipment.canceled
+                  group: shipment
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: fulfillment.canceled
+                - name: shipment.shipped
+                  group: shipment
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: fulfillment.fulfilled
+                - name: shipping_label.created
+                  group: shipping_label
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: shipping_label.deleted
+                  group: shipping_label
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: shipping_label.purchased
+                  group: shipping_label
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: shipping_label.refunded
+                  group: shipping_label
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: shipping_label.updated
+                  group: shipping_label
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_item.created
+                  group: stock_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: stock_level.created
+                - name: stock_item.deleted
+                  group: stock_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: stock_level.deleted
+                - name: stock_item.updated
+                  group: stock_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: stock_level.updated
+                - name: stock_level.created
+                  group: stock_level
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_level.deleted
+                  group: stock_level
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_level.updated
+                  group: stock_level
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_movement.created
+                  group: stock_movement
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_movement.deleted
+                  group: stock_movement
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_movement.updated
+                  group: stock_movement
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_receipt.created
+                  group: stock_receipt
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_receipt.deleted
+                  group: stock_receipt
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_receipt.updated
+                  group: stock_receipt
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_reservation.created
+                  group: stock_reservation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_reservation.deleted
+                  group: stock_reservation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_reservation.updated
+                  group: stock_reservation
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.canceled
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.created
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.deleted
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.draft
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.over_received
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.partially_received
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.ready_to_ship
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.received
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.shipped
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: stock_transfer.updated
+                  group: stock_transfer
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: store_credit.created
+                  group: store_credit
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: store_credit.deleted
+                  group: store_credit
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: store_credit.updated
+                  group: store_credit
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: supplier.created
+                  group: supplier
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: supplier.deleted
+                  group: supplier
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: supplier.updated
+                  group: supplier
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: tax_exemption_certificate.verified
+                  group: tax_exemption_certificate
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: tax_identifier.number_changed
+                  group: tax_identifier
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: user.created
+                  group: user
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: user.deleted
+                  group: user
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: user.updated
+                  group: user
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.created
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.deleted
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: variant.updated
+                  group: variant
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wished_item.created
+                  group: wished_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: wishlist_item.created
+                - name: wished_item.deleted
+                  group: wished_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: wishlist_item.deleted
+                - name: wished_item.updated
+                  group: wished_item
+                  credential_permission:
+                  credential: false
+                  deprecated: true
+                  replaced_by: wishlist_item.updated
+                - name: wishlist.created
+                  group: wishlist
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wishlist.deleted
+                  group: wishlist
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wishlist.updated
+                  group: wishlist
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wishlist_item.created
+                  group: wishlist_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wishlist_item.deleted
+                  group: wishlist_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                - name: wishlist_item.updated
+                  group: wishlist_item
+                  credential_permission:
+                  credential: false
+                  deprecated: false
+                  replaced_by:
+                meta:
+                  count: 251
   "/api/v3/admin/catalogs":
     get:
       summary: List catalogs
@@ -44778,6 +46331,10 @@ components:
           type: number
         includes_first_party:
           type: boolean
+        confirmation_delivered:
+          type: boolean
+        store_owner_notification_delivered:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -44805,6 +46362,8 @@ components:
       - cart_id
       - seller_count
       - includes_first_party
+      - confirmation_delivered
+      - store_owner_notification_delivered
       - created_at
       - updated_at
       - payments
@@ -49325,4 +50884,29 @@ components:
       - total_delivery_count
       - successful_delivery_count
       - failed_delivery_count
+      x-typelizer: true
+    WebhookEvent:
+      type: object
+      properties:
+        name:
+          type: string
+        group:
+          type: string
+        credential_permission:
+          type: string
+          nullable: true
+        credential:
+          type: boolean
+        deprecated:
+          type: boolean
+        replaced_by:
+          type: string
+          nullable: true
+      required:
+      - name
+      - group
+      - credential_permission
+      - credential
+      - deprecated
+      - replaced_by
       x-typelizer: true

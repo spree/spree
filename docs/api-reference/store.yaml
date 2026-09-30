@@ -13241,6 +13241,141 @@ components:
       - amount
       - display_amount
       x-typelizer: true
+    ExchangeLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        received_quantity:
+          type: number
+        resellable:
+          type: boolean
+        original_price:
+          type: string
+        new_variant_price:
+          type: string
+        price_difference:
+          type: string
+        original_variant_id:
+          type: string
+          nullable: true
+        new_variant_id:
+          type: string
+          nullable: true
+        line_item_id:
+          type: string
+          nullable: true
+        fulfillment_item_id:
+          type: string
+          nullable: true
+        original_variant:
+          "$ref": "#/components/schemas/Variant"
+        new_variant:
+          "$ref": "#/components/schemas/Variant"
+      required:
+      - id
+      - quantity
+      - received_quantity
+      - resellable
+      - original_price
+      - new_variant_price
+      - price_difference
+      - original_variant_id
+      - new_variant_id
+      - line_item_id
+      - fulfillment_item_id
+      x-typelizer: true
+    Exchange:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - requested
+            - approved
+            - received
+            - fulfilled
+            - canceled
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        order_id:
+          type: string
+          nullable: true
+        reason_id:
+          type: string
+          nullable: true
+        price_difference:
+          type: string
+        display_price_difference:
+          type: string
+        approved_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        fulfilled_at:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        reason:
+          "$ref": "#/components/schemas/ReturnReason"
+        exchange_line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/ExchangeLineItem"
+      required:
+      - id
+      - number
+      - status
+      - order_id
+      - reason_id
+      - price_difference
+      - display_price_difference
+      - approved_at
+      - received_at
+      - fulfilled_at
+      - canceled_at
+      x-typelizer: true
+    Export:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        format:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        type:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - format
+      - created_at
+      - updated_at
+      - type
+      - user_id
+      x-typelizer: true
     Fee:
       type: object
       properties:
@@ -13544,6 +13679,111 @@ components:
       - redeemed_at
       - expired
       - active
+      x-typelizer: true
+    ImportRow:
+      type: object
+      properties:
+        id:
+          type: string
+        row_number:
+          type: number
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        validation_errors:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        import_id:
+          type: string
+          nullable: true
+        item_type:
+          type: string
+          nullable: true
+        item_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - row_number
+      - status
+      - validation_errors
+      - created_at
+      - updated_at
+      - import_id
+      - item_type
+      - item_id
+      x-typelizer: true
+    Import:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        rows_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        type:
+          type: string
+          nullable: true
+          description: 'Import type. Built-in: products, product_translations, customers,
+            price_list_prices. Extensions may register more.'
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - mapping
+            - completed_mapping
+            - processing
+            - completed
+            - failed
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        store_id:
+          type: string
+          nullable: true
+        seller_id:
+          type: string
+          nullable: true
+        owner_type:
+          type: string
+          nullable: true
+        owner_id:
+          type: string
+          nullable: true
+        user_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - rows_count
+      - created_at
+      - updated_at
+      - type
+      - status
+      - store_id
+      - seller_id
+      - owner_type
+      - owner_id
+      - user_id
       x-typelizer: true
     Invitation:
       type: object
@@ -13916,6 +14156,32 @@ components:
       - large_url
       - xlarge_url
       - og_image_url
+      x-typelizer: true
+    NewsletterSubscriberRequestEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        verification_token:
+          type: string
+        unsubscribe_token:
+          type: string
+        store_id:
+          type: string
+          nullable: true
+        customer_id:
+          type: string
+          nullable: true
+        redirect_url:
+          type: string
+      required:
+      - id
+      - email
+      - unsubscribe_token
+      - store_id
+      - customer_id
       x-typelizer: true
     NewsletterSubscriber:
       type: object
@@ -14328,6 +14594,26 @@ components:
       - shipping_address
       - gift_card
       - market
+      x-typelizer: true
+    PasswordResetRequestedEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        reset_token:
+          type: string
+        store_id:
+          type: string
+          nullable: true
+        redirect_url:
+          type: string
+      required:
+      - id
+      - email
+      - reset_token
+      - store_id
       x-typelizer: true
     PaymentMethod:
       type: object
@@ -14955,6 +15241,40 @@ components:
       - original_price
       - seller_id
       x-typelizer: true
+    ProductSubmission:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - approved
+            - rejected
+            - withdrawn
+          - type: string
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        review_note:
+          type: string
+          nullable: true
+        reviewed_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        product_id:
+          type: string
+      required:
+      - id
+      - status
+      - review_note
+      - reviewed_at
+      - created_at
+      - product_id
+      x-typelizer: true
     ProductType:
       type: object
       properties:
@@ -14984,6 +15304,46 @@ components:
       - name
       - description
       - code
+      x-typelizer: true
+    PurchaseOrderEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        status:
+          type: string
+        ordered_at:
+          type: string
+          nullable: true
+        received_at:
+          type: string
+          nullable: true
+        closed_short_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        supplier_id:
+          type: string
+          nullable: true
+        destination_location_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - status
+      - ordered_at
+      - received_at
+      - closed_short_at
+      - created_at
+      - updated_at
+      - supplier_id
+      - destination_location_id
       x-typelizer: true
     Refund:
       type: object
@@ -15152,6 +15512,37 @@ components:
       - refunded_at
       - canceled_at
       x-typelizer: true
+    SavedReportEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        query:
+          type: object
+        seeded:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        user_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - description
+      - query
+      - seeded
+      - created_at
+      - updated_at
+      - user_id
+      x-typelizer: true
     Seller:
       type: object
       properties:
@@ -15193,11 +15584,6 @@ components:
       properties:
         id:
           type: string
-        source:
-          type: string
-          enum:
-          - purchased
-          - uploaded
         status:
           anyOf:
           - type: string
@@ -15211,26 +15597,12 @@ components:
         carrier:
           type: string
           nullable: true
-        carrier_name:
-          type: string
-          nullable: true
         service:
           type: string
           nullable: true
         tracking_number:
           type: string
           nullable: true
-        currency:
-          type: string
-          nullable: true
-        format:
-          type: string
-          nullable: true
-        external_id:
-          type: string
-          nullable: true
-        metadata:
-          type: object
         refunded_at:
           type: string
           nullable: true
@@ -15243,42 +15615,19 @@ components:
         owner_type:
           type: string
           enum:
-          - Spree::Fulfillment
-          - Spree::Return
-        cost:
-          type: string
-        display_cost:
-          type: string
-        integration_id:
-          type: string
-          nullable: true
-        file_pending:
-          type: boolean
-        download_url:
-          type: string
-          nullable: true
+          - fulfillment
+          - return
       required:
       - id
-      - source
       - status
       - carrier
-      - carrier_name
       - service
       - tracking_number
-      - currency
-      - format
-      - external_id
-      - metadata
       - refunded_at
       - created_at
       - updated_at
       - owner_id
       - owner_type
-      - cost
-      - display_cost
-      - integration_id
-      - file_pending
-      - download_url
       x-typelizer: true
     State:
       type: object
@@ -15290,6 +15639,28 @@ components:
       required:
       - abbr
       - name
+      x-typelizer: true
+    StockLevel:
+      type: object
+      properties:
+        id:
+          type: string
+        count_on_hand:
+          type: number
+        backorderable:
+          type: boolean
+        stock_location_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - count_on_hand
+      - backorderable
+      - stock_location_id
+      - variant_id
       x-typelizer: true
     StockLocation:
       type: object
@@ -15338,6 +15709,76 @@ components:
       - pickup_ready_in_minutes
       - pickup_instructions
       x-typelizer: true
+    StockMovement:
+      type: object
+      properties:
+        id:
+          type: string
+        quantity:
+          type: number
+        kind:
+          type: string
+          nullable: true
+          enum:
+          - received
+          - allocated
+          - shipped
+          - released
+          - adjusted
+        reason:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        stock_level_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - quantity
+      - kind
+      - reason
+      - created_at
+      - updated_at
+      - stock_level_id
+      x-typelizer: true
+    StockReceiptEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        quantity_accepted_total:
+          type: number
+        quantity_rejected_total:
+          type: number
+        received_at:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        receivable_type:
+          type: string
+          enum:
+          - purchase_order
+          - stock_transfer
+        receivable_id:
+          type: string
+      required:
+      - id
+      - number
+      - quantity_accepted_total
+      - quantity_rejected_total
+      - received_at
+      - created_at
+      - updated_at
+      - receivable_type
+      - receivable_id
+      x-typelizer: true
     StockReservation:
       type: object
       properties:
@@ -15345,6 +15786,33 @@ components:
           type: string
       required:
       - id
+      x-typelizer: true
+    StockTransfer:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        reference:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        source_location_id:
+          type: string
+        destination_location_id:
+          type: string
+      required:
+      - id
+      - number
+      - reference
+      - created_at
+      - updated_at
+      - source_location_id
+      - destination_location_id
       x-typelizer: true
     StoreCreditEvent:
       type: object
@@ -15402,6 +15870,23 @@ components:
       - display_amount_used
       - display_amount_remaining
       - currency
+      x-typelizer: true
+    SupplierEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - name
+      - created_at
+      - updated_at
       x-typelizer: true
     TaxIdentifier:
       type: object
