@@ -98,12 +98,16 @@ Address rules are regional and business-specific, so addresses carry a registry
 of extra validator classes you can add to and remove from:
 
 ```ruby
-# server/config/initializers/spree.rb — or config.to_prepare for your own classes
-Spree.validators.addresses.register(MyStore::PostBoxValidator)
+# server/config/initializers/spree.rb
+Rails.application.config.to_prepare do
+  Spree.validators.addresses.register(MyStore::PostBoxValidator)
 
-# Drop a rule Spree ships
-Spree.validators.addresses.unregister(Spree::Addresses::PhoneValidator)
+  # Drop a rule Spree ships
+  Spree.validators.addresses.unregister(Spree::Addresses::PhoneValidator)
+end
 ```
+
+The block is needed because validator classes cannot be loaded while initializer files are still running. A rule unregistered there stays off even though Spree adds its defaults later in boot.
 
 A validator is an ordinary `ActiveModel::Validator`:
 

@@ -79,7 +79,21 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+        app.config.spree = Environment.new(SpreeCalculators.new([], [], [], []), SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+
+        # Every registry core fills in after_initialize exists, empty, before
+        # any initializer file runs, so an application or extension can
+        # register from a plain initializer. Core's defaults are put in front
+        # of those entries later (see .register_defaults).
+        %i[payment_methods adjusters media_viewable_types fulfillment_providers stock_splitters
+           data_feed_types export_types import_types taxon_rules collection_rules
+           time_based_collection_rules translatable_resources taggable_types
+           analytics_event_handlers integrations].each { |registry| app.config.spree[registry] = [] }
+        app.config.spree.tracking_carriers = {}
+        app.config.spree.analytics_events = {}
+        app.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new
+        app.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new
+        app.config.spree.seller_authentication_strategies = Spree::Authentication::StrategyRegistry.new
 
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time])
@@ -113,22 +127,16 @@ module Spree
       end
 
       # Seeded before application initializers so an extension registering an
-      # actor class has something to append to. The defaults are unioned in
-      # after initialization, where Spree.admin_user_class is finally known.
+      # actor class has something to append to. The defaults are added after
+      # initialization, where Spree.admin_user_class is finally known.
       initializer 'spree.register.actor_classes', before: :load_config_initializers do |app|
         app.config.spree.actor_classes = []
-      end
-
-      initializer 'spree.register.calculators', before: :after_initialize do |app|
       end
 
       # Seeded before application initializers so a host's
       # `config/initializers/spree.rb` can register custom generators.
       initializer 'spree.register.number_generators', before: :load_config_initializers do |app|
         app.config.spree.number_generators = Spree::NumberGenerators::Registry.new
-      end
-
-      initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
       end
 
       initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
@@ -141,12 +149,6 @@ module Spree
       initializer 'spree.returns.register_eligibility_validator', before: :load_config_initializers do
         Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
         Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
-      end
-
-      initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
-      end
-
-      initializer 'spree.register.adjustable_adjusters' do |app|
       end
 
       # Seed the order routing registries early so engines and apps can append
@@ -209,7 +211,7 @@ module Spree
         app.config.spree.delivery_profile_types = []
       end
 
-      initializer 'spree.register.custom_fields' do |app|
+      initializer 'spree.register.custom_fields', before: :load_config_initializers do |app|
         app.config.spree.custom_fields = CustomFieldsEnvironment.new
         app.config.spree.custom_fields.types = []
         app.config.spree.custom_fields.enabled_resources = []
@@ -225,16 +227,12 @@ module Spree
 
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
-      initializer 'spree.promo.environment' do |app|
-        app.config.spree.promotions = PromoEnvironment.new
-        app.config.spree.promotions.rules = []
-      end
-
-      initializer 'spree.promo.register.promotion.calculators' do |app|
+      initializer 'spree.promo.environment', before: :load_config_initializers do |app|
+        app.config.spree.promotions = PromoEnvironment.new([], [])
       end
 
       # Pricing configuration for price lists and price rules
-      initializer 'spree.pricing.environment', after: 'spree.environment' do |app|
+      initializer 'spree.pricing.environment', after: 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree.pricing = PricingEnvironment.new
         app.config.spree.pricing.rules = []
       end
@@ -251,12 +249,14 @@ module Spree
         Spree::IsoData.reset!
       end
 
-      # Promotion rules need to be evaluated on after initialize otherwise
-      # Spree.customer_class would be nil and users might experience errors related
-      # to malformed model associations (Spree.customer_class is only defined on
-      # the app initializer)
+      # Core's defaults are registered after initialization: some name
+      # Spree.customer_class, which the application only sets in its own
+      # initializer, and loading model classes any earlier would break their
+      # associations. Registries are seeded empty before initializer files run
+      # (see 'spree.environment'), so what an application or extension
+      # registered there, or registers in a later after_initialize, is kept.
       config.after_initialize do
-        Rails.application.config.spree.calculators.shipping_methods = [
+        register_defaults Rails.application.config.spree.calculators.shipping_methods, [
           Spree::Calculator::Shipping::FlatPercentItemTotal,
           Spree::Calculator::Shipping::FlatRate,
           Spree::Calculator::Shipping::FlexiRate,
@@ -265,19 +265,19 @@ module Spree
           Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
-        Rails.application.config.spree.stock_splitters = [
+        register_defaults Rails.application.config.spree.stock_splitters, [
           Spree::Stock::Splitter::DeliveryProfile,
           Spree::Stock::Splitter::Backordered
         ]
 
-        Rails.application.config.spree.payment_methods = [
+        register_defaults Rails.application.config.spree.payment_methods, [
           Spree::Gateway::Bogus,
           Spree::Gateway::CustomPaymentSourceMethod,
           Spree::PaymentMethod::Check,
           Spree::PaymentMethod::StoreCredit
         ]
 
-        Rails.application.config.spree.adjusters = [
+        register_defaults Rails.application.config.spree.adjusters, [
           Spree::Adjusters::Promotion
         ]
 
@@ -286,7 +286,7 @@ module Spree
         # store resolution, counter caches, the usage panel — reasons about the
         # registered set. An extension placing media on its own model appends
         # to this from an initializer.
-        Rails.application.config.spree.media_viewable_types = %w[
+        register_defaults Rails.application.config.spree.media_viewable_types, %w[
           Spree::Product
           Spree::Variant
           Spree::Category
@@ -299,15 +299,14 @@ module Spree
         # that picks its own default must keep it.
         Rails.application.config.spree.default_tax_provider ||= Spree::TaxProvider::Internal
 
-        # Engines a market can select. Concatenated, not assigned: provider gems
-        # and host apps append theirs from initializer files, which run first.
-        Rails.application.config.spree.tax_providers.concat [Spree::TaxProvider::Internal]
+        # Engines a market can select. Provider gems and host apps append theirs.
+        register_defaults Rails.application.config.spree.tax_providers, [Spree::TaxProvider::Internal]
 
         # Pricing and inventory sources. Internal is Spree's own catalog and
         # stock records; connector gems append theirs so a merchant picks from
         # what is installed (see docs/plans/6.0-third-party-pricing-inventory.md).
-        Rails.application.config.spree.pricing_providers.concat [Spree::PricingProvider::Internal]
-        Rails.application.config.spree.inventory_providers.concat [Spree::InventoryProvider::Internal]
+        register_defaults Rails.application.config.spree.pricing_providers, [Spree::PricingProvider::Internal]
+        register_defaults Rails.application.config.spree.inventory_providers, [Spree::InventoryProvider::Internal]
         # 'manual' is the negotiated-price marker on line items, so no pricing
         # engine may answer under it — fail the boot rather than the checkout.
         Spree::PricingProvider.verify_registry!
@@ -316,13 +315,13 @@ module Spree
         # and the operator settles offline. Assigned only if an initializer has
         # not already chosen one.
         Rails.application.config.spree.default_payout_provider ||= Spree::PayoutProvider::System
-        Rails.application.config.spree.payout_providers.concat [Spree::PayoutProvider::System]
+        register_defaults Rails.application.config.spree.payout_providers, [Spree::PayoutProvider::System]
 
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.
-        Rails.application.config.spree.password_validator = Spree::PasswordLengthValidator
+        Rails.application.config.spree.password_validator ||= Spree::PasswordLengthValidator
 
-        Rails.application.config.spree.fulfillment_providers = [
+        register_defaults Rails.application.config.spree.fulfillment_providers, [
           Spree::FulfillmentProvider::Manual,
           Spree::FulfillmentProvider::Digital,
           Spree::FulfillmentProvider::Pickup,
@@ -336,7 +335,7 @@ module Spree
         # Slugs match the tracking_number gem's courier codes where both know
         # the carrier, so a number auto-detected from its format lands on the
         # same entry a merchant would have picked by hand.
-        Rails.application.config.spree.tracking_carriers = {
+        register_defaults Rails.application.config.spree.tracking_carriers, {
           'ups' => { name: 'UPS', url: 'https://www.ups.com/track?tracknum=:tracking' },
           'usps' => { name: 'USPS', url: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=:tracking' },
           'fedex' => { name: 'FedEx', url: 'https://www.fedex.com/fedextrack/?trknbr=:tracking' },
@@ -358,20 +357,20 @@ module Spree
 
         # Quoting strategies selectable on a delivery method. Internal prices
         # through the method's calculator; carrier gems append theirs.
-        Rails.application.config.spree.delivery_rate_providers.concat [
+        register_defaults Rails.application.config.spree.delivery_rate_providers, [
           Spree::DeliveryRateProvider::Internal,
           Spree::DeliveryRateProvider::Freight
         ]
 
         # Digital asset sources. Core ships the uploaded-file default; host
         # apps append providers that resolve a deliverable elsewhere.
-        Rails.application.config.spree.digital_asset_providers.concat [
+        register_defaults Rails.application.config.spree.digital_asset_providers, [
           Spree::DigitalAssetProvider::File
         ]
 
         # Profile kinds selectable when creating a delivery profile;
         # extension kinds append theirs.
-        Rails.application.config.spree.delivery_profile_types.concat [
+        register_defaults Rails.application.config.spree.delivery_profile_types, [
           Spree::DeliveryProfiles::Shipping,
           Spree::DeliveryProfiles::Digital
         ]
@@ -379,21 +378,21 @@ module Spree
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
         # their own via this array.
-        Rails.application.config.spree.order_routing.strategies.concat [
+        register_defaults Rails.application.config.spree.order_routing.strategies, [
           Spree::OrderRouting::Strategy::Rules
         ]
 
         # Available order routing rule kinds. STI dispatches at runtime via the
         # +type+ column; this array is the curated allowlist that drives admin
         # pickers and the rule +type+ validation. Plugins append their own.
-        Rails.application.config.spree.order_routing.rules.concat [
+        register_defaults Rails.application.config.spree.order_routing.rules, [
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
         ]
 
         # Commission targeting rule kinds (docs/plans/6.0-multi-vendor-marketplace.md).
-        Rails.application.config.spree.commission_rules.concat [
+        register_defaults Rails.application.config.spree.commission_rules, [
           Spree::CommissionRules::SellerRule,
           Spree::CommissionRules::CategoryRule,
           Spree::CommissionRules::ProductRule,
@@ -402,7 +401,7 @@ module Spree
 
         # Seller onboarding requirement kinds
         # (docs/plans/6.0-seller-onboarding-requirements.md).
-        Rails.application.config.spree.seller_requirements.concat [
+        register_defaults Rails.application.config.spree.seller_requirements, [
           Spree::SellerRequirements::AcceptTerms,
           Spree::SellerRequirements::CompleteProfile,
           Spree::SellerRequirements::BillingAddress,
@@ -419,7 +418,7 @@ module Spree
         ]
 
         # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
-        Rails.application.config.spree.delivery_method_rules.concat [
+        register_defaults Rails.application.config.spree.delivery_method_rules, [
           Spree::DeliveryMethodRules::ItemTotalRule,
           Spree::DeliveryMethodRules::WeightRule,
           Spree::DeliveryMethodRules::ExcludedProductsRule,
@@ -428,7 +427,7 @@ module Spree
           Spree::DeliveryMethodRules::CompanyRule
         ]
 
-        Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
+        register_defaults Rails.application.config.spree.calculators.promotion_actions_create_adjustments, [
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
@@ -436,13 +435,13 @@ module Spree
           Spree::Calculator::TieredFlatRate
         ]
 
-        Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments = [
+        register_defaults Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments, [
           Spree::Calculator::PercentOnLineItem,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate
         ]
 
-        Rails.application.config.spree.promotions.rules.concat [
+        register_defaults Rails.application.config.spree.promotions.rules, [
           Spree::Promotion::Rules::Currency,
           Spree::Promotion::Rules::Country,
           Spree::Promotion::Rules::Channel,
@@ -462,7 +461,7 @@ module Spree
         # lists that were zone-scoped before 6.0 are converted onto it by
         # `spree:migrate_tax_zones` where the countries match a market, and
         # deactivated with a report where they don't.
-        Rails.application.config.spree.pricing.rules.concat [
+        register_defaults Rails.application.config.spree.pricing.rules, [
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,
           Spree::PriceRules::VolumeRule,
@@ -470,18 +469,18 @@ module Spree
           Spree::PriceRules::ChannelRule
         ]
 
-        Rails.application.config.spree.promotions.actions = [
+        register_defaults Rails.application.config.spree.promotions.actions, [
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
         ]
 
-        Rails.application.config.spree.data_feed_types = [
+        register_defaults Rails.application.config.spree.data_feed_types, [
           Spree::DataFeed::Google
         ]
 
-        Rails.application.config.spree.export_types = [
+        register_defaults Rails.application.config.spree.export_types, [
           Spree::Exports::Products,
           Spree::Exports::ProductTranslations,
           Spree::Exports::Orders,
@@ -494,7 +493,7 @@ module Spree
           Spree::Exports::Report
         ]
 
-        Rails.application.config.spree.import_types = [
+        register_defaults Rails.application.config.spree.import_types, [
           Spree::Imports::Products,
           Spree::Imports::ProductTranslations,
           Spree::Imports::Customers,
@@ -502,7 +501,7 @@ module Spree
           Spree::Imports::PurchaseOrders
         ]
 
-        Rails.application.config.spree.taxon_rules = [
+        register_defaults Rails.application.config.spree.taxon_rules, [
           Spree::TaxonRules::Tag,
           Spree::TaxonRules::AvailableOn,
           Spree::TaxonRules::Sale,
@@ -511,7 +510,7 @@ module Spree
         # Mirrors config.spree.taxon_rules above. AvailableOn ships with an interim
         # legacy-column implementation; its channel-aware rewrite is a later phase
         # (see docs/plans/6.0-replace-taxons-with-categories.md → Migration Phase 5).
-        Rails.application.config.spree.collection_rules = [
+        register_defaults Rails.application.config.spree.collection_rules, [
           Spree::CollectionRules::Tag,
           Spree::CollectionRules::AvailableOn,
           Spree::CollectionRules::Sale,
@@ -519,11 +518,11 @@ module Spree
 
         # Net-new (no taxon_rules equivalent — taxons ship no scheduled refresh).
         # Drives Spree::Collections::RegenerateTimeBasedJob.
-        Rails.application.config.spree.time_based_collection_rules = [
+        register_defaults Rails.application.config.spree.time_based_collection_rules, [
           Spree::CollectionRules::AvailableOn,
         ]
 
-        Rails.application.config.spree.translatable_resources = [
+        register_defaults Rails.application.config.spree.translatable_resources, [
           Spree::OptionType,
           Spree::OptionValue,
           Spree::Product,
@@ -538,10 +537,9 @@ module Spree
         # Resources that expose tags via `acts_as_taggable_on :tags`. The
         # Admin API's `/tags` autocomplete endpoint accepts these as
         # `taggable_type`, and the SPA `<TagCombobox>` targets them by name.
-        # Extend in an app initializer (after :load_config_initializers) to
-        # surface custom taggables — e.g.
+        # Extend in an app initializer to surface custom taggables — e.g.
         #   Rails.application.config.spree.taggable_types << 'MyApp::Seller'.
-        Rails.application.config.spree.taggable_types = [
+        register_defaults Rails.application.config.spree.taggable_types, [
           'Spree::Product',
           'Spree::Order',
           Spree.customer_class.to_s
@@ -552,15 +550,12 @@ module Spree
         # against. Extend in an app initializer to register an App or bot
         # class, which must include Spree::Actor:
         #   Rails.application.config.spree.actor_classes << 'MyApp::App'.
-        #
-        # Unioned rather than assigned, so what an initializer registered
-        # above survives.
-        Rails.application.config.spree.actor_classes |= [
+        register_defaults Rails.application.config.spree.actor_classes, [
           Spree.admin_user_class.to_s,
           'Spree::ApiKey'
         ]
 
-        Rails.application.config.spree.custom_fields.types = [
+        register_defaults Rails.application.config.spree.custom_fields.types, [
           Spree::CustomFields::ShortText,
           Spree::CustomFields::LongText,
           Spree::CustomFields::RichText,
@@ -569,7 +564,7 @@ module Spree
           Spree::CustomFields::Json
         ]
 
-        Rails.application.config.spree.custom_fields.enabled_resources = [
+        register_defaults Rails.application.config.spree.custom_fields.enabled_resources, [
           Spree::Address,
           Spree::Claim,
           Spree::Collection,
@@ -603,7 +598,7 @@ module Spree
           Spree.customer_class
         ]
 
-        Rails.application.config.spree.analytics_events = {
+        register_defaults Rails.application.config.spree.analytics_events, {
           product_viewed: 'Product Viewed',
           product_list_viewed: 'Product List Viewed',
           product_searched: 'Product Searched',
@@ -628,11 +623,8 @@ module Spree
           checkout_step_completed: 'Checkout Step Completed',
           order_completed: 'Order Completed',
         }
-        Rails.application.config.spree.analytics_event_handlers = []
 
-        Rails.application.config.spree.integrations = []
-
-        Rails.application.config.spree.validators.addresses = [
+        Rails.application.config.spree.validators.addresses.register_defaults [
           Spree::Addresses::PhoneValidator
         ]
 
@@ -657,18 +649,15 @@ module Spree
         ]
 
         # Pre-load authentication strategy classes to avoid reflection at request time
-        Rails.application.config.spree.store_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+        Rails.application.config.spree.store_authentication_strategies.register_defaults(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-        Rails.application.config.spree.admin_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+        Rails.application.config.spree.admin_authentication_strategies.register_defaults(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-        Rails.application.config.spree.seller_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
+        Rails.application.config.spree.seller_authentication_strategies.register_defaults(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-      end
-
-      initializer 'spree.promo.register.promotions.actions' do |app|
       end
 
       # filter sensitive information during logging
@@ -708,6 +697,17 @@ module Spree
         app.config.after_initialize do
           Spree.hooks.validate! if app.config.eager_load
         end
+      end
+
+      # Puts core's defaults ahead of whatever was registered before them,
+      # keeping each entry once. A Hash keeps the value registered under a
+      # default's key, so an application can override a single default.
+      #
+      # @param registry [Array, Hash] the registry to fill, changed in place
+      # @param defaults [Array, Hash] core's entries, in their canonical order
+      # @return [Array, Hash] the registry
+      def self.register_defaults(registry, defaults)
+        registry.replace(registry.is_a?(Hash) ? defaults.merge(registry) : defaults | registry)
       end
 
       config.to_prepare do

@@ -89,10 +89,10 @@ A provider that declares no settings skips the form entirely — adding it is a 
 ## 2. Register the provider
 
 ```ruby config/initializers/spree.rb
-Rails.application.config.after_initialize do
-  Spree.digital_asset_providers << 'Spree::DigitalAssetProvider::LicenseKey'
-end
+Spree.digital_asset_providers << 'Spree::DigitalAssetProvider::LicenseKey'
 ```
+
+A class-name string can be registered at the top level of the file. Registering the class itself needs `Rails.application.config.after_initialize`, because application classes cannot be loaded while initializer files are still running.
 
 Once registered, the provider appears as a source on the product's **Digital files** card: the **Add** button becomes a menu offering **Upload a file** alongside each registered provider. Picking your provider creates an asset with its `provider_type` set and no file attached.
 

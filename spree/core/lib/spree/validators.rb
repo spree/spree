@@ -30,6 +30,7 @@ module Spree
       # @return [Class] the registered validator
       def register(validator)
         resolved = resolve(validator)
+        unregistered.delete(resolved)
         push(resolved) unless include?(resolved)
         resolved
       end
@@ -37,7 +38,19 @@ module Spree
       # @param validator [Class, String]
       # @return [Class, nil] the removed validator, nil when not registered
       def unregister(validator)
-        delete(resolve(validator))
+        resolved = resolve(validator)
+        unregistered << resolved unless unregistered.include?(resolved)
+        delete(resolved)
+      end
+
+      # Puts core's defaults ahead of the validators registered before them.
+      # A default unregistered before core got to add it stays out, so a host
+      # can drop one from a plain initializer.
+      #
+      # @param defaults [Array<Class, String>]
+      # @return [Spree::Validators::Set] self
+      def register_defaults(defaults)
+        replace((Array(defaults).map { |entry| resolve(entry) } - unregistered) | self)
       end
 
       def replace(entries)
@@ -45,6 +58,10 @@ module Spree
       end
 
       private
+
+      def unregistered
+        @unregistered ||= []
+      end
 
       def resolve(validator)
         validator.is_a?(String) || validator.is_a?(Symbol) ? validator.to_s.constantize : validator

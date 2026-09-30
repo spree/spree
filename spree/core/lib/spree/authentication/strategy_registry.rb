@@ -42,6 +42,7 @@ module Spree
 
       def initialize(strategies = {})
         @strategies = {}
+        @removed = []
         strategies.each { |key, klass| add(key, klass) }
       end
 
@@ -53,6 +54,7 @@ module Spree
       #   {Spree::Authentication::Strategies::BaseStrategy})
       # @return [Class] the registered class
       def add(key, strategy_class)
+        @removed.delete(key.to_sym)
         @strategies[key.to_sym] = strategy_class
       end
 
@@ -61,7 +63,21 @@ module Spree
       # @param key [Symbol, String]
       # @return [Class, nil] the removed class, or nil if no such key
       def remove(key)
+        @removed << key.to_sym unless @removed.include?(key.to_sym)
         @strategies.delete(key.to_sym)
+      end
+
+      # Puts core's default strategies ahead of the ones registered before
+      # them. A key already registered keeps its strategy, and a key removed
+      # before core got to add it stays out — so a store can turn off
+      # password sign-in from a plain initializer.
+      #
+      # @param defaults [Hash{Symbol => Class}]
+      # @return [self]
+      def register_defaults(defaults)
+        defaults = defaults.to_h { |key, strategy| [key.to_sym, strategy] }.except(*@removed)
+        @strategies = defaults.merge(@strategies)
+        self
       end
 
       # Look up a registered strategy class.
