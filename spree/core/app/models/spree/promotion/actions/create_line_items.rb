@@ -104,26 +104,14 @@ module Spree
           quantifier.can_supply? quantity
         end
 
-        private
-
-        # Whether this line holds a variant the promotion gives away.
-        def gifted_item?(line_item)
-          gifted_quantity_of(line_item).positive?
-        end
-
-        # A gift cannot be the thing that qualifies the order for the promotion
-        # giving it away: a rule naming the gift's own product would otherwise
-        # hand the item over to anyone who put it in their cart. The order has
-        # to hold a line the rules count with units this action is not already
-        # covering. A promotion with no rules qualifies on anything, so there is
-        # nothing for the gift to stand in for.
-        def qualifies_beyond_the_gift?(order)
-          return true if promotion.promotion_rules.empty?
-
-          order.line_items.any? do |line_item|
-            promotion.line_item_actionable?(order, line_item) &&
-              gifted_quantity_of(line_item) < line_item.quantity
-          end
+        # Whether the promotion gives its gift on this order, judged with other
+        # promotions' gifts still counting toward its own rules — a single
+        # level, so two gift promotions measuring each other cannot loop.
+        #
+        # @param order [Spree::Order, Spree::Cart]
+        # @return [Boolean]
+        def gives_away?(order)
+          promotion.eligible?(order, own_gift_only: true) && qualifies_beyond_the_gift?(order, own_gift_only: true)
         end
 
         # How many units of this line the promotion pays for — never more than
@@ -139,6 +127,28 @@ module Spree
           return 0 if gifted.nil?
 
           [[line_item.quantity, gifted.quantity.to_i].min, 0].max
+        end
+
+        private
+
+        # Whether this line holds a variant the promotion gives away.
+        def gifted_item?(line_item)
+          gifted_quantity_of(line_item).positive?
+        end
+
+        # A gift cannot be the thing that qualifies the order for the promotion
+        # giving it away: a rule naming the gift's own product would otherwise
+        # hand the item over to anyone who put it in their cart. The order has
+        # to hold a line the rules count with units this action is not already
+        # covering. A promotion with no rules qualifies on anything, so there is
+        # nothing for the gift to stand in for.
+        def qualifies_beyond_the_gift?(order, options = {})
+          return true if promotion.promotion_rules.empty?
+
+          order.line_items.any? do |line_item|
+            promotion.line_item_actionable?(order, line_item, options) &&
+              gifted_quantity_of(line_item) < line_item.quantity
+          end
         end
 
         def add_missing_line_items(order)

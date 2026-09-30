@@ -53,7 +53,7 @@ module Spree
       end
 
       def shipping
-        order.ship_total * exchange_multiplier
+        order.delivery_total * exchange_multiplier
       end
 
       def tax

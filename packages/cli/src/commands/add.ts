@@ -145,6 +145,7 @@ export async function addApp(
     try {
       await execa(pm, ['install'], { cwd: appDir })
       s.stop('Dependencies installed.')
+      await generateRouteTree(appDir)
     } catch (err) {
       s.stop(pc.yellow(`${pm} install failed — run it manually in apps/${app.dir}/.`))
       p.log.warn(err instanceof Error ? err.message : String(err))
@@ -192,6 +193,28 @@ function resolveBundledTemplate(app: AppSpec): string {
       'or pass --template <path|git-url>.\n',
   )
   process.exit(1)
+}
+
+/**
+ * Writes the app's `src/routeTree.gen.ts` for the packages just installed.
+ *
+ * The template's copy was generated in the monorepo, so the first dev start
+ * would rewrite it — and Vite reloads the open page when it notices, which is
+ * the setup screen a new project opens straight into. Loading the app's own
+ * Vite config runs the same generator, with the same extensions, without
+ * starting a server, so that first start finds nothing to change.
+ */
+async function generateRouteTree(appDir: string): Promise<void> {
+  // Best effort: the dev server generates the file on start regardless.
+  await execa(
+    'node',
+    [
+      '--input-type=module',
+      '-e',
+      "const { resolveConfig } = await import('vite'); await resolveConfig({}, 'serve')",
+    ],
+    { cwd: appDir, reject: false },
+  )
 }
 
 /**

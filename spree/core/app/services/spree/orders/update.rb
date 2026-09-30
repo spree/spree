@@ -15,7 +15,10 @@ module Spree
         items_param = @params.delete(:items)
         address_params = extract_address_params
 
-        ApplicationRecord.transaction do
+        # requires_new: the rescue below sits outside the block, so joining a
+        # caller's open transaction (the API's order lock) would let it commit
+        # the half-applied edit.
+        ApplicationRecord.transaction(requires_new: true) do
           ship_address_id_before = @order.ship_address_id
           assign_addresses(address_params)
 
@@ -25,11 +28,12 @@ module Spree
 
           process_items(items_param) if items_param
 
-          if items_param || @order.ship_address_id != ship_address_id_before
-            build_fulfillments
-          end
+          # An address row edited in place keeps its id, so an edit to the fields a quote reads counts too.
+          destination_changed = @order.ship_address_id != ship_address_id_before || @order.ship_address&.saved_change_to_destination?
+          build_fulfillments(keep_selection: !destination_changed) if items_param || destination_changed
 
           @order.recalculate_totals!
+          @order.update_statuses!
         end
 
         success(@order.reload)
@@ -70,8 +74,8 @@ module Spree
         propagate_step_failure!(result, fallback: 'Failed to update items on order') if result.failure?
       end
 
-      def build_fulfillments
-        result = Spree::Orders::BuildFulfillments.call(order: @order)
+      def build_fulfillments(keep_selection:)
+        result = Spree::Orders::BuildFulfillments.call(order: @order, keep_selection: keep_selection)
         propagate_step_failure!(result, fallback: 'Failed to build shipments') if result.failure?
       end
 

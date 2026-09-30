@@ -685,6 +685,25 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         expect(order.reload.line_items).to contain_exactly(kept)
         expect(kept.reload.quantity).to eq(3)
       end
+
+      it 'applies none of the changes when one line is refused' do
+        unavailable = create(:variant)
+        unavailable.stock_levels.update_all(count_on_hand: 0, backorderable: false)
+
+        patch :update, params: {
+          id: order.prefixed_id,
+          items: [
+            { variant_id: kept.variant.prefixed_id, quantity: 3 },
+            { variant_id: removed.variant.prefixed_id, quantity: 0 },
+            { variant_id: unavailable.prefixed_id, quantity: 5 }
+          ]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include('is not available')
+        expect(order.reload.line_items).to contain_exactly(kept, removed)
+        expect(kept.reload.quantity).to eq(1)
+      end
     end
 
     # Staff assigning the business an order is for. A buyer with several

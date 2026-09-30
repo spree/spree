@@ -263,6 +263,19 @@ module Spree
         end || amount
     end
 
+    # Resizes a store credit payment that has not been taken yet. Completion
+    # takes it against the eligibility event recorded for its amount, so the
+    # new amount needs one of its own.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [void]
+    def update_store_credit_amount!(new_amount)
+      return if amount == new_amount
+
+      update_column(:amount, new_amount)
+      create_eligible_credit_event
+    end
+
     def offsets_total
       offsets.sum(:amount)
     end

@@ -10,3 +10,7 @@ export const ASYNC_JOBS_INITIALIZER = resolve(
   E2E_DIR,
   '../../../spree/api/spec/dummy/config/initializers/zz_dashboard_e2e_async_jobs.rb',
 )
+// The first-run setup suite runs its own Rails against its own database, so
+// its state files live apart from the main suite's.
+export const FIRST_RUN_CREDENTIALS_FILE = resolve(E2E_DIR, '.first-run.json')
+export const FIRST_RUN_RAILS_PID_FILE = resolve(E2E_DIR, '.first-run-rails.pid')

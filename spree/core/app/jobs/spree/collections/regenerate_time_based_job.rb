@@ -9,9 +9,12 @@ module Spree
       def perform
         types = Rails.application.config.spree.time_based_collection_rules.map(&:to_s)
 
-        Spree::Collection.automatic.
-          where(id: Spree::CollectionRule.where(type: types).select(:collection_id)).
-          find_each { |collection| Spree::Collections::RegenerateProducts.call(collection: collection) }
+        time_based = Spree::Collection.automatic.
+                     where(id: Spree::CollectionRule.where(type: types).select(:collection_id))
+
+        each_store_of(time_based) do |collections|
+          collections.find_each { |collection| Spree::Collections::RegenerateProducts.call(collection: collection) }
+        end
       end
     end
   end

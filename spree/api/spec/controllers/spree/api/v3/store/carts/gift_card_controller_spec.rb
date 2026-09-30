@@ -54,7 +54,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
     end
 
     context 'when the card is already held by the customer\'s other cart' do
-      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user) }
+      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user, line_items_price: 50) }
 
       before do
         other_cart.update_column(:total, 50)
@@ -71,7 +71,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
     end
 
     context 'when the other cart is being completed' do
-      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user) }
+      let!(:other_cart) { create(:cart_with_line_items, store: store, customer: user, line_items_price: 50) }
 
       before do
         other_cart.update_column(:total, 50)

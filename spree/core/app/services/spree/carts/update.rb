@@ -16,6 +16,9 @@ module Spree
           assign_default_addresses
 
           cart.save!
+          # Read before the items: processing them reloads the cart, which forgets what this save changed.
+          @destination_changed = destination_changed?
+          @new_delivery_destination = new_delivery_destination?
 
           process_items
           try_advance
@@ -63,6 +66,15 @@ module Spree
         cart.saved_change_to_ship_address_id? ||
           cart.saved_change_to_market_id? ||
           cart.saved_change_to_preferred_stock_location_id?
+      end
+
+      # Whether the chosen delivery belongs to a place the cart no longer
+      # ships to. A market change or a corrected phone number keeps the
+      # choice, quoted again.
+      def new_delivery_destination?
+        cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_preferred_stock_location_id? ||
+          cart.ship_address&.saved_change_to_destination? || false
       end
 
       def assign_cart_attributes
@@ -237,8 +249,8 @@ module Spree
       def try_advance
         return if cart.complete?
 
-        if @address_invalidated || destination_changed?
-          cart.recalculate_for_address_change!
+        if @address_invalidated || @destination_changed
+          cart.recalculate_for_address_change!(keep_selection: !@new_delivery_destination)
         else
           cart.recalculate_totals!
         end
