@@ -36,6 +36,27 @@ RSpec.describe Spree::Events::Catalog do
     end
   end
 
+  describe '#webhook?' do
+    it 'is true for an event declared without `webhook: false`, and for an undeclared one' do
+      catalog.instance_variable_set(:@loaded, true)
+      catalog.declare(Spree::Order, :placed)
+
+      expect(catalog.webhook?('order.placed')).to be(true)
+      expect(catalog.webhook?('order.teleported')).to be(true)
+    end
+
+    # Where classes load lazily, the process delivering webhooks may not have
+    # loaded the model that declares an event `webhook: false` yet.
+    it 'loads every model before letting an unknown event through' do
+      allow(catalog).to receive(:load!).and_wrap_original do |original|
+        catalog.declare(Spree::AdminUser, 'admin_user.password_reset_requested', webhook: false)
+        original.call
+      end
+
+      expect(catalog.webhook?('admin_user.password_reset_requested')).to be(false)
+    end
+  end
+
   describe '#verify_declared!' do
     before { catalog.instance_variable_set(:@loaded, true) }
 

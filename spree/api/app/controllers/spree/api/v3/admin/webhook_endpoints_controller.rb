@@ -73,10 +73,10 @@ module Spree
 
           private
 
-          # Password reset tokens are account credentials, so the webhooks
-          # permission alone cannot subscribe an endpoint to them, or repoint an
-          # endpoint that already receives them: each needs the permission the
-          # event catalog names for it (customers, staff or sellers).
+          # A customer's password reset token is an account credential, so the
+          # webhooks permission alone cannot subscribe an endpoint to it, or
+          # repoint an endpoint that already receives it: that needs the
+          # permission the event catalog names for it (`write_customers`).
           def reject_unauthorized_credential_subscription!
             events = requested_credential_events | repointed_credential_events
             missing = events.reject { |entry| holds_permission?(entry.credential_permission) }
