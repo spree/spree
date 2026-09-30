@@ -8,6 +8,7 @@ module Spree
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events
+    publishes_events :canceled, :partially_redeemed, :redeemed
 
     #
     # Status

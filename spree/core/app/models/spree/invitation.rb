@@ -1,5 +1,7 @@
 module Spree
   class Invitation < Spree.base_class
+    publishes_events :accepted, :created, :resent
+
     has_prefix_id :inv
 
     has_secure_token

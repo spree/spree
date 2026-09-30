@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :dl  # Spree-specific: digital link
 
     publishes_lifecycle_events
+    publishes_event :downloaded
 
     has_secure_token on: :save
 
