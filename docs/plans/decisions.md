@@ -36,6 +36,16 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 
 ## 2026-09-29: Liquid and MJML emails move into 6.0, with ERB overrides bridged for one release
 
+## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
+
+**Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
+
+**Decision:** Each store can edit every email, the shared layout and the shared partials. Edits are saved as drafts and go live when published; publishing renders the template with sample data under strict variables (every email, for the layout or a partial) and refuses anything that does not render. Published templates are store-scoped rows found before the files in the template lookup, one version for every language (`locale = 'any'`, never NULL, so the unique index holds) with optional per-language versions. History is an append-only revisions table next to the live row. Preview renders on the server through the same renderer customers' emails use, with the store's latest matching record or one the merchant picks. Test emails go only to the signed-in admin. Branding (colors, fonts) lives in store preferences, independent of template code. Templates are their own permission resource, `email_templates`. The editor is CodeMirror 6 in `@spree/dashboard-ui`.
+
+**Consequences:** A bad layout or partial edit reaches every email, which is why publishing validates them all. Renaming an email key or a partial argument now breaks stores that customized it; keys need a data migration and partial arguments may only be added. Changing a default template shows an "updated by Spree" notice to every store that customized it.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (its deferred editing work now points to `6.0-email-template-editor.md`).
+
 ## 2026-09-29: Liquid and MJML emails move into 6.0, and ERB email overrides are dropped
 
 **Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid. A bridge that kept ERB overrides rendering through 6.0 was built first, as a `spree_legacy_emails` gem, and then removed the same day.
