@@ -16,6 +16,16 @@ RSpec.describe Spree::Api::WebhookEventTypes do
     end
   end
 
+  it 'has a dashboard label for every event group, in every language' do
+    groups = Spree::Events.catalog.all.map(&:group).uniq
+
+    Dir[monorepo_root.join('packages/dashboard/src/locales/*.json')].each do |file|
+      labels = JSON.parse(File.read(file)).dig('admin', 'pages', 'settings', 'webhooks', 'event_groups')
+
+      expect(groups - labels.keys).to be_empty, "#{File.basename(file)} has no label for #{(groups - labels.keys).join(', ')}"
+    end
+  end
+
   it 'types a deprecated alias with the event that replaces it' do
     expect(generator.render[:types]).to include(
       "  /** @deprecated Use `order.placed` instead. */\n  'order.completed': Order"

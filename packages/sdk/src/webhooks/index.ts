@@ -98,7 +98,7 @@ export interface WebhookEventMetadata {
 
 // ─── Construction ──────────────────────────────────────────────
 
-/** Anything with a `parse` method returning the parsed value, such as a Zod schema. */
+/** Anything with a `parse` method that throws on invalid data, such as a Zod schema. */
 export interface WebhookDataSchema {
   parse(data: unknown): unknown
 }
@@ -108,8 +108,9 @@ export interface ConstructWebhookEventOptions {
   toleranceSeconds?: number
   /**
    * Schemas to validate `data` with, keyed by event name — pass
-   * `webhookEventSchemas` from `@spree/sdk/zod`. An event without a schema
-   * is returned unvalidated.
+   * `webhookEventSchemas` from `@spree/sdk/zod`. A schema that rejects `data`
+   * throws its own error; `data` itself is returned as received. An event
+   * without a schema is returned unvalidated.
    */
   schemas?: Partial<Record<string, WebhookDataSchema>>
 }
@@ -181,6 +182,8 @@ export function constructWebhookEvent(
   }
 
   const event = JSON.parse(rawBody) as WebhookEvent
-  const schema = options.schemas?.[event.name]
-  return schema ? ({ ...event, data: schema.parse(event.data) } as WebhookEvent) : event
+  // Validated, not replaced: a schema's parse drops fields it does not list,
+  // which would silently strip what a customized serializer adds.
+  options.schemas?.[event.name]?.parse(event.data)
+  return event
 }

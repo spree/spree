@@ -179,15 +179,27 @@ describe('constructWebhookEvent', () => {
     )
   })
 
-  it('validates data with the schema for its event', () => {
-    const parse = vi.fn((data: unknown) => ({ ...(data as object), parsed: true }))
+  it('validates data with the schema for its event, keeping fields the schema does not list', () => {
+    const parse = vi.fn((data: unknown) => ({ id: (data as { id: string }).id }))
 
     const event = constructWebhookEvent(body, headersFor(body), secret, {
       schemas: { 'order.placed': { parse } },
     })
 
     expect(parse).toHaveBeenCalledWith({ id: 'or_1', number: 'R123' })
-    expect(event.data).toMatchObject({ parsed: true })
+    expect(event.data).toEqual({ id: 'or_1', number: 'R123' })
+  })
+
+  it('throws when the schema rejects data', () => {
+    const parse = () => {
+      throw new Error('invalid order')
+    }
+
+    expect(() =>
+      constructWebhookEvent(body, headersFor(body), secret, {
+        schemas: { 'order.placed': { parse } },
+      }),
+    ).toThrow('invalid order')
   })
 
   it('declares a schema for every event', () => {
