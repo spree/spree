@@ -42,6 +42,7 @@ export const FulfillmentSchema = z.object({
   metadata: z.record(z.string(), z.unknown()),
   adjustment_total: z.string(),
   pre_tax_amount: z.string(),
+  cost_source: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   order_id: z.string().nullable(),
