@@ -23,9 +23,9 @@ Every webhook delivery sends a JSON envelope with the event metadata and a `data
 | `name` | string | Event name (e.g., `order.placed`) |
 | `created_at` | string | ISO 8601 timestamp |
 | `data` | object | Serialized resource (see payloads below) |
-| `metadata` | object | Additional context: always the Spree version, plus event-specific keys such as `notify_customer` (fulfillment events — order events carry it in `data`) or `deprecated_alias_of` |
+| `metadata` | object | Additional context: always the Spree version, plus event-specific keys such as `notify_customer` or `deprecated_alias_of` |
 
-Event payloads use the same [Store API V3 serializers](/api-reference/introduction) as the REST API. All `id` fields use [prefixed IDs](/api-reference/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
+Event payloads use the same [Store API V3 serializers](/api-reference/introduction) as the REST API, so they never carry back-office fields such as costs, internal notes or staff names. When you need those, fetch the record from the [Admin API](/api-reference/admin-api/introduction) using the `id` in the payload. All `id` fields use [prefixed IDs](/api-reference/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
 
 For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system and the subscriber pattern, see [Events](/developer/core-concepts/events).
 
@@ -75,7 +75,7 @@ Events: `order.created`, `order.updated`, `order.deleted`, `order.placed`, `orde
 | `order.resend_confirmation_email` | An admin asked to send the order confirmation again |
 | `order.resend_digital_links_email` | An admin asked to send the download links again |
 
-The `order.placed` and `order.canceled` payloads also contain a `notify_customer` boolean. It is `false` when whoever placed or canceled the order asked for the customer not to be emailed.
+The `metadata` of `order.placed` and `order.canceled` contains a `notify_customer` boolean. It is `false` when whoever placed or canceled the order asked for the customer not to be emailed.
 
 Order payloads include nested `items`, `fulfillments`, `payments`, `discounts`, `fees`, `billing_address`, `shipping_address`, `gift_card`, and `market`.
 
@@ -173,7 +173,7 @@ Carts publish their own events, separate from orders. Use them to follow carts t
 
 Events: `order_group.created`, `order_group.updated`, `order_group.deleted`, `order_group.completed`
 
-When one checkout creates several orders (for example, one per seller), they belong to an order group. `order_group.completed` fires once every order in the group is placed. The payload includes the group's `number`, `email`, `currency`, `total`, `item_total`, `fulfillment_status`, `payment_status`, `completed_at`, the addresses, and the nested `orders`.
+When one checkout creates several orders (for example, one per seller), they belong to an order group. `order_group.completed` fires once every order in the group is placed. The payload includes the group's `number`, `email`, `currency`, `total`, `item_total`, `fulfillment_status`, `payment_status`, `completed_at`, the addresses, and the nested `orders`. Its `metadata` contains `notify_customer`, as on `order.placed`.
 
 ## Line Item Events
 
@@ -544,6 +544,23 @@ Events: `user.created`, `user.updated`, `user.deleted`, `customer.anonymized`, `
 
 Customer lifecycle events use the `user` prefix. Customer payloads include nested `addresses`, `default_billing_address`, `default_shipping_address`, `newsletter_subscriber`, and `customer_groups`.
 
+`customer.password_reset_requested` carries what you need to send the reset email yourself, rather than the customer record. Staff and seller users have the same event, `admin_user.password_reset_requested` and `seller_user.password_reset_requested`:
+
+```json
+{
+  "email": "customer@example.com",
+  "reset_token": "eyJfcmFpbHMiOnsi...",
+  "store_id": "store_UkLWZg9DAJ",
+  "redirect_url": "https://shop.example.com/account/reset-password"
+}
+```
+
+`redirect_url` is present only when the request included one.
+
+<Warning>
+A reset token lets whoever holds it take over the account. The three `*.password_reset_requested` events are therefore sent only to endpoints that name them — never to an endpoint subscribed to `*` or `customer.*` — and subscribing to one needs the matching permission: manage customers, staff or sellers.
+</Warning>
+
 ```json
 {
   "id": "cust_k5nR8xLq",
@@ -867,7 +884,7 @@ Events: `invitation.created`, `invitation.resent`, `invitation.accepted`
 
 ## Other Events
 
-These resources publish events too. Their payloads use the same serializers as the matching API responses.
+These resources publish events too. Back-office records (purchase orders, stock receipts, suppliers and shipping labels) send a short payload with their status, related record IDs and timestamps; fetch the rest from the Admin API.
 
 | Resource | Events |
 |---|---|

@@ -147,6 +147,30 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 | `['order.*', 'payment.*', 'fulfillment.fulfilled']` | Multiple patterns |
 | `[]` or `['*']` | All events |
 
+Events that carry a credential — the `*.password_reset_requested` events, which include a reset token — are never matched by a pattern. An endpoint receives them only when it names them, and naming one needs the permission to manage the accounts it concerns.
+
+To see every event you can subscribe to, including those your installed extensions add, list them:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: events } = await client.webhookEvents.list()
+// [{ name: 'order.placed', group: 'order', credential: false, deprecated: false, ... }, ...]
+```
+
+```bash CLI
+spree api get /webhook_events
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/admin/webhook_events' \
+  -H 'X-Spree-API-Key: sk_xxx'
+```
+
+</CodeGroup>
+
+Each entry says whether the event carries a credential (and which permission subscribing to it needs), and whether it is a deprecated name along with the event that replaces it.
+
 ## Webhook Payload
 
 Each webhook delivery sends a JSON payload with the following structure. The `data` object uses the same [Store API V3 serializers](/api-reference/introduction) as the REST API, so webhook payloads and API responses share the same schema:
@@ -181,7 +205,9 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
 | `name` | Event name (e.g., `order.placed`) |
 | `created_at` | ISO8601 timestamp when event occurred |
 | `data` | Serialized resource data (V3 API format with [prefixed IDs](/api-reference/introduction)) |
-| `metadata` | Additional context including Spree version |
+| `metadata` | Additional context: the Spree version, plus facts about the event itself, such as `notify_customer` |
+
+Payloads carry what a customer could see, never back-office fields such as costs, internal notes or staff names. When an integration needs those, it fetches the record from the Admin API with the `id` in the payload, using a key scoped to what it may read.
 
 For complete payload schemas for each event type, see [Webhook Events & Payloads](/api-reference/webhooks-events).
 
@@ -209,27 +235,47 @@ The [Spree Storefront](https://github.com/spree/storefront) includes a ready-mad
 
 #### Any JavaScript/TypeScript framework
 
-Use `@spree/sdk/webhooks` for framework-agnostic verification:
+Use `@spree/sdk/webhooks` for framework-agnostic verification. `constructWebhookEvent` checks the signature and returns a typed event: once you check `event.name`, `event.data` has the type of the record that event carries.
 
 ```typescript Store SDK
-import { verifyWebhookSignature } from '@spree/sdk/webhooks'
-import type { WebhookEvent } from '@spree/sdk/webhooks'
-import type { Order } from '@spree/sdk'
+import { constructWebhookEvent, WebhookVerificationError } from '@spree/sdk/webhooks'
+import { webhookEventSchemas } from '@spree/sdk/zod'
 
 // Hono, Cloudflare Workers, or any Web Fetch API-based framework
-app.post('/webhooks/spree', async (req, res) => {
-  const body = await req.text()
-  const signature = req.headers['x-spree-webhook-signature']
-  const timestamp = req.headers['x-spree-webhook-timestamp']
-
-  if (!verifyWebhookSignature(body, signature, timestamp, process.env.SPREE_WEBHOOK_SECRET!)) {
-    return res.status(401).json({ error: 'Invalid signature' })
+app.post('/webhooks/spree', async (c) => {
+  let event
+  try {
+    event = constructWebhookEvent(await c.req.text(), c.req.raw.headers, process.env.SPREE_WEBHOOK_SECRET!, {
+      schemas: webhookEventSchemas, // optional: validate `data` at runtime
+    })
+  } catch (error) {
+    if (error instanceof WebhookVerificationError) return c.json({ error: 'Invalid signature' }, 401)
+    throw error
   }
 
-  const event: WebhookEvent<Order> = JSON.parse(body)
-  // handle event...
-  res.json({ received: true })
+  switch (event.name) {
+    case 'order.placed':
+      await fulfil(event.data) // typed as Order
+      break
+    case 'customer.password_reset_requested':
+      await sendResetEmail(event.data.email, event.data.reset_token)
+      break
+  }
+
+  return c.json({ received: true })
 })
+```
+
+Pass the body exactly as received: parsing and re-serializing it changes the bytes the signature covers. `verifyWebhookSignature` is still available when you only need the check.
+
+Events your own code or an extension publishes can be typed too, by adding them to `WebhookEventMap`:
+
+```typescript
+declare module '@spree/sdk/webhooks' {
+  interface WebhookEventMap {
+    'loyalty.points_earned': { id: string; points: number }
+  }
+}
 ```
 
 #### Ruby
@@ -332,7 +378,7 @@ SSL certificates are verified in production, and not in development — so you c
 
 ## Available Events
 
-Webhooks can subscribe to any event in Spree's event system. See [Webhook Events & Payloads](/api-reference/webhooks-events) for the complete list.
+Webhooks can subscribe to any event in Spree's event system. See [Webhook Events & Payloads](/api-reference/webhooks-events) for the complete list, or [list them through the Admin API](#event-subscriptions) to include the events your extensions add.
 
 Common webhook events include:
 
