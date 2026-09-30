@@ -655,6 +655,7 @@
           "events_credential": "Credencial",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "Obsoleto, usa {{event}}",
+          "events_load_failed": "No se pudo cargar la lista de eventos. Aún puedes añadir un evento por su nombre abajo.",
           "events_remove_aria": "Quitar {{event}}",
           "health": {
             "auto_disabled_alert": "Este endpoint se deshabilitó automáticamente después de fallas repetidas de entrega.",

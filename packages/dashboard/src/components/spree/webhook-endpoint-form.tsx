@@ -102,7 +102,7 @@ export function WebhookEndpointFormFields({
 function EventPicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
   const { t } = useTranslation()
   const [customEvent, setCustomEvent] = useState('')
-  const { data: catalog } = useWebhookEventCatalog()
+  const { data: catalog, isPending, isError, refetch } = useWebhookEventCatalog()
   const events = catalog?.data ?? []
   const subscribed = new Set(value)
   const declared = new Set(events.map((event) => event.name))
@@ -137,6 +137,17 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
           : t('admin.pages.settings.webhooks.events_count', { count: value.length })}
       </div>
       <div className="flex max-h-72 flex-col gap-4 overflow-y-auto p-3">
+        {isPending && <p className="text-xs text-muted-foreground">{t('admin.common.loading')}</p>}
+        {isError && (
+          <div className="flex items-center justify-between gap-2" role="alert">
+            <p className="text-xs text-destructive">
+              {t('admin.pages.settings.webhooks.events_load_failed')}
+            </p>
+            <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
+              {t('admin.common.retry')}
+            </Button>
+          </div>
+        )}
         {[...groups].map(([group, groupEvents]) => (
           <div key={group} className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">

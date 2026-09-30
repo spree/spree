@@ -3991,6 +3991,7 @@
           "events_credential": "Zugangsdaten",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "Veraltet, {{event}} verwenden",
+          "events_load_failed": "Die Ereignisliste konnte nicht geladen werden. Du kannst unten trotzdem ein Ereignis per Namen hinzufügen.",
           "events_remove_aria": "{{event}} entfernen",
           "health": {
             "auto_disabled_alert": "Dieser Endpunkt wurde nach wiederholten Zustellfehlern automatisch deaktiviert.",

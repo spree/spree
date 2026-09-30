@@ -4041,6 +4041,7 @@
           "events_credential": "Dane uwierzytelniające",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "Przestarzałe, użyj {{event}}",
+          "events_load_failed": "Nie udało się wczytać listy zdarzeń. Nadal możesz dodać zdarzenie po nazwie poniżej.",
           "events_remove_aria": "Usuń {{event}}",
           "health": {
             "auto_disabled_alert": "Ten punkt końcowy został automatycznie wyłączony po wielokrotnych niepowodzeniach dostarczenia.",

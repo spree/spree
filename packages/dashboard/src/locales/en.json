@@ -3991,6 +3991,7 @@
           "events_credential": "Credential",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "Deprecated, use {{event}}",
+          "events_load_failed": "Couldn't load the list of events. You can still add an event by name below.",
           "events_remove_aria": "Remove {{event}}",
           "health": {
             "auto_disabled_alert": "This endpoint was automatically disabled after repeated delivery failures.",
