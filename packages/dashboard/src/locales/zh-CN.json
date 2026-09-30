@@ -3965,6 +3965,7 @@
           "events_credential": "凭据",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "已弃用，请使用 {{event}}",
+          "events_load_failed": "无法加载事件列表。你仍可以在下方按名称添加事件。",
           "events_remove_aria": "移除 {{event}}",
           "health": {
             "auto_disabled_alert": "此端点因多次投递失败已被自动禁用。",

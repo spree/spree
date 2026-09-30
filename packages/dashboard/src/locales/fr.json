@@ -3975,6 +3975,7 @@
           "events_credential": "Identifiant",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "Obsolète, utilisez {{event}}",
+          "events_load_failed": "Impossible de charger la liste des événements. Vous pouvez toujours ajouter un événement par son nom ci-dessous.",
           "events_remove_aria": "Retirer {{event}}",
           "health": {
             "auto_disabled_alert": "Ce point de terminaison a été automatiquement désactivé après des échecs de livraison répétés.",

@@ -4003,6 +4003,7 @@
           "events_credential": "بيانات اعتماد",
           "events_custom_input_placeholder": "custom.event_name",
           "events_deprecated": "مهمل، استخدم {{event}}",
+          "events_load_failed": "تعذّر تحميل قائمة الأحداث. لا يزال بإمكانك إضافة حدث باسمه أدناه.",
           "events_remove_aria": "إزالة {{event}}",
           "health": {
             "auto_disabled_alert": "تم تعطيل نقطة النهاية هذه تلقائيًا بعد فشل التسليم المتكرر.",

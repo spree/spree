@@ -39,7 +39,7 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
       post :create, params: { email: 'admin@example.com', redirect_url: 'https://evil.example.com' }
 
       expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
-        expect(payload).not_to have_key(:redirect_url)
+        expect(payload).not_to have_key('redirect_url')
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
         post :create, params: { email: 'admin@example.com', redirect_url: 'https://attacker.example.com/reset' }
 
         expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
-          expect(payload).not_to have_key(:redirect_url)
+          expect(payload).not_to have_key('redirect_url')
         end
       end
 
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
         post :create, params: { email: 'outsider@example.com', redirect_url: 'https://admin.example.com/reset-password' }
 
         expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
-          expect(payload).not_to have_key(:redirect_url)
+          expect(payload).not_to have_key('redirect_url')
         end
       end
     end
