@@ -14,4 +14,18 @@ RSpec.describe SpreeVies::RevalidateJob do
 
     expect(stale.reload.validation_status).to eq('verified')
   end
+
+  it 'spreads the checks out at the configured rate' do
+    due = create_list(:tax_identifier, 3).sort_by(&:id)
+    due.each { |tax_identifier| tax_identifier.update_columns(validation_status: nil) } # never asked
+    allow(SpreeVies).to receive(:revalidations_per_minute).and_return(2)
+
+    Timecop.freeze do
+      described_class.perform_now
+
+      expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[0].id).at(Time.current)
+      expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[1].id).at(Time.current)
+      expect(Spree::TaxIdentifiers::ValidateJob).to have_been_enqueued.with(due[2].id).at(1.minute.from_now)
+    end
+  end
 end

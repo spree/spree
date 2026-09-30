@@ -4,6 +4,9 @@ module SpreeVies
   #
   # Leaves each verdict as it is while its check is queued: the last answer is
   # still the best one there is, and marking the number pending would hide it.
+  #
+  # Checks are spread out at {SpreeVies.revalidations_per_minute}, so a large
+  # backlog doesn't reach VIES all at once.
   class RevalidateJob < Spree::BaseJob
     include ActiveJob::Continuable
 
@@ -16,8 +19,9 @@ module SpreeVies
     private
 
     def queue_checks(step)
-      SpreeVies::Validator.due_for_check.find_each(start: step.cursor) do |tax_identifier|
-        Spree::TaxIdentifiers::ValidateJob.perform_later(tax_identifier.id)
+      SpreeVies::Validator.due_for_check.find_each(start: step.cursor).each_with_index do |tax_identifier, index|
+        delay = (index / SpreeVies.revalidations_per_minute).minutes
+        Spree::TaxIdentifiers::ValidateJob.set(wait: delay).perform_later(tax_identifier.id)
         step.advance! from: tax_identifier.id
       end
     end

@@ -33,6 +33,12 @@ To trust answers for a different period, set it in `config/initializers/spree.rb
 SpreeVies.freshness = 30.days
 ```
 
+The re-check releases at most 60 checks a minute, so a large backlog (for example every number on the day the gem is installed) doesn't reach VIES all at once. To change that:
+
+```ruby
+SpreeVies.revalidations_per_minute = 30
+```
+
 Retries, the rate-limit pause and the guard against checking one number twice at once use `Rails.cache`. With more than one server or worker process, use a cache store they share (Solid Cache, Redis or Memcached).
 
 ## Testing
