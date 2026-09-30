@@ -6,7 +6,8 @@ module SpreeVies
   # still the best one there is, and marking the number pending would hide it.
   #
   # Checks are spread out at {SpreeVies.revalidations_per_minute}, so a large
-  # backlog doesn't reach VIES all at once.
+  # backlog doesn't reach VIES all at once. The schedule is saved with the
+  # job's progress, so a run that is interrupted and resumed keeps to it.
   class RevalidateJob < Spree::BaseJob
     include ActiveJob::Continuable
 
@@ -19,11 +20,18 @@ module SpreeVies
     private
 
     def queue_checks(step)
-      SpreeVies::Validator.due_for_check.find_each(start: step.cursor).each_with_index do |tax_identifier, index|
-        delay = (index / SpreeVies.revalidations_per_minute).minutes
-        Spree::TaxIdentifiers::ValidateJob.set(wait: delay).perform_later(tax_identifier.id)
-        step.advance! from: tax_identifier.id
+      schedule = step.cursor || { next_id: nil, released: 0, started_at: Time.current }
+
+      SpreeVies::Validator.due_for_check.find_each(start: schedule[:next_id]) do |tax_identifier|
+        Spree::TaxIdentifiers::ValidateJob.set(wait_until: release_time(schedule)).perform_later(tax_identifier.id)
+
+        schedule = schedule.merge(next_id: tax_identifier.id.succ, released: schedule[:released] + 1)
+        step.set! schedule
       end
+    end
+
+    def release_time(schedule)
+      schedule[:started_at] + (schedule[:released] / SpreeVies.revalidations_per_minute).minutes
     end
   end
 end
