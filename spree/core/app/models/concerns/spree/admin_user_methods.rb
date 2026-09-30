@@ -10,6 +10,12 @@ module Spree
     included do
       has_prefix_id :adm
 
+      publishes_events 'admin_user.password_reset', 'seller_user.password_reset'
+      publishes_event 'admin_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', credential: 'write_staff'
+      publishes_event 'seller_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', credential: 'write_sellers'
+
       has_person_name
 
       normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }

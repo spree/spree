@@ -103,9 +103,8 @@ module Spree
         customer.reload
 
         customer.publish_event(
-          'customer.anonymized',
-          store_id: store&.prefixed_id,
-          requested_by_id: requested_by&.prefixed_id
+          'customer.anonymized', nil,
+          store_id: store&.prefixed_id, requested_by_id: requested_by&.prefixed_id
         )
 
         run_hooks :after_anonymize

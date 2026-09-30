@@ -1,5 +1,7 @@
 module Spree
   class ImportRow < Spree.base_class
+    publishes_events :completed, :failed
+
     has_prefix_id :imrow
 
     # Set event prefix for ImportRow

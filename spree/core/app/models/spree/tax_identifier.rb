@@ -36,6 +36,8 @@ module Spree
   # directly. It is a habit of the gems that use it, not a rule this model
   # applies.
   class TaxIdentifier < Spree.base_class
+    publishes_event :number_changed
+
     has_prefix_id :txi
 
     # Statuses the platform records rather than the buyer chooses: nil means

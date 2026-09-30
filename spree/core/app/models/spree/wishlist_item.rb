@@ -11,6 +11,9 @@ module Spree
     money_methods :total, :price
 
     publishes_lifecycle_events
+    publishes_event 'wished_item.created', deprecated_alias_of: 'wishlist_item.created'
+    publishes_event 'wished_item.updated', deprecated_alias_of: 'wishlist_item.updated'
+    publishes_event 'wished_item.deleted', deprecated_alias_of: 'wishlist_item.deleted'
 
     belongs_to :variant, class_name: 'Spree::Variant'
     belongs_to :wishlist, class_name: 'Spree::Wishlist'

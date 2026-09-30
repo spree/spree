@@ -20,6 +20,7 @@ module Spree
     include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :fulfilled, :received, :requested
 
     has_status :requested, :approved, :received, :fulfilled, :canceled,
                default: :requested

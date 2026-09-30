@@ -21,7 +21,11 @@ module Spree
       attribute :metadata, default: -> { {} }
 
       # Enable lifecycle events for user models
+      self.event_prefix = 'user'
       publishes_lifecycle_events
+      publishes_events 'customer.password_reset', 'customer.anonymized'
+      publishes_event 'customer.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', credential: 'write_customers'
 
       # Password reset token (Rails 7.1+ signed token, no DB column needed)
       # Token auto-invalidates when password changes (salt changes)

@@ -39,6 +39,7 @@ module Spree
     has_spree_number prefix: 'R', key: :order
 
     publishes_lifecycle_events
+    publishes_events :completed, :resend_confirmation_email
 
     #
     # Associations

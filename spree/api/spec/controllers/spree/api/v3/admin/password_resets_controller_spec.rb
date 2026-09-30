@@ -19,7 +19,7 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
       expect(response).to have_http_status(:accepted)
       expect(Spree::Events).to have_received(:publish).with(
         'admin_user.password_reset_requested',
-        hash_including(reset_token: an_instance_of(String), email: 'admin@example.com', store_id: store.prefixed_id),
+        hash_including('reset_token' => an_instance_of(String), 'email' => 'admin@example.com', 'store_id' => store.prefixed_id),
         anything
       )
     end
@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::Admin::PasswordResetsController, type: :controlle
         post :create, params: { email: 'admin@example.com', redirect_url: 'https://admin.example.com/reset-password' }
 
         expect(Spree::Events).to have_received(:publish) do |_name, payload, _meta|
-          expect(payload[:redirect_url]).to eq('https://admin.example.com/reset-password')
+          expect(payload['redirect_url']).to eq('https://admin.example.com/reset-password')
         end
       end
 
