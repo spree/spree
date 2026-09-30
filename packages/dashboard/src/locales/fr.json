@@ -3338,7 +3338,8 @@
               "approve": "Approuver",
               "create": "Nouveau retour",
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser"
+              "refund": "Rembourser",
+              "complete": "Clôturer le retour"
             },
             "buy_label": "Acheter une étiquette de retour",
             "buy_label_confirm": "Acheter une étiquette de retour prépayée ? Votre compte transporteur est débité dès son émission.",
@@ -3367,6 +3368,8 @@
               "store_credit": "Avoir"
             },
             "refund_title": "Rembourser le retour",
+            "complete_title": "Clôturer le retour",
+            "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "refund_total": "Total du remboursement",
             "resellable": "Revendable",
             "returning_to": "Retour vers {{name}}"

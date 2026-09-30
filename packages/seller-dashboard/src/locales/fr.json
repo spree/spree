@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser"
+              "refund": "Rembourser",
+              "complete": "Clôturer le retour"
             },
             "create_title": "Nouveau retour",
             "location": "Retourner à",
@@ -153,6 +154,8 @@
               "store_credit": "Avoir"
             },
             "refund_title": "Rembourser le retour",
+            "complete_title": "Clôturer le retour",
+            "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "resellable": "Revendable"
           }
         }

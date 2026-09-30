@@ -285,7 +285,8 @@
               "approve": "Aprobar",
               "create": "Nueva devolución",
               "receive": "Recibir artículos",
-              "refund": "Reembolsar"
+              "refund": "Reembolsar",
+              "complete": "Completar devolución"
             },
             "buy_label": "Comprar etiqueta de devolución",
             "buy_label_confirm": "¿Comprar una etiqueta de devolución prepagada? Tu cuenta de transportista se cobra en cuanto se emite la etiqueta.",
@@ -314,6 +315,8 @@
               "store_credit": "Crédito de tienda"
             },
             "refund_title": "Reembolsar devolución",
+            "complete_title": "Completar devolución",
+            "nothing_owed": "No se debe nada en esta devolución, así que no se reembolsa dinero. Al completarla, la devolución se cierra.",
             "refund_total": "Total del reembolso",
             "resellable": "Revendible",
             "returning_to": "Devolviendo a {{name}}"

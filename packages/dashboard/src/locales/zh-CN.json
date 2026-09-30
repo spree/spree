@@ -3328,7 +3328,8 @@
               "approve": "批准",
               "create": "新建退货",
               "receive": "接收商品",
-              "refund": "退款"
+              "refund": "退款",
+              "complete": "完成退货"
             },
             "buy_label": "购买退货面单",
             "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
@@ -3357,6 +3358,8 @@
               "store_credit": "商店积分"
             },
             "refund_title": "退货退款",
+            "complete_title": "完成退货",
+            "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "refund_total": "退款总额",
             "resellable": "可再销售",
             "returning_to": "退回至 {{name}}"

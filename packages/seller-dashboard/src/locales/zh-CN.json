@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "接收商品",
-              "refund": "退款"
+              "refund": "退款",
+              "complete": "完成退货"
             },
             "create_title": "新建退货",
             "location": "退回至",
@@ -153,6 +154,8 @@
               "store_credit": "店铺余额"
             },
             "refund_title": "退货退款",
+            "complete_title": "完成退货",
+            "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "resellable": "可再次销售"
           }
         }
