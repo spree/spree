@@ -147,7 +147,7 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 | `['order.*', 'payment.*', 'fulfillment.fulfilled']` | Multiple patterns |
 | `[]` or `['*']` | All events |
 
-Events that carry a credential — the `*.password_reset_requested` events, which include a reset token — are never matched by a pattern. An endpoint receives them only when it names them, and naming one needs the permission to manage the accounts it concerns.
+An event that carries a credential — `customer.password_reset_requested`, which includes a reset token — is never matched by a pattern. An endpoint receives it only when it names it, and naming it needs the permission to manage customers. Password reset requests for staff and sellers are never sent to webhooks: Spree emails those itself.
 
 To see every event you can subscribe to, including those your installed extensions add, list them:
 

@@ -60,7 +60,6 @@ export const WebhookRecordReferenceSchema = z.object({
 /** The Zod schema for each webhook event's `data`, for `constructWebhookEvent`'s `schemas` option. */
 export const webhookEventSchemas = {
   'admin_user.password_reset': WebhookRecordReferenceSchema,
-  'admin_user.password_reset_requested': PasswordResetRequestedEventSchema,
   'cart.created': CartSchema,
   'cart.deleted': CartSchema,
   'cart.updated': CartSchema,
@@ -254,7 +253,6 @@ export const webhookEventSchemas = {
   'seller_requirement_submission.updated': WebhookRecordReferenceSchema,
   'seller_requirement_submission.waived': WebhookRecordReferenceSchema,
   'seller_user.password_reset': WebhookRecordReferenceSchema,
-  'seller_user.password_reset_requested': PasswordResetRequestedEventSchema,
   'shipment.canceled': FulfillmentSchema,
   'shipment.shipped': FulfillmentSchema,
   'shipping_label.created': ShippingLabelEventSchema,

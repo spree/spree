@@ -544,7 +544,7 @@ Events: `user.created`, `user.updated`, `user.deleted`, `customer.anonymized`, `
 
 Customer lifecycle events use the `user` prefix. Customer payloads include nested `addresses`, `default_billing_address`, `default_shipping_address`, `newsletter_subscriber`, and `customer_groups`.
 
-`customer.password_reset_requested` carries what you need to send the reset email yourself, rather than the customer record. Staff and seller users have the same event, `admin_user.password_reset_requested` and `seller_user.password_reset_requested`:
+`customer.password_reset_requested` carries what you need to send the reset email yourself, rather than the customer record:
 
 ```json
 {
@@ -558,7 +558,7 @@ Customer lifecycle events use the `user` prefix. Customer payloads include neste
 `redirect_url` is present only when the request included one.
 
 <Warning>
-A reset token lets whoever holds it take over the account. The three `*.password_reset_requested` events are therefore sent only to endpoints that name them — never to an endpoint subscribed to `*` or `customer.*` — and subscribing to one needs the matching permission: manage customers, staff or sellers.
+A reset token lets whoever holds it take over the account. `customer.password_reset_requested` is therefore sent only to endpoints that name it — never to an endpoint subscribed to `*` or `customer.*` — and subscribing to it needs the permission to manage customers. The staff and seller equivalents are never sent to webhooks at all: Spree sends those emails itself.
 </Warning>
 
 ```json

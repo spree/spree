@@ -11,7 +11,7 @@ module Spree
           # GET /api/v3/admin/webhook_events
           def index
             authorize!(:show, Spree::WebhookEndpoint)
-            entries = Spree::Events.catalog.all
+            entries = Spree::Events.catalog.webhook_events
 
             render json: {
               data: entries.map { |entry| Spree.api.admin_webhook_event_serializer.new(entry).to_h },

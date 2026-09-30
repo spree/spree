@@ -45,7 +45,7 @@ module Spree
       attr_reader :catalog
 
       def entries
-        @entries ||= catalog.all
+        @entries ||= catalog.webhook_events
       end
 
       def payload_type_names

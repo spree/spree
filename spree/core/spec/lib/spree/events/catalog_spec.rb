@@ -67,12 +67,14 @@ RSpec.describe Spree::Events::Catalog do
       expect(entries.map(&:name)).to include('order.created', 'order.placed', 'fulfillment.fulfilled', 'customer.anonymized')
     end
 
-    it 'marks every password reset request as a credential event' do
-      expect(Spree::Events.catalog.credential_events.map(&:name)).to contain_exactly(
-        'admin_user.password_reset_requested',
-        'customer.password_reset_requested',
-        'seller_user.password_reset_requested'
-      )
+    it 'marks the customer password reset request as a credential event' do
+      expect(Spree::Events.catalog.credential_events.map(&:name)).to eq(['customer.password_reset_requested'])
+    end
+
+    it 'never forwards staff or seller password reset requests to webhooks' do
+      expect(Spree::Events.catalog.webhook?('admin_user.password_reset_requested')).to be(false)
+      expect(Spree::Events.catalog.webhook?('seller_user.password_reset_requested')).to be(false)
+      expect(Spree::Events.catalog.webhook_events.map(&:name)).not_to include('admin_user.password_reset_requested')
     end
   end
 end
