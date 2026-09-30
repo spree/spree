@@ -1,8 +1,8 @@
 <%# A call-to-action button for a custom mailer's ERB view. Locals: url, label. %>
-<table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin: 32px auto 0;">
+<table align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin: 32px auto 0;">
   <tr>
     <td align="center">
-      <a href="<%= url %>" class="button <%= local_assigns[:button_class] %>" target="_blank"
+      <a href="<%= url %>" target="_blank"
          style="display: inline-block; background-color: #FFFFFF; border: 1px solid #E8E9E9; border-radius: 8px; padding: 12px 20px; font-size: 15px; line-height: 1.6; font-weight: 500; color: #1F2222; text-decoration: none;"><%= label %></a>
     </td>
   </tr>

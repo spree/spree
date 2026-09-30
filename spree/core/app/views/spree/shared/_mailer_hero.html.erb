@@ -2,10 +2,10 @@
     the view's heading and copy fill it:
     render layout: 'spree/shared/mailer_hero' do ... end
     Style its contents with h1, p.greeting and p.sub. %>
-<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+<table class="mailer_hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
     <td align="center">
-      <div class="hero_content">
+      <div style="max-width: 420px; margin: 0 auto; text-align: center;">
         <%= yield %>
       </div>
     </td>

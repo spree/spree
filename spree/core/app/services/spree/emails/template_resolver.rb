@@ -28,8 +28,7 @@ module Spree
       # @param name [String] a partial name, e.g. "spree/shared/line_item"
       # @return [String, nil] the partial's path, "spree/shared/_line_item.liquid"
       def find_partial(name)
-        validate!(name)
-        *folders, file = name.split('/')
+        *folders, file = name.to_s.split('/')
         find_file([*folders, "_#{file}"].join('/'), '.liquid')&.path
       end
 

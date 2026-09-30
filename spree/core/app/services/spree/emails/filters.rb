@@ -62,16 +62,6 @@ module Spree
         input.to_s.html_safe
       end
 
-      # Trimming whitespace cannot break escaped HTML, so text captured from
-      # the template — already escaped — stays marked safe rather than being
-      # escaped a second time when printed.
-      %i[strip lstrip rstrip strip_newlines].each do |name|
-        define_method(name) do |input|
-          output = super(input)
-          input.try(:html_safe?) ? output.to_s.html_safe : output
-        end
-      end
-
       private
 
       def parse_time(input)

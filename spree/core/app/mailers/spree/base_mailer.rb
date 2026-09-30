@@ -63,15 +63,9 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-
-      if @_store_locale_active
-        super
-      else
-        # Subclasses that call `mail` without wrapping their action in
-        # `with_store_locale` (e.g. extension mailers) still get the
-        # store default locale, as `mail` applied before Spree 5.6.
-        with_store_locale(current_store) { super }
-      end
+      # Mailers that don't wrap their action in `with_store_locale` still get
+      # the store's default locale, as `mail` applied before Spree 5.6.
+      in_store_locale { super }
     end
 
     protected

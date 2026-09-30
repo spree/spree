@@ -62,15 +62,6 @@ module Spree
         render_layout(body, prepare('subject' => subject.to_s))
       end
 
-      # The subject is plain text for a mail header, so it is not HTML-escaped.
-      #
-      # @param template [Spree::Emails::Template]
-      # @param assigns [Hash]
-      # @return [String]
-      def render_subject(template, assigns = {})
-        subject_for(template, prepare(assigns))
-      end
-
       private
 
       def render_layout(body, assigns)
@@ -83,6 +74,7 @@ module Spree
         base_assigns.merge(assigns.deep_stringify_keys)
       end
 
+      # The subject is plain text for a mail header, so it is not HTML-escaped.
       def subject_for(template, assigns)
         render_liquid(template.subject.to_s, assigns, escape: false).squish
       end

@@ -26,7 +26,9 @@ module Spree
         # @param app_view_path [Pathname, String]
         # @param gem_view_paths [Array<Pathname, String>] where Spree's own Liquid templates live
         # @return [Array<String>] the app's ERB overrides of Spree emails that are no longer used
-        def ignored(app_view_path = Rails.root.join('app/views'), gem_view_paths = spree_view_paths)
+        def ignored(app_view_path = Rails.root.join('app/views'), gem_view_paths = Spree::BaseMailer.view_paths.paths.map(&:path))
+          return [] unless File.directory?(File.join(app_view_path.to_s, 'spree'))
+
           candidates = REMOVED_PARTIALS + shipped_email_keys(gem_view_paths).flat_map { |key| ["#{key}.html.erb", "#{key}.text.erb"] }
           candidates.select { |file| File.file?(File.join(app_view_path.to_s, file)) }.sort
         end
@@ -42,12 +44,6 @@ module Spree
         end
 
         private
-
-        def spree_view_paths
-          engines = [Spree::Core::Engine]
-          engines << Spree::Emails::Engine if defined?(Spree::Emails::Engine)
-          engines.map { |engine| engine.root.join('app/views') }
-        end
 
         def shipped_email_keys(view_paths)
           view_paths.flat_map do |view_path|

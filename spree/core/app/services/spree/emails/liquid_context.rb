@@ -20,6 +20,19 @@ module Spree
       def find_variable(key, raise_on_not_found: true)
         super(key, raise_on_not_found: raise_on_not_found && !optional_arguments)
       end
+
+      # Captured text is already-escaped HTML. A filter over it keeps it that
+      # way, the same rule `SafeBuffer#+` follows: plain string arguments are
+      # escaped going in and the string that comes out stays marked safe, so
+      # `{{ greeting | upcase }}` is not escaped a second time when printed.
+      def invoke(method, *args)
+        input = args.first
+        return super unless registers[:escape_output] && input.is_a?(ActiveSupport::SafeBuffer)
+
+        escaped = args.drop(1).map { |arg| arg.is_a?(String) ? ERB::Util.html_escape(arg) : arg }
+        result = super(method, input, *escaped)
+        result.is_a?(String) ? result.html_safe : result
+      end
     end
   end
 end

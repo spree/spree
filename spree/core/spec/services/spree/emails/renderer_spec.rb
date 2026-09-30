@@ -70,6 +70,12 @@ describe Spree::Emails::Renderer do
       expect(email.html).to include('Hi Smith &amp; Co')
     end
 
+    it 'escapes captured text once through any filter, and escapes the filter arguments' do
+      email = render(section("{% capture greeting %}Hi {{ name }}{% endcapture %}{{ greeting | append: ' & <b>more</b>' }}"), { name: 'Smith & Co' })
+
+      expect(email.html).to include('Hi Smith &amp; Co &amp; &lt;b&gt;more&lt;/b&gt;')
+    end
+
     it 'escapes what cycle writes' do
       email = render(section("{% cycle name, 'x' %}"), { name: payload })
 
