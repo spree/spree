@@ -12,11 +12,24 @@ TypeScript client for the [Spree Commerce](https://spreecommerce.org) Seller API
 ## Usage
 
 ```ts
-import { createClient } from '@spree/seller-sdk'
+import { createSellerClient } from '@spree/seller-sdk'
 
-const client = createClient({ baseUrl: 'https://your-store.com' })
+const client = createSellerClient({ baseUrl: 'https://your-store.com' })
+
+const { token } = await client.auth.login({ email: 'owner@example.com', password: '…' })
+client.setToken(token)
+
+// Who is signed in, and which sellers they may act for
+const { user, sellers } = await client.me.get()
+client.setSeller(sellers[0].id)
+
 const products = await client.products.list()
+
+// The signed-in person's own account: name, photo and panel language
+await client.me.update({ first_name: 'Ada', selected_locale: 'de' })
 ```
+
+`client.me()` — the form in 1.0.0-beta.1 and beta.2 — still works but is deprecated and logs a one-time warning; use `client.me.get()`.
 
 Sellers authenticate against the seller branch (`/seller/auth/*`), which issues its own token audience — a seller token is never an admin token.
 
