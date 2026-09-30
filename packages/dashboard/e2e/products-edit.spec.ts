@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test'
-import { FIXTURE_BULK_CHANNEL_NAME, login } from './helpers'
+import {
+  FIXTURE_BULK_CATEGORY,
+  FIXTURE_BULK_CHANNEL_NAME,
+  FIXTURE_PROMO_TAXON,
+  login,
+} from './helpers'
 import { createProduct, publishingCard, typeDescription } from './products-helpers'
 
 test.describe('product edit', () => {
@@ -126,6 +131,39 @@ test.describe('product edit', () => {
 
     await page.reload()
     await expect(page.getByLabel(/^name$/i)).toHaveValue(updated)
+  })
+
+  test('keeps picked categories when Escape dismisses the search', async ({ page }) => {
+    const creds = await login(page)
+    await createProduct(page, creds.store_id, `E2E Product Categories ${Date.now()}`)
+
+    const categoriesField = page
+      .locator('[data-slot="field"]')
+      .filter({ has: page.getByText('Categories', { exact: true }) })
+    const search = categoriesField.getByRole('combobox')
+    const chips = categoriesField.locator('[data-slot="combobox-chip"]')
+
+    // Picking a searched result closes the list, so the Escape that follows
+    // lands on a closed picker.
+    for (const category of [FIXTURE_PROMO_TAXON, FIXTURE_BULK_CATEGORY]) {
+      await search.fill(category)
+      await page
+        .getByRole('option', { name: new RegExp(category, 'i') })
+        .first()
+        .click()
+    }
+    await expect(chips).toHaveCount(2)
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(search).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(chips).toHaveCount(2)
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+    await page.reload()
+    await expect(chips).toHaveCount(2)
   })
 
   test('lists a product on an additional channel via the publishing card', async ({ page }) => {
