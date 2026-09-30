@@ -33,6 +33,12 @@ describe Spree::Emails::TemplateResolver do
     expect(resolver.find(key).path).to end_with('.liquid')
   end
 
+  it 'finds a partial named without a folder' do
+    partial = write(gem_views, '_greeting.liquid')
+
+    expect(resolver.find_partial('greeting')).to eq(partial)
+  end
+
   it 'refuses a key that could leave the view paths' do
     expect { resolver.find('../secrets') }.to raise_error(described_class::InvalidKey)
   end

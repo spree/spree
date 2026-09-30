@@ -29,7 +29,8 @@ module Spree
       # @return [String, nil] the partial's path, "spree/shared/_line_item.liquid"
       def find_partial(name)
         validate!(name)
-        find_file(File.join(File.dirname(name), "_#{File.basename(name)}"), '.liquid')&.path
+        *folders, file = name.split('/')
+        find_file([*folders, "_#{file}"].join('/'), '.liquid')&.path
       end
 
       private
@@ -41,7 +42,7 @@ module Spree
 
         view_paths.each do |view_path|
           path = File.join(view_path, "#{key}#{extension}")
-          return Template.new(key: key.delete_prefix('./'), path: path) if File.file?(path)
+          return Template.new(key: key, path: path) if File.file?(path)
         end
 
         nil
