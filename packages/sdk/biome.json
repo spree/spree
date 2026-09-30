@@ -3,6 +3,12 @@
   "root": false,
   "extends": ["../../biome.json"],
   "files": {
-    "includes": ["src/**", "tests/**", "!src/types/generated", "!src/zod/generated", "!src/webhooks/generated"]
+    "includes": [
+      "src/**",
+      "tests/**",
+      "!src/types/generated",
+      "!src/zod/generated",
+      "!src/webhooks/generated"
+    ]
   }
 }
