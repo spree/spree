@@ -287,5 +287,11 @@ describe Spree::WebhookDelivery, type: :model do
     it 'is true for a payload with nothing redacted' do
       expect(build(:webhook_delivery, payload: { 'name' => 'order.placed', 'data' => { 'id' => 'or_1' } })).to be_redeliverable
     end
+
+    it 'is true when a non-credential field happens to read the placeholder' do
+      payload = { 'name' => 'order.placed', 'data' => { 'id' => 'or_1', 'note' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER } }
+
+      expect(build(:webhook_delivery, payload: payload)).to be_redeliverable
+    end
   end
 end
