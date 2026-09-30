@@ -45,12 +45,16 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/items/:id
             def destroy
               with_order_lock do
-                Spree.order_remove_line_item_service.call(
+                result = Spree.order_remove_line_item_service.call(
                   order: @parent,
                   line_item: @resource
                 )
 
-                head :no_content
+                if result.success?
+                  head :no_content
+                else
+                  render_order_item_error(result, default_code: ERROR_CODES[:processing_error])
+                end
               end
             end
 

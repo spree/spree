@@ -26,11 +26,35 @@ module Spree
       result = nil
       expect {
         result = described_class.call(order: order, line_item: line_item)
-      }.not_to change { order.reload.line_items.count }
+      }.not_to change { [order.reload.line_items.count, order.total] }
 
       expect(result).to be_failure
+      expect(result.error.to_s).to eq('locked')
     ensure
       Spree.hooks.clear!
+    end
+
+    context 'on a placed order that has been paid in full' do
+      let(:order) { create(:completed_order_with_totals, store: @default_store, line_items_count: 2) }
+
+      before do
+        create(:payment, amount: order.total, order: order, status: 'completed')
+        order.update_column(:payment_total, order.total)
+        order.update_statuses!
+      end
+
+      it 'takes the removed line out of the totals and re-derives the payment status' do
+        removed_amount = line_item.amount
+        total_before = order.total
+
+        result = described_class.call(order: order, line_item: line_item)
+
+        expect(result).to be_success
+        order.reload
+        expect(order.item_total).to eq(order.line_items.sum(&:amount))
+        expect(order.total).to eq(total_before - removed_amount)
+        expect(order.payment_status).to eq('overcharged')
+      end
     end
   end
 end

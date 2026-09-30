@@ -253,5 +253,34 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
       subject
       expect(response).to have_http_status(:no_content)
     end
+
+    context 'on a placed order' do
+      let!(:order) { create(:completed_order_with_totals, store: store, line_items_count: 2) }
+      let!(:line_item) { order.line_items.first }
+
+      it 'takes the removed line out of the order totals' do
+        removed_amount = line_item.amount
+        total_before = order.total
+
+        subject
+
+        expect(response).to have_http_status(:no_content)
+        expect(order.reload.item_total).to eq(order.line_items.sum(&:amount))
+        expect(order.total).to eq(total_before - removed_amount)
+      end
+    end
+
+    context 'when the removal is refused' do
+      before { Spree.hooks.register('orders.upsert_items.validate') { |flow| flow.reject!('Order is locked') } }
+      after { Spree.hooks.clear! }
+
+      it 'returns 422 with the error and leaves the order unchanged' do
+        expect { subject }.not_to change { [order.reload.line_items.count, order.total] }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('processing_error')
+        expect(json_response['error']['message']).to eq('Order is locked')
+      end
+    end
   end
 end
