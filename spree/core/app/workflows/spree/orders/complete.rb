@@ -52,6 +52,7 @@ module Spree
 
         step :ensure_placed_status
         step :release_stock_reservations
+        step :cancel_unused_payment_sessions
         step :update_statuses
         step :publish_order_placed
         step :complete_sibling_orders
@@ -210,6 +211,15 @@ module Spree
 
       def release_stock_reservations
         Spree::StockReservations::Release.call(owner: order)
+      end
+
+      # A session left behind by a switched method or a second tab could still
+      # be paid, charging the buyer twice. One provider call per session, so
+      # it runs in a job rather than holding up placement.
+      def cancel_unused_payment_sessions
+        return unless order.payment_sessions.unused.exists?
+
+        Spree::Payments::CancelUnusedSessionsJob.perform_later(order.id)
       end
 
       def update_statuses

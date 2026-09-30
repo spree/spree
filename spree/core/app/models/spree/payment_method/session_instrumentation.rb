@@ -16,6 +16,7 @@ module Spree
         create_payment_session
         update_payment_session
         complete_payment_session
+        cancel_payment_session
         create_payment_setup_session
         complete_payment_setup_session
       ].freeze
