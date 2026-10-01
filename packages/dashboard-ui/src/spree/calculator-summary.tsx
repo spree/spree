@@ -85,6 +85,7 @@ export function formatCalculatorSummary(
  * - `*_percent` decimals → `N%`.
  * - `currency` strings → omitted (folded into the money formatting).
  * - booleans → humanized key when true; skipped when false.
+ * - lists (tiers) → their length; other objects → omitted.
  * - everything else → `key: value`.
  */
 function formatField(
@@ -105,6 +106,8 @@ function formatField(
   if (field.type === 'boolean') {
     return value ? humanize(field.key) : null
   }
+  if (Array.isArray(value)) return value.length ? `${humanize(field.key)}: ${value.length}` : null
+  if (typeof value === 'object') return null
   return `${humanize(field.key)}: ${value}`
 }
 

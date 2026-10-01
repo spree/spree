@@ -474,6 +474,7 @@ function TierRow({
         min={0}
         value={row.threshold}
         placeholder="100"
+        aria-label={t('admin.components.preferences_form.tiers.header_threshold')}
         onChange={(e) => onChange({ threshold: e.target.value })}
       />
       <Input
@@ -482,6 +483,7 @@ function TierRow({
         min={0}
         value={row.value}
         placeholder="10"
+        aria-label={t('admin.components.preferences_form.tiers.header_value')}
         onChange={(e) => onChange({ value: e.target.value })}
       />
       <Button
