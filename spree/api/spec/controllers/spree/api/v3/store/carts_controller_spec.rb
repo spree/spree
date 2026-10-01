@@ -289,6 +289,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['error']['code']).to eq('variant_not_found')
         expect(json_response['error']['message']).to eq('Variant not found')
       end
+
+      it "refuses an item outside the buyer's catalogs" do
+        company = create(:company, store: store)
+        catalog = create(:catalog, store: store)
+        create(:catalog_product, catalog: catalog, product: product2)
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        create(:company_membership, company: company, customer: user)
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+        post :create, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] }
+
+        expect(response).to have_http_status(:not_found)
+        expect(Spree::LineItem.where(variant: variant)).to be_empty
+      end
     end
 
     context 'without API key' do

@@ -132,6 +132,32 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    # The same answer a product read gives: a variant the listing would not
+    # show this buyer reads as missing.
+    context 'with a variant the buyer cannot order' do
+      it "refuses a product outside the buyer's catalogs" do
+        company = create(:company, store: store)
+        catalog = create(:catalog, store: store)
+        create(:catalog_product, catalog: catalog, product: create(:product, store: store))
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        create(:company_membership, company: company, customer: user)
+
+        expect {
+          post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+        }.not_to change(Spree::LineItem, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "refuses a product not published on the cart's channel" do
+        product.product_publications.destroy_all
+
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   describe 'PATCH #update' do
