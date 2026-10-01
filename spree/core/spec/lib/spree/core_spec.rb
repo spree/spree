@@ -121,12 +121,11 @@ describe Spree do
   end
 
   describe '.install_id' do
-    it 'generates a UUID, keeps it on the default store and returns the same value on subsequent calls' do
-      id = described_class.install_id
+    it 'returns the UUID the default store generated when it was saved' do
+      @default_store.save!
 
-      expect(id).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(@default_store.reload.preferred_install_id).to eq(id)
-      expect(described_class.install_id).to eq(id)
+      expect(described_class.install_id).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
+      expect(described_class.install_id).to eq(@default_store.reload.preferred_install_id)
     end
 
     it 'reuses an identifier already stored' do
