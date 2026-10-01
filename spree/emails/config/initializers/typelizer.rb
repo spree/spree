@@ -36,23 +36,22 @@ Rails.application.config.after_initialize do
 
     # Their own folder in the admin SDK; the Store API types they nest
     # (Payment, Address, ...) import from the admin SDK's types of that name.
+    # Self-contained in their own folder: every record an email serializes has
+    # an email serializer of its own, so these types describe exactly what
+    # templates receive.
     config.writer(:emails, from: :admin) do |c|
       c.output_dir = emails_root.join('../../packages/admin-sdk/src/types/generated/emails')
-      # The SDK's full type index, which exports these and the admin types alike.
-      c.types_import_path = '../..'
+      c.types_import_path = '.'
       c.reject_class = ->(serializer:) {
         name = serializer.name.to_s
         bare = name.delete_prefix('Spree::Emails::').delete_suffix('Serializer')
         !name.start_with?('Spree::Emails::') || staff.include?(bare) || bare == 'Base'
       }
       c.serializer_name_mapper = ->(serializer) {
-        name = serializer.name.to_s
-        if name.start_with?('Spree::Emails::')
-          "Email#{name.delete_prefix('Spree::Emails::').delete_suffix('Serializer')}"
-        else
-          name.sub(/\ASpree::Api::V3::(Admin::)?/, '').delete_suffix('Serializer')
-        end
+        "Email#{serializer.name.to_s.delete_prefix('Spree::Emails::').delete_suffix('Serializer')}"
       }
+      # Associations a request must ask for (`expand`) never reach an email.
+      c.properties_transformer = ->(properties) { properties.reject(&:optional) }
     end
   end
 end

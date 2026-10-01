@@ -7,6 +7,11 @@ module Spree
         fulfillment.delivery_method&.name
       end
 
+      many :deliveries, resource: Spree::Emails::DeliverySerializer
+      one :delivery_method, resource: Spree::Emails::DeliveryMethodSerializer
+      one :stock_location, resource: Spree::Emails::StockLocationSerializer
+      many :delivery_rates, resource: Spree::Emails::DeliveryRateSerializer
+
       many :manifest, key: :manifest_items, source: proc { manifest.select(&:line_item) },
                      resource: Spree::Emails::ParcelItemSerializer
     end

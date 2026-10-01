@@ -363,18 +363,22 @@ function detectCyclicTypes(parsedTypes: Map<string, ParsedType>): Set<string> {
   return cyclic
 }
 
-function main(): void {
-  if (fs.existsSync(ZOD_DIR)) {
-    fs.rmSync(ZOD_DIR, { recursive: true })
-  }
-  fs.mkdirSync(ZOD_DIR, { recursive: true })
+/**
+ * Turns one folder of generated types into schemas. Each folder is a set of
+ * its own (the email template types reference only each other), so names
+ * resolve within it.
+ */
+function generateFolder(typesDir: string, zodDir: string): void {
+  enumTypeNames.clear()
+  generatedTypeNames.clear()
+  fs.mkdirSync(zodDir, { recursive: true })
 
   const files = fs
-    .readdirSync(TYPES_DIR)
+    .readdirSync(typesDir)
     .filter((f) => f.endsWith('.ts') && f !== 'index.ts' && f !== 'Enums.ts')
     .sort()
 
-  const enumsFile = path.join(TYPES_DIR, 'Enums.ts')
+  const enumsFile = path.join(typesDir, 'Enums.ts')
   if (fs.existsSync(enumsFile)) {
     for (const m of fs.readFileSync(enumsFile, 'utf-8').matchAll(/^export type (\w+) =/gm)) {
       enumTypeNames.add(m[1])
@@ -384,7 +388,7 @@ function main(): void {
   // First pass: parse all type files
   const parsedTypes = new Map<string, ParsedType>()
   for (const file of files) {
-    const filePath = path.join(TYPES_DIR, file)
+    const filePath = path.join(typesDir, file)
     const content = fs.readFileSync(filePath, 'utf-8')
     const parsed = parseTypeFile(content)
     if (!parsed) {
@@ -406,7 +410,7 @@ function main(): void {
 
   for (const [, parsed] of parsedTypes) {
     fs.writeFileSync(
-      path.join(ZOD_DIR, `${parsed.typeName}.ts`),
+      path.join(zodDir, `${parsed.typeName}.ts`),
       generateZodFile(parsed, cyclicTypes),
       'utf-8',
     )
@@ -419,8 +423,19 @@ function main(): void {
     ...generatedNames.map((n) => `export { ${n}Schema, type ${n} } from './${n}';`),
     '',
   ]
-  fs.writeFileSync(path.join(ZOD_DIR, 'index.ts'), indexLines.join('\n'), 'utf-8')
+  fs.writeFileSync(path.join(zodDir, 'index.ts'), indexLines.join('\n'), 'utf-8')
   console.log(`\nGenerated barrel: index.ts (${generatedNames.length} schemas)`)
+}
+
+function main(): void {
+  if (fs.existsSync(ZOD_DIR)) fs.rmSync(ZOD_DIR, { recursive: true })
+
+  generateFolder(TYPES_DIR, ZOD_DIR)
+  for (const entry of fs.readdirSync(TYPES_DIR, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      generateFolder(path.join(TYPES_DIR, entry.name), path.join(ZOD_DIR, entry.name))
+    }
+  }
 }
 
 main()

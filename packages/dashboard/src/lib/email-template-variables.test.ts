@@ -32,5 +32,8 @@ describe('documentedPaths', () => {
     expect(paths).toContain('order.billing_address.first_name')
     expect(paths).toContain('order.shipping_address.city')
     expect(paths).toContain('store.name')
+    expect(paths).toContain('order.payments.payment_method.name')
+    // Email data is serialized with Store API shapes, never admin-only fields.
+    expect(paths).not.toContain('order.billing_address.metadata')
   })
 })

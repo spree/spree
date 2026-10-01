@@ -3,6 +3,8 @@ module Spree
     class LineItemSerializer < Spree::Api::V3::LineItemSerializer
       include Spree::Emails::PurchasedItemAttributes
 
+      many :option_values, resource: Spree::Emails::OptionValueSerializer
+
       typelize sku: [:string, nullable: true], display_amount: :string,
                url: [:string, nullable: true], image_url: [:string, nullable: true]
 
