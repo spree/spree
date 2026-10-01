@@ -1,5 +1,4 @@
 import type {
-  Address,
   Company,
   Customer,
   EmailFulfillment,
@@ -8,21 +7,35 @@ import type {
   EmailReturn,
   EmailStore,
 } from '@spree/admin-sdk'
+import {
+  EmailFulfillmentSchema,
+  EmailOrderGroupSchema,
+  EmailOrderSchema,
+  EmailReturnSchema,
+  EmailStoreSchema,
+} from '@spree/admin-sdk/zod'
 
 type FieldsOf<T> = ReadonlyArray<Extract<keyof T, string>>
 
 /** A variable a template receives, with the fields worth pointing out. */
 export interface EmailTemplateVariable {
   name: string
+  /** The generated schema of the data it holds, for suggesting all of its fields. */
+  schema?: unknown
   /** Translation key for one line saying what it is. */
   descriptionKey: string
   fields?: readonly string[]
 }
 
-const variable = (name: string, fields?: readonly string[]): EmailTemplateVariable => ({
+const variable = (
+  name: string,
+  fields?: readonly string[],
+  schema?: unknown,
+): EmailTemplateVariable => ({
   name,
   descriptionKey: `admin.email_templates.variables.${name}`,
   fields,
+  schema,
 })
 
 const ORDER_FIELDS = [
@@ -40,32 +53,7 @@ const ORDER_FIELDS = [
   'payments',
 ] as const satisfies FieldsOf<EmailOrder>
 
-/**
- * Fields of objects a sample record often lacks (a pickup order has no
- * shipping address), so they are suggested even when the preview has none.
- */
-const ADDRESS_FIELDS = [
-  'first_name',
-  'last_name',
-  'full_name',
-  'company',
-  'address1',
-  'address2',
-  'city',
-  'postal_code',
-  'state_name',
-  'state_code',
-  'country_name',
-  'country_code',
-  'phone',
-] as const satisfies FieldsOf<Address>
-
-const NESTED_FIELDS: Record<string, readonly string[]> = {
-  billing_address: ADDRESS_FIELDS,
-  shipping_address: ADDRESS_FIELDS,
-}
-
-const order = variable('order', ORDER_FIELDS)
+const order = variable('order', ORDER_FIELDS, EmailOrderSchema)
 const resend = variable('resend')
 
 const STORE_FIELDS = [
@@ -79,7 +67,7 @@ const STORE_FIELDS = [
 
 /** Every email receives these. */
 export const SHARED_EMAIL_VARIABLES: EmailTemplateVariable[] = [
-  variable('store', STORE_FIELDS),
+  variable('store', STORE_FIELDS, EmailStoreSchema),
   variable('locale'),
 ]
 
@@ -89,34 +77,46 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
   'spree.order_mailer.cancel_email': [order, resend],
   'spree.order_mailer.payment_link_email': [order, variable('payment_url')],
   'spree.order_group_mailer.confirm_email': [
-    variable('order_group', [
-      'number',
-      'customer_name',
-      'order_count',
-      'items',
-      'fulfillment_groups',
-      'display_total',
-    ] as const satisfies FieldsOf<EmailOrderGroup>),
+    variable(
+      'order_group',
+      [
+        'number',
+        'customer_name',
+        'order_count',
+        'items',
+        'fulfillment_groups',
+        'display_total',
+      ] as const satisfies FieldsOf<EmailOrderGroup>,
+      EmailOrderGroupSchema,
+    ),
     resend,
   ],
   'spree.fulfillment_mailer.fulfilled_email': [
     order,
-    variable('fulfillment', [
-      'number',
-      'tracking',
-      'tracking_url',
-      'delivery_method_name',
-      'items',
-    ] as const satisfies FieldsOf<EmailFulfillment>),
+    variable(
+      'fulfillment',
+      [
+        'number',
+        'tracking',
+        'tracking_url',
+        'delivery_method_name',
+        'items',
+      ] as const satisfies FieldsOf<EmailFulfillment>,
+      EmailFulfillmentSchema,
+    ),
     resend,
   ],
   'spree.return_mailer.refunded_email': [
     order,
-    variable('return', [
-      'number',
-      'returned_items',
-      'display_refunded_total',
-    ] as const satisfies FieldsOf<EmailReturn>),
+    variable(
+      'return',
+      [
+        'number',
+        'returned_items',
+        'display_refunded_total',
+      ] as const satisfies FieldsOf<EmailReturn>,
+      EmailReturnSchema,
+    ),
     resend,
   ],
   'spree.digital_asset_mailer.files_ready_email': [order, variable('downloads'), resend],
@@ -141,17 +141,42 @@ export function templateVariables(templateId: string): EmailTemplateVariable[] {
   return [...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []), ...SHARED_EMAIL_VARIABLES]
 }
 
+const SCHEMA_DEPTH = 3
+
+interface SchemaNode {
+  def?: { type?: string }
+  shape?: Record<string, unknown>
+  element?: unknown
+  unwrap?: () => unknown
+}
+
 /**
- * Every dotted path the manifest documents for a template: each variable,
- * its highlighted fields, and the fields of those that are objects.
+ * Every dotted path in a generated email schema. A list contributes the
+ * fields of its items, as a loop over it (`{% for item in order.items %}`)
+ * reads them.
+ */
+function schemaPaths(schema: unknown, prefix: string, depth: number): string[] {
+  let node = schema as SchemaNode
+  while (node.def?.type === 'nullable' || node.def?.type === 'optional')
+    node = node.unwrap?.() as SchemaNode
+  if (node.def?.type === 'array') return schemaPaths(node.element, prefix, depth)
+  if (node.def?.type !== 'object' || !node.shape || depth > SCHEMA_DEPTH) return []
+
+  return Object.keys(node.shape).flatMap((field) => {
+    const path = `${prefix}.${field}`
+    return [path, ...schemaPaths(node.shape?.[field], path, depth + 1)]
+  })
+}
+
+/**
+ * Every dotted path a template can read: each variable, and for those
+ * holding generated email data, all of its fields, whether or not the
+ * sample record has them.
  */
 export function documentedPaths(templateId: string): string[] {
-  return templateVariables(templateId).flatMap(({ name, fields = [] }) => [
+  return templateVariables(templateId).flatMap(({ name, fields = [], schema }) => [
     name,
-    ...fields.flatMap((field) => [
-      `${name}.${field}`,
-      ...(NESTED_FIELDS[field] ?? []).map((nested) => `${name}.${field}.${nested}`),
-    ]),
+    ...(schema ? schemaPaths(schema, name, 1) : fields.map((field) => `${name}.${field}`)),
   ])
 }
 

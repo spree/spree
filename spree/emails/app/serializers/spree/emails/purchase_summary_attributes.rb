@@ -18,6 +18,8 @@ module Spree
         end
 
         many :line_items, key: :items, resource: Spree::Emails::LineItemSerializer
+        one :billing_address, resource: Spree::Emails::AddressSerializer
+        one :shipping_address, resource: Spree::Emails::AddressSerializer
 
         many :promotion_discounts,
              source: proc { Spree::Emails::AmountLine.group(discounts.promotion, currency: currency) },
