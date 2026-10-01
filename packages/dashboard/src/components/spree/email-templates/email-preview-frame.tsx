@@ -1,4 +1,5 @@
 import { cn } from '@spree/dashboard-ui'
+import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export type EmailPreviewWidth = 'desktop' | 'mobile'
@@ -6,6 +7,10 @@ export type EmailPreviewWidth = 'desktop' | 'mobile'
 /**
  * A rendered email in a sandboxed frame: no scripts, no navigation, nothing
  * the email's markup can reach in the dashboard.
+ *
+ * Each render gets a new frame. Changing a loaded frame's document adds an
+ * entry to the page's history, so with live previews the browser's Back went
+ * through every past render before leaving the page.
  */
 export function EmailPreviewFrame({
   html,
@@ -21,6 +26,9 @@ export function EmailPreviewFrame({
   className?: string
 }) {
   const { t } = useTranslation()
+  const renders = useRef(0)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: a new key for every new document
+  const frameKey = useMemo(() => ++renders.current, [html])
 
   if (view === 'text') {
     return (
@@ -43,6 +51,7 @@ export function EmailPreviewFrame({
       )}
     >
       <iframe
+        key={frameKey}
         title={t('admin.email_templates.preview.frame_title')}
         sandbox=""
         srcDoc={html ?? ''}

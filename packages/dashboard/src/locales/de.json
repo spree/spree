@@ -6199,9 +6199,9 @@
         "mobile": "Mobile Breite",
         "shown_in": "Anzeigen in",
         "record": "Vorschau mit Datensatz",
-        "record_placeholder": "Neuester oder eine ID wie or_m3Rp9wXz",
         "unavailable": "Die Vorschau konnte nicht angezeigt werden.",
-        "needs_permission": "Vorschauen werden für Personen erstellt, die E-Mail-Vorlagen bearbeiten dürfen."
+        "needs_permission": "Vorschauen werden für Personen erstellt, die E-Mail-Vorlagen bearbeiten dürfen.",
+        "latest_record": "Neuester"
       },
       "problems": {
         "title": "Diese Vorlage lässt sich nicht darstellen",
@@ -6250,7 +6250,8 @@
         "company": "Die Firma, zu der der Kunde eingeladen ist.",
         "accept_url": "Der Link, der die Einladung annimmt.",
         "store": "Ihr Shop: Name, Links, Logo und Branding.",
-        "locale": "Die Sprache, in der die E-Mail gesendet wird."
+        "locale": "Die Sprache, in der die E-Mail gesendet wird.",
+        "insert": "{{variable}} einfügen"
       },
       "messages": {
         "draft_saved": "Entwurf gespeichert",

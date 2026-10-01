@@ -6199,9 +6199,9 @@
         "mobile": "Ancho móvil",
         "shown_in": "Mostrar dentro de",
         "record": "Vista previa con registro",
-        "record_placeholder": "El más reciente o un ID como or_m3Rp9wXz",
         "unavailable": "No se pudo mostrar la vista previa.",
-        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo."
+        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo.",
+        "latest_record": "El más reciente"
       },
       "problems": {
         "title": "Esta plantilla no se puede mostrar",
@@ -6250,7 +6250,8 @@
         "company": "La empresa a la que se invita al cliente.",
         "accept_url": "El enlace que acepta la invitación.",
         "store": "Tu tienda: nombre, enlaces, logotipo y marca.",
-        "locale": "El idioma en que se envía el correo."
+        "locale": "El idioma en que se envía el correo.",
+        "insert": "Insertar {{variable}}"
       },
       "messages": {
         "draft_saved": "Borrador guardado",

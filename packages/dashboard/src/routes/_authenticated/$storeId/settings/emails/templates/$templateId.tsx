@@ -33,9 +33,13 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { HistoryIcon, RotateCcwIcon, SendIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
-import { CodeEditor, type CodeEditorCompletion } from '@spree/dashboard-ui/ui/code-editor'
+import {
+  CodeEditor,
+  type CodeEditorCompletion,
+  type CodeEditorHandle,
+} from '@spree/dashboard-ui/ui/code-editor'
 import { createFileRoute, useBlocker } from '@tanstack/react-router'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { EmailTemplateConflictDialog } from '../../../../../../components/spree/email-templates/conflict-dialog'
 import { DefaultDiffDialog } from '../../../../../../components/spree/email-templates/default-diff-dialog'
@@ -149,6 +153,7 @@ function EmailTemplateEditor({
   const confirm = useConfirm()
   const { permissions } = usePermissions()
   const canEdit = permissions.can('update', Subject.EmailTemplate)
+  const editorRef = useRef<CodeEditorHandle>(null)
   const isEmail = template.kind === 'email'
 
   const [saved, setSaved] = useState<Version>(() => startingVersion(template))
@@ -457,6 +462,7 @@ function EmailTemplateEditor({
                   </Field>
                 )}
                 <CodeEditor
+                  ref={editorRef}
                   aria-label={t('admin.email_templates.editor.body')}
                   value={body}
                   onChange={editBody}
@@ -473,7 +479,10 @@ function EmailTemplateEditor({
             <EmailTemplatePreviewCard template={template} preview={preview} />
           </div>
 
-          <EmailTemplateVariablesCard templateId={template.id} />
+          <EmailTemplateVariablesCard
+            templateId={template.id}
+            onInsert={canEdit ? (text) => editorRef.current?.insert(text) : undefined}
+          />
 
           <EmailTemplateHistorySheet
             open={historyOpen}

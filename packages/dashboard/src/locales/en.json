@@ -6199,9 +6199,9 @@
         "mobile": "Mobile width",
         "shown_in": "Show inside",
         "record": "Preview with record",
-        "record_placeholder": "Latest, or an ID such as or_m3Rp9wXz",
         "unavailable": "The preview could not be shown.",
-        "needs_permission": "Previews are rendered for people who can edit email templates."
+        "needs_permission": "Previews are rendered for people who can edit email templates.",
+        "latest_record": "Latest"
       },
       "problems": {
         "title": "This template does not render",
@@ -6250,7 +6250,8 @@
         "company": "The company the customer is invited to.",
         "accept_url": "The link that accepts the invitation.",
         "store": "Your store: name, links, logo and branding.",
-        "locale": "The language the email is sent in."
+        "locale": "The language the email is sent in.",
+        "insert": "Insert {{variable}}"
       },
       "messages": {
         "draft_saved": "Draft saved",

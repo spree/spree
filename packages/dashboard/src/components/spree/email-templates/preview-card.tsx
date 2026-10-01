@@ -1,4 +1,5 @@
 import type { EmailTemplate, EmailTemplatePreview } from '@spree/admin-sdk'
+import { formatStoreDate, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -8,7 +9,6 @@ import {
   CardTitle,
   Field,
   FieldLabel,
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -27,6 +27,7 @@ import {
   type EmailTemplateProblem,
   templateProblems,
   useEmailTemplatePreview,
+  useEmailTemplateSampleRecords,
   useEmailTemplates,
 } from '../../../hooks/use-email-templates'
 import { emailTemplateName } from '../../../lib/email-template-name'
@@ -50,6 +51,8 @@ export interface LivePreview {
   setRecordId: (value: string) => void
   emailKey: string
   setEmailKey: (value: string) => void
+  /** Whether previews are rendered for this caller. */
+  enabled: boolean
 }
 
 /**
@@ -123,6 +126,7 @@ export function useLivePreview(
     setRecordId,
     emailKey,
     setEmailKey,
+    enabled,
   }
 }
 
@@ -172,17 +176,7 @@ export function EmailTemplatePreviewCard({
       <CardContent className="flex flex-col gap-3">
         <div className="grid gap-3 sm:grid-cols-2">
           {template.kind !== 'email' && <ShownInField preview={preview} />}
-          <Field>
-            <FieldLabel htmlFor="email-template-preview-record">
-              {t('admin.email_templates.preview.record')}
-            </FieldLabel>
-            <Input
-              id="email-template-preview-record"
-              placeholder={t('admin.email_templates.preview.record_placeholder')}
-              value={preview.recordId}
-              onChange={(event) => preview.setRecordId(event.target.value.trim())}
-            />
-          </Field>
+          <RecordField template={template} preview={preview} />
         </div>
         {preview.unavailable ? (
           <p className="rounded-md border border-border p-4 text-sm text-muted-foreground">
@@ -218,7 +212,10 @@ function ShownInField({ preview }: { preview: LivePreview }) {
       <Select
         items={emailOptions}
         value={preview.emailKey || preview.data?.email_key || ''}
-        onValueChange={(value) => preview.setEmailKey((value as string) ?? '')}
+        onValueChange={(value) => {
+          preview.setEmailKey((value as string) ?? '')
+          preview.setRecordId('')
+        }}
       >
         <SelectTrigger id="email-template-preview-email">
           <SelectValue />
@@ -226,6 +223,53 @@ function ShownInField({ preview }: { preview: LivePreview }) {
         <SelectContent>
           {emailOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </Field>
+  )
+}
+
+const LATEST = ''
+
+/** Which of the store's latest records the preview is built from. */
+function RecordField({ template, preview }: { template: EmailTemplate; preview: LivePreview }) {
+  const { t } = useTranslation()
+  const { timezone } = useStore()
+  const { data: records } = useEmailTemplateSampleRecords(
+    template.id,
+    preview.emailKey,
+    preview.enabled,
+  )
+
+  if (!records?.length) return null
+
+  const options = [
+    { value: LATEST, label: t('admin.email_templates.preview.latest_record') },
+    ...records.map((record) => ({
+      value: record.id,
+      label: `${record.label} · ${formatStoreDate(record.created_at, timezone)}`,
+    })),
+  ]
+
+  return (
+    <Field>
+      <FieldLabel htmlFor="email-template-preview-record">
+        {t('admin.email_templates.preview.record')}
+      </FieldLabel>
+      <Select
+        items={options}
+        value={preview.recordId}
+        onValueChange={(value) => preview.setRecordId((value as string) ?? LATEST)}
+      >
+        <SelectTrigger id="email-template-preview-record">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value || 'latest'} value={option.value}>
               {option.label}
             </SelectItem>
           ))}

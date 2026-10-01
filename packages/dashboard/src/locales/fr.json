@@ -6199,9 +6199,9 @@
         "mobile": "Largeur mobile",
         "shown_in": "Afficher dans",
         "record": "Aperçu avec l'enregistrement",
-        "record_placeholder": "Le plus récent, ou un ID comme or_m3Rp9wXz",
         "unavailable": "L'aperçu n'a pas pu être affiché.",
-        "needs_permission": "Les aperçus sont générés pour les personnes autorisées à modifier les modèles d'e-mail."
+        "needs_permission": "Les aperçus sont générés pour les personnes autorisées à modifier les modèles d'e-mail.",
+        "latest_record": "Le plus récent"
       },
       "problems": {
         "title": "Ce modèle ne s'affiche pas",
@@ -6250,7 +6250,8 @@
         "company": "L'entreprise à laquelle le client est invité.",
         "accept_url": "Le lien qui accepte l'invitation.",
         "store": "Votre boutique : nom, liens, logo et image de marque.",
-        "locale": "La langue dans laquelle l'e-mail est envoyé."
+        "locale": "La langue dans laquelle l'e-mail est envoyé.",
+        "insert": "Insérer {{variable}}"
       },
       "messages": {
         "draft_saved": "Brouillon enregistré",

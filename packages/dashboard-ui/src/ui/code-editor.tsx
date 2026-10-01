@@ -25,7 +25,7 @@ import {
   keymap,
   lineNumbers,
 } from '@codemirror/view'
-import { useEffect, useRef } from 'react'
+import { type Ref, useEffect, useImperativeHandle, useRef } from 'react'
 import { cn } from '../lib/utils'
 
 export interface CodeEditorCompletion {
@@ -43,7 +43,13 @@ export interface CodeEditorDiagnostic {
   message: string
 }
 
+export interface CodeEditorHandle {
+  /** Replaces the selection with `text`, leaves the cursor after it and focuses the editor. */
+  insert: (text: string) => void
+}
+
 export interface CodeEditorProps {
+  ref?: Ref<CodeEditorHandle>
   value: string
   onChange?: (value: string) => void
   /** Variables offered after `{{` and their fields after a dot. */
@@ -111,10 +117,24 @@ function CodeEditor({
   readOnly = false,
   onSave,
   className,
+  ref,
   ...props
 }: CodeEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      insert: (text) => {
+        const view = viewRef.current
+        if (!view || view.state.readOnly) return
+        view.dispatch(view.state.replaceSelection(text), { scrollIntoView: true })
+        view.focus()
+      },
+    }),
+    [],
+  )
   const languageCompartment = useRef(new Compartment())
   const readOnlyCompartment = useRef(new Compartment())
   const callbacks = useRef({ onChange, onSave })
