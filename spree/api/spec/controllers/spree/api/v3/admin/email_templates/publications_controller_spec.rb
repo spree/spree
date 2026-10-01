@@ -33,6 +33,15 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PublicationsController, ty
     expect(store.email_templates.count).to eq(0)
   end
 
+  it 'refuses with 409 a draft saved after the one the admin reviewed' do
+    draft = create(:email_template_draft, store: store, key: editable_key, body: body)
+    draft.update!(body: "#{body} changed")
+
+    post :create, params: { email_template_id: id, lock_version: 0 }, as: :json
+
+    expect(response).to have_http_status(:conflict)
+  end
+
   it 'refuses when there is no draft' do
     post :create, params: { email_template_id: id }, as: :json
 

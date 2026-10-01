@@ -35,6 +35,31 @@ describe Spree::AdminUserMailer, type: :mailer do
       expect(email_body(message)).to include("https://admin.example.com/reset-password?token=#{token}")
     end
 
+    context "with the store's published version, made editable for the example" do
+      include_context 'with an editable email template'
+
+      it 'sends the store version' do
+        create(:email_template, store: store, key: editable_key, subject: 'Store subject',
+                                body: '<mj-section><mj-column><mj-text>Store version</mj-text></mj-column></mj-section>')
+
+        message = described_class.password_reset_email(admin_user, token, store)
+
+        expect(message.subject).to eq('Store subject')
+        expect(email_body(message)).to include('Store version')
+      end
+
+      it "falls back to Spree's template when the store version fails on real data, reporting the error" do
+        create(:email_template, store: store, key: editable_key,
+                                body: '<mj-section><mj-column><mj-text>{{ 1 | divided_by: 0 }}</mj-text></mj-column></mj-section>')
+        allow(Rails.error).to receive(:report)
+
+        message = described_class.password_reset_email(admin_user, token, store)
+
+        expect(email_body(message)).to include("token=#{token}")
+        expect(Rails.error).to have_received(:report).with(an_instance_of(Liquid::ZeroDivisionError), anything)
+      end
+    end
+
     context 'when the admin has a dashboard language set' do
       around do |example|
         previous = I18n.available_locales

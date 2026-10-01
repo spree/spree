@@ -41,6 +41,8 @@ module Spree
         draft.body = attributes[:body] if attributes.key?(:body)
         draft.updated_by = actor
         failure(draft) unless draft.save
+      rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotUnique
+        failure(nil, :stale)
       end
 
       def start_from_current

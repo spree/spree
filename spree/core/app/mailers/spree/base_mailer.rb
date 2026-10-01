@@ -90,9 +90,7 @@ module Spree
     # @return [Mail::Message]
     def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", **headers)
       in_store_locale do
-        resolver = email_resolver(template)
-        email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
-        email = email_renderer(resolver).render(email_template, assigns)
+        email = render_email_template(template, assigns)
 
         mail(headers.merge(subject: email.subject)) do |format|
           format.text { render plain: email.text, layout: false }
@@ -134,6 +132,24 @@ module Spree
     end
 
     private
+
+    # A store's published template passed its checks with sample data, but a
+    # real record can still trip it. The customer then gets the email from the
+    # files rather than none, and the error is reported.
+    def render_email_template(template, assigns)
+      resolver = email_resolver(template)
+      email_renderer(resolver).render(find_email_template(resolver, template), assigns)
+    rescue Liquid::Error, MRML::Error => e
+      raise unless resolver&.store
+
+      Rails.error.report(e, context: { email_template: template, store_id: current_store&.id })
+      fallback = email_resolver
+      email_renderer(fallback).render(find_email_template(fallback, template), assigns)
+    end
+
+    def find_email_template(resolver, template)
+      resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
+    end
 
     # The store's published templates apply only to the emails merchants may
     # edit; every other email, and the layout and partials it uses, comes

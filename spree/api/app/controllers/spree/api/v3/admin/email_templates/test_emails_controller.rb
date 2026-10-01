@@ -6,6 +6,8 @@ module Spree
           class TestEmailsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
+            before_action :authorize_sample_data!
+
             # POST /api/v3/admin/email_templates/:email_template_id/test_email
             #
             # Sends the template, rendered as the preview renders it, to the

@@ -925,6 +925,7 @@ en:
     email_templates:
       another_admin: another admin
       no_sample_record: There is no %{record} in this store to preview this email with yet.
+      sample_needs_permission: Previewing this email shows your store's records, which needs the %{permissions} permission.
       stale_draft: "%{name} saved this draft after you opened it. Reload to see their changes before saving yours."
       test_email_needs_admin: A test email goes to the signed-in admin, so it needs one.
       test_email_subject: "[Test] %{subject}"

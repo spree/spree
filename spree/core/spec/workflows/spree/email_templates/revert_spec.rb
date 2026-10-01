@@ -20,4 +20,13 @@ describe Spree::EmailTemplates::Revert do
     expect(template.revisions.count).to eq(1)
     expect(store.email_template_drafts.count).to eq(0)
   end
+
+  it 'keeps a draft saved after the one the admin saw' do
+    store.email_template_drafts.first.update!(body: 'Newer')
+
+    result = described_class.new.call(store: store, key: editable_key, actor: admin, lock_version: 0)
+
+    expect(result.error.value).to eq(:stale)
+    expect(template.reload).to be_published
+  end
 end

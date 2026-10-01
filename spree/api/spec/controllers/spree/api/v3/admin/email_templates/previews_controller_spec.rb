@@ -31,6 +31,33 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PreviewsController, type: 
     expect(store.reload.preferred_email_card_color).to be_nil
   end
 
+  context 'when the sample shows records the caller may not read' do
+    let(:headers) { { 'x-spree-api-key' => create(:api_key, :secret, store: store, scopes: scopes).plaintext_token } }
+
+    before { allow(Spree::TestingSupport::EmailTemplateSample).to receive(:required_permissions).and_return(%w[read_orders]) }
+
+    context 'with only the email templates scope' do
+      let(:scopes) { %w[write_email_templates] }
+
+      it 'is refused' do
+        post :create, params: { email_template_id: id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scope']).to eq('read_orders')
+      end
+    end
+
+    context 'with the orders scope too' do
+      let(:scopes) { %w[write_email_templates read_orders] }
+
+      it 'renders' do
+        post :create, params: { email_template_id: id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
   it 'says what is wrong and where when the template does not render' do
     post :create, params: { email_template_id: id, body: "<mj-section>\n{% if %}</mj-section>" }, as: :json
 

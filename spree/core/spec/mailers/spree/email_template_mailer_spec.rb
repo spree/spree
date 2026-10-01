@@ -15,4 +15,10 @@ describe Spree::EmailTemplateMailer, type: :mailer do
     expect(mail.html_part.body.to_s).to include('Draft for ann@example.com')
     expect(mail.text_part.body.to_s).to include('Draft for ann@example.com')
   end
+
+  it 'renders unsaved branding' do
+    mail = described_class.test_email(store, 'admin@example.com', editable_key, branding: { card_color: '#123456' })
+
+    expect(mail.html_part.body.to_s).to include('#123456')
+  end
 end

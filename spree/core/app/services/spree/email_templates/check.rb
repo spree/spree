@@ -3,7 +3,8 @@ module Spree
     # Renders a draft the way customers would receive it, with sample data
     # and strict variables, and reports what stops it from rendering. A
     # draft of the layout or a shared partial is checked inside every
-    # editable email, since all of them use it.
+    # editable email, since all of them use it, and in every language the
+    # store has published its own version of an email in.
     #
     # An email the store has no record for cannot be rendered with data; its
     # draft is still checked for Liquid syntax errors.
@@ -17,7 +18,7 @@ module Spree
 
       # @return [Array<Hash>] one `{ email:, message:, line: }` per problem; empty when the draft renders
       def call
-        email_keys.filter_map { |email_key| problem_in(email_key) }
+        locales.flat_map { |locale| email_keys.filter_map { |email_key| problem_in(email_key, locale) } }.uniq
       end
 
       private
@@ -27,8 +28,14 @@ module Spree
         definition.email? ? [definition.key] : Spree.editable_email_templates.emails.map(&:key)
       end
 
-      def problem_in(email_key)
-        Preview.new(store: @store, key: @draft.key, locale: @draft.locale, subject: @draft.subject, body: @draft.body,
+      def locales
+        return [@draft.locale] if @draft.definition.email? || @draft.locale != Spree::EmailTemplate::ANY_LOCALE
+
+        [@draft.locale, *@store.email_templates.published.where.not(locale: Spree::EmailTemplate::ANY_LOCALE).distinct.pluck(:locale)]
+      end
+
+      def problem_in(email_key, locale)
+        Preview.new(store: @store, key: @draft.key, locale: locale, subject: @draft.subject, body: @draft.body,
                     email_key: email_key, strict: true).call
         nil
       rescue Spree::EmailTemplates::NoSampleRecord

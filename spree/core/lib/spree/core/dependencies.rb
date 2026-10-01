@@ -252,6 +252,7 @@ module Spree
         email_template_save_draft_workflow: 'Spree::EmailTemplates::SaveDraft',
         email_template_publish_workflow: 'Spree::EmailTemplates::Publish',
         email_template_revert_workflow: 'Spree::EmailTemplates::Revert',
+        email_template_discard_draft_workflow: 'Spree::EmailTemplates::DiscardDraft',
         email_template_restore_revision_workflow: 'Spree::EmailTemplates::RestoreRevision',
 
         # finders
