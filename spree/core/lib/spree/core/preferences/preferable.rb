@@ -160,10 +160,10 @@ module Spree::Preferences::Preferable
       value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
     end
     value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
-    # A decimal is kept in the exact-string form JSON stores, so a record read
-    # back from the database and one just written compare equal and setting
-    # the same value is not a change. The reader restores it.
-    value = value.as_json if definition[:type] == :decimal
+    # Decimals and times are kept in the string form JSON stores, so a record
+    # read back from the database and one just written compare equal and
+    # setting the same value is not a change. The reader restores them.
+    value = value.as_json if %i[decimal datetime].include?(definition[:type])
 
     Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
     value
@@ -181,6 +181,18 @@ module Spree::Preferences::Preferable
     else
       self.preferences = (preferences || {}).with_indifferent_access.merge(name => value)
     end
+  end
+
+  def restore_preference_value(value, type)
+    return value unless value.is_a?(String)
+
+    case type
+    when :decimal then value.to_d
+    when :datetime then Time.zone.iso8601(value)
+    else value
+    end
+  rescue ArgumentError
+    value
   end
 
   def convert_preference_value(value, type, nullable: false)

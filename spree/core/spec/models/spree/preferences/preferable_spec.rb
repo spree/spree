@@ -412,6 +412,7 @@ describe Spree::Preferences::Preferable, type: :model do
         preference :pref_test_pref, :string, default: 'abc'
         preference :pref_test_any, :any, default: []
         preference :pref_test_decimal, :decimal, default: 0
+        preference :pref_test_datetime, :datetime
       end
     end
 
@@ -460,6 +461,16 @@ describe Spree::Preferences::Preferable, type: :model do
         @pt.update!(preferred_pref_test_decimal: '19.99')
 
         expect(PrefTest.find(@pt.id).preferred_pref_test_decimal).to eq(BigDecimal('19.99'))
+      end
+
+      it 'restores a time after a round trip' do
+        time = Time.zone.parse('2026-03-01 09:30:00')
+        @pt.update!(preferred_pref_test_datetime: time)
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferred_pref_test_datetime).to eq(time)
+        reloaded.preferred_pref_test_datetime = time
+        expect(reloaded.preferred_pref_test_datetime_changed?).to be(false)
       end
 
       it 'reads stored keys with indifferent access' do
