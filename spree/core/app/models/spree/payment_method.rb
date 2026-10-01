@@ -13,6 +13,7 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SecretPreferences
     include Spree::CaptureMethod
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
@@ -302,8 +303,9 @@ module Spree
     end
 
     def public_preferences
+      values = preference_values
       public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = preferences[key]
+        hash[key] = values[key]
       end
     end
 

@@ -642,6 +642,7 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/preferences/store'
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
 require 'spree/core/ransack_configuration'

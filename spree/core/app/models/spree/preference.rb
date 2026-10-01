@@ -1,6 +1,4 @@
 class Spree::Preference < Spree.base_class
-  serialize :value, coder: YAML
-
   validates :key, presence: true,
                   uniqueness: { case_sensitive: false, allow_blank: true, scope: spree_base_uniqueness_scope }
 
