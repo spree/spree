@@ -84,7 +84,8 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       secrets = connection.column_exists?(table, :secret_preferences)
       columns = ['id', 'preferences', ('type' if typed), ('secret_preferences' if secrets)].compact
 
-      connection.select_all("SELECT #{columns.map { |c| connection.quote_column_name(c) }.join(', ')} FROM #{connection.quote_table_name(table)}").each do |row|
+      arel_table = Arel::Table.new(table)
+      connection.select_all(arel_table.project(*columns.map { |column| arel_table[column] })).each do |row|
         next if row['preferences'].nil? && row['secret_preferences'].nil?
 
         preferences = decode(row['preferences']) || {}
@@ -98,7 +99,8 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
     end
 
     def values(table, source:, target:)
-      connection.select_all("SELECT id, #{connection.quote_column_name(source)} FROM #{connection.quote_table_name(table)}").each do |row|
+      arel_table = Arel::Table.new(table)
+      connection.select_all(arel_table.project(arel_table[:id], arel_table[source])).each do |row|
         next if row[source].nil?
 
         conversion.write(table, row['id'], target => YAML.dump(decode(row[source])))
