@@ -6122,7 +6122,10 @@
         "revert_title": "¿Volver a la versión predeterminada de Spree?",
         "revert_message": "A partir de ahora los clientes reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde.",
         "restore_title": "¿Restaurar esta versión?",
-        "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes."
+        "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes.",
+        "leave_title": "¿Salir sin guardar?",
+        "leave_message": "Se perderán los cambios sin guardar de esta plantilla.",
+        "leave": "Salir"
       },
       "editor": {
         "title": "Plantilla",
@@ -6144,7 +6147,8 @@
         "shown_in": "Mostrar dentro de",
         "record": "Vista previa con registro",
         "record_placeholder": "El más reciente o un ID como or_m3Rp9wXz",
-        "unavailable": "No se pudo mostrar la vista previa."
+        "unavailable": "No se pudo mostrar la vista previa.",
+        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo."
       },
       "problems": {
         "title": "Esta plantilla no se puede mostrar",
@@ -6172,7 +6176,8 @@
       "conflict": {
         "title": "Otra persona guardó este borrador",
         "keep_editing": "Seguir editando",
-        "reload": "Cargar su versión"
+        "reload": "Cargar su versión",
+        "overwrite": "Guardar la mía encima"
       },
       "variables": {
         "title": "Variables",

@@ -6122,7 +6122,10 @@
         "revert_title": "Revenir au modèle par défaut de Spree ?",
         "revert_message": "Les clients reçoivent désormais l'e-mail par défaut de Spree et le brouillon est supprimé. Les versions publiées restent dans l'historique pour être restaurées plus tard.",
         "restore_title": "Restaurer cette version ?",
-        "restore_message": "Cette version remplace le brouillon. Publiez-la pour que les clients la reçoivent."
+        "restore_message": "Cette version remplace le brouillon. Publiez-la pour que les clients la reçoivent.",
+        "leave_title": "Quitter sans enregistrer ?",
+        "leave_message": "Vos modifications non enregistrées de ce modèle seront perdues.",
+        "leave": "Quitter"
       },
       "editor": {
         "title": "Modèle",
@@ -6144,7 +6147,8 @@
         "shown_in": "Afficher dans",
         "record": "Aperçu avec l'enregistrement",
         "record_placeholder": "Le plus récent, ou un ID comme or_m3Rp9wXz",
-        "unavailable": "L'aperçu n'a pas pu être affiché."
+        "unavailable": "L'aperçu n'a pas pu être affiché.",
+        "needs_permission": "Les aperçus sont générés pour les personnes autorisées à modifier les modèles d'e-mail."
       },
       "problems": {
         "title": "Ce modèle ne s'affiche pas",
@@ -6172,7 +6176,8 @@
       "conflict": {
         "title": "Quelqu'un d'autre a enregistré ce brouillon",
         "keep_editing": "Continuer la modification",
-        "reload": "Charger sa version"
+        "reload": "Charger sa version",
+        "overwrite": "Enregistrer ma version par-dessus"
       },
       "variables": {
         "title": "Variables",

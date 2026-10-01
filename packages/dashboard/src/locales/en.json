@@ -6122,7 +6122,10 @@
         "revert_title": "Revert to Spree's default?",
         "revert_message": "Customers receive Spree's default email from now on and the draft is deleted. Published versions stay in the history, so you can restore one later.",
         "restore_title": "Restore this version?",
-        "restore_message": "This version replaces the draft. Publish it for customers to receive it."
+        "restore_message": "This version replaces the draft. Publish it for customers to receive it.",
+        "leave_title": "Leave without saving?",
+        "leave_message": "Your unsaved changes to this template will be lost.",
+        "leave": "Leave"
       },
       "editor": {
         "title": "Template",
@@ -6144,7 +6147,8 @@
         "shown_in": "Show inside",
         "record": "Preview with record",
         "record_placeholder": "Latest, or an ID such as or_m3Rp9wXz",
-        "unavailable": "The preview could not be shown."
+        "unavailable": "The preview could not be shown.",
+        "needs_permission": "Previews are rendered for people who can edit email templates."
       },
       "problems": {
         "title": "This template does not render",
@@ -6172,7 +6176,8 @@
       "conflict": {
         "title": "Someone else saved this draft",
         "keep_editing": "Keep editing",
-        "reload": "Load their version"
+        "reload": "Load their version",
+        "overwrite": "Save mine over theirs"
       },
       "variables": {
         "title": "Variables",
