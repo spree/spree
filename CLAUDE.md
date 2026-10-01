@@ -190,7 +190,7 @@ end
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
 - Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
-- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys
+- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys; secrets are `:password` preferences, stored encrypted in a `secret_preferences` `text` column
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
