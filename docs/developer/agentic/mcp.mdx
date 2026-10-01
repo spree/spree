@@ -12,6 +12,13 @@ https://spreecommerce.org/docs/mcp
 
 The server exposes two tools: full-text **search** across the documentation, and **reading** doc pages as Markdown.
 
+<Note>
+  This server is about Spree's documentation, not your store. To let an agent
+  work on your own catalog, orders and settings, see the
+  [Admin MCP server](/developer/agentic/admin-mcp) — the same protocol, hosted
+  by your application and authenticated with one of your API keys.
+</Note>
+
 ## Setup
 
 <Tabs>
@@ -68,6 +75,7 @@ The server exposes two tools: full-text **search** across the documentation, and
 | **MCP server** (this page) | The latest published docs; agents working outside a scaffolded project; questions the installed skills don't cover |
 | **[`@spree/docs` npm package](/developer/agentic/llm-docs)** | Fast local reads inside a project — no network round-trip, works offline, pinned to what you installed |
 | **[Agent skills](/developer/agentic/agent-skills)** | Conventions and how-to knowledge the agent should apply without searching at all |
+| **[Admin MCP server](/developer/agentic/admin-mcp)** | Not docs at all — operating a real store: its catalog, orders, reports and settings |
 
 <Note>
   In create-spree-app projects the generated `AGENTS.md` and `CLAUDE.md` already points agents at the local `@spree/docs` package first — MCP complements it for anything newer than your installed docs version.
