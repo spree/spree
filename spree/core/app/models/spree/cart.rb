@@ -272,6 +272,20 @@ module Spree
       reload
     end
 
+    # The variants this cart's buyer may order: the channel's publications,
+    # narrowed to the catalogs the cart's company, customer group or channel
+    # resolve to. Status, stock and currency are left to the add and checkout
+    # checks, which explain a refusal rather than reading as not found.
+    #
+    # @return [ActiveRecord::Relation<Spree::Variant>]
+    def orderable_variants
+      products = Spree.products_for_context_service.call(
+        store: store, channel: channel, customer: customer, company: resolved_company
+      ).value
+
+      Spree::Variant.for_products(products)
+    end
+
     # Removes out-of-stock/discontinued items and populates warnings
     # (mirrors Order#remove_out_of_stock_items!).
     def remove_out_of_stock_items!

@@ -715,11 +715,10 @@ module Spree
       end
 
       describe 'setting line items' do
-        let(:variant) { create(:variant) }
+        let(:variant) { create(:variant, product: create(:product, store: store)) }
 
         before do
           variant.stock_levels.first.update!(count_on_hand: 10)
-          store.products << variant.product unless store.products.include?(variant.product)
         end
 
         context 'with new line_items' do
@@ -776,6 +775,47 @@ module Spree
               expect(error.model).to eq('Spree::Variant')
               expect(error.message).to include('variant_invalid999')
             end
+          end
+        end
+
+        context "with a variant outside the buyer's catalogs" do
+          let(:hidden) { create(:product, store: store).default_variant }
+          let(:company) { create(:company, store: store) }
+          let(:open_company) { create(:company, store: store) }
+          let(:params) { { items: [{ variant_id: hidden.prefixed_id, quantity: 1 }] } }
+
+          before do
+            hidden.stock_levels.first.update!(count_on_hand: 10)
+            catalog = create(:catalog, store: store)
+            create(:catalog_product, catalog: catalog, product: create(:product, store: store))
+            create(:catalog_assignment, catalog: catalog, assignable: company)
+            create(:company_membership, company: company, customer: user)
+          end
+
+          it 'refuses the item and leaves the cart as it was' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+            expect(cart.reload.line_items.map(&:variant)).not_to include(hidden)
+          end
+
+          it 'checks the items against a company named in the same request' do
+            create(:company_membership, company: open_company, customer: user)
+            cart.update!(company: open_company)
+
+            expect {
+              described_class.call(cart: cart, params: params.merge(company_id: company.prefixed_id))
+            }.to raise_error(ActiveRecord::RecordNotFound)
+          end
+
+          # A claimed guest cart can already hold the line; resending the cart
+          # must not fail every other change in the request. Checkout judges it.
+          it 'still applies a quantity edit to a line already in the cart' do
+            line_item = create(:line_item, cart: cart, order: nil, variant: hidden)
+
+            result = described_class.call(cart: cart, params: params.merge(email: 'buyer@example.com', items: [{ variant_id: hidden.prefixed_id, quantity: 3 }]))
+
+            expect(result).to be_success
+            expect(line_item.reload.quantity).to eq(3)
+            expect(cart.reload.email).to eq('buyer@example.com')
           end
         end
       end

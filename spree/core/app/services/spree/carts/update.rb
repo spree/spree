@@ -187,7 +187,9 @@ module Spree
       def process_items
         return unless params[:items].is_a?(Array)
 
-        result = Spree.cart_upsert_items_workflow.call(cart: cart, items: params[:items])
+        # Resolved after the save, so a company named in the same request
+        # decides which catalogs the items are checked against.
+        result = Spree.cart_upsert_items_workflow.call(cart: cart, items: params[:items], orderable_variants: cart.orderable_variants)
 
         raise StandardError, result.error.to_s if result.failure?
       end
