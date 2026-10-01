@@ -3,6 +3,7 @@ import {
   type EmailTemplateDraftParams,
   type EmailTemplatePreview,
   type EmailTemplatePreviewParams,
+  type EmailTemplateVersionParams,
   SpreeError,
 } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
@@ -32,10 +33,11 @@ export function useEmailTemplates(language = 'any') {
   })
 }
 
-export function useEmailTemplate(id: string, language: string) {
+export function useEmailTemplate(id: string, language: string, enabled = true) {
   return useQuery({
     queryKey: useResourceKey(RESOURCE, id, language),
     queryFn: () => adminClient.emailTemplates.get(id, { language, expand: ['draft.updated_by'] }),
+    enabled,
   })
 }
 
@@ -63,16 +65,17 @@ export function useSaveEmailTemplateDraft(id: string) {
 }
 
 export function useDiscardEmailTemplateDraft(id: string) {
-  return useResourceMutation<EmailTemplate, Error, string>({
-    mutationFn: (language) => adminClient.emailTemplates.draft.delete(id, { language }),
+  return useResourceMutation<EmailTemplate, Error, EmailTemplateVersionParams>({
+    mutationFn: (params) => adminClient.emailTemplates.draft.delete(id, params),
     invalidate: [[RESOURCE]],
+    errorMessage: false,
     successMessage: i18n.t('admin.email_templates.messages.draft_discarded'),
   })
 }
 
 export function usePublishEmailTemplate(id: string) {
-  return useResourceMutation<EmailTemplate, Error, string>({
-    mutationFn: (language) => adminClient.emailTemplates.publish(id, { language }),
+  return useResourceMutation<EmailTemplate, Error, EmailTemplateVersionParams>({
+    mutationFn: (params) => adminClient.emailTemplates.publish(id, params),
     invalidate: [[RESOURCE]],
     successMessage: i18n.t('admin.email_templates.messages.published'),
     errorMessage: false,
@@ -80,9 +83,10 @@ export function usePublishEmailTemplate(id: string) {
 }
 
 export function useRevertEmailTemplate(id: string) {
-  return useResourceMutation<EmailTemplate, Error, string>({
-    mutationFn: (language) => adminClient.emailTemplates.revert(id, { language }),
+  return useResourceMutation<EmailTemplate, Error, EmailTemplateVersionParams>({
+    mutationFn: (params) => adminClient.emailTemplates.revert(id, params),
     invalidate: [[RESOURCE]],
+    errorMessage: false,
     successMessage: i18n.t('admin.email_templates.messages.reverted'),
   })
 }

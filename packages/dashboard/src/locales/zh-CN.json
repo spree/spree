@@ -6164,7 +6164,10 @@
         "revert_title": "恢复为 Spree 默认？",
         "revert_message": "从现在起客户将收到 Spree 的默认邮件，草稿将被删除。已发布的版本保留在历史记录中，以后可以恢复。",
         "restore_title": "恢复此版本？",
-        "restore_message": "此版本将替换草稿。发布后客户才会收到。"
+        "restore_message": "此版本将替换草稿。发布后客户才会收到。",
+        "leave_title": "不保存就离开？",
+        "leave_message": "您对此模板未保存的更改将会丢失。",
+        "leave": "离开"
       },
       "editor": {
         "title": "模板",
@@ -6186,7 +6189,8 @@
         "shown_in": "显示于",
         "record": "使用记录预览",
         "record_placeholder": "最新记录，或如 or_m3Rp9wXz 的 ID",
-        "unavailable": "无法显示预览。"
+        "unavailable": "无法显示预览。",
+        "needs_permission": "只有可以编辑邮件模板的人才能生成预览。"
       },
       "problems": {
         "title": "此模板无法渲染",
@@ -6214,7 +6218,8 @@
       "conflict": {
         "title": "其他人保存了此草稿",
         "keep_editing": "继续编辑",
-        "reload": "加载对方的版本"
+        "reload": "加载对方的版本",
+        "overwrite": "用我的版本覆盖"
       },
       "variables": {
         "title": "变量",

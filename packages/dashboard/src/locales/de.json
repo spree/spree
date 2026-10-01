@@ -6177,7 +6177,10 @@
         "revert_title": "Auf den Spree-Standard zurücksetzen?",
         "revert_message": "Kunden erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können.",
         "restore_title": "Diese Version wiederherstellen?",
-        "restore_message": "Diese Version ersetzt den Entwurf. Veröffentlichen Sie sie, damit Kunden sie erhalten."
+        "restore_message": "Diese Version ersetzt den Entwurf. Veröffentlichen Sie sie, damit Kunden sie erhalten.",
+        "leave_title": "Ohne Speichern verlassen?",
+        "leave_message": "Ihre ungespeicherten Änderungen an dieser Vorlage gehen verloren.",
+        "leave": "Verlassen"
       },
       "editor": {
         "title": "Vorlage",
@@ -6199,7 +6202,8 @@
         "shown_in": "Anzeigen in",
         "record": "Vorschau mit Datensatz",
         "record_placeholder": "Neuester oder eine ID wie or_m3Rp9wXz",
-        "unavailable": "Die Vorschau konnte nicht angezeigt werden."
+        "unavailable": "Die Vorschau konnte nicht angezeigt werden.",
+        "needs_permission": "Vorschauen werden für Personen erstellt, die E-Mail-Vorlagen bearbeiten dürfen."
       },
       "problems": {
         "title": "Diese Vorlage lässt sich nicht darstellen",
@@ -6227,7 +6231,8 @@
       "conflict": {
         "title": "Jemand anderes hat diesen Entwurf gespeichert",
         "keep_editing": "Weiter bearbeiten",
-        "reload": "Deren Version laden"
+        "reload": "Deren Version laden",
+        "overwrite": "Meine Version darüber speichern"
       },
       "variables": {
         "title": "Variablen",

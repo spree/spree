@@ -52,7 +52,7 @@ import {
   Trash2Icon,
 } from '@spree/dashboard-ui/icons'
 import { CodeEditor, type CodeEditorCompletion } from '@spree/dashboard-ui/ui/code-editor'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useBlocker } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DefaultDiffDialog } from '../../../../../../components/spree/email-templates/default-diff-dialog'
@@ -96,9 +96,20 @@ const PREVIEW_DELAY_MS = 600
 function EmailTemplateEditorPage() {
   const { t } = useTranslation()
   const { templateId } = Route.useParams()
+  const { permissions } = usePermissions()
+  const canRead = permissions.can('read', Subject.EmailTemplate)
   const [language, setLanguage] = useState(ANY_LANGUAGE)
   const [reloads, setReloads] = useState(0)
-  const { data: template, isLoading, error, refetch } = useEmailTemplate(templateId, language)
+  const {
+    data: template,
+    isLoading,
+    error,
+    refetch,
+  } = useEmailTemplate(templateId, language, canRead)
+
+  if (!canRead) {
+    return <ErrorState title={t('admin.email_templates.errors.not_allowed')} />
+  }
 
   if (error) {
     return (
@@ -129,6 +140,7 @@ function EmailTemplateEditorPage() {
         await refetch()
         setReloads((count) => count + 1)
       }}
+      onFetchLatest={async () => (await refetch()).data}
     />
   )
 }
@@ -149,11 +161,13 @@ function EmailTemplateEditor({
   language,
   onLanguageChange,
   onReload,
+  onFetchLatest,
 }: {
   template: EmailTemplate
   language: string
   onLanguageChange: (language: string) => void
   onReload: () => void
+  onFetchLatest: () => Promise<EmailTemplate | undefined>
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
@@ -172,6 +186,23 @@ function EmailTemplateEditor({
   const [diffOpen, setDiffOpen] = useState(false)
   const dirty = subject !== saved.subject || body !== saved.body
 
+  // Problems from a save or publish describe the text as it was sent.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: cleared whenever the text changes
+  useEffect(() => setProblems([]), [subject, body])
+
+  // Leaving the page, or the tab, would lose unsaved changes.
+  useBlocker({
+    shouldBlockFn: async () =>
+      dirty &&
+      !(await confirm({
+        title: t('admin.email_templates.confirm.leave_title'),
+        message: t('admin.email_templates.confirm.leave_message'),
+        confirmLabel: t('admin.email_templates.confirm.leave'),
+        variant: 'destructive',
+      })),
+    enableBeforeUnload: () => dirty,
+  })
+
   const save = useSaveEmailTemplateDraft(template.id)
   const discard = useDiscardEmailTemplateDraft(template.id)
   const publish = usePublishEmailTemplate(template.id)
@@ -180,11 +211,15 @@ function EmailTemplateEditor({
   const sendTest = useSendTestEmail(template.id)
   const revisions = useEmailTemplateRevisions(template.id, language, historyOpen)
 
-  const applyResponse = useCallback((next: EmailTemplate) => {
+  /**
+   * Takes the server's version after a write. With `sent`, text typed while
+   * the request was out is kept rather than replaced.
+   */
+  const applyResponse = useCallback((next: EmailTemplate, sent?: Version) => {
     const version = startingVersion(next)
     setSaved(version)
-    setSubject(version.subject)
-    setBody(version.body)
+    setSubject((current) => (!sent || current === sent.subject ? version.subject : current))
+    setBody((current) => (!sent || current === sent.body ? version.body : current))
     setLockVersion(next.draft?.lock_version)
     setHasDraft(!!next.draft)
     setProblems([])
@@ -200,14 +235,16 @@ function EmailTemplateEditor({
     else if (error instanceof Error) toastManager.add({ type: 'error', title: error.message })
   }
 
-  const saveDraft = async (extra: { rebase?: boolean; version?: Version } = {}) => {
+  const saveDraft = async (
+    extra: { rebase?: boolean; version?: Version; lockVersion?: number } = {},
+  ) => {
     const version = extra.version ?? { subject, body }
     try {
       const next = await save.mutateAsync({
         language,
         body: version.body,
         ...(isEmail ? { subject: version.subject } : {}),
-        lock_version: lockVersion,
+        lock_version: 'lockVersion' in extra ? extra.lockVersion : lockVersion,
         rebase: extra.rebase,
       })
       // Keep what is being typed: only the saved copy moves on.
@@ -223,9 +260,12 @@ function EmailTemplateEditor({
   }
 
   const handlePublish = async () => {
-    if ((dirty || !hasDraft) && !(await saveDraft())) return
+    const sent = { subject, body }
+    const draft = dirty || !hasDraft ? await saveDraft() : undefined
+    if (draft === null) return
     try {
-      applyResponse(await publish.mutateAsync(language))
+      const lock_version = draft ? draft.draft?.lock_version : lockVersion
+      applyResponse(await publish.mutateAsync({ language, lock_version }), sent)
     } catch (error) {
       handleError(error)
     }
@@ -240,9 +280,9 @@ function EmailTemplateEditor({
     })
     if (!confirmed) return
     try {
-      applyResponse(await discard.mutateAsync(language))
-    } catch {
-      // The mutation already reported the failure.
+      applyResponse(await discard.mutateAsync({ language, lock_version: lockVersion }))
+    } catch (error) {
+      handleError(error)
     }
   }
 
@@ -255,9 +295,9 @@ function EmailTemplateEditor({
     })
     if (!confirmed) return
     try {
-      applyResponse(await revert.mutateAsync(language))
-    } catch {
-      // The mutation already reported the failure.
+      applyResponse(await revert.mutateAsync({ language, lock_version: lockVersion }))
+    } catch (error) {
+      handleError(error)
     }
   }
 
@@ -277,6 +317,15 @@ function EmailTemplateEditor({
     }
   }
 
+  const handleOverwrite = async () => {
+    setConflict(null)
+    const latest = await onFetchLatest()
+    if (!latest) return
+    const latestLockVersion = latest.draft?.lock_version
+    setLockVersion(latestLockVersion)
+    await saveDraft({ lockVersion: latestLockVersion })
+  }
+
   const handleKeepMine = async () => {
     if (await saveDraft({ rebase: true })) setDiffOpen(false)
   }
@@ -290,11 +339,11 @@ function EmailTemplateEditor({
     }
   }
 
-  const preview = useLivePreview(template.id, {
-    language,
-    subject: isEmail ? subject : undefined,
-    body,
-  })
+  const preview = useLivePreview(
+    template.id,
+    { language, subject: isEmail ? subject : undefined, body },
+    canEdit,
+  )
 
   const handleSendTest = async () => {
     try {
@@ -319,7 +368,12 @@ function EmailTemplateEditor({
     .filter((problem) => !problem.email || problem.email === template.id)
     .map((problem) => ({ line: problem.line, message: problem.message }))
 
-  const busy = save.isPending || publish.isPending || discard.isPending || revert.isPending
+  const busy =
+    save.isPending ||
+    publish.isPending ||
+    discard.isPending ||
+    revert.isPending ||
+    restore.isPending
 
   return (
     <ResourceLayout
@@ -420,7 +474,7 @@ function EmailTemplateEditor({
                   completions={preview.completions}
                   filters={FILTER_COMPLETIONS}
                   diagnostics={diagnostics}
-                  onSave={() => canEdit && dirty && saveDraft()}
+                  onSave={() => canEdit && dirty && !busy && saveDraft()}
                   className="h-[36rem]"
                 />
               </CardContent>
@@ -452,6 +506,7 @@ function EmailTemplateEditor({
           <ConflictDialog
             message={conflict}
             onClose={() => setConflict(null)}
+            onOverwrite={handleOverwrite}
             onReload={() => {
               setConflict(null)
               onReload()
@@ -568,6 +623,7 @@ interface LivePreview {
 function useLivePreview(
   templateId: string,
   unsaved: { language: string; subject?: string; body: string },
+  enabled: boolean,
 ): LivePreview {
   const { t } = useTranslation()
   const [recordId, setRecordId] = useState('')
@@ -588,6 +644,7 @@ function useLivePreview(
   )
 
   useEffect(() => {
+    if (!enabled) return
     const id = ++latest.current
     mutateAsync(JSON.parse(request))
       .then((result) => {
@@ -602,7 +659,7 @@ function useLivePreview(
         setProblems(listed)
         setUnavailable(listed.length > 0 ? undefined : (error as Error).message)
       })
-  }, [request, mutateAsync])
+  }, [request, mutateAsync, enabled])
 
   const completions = useMemo(() => {
     const documented = [...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []), ...SHARED_EMAIL_VARIABLES]
@@ -621,7 +678,16 @@ function useLivePreview(
     return [...fromPreview, ...documentedOnly]
   }, [data, templateId, t])
 
-  return { data, problems, unavailable, completions, recordId, setRecordId, emailKey, setEmailKey }
+  return {
+    data,
+    problems,
+    unavailable: enabled ? unavailable : t('admin.email_templates.preview.needs_permission'),
+    completions,
+    recordId,
+    setRecordId,
+    emailKey,
+    setEmailKey,
+  }
 }
 
 function PreviewCard({ template, preview }: { template: EmailTemplate; preview: LivePreview }) {
@@ -765,10 +831,12 @@ function VariablesCard({ templateId }: { templateId: string }) {
 function ConflictDialog({
   message,
   onReload,
+  onOverwrite,
   onClose,
 }: {
   message: string | null
   onReload: () => void
+  onOverwrite: () => void
   onClose: () => void
 }) {
   const { t } = useTranslation()
@@ -784,8 +852,11 @@ function ConflictDialog({
           <Button variant="outline" onClick={onClose}>
             {t('admin.email_templates.conflict.keep_editing')}
           </Button>
-          <Button variant="destructive" onClick={onReload}>
+          <Button variant="outline" onClick={onReload}>
             {t('admin.email_templates.conflict.reload')}
+          </Button>
+          <Button variant="destructive" onClick={onOverwrite}>
+            {t('admin.email_templates.conflict.overwrite')}
           </Button>
         </DialogFooter>
       </DialogContent>

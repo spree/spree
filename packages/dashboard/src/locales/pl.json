@@ -6245,7 +6245,10 @@
         "revert_title": "Przywrócić domyślny szablon Spree?",
         "revert_message": "Od teraz klienci otrzymują domyślny e-mail Spree, a szkic zostanie usunięty. Opublikowane wersje zostają w historii, więc możesz później przywrócić jedną z nich.",
         "restore_title": "Przywrócić tę wersję?",
-        "restore_message": "Ta wersja zastąpi szkic. Opublikuj ją, aby otrzymali ją klienci."
+        "restore_message": "Ta wersja zastąpi szkic. Opublikuj ją, aby otrzymali ją klienci.",
+        "leave_title": "Wyjść bez zapisywania?",
+        "leave_message": "Niezapisane zmiany w tym szablonie zostaną utracone.",
+        "leave": "Wyjdź"
       },
       "editor": {
         "title": "Szablon",
@@ -6267,7 +6270,8 @@
         "shown_in": "Pokaż w",
         "record": "Podgląd z rekordem",
         "record_placeholder": "Najnowszy lub ID, np. or_m3Rp9wXz",
-        "unavailable": "Nie udało się wyświetlić podglądu."
+        "unavailable": "Nie udało się wyświetlić podglądu.",
+        "needs_permission": "Podgląd jest generowany dla osób, które mogą edytować szablony e-maili."
       },
       "problems": {
         "title": "Tego szablonu nie da się wyświetlić",
@@ -6295,7 +6299,8 @@
       "conflict": {
         "title": "Ktoś inny zapisał ten szkic",
         "keep_editing": "Edytuj dalej",
-        "reload": "Wczytaj jego wersję"
+        "reload": "Wczytaj jego wersję",
+        "overwrite": "Zapisz moją wersję zamiast jego"
       },
       "variables": {
         "title": "Zmienne",
