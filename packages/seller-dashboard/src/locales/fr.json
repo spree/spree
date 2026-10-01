@@ -148,6 +148,7 @@
             "receive_title": "Réceptionner les articles retournés",
             "received_quantity": "Reçu",
             "refund_amount": "Montant",
+            "refund_includes_tax": "Le montant total comprend {{tax}} de taxes. Un montant inférieur rembourse les taxes dans la même proportion.",
             "refund_method": "Rembourser sur",
             "refund_methods": {
               "original_payment": "Paiement d’origine",
@@ -519,6 +520,7 @@
         "cancel_message": "Le client est informé que cela n’aura pas lieu.",
         "cancel_title": "Annuler cet échange ?",
         "fulfill": "Envoyer le remplacement",
+        "balance_due_confirm": "Le remplacement coûte plus cher que l'article retourné. Son envoi ajoute la différence à la commande comme solde dû. Rien n'est débité automatiquement.",
         "price_difference": "Différence de prix : {{amount}}",
         "receive": "Réceptionner",
         "title": "Échanges"

@@ -389,6 +389,11 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      refundTaxTotal={
+        Number(returnRecord.refund_tax_total) > 0
+          ? returnRecord.display_refund_tax_total
+          : undefined
+      }
       currencySymbol={currencySymbol}
       onClose={onClose}
       onSubmit={onSubmit}

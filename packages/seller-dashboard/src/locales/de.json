@@ -148,6 +148,7 @@
             "receive_title": "Rücksendung annehmen",
             "received_quantity": "Erhalten",
             "refund_amount": "Betrag",
+            "refund_includes_tax": "Der volle Betrag enthält {{tax}} Steuern. Bei einem kleineren Betrag wird die Steuer anteilig erstattet.",
             "refund_method": "Erstatten auf",
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
@@ -519,6 +520,7 @@
         "cancel_message": "Der Kunde erfährt, dass es nicht weitergeht.",
         "cancel_title": "Diesen Umtausch abbrechen?",
         "fulfill": "Ersatz senden",
+        "balance_due_confirm": "Der Ersatz kostet mehr als die zurückgesendete Ware. Beim Versand wird die Differenz der Bestellung als offener Betrag hinzugefügt. Es wird nichts automatisch belastet.",
         "price_difference": "Preisdifferenz: {{amount}}",
         "receive": "Annehmen",
         "title": "Umtausch"

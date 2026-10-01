@@ -148,6 +148,7 @@
             "receive_title": "Przyjmij zwrócone pozycje",
             "received_quantity": "Przyjęto",
             "refund_amount": "Kwota",
+            "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwrot na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
@@ -521,6 +522,7 @@
         "cancel_message": "Klient dostanie informację, że sprawa nie będzie kontynuowana.",
         "cancel_title": "Anulować tę wymianę?",
         "fulfill": "Wyślij wymianę",
+        "balance_due_confirm": "Zamiennik kosztuje więcej niż zwrócony towar. Jego wysłanie doda różnicę do zamówienia jako kwotę do zapłaty. Nic nie zostanie pobrane automatycznie.",
         "price_difference": "Różnica w cenie: {{amount}}",
         "receive": "Przyjmij",
         "title": "Wymiany"

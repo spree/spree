@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Field, FieldLabel } from '../ui/field'
+import { Field, FieldDescription, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -150,15 +150,19 @@ export function returnOwesNothing(refundableTotal: string): boolean {
  *
  * The currency symbol comes from the caller — the operator's panel reads it
  * from the store it is looking at, and a seller has no currency of their own.
+ * `refundTaxTotal` is the formatted tax inside `refundableTotal`, shown so a
+ * merchant knows the pre-filled amount gives the tax back too.
  */
 export function ReturnRefundDialog({
   refundableTotal,
+  refundTaxTotal,
   currencySymbol,
   onClose,
   onSubmit,
   pending = false,
 }: {
   refundableTotal: string
+  refundTaxTotal?: string
   currencySymbol: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
@@ -214,6 +218,13 @@ export function ReturnRefundDialog({
                     onChange={(event) => setAmount(event.target.value)}
                   />
                 </InputGroup>
+                {refundTaxTotal && (
+                  <FieldDescription>
+                    {t('admin.pages.orders.detail.returns.refund_includes_tax', {
+                      tax: refundTaxTotal,
+                    })}
+                  </FieldDescription>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="refund-method">
