@@ -36,10 +36,11 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { EmailPreviewFrame } from '../../../../../components/spree/email-templates/email-preview-frame'
 import { EmailsTabs } from '../../../../../components/spree/email-templates/emails-tabs'
+import { PREVIEW_DELAY_MS } from '../../../../../components/spree/email-templates/preview-card'
 import { useEmailTemplatePreview } from '../../../../../hooks/use-email-templates'
 import { useStoreSettings, useUpdateStoreSettings } from '../../../../../hooks/use-store-settings'
 import {
@@ -413,14 +414,17 @@ function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFor
 function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmailsFormValues>> }) {
   const { t } = useTranslation()
   const preview = useEmailTemplatePreview(BRANDING_PREVIEW_TEMPLATE)
-  const [accent, background, card, text, heading, font] = form.watch([
-    'preferred_email_accent_color',
-    'preferred_email_background_color',
-    'preferred_email_card_color',
-    'preferred_email_text_color',
-    'preferred_email_heading_color',
-    'preferred_email_font',
-  ])
+  const [accent, background, card, text, heading, font] = useWatch({
+    control: form.control,
+    name: [
+      'preferred_email_accent_color',
+      'preferred_email_background_color',
+      'preferred_email_card_color',
+      'preferred_email_text_color',
+      'preferred_email_heading_color',
+      'preferred_email_font',
+    ],
+  })
   const branding = useDebouncedValue(
     JSON.stringify({
       accent_color: accent,
@@ -430,7 +434,7 @@ function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmails
       heading_color: heading,
       font,
     }),
-    600,
+    PREVIEW_DELAY_MS,
   )
   const { mutate } = preview
 

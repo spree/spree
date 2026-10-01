@@ -87,6 +87,9 @@ const theme = EditorView.theme({
   },
 })
 
+const NO_COMPLETIONS: CodeEditorCompletion[] = []
+const NO_DIAGNOSTICS: CodeEditorDiagnostic[] = []
+
 function toDiagnostics(state: EditorState, problems: CodeEditorDiagnostic[]): Diagnostic[] {
   return problems.map((problem) => {
     const lineNumber = Math.min(Math.max(problem.line ?? 1, 1), state.doc.lines)
@@ -102,9 +105,9 @@ function toDiagnostics(state: EditorState, problems: CodeEditorDiagnostic[]): Di
 function CodeEditor({
   value,
   onChange,
-  completions = [],
-  filters = [],
-  diagnostics = [],
+  completions = NO_COMPLETIONS,
+  filters = NO_COMPLETIONS,
+  diagnostics = NO_DIAGNOSTICS,
   readOnly = false,
   onSave,
   className,
