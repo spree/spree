@@ -107,6 +107,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       include_context 'with admin auth parameters'
       parameter name: :language, in: :query, type: :string, required: false,
                 description: 'A language code, or `any` (the default)'
+      parameter name: :lock_version, in: :query, type: :integer, required: false,
+                description: 'The draft\'s `lock_version` as last seen; a draft saved since is refused with 409'
 
       response '200', 'email template reverted' do
         schema '$ref' => '#/components/schemas/EmailTemplate'
@@ -187,6 +189,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       include_context 'with admin auth parameters'
       parameter name: :language, in: :query, type: :string, required: false,
                 description: 'A language code, or `any` (the default)'
+      parameter name: :lock_version, in: :query, type: :integer, required: false,
+                description: 'The draft\'s `lock_version` as last seen; a draft saved since is refused with 409'
 
       response '200', 'draft discarded' do
         schema '$ref' => '#/components/schemas/EmailTemplate'
@@ -222,7 +226,10 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       include_context 'with admin auth parameters'
       parameter name: :body, in: :body, required: false, schema: {
         type: :object,
-        properties: { language: { type: :string, example: 'any' } }
+        properties: {
+          language: { type: :string, example: 'any' },
+          lock_version: { type: :integer, description: "The draft's `lock_version` as reviewed; a draft saved since is refused with 409" }
+        }
       }
 
       response '201', 'draft published' do
