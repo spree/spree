@@ -131,6 +131,10 @@ the period of the original order. A report over a past range can therefore
 change after the fact, which is the conventional treatment and the only one an
 open accounting period can produce.
 
+A refund from a return, claim or exchange gives tax back with the goods, so it
+is split: the goods come off `returns` and `net_sales`, and the tax comes off
+`taxes`. `total_sales` loses the whole refund.
+
 `cost_of_goods`, `gross_profit` and `gross_margin` read the line item's
 `cost_price`. That column is nullable, so a variant with no cost contributes
 zero and margin over an incompletely-costed catalogue reads high.
