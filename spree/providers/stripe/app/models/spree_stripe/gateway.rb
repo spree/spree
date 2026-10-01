@@ -65,10 +65,7 @@ module SpreeStripe
       # read as every key having changed.
       return false if previously_new_record?
 
-      # The preference macro's own reader rather than a hand-rolled diff: it
-      # reads the change through indifferent access, so it answers the same
-      # whether the serialized hash came back with symbol or string keys.
-      preferred_secret_key_previously_changed?
+      saved_change_to_preferred_secret_key?
     end
 
     def gateway_dashboard_payment_url(payment)
