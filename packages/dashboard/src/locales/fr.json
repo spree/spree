@@ -5114,8 +5114,7 @@
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
-        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
-        "email_templates": "Modifier les e-mails que reçoivent les clients"
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,8 +5152,7 @@
         "webhooks": "Webhooks",
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
-        "marketplace": "Paramètres",
-        "email_templates": "Modèles d'e-mail"
+        "marketplace": "Paramètres"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

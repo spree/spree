@@ -5114,8 +5114,7 @@
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
-        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
-        "email_templates": "Die E-Mails bearbeiten, die Kunden erhalten"
+        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,8 +5152,7 @@
         "webhooks": "Webhooks",
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
-        "marketplace": "Einstellungen",
-        "email_templates": "E-Mail-Vorlagen"
+        "marketplace": "Einstellungen"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"
