@@ -12427,6 +12427,14 @@ components:
           type: string
         paid_amount:
           type: string
+        pre_tax_amount:
+          type: string
+        included_tax_total:
+          type: string
+        additional_tax_total:
+          type: string
+        tax_total:
+          type: string
         display_refund_amount:
           type: string
         variant_id:
@@ -12447,6 +12455,10 @@ components:
       - description
       - refund_amount
       - paid_amount
+      - pre_tax_amount
+      - included_tax_total
+      - additional_tax_total
+      - tax_total
       - display_refund_amount
       - variant_id
       - replacement_variant_id
@@ -13246,6 +13258,7 @@ components:
             - cod
             - payment
             - duty
+            - exchange
           - type: string
           description: What sort of charge this is. `duty` is a customs duty on a
             cross-border order and is not taxed; the other kinds are. Extensions may
@@ -15019,6 +15032,18 @@ components:
           type: string
         display_pre_tax_amount:
           type: string
+        included_tax_total:
+          type: string
+        additional_tax_total:
+          type: string
+        tax_total:
+          type: string
+        display_tax_total:
+          type: string
+        refund_amount:
+          type: string
+        display_refund_amount:
+          type: string
         variant_id:
           type: string
           nullable: true
@@ -15037,6 +15062,12 @@ components:
       - resellable
       - pre_tax_amount
       - display_pre_tax_amount
+      - included_tax_total
+      - additional_tax_total
+      - tax_total
+      - display_tax_total
+      - refund_amount
+      - display_refund_amount
       - variant_id
       - line_item_id
       - fulfillment_item_id
@@ -15084,6 +15115,10 @@ components:
           type: string
         display_refund_total:
           type: string
+        refund_tax_total:
+          type: string
+        display_refund_tax_total:
+          type: string
         approved_at:
           type: string
           nullable: true
@@ -15110,6 +15145,8 @@ components:
       - reason_id
       - refund_total
       - display_refund_total
+      - refund_tax_total
+      - display_refund_tax_total
       - approved_at
       - received_at
       - refunded_at
@@ -15391,6 +15428,8 @@ components:
           type: string
         included:
           type: boolean
+        credit:
+          type: boolean
         rate:
           type: string
         tax_rate_id:
@@ -15405,6 +15444,15 @@ components:
         fee_id:
           type: string
           nullable: true
+        return_line_item_id:
+          type: string
+          nullable: true
+        claim_line_item_id:
+          type: string
+          nullable: true
+        exchange_line_item_id:
+          type: string
+          nullable: true
         amount:
           type: string
           nullable: true
@@ -15415,11 +15463,15 @@ components:
       - id
       - label
       - included
+      - credit
       - rate
       - tax_rate_id
       - line_item_id
       - fulfillment_id
       - fee_id
+      - return_line_item_id
+      - claim_line_item_id
+      - exchange_line_item_id
       - amount
       - display_amount
       x-typelizer: true

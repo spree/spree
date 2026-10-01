@@ -17,6 +17,8 @@ export const ReturnSchema = z.object({
   reason_id: z.string().nullable(),
   refund_total: z.string(),
   display_refund_total: z.string(),
+  refund_tax_total: z.string(),
+  display_refund_tax_total: z.string(),
   approved_at: z.string().nullable(),
   received_at: z.string().nullable(),
   refunded_at: z.string().nullable(),
