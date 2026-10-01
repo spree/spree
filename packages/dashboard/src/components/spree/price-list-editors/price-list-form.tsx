@@ -29,7 +29,13 @@ import {
 } from '@spree/dashboard-ui/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
@@ -47,6 +53,8 @@ import { PriceListStatusBadge } from './status-badge'
 // mounts.
 import './register'
 import {
+  extensionFormValues,
+  extensionSubmitValues,
   mapSpreeErrorsToForm,
   Slot,
   StoreDatePicker,
@@ -148,7 +156,7 @@ export function PriceListForm({
   const form = useForm<PriceListFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(priceListFormSchema) as any,
-    defaultValues: PRICE_LIST_DEFAULTS,
+    defaultValues: { ...PRICE_LIST_DEFAULTS, ...extensionFormValues('price_list', null) },
   })
 
   const rulesArray = useFieldArray<PriceListFormValues, 'rules', '_key'>({
@@ -177,12 +185,16 @@ export function PriceListForm({
       match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
       staged_products: { adds: [], removes: [] },
+      ...extensionFormValues('price_list', priceList),
     })
   }, [mode, priceList, initialRules])
 
   async function handleSubmit(values: PriceListFormValues) {
+    // Read before any reset — extension values live in raw form state (the
+    // Zod parse behind `values` strips keys the schema doesn't know).
+    const extensionValues = extensionSubmitValues('price_list', form)
     try {
-      await onSubmit(priceListValuesToParams(values))
+      await onSubmit({ ...priceListValuesToParams(values), ...extensionValues })
       // Membership flushes after the list itself saves, so a validation
       // failure aborts before any membership write.
       if (priceList) {
@@ -193,7 +205,7 @@ export function PriceListForm({
           queryClient,
           productsKey,
         })
-        form.reset({ ...values, staged_products: { adds: [], removes: [] } })
+        form.reset({ ...values, ...extensionValues, staged_products: { adds: [], removes: [] } })
       }
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
@@ -212,132 +224,136 @@ export function PriceListForm({
 
   return (
     <ProductMembershipStagingProvider form={form} name="staged_products">
-      <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <ResourceLayout
-          header={
-            <PageHeader
-              title={
-                mode === 'create'
-                  ? t('admin.pages.products.price_lists.sheet_title_create')
-                  : (priceList?.name ?? '')
-              }
-              backTo="products/price-lists"
-              badges={priceList && <PriceListStatusBadge priceList={priceList} />}
-              // `destructiveItems` rather than `onDelete`: the caller already runs
-              // its own confirm, naming the price list being deleted, and
-              // `onDelete` would stack the header's generic prompt in front of it.
-              destructiveItems={
-                mode === 'edit' && onDelete && canDelete ? (
-                  <DropdownMenuItem
-                    variant="destructive"
-                    disabled={deletePending}
-                    onClick={onDelete}
-                  >
-                    {t('admin.actions.delete')}
-                  </DropdownMenuItem>
-                ) : undefined
-              }
-              jsonPreview={
-                mode === 'edit' && priceList
-                  ? {
-                      title: `Price list ${priceList.name}`,
-                      fetch: () => adminClient.priceLists.get(priceList.id),
-                      endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
-                      resolveLink: spreeJsonLinkResolver(storeId),
-                    }
-                  : undefined
-              }
-              actions={
-                <div className="flex gap-2">
-                  {mode === 'edit' && priceList && canEdit && (
-                    <EditPricesButton priceList={priceList} />
-                  )}
-                  {/* Export needs only read access; the import button gates
+      {/* FormProvider exposes the form to `price_list.form_sidebar` widgets,
+          so inputs bound via `useHostForm()` save with this page. */}
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <ResourceLayout
+            header={
+              <PageHeader
+                title={
+                  mode === 'create'
+                    ? t('admin.pages.products.price_lists.sheet_title_create')
+                    : (priceList?.name ?? '')
+                }
+                backTo="products/price-lists"
+                badges={priceList && <PriceListStatusBadge priceList={priceList} />}
+                // `destructiveItems` rather than `onDelete`: the caller already runs
+                // its own confirm, naming the price list being deleted, and
+                // `onDelete` would stack the header's generic prompt in front of it.
+                destructiveItems={
+                  mode === 'edit' && onDelete && canDelete ? (
+                    <DropdownMenuItem
+                      variant="destructive"
+                      disabled={deletePending}
+                      onClick={onDelete}
+                    >
+                      {t('admin.actions.delete')}
+                    </DropdownMenuItem>
+                  ) : undefined
+                }
+                jsonPreview={
+                  mode === 'edit' && priceList
+                    ? {
+                        title: `Price list ${priceList.name}`,
+                        fetch: () => adminClient.priceLists.get(priceList.id),
+                        endpoint: `/api/v3/admin/price_lists/${priceList.id}`,
+                        resolveLink: spreeJsonLinkResolver(storeId),
+                      }
+                    : undefined
+                }
+                actions={
+                  <div className="flex gap-2">
+                    {mode === 'edit' && priceList && canEdit && (
+                      <EditPricesButton priceList={priceList} />
+                    )}
+                    {/* Export needs only read access; the import button gates
                       itself on create. */}
-                  {mode === 'edit' && priceList && onImportCreated && (
-                    <PriceListCsvButtons
-                      priceList={priceList}
-                      onImportCreated={onImportCreated}
-                      size="default"
-                    />
-                  )}
-                  {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
-                  <Button
-                    type="submit"
-                    disabled={
-                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
-                    }
+                    {mode === 'edit' && priceList && onImportCreated && (
+                      <PriceListCsvButtons
+                        priceList={priceList}
+                        onImportCreated={onImportCreated}
+                        size="default"
+                      />
+                    )}
+                    {mode === 'edit' && priceList && <ActivationButtons priceList={priceList} />}
+                    <Button
+                      type="submit"
+                      disabled={
+                        form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                      }
+                    >
+                      {form.formState.isSubmitting
+                        ? mode === 'create'
+                          ? t('admin.actions.creating')
+                          : t('admin.actions.saving')
+                        : mode === 'create'
+                          ? t('admin.actions.create')
+                          : t('admin.actions.save')}
+                    </Button>
+                  </div>
+                }
+              />
+            }
+            main={
+              <>
+                {form.formState.errors.root?.message && (
+                  <p
+                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                    role="alert"
                   >
-                    {form.formState.isSubmitting
-                      ? mode === 'create'
-                        ? t('admin.actions.creating')
-                        : t('admin.actions.saving')
-                      : mode === 'create'
-                        ? t('admin.actions.create')
-                        : t('admin.actions.save')}
-                  </Button>
-                </div>
-              }
-            />
-          }
-          main={
-            <>
-              {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
-              )}
-              <RulesCard form={form} rulesArray={rulesArray} />
-              {mode === 'edit' && priceList && (
-                <DeferredProductMembershipCard
-                  parentId={priceList.id}
-                  storeId={storeId}
-                  canEdit={canEdit}
-                  useProducts={usePriceListProducts}
-                  listMembersPage={listPriceListProductsPage}
-                  translationNamespace="admin.pages.products.price_lists"
-                  description={
-                    (priceList.prices_count ?? 0) > 0
-                      ? t('admin.pages.products.price_lists.products_help_with_prices', {
-                          count: priceList.prices_count ?? 0,
-                        })
-                      : t('admin.pages.products.price_lists.products_help')
-                  }
-                  // Each variant priced on its own row with its ladder — the
-                  // catalog's reading, on the page where the ladder is edited
-                  // (docs/plans/6.0-volume-pricing.md).
-                  renderSubRows={(products) =>
-                    catalogVariantRows<PriceListProduct>({
-                      products,
-                      variantsOf: (product) => product.price_list_variants,
-                      namespace: PRICE_LIST_PRICES_NAMESPACE,
-                    })
-                  }
-                  extraColumns={() =>
-                    catalogPriceColumns({
-                      headers: {
-                        price: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_price`),
-                        source: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_source`),
-                      },
-                      namespace: PRICE_LIST_PRICES_NAMESPACE,
-                    })
-                  }
-                />
-              )}
-            </>
-          }
-          sidebar={
-            <>
-              <BasicsCard form={form} />
-              <ScheduleCard form={form} />
-              <Slot name="price_list.form_sidebar" context={{ priceList, mode }} />
-            </>
-          }
-        />
-      </form>
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
+                <RulesCard form={form} rulesArray={rulesArray} />
+                {mode === 'edit' && priceList && (
+                  <DeferredProductMembershipCard
+                    parentId={priceList.id}
+                    storeId={storeId}
+                    canEdit={canEdit}
+                    useProducts={usePriceListProducts}
+                    listMembersPage={listPriceListProductsPage}
+                    translationNamespace="admin.pages.products.price_lists"
+                    description={
+                      (priceList.prices_count ?? 0) > 0
+                        ? t('admin.pages.products.price_lists.products_help_with_prices', {
+                            count: priceList.prices_count ?? 0,
+                          })
+                        : t('admin.pages.products.price_lists.products_help')
+                    }
+                    // Each variant priced on its own row with its ladder — the
+                    // catalog's reading, on the page where the ladder is edited
+                    // (docs/plans/6.0-volume-pricing.md).
+                    renderSubRows={(products) =>
+                      catalogVariantRows<PriceListProduct>({
+                        products,
+                        variantsOf: (product) => product.price_list_variants,
+                        namespace: PRICE_LIST_PRICES_NAMESPACE,
+                      })
+                    }
+                    extraColumns={() =>
+                      catalogPriceColumns({
+                        headers: {
+                          price: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_price`),
+                          source: t(`${PRICE_LIST_PRICES_NAMESPACE}.column_source`),
+                        },
+                        namespace: PRICE_LIST_PRICES_NAMESPACE,
+                      })
+                    }
+                  />
+                )}
+              </>
+            }
+            sidebar={
+              <>
+                <BasicsCard form={form} />
+                <ScheduleCard form={form} />
+                <Slot name="price_list.form_sidebar" context={{ priceList, mode }} />
+              </>
+            }
+          />
+        </form>
+      </FormProvider>
     </ProductMembershipStagingProvider>
   )
 }
