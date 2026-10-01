@@ -12,13 +12,27 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      serialize :secret_preferences, coder: Spree::Preferences::JsonTextCoder
+      serialize :secret_preferences, coder: TextHashSerializer
 
       if ActiveRecord::Encryption.config.has_primary_key?
         encrypts :secret_preferences, support_unencrypted_data: true
       end
 
       before_save :move_secret_preferences
+    end
+
+    # The column is `text`, since ciphertext cannot live in a JSON column. An
+    # empty column stays nil rather than `{}`: encrypted attributes compare the
+    # stored value with the loaded one, so `{}` would mark every record without
+    # secrets as changed.
+    class TextHashSerializer
+      def self.dump(hash)
+        ActiveSupport::JSON.encode(hash) unless hash.nil?
+      end
+
+      def self.load(json)
+        Spree::Metadata::HashSerializer.load(ActiveSupport::JSON.decode(json)) unless json.nil?
+      end
     end
 
     class_methods do

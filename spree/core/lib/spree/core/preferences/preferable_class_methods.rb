@@ -21,11 +21,6 @@ module Spree::Preferences
       end
     end
 
-    # @return [Array<Symbol>]
-    def declared_preference_order
-      preference_definitions.keys
-    end
-
     # Each declared preference's type, known from the declarations alone —
     # without building a record.
     #
@@ -56,7 +51,7 @@ module Spree::Preferences
     # `saved_change_to_preferred_<name>?` and `preferred_<name>_before_last_save`.
     def preference(name, type, *args)
       name = name.to_sym
-      secret = type == :password && self < ActiveRecord::Base
+      secret = type == :password
       if secret && !stores_secret_preferences?
         raise ArgumentError, "#{self.name} declares the secret preference `#{name}` but cannot encrypt it. " \
                              'Include Spree::SecretPreferences and add a `secret_preferences` text column to its table.'
@@ -80,33 +75,23 @@ module Spree::Preferences
       }
       PreferableClassMethods.declarations += 1
 
-      store_accessor(secret ? :secret_preferences : :preferences, name, prefix: :preferred) if respond_to?(:store_accessor)
+      store_accessor(secret ? :secret_preferences : :preferences, name, prefix: :preferred)
 
-      define_method preference_getter_method(name) do
+      # Overrides the store accessor's reader and writer, which treat a missing
+      # key as nil; here a missing key means the declared default.
+      define_method(:"preferred_#{name}") do
         value = stored_preference(name) { return preference_default(name) }
         # JSON keeps a decimal as its exact string; the declared type restores it.
         type == :decimal && value.is_a?(String) ? value.to_d : value
       end
 
-      define_method preference_setter_method(name) do |value|
-        write_preference(name, value)
+      define_method(:"preferred_#{name}=") do |value|
+        write_preference(name, cast_preference(name, value))
       end
 
-      define_method prefers_query_method(name) do
+      define_method(:"prefers_#{name}?") do
         stored_preference(name) { raise KeyError, "key not found: #{name.inspect}" }.to_b
       end
-    end
-
-    def preference_getter_method(name)
-      "preferred_#{name}".to_sym
-    end
-
-    def preference_setter_method(name)
-      "preferred_#{name}=".to_sym
-    end
-
-    def prefers_query_method(name)
-      "prefers_#{name}?".to_sym
     end
 
     private

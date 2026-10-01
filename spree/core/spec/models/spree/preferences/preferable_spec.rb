@@ -2,18 +2,12 @@ require 'spec_helper'
 
 describe Spree::Preferences::Preferable, type: :model do
   before :all do
-    class A
-      include ActiveModel::Model
-      include Spree::Preferences::Preferable
-      attr_reader :id
+    ActiveRecord::Migration.suppress_messages do
+      ActiveRecord::Migration.create_table(:preferable_spec_records, force: true) { |t| t.json :preferences }
+    end
 
-      def initialize
-        @id = rand(999)
-      end
-
-      def preferences
-        @preferences ||= default_preferences
-      end
+    class A < Spree::Base
+      self.table_name = 'preferable_spec_records'
 
       preference :color, :string, default: 'green', deprecated: 'Please use colour instead'
     end
@@ -23,16 +17,13 @@ describe Spree::Preferences::Preferable, type: :model do
     end
   end
 
+  after :all do
+    ActiveRecord::Migration.suppress_messages { ActiveRecord::Migration.drop_table(:preferable_spec_records) }
+  end
+
   before do
     @a = A.new
-    allow(@a).to receive_messages(persisted?: true)
     @b = B.new
-    allow(@b).to receive_messages(persisted?: true)
-
-    # ensure we're persisting as that is the default
-    #
-    store = Spree::Preferences::Store.instance
-    store.persistence = true
   end
 
   describe 'preference definitions' do
@@ -296,9 +287,9 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.preferences[:is_hash]).to be_is_a(Hash)
       end
 
-      it 'with hash and keys are integers' do
+      it 'with hash and keys are integers, which JSON keeps as strings' do
         @a.set_preference(:is_hash, 1 => 2, 3 => 4)
-        expect(@a.preferences[:is_hash]).to eql(1 => 2, 3 => 4)
+        expect(@a.preferences[:is_hash]).to eql('1' => 2, '3' => 4)
       end
 
       it 'with string' do
@@ -381,6 +372,7 @@ describe Spree::Preferences::Preferable, type: :model do
       before do
         A.preference :product_ids, :any, default: []
         A.preference :product_attributes, :any, default: {}
+        @a = A.new
       end
 
       it 'with array' do
@@ -392,7 +384,7 @@ describe Spree::Preferences::Preferable, type: :model do
       it 'with hash' do
         expect(@a.preferences[:product_attributes]).to eq({})
         @a.set_preference(:product_attributes, id: 1, name: 2)
-        expect(@a.preferences[:product_attributes]).to eq(id: 1, name: 2)
+        expect(@a.preferences[:product_attributes]).to eq('id' => 1, 'name' => 2)
       end
     end
   end
@@ -488,14 +480,6 @@ describe Spree::Preferences::Preferable, type: :model do
         reloaded.preferred_pref_test_decimal = BigDecimal('19.99')
 
         expect(reloaded.preferred_pref_test_decimal_changed?).to be(false)
-      end
-
-      it 'refuses to load a row still holding YAML' do
-        ActiveRecord::Base.connection.exec_update(
-          "UPDATE pref_tests SET preferences = #{ActiveRecord::Base.connection.quote(YAML.dump({ pref_test_pref: 'x' }).to_json)} WHERE id = #{@pt.id}"
-        )
-
-        expect { PrefTest.find(@pt.id) }.to raise_error(Spree::Preferences::LegacyYamlError, /spree:upgrade:preferences_json/)
       end
     end
 

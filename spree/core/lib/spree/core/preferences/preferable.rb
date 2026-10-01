@@ -1,56 +1,36 @@
-# Preferable allows defining preference accessor methods.
+# Typed model preferences, each a Rails store accessor on the `preferences`
+# JSON column — `secret_preferences` for a `:password` one (see
+# {Spree::SecretPreferences}). Included by `Spree::Base`.
 #
-# A class including Preferable must implement #preferences which should return
-# an object responding to .fetch(key), []=(key, val), and .delete(key).
-#
-# The generated writer method performs typecasting before assignment into the
-# preferences object.
-#
-# Examples:
-#
-#   # Spree::Base includes Preferable and stores preferences in a JSON
-#   # column.
 #   class Settings < Spree::Base
 #     preference :color,       :string,  default: 'red'
 #     preference :temperature, :integer, default: 21
 #   end
 #
 #   s = Settings.new
-#   s.preferred_color # => 'red'
-#   s.preferred_temperature # => 21
-#
-#   s.preferred_color = 'blue'
-#   s.preferred_color # => 'blue'
-#
-#   # Typecasting is performed on assignment
-#   s.preferred_temperature = '24'
-#   s.preferred_temperature # => 24
-#
-#   # Modifications have been made to the .preferences hash
-#   s.preferences #=> {'color' => 'blue', 'temperature' => 24}
-#
-#   # Save the changes. All handled by activerecord
-#   s.save!
+#   s.preferred_color                # => 'red'
+#   s.preferred_temperature = '24'   # cast on assignment
+#   s.preferred_temperature          # => 24
+#   s.preferences                    # => { 'color' => 'red', 'temperature' => 24 }
 
-require 'spree/core/preferences/json_coder'
 require 'spree/core/preferences/preferable_class_methods'
 
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   included do
-    serialize :preferences, coder: Spree::Preferences::JsonCoder if defined?(serialize)
+    serialize :preferences, coder: Spree::Metadata::HashSerializer
     extend Spree::Preferences::PreferableClassMethods
   end
 
   def get_preference(name)
     has_preference! name
-    send self.class.preference_getter_method(name)
+    public_send(:"preferred_#{name}")
   end
 
   def set_preference(name, value)
     has_preference! name
-    send self.class.preference_setter_method(name), value
+    public_send(:"preferred_#{name}=", value)
   end
 
   def preference_type(name)
@@ -102,14 +82,6 @@ module Spree::Preferences::Preferable
 
   def default_preferences
     defined_preferences.index_with { |name| preference_default(name) }
-  end
-
-  # Whether this record keeps `:password` preferences apart, in its encrypted
-  # `secret_preferences` column (see {Spree::SecretPreferences}).
-  #
-  # @return [Boolean]
-  def stores_secret_preferences?
-    self.class.stores_secret_preferences?
   end
 
   # Every preference value, secrets included — what `preferences` alone held
@@ -172,11 +144,12 @@ module Spree::Preferences::Preferable
     self.class.preference_definitions[name.to_sym]
   end
 
+  # Only a class that stores secrets can declare one, so the names say it all.
   def secret_preference?(name)
-    stores_secret_preferences? && self.class.secret_preference_names.include?(name.to_sym)
+    self.class.secret_preference_names.include?(name.to_sym)
   end
 
-  def write_preference(name, value)
+  def cast_preference(name, value)
     definition = preference_definition(name)
     parse_on_set = definition[:parse_on_set]
     if parse_on_set.is_a?(Proc)
@@ -193,16 +166,20 @@ module Spree::Preferences::Preferable
     value = value.as_json if definition[:type] == :decimal
 
     Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
+    value
+  end
 
+  # Assigns a new hash rather than calling the store accessor's writer, which
+  # skips writing nil to a missing key — leaving the default in force when nil
+  # was meant. Rails still sees no change when the value is the one stored.
+  def write_preference(name, value)
     if secret_preference?(name)
       # A copy assigned as part of a whole hash would otherwise outlive the
       # value written here and be moved over it on save.
-      self.preferences = preferences.with_indifferent_access.except(name) if preferences&.key?(name)
+      self.preferences = preferences.except(name) if preferences&.key?(name)
       self.secret_preferences = (secret_preferences || {}).with_indifferent_access.merge(name => value)
-    elsif respond_to?(:preferences_will_change!)
-      self.preferences = (preferences || {}).with_indifferent_access.merge(name => value)
     else
-      (self.preferences ||= {})[name] = value
+      self.preferences = (preferences || {}).with_indifferent_access.merge(name => value)
     end
   end
 
