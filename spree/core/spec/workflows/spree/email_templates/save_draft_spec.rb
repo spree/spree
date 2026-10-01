@@ -43,6 +43,15 @@ describe Spree::EmailTemplates::SaveDraft do
     FileUtils.rm_f(path)
   end
 
+  it "rebases onto Spree's current default when asked, keeping the merchant's body" do
+    create(:email_template, store: store, key: editable_key, body: 'Mine', base_body: 'Old default')
+
+    draft = save({ rebase: true }).value
+
+    expect(draft.body).to eq('Mine')
+    expect(draft.default_changed?(Spree::Emails::TemplateResolver.new(Spree::BaseMailer.view_paths.paths.map(&:path)).find_default(editable_key))).to be(false)
+  end
+
   it 'refuses a save made from a stale copy' do
     draft = save({ body: 'first' }).value
     save({ body: 'second', lock_version: draft.lock_version })

@@ -147,7 +147,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
           language: { type: :string, example: 'any' },
           subject: { type: :string, example: 'Reset your {{ store.name }} password' },
           body: { type: :string, example: '<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>' },
-          lock_version: { type: :integer, example: 0 }
+          lock_version: { type: :integer, example: 0 },
+          rebase: { type: :boolean, description: "Marks the draft as based on Spree's current default, after reviewing what changed in it" }
         }
       }
 
