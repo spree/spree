@@ -74,12 +74,6 @@ module Spree::Preferences::Preferable
     self.class.preference_definitions.keys
   end
 
-  def deprecated_preferences
-    self.class.preference_definitions.filter_map do |name, definition|
-      { name: name, message: definition[:deprecated] } if definition[:deprecated]
-    end
-  end
-
   def default_preferences
     defined_preferences.index_with { |name| preference_default(name) }
   end
@@ -122,19 +116,11 @@ module Spree::Preferences::Preferable
     self.preferences = preferences.merge(missing) if missing.any?
   end
 
-  # Names of the preferences the last save changed, across both the plain and
-  # the secret column.
+  # Names of the preferences the last save changed, secrets included.
   #
   # @return [Array<Symbol>]
   def previously_changed_preference_names
-    %w[preferences secret_preferences].flat_map do |column|
-      before, after = previous_changes[column]
-      next [] if before.nil? && after.nil?
-
-      before = before || {}
-      after = after || {}
-      (before.keys | after.keys).reject { |key| before[key] == after[key] }
-    end.map(&:to_sym).uniq
+    defined_preferences.select { |name| public_send(:"saved_change_to_preferred_#{name}?") }
   end
 
   private
