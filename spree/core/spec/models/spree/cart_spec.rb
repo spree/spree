@@ -267,6 +267,12 @@ describe Spree::Cart, type: :model do
 
       expect(cart.orderable_variants).not_to include(listed.default_variant)
     end
+
+    it "leaves out a product whose publication on the cart's channel has ended" do
+      listed.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
   end
 
   describe '#remove_out_of_stock_items!' do

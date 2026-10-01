@@ -220,6 +220,16 @@ RSpec.describe Spree::Checkout::Requirements do
       expect(described_class.new(cart.reload).call(completion: true)).not_to include(a_hash_including(code: 'not_orderable'))
     end
 
+    it 'reports a discontinued line once' do
+      hidden.update_column(:discontinue_on, 1.day.ago)
+      create(:line_item, cart: cart, order: nil, variant: hidden.default_variant)
+
+      codes = described_class.new(cart.reload).call(completion: true).map { |requirement| requirement[:code] }
+
+      expect(codes).to include('discontinued')
+      expect(codes).not_to include('not_orderable')
+    end
+
     it "does not hold back staff's draft order" do
       order.update_columns(customer_id: customer.id)
       create(:line_item, order: order, variant: hidden.default_variant)

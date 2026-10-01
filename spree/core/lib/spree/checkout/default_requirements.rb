@@ -58,11 +58,12 @@ module Spree
       # Re-checked at completion because a line can outlive the add that
       # admitted it: a guest cart claimed after sign-in, a cart moved to
       # another company, an assortment edited since. An order arriving here is
-      # staff's draft, which may sell outside the buyer's catalogs.
+      # staff's draft, which may sell outside the buyer's catalogs. A
+      # discontinued line already has its own requirement.
       def assortment_errors
         return [] unless @cart.is_a?(Spree::Cart)
 
-        line_items = completion_line_items.select(&:variant)
+        line_items = completion_line_items.reject { |line_item| discontinued?(line_item) }
         orderable_ids = @cart.orderable_variants.where(id: line_items.map(&:variant_id)).pluck(:id).to_set
 
         line_items.reject { |line_item| orderable_ids.include?(line_item.variant_id) }.map do |line_item|
@@ -93,12 +94,16 @@ module Spree
       # entered the cart.
       def stock_errors
         completion_line_items.filter_map do |line_item|
-          if line_item.variant.nil? || line_item.variant.discontinued? || line_item.variant.product.discontinued?
+          if discontinued?(line_item)
             req('cart', 'line_items', Spree.t('cart_line_item.discontinued', li_name: line_item.name), code: 'discontinued')
           elsif !line_item.sufficient_stock?
             req('cart', 'line_items', Spree.t('cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
           end
         end
+      end
+
+      def discontinued?(line_item)
+        line_item.variant.nil? || line_item.variant.discontinued? || line_item.variant.product.discontinued?
       end
 
       def completion_line_items
