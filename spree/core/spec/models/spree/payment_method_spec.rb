@@ -436,19 +436,6 @@ describe Spree::PaymentMethod, type: :model do
       expect(gateway.preference_internal(:issued_secret)).to be(true)
       expect(gateway.preference_internal(:api_key)).to be_nil
     end
-
-    # A gateway loaded from a build that predates this option has no such
-    # reader. Schema computation rescues everything into an empty list, so
-    # without a guard one old declaration would strip every field from the
-    # class — including the password ones the admin form relies on.
-    it 'still describes a class whose declarations predate the option' do
-      gateway_class.send(:undef_method, :preferred_issued_secret_internal)
-      gateway_class.instance_variable_set(:@preference_schema, nil)
-
-      keys = gateway_class.preference_schema.map { |field| field[:key] }
-
-      expect(keys).to include(:api_key, :issued_secret)
-    end
   end
 
   # Describing a class needs a connection, so the schema can be asked for
@@ -530,7 +517,7 @@ describe Spree::PaymentMethod, type: :model do
     it 'reports a secret change through the preference change methods' do
       gateway.update!(preferred_dummy_secret_key: 'sk_rotated')
 
-      expect(gateway.preferred_dummy_secret_key_previously_changed?).to be(true)
+      expect(gateway.saved_change_to_preferred_dummy_secret_key?).to be(true)
       expect(gateway.previously_changed_preference_names).to eq([:dummy_secret_key])
     end
 

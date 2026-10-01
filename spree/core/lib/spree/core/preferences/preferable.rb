@@ -54,32 +54,22 @@ module Spree::Preferences::Preferable
   end
 
   def preference_type(name)
-    has_preference! name
-    send self.class.preference_type_getter_method(name)
+    preference_definition(name)[:type]
   end
 
   def preference_default(name)
-    has_preference! name
-    send self.class.preference_default_getter_method(name)
+    instance_exec(&preference_definition(name)[:default])
   end
 
   def preference_deprecated(name)
-    has_preference! name
-    send(self.class.preference_deprecated_getter_method(name))
+    preference_definition(name)[:deprecated]
   end
 
   # Whether this preference is written by Spree rather than supplied by the
   # operator — a webhook secret a provider issues, say. Kept out of the
   # schema, so nothing offers it as a field to fill in.
   def preference_internal(name)
-    has_preference! name
-    getter = self.class.preference_internal_getter_method(name)
-    # A preference declared before this option existed has no such reader.
-    # Treated as not internal rather than raising, so one old declaration
-    # cannot take a whole class's preference schema down with it.
-    return false unless respond_to?(getter)
-
-    send(getter)
+    preference_definition(name)[:internal]
   end
 
   # The fixed set this preference's value must come from, when it has one.
@@ -88,14 +78,8 @@ module Spree::Preferences::Preferable
   #
   # @return [Array, nil]
   def preference_choices(name)
-    has_preference! name
-    getter = self.class.preference_choices_getter_method(name)
-    # A preference declared before this option existed has no such reader.
-    # Treated as unconstrained rather than raising, so one old declaration
-    # cannot take a whole class's preference schema down with it.
-    return unless respond_to?(getter)
-
-    send(getter)
+    choices = preference_definition(name)[:choices]
+    choices.respond_to?(:call) ? choices.call : choices
   end
 
   def has_preference!(name)
@@ -103,45 +87,21 @@ module Spree::Preferences::Preferable
   end
 
   def has_preference?(name)
-    respond_to? self.class.preference_getter_method(name)
+    self.class.preference_definitions.key?(name.to_sym)
   end
 
   def defined_preferences
-    # Only real `preference`-macro definitions carry a `_default` getter —
-    # the name grep alone would also catch `preferred_*` association writers
-    # (e.g. Order#preferred_stock_location=).
-    methods.grep(/\Apreferred_.*=\Z/).filter_map do |pref_method|
-      name = pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
-      name if respond_to?(self.class.preference_default_getter_method(name))
-    end
+    self.class.preference_definitions.keys
   end
 
   def deprecated_preferences
-    defined_preferences.each_with_object([]) do |pref_name, array|
-      deprecated_message = preference_deprecated(pref_name)
-      array << { name: pref_name, message: deprecated_message } unless deprecated_message.nil?
+    self.class.preference_definitions.filter_map do |name, definition|
+      { name: name, message: definition[:deprecated] } if definition[:deprecated]
     end
   end
 
   def default_preferences
-    Hash[
-      defined_preferences.map do |preference|
-        [preference, preference_default(preference)]
-      end
-    ]
-  end
-
-  def preferences_of_type(type)
-    defined_preferences.find_all { |preference| preference_type(preference) == type.to_sym }
-  end
-
-  def clear_preferences
-    preferences.keys.each { |pref| preferences.delete pref }
-    secret_preferences&.clear if stores_secret_preferences?
-  end
-
-  def restore_preferences_for(preference_keys)
-    preference_keys.each { |pref| preference_storage(pref)[pref] = preference_default(pref) }
+    defined_preferences.index_with { |name| preference_default(name) }
   end
 
   # Whether this record keeps `:password` preferences apart, in its encrypted
@@ -181,8 +141,9 @@ module Spree::Preferences::Preferable
 
   # Fills in the declared default of every preference this record has no
   # stored value for, so a preference added to the class after the row was
-  # saved never reads as missing. Secrets are left out: their defaults are read
-  # through the `preferred_*` reader, never copied into storage.
+  # saved never reads as missing and the raw `preferences` hash always holds
+  # every value. Secrets are left out: their defaults are read through the
+  # `preferred_*` reader, never copied into storage.
   def backfill_default_preferences
     secrets = self.class.secret_preference_names
     missing = default_preferences.reject { |name, _| preferences.key?(name) || secrets.include?(name) }
@@ -204,33 +165,44 @@ module Spree::Preferences::Preferable
     end.map(&:to_sym).uniq
   end
 
-  def preference_change(name, changes_or_previous_changes)
-    column = preference_column(name)
-    preference_changes = changes_or_previous_changes.with_indifferent_access.fetch(column, [{}, {}])
-    before_preferences = preference_changes[0] || {}
-    after_preferences = preference_changes[1] || {}
-
-    return if before_preferences[name] == after_preferences[name]
-
-    [before_preferences[name], after_preferences[name]]
-  end
-
   private
 
-  def preference_column(name)
-    secret_preference?(name) ? 'secret_preferences' : 'preferences'
+  def preference_definition(name)
+    has_preference! name
+    self.class.preference_definitions[name.to_sym]
   end
 
   def secret_preference?(name)
     stores_secret_preferences? && self.class.secret_preference_names.include?(name.to_sym)
   end
 
-  # The hash a preference is written to.
-  def preference_storage(name)
+  def write_preference(name, value)
+    definition = preference_definition(name)
+    parse_on_set = definition[:parse_on_set]
+    if parse_on_set.is_a?(Proc)
+      # Procs that accept more than one arg opt into receiving the owning
+      # record so they can scope (e.g. `normalize_id_preference` rejecting
+      # cross-store IDs). `arity.abs > 1` covers both the `(value, owner)` and
+      # `(value, owner = nil)` shapes.
+      value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
+    end
+    value = convert_preference_value(value, definition[:type], nullable: definition[:nullable])
+    # A decimal is kept in the exact-string form JSON stores, so a record read
+    # back from the database and one just written compare equal and setting
+    # the same value is not a change. The reader restores it.
+    value = value.as_json if definition[:type] == :decimal
+
+    Spree::Deprecation.warn("`#{name}` is deprecated. #{definition[:deprecated]}") if definition[:deprecated]
+
     if secret_preference?(name)
-      self.secret_preferences ||= {}
+      # A copy assigned as part of a whole hash would otherwise outlive the
+      # value written here and be moved over it on save.
+      self.preferences = preferences.with_indifferent_access.except(name) if preferences&.key?(name)
+      self.secret_preferences = (secret_preferences || {}).with_indifferent_access.merge(name => value)
+    elsif respond_to?(:preferences_will_change!)
+      self.preferences = (preferences || {}).with_indifferent_access.merge(name => value)
     else
-      self.preferences ||= {}
+      (self.preferences ||= {})[name] = value
     end
   end
 
