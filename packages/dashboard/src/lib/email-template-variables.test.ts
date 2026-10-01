@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flattenVariables } from './email-template-variables'
+import { documentedPaths, flattenVariables } from './email-template-variables'
 
 describe('flattenVariables', () => {
   it('lists dotted paths with samples, reading a list through its first item', () => {
@@ -22,5 +22,15 @@ describe('flattenVariables', () => {
     const deep = { a: { b: { c: { d: { e: { f: 1 } } } } } }
 
     expect(flattenVariables(deep).map((entry) => entry.path)).not.toContain('a.b.c.d.e.f')
+  })
+})
+
+describe('documentedPaths', () => {
+  it('suggests address fields even when the sample order has no address', () => {
+    const paths = documentedPaths('spree.order_mailer.confirm_email')
+
+    expect(paths).toContain('order.billing_address.first_name')
+    expect(paths).toContain('order.shipping_address.city')
+    expect(paths).toContain('store.name')
   })
 })
