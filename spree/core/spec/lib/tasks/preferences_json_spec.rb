@@ -16,10 +16,11 @@ describe 'preferences stored as JSON' do
 
     # The real tables are converted by the migration, so the conversion is
     # exercised against a synthetic table in the pre-6.0 shape: YAML text, plus
-    # the JSON column the migration writes into.
-    before do
-      connection.drop_table table_name, if_exists: true
-      connection.create_table table_name do |t|
+    # the JSON column the migration writes into. Built once, outside the
+    # example's transaction, because MySQL commits any open transaction when a
+    # table is created.
+    before(:all) do
+      ActiveRecord::Base.connection.create_table 'spree_legacy_preference_fixtures', force: true do |t|
         t.string :type
         t.text :preferences
         t.text :secret_preferences
@@ -27,7 +28,7 @@ describe 'preferences stored as JSON' do
       end
     end
 
-    after { connection.drop_table table_name, if_exists: true }
+    after(:all) { ActiveRecord::Base.connection.drop_table 'spree_legacy_preference_fixtures', if_exists: true }
 
     def insert_row(preferences, type: nil)
       connection.exec_insert(
