@@ -7986,6 +7986,10 @@ paths:
                 lock_version:
                   type: integer
                   example: 0
+                rebase:
+                  type: boolean
+                  description: Marks the draft as based on Spree's current default,
+                    after reviewing what changed in it
     delete:
       summary: Discard an email template draft
       tags:
