@@ -11,6 +11,9 @@ module Spree
       # @return [Hash] the variables the email was rendered with, once {#call} has run
       attr_reader :variables
 
+      # @return [Spree::Emails::RenderedEmail, nil] the rendered email, once {#call} has run
+      attr_reader :rendered
+
       # @param store [Spree::Store]
       # @param key [String] the editable template being previewed
       # @param locale [String] a language code, or "any"
@@ -40,7 +43,7 @@ module Spree
           renderer = Spree::Emails::Renderer.new(resolver: resolver, store: @store, currency: sample.currency, strict: @strict)
           sample_variables = sample.variables
           @variables = renderer.variables(sample_variables)
-          renderer.render(resolver.find(email.key), sample_variables)
+          @rendered = renderer.render(resolver.find(email.key), sample_variables)
         end
       end
 

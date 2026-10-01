@@ -265,6 +265,10 @@ import type {
   DigitalAssetProvider,
   DigitalAssetUpdateParams,
   DirectUploadCreateParams,
+  EmailTemplateDraftParams,
+  EmailTemplateLanguageParams,
+  EmailTemplatePreviewParams,
+  EmailTemplateRestoreParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
   ExchangeReceiveParams,
@@ -428,6 +432,9 @@ import type {
   DigitalAsset,
   DigitalLink,
   Discount,
+  EmailTemplate,
+  EmailTemplatePreview,
+  EmailTemplateRevision,
   Exchange,
   Export,
   Fee,
@@ -5753,6 +5760,120 @@ export class AdminClient {
   // ============================================
   // Webhook Endpoints + Deliveries
   // ============================================
+
+  readonly emailTemplates = {
+    /** Every editable email template: customer emails, the layout and shared partials. */
+    list: (
+      params?: EmailTemplateLanguageParams,
+      options?: RequestOptions,
+    ): Promise<{ data: EmailTemplate[] }> =>
+      this.request<{ data: EmailTemplate[] }>('GET', '/email_templates', { ...options, params }),
+
+    /** One template in one language, with the draft (`expand: ['draft.updated_by']` names who saved it). */
+    get: (
+      id: string,
+      params?: EmailTemplateLanguageParams & { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('GET', `/email_templates/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    /** Goes back to Spree's default and discards the draft. Published versions stay in the history. */
+    revert: (
+      id: string,
+      params?: EmailTemplateLanguageParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('DELETE', `/email_templates/${id}`, { ...options, params }),
+
+    draft: {
+      /** Saves the draft. A save from a stale `lock_version` is refused with 409. */
+      update: (
+        id: string,
+        params: EmailTemplateDraftParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>('PUT', `/email_templates/${id}/draft`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (
+        id: string,
+        params?: EmailTemplateLanguageParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>('DELETE', `/email_templates/${id}/draft`, {
+          ...options,
+          params,
+        }),
+    },
+
+    /** Makes the draft live; refused with 422 and each problem's email and line when it does not render. */
+    publish: (
+      id: string,
+      params?: EmailTemplateLanguageParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplate> =>
+      this.request<EmailTemplate>('POST', `/email_templates/${id}/publication`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    /** Renders the template, or unsaved changes to it, with sample data. */
+    preview: (
+      id: string,
+      params?: EmailTemplatePreviewParams,
+      options?: RequestOptions,
+    ): Promise<EmailTemplatePreview> =>
+      this.request<EmailTemplatePreview>('POST', `/email_templates/${id}/preview`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    /** Sends the rendered template to the signed-in admin. */
+    sendTest: (
+      id: string,
+      params?: EmailTemplatePreviewParams,
+      options?: RequestOptions,
+    ): Promise<{ sent_to: string }> =>
+      this.request<{ sent_to: string }>('POST', `/email_templates/${id}/test_email`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    revisions: {
+      /** Published versions in one language, newest first. */
+      list: (
+        id: string,
+        params?: ListParams & EmailTemplateLanguageParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<EmailTemplateRevision>> =>
+        this.request<PaginatedResponse<EmailTemplateRevision>>(
+          'GET',
+          `/email_templates/${id}/revisions`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      /** Copies a revision into the draft, to publish like any change. */
+      restore: (
+        id: string,
+        revisionId: string,
+        params?: EmailTemplateRestoreParams,
+        options?: RequestOptions,
+      ): Promise<EmailTemplate> =>
+        this.request<EmailTemplate>(
+          'POST',
+          `/email_templates/${id}/revisions/${revisionId}/restoration`,
+          { ...options, body: params ?? {} },
+        ),
+    },
+  }
 
   /**
    * The events a webhook endpoint can subscribe to, including those installed
