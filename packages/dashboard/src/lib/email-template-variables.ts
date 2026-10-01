@@ -110,6 +110,11 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
   ],
 }
 
+/** The variables a template receives: its own, then the shared ones. */
+export function templateVariables(templateId: string): EmailTemplateVariable[] {
+  return [...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []), ...SHARED_EMAIL_VARIABLES]
+}
+
 /** Spree's own Liquid filters, on top of Liquid's standard ones. */
 export const EMAIL_TEMPLATE_FILTERS = ['money', 'money_with_currency', 'date', 't'] as const
 

@@ -1,4 +1,4 @@
-import { type EmailTemplate, type EmailTemplatePreview, SpreeError } from '@spree/admin-sdk'
+import { type EmailTemplate, SpreeError } from '@spree/admin-sdk'
 import {
   PageHeader,
   Subject,
@@ -15,15 +15,8 @@ import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DropdownMenuItem,
   ErrorState,
   Field,
@@ -36,39 +29,29 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
-  Tabs,
-  TabsList,
-  TabsTrigger,
   toastManager,
   useConfirm,
-  useDebouncedValue,
 } from '@spree/dashboard-ui'
-import {
-  HistoryIcon,
-  MonitorIcon,
-  RotateCcwIcon,
-  SendIcon,
-  SmartphoneIcon,
-  Trash2Icon,
-} from '@spree/dashboard-ui/icons'
+import { HistoryIcon, RotateCcwIcon, SendIcon, Trash2Icon } from '@spree/dashboard-ui/icons'
 import { CodeEditor, type CodeEditorCompletion } from '@spree/dashboard-ui/ui/code-editor'
 import { createFileRoute, useBlocker } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { EmailTemplateConflictDialog } from '../../../../../../components/spree/email-templates/conflict-dialog'
 import { DefaultDiffDialog } from '../../../../../../components/spree/email-templates/default-diff-dialog'
-import {
-  EmailPreviewFrame,
-  type EmailPreviewWidth,
-} from '../../../../../../components/spree/email-templates/email-preview-frame'
 import { EmailTemplateHistorySheet } from '../../../../../../components/spree/email-templates/history-sheet'
+import {
+  EmailTemplatePreviewCard,
+  useLivePreview,
+} from '../../../../../../components/spree/email-templates/preview-card'
+import { EmailTemplateProblemsAlert } from '../../../../../../components/spree/email-templates/problems-alert'
+import { EmailTemplateVariablesCard } from '../../../../../../components/spree/email-templates/variables-card'
 import {
   type EmailTemplateProblem,
   templateProblems,
   useDiscardEmailTemplateDraft,
   useEmailTemplate,
-  useEmailTemplatePreview,
   useEmailTemplateRevisions,
-  useEmailTemplates,
   usePublishEmailTemplate,
   useRestoreEmailTemplateRevision,
   useRevertEmailTemplate,
@@ -76,13 +59,7 @@ import {
   useSendTestEmail,
 } from '../../../../../../hooks/use-email-templates'
 import { emailTemplateName } from '../../../../../../lib/email-template-name'
-import {
-  EMAIL_TEMPLATE_FILTERS,
-  EMAIL_TEMPLATE_VARIABLES,
-  type EmailTemplateVariable,
-  flattenVariables,
-  SHARED_EMAIL_VARIABLES,
-} from '../../../../../../lib/email-template-variables'
+import { EMAIL_TEMPLATE_FILTERS } from '../../../../../../lib/email-template-variables'
 
 export const Route = createFileRoute(
   '/_authenticated/$storeId/settings/emails/templates/$templateId',
@@ -91,7 +68,6 @@ export const Route = createFileRoute(
 })
 
 const ANY_LANGUAGE = 'any'
-const PREVIEW_DELAY_MS = 600
 
 function EmailTemplateEditorPage() {
   const { t } = useTranslation()
@@ -187,8 +163,14 @@ function EmailTemplateEditor({
   const dirty = subject !== saved.subject || body !== saved.body
 
   // Problems from a save or publish describe the text as it was sent.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: cleared whenever the text changes
-  useEffect(() => setProblems([]), [subject, body])
+  const editSubject = (value: string) => {
+    setSubject(value)
+    setProblems([])
+  }
+  const editBody = (value: string) => {
+    setBody(value)
+    setProblems([])
+  }
 
   // Leaving the page, or the tab, would lose unsaved changes.
   useBlocker({
@@ -271,50 +253,54 @@ function EmailTemplateEditor({
     }
   }
 
-  const handleDiscard = async () => {
-    const confirmed = await confirm({
-      title: t('admin.email_templates.confirm.discard_title'),
-      message: t('admin.email_templates.confirm.discard_message'),
-      confirmLabel: t('admin.email_templates.actions.discard_draft'),
-      variant: 'destructive',
-    })
-    if (!confirmed) return
+  /** Asks first, then replaces the editor's text with what the write returns. */
+  const confirmAndApply = async (
+    question: Parameters<typeof confirm>[0],
+    write: () => Promise<EmailTemplate>,
+  ) => {
+    if (!(await confirm(question))) return false
     try {
-      applyResponse(await discard.mutateAsync({ language, lock_version: lockVersion }))
+      applyResponse(await write())
+      return true
     } catch (error) {
       handleError(error)
+      return false
     }
   }
 
-  const handleRevert = async () => {
-    const confirmed = await confirm({
-      title: t('admin.email_templates.confirm.revert_title'),
-      message: t('admin.email_templates.confirm.revert_message'),
-      confirmLabel: t('admin.email_templates.actions.revert'),
-      variant: 'destructive',
-    })
-    if (!confirmed) return
-    try {
-      applyResponse(await revert.mutateAsync({ language, lock_version: lockVersion }))
-    } catch (error) {
-      handleError(error)
-    }
-  }
+  const handleDiscard = () =>
+    confirmAndApply(
+      {
+        title: t('admin.email_templates.confirm.discard_title'),
+        message: t('admin.email_templates.confirm.discard_message'),
+        confirmLabel: t('admin.email_templates.actions.discard_draft'),
+        variant: 'destructive',
+      },
+      () => discard.mutateAsync({ language, lock_version: lockVersion }),
+    )
+
+  const handleRevert = () =>
+    confirmAndApply(
+      {
+        title: t('admin.email_templates.confirm.revert_title'),
+        message: t('admin.email_templates.confirm.revert_message'),
+        confirmLabel: t('admin.email_templates.actions.revert'),
+        variant: 'destructive',
+      },
+      () => revert.mutateAsync({ language, lock_version: lockVersion }),
+    )
 
   const handleRestore = async (revisionId: string) => {
-    const confirmed = await confirm({
-      title: t('admin.email_templates.confirm.restore_title'),
-      message: t('admin.email_templates.confirm.restore_message'),
-      confirmLabel: t('admin.email_templates.history.restore'),
-      variant: dirty ? 'destructive' : 'default',
-    })
-    if (!confirmed) return
-    try {
-      applyResponse(await restore.mutateAsync({ revisionId, language, lock_version: lockVersion }))
-      setHistoryOpen(false)
-    } catch (error) {
-      handleError(error)
-    }
+    const restored = await confirmAndApply(
+      {
+        title: t('admin.email_templates.confirm.restore_title'),
+        message: t('admin.email_templates.confirm.restore_message'),
+        confirmLabel: t('admin.email_templates.history.restore'),
+        variant: dirty ? 'destructive' : 'default',
+      },
+      () => restore.mutateAsync({ revisionId, language, lock_version: lockVersion }),
+    )
+    if (restored) setHistoryOpen(false)
   }
 
   const handleOverwrite = async () => {
@@ -364,9 +350,13 @@ function EmailTemplateEditor({
   }
 
   const shownProblems = problems.length > 0 ? problems : preview.problems
-  const diagnostics = shownProblems
-    .filter((problem) => !problem.email || problem.email === template.id)
-    .map((problem) => ({ line: problem.line, message: problem.message }))
+  const diagnostics = useMemo(
+    () =>
+      shownProblems
+        .filter((problem) => !problem.email || problem.email === template.id)
+        .map((problem) => ({ line: problem.line, message: problem.message })),
+    [shownProblems, template.id],
+  )
 
   const busy =
     save.isPending ||
@@ -444,7 +434,7 @@ function EmailTemplateEditor({
             </Alert>
           )}
 
-          {shownProblems.length > 0 && <ProblemsAlert problems={shownProblems} />}
+          {shownProblems.length > 0 && <EmailTemplateProblemsAlert problems={shownProblems} />}
 
           <div className="grid gap-4 xl:grid-cols-2">
             <Card>
@@ -462,14 +452,14 @@ function EmailTemplateEditor({
                       id="email-template-subject"
                       value={subject}
                       readOnly={!canEdit}
-                      onChange={(event) => setSubject(event.target.value)}
+                      onChange={(event) => editSubject(event.target.value)}
                     />
                   </Field>
                 )}
                 <CodeEditor
                   aria-label={t('admin.email_templates.editor.body')}
                   value={body}
-                  onChange={setBody}
+                  onChange={editBody}
                   readOnly={!canEdit}
                   completions={preview.completions}
                   filters={FILTER_COMPLETIONS}
@@ -480,10 +470,10 @@ function EmailTemplateEditor({
               </CardContent>
             </Card>
 
-            <PreviewCard template={template} preview={preview} />
+            <EmailTemplatePreviewCard template={template} preview={preview} />
           </div>
 
-          <VariablesCard templateId={template.id} />
+          <EmailTemplateVariablesCard templateId={template.id} />
 
           <EmailTemplateHistorySheet
             open={historyOpen}
@@ -503,7 +493,7 @@ function EmailTemplateEditor({
             onKeepMine={handleKeepMine}
             onStartOver={handleStartOver}
           />
-          <ConflictDialog
+          <EmailTemplateConflictDialog
             message={conflict}
             onClose={() => setConflict(null)}
             onOverwrite={handleOverwrite}
@@ -577,289 +567,5 @@ function LanguageSelect({
         ))}
       </SelectContent>
     </Select>
-  )
-}
-
-function ProblemsAlert({ problems }: { problems: EmailTemplateProblem[] }) {
-  const { t } = useTranslation()
-
-  return (
-    <Alert variant="destructive">
-      <AlertTitle>{t('admin.email_templates.problems.title')}</AlertTitle>
-      <AlertDescription>
-        <ul className="list-disc pl-4">
-          {problems.map((problem) => (
-            <li key={`${problem.email}:${problem.line}:${problem.message}`}>
-              {problem.email && `${emailTemplateName(t, problem.email.replace(/\./g, '/'))}: `}
-              {problem.line
-                ? t('admin.email_templates.problems.on_line', {
-                    line: problem.line,
-                    message: problem.message,
-                  })
-                : problem.message}
-            </li>
-          ))}
-        </ul>
-      </AlertDescription>
-    </Alert>
-  )
-}
-
-interface LivePreview {
-  data?: EmailTemplatePreview
-  problems: EmailTemplateProblem[]
-  unavailable?: string
-  completions: CodeEditorCompletion[]
-  recordId: string
-  setRecordId: (value: string) => void
-  emailKey: string
-  setEmailKey: (value: string) => void
-}
-
-/**
- * Re-renders the template on the server once typing pauses. Only the latest
- * request's answer is kept, so a slow render never overwrites a newer one.
- */
-function useLivePreview(
-  templateId: string,
-  unsaved: { language: string; subject?: string; body: string },
-  enabled: boolean,
-): LivePreview {
-  const { t } = useTranslation()
-  const [recordId, setRecordId] = useState('')
-  const [emailKey, setEmailKey] = useState('')
-  const [data, setData] = useState<EmailTemplatePreview>()
-  const [problems, setProblems] = useState<EmailTemplateProblem[]>([])
-  const [unavailable, setUnavailable] = useState<string>()
-  const { mutateAsync } = useEmailTemplatePreview(templateId)
-  const latest = useRef(0)
-
-  const request = useDebouncedValue(
-    JSON.stringify({
-      ...unsaved,
-      record_id: recordId || undefined,
-      email_key: emailKey || undefined,
-    }),
-    PREVIEW_DELAY_MS,
-  )
-
-  useEffect(() => {
-    if (!enabled) return
-    const id = ++latest.current
-    mutateAsync(JSON.parse(request))
-      .then((result) => {
-        if (id !== latest.current) return
-        setData(result)
-        setProblems([])
-        setUnavailable(undefined)
-      })
-      .catch((error: unknown) => {
-        if (id !== latest.current) return
-        const listed = templateProblems(error)
-        setProblems(listed)
-        setUnavailable(listed.length > 0 ? undefined : (error as Error).message)
-      })
-  }, [request, mutateAsync, enabled])
-
-  const completions = useMemo(() => {
-    const documented = [...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []), ...SHARED_EMAIL_VARIABLES]
-    const descriptions = new Map(
-      documented.map((variable) => [variable.name, t(variable.descriptionKey)]),
-    )
-    const fromPreview = flattenVariables(data?.variables ?? {}).map(({ path, sample }) => ({
-      label: path,
-      detail: sample.length > 40 ? `${sample.slice(0, 40)}…` : sample,
-      info: descriptions.get(path),
-    }))
-    const known = new Set(fromPreview.map((completion) => completion.label))
-    const documentedOnly = documented
-      .filter((variable) => !known.has(variable.name))
-      .map((variable) => ({ label: variable.name, info: descriptions.get(variable.name) }))
-    return [...fromPreview, ...documentedOnly]
-  }, [data, templateId, t])
-
-  return {
-    data,
-    problems,
-    unavailable: enabled ? unavailable : t('admin.email_templates.preview.needs_permission'),
-    completions,
-    recordId,
-    setRecordId,
-    emailKey,
-    setEmailKey,
-  }
-}
-
-function PreviewCard({ template, preview }: { template: EmailTemplate; preview: LivePreview }) {
-  const { t } = useTranslation()
-  const [view, setView] = useState<'html' | 'text'>('html')
-  const [width, setWidth] = useState<EmailPreviewWidth>('desktop')
-  const { data: templates } = useEmailTemplates()
-  const emailOptions = (templates?.data ?? [])
-    .filter((entry) => entry.kind === 'email')
-    .map((entry) => ({ value: entry.id, label: emailTemplateName(t, entry.key) }))
-
-  return (
-    <Card>
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-col gap-1">
-          <CardTitle>{t('admin.email_templates.preview.title')}</CardTitle>
-          {preview.data && (
-            <CardDescription className="truncate">
-              {t('admin.email_templates.preview.subject', { subject: preview.data.subject })}
-            </CardDescription>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Tabs value={view} onValueChange={(value) => setView(value as 'html' | 'text')}>
-            <TabsList>
-              <TabsTrigger value="html">{t('admin.email_templates.preview.html')}</TabsTrigger>
-              <TabsTrigger value="text">{t('admin.email_templates.preview.text')}</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <Button
-            size="icon-sm"
-            variant={width === 'desktop' ? 'outline' : 'ghost'}
-            aria-pressed={width === 'desktop'}
-            aria-label={t('admin.email_templates.preview.desktop')}
-            onClick={() => setWidth('desktop')}
-          >
-            <MonitorIcon className="size-4" />
-          </Button>
-          <Button
-            size="icon-sm"
-            variant={width === 'mobile' ? 'outline' : 'ghost'}
-            aria-pressed={width === 'mobile'}
-            aria-label={t('admin.email_templates.preview.mobile')}
-            onClick={() => setWidth('mobile')}
-          >
-            <SmartphoneIcon className="size-4" />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <div className="grid gap-3 sm:grid-cols-2">
-          {template.kind !== 'email' && (
-            <Field>
-              <FieldLabel htmlFor="email-template-preview-email">
-                {t('admin.email_templates.preview.shown_in')}
-              </FieldLabel>
-              <Select
-                items={emailOptions}
-                value={preview.emailKey || preview.data?.email_key || ''}
-                onValueChange={(value) => preview.setEmailKey((value as string) ?? '')}
-              >
-                <SelectTrigger id="email-template-preview-email">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {emailOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          )}
-          <Field>
-            <FieldLabel htmlFor="email-template-preview-record">
-              {t('admin.email_templates.preview.record')}
-            </FieldLabel>
-            <Input
-              id="email-template-preview-record"
-              placeholder={t('admin.email_templates.preview.record_placeholder')}
-              value={preview.recordId}
-              onChange={(event) => preview.setRecordId(event.target.value.trim())}
-            />
-          </Field>
-        </div>
-        {preview.unavailable ? (
-          <p className="rounded-md border border-border p-4 text-sm text-muted-foreground">
-            {preview.unavailable}
-          </p>
-        ) : (
-          <EmailPreviewFrame
-            html={preview.data?.html}
-            text={preview.data?.text}
-            view={view}
-            width={width}
-            className="h-[36rem]"
-          />
-        )}
-      </CardContent>
-    </Card>
-  )
-}
-
-function VariablesCard({ templateId }: { templateId: string }) {
-  const { t } = useTranslation()
-  const variables: EmailTemplateVariable[] = [
-    ...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []),
-    ...SHARED_EMAIL_VARIABLES,
-  ]
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.email_templates.variables.title')}</CardTitle>
-        <CardDescription>{t('admin.email_templates.variables.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <dl className="grid gap-3 sm:grid-cols-2">
-          {variables.map((variable) => (
-            <div key={variable.name} className="flex flex-col gap-1">
-              <dt className="font-mono text-sm">{`{{ ${variable.name} }}`}</dt>
-              <dd className="text-sm text-muted-foreground">{t(variable.descriptionKey)}</dd>
-              {variable.fields && (
-                <dd className="flex flex-wrap gap-1">
-                  {variable.fields.map((field) => (
-                    <code key={field} className="rounded bg-muted px-1.5 py-0.5 text-xs">
-                      {`${variable.name}.${field}`}
-                    </code>
-                  ))}
-                </dd>
-              )}
-            </div>
-          ))}
-        </dl>
-      </CardContent>
-    </Card>
-  )
-}
-
-function ConflictDialog({
-  message,
-  onReload,
-  onOverwrite,
-  onClose,
-}: {
-  message: string | null
-  onReload: () => void
-  onOverwrite: () => void
-  onClose: () => void
-}) {
-  const { t } = useTranslation()
-
-  return (
-    <Dialog open={!!message} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.email_templates.conflict.title')}</DialogTitle>
-          <DialogDescription>{message}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            {t('admin.email_templates.conflict.keep_editing')}
-          </Button>
-          <Button variant="outline" onClick={onReload}>
-            {t('admin.email_templates.conflict.reload')}
-          </Button>
-          <Button variant="destructive" onClick={onOverwrite}>
-            {t('admin.email_templates.conflict.overwrite')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   )
 }
