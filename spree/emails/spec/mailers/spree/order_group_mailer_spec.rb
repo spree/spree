@@ -54,7 +54,7 @@ describe Spree::OrderGroupMailer, type: :mailer do
     end
 
     it 'prefixes a re-send so the customer knows it is not a second purchase' do
-      expect(described_class.confirm_email(group, true).subject).to include('[RESEND]')
+      expect(described_class.confirm_email(group, true).subject).to include('[Resend]')
     end
 
     # BaseMailer#current_store memoizes off @order, which a group never sets —
