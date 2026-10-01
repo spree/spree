@@ -6178,16 +6178,14 @@
         "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes.",
         "leave_title": "¿Salir sin guardar?",
         "leave_message": "Se perderán los cambios sin guardar de esta plantilla.",
-        "leave": "Salir"
+        "leave": "Salir",
+        "revert_every_language_message": "A partir de ahora los clientes de todos los idiomas reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde."
       },
       "editor": {
         "title": "Plantilla",
         "subject": "Asunto",
         "body": "Código de la plantilla",
         "language": "Idioma"
-      },
-      "languages": {
-        "any": "Todos los idiomas"
       },
       "preview": {
         "title": "Vista previa",
@@ -6265,6 +6263,9 @@
         "load_failed": "No se pudieron cargar las plantillas de correo",
         "not_allowed": "No tienes permiso para ver las plantillas de correo",
         "test_email_failed": "No se pudo enviar el correo de prueba"
+      },
+      "every_language": {
+        "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
       }
     }
   }

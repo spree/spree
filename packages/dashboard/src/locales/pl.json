@@ -6246,16 +6246,14 @@
         "restore_message": "Ta wersja zastąpi szkic. Opublikuj ją, aby otrzymali ją klienci.",
         "leave_title": "Wyjść bez zapisywania?",
         "leave_message": "Niezapisane zmiany w tym szablonie zostaną utracone.",
-        "leave": "Wyjdź"
+        "leave": "Wyjdź",
+        "revert_every_language_message": "Od teraz klienci we wszystkich językach otrzymują domyślny e-mail Spree, a szkic zostanie usunięty. Opublikowane wersje zostają w historii, więc możesz później przywrócić jedną z nich."
       },
       "editor": {
         "title": "Szablon",
         "subject": "Temat",
         "body": "Kod szablonu",
         "language": "Język"
-      },
-      "languages": {
-        "any": "Wszystkie języki"
       },
       "preview": {
         "title": "Podgląd",
@@ -6333,6 +6331,9 @@
         "load_failed": "Nie udało się wczytać szablonów e-maili",
         "not_allowed": "Nie masz uprawnień do przeglądania szablonów e-maili",
         "test_email_failed": "Nie udało się wysłać testowego e-maila"
+      },
+      "every_language": {
+        "notice": "Klienci we wszystkich językach otrzymują tę wersję, dopóki nie opublikujesz wersji dla języka {{language}}."
       }
     }
   }

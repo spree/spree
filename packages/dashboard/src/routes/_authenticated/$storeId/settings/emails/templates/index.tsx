@@ -1,5 +1,5 @@
 import type { EmailTemplate } from '@spree/admin-sdk'
-import { PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
+import { PageHeader, Subject, usePermissions, useStore } from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -27,7 +27,8 @@ const GROUPS = ['email', 'layout', 'partial'] as const
 function EmailTemplatesPage() {
   const { t } = useTranslation()
   const { permissions } = usePermissions()
-  const { data, isLoading, error, refetch } = useEmailTemplates()
+  const { defaultLocale } = useStore()
+  const { data, isLoading, error, refetch } = useEmailTemplates(defaultLocale)
 
   if (!permissions.can('read', Subject.EmailTemplate)) {
     return <ErrorState title={t('admin.email_templates.errors.not_allowed')} />
@@ -130,7 +131,7 @@ function TemplateBadges({ template }: { template: EmailTemplate }) {
         <Badge variant="warning">{t('admin.email_templates.badges.default_updated')}</Badge>
       )}
       {template.draft && <Badge variant="info">{t('admin.email_templates.badges.draft')}</Badge>}
-      {template.customized_languages.length > 0 ? (
+      {template.customized ? (
         <Badge variant="success">{t('admin.email_templates.badges.customized')}</Badge>
       ) : (
         <Badge variant="outline">{t('admin.email_templates.badges.default')}</Badge>

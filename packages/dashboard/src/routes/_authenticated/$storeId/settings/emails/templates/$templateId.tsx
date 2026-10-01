@@ -71,14 +71,16 @@ export const Route = createFileRoute(
   component: EmailTemplateEditorPage,
 })
 
-const ANY_LANGUAGE = 'any'
+/** A version an earlier store published for every language at once. */
+const EVERY_LANGUAGE = 'any'
 
 function EmailTemplateEditorPage() {
   const { t } = useTranslation()
   const { templateId } = Route.useParams()
   const { permissions } = usePermissions()
   const canRead = permissions.can('read', Subject.EmailTemplate)
-  const [language, setLanguage] = useState(ANY_LANGUAGE)
+  const { defaultLocale } = useStore()
+  const [language, setLanguage] = useState(defaultLocale)
   const [reloads, setReloads] = useState(0)
   const {
     data: template,
@@ -196,7 +198,11 @@ function EmailTemplateEditor({
   const revert = useRevertEmailTemplate(template.id)
   const restore = useRestoreEmailTemplateRevision(template.id)
   const sendTest = useSendTestEmail(template.id)
-  const revisions = useEmailTemplateRevisions(template.id, language, historyOpen)
+  // Until this language has its own version, revert and history act on the
+  // one published for every language, which is what customers receive.
+  const forEveryLanguage = template.published_language === EVERY_LANGUAGE
+  const versionLanguage = forEveryLanguage ? EVERY_LANGUAGE : language
+  const revisions = useEmailTemplateRevisions(template.id, versionLanguage, historyOpen)
 
   /**
    * Takes the server's version after a write. With `sent`, text typed while
@@ -288,11 +294,13 @@ function EmailTemplateEditor({
     confirmAndApply(
       {
         title: t('admin.email_templates.confirm.revert_title'),
-        message: t('admin.email_templates.confirm.revert_message'),
+        message: forEveryLanguage
+          ? t('admin.email_templates.confirm.revert_every_language_message')
+          : t('admin.email_templates.confirm.revert_message'),
         confirmLabel: t('admin.email_templates.actions.revert'),
         variant: 'destructive',
       },
-      () => revert.mutateAsync({ language, lock_version: lockVersion }),
+      () => revert.mutateAsync({ language: versionLanguage, lock_version: lockVersion }),
     )
 
   const handleRestore = async (revisionId: string) => {
@@ -303,7 +311,8 @@ function EmailTemplateEditor({
         confirmLabel: t('admin.email_templates.history.restore'),
         variant: dirty ? 'destructive' : 'default',
       },
-      () => restore.mutateAsync({ revisionId, language, lock_version: lockVersion }),
+      () =>
+        restore.mutateAsync({ revisionId, language: versionLanguage, lock_version: lockVersion }),
     )
     if (restored) setHistoryOpen(false)
   }
@@ -439,6 +448,8 @@ function EmailTemplateEditor({
             </Alert>
           )}
 
+          {forEveryLanguage && <EveryLanguageNotice language={language} />}
+
           {shownProblems.length > 0 && <EmailTemplateProblemsAlert problems={shownProblems} />}
 
           <div className="grid gap-4 xl:grid-cols-2">
@@ -555,10 +566,7 @@ function LanguageSelect({
   const { t } = useTranslation()
   const { locales } = useStore()
   const languageName = useDisplayName('language')
-  const options = [
-    { value: ANY_LANGUAGE, label: t('admin.email_templates.languages.any') },
-    ...locales.map((code) => ({ value: code, label: languageName(code) ?? code })),
-  ]
+  const options = locales.map((code) => ({ value: code, label: languageName(code) ?? code }))
 
   return (
     <Select
@@ -578,5 +586,20 @@ function LanguageSelect({
         ))}
       </SelectContent>
     </Select>
+  )
+}
+
+function EveryLanguageNotice({ language }: { language: string }) {
+  const { t } = useTranslation()
+  const languageName = useDisplayName('language')
+
+  return (
+    <Alert variant="info">
+      <AlertDescription>
+        {t('admin.email_templates.every_language.notice', {
+          language: languageName(language) ?? language,
+        })}
+      </AlertDescription>
+    </Alert>
   )
 }

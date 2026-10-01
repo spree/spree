@@ -26,7 +26,7 @@ export function templateProblems(error: unknown): EmailTemplateProblem[] {
   return problems ?? [{ email: '', message: error.message }]
 }
 
-export function useEmailTemplates(language = 'any') {
+export function useEmailTemplates(language: string) {
   return useQuery({
     queryKey: useResourceKey(RESOURCE, 'list', language),
     queryFn: () => adminClient.emailTemplates.list({ language }),

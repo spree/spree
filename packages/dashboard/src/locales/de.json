@@ -6178,16 +6178,14 @@
         "restore_message": "Diese Version ersetzt den Entwurf. Veröffentlichen Sie sie, damit Kunden sie erhalten.",
         "leave_title": "Ohne Speichern verlassen?",
         "leave_message": "Ihre ungespeicherten Änderungen an dieser Vorlage gehen verloren.",
-        "leave": "Verlassen"
+        "leave": "Verlassen",
+        "revert_every_language_message": "Kunden in allen Sprachen erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können."
       },
       "editor": {
         "title": "Vorlage",
         "subject": "Betreff",
         "body": "Vorlagencode",
         "language": "Sprache"
-      },
-      "languages": {
-        "any": "Alle Sprachen"
       },
       "preview": {
         "title": "Vorschau",
@@ -6265,6 +6263,9 @@
         "load_failed": "E-Mail-Vorlagen konnten nicht geladen werden",
         "not_allowed": "Sie dürfen E-Mail-Vorlagen nicht ansehen",
         "test_email_failed": "Die Test-E-Mail konnte nicht gesendet werden"
+      },
+      "every_language": {
+        "notice": "Kunden in allen Sprachen erhalten diese Version, bis Sie eine für {{language}} veröffentlichen."
       }
     }
   }
