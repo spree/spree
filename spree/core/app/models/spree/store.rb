@@ -45,6 +45,9 @@ module Spree
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
+    # Anonymous identifier of this installation, kept on the default store
+    # (see Spree.install_id). Written by Spree, never by the operator.
+    preference :install_id, :string, internal: true, nullable: true
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
     # Sellers are a different audience from shoppers, with their own reasons to
