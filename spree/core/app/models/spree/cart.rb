@@ -161,11 +161,13 @@ module Spree
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
-    # the current items/address; nothing here touches a completed cart.
+    # the current items/address; nothing here touches a completed cart. Until
+    # deliveries can be proposed the cart gets none: preselecting the pickup
+    # rate that is all a destination-less quote finds would choose pickup for
+    # a customer who had not been offered anything.
     #
     # @param keep_selection [Boolean] false when the destination changed: a
-    #   choice made for one address is not a choice for another, and before an
-    #   address is known the only rate on offer is a pickup default
+    #   choice made for one address is not a choice for another
     def rebuild_fulfillments!(keep_selection: true)
       return if completed?
 
@@ -179,6 +181,7 @@ module Spree
       DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
       fulfillments.delete_all
       fulfillment_items.reset
+      return fulfillments.reload unless can_propose_deliveries?
 
       # Appended rather than assigned: setting `cart` on each proposal already
       # files it under this cart's `fulfillments` (the association is

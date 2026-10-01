@@ -11,10 +11,7 @@ module Spree
       def call(order:, state: nil, shipping_method_id: nil)
         cart = order
 
-        # A destination is either a shipping address or a pickup intent — a
-        # pure-pickup cart never gets an address, but still needs proposals.
-        has_destination = cart.ship_address.present? || cart.preferred_stock_location_id.present?
-        if cart.fulfillments.empty? && cart.delivery_step_required? && has_destination && cart.respond_to?(:rebuild_fulfillments!)
+        if cart.fulfillments.empty? && cart.delivery_step_required? && cart.can_propose_deliveries? && cart.respond_to?(:rebuild_fulfillments!)
           cart.rebuild_fulfillments!
         end
 
