@@ -8662,6 +8662,75 @@ paths:
                   example: any
                 lock_version:
                   type: integer
+  "/api/v3/admin/email_templates/{email_template_id}/sample_records":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    get:
+      summary: List records to preview an email template with
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The store's five latest records the template can be previewed with,
+        newest first, to pass as `record_id` to the preview. For the layout
+        and partials, those of the email `email_key` names. Empty for an
+        email that needs no record.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The latest orders to preview the order confirmation with; pass one's id as `record_id`.
+          const { data: records } = await client.emailTemplates.sampleRecords.list(
+            'spree.order_mailer.confirm_email',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates/{email_template_id}/sample_records
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: email_key
+        in: query
+        required: false
+        description: For the layout or a partial, the email to show it in
+        schema:
+          type: string
+      responses:
+        '200':
+          description: records found
+          content:
+            application/json:
+              example:
+                data:
+                - id: or_UkLWZg9DAJ
+                  label: R1001
+                  created_at: '2026-01-15T12:00:00.000Z'
   "/api/v3/admin/exports":
     get:
       summary: List exports
@@ -52360,6 +52429,20 @@ components:
       - created_at
       - published_by_id
       - published_by_type
+      x-typelizer: true
+    EmailTemplateSampleRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - label
+      - created_at
       x-typelizer: true
     EmailTemplate:
       type: object

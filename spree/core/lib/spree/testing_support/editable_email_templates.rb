@@ -21,6 +21,12 @@ module Spree
         @store.default_currency
       end
 
+      def recent_records(limit: 5)
+        @store.orders.order(created_at: :desc).limit(limit).map do |order|
+          Spree::EmailTemplates::SampleRecord.new(id: order.prefixed_id, label: order.number, created_at: order.created_at)
+        end
+      end
+
       def variables
         {
           user: { 'first_name' => 'Ann', 'email' => 'ann@example.com' },
