@@ -5779,7 +5779,11 @@ export class AdminClient {
     ): Promise<EmailTemplate> =>
       this.request<EmailTemplate>('GET', `/email_templates/${id}`, {
         ...options,
-        params: getParams(params),
+        // getParams keeps only expand and fields, so the language is added back.
+        params: {
+          ...getParams(params),
+          ...(params?.language ? { language: params.language } : {}),
+        },
       }),
 
     /** Goes back to Spree's default and discards the draft. Published versions stay in the history. */
@@ -5872,7 +5876,13 @@ export class AdminClient {
           `/email_templates/${id}/revisions`,
           {
             ...options,
-            params: params ? transformListParams(params) : undefined,
+            // The language picks the version, so it stays out of the Ransack filters.
+            params: params
+              ? (({ language, ...list }) => ({
+                  ...transformListParams(list),
+                  ...(language ? { language } : {}),
+                }))(params)
+              : undefined,
           },
         ),
 
