@@ -19,6 +19,13 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::RestorationsController, ty
     expect(json_response['draft']).to include('subject' => 'Old subject', 'body' => 'Old body')
   end
 
+  it "restores a revision of the version for every language into one language's draft" do
+    post :create, params: { email_template_id: id, revision_id: revision.prefixed_id, language: 'de' }, as: :json
+
+    expect(response).to have_http_status(:created)
+    expect(store.email_template_drafts.find_by(locale: 'de').body).to eq('Old body')
+  end
+
   it "does not restore another store's revision" do
     other = create(:email_template_revision, email_template: create(:email_template, store: create(:store), key: editable_key))
 

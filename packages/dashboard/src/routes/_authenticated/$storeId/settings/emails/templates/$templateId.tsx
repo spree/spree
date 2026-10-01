@@ -300,7 +300,13 @@ function EmailTemplateEditor({
         confirmLabel: t('admin.email_templates.actions.revert'),
         variant: 'destructive',
       },
-      () => revert.mutateAsync({ language: versionLanguage, lock_version: lockVersion }),
+      // The shared version has no draft anyone edits here, so there is no copy
+      // to check against; this language's draft is not the one it affects.
+      () =>
+        revert.mutateAsync({
+          language: versionLanguage,
+          lock_version: forEveryLanguage ? undefined : lockVersion,
+        }),
     )
 
   const handleRestore = async (revisionId: string) => {
@@ -312,7 +318,8 @@ function EmailTemplateEditor({
         variant: dirty ? 'destructive' : 'default',
       },
       () =>
-        restore.mutateAsync({ revisionId, language: versionLanguage, lock_version: lockVersion }),
+        // Restored into this language's draft, even from the shared version's history.
+        restore.mutateAsync({ revisionId, language, lock_version: lockVersion }),
     )
     if (restored) setHistoryOpen(false)
   }
