@@ -1,3 +1,11 @@
+## 2026-10-01: Preferences are stored as JSON, converted inside the 6.0 migration
+
+**Context:** Every `preferences` column is a YAML document written by one line in `Spree::Preferences::Preferable`. YAML loading is an attack surface Rails fences with a permitted-class list Spree has to inject; the columns cannot be queried; and the two 6.0 tables that declared `preferences` as JSON (delivery method rules, commission rules) actually hold a YAML document wrapped in a JSON string, because the shared coder still writes YAML.
+
+**Decision:** A JSON coder replaces YAML for every preferences column and for `spree_preferences.value`. Keys are strings, read through indifferent access; the `preferred_*` readers cast through the declared preference type, so values come back as the same Ruby types as before. Decimals are exact strings. The conversion runs inside the 6.0 migration, reading rows without models, because `spree:upgrade` runs after `db:migrate` and would find the YAML column gone. A row still holding YAML raises when read, naming its table and the fixing task; a boot check was rejected because it would block the migration that repairs the data. The tiered promotion calculators move their tiers from a hash with number keys to a list of `{threshold, rate}` objects. Encrypting gateway secrets is left to its own plan.
+
+**Consequences:** New `preferences` columns are JSON. Hash preferences must not use number keys, and secrets must stay single `:password` values so they can be encrypted later. The tiered calculators' `tiers` value changes shape in the Admin API. See `6.0-json-preferences.md`.
+
 ## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
 
 **Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
