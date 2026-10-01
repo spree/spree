@@ -261,6 +261,8 @@ Model preferences moved from YAML to JSON, and secrets moved out of them. Declar
 
   `value` is a percentage for `TieredPercent` and an amount for `TieredFlatRate`.
 - **Spree no longer allows extra classes in YAML columns.** It used to add `Symbol`, `BigDecimal` and a few time classes to `config.active_record.yaml_column_permitted_classes`. If your application serializes its own columns as YAML with those classes, add them in `config/application.rb` yourself.
+- **Preference change methods follow Rails' naming.** Each preference is a Rails store accessor, so `preferred_<name>_changed?`, `preferred_<name>_change` and `preferred_<name>_was` work as before, while the after-save forms are Rails' own: `saved_change_to_preferred_<name>?` replaces `preferred_<name>_previously_changed?`, `saved_change_to_preferred_<name>` replaces `preferred_<name>_previous_change`, and `preferred_<name>_before_last_save` replaces `preferred_<name>_previously_was`.
+- **Per-preference helper methods are gone.** Use `preference_type(:name)`, `preference_default(:name)` and `preference_deprecated(:name)` instead of `preferred_<name>_type`, `preferred_<name>_default` and `preferred_<name>_deprecated`. `clear_preferences`, `restore_preferences_for` and `preferences_of_type` are removed.
 - **A row still holding YAML fails loudly** with `Spree::Preferences::LegacyYamlError` when it is read. Run `spree rake spree:upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
 
 ## The Cart/Order split
