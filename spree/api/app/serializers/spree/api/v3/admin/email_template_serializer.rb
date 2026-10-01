@@ -14,6 +14,7 @@ module Spree
                    subject: [:string, nullable: true],
                    body: :string,
                    published_at: [:string, nullable: true],
+                   published_language: [:string, nullable: true],
                    default_subject: [:string, nullable: true],
                    default_body: :string,
                    default_changed: :boolean,
@@ -38,13 +39,11 @@ module Spree
             entry.published&.published_at&.iso8601
           end
 
-          attribute :default_subject do |entry|
-            entry.default&.subject
-          end
+          attributes :default_subject, :default_body
 
-          attribute :default_body do |entry|
-            entry.default&.body
-          end
+          # `any` when this language has no version of its own and customers
+          # receive the one for every language.
+          attribute :published_language, &:published_locale
 
           attribute :default_changed do |entry|
             entry.outdated_version.present?
@@ -52,13 +51,7 @@ module Spree
 
           # The default the store's version started from, when Spree's default
           # has changed since: compare it with `default_body` to see what changed.
-          attribute :base_subject do |entry|
-            entry.outdated_version&.base_subject
-          end
-
-          attribute :base_body do |entry|
-            entry.outdated_version&.base_body
-          end
+          attributes :base_subject, :base_body
 
           one :draft, resource: proc { Spree.api.admin_email_template_draft_serializer }
         end

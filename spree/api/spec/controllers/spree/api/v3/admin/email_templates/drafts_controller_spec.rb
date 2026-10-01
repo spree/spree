@@ -41,7 +41,8 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::DraftsController, type: :c
     it 'refuses a language code that is not one' do
       put :update, params: { email_template_id: id, language: 'not a language', body: 'x' }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:bad_request)
+      expect(store.email_template_drafts.count).to eq(0)
     end
   end
 

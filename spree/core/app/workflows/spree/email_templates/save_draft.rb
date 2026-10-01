@@ -48,11 +48,14 @@ module Spree
         failure(nil, :stale)
       end
 
+      # Starts from what customers in this language receive, with Spree's
+      # translation keys written out as text in it.
       def start_from_current
-        published = store.email_templates.published.find_by(key: key, locale: draft.locale)
+        published = store.email_templates.published.where(key: key, locale: [draft.locale, Spree::EmailTemplate::ANY_LOCALE]).
+                    min_by { |template| template.locale == draft.locale ? 0 : 1 }
 
-        draft.subject = published&.subject || default&.subject
-        draft.body = published&.body || default&.body
+        draft.subject = readable(published&.subject || default&.subject)
+        draft.body = readable(published&.body || default&.body)
         draft.base_subject = published ? published.base_subject : default&.subject
         draft.base_body = published ? published.base_body : default&.body
       end
@@ -60,6 +63,12 @@ module Spree
       def rebase
         draft.base_subject = default&.subject
         draft.base_body = default&.body
+      end
+
+      def readable(text)
+        return text if draft.locale == Spree::EmailTemplate::ANY_LOCALE
+
+        Spree::Emails::TranslationInliner.call(text, locale: draft.locale)
       end
 
       def default
