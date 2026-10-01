@@ -2143,6 +2143,25 @@
           "label": "Default tax on commission",
           "help": "Charged on your commission when neither the commission rate nor your tax provider gives a rate of its own. Leave at 0 if you charge no tax on your fee.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Accent color"
+        },
+        "preferred_email_background_color": {
+          "label": "Background color"
+        },
+        "preferred_email_card_color": {
+          "label": "Card color"
+        },
+        "preferred_email_text_color": {
+          "label": "Text color"
+        },
+        "preferred_email_heading_color": {
+          "label": "Heading color"
+        },
+        "preferred_email_font": {
+          "label": "Font",
+          "help": "Email apps that can't load it fall back to a similar font."
         }
       },
       "store_credit": {
@@ -3784,7 +3803,21 @@
           "section_delivery": "Delivery",
           "section_logo": "Logo",
           "subtitle": "Sender addresses, notifications, and the logo embedded in transactional emails.",
-          "title": "Email settings"
+          "title": "Email settings",
+          "branding": {
+            "title": "Branding",
+            "description": "Colors and font for every customer email. Leave a color empty to keep the default.",
+            "default_color": "Default",
+            "fonts": {
+              "inter": "Inter (default)",
+              "system": "System font",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -5027,7 +5060,8 @@
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
-        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
+        "email_templates": "Edit the emails customers receive"
       },
       "groups": {
         "audit": "Audit",
@@ -5065,7 +5099,8 @@
         "webhooks": "Webhooks",
         "package_types": "Package types",
         "suppliers": "Suppliers",
-        "marketplace": "Settings"
+        "marketplace": "Settings",
+        "email_templates": "Email templates"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
@@ -6019,6 +6054,158 @@
       "no_customer": "No customer",
       "page": {
         "subtitle": "What the store owes in prepaid balances, across every customer."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Settings",
+        "templates": "Templates"
+      },
+      "list": {
+        "description": "Edit the emails customers receive. Changes are saved as a draft and reach customers only when you publish them.",
+        "groups": {
+          "email": {
+            "title": "Customer emails",
+            "description": "Each email a customer can receive from your store."
+          },
+          "layout": {
+            "title": "Layout",
+            "description": "The header, footer and styles around every customer email."
+          },
+          "partial": {
+            "title": "Shared blocks",
+            "description": "Pieces used by several emails, such as the list of items and the totals."
+          }
+        },
+        "empty": "No email templates can be edited here. Customer email templates come with the Spree emails package."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Order confirmation",
+        "order_mailer_cancel_email": "Order canceled",
+        "order_mailer_payment_link_email": "Payment link",
+        "order_group_mailer_confirm_email": "Multi-seller order confirmation",
+        "fulfillment_mailer_fulfilled_email": "Order shipped",
+        "return_mailer_refunded_email": "Return refunded",
+        "digital_asset_mailer_files_ready_email": "Downloads ready",
+        "customer_mailer_password_reset_email": "Password reset",
+        "customer_mailer_data_export_email": "Personal data export ready",
+        "newsletter_mailer_email_confirmation": "Newsletter confirmation",
+        "company_mailer_invitation_email": "Company invitation",
+        "spree_base_mailer": "Email layout",
+        "shared_line_item": "Item",
+        "shared_order_summary": "Order summary",
+        "shared_purchase_totals": "Totals",
+        "shared_fulfillment_group": "Shipment",
+        "shared_summary_row": "Summary row"
+      },
+      "badges": {
+        "customized": "Customized",
+        "default": "Default",
+        "draft": "Draft",
+        "default_updated": "Updated by Spree",
+        "unsaved": "Unsaved changes",
+        "showing_draft": "Draft — customers receive the published version",
+        "showing_published": "Published — what customers receive",
+        "showing_default": "Spree's default — what customers receive"
+      },
+      "actions": {
+        "save_draft": "Save draft",
+        "publish": "Publish",
+        "discard_draft": "Discard draft",
+        "revert": "Revert to default",
+        "send_test": "Send test email",
+        "history": "History"
+      },
+      "confirm": {
+        "discard_title": "Discard this draft?",
+        "discard_message": "Your unpublished changes are deleted. Customers keep receiving the published version.",
+        "revert_title": "Revert to Spree's default?",
+        "revert_message": "Customers receive Spree's default email from now on and the draft is deleted. Published versions stay in the history, so you can restore one later.",
+        "restore_title": "Restore this version?",
+        "restore_message": "This version replaces the draft. Publish it for customers to receive it."
+      },
+      "editor": {
+        "title": "Template",
+        "subject": "Subject",
+        "body": "Template code",
+        "language": "Language"
+      },
+      "languages": {
+        "any": "All languages"
+      },
+      "preview": {
+        "title": "Preview",
+        "frame_title": "Email preview",
+        "subject": "Subject: {{subject}}",
+        "html": "Email",
+        "text": "Plain text",
+        "desktop": "Desktop width",
+        "mobile": "Mobile width",
+        "shown_in": "Show inside",
+        "record": "Preview with record",
+        "record_placeholder": "Latest, or an ID such as or_m3Rp9wXz",
+        "unavailable": "The preview could not be shown."
+      },
+      "problems": {
+        "title": "This template does not render",
+        "on_line": "Line {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Updated by Spree",
+        "description": "Spree changed its default for this template since your version was made from it. Compare the two before you decide.",
+        "compare": "Compare",
+        "dialog_title": "What changed in Spree's default",
+        "dialog_description": "On the left, the default your version was made from. On the right, the default now.",
+        "before": "Your version started from",
+        "after": "Spree's default now",
+        "keep_mine": "Keep my version",
+        "start_over": "Start from the new default"
+      },
+      "history": {
+        "title": "History",
+        "description": "Every version published in this language, newest first.",
+        "empty": "Nothing has been published yet.",
+        "latest": "Latest",
+        "version": "Version {{number}}",
+        "restore": "Restore"
+      },
+      "conflict": {
+        "title": "Someone else saved this draft",
+        "keep_editing": "Keep editing",
+        "reload": "Load their version"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Data this email can show. Start typing a variable in the code to see all of its fields.",
+        "order": "The order, with its items, addresses and totals.",
+        "resend": "Whether this is a copy sent again.",
+        "payment_url": "The link where the customer pays.",
+        "order_group": "An order split across several sellers.",
+        "fulfillment": "The shipment, with its tracking.",
+        "return": "The return and what was refunded.",
+        "downloads": "The files the customer can download.",
+        "customer": "The customer the email goes to.",
+        "reset_url": "The link to choose a new password.",
+        "download_url": "The link to download the export.",
+        "expires_at": "When the link stops working.",
+        "confirmation_url": "The link that confirms the subscription.",
+        "company": "The company the customer is invited to.",
+        "accept_url": "The link that accepts the invitation.",
+        "store": "Your store: name, links, logo and branding.",
+        "locale": "The language the email is sent in."
+      },
+      "messages": {
+        "draft_saved": "Draft saved",
+        "draft_discarded": "Draft discarded",
+        "published": "Published. Customers receive this version from now on.",
+        "reverted": "Reverted to Spree's default",
+        "restored": "Version restored into the draft",
+        "test_sent": "Test email sent to {{email}}"
+      },
+      "errors": {
+        "load_failed": "Couldn't load email templates",
+        "not_allowed": "You don't have permission to view email templates",
+        "test_email_failed": "Couldn't send the test email"
       }
     }
   }

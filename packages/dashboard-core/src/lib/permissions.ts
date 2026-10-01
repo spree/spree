@@ -77,6 +77,7 @@ export const Subject = {
   Invitation: 'Spree::Invitation',
   Market: 'Spree::Market',
   WebhookEndpoint: 'Spree::WebhookEndpoint',
+  EmailTemplate: 'Spree::EmailTemplate',
   WebhookDelivery: 'Spree::WebhookDelivery',
   Wishlist: 'Spree::Wishlist',
   Seller: 'Spree::Seller',

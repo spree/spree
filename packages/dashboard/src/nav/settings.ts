@@ -3,6 +3,7 @@ import {
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
+  FileCodeIcon,
   GlobeIcon,
   GlobeLockIcon,
   KeyRoundIcon,
@@ -84,6 +85,19 @@ settingsNav.add({
   position: 200,
   subject: Subject.Store,
   action: 'update',
+})
+
+settingsNav.add({
+  key: 'settings.email_templates',
+  labelKey: 'admin.settings_nav.items.email_templates',
+  descriptionKey: 'admin.settings_nav.descriptions.email_templates',
+  keywords: ['email', 'template', 'liquid', 'mjml', 'order confirmation', 'branding'],
+  path: '/emails/templates',
+  icon: FileCodeIcon,
+  group: 'store',
+  position: 210,
+  subject: Subject.EmailTemplate,
+  action: 'read',
 })
 
 settingsNav.add({
