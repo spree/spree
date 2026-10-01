@@ -235,6 +235,8 @@ To add your own step or requirement, see
   <Step title="Choose delivery">
     Each [fulfillment](/developer/core-concepts/fulfillments) offers delivery rates. Pick one per fulfillment.
 
+    A cart has no fulfillments until it has a shipping address or a pickup location, unless none of its items ships to an address (a digital-only cart has them straight away). Saving a different address replaces the fulfillments, under new ids, with the cheapest shipping rate selected, so show the customer the new options before taking payment.
+
     ```typescript Store SDK
     const cart = await client.carts.get(cartId)
     await client.carts.fulfillments.update(cartId, cart.fulfillments[0].id, {
