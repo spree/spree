@@ -452,6 +452,13 @@ module Spree
   #   Spree.number_generators[:order] = 'MyApp::BranchOrderNumbers'
   singleton_class.delegate :number_generators, to: :spree_config
 
+  # The email templates merchants may edit in the dashboard.
+  #
+  # @return [Spree::Emails::EditableTemplates]
+  def self.editable_email_templates
+    @editable_email_templates ||= Spree::Emails::EditableTemplates.new
+  end
+
   # Event subscribers that handle lifecycle and custom events
   # @example Adding a custom subscriber
   #   Spree.subscribers << MyApp::OrderNotificationSubscriber
@@ -626,6 +633,7 @@ require 'spree/store_scope_guard'
 require 'spree/checkout/step'
 require 'spree/checkout/requirement'
 require 'spree/checkout/registry'
+require 'spree/emails/editable_templates'
 require 'spree/checkout/default_requirements'
 require 'spree/checkout/requirements'
 

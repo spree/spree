@@ -11,10 +11,10 @@ module Spree
       # @param name [String]
       # @return [String] the partial's source
       def read_template_file(name)
-        path = @resolver.find_partial(name.to_s)
-        raise Liquid::FileSystemError, "No such email partial: #{name}" unless path
+        partial = @resolver.find_partial(name.to_s)
+        raise Liquid::FileSystemError, "No such email partial: #{name}" unless partial
 
-        File.read(path)
+        partial.body
       rescue Spree::Emails::TemplateResolver::InvalidKey => e
         raise Liquid::FileSystemError, e.message
       end

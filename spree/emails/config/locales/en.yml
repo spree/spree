@@ -31,6 +31,9 @@ en:
         dear_customer: Dear %{name},
         instructions: The files from your order %{number} are ready to download.
         subject: Your files are ready
+    emails:
+      samples:
+        no_record: There is no %{record} in this store to preview this email with yet.
     fulfillment_mailer:
       fulfilled_email:
         dear_customer: Dear %{name},
