@@ -6131,9 +6131,9 @@
         "mobile": "手机宽度",
         "shown_in": "显示于",
         "record": "使用记录预览",
-        "record_placeholder": "最新记录，或如 or_m3Rp9wXz 的 ID",
         "unavailable": "无法显示预览。",
-        "needs_permission": "只有可以编辑邮件模板的人才能生成预览。"
+        "needs_permission": "只有可以编辑邮件模板的人才能生成预览。",
+        "latest_record": "最新"
       },
       "problems": {
         "title": "此模板无法渲染",
@@ -6182,7 +6182,8 @@
         "company": "邀请客户加入的公司。",
         "accept_url": "接受邀请的链接。",
         "store": "您的店铺：名称、链接、标志和品牌样式。",
-        "locale": "邮件发送所用的语言。"
+        "locale": "邮件发送所用的语言。",
+        "insert": "插入 {{variable}}"
       },
       "messages": {
         "draft_saved": "草稿已保存",

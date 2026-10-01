@@ -113,6 +113,29 @@ export function useSendTestEmail(id: string) {
   })
 }
 
+/**
+ * The store's latest records a template can be previewed with. Empty for an
+ * email that needs none; a caller who may not read them gets none either.
+ */
+export function useEmailTemplateSampleRecords(id: string, emailKey: string, enabled: boolean) {
+  return useQuery({
+    queryKey: useResourceKey(RESOURCE, id, 'sample-records', emailKey),
+    queryFn: async () => {
+      try {
+        return (
+          await adminClient.emailTemplates.sampleRecords.list(id, {
+            email_key: emailKey || undefined,
+          })
+        ).data
+      } catch (error) {
+        if (error instanceof SpreeError && error.status === 403) return []
+        throw error
+      }
+    },
+    enabled,
+  })
+}
+
 /** Renders a template, or unsaved changes to it, with sample data. Never cached. */
 export function useEmailTemplatePreview(id: string) {
   return useMutation<EmailTemplatePreview, Error, EmailTemplatePreviewParams>({

@@ -6212,9 +6212,9 @@
         "mobile": "Szerokość telefonu",
         "shown_in": "Pokaż w",
         "record": "Podgląd z rekordem",
-        "record_placeholder": "Najnowszy lub ID, np. or_m3Rp9wXz",
         "unavailable": "Nie udało się wyświetlić podglądu.",
-        "needs_permission": "Podgląd jest generowany dla osób, które mogą edytować szablony e-maili."
+        "needs_permission": "Podgląd jest generowany dla osób, które mogą edytować szablony e-maili.",
+        "latest_record": "Najnowszy"
       },
       "problems": {
         "title": "Tego szablonu nie da się wyświetlić",
@@ -6263,7 +6263,8 @@
         "company": "Firma, do której zaproszono klienta.",
         "accept_url": "Link przyjmujący zaproszenie.",
         "store": "Twój sklep: nazwa, linki, logo i wygląd marki.",
-        "locale": "Język, w którym wysyłany jest e-mail."
+        "locale": "Język, w którym wysyłany jest e-mail.",
+        "insert": "Wstaw {{variable}}"
       },
       "messages": {
         "draft_saved": "Szkic zapisany",
