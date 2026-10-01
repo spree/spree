@@ -172,7 +172,12 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       tiers = preferences['tiers']
       return unless tiers.is_a?(Array) && Spree::Preferences::JsonConversion.tiered_calculator?(model)
 
-      preferences['tiers'] = tiers.to_h { |tier| [BigDecimal(tier['threshold'].to_s, exception: false), BigDecimal(tier['value'].to_s, exception: false)] }
+      # A value that is not a number is kept as written, so two such tiers
+      # cannot collapse into one nil key.
+      preferences['tiers'] = tiers.to_h do |tier|
+        [BigDecimal(tier['threshold'].to_s, exception: false) || tier['threshold'],
+         BigDecimal(tier['value'].to_s, exception: false) || tier['value']]
+      end
     end
 
     def restore_decimals(preferences, model)
