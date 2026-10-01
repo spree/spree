@@ -7,6 +7,8 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
+        typelize customer_name: :string, display_total_minus_store_credits: :string
+
         attribute :customer_name do |purchase|
           purchase.name.presence || Spree.t(:customer)
         end

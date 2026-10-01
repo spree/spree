@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class FulfillmentSerializer < Spree::Api::V3::FulfillmentSerializer
+      typelize delivery_method_name: [:string, nullable: true]
+
       attribute :delivery_method_name do |fulfillment|
         fulfillment.delivery_method&.name
       end
