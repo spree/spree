@@ -1,4 +1,3 @@
-require 'spree/core/preferences/json_coder'
 
 module Spree
   module Preferences
@@ -151,7 +150,7 @@ module Spree
         value = parse_yaml(yaml, table, id) || {}
         raise UnreadableRowError, "#{table} row #{id}: preferences are not a hash" unless value.is_a?(Hash)
 
-        [JsonCoder.dump(value), false]
+        [value.as_json, false]
       end
 
       def decode_json(raw)
