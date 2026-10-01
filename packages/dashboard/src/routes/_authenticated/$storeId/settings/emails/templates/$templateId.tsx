@@ -21,7 +21,6 @@ import {
   ErrorState,
   Field,
   FieldLabel,
-  Input,
   ResourceLayout,
   Select,
   SelectContent,
@@ -29,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
   Skeleton,
+  Textarea,
   toastManager,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -453,8 +453,10 @@ function EmailTemplateEditor({
                     <FieldLabel htmlFor="email-template-subject">
                       {t('admin.email_templates.editor.subject')}
                     </FieldLabel>
-                    <Input
+                    <Textarea
                       id="email-template-subject"
+                      rows={2}
+                      className="min-h-0 resize-y font-mono text-sm"
                       value={subject}
                       readOnly={!canEdit}
                       onChange={(event) => editSubject(event.target.value)}
