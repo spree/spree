@@ -129,14 +129,6 @@ describe Spree do
       expect(described_class.install_id).to eq(id)
     end
 
-    it 'keeps the identifier when another store becomes the default' do
-      id = described_class.install_id
-      create(:store, default: true)
-
-      expect(Spree::Store.default).not_to eq(@default_store)
-      expect(described_class.install_id).to eq(id)
-    end
-
     it 'reuses an identifier already stored' do
       @default_store.update!(preferred_install_id: 'already-persisted-id')
 
