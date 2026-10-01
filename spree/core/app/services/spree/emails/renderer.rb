@@ -32,17 +32,20 @@ module Spree
       # @param resolver [Spree::Emails::TemplateResolver]
       # @param store [Spree::Store]
       # @param currency [String, nil] what `money` formats in, defaults to the store's
-      def initialize(resolver:, store:, currency: nil)
+      # @param strict [Boolean] whether an unknown variable raises; defaults to
+      #   true in development and test, false in production
+      def initialize(resolver:, store:, currency: nil, strict: Rails.env.local?)
         @resolver = resolver
         @store = store
         @currency = currency.presence || store.default_currency
+        @strict = strict
       end
 
       # @param template [Spree::Emails::Template] a Liquid template
       # @param assigns [Hash] the template's variables
       # @return [Spree::Emails::RenderedEmail]
       def render(template, assigns = {})
-        assigns = prepare(assigns)
+        assigns = variables(assigns)
         subject = subject_for(template, assigns)
         body = render_liquid(template.body, assigns)
         html = render_layout(body, assigns.merge('subject' => subject))
@@ -59,7 +62,16 @@ module Spree
       def wrap(html, subject: nil)
         body = %(<mj-section><mj-column><mj-text align="left">#{html}</mj-text></mj-column></mj-section>)
 
-        render_layout(body, prepare('subject' => subject.to_s))
+        render_layout(body, variables('subject' => subject.to_s))
+      end
+
+      # Everything a template receives: the given variables plus `store` and
+      # `locale`, with string keys.
+      #
+      # @param assigns [Hash]
+      # @return [Hash]
+      def variables(assigns = {})
+        base_assigns.merge(assigns.deep_stringify_keys)
       end
 
       private
@@ -70,9 +82,6 @@ module Spree
         MRML.to_html(render_liquid(layout.body, assigns.merge('content_for_layout' => body.html_safe)))
       end
 
-      def prepare(assigns)
-        base_assigns.merge(assigns.deep_stringify_keys)
-      end
 
       # The subject is plain text for a mail header, so it is not HTML-escaped.
       def subject_for(template, assigns)
@@ -95,10 +104,10 @@ module Spree
           resource_limits: Liquid::ResourceLimits.new(RESOURCE_LIMITS),
           rethrow_errors: true
         )
-        context.strict_variables = strict?
+        context.strict_variables = @strict
         context.strict_filters = true
 
-        Liquid::Template.parse(source, environment: self.class.environment).render!(context)
+        Liquid::Template.parse(source, environment: self.class.environment, line_numbers: true).render!(context)
       end
 
       def base_assigns
@@ -106,12 +115,6 @@ module Spree
           'store' => JSON.parse(Spree::Emails::StoreSerializer.new(@store).serialize),
           'locale' => I18n.locale.to_s
         }
-      end
-
-      # An unknown variable raises in development and test, so a typo fails
-      # a spec rather than rendering blank; production renders it empty.
-      def strict?
-        Rails.env.local?
       end
     end
   end

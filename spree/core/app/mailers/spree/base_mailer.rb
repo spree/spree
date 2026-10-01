@@ -82,8 +82,9 @@ module Spree
     # @return [Mail::Message]
     def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", **headers)
       in_store_locale do
-        email_template = email_resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
-        email = email_renderer.render(email_template, assigns)
+        resolver = email_resolver(template)
+        email_template = resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
+        email = email_renderer(resolver).render(email_template, assigns)
 
         mail(headers.merge(subject: email.subject)) do |format|
           format.text { render plain: email.text, layout: false }
@@ -108,12 +109,7 @@ module Spree
     # @param params [Hash] serializer params, over the email's store, currency and locale
     # @return [Hash, nil]
     def email_data(object, serializer, **params)
-      return if object.nil?
-
-      params = { store: current_store, currency: email_currency, locale: I18n.locale.to_s,
-                 storefront_url: current_store.storefront_url.to_s.chomp('/'),
-                 hide_credentials: true }.merge(params)
-      JSON.parse(serializer.new(object, params: params).serialize)
+      Spree::Emails::TemplateData.call(object, serializer, store: current_store, currency: email_currency, **params)
     end
 
     # URI-based merge preserves existing query params and fragments so the token
@@ -131,12 +127,18 @@ module Spree
 
     private
 
-    def email_resolver
-      @email_resolver ||= Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
+    # The store's published templates apply only to the emails merchants may
+    # edit; every other email, and the layout and partials it uses, comes
+    # from files.
+    def email_resolver(template = nil)
+      view_paths = self.class.view_paths.paths.map(&:path)
+      return Spree::Emails::TemplateResolver.new(view_paths) unless Spree.editable_email_templates.include?(template)
+
+      Spree::Emails::TemplateResolver.new(view_paths, store: current_store, locale: I18n.locale)
     end
 
-    def email_renderer
-      Spree::Emails::Renderer.new(resolver: email_resolver, store: current_store, currency: email_currency)
+    def email_renderer(resolver = email_resolver)
+      Spree::Emails::Renderer.new(resolver: resolver, store: current_store, currency: email_currency)
     end
 
     def in_store_locale(&block)
