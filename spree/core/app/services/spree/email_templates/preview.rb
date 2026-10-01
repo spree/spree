@@ -55,8 +55,8 @@ module Spree
         @email ||= if definition.email?
                      definition
                    else
-                     Spree.editable_email_templates[@email_key.to_s].then { |named| named&.email? ? named : nil } ||
-                       Spree.editable_email_templates.emails.first
+                     emails = Spree.editable_email_templates.emails
+                     emails.find { |candidate| candidate.key == @email_key } || emails.first
                    end
       end
 
@@ -67,9 +67,7 @@ module Spree
       end
 
       def resolver
-        @resolver ||= Spree::Emails::TemplateResolver.new(
-          Spree::BaseMailer.view_paths.paths.map(&:path), store: @store, locale: language, drafts: drafts
-        )
+        @resolver ||= Spree::Emails::TemplateResolver.for_mailers(store: @store, locale: language, drafts: drafts)
       end
 
       def drafts

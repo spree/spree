@@ -20,10 +20,7 @@ module Spree
                 store: current_store, key: email_template.key, locale: language, actor: current_actor,
                 attributes: params.permit(:subject, :body, :lock_version, :rebase).to_h.symbolize_keys
               )
-              return render_stale_draft if result.error&.value == :stale
-              return render_result_error(result) unless result.success?
-
-              render json: serialize_email_template(reload: true)
+              render_email_template_result(result)
             end
 
             # DELETE /api/v3/admin/email_templates/:email_template_id/draft
@@ -33,9 +30,7 @@ module Spree
               result = Spree.email_template_discard_draft_workflow.call(
                 store: current_store, key: email_template.key, locale: language, lock_version: params[:lock_version].presence
               )
-              return render_stale_draft if result.error&.value == :stale
-
-              render json: serialize_email_template(reload: true)
+              render_email_template_result(result)
             end
           end
         end

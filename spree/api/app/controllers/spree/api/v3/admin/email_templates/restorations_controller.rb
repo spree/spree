@@ -12,17 +12,12 @@ module Spree
             def create
               authorize! :update, Spree::EmailTemplate
 
-              revision = Spree::EmailTemplateRevision.where(
-                email_template: current_store.email_templates.for_key(email_template.key, language)
-              ).find_by_prefix_id!(params[:revision_id])
+              revision = email_template_revisions.find_by_prefix_id!(params[:revision_id])
 
               result = Spree.email_template_restore_revision_workflow.call(
                 revision: revision, actor: current_actor, lock_version: params[:lock_version]
               )
-              return render_stale_draft if result.error&.value == :stale
-              return render_result_error(result) unless result.success?
-
-              render json: serialize_email_template(reload: true), status: :created
+              render_email_template_result(result, status: :created)
             end
           end
         end

@@ -19,9 +19,7 @@ module Spree
             end
 
             def scope
-              Spree::EmailTemplateRevision.where(
-                email_template: current_store.email_templates.for_key(email_template.key, language)
-              ).order(created_at: :desc)
+              email_template_revisions.order(created_at: :desc)
             end
 
             def collection_includes

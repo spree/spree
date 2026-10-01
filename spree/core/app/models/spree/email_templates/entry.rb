@@ -59,7 +59,7 @@ module Spree
 
       # @return [Spree::Emails::Template, nil] the template file Spree or the app ships
       def default
-        @default ||= Spree::Emails::TemplateResolver.new(Spree::BaseMailer.view_paths.paths.map(&:path)).find_default(key)
+        @default ||= Spree::Emails::TemplateResolver.for_mailers.find_default(key)
       end
 
       # What customers receive now.

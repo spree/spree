@@ -84,7 +84,6 @@ module Spree
         MRML.to_html(render_liquid(layout.body, assigns.merge('content_for_layout' => body.html_safe)))
       end
 
-
       # The subject is plain text for a mail header, so it is not HTML-escaped.
       def subject_for(template, assigns)
         render_liquid(template.subject.to_s, assigns, escape: false).squish
