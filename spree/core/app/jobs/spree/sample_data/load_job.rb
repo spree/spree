@@ -5,8 +5,13 @@ module Spree
     # loader needs an admin to own its imports and downloads product images,
     # so it can neither run before setup nor inside the setup request.
     class LoadJob < Spree::BaseJob
-      def perform
-        Spree::SampleData::Loader.call
+      # @param store_id [String, Integer, nil] the store to load into; the
+      #   default store when omitted
+      def perform(store_id = nil)
+        return Spree::SampleData::Loader.call if store_id.nil?
+
+        store = Spree::Store.find_by(id: store_id)
+        Spree::SampleData::Loader.call(store: store) if store
       end
     end
   end

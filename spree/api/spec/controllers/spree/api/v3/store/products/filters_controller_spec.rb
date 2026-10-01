@@ -64,6 +64,28 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       expect(price_filter).to have_key('currency')
     end
 
+    context 'on a channel that hides prices from guests' do
+      before do
+        store.default_channel.update!(preferred_storefront_access: 'prices_hidden')
+        request.headers['X-Spree-Channel'] = store.default_channel.code
+      end
+
+      it 'leaves out the price range for a guest' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['filters'].pluck('type')).not_to include('price_range')
+      end
+
+      it 'shows the price range to a signed-in customer' do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+        get :index
+
+        expect(json_response['filters'].pluck('type')).to include('price_range')
+      end
+    end
+
     it 'returns availability filter' do
       get :index
 

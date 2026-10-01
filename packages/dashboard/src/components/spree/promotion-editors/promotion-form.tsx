@@ -597,6 +597,7 @@ function ScheduleCard({ form }: { form: UseFormReturn<PromotionFormValues> }) {
                 />
               )}
             />
+            <FieldError errors={[errors.expires_at]} />
           </Field>
           <Field>
             <FieldLabel htmlFor="usage_limit">

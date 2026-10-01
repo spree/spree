@@ -1,7 +1,7 @@
 # Three collections that between them exercise both membership models: two
 # rule-based (they regenerate themselves) and one hand-curated with a dynamic
 # sort. Runs after the product import so there is a catalog to draw from.
-store = Spree::Store.default
+store = Spree::Current.store
 
 # Each automatic collection is defined by the single rule that materializes it.
 automatic_collections = [

@@ -43,7 +43,7 @@ module Spree
           # translation tables.
           def parent_relation
             klass = parent_lookup.klass
-            relation = klass.respond_to?(:for_store) ? klass.for_store(current_store) : klass
+            relation = klass.respond_to?(:translatable_scope) ? klass.translatable_scope(current_store) : klass.for_store(current_store)
 
             children = klass.try(:translatable_children)
             children ? relation.includes(children => :translations) : relation

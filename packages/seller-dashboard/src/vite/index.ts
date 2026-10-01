@@ -4,6 +4,7 @@ import {
   type SpreeDashboardPluginOptions as CoreOptions,
   spreeDashboardPlugin as spreeDashboardCorePlugin,
 } from '@spree/dashboard-core/vite'
+import { linkedPackagePath } from '@spree/dashboard-core/vite/discover'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { index, layout, physical, rootRoute, route } from '@tanstack/virtual-file-routes'
 import type { PluginOption } from 'vite'
@@ -60,7 +61,11 @@ function sellerRouterPlugin(hostRoot: string, options: SpreeSellerDashboardPlugi
   // `@spree/seller-dashboard` lives (workspace symlink or npm install). The
   // `.` export maps to a file in src/, so `routes/` is its sibling.
   const shellEntry = fromHost.resolve('@spree/seller-dashboard')
-  const shellRoutesDir = path.join(path.dirname(shellEntry), 'routes')
+  const shellRoutesDir = linkedPackagePath(
+    hostRoot,
+    '@spree/seller-dashboard',
+    path.join(path.dirname(shellEntry), 'routes'),
+  )
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),

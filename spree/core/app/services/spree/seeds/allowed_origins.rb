@@ -2,11 +2,12 @@ module Spree
   module Seeds
     class AllowedOrigins
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
-      def call
-        Spree::Store.all.each do |store|
-          store.allowed_origins.find_or_create_by!(origin: 'http://localhost')
-        end
+      private
+
+      def seed(store)
+        store.allowed_origins.find_or_create_by!(origin: 'http://localhost')
       end
     end
   end

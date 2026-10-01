@@ -170,6 +170,7 @@ module Spree
             coupon_code: @params[:coupon_code]
           }
           order.coupon_code = nil
+          handler.release_stale_coupon_codes
         end
       end
     end

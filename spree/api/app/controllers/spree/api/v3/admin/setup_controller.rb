@@ -14,10 +14,14 @@ module Spree
           skip_scope_check!
           skip_before_action :authenticate_admin!, only: [:show, :countries, :create]
 
+          # Only create checks the setup token, so only create needs the strict
+          # login budget against guessing. The status and countries reads stay
+          # on the general per-caller limit: sharing the login budget with them
+          # let an ordinary first visit and one reload lock the setup screen.
           rate_limit to: Spree::Api::Config[:rate_limit_login],
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
-                     only: [:show, :countries, :create],
+                     only: :create,
                      with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
 
           # GET /api/v3/admin/auth/setup
@@ -65,7 +69,7 @@ module Spree
 
             # Outside the lock: the loader needs the admin committed, and it
             # runs for minutes, so it is queued rather than awaited.
-            Spree::SampleData::LoadJob.perform_later if sample_data_requested?
+            Spree::SampleData::LoadJob.perform_later(store.id) if sample_data_requested?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
             set_refresh_cookie(refresh_token)

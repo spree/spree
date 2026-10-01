@@ -251,7 +251,6 @@
         "filter_select_placeholder": "Seleccionar…",
         "filter_text_placeholder": "Filtrar…",
         "filter_to_placeholder": "Filtrar hasta…",
-        "more_conditions": "Más condiciones",
         "operators": {
           "after": "después de",
           "before": "antes de",
@@ -722,6 +721,32 @@
       },
       "quantity": {
         "label": "Cantidad"
+      },
+      "setup": {
+        "country_code": {
+          "help": "Desde dónde enviás. Tu tienda puede vender en todo el mundo: esto solo define la moneda, el depósito y las zonas de entrega de inicio, todo editable después.",
+          "label": "País",
+          "placeholder": "Buscar países"
+        },
+        "currency": {
+          "help": "Tu moneda predeterminada. Agregá más cuando quieras.",
+          "label": "Moneda",
+          "placeholder": "Buscar monedas"
+        },
+        "locale": {
+          "help": "Tu idioma predeterminado. Agregá más cuando quieras.",
+          "label": "Idioma"
+        },
+        "password_confirmation": {
+          "label": "Confirmar contraseña"
+        },
+        "sample_data": {
+          "help": "Agrega productos, categorías, clientes y pedidos de demostración en segundo plano para que puedas explorar el dashboard. Tarda unos minutos y descarga imágenes de productos.",
+          "label": "Cargar datos de ejemplo"
+        },
+        "store_name": {
+          "label": "Nombre de la tienda"
+        }
       },
       "shipping": {
         "label": "Envío"
@@ -1268,7 +1293,7 @@
         },
         "create_line_items": {
           "name": "Crear líneas de pedido",
-          "description": "Completa el carrito con la cantidad especificada de la variante"
+          "description": "Agrega al carrito la cantidad especificada de la variante de forma gratuita"
         },
         "free_shipping": {
           "name": "Envío gratis",
@@ -1696,6 +1721,11 @@
         "title": "Bienvenido de nuevo"
       },
       "logout": "Cerrar sesión",
+      "no_store_access": {
+        "description": "Iniciaste sesión, pero tu cuenta todavía no pertenece a ninguna tienda. Pedile a un administrador de la tienda que te invite o iniciá sesión con otra cuenta.",
+        "signed_in_as": "Sesión iniciada como {{email}}",
+        "title": "No tenés acceso a ninguna tienda"
+      },
       "reset_password": {
         "confirm_password_label": "Confirmar nueva contraseña",
         "error": "Algo salió mal. Volvé a intentar.",

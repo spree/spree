@@ -128,6 +128,23 @@ describe Spree::WebhookEndpoint, type: :model do
       end
     end
 
+    # A password reset token is a live customer credential, so it reaches
+    # only an endpoint that names the event.
+    context 'with a customer credential event' do
+      it 'is not delivered through a wildcard, a pattern or an empty list' do
+        [[], ['*'], ['customer.*']].each do |subscriptions|
+          endpoint = build(:webhook_endpoint, subscriptions: subscriptions)
+          expect(endpoint.subscribed_to?('customer.password_reset_requested')).to be false
+        end
+      end
+
+      it 'is delivered when named' do
+        endpoint = build(:webhook_endpoint, subscriptions: %w[customer.password_reset_requested])
+
+        expect(endpoint.subscribed_to?('customer.password_reset_requested')).to be true
+      end
+    end
+
     context 'with specific subscriptions' do
       let(:endpoint) { build(:webhook_endpoint, subscriptions: %w[order.created order.placed]) }
 

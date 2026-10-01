@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { PencilIcon, XIcon } from '@spree/dashboard-ui/icons'
+import { PencilIcon, SwatchBookIcon, XIcon } from '@spree/dashboard-ui/icons'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -343,7 +343,10 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle>{t('admin.products.variants.title')}</CardTitle>
+        <CardTitle>
+          <SwatchBookIcon className="size-4" />
+          {t('admin.products.variants.title')}
+        </CardTitle>
         {fields.length > 0 && (
           <Button type="button" variant="outline" size="sm" onClick={() => setBulkOpen(true)}>
             {t('admin.products.variants.bulk_edit.trigger')}

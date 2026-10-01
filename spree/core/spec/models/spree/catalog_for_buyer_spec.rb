@@ -59,7 +59,7 @@ RSpec.describe Spree::Catalog, '.for_buyer' do
     Spree::Current.reset_catalog_memos
     queries = 0
     subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |*, payload|
-      queries += 1 if payload[:sql].to_s.include?('spree_companies')
+      queries += 1 if payload[:sql].to_s.include?('spree_companies') && !payload[:name].to_s.include?('SCHEMA')
     end
 
     5.times { described_class.for_buyer(store: store, customer: customer) }

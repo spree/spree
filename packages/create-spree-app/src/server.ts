@@ -56,15 +56,30 @@ export function prepareServerTemplate(projectDir: string): void {
     fs.rmSync(path.join(serverDir, '.github'), { recursive: true, force: true })
   }
 
-  // Render reads a single Blueprint from the repository root. The starter ships
-  // The starter authors render.yaml for exactly this project layout (Docker
-  // runtime, server/Dockerfile built with the repo root as context, so the
-  // ejected server and apps/dashboard ship in one image) — Render just needs
-  // it at the repo root where Blueprints are read.
+  // Render reads a single Blueprint from the repository root. Each service
+  // builds server/Dockerfile with the repo root as context, so the ejected
+  // server and apps/dashboard ship in one image.
   const srcRenderYaml = path.join(serverDir, 'render.yaml')
   if (fs.existsSync(srcRenderYaml)) {
-    fs.renameSync(srcRenderYaml, path.join(projectDir, 'render.yaml'))
+    const content = fs.readFileSync(srcRenderYaml, 'utf-8')
+    fs.writeFileSync(path.join(projectDir, 'render.yaml'), adaptRenderYamlForNestedServer(content))
+    fs.rmSync(srcRenderYaml)
   }
+}
+
+/**
+ * Point every Render service's `dockerfilePath` at `server/Dockerfile`. The
+ * starter may author its Blueprint for standalone deploys (`./Dockerfile`) or
+ * already for this layout; either way the relocated file builds the nested
+ * server. Commented-out services (the worker template) are rewritten too, so
+ * uncommenting one works as-is. The Dockerfile detects the layout from its
+ * build context, so `dockerContext` stays the repo root.
+ */
+export function adaptRenderYamlForNestedServer(content: string): string {
+  return content.replace(
+    /^([ \t]*(?:#[ \t]*)?dockerfilePath:[ \t]*)(?:\.\/)?Dockerfile[ \t]*$/gm,
+    '$1./server/Dockerfile',
+  )
 }
 
 /**

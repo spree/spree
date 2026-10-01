@@ -1,44 +1,143 @@
 ---
 title: "Stock Locations"
-description: "Learn how to create and manage stock locations in Spree Commerce."
+description: "Learn how to set up the warehouses, shops and pickup points your store holds stock in and fulfils orders from."
 ---
 
-For large businesses with multiple warehouses, the ability to add multiple stock locations is essential for efficiently managing inventory across different regions. 
+A stock location is a place you hold stock and fulfil orders from. That might be a warehouse, a shop with a stockroom, or a third-party fulfilment centre. Every unit of stock in your store sits at a location, and every order is fulfilled from one.
 
-It ensures accurate stock tracking, optimizes order fulfillment, and enables faster shipping by routing orders from the nearest warehouse.
+Stores running a single warehouse can largely set this up once and leave it. It becomes more involved as you add locations: stock is counted per location, [<u>transfers</u>](/user/inventory/stock-transfers) move goods between them, and [<u>delivery profiles</u>](/user/settings/delivery-profiles) decide which locations ship to which places and at what price.
 
-To set up and manage stock locations, navigate to **Settings → Locations**.
+To manage stock locations, navigate to **Settings → Stock locations**, under the **Shipping & delivery** group.
 
-![](/docs/images/user/settings/locations/1-stock-locations.png)
+## Reviewing Your Stock Locations
 
-## Add a New Location
+![The Stock locations list, showing each location's type, address and whether it accepts pickup and returns](/docs/images/user/settings/locations/1-locations-overview.png)
 
-To add a new Location, click on **New Stock Location** in the top right corner. This will open the Location creation form.
+Each row shows:
 
-![](/docs/images/user/settings/locations/2-create-stock-location.png)
+- **Name** - What the location is called.
+- **Type** - Whether it is a warehouse, a store, or a fulfillment center.
+- **Location** - The city and country from its address.
+- **Pickup** - Whether customers can collect orders from here.
+- **Returns** - Whether returned goods come back here.
+- **Active** - Whether the location is available for fulfilment.
+- **Default** - The location new stock levels propagate to. Only one location carries this.
+- **Seller** - On a marketplace, the seller the location belongs to.
 
-Simply enter a name, company name, the address, and (optionally) a phone number, and click then click **Create** at the bottom of the page to create the Location.
+Use the **Type** filter to narrow the list to warehouses, stores or fulfillment centers.
 
-The new Location will now be added to your list of stock locations.
+## How to Create a Stock Location
 
-![](/docs/images/user/settings/locations/3-stock-location-created.png)
+Click **Add stock location**. A panel opens with five groups of settings.
 
-## Edit a Location
+![The Add stock location panel, showing the details, behaviour switches and address fields](/docs/images/user/settings/locations/2-add-location.png)
 
-To edit a Location, simply click **Edit** on the right-hand side of the Location’s row, and update the information as necessary.
+### Details
 
-## Set a Default Location
+What the location is called and what kind of place it is.
 
-To set your default Location, click the **three-dot menu** on the right-hand side of the Location’s row and select **Mark as default** from the menu.
+- **Name** - What the location is called. Customers may see this at checkout when choosing a pickup point.
+- **Internal name** - An optional alternative name shown only in the admin, for when your team calls a location something different from what customers see.
+- **Kind** - **Warehouse**, **Store**, or **Fulfillment center**.
 
-![](/docs/images/user/settings/locations/4-set-default-location.png)
+### Behavior
 
-## Delete a Location
+Four switches that decide how the location handles stock.
 
-To delete a Location, click **Edit** on the right side of the Location’s row to open the Location edit form, and click **Delete** at the bottom of the page.
+- **Active** - On by default. Inactive locations do not appear in fulfillment selection.
+- **Default location** - New stock levels propagate here. Only one location can be default.
+- **Backorderable by default** - New stock levels at this location default to allowing backorders when out of stock.
+- **Auto-create stock levels for all variants** - Creates a stock level at this location for every product variant you sell.
 
-![](/docs/images/user/settings/locations/5-delete-stock-location.png)
+<Warning>Turning on **Auto-create stock levels for all variants** puts every variant in your catalogue onto this location's books at once. On a large catalogue that is a lot of rows. Leave it off if the location will only ever carry part of your range.</Warning>
 
-The Location will then be removed from your list of stock locations.
+### Address
 
-Congratulations, you now know how to create, edit, and delete stock locations!
+- **Address line 1**, **Address line 2**, **City**, **Postal code**, **Country**, **State / Province**
+- **Phone**
+- **Company**
+
+A complete address matters more than it looks. It is what carriers quote delivery rates from, and what customers are shown when collecting an order in person.
+
+<Note>The **State / Province** field changes shape with the country you pick, appearing as a dropdown for countries with defined states and a plain text box for those without.</Note>
+
+### Returns
+
+Whether goods customers send back come here.
+
+- **Accept returns here** - On by default. Returned goods come back to this location. Turn it off if returns are inspected somewhere else.
+
+<Note>**Accept returns here** is on by default, so a new location will start receiving returns as soon as it is created unless you turn it off.</Note>
+
+### Pickup
+
+Whether customers can collect their orders here in person.
+
+- **Allow customer pickup** - Off by default. Customers can pick orders up from this location at checkout.
+
+Turning this on reveals three more settings that decide how collection works here:
+
+- **Stock policy** - What a customer can collect:
+  - **Only items at this location** offers pickup for what is already on this shelf, so a customer is never promised something that is not there.
+  - **Allow transfers from other locations** lets them collect items you would bring in from another warehouse first.
+- **Ready in (minutes)** - How long it takes your team to have an order ready to collect. This sets the expectation the customer is given at checkout, so base it on how quickly someone actually picks and packs rather than on how quickly you would like to.
+- **Pickup instructions** - Where the customer should go to collect their order. Worth being specific: the entrance to use, the desk to ask at, and what to bring.
+
+<Warning>**Allow transfers from other locations** means a customer can order to pick up something this location does not hold. Only use it where your team will reliably review and process the transfer and bring the stock in, otherwise a customer arrives to collect an order that was never here.</Warning>
+
+Click **Create stock location** when you are done.
+
+## How to Edit a Stock Location
+
+Open the row menu on any location and choose **Edit**. The panel carries everything from the creation form, plus two sections that only appear once the location exists.
+
+### Stock at this location
+
+![The Stock at this location panel, listing variants with their on-hand and backorder settings](/docs/images/user/settings/locations/3-stock-at-location.png)
+
+This panel lists every variant stocked here, with its **On hand** count and whether it is **Backorderable**, and lets you adjust both per variant. Variants running low are marked **low stock**.
+
+Use the search box to find a product by name or SKU. If the location has no stock yet, the panel reads **No stock levels at this location yet**.
+
+<Note>For day-to-day counting, the [<u>Inventory</u>](/user/inventory/stock-levels) page is usually quicker, because it shows every location at once and records a reason against each correction.</Note>
+
+### Stock history
+
+Every change to this location's stock, newest first, and what caused it. Where the **Stock at this location** panel shows what you have now, this shows how it got that way.
+
+![The Stock history panel, listing each movement with its cause](/docs/images/user/settings/locations/4-stock-history.png)
+
+Each row records:
+
+- **Date** - When the change happened.
+- **Product** - The variant that moved, with its SKU beneath.
+- **Where** - The location the change was recorded against.
+- **Change** - How many units, signed. Additions are shown in green and departures in red.
+- **What happened** - **Received**, **Allocated**, **Shipped**, **Released**, or **Adjusted**.
+- **Why** - The document behind the change, such as **Purchase order**, **Stock transfer**, **Return**, **Exchange**, **Fulfillment**, **Order**, or **Manual adjustment**.
+
+The **Why** column names the document and links to it, so a row reading "Stock transfer T1001" takes you straight to the transfer that moved the units. Returns and exchanges link to the order they belong to.
+
+This is where you answer "why is this number what it is". A count that looks wrong is usually explained by a movement here, and if it is not, the change was made outside Spree and needs a correction with a reason attached.
+
+<Note>If the location has never held stock, the panel reads **Nothing has changed this stock yet**.</Note>
+
+Click **Save** when you have finished, then **Close**.
+
+## How to Set a Default Location
+
+The default location is the one new stock levels propagate to. To change it, open the location you want as the default, turn on **Default location**, and save.
+
+<Note>Only one location can be default. Turning the switch on for one location takes it off whichever location held it before.</Note>
+
+## How to Delete a Stock Location
+
+Open the row menu on the locations list and choose **Delete**.
+
+<Warning>Deleting a location removes the stock records held there. Move the stock out with a [<u>transfer</u>](/user/inventory/stock-transfers) first if it is going somewhere else, so the movement is recorded rather than simply disappearing.</Warning>
+
+## Further Reading
+
+- [<u>Inventory</u>](/user/inventory/stock-levels) - What you have at each location
+- [<u>Stock Transfers</u>](/user/inventory/stock-transfers) - Moving stock between locations
+- [<u>Delivery Profiles</u>](/user/settings/delivery-profiles) - Which locations ship where, and at what price

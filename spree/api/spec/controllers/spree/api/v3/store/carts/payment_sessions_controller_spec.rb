@@ -31,6 +31,23 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(json_response['order_id']).to eq(order.prefixed_id)
     end
 
+    it 'does not accept a staff-only payment method' do
+      payment_method.update!(storefront_visible: false)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'rejects a payment method unavailable for the cart' do
+      allow_any_instance_of(payment_method.class).to receive(:available_for_order?).and_return(false)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('payment_method_unavailable')
+    end
+
     it 'passes external_data to the gateway' do
       post :create, params: {
         cart_id: order.prefixed_id,

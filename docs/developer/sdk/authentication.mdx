@@ -27,8 +27,11 @@ For authenticated customer actions like viewing orders or managing addresses:
 <AuthJwtExample />
 
 ```typescript
-// Refresh token when needed
-const newTokens = await client.auth.refresh({ token })
+// Exchange the refresh_token returned by login for a new access token.
+// The refresh token rotates, so store the new one as well.
+const { token: newToken, refresh_token: newRefreshToken } = await client.auth.refresh({
+  refresh_token: refreshToken,
+})
 ```
 
 ## Register New Customer

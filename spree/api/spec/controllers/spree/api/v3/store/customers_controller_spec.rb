@@ -358,6 +358,22 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         expect(json_response['error']['code']).to eq('current_password_invalid')
       end
 
+      # Under the login lockout, so a stolen session cannot guess the password.
+      it 'counts a wrong current_password towards the lockout' do
+        expect {
+          patch :update, params: { email: 'new@example.com', current_password: 'wrongpassword' }
+        }.to change { user.reload.failed_attempts }.by(1)
+      end
+
+      it 'refuses the right current_password while the account is locked' do
+        user.update_columns(locked_at: Time.current)
+
+        patch :update, params: { email: 'new@example.com', current_password: 'secret123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(user.reload.email).not_to eq('new@example.com')
+      end
+
       it 'accepts correct current_password' do
         patch :update, params: { email: 'new@example.com', current_password: 'secret123' }
 

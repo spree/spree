@@ -4,7 +4,9 @@ module Spree
     # Derive-then-persist: statuses are recomputed from payment/refund/
     # fulfillment records and stored in indexed columns so admin filtering
     # keeps working. Triggered from payment/refund/fulfillment/return event
-    # subscribers — never inline from controllers.
+    # subscribers, and by each edit service that moves an order's total
+    # (fees, discounts, items) once it has re-summed — no event announces
+    # that change. Never inline from controllers.
     class UpdateStatuses
       prepend Spree::ServiceModule::Base
 
@@ -60,14 +62,20 @@ module Spree
       # shipped and been captured while another has not, no proportion of the
       # group's totals can describe either.
       #
+      # Refunded spans both ledgers. A refund paid as store credit writes no
+      # {Spree::Refund} row, and counting only those rows left an order that
+      # had given every penny back still reading `paid`.
+      #
       # @return [Array(BigDecimal, BigDecimal, BigDecimal)] captured,
       #   authorized and refunded, in that order
       def money_for(order)
+        credited = order.store_credit_refunds.sum(:amount)
+
         unless order.order_group_id.present?
           return [
             order.payments.valid.completed.sum(:amount),
             order.payments.valid.pending.sum(:amount),
-            order.refunds.sum(:amount)
+            order.refunds.sum(:amount) + credited
           ]
         end
 
@@ -76,7 +84,7 @@ module Spree
 
         # Authorized means still to draw: what the shares allow, less what has
         # already been taken against them.
-        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount)]
+        [captured, splits.sum(&:authorized_amount) - captured, splits.sum(&:refunded_amount) + credited]
       end
 
       # Rolls the fulfillments up into one word for filtering and display.

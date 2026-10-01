@@ -369,6 +369,10 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at seller_id]
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
                                                    product_type product_categories option_types seller]
+    # The storefront filters by tag, category and collection; every other hop
+    # (variants, prices, channels) reaches back-office data, and variants lead
+    # back to the product, which lets one filter chain joins without end.
+    self.storefront_ransackable_associations = %w[tags categories collections]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids

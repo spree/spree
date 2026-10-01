@@ -48,11 +48,12 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
   {
     labelKey: 'admin.pages.settings.webhooks.event_groups.customer',
     events: [
-      'customer.created',
-      'customer.deleted',
+      'customer.anonymized',
       'customer.password_reset',
       'customer.password_reset_requested',
-      'customer.updated',
+      'user.created',
+      'user.deleted',
+      'user.updated',
     ],
   },
   {

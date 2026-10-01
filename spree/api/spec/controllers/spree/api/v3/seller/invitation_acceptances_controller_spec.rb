@@ -96,6 +96,27 @@ RSpec.describe Spree::Api::V3::Seller::InvitationAcceptancesController, type: :c
         expect(response).to have_http_status(:unauthorized)
         expect(invitation.reload).not_to be_accepted
       end
+
+      # Otherwise the invitation token is an unthrottled way to guess the
+      # account's password.
+      it 'counts a wrong password towards the lockout' do
+        expect {
+          post :accept,
+               params: { id: invitation.prefixed_id, token: invitation.token, password: 'nope' },
+               as: :json
+        }.to change { existing.reload.failed_attempts }.by(1)
+      end
+
+      it 'refuses the right password while the account is locked' do
+        existing.update_columns(locked_at: Time.current)
+
+        post :accept,
+             params: { id: invitation.prefixed_id, token: invitation.token, password: 'sekrit123' },
+             as: :json
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(invitation.reload).not_to be_accepted
+      end
     end
 
     it 'refuses an invitation onto the store' do

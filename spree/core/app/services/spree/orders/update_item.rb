@@ -47,7 +47,10 @@ module Spree
         ActiveRecord::Base.transaction do
           return failure(line_item) unless line_item.update(attributes)
 
-          Spree::Orders::Recalculate.call(order: order, line_item: line_item) if quantity_changing || price_provided
+          if quantity_changing || price_provided
+            Spree::Orders::Recalculate.call(order: order, line_item: line_item)
+            order.update_statuses!
+          end
         end
 
         success(line_item)

@@ -193,7 +193,7 @@ const filters = await client.products.filters()
 //   filters: [
 //     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
 //     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, { id: 'out_of_stock', count: 3 }] },
-//     { id: 'optt_xxx', type: 'option', name: 'size', label: 'Size', kind: 'dropdown', options: [{ id: 'optval_xxx', name: 'Small', label: 'Small', position: 1, color_code: null, image_url: null, count: 12 }] },
+//     { id: 'opt_xxx', type: 'option', name: 'size', label: 'Size', kind: 'dropdown', options: [{ id: 'optval_xxx', name: 'Small', label: 'Small', position: 1, color_code: null, image_url: null, count: 12 }] },
 //     { id: 'categories', type: 'category', options: [{ id: 'ctg_xxx', name: 'Clothing', permalink: 'clothing', count: 45 }] },
 //   ],
 //   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: '-price' }],
@@ -294,10 +294,10 @@ See [Querying](/api-reference/store-api/querying) for the full list of filtering
 
 ## Search Providers
 
-Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
+Spree uses a pluggable search provider architecture. The default provider uses SQL (ILIKE + Ransack). For production catalogs with 1,000+ products, we recommend installing the `spree_meilisearch` gem and switching to [Meilisearch](/integrations/search/meilisearch) for typo tolerance, relevance ranking, and faster faceted search.
 
 ```ruby server/config/initializers/spree.rb
-Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 ```
 
 No client-side or API changes are needed — the same `q[search]`, filter params, and sort options work with any provider.

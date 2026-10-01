@@ -37,7 +37,7 @@ module Spree
         private
 
         def product_scope
-          Spree::Product.accessible_by(import.current_ability, :manage)
+          store.products.accessible_by(import.current_ability, :manage)
         end
       end
     end

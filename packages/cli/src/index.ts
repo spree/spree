@@ -11,6 +11,7 @@ import { registerConsoleCommand } from './commands/console.js'
 import { registerDbCommand } from './commands/db.js'
 import { registerDevCommand } from './commands/dev.js'
 import { registerEjectCommand } from './commands/eject.js'
+import { registerEncryptionCommand } from './commands/encryption.js'
 import { registerExecCommand } from './commands/exec.js'
 import { registerGenerateCommand } from './commands/generate.js'
 import { registerInitCommand } from './commands/init.js'
@@ -92,6 +93,7 @@ registerShellCommand(program)
 // Spree-specific helpers
 registerUserCommand(program)
 registerApiKeyCommand(program)
+registerEncryptionCommand(program)
 registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)

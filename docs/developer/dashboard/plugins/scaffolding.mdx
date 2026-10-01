@@ -1,7 +1,7 @@
 ---
 title: Scaffolding
 sidebarTitle: Scaffolding
-description: Generate a new dashboard plugin monorepo with `@spree/cli` in one command. Includes TypeScript, biome, tsup, a working example entry-point, and translations.
+description: Generate a new dashboard plugin monorepo with `@spree/cli` in one command. Includes TypeScript, biome, a working example entry-point, and translations.
 ---
 
 `@spree/cli` ships a `plugin new` command that scaffolds the whole plugin monorepo for you. Generated layout:
@@ -15,7 +15,7 @@ your-plugin/
 ├── .gitignore
 └── packages/
     └── dashboard/
-        ├── package.json    # @your-scope/dashboard-your-plugin
+        ├── package.json    # @your-scope/your-plugin-dashboard
         ├── tsconfig.json
         ├── biome.json
         └── src/
@@ -68,14 +68,14 @@ For CI and scripted use, `-y` / `--yes` accepts the default for anything the fla
 npx @spree/cli plugin new my-plugin -y
 ```
 
-`--force` overwrites an existing directory. `--no-dashboard` skips the dashboard package (Rails-engine-only plugins). `--no-engine` is reserved — engine scaffolding lands later.
+`--force` overwrites an existing directory. `--no-dashboard` and `--no-engine` are reserved for when engine scaffolding lands — today the dashboard package is the only half the CLI generates, so `--no-dashboard` leaves nothing to scaffold.
 
 ## After scaffolding
 
 ```bash
 cd my-plugin
 pnpm install          # runs by default unless --no-install
-pnpm build
+pnpm build            # type-checks the plugin — it ships TypeScript source
 ```
 
 You now have a buildable plugin. The next page covers what to put in `package.json` for publishing — but if you're using it internally and importing by path, you can stop here and skip [Publishing](/developer/dashboard/plugins/publishing).

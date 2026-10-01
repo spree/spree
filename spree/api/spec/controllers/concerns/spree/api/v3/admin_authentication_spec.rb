@@ -88,6 +88,35 @@ RSpec.describe Spree::Api::V3::Admin::TaxCategoriesController, type: :controller
     end
   end
 
+  # The upgrade guide's answer to record-level rules the catalog cannot express
+  # is replacing the ability class — so a JWT admin must be authorized by it.
+  describe 'custom ability class via Spree::Dependencies' do
+    let(:custom_ability_class) do
+      Class.new(Spree::Ability) do
+        def initialize(user, options = {})
+          super
+          cannot :manage, Spree::TaxCategory
+        end
+      end
+    end
+
+    before do
+      stub_const('MyApp::Ability', custom_ability_class)
+      Spree::Dependencies.ability_class = 'MyApp::Ability'
+      request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+    end
+
+    after { Spree::Dependencies.ability_class = 'Spree::Ability' }
+
+    it 'builds the JWT admin ability from the configured class and enforces its rules' do
+      get :show, params: { id: tax_category.prefixed_id }, as: :json
+
+      expect(controller.send(:current_ability)).to be_a(MyApp::Ability)
+      expect(controller.send(:current_ability).store).to eq(store)
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'touch throttling for secret keys' do
     before { request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token }
 

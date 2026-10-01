@@ -375,6 +375,28 @@ describe Spree::LineItem, type: :model do
     end
   end
 
+  describe '#discounted_amount_for' do
+    before do
+      line_item.price = 10
+      line_item.quantity = 3
+      line_item.taxable_adjustment_total = -10
+    end
+
+    it 'rounds a share that does not divide evenly to the currency' do
+      expect(line_item.discounted_amount_for(1)).to eq(6.67)
+    end
+
+    it 'comes to the whole discounted line for every unit' do
+      expect(line_item.discounted_amount_for(3)).to eq(20)
+    end
+
+    it 'is never negative' do
+      line_item.taxable_adjustment_total = -40
+
+      expect(line_item.discounted_amount_for(1)).to eq(0)
+    end
+  end
+
   describe '.currency' do
     it 'returns the globally configured currency' do
       line_item.currency == 'USD'

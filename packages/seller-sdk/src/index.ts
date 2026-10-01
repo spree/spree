@@ -7,6 +7,7 @@ export { SpreeError } from '@spree/sdk-core'
 export type { Client, Client as SellerApiClient, SellerClientConfig } from './client'
 export { createSellerClient } from './client'
 export type {
+  AccountUpdateParams,
   BulkProductResult,
   DeliveryCalculatorType,
   DeliveryMethodParams,
@@ -14,6 +15,7 @@ export type {
   DeliveryMethodRuleType,
   DeliveryPreferenceField,
   DeliveryZoneListParams,
+  MeResource,
   MeResponse,
   OnboardingResponse,
   OrderAddressParams,

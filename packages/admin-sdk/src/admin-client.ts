@@ -337,6 +337,7 @@ import type {
   ReasonCreateParams,
   ReasonUpdateParams,
   ReceivableCloseParams,
+  RefundCreateParams,
   ResourceTypeDefinition,
   ReturnCreateParams,
   ReturnReceiveParams,
@@ -438,6 +439,7 @@ import type {
   ImportRow,
   Integration,
   Invitation,
+  InvitationAcceptanceLink,
   LineItem,
   Locale,
   Market,
@@ -514,6 +516,8 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   'Spree::Product': '/products',
   'Spree::Variant': '/variants',
   'Spree::Order': '/orders',
+  'Spree::Customer': '/customers',
+  // Pre-6.0 customer class name, kept so existing callers still resolve.
   'Spree::User': '/customers',
   'Spree::Category': '/categories',
   'Spree::Collection': '/collections',
@@ -860,8 +864,9 @@ export class AdminClient {
     /**
      * Public (unauthenticated) request for a password reset email. Always
      * resolves (202) whether or not the email matches an account, to prevent
-     * enumeration. The emailed link points at `redirect_url` (validated against
-     * the store's allowed origins) with the reset token appended as `?token=`.
+     * enumeration. The emailed link points at `redirect_url` when it is on the
+     * dashboard's origin and the account is staff of the store, otherwise at the
+     * dashboard's reset page, with the reset token appended as `?token=`.
      */
     requestPasswordReset: (
       params: PasswordResetRequestParams,
@@ -2135,13 +2140,7 @@ export class AdminClient {
 
       create: (
         orderId: string,
-        params: {
-          payment_id: string
-          /** Decimal amount; see `PaymentCreateParams.amount` for the string rationale. */
-          amount: string | number
-          reason_id?: string
-          refund_reason_id?: string
-        },
+        params: RefundCreateParams,
         options?: RequestOptions,
       ): Promise<Refund> =>
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
@@ -3151,6 +3150,18 @@ export class AdminClient {
       /** Sends the email again; refused once the offer has lapsed. */
       resend: (sellerId: string, id: string, options?: RequestOptions): Promise<Invitation> =>
         this.request<Invitation>('PATCH', `/sellers/${sellerId}/invitations/${id}/resend`, options),
+
+      /** The link that joins the seller's team; needs write access to sellers. */
+      acceptanceLink: (
+        sellerId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<InvitationAcceptanceLink> =>
+        this.request<InvitationAcceptanceLink>(
+          'GET',
+          `/sellers/${sellerId}/invitations/${id}/acceptance_link`,
+          options,
+        ),
     },
 
     /** What this seller submitted about the requirements, and its decisions. */
@@ -4531,7 +4542,7 @@ export class AdminClient {
         this.request<void>('DELETE', `/customers/${customerId}/store_credits/${id}`, options),
     },
 
-    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::User']),
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Customer']),
   }
 
   // ============================================
@@ -5633,6 +5644,13 @@ export class AdminClient {
     /** Issues a fresh token + email for a pending invitation. */
     resend: (id: string, options?: RequestOptions): Promise<Invitation> =>
       this.request<Invitation>('PATCH', `/invitations/${id}/resend`, options),
+
+    /**
+     * The acceptance link of a pending invitation. It carries the token, so it
+     * needs write access to staff and the right to grant the invitation's role.
+     */
+    acceptanceLink: (id: string, options?: RequestOptions): Promise<InvitationAcceptanceLink> =>
+      this.request<InvitationAcceptanceLink>('GET', `/invitations/${id}/acceptance_link`, options),
   }
 
   // ============================================

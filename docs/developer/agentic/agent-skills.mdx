@@ -1,7 +1,7 @@
 ---
 title: "Agent Skills"
 sidebarTitle: Agent Skills
-description: "Teach your AI coding agent Spree's conventions — 25 installable skills, a Spree expert subagent, slash commands, and safety hooks."
+description: "Teach your AI coding agent Spree's conventions — 38 installable skills, a Spree expert subagent, slash commands, and safety hooks."
 ---
 
 [spree/agent-skills](https://github.com/spree/agent-skills) is a collection of agent skills for Spree Commerce. Skills are markdown instructions your coding agent loads on demand — they encode Spree's conventions, customization decision trees, API patterns, and upgrade flows, so the agent does things the Spree way instead of improvising from training data.
@@ -9,6 +9,11 @@ description: "Teach your AI coding agent Spree's conventions — 25 installable 
 The skills work with Claude Code, Codex, Cursor, GitHub Copilot, Cline, Aider, Zed, Windsurf, OpenCode, and 60+ other agentic tools.
 
 ## Install
+
+<Note>
+The skills target Spree 6. For a Spree 5 project, use the [`v0.3.0` release](https://github.com/spree/agent-skills/tree/v0.3.0) of the skills.
+</Note>
+
 
 Run from your project directory:
 
@@ -30,7 +35,7 @@ npx skills update                                        # update installed skil
 
 | | |
 |---|---|
-| **25 skills** | Project conventions, the customization decision tree (subscriber vs decorator vs dependency injection vs generator), the v3 Store + Admin API, the `spree:model` / `spree:api_resource` generators, TypeScript SDKs, upgrades, and domain deep-dives: catalog, checkout, payments, promotions, pricing, shipping, i18n, testing, security, performance, deployment. |
+| **38 skills** | Project conventions, the customization decision tree (workflow hook vs event subscriber vs provider vs dependency swap vs decorator), workflows and hooks, the v3 Store, Admin and Seller APIs, the `spree:model` / `spree:api_resource` generators, TypeScript SDKs, staff permissions, the admin dashboard and plugins, upgrades (including 5.6 → 6.0), and domain deep-dives: catalog, pricing, inventory, checkout, order totals, taxes, payments, promotions, fulfillment, returns, marketplace, B2B, multi-tenant, reporting, i18n, testing, security, performance, deployment. |
 | **`spree-expert` subagent** | A Claude Code agent for multi-step investigations (upgrade audits, checkout-flow debugging, API surface planning). It researches in its own context window and returns a focused report, keeping your main session lean. |
 | **2 slash commands** | `/spree:doctor` diagnoses the local dev stack (containers, env, migrations, job queues) and prescribes fixes. `/spree:audit-upgrade [version]` runs a read-only upgrade-readiness audit against your codebase. |
 | **2 safety hooks** | Block destructive database commands (`db:drop`, `DROP TABLE spree_*`, mass deletes, force-pushes to main) and warn when an edit introduces a hardcoded secret (Stripe live keys, AWS keys, API tokens). Disable with `SPREE_HOOKS_DISABLE=1`. |

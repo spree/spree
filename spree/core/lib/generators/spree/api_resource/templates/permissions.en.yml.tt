@@ -1,0 +1,6 @@
+en:
+  spree:
+    permissions_catalog:
+      resources:
+        <%= plural_name %>:
+          label: <%= plural_name.humanize %>

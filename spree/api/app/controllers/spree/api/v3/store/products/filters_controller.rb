@@ -40,6 +40,7 @@ module Spree
                 current_store.id,
                 current_currency,
                 current_locale,
+                (hide_prices? ? 'prices_hidden' : nil),
                 category&.cache_key_with_version,
                 collection&.cache_key_with_version,
                 search_query,

@@ -7,6 +7,7 @@ module Spree
     # decide at resolution time rather than at claim creation.
     class Resolve < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Fulfillments::Replacements
 
       hooks :validate, :before_settle, :after_resolve
 
@@ -96,51 +97,23 @@ module Spree
       end
 
       def build_replacement_fulfillments
-        units = claim.replacement_line_items.map do |line|
-          claim.order.fulfillment_items.new(
-            variant: line.variant_to_send,
-            quantity: line.quantity,
-            line_item: line.line_item,
-            order: claim.order,
-            status: 'on_hand'
-          )
+        items = claim.replacement_line_items.map do |line|
+          { variant: line.variant_to_send, quantity: line.quantity, line_item: line.line_item }
         end
 
-        failure(claim, :nothing_to_replace) if units.empty?
+        failure(claim, :nothing_to_replace) if items.empty?
 
-        @fulfillments = Spree::Stock::Coordinator.new(claim.order, units).fulfillments
-        if @fulfillments.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
-          failure(claim, :replacement_out_of_stock)
-        end
-
-        claim.order.fulfillments += @fulfillments
-        claim.order.save!
-        @fulfillments.each { |fulfillment| allocate_replacement_stock(fulfillment) }
-      end
-
-      # See Spree::Exchanges::Fulfill — a replacement that holds no promise
-      # ships without writing a movement, so the shelf never follows the goods.
-      def allocate_replacement_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
-        end
+        @fulfillments = build_replacements(claim, items)
       end
 
       def issue_store_credit
-        @refunds = [
-          Spree::StoreCredit.create!(
-            store: claim.store,
-            customer: claim.order.customer,
-            amount: @amount_to_refund,
-            currency: claim.currency,
-            created_by: resolver,
-            originator: claim,
-            memo: "Claim #{claim.number}"
-          )
-        ]
+        @refunds = issue_refund_store_credit(
+          order: claim.order,
+          amount: @amount_to_refund,
+          record: claim,
+          memo: "Claim #{claim.number}",
+          refunder: resolver
+        )
       end
 
       def refund_at_gateway

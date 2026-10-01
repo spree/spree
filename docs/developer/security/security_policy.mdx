@@ -63,6 +63,7 @@ Spree API is built on **Ruby on Rails** which provides strong security defaults 
 We recommend:
 
 - Keeping Spree and all dependencies up to date
+- Configuring [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) keys in production — without them, webhook signing secrets, payment gateway customer IDs and OAuth tokens are stored in plain text
 - Following the [Rails Security Guide](https://guides.rubyonrails.org/security.html)
 - Using [bundler-audit](https://github.com/rubysec/bundler-audit) to scan for known vulnerabilities in dependencies
 - Running [brakeman](https://github.com/presidentbeef/brakeman) for static security analysis

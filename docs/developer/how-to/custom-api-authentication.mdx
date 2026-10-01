@@ -59,7 +59,7 @@ Client → POST /api/v3/store/auth/login
 Client → subsequent calls with `Authorization: Bearer <Spree JWT>`
 ```
 
-The third-party JWT proves identity **once, at login**. After that, the client uses the Spree JWT for everything, and `/auth/refresh` rotates it via Spree's own refresh-token mechanism. Your existing CanCanCan rules, `current_user`, and serializer params just work.
+The third-party JWT proves identity **once, at login**. After that, the client uses the Spree JWT for everything, and `/auth/refresh` rotates it via Spree's own refresh-token mechanism. Your existing authorization, `current_user`, and serializer params just work.
 
 ## Step 1: Create the Strategy Class
 
@@ -142,6 +142,10 @@ end
 
 `find_or_create_user_from_oauth` returns the **user**, not the identity. It creates the `Spree::UserIdentity` row on first login (mapping `provider + uid → user`) and reuses it on subsequent logins — so repeat sign-ins land on the same Spree customer.
 
+<Note>
+Any `access_token` and `refresh_token` you pass in `tokens` are stored on the identity and encrypted at rest with Active Record encryption. Configure the encryption keys in production (`bin/rails db:encryption:init`, then store the output in your encrypted credentials). Without them, Spree stores the tokens in plain text.
+</Note>
+
 ## Step 2: Register the Strategy
 
 Add the strategy to a registry in `config/initializers/spree.rb`. **This is the only line that decides which API the provider serves** — `store_authentication_strategies` for customer login, `admin_authentication_strategies` for staff login. Register with both to allow the same provider on either surface. The key you choose here is what clients send as `provider` in the login payload.
@@ -188,7 +192,7 @@ Restrict a surface to SSO by removing the built-in email/password strategy after
 </Tip>
 
 <Warning>
-`Spree::UserIdentity` validates that `provider` is a registered strategy key. Registration must happen during boot — before the first login attempt.
+`Spree::UserIdentity` validates that `provider` is a key registered in the store, admin or seller strategy registry. Registration must happen during boot — before the first login attempt.
 </Warning>
 
 ## Step 3: Call the Exchange Endpoint

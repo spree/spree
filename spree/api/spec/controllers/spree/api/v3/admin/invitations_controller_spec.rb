@@ -53,6 +53,15 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
         expect(Spree::Invitation.last.role).to eq(staff_role)
       end
 
+      # Leaving the role out used to fall back to the admin role.
+      it 'refuses an invitation without a role' do
+        expect {
+          post :create, params: { email: 'attacker@evil.com' }, as: :json
+        }.not_to change(Spree::Invitation, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
       it 'forbids inviting into a role whose permissions exceed its own' do
         owner_role = create(:role, name: 'owner', permissions: Spree.permissions.grantable_keys(:store))
 
@@ -88,6 +97,23 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
 
         expect(response).to have_http_status(:unprocessable_content)
       end
+    end
+  end
+
+  describe 'GET #index' do
+    let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['read_staff']) }
+    let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+    let!(:invitation) { create(:invitation, resource: store, role: admin_role) }
+
+    # The token creates the account and grants the role, so a read-only
+    # principal must never see it.
+    it 'does not expose the acceptance token' do
+      get :index, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].first['id']).to eq(invitation.prefixed_id)
+      expect(response.body).not_to include(invitation.token)
+      expect(json_response['data'].first).not_to have_key('acceptance_url')
     end
   end
 end

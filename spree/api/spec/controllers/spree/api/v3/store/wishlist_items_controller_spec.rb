@@ -39,12 +39,30 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns errors for invalid variant_id' do
+      it 'returns not found for an unknown variant_id' do
         post :create, params: { wishlist_id: wishlist.prefixed_id, variant_id: 0, quantity: 1 }
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['code']).to eq('validation_error')
-        expect(json_response['error']['details']['variant']).to be_present
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    # The item renders its variant and product, so a variant the listing
+    # would not show must read as missing.
+    context 'with a variant the buyer cannot see' do
+      it 'refuses a draft product' do
+        draft_variant = create(:variant, product: create(:product, status: 'draft'))
+
+        expect {
+          post :create, params: { wishlist_id: wishlist.prefixed_id, variant_id: draft_variant.prefixed_id }
+        }.not_to change(Spree::WishlistItem, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'refuses a raw integer id' do
+        post :create, params: { wishlist_id: wishlist.prefixed_id, variant_id: new_variant.id }
+
+        expect(response).to have_http_status(:not_found)
       end
     end
 

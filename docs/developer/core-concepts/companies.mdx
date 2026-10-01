@@ -227,7 +227,8 @@ await adminClient.companies.taxIdentifiers.create('comp_xxx', {
   value: 'NL123456789B01',
 })
 
-// Validation runs against the official registry, in the background
+// Out of the box this checks the number's format and checksum only.
+// Registry lookups (such as VIES) come from an extension that re-registers the validator.
 await adminClient.companies.taxIdentifiers.validate('comp_xxx', 'txid_xxx')
 ```
 

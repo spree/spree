@@ -125,6 +125,11 @@
         "title": "Witaj ponownie"
       },
       "logout": "Wyloguj się",
+      "no_store_access": {
+        "description": "Jesteś zalogowany, ale Twoje konto nie należy jeszcze do żadnego sklepu. Poproś administratora sklepu o zaproszenie lub zaloguj się na inne konto.",
+        "signed_in_as": "Zalogowano jako {{email}}",
+        "title": "Nie masz dostępu do żadnego sklepu"
+      },
       "reset_password": {
         "confirm_password_label": "Potwierdź nowe hasło",
         "error": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -430,7 +435,6 @@
         "filter_select_placeholder": "Wybierz…",
         "filter_text_placeholder": "Filtruj…",
         "filter_to_placeholder": "Filtruj do…",
-        "more_conditions": "Więcej warunków",
         "operators": {
           "after": "po",
           "before": "przed",
@@ -686,6 +690,32 @@
       },
       "quantity": {
         "label": "Ilość"
+      },
+      "setup": {
+        "country_code": {
+          "help": "Skąd wysyłasz. Twój sklep może sprzedawać na całym świecie — to ustala tylko początkową walutę, magazyn i strefy dostawy, które później zmienisz.",
+          "label": "Kraj",
+          "placeholder": "Szukaj krajów"
+        },
+        "currency": {
+          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili.",
+          "label": "Waluta",
+          "placeholder": "Szukaj walut"
+        },
+        "locale": {
+          "help": "Twój domyślny język. Kolejne dodasz w każdej chwili.",
+          "label": "Język"
+        },
+        "password_confirmation": {
+          "label": "Potwierdź hasło"
+        },
+        "sample_data": {
+          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
+          "label": "Wczytaj dane przykładowe"
+        },
+        "store_name": {
+          "label": "Nazwa sklepu"
+        }
       },
       "shipping": {
         "label": "Wysyłka"
@@ -1911,7 +1941,7 @@
         },
         "create_line_items": {
           "name": "Utwórz pozycje zamówienia",
-          "description": "Dodaje do koszyka określoną ilość wariantu"
+          "description": "Dodaje do koszyka określoną ilość wariantu za darmo"
         },
         "free_shipping": {
           "name": "Darmowa wysyłka",

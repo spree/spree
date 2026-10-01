@@ -33,6 +33,7 @@ module Spree
     has_many :claim_line_items, class_name: 'Spree::ClaimLineItem',
                                 dependent: :destroy, inverse_of: :claim
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
+    has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
 
     validates :claim_line_items, presence: true, on: :create
     validates :resolution, inclusion: { in: RESOLUTIONS }, allow_nil: true

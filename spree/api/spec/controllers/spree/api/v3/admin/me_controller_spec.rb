@@ -123,6 +123,32 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       expect(json_response['user']).to have_key('selected_locale')
     end
 
+    context 'as an admin who holds no role on any store' do
+      let(:storeless_user) { create(:admin_user, :without_admin_role) }
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(storeless_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'returns the user with no stores, roles or permission keys' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user']['email']).to eq(storeless_user.email)
+        expect(json_response['user']['stores']).to eq([])
+        expect(json_response['user']['roles']).to eq([])
+        expect(json_response['permission_keys']).to eq([])
+      end
+
+      context 'when the request names a store' do
+        before { request.headers['X-Spree-Store-Id'] = store.prefixed_id }
+
+        it 'returns forbidden' do
+          subject
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['code']).to eq('access_denied')
+        end
+      end
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 

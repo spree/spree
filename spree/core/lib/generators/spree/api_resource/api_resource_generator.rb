@@ -17,6 +17,7 @@ module Spree
   #   - Factory                       (managed — overwrite on re-run)
   #   - Controller specs              (managed — overwrite on re-run)
   #   - Routes                        (idempotent inject between sentinels)
+  #   - Permission scope + label      (idempotent inject; locale owned-once)
   #
   # Owned-once contract: if the model file already exists, the generator
   # leaves it (and the migration) alone — domain code is yours after
@@ -58,6 +59,11 @@ module Spree
                  type: :boolean,
                  default: false,
                  desc: "Don't inject routes into spree/api/config/routes.rb"
+
+    class_option :permission_group,
+                 type: :string,
+                 default: 'catalog',
+                 desc: 'Permission picker group for the read_/write_ keys (orders, catalog, customers, settings, …)'
 
     class_option :skip_specs,
                  type: :boolean,
@@ -182,6 +188,35 @@ module Spree
       inject_route_for(:admin, admin_route_line) if options[:admin]
     end
 
+    # The Admin controller declares `scoped_resource :<plural>`; without a
+    # matching catalog scope its keys cannot be granted to a staff role or
+    # minted on a secret API key, so only full-access principals get in.
+    def register_permission_scope
+      return unless options[:admin]
+
+      if File.exist?(File.join(destination_root, INITIALIZER_PATH))
+        if File.read(File.join(destination_root, INITIALIZER_PATH)).include?("register_scope(:#{plural_name},")
+          say_status :identical, "#{INITIALIZER_PATH} (#{plural_name} permission scope)", :blue
+        else
+          append_to_file INITIALIZER_PATH, permission_scope_block
+        end
+      else
+        create_file INITIALIZER_PATH, permission_scope_block.lstrip
+      end
+    end
+
+    def create_permission_locale
+      return unless options[:admin]
+
+      path = "config/locales/spree_#{plural_name}.en.yml"
+      if File.exist?(File.join(destination_root, path))
+        say_status :skip, "#{path} (owned-once; already exists)", :yellow
+        return
+      end
+
+      template 'permissions.en.yml.tt', path
+    end
+
     no_tasks do
     # A host app declares its API routes in config/routes.rb, inside the
     # engine's route hook that spree-starter ships ready to fill in. The
@@ -253,7 +288,11 @@ module Spree
       say '  Next steps:', :yellow
       say '    1. Review the generated model — add validations, scopes, callbacks'
       say '    2. Apply the migration:  pnpm exec spree migrate'
-      say '    3. Set up authorization (CanCanCan ability) for the resource'
+      if options[:admin]
+        say "    3. Grant read_#{plural_name} / write_#{plural_name} to staff roles or secret API keys"
+      else
+        say '    3. Add an Admin API resource later to manage it from the dashboard'
+      end
       say "    4. Add `has_many :#{plural_name}` to Spree::Store" if store_scoped?
       if options[:store] || options[:admin]
         say "    #{store_scoped? ? 5 : 4}. Run the specs:  pnpm exec spree rspec spec/controllers/spree/api/v3/"
@@ -295,6 +334,13 @@ module Spree
         file_name.pluralize
       end
 
+      def permission_group
+        group = options[:permission_group].to_s
+        raise Thor::Error, "--permission-group must be a lowercase identifier (got #{group.inspect})" unless group.match?(/\A[a-z][a-z0-9_]*\z/)
+
+        group
+      end
+
       # Attributes the controller permits on write. By default, every column
       # except references (FKs come through nested), attachments, rich text.
       def permitted_attribute_names
@@ -305,6 +351,17 @@ module Spree
     end
 
     private
+
+    INITIALIZER_PATH = 'config/initializers/spree.rb'.freeze
+
+    def permission_scope_block
+      <<~RUBY
+
+        # Permissions for the #{bare_class_name} API — grants read_#{plural_name} / write_#{plural_name}
+        # to staff roles and secret API keys. Labels: config/locales/spree_#{plural_name}.en.yml
+        Spree.permissions.register_scope(:#{plural_name}, group: :#{permission_group}, resources: -> { [Spree::#{bare_class_name}] })
+      RUBY
+    end
 
     # Where the model file lands. We use parent's class_path + file_name so
     # this stays in sync with whatever Spree::ModelGenerator decides.

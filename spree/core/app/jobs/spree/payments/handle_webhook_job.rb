@@ -9,6 +9,7 @@ module Spree
 
       def perform(payment_method_id:, action:, payment_session_id:)
         payment_method = Spree::PaymentMethod.find(payment_method_id)
+        Spree::Current.store = payment_method.store
         payment_session = Spree::PaymentSession.find(payment_session_id)
 
         Spree.payments_handle_webhook_workflow.call(

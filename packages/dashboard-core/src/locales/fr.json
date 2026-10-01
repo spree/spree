@@ -125,6 +125,11 @@
         "title": "Bon retour"
       },
       "logout": "Se déconnecter",
+      "no_store_access": {
+        "description": "Vous êtes connecté, mais votre compte n'est encore membre d'aucune boutique. Demandez à un administrateur de boutique de vous inviter, ou connectez-vous avec un autre compte.",
+        "signed_in_as": "Connecté en tant que {{email}}",
+        "title": "Vous n'avez accès à aucune boutique"
+      },
       "reset_password": {
         "confirm_password_label": "Confirmer le nouveau mot de passe",
         "error": "Une erreur s'est produite. Veuillez réessayer.",
@@ -429,7 +434,6 @@
         "filter_select_placeholder": "Sélectionner…",
         "filter_text_placeholder": "Filtrer…",
         "filter_to_placeholder": "Filtrer sur…",
-        "more_conditions": "Autres conditions",
         "operators": {
           "after": "après",
           "before": "avant",
@@ -685,6 +689,32 @@
       },
       "quantity": {
         "label": "Quantité"
+      },
+      "setup": {
+        "country_code": {
+          "help": "D'où vous expédiez. Votre boutique peut vendre dans le monde entier — ceci définit seulement la devise, l'entrepôt et les zones de livraison de départ, tous modifiables ensuite.",
+          "label": "Pays",
+          "placeholder": "Rechercher un pays"
+        },
+        "currency": {
+          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez.",
+          "label": "Devise",
+          "placeholder": "Rechercher une devise"
+        },
+        "locale": {
+          "help": "Votre langue par défaut. Ajoutez-en d’autres quand vous voulez.",
+          "label": "Langue"
+        },
+        "password_confirmation": {
+          "label": "Confirmer le mot de passe"
+        },
+        "sample_data": {
+          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
+          "label": "Charger des données d’exemple"
+        },
+        "store_name": {
+          "label": "Nom de la boutique"
+        }
       },
       "shipping": {
         "label": "Livraison"
@@ -1882,7 +1912,7 @@
         },
         "create_line_items": {
           "name": "Créer des lignes d'article",
-          "description": "Ajoute au panier la quantité spécifiée de la variante"
+          "description": "Ajoute gratuitement au panier la quantité spécifiée de la variante"
         },
         "free_shipping": {
           "name": "Livraison gratuite",

@@ -144,30 +144,26 @@ interface MoneyCellProps extends BaseCellProps {
   /** Canonical decimal string (`12.50`) coming back from the API, or
    *  `null`/blank for unset. */
   value: string | null
-  /** Receives the user's raw input — locale-formatted strings like
-   *  `"12,50"` are fine, the backend's `Spree::LocalizedNumber` does the
-   *  parsing. `null` only when the user explicitly blanks the field. */
+  /** Receives the user's raw, locale-formatted input (`"12,50"`). The caller
+   *  normalizes it to canonical and passes that back as `value`, so the cell
+   *  always shows what will be saved. `null` only when the user explicitly
+   *  blanks the field. */
   onChange: (next: string | null) => void
   /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …).
    *  Omit for a plain decimal cell with no prefix. */
   symbol?: string
   /**
    * Locale decimal separator used only for display (canonical `.` →
-   * locale char). Whatever the user types is shipped as-is; the
-   * backend handles thousands separators, grouped digits, and so on.
-   * Default `.`.
+   * locale char). Default `.`.
    */
   decimal?: string
 }
 
 /**
  * Editable money cell. Like `NumberCell` but keeps decimals (no truncation)
- * and renders a currency-symbol prefix. Mirrors the rails admin's
- * `edit_prices` bulk editor: format the API's canonical value with the
- * locale's decimal mark for display, but ship the user's raw input
- * untouched on save. `Spree::LocalizedNumber.parse` on the backend handles
- * locale-aware parsing (thousands separators, decimal comma, etc.) so the
- * SPA doesn't have to reimplement it.
+ * and renders a currency-symbol prefix. Formats the canonical value with the
+ * locale's decimal mark for display and hands the user's raw input to
+ * `onChange` for the caller to normalize.
  */
 export function MoneyCell({
   coords,
@@ -219,9 +215,7 @@ export function MoneyCell({
   })
 
   function commit() {
-    // Ship the user's raw input; the backend's `Spree::LocalizedNumber`
-    // handles locale-aware parsing. Empty string is the only "clear"
-    // signal we generate frontend-side.
+    // Empty string is the only "clear" signal we generate frontend-side.
     onChange(draft.trim() ? draft : null)
   }
 

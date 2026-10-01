@@ -57,7 +57,7 @@ function ComboboxButtonTrigger({
       data-slot="combobox-button-trigger"
       data-size={size}
       className={cn(
-        "group/combobox-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border shadow-xs bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[size=sm]:shadow-xs data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "group/combobox-trigger flex w-full min-h-8 cursor-pointer items-center justify-between gap-1.5 rounded-md border border-border shadow-control bg-card py-1.5 pr-2 pl-2.5 text-base font-normal leading-normal text-foreground transition-[color,background-color,border-color,box-shadow] duration-100 ease-out outline-none select-none focus:border-blue-500 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground aria-invalid:border-destructive data-[size=sm]:shadow-control data-[size=sm]:h-8 data-[size=sm]:min-h-8 data-[size=sm]:gap-2 data-[size=sm]:px-2 data-[size=sm]:py-1 data-[size=sm]:text-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -295,7 +295,7 @@ function ComboboxChips({
         // resize lets the positioner follow the anchor smoothly; making it
         // instant jumps the open popup out from under the pointer, so the next
         // option click lands on nothing.
-        'flex flex-wrap items-center gap-1.5 rounded-md border border-border bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
+        'flex flex-wrap items-center gap-1.5 rounded-md border border-border shadow-control bg-card text-foreground px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:p-1.5',
         className,
       )}
       {...props}

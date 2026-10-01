@@ -48,7 +48,7 @@ module Spree
       # role naming somewhere else comes back as a 422 rather than access
       # granted elsewhere.
       def send_invitation
-        @invitation = seller.invitations.new(email: email, role: role, inviter: inviter)
+        @invitation = seller.invitations.new(email: email, role: role || seller.default_user_role, inviter: inviter)
 
         failure(@invitation, @invitation.errors) unless @invitation.save
       end

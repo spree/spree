@@ -562,7 +562,7 @@
         "settings_label": "计算器设置"
       },
       "create_line_items_action_editor": {
-        "description": "当促销符合条件时，这些商品会加入购物车。",
+        "description": "当促销符合条件时，这些商品会免费加入购物车。",
         "empty": "尚无变体。请在下方搜索以添加。",
         "search_placeholder": "按名称或 SKU 搜索变体…",
         "variant_label": "添加变体"
@@ -1233,7 +1233,7 @@
             "Spree::Order": "订单",
             "Spree::Product": "商品",
             "Spree::Taxon": "分类",
-            "Spree::User": "客户",
+            "Spree::Customer": "客户",
             "Spree::Variant": "变体"
           },
           "read_only_help": "一旦此字段存在值，所属对象便无法更改。"
@@ -1844,32 +1844,6 @@
         "tax_remittance": {
           "help": "由谁为该卖家的销售申报消费税。",
           "label": "税务申报方"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "您的发货地。您的商店可以面向全球销售——这只设置初始货币、仓库和配送区域，之后均可修改。",
-          "label": "国家/地区",
-          "placeholder": "搜索国家/地区"
-        },
-        "currency": {
-          "help": "您的默认货币。随时可添加更多。",
-          "label": "货币",
-          "placeholder": "搜索货币"
-        },
-        "locale": {
-          "help": "您的默认语言。随时可添加更多。",
-          "label": "语言"
-        },
-        "password_confirmation": {
-          "label": "确认密码"
-        },
-        "sample_data": {
-          "help": "在后台添加演示商品、分类、客户和订单，方便您浏览后台。需要几分钟并会下载商品图片。",
-          "label": "加载示例数据"
-        },
-        "store_name": {
-          "label": "商店名称"
         }
       },
       "state": {
@@ -3354,7 +3328,8 @@
               "approve": "批准",
               "create": "新建退货",
               "receive": "接收商品",
-              "refund": "退款"
+              "refund": "退款",
+              "complete": "完成退货"
             },
             "buy_label": "购买退货面单",
             "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
@@ -3383,6 +3358,8 @@
               "store_credit": "商店积分"
             },
             "refund_title": "退货退款",
+            "complete_title": "完成退货",
+            "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "refund_total": "退款总额",
             "resellable": "可再销售",
             "returning_to": "退回至 {{name}}"
@@ -5098,7 +5075,11 @@
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
       "title": "设置 Spree",
       "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
-      "welcome_title": "欢迎，您的商店已就绪！"
+      "welcome_title": "欢迎，您的商店已就绪！",
+      "rate_limited_title": "尝试次数过多",
+      "rate_limited_message": "短时间内检查设置的次数过多。请等待一分钟后重试。",
+      "check_failed_title": "无法检查设置",
+      "check_failed_message": "无法连接服务器以检查此安装是否需要设置。请确认服务器正在运行，然后重试。"
     },
     "staff": {
       "actions": {
@@ -5123,7 +5104,8 @@
       "errors": {
         "failed_to_remove": "移除员工失败",
         "failed_to_resend": "重新发送邀请失败",
-        "failed_to_revoke": "撤销邀请失败"
+        "failed_to_revoke": "撤销邀请失败",
+        "failed_to_copy_link": "复制邀请链接失败"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

@@ -7,8 +7,9 @@ interface UseCopyToClipboardOptions {
 
 /**
  * Wraps `navigator.clipboard.writeText` with a `copied` flag that flashes true
- * for `resetMs` after a successful copy. Failure (insecure context, denied
- * permissions) is swallowed; the flag stays false.
+ * for `resetMs` after a successful copy. `copy` resolves to whether it worked:
+ * it fails in insecure contexts or when permission is denied, and the flag
+ * then stays false.
  *
  * The reset timer is cleared on unmount so the component doesn't try to
  * `setState` after it's gone.
@@ -24,7 +25,7 @@ export function useCopyToClipboard({ resetMs = 1200 }: UseCopyToClipboardOptions
   }, [])
 
   const copy = useCallback(
-    async (value: string) => {
+    async (value: string): Promise<boolean> => {
       try {
         await navigator.clipboard.writeText(value)
         setCopied(true)
@@ -33,8 +34,9 @@ export function useCopyToClipboard({ resetMs = 1200 }: UseCopyToClipboardOptions
           setCopied(false)
           timerRef.current = null
         }, resetMs)
+        return true
       } catch {
-        // Clipboard API can fail in insecure contexts; ignore silently.
+        return false
       }
     },
     [resetMs],

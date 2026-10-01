@@ -65,22 +65,8 @@ module Spree
         end
       end
 
-      # The owner's PERSISTED coupon code keeps its promotion in candidacy
-      # even before it ever applied — the discount activates on the exact
-      # recalculation where the cart first qualifies, and deactivates the
-      # same way (Shopify-parity for cart-level discount codes). In-memory
-      # assignments deliberately don't participate: unsaved codes belong to
-      # the explicit PromotionHandler::Coupon path.
       def coupon_promotions
-        return [] unless order.class.respond_to?(:column_names) && order.class.column_names.include?('coupon_code')
-
-        code = order.read_attribute(:coupon_code)
-        return [] if code.blank?
-
-        promotion = order.store.promotions.active.with_coupon_code(code)
-        return [] if promotion.nil? || promotion.usage_limit_exceeded?(order)
-
-        [promotion]
+        Spree::Promotion.held_by_saved_coupon_code(order)
       end
 
       # A coupon promotion that produced rows becomes an applied promotion —
@@ -113,7 +99,7 @@ module Spree
       def line_item_candidates(line_item)
         @line_item_candidates ||= {}
         @line_item_candidates[line_item.id] ||= discount_actions(:line_item).filter_map do |action|
-          next unless action.promotion.line_item_actionable?(order, line_item)
+          next unless action.applies_to_line_item?(order, line_item)
 
           amount = action.compute_amount(line_item)
           next if amount.zero?

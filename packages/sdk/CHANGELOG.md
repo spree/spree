@@ -1,5 +1,15 @@
 # @spree/sdk
 
+## 2.0.0-beta.2
+
+### Minor Changes
+
+- [#14695](https://github.com/spree/spree/pull/14695) [`df8a0ea`](https://github.com/spree/spree/commit/df8a0eafe4f2ad382ac1f14400818b51a8fed475) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `carts.complete` is now typed as `Order | OrderGroup`: in a marketplace, a cart holding several sellers' goods completes into an order group rather than a single order. Added the `OrderGroup` type export and an `isOrderGroup` type guard so storefronts can tell the two apart.
+
+### Patch Changes
+
+- [#14736](https://github.com/spree/spree/pull/14736) [`cb92ce3`](https://github.com/spree/spree/commit/cb92ce3371c312611ffd06b9cb0c340895dc1033) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `companies.members.create` now always returns the `CompanyInvitation`: adding a member from the storefront sends an invitation even to an existing customer, who joins by accepting it.
+
 ## 2.0.0-beta.1
 
 ### Major Changes

@@ -147,7 +147,7 @@ A [Channel](/developer/core-concepts/channels) is not assigned — it names its 
 ```typescript Admin SDK
 await adminClient.catalogs.assign(catalog.id, {
   assignable_type: 'customer_group',
-  assignable_id: 'cgrp_xxx',
+  assignable_id: 'cg_xxx',
 })
 ```
 
@@ -155,7 +155,7 @@ await adminClient.catalogs.assign(catalog.id, {
 curl -X POST 'https://api.mystore.com/api/v3/admin/catalogs/cat_xxx/assign' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "assignable_type": "customer_group", "assignable_id": "cgrp_xxx" }'
+  -d '{ "assignable_type": "customer_group", "assignable_id": "cg_xxx" }'
 ```
 
 </CodeGroup>

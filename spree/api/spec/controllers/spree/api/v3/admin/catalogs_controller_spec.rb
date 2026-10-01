@@ -43,6 +43,28 @@ RSpec.describe Spree::Api::V3::Admin::CatalogsController, type: :controller do
     # A percentage plus a volume rule is an automatic volume discount, and
     # both halves have to be settable in the one request that stands the
     # agreement up (docs/plans/6.0-price-list-automatic-pricing.md).
+    it "ignores another store's variant in the inline prices" do
+      foreign_variant = create(:product, store: create(:store)).default_variant
+      own_variant = create(:product, store: store).default_variant
+
+      post :create,
+           params: {
+             name: 'Contract',
+             price_list: {
+               prices: [
+                 { variant_id: foreign_variant.prefixed_id, currency: 'USD', amount: '0.01' },
+                 { variant_id: own_variant.prefixed_id, currency: 'USD', amount: '5.00' }
+               ]
+             }
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      list = store.catalogs.find_by(name: 'Contract').price_list
+      expect(list.prices.where(variant_id: foreign_variant.id)).to be_empty
+      expect(list.prices.find_by(variant_id: own_variant.id).amount).to eq(5)
+    end
+
     it 'accepts the contextual rules that make automatic volume pricing work' do
       post :create,
            params: {

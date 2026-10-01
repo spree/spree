@@ -125,6 +125,11 @@
         "title": "Welcome back"
       },
       "logout": "Sign out",
+      "no_store_access": {
+        "description": "You're signed in, but your account isn't a member of any store yet. Ask a store administrator to invite you, or sign in with a different account.",
+        "signed_in_as": "Signed in as {{email}}",
+        "title": "You don't have access to any store"
+      },
       "reset_password": {
         "confirm_password_label": "Confirm new password",
         "error": "Something went wrong. Please try again.",
@@ -431,7 +436,6 @@
         "filter_select_placeholder": "Select…",
         "filter_text_placeholder": "Filter…",
         "filter_to_placeholder": "Filter to…",
-        "more_conditions": "More conditions",
         "operators": {
           "after": "after",
           "before": "before",
@@ -687,6 +691,32 @@
       },
       "quantity": {
         "label": "Quantity"
+      },
+      "setup": {
+        "country_code": {
+          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later.",
+          "label": "Country",
+          "placeholder": "Search countries"
+        },
+        "currency": {
+          "help": "Your default currency. Add more anytime.",
+          "label": "Currency",
+          "placeholder": "Search currencies"
+        },
+        "locale": {
+          "help": "Your default language. Add more anytime.",
+          "label": "Language"
+        },
+        "password_confirmation": {
+          "label": "Confirm password"
+        },
+        "sample_data": {
+          "help": "Adds demo products, categories, customers and orders in the background so you can explore the dashboard. Takes a few minutes and downloads product images.",
+          "label": "Load sample data"
+        },
+        "store_name": {
+          "label": "Store name"
+        }
       },
       "shipping": {
         "label": "Shipping"
@@ -1884,7 +1914,7 @@
         },
         "create_line_items": {
           "name": "Create line items",
-          "description": "Populates the cart with the specified quantity of variant"
+          "description": "Adds the specified quantity of a variant to the cart free of charge"
         },
         "free_shipping": {
           "name": "Free shipping",

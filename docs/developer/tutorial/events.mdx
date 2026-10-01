@@ -63,7 +63,7 @@ When the consumer is a system you do not deploy your own code into, use a webhoo
 
 Each delivery is an HTTP POST carrying the event name and the same serialized payload. The endpoint's **signing secret is shown once when you create it**: store it in the receiving system and verify every request against it, so the receiver can prove the call came from your store.
 
-Deliveries are retried with exponential backoff, and the dashboard shows the attempt history per endpoint, which is where to look when a third party says they never received something.
+Failed deliveries are retried with increasing delays, and the dashboard shows the delivery history per endpoint, which is where to look when a third party says they never received something.
 
 <Tip>
   Webhooks need no code in your app at all. Reach for a subscriber only when the reaction needs application context or credentials you would rather not hand to a third party. See [events](/developer/core-concepts/events) and [webhooks](/developer/core-concepts/webhooks).

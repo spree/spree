@@ -1,8 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
-
-// The seller panel is its own app on its own origin (see playwright.config.ts).
-const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
+import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
 
 /**
  * Creates a seller, invites someone, and accepts on the panel — returning the
@@ -39,8 +36,12 @@ async function signInAsNewSeller(
     ),
     page.getByRole('button', { name: /send invitation/i }).click(),
   ])
-  const { data } = (await listResponse.json()) as { data: Array<{ acceptance_url: string }> }
-  const acceptancePath = data[0].acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+  const { data } = (await listResponse.json()) as { data: Array<{ id: string }> }
+  const acceptancePath = await invitationAcceptancePath(
+    page,
+    creds,
+    `${new URL(listResponse.url()).pathname}/${data[0].id}`,
+  )
 
   const context = await browser.newContext()
   const sellerPage = await context.newPage()

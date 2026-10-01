@@ -12,7 +12,11 @@ module Spree
             # Creates a payment for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer).
             # Not for store credit — apply that with POST /carts/:cart_id/store_credits.
             def create
-              payment_method = current_store.payment_methods.find_by_prefix_id!(params[:payment_method_id])
+              # The same methods the cart offers: a disabled or staff-only
+              # method (an offline one marks the order paid) must not be
+              # reachable by naming its id.
+              payment_method = current_store.payment_methods.active.storefront_visible.
+                               find_by_prefix_id!(params[:payment_method_id])
 
               if payment_method.session_required?
                 return render_error(
@@ -22,6 +26,8 @@ module Spree
                 )
               end
 
+              # Store credit passes the lookup above but has its own endpoint, so
+              # it is never among the methods the cart offers.
               if payment_method.store_credit?
                 return render_error(
                   code: 'store_credits_endpoint_required',
@@ -30,7 +36,7 @@ module Spree
                 )
               end
 
-              unless payment_method.available_for_order?(@cart)
+              unless @cart.payment_methods.include?(payment_method)
                 return render_error(
                   code: 'payment_method_unavailable',
                   message: Spree.t('api.v3.payments.method_unavailable'),

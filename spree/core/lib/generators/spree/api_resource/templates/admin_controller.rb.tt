@@ -3,9 +3,10 @@ module Spree
     module V3
       module Admin
         class <%= plural_name.camelize %>Controller < ResourceController
-          # Which API key scope authorizes this endpoint — `read_<%= plural_name %>`
-          # and `write_<%= plural_name %>`. Point it at an existing resource name
-          # instead if this endpoint belongs under one.
+          # The permission that authorizes this endpoint — `read_<%= plural_name %>` and
+          # `write_<%= plural_name %>`, registered in config/initializers/spree.rb so
+          # they can be granted to staff roles and secret API keys. Point it at an
+          # existing resource name instead if this endpoint belongs under one.
           scoped_resource :<%= plural_name %>
 
           protected
@@ -18,8 +19,8 @@ module Spree
             Spree::Api::V3::Admin::<%= bare_class_name %>Serializer
           end
 
-          def permitted_params
-            params.permit(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>)
+          def resource_permitted_attributes
+            [<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>]
           end
         end
       end

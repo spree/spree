@@ -98,11 +98,12 @@ class MyGateway < Spree::PaymentMethod
     provider_session = MyProvider::Client.new(preferred_api_key).create_session(
       amount: (total * 100).to_i, # amount in cents
       currency: order.currency,
-      metadata: { order_number: order.number }
+      metadata: { cart_id: order.prefixed_id }
     )
 
+    # `order:` receives the cart during checkout — assign it as the owner
     payment_sessions.create!(
-      order: order,
+      owner: order,
       amount: total,
       currency: order.currency,
       external_id: provider_session.id,
@@ -130,8 +131,7 @@ class MyGateway < Spree::PaymentMethod
   #
   # Responsibilities:
   # - Verify payment status with the provider
-  # - Create the Spree::Payment record
-  # - Transition the payment to the correct state
+  # - Create the Spree::Payment record and move it to the right status
   # - Mark the session as completed/failed
   #
   # Must NOT complete the order — that is handled by Carts::Complete
@@ -143,21 +143,19 @@ class MyGateway < Spree::PaymentMethod
     )
 
     if result.status == 'succeeded'
-      payment_session.process!
+      payment_session.process if payment_session.can_process?
 
-      # Create the Spree::Payment record
-      payment = payment_session.find_or_create_payment!
+      # Create the Spree::Payment record (or find the one a webhook already
+      # created) and mark it completed — captured: false leaves it pending
+      # for an authorization-only payment
+      payment_session.settle_payment!(captured: true)
 
-      # Transition the payment to completed
-      if payment.present? && !payment.completed?
-        payment.started_processing! if payment.checkout?
-        payment.complete! if payment.can_complete?
-      end
-
-      payment_session.complete!
+      payment_session.complete unless payment_session.completed?
     else
-      payment_session.fail!
+      payment_session.fail if payment_session.can_fail?
     end
+
+    payment_session
   end
 
   def payment_icon_name
@@ -171,8 +169,8 @@ end
 The frontend creates a session, then uses the provider's SDK to collect payment:
 
 ```typescript
-// 1. Get available payment methods
-const methods = await client.carts.paymentMethods.list(cart.id, options)
+// 1. Get available payment methods (embedded in the cart)
+const methods = cart.payment_methods
 
 // 2. Find your gateway (check session_required flag)
 const myGateway = methods.find(m => m.session_required)
@@ -329,9 +327,9 @@ class MyGateway < Spree::PaymentMethod
       setup_session.update!(
         payment_source: credit_card
       )
-      setup_session.complete!
+      setup_session.complete
     else
-      setup_session.fail!
+      setup_session.fail
     end
 
     setup_session

@@ -197,6 +197,64 @@ RSpec.describe 'Spree::Returns workflows' do
       expect(result.error.value).to eq(:refund_exceeds_balance)
     end
 
+    it 'refuses zero while the customer is still owed money' do
+      result = Spree::Returns::Refund.call(return_record: return_record, amount: 0)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_required)
+      expect(return_record.reload).to be_received
+    end
+
+    it 'refuses a negative amount' do
+      result = Spree::Returns::Refund.call(return_record: return_record, amount: -1)
+
+      expect(result).to be_failure
+      expect(result.error.value).to eq(:refund_amount_negative)
+    end
+
+    # A free gift sent back is owed nothing, and refusing to refund it left the
+    # return received for good, with no step that could close it.
+    context 'when nothing is owed' do
+      before do
+        return_record.return_line_items.each { |line| line.update!(pre_tax_amount: 0) }
+        return_record.reload
+      end
+
+      %w[original_payment store_credit].each do |refund_method|
+        it "closes the return without moving any money when asked for #{refund_method}", :events do
+          allow(Spree::Events).to receive(:publish)
+          order = return_record.order
+          provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+          allow(order).to receive(:tax_provider).and_return(provider)
+          allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+          result = Spree::Returns::Refund.call(return_record: return_record, refund_method: refund_method)
+
+          expect(result).to be_success
+          expect(result.value).to be_refunded
+          expect(return_record.refunds).to be_empty
+          expect(Spree::StoreCredit.where(originator: return_record)).to be_empty
+          expect(provider).not_to have_received(:refund)
+          expect(Spree::Events).to have_received(:publish).with('return.refunded', any_args)
+        end
+      end
+    end
+
+    # Completing a return whose money already went back moves nothing, so there
+    # is no tax to credit a second time.
+    it 'credits no tax when the money already went back' do
+      create(:store_credit, originator: return_record, amount: return_record.refund_total)
+      order = return_record.order
+      provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+      allow(order).to receive(:tax_provider).and_return(provider)
+      allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+      result = Spree::Returns::Refund.call(return_record: return_record)
+
+      expect(result.value).to be_refunded
+      expect(provider).not_to have_received(:refund)
+    end
+
     context 'to store credit' do
       it 'issues credit inside the transaction and marks the return refunded' do
         result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
@@ -206,6 +264,9 @@ RSpec.describe 'Spree::Returns workflows' do
         credit = Spree::StoreCredit.find_by(originator: return_record)
         expect(credit).to be_present
         expect(credit.amount).to eq(return_record.refund_total)
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(credit.refunded_order).to eq(return_record.order)
       end
 
       it 'credits only the lines that actually arrived' do
@@ -300,6 +361,9 @@ RSpec.describe 'Spree::Returns workflows' do
         before do
           return_record.return_line_items.first.
             update!(quantity: 3, received_quantity: 2, pre_tax_amount: 269.97)
+          # Store credit is capped at what the order paid, so the order has to
+          # have paid for the three units this return now claims.
+          return_record.order.payments.completed.first.update_column(:amount, 500)
         end
 
         it 'credits only what arrived when the caller names no amount' do

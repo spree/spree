@@ -12,7 +12,7 @@ Webhooks are built on top of Spree's [event system](/developer/core-concepts/eve
 - **Multi-store support** - Each store has its own webhook endpoints
 - **Event filtering** - Subscribe to specific events or patterns with wildcards
 - **Secure delivery** - HMAC-SHA256 signatures for payload verification
-- **Automatic retries** - Failed deliveries retry with exponential backoff
+- **Failure handling** - Failed deliveries are retried automatically and can be re-sent by hand, and an endpoint that keeps failing is disabled
 - **Full audit trail** - Track every delivery attempt with response codes and timing
 
 ## How Webhooks Work
@@ -34,10 +34,9 @@ flowchart LR
 
     subgraph External Service
         H --> I{Response}
-        I -->|2xx| J[Success]
-        I -->|Error| K[Retry with Backoff]
-        K -->|Max Retries| L[Mark Failed]
-        K -->|Retry| H
+        I -->|2xx| J[Mark Successful]
+        I -->|Error| K[Mark Failed]
+        K -->|15 failures in a row| L[Disable Endpoint]
     end
 ```
 
@@ -51,7 +50,7 @@ flowchart LR
 
 ### Via Admin Panel
 
-Navigate to **Settings → Developers → Webhooks** in the admin panel to create and manage webhook endpoints.
+Navigate to **Settings → Developer → Webhooks** in the admin panel to create and manage webhook endpoints.
 
 ### Via the Admin API
 
@@ -145,7 +144,7 @@ The `subscriptions` array accepts exact event names and wildcard patterns:
 | `['order.placed', 'order.canceled']` | Only those two events |
 | `['order.*']` | All order events |
 | `['*.created']` | All creation events |
-| `['order.*', 'payment.*', 'shipment.shipped']` | Multiple patterns |
+| `['order.*', 'payment.*', 'fulfillment.fulfilled']` | Multiple patterns |
 | `[]` or `['*']` | All events |
 
 ## Webhook Payload
@@ -160,7 +159,7 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
   "data": {
     "id": "or_m3Rp9wXz",
     "number": "R123456789",
-    "fulfillment_status": "shipped",
+    "fulfillment_status": "unfulfilled",
     "payment_status": "paid",
     "total": "99.99",
     "display_total": "$99.99",
@@ -171,7 +170,7 @@ Each webhook delivery sends a JSON payload with the following structure. The `da
     "payments": [ ... ]
   },
   "metadata": {
-    "spree_version": "5.1.0"
+    "spree_version": "6.0.0"
   }
 }
 ```
@@ -249,7 +248,7 @@ class WebhooksController < ApplicationController
 
     case event['name']
     when 'order.placed'
-      handle_order_completed(event['data'])
+      handle_order_placed(event['data'])
     when 'product.updated'
       handle_product_updated(event['data'])
     end
@@ -272,11 +271,15 @@ class WebhooksController < ApplicationController
 end
 ```
 
-## Delivery Status & Retries
+## Delivery Status
 
-### Automatic Retries
+### Failed Deliveries
 
-Failed webhook deliveries automatically retry up to 5 times with exponential backoff. This handles temporary network issues and endpoint downtime.
+Any response other than 2xx — including a timeout or a connection error — marks the delivery as failed. Spree then sends it again, waiting longer before each try, up to 5 attempts in total over about six minutes. The delivery log shows the outcome of the latest attempt. Retries stop as soon as the endpoint is turned off.
+
+Every attempt carries the same event `id`, so use it to ignore an event your receiver has already processed. To send a delivery again after the retries run out, re-send it from the delivery log (see below).
+
+If an endpoint fails 15 deliveries in a row, Spree disables it and emails the store staff. Fix the endpoint, then turn it back on by marking it active again.
 
 ### Checking Delivery Status
 
@@ -329,7 +332,7 @@ SSL certificates are verified in production, and not in development — so you c
 
 ## Available Events
 
-Webhooks can subscribe to any event in Spree's event system. See [Events](/developer/core-concepts/events#available-events) for a complete list.
+Webhooks can subscribe to any event in Spree's event system. See [Webhook Events & Payloads](/api-reference/webhooks-events) for the complete list.
 
 Common webhook events include:
 
@@ -338,12 +341,12 @@ Common webhook events include:
 | `order.placed` | A customer completed checkout |
 | `order.paid` | The order is fully paid |
 | `order.canceled` | The order was canceled |
-| `order.shipped` | Everything on the order has shipped |
-| `fulfillment.shipped` | One parcel went out |
+| `order.fulfilled` | Everything on the order has shipped |
+| `fulfillment.fulfilled` | One parcel went out |
 | `payment.completed` | A payment succeeded |
 | `product.created` / `product.updated` | Catalog changes |
 | `product.out_of_stock` / `product.back_in_stock` | Availability flipped |
-| `customer.created` | A new customer registered |
+| `user.created` | A new customer registered |
 | `return.received` | A return arrived |
 
 ## Testing Webhooks
@@ -401,7 +404,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints' \
   </Card>
 
   <Card title="Handle duplicates" icon="copy">
-    Use the event `id` to detect and handle duplicate deliveries. Webhooks may be retried.
+    Use the event `id` to detect and handle duplicate deliveries. A delivery that is re-sent carries the same event `id`.
   </Card>
 
   <Card title="Subscribe selectively" icon="filter">

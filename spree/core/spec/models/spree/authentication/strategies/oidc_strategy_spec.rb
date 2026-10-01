@@ -71,7 +71,10 @@ describe Spree::Authentication::Strategies::OidcStrategy do
     context 'with verified claims' do
       let(:params) { { provider: 'entra', code: 'auth-code' } }
       let(:claims) do
-        { 'sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true', 'name' => 'Ada' }
+        {
+          'sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true',
+          'name' => 'Ada Lovelace', 'given_name' => 'Ada', 'family_name' => 'Lovelace', 'nonce' => 'n-1'
+        }
       end
       let!(:admin) { create(:admin_user, email: 'ada@example.com') }
 
@@ -86,6 +89,14 @@ describe Spree::Authentication::Strategies::OidcStrategy do
         expect(result).to be_success
         expect(result.value).to eq(admin)
         expect(admin.identities.find_by(provider: 'entra', uid: 'idp-subject-1')).to be_present
+      end
+
+      it 'stores the profile claims on the identity' do
+        strategy.callback
+
+        info = admin.identities.find_by!(provider: 'entra').info
+        expect(info).to include('name' => 'Ada Lovelace', 'given_name' => 'Ada', 'family_name' => 'Lovelace')
+        expect(info).not_to have_key('nonce')
       end
 
       it 'signs in through an already-linked identity without creating a second one' do

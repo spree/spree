@@ -52,6 +52,35 @@ RSpec.describe 'Seller Invitations API', type: :request, swagger_doc: 'api-refer
     end
   end
 
+  path '/api/v3/seller/invitations/{invitation_id}/acceptance_link' do
+    parameter name: :invitation_id, in: :path, type: :string, description: 'Invitation ID'
+
+    get 'Get an invitation acceptance link' do
+      tags 'Team'
+      produces 'application/json'
+      security [bearer_auth: []]
+      description <<~DESC
+        The link a colleague opens to join the team. It carries the invitation's
+        token, so the listing never includes it; fetch it when someone asks to
+        copy the link.
+      DESC
+
+      parameter name: 'X-Spree-Seller-Id', in: :header, type: :string, required: true
+
+      response '200', 'acceptance link found' do
+        let(:Authorization) { "Bearer #{seller_jwt_token}" }
+        let(:'X-Spree-Seller-Id') { seller.prefixed_id }
+        let(:invitation_id) { pending_invitation.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/InvitationAcceptanceLink'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['acceptance_url']).to include(pending_invitation.token)
+        end
+      end
+    end
+  end
+
   path '/api/v3/seller/invitations/{id}/resend' do
     parameter name: :id, in: :path, type: :string, description: 'Invitation ID'
 

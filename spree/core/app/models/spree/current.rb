@@ -5,6 +5,10 @@ module Spree
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
     attribute :store, :channel, :market, :currency, :locale, :content_locale, :tax_country, :price_lists, :applicable_catalogs, :applicable_catalog_groups, :quantity_rules_resolvers, :standing_companies, :global_pricing_context, :provider_cache, :integrations
+    # Latch for the cross-store leak tripwire — see #store= below. Lives here
+    # so it clears exactly when the store context does, which Rails does per
+    # request and per job.
+    attribute :store_scope_guard_armed
 
     # Scratch space for provider strategies to memoize a call across the
     # request — part of the delivery rate provider contract (nothing in core
@@ -17,10 +21,44 @@ module Spree
       super || (self.provider_cache = {})
     end
 
+    # Declaring a store context arms the cross-store leak tripwire for the
+    # rest of this unit of work — a request, a job, a webhook — so the guard
+    # follows the context rather than a list of entry points
+    # (docs/plans/6.0-store-context-and-first-run-setup.md). Work that never
+    # declares a store is left alone: it reads the default store through the
+    # fallback below, which is not a scoping claim to check.
+    def store=(value)
+      Spree::StoreScopeGuard.arm! if value
+      super
+    end
+
     # Returns the current store, falling back to the default store.
     # @return [Spree::Store]
     def store
       super || Spree::Store.default
+    end
+
+    # Runs the block in +store+ from a clean context: nothing a previous store
+    # resolved (channel, market, currency, integrations, pricing) carries in,
+    # and nothing resolved inside leaks out. For work that walks several
+    # stores in one unit of work, such as an installation-wide sweep job; a
+    # request or a single-store job assigns #store once instead.
+    #
+    # The store scope guard stays armed afterwards, like any other store
+    # declaration in this unit of work.
+    #
+    # @param store [Spree::Store]
+    # @return [Object] the block's result
+    def with_store(store)
+      previous = attributes
+
+      begin
+        self.attributes = {}
+        self.store = store
+        yield
+      ensure
+        self.attributes = previous.merge(store_scope_guard_armed: store_scope_guard_armed)
+      end
     end
 
     def channel

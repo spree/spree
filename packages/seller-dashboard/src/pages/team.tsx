@@ -1,4 +1,4 @@
-import { Can, getInitials, PageHeader, Slot } from '@spree/dashboard-core'
+import { Can, getInitials, PageHeader, Slot, usePermissions } from '@spree/dashboard-core'
 import {
   Avatar,
   AvatarFallback,
@@ -283,6 +283,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
   const queryClient = useQueryClient()
   const confirm = useConfirm()
   const { copy } = useCopyToClipboard()
+  const { permissions } = usePermissions()
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['seller', sellerId, 'invitations'] })
@@ -313,20 +314,37 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
       }),
   })
 
-  async function handleCopyLink() {
-    // Path-only when no panel origin is configured; resolve against wherever
-    // this panel is actually mounted. `BASE_URL` matters: served at /sellers
-    // (the single-node topology), origin alone would produce a link that
-    // misses the mount and 404s.
-    const url = invitation.acceptance_url.startsWith('/')
-      ? new URL(
-          `.${invitation.acceptance_url}`,
-          `${window.location.origin}${import.meta.env.BASE_URL}`,
-        ).toString()
-      : invitation.acceptance_url
+  // The link carries the invitation's token, so it is fetched on demand
+  // rather than shipped with the listing.
+  const acceptanceLink = useMutation({
+    mutationFn: (id: string) => sellerClient().invitations.acceptanceLink(id),
+  })
 
-    await copy(url)
-    toastManager.add({ type: 'success', title: t('team.messages.link_copied') })
+  async function handleCopyLink() {
+    try {
+      const { acceptance_url } = await acceptanceLink.mutateAsync(invitation.id)
+      // Path-only when no panel origin is configured; resolve against wherever
+      // this panel is actually mounted. `BASE_URL` matters: served at /sellers
+      // (the single-node topology), origin alone would produce a link that
+      // misses the mount and 404s.
+      const url = acceptance_url.startsWith('/')
+        ? new URL(
+            `.${acceptance_url}`,
+            `${window.location.origin}${import.meta.env.BASE_URL}`,
+          ).toString()
+        : acceptance_url
+
+      if (!(await copy(url))) {
+        toastManager.add({ type: 'error', title: t('common.error') })
+        return
+      }
+      toastManager.add({ type: 'success', title: t('team.messages.link_copied') })
+    } catch (err) {
+      toastManager.add({
+        type: 'error',
+        title: err instanceof Error ? err.message : t('common.error'),
+      })
+    }
   }
 
   async function handleRevoke() {
@@ -371,6 +389,8 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
               key: 'copy',
               label: t('team.actions.copy_link'),
               icon: <LinkIcon className="size-4" />,
+              visible: permissions.can('update', 'seller_profile'),
+              disabled: acceptanceLink.isPending,
               onSelect: handleCopyLink,
             },
             {

@@ -37,7 +37,7 @@ export const LineItemSchema = z.object({
   thumbnail_url: z.string().nullable(),
   seller: SellerSchema.optional(),
   option_values: z.array(OptionValueSchema),
-  digital_links: z.array(DigitalLinkSchema),
+  digital_links: z.array(DigitalLinkSchema).optional(),
   tax_lines: z.array(TaxLineSchema).optional(),
 });
 

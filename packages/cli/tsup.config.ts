@@ -1,5 +1,6 @@
 import { cpSync } from 'node:fs'
 import { defineConfig } from 'tsup'
+import { pluginPeerRanges } from './scripts/plugin-peer-ranges.mjs'
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -8,6 +9,7 @@ export default defineConfig({
   platform: 'node',
   noExternal: [/.*/],
   splitting: false,
+  define: { __SPREE_PLUGIN_PEER_RANGES__: JSON.stringify(pluginPeerRanges()) },
   clean: true,
   minify: true,
   banner: {

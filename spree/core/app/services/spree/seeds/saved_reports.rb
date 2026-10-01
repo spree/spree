@@ -6,6 +6,7 @@ module Spree
     # only never-created ones are added.
     class SavedReports
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
       REPORTS = [
         { key: 'sales_over_time',
@@ -70,30 +71,28 @@ module Spree
                    'time_range' => { 'preset' => 'last_4_weeks' } } }
       ].freeze
 
-      def call
-        Spree::Store.find_each do |store|
-          # Compared case-insensitively like the model's uniqueness rule, so a
-          # merchant's own "top products" never makes a re-seed raise.
-          existing = store.saved_reports.pluck(:name).map(&:downcase).to_set
+      private
 
-          REPORTS.each do |report|
-            # Every locale's name for this report, not just the current one:
-            # the name is translated, so a store seeded in one language and
-            # re-seeded in another would otherwise recognise none of its own
-            # built-ins and create a second full set.
-            next if known_names(report[:key]).intersect?(existing)
+      def seed(store)
+        # Compared case-insensitively like the model's uniqueness rule, so a
+        # merchant's own "top products" never makes a re-seed raise.
+        existing = store.saved_reports.pluck(:name).map(&:downcase).to_set
 
-            store.saved_reports.create!(
-              name: Spree.t("reporting.seeds.#{report[:key]}.name"),
-              description: Spree.t("reporting.seeds.#{report[:key]}.description"),
-              query: report[:query],
-              seeded: true
-            )
-          end
+        REPORTS.each do |report|
+          # Every locale's name for this report, not just the current one:
+          # the name is translated, so a store seeded in one language and
+          # re-seeded in another would otherwise recognise none of its own
+          # built-ins and create a second full set.
+          next if known_names(report[:key]).intersect?(existing)
+
+          store.saved_reports.create!(
+            name: Spree.t("reporting.seeds.#{report[:key]}.name"),
+            description: Spree.t("reporting.seeds.#{report[:key]}.description"),
+            query: report[:query],
+            seeded: true
+          )
         end
       end
-
-      private
 
       # The downcased name this report carries in every locale core ships.
       def known_names(key)

@@ -1,74 +1,82 @@
 ---
 title: "Markets"
-description: "Learn how to create and manage markets in Spree Commerce."
+description: "Learn how to define the regions you sell to in Spree Commerce, each with its own currency, languages and tax treatment."
 ---
 
-import { Since } from '/snippets/since.mdx';
+A market is a region you sell to, grouped into a single pricing area with its own currency, languages and tax treatment. Rather than configuring each country separately, you group the countries that should behave the same way and set the rules once.
 
-<Since version="5.4" />
+Most stores start with one market covering everywhere they ship, and add more as they grow. A store selling into the EU and the US needs two, because one prices in euros with tax shown in the price and the other prices in dollars with tax added at checkout. Markets are also available as a rule condition on price lists, so a region can carry its own prices without duplicating products.
 
-Markets allow you to define distinct shopping experiences for different regions or customer
-segments — each with its own currency, language, and tax settings. When multiple markets are
-configured, customers can switch between them on the storefront to see prices and content in
-their preferred currency and language.
+To manage markets, navigate to **Settings → Markets**, under the **Selling** group.
 
-Markets can also be used as a rule condition in Price Lists, making it easy to apply
-region-specific pricing without duplicating products.
+## Reviewing Your Markets
 
-To manage markets, navigate to **Settings → Markets** in the admin dashboard.
+![The Markets list, showing each market's currency, locale and tax treatment](/docs/images/user/settings/markets/1-markets-overview.png)
 
-![The Markets overview page showing all configured markets](/docs/images/user/settings/markets/1-markets-overview.png)
+Each row shows:
 
-## Markets Overview
+- **Name** - What the market is called. The countries it covers are listed beneath.
+- **Currency** - The currency all prices in this market are held in.
+- **Default locale** - The language shoppers in this market see first.
+- **Tax** - Whether prices in this market include tax or have it added at checkout.
+- **Default** - The market shown to shoppers whose country is unknown.
 
-The Markets table displays all configured markets with the following details:
+This list is dragged into order rather than sorted, so use the handle on any row to move it.
 
-- **Name** — the internal label for the market (e.g., "United States", "Europe")
-- **Currency** — the currency customers in this market will see at checkout
-- **Default Locale** — the primary language for this market
-- **Default** — indicates which market is set as the default for new visitors
+## How to Create a Market
 
-## Create a Market
+Click **Add market**.
 
-To create a new market, click **New Market** in the top-right corner.
+![The Add market panel, with currency, locales and country coverage](/docs/images/user/settings/markets/2-add-market.png)
 
-![The market creation form in Spree Commerce](/docs/images/user/settings/markets/2-new-market.png)
+- **Name** - What the region is called internally, such as Europe or DACH.
+- **Currency** - The currency used for all prices in this market.
+- **Default locale** - The storefront language shoppers in this market see first.
+- **Supported locales** - Additional languages shoppers can switch to. The default locale is always included.
+- **Countries** - The countries this market covers. Search for each one and add it.
+- **Tax engine** - Which engine calculates tax for orders in this market. Leave this as it is unless another engine has been installed for your store.
+- **Tax-inclusive pricing** - Display prices with tax included. Common in EU markets.
+- **Default market** - Shoppers without a known country see this market. Only one can be default per store.
 
-Fill in the following fields:
+Click **Create market** when you are done.
 
-- **Name** — an internal label to identify this market (e.g., "United Kingdom", "DACH Region")
-- **Default Country** — the primary country for this market, used to determine default shipping
-  and tax behaviour
-- **Currency** — the currency displayed to customers in this market at checkout
-- **Default Locale** — the primary language shown to customers in this market
-- **Supported Locales** — additional languages customers can switch to within this market
-- **Tax Inclusive** — check this if prices should be displayed with tax already included
-  (common in VAT-inclusive markets such as the EU)
-- **Default** — check this to make this the default market for visitors who haven't selected one
+<Warning>Each country can belong to at most one market per store. A country already claimed by another market cannot be added to a second one, so plan your coverage before creating several markets.</Warning>
 
-Once you've filled in the details, click **Create** to save the new market.
+### What the built-in tax engine does not calculate
 
-<Note>A country must be included in a configured Zone before it can be set as the Default Country for a Market. See Zones for setup instructions.</Note>
+Spree's built-in tax engine handles the rates you configure per country or state. Four things it does not do are printed under the **Tax engine** chooser, and each one can mean collecting the wrong amount of tax:
 
-## Edit a Market
+- **US local tax** - "County, city and district rates are not applied, only the rates configured per country or state. Sales into US states that levy local tax will be under-collected."
+- **EU reverse charge** - "A VAT-registered business buyer is charged tax instead of receiving a zero-rated invoice. Their registration number is recorded but does not change the tax."
+- **Distance-selling thresholds** - "Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order."
+- **Proportional delivery tax** - "Delivery is taxed at the single rate its delivery method names, not split across the rates of the goods being delivered. A basket mixing tax rates collects the wrong amount on delivery."
 
-To edit a market, click on its row in the Markets table to open the edit form.
+<Warning>If any of these apply to where you sell, connect a tax provider and then select it in **Tax engine** on every market it affects. Connecting a provider does not change anything on its own, and a market left on the built-in engine keeps calculating tax with it.</Warning>
 
-![Editing a market in Spree Commerce](/docs/images/user/settings/markets/3-edit-market.png)
+<Note>Tax rates and their calculators are configuration for the built-in engine, and do not decide which engine a market uses. Setting a rate's calculator does not move that market off the built-in engine. See [<u>Tax Rates</u>](/user/settings/tax-rates) for what rates do.</Note>
 
-The edit form contains the same fields as the creation form. Update the relevant fields and
-click **Update** to save your changes.
+## How to Edit a Market
 
-## Delete a Market
+Click a market's row to open it. The panel carries the same controls as the creation form, with chosen locales and countries shown as removable chips.
 
-To delete a market, click on its row to open the edit form, then click **Delete** at the
-bottom of the page.
+### Changing a market's currency
 
-<Warning>Deleting a market cannot be undone. Before deleting, check that no active Price List rules or storefront configurations reference this market.</Warning>
+Changing the currency does not convert the prices you already have. It changes which currency the market's prices are read from, and nothing is carried across:
 
-## Related
+- Products need a **base price** in the new currency.
+- Price list entries for that market appear with empty prices until you fill them in.
 
-- [<u>Delivery Profiles</u>](/user/settings/delivery-profiles)
-- [<u>Tax Rates</u>](/user/settings/tax-rates)
-- [<u>Tax Categories</u>](/user/settings/tax-categories)
-- [<u>Price Lists</u>](/user/pricing/price-lists)
+<Warning>Set the base prices and any price list prices in the new currency before switching a live market. A product with no price in the market's currency is hidden from the storefront, unless **Show products without a price** is turned on in [<u>Store Details</u>](/user/settings/store-details).</Warning>
+
+## How to Delete a Market
+
+Open the row menu and choose **Delete**.
+
+<Warning>Before deleting, check that no price list rules or storefront configuration reference this market. Countries covered by a deleted market are freed up and can be added to another one.</Warning>
+
+## Further Reading
+
+- [<u>Tax Rates</u>](/user/settings/tax-rates) - The rates charged in each market
+- [<u>Tax Categories</u>](/user/settings/tax-categories) - The tax classes products are assigned to
+- [<u>Price Lists</u>](/user/pricing/price-lists) - Using a market as a pricing rule
+- [<u>Delivery Profiles</u>](/user/settings/delivery-profiles) - Where goods can be shipped, and at what price

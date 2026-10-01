@@ -1,7 +1,7 @@
 # This model is used to store payment sources for non-credit card payments, eg wallet, account, etc.
 module Spree
   class PaymentSource < Spree.base_class
-    has_prefix_id :ps
+    has_prefix_id :psrc
 
     include Spree::HasCustomFields
     include Spree::Metadata

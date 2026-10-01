@@ -504,6 +504,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(json_response['items'].length).to eq(original_item_count - 1)
       end
+
+      it 'drops a batch coupon code another cart has taken, with a warning' do
+        promotion = create(:promotion, :with_line_item_adjustment, code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store)
+        coupon_code = promotion.coupon_codes.first
+        coupon_code.update!(cart: create(:cart, store: store))
+        cart.update_columns(coupon_code: coupon_code.code)
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(json_response['coupon_code']).to be_nil
+        expect(json_response['warnings']).to contain_exactly(
+          'code' => 'coupon_code_unavailable', 'message' => Spree.t(:coupon_code_unavailable)
+        )
+      end
     end
 
     context 'auto-advance' do

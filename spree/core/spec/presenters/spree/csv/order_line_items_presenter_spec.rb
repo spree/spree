@@ -35,6 +35,14 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
       expect(subject[23]).to eq line_item.total
     end
 
+    it 'exports the state code of the billing and shipping addresses' do
+      expect(order.bill_address.state_code).to be_present
+      expect(order.ship_address.state_code).to be_present
+
+      expect(subject[described_class::HEADERS.index('Billing State')]).to eq order.bill_address.state_code
+      expect(subject[described_class::HEADERS.index('Shipping State')]).to eq order.ship_address.state_code
+    end
+
     context 'when index is not zero' do
       let(:index) { 1 }
 

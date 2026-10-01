@@ -30,6 +30,7 @@ function separatorsFor(locale: string): { decimal: string; group: string } {
  * - `"1.234,56"` under `de` → `"1234.56"`
  * - `"1 234,56"` under `fr` → `"1234.56"` (narrow-space grouping)
  * - `"19.99"` under `en` → `"19.99"`
+ * - `"19.50"` under `de` → `"19.50"` (a period can't be grouping before two digits)
  * - `""` / whitespace → `""`
  *
  * Strips the locale's group separator and any whitespace, standardizes the
@@ -48,6 +49,17 @@ export function normalizeMoneyInput(raw: string | null | undefined, locale: stri
   const { decimal, group } = separatorsFor(locale)
 
   let out = trimmed
+  // A group separator is always followed by exactly three digits, so a lone
+  // one that is not (`19.50` under `de`) is the merchant typing the other
+  // decimal mark. `1.500` stays ambiguous and is read the locale's way.
+  const groupParts = group.trim() === '' ? [] : out.split(group)
+  if (
+    groupParts.length === 2 &&
+    !out.includes(decimal) &&
+    groupParts[1].replace(/\D/g, '').length !== 3
+  ) {
+    out = groupParts.join(decimal)
+  }
   // Remove the locale's grouping separator (explicit char) plus any whitespace
   // (covers narrow/no-break spaces used by some locales as the group char).
   if (group) out = out.split(group).join('')

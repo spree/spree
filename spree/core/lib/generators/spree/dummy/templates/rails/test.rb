@@ -43,5 +43,12 @@ Dummy::Application.configure do
 
   config.cache_store = :null_store
 
+  # Spree encrypts secrets at rest (webhook signing keys, OAuth tokens) only when
+  # Active Record encryption is configured, so the suite configures it like a
+  # production app would.
+  config.active_record.encryption.primary_key = 'spree-test-primary-key'
+  config.active_record.encryption.deterministic_key = 'spree-test-deterministic-key'
+  config.active_record.encryption.key_derivation_salt = 'spree-test-key-derivation-salt'
+
   routes.default_url_options = { host: 'localhost', port: 3000 }
 end

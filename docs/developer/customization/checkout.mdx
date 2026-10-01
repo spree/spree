@@ -36,12 +36,17 @@ Spree::Checkout::Registry.add_requirement(
   step: :address,
   field: :vat_number,
   message: 'VAT number is required for business orders',
-  satisfied: ->(cart) { cart.custom_fields['vat_number'].present? }
+  satisfied: ->(cart) { cart.metadata['vat_number'].present? }
 )
 ```
 
 While `satisfied:` returns false the cart reports the requirement and refuses to
 complete. Its `code` is derived as `<field>_required` — `vat_number_required` here.
+
+The storefront satisfies it by writing the value into the cart's `metadata`. When the
+cart is completed, its `metadata` is copied onto the order — onto every order if the
+checkout is split between sellers — so the VAT number is still there after placement as
+`order.metadata['vat_number']`.
 
 Pass `applicable:` to scope it. It is checked before `satisfied:`, so a requirement
 that doesn't apply never appears at all:
@@ -60,7 +65,7 @@ A step bundles its own requirements and says when it is satisfied:
 Spree::Checkout::Registry.register_step(
   name: :loyalty,
   before: :payment,
-  satisfied: ->(cart) { cart.custom_fields['loyalty_number'].present? },
+  satisfied: ->(cart) { cart.metadata['loyalty_number'].present? },
   requirements: ->(cart) {
     [{ step: 'loyalty', field: 'loyalty_number',
        message: 'Loyalty number is required' }]

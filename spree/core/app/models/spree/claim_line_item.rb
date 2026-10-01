@@ -23,9 +23,7 @@ module Spree
     # What the customer paid for the affected units, after discounts — the
     # ceiling for a refund on this line.
     def paid_amount
-      return 0 if line_item.nil? || line_item.quantity.to_i.zero?
-
-      (line_item.amount / line_item.quantity) * quantity.to_i
+      line_item&.discounted_amount_for(quantity) || 0
     end
 
     def display_refund_amount

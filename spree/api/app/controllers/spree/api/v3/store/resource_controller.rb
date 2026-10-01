@@ -28,6 +28,10 @@ module Spree
           def authenticate_request!
             authenticate_api_key!
           end
+
+          def ransack_auth_object
+            :store
+          end
         end
       end
     end

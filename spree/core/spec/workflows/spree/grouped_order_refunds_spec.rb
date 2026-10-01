@@ -145,7 +145,8 @@ RSpec.describe 'refunding a child order of a split checkout' do
 
     # Only owes money when the replacement is cheaper than what came back.
     it 'refunds a price difference through the order group payment' do
-      allow_any_instance_of(Spree::Exchange).to receive(:price_difference).and_return(-10)
+      # Credit is priced per line on the units received.
+      allow_any_instance_of(Spree::ExchangeLineItem).to receive(:price_difference).and_return(-10)
 
       result = described_class.call(exchange: exchange, refund_method: 'original_payment')
 

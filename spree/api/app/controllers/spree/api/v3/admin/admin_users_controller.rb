@@ -24,6 +24,8 @@ module Spree
           # the account globally. The user keeps access to any other stores.
           def destroy
             authorize!(:destroy, @resource)
+            return if reject_unauthorized_role_removal!(@resource, @resource.spree_roles.for_resource(current_store).to_a)
+
             @resource.role_users.where(role: current_store.roles).destroy_all
             head :no_content
           end
@@ -42,6 +44,7 @@ module Spree
             # RoleManagement permission set, not by profile-edit rights.
             role_ids = role_ids_param if params.key?(:role_ids)
             return if role_ids && reject_unauthorized_role_grant!(role_ids, require_role_management: true)
+            return if role_ids && reject_unauthorized_role_removal!(@resource, removed_roles(role_ids))
 
             if @resource.update(identity_params)
               apply_role_ids(role_ids) if role_ids
@@ -87,6 +90,12 @@ module Spree
           def role_ids_param
             ids = Array(params[:role_ids])
             ids.map { |id| Spree::PrefixedId.prefixed_id?(id) ? Spree::PrefixedId.decode_prefixed_id(id) : id }.compact
+          end
+
+          # The store roles the user holds that `desired_role_ids` leaves out.
+          def removed_roles(desired_role_ids)
+            target = desired_role_ids.map(&:to_s)
+            @resource.spree_roles.for_resource(current_store).reject { |role| target.include?(role.id.to_s) }
           end
 
           # Reconcile the user's roles on this store to match `desired_role_ids`.

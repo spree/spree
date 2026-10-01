@@ -14,7 +14,7 @@ Pass filter conditions via `q`:
 
 ```typescript SDK
 const orders = await client.orders.list({
-  status_eq: 'complete',
+  status_eq: 'placed',
   total_gteq: 100,
   email_cont: '@example.com',
 })
@@ -23,7 +23,7 @@ const orders = await client.orders.list({
 ```bash cURL
 curl -G 'https://store.example.com/api/v3/admin/orders' \
   -H 'X-Spree-Api-Key: sk_xxx' \
-  --data-urlencode 'q[status_eq]=complete' \
+  --data-urlencode 'q[status_eq]=placed' \
   --data-urlencode 'q[total_gteq]=100' \
   --data-urlencode 'q[email_cont]=@example.com'
 ```
@@ -38,7 +38,7 @@ The SDK automatically wraps filter keys in `q[...]` and appends `[]` for array v
 
 | Predicate | Description | SDK | cURL |
 |---|---|---|---|
-| `eq` | Equals | `status_eq: 'complete'` | `q[status_eq]=complete` |
+| `eq` | Equals | `status_eq: 'placed'` | `q[status_eq]=placed` |
 | `not_eq` | Not equals | `status_not_eq: 'canceled'` | `q[status_not_eq]=canceled` |
 | `cont` | Contains (case-insensitive) | `email_cont: '@acme'` | `q[email_cont]=@acme` |
 | `start` | Starts with | `number_start: 'R10'` | `q[number_start]=R10` |
@@ -79,9 +79,9 @@ Multiple filters combine with AND:
 <CodeGroup>
 
 ```typescript SDK
-// Completed orders over $100 from the last 7 days
+// Placed orders over $100 from the last 7 days
 const orders = await client.orders.list({
-  status_eq: 'complete',
+  status_eq: 'placed',
   total_gteq: 100,
   completed_at_gteq: new Date(Date.now() - 7 * 86_400_000).toISOString(),
 })
@@ -90,7 +90,7 @@ const orders = await client.orders.list({
 ```bash cURL
 curl -G 'https://store.example.com/api/v3/admin/orders' \
   -H 'X-Spree-Api-Key: sk_xxx' \
-  --data-urlencode 'q[status_eq]=complete' \
+  --data-urlencode 'q[status_eq]=placed' \
   --data-urlencode 'q[total_gteq]=100' \
   --data-urlencode 'q[completed_at_gteq]=2026-04-22T00:00:00Z'
 ```

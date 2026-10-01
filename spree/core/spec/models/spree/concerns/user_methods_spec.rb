@@ -5,8 +5,35 @@ describe Spree::UserMethods do
   let!(:another_user) { create(:user) }
   let(:current_store) { @default_store }
 
+  describe '#carts' do
+    let!(:open_cart) { create(:cart, customer: test_user, store: current_store) }
+
+    before do
+      create(:cart, customer: another_user, store: current_store)
+      create(:cart, customer: test_user, store: current_store, completed_at: Time.current)
+      # A backoffice draft order is incomplete but it is not a cart.
+      create(:order, customer: test_user, store: current_store)
+    end
+
+    it 'returns only the customer\'s open Spree::Cart records' do
+      expect(test_user.carts).to contain_exactly(open_cart)
+      expect(test_user.carts.first).to be_a(Spree::Cart)
+    end
+
+    it 'leaves carts in place when the customer is destroyed' do
+      expect { test_user.destroy }.not_to change(Spree::Cart, :count)
+    end
+  end
+
   describe '#last_incomplete_spree_order' do
     subject { test_user.last_incomplete_spree_order(current_store) }
+
+    before { allow(Spree::Deprecation).to receive(:warn) }
+
+    it 'is deprecated' do
+      subject
+      expect(Spree::Deprecation).to have_received(:warn).with(/last_incomplete_spree_order is deprecated/)
+    end
 
     context 'with an incomplete order' do
       let(:last_incomplete_order) { create :order, customer: test_user, store: current_store }

@@ -7,7 +7,7 @@ module Spree
       #   runs — a price-list import's `preferred_price_list_id`, say
       # @return [Spree::Import] persisted, unprocessed
       def self.call(csv_path:, import_class:, store: nil, user: nil, inline: false, skip_events: false, attributes: {})
-        store ||= Spree::Store.default
+        store ||= Spree::Current.store
         # An admin of the target store, not `admin_user_class.first` — in a
         # multi-store or multi-tenant app that global first can belong to a
         # different store entirely.

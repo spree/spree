@@ -38,7 +38,10 @@ export function ResourceTranslationsCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <CardTitle>{t('admin.translations.title')}</CardTitle>
+        <CardTitle>
+          <LanguagesIcon className="size-4" />
+          {t('admin.translations.title')}
+        </CardTitle>
         {targetLocales.length > 0 && (
           <Button type="button" size="sm" variant="outline" onClick={() => setOpen(true)}>
             <LanguagesIcon />

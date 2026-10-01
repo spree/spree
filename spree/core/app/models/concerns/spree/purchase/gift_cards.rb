@@ -51,16 +51,22 @@ module Spree
 
         payment = payments.checkout.store_credits.where(source: gift_card.store_credits).first
         return unless payment
+        # Nothing is left for the card to pay, and a store credit cannot hold
+        # a zero amount, so the card is released rather than resized.
+        return remove_gift_card unless total.positive?
 
         gift_card.with_lock do
-          new_amount = [gift_card.amount_remaining + payment.amount, total].min
+          # A locking read: a plain reload can return the transaction's older
+          # snapshot, and a resize committed since would be applied again.
+          payment.lock!
+          new_amount = [gift_card.spendable_amount + payment.amount, total].min
           next if payment.amount == new_amount
 
           difference = new_amount - payment.amount
-          # update_column bypasses Payment#max_amount validation which can
-          # fail on stale in-memory state; bounds enforced via min() above.
-          payment.update_column(:amount, new_amount)
           payment.source.update_column(:amount, new_amount)
+          # Skips Payment#max_amount, which can fail on stale in-memory state;
+          # min() above bounds the amount.
+          payment.update_store_credit_amount!(new_amount)
           gift_card.amount_used += difference
           gift_card.save!
         end

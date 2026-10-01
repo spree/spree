@@ -13,7 +13,7 @@
 #
 # Usage:
 #   bundle exec rake spree:upgrade                 # walk all eligible manifests
-#   bundle exec rake spree:upgrade DRY_RUN=1       # print plan, run nothing
+#   bundle exec rake spree:upgrade DRY_RUN=1       # print the steps a run would execute, run nothing
 #   bundle exec rake spree:upgrade STEP=channels   # run one step by id (any manifest)
 #   bundle exec rake spree:upgrade TO=5.4          # cap the walk at this version
 #
@@ -72,10 +72,9 @@ module Spree
     # rendering, invocation) stay separable and the plan can be inspected
     # without execution.
     class Runner
-      attr_reader :target_version, :step_id, :dry_run, :target_explicit
+      attr_reader :target_version, :step_id, :dry_run
 
       def initialize(target_version: nil, step_id: nil, dry_run: false)
-        @target_explicit = !target_version.nil?
         @target_version  = target_version || Spree::Upgrade.installed_minor_version
         @step_id         = step_id
         @dry_run         = dry_run
@@ -98,21 +97,12 @@ module Spree
 
       private
 
-      # In plan-mode without explicit TO, show manifests ahead of the installed
-      # version — the path the operator is about to walk. Otherwise filter to
-      # manifests whose `to` is ≤ target.
+      # Plan mode selects exactly what a real run executes, so a dry run after
+      # bumping the gem lists every backfill the upgrade is about to perform.
       def eligible_manifests
         Spree::Upgrade.available_manifests
-          .select { |manifest| manifest_eligible?(manifest) }
+          .select { |manifest| Spree::Upgrade.compare(manifest[:to], target_version) <= 0 }
           .map { |entry| load_manifest_yaml(entry) }
-      end
-
-      def manifest_eligible?(manifest)
-        if dry_run && !target_explicit
-          Spree::Upgrade.compare(manifest[:from], Spree::Upgrade.installed_minor_version) >= 0
-        else
-          Spree::Upgrade.compare(manifest[:to], target_version) <= 0
-        end
       end
 
       def load_manifest_yaml(entry)
@@ -121,13 +111,8 @@ module Spree
 
       def run_full_walk(manifests)
         total_steps = manifests.sum { |m| m['steps'].size }
-        reported_target = if dry_run && !target_explicit
-                            manifests.map { |m| m['to'] }.compact.max_by { |v| Spree::Upgrade.version_parts(v) } || target_version
-                          else
-                            target_version
-                          end
         puts
-        puts "  Walking #{manifests.size} manifest(s), #{total_steps} step(s) total. Target: Spree #{reported_target}."
+        puts "  Walking #{manifests.size} manifest(s), #{total_steps} step(s) total. Target: Spree #{target_version}."
 
         manifests.each do |manifest|
           print_manifest_header(manifest)

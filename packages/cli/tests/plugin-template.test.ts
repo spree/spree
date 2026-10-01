@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
+import { PLUGIN_PEER_RANGES } from '../src/lib/plugin-peer-ranges'
 import { render, type TemplateVars } from '../src/lib/template'
 
 const TEMPLATE_SRC = path.resolve(__dirname, '../templates/plugin')
@@ -24,6 +25,12 @@ const SAMPLE_VARS: TemplateVars = {
   author_email: 'jane@acme.dev',
   license: 'MIT',
   year: '2026',
+  ...PLUGIN_PEER_RANGES,
+}
+
+function workspaceVersion(dir: string): string {
+  return JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../${dir}/package.json`), 'utf8'))
+    .version
 }
 
 describe('bundled plugin template', () => {
@@ -83,7 +90,34 @@ describe('bundled plugin template', () => {
       fs.readFileSync(path.join(dst, 'packages/dashboard/package.json'), 'utf8'),
     )
     expect(pkg.name).toBe('@acme/brands-dashboard')
-    expect(pkg.peerDependencies['@spree/dashboard-core']).toBeDefined()
+  })
+
+  // Hand-written ranges drifted to versions no published package matched.
+  it('peer-depends on the admin SDK and dashboard packages released with this CLI', () => {
+    const dst = path.join(tempDir(), 'out')
+    render({ src: TEMPLATE_SRC, dst, vars: SAMPLE_VARS })
+
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(dst, 'packages/dashboard/package.json'), 'utf8'),
+    )
+    expect(pkg.peerDependencies).toMatchObject({
+      '@spree/admin-sdk': `^${workspaceVersion('admin-sdk')}`,
+      '@spree/dashboard-core': `^${workspaceVersion('dashboard-core')}`,
+      '@spree/dashboard-ui': `^${workspaceVersion('dashboard-ui')}`,
+    })
+  })
+
+  it('makes the dashboard package buildable and safe from tree-shaking', () => {
+    const dst = path.join(tempDir(), 'out')
+    render({ src: TEMPLATE_SRC, dst, vars: SAMPLE_VARS })
+
+    const pkg = JSON.parse(
+      fs.readFileSync(path.join(dst, 'packages/dashboard/package.json'), 'utf8'),
+    )
+    // The root `pnpm build` runs `pnpm -r build`, which fails when no package has one.
+    expect(pkg.scripts.build).toBeDefined()
+    // The entry registers the plugin at import time; bundlers must keep it.
+    expect(pkg.sideEffects).toContain(pkg.exports['.'])
   })
 
   it('substitutes module names + paths consistently in the dashboard entry', () => {
@@ -122,6 +156,8 @@ describe('bundled plugin template', () => {
     expect(readme).toContain("gem 'spree_brands'")
     expect(readme).toContain('Jane Developer')
     expect(readme).not.toContain('{{')
+    // The CLI generates no engine/ directory (yet), so the README must not describe one.
+    expect(readme).not.toContain('engine/')
   })
 
   it('skips the dashboard subtree when asked', () => {

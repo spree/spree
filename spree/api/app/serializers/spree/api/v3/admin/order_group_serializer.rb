@@ -13,6 +13,8 @@ module Spree
                    cart_id: 'string | null',
                    seller_count: :number,
                    includes_first_party: :boolean,
+                   confirmation_delivered: :boolean,
+                   store_owner_notification_delivered: :boolean,
                    created_at: :string, updated_at: :string
 
           attribute :customer_id do |group|
@@ -33,6 +35,11 @@ module Spree
           attribute :includes_first_party do |group|
             group.includes_first_party?
           end
+
+          # A split checkout is confirmed once, from here — every child order
+          # places silently, so their own flags are false and only the group
+          # can answer whether the customer was told.
+          attributes :confirmation_delivered, :store_owner_notification_delivered
 
           attributes :created_at, :updated_at
 

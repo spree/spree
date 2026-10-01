@@ -6,8 +6,8 @@ section: customization
 ## Overview
 
 With Dependencies, you can replace parts of Spree core with your custom code:
-[Services and Workflows](/developer/customization/workflows), CanCanCan
-Abilities (used for [Permissions](/developer/customization/permissions)), and API Serializers (used for
+[Services and Workflows](/developer/customization/workflows), the staff ability class
+and the storefront access policy (used for [Permissions](/developer/customization/permissions)), and API Serializers (used for
 generating JSON API responses).
 
 <Tip>
@@ -20,19 +20,19 @@ instead. Hooks survive upgrades.
 
 ## Application (global) customization
 
-This will change every aspect of the application (both APIs, Admin Panel, and Storefront).
+This will change every aspect of the application (the Store API, the Admin API, and everything built on them).
 
 In your `config/initializers/spree.rb` file, you can set the following:
 
 ```ruby
-Spree.cart_update_service = MyStore::CartUpdate
+Spree.carts_update_service = MyStore::CartUpdate
 ```
 
 or using the block syntax:
 
 ```ruby
 Spree.dependencies do |dependencies|
-  dependencies.cart_update_service = MyStore::CartUpdate
+  dependencies.carts_update_service = MyStore::CartUpdate
 end
 ```
 
@@ -90,6 +90,20 @@ reasons people replace this class, and they don't need maintaining across
 upgrades.
 </Note>
 
+<Warning>
+A subclass runs its hooks under its **own** key, derived from its class name —
+`MyStore::AddItem` fires `my_store.add_item.*`, not `carts.add_item.*`. Hooks
+registered on the original key (by you or by an installed extension) stop
+firing once you swap the class in. To keep them, declare the original key in
+the subclass:
+
+```ruby
+class AddItem < Spree::Carts::AddItem
+  workflow_key 'carts.add_item'
+end
+```
+</Warning>
+
 ## Using dependencies in your code
 
 When you need to use a dependency in your code, you can access it directly via the `Spree` module:
@@ -99,60 +113,53 @@ When you need to use a dependency in your code, you can access it directly via t
 Spree.cart_add_item_workflow.call(cart: cart, variant: variant, quantity: 1)
 
 # For API dependencies, use the Spree.api accessor
-Spree.api.storefront_cart_serializer.new(order).serializable_hash
+Spree.api.cart_serializer.new(cart).serializable_hash
 ```
 
 ## Controller level customization
 
-If you need to replace [serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) or Services in a specific API endpoint you can create a [code decorator](/developer/customization/decorators):
+If you need to replace a serializer in a specific API endpoint only, you can create a [code decorator](/developer/customization/decorators):
 
 ```bash
-mkdir -p app/controllers/spree && touch app/controllers/spree/cart_controller_decorator.rb
+mkdir -p app/controllers/spree/api/v3/store && touch app/controllers/spree/api/v3/store/carts_controller_decorator.rb
 ```
 
 and add the following code to it:
 
 ```ruby
 module Spree
-  module CartControllerDecorator
-    def resource_serializer
-      MyNewAwesomeCartSerializer
-    end
+  module Api
+    module V3
+      module Store
+        module CartsControllerDecorator
+          def serializer_class
+            MyNewAwesomeCartSerializer
+          end
+        end
 
-    def add_item_service
-      MyNewAwesomeAddItemToCart
+        CartsController.prepend(CartsControllerDecorator)
+      end
     end
   end
-
-  CartController.prepend(CartControllerDecorator)
 end
 ```
 
-This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.
+This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer`. Services and workflows are resolved through the global dependencies (e.g. `Spree.cart_add_item_workflow`), so swap those at the application level.
 
-Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/main/api/app/controllers/spree/api/v3) to see what you can replace.
+Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/main/spree/api/app/controllers/spree/api/v3) to see what you can replace.
 
 ## API level customization
 
-Storefront API and Platform API have separate Dependencies injection points so you can easily customize one without touching the other.
+API serializers have their own injection points under `Spree.api` — Store API serializers (`cart_serializer`, `product_serializer`, …) and Admin API serializers (`admin_order_serializer`, …) — so you can customize one surface without touching the other.
 
 In your Spree initializer (`config/initializers/spree.rb`) please add:
 
 ```ruby
-Spree.api.storefront_cart_serializer = MyNewAwesomeCartSerializer
-Spree.api.storefront_cart_add_item_service = MyNewAwesomeAddItemToCart
+Spree.api.cart_serializer = MyNewAwesomeCartSerializer
+Spree.api.admin_order_serializer = MyNewAwesomeAdminOrderSerializer
 ```
 
-This will swap the default Cart serializer and Add Item to Cart service for your custom ones within all Storefront API endpoints that use those classes.
-
-You can mix and match both global and API-level customizations:
-
-```ruby
-Spree.cart_add_item_workflow = MyNewAwesomeAddItemToCart
-Spree.api.storefront_cart_add_item_service = AnotherAddItemToCart
-```
-
-The second line will have precedence over the first one, and the Storefront API will use `AnotherAddItemToCart` and the rest of the application will use `MyNewAwesomeAddItemToCart`.
+This will swap the default serializers for your custom ones within all API endpoints that use them.
 
 ## Debugging dependencies
 
@@ -174,8 +181,8 @@ cart_recalculate_workflow       Spree::Carts::Recalculate [OVERRIDDEN]
 ...
 
 [API]
-storefront_cart_serializer      Spree::V2::Storefront::CartSerializer
-storefront_cart_add_item_service  MyApp::CartAddItem [OVERRIDDEN]
+cart_serializer                 Spree::Api::V3::CartSerializer
+product_serializer              MyApp::ProductSerializer [OVERRIDDEN]
 ...
 ```
 
@@ -198,7 +205,7 @@ This shows only the dependencies that have been customized, along with their ori
 cart_recalculate_workflow  Spree::Carts::Recalculate -> MyApp::CartRecalculate (config/initializers/spree.rb:15)
 
 [API OVERRIDES]
-storefront_cart_add_item_service  Spree::Carts::AddItem -> MyApp::CartAddItem (config/initializers/spree.rb:20)
+product_serializer  Spree::Api::V3::ProductSerializer -> MyApp::ProductSerializer (config/initializers/spree.rb:20)
 ```
 
 ### Validate all dependencies
@@ -247,11 +254,16 @@ Seams backed by a [workflow](/developer/customization/workflows) use a
 | `cart_add_item_service` | `cart_add_item_workflow` |
 | `cart_recalculate_service` | `cart_recalculate_workflow` |
 | `carts_complete_service` | `carts_complete_workflow` |
+| `carts_upsert_items_service` | `cart_upsert_items_workflow` |
 | `cart_merge_strategy` | `cart_merge_workflow` |
 | `order_cancel_service` | `order_cancel_workflow` |
 | `order_complete_service` | `order_complete_workflow` |
 | `fulfillment_create_service` | `fulfillment_create_workflow` |
 | `payments_handle_webhook_service` | `payments_handle_webhook_workflow` |
+| `shipment_update_service`, `fulfillment_update_service` | `fulfillment_update_workflow` |
+| `gift_card_apply_service` | `gift_card_apply_workflow` |
+| `gift_card_remove_service` | `gift_card_remove_workflow` |
+| `gift_card_redeem_service` | `gift_card_redeem_workflow` |
 
 <Warning>
 The legacy names stay readable, but **assigning to one no longer has any
@@ -263,6 +275,12 @@ checkout in ways that are hard to trace.
 If you override any of these, move to the `*_workflow` name and make sure your
 class subclasses the workflow.
 </Warning>
+
+Two seams are plain renames with an unchanged contract, so an override set
+under the old name is still applied (with a deprecation warning):
+`checkout_add_store_credit_service` → `store_credit_apply_service` and
+`checkout_remove_store_credit_service` → `store_credit_remove_service`. All
+legacy names are removed in Spree 6.1.
 
 ## Backwards compatibility
 
@@ -286,5 +304,5 @@ Default values can be easily checked by:
 
 1. Using the rake task: `bin/rake spree:dependencies:list`
 2. Looking at the source code:
-   * [Application (global) dependencies](https://github.com/spree/spree/blob/main/core/lib/spree/core/dependencies.rb)
-   * [API level dependencies](https://github.com/spree/spree/blob/main/api/lib/spree/api/dependencies.rb)
+   * [Application (global) dependencies](https://github.com/spree/spree/blob/main/spree/core/lib/spree/core/dependencies.rb)
+   * [API level dependencies](https://github.com/spree/spree/blob/main/spree/api/lib/spree/api/dependencies.rb)

@@ -15,6 +15,15 @@ module Spree
 
         self.additional_permitted_attributes = [product_ids: []]
 
+        validate :products_belong_to_store
+
+        # Resolved through the promotion's own store, so another store's
+        # product raises rather than being linked and then served back with
+        # its admin data.
+        def product_ids=(ids)
+          super(ids_within_store(ids, promotion&.store&.products))
+        end
+
         #
         # Preferences
         #
@@ -86,10 +95,17 @@ module Spree
           ActiveSupport::Deprecation.warn(
             'Please use `product_ids=` instead.'
           )
-          self.product_ids = s
+          self.product_ids = s.to_s.split(',')
         end
 
         private
+
+        def products_belong_to_store
+          return if promotion.nil? || product_ids.empty?
+          return if (product_ids - promotion.store.products.where(id: product_ids).ids).empty?
+
+          errors.add(:products, :invalid)
+        end
 
         def add_products
           return if product_ids_to_add.nil?

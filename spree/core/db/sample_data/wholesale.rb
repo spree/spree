@@ -2,7 +2,7 @@
 # Spree::Seeds::Channels: an approved demo buyer and a customer-group price
 # list, so a fresh install can walk the whole B2B portal story — sign in as
 # the buyer, see wholesale prices, check out on the wholesale channel.
-store = Spree::Store.default
+store = Spree::Current.store
 
 wholesale_group = store.customer_groups.find_or_create_by!(name: Spree::Seeds::CustomerGroups::WHOLESALE_NAME)
 

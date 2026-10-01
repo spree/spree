@@ -330,6 +330,7 @@ module Spree
                                                  carton_package_type_id carton_weight cartons_per_pallet]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search
                                              available_at_stock_location)
+    self.private_ransackable_attributes = { store: %w[cost_price cost_currency deleted_at] }
 
     def self.product_name_or_sku_cont(query)
       sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
@@ -604,8 +605,11 @@ module Spree
     # @param opt_type_position [Integer] the position of the option type
     # @return [void]
     def set_option_value(opt_name, opt_value, opt_type_position = nil)
-      option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
+      # The product's own store: option types are store-owned, and matching one
+      # by name elsewhere would attach and extend another store's type.
+      option_type = Spree::OptionType.for_store(product.store).where(name: opt_name.parameterize).first_or_initialize do |o|
         o.name = o.label = opt_name
+        o.store = product.store
         o.save!
       end
 
@@ -1190,10 +1194,11 @@ module Spree
     end
 
     # Only the product's own store's locations — a new variant must not grow
-    # stock items in every other store's warehouses.
+    # stock items in every other store's warehouses — and of those, a seller's
+    # location only stocks what that seller sells.
     def create_stock_levels
       locations = product&.store ? product.store.stock_locations : StockLocation.all
-      locations.where(propagate_all_variants: true).each do |stock_location|
+      locations.where(propagate_all_variants: true, seller_id: [nil, resolved_seller_id].uniq).each do |stock_location|
         stock_location.propagate_variant(self)
       end
     end

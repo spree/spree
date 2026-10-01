@@ -1,0 +1,56 @@
+---
+title: Resend
+description: Send Spree's transactional emails through Resend over SMTP — one hostname, the literal username `resend`, and your API key as the password.
+---
+
+[Resend](https://resend.com) is a transactional email service built for developers, with a deliberately small setup: add a domain, create an API key, and send. It is a good default for a new Spree store that wants working email quickly without a long account review.
+
+Spree talks to Resend over plain SMTP, so there is nothing to install — see [Emails](/developer/providers/emails) for how the configuration works.
+
+## Configuration
+
+```bash
+SMTP_HOST=smtp.resend.com
+SMTP_PORT=587
+SMTP_USERNAME=resend
+SMTP_PASSWORD=re_your_api_key
+SMTP_FROM_ADDRESS=orders@yourstore.com
+```
+
+The username is the **literal string `resend`** — not your email address and not the API key. The API key goes in the password field.
+
+Resend also accepts ports 25 and 2587 for STARTTLS. Ports 465 and 2465 are implicit TLS, which Spree does not use, so stay on 587.
+
+## Getting an API key
+
+1. Open the Resend dashboard and go to **API Keys**.
+2. Create a key with sending permission.
+3. Copy it immediately — the full value is shown only once. Keys start with `re_`.
+
+## Authenticating your domain
+
+Go to **Domains → Add Domain**, enter your sending domain, and add the records Resend generates at your DNS host:
+
+- **DKIM**, which proves the mail is really yours.
+- **SPF**, plus a record on the sending subdomain that routes bounces back to Resend.
+
+Create each one with the **type Resend displays**. Older domains are given `TXT`
+and `MX` records for SPF, where domains added after August 2026 may get `CNAME`
+records instead — so copy what the dashboard shows rather than assuming a type.
+On older domains both SPF records must be right or SPF does not verify at all.
+
+Once the domain shows as verified, set `SMTP_FROM_ADDRESS` to an address on it. A verified domain already passes SPF and DKIM; **DMARC** is not needed to verify, but is worth adding afterwards.
+
+<Warning>
+**Until you verify a domain, you can only email yourself.** An unverified account sends from `onboarding@resend.dev`, and Resend restricts that test sender to the address on your own Resend account — anything else is refused with "You can only send testing emails to your own email address". A store in this state appears to work while no customer ever receives an order confirmation, so verify your domain before going live.
+</Warning>
+
+<Note>
+Resend's free tier allows 3,000 emails a month but also caps sending at **100 a day**. A busy day of confirmations and shipping notices can reach that ceiling well before the monthly allowance, so check the daily figure rather than the monthly one when sizing a plan.
+</Note>
+
+## Related
+
+- [Emails](/developer/providers/emails) — the SMTP variables and how to verify delivery
+- [Sending out Emails](/developer/deployment/emails) — what Spree sends and when
+- [Resend SMTP documentation](https://resend.com/docs/send-with-smtp)

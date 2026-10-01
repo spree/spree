@@ -73,6 +73,36 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
       expect(json_response['error']['code']).to eq('payment_method_unavailable')
     end
 
+    # The cart only offers active, storefront-visible methods; an offline
+    # staff-only method would otherwise mark the order paid.
+    it 'does not accept a staff-only payment method' do
+      staff_only = create(:check_payment_method, storefront_visible: false)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: staff_only.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+      expect(order.payments.reload).to be_empty
+    end
+
+    it 'does not accept an inactive payment method' do
+      inactive = create(:check_payment_method, active: false)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: inactive.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'rejects store credit, which is applied through its own endpoint' do
+      store_credit_method = create(:store_credit_payment_method, store: store)
+      create(:store_credit, customer: user, store: store, currency: order.currency)
+
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: store_credit_method.prefixed_id }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('payment_method_unavailable')
+      expect(order.reload.payments).to be_empty
+    end
+
     it 'returns not found for invalid payment method' do
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: 'pm_invalid' }
 

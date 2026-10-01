@@ -18,6 +18,12 @@ module Spree
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
+          # A bearer credential: in full only to a caller who may read gift
+          # cards, masked when the card rides along on an order.
+          attribute :code do |gift_card|
+            params[:gift_card_codes] ? gift_card.display_code : gift_card.masked_code
+          end
+
           attribute :customer_id do |gift_card|
             gift_card.customer&.prefixed_id
           end

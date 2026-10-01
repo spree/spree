@@ -414,6 +414,31 @@ module Spree
       end
     end
 
+    describe 'cart metadata' do
+      it 'carries the cart metadata onto the order' do
+        ready_cart.update!(metadata: { 'gift_message' => 'Happy birthday', 'delivery' => { 'window' => 'am' } })
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.reload.metadata).to eq('gift_message' => 'Happy birthday', 'delivery' => { 'window' => 'am' })
+      end
+
+      it 'gives the order its own copy rather than sharing the cart hash' do
+        ready_cart.update!(metadata: { 'delivery' => { 'window' => 'am' } })
+
+        order = described_class.call(cart: ready_cart).value
+        order.metadata['delivery']['window'] = 'pm'
+
+        expect(ready_cart.metadata['delivery']['window']).to eq('am')
+      end
+
+      it 'leaves the order metadata empty when the cart has none' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.reload.metadata).to eq({})
+      end
+    end
+
     describe 'the buyer purchase order' do
       it 'carries the reference onto the order' do
         ready_cart.update!(po_number: 'PO-4471')
@@ -615,6 +640,33 @@ module Spree
         expect(result).to be_success
         expect(coupon_code.reload.state).to eq('unused')
         expect(coupon_code.order_id).to be_nil
+      end
+
+      it 'refuses a cart discounted by a code another cart has since taken' do
+        promotion = create(:promotion_with_item_adjustment, adjustment_rate: 2, kind: :coupon_code, store: store, multi_codes: true, number_of_codes: 1)
+        coupon_code = promotion.coupon_codes.first
+        coupon_code.update!(cart: ready_cart)
+        ready_cart.update_columns(coupon_code: coupon_code.code)
+        ready_cart.recalculate_totals!
+        coupon_code.update!(cart: create(:cart, store: store))
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('coupon_code_unavailable')
+        expect(ready_cart.reload.order).to be_nil
+        expect(ready_cart.discounts.where(promotion_id: promotion.id)).to be_present
+      end
+
+      it 'refuses a cart showing a code it gave up, rather than naming it on the order' do
+        promotion = create(:promotion_with_item_adjustment, adjustment_rate: 2, kind: :coupon_code, store: store, multi_codes: true, number_of_codes: 1)
+        ready_cart.update_columns(coupon_code: promotion.coupon_codes.first.code)
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('coupon_code_unavailable')
+        expect(ready_cart.reload.order).to be_nil
       end
     end
   end

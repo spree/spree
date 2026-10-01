@@ -75,6 +75,19 @@ RSpec.describe Spree::Export, :job, type: :model do
         export.save!
         expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
       end
+
+      it 'writes a row for a customer with addresses' do
+        customer = create(:customer_with_addresses)
+        export.save!
+        export.generate
+
+        row = CSV.parse(export.attachment.download, headers: true).find { |r| r['Email'] == customer.email }
+        expect(row.to_h).to include(
+          'City' => customer.bill_address.city,
+          'Province Code' => customer.bill_address.state_code,
+          'Country Code' => customer.bill_address.country.iso
+        )
+      end
     end
 
     # Header and value rows are built in different objects, so they have to
@@ -176,6 +189,12 @@ RSpec.describe Spree::Export, :job, type: :model do
       it 'spans the store' do
         expect(export.scope).to include(sellers_order)
       end
+
+      it 'leaves out drafts' do
+        draft = create(:order, store: store, status: 'draft', cart: nil)
+
+        expect(export.scope).not_to include(draft)
+      end
     end
   end
 
@@ -219,6 +238,15 @@ RSpec.describe Spree::Export, :job, type: :model do
       expect(headers).to include('Shipping Address 1', 'Shipping Phone')
       expect(headers).to include('Billing Address 1')
       expect(headers).to include('Notes')
+    end
+
+    # Which orders land in the file would otherwise answer whether a buyer's
+    # email matches the condition, one guess per export.
+    it "ignores a condition on the buyer's email" do
+      export = create(:order_export, store: store, seller: seller, user: nil,
+                                     search_params: { email_start: 'zzz' }.to_json)
+
+      expect(export.records_to_export).to include(order)
     end
 
     it "leaves the operator's own export untouched" do

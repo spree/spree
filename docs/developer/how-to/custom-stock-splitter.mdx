@@ -1,15 +1,15 @@
 ---
 title: Build a Custom Stock Splitter
-description: Step-by-step guide to extending Spree's stock splitter chain — break a location's allocation into multiple shipments along your own axis (refrigeration, gift wrap, bin size, hazmat, anything you need to physically separate).
+description: Step-by-step guide to extending Spree's stock splitter chain — break a location's allocation into multiple fulfillments along your own axis (refrigeration, gift wrap, bin size, hazmat, anything you need to physically separate).
 ---
 
 ## Overview
 
-When [Order Routing](/developer/core-concepts/fulfillments#order-routing) picks one or more stock locations to fulfill an order, each location's allocation is then run through a chain of **splitters**. Each splitter looks at the packages produced so far and decides whether to break them further along its own axis.
+When [Order Routing](/developer/how-to/custom-order-routing) picks one or more stock locations to fulfill an order, each location's allocation is then run through a chain of **splitters**. Each splitter looks at the packages produced so far and decides whether to break them further along its own axis.
 
-Spree ships with four splitters out of the box (`ShippingCategory`, `Backordered`, `Digital`, `Weight`). You add your own when you need a *physical* separation that isn't expressed by any of the existing ones — refrigerated SKUs that can't share a box with ambient ones, hazmat goods that need their own carrier label, gift-wrap items that ship from a separate processing room, and so on.
+Spree ships with three splitters out of the box: `DeliveryProfile` (keeps each package to a single [delivery profile](/developer/core-concepts/delivery-setup#delivery-profiles)), `Backordered` and `Weight`. The default chain is `DeliveryProfile` then `Backordered`; `Weight` is opt-in. You add your own when you need a *physical* separation that isn't expressed by any of the existing ones — refrigerated SKUs that can't share a box with ambient ones, hazmat goods that need their own carrier label, gift-wrap items that ship from a separate processing room, and so on.
 
-Before starting, make sure you understand [how splitting works in Spree](/developer/core-concepts/fulfillments#stock-splitters) and the [order routing](/developer/core-concepts/fulfillments#order-routing) layer that runs before splitters.
+Before starting, make sure you understand [how delivery profiles split a cart](/developer/core-concepts/delivery-setup#delivery-profiles) and the [order routing](/developer/how-to/custom-order-routing) layer that runs before splitters.
 
 | If the answer is "yes" | Pick |
 |---|---|
@@ -74,12 +74,12 @@ end
 
 #### What `package.contents` Looks Like
 
-Each `package.contents` is an array of `Spree::Stock::ContentItem` — wrappers around `InventoryUnit`. The two attributes you'll use most:
+Each `package.contents` is an array of `Spree::Stock::ContentItem` — wrappers around a `Spree::FulfillmentItem`. The attributes you'll use most:
 
 ```ruby
 content.variant         # The Spree::Variant being shipped
-content.inventory_unit  # The Spree::InventoryUnit (gives access to line_item, order, etc.)
-content.weight          # Convenience: variant.weight × inventory_unit.quantity
+content.inventory_unit  # The Spree::FulfillmentItem (gives access to line_item, quantity, etc.)
+content.weight          # Convenience: variant.weight × quantity
 content.state           # :on_hand or :backordered
 ```
 
@@ -90,43 +90,44 @@ So the splitter's job is "look at each package's contents, decide which contents
 Splitters are registered globally on `Rails.application.config.spree.stock_splitters` — every order runs through the full chain. Add yours in `config/initializers/spree.rb`:
 
 ```ruby config/initializers/spree.rb
-Rails.application.config.to_prepare do
+Rails.application.config.after_initialize do
   Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::Refrigerated
 end
 ```
 
-The `to_prepare` block re-runs on Zeitwerk code reloads in development, so the splitter survives reloads correctly. Putting the line at the top of the initializer (outside `to_prepare`) works too in production but can leave a stale registry in development.
+Spree assigns its default chain in its own `after_initialize`, which runs after your initializer files — so a splitter appended at the top level of the file, or in a `to_prepare` block, is overwritten at boot. Registering in `after_initialize` runs after Spree's defaults. The chain holds the class loaded at boot, so restart the server in development after changing the splitter.
 
 #### Replacing the Whole Chain
 
 If you'd rather control the full chain (uncommon — the defaults are well-chosen), assign instead of append:
 
 ```ruby
-Rails.application.config.spree.stock_splitters = [
-  Spree::Stock::Splitter::ShippingCategory,
-  Spree::Stock::Splitter::Refrigerated,        # custom one slotted in
-  Spree::Stock::Splitter::Backordered,
-  Spree::Stock::Splitter::Digital
-]
+Rails.application.config.after_initialize do
+  Rails.application.config.spree.stock_splitters = [
+    Spree::Stock::Splitter::DeliveryProfile,
+    Spree::Stock::Splitter::Refrigerated,        # custom one slotted in
+    Spree::Stock::Splitter::Backordered
+  ]
+end
 ```
 
 #### Ordering Matters
 
 Splitters run in array order, each feeding the next. Two practical rules:
 
-1. **Coarse before fine.** `ShippingCategory` runs first by default because it groups packages by carrier-relevant category before any other axis cuts in. Your custom splitter usually wants to run after it, unless you're separating items that should *never* share a package even within a category (e.g. hazmat).
+1. **Coarse before fine.** `DeliveryProfile` runs first by default because it groups packages by delivery profile — which decides the delivery methods a package can use — before any other axis cuts in. Your custom splitter usually wants to run after it, unless you're separating items that should *never* share a package even within a profile (e.g. hazmat).
 2. **`Backordered` should usually be last among the "type" splitters.** It splits on-hand from backordered items, which is a state-axis split rather than a packaging-axis split. Splitting before `Backordered` gives you finer category buckets; splitting after does too — pick based on whether your axis applies to backorders. Refrigerated items have the same handling whether on-hand or backordered, so running before `Backordered` is fine. Hazmat shipping rules might differ between on-hand (real package) and backorder (paperwork only), so running after might be cleaner.
 
 ### Step 3: Test the Splitter
 
-Splitter tests are unit tests — instantiate a fake `Packer`, hand the splitter a hand-built package, assert on the output. There's no factory required.
+Splitter tests are unit tests — instantiate a `Packer`, hand the splitter a hand-built package, assert on the output. There's no factory required.
 
 ```ruby spec/models/spree/stock/splitter/refrigerated_spec.rb
 require 'rails_helper'
 
 RSpec.describe Spree::Stock::Splitter::Refrigerated, type: :model do
   let(:stock_location) { build_stubbed(:stock_location) }
-  let(:packer)         { instance_double(Spree::Stock::Packer, stock_location: stock_location) }
+  let(:packer)         { Spree::Stock::Packer.new(stock_location, []) }
   let(:cold_variant)   { build_stubbed(:variant).tap { |v| allow(v).to receive(:refrigerated?).and_return(true) } }
   let(:warm_variant)   { build_stubbed(:variant).tap { |v| allow(v).to receive(:refrigerated?).and_return(false) } }
 
@@ -162,8 +163,8 @@ RSpec.describe Spree::Stock::Splitter::Refrigerated, type: :model do
   end
 
   def content_item_for(variant)
-    inventory_unit = build_stubbed(:inventory_unit, variant: variant)
-    Spree::Stock::ContentItem.new(inventory_unit, :on_hand)
+    fulfillment_item = build_stubbed(:fulfillment_item, variant: variant)
+    Spree::Stock::ContentItem.new(fulfillment_item, :on_hand)
   end
 end
 ```
@@ -197,8 +198,8 @@ Splitters and routing run in series, not in parallel — every package a splitte
 |---|---|---|
 | 1 | Routing | `Strategy::Rules#for_allocation` ranks all eligible locations |
 | 2 | Per-location packing | One `Packer` per location runs the full splitter chain |
-| 3 | Cross-location dedup | `Prioritizer.Adjuster` walks packages in rank order, assigns each inventory unit to the first package with on-hand stock |
-| 4 | Rate estimation | `Estimator` attaches shipping rates |
+| 3 | Cross-location dedup | `Prioritizer.Adjuster` walks packages in rank order, assigns each unit to the first package with on-hand stock |
+| 4 | Rate estimation | `Estimator` attaches delivery rates |
 
 Practical implications:
 
@@ -208,6 +209,6 @@ Practical implications:
 
 ## Next Steps
 
-- [Shipments — Stock Splitters](/developer/core-concepts/fulfillments#stock-splitters) — Concept overview and built-in splitter list
-- [Build Custom Order Routing](/developer/how-to/custom-order-routing) — The other layer of split-shipment customization
+- [Delivery Setup — Delivery profiles](/developer/core-concepts/delivery-setup#delivery-profiles) — Why every package keeps to a single delivery profile
+- [Build Custom Order Routing](/developer/how-to/custom-order-routing) — The other layer of split-fulfillment customization
 - [Custom Fields](/developer/core-concepts/metafields) — Tag variants with the data your splitter reads

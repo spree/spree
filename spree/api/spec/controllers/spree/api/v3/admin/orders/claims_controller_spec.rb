@@ -49,6 +49,17 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
     end
   end
 
+  describe 'PATCH #update' do
+    it "refuses another store's reason" do
+      claim = create(:claim, order: order)
+
+      patch :update, params: { order_id: order.prefixed_id, id: claim.prefixed_id,
+                               reason_id: create(:claim_reason, store: create(:store)).prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'PATCH #approve' do
     it 'approves an open claim' do
       claim = create(:claim, store: store, order: order)

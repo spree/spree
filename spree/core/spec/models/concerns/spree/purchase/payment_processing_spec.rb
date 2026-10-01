@@ -153,9 +153,19 @@ RSpec.shared_examples 'a payment processing host' do
     end
 
     it 'excludes methods that report themselves unavailable for the record' do
-      # Store credit is only offered when the customer actually holds credit.
-      store_credit_method = create(:store_credit_payment_method, store: store)
+      unavailable = create(:credit_card_payment_method, store: store)
+      allow_any_instance_of(unavailable.class).to receive(:available_for_order?).and_return(false)
 
+      expect(record.payment_methods).not_to include(unavailable)
+    end
+
+    it 'never lists store credit, which is applied through its own endpoint' do
+      store_credit_method = create(:store_credit_payment_method, store: store)
+      customer = create(:customer)
+      record.update!(customer: customer)
+      create(:store_credit, customer: customer, store: store, currency: record.currency)
+
+      expect(store_credit_method.available_for_order?(record)).to be(true)
       expect(record.payment_methods).not_to include(store_credit_method)
     end
   end

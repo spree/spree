@@ -64,16 +64,17 @@ without a dashboard change.
 
 ## Metrics
 
-A metric is an aggregate over one **base** relation. Core registers four, in
-three families:
+A metric is an aggregate over one **base** relation. Core registers five, in
+four families:
 
 | Family | Bases | Anchored on |
 |--------|-------|-------------|
 | `sales` | `:orders`, `:line_items` | when the order completed |
 | `payments` | `:payments` | when the payment was taken |
 | `inventory` | `:stock_movements` | when the stock moved |
+| `carts` | `:carts` | when the cart was started |
 
-A query draws from **one family only**. The three answer different questions on
+A query draws from **one family only**. The families answer different questions on
 different clocks, so a payment total beside a units-received count is two
 reports wearing one table — the query refuses the mix rather than inventing a
 join between grains that have no honest relationship.

@@ -33,6 +33,15 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(numbers).not_to include(theirs.number)
     end
 
+    # The buyer's email is hidden from sellers, and the buyer's other orders
+    # belong to other sellers; a filter on either answers a yes/no question
+    # about them, so it is ignored.
+    it 'ignores filters on the buyer and the buyer\'s other orders' do
+      get :index, params: { q: { email_start: 'zzz', customer_orders_total_gt: 1_000_000, search: 'zzz' } }, as: :json
+
+      expect(json_response['data'].map { |row| row['number'] }).to eq([mine.number])
+    end
+
     # A draft carrying its cart is a checkout still in flight; it is nobody's
     # order yet and must not appear in a seller's list.
     it 'leaves out a checkout still in flight' do
@@ -106,6 +115,40 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       # the address the customer may also have saved in their own book.
       expect(address.id).not_to eq(original.id)
       expect(original.reload.address1).to eq(original_line)
+    end
+
+    # The correction is this order's, not the buyer's account: their default
+    # addresses and address book serve every later checkout.
+    it "leaves the buyer's default addresses and address book alone" do
+      customer = mine.customer
+      defaults = [customer.ship_address_id, customer.bill_address_id]
+      book_size = customer.addresses.count
+
+      patch :address, params: {
+        id: mine.prefixed_id,
+        shipping_address: { address1: '9 Corrected Way' },
+        billing_address: { address1: '4 Invoice Street' }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      customer.reload
+      expect([customer.ship_address_id, customer.bill_address_id]).to eq(defaults)
+      expect(customer.addresses.count).to eq(book_size)
+      expect(mine.reload.ship_address.owner).to be_nil
+    end
+
+    # A label names an address-book entry; the order's copy has no book.
+    it 'drops an address-book label from the correction' do
+      patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '9 Corrected Way', label: 'Home' } }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(mine.reload.ship_address.label).to be_nil
+    end
+
+    it 'refuses an address the correction leaves invalid' do
+      patch :address, params: { id: mine.prefixed_id, shipping_address: { address1: '' } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'corrects the billing address' do
@@ -197,6 +240,18 @@ RSpec.describe Spree::Api::V3::Seller::OrdersController, type: :controller do
       expect(row).to include('captured_amount' => '100.0', 'refunded_amount' => '20.0',
                              'net_captured_amount' => '80.0', 'display_captured_amount' => '$100.00')
       expect(row.keys).not_to include('payment_id', 'payment_number', 'payment_method')
+    end
+
+    # What a claim on the line can refund at most, so the seller panel can
+    # offer it.
+    it 'renders what each line sold for after discounts' do
+      line_item = mine.line_items.first
+      line_item.update_columns(price: 10, quantity: 1, taxable_adjustment_total: -2)
+
+      get :show, params: { id: mine.prefixed_id }, as: :json
+
+      item = json_response['items'].find { |row| row['id'] == line_item.prefixed_id }
+      expect(item).to include('discounted_amount' => '8.0', 'display_discounted_amount' => '$8.00')
     end
 
     it 'leaves the shares out unless asked' do

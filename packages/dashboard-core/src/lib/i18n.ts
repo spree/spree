@@ -1,5 +1,6 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import { intlDisplayName } from '../hooks/use-display-name'
 // Relative path, not `@/...`: dashboard-core ships source; the consuming
 // project's `@/*` alias is theirs alone (see Phase 1's rationale).
 import en from '../locales/en.json'
@@ -126,10 +127,84 @@ const coreLocales = import.meta.glob<{ default: Record<string, unknown> }>(
 
 /** Admin-UI locale codes the framework ships a bundle for (including `en`). */
 export function coreLocaleCodes(): string[] {
-  return [
-    'en',
-    ...Object.keys(coreLocales).map((p) => p.replace('../locales/', '').replace('.json', '')),
-  ]
+  return localeCodesFromBundlePaths(Object.keys(coreLocales))
+}
+
+/**
+ * Turns a panel's locale-bundle paths into the `{ code, name }` pairs its
+ * language pickers render, with `en` always first.
+ *
+ * The glob itself has to stay in the calling package — `import.meta.glob` is a
+ * compile-time transform resolved against the file that writes it, so hoisting
+ * it here would scan the framework's own locales instead of the panel's. What
+ * IS shared is everything after that: stripping the path down to a code, and
+ * naming each language in its own words.
+ *
+ * @param paths bundle paths from the caller's `import.meta.glob`, e.g.
+ *   `./locales/de.json`
+ */
+export function localesFromBundlePaths(paths: string[]): Array<{ code: string; name: string }> {
+  return localeCodesFromBundlePaths(paths).map((code) => ({ code, name: localeEndonym(code) }))
+}
+
+// `en` first, then a code per bundle path. The glob hands back whatever prefix
+// the calling file used (`./locales/`, `../locales/`), so match either.
+function localeCodesFromBundlePaths(paths: string[]): string[] {
+  return ['en', ...paths.map((path) => path.replace(/^.*\/locales\//, '').replace('.json', ''))]
+}
+
+// Each language's endonym (its own name: `Deutsch`, `中文`). `Intl.DisplayNames`
+// answers in the language's own convention, so some come back lowercase
+// (`français`, `polski`); capitalize the first letter by THAT language's casing
+// rules rather than the current locale's. Scripts without case are unaffected,
+// and an unknown code falls back to itself.
+function localeEndonym(code: string): string {
+  const name = intlDisplayName('language', code, code) ?? code
+
+  return name.charAt(0).toLocaleUpperCase(code) + name.slice(1)
+}
+
+// The languages the running panel can display, as it declared them. `null`
+// until a panel does, which accepts every code — the behaviour before panels
+// declared anything.
+let uiLocaleCodes: readonly string[] | null = null
+
+/**
+ * Declares the languages this panel can display, so a saved preference for one
+ * it does not ship is never applied.
+ *
+ * The account's language is shared by every panel a person signs in to, and
+ * panels ship different sets: a language picked in one may not exist in the
+ * other. Applied anyway, the framework's own strings would switch while the
+ * panel's stayed in English. Call once at boot with the panel's own list.
+ *
+ * @param codes locale codes the panel ships a bundle for, e.g. `['en', 'de']`
+ */
+export function setUiLocales(codes: readonly string[]): void {
+  uiLocaleCodes = codes
+}
+
+/** @returns whether the running panel can display `code` */
+export function isUiLocale(code: string): boolean {
+  return uiLocaleCodes === null || uiLocaleCodes.includes(code)
+}
+
+/**
+ * The language a new session should switch the page to, or `null` when the
+ * page is already right.
+ *
+ * The account's saved language wins when the panel can display it. When it
+ * cannot, the page keeps the language it booted in — unless that one is not
+ * displayable either, which a panel reached before this check existed can be
+ * left in, and then it goes back to English.
+ *
+ * @param saved the account's `selected_locale`
+ * @param stored the language the page booted in
+ */
+export function sessionLocale(saved: string | null | undefined, stored: string): string | null {
+  const target = saved && isUiLocale(saved) ? saved : isUiLocale(stored) ? stored : 'en'
+
+  return target === stored ? null : target
 }
 
 /**

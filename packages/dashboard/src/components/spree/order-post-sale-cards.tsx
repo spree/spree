@@ -36,6 +36,7 @@ import {
   useOrderClaims,
   useOrderExchanges,
 } from '../../hooks/use-post-sale'
+import { variantLabel } from '../../lib/variant-label'
 import {
   CreateClaimDialog,
   CreateExchangeDialog,
@@ -167,11 +168,9 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                 {(exchange.exchange_line_items ?? []).map((line) => (
                   <div key={line.id} className="flex items-center justify-between text-sm">
                     <span className="truncate">
-                      {line.original_variant?.product_name ?? line.original_variant_id}
+                      {variantLabel(line.original_variant, line.original_variant_id)}
                       {' → '}
-                      {line.new_variant?.options_text ||
-                        line.new_variant?.sku ||
-                        line.new_variant_id}
+                      {variantLabel(line.new_variant, line.new_variant_id)}
                     </span>
                     <span className="text-muted-foreground">×{line.quantity}</span>
                   </div>

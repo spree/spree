@@ -27,6 +27,7 @@ import {
 import {
   ChevronDownIcon,
   DownloadIcon,
+  FileDownIcon,
   FileIcon,
   PlusIcon,
   UploadIcon,
@@ -158,7 +159,10 @@ export function DigitalAssetsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.digital_assets.title')}</CardTitle>
+        <CardTitle>
+          <FileDownIcon className="size-4" />
+          {t('admin.digital_assets.title')}
+        </CardTitle>
         {/* The header action only appears once files exist — an empty card
             invites the first upload through its dropzone, not a button. */}
         {assets.length > 0 && (
@@ -237,8 +241,8 @@ export function DigitalAssetsCard({
             </p>
           </button>
         ) : (
-          <div className="overflow-hidden rounded-md border border-border">
-            <Table className="border-collapse [&_td]:rounded-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border">
+          <div className="overflow-hidden rounded-xl border border-border-subtle">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>

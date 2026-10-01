@@ -16,8 +16,8 @@ Every monetary field has a corresponding `display_` field that includes currency
   "display_total": "$129.99",
   "item_total": "99.99",
   "display_item_total": "$99.99",
-  "ship_total": "10.00",
-  "display_ship_total": "$10.00",
+  "delivery_total": "10.00",
+  "display_delivery_total": "$10.00",
   "tax_total": "20.00",
   "display_tax_total": "$20.00"
 }
@@ -29,9 +29,9 @@ This convention applies to all monetary fields across all resources:
 
 | Resource | Monetary Fields |
 |----------|----------------|
-| **Order** | `total`, `item_total`, `ship_total`, `tax_total`, `adjustment_total`, `promo_total`, `included_tax_total`, `additional_tax_total` |
-| **Line Item** | `price`, `total`, `adjustment_total`, `promo_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount` |
-| **Shipment** | `cost` |
+| **Cart / Order** | `total`, `item_total`, `delivery_total`, `tax_total`, `adjustment_total`, `discount_total`, `included_tax_total`, `additional_tax_total`, `fee_total`, `store_credit_total`, `gift_card_total`, `amount_due` |
+| **Line Item** | `price`, `total`, `adjustment_total`, `discount_total`, `included_tax_total`, `additional_tax_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount` |
+| **Fulfillment** | `cost` |
 | **Payment** | `amount` |
 | **Gift Card** | `amount`, `amount_used`, `amount_authorized`, `amount_remaining` |
 | **Store Credit** | `amount`, `amount_used`, `amount_remaining` |

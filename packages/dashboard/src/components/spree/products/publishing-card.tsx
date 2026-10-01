@@ -18,7 +18,7 @@ import {
   SheetTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
+import { GlobeIcon, PencilIcon, SettingsIcon } from '@spree/dashboard-ui/icons'
 import { parseISO } from 'date-fns'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray } from 'react-hook-form'
@@ -130,7 +130,10 @@ export function PublishingCard({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-2">
-        <CardTitle>{t('admin.pages.products.publishing.title')}</CardTitle>
+        <CardTitle>
+          <GlobeIcon className="size-4" />
+          {t('admin.pages.products.publishing.title')}
+        </CardTitle>
         <Button
           type="button"
           variant="outline"

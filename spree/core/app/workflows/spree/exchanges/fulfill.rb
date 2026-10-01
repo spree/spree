@@ -9,6 +9,7 @@ module Spree
     # authorization is not something core should do silently.
     class Fulfill < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Fulfillments::Replacements
 
       hooks :validate, :before_settle, :after_fulfill
 
@@ -51,11 +52,23 @@ module Spree
       # Negative price difference means the replacements cost less than what
       # came back, so the customer is owed the difference.
       def credit_due?
-        exchange.price_difference.to_d.negative?
+        settled_difference.negative?
       end
 
       def credit_amount
-        exchange.price_difference.to_d.abs
+        settled_difference.abs
+      end
+
+      # The difference on the units that actually came back — the same units
+      # the replacements are shipped for. Priced on the requested quantity, an
+      # exchange that asked for more than arrived would pay credit for goods
+      # nobody returned.
+      def settled_difference
+        @settled_difference ||= exchange.exchange_line_items.sum(0.to_d) do |line|
+          next 0.to_d if line.quantity.to_i.zero?
+
+          line.price_difference.to_d / line.quantity.to_i * line.received_quantity.to_i
+        end
       end
 
       def ensure_fulfillable
@@ -73,56 +86,25 @@ module Spree
       # Only lines that actually came back are replaced — a customer who
       # returned two of three items gets two replacements.
       def build_replacement_fulfillments
-        units = exchange.exchange_line_items.filter_map do |line|
+        items = exchange.exchange_line_items.filter_map do |line|
           next if line.received_quantity.to_i.zero?
 
-          exchange.order.fulfillment_items.new(
-            variant: line.new_variant,
-            quantity: line.received_quantity,
-            line_item: line.line_item,
-            order: exchange.order,
-            status: 'on_hand'
-          )
+          { variant: line.new_variant, quantity: line.received_quantity, line_item: line.line_item }
         end
 
-        failure(exchange, :nothing_to_fulfill) if units.empty?
+        failure(exchange, :nothing_to_fulfill) if items.empty?
 
-        @fulfillments = Spree::Stock::Coordinator.new(exchange.order, units).fulfillments
-        if @fulfillments.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
-          failure(exchange, :replacement_out_of_stock)
-        end
-
-        exchange.order.fulfillments += @fulfillments
-        exchange.order.save!
-        @fulfillments.each { |fulfillment| allocate_replacement_stock(fulfillment) }
-      end
-
-      # The replacement is promised the moment it exists, exactly as placement
-      # promises an order's own fulfillments. Without this the fulfillment holds
-      # nothing, and dispatch then writes no movement at all — an unallocated
-      # fulfillment is indistinguishable from one created before typed
-      # movements, so the goods would leave the shelf untouched and unrecorded.
-      def allocate_replacement_stock(fulfillment)
-        fulfillment.manifest.each do |item|
-          next unless item.variant.track_inventory?
-          next unless item.quantity.positive?
-
-          fulfillment.stock_location.allocate(item.variant, item.quantity, fulfillment)
-        end
+        @fulfillments = build_replacements(exchange, items)
       end
 
       def issue_store_credit
-        @refunds = [
-          Spree::StoreCredit.create!(
-            store: exchange.store,
-            customer: exchange.order.customer,
-            amount: credit_amount,
-            currency: exchange.currency,
-            created_by: refunder,
-            originator: exchange,
-            memo: "Exchange #{exchange.number}"
-          )
-        ]
+        @refunds = issue_refund_store_credit(
+          order: exchange.order,
+          amount: credit_amount,
+          record: exchange,
+          memo: "Exchange #{exchange.number}",
+          refunder: refunder
+        )
       end
 
       def refund_at_gateway

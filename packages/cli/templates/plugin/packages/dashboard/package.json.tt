@@ -12,11 +12,15 @@
   "exports": {
     ".": "./src/index.tsx"
   },
+  "sideEffects": [
+    "./src/index.tsx"
+  ],
   "files": [
     "src",
     "README.md"
   ],
   "scripts": {
+    "build": "tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "typecheck": "tsc --noEmit"
@@ -28,9 +32,9 @@
     }
   },
   "peerDependencies": {
-    "@spree/admin-sdk": "^0.6.0",
-    "@spree/dashboard-core": "^0.10.0",
-    "@spree/dashboard-ui": "^0.10.0",
+    "@spree/admin-sdk": "{{spree_admin_sdk_range}}",
+    "@spree/dashboard-core": "{{spree_dashboard_core_range}}",
+    "@spree/dashboard-ui": "{{spree_dashboard_ui_range}}",
     "@tanstack/react-query": "^5",
     "@tanstack/react-router": "^1",
     "i18next": "^26",

@@ -22,31 +22,32 @@ module Spree
     # setting the value is the operator's first commission decision.
     class CommissionRates
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
       DEFAULT_CODE = 'marketplace-default'.freeze
 
-      def call
-        Spree::Store.find_each do |store|
-          # Live rows only, matching the partial unique index: an operator who
-          # deleted the seeded fallback gets it back on the next run rather
-          # than being left with no bottom-of-list catch-all forever.
-          next if store.commission_rates.exists?(code: DEFAULT_CODE)
+      private
 
-          rate = store.commission_rates.create!(
-            name: Spree.t('seed.commission_rates.marketplace_default'),
-            code: DEFAULT_CODE,
-            kind: 'percentage',
-            value: 0,
-            enabled: false
-          )
+      def seed(store)
+        # Live rows only, matching the partial unique index: an operator who
+        # deleted the seeded fallback gets it back on the next run rather
+        # than being left with no bottom-of-list catch-all forever.
+        return if store.commission_rates.exists?(code: DEFAULT_CODE)
 
-          # New rates are born at the top, which is right for one an operator
-          # adds and wrong for this one: it matches every sale, so anywhere but
-          # the bottom leaves the rates below it unreachable. A store seeded
-          # after it already has rates would otherwise have them all shadowed
-          # the moment this was enabled.
-          rate.move_to_bottom
-        end
+        rate = store.commission_rates.create!(
+          name: Spree.t('seed.commission_rates.marketplace_default'),
+          code: DEFAULT_CODE,
+          kind: 'percentage',
+          value: 0,
+          enabled: false
+        )
+
+        # New rates are born at the top, which is right for one an operator
+        # adds and wrong for this one: it matches every sale, so anywhere but
+        # the bottom leaves the rates below it unreachable. A store seeded
+        # after it already has rates would otherwise have them all shadowed
+        # the moment this was enabled.
+        rate.move_to_bottom
       end
     end
   end

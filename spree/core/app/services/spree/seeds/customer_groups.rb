@@ -5,13 +5,14 @@ module Spree
     # wholesale price lists key off.
     class CustomerGroups
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
       WHOLESALE_NAME = 'Wholesale'.freeze
 
-      def call
-        Spree::Store.find_each do |store|
-          store.customer_groups.find_or_create_by!(name: WHOLESALE_NAME)
-        end
+      private
+
+      def seed(store)
+        store.customer_groups.find_or_create_by!(name: WHOLESALE_NAME)
       end
     end
   end

@@ -71,7 +71,8 @@ module Spree
             if: proc { expand?('seller') }
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
-        many :digital_links, resource: proc { Spree.api.digital_link_serializer }
+        # Download links carry a bearer token; only the buyer gets them.
+        many :digital_links, resource: proc { Spree.api.digital_link_serializer }, if: proc { !params[:hide_credentials] }
         # Tax hangs off its adjustable, never off the cart or order: the
         # exactly-one-adjustable rule makes the nested view complete, and the
         # owner already carries the tax totals.

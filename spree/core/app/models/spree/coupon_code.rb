@@ -10,6 +10,7 @@ module Spree
 
     scope :used_with_code, ->(code) { used.where(code: code.downcase) }
     scope :with_order, ->(order_id) { where(order_id: order_id) }
+    scope :held_by, ->(owner) { owner.is_a?(Spree::Cart) ? where(cart_id: owner.id) : where(order_id: owner.id) }
     scope :in_promotions, ->(promotion_ids) { where(promotion_id: promotion_ids) }
     scope :not_in_promotions, ->(promotion_ids) { where.not(promotion_id: promotion_ids) }
 
@@ -38,9 +39,20 @@ module Spree
       used_with_code(code).any?
     end
 
+    # Attaches the code to the cart or order presenting it. The code is not
+    # spent here: it stays unused until an order is placed with it, so a code
+    # left on an abandoned cart can still be presented by someone else.
+    #
+    # @param owner [Spree::Cart, Spree::Order]
+    # @return [Boolean]
     def apply_order!(owner)
-      owner_key = owner.is_a?(Spree::Cart) ? :cart : :order
-      update(owner_key => owner, state: 'used')
+      cart = owner.is_a?(Spree::Cart) ? owner : nil
+      update(cart: cart, order: cart ? nil : owner)
+    end
+
+    # @return [Spree::Cart, Spree::Order, nil] the record currently holding this code
+    def holder
+      cart || order
     end
 
     def remove_from_order

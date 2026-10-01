@@ -207,6 +207,25 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     end
   end
 
+  # The parent comes from the route: a `store_id` in the query string must not
+  # switch it to a store, which has no store scope to narrow it.
+  describe 'a parent named outside the route' do
+    let(:category) { create(:category) }
+    let(:category_definition) { create(:custom_field_definition, :short_text_field, resource_type: 'Spree::Category') }
+
+    it 'keeps the routed parent' do
+      post :create,
+           params: {
+             category_id: category.prefixed_id, store_id: create(:store).prefixed_id,
+             custom_field_definition_id: category_definition.prefixed_id, value: 'summer'
+           },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(category.custom_fields.pluck(:value)).to eq(['summer'])
+    end
+  end
+
   describe 'API key scope enforcement' do
     let(:api_key) { create(:api_key, :secret, store: store, scopes: [granted_scope]) }
     let(:api_key_headers) { { 'x-spree-api-key' => api_key.plaintext_token } }

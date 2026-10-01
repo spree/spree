@@ -19,7 +19,7 @@ All routes are prefixed with `/api/v3/admin`. During development the API is avai
 | **Purpose** | Manage store data | Power storefronts |
 | **Audience** | Staff users, backend integrations | Customers, storefronts |
 | **Authentication** | Secret API key (`sk_…`) or admin JWT | Publishable API key (`pk_…`), customer JWT, order token |
-| **Permissions** | API key scopes (API key authentication) or Admin Staff permission sets | Customer can only read/modify their own data |
+| **Permissions** | API key scopes (API key authentication) or the staff member's role permissions — the same `read_*`/`write_*` keys | Customer can only read/modify their own data |
 | **Write operations** | Full CRUD on most resources | Limited to the current customer's cart, addresses, profile |
 
 If you're building a storefront, use the [Store API](/api-reference/store-api/introduction). The Admin API exposes administrative operations that should never be invoked from a browser.
@@ -49,7 +49,7 @@ const client = createAdminClient({
 })
 
 const { data: orders } = await client.orders.list({
-  status_eq: 'complete',
+  status_eq: 'placed',
   limit: 25,
 })
 ```
@@ -59,7 +59,7 @@ const { data: orders } = await client.orders.list({
 Every endpoint can also be called with the [Spree CLI](/developer/cli/admin-api) — a generic HTTP client (`get`/`post`/`patch`/`delete`) built into `@spree/cli`. It's the fastest way to explore the API from a terminal or drive it from scripts and AI agents, with zero-config credentials in local development:
 
 ```bash
-spree api get /orders -q status_eq=complete --limit 25
+spree api get /orders -q status_eq=placed --limit 25
 ```
 
 Each endpoint page below shows the matching **Spree CLI** command alongside the SDK example. To browse the whole surface offline, use `spree api endpoints` and `spree api schema "<METHOD> <path>"`.

@@ -141,7 +141,7 @@ The base `ResourceController` provides:
 | Pagination | [Pagy](https://github.com/ddnexus/pagy) — `?page=2&limit=25` |
 | Filtering | [Ransack](https://github.com/activerecord-hackery/ransack) — `?q[name_cont]=nike` |
 | Sorting | JSON:API style — `?sort=-name` |
-| Authorization | [CanCanCan](https://github.com/CanCanCommunity/cancancan) |
+| Authorization | Ownership scoping — `scope` decides what the caller can see (Admin API controllers add the `scoped_resource` permission gate) |
 | Prefixed IDs | Stripe-style — `brand_k5nR8xLq` |
 
 Override these methods to customize:

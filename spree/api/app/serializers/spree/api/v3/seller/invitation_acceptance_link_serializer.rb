@@ -1,0 +1,15 @@
+module Spree
+  module Api
+    module V3
+      module Seller
+        # The acceptance link of one seller-team invitation, served on its own
+        # so the token never travels with the invitation listing.
+        class InvitationAcceptanceLinkSerializer < V3::BaseSerializer
+          typelize acceptance_url: :string
+
+          attributes :acceptance_url
+        end
+      end
+    end
+  end
+end

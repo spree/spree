@@ -55,15 +55,23 @@ module Spree
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :order_group, dependent: :restrict_with_error
     has_many :payment_splits, through: :payments, class_name: 'Spree::PaymentSplit', source: :payment_splits
 
+    # What the customer bought and the money hanging off it, reached through
+    # the children that own it. A purchase-level reader is not a second source
+    # of truth — it is the same rows, asked for as one basket, which is how the
+    # customer's own confirmation has to describe them.
+    has_many :line_items, through: :orders, class_name: 'Spree::LineItem', source: :line_items
+    has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment', source: :fulfillments
+    has_many :discounts, through: :orders, class_name: 'Spree::Discount', source: :discounts
+    has_many :fees, through: :orders, class_name: 'Spree::Fee', source: :fees
+
     # Brings the ship/bill pair with the shipping_address/billing_address
     # aliases every other purchase surface reads them by.
     #
     # Only the associations and aliases apply here. The concern's checkout
-    # helpers — shipping_address_required?, assign_default_addresses! — reach
-    # for line items, fulfillments and digital goods, none of which a group
-    # has: they belong to its children, which answer those questions for
-    # themselves. A group's addresses are copies made when the checkout
-    # divided, so nothing asks it to work them out.
+    # helpers — shipping_address_required?, assign_default_addresses! — are
+    # about working an address out, and a group's addresses are copies made
+    # when the checkout divided, so nothing asks it to. They also read digital
+    # goods, which only a child can answer for.
     include Spree::Purchase::Addresses
     # What a marketplace asks about a group. Kept out of the class itself so
     # this stays the neutral primitive its other consumers need.
@@ -81,7 +89,6 @@ module Spree
     self.whitelisted_ransackable_associations = %w[orders customer]
 
     extend Spree::DisplayMoney
-    money_methods :total, :item_total
 
     # What the customer was charged for the whole checkout, and what it was
     # charged for — the sums of what each child independently computed. Never
@@ -104,6 +111,9 @@ module Spree
       end
     end
 
+    money_methods(*ROLLED_UP_TOTALS)
+    money_methods :gift_card_total
+
     alias ship_total delivery_total
 
     # Where the checkout was made from, carried on the children because they
@@ -112,6 +122,68 @@ module Spree
     # @return [String, nil]
     def last_ip_address
       orders.first&.last_ip_address
+    end
+
+    # @return [String, nil]
+    def locale
+      orders.first&.locale
+    end
+
+    # @return [String, nil]
+    def po_number
+      orders.first&.po_number
+    end
+
+    # Who to address the purchase to, read off the addresses the checkout
+    # copied onto the group — the same answer +Spree::Order#name+ gives, so a
+    # customer-facing document greets them identically either way.
+    #
+    # @return [String, nil]
+    def name
+      (bill_address || ship_address)&.full_name
+    end
+
+    # The parcels this purchase actually ships in — not one per child order.
+    # A parcel divided between sellers is counted once, because one box leaves
+    # the warehouse however many orders its contents belong to. See
+    # +Spree::FulfillmentGroup+ for why the two numbers differ.
+    #
+    # Ordered by child, so first-party goods lead and sellers follow in the
+    # order the split filed them, and the same purchase reads the same way
+    # twice.
+    #
+    # @return [Array<Spree::FulfillmentGroup>]
+    def fulfillment_groups
+      Spree::FulfillmentGroup.build_from(
+        fulfillments.
+          includes(:stock_location, { order: :seller }, { selected_delivery_rate: :delivery_method }).
+          order(:order_id, :id)
+      )
+    end
+
+    # What was bought that no parcel carries — a downloaded album, a gift card
+    # sent by email. Without it a confirmation organised by parcel would list
+    # everything the customer is waiting for and silently omit what they
+    # already have.
+    #
+    # @param groups [Array<Spree::FulfillmentGroup>] the parcels, when the
+    #   caller has already built them — rebuilding re-reads the fulfillments
+    # @return [Array<Spree::LineItem>]
+    def unfulfilled_line_items(groups = fulfillment_groups)
+      line_items.to_a - groups.flat_map(&:line_items)
+    end
+
+    # What the customer paid with a gift card. Not rolled up from the children:
+    # the group claims the payments at completion, so a child's own
+    # +gift_card_total+ — which reads its payments — answers zero for every one
+    # of them, and the confirmation would omit a deduction its total makes.
+    #
+    # @return [BigDecimal]
+    def gift_card_total
+      return 0.to_d if gift_card.nil?
+
+      store_credit_ids = payments.store_credits.valid.pluck(:source_id)
+      Spree::StoreCredit.where(id: store_credit_ids, originator: gift_card).sum(:amount)
     end
 
     # @return [String, nil] the group's fulfillment position, in the same

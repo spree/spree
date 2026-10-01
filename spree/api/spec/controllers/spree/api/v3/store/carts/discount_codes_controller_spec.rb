@@ -68,6 +68,32 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
         expect(warning['code']).to eq('coupon_code_not_eligible')
         expect(warning['message']).to be_present
       end
+
+      context 'from a batch of single-use codes' do
+        let!(:promotion) do
+          create(:promotion_with_item_total_rule, :with_line_item_adjustment,
+                 code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store,
+                 item_total_threshold_amount: 1_000_000)
+        end
+        let(:coupon_code) { promotion.coupon_codes.first }
+
+        it 'holds the code for the cart' do
+          post :create, params: { cart_id: order.prefixed_id, code: coupon_code.code }
+
+          expect(response).to have_http_status(:created)
+          expect(coupon_code.reload.holder).to eq(order)
+        end
+
+        it 'refuses a code a cart in checkout holds' do
+          coupon_code.update!(cart: create(:cart, store: store, completing_at: Time.current))
+
+          post :create, params: { cart_id: order.prefixed_id, code: coupon_code.code }
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['message']).to eq(Spree.t(:coupon_code_used))
+          expect(order.reload.read_attribute(:coupon_code)).to be_nil
+        end
+      end
     end
 
     context 'with a multi-code promotion' do
@@ -83,10 +109,11 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
         expect(json_response['id']).to start_with('cart_')
       end
 
-      it 'marks the coupon code as used' do
+      it 'holds the coupon code for the cart without using it up' do
         post :create, params: { cart_id: order.prefixed_id, code: 'multi1' }
 
-        expect(coupon_code.reload.state).to eq('used')
+        expect(coupon_code.reload.state).to eq('unused')
+        expect(coupon_code.cart).to eq(order)
       end
     end
 

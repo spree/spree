@@ -48,13 +48,12 @@ module Spree
       # Every record of this type belonging to +store+, for surfaces that read
       # a whole translatable resource type at once (the coverage grid).
       #
-      # +for_store+ resolves through the store's own association, so it is
-      # right for a store column (Product), a polymorphic owner (Policy) and
-      # genuinely global reference data alike (OptionType, which has no store
-      # dimension and returns everything by design). Its one blind spot is
-      # +Spree::Store+: with no `stores` association to follow it falls back to
-      # the UNSCOPED class, which would answer with every store in the
-      # installation, so that case is narrowed here.
+      # +for_store+ resolves through the store's own association, or through a
+      # model's own +for_store+ scope where there is none to follow (OptionType
+      # by its store column, OptionValue through its option type). Its one
+      # blind spot is +Spree::Store+: with no `stores` association to follow it
+      # falls back to the UNSCOPED class, which would answer with every store in
+      # the installation, so that case is narrowed here.
       #
       # @param store [Spree::Store]
       # @return [ActiveRecord::Relation]

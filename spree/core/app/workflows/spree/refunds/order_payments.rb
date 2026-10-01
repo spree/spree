@@ -2,7 +2,8 @@
 
 module Spree
   module Refunds
-    # Gives a post-sale workflow one way to put money back on an order.
+    # Gives a post-sale workflow its two ways to put money back on an order:
+    # back to what paid for it, or as store credit.
     #
     # Returns, claims and exchanges all owe the customer money for the same
     # reason — goods that are going back, or were never right — and all three
@@ -21,6 +22,57 @@ module Spree
       extend ActiveSupport::Concern
 
       private
+
+      # Puts `amount` back as store credit.
+      #
+      # Credit is its own ledger and writes no {Spree::Refund} row, so the
+      # credit names the order it settles — without that the order could not
+      # tell it had given anything back, and its payment status stayed `paid`
+      # on money the customer had already been made whole for.
+      #
+      # @param order [Spree::Order] the order being put right
+      # @param amount [BigDecimal] how much to give back
+      # @param record [Spree::Return, Spree::Claim, Spree::Exchange] what asked
+      #   for it; it originates the credit
+      # @param memo [String] what the customer reads on the credit
+      # @param refunder [Object, nil] whoever is issuing it
+      # @return [Array<Spree::StoreCredit>] the one credit written, shaped like
+      #   {#refund_order_payments} so both branches answer the same way
+      def issue_refund_store_credit(order:, amount:, record:, memo:, refunder: nil)
+        failure(record, :refund_exceeds_paid) if amount.to_d > refundable_balance(order)
+
+        [
+          Spree::StoreCredit.create!(
+            store: record.store,
+            customer: order.customer,
+            refunded_order: order,
+            amount: amount,
+            currency: record.currency,
+            created_by: refunder,
+            originator: record,
+            memo: memo
+          )
+        ]
+      end
+
+      # What the order can still give back, as store credit or to its
+      # payments: what its payments can still refund, less credit already
+      # issued against it. Credit writes no refund row, so without the second
+      # half every return, claim and exchange on one order could each hand back
+      # the full amount paid, and a refund to the card could follow a credit.
+      #
+      # The order row is locked first, so two settlements racing on one order
+      # cannot both read the same headroom.
+      #
+      # @param order [Spree::Order]
+      # @param shares [Hash{Spree::Payment => BigDecimal}, nil] already read
+      # @return [BigDecimal]
+      def refundable_balance(order, shares = nil)
+        Spree::Order.lock.find(order.id)
+
+        (shares || refundable_shares(order)).values.sum(0.to_d) -
+          Spree::StoreCredit.where(refunded_order: order).sum(:amount).to_d
+      end
 
       # Puts `amount` back on `order`, oldest payment first, until it is
       # covered.
@@ -44,6 +96,8 @@ module Spree
         remaining = amount.to_d
         refunds = []
         shares = refundable_shares(order)
+        # With no payment to draw on the caller reports that instead.
+        failure(record, :refund_exceeds_paid) if shares.any? && remaining > refundable_balance(order, shares)
         # Resolved once rather than per payment — but only once there is
         # something to refund, since it is a find_or_create_by and a run that
         # refunds nothing should leave no reason row behind.

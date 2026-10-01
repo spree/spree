@@ -55,6 +55,17 @@ RSpec.describe Spree::Api::V3::Admin::TaxCategoriesController, type: :controller
       end
     end
 
+    context 'without the header, as an admin who holds no role on any store' do
+      let(:admin_user) { create(:admin_user, :without_admin_role) }
+
+      it 'returns 403 access_denied rather than resolving the default store' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['code']).to eq('access_denied')
+      end
+    end
+
     context 'without the header' do
       # No Spree::Deprecation here by design: /me and the auth endpoints
       # structurally cannot send the header, and deprecations-as-errors would

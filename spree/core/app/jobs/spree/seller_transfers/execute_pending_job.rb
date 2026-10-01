@@ -26,6 +26,7 @@ module Spree
         seller = Spree::Seller.find_by(id: seller_id)
         return if seller.nil? || !seller.payouts_enabled?
 
+        Spree::Current.store = seller.store
         provider = seller.store.payout_provider_instance
 
         # Earnings only — see the scope. A reversal is retryable the same way

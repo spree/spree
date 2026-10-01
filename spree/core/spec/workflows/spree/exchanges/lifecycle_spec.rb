@@ -26,6 +26,30 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(result.value.exchange_line_items.count).to eq(1)
     end
 
+    # The credit an exchange pays is priced on its quantity, so a quantity
+    # above what shipped would pay for goods nobody bought.
+    it 'refuses more units than were shipped' do
+      result = Spree::Exchanges::Create.call(
+        order: order,
+        items: [{ fulfillment_item: fulfillment_item, new_variant: replacement, quantity: fulfillment_item.quantity + 1 }]
+      )
+
+      expect(result).to be_failure
+      expect(order.reload.exchanges).to be_empty
+    end
+
+    it 'refuses units that were already returned' do
+      Spree::Returns::Create.call(order: order, items: [{ fulfillment_item: fulfillment_item, quantity: fulfillment_item.quantity }])
+
+      expect(create_exchange).to be_failure
+    end
+
+    it 'refuses a single request naming the same units twice' do
+      item = { fulfillment_item: fulfillment_item, new_variant: replacement, quantity: fulfillment_item.quantity }
+
+      expect(Spree::Exchanges::Create.call(order: order, items: [item, item])).to be_failure
+    end
+
     it 'refuses a replacement that cannot be sold' do
       allow_any_instance_of(Spree::Variant).to receive(:purchasable?).and_return(false)
 
@@ -120,6 +144,37 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(replacement.stock_movements.allocated.sum(:quantity)).to eq(1)
     end
 
+    # The coordinator packs a copy of each unit it is handed, so the unit
+    # handed to it must not be saved as well.
+    it 'flags the replacement and leaves no unit outside a fulfillment' do
+      line = exchange.exchange_line_items.first
+      line.new_variant.stock_levels.first&.set_count_on_hand(10)
+
+      Spree::Exchanges::Fulfill.call(exchange: exchange)
+      units = exchange.order.fulfillment_items.reload.where(variant: line.new_variant)
+
+      expect(units.sum(:quantity)).to eq(1)
+      expect(units).to all(have_attributes(replacement: true, fulfillment_id: be_present))
+    end
+
+    it 'adds a unit when the exchanged line is raised afterwards' do
+      line = exchange.exchange_line_items.first
+      line_item = line.line_item
+      [line.new_variant, line_item.variant].each { |variant| variant.stock_levels.first&.set_count_on_hand(10) }
+      Spree::Exchanges::Fulfill.call(exchange: exchange)
+      original_fulfillments = exchange.order.fulfillments.reload.to_a
+      quantity = line_item.reload.quantity + 1
+
+      result = Spree::Orders::Update.call(
+        order: exchange.order.reload,
+        params: { items: [{ variant_id: line_item.variant_id, quantity: quantity }] }
+      )
+
+      expect(result).to be_success
+      expect(line_item.fulfillment_items.reload.reject(&:replacement?).sum(&:quantity)).to eq(quantity)
+      expect(exchange.order.fulfillments.reload).to include(*original_fulfillments)
+    end
+
     # The guard only matters when money moves: a cheaper replacement owes the
     # customer the difference, and an unrecognised method would otherwise fall
     # through to the gateway instead of store credit.
@@ -139,10 +194,24 @@ RSpec.describe 'Spree::Exchanges workflows' do
         expect(result.error.value[:base].join).to include('original_payment')
       end
 
+      # Only the units that came back are replaced, so only they are credited.
+      it 'credits only the units that were received' do
+        line = cheap_exchange.exchange_line_items.first
+        line.update_columns(quantity: 2, received_quantity: 1)
+        per_unit = (line.line_item.amount / line.line_item.quantity) - line.new_variant.price_in(line.currency).amount
+
+        Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
+
+        expect(Spree::StoreCredit.find_by(originator: cheap_exchange).amount).to eq(per_unit)
+      end
+
       it 'accepts store credit' do
         result = Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
 
         expect(result).to be_success
+        # Credit writes no refund row, so naming the order is the only way the
+        # order can tell it gave anything back.
+        expect(Spree::StoreCredit.find_by(originator: cheap_exchange).refunded_order).to eq(cheap_exchange.order)
       end
     end
   end

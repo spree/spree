@@ -8,11 +8,12 @@ module Spree
     # a licence) is theirs to add, and there is no sensible default for it.
     class SellerRequirements
       prepend Spree::ServiceModule::Base
+      include StoreScoped
 
-      def call
-        Spree::Store.find_each do |store|
-          Spree::SellerRequirement.provision_defaults(store)
-        end
+      private
+
+      def seed(store)
+        Spree::SellerRequirement.provision_defaults(store)
       end
     end
   end

@@ -52,7 +52,7 @@ For remote stores, create a secret key in the admin under **Settings → API Key
 
 ```bash
 spree auth login --profile prod --base-url https://store.example.com
-spree api get /orders --profile prod -q "status_eq=complete"
+spree api get /orders --profile prod -q "status_eq=placed"
 spree auth status
 spree auth logout --profile prod
 ```

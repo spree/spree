@@ -18,6 +18,7 @@ module Spree
             next false unless discount.update(attributes)
 
             Spree.order_recalculate_totals_workflow.call(order: order)
+            order.update_statuses!
             true
           end
 

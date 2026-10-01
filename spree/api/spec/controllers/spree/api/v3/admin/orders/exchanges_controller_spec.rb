@@ -53,6 +53,22 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ExchangesController, type: :contro
     end
   end
 
+  describe 'PATCH #update' do
+    let(:exchange) { create(:exchange, order: order) }
+
+    it "refuses another store's reason or warehouse" do
+      other_store = create(:store)
+
+      patch :update, params: { order_id: order.prefixed_id, id: exchange.prefixed_id,
+                               reason_id: create(:return_reason, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+
+      patch :update, params: { order_id: order.prefixed_id, id: exchange.prefixed_id,
+                               stock_location_id: create(:stock_location, store: other_store).prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'PATCH #approve' do
     it 'approves a requested exchange' do
       exchange = create(:exchange, store: store, order: order)

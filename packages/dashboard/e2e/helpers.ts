@@ -178,6 +178,21 @@ export const FIXTURE_LEDGER_PAYOUT_AMOUNT = '120.0'
  */
 export const FIXTURE_LEDGER_OWED_AMOUNT = '75.0'
 
+/**
+ * Seller panel accounts. `FIXTURE_SELLER_USER_EMAIL` runs the ledger seller, so
+ * the panel's read-only screens have a sale and payouts to show;
+ * `FIXTURE_SELLER_WRITER_EMAIL` runs `FIXTURE_PANEL_SELLER`, which the specs
+ * that edit a profile, policy or team may change without moving what another
+ * spec reads.
+ */
+export const FIXTURE_SELLER_USER_EMAIL = 'e2e-ledger-seller@example.com'
+export const FIXTURE_SELLER_WRITER_EMAIL = 'e2e-panel-seller@example.com'
+export const FIXTURE_SELLER_PASSWORD = 'spree123'
+export const FIXTURE_PANEL_SELLER = 'E2E Panel Seller'
+
+/** The marketplace seller panel, its own app on its own origin (see playwright.config.ts). */
+export const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
+
 export const FIXTURE_PROMO_CUSTOMER_EMAIL = 'e2e-promo-customer@example.com'
 export const FIXTURE_PROMO_CUSTOMER_FIRST_NAME = 'Promo'
 export const FIXTURE_PROMO_CUSTOMER_FULL_NAME = 'Promo Customer'
@@ -243,6 +258,28 @@ export async function login(page: Page): Promise<E2ELoginSession> {
 }
 
 /**
+ * The seller panel's counterpart to `login`: signs in through the Seller API,
+ * then opens the panel and waits until it has settled on the seller's own
+ * home — the same single-use refresh-cookie race `login` guards against.
+ *
+ * @returns The seller panel URL of the seller's home, e.g. `.../sel_x`.
+ */
+export async function sellerLogin(
+  page: Page,
+  email: string = FIXTURE_SELLER_USER_EMAIL,
+): Promise<string> {
+  const res = await page.request.post(`${SELLER_PANEL}/api/v3/seller/auth/login`, {
+    data: { email, password: FIXTURE_SELLER_PASSWORD },
+  })
+  if (!res.ok()) {
+    throw new Error(`Seller API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  await page.goto(SELLER_PANEL)
+  await expect(page).toHaveURL(/\/sel_[^/]+$/, { timeout: 20_000 })
+  return page.url()
+}
+
+/**
  * Navigate to a resource index page and wait for it to settle. Every new
  * spec needs the same shape: visit the URL, wait for the page's primary
  * call-to-action button to appear (proves auth + data have loaded).
@@ -281,6 +318,17 @@ export async function openRowMenu(page: Page, rowText: string) {
     .filter({ hasText: rowText })
     .getByRole('button', { name: /open actions/i })
     .click()
+}
+
+/**
+ * Wait for every toast to leave. Toasts stack over the bottom-right corner,
+ * where the last row's action menu sits, and a toast under the pointer pauses
+ * its own timer — so the pointer is moved away first, or a click aimed at that
+ * row can wait on it forever.
+ */
+export async function waitForToastsToClear(page: Page) {
+  await page.mouse.move(0, 0)
+  await expect(page.locator('[role="status"][data-type]')).toHaveCount(0, { timeout: 15_000 })
 }
 
 /**
@@ -406,4 +454,85 @@ export async function createInTransitTransfer(
   expect(shipped.status(), await shipped.text()).toBe(200)
 
   return transfer
+}
+
+/**
+ * The path an invitee opens to accept an invitation. The link carries the
+ * invitation's token, so the listing never includes it; this fetches it the way
+ * the "copy link" action does. `invitationPath` is the invitation's API path,
+ * e.g. `/api/v3/admin/invitations/inv_x` or `/api/v3/admin/sellers/seller_x/invitations/inv_x`.
+ */
+export async function invitationAcceptancePath(
+  page: Page,
+  session: E2ELoginSession,
+  invitationPath: string,
+): Promise<string> {
+  const res = await page.request.get(`${invitationPath}/acceptance_link`, {
+    headers: {
+      'X-Spree-Store-Id': session.store_id,
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+  })
+  if (!res.ok()) {
+    throw new Error(`Acceptance link request failed with ${res.status()}: ${await res.text()}`)
+  }
+  const { acceptance_url } = (await res.json()) as { acceptance_url: string }
+  // Tolerate either path-only (no app origin configured) or an absolute URL.
+  return acceptance_url.replace(/^https?:\/\/[^/]+/, '')
+}
+
+/**
+ * A placed, paid and shipped order for the fixture customer, built through the
+ * API — returns and claims can only be raised against goods that left. Paid
+ * with store credit, because that is the payment method every seeded store
+ * has; it also saves spec time over driving checkout.
+ */
+export async function createShippedOrder(page: Page, accessToken: string, quantity = 2) {
+  const headers = { Authorization: `Bearer ${accessToken}` }
+  const request = async (method: 'get' | 'post' | 'patch', path: string, data?: object) => {
+    const res = await page.request[method](path, { headers, data })
+    expect(res.ok(), `${method.toUpperCase()} ${path}: ${await res.text()}`).toBeTruthy()
+    return res.json()
+  }
+
+  const customers = await request(
+    'get',
+    `/api/v3/admin/customers?q[email_eq]=${encodeURIComponent(FIXTURE_PROMO_CUSTOMER_EMAIL)}`,
+  )
+  const customerId = customers.data[0].id
+  const variants = await request('get', `/api/v3/admin/variants?q[sku_eq]=${FIXTURE_PROMO_SKU}`)
+  const address = {
+    first_name: 'Promo',
+    last_name: 'Customer',
+    address1: '1 Main St',
+    city: 'Los Angeles',
+    country_code: 'US',
+    state_code: 'CA',
+    postal_code: '90001',
+    phone: '5555555555',
+  }
+
+  const order = await request('post', '/api/v3/admin/orders', {
+    customer_id: customerId,
+    items: [{ variant_id: variants.data[0].id, quantity }],
+    shipping_address: address,
+    billing_address: address,
+  })
+  await request('post', `/api/v3/admin/customers/${customerId}/store_credits`, {
+    amount: order.total,
+    currency: order.currency,
+    memo: `E2E payment for ${order.number}`,
+  })
+  await request('post', `/api/v3/admin/orders/${order.id}/store_credits`)
+  await request('patch', `/api/v3/admin/orders/${order.id}/complete`)
+
+  const fulfillments = await request('get', `/api/v3/admin/orders/${order.id}/fulfillments`)
+  for (const fulfillment of fulfillments.data) {
+    await request(
+      'patch',
+      `/api/v3/admin/orders/${order.id}/fulfillments/${fulfillment.id}/fulfill`,
+    )
+  }
+
+  return order as { id: string; number: string }
 }

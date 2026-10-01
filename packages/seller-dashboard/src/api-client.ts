@@ -56,7 +56,7 @@ export function createSellerApiClient({
     // and 403 them against a seller they may hold no role on.
     clearTenant: forgetSeller,
     fetchPermissions: async () => {
-      const response = await sellerClient().me()
+      const response = await sellerClient().me.get()
 
       // Both shapes, exactly as the operator's dashboard receives them. The
       // framework's `<Can>` reads CanCanCan rules; the key list is what the
@@ -64,6 +64,10 @@ export function createSellerApiClient({
       // did) left every `<Can>` on the panel answering false — silently.
       return { rules: response.permissions ?? [], keys: response.permission_keys ?? [] }
     },
+    // The account menu's language switcher and the profile dialog both write
+    // through this, so neither reaches for the Admin API from a panel holding
+    // only a seller credential.
+    updateAccount: (params) => sellerClient().me.update(params),
     // The shared address form reads countries through the registered client,
     // so it works in a panel that has no admin credential.
     listCountries: () => sellerClient().countries.list(),

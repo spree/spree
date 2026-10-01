@@ -31,9 +31,17 @@ module Spree
       end
 
       context 'with an event carrying a live credential' do
-        let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['*']) }
+        let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['customer.password_reset_requested']) }
         let(:event_name) { 'customer.password_reset_requested' }
         let(:event_payload) { { reset_token: 'live-token', email: 'customer@example.com' } }
+
+        # A wildcard is set up by whoever holds the webhooks permission; the
+        # reset token reaches only an endpoint that names the event.
+        it 'is not delivered to a wildcard subscription' do
+          webhook_endpoint.update!(subscriptions: ['*'])
+
+          expect { described_class.new.handle(event) }.not_to change(Spree::WebhookDelivery, :count)
+        end
 
         it 'keeps the token out of the persisted delivery log' do
           described_class.new.handle(event)

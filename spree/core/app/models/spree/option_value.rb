@@ -48,6 +48,13 @@ module Spree
         distinct
     }
 
+    # Option values are owned through their option type, and the store has no
+    # `option_values` association for `Spree::Base.for_store` to follow, which
+    # would otherwise fall back to every store's values.
+    scope :for_store, lambda { |store|
+      joins(:option_type).where(Spree::OptionType.table_name => { store_id: store.id })
+    }
+
     scope :for_products, lambda { |products|
       # we need to use map(&:id) to avoid SQL errors when merging with other scopes
       joins(:variants).where(Spree::Variant.table_name => { product_id: products.map(&:id) })

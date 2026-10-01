@@ -94,7 +94,7 @@ Rules decide when a promotion is eligible. You can combine multiple rules and co
 | Rule | Applies when |
 |---|---|
 | **FirstOrder** | It's the customer's first order (checked by account and email) |
-| **ItemTotal** | The order subtotal is within configured minimum/maximum thresholds |
+| **ItemTotal** | The order subtotal, not counting free gifts, is within configured minimum/maximum thresholds |
 | **Product** | Specific products are in the order (`any` / `all` / `none` match policy) |
 | **Category** | Products from specific categories are in the order — child categories count |
 | **OptionValue** | Products with specific option values (size, color) are in the order |
@@ -137,7 +137,11 @@ Writes a discount on each fulfillment covering its delivery cost. The row is kep
 
 ### Free items (`CreateLineItems`)
 
-Adds specified products to the cart when the promotion is eligible, checking stock first. Items are not removed automatically if eligibility is lost — customers remove them manually.
+Adds specified products to the cart when the promotion is eligible, checking stock first, and discounts them to zero. A customer who already has the gift in their cart gets theirs free rather than a duplicate; any further copies they bought stay paid for. The gift is taken back when the promotion stops applying.
+
+No second action is needed to make the gift free — pairing this with an order discount set to the gift's price discounts it twice.
+
+A gift the promotion gives away does not count toward what other promotions measure: it cannot lift an order over an `ItemTotal` threshold, and an order discount's percentage is taken from the paid goods only. Nor does it count toward its own promotion's threshold, so in "Spend \$100 get a free sample" the sample is taken back once the paid goods drop to \$100 or less. A copy of the gift the customer pays for counts toward other promotions like any other item, but not toward its own promotion's threshold.
 
 **Use case:** "Free gift with purchase", "Spend $100 get a free sample".
 
@@ -211,7 +215,7 @@ Deleting a promotion doesn't disturb the orders that used it. Their discount row
 Coupon codes track promotion usage and can be single-use or multi-use.
 
 - **Single code** — set the `code` attribute on the promotion; `usage_limit` controls how many times it can be redeemed.
-- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`).
+- **Multi-code** — bulk-generated codes each track their own state (`unused` / `used`). A code is used up only when an order is placed with it. Applying it to a cart just holds it there, even before the cart qualifies, and only the cart holding a code gets its discount. A shopper who presents a code held by an abandoned cart takes it over, so an unfinished checkout never burns a code. The cart that lost it drops the code and gets a `coupon_code_unavailable` warning on its next Store API request that reads or changes the cart, and placing an order with a code that has been taken is refused rather than charged more than the shopper was shown.
 
 Customers apply codes on the cart via the Store API:
 

@@ -14,6 +14,15 @@ describe('normalizeMoneyInput', () => {
     expect(normalizeMoneyInput('1.000.000,00', 'de')).toBe('1000000.00')
   })
 
+  it('reads a lone group separator not followed by three digits as the decimal', () => {
+    expect(normalizeMoneyInput('19.50', 'de')).toBe('19.50')
+    expect(normalizeMoneyInput('0.5', 'de')).toBe('0.5')
+    expect(normalizeMoneyInput('19.50 €', 'de')).toBe('19.50')
+    expect(normalizeMoneyInput('19,50', 'en')).toBe('19.50')
+    expect(normalizeMoneyInput('1.500 €', 'de')).toBe('1500')
+    expect(normalizeMoneyInput('1.234.567', 'de')).toBe('1234567')
+  })
+
   it('handles fr narrow-space grouping', () => {
     // fr groups with U+202F (narrow no-break space) and uses a comma decimal.
     expect(normalizeMoneyInput('1 234,56', 'fr')).toBe('1234.56')

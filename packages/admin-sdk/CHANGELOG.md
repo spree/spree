@@ -1,5 +1,21 @@
 # @spree/admin-sdk
 
+## 1.0.0-beta.3
+
+### Minor Changes
+
+- [#14736](https://github.com/spree/spree/pull/14736) [`e601826`](https://github.com/spree/spree/commit/e601826eb3cc701bc918ae7ddb9c2c52598e02d7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Invitation listings no longer include `acceptance_url`, because the link carries the token that accepts the invitation. Fetch it on demand with `invitations.acceptanceLink(id)` (and `sellers.invitations.acceptanceLink(sellerId, id)` in the Admin SDK), which needs write access. The "Copy invitation link" actions in the dashboard and the seller panel now use it.
+
+### Patch Changes
+
+- [#14702](https://github.com/spree/spree/pull/14702) [`349dddf`](https://github.com/spree/spree/commit/349dddfb537dad5b82aa50a2409bd3d0d0918756) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `orders.create` and `orders.update` params now include `company_id`, which the Admin API already accepted. Sending it makes a draft a company purchase; `null` on update clears it.
+
+- [#14696](https://github.com/spree/spree/pull/14696) [`d065d0b`](https://github.com/spree/spree/commit/d065d0b793046cacc671f0d5297990b9ac600ab7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `orders.refunds.create` no longer accepts `reason_id`. The Admin API only reads `refund_reason_id` (matching the `Refund` response field), so a `reason_id` was silently dropped and the refund fell back to the store's first refund reason. The params are now typed as `RefundCreateParams`; pass `refund_reason_id` instead.
+
+- [#14703](https://github.com/spree/spree/pull/14703) [`9e41f7d`](https://github.com/spree/spree/commit/9e41f7da03a9fd87050a78033620225922574d14) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The `refund_reason_id` documentation now shows the refund reason ID prefix Spree actually uses (`rr_…`).
+
+- [#14727](https://github.com/spree/spree/pull/14727) [`a862b80`](https://github.com/spree/spree/commit/a862b80014fc5aa8ecddca1008917eda9f17635f) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The dashboard now refers to customers by their 6.0 class name, `Spree::Customer`, instead of the pre-6.0 `Spree::User`. This fixes the Customers list's Tags filter, which always showed "No results", along with customer permission checks and customer custom fields. `client.customFields('Spree::Customer', id)` is now supported; `'Spree::User'` keeps working until 6.1.
+
 ## 1.0.0-beta.2
 
 ### Patch Changes

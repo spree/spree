@@ -574,7 +574,7 @@
         "settings_label": "Ustawienia kalkulatora"
       },
       "create_line_items_action_editor": {
-        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka.",
+        "description": "Gdy promocja kwalifikuje się, te pozycje są dodawane do koszyka za darmo.",
         "empty": "Brak wariantów. Wyszukaj poniżej, aby dodać.",
         "search_placeholder": "Szukaj wariantów po nazwie lub SKU…",
         "variant_label": "Dodaj wariant"
@@ -1256,7 +1256,7 @@
             "Spree::Order": "Zamówienia",
             "Spree::Product": "Produkty",
             "Spree::Taxon": "Kategorie",
-            "Spree::User": "Klienci",
+            "Spree::Customer": "Klienci",
             "Spree::Variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
@@ -1867,32 +1867,6 @@
         "tax_remittance": {
           "help": "Kto odprowadza podatek konsumencki od sprzedaży tego sprzedawcy.",
           "label": "Podatek rozlicza"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Skąd wysyłasz. Twój sklep może sprzedawać na całym świecie — to ustala tylko początkową walutę, magazyn i strefy dostawy, które później zmienisz.",
-          "label": "Kraj",
-          "placeholder": "Szukaj krajów"
-        },
-        "currency": {
-          "help": "Twoja domyślna waluta. Kolejne dodasz w każdej chwili.",
-          "label": "Waluta",
-          "placeholder": "Szukaj walut"
-        },
-        "locale": {
-          "help": "Twój domyślny język. Kolejne dodasz w każdej chwili.",
-          "label": "Język"
-        },
-        "password_confirmation": {
-          "label": "Potwierdź hasło"
-        },
-        "sample_data": {
-          "help": "Dodaje w tle przykładowe produkty, kategorie, klientów i zamówienia, aby można było poznać panel. Trwa kilka minut i pobiera zdjęcia produktów.",
-          "label": "Wczytaj dane przykładowe"
-        },
-        "store_name": {
-          "label": "Nazwa sklepu"
         }
       },
       "state": {
@@ -3402,7 +3376,8 @@
               "approve": "Zatwierdź",
               "create": "Nowy zwrot",
               "receive": "Przyjmij produkty",
-              "refund": "Zwróć płatność"
+              "refund": "Zwróć płatność",
+              "complete": "Zakończ zwrot"
             },
             "buy_label": "Kup etykietę zwrotną",
             "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
@@ -3431,6 +3406,8 @@
               "store_credit": "Kredyt sklepowy"
             },
             "refund_title": "Zwrot płatności",
+            "complete_title": "Zakończ zwrot",
+            "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "refund_total": "Kwota zwrotu",
             "resellable": "Nadaje się do sprzedaży",
             "returning_to": "Zwrot do {{name}}"
@@ -5173,7 +5150,11 @@
       "subtitle": "Utwórz konto administratora i opisz swój sklep. Wszystko tutaj możesz później zmienić.",
       "title": "Skonfiguruj Spree",
       "welcome_description": "Przejdź przez poniższą listę, aby otworzyć sklep {{store}}.",
-      "welcome_title": "Witamy, Twój sklep jest gotowy!"
+      "welcome_title": "Witamy, Twój sklep jest gotowy!",
+      "rate_limited_title": "Zbyt wiele prób",
+      "rate_limited_message": "Konfiguracja była sprawdzana zbyt często w krótkim czasie. Odczekaj minutę i spróbuj ponownie.",
+      "check_failed_title": "Nie udało się sprawdzić konfiguracji",
+      "check_failed_message": "Nie udało się połączyć z serwerem, aby sprawdzić, czy ta instalacja wymaga konfiguracji. Upewnij się, że działa, i spróbuj ponownie."
     },
     "staff": {
       "actions": {
@@ -5198,7 +5179,8 @@
       "errors": {
         "failed_to_remove": "Nie udało się usunąć personelu",
         "failed_to_resend": "Nie udało się ponownie wysłać zaproszenia",
-        "failed_to_revoke": "Nie udało się cofnąć zaproszenia"
+        "failed_to_revoke": "Nie udało się cofnąć zaproszenia",
+        "failed_to_copy_link": "Nie udało się skopiować linku zaproszenia"
       },
       "invite": {
         "email_placeholder": "wspolpracownik@przyklad.com",

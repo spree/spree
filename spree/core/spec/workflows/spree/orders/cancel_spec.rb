@@ -45,6 +45,20 @@ module Spree
         expect(stock_level.reload.count_on_hand).to eq(count_on_hand_before)
       end
 
+      it 'withdraws what an edit after placement added to the promise' do
+        fulfillment = order.fulfillments.first
+        line_item = order.line_items.first
+        variant = line_item.variant
+        placed_quantity = line_item.quantity
+        stock_level = fulfillment.stock_location.stock_level(variant)
+        fulfillment.stock_location.allocate(variant, placed_quantity, fulfillment)
+
+        Spree::Orders::Update.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: placed_quantity + 1 }] })
+
+        expect { subject.call(order: order.reload, canceler: user) }.
+          to change { stock_level.reload.allocated_count }.by(-(placed_quantity + 1))
+      end
+
       # The carrier calls are batched after the order transaction commits, so
       # they must still happen — just not from inside the fulfillment workflow.
       it 'tells each provider to stand down' do

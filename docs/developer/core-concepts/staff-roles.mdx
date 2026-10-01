@@ -219,9 +219,11 @@ The invitation system publishes [events](/developer/core-concepts/events) you ca
 
 ## Permissions
 
-Spree uses [CanCanCan](https://github.com/CanCanCommunity/cancancan) for authorization. Permissions apply to both customers (Store API access) and admins (Admin Panel access).
+A role holds flat permission keys from one catalog (`read_orders`, `write_products`, …) — the same vocabulary as secret API key scopes. Every Admin API request checks the staff member's keys on the current store against the endpoint's `read_<resource>` / `write_<resource>` key and returns `403` with `details.required_permission` when it is missing. Staff endpoints (`/admin_users`, `/invitations`, `/roles`) need `read_staff` / `write_staff`.
 
-See the [Customize Permissions guide](/developer/customization/permissions) for details on creating custom roles and permission sets.
+Permissions apply to staff only. Customers never hold roles: the Store API authorizes them by ownership-scoped queries plus `Spree::Storefront::AccessPolicy`.
+
+See the [Customize Permissions guide](/developer/customization/permissions) for details on creating custom roles and registering your own permission keys.
 
 ## Related Documentation
 

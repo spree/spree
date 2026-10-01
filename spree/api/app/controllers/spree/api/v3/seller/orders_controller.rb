@@ -77,7 +77,11 @@ module Spree
             # each lay their fields over the same snapshot, and the later one
             # would undo the earlier one's lines.
             with_order_lock do
-              if @resource.update(address_params)
+              addresses = corrected_addresses
+              invalid = addresses.values.find(&:invalid?)
+              next render_validation_error(invalid.errors) if invalid
+
+              if @resource.update(addresses)
                 render json: serialize_resource(@resource.reload)
               else
                 render_validation_error(@resource.errors)
@@ -115,9 +119,10 @@ module Spree
           # Either address, as a correction rather than a replacement: the
           # sent fields are laid over what the order already holds, so a
           # request naming one line does not blank out the country and
-          # postcode beside it. The nested writer builds a fresh address row
-          # either way, which is what keeps a shared customer address book
-          # entry from being rewritten by an order-level fix.
+          # postcode beside it. Written as a fresh ownerless snapshot straight
+          # onto the order — never through the buyer's nested writer, which
+          # files the address in their book and makes it their default for
+          # every later checkout on the marketplace.
           def sent_addresses
             @sent_addresses ||= params.permit(
               shipping_address: address_permitted_keys,
@@ -125,32 +130,22 @@ module Spree
             ).slice(:shipping_address, :billing_address).reject { |_key, value| value.blank? }
           end
 
-          def address_params
-            permitted = sent_addresses
-
-            {}.tap do |attributes|
-              if permitted[:shipping_address].present?
-                attributes[:ship_address_attributes] =
-                  merged_address(@resource.ship_address, permitted[:shipping_address])
+          def corrected_addresses
+            {}.tap do |addresses|
+              if sent_addresses[:shipping_address].present?
+                addresses[:ship_address] = corrected_address(@resource.ship_address, sent_addresses[:shipping_address])
               end
 
-              if permitted[:billing_address].present?
-                attributes[:bill_address_attributes] =
-                  merged_address(@resource.bill_address, permitted[:billing_address])
+              if sent_addresses[:billing_address].present?
+                addresses[:bill_address] = corrected_address(@resource.bill_address, sent_addresses[:billing_address])
               end
             end
           end
 
-          def merged_address(address, sent)
-            current = address ? address.attributes.slice(*address_attribute_names) : {}
-            current.merge(sent.to_h)
-          end
-
-          # The permitted keys that are real columns; the rest are the writer
-          # aliases a client may send, which have no value to carry over.
-          def address_attribute_names
-            @address_attribute_names ||=
-              address_permitted_keys.map(&:to_s) & Spree::Address.column_names
+          def corrected_address(address, sent)
+            # No label: an address-book label means nothing on an order's copy,
+            # and labels are unique per owner, which an ownerless copy lacks.
+            (address&.snapshot || Spree::Address.new).tap { |copy| copy.assign_attributes(sent.to_h.except('label', :label)) }
           end
 
           def address_permitted_keys

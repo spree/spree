@@ -74,6 +74,31 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
       expect(json_response['secret_key']).to eq(created.secret_key)
     end
 
+    # A password reset token is as good as the customer's account, so the
+    # webhooks permission alone cannot route one to an endpoint.
+    context 'subscribing to customer password resets' do
+      let(:params) { { url: 'https://example.com/hook', subscriptions: %w[customer.password_reset_requested] } }
+
+      context 'with only the webhooks permission' do
+        let(:caller_key) { create(:api_key, :secret, store: store, scopes: %w[write_webhooks]) }
+        let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+
+        it 'is forbidden' do
+          expect { subject }.not_to change(Spree::WebhookEndpoint, :count)
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      context 'with permission to manage customers' do
+        let(:caller_key) { create(:api_key, :secret, store: store, scopes: %w[write_webhooks write_customers]) }
+        let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+
+        it 'creates the endpoint' do
+          expect { subject }.to change(Spree::WebhookEndpoint, :count).by(1)
+        end
+      end
+    end
+
     context 'when the url is invalid' do
       let(:params) { { url: 'not-a-url', subscriptions: [] } }
 
@@ -101,6 +126,26 @@ RSpec.describe Spree::Api::V3::Admin::WebhookEndpointsController, type: :control
     it 'does not return the secret_key on subsequent reads' do
       subject
       expect(json_response['secret_key']).to be_nil
+    end
+
+    context 'on an endpoint that receives customer password resets' do
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: %w[write_webhooks]) }
+      let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
+
+      before { endpoint.update!(subscriptions: %w[customer.password_reset_requested]) }
+
+      it 'refuses to repoint it with only the webhooks permission' do
+        patch :update, params: { id: endpoint.prefixed_id, url: 'https://attacker.example/hook' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(endpoint.reload.url).not_to eq('https://attacker.example/hook')
+      end
+
+      it 'still allows renaming it' do
+        patch :update, params: { id: endpoint.prefixed_id, name: 'Renamed' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
     end
   end
 

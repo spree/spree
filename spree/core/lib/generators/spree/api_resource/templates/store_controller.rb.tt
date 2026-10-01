@@ -20,8 +20,8 @@ module Spree
 <% end -%>
 <% if writable? -%>
 
-          def permitted_params
-            params.permit(<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>)
+          def resource_permitted_attributes
+            [<%= permitted_attribute_names.map { |a| ":#{a}" }.join(', ') %>]
           end
 <% end -%>
         end

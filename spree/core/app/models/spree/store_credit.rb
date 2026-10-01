@@ -25,6 +25,8 @@ module Spree
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
     belongs_to :originator, polymorphic: true, optional: true
+    belongs_to :refunded_order, class_name: 'Spree::Order', optional: true,
+                                inverse_of: :store_credit_refunds
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     has_many :payments, as: :source, class_name: 'Spree::Payment'
@@ -111,6 +113,8 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[customer_id created_by_id amount currency memo]
     self.whitelisted_ransackable_associations = %w[customer created_by]
     self.whitelisted_ransackable_scopes = %w[outstanding from_gift_card]
+    # Staff notes and who issued the credit are back-office data.
+    self.private_ransackable_attributes = { store: %w[memo created_by_id] }
 
     # Two-state scopes: see Spree::Base.ransack_flag? for why the cast is
     # opted out of here and done inside each scope instead.

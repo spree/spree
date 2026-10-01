@@ -204,6 +204,20 @@ module Spree
         def scope_limited_principal?
           current_api_key.present? && current_user.blank?
         end
+
+        # Whether the caller holds a catalog key beyond the one the action
+        # needs — for data another permission guards riding along in a
+        # response (an expanded association, an embedded record). Mirrors the
+        # key gate's two principals: a secret key carries scopes, a signed-in
+        # staffer carries their roles' catalog keys.
+        def holds_permission?(key)
+          return current_api_key.has_scope?(key) if scope_limited_principal?
+
+          ability = current_ability
+          return true unless ability.respond_to?(:permission_keys)
+
+          ability.permission_keys.include?(key.to_s)
+        end
       end
     end
   end

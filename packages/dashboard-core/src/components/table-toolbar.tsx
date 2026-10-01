@@ -306,8 +306,6 @@ export function TableToolbar({
                 <PopoverContent align="start" className="w-[min(480px,calc(100vw-1rem))] p-0">
                   <FilterPanel
                     columns={panelColumns}
-                    allColumns={filterableColumns}
-                    quickFilterKeys={quickFilterKeys}
                     filters={filters}
                     onApply={(f) => {
                       onFiltersChange(f)
@@ -1233,22 +1231,14 @@ function InlineValueList({
  */
 function FilterPanel({
   columns,
-  allColumns,
-  quickFilterKeys,
   filters,
   onApply,
   onChange,
 }: {
-  /** Fields offered first — those with no quick control of their own. */
+  /** The fields with no quick control of their own. A field that has one is
+   *  filtered there alone — its checkbox list already says "is" and "is not",
+   *  so offering it here too only listed the same field twice. */
   columns: ColumnDef[]
-  /** Every filterable field. The ones absent from `columns` are listed after
-   *  them, for the operators their quick control cannot express. */
-  allColumns: ColumnDef[]
-  /** Which fields have a quick control on the row. Such a field goes to the
-   *  operator picker rather than the one-click value list: the list writes
-   *  `eq`, and only `in` is the operator a control displays, so a one-click
-   *  `eq` would chip while its control still read "All". */
-  quickFilterKeys: Set<string>
   filters: FilterRule[]
   /** Commit and close — for the filters that are finished in one action. */
   onApply: (filters: FilterRule[]) => void
@@ -1269,9 +1259,7 @@ function FilterPanel({
   // strand a half-entered range.
   const [customRange, setCustomRange] = useState<{ from: string; to: string } | null>(null)
 
-  // Resolved against every field, not just the offered ones: the switch
-  // select can land on a quick-filtered field the list deliberately omits.
-  const column = allColumns.find((c) => c.key === field)
+  const column = columns.find((c) => c.key === field)
   const type = column?.filterType ?? 'string'
   const operators = useMemo(
     () => getOperators(type).map((op) => ({ value: op.value, label: t(op.labelKey) })),
@@ -1284,18 +1272,12 @@ function FilterPanel({
   // Types whose values are chosen from a list rather than typed. `multi` ones
   // accumulate a set and need an explicit Apply; the single ones commit on the
   // click that picks them.
-  // A field whose quick control already covers the straightforward case is
-  // here for the operators that control cannot express, so it skips the
-  // shorthands — the value list and the date presets — and goes to the
-  // operator picker. Those shorthands write exactly what the control already
-  // writes, which is the one thing the panel does not need to offer twice.
-  const quickFiltered = Boolean(field) && quickFilterKeys.has(field as string)
-  const multi = !quickFiltered && (type === 'tags' || type === 'resource' || type === 'currency')
+  const multi = type === 'tags' || type === 'resource' || type === 'currency'
   // Dates are their own shape: a list of relative presets, with the calendar
   // behind "custom". Same presets the quick filter offers, so a range means
   // the same thing wherever it was set.
-  const dated = !quickFiltered && type === 'date'
-  const listed = !quickFiltered && (type === 'enum' || type === 'boolean' || multi)
+  const dated = type === 'date'
+  const listed = type === 'enum' || type === 'boolean' || multi
   // The header search filters the list below it, so it earns its place only
   // when there is a list: the fields, or a list-shaped type's values.
   const searchable = (!field || listed) && !dated
@@ -1319,18 +1301,8 @@ function FilterPanel({
     return matching(columns)
   }, [columns, query])
 
-  // The fields a quick control already owns, listed under their own heading
-  // below the rest. They are the only route to an operator the control cannot
-  // express, and burying them entirely is what left `status is not active`
-  // unbuildable from anywhere.
-  const visibleQuickFields = useMemo(() => {
-    const offered = allColumns.filter((c) => quickFilterKeys.has(c.key))
-    const needle = query.trim().toLowerCase()
-    return needle ? offered.filter((c) => c.label.toLowerCase().includes(needle)) : offered
-  }, [allColumns, quickFilterKeys, query])
-
   function chooseField(key: string) {
-    const col = allColumns.find((c) => c.key === key)
+    const col = columns.find((c) => c.key === key)
     const firstOperator = getOperators(col?.filterType ?? 'string')[0].value
     setField(key)
     setOperator(firstOperator)
@@ -1506,32 +1478,6 @@ function FilterPanel({
               <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
             </button>
           ))}
-
-        {/* The fields that already have a control on the row. Set apart under
-            a heading rather than mixed in, because picking one here means
-            something narrower than picking any field above: not "filter by
-            status" — the control does that — but "filter by status in a way
-            the control cannot say". */}
-        {!field && visibleQuickFields.length > 0 && (
-          <>
-            {visibleFields.length > 0 && <div className="my-1 border-t" />}
-            <p className="px-2 py-1.5 text-xs text-muted-foreground">
-              {t('admin.components.table_toolbar.more_conditions')}
-            </p>
-            {visibleQuickFields.map((col) => (
-              <button
-                key={col.key}
-                type="button"
-                data-slot="filter-panel-item"
-                className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                onClick={() => chooseField(col.key)}
-              >
-                {col.label}
-                <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-              </button>
-            ))}
-          </>
-        )}
 
         {/* Stage two, list-shaped types: the values themselves, one click to
             apply. No operator control — "is" is the only thing a list of
@@ -1737,7 +1683,7 @@ function FilterPanel({
 
         {/* Nothing matched the search — say so rather than showing a blank
             panel that reads as broken. */}
-        {((!field && visibleFields.length === 0 && visibleQuickFields.length === 0) ||
+        {((!field && visibleFields.length === 0) ||
           (field && listed && !multi && listOptions.length === 0)) && (
           <p className="px-2 py-6 text-center text-muted-foreground">
             {t('admin.common.no_results')}

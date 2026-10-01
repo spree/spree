@@ -57,7 +57,7 @@ erDiagram
 | `delivery_rates` | The options the customer can choose from |
 | `selected_delivery_rate_id` | The chosen option |
 | `fulfilled_at` | When it went out |
-| `delivered_at` | When the customer got it — what return windows count from |
+| `delivered_at` | When the customer got it |
 
 ## Statuses
 
@@ -104,9 +104,9 @@ only delivered when the third one lands. That rollup is recomputed whenever
 deliveries are added, removed or corrected — including when a tracking number
 is fixed, which starts that consignment's journey over.
 
-`delivered_at` is what return windows and the EU withdrawal period count from,
-so it records when the carrier says the parcel arrived rather than when you
-heard about it.
+`delivered_at` records when the carrier says the parcel arrived rather than
+when you heard about it. (The default return window counts from when the order
+was placed, not from delivery — see [returns](/developer/core-concepts/returns-exchanges-claims).)
 
 Carriers report this through their provider's webhook, matched to the delivery
 by tracking number. With no carrier integration, staff mark receipt by hand —
@@ -221,11 +221,11 @@ Each fulfillment on a cart offers delivery rates. The customer picks one per ful
 const cart = await client.carts.get(cartId)
 
 cart.fulfillments[0].delivery_rates
-// => [{ id: 'rate_xxx', name: 'DHL Express', display_cost: '$12.00',
+// => [{ id: 'dr_xxx', name: 'DHL Express', display_cost: '$12.00',
 //       estimated_delivery_date: '2026-08-07' }, ...]
 
 await client.carts.fulfillments.update(cartId, cart.fulfillments[0].id, {
-  selected_delivery_rate_id: 'rate_xxx',
+  selected_delivery_rate_id: 'dr_xxx',
 })
 ```
 
@@ -234,7 +234,7 @@ curl -X PATCH 'https://api.mystore.com/api/v3/store/carts/cart_xxx/fulfillments/
   -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: abc123' \
   -H 'Content-Type: application/json' \
-  -d '{ "selected_delivery_rate_id": "rate_xxx" }'
+  -d '{ "selected_delivery_rate_id": "dr_xxx" }'
 ```
 
 </CodeGroup>
@@ -295,7 +295,9 @@ await adminClient.orders.fulfillments.markDelivered('or_xxx', 'ful_xxx')
 
 // Split it when only part can go now
 await adminClient.orders.fulfillments.split('or_xxx', 'ful_xxx', {
-  items: [{ fulfillment_item_id: 'fi_xxx', quantity: 1 }],
+  variant_id: 'variant_xxx',
+  quantity: 1,
+  stock_location_id: 'sloc_xxx', // optional; defaults to the fulfillment's location
 })
 
 // Cancel

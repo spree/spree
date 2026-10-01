@@ -32,6 +32,7 @@ module Spree
 
             # The customer is returning to a cart that may have sat for days.
             sweep_unbuyable_lines!
+            sweep_unavailable_coupon_code!
             render_cart
           end
 
@@ -41,7 +42,7 @@ module Spree
           def create
             result = Spree::Carts::Create.call(
               params: permitted_params.merge(
-                user: current_user,
+                customer: current_user,
                 store: current_store,
                 channel: current_channel,
                 currency: current_currency,
@@ -70,6 +71,7 @@ module Spree
               )
 
               if result.success?
+                sweep_unavailable_coupon_code!
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
@@ -107,6 +109,7 @@ module Spree
             if result.success?
               # Signing in hands back a cart built earlier, possibly long ago.
               sweep_unbuyable_lines!
+              sweep_unavailable_coupon_code!
               render_cart
             else
               render_service_error(result.error.to_s)

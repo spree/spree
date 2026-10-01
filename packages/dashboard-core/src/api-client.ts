@@ -16,6 +16,34 @@
 
 import type { PermissionRule } from '@spree/admin-sdk'
 
+/** What a panel may change on the signed-in person's own account. */
+export interface PanelAccountParams {
+  first_name?: string
+  last_name?: string
+  /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
+  selected_locale?: string
+  /**
+   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * leave the current one alone — the only field here where `null` means
+   * something the API acts on.
+   */
+  avatar?: string | null
+}
+
+/**
+ * The account fields both panels' `/me` answer with. Deliberately the subset
+ * they share — anything one API alone returns stays on its own client.
+ */
+export interface PanelAccountUser {
+  id: string
+  email: string
+  first_name?: string | null
+  last_name?: string | null
+  full_name?: string | null
+  selected_locale?: string | null
+  avatar_url?: string | null
+}
+
 /** What the permission provider needs, whichever panel asked. */
 export interface PanelPermissions {
   /**
@@ -90,6 +118,21 @@ export interface PanelApiClient {
     direct_upload: { url: string; headers: Record<string, string> }
     signed_id: string
   }>
+  /**
+   * Writes the signed-in person's own account — their name, photo and the
+   * panel's language.
+   *
+   * Registered rather than imported for the same reason as everything else
+   * here: the account menu's language switcher is one shared component, and
+   * reaching for `adminClient` inside it would send a seller's language
+   * change to an API they hold no credential for.
+   *
+   * Required, unlike most of this contract: the account menu lives in the
+   * shared sidebar, so every panel mounting the shell already offers the
+   * language switcher that calls this. An optional marker would describe a
+   * host that does not exist and push a runtime guard onto every caller.
+   */
+  updateAccount(params: PanelAccountParams): Promise<{ user: PanelAccountUser }>
   stockLocations?: {
     list(params?: Record<string, unknown>): Promise<{ data: PanelStockLocation[]; meta?: unknown }>
     get(id: string): Promise<PanelStockLocation>

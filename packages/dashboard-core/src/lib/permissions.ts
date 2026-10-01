@@ -15,7 +15,7 @@ export const Subject = {
   Order: 'Spree::Order',
   SavedReport: 'Spree::SavedReport',
   ReportExport: 'Spree::Exports::Report',
-  Customer: 'Spree::User',
+  Customer: 'Spree::Customer',
   CustomerGroup: 'Spree::CustomerGroup',
   AdminUser: 'Spree::AdminUser',
   ApiKey: 'Spree::ApiKey',

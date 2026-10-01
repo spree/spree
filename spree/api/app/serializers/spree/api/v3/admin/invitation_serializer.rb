@@ -13,7 +13,6 @@ module Spree
                    role_name: :string,
                    inviter_email: :string,
                    expires_at: :string,
-                   acceptance_url: :string,
                    invitee_exists: :boolean,
                    store: '{ id: string; name: string }'
 
@@ -32,16 +31,6 @@ module Spree
 
           attribute :inviter_email do |invitation|
             invitation.inviter.email
-          end
-
-          # Absolute URL when a dashboard origin is configured, otherwise the
-          # path so the SPA can prepend `window.location.origin`.
-          attribute :acceptance_url do |invitation|
-            if Spree::Config[:dashboard_url].present?
-              Rails.application.routes.url_helpers.admin_invitation_acceptance_url(invitation)
-            else
-              "/accept-invitation/#{invitation.prefixed_id}?token=#{invitation.token}"
-            end
           end
 
           # Drives the SPA's sign-in vs sign-up branch on the acceptance page.

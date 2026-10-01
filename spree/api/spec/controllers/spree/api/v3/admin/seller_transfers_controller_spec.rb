@@ -27,6 +27,20 @@ RSpec.describe Spree::Api::V3::Admin::SellerTransfersController, type: :controll
       expect(row['kind']).to eq('earning')
     end
 
+    # Filtering through the order reaches the buyer's email and address,
+    # which a payouts-only caller may not read.
+    it 'ignores filters through the order' do
+      get :index, params: { q: { order_email_start: 'zzz' } }, as: :json
+
+      expect(json_response['data'].map { |row| row['id'] }).to eq([transfer.prefixed_id])
+    end
+
+    it 'filters by the order id' do
+      get :index, params: { q: { order_id_eq: create(:order, store: store).prefixed_id } }, as: :json
+
+      expect(json_response['data']).to be_empty
+    end
+
     it "hides another marketplace's ledger" do
       other_store = create(:store)
       other_seller = create(:seller, store: other_store)

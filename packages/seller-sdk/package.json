@@ -1,6 +1,6 @@
 {
   "name": "@spree/seller-sdk",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "TypeScript client for the Spree Seller API — the marketplace seller panel.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -26,6 +26,16 @@
         "types": "./dist/types/index.d.cts",
         "default": "./dist/types/index.cjs"
       }
+    },
+    "./zod": {
+      "import": {
+        "types": "./dist/zod/index.d.ts",
+        "default": "./dist/zod/index.js"
+      },
+      "require": {
+        "types": "./dist/zod/index.d.cts",
+        "default": "./dist/zod/index.cjs"
+      }
     }
   },
   "files": [
@@ -34,6 +44,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "generate:zod": "tsx ../sdk-core/scripts/generate-zod.ts",
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
@@ -74,13 +85,18 @@
     "tsx": "^4.0.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5",
-    "yaml": "^2.8.4"
+    "yaml": "^2.8.4",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "typescript": ">=4.7.0"
+    "typescript": ">=4.7.0",
+    "zod": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "typescript": {
+      "optional": true
+    },
+    "zod": {
       "optional": true
     }
   },

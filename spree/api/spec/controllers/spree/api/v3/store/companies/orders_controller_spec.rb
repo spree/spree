@@ -37,6 +37,23 @@ RSpec.describe Spree::Api::V3::Store::Companies::OrdersController, type: :contro
       expect(json_response['data']).to be_empty
     end
 
+    # Other members' orders: the buyer's gift card code and download links
+    # are credentials, not company data.
+    it "withholds another member's gift card code and download links" do
+      order = create(:completed_order_with_totals, store: store)
+      order.update_columns(company_id: company.id)
+      gift_card = create(:gift_card, store: store, code: 'membercard1234')
+      order.update_column(:gift_card_id, gift_card.id)
+      create(:digital_link, line_item: order.line_items.first)
+
+      get :index, params: { company_id: company.prefixed_id }, as: :json
+
+      row = json_response['data'].first
+      expect(row['gift_card']['code']).to eq('**********1234')
+      expect(response.body).not_to include('MEMBERCARD1234')
+      expect(row['items'].first).not_to have_key('digital_links')
+    end
+
     it '404s a node without standing' do
       get :index, params: { company_id: create(:company, store: store).prefixed_id }, as: :json
 

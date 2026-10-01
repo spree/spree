@@ -127,8 +127,8 @@ const LOW_STOCK_THRESHOLD = 5
 function groupItemsByProduct(items: StockLevel[], unknownProductLabel: string): StockLevelGroup[] {
   const map = new Map<string, StockLevelGroup>()
   for (const item of items) {
-    const productId = item.variant?.product_id ?? '__unknown__'
-    const productName = item.variant?.product_name ?? unknownProductLabel
+    const productId = item.variant?.product_id ?? item.product_id ?? '__unknown__'
+    const productName = item.variant?.product_name ?? item.variant_name ?? unknownProductLabel
     let group = map.get(productId)
     if (!group) {
       group = { productId, productName, items: [], hasLowStock: false }
@@ -204,9 +204,9 @@ function StockLevelRow({ item }: { item: StockLevel }) {
 
   const dirty = count !== item.count_on_hand || backorderable !== item.backorderable
   const variant = item.variant
-  const optionsText = variant?.options_text
-  const sku = variant?.sku
-  const productId = variant?.product_id
+  const optionsText = variant?.options_text ?? item.options_text
+  const sku = variant?.sku ?? item.variant_sku
+  const productId = variant?.product_id ?? item.product_id
   const variantLabel = optionsText || sku || t('admin.common.default')
   const isLowStock = count < LOW_STOCK_THRESHOLD && !backorderable
 

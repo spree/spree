@@ -113,7 +113,7 @@ module Spree
             end
 
             def find_stock_location!(id)
-              Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(id)
+              current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id)
             end
 
             def stock_location_for_create

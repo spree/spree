@@ -151,11 +151,12 @@ module Spree
       # In development, Zeitwerk may have reloaded the class, creating a new
       # class object while the old one is still referenced in Spree.subscribers.
       # This method resolves the constant fresh to get the current class.
+      # A class name given as a String is resolved in every environment.
       #
       # @param subscriber [Class, String] The subscriber class or class name
       # @return [Class, nil] The resolved class or nil if not found
       def resolve_subscriber(subscriber)
-        return subscriber unless Rails.env.development? || Rails.env.test?
+        return subscriber unless subscriber.is_a?(String) || Rails.env.development? || Rails.env.test?
 
         class_name = subscriber.is_a?(String) ? subscriber : subscriber.name
         return nil unless class_name

@@ -15,6 +15,16 @@ interface UseStockLevelsParams {
   variant_sku_or_variant_product_name_cont?: string
 }
 
+/** Preserve expanded associations when a PATCH response omits them. */
+export function mergeStockLevelUpdate(previous: StockLevel, updated: StockLevel): StockLevel {
+  return {
+    ...previous,
+    ...updated,
+    variant: updated.variant ?? previous.variant,
+    stock_location: updated.stock_location ?? previous.stock_location,
+  }
+}
+
 export function useStockLevels(params: UseStockLevelsParams = {}) {
   return useQuery({
     queryKey: useResourceKey('stock-levels', params),
@@ -52,6 +62,7 @@ export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []
     invalidate: [['stock-levels', id], ...extraInvalidate],
     successMessage: i18n.t('admin.stock_levels.messages.stock_updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
+    showValidationErrors: true,
     onSuccess: (updated) => {
       queryClient.setQueriesData<{ data: StockLevel[] }>(
         { queryKey: buildKey('stock-levels') },
@@ -61,7 +72,7 @@ export function useUpdateStockLevel(id: string, extraInvalidate: QueryKey[] = []
           if (index === -1) return cached
 
           const data = [...cached.data]
-          data[index] = updated
+          data[index] = mergeStockLevelUpdate(cached.data[index], updated)
           return { ...cached, data }
         },
       )

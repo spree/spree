@@ -7,7 +7,7 @@ description: Change the shape of order, return and other document numbers — fr
 
 Every order, return, exchange, claim, stock transfer, import and export carries a **document number** — the short, human-readable reference a merchant reads out on a support call and a customer quotes in an email. Orders look like `R1001`, returns like `RET1001`.
 
-Numbers are separate from IDs. Every record also has a prefixed ID (`order_86Rf07xd4z`) which is what the API uses and what you should reference in code. The number exists purely so people can read, say and type it.
+Numbers are separate from IDs. Every record also has a prefixed ID (`or_86Rf07xd4z`) which is what the API uses and what you should reference in code. The number exists purely so people can read, say and type it.
 
 There are two ways to change it. Merchants can reshape **order numbers** from the dashboard without any code. Developers can replace the generator for **any** document type when the settings are not enough.
 

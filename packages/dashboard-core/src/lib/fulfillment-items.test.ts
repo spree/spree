@@ -82,6 +82,35 @@ describe('fulfillmentItemRows', () => {
     })
   })
 
+  it('names an exchange replacement by its own variant, not the original line item', () => {
+    const rows = fulfillmentItemRows(
+      fulfillment({
+        fulfillment_items: [
+          {
+            line_item_id: 'li_1',
+            variant_id: 'variant_2',
+            name: 'Blender',
+            options_text: 'White',
+            quantity: 1,
+          },
+        ],
+      }),
+      [lineItem({ variant_id: 'variant_1' })],
+    )
+
+    expect(rows).toEqual([
+      {
+        key: 'li_1:variant_2',
+        lineItem: expect.objectContaining({ id: 'li_1' }),
+        name: 'Blender',
+        optionsText: 'White',
+        thumbnailUrl: null,
+        displayPrice: null,
+        quantity: 1,
+      },
+    ])
+  })
+
   it('keys an item with no line item by its variant so it still renders', () => {
     const rows = fulfillmentItemRows(
       fulfillment({

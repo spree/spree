@@ -1,4 +1,9 @@
 import type { SetupCountry } from '@spree/admin-sdk'
+// Barrel imports only. Deep imports here (`@spree/dashboard-ui/ui/select` and
+// friends) make Vite prebundle each subpath as its own dependency in an
+// installed app, which leaves Base UI's CommonJS shim unconverted and stops
+// the dashboard from starting. The monorepo cannot show this: its workspace
+// links are treated as source.
 import { ALL_CURRENCY_CODES, useDisplayName } from '@spree/dashboard-core'
 import {
   Combobox,

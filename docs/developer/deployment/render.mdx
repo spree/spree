@@ -29,17 +29,17 @@ The database is seeded on first boot. Your store is ready in a few minutes — i
 ### Admin
 
 ```
-https://<your-app-name>.onrender.com/admin        # admin panel
+https://<your-app-name>.onrender.com/dashboard    # admin dashboard
 https://<your-app-name>.onrender.com/jobs         # background jobs dashboard
 ```
 
-Default credentials are created during seeding. Change them immediately after first login.
+No default admin account is created. Seeding prints a one-time setup link where you create the first admin account — print it again from the web service's **Shell** tab with `bin/rails spree:setup:token`.
 
 The `/jobs` dashboard uses HTTP Basic auth: user `jobs`, with a password the Blueprint generates — read it in the Render dashboard under the web service's **Environment** tab (`MISSION_CONTROL_PASSWORD`).
 
 ### Environment Variables
 
-Render sets `DATABASE_URL` and `SECRET_KEY_BASE` automatically from the Blueprint. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
+Render sets `DATABASE_URL`, `SECRET_KEY_BASE` and the three [Active Record encryption](/developer/deployment/environment_variables#active-record-encryption) keys automatically from the Blueprint. Copy the encryption keys from the **Environment** tab into your secret manager as a backup — never change them once data is encrypted. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
 
 Generated URLs (images and attachments in API responses, email links) automatically use Render's `RENDER_EXTERNAL_HOSTNAME` (`<your-app-name>.onrender.com`). When you attach a custom domain, set [`RAILS_HOST`](/developer/deployment/environment_variables#urls-and-hosts) to it — it takes precedence.
 

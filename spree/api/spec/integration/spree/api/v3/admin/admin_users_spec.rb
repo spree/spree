@@ -108,7 +108,8 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
     delete 'Remove a staff member from this store' do
       tags 'Staff'
       security [api_key: [], bearer_auth: []]
-      description "Removes the user's role assignments on the current store. The account is preserved — the user keeps access to any other stores."
+      description "Removes the user's role assignments on the current store. The account is preserved — the user keeps access to any other stores. " \
+                  'Removing a role needs the same rights as granting it, and the store always keeps at least one admin.'
       admin_scope :write, :staff
 
       admin_sdk_example 'admin-users/delete'
@@ -119,6 +120,9 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
 
       response '204', 'staff removed from store' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        # The store must keep an admin, so another one stays behind.
+        before { create(:admin_user).role_users.find_or_create_by!(role: admin_role) }
 
         run_test! do |response|
           # Account still exists; only the per-store RoleUser is gone.

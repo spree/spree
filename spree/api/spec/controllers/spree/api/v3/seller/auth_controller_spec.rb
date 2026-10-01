@@ -29,6 +29,18 @@ RSpec.describe Spree::Api::V3::Seller::AuthController, type: :controller do
       expect(json_response['sellers'].pluck('id')).to eq([seller.prefixed_id])
     end
 
+    # The panel adopts the account's saved language from this payload at
+    # sign-in — that is what carries the choice to a second browser, where
+    # localStorage has nothing. Serialized with the account serializer for
+    # exactly this; the team shape has no locale.
+    it 'returns the language the account chose' do
+      seller_user.update!(selected_locale: 'de')
+
+      post :create, params: { email: seller_user.email, password: 'secret123' }, as: :json
+
+      expect(json_response['user']['selected_locale']).to eq('de')
+    end
+
     it 'refuses a store staff member who runs no seller' do
       staff = create(:admin_user, password: 'secret123', password_confirmation: 'secret123')
 

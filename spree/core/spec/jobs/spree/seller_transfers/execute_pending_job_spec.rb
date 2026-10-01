@@ -32,6 +32,19 @@ RSpec.describe Spree::SellerTransfers::ExecutePendingJob do
     expect(transfer.reload).to be_pending
   end
 
+  it "sends the earnings in the seller's own store" do
+    other_store = create(:store)
+    seller = create(:seller, :approved, store: other_store, payouts_enabled_at: Time.current)
+    create(:seller_transfer, seller: seller, amount: 40, status: 'pending',
+                             order: create(:order, store: other_store, seller: seller))
+    sent_in = []
+    allow_any_instance_of(Spree::PayoutProvider::System).to receive(:transfer!) { sent_in << Spree::Current.store }
+
+    described_class.perform_now(seller.id)
+
+    expect(sent_in).to eq([other_store])
+  end
+
   # One seller's stuck earning must not stop the rest.
   it 'carries on past an earning the provider refuses' do
     first = pending_earning(40)

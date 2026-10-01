@@ -564,7 +564,7 @@
         "settings_label": "Paramètres du calculateur"
       },
       "create_line_items_action_editor": {
-        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés au panier.",
+        "description": "Lorsque la promotion est éligible, ces articles sont ajoutés gratuitement au panier.",
         "empty": "Aucune variante pour l'instant. Recherchez ci-dessous pour en ajouter une.",
         "search_placeholder": "Rechercher des variantes par nom ou SKU…",
         "variant_label": "Ajouter une variante"
@@ -1238,7 +1238,7 @@
             "Spree::Order": "Commandes",
             "Spree::Product": "Produits",
             "Spree::Taxon": "Catégories",
-            "Spree::User": "Clients",
+            "Spree::Customer": "Clients",
             "Spree::Variant": "Variantes"
           },
           "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
@@ -1849,32 +1849,6 @@
         "tax_remittance": {
           "help": "Qui déclare la taxe à la consommation sur les ventes de ce vendeur.",
           "label": "Taxe reversée par"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "D'où vous expédiez. Votre boutique peut vendre dans le monde entier — ceci définit seulement la devise, l'entrepôt et les zones de livraison de départ, tous modifiables ensuite.",
-          "label": "Pays",
-          "placeholder": "Rechercher un pays"
-        },
-        "currency": {
-          "help": "Votre devise par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Devise",
-          "placeholder": "Rechercher une devise"
-        },
-        "locale": {
-          "help": "Votre langue par défaut. Ajoutez-en d’autres quand vous voulez.",
-          "label": "Langue"
-        },
-        "password_confirmation": {
-          "label": "Confirmer le mot de passe"
-        },
-        "sample_data": {
-          "help": "Ajoute en arrière-plan des produits, catégories, clients et commandes de démonstration pour explorer le tableau de bord. Le chargement prend quelques minutes et télécharge les images des produits.",
-          "label": "Charger des données d’exemple"
-        },
-        "store_name": {
-          "label": "Nom de la boutique"
         }
       },
       "state": {
@@ -3364,7 +3338,8 @@
               "approve": "Approuver",
               "create": "Nouveau retour",
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser"
+              "refund": "Rembourser",
+              "complete": "Clôturer le retour"
             },
             "buy_label": "Acheter une étiquette de retour",
             "buy_label_confirm": "Acheter une étiquette de retour prépayée ? Votre compte transporteur est débité dès son émission.",
@@ -3393,6 +3368,8 @@
               "store_credit": "Avoir"
             },
             "refund_title": "Rembourser le retour",
+            "complete_title": "Clôturer le retour",
+            "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "refund_total": "Total du remboursement",
             "resellable": "Revendable",
             "returning_to": "Retour vers {{name}}"
@@ -5109,7 +5086,11 @@
       "subtitle": "Créez votre compte administrateur et présentez votre boutique. Tout ceci est modifiable par la suite.",
       "title": "Configurer Spree",
       "welcome_description": "Suivez la liste ci-dessous pour ouvrir {{store}}.",
-      "welcome_title": "Bienvenue, votre boutique est prête !"
+      "welcome_title": "Bienvenue, votre boutique est prête !",
+      "rate_limited_title": "Trop de tentatives",
+      "rate_limited_message": "La configuration a été vérifiée trop souvent en peu de temps. Patientez une minute, puis réessayez.",
+      "check_failed_title": "Impossible de vérifier la configuration",
+      "check_failed_message": "Le serveur est injoignable pour vérifier si cette installation doit être configurée. Vérifiez qu'il est démarré, puis réessayez."
     },
     "staff": {
       "actions": {
@@ -5134,7 +5115,8 @@
       "errors": {
         "failed_to_remove": "Échec du retrait du membre du personnel",
         "failed_to_resend": "Échec du renvoi de l'invitation",
-        "failed_to_revoke": "Échec de la révocation de l'invitation"
+        "failed_to_revoke": "Échec de la révocation de l'invitation",
+        "failed_to_copy_link": "Impossible de copier le lien d'invitation"
       },
       "invite": {
         "email_placeholder": "collegue@exemple.com",

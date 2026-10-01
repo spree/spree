@@ -136,5 +136,19 @@ describe Spree::Promotion::Rules::Category, type: :model do
       expect { rule.category_ids = [foreign_category.prefixed_id] }.
         to raise_error(ActiveRecord::RecordNotFound)
     end
+
+    # Mass assignment decodes prefixed ids before the setter runs, so the raw
+    # id must be checked as well.
+    it 'rejects the foreign raw ID' do
+      expect { rule.category_ids = [foreign_category.id] }.
+        to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'is invalid when built before its promotion is known' do
+      built = described_class.new(category_ids: [foreign_category.id])
+      built.promotion = promotion
+
+      expect(built).not_to be_valid
+    end
   end
 end

@@ -57,7 +57,23 @@ module Spree
         else
           set_error_code :coupon_code_not_found
         end
+        release_stale_coupon_codes
         self
+      end
+
+      # Gives back every batch code this cart or order holds but no longer
+      # shows: anything other than the code it entered while that code waits
+      # to qualify, or the codes of promotions attached to it. Without this a
+      # replaced or dropped code stays held, and is spent with the order.
+      #
+      # @return [void]
+      def release_stale_coupon_codes
+        return unless order.persisted?
+
+        stale = Spree::CouponCode.unused.held_by(order).where.not(promotion_id: order.promotions.select(:id))
+        pending = order.coupon_code.to_s.downcase.presence if status_code == :coupon_code_not_eligible
+        stale = stale.where.not(code: pending) if pending
+        stale.find_each(&:remove_from_order)
       end
 
       def remove(coupon_code)
@@ -75,25 +91,30 @@ module Spree
 
         promotion = order.promotions.with_coupon_code(coupon_code)
         if promotion.present?
-          # Order promotion has to be destroyed before line item removing
-          order.promotions.delete(promotion)
           clear_persisted_coupon_code(coupon_code)
+          detach_promotion(promotion)
 
-          if promotion.multi_codes?
-            coupon_code = promotion.coupon_codes.find_by(order: order)
-            coupon_code&.remove_from_order
-          else
-            promotion.touch
-          end
-
-          remove_promotion_adjustments(promotion)
-          remove_promotion_line_items(promotion)
-          order.recalculate_totals!
+          set_success_code :adjustments_deleted
+        elsif clear_persisted_coupon_code(coupon_code)
+          # Saved before the cart qualified, so no promotion is attached yet.
+          Spree::CouponCode.held_by(order).find_by(code: coupon_code.to_s.strip.downcase)&.remove_from_order
 
           set_success_code :adjustments_deleted
         else
           set_error_code :coupon_code_not_found
         end
+        self
+      end
+
+      # Gives the code up to another cart or order that has taken it. Unlike
+      # #remove, the entered code stays on this one, so the shopper can be
+      # told it went (Spree::Cart#remove_unavailable_coupon_code!).
+      #
+      # @param coupon_code [String]
+      # @return [self]
+      def release(coupon_code)
+        promotion = order.promotions.with_coupon_code(coupon_code)
+        detach_promotion(promotion) if promotion.present?
         self
       end
 
@@ -144,6 +165,21 @@ module Spree
         order.update_column(:coupon_code, nil)
       end
 
+      def detach_promotion(promotion)
+        # Order promotion has to be destroyed before line item removing
+        order.promotions.delete(promotion)
+
+        if promotion.multi_codes?
+          promotion.coupon_codes.held_by(order).first&.remove_from_order
+        else
+          promotion.touch
+        end
+
+        remove_promotion_adjustments(promotion)
+        remove_promotion_line_items(promotion)
+        order.recalculate_totals!
+      end
+
       def remove_promotion_adjustments(promotion)
         order.discounts.where(promotion_action_id: promotion.actions.pluck(:id)).destroy_all
       end
@@ -165,6 +201,11 @@ module Spree
         return promotion_applied if promotion_exists_on_order?
         return set_error_code :coupon_code_used if promotion.coupon_codes.used.where(code: order.coupon_code).exists?
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
+
+        # Claimed before anything prices the code, since the adjuster only
+        # discounts the holder, and a cart that qualifies later activates the
+        # code on recalculation without coming back here.
+        return set_error_code :coupon_code_used unless claim_coupon_code(order.coupon_code.downcase)
 
         unless promotion.eligible?(order, options)
           # Rules that explain themselves keep their message, but the status
@@ -217,8 +258,6 @@ module Spree
         end
 
         if discount || created_line_items
-          handle_coupon_code(discount, coupon_code) if discount
-
           order.recalculate_totals!
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
@@ -236,8 +275,46 @@ module Spree
         end
       end
 
-      def handle_coupon_code(discount, coupon_code)
-        Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)&.apply_order!(order)
+      # A single-use code is spent only when an order is placed with it, so a
+      # code sitting on another open cart is taken from it rather than
+      # refused: whoever presents it now gets the discount, and whoever places
+      # an order first keeps the code. A cart in the middle of checkout keeps
+      # it, and so does a draft order, since its totals are fixed and money
+      # may already be at the gateway.
+      #
+      # The holder is locked before the code, the same order checkout takes
+      # them in, so the two serialize instead of deadlocking.
+      #
+      # @return [Boolean] false when the code can no longer be claimed
+      def claim_coupon_code(coupon_code)
+        record = promotion.coupon_codes.find_by(code: coupon_code)
+        return true if record.nil?
+
+        holder = record.holder
+        holder = nil if holder && same_record?(holder, order)
+
+        Spree::CouponCode.transaction do
+          holder&.lock!
+          record.lock!
+          next false if record.used? || !same_holder?(record.holder, holder) || !releasable?(holder)
+
+          self.class.new(holder).release(coupon_code) if holder
+          record.apply_order!(order)
+        end
+      end
+
+      def releasable?(holder)
+        return true if holder.nil?
+
+        holder.is_a?(Spree::Cart) && holder.completed_at.nil? && !holder.completion_claimed?
+      end
+
+      def same_record?(holder, other)
+        holder.class == other.class && holder.id == other.id
+      end
+
+      def same_holder?(current, expected)
+        current.nil? || same_record?(current, expected || order)
       end
 
       # Whether the coupon handler should also handle gift card codes.

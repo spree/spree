@@ -1,6 +1,7 @@
 import type { ListParams, PaginatedResponse, RequestFn, RequestOptions } from '@spree/sdk-core'
 import { transformListParams } from '@spree/sdk-core'
 import type {
+  Account,
   AuthTokens,
   Balance,
   Claim,
@@ -14,6 +15,7 @@ import type {
   Import,
   ImportRow,
   Invitation,
+  InvitationAcceptanceLink,
   Order,
   PackageType,
   Payout,
@@ -133,14 +135,36 @@ export class SellerClient {
   }
 
   /**
-   * The signed-in seller: who they are, which sellers they may act for, and
+   * The signed-in person: who they are, which sellers they may act for, and
    * what they may do on the selected one.
    *
    * `permission_keys` is empty until a seller is named — capability is per
    * seller, so there is no answer spanning all of them.
+   *
+   * Read it with `me.get()` and edit it with `me.update()`. Calling `me()`
+   * directly still works for code written against 1.0.0-beta.1/beta.2, but is
+   * deprecated and warns once per client.
    */
-  me = (options?: RequestOptions): Promise<MeResponse> =>
-    this.request<MeResponse>('GET', '/me', options)
+  readonly me: MeResource = Object.assign(
+    (options?: RequestOptions): Promise<MeResponse> => {
+      if (!this.meCallDeprecationWarned) {
+        this.meCallDeprecationWarned = true
+        console.warn(
+          '[@spree/seller-sdk] `client.me()` is deprecated; use `client.me.get()` instead.',
+        )
+      }
+      return this.me.get(options)
+    },
+    {
+      get: (options?: RequestOptions): Promise<MeResponse> =>
+        this.request<MeResponse>('GET', '/me', options),
+
+      update: (params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
+        this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
+    },
+  )
+
+  private meCallDeprecationWarned = false
 
   /** The seller's own record, as they maintain it. */
   readonly profile = {
@@ -290,6 +314,10 @@ export class SellerClient {
     /** Withdraws an offer that has not been accepted. */
     revoke: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/invitations/${id}`, options),
+
+    /** The link a colleague opens to join; it carries the invitation's token. */
+    acceptanceLink: (id: string, options?: RequestOptions): Promise<InvitationAcceptanceLink> =>
+      this.request<InvitationAcceptanceLink>('GET', `/invitations/${id}/acceptance_link`, options),
   }
 
   /**
@@ -1670,11 +1698,49 @@ export interface PermissionRule {
 }
 
 export interface MeResponse {
-  user: TeamMember
+  /**
+   * `Account` rather than `TeamMember`: reading your own record also shows
+   * the panel language you chose, which the team list does not publish about
+   * a colleague.
+   */
+  user: Account
   sellers: SellerSummary[]
   /** Empty until a seller is named — capability is per seller. */
   permissions: PermissionRule[]
   permission_keys: string[]
+}
+
+/**
+ * `client.me`: an object with `get` and `update`, which is also callable as
+ * `client.me()` — the 1.0.0-beta.1/beta.2 form — for backwards compatibility.
+ */
+export interface MeResource {
+  /** @deprecated Use `me.get()` instead. Calling `me()` directly will be removed in a future release. */
+  (options?: RequestOptions): Promise<MeResponse>
+  /** Reads the signed-in person, the sellers they may act for, and their permissions. */
+  get(options?: RequestOptions): Promise<MeResponse>
+  /**
+   * Edits the signed-in person's own account — the name and photo their
+   * team sees, and the panel's language. Not the seller business they act
+   * for: that is `profile.update`.
+   *
+   * `avatar` takes a direct-upload signed id to set the photo, or `null` to
+   * remove it; omitting it leaves the current one alone.
+   */
+  update(params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse>
+}
+
+/** What a seller may change on their own account. */
+export interface AccountUpdateParams {
+  first_name?: string
+  last_name?: string
+  /** The panel's UI language, as a bundle code the panel ships (e.g. `de`). */
+  selected_locale?: string
+  /**
+   * ActiveStorage signed id to set the photo, or `null` to remove it. Omit to
+   * leave the current one alone.
+   */
+  avatar?: string | null
 }
 
 /** The fields a seller may change on their own record. */

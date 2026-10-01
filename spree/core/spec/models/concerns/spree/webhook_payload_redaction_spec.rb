@@ -143,6 +143,42 @@ describe Spree::WebhookPayloadRedaction do
       expect(secrets.keys).to eq(['data.client_secret'])
     end
 
+    # The guest cart token lets whoever holds it read and change the cart,
+    # so it must not sit in a log that `read_webhooks` can read.
+    it 'redacts the guest cart token' do
+      original = { name: 'cart.updated', data: { id: 'cart_1', token: 'guest-token' } }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload[:data][:token]).to eq(placeholder)
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
+    it "redacts a gift card event's code" do
+      original = { name: 'gift_card.created', data: { id: 'gc_1', code: 'SPEND-ME' } }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload[:data][:code]).to eq(placeholder)
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
+    it 'redacts the code of a gift card applied to an order' do
+      original = { name: 'order.completed', data: { id: 'or_1', gift_card: { id: 'gc_1', code: 'SPEND-ME' } } }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload[:data][:gift_card][:code]).to eq(placeholder)
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
+    # Promotion, country and channel codes are not credentials.
+    it 'leaves other codes alone' do
+      original = { name: 'order.completed', data: { id: 'or_1', code: 'R123', market: { code: 'eu' } } }
+
+      expect(described_class.split(original)).to eq([original, {}])
+    end
+
     it 'returns the payload untouched when nothing is sensitive' do
       original = { 'data' => { 'number' => 'R123' } }
 

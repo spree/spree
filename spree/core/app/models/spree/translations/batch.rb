@@ -38,8 +38,10 @@ module Spree
       attr_reader :records
 
       # @param entries [Array<Hash>] [{ resource_type:, resource_id:, values: { locale => { field => value } } }]
-      def initialize(entries)
+      # @param store [Spree::Store] the store every record must belong to
+      def initialize(entries, store: Spree::Store.current)
         @entries = Array(entries)
+        @store = store
         @records = []
       end
 
@@ -86,7 +88,7 @@ module Spree
         klass = resource_class(entry[:resource_type])
         raise EntryError.new("Unknown translatable resource type: #{entry[:resource_type]}", index) if klass.nil?
 
-        relation = klass.respond_to?(:for_store) ? klass.for_store(Spree::Store.current) : klass
+        relation = klass.respond_to?(:translatable_scope) ? klass.translatable_scope(@store) : klass.for_store(@store)
         relation.find_by_prefix_id!(entry[:resource_id])
       rescue ActiveRecord::RecordNotFound
         raise EntryError.new("Resource not found: #{entry[:resource_id]}", index)

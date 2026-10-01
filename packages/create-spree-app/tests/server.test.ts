@@ -2,7 +2,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { adaptWorkflowForNestedServer, prepareServerTemplate } from '../src/server'
+import {
+  adaptRenderYamlForNestedServer,
+  adaptWorkflowForNestedServer,
+  prepareServerTemplate,
+} from '../src/server'
 
 // Mirrors spree-starter's .github/workflows/server-ci.yml (the workflow that
 // create-spree-app relocates to the generated project root).
@@ -56,22 +60,22 @@ jobs:
           context: .
 `
 
-// A trimmed render.yaml covering the three shapes the transform distinguishes:
-// a buildable service (has `runtime:`), the commented-out worker template
-// (`runtime:` behind a `#`), and a managed service (no `runtime:`).
+// A trimmed render.yaml in the starter's shape: a Docker web service plus the
+// commented-out worker template, both building the nested server.
 const RENDER_YAML = `services:
   - type: web
-    runtime: ruby
-    plan: free
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: .
 
   # - type: worker
-  #   runtime: ruby
-  #   plan: standard
-
-  - type: redis
-    name: spree-redis
-    plan: free
+  #   runtime: docker
+  #   dockerfilePath: ./server/Dockerfile
+  #   dockerContext: .
 `
+
+// The same Blueprint authored for deploying the starter on its own.
+const STANDALONE_RENDER_YAML = RENDER_YAML.replaceAll('./server/Dockerfile', './Dockerfile')
 
 describe('adaptWorkflowForNestedServer', () => {
   it('points ruby/setup-ruby at the server/ subdirectory', () => {
@@ -111,10 +115,20 @@ describe('adaptWorkflowForNestedServer', () => {
   })
 })
 
+describe('adaptRenderYamlForNestedServer', () => {
+  it('leaves a Blueprint already written for the nested server untouched', () => {
+    expect(adaptRenderYamlForNestedServer(RENDER_YAML)).toBe(RENDER_YAML)
+  })
+
+  it('points a standalone Blueprint, commented services included, at server/Dockerfile', () => {
+    expect(adaptRenderYamlForNestedServer(STANDALONE_RENDER_YAML)).toBe(RENDER_YAML)
+  })
+})
+
 describe('prepareServerTemplate', () => {
   const tempDirs: string[] = []
 
-  function seedClonedServer(): string {
+  function seedClonedServer(renderYaml = RENDER_YAML): string {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-server-'))
     tempDirs.push(projectDir)
 
@@ -123,7 +137,7 @@ describe('prepareServerTemplate', () => {
     fs.writeFileSync(path.join(workflows, 'server-ci.yml'), SERVER_CI)
     fs.writeFileSync(path.join(workflows, 'release.yml'), RELEASE)
     fs.writeFileSync(path.join(projectDir, 'server', 'README.md'), '# Spree starter')
-    fs.writeFileSync(path.join(projectDir, 'server', 'render.yaml'), RENDER_YAML)
+    fs.writeFileSync(path.join(projectDir, 'server', 'render.yaml'), renderYaml)
 
     return projectDir
   }
@@ -157,13 +171,12 @@ describe('prepareServerTemplate', () => {
     expect(fs.existsSync(path.join(projectDir, 'server', 'README.md'))).toBe(false)
   })
 
-  it('relocates render.yaml to the project root verbatim', () => {
-    const projectDir = seedClonedServer()
+  it('relocates render.yaml to the project root, building server/Dockerfile', () => {
+    const projectDir = seedClonedServer(STANDALONE_RENDER_YAML)
     prepareServerTemplate(projectDir)
 
     const moved = path.join(projectDir, 'render.yaml')
     expect(fs.existsSync(moved)).toBe(true)
-    // Authored by the starter for exactly this layout — no rewriting.
     expect(fs.readFileSync(moved, 'utf-8')).toBe(RENDER_YAML)
     // The original in server/ is removed so Render never reads a stale copy.
     expect(fs.existsSync(path.join(projectDir, 'server', 'render.yaml'))).toBe(false)

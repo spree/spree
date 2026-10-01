@@ -182,6 +182,32 @@ export async function dockerComposeRun(
   await execa('docker', args, { cwd: projectDir, ...stdio })
 }
 
+// The dev compose (an ejected project) starts `bin/rails server` directly,
+// bypassing bin/docker-entrypoint and its db:prepare. Puma runs the Solid Queue
+// supervisor in-process, and when the database does not exist yet the
+// supervisor fails and takes Puma down with it — so on a fresh stack the web
+// container exits before anything can `exec` into it. Prepare the database in
+// a one-off container instead (no Puma) before the app server is brought up.
+// Postgres is started and health-waited explicitly first: older dev compose
+// files give web no depends_on, so `run` alone would not wait for it. Being the only container that mounts a
+// cold bundle_cache volume, it also wins the copy-up uncontended, so no
+// separate primeBundleVolume is needed after it. `--build` makes it use the
+// current Dockerfile rather than a dev image left over from an earlier eject,
+// and the `up -d` that follows reuses that image.
+//
+// stdio defaults to piped so a spinner caller stays clean and a failure still
+// carries compose's output on the thrown error.
+export async function prepareDatabase(
+  projectDir: string,
+  options?: { stdio?: ExecaOptions['stdio'] },
+): Promise<void> {
+  const stdio = options?.stdio ?? 'pipe'
+  await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })
+  await dockerCompose(['run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'], projectDir, {
+    stdio,
+  })
+}
+
 export interface DockerComposeExecOrRunOptions {
   service?: string
   env?: Record<string, string>

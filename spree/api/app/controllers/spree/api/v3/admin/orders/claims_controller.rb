@@ -18,7 +18,7 @@ module Spree
             #
             # Editable fields only — status moves through the member actions.
             def update
-              if @resource.update(permitted_params)
+              if @resource.update(update_attributes)
                 render json: serialize_resource(@resource.reload)
               else
                 render_validation_error(@resource.errors)
@@ -40,6 +40,19 @@ module Spree
             end
 
             private
+
+            # The reason is resolved through the store rather than assigned
+            # raw, so another store's reads as missing.
+            def update_attributes
+              attributes = permitted_params.to_h.except('reason_id')
+
+              if params.key?(:reason_id)
+                attributes['reason'] =
+                  (current_store.claim_reasons.find_by_prefix_id!(params[:reason_id]) if params[:reason_id].present?)
+              end
+
+              attributes
+            end
 
             # The whole store's catalogue: an operator may promise anything
             # the store sells as a replacement.

@@ -3,9 +3,9 @@
 module Spree
   # spree:subscriber — scaffold an event subscriber and register it.
   #
-  #   bin/rails g spree:subscriber OmsOrderSync order.completed order.canceled
+  #   bin/rails g spree:subscriber OmsOrderSync order.placed order.canceled
   #   bin/rails g spree:subscriber MyApp::BrandSync brand.created brand.updated
-  #   bin/rails g spree:subscriber CriticalSync order.completed --sync
+  #   bin/rails g spree:subscriber CriticalSync order.placed --sync
   #
   # Subscribers are not auto-discovered — they must be appended to the
   # Spree.subscribers array. Forgetting that step produces a silent no-op,
@@ -64,7 +64,7 @@ module Spree
     def warn_about_missing_events
       return if events.any?
 
-      say_status :note, "no events given — edit `subscribes_to` in the generated subscriber (e.g. 'order.completed')", :yellow
+      say_status :note, "no events given — edit `subscribes_to` in the generated subscriber (e.g. 'order.placed')", :yellow
     end
 
     private

@@ -22,6 +22,14 @@ RSpec.describe Spree::Api::V3::Admin::Sellers::InvitationsController, type: :con
       expect(json_response['data'].map { |row| row['id'] }).to include(invitation.prefixed_id)
     end
 
+    it 'does not expose the acceptance token' do
+      invitation
+
+      get :index, params: { seller_id: seller.prefixed_id }, as: :json
+
+      expect(response.body).not_to include(invitation.token)
+    end
+
     # An accepted invitation is a team member, which the team endpoint lists.
     it 'leaves out one that has been accepted' do
       invitation.update!(accepted_at: Time.current, status: 'accepted')

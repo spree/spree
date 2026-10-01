@@ -130,9 +130,13 @@ end
 ### Register it
 
 ```ruby server/config/initializers/spree.rb
-Spree.integrations << 'MyApp::AcmeIntegration'
-Spree.payout_providers << MyApp::PayoutProvider
+Rails.application.config.after_initialize do
+  Spree.integrations << 'MyApp::AcmeIntegration'
+  Spree.payout_providers << MyApp::PayoutProvider
+end
 ```
+
+Register inside `after_initialize`: Spree sets up its own integrations list after your initializers run, so an entry added at the top level of the file would be dropped.
 
 The operator then picks it under **Settings → Marketplace**, which is the store's `payout_provider` preference. The picker is built from the registry, so your provider appears alongside the built-in one and reports whether the store can use it today:
 

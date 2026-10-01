@@ -55,9 +55,35 @@ module Spree
           end
 
           it 'invalidates the Variant cache' do
-            expect(Spree::Variant).to receive(:touch_all).once
-            result
+            Timecop.freeze(1.hour.from_now) do
+              expect { result }.to change { unrelated_variant.reload.updated_at }
+            end
           end
+        end
+      end
+
+      # Propagation writes rows with insert_all, which skips validations, so
+      # the scope itself has to keep them inside what the location may stock.
+      context 'with variants the location may not stock' do
+        let!(:foreign) { create(:variant, product: create(:product, store: create(:store))) }
+
+        before { stock_location.stock_levels.unscope(:where).delete_all }
+
+        it "leaves another store's variants alone" do
+          result
+
+          expect(stock_location.stock_levels.where(variant_id: foreign.id)).to be_empty
+        end
+
+        it "stocks only the seller's own variants in a seller's location" do
+          seller = create(:seller, store: stock_location.store)
+          own = create(:variant, product: create(:product, seller: seller))
+          stock_location.stock_levels.unscope(:where).delete_all
+          stock_location.update_columns(seller_id: seller.id)
+
+          result
+
+          expect(stock_location.stock_levels.pluck(:variant_id)).to match_array(own.product.variants_including_master.ids)
         end
       end
 
@@ -66,11 +92,6 @@ module Spree
 
         it 'does not insert stock levels' do
           expect(stock_location.stock_levels).not_to receive(:insert_all)
-          result
-        end
-
-        it 'does not invalidates the Variant cache' do
-          expect(Spree::Variant).not_to receive(:touch_all)
           result
         end
       end

@@ -438,6 +438,22 @@ steps:
       once several stores hold tax configuration. The NOT NULL constraints land
       in 6.1. Idempotent.
 
+  - id: backfill_order_coupon_codes
+    name: "Backfill coupon codes on placed orders"
+    task: "spree:backfill_order_coupon_codes"
+    notes: |
+      spree_orders gains a coupon_code column in Spree 6, matching carts.
+      Historical placed orders applied coupons only through the promotion
+      join tables, so this fills the column from the order's coupon-code
+      record, or failing that from the code of an applied single-code
+      promotion, so admin filtering and the serializer answer consistently
+      for old orders. Reads promotion records only — no dependency on the
+      adjustments conversion — and touches completed orders only, so it is
+      independent of the cart conversion below. Tune the load size with
+      BATCH_SIZE (default 500).
+
+      Idempotent — only orders whose coupon_code is still blank are scanned.
+
   - id: backfill_order_markets
     name: "Backfill order markets"
     task: "spree:backfill_order_markets"
@@ -663,6 +679,24 @@ steps:
       reported and skipped rather than guessed at, and one bad row does not
       stop the run. Purge the soft-deleted rows later with
       spree:upgrade:purge_migrated_external_receives.
+
+  - id: backfill_actor_types
+    name: "Name the kind of actor on past orders, returns, refunds and receipts"
+    task: "spree:upgrade:backfill_actor_types"
+    notes: |
+      Orders, refunds, returns, exchanges, claims and stock receipts remember
+      who cancelled, approved, created or received them. In 6.0 that can be a
+      member of staff or an API key, so each actor id column gained a type
+      column beside it. Rows written before the upgrade carry an id and no
+      type — they could only ever have pointed at an admin user — so this
+      fills in the admin user class. Until it runs those rows still read as
+      the staff member they always were, with a deprecation warning.
+
+      Run AFTER migrate_returns and migrate_external_receives_to_purchase_orders
+      so any actor rows those steps write are covered too. Walks
+      every model that declares acted_by, so extensions are included.
+
+      Idempotent — a row that already carries a type is skipped.
 
   - id: recount_stock_levels
     name: "Fill in the reserved and incoming counters on every stock level"

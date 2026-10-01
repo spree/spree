@@ -85,6 +85,43 @@ RSpec.describe Spree::StoreScopeGuard do
     end
   end
 
+  # Declaring a store context arms the guard for the rest of the unit of
+  # work, so jobs, webhook controllers and console scripts are covered
+  # without registering each entry point.
+  describe 'arming through Spree::Current.store' do
+    before { Spree::Config.store_scope_guard = 'raise' }
+
+    after { Spree::Current.reset }
+
+    it 'guards work that declared a store, with no watch block' do
+      Spree::Current.store = @default_store
+
+      expect { Spree::Product.where(name: 'x').to_a }.
+        to raise_error(described_class::UnscopedQueryError, /spree_products/)
+    end
+
+    it 'leaves work that never declared a store alone' do
+      Spree::Current.reset
+
+      expect { Spree::Product.where(name: 'x').to_a }.not_to raise_error
+    end
+
+    it 'stops guarding once the context resets, as it does between jobs' do
+      Spree::Current.store = @default_store
+      Spree::Current.reset
+
+      expect { Spree::Product.where(name: 'x').to_a }.not_to raise_error
+    end
+
+    it 'still honors skip for deliberately global lookups' do
+      Spree::Current.store = @default_store
+
+      expect {
+        described_class.skip { Spree::Product.where(name: 'x').to_a }
+      }.not_to raise_error
+    end
+  end
+
   describe 'log mode' do
     before { Spree::Config.store_scope_guard = 'log' }
 

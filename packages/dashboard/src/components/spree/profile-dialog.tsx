@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type MeResponse, SpreeError } from '@spree/admin-sdk'
+import type { MeResponse } from '@spree/admin-sdk'
 import {
   ImageUploadField,
   i18n,
@@ -147,12 +147,9 @@ function ProfileForm({
       const code = values.selected_locale
       if (code && code !== i18n.language) switchLocale(code)
     } catch (err) {
-      if (mapSpreeErrorsToForm(err, form.setError)) return
-      if (err instanceof SpreeError) throw err
-      toastManager.add({
-        type: 'error',
-        title: err instanceof Error ? err.message : t('admin.errors.failed_to_update_profile'),
-      })
+      // Anything that is not a field error has already been toasted by the
+      // mutation hook.
+      mapSpreeErrorsToForm(err, form.setError)
     }
   }
 

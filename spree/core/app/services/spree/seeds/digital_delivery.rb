@@ -2,16 +2,11 @@ module Spree
   module Seeds
     class DigitalDelivery
       prepend Spree::ServiceModule::Base
-
-      def call
-        Spree::Store.all.find_each do |store|
-          create_for(store)
-        end
-      end
+      include StoreScoped
 
       private
 
-      def create_for(store)
+      def seed(store)
         # Digital goods are a distinct product set, so they get their own
         # profile; assigning a product to it is what makes it digital.
         profile = Spree::DeliveryProfiles::Digital.find_by(store: store) ||
@@ -22,7 +17,11 @@ module Spree
         digital_delivery_method.delivery_profile = profile
         digital_delivery_method.storefront_visible = true
         digital_delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Digital'
-        digital_delivery_method.calculator ||= Spree::Calculator::Shipping::DigitalDelivery.create!
+        # Explicit, because the calculator's own default is the default
+        # store's currency rather than this store's.
+        digital_delivery_method.calculator ||= Spree::Calculator::Shipping::DigitalDelivery.create!(
+          preferred_currency: store.default_currency
+        )
         digital_delivery_method.save!
       end
     end

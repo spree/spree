@@ -1,6 +1,6 @@
 import type { AdminUserUpdateParams, InvitationCreateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 export function useStaff() {
   return useQuery({
@@ -73,5 +73,15 @@ export function useDeleteInvitation() {
     invalidate: [['invitations']],
     successMessage: false,
     errorMessage: false,
+  })
+}
+
+/**
+ * Fetches an invitation's acceptance link on demand. The link carries the
+ * token, so the invitation listing never includes it.
+ */
+export function useInvitationAcceptanceLink() {
+  return useMutation({
+    mutationFn: (id: string) => adminClient.invitations.acceptanceLink(id),
   })
 }

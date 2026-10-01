@@ -135,6 +135,35 @@ RSpec.describe 'EasyPost fulfillment webhooks', type: :request do
     expect(other_fulfillment.reload.primary_delivery.status).to eq('pending')
   end
 
+  # Carriers call back without an API key or store header, so the request
+  # host names the default store — the integration decides the store.
+  context 'when the integration belongs to another store' do
+    let(:store) { create(:store, code: "other-#{SecureRandom.hex(4)}") }
+
+    before { host! @default_store.url }
+
+    it "records the carrier update in the integration's store" do
+      recorded_in = []
+      allow_any_instance_of(Spree::Deliveries::UpdateTracking).to receive(:call).and_wrap_original do |original, **arguments|
+        recorded_in << Spree::Current.store
+        original.call(**arguments)
+      end
+
+      post_tracker(status: 'out_for_delivery')
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery.reload.status).to eq('out_for_delivery')
+      expect(recorded_in).to eq([store])
+    end
+
+    it 'refuses a wrong signature' do
+      post_tracker(status: 'delivered', secret: 'not-the-secret')
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(delivery.reload.status).to eq('pending')
+    end
+  end
+
   it 'answers 404 for an unknown integration' do
     body = { description: 'tracker.updated', result: {} }.to_json
 

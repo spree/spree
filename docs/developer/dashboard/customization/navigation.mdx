@@ -24,7 +24,7 @@ nav.add({
   path: '/analytics',      // prefixed with /$storeId at render time
   icon: BarChartIcon,
   position: 650,
-  subject: 'Spree::Order', // optional CanCanCan subject — hides item without read permission
+  subject: 'Spree::Order', // optional permission subject — hides item without read permission
 })
 ```
 
@@ -51,6 +51,7 @@ defineDashboardPlugin({
 nav.add({
   key: 'analytics',
   label: 'Analytics',
+  path: '/analytics',       // required, even on a parent
   icon: BarChartIcon,
   position: 650,
   children: [
@@ -198,7 +199,7 @@ settingsNav.add({
 
 ## Permission gating
 
-`subject` on a nav entry checks `permissions.can('read', subject)` — when it fails, the sidebar item is hidden. **This is UX, not authorization.** The backend still enforces CanCanCan via `authorize!` on every API call. Hiding the link is a hint, not a security boundary.
+`subject` on a nav entry checks `permissions.can('read', subject)` — when it fails, the sidebar item is hidden. **This is UX, not authorization.** The backend still enforces permissions on every API call. Hiding the link is a hint, not a security boundary.
 
 ## Order of operations
 

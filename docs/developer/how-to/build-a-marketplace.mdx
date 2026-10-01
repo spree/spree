@@ -31,7 +31,7 @@ To try the flow quickly, you can seed a sample seller with an owner account, a p
 <CodeGroup>
 
 ```bash Spree CLI
-spree run rake spree:sellers:sample_data
+spree rake spree:sellers:sample_data
 ```
 
 ```bash Without CLI
@@ -757,11 +757,20 @@ const tokens = await sellerClient.auth.login({
   email: 'owner@brightsparks.example',
   password: '…',
 })
-sellerClient.setToken(tokens.access_token)
+sellerClient.setToken(tokens.token)
 
 // A user who runs several sellers picks which one they are acting as
-sellerClient.setSeller('sel_xxx')
+const { sellers } = await sellerClient.me.get()
+sellerClient.setSeller(sellers[0].id)
+
+// The signed-in person edits their own account (name, photo, panel language);
+// the seller business itself is `sellerClient.profile.update(...)`
+await sellerClient.me.update({ first_name: 'Ada', selected_locale: 'de' })
 ```
+
+<Note>
+`sellerClient.me` is an object with `get()` and `update()`. Code written against `@spree/seller-sdk` 1.0.0-beta.1 or beta.2 that calls `sellerClient.me()` directly keeps working, but that form is deprecated and logs a one-time warning — switch to `sellerClient.me.get()`.
+</Note>
 
 Authentication is JWT only. **There is deliberately no secret-key equivalent**: a key that acts as a seller without a seller signing in is exactly what the Seller API's design exists to prevent. Sign-in fails for a store staff member who runs no seller, even though staff share the same user class.
 

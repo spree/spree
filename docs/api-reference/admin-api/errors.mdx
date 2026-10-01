@@ -63,7 +63,7 @@ Some specialized errors carry structured `details` (for example, scope errors in
 |---|---|---|
 | `400` | Bad Request | Missing required parameters, malformed JSON |
 | `401` | Unauthorized | Missing or invalid API key, expired or invalid JWT token |
-| `403` | Forbidden | Authenticated but lacks permission (CanCanCan ability) or scope |
+| `403` | Forbidden | Authenticated but lacks a scope (API key) or role permission (JWT) |
 | `404` | Not Found | Resource doesn't exist, isn't accessible to the calling key, or belongs to a different store |
 | `409` | Conflict | Resource was modified by a concurrent request (optimistic locking) |
 | `422` | Unprocessable Content | Validation failed, invalid state transition, business rule violation |
@@ -77,7 +77,7 @@ Some specialized errors carry structured `details` (for example, scope errors in
 | `authentication_failed` | 401 | Login email/password was wrong |
 | `invalid_token` | 401 | API key or JWT token is invalid or expired |
 | `invalid_refresh_token` | 401 | Refresh token is invalid or expired |
-| `access_denied` | 403 | Caller lacks permission. For API-key callers, `details.required_scope` indicates the missing scope (see [Authentication](/api-reference/admin-api/authentication#permissions)). For JWT callers, the user's role lacks the CanCanCan ability for this action. |
+| `access_denied` | 403 | Caller lacks permission. For API-key callers, `details.required_scope` indicates the missing scope (see [Authentication](/api-reference/admin-api/authentication#permissions)). For JWT callers, `details.required_permission` names the permission key the user's role is missing; a denial without it is a record-level rule. |
 | `current_password_invalid` | 422 | Current password is wrong (when changing password) |
 
 ## Resources

@@ -223,7 +223,7 @@ module Spree
         end
 
         def identity_info(claims)
-          claims.slice('email', 'name', 'gisel_name', 'family_name', 'picture')
+          claims.slice('email', 'name', 'given_name', 'family_name', 'picture')
         end
 
         # The key this provider is registered under — used as UserIdentity#provider

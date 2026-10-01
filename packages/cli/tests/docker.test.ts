@@ -19,6 +19,7 @@ import {
   dockerComposeCapture,
   dockerComposeExecOrRun,
   dockerComposeRun,
+  prepareDatabase,
   rakeTask,
 } from '../src/docker'
 
@@ -107,6 +108,31 @@ describe('dockerComposeRun', () => {
       stderr: ['pipe', 'inherit'],
     })
     expect(opts).not.toHaveProperty('stdio')
+  })
+})
+
+describe('prepareDatabase', () => {
+  afterEach(() => mockExeca.mockReset())
+
+  it('waits for a healthy postgres, then runs db:prepare in a one-off web container', async () => {
+    await prepareDatabase('/proj')
+
+    expect(mockExeca).toHaveBeenCalledTimes(2)
+    expect(mockExeca).toHaveBeenNthCalledWith(
+      1,
+      'docker',
+      ['compose', 'up', '-d', '--wait', 'postgres'],
+      {
+        cwd: '/proj',
+        stdio: 'pipe',
+      },
+    )
+    expect(mockExeca).toHaveBeenNthCalledWith(
+      2,
+      'docker',
+      ['compose', 'run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'],
+      { cwd: '/proj', stdio: 'pipe' },
+    )
   })
 })
 

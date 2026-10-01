@@ -15,7 +15,6 @@ module Spree
         # sender's timeout.
         class FulfillmentsController < ActionController::API
           include ActionController::RateLimiting
-          include Spree::Core::ControllerHelpers::Store
 
           # Must render — instance_exec'd in a before_action, where only
           # render/redirect halts the chain.
@@ -31,12 +30,17 @@ module Spree
                      with: RATE_LIMIT_RESPONSE
 
           def create
-            integration = current_store.integrations.active.find_by_prefix_id!(params[:integration_id])
+            # By id alone: providers call back without an API key or store
+            # header, so the request cannot name the store — the record does.
+            # The signature check below, against the record's own secret, is
+            # what authenticates the request.
+            integration = Spree::Integration.active.find_by_prefix_id!(params[:integration_id])
+            Spree::Current.store = integration.store
 
             event = integration.parse_webhook_event(request.raw_post, request.headers)
             return head :ok if event.nil?
 
-            delivery = find_delivery(event[:tracking_code])
+            delivery = find_delivery(integration.store, event[:tracking_code])
             return head :ok if delivery.nil?
 
             Spree.delivery_update_tracking_workflow.call(
@@ -57,7 +61,7 @@ module Spree
           private
 
           # Scoped to the store the verified integration belongs to — a
-          # tracking code can never address another tenant's parcel — and to
+          # tracking code can never address another store's parcel — and to
           # consignments whose parcel was not canceled, so a recycled code
           # cannot reopen an old one. The newest wins when a code was reused.
           # Carriers reuse tracking numbers across years, so a code can match
@@ -67,14 +71,14 @@ module Spree
           # database. The newest survivor wins.
           CANDIDATE_LIMIT = 20
 
-          def find_delivery(tracking_code)
+          def find_delivery(store, tracking_code)
             return if tracking_code.blank?
 
             # Paged rather than capped: a tracking number reused across
             # canceled owners would otherwise fill the window and hide the
             # live delivery behind them, and the webhook would be
             # acknowledged without applying the carrier's update.
-            current_store.deliveries.
+            store.deliveries.
               where(tracking_number: tracking_code).
               order(created_at: :desc, id: :desc).
               includes(:owner).

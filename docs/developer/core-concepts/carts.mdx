@@ -259,7 +259,7 @@ To add your own step or requirement, see
     const order = await client.carts.complete(cartId)
     ```
 
-    You get back an [Order](/developer/core-concepts/orders).
+    You get back an [Order](/developer/core-concepts/orders) — or, in a marketplace where the cart held several sellers' goods, an [order group](/developer/core-concepts/sellers#one-checkout-several-sellers) holding one order per seller. Tell them apart with `isOrderGroup` from `@spree/sdk`.
   </Step>
 </Steps>
 
@@ -291,6 +291,12 @@ Completing a cart moves real money, so Spree is careful about it:
 **An interrupted completion recovers.** If something dies after the customer was charged, trying again finishes the job instead of charging twice.
 
 **Totals are worked out at the last moment.** The amount charged is calculated when the cart is completed, not taken from an earlier request — so a price or promotion that changed while the customer was reviewing can't lead to the wrong charge.
+
+**The order keeps what the cart collected.** The customer, addresses, items, notes, purchase order number, tax identifier and the cart's `metadata` are all copied onto the order. When a checkout is split into one order per seller, every one of those orders receives the same copy. After that the cart and the order are independent — changing one never changes the other.
+
+<Warning>
+  A customer can write a cart's `metadata` through the Store API, so once it is copied onto the order, treat those keys as customer input. Do not keep anything there that your own code later trusts, such as a fraud or approval flag.
+</Warning>
 
 If a cart can't be completed you get told why — a payment failure, or unmet [requirements](#checkout-requirements) — and the cart is left alone so the customer can fix it and try again.
 

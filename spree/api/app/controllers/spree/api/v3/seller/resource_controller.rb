@@ -18,6 +18,10 @@ module Spree
             authenticate_seller!
           end
 
+          def ransack_auth_object
+            :seller
+          end
+
           # Every collection is rooted in the seller's own records.
           #
           # The inherited implementation roots at `for_store(current_store)`,

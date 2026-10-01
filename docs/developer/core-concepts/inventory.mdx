@@ -257,7 +257,7 @@ await adminClient.stockTransfers.stockReceipts.create(transfer.id, {
 curl -X POST 'https://api.mystore.com/api/v3/admin/stock_transfers' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "source_location_id": "sl_a", "destination_location_id": "sl_b" }'
+  -d '{ "source_location_id": "sloc_xxx", "destination_location_id": "sloc_yyy" }'
 ```
 
 </CodeGroup>
@@ -302,7 +302,7 @@ await adminClient.purchaseOrders.stockReceipts.create(order.id, {
 curl -X POST 'https://api.mystore.com/api/v3/admin/purchase_orders' \
   -H 'X-Spree-API-Key: sk_xxx' \
   -H 'Content-Type: application/json' \
-  -d '{ "supplier_id": "sup_xxx", "stock_location_id": "sl_xxx" }'
+  -d '{ "supplier_id": "sup_xxx", "destination_location_id": "sloc_xxx" }'
 ```
 
 </CodeGroup>

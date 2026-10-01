@@ -5,7 +5,7 @@ description: "Set up Meilisearch in Spree for fast, typo-tolerant product search
 
 ## Overview
 
-[Meilisearch](https://www.meilisearch.com/) is a fast, open-source search engine that provides typo tolerance, relevance ranking, faceted filtering, and sub-50ms search responses. Spree includes a built-in Meilisearch search provider that replaces the default SQL-based search.
+[Meilisearch](https://www.meilisearch.com/) is a fast, open-source search engine that provides typo tolerance, relevance ranking, faceted filtering, and sub-50ms search responses. The official `spree_meilisearch` gem provides a Meilisearch search provider that replaces the default SQL-based search.
 
 **When to use Meilisearch:**
 - Catalogs with 1,000+ products
@@ -52,7 +52,7 @@ For local development, Meilisearch runs without authentication by default — no
 ### 2. Add the gem to your Gemfile
 
 ```ruby
-gem 'meilisearch', '>= 0.28'
+gem 'spree_meilisearch'
 ```
 
 <CodeGroup>
@@ -83,7 +83,7 @@ MEILISEARCH_URL=http://localhost:7700
 
 ```ruby
 # config/initializers/spree.rb
-Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 ```
 
 ### 5. Index your products
@@ -226,7 +226,7 @@ The Meilisearch provider automatically configures these filterable attributes:
 - `name` — product name (in document locale)
 - `description` — product description (in document locale)
 - `sku` — variant SKU
-- `option_values` — option value presentations (e.g., "Red", "Small")
+- `option_values` — option value labels (e.g., "Red", "Small")
 - `category_names` — category names
 - `tags` — product tags
 

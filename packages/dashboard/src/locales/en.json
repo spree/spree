@@ -564,7 +564,7 @@
         "settings_label": "Calculator settings"
       },
       "create_line_items_action_editor": {
-        "description": "When the promotion qualifies, these items are added to the cart.",
+        "description": "When the promotion qualifies, these items are added to the cart free of charge.",
         "empty": "No variants yet. Search below to add one.",
         "search_placeholder": "Search variants by name or SKU…",
         "variant_label": "Add variant"
@@ -1238,7 +1238,7 @@
             "Spree::Order": "Orders",
             "Spree::Product": "Products",
             "Spree::Taxon": "Categories",
-            "Spree::User": "Customers",
+            "Spree::Customer": "Customers",
             "Spree::Variant": "Variants"
           },
           "read_only_help": "The owner can't be changed once values exist for this field."
@@ -1849,32 +1849,6 @@
         "tax_remittance": {
           "help": "Who accounts for consumer tax on this seller’s sales.",
           "label": "Tax remitted by"
-        }
-      },
-      "setup": {
-        "country_code": {
-          "help": "Where you ship from. Your store can sell worldwide — this just sets the starting currency, warehouse and delivery zones, all editable later.",
-          "label": "Country",
-          "placeholder": "Search countries"
-        },
-        "currency": {
-          "help": "Your default currency. Add more anytime.",
-          "label": "Currency",
-          "placeholder": "Search currencies"
-        },
-        "locale": {
-          "help": "Your default language. Add more anytime.",
-          "label": "Language"
-        },
-        "password_confirmation": {
-          "label": "Confirm password"
-        },
-        "sample_data": {
-          "help": "Adds demo products, categories, customers and orders in the background so you can explore the dashboard. Takes a few minutes and downloads product images.",
-          "label": "Load sample data"
-        },
-        "store_name": {
-          "label": "Store name"
         }
       },
       "state": {
@@ -3364,7 +3338,8 @@
               "approve": "Approve",
               "create": "New return",
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "complete": "Complete return"
             },
             "buy_label": "Buy return label",
             "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
@@ -3393,6 +3368,8 @@
               "store_credit": "Store credit"
             },
             "refund_title": "Refund return",
+            "complete_title": "Complete return",
+            "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_total": "Refund total",
             "resellable": "Resellable",
             "returning_to": "Returning to {{name}}"
@@ -5109,7 +5086,11 @@
       "subtitle": "Create your admin account and tell us about your store. Everything here can be changed later.",
       "title": "Set up Spree",
       "welcome_description": "Work through the checklist below to open {{store}} for business.",
-      "welcome_title": "Welcome, your store is now ready!"
+      "welcome_title": "Welcome, your store is now ready!",
+      "rate_limited_title": "Too many attempts",
+      "rate_limited_message": "Setup was checked too many times in a short period. Wait a minute, then try again.",
+      "check_failed_title": "Couldn't check setup",
+      "check_failed_message": "The server couldn't be reached to check whether this installation needs setup. Make sure it is running, then try again."
     },
     "staff": {
       "actions": {
@@ -5134,7 +5115,8 @@
       "errors": {
         "failed_to_remove": "Failed to remove staff",
         "failed_to_resend": "Failed to resend invitation",
-        "failed_to_revoke": "Failed to revoke invitation"
+        "failed_to_revoke": "Failed to revoke invitation",
+        "failed_to_copy_link": "Failed to copy invitation link"
       },
       "invite": {
         "email_placeholder": "teammate@example.com",

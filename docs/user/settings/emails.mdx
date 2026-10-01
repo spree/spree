@@ -1,32 +1,49 @@
 ---
 title: "Emails"
-description: "Configure how your store communicates with customers via email."
+description: "Learn how to set the addresses your store's transactional emails come from, who replies reach, and the logo shown at the top."
 ---
 
-Email communication is a key part of building trust with your customers. From order confirmations to support inquiries, making sure your emails are professional and come from the right addresses helps reinforce your brand and ensures important messages reach the right people.
+Spree sends transactional emails automatically as orders move: confirmations, shipping notifications, refunds and password resets. This screen controls the addresses behind those emails, who is told when an order comes in, and the logo at the top of each one.
 
-To configure email settings, navigate to the Emails tab of the Settings menu.
+Email wording and layout are handled separately by your developers, who set the templates. What you control here is where mail comes from and where replies land, which is what customers actually judge when a message arrives.
 
-![](/images/user/settings/emails/1.Emails.png)
+To configure email settings, navigate to **Settings → Emails**, under the **Store** group.
 
-## Logo for Emails
+![The Email settings page, showing the delivery switch, addresses and logo upload](/docs/images/user/settings/emails/1-email-settings.png)
 
-![](/images/user/settings/emails/2.Logo.png)
+## Delivery
 
-Here you can upload a logo that will appear in all automated email notifications (e.g. order confirmations, shipment tracking). Simply select the file you wish to upload.
+Whether your store emails customers at all.
 
-Note: We recommend using a transparent PNG or JPEG for best results.
+- **Send transactional emails to customers** - When off, no order confirmation, shipping, or refund emails are sent.
+
+<Warning>Turning this off stops every customer email, besides password resets. Customers will place orders and hear nothing back, so only use it on a store that is not yet live or where another system is being used to send the messages instead.</Warning>
 
 ## Email Addresses
 
-![](/images/user/settings/emails/3.Addresses.png)
+Three addresses doing three different jobs. Each is worth setting deliberately, because they appear in different places and confusing them is easy.
 
-Here you can set the email addresses that will be used for various purposes by your business:
+- **Sender address** - The From address on every transactional email. This is what a customer sees the message arrive from, so use an address at your own domain rather than a personal one.
+- **Customer support email** - The reply-to address shown to customers in storefront emails. When a customer hits reply, this is where it goes, so it needs to be a mailbox somebody actually reads.
+- **New order notifications** - Where "new order placed" notifications are sent. Use an internal address your team monitors, or leave it blank to turn those notifications off.
 
-- **Mail from address**: The email address used as the sender for all outgoing store emails.
-- **Customer Support Email**: This will be shown in your store’s footer so customers know how to reach you.
-- **New Order Notifications Email**: Want to be notified every time an order is placed? Enter the email address where those alerts should go.
+<Note>**Sender address** and **Customer support email** are often different on purpose. Mail goes out from a no-reply address, and replies are routed to a support inbox.</Note>
+
+## Logo
+
+The image embedded in the header of transactional emails.
+
+![The email logo upload area](/docs/images/user/settings/emails/2-email-logo.png)
+
+Drop an image into the upload area or click to browse. Spree recommends **204 by 104 pixels**, as a PNG or JPG with a transparent background.
+
+<Note>A transparent background matters more here than elsewhere, because email clients render backgrounds differently and a logo with a white box around it will look wrong against a coloured header.</Note>
 
 ## Saving Changes
 
-After making any updates, click Update at the bottom of the page to save your email settings, otherwise any changes you’ve made will not be saved.
+Click **Save** at the top of the page. The button stays greyed out until you change something.
+
+## Further Reading
+
+- [<u>Policies</u>](/user/settings/policies) - The terms and privacy documents linked from your emails and storefront
+- [<u>Sending out Emails</u>](/developer/deployment/emails) - How your developers configure delivery and customise templates

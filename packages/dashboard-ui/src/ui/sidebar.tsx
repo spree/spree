@@ -421,13 +421,67 @@ function SidebarSeparator({ className, ...props }: React.ComponentProps<typeof S
   )
 }
 
-function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
+/**
+ * Width of `element`'s vertical scrollbar in pixels — 0 while it does not
+ * overflow, and 0 wherever the platform overlays its scrollbars. A scrollbar
+ * appearing shrinks the content box, so observing the size catches it.
+ */
+function useScrollbarWidth(element: HTMLElement | null) {
+  const [width, setWidth] = React.useState(0)
+
+  React.useLayoutEffect(() => {
+    if (!element) return
+    const measure = () => setWidth(element.offsetWidth - element.clientWidth)
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    measure()
+    return () => observer.disconnect()
+  }, [element])
+
+  return width
+}
+
+function SidebarContent({ className, style, ref, ...props }: React.ComponentProps<'div'>) {
+  const [element, setElement] = React.useState<HTMLDivElement | null>(null)
+  const scrollbarWidth = useScrollbarWidth(element)
+
+  const setRefs = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      setElement(node)
+      if (typeof ref === 'function') ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref],
+  )
+
   return (
     <div
+      ref={setRefs}
       data-slot="sidebar-content"
       data-sidebar="content"
+      style={
+        { '--sidebar-scrollbar-width': `${scrollbarWidth}px`, ...style } as React.CSSProperties
+      }
       className={cn(
-        'no-scrollbar flex min-h-0 flex-1 flex-col gap-0 pt-3 overflow-auto group-data-[collapsible=icon]:overflow-visible',
+        // `scroll-fade` dissolves the rows into the header above and the pinned
+        // entries below as they scroll past. Its defaults suit a long page, not
+        // a rail: at most 40px of fade, easing out across the last 96px of
+        // scroll, which left a row sliced flat against Settings whenever the
+        // list was nearly at its end. A row-deep fade that holds until the
+        // final 1rem reads as a fade at every position; `pb-3` lets the last
+        // row come clear of it at the end.
+        //
+        // The icon rail scrolls too, with no scrollbar: a rail too narrow for
+        // one would otherwise let its icons run over the pinned entries and the
+        // account row. Its tooltips and hover menus are portalled, so nothing
+        // needs to escape the box.
+        'quiet-scrollbar scroll-fade [--scroll-fade-size:3rem] [--scroll-fade-reveal:1rem] flex min-h-0 flex-1 flex-col gap-0 pt-3 pb-3 overflow-auto group-data-[collapsible=icon]:no-scrollbar',
+        // A scrollbar would otherwise take its width out of the rows, leaving
+        // them short of the header and the pinned entries. It moves into the
+        // sidebar's own padding instead (up to 0.5rem), and anything wider
+        // comes out of the groups' end padding — so rows end in the same place
+        // whether the list scrolls or not.
+        '-me-[min(var(--sidebar-scrollbar-width),0.5rem)] **:data-[slot=sidebar-group]:pe-[calc(0.5rem_-_max(0px,var(--sidebar-scrollbar-width)_-_0.5rem))] group-data-[collapsible=icon]:**:data-[slot=sidebar-group]:pe-0',
         className,
       )}
       {...props}
@@ -654,7 +708,7 @@ function SidebarMenuBadge({ className, ...props }: React.ComponentProps<'div'>) 
       data-slot="sidebar-menu-badge"
       data-sidebar="menu-badge"
       className={cn(
-        'pointer-events-none flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md border border-sidebar-border px-1.5 text-[11px] font-medium text-sidebar-foreground/70 tabular-nums select-none',
+        'pointer-events-none flex h-5 min-w-5 shrink-0 items-center justify-center rounded-md border border-sidebar-border bg-sidebar px-1.5 text-[11px] font-medium text-sidebar-foreground/70 tabular-nums select-none',
         'transition-colors duration-100 ease-out group-data-[collapsible=icon]:hidden',
         // Follows its own row: brighter under the pointer, full strength when
         // the item is the active one.

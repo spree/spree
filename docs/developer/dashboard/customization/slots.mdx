@@ -70,7 +70,7 @@ import { usePermissions } from '@spree/dashboard'
 
 function AdminOnlyMenuItem() {
   const { permissions } = usePermissions()
-  if (!permissions.can('manage', 'Spree::User')) return null
+  if (!permissions.can('manage', 'Spree::Customer')) return null
   return <DropdownMenuItem>…</DropdownMenuItem>
 }
 ```

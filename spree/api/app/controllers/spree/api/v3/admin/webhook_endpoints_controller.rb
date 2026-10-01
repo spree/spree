@@ -8,6 +8,8 @@ module Spree
         class WebhookEndpointsController < ResourceController
           scoped_resource :webhooks
 
+          before_action :reject_unauthorized_credential_subscription!, only: [:create, :update]
+
           # POST /api/v3/admin/webhook_endpoints/:id/send_test
           #
           # Fires a synthetic `webhook.test` delivery so admins can verify the
@@ -67,6 +69,31 @@ module Spree
 
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :url, :active, subscriptions: [])
+          end
+
+          private
+
+          # Customer password reset tokens are account credentials, so the
+          # webhooks permission alone cannot subscribe an endpoint to them, or
+          # repoint an endpoint that already receives them.
+          def reject_unauthorized_credential_subscription!
+            return if holds_permission?('write_customers')
+
+            requested = Array(permitted_params[:subscriptions]) & Spree::WebhookEndpoint::CREDENTIAL_EVENTS
+            return if requested.empty? && !repoints_credential_endpoint?
+
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: "Receiving #{Spree::WebhookEndpoint::CREDENTIAL_EVENTS.to_sentence} requires permission to manage customers",
+              status: :forbidden
+            )
+          end
+
+          def repoints_credential_endpoint?
+            return false unless action_name == 'update'
+            return false unless permitted_params.key?(:url) || permitted_params.key?(:subscriptions)
+
+            current_store.webhook_endpoints.find_by_prefix_id(params[:id])&.receives_credentials?
           end
         end
       end
