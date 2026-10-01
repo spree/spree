@@ -5,6 +5,32 @@ import { z } from 'zod/v4'
 // empty input without tripping the email validator. The mapper to API params
 // converts empty strings to `null` so the backend treats them as cleared.
 const optionalEmail = z.string().email().or(z.literal('')).optional()
+const optionalColor = z
+  .string()
+  .regex(/^#[0-9A-Fa-f]{6}$/)
+  .or(z.literal(''))
+  .nullable()
+  .optional()
+
+/** Fonts customer emails can use; mirrors `Spree::Emails::Branding::FONTS`. */
+export const EMAIL_FONTS = [
+  'inter',
+  'system',
+  'helvetica',
+  'georgia',
+  'roboto',
+  'lato',
+  'merriweather',
+] as const
+
+/** Colors customer emails can be branded with, in the order the card shows them. */
+export const EMAIL_BRANDING_COLORS = [
+  'accent_color',
+  'background_color',
+  'card_color',
+  'text_color',
+  'heading_color',
+] as const
 
 export const storeEmailsFormSchema = z.object({
   mail_from_address: z
@@ -14,6 +40,12 @@ export const storeEmailsFormSchema = z.object({
   customer_support_email: optionalEmail,
   new_order_notifications_email: optionalEmail,
   preferred_send_consumer_transactional_emails: z.boolean(),
+  preferred_email_accent_color: optionalColor,
+  preferred_email_background_color: optionalColor,
+  preferred_email_card_color: optionalColor,
+  preferred_email_text_color: optionalColor,
+  preferred_email_heading_color: optionalColor,
+  preferred_email_font: z.enum(EMAIL_FONTS),
 
   // Active Storage signed_id from a fresh direct upload. Frontend-only state.
   mailer_logo_signed_id: z.string().nullable().optional(),
