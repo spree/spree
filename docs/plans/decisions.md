@@ -1,3 +1,13 @@
+## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
+
+**Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
+
+**Decision:** Each store can edit its customer emails, and the shared layout and partials those emails use. Staff emails in core, store-owner notifications and seller emails stay as Spree's files and never read a store's edited layout or partials, so a template edit can never break a staff password reset. Edits are saved as drafts and go live when published; publishing renders the template with sample data under strict variables (every customer email, for the layout or a partial) and refuses anything that does not render. Published templates are store-scoped rows found before the files in the template lookup, one version for every language (`locale = 'any'`, never NULL, so the unique index holds) with optional per-language versions. History is an append-only revisions table next to the live row. Preview renders on the server through the same renderer customers' emails use, with the store's latest matching record or one the merchant picks. Test emails go only to the signed-in admin. Branding (colors, fonts) lives in store preferences, independent of template code. Templates are their own permission resource, `email_templates`. The editor is CodeMirror 6 in `@spree/dashboard-ui`.
+
+**Consequences:** A bad layout or partial edit reaches every email, which is why publishing validates them all. Renaming an email key or a partial argument now breaks stores that customized it; keys need a data migration and partial arguments may only be added. Changing a default template shows an "updated by Spree" notice to every store that customized it.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (its deferred editing work now points to `6.0-email-template-editor.md`).
+
 ## 2026-09-30: A return owed nothing completes at zero
 
 **Context:** Once a returned free gift was valued at what the customer paid for it (entry below), its return could never be closed. Reproduced on R1009: a Tee with a free pink Polo, the Polo returned alone, approved and received with a refund total of $0.00. `Returns::Refund` refused any amount that was not positive ("There is nothing left to refund on this return."), and `Returns::Cancel` only accepts requested or approved returns, so the return sat at `received` for good. It kept counting in the dashboard's open-returns counter and the open filter, the customer's return page never showed it finished, and `return.refunded` never reached webhooks. Any return whose refund works out to zero was caught the same way, including one where nothing that arrived was worth anything. Money was never at stake.
@@ -33,6 +43,26 @@ Rejected: refusing codes that do not qualify yet, which would reverse the 2026-0
 **Consequences:** A shopper who saves a batch code below the minimum now blocks nobody. Anyone presenting it takes it over, as with any held code. A takeover recalculates the losing cart at once, so the checkout refusal is what that shopper sees only if they place the order with no other cart request in between. A code saved on a cart before this change is held by nobody, so that cart's next response drops it with the same warning even though the code is free; the shopper can enter it again. Orders already placed on the affected builds keep their discount, because placed orders never re-run promotions. Their codes still read `unused`, but `spree_orders.coupon_code` records which code each used, so they can be found. No backfill ships. Left alone, both pre-existing: every checkout refusal that carries a code (`payment_failed`, `cart_changed`, now `coupon_code_unavailable`) reaches the Store API as the error hash's text rather than its message; and a single-code promotion's `usage_limit` counts placed orders only, so open carts can pass it together (not tested).
 
 **Plans amended:** `6.0-core-rewrite-tasks.md` (the "Coupon code wired fully" bullet).
+
+## 2026-09-29: Liquid and MJML emails move into 6.0, and ERB email overrides are dropped
+
+**Context:** The Liquid and MJML email plan (2026-09-25 entry below) targeted 6.1. Shipping 6.0 with the ERB emails would mean every app customising an email ports it twice in two releases: once to 6.0's rebuilt ERB, once to Liquid. A bridge that kept ERB overrides rendering through 6.0 was built first, as a `spree_legacy_emails` gem, and then removed the same day.
+
+**Decision:** The plan targets 6.0 and is renamed `6.0-liquid-mjml-emails.md`. All 16 mailers convert in 6.0, core's back-office emails included. ERB overrides of Spree's own emails are dropped with no bridge: 6.0 is a major release, the ERB emails were only rebuilt in 5.6, and the bridge cost a gem, a CI lane, an ERB step in the template lookup and a 6.1 cleanup. Custom mailers that render their own ERB views keep working: core keeps a one-line ERB layout that wraps them in the Liquid layout, plus the `mailer_hero` and `mailer_button` partials. A template carries its subject as YAML front matter, which maps straight onto a subject column when templates move to the database.
+
+**Consequences:** An app that overrode one of Spree's emails in ERB must port it to Liquid; until it does, the default design goes out, with no warning beyond the upgrade guide. The mailer view helpers (`name_for`, `spree_storefront_resource_url` and the fulfillment and digital asset helpers) are removed.
+
+**Plans amended:** `6.0-liquid-mjml-emails.md` (renamed from `6.1-liquid-mjml-emails.md`; target, override and subject decisions).
+
+## 2026-09-25: Emails render through Liquid and MJML, reading serializers, not views
+
+**Context:** Transactional emails are the last HTML Spree renders through Rails views: 61 ERB templates across 16 mailers, which call model methods, helpers and even database queries from the view. The longer-term direction is to shrink Rails in the stack, and to let merchants edit email templates from the dashboard later. ERB can do neither safely: it runs arbitrary Ruby and exists only in Ruby.
+
+**Decision:** Every email template becomes Liquid written in MJML. Liquid fills in the data, then MJML (the `mrml` gem, no Node) compiles it to email-safe HTML, on every email. Liquid was picked over Handlebars because it's the only template language with first-class engines in both Ruby and TypeScript, and it was built for untrusted templates. Templates read hashes from email serializers: `spree_emails` serializers inherit the v3 Store serializers for customer emails, and core serializers serve back-office emails. `alba` moves into `spree_core` for that, together with its setup. Output is HTML-escaped by default, tokens are built by mailers and never serialized, templates keep their Rails view paths (which become their keys), the text part is generated from the HTML, and copy keeps its `Spree.t` keys through a `t` filter. Rejected: React Email, Maizzle and other build-time tools (the file you write isn't the file that runs, so merchant editing needs Node); plain HTML tables (fragile markup maintained by hand); widening the public Store serializers for email-only fields.
+
+**Consequences:** Renaming a mailer or one of its methods becomes a breaking change, because the view path is what apps override. Email views must stop calling models and helpers now, so the conversion stays mechanical. Merchant editing, database-stored templates and previews are a later plan built on the resolver chain this one ships.
+
+**Plans amended:** none. `6.0-liquid-mjml-emails.md` is the new plan.
 
 ## 2026-09-25: Replacement units are flagged, so an order edit counts only what was bought
 

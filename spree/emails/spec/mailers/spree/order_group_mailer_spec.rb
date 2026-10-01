@@ -144,9 +144,9 @@ describe Spree::OrderGroupMailer, type: :mailer do
       it 'tells each parcel what it carries rather than what was ordered' do
         text = described_class.confirm_email(group).text_part.body.to_s
 
-        expect(text).to include('(2)')
-        expect(text).to include('(1)')
-        expect(text).not_to include('(3)')
+        expect(text).to include('2 x')
+        expect(text).to include('1 x')
+        expect(text).not_to include('3 x')
       end
     end
 

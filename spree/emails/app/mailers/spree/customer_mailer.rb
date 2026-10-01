@@ -10,10 +10,9 @@ module Spree
       @reset_url = append_token(base_url, reset_token)
 
       with_store_locale(store) do
-        mail(
-          to: user.email,
-          subject: "#{store.name} #{Spree.t('customer_mailer.password_reset_email.subject')}",
-          store_url: store.storefront_url
+        mail_template(
+          { customer: email_data(user, Spree.api.customer_serializer), reset_url: @reset_url },
+          to: user.email, store_url: store.storefront_url
         )
       end
     end
@@ -31,10 +30,9 @@ module Spree
       @expires_at = data_request.expires_at
 
       with_store_locale(@current_store) do
-        mail(
-          to: data_request.email,
-          subject: "#{@current_store.name} #{Spree.t('customer_mailer.data_export_email.subject')}",
-          store_url: @current_store.storefront_url
+        mail_template(
+          { download_url: @download_url, expires_at: @expires_at&.iso8601 },
+          to: data_request.email, store_url: @current_store.storefront_url
         )
       end
     end

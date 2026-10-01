@@ -1,0 +1,11 @@
+---
+subject: "{{ 'seller_mailer.suspended_email.subject' | t: store_name: store.name }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'seller_mailer.suspended_email.heading' | t }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'seller_mailer.greeting' | t: seller_name: seller.name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'seller_mailer.suspended_email.message' | t: store_name: store.name }}</mj-text>
+    <mj-text mj-class="note">{{ 'seller_mailer.get_in_touch' | t: store_email: store.mail_from_address }}</mj-text>
+  </mj-column>
+</mj-section>

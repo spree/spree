@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'
+  s.add_dependency 'alba', '~> 3.0'
   s.add_dependency 'acts-as-taggable-on'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'
   s.add_dependency 'benchmark' # needed for ruby 4.0 and benchmark gem
@@ -49,10 +50,13 @@ Gem::Specification.new do |s|
   # once activesupport passes those options as keywords.
   s.add_dependency 'json', '< 3'
   s.add_dependency 'jwt', '~> 3.1'
+  s.add_dependency 'liquid', '~> 5.14'
   s.add_dependency 'money', '~> 6.13'
+  s.add_dependency 'mrml', '~> 1.10'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'name_of_person', '~> 1.1'
   s.add_dependency 'nokogiri', '~> 1.18'
+  s.add_dependency 'oj', '~> 3.16'
   s.add_dependency 'ostruct'
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'loofah', '~> 2.21'

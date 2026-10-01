@@ -1,0 +1,13 @@
+---
+subject: "{{ 'invitation_mailer.invitation_email.subject' | t: resource_name: invitation.resource_name }}"
+---
+{% assign name = invitation.invitee_first_name | default: invitation.email %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'invitation_mailer.invitation_email.subject' | t: resource_name: invitation.resource_name }}</mj-text>
+    <mj-text mj-class="greeting">{{ 'invitation_mailer.greeting' | t: user_name: name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'invitation_mailer.invitation_email.body' | t: inviter_name: invitation.inviter_name, resource_name: invitation.resource_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'invitation_mailer.invitation_email.link_description' | t }}</mj-text>
+    <mj-button href="{{ accept_url }}">{{ 'accept' | t }}</mj-button>
+  </mj-column>
+</mj-section>

@@ -1,0 +1,15 @@
+---
+subject: "{{ 'import_mailer.import_done.subject' | t: import_number: import.number }}"
+---
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'import_mailer.greeting' | t: user_name: import.user.first_name }}</mj-text>
+    <mj-text mj-class="lead">{{ 'import_mailer.import_done.message' | t: completed_count: import.completed_count }}</mj-text>
+    {% if import.failed_count > 0 %}
+      <mj-text mj-class="lead"><strong>{{ 'import_mailer.import_done.failed_message' | t: failed_count: import.failed_count }}</strong></mj-text>
+    {% endif %}
+    {% if import.results_url != blank %}
+      <mj-button href="{{ import.results_url }}">{{ 'import_mailer.import_done.view_results' | t }}</mj-button>
+    {% endif %}
+  </mj-column>
+</mj-section>
