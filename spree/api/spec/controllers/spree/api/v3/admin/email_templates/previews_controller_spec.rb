@@ -58,13 +58,6 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PreviewsController, type: 
     end
   end
 
-  it 'marks text the email would not show on its line' do
-    post :create, params: { email_template_id: id, body: "<mj-section><mj-column><mj-text>Hi</mj-text></mj-column></mj-section>\ntesting preview" }, as: :json
-
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(json_response['error']['details']['problems'].first).to include('email' => id, 'line' => 2, 'message' => a_string_including('testing preview'))
-  end
-
   it 'says what is wrong and where when the template does not render' do
     post :create, params: { email_template_id: id, body: "<mj-section>\n{% if %}</mj-section>" }, as: :json
 

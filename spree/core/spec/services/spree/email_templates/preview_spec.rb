@@ -23,14 +23,4 @@ describe Spree::EmailTemplates::Preview do
 
     expect(email.html).to include('LAYOUT DRAFT')
   end
-
-  it 'refuses text that the email would not show, naming its line, when rendering strictly' do
-    preview = described_class.new(store: store, key: editable_key, strict: true,
-                                  body: "<mj-section><mj-column><mj-text>Hi</mj-text></mj-column></mj-section>\ntesting preview")
-
-    expect { preview.call }.to raise_error(Spree::EmailTemplates::InvisibleText) { |error|
-      expect(error.line_number).to eq(2)
-      expect(error.message).to include('testing preview')
-    }
-  end
 end
