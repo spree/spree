@@ -3,6 +3,9 @@ module Spree
     class LineItemSerializer < Spree::Api::V3::LineItemSerializer
       include Spree::Emails::PurchasedItemAttributes
 
+      typelize sku: [:string, nullable: true], display_amount: :string,
+               url: [:string, nullable: true], image_url: [:string, nullable: true]
+
       attributes :sku
 
       # Price times quantity, before discounts — what the line cost.

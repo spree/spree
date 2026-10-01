@@ -8,6 +8,9 @@ pre-commit:
       glob:
         - "spree/api/app/serializers/**/*.rb"
         - "spree/api/lib/spree/api/webhook_event_types.rb"
+        - "spree/emails/app/serializers/**/*.rb"
+        - "spree/core/app/serializers/spree/emails/**/*.rb"
+        - "spree/*/config/initializers/typelizer.rb"
       run: |
         echo "Serializer changes detected — regenerating TypeScript types and Zod schemas..."
         cd spree/api && bundle exec rake typelizer:generate && cd ../..
