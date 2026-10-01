@@ -29,7 +29,7 @@ module Spree
 
         # @return [String] the currency the email's amounts are in
         def currency
-          self.class.record_type ? record.currency : store.default_currency
+          (self.class.record_type && record.try(:currency)).presence || store.default_currency
         end
 
         protected

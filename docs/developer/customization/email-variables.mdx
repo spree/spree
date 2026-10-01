@@ -42,7 +42,8 @@ Each object's fields, and the fields of the objects nested in it.
 
 ### `store`
 
-- `store`: `id`, `name`, `address`, `mail_from_address`, `default_currency`, `default_locale`, `url`, `support_email`, `logo_url`, `logo_width`
+- `store`: `id`, `name`, `address`, `mail_from_address`, `default_currency`, `default_locale`, `url`, `support_email`, `logo_url`, `logo_width`, `branding`
+- `store.branding`: `background_color`, `card_color`, `text_color`, `heading_color`, `accent_color` (empty unless the merchant set one), `link_color`, `button_color`, `button_text_color`, `button_border`, `font`, `font_family`, `heading_font_family`, `font_url` (a web font's stylesheet, empty for email-safe fonts)
 
 ### `order`
 

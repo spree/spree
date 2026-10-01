@@ -1,3 +1,13 @@
+## 2026-10-01: Building the email editor settled its API shape, branding and sample data
+
+**Context:** Implementing `6.0-email-template-editor.md` met details the design left loose: how the API names a template and its language, how the editor shows what an upgrade changed in a default, where branding is edited, what a new store previews, and whether the generated email types get Zod schemas.
+
+**Decision:** The API names a template by its key with dots (`spree.order_mailer.confirm_email`) and picks the version with a `language` parameter, because `locale` already sets the response's language. Templates and drafts store the default they started from as `base_subject` and `base_body`, so the editor can show what changed; reading a template returns the default and the base, with no separate diff endpoint, and saving a draft with `rebase` keeps the merchant's version as based on the new default. The editable registry is `Spree.editable_email_templates` in core, filled by `spree_emails`. Branding is six store preferences edited through the store settings endpoint under the settings permission; only `#RRGGBB` colors and fonts from a fixed list reach an email, and the preview takes unsaved values. Emails built from a record have no in-memory sample: a store with no such record is told there is nothing to preview with yet, and publishing such an email checks its syntax only. The `Email*` types are generated into their own folder of `@spree/admin-sdk` without Zod schemas, since the order email's schema is too large for TypeScript to emit and nothing validates email data at runtime.
+
+**Consequences:** Type generation for every SDK now runs from `spree_emails`, where both the API and email serializers load. A brand-new store cannot preview its order emails until it has an order. The earlier entry's Zod schemas for email types and the in-memory fallback for previews no longer apply.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
 ## 2026-10-01: The email editor's variables come from generated types, and reverted templates keep their history
 
 **Context:** Building the email template editor (`6.0-email-template-editor.md`) left three details open: how autocomplete learns each email's variables, how two admins editing one draft avoid overwriting each other, and what reverting to the default does to a template's history.
