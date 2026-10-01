@@ -41,7 +41,9 @@ RSpec.describe 'refunding a child order of a split checkout' do
   before do
     allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
     allow_any_instance_of(Spree::Order).to receive(:tax_provider).
-      and_return(instance_double(Spree::TaxProvider::Internal, refund: nil, void: nil, estimate: nil))
+      and_return(instance_double(Spree::TaxProvider::Internal, refund: nil, void: nil, estimate: nil,
+                                                               estimate_refund: nil, estimate_replacement: nil,
+                                                               commit_replacement: nil))
   end
 
   describe Spree::Returns::Refund do
@@ -146,7 +148,7 @@ RSpec.describe 'refunding a child order of a split checkout' do
     # Only owes money when the replacement is cheaper than what came back.
     it 'refunds a price difference through the order group payment' do
       # Credit is priced per line on the units received.
-      allow_any_instance_of(Spree::ExchangeLineItem).to receive(:price_difference).and_return(-10)
+      allow_any_instance_of(Spree::ExchangeLineItem).to receive_messages(settled_credit: 10, settled_charge: 0)
 
       result = described_class.call(exchange: exchange, refund_method: 'original_payment')
 

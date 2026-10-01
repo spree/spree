@@ -321,4 +321,52 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
   end
 
+  describe '#estimate_replacement' do
+    let(:exchange) { create(:exchange) }
+    let(:order) { exchange.order }
+    let(:line) { exchange.exchange_line_items.first }
+    let!(:rate) do
+      create(:tax_rate, country_code: order.tax_address.country.iso, amount: 0.2,
+                        tax_category: line.new_variant.tax_category, included_in_price: true)
+    end
+
+    it 'taxes the replacement as a sale of its own' do
+      provider.estimate_replacement(order, [line])
+
+      row = line.tax_lines.charges.sole
+      expect(row.amount).to eq((line.taxable_basis / 1.2 * 0.2).round(2))
+      expect(row).to have_attributes(included: true, tax_rate: rate, order: order, credit: false)
+      expect(order.tax_lines.reload).to be_empty
+    end
+
+    it 'leaves the credit for the units coming back alone' do
+      credit = create(:tax_line, order: order, line_item: nil, exchange_line_item: line, credit: true, amount: 1)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.credits).to eq([credit])
+    end
+
+    it 'writes nothing once the exchange is canceled' do
+      provider.estimate_replacement(order, [line])
+      exchange.update!(status: 'canceled')
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.reload).to be_empty
+    end
+
+    # The carve-out names the line being replaced, which is the line whose
+    # treatment the replacement takes over.
+    it 'taxes the replacement of a line the buyer carved out of an exemption' do
+      carved_out = Spree::TaxExemption.new(
+        reason_code: 'resale',
+        item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: line.line_item.prefixed_id, exempt: false)]
+      )
+
+      provider.estimate_replacement(order, [line], exemptions: [carved_out])
+
+      expect(line.tax_lines.charges.sole.taxability_reason).to eq('standard_rated')
+    end
+  end
 end

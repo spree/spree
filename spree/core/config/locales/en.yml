@@ -1085,6 +1085,7 @@ en:
           no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
     estimated_transit_business_days: Estimated transit business days
     event: Event
+    exchange_fee_label: Exchange %{number}
     excl: excl.
     existing_address: Existing address
     expiration: Expiration
@@ -2201,6 +2202,7 @@ en:
       gb_vat: UK VAT
       us_ein: US EIN
     tax_inclusive: Tax inclusive
+    tax_provider_unavailable: The tax service could not work out the tax to give back. Try again in a few minutes.
     tax_rates: Tax Rates
     taxes: Taxes
     taxon: Taxon

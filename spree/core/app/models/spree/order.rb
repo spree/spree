@@ -234,7 +234,10 @@ module Spree
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
-    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    # Sale rows only: the order's totals are re-summed from this association,
+    # and tax given back on a return, claim or exchange is not tax charged.
+    has_many :tax_lines, -> { sale }, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :post_sale_tax_lines, -> { post_sale }, class_name: 'Spree::TaxLine', dependent: :destroy
     # delete, not destroy: the snapshot is readonly once written, and destroy
     # refuses readonly records. It has no dependents of its own.
     has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', as: :owner,

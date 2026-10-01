@@ -76,6 +76,17 @@ module Spree
       originator.refunded_line_amounts
     end
 
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is known.
+    # A line opened before returns and claims carried tax is absent: its amount
+    # says nothing about how much of it was tax.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      return {} unless originator.respond_to?(:refunded_line_taxes)
+
+      originator.refunded_line_taxes
+    end
+
     # Returns true if the refund is editable.
     #
     # Read through the refund's own order: a payment shared by a split checkout
