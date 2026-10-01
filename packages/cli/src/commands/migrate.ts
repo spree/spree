@@ -1,40 +1,33 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { MIGRATE, MIGRATE_STATUS, rollbackCommand } from '../backend.js'
 import { detectProject } from '../context.js'
-import { dockerComposeExec, dockerComposeExecOrRun, isServiceRunning } from '../docker.js'
+import { warnDeprecated } from '../deprecation.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 export function registerMigrateCommand(program: Command): void {
   program
     .command('migrate')
-    .description(
-      'Install pending Spree migrations from gems, then run them (`spree:install:migrations` + `db:migrate`)',
-    )
-    .argument('[args...]', 'extra args forwarded to db:migrate')
+    .description('Install pending Spree migrations, then run them')
+    .argument('[args...]')
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
-      const ctx = detectProject()
-
-      // Both Rails tasks are silent when there's nothing to do, which leaves
-      // the operator wondering whether anything ran. Print a visible header
-      // for each step and a footer summarising the outcome.
-      if (await isServiceRunning('web', ctx.projectDir)) {
-        console.log(`\n${pc.bold('→ Installing pending Spree migrations from gems...')}`)
-        await dockerComposeExec(['bin/rails', 'spree:install:migrations'], ctx.projectDir)
-
-        console.log(`\n${pc.bold('→ Running db:migrate...')}`)
-        await dockerComposeExec(['bin/rails', 'db:migrate', ...args], ctx.projectDir)
-      } else {
-        // One combined invocation on the fallback path: a one-off container
-        // pays a cold Rails boot per invocation, so don't pay it twice.
-        console.log(`\n${pc.bold('→ Installing + running pending Spree migrations...')}`)
-        await dockerComposeExecOrRun(
-          ['bin/rails', 'spree:install:migrations', 'db:migrate', ...args],
-          ctx.projectDir,
-          { edgeHint: 'the edge boot installs and runs pending migrations itself' },
+      if (args.length > 0) {
+        warnDeprecated(
+          `spree migrate ${args.join(' ')}`,
+          `spree migrate, or spree exec bin/rails db:migrate ${args.join(' ')}`,
         )
       }
+      const ctx = detectProject()
+
+      // The migration tasks are silent when there's nothing to do, which
+      // leaves the operator wondering whether anything ran.
+      console.log(`\n${pc.bold('→ Installing + running pending Spree migrations...')}`)
+      await dockerComposeExecOrRun([...MIGRATE, ...args], ctx.projectDir, {
+        edgeHint: 'the edge boot installs and runs pending migrations itself',
+      })
 
       p.note(
         `Run ${pc.bold('spree migrate:status')} to inspect the migration log.`,
@@ -44,20 +37,38 @@ export function registerMigrateCommand(program: Command): void {
 
   program
     .command('migrate:rollback')
-    .description('Roll back the last migration (`STEP=n` to roll back n steps)')
-    .argument('[args...]', 'extra args forwarded to db:rollback (e.g. STEP=2)')
+    .description('Roll back the last migration (`--steps n` to roll back n)')
+    .option('--steps <n>', 'number of migrations to roll back', parseSteps)
+    .argument('[args...]')
     .allowUnknownOption(true)
     .passThroughOptions(true)
-    .action(async (args: string[]) => {
+    .action(async (args: string[], flags: { steps?: number }) => {
+      if (args.length > 0) {
+        const step = args.find((arg) => arg.startsWith('STEP='))
+        warnDeprecated(
+          `spree migrate:rollback ${args.join(' ')}`,
+          step
+            ? `spree migrate:rollback --steps ${step.slice('STEP='.length)}`
+            : 'spree migrate:rollback',
+        )
+      }
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bin/rails', 'db:rollback', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(rollbackCommand(flags.steps, args), ctx.projectDir)
     })
 
   program
     .command('migrate:status')
-    .description('Show migration status (`bin/rails db:migrate:status`)')
+    .description('Show which migrations have run')
     .action(async () => {
       const ctx = detectProject()
-      await dockerComposeExecOrRun(['bin/rails', 'db:migrate:status'], ctx.projectDir)
+      await dockerComposeExecOrRun(MIGRATE_STATUS, ctx.projectDir)
     })
+}
+
+function parseSteps(value: string): number {
+  const steps = Number(value)
+  if (!Number.isInteger(steps) || steps < 1) {
+    throw new Error(`--steps must be a positive whole number, got "${value}"`)
+  }
+  return steps
 }

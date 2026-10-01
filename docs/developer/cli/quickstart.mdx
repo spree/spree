@@ -68,13 +68,13 @@ spree stop
 
 ### `spree restart`
 
-Restart `web` and `worker` in place — same image, same volumes, fresh Rails process. Good for `config/initializers/*.rb` changes or anything Zeitwerk doesn't auto-reload.
+Restart `web` and `worker` in place — same image, same volumes, fresh backend process. Good for configuration changes the backend doesn't reload on its own.
 
 ```bash
 spree restart
 ```
 
-Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
+Not appropriate for dependency changes (Ctrl+C and re-run `spree dev`), Dockerfile or runtime version changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
 ### `spree update`
 
@@ -86,35 +86,35 @@ spree update
 
 ### `spree build`
 
-Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
+Rebuild the dev image after Dockerfile or runtime version changes. Only relevant after `spree eject`.
 
 ```bash
 spree build
-spree build --reset-bundle   # Also drop the bundle_cache volume so gems re-seed
+spree build --reset-deps     # Also drop the cached backend dependencies so they re-install
 spree build --yes            # Skip confirmation prompts (for CI)
 ```
 
-`spree bundle add` does NOT require a rebuild — gems land in the `bundle_cache` volume which survives image rebuilds.
+`spree add <extension>` does NOT require a rebuild — dependencies land in a cache volume which survives image rebuilds.
 
-`--reset-bundle` only drops `bundle_cache`. Postgres, Redis, Meilisearch, and storage volumes are preserved.
+`--reset-deps` only drops that cache. Postgres, Redis, Meilisearch, and storage volumes are preserved.
 
 ### `spree upgrade`
 
-Walk a Spree version upgrade end-to-end inside the dev stack. Runs `bundle update`, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
+Walk a Spree version upgrade end-to-end inside the dev stack. Updates the Spree packages, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
 
 ```bash
 spree upgrade                  # Detect target, run the full sequence interactively
-spree upgrade --plan           # Print the plan without executing (DRY_RUN=1)
+spree upgrade --plan           # Print the plan without executing
 spree upgrade --to 5.5         # Cap the walk at a specific target version
-spree upgrade --step <id>      # Re-run a single step idempotently (skips bundle + migrate)
+spree upgrade --step <id>      # Re-run a single step idempotently (skips the update + migrate)
 spree upgrade --yes            # Skip the per-step prompts
 ```
 
-Production upgrades only need the third stage — `bundle install` and `db:migrate` happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
+Production upgrades only need the third stage — installing dependencies and migrating happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
 
 ### `spree eject`
 
-Switch from the prebuilt Docker image to building from your local `server/` directory. This lets you customize the Rails app — add gems, override models, add migrations, etc.
+Switch from the prebuilt Docker image to building from your local `server/` directory. This lets you customize the backend — add extensions, override models, add migrations, etc.
 
 ```bash
 spree eject
@@ -123,6 +123,18 @@ spree eject
 After ejecting, the Docker image is built from `server/Dockerfile`. Edit files in `server/` and run `spree dev` to rebuild and restart with your changes.
 
 See [Customizing the Backend](/developer/create-spree-app/quickstart#customizing-the-backend) for details on what you can customize.
+
+### `spree add`
+
+Add an app or an extension to your project.
+
+```bash
+spree add dashboard           # React Admin Dashboard in apps/dashboard
+spree add seller-dashboard    # Seller Panel in apps/seller-dashboard
+spree add spree_stripe        # An extension, by its package name
+```
+
+For an extension, `spree add` installs the package, runs the extension's installer when it ships one, and restarts a running stack so the server loads it.
 
 ### `spree logs`
 
@@ -135,7 +147,7 @@ spree logs worker  # Worker service
 
 ### `spree console`
 
-Open a Rails console.
+Open an interactive backend console.
 
 ```bash
 spree console
@@ -143,7 +155,7 @@ spree console
 
 ### `spree shell`
 
-Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
+Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
 
 ```bash
 spree shell
@@ -231,29 +243,27 @@ spree auth logout --profile prod
 
 ## Dev workflow commands
 
-These mirror the Rails commands you'd run if you were running the app directly on your host — but each is routed through `docker compose exec` against the running stack.
+Each command runs inside the project's containers against the running stack.
 
 ### `spree generate`
 
-Run a generator inside the container. Bare generator names are auto-prefixed with `spree:` — `model` runs `spree:model`, `api_resource` runs `spree:api_resource` — so you get the Spree conventions (`Spree::` namespace, `spree_`-prefixed table, prefixed IDs, `null: false`, no FK constraints) by default. Rails built-ins (`migration`, `scaffold`, `mailer`, `job`, …) and any name containing `:` are forwarded as-is.
+Scaffold a new API resource.
 
 ```bash
-spree generate model Brand name:string slug:string:uniq          # runs spree:model
-spree generate api_resource Brand name:string slug:string:uniq   # runs spree:api_resource — model + v3 Store/Admin API
-spree generate subscriber OmsOrderSync order.placed              # runs spree:subscriber — event subscriber + registration
-spree generate migration AddPositionToSpreeBrands position:integer  # Rails built-in, forwarded as-is
+spree generate api_resource Brand name:string slug:string:uniq
 ```
 
-`spree:api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
+`api_resource` scaffolds the full v3 surface: model, migration, Store + Admin controllers and serializers, factory, controller specs, routes, and the `read_<resources>` / `write_<resources>` permissions that let staff roles and secret API keys reach the Admin API.
 
 ### `spree migrate`
 
-Install pending Spree migrations from gems, then run `db:migrate` — the canonical post-update sequence.
+Install pending Spree migrations, then run them — the canonical post-update sequence.
 
 ```bash
 spree migrate
-spree migrate:status            # show the migration log (`db:migrate:status`)
-spree migrate:rollback STEP=2   # roll back (`db:rollback`)
+spree migrate:status               # show which migrations have run
+spree migrate:rollback             # roll back the last migration
+spree migrate:rollback --steps 2   # roll back the last two
 ```
 
 ### `spree db:reset`
@@ -273,85 +283,61 @@ Open a `psql` session against the dev Postgres database (runs inside the `postgr
 spree db:console
 ```
 
-### `spree routes`
+### `spree test`
 
-Show Rails routes. All flags pass through to `bin/rails routes`.
-
-```bash
-spree routes
-spree routes -g products                                 # Filter by pattern
-spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controller
-spree routes --expanded
-```
-
-### `spree rspec`
-
-Run the RSpec test suite inside the web container with `RAILS_ENV=test`, so tests hit the `spree_test` database — never your development data. Everything after `rspec` passes through, so file paths, line numbers, and flags work as usual.
+Run the backend test suite inside the web container against the test database — never your development data. Everything after `test` passes through, so file paths, line numbers, and flags work as usual.
 
 ```bash
-spree rspec                                      # full suite
-spree rspec spec/models/spree/brand_spec.rb      # one file
-spree rspec spec/models/spree/brand_spec.rb:15   # one example
-spree rspec --format documentation
+spree test                                      # full suite
+spree test spec/models/spree/brand_spec.rb      # one file
+spree test spec/models/spree/brand_spec.rb:15   # one example
+spree test --format documentation
 ```
 
-Before the first run, create the test database with `spree rails db:test:prepare`. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
+Before the first run, create the test database with `spree exec bin/rails db:test:prepare`. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
 
 ## Running things inside the container
 
-These are passthrough commands — anything after the subcommand reaches the inner Rails/Bundle/Rake invocation as-is. Useful for ad-hoc commands that don't have a dedicated wrapper.
+### `spree task`
+
+Run a Spree maintenance task. Anything after the task name passes through.
+
+```bash
+spree task load_sample_data
+spree task search:reindex
+spree task price_history:seed
+spree task price_history:prune
+```
 
 ### `spree exec`
 
-Run an arbitrary command inside the `web` container.
+Run an arbitrary command inside the `web` container. Use it for anything without a dedicated command.
 
 ```bash
 spree exec ls -la
 spree exec env
-spree exec ruby -v
+spree exec bin/rails runner "puts Spree::Product.count"
+spree exec bundle outdated
 ```
 
-### `spree rails`
+### Deprecated commands
 
-Run a `bin/rails` command.
+These commands still work in Spree 6 and print a notice naming their replacement. They are removed in Spree 7, when the backend moves from Rails to Node.
 
-```bash
-spree rails c                                  # Console (alias of `spree console`)
-spree rails routes -g products                 # Alias of `spree routes -g products`
-spree rails runner "puts Spree::Product.count"
-spree rails new_subcommand arg1 arg2
-```
-
-### `spree bundle`
-
-Run a `bundle` command. Gems land in the `bundle_cache` volume (no image rebuild needed).
-
-```bash
-spree bundle install
-spree bundle add stripe
-spree bundle update spree_core
-spree bundle outdated
-```
-
-### `spree rake`
-
-Run a Rake task.
-
-```bash
-spree rake -T                          # List tasks
-spree rake spree:upgrade               # Run the version-specific data backfills
-spree rake spree:upgrade DRY_RUN=1     # Same, plan only
-```
-
-### `spree task`
-
-Shortcut for `bin/rails <task>` (Spree-style rake tasks registered as Rails tasks).
-
-```bash
-spree task load_sample_data
-spree task spree:price_history:seed
-spree task spree:price_history:prune
-```
+| Deprecated | Use instead |
+| --- | --- |
+| `spree exec bin/rails …` | `spree exec bin/rails …` |
+| `spree exec bin/rake spree:<task>` | `spree task <task>` |
+| `spree exec bin/rake <other task>` | `spree exec bin/rake <other task>` |
+| `spree bundle add <extension>` | `spree add <extension>` |
+| `spree bundle …` | `spree exec bundle …` |
+| `spree test …` | `spree test …` |
+| `spree routes` | `spree api endpoints` |
+| `spree generate <anything but api_resource>` | `spree exec bin/rails generate …` |
+| `spree generate <extension>:install` | `spree add <extension>` |
+| `spree migrate:rollback STEP=n` | `spree migrate:rollback --steps n` |
+| `spree build --reset-bundle` | `spree build --reset-deps` |
+| `spree plugin new --ruby-name`, `--no-engine` | `--backend-name`, `--no-backend` |
 
 ## Pair with AI agents
 

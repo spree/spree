@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as p from '@clack/prompts'
-import type { Command } from 'commander'
+import { type Command, Option } from 'commander'
 import { execaCommand } from 'execa'
 import pc from 'picocolors'
+import { warnDeprecated } from '../deprecation.js'
 import { PLUGIN_PEER_RANGES } from '../lib/plugin-peer-ranges.js'
 import { render, type TemplateVars } from '../lib/template.js'
 
@@ -12,10 +13,12 @@ const TEMPLATE_RELATIVE_PATH = '../../templates/plugin'
 
 interface PluginNewFlags {
   dashboard: boolean
+  backend: boolean
   engine: boolean
   install: boolean
   force: boolean
   yes: boolean
+  backendName?: string
   rubyName?: string
   moduleName?: string
   npmScope?: string
@@ -29,18 +32,19 @@ const LICENSES = ['MIT', 'Apache-2.0', 'BSD-3-Clause'] as const
 export function registerPluginCommand(program: Command): void {
   const plugin = program
     .command('plugin')
-    .description('Scaffold and manage Spree plugins (dashboard + Rails engine)')
+    .description('Scaffold and manage Spree plugins (dashboard + backend)')
 
   plugin
     .command('new')
     .description(
-      'Scaffold a new Spree plugin monorepo (dashboard plugin half today; Rails engine coming soon)',
+      'Scaffold a new Spree plugin monorepo (dashboard plugin half today; backend half coming soon)',
     )
     .argument('[name]', 'Plugin name (e.g. brands). If omitted, you will be prompted.')
-    .option('--ruby-name <name>', 'Ruby gem name (default: spree_<name>)')
+    .option('--backend-name <name>', 'Backend package name (default: spree_<name>)')
+    .addOption(new Option('--ruby-name <name>').hideHelp())
     .option(
       '--module-name <name>',
-      'Ruby module / TS namespace (default: PascalCase of the gem name)',
+      'Backend module / TS namespace (default: PascalCase of the backend package name)',
     )
     .option('--npm-scope <scope>', 'npm scope, e.g. @acme (default: unscoped)')
     .option('--author <name>', 'Author name (default: git config user.name)')
@@ -53,13 +57,23 @@ export function registerPluginCommand(program: Command): void {
     )
     .option('--no-dashboard', 'Skip the dashboard plugin half')
     .option(
-      '--no-engine',
-      'Skip the Rails engine half (currently always skipped — engine support coming soon)',
+      '--no-backend',
+      'Skip the backend half (currently always skipped — backend support coming soon)',
     )
+    .addOption(new Option('--no-engine').hideHelp())
     .option('--no-install', 'Skip running pnpm install')
     .option('--force', 'Overwrite a non-empty destination directory')
     .action(async (nameArg: string | undefined, flags: PluginNewFlags) => {
       p.intro(pc.bgCyan(pc.black(' Spree Plugin Scaffolder ')))
+
+      if (flags.rubyName) {
+        warnDeprecated('--ruby-name', '--backend-name')
+        flags.backendName ??= flags.rubyName
+      }
+      if (flags.engine === false) {
+        warnDeprecated('--no-engine', '--no-backend')
+        flags.backend = false
+      }
 
       const answers = await collectAnswers(nameArg, flags)
       if (p.isCancel(answers)) {
@@ -160,8 +174,8 @@ async function collectAnswers(
   // default for whatever the flags leave unanswered.
   const rubyDefault = `spree_${(name as string).replace(/-/g, '_')}`
   const rubyName = await resolveField({
-    flag: '--ruby-name',
-    flagValue: flags.rubyName,
+    flag: '--backend-name',
+    flagValue: flags.backendName,
     fallback: rubyDefault,
     yes: flags.yes,
     validate: (value) =>
@@ -170,7 +184,7 @@ async function collectAnswers(
         : 'Use lowercase letters, digits, and underscores (e.g. "spree_brands")',
     prompt: () =>
       p.text({
-        message: 'Ruby gem name',
+        message: 'Backend package name (Ruby gem)',
         placeholder: rubyDefault,
         initialValue: rubyDefault,
         validate: (value) =>
@@ -290,13 +304,13 @@ async function collectAnswers(
   // land in a follow-up PR. For now, we always answer false and note it.
   // Once the engine templates exist, restore the prompt:
   //
-  //   const includeEngine = flags.engine === false
+  //   const includeEngine = flags.backend === false
   //     ? false
   //     : await promptConfirm('Include Rails engine (API endpoints)?', true)
   const includeEngine = false
-  if (flags.engine !== false) {
+  if (flags.backend !== false) {
     p.log.warn(
-      'Rails engine generation is coming in a future release. For now, scaffold the dashboard half here and use `spree-extension create` for the Ruby side.',
+      'Backend generation is coming in a future release. For now, scaffold the dashboard half here and use `spree-extension create` for the backend side.',
     )
   }
 

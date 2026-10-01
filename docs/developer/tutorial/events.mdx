@@ -27,7 +27,7 @@ Now `brand.created`, `brand.updated` and `brand.deleted` fire after the matching
 Generate a subscriber:
 
 ```bash
-spree generate subscriber BrandSync brand.created brand.updated
+spree exec bin/rails generate spree:subscriber BrandSync brand.created brand.updated
 ```
 
 This creates the subscriber, a spec stub, and — crucially — **registers it** in `config/initializers/spree.rb`. Subscribers are not auto-discovered: one that never gets appended to `Spree.subscribers` is a silent no-op, which is why the generator owns that step. Re-runs are idempotent.

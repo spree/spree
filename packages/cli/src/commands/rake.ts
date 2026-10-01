@@ -1,20 +1,24 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
+import { warnDeprecated } from '../deprecation.js'
 import { dockerComposeExecOrRun } from '../docker.js'
 
-// Run a rake task inside the web container. Variadic: anything after the
-// task name is forwarded verbatim, including `KEY=value` rake args and flags.
-//   spree rake spree:channels:full_upgrade
-//   spree rake spree:price_history:seed
-//   spree rake db:rollback STEP=2
+// Deprecated: Spree tasks belong to `spree task`, everything else to `spree exec`.
 export function registerRakeCommand(program: Command): void {
   program
-    .command('rake')
-    .description('Run a rake task (`bin/rake …`) inside the web container')
+    .command('rake', { hidden: true })
+    .description('Deprecated: use `spree task …` or `spree exec bin/rake …`')
     .argument('<args...>', 'task name and arguments')
     .allowUnknownOption(true)
     .passThroughOptions(true)
     .action(async (args: string[]) => {
+      const [task, ...rest] = args
+      warnDeprecated(
+        'spree rake',
+        task.startsWith('spree:')
+          ? `spree task ${[task.slice('spree:'.length), ...rest].join(' ')}`
+          : `spree exec bin/rake ${args.join(' ')}`,
+      )
       const ctx = detectProject()
       await dockerComposeExecOrRun(['bin/rake', ...args], ctx.projectDir)
     })

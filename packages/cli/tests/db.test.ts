@@ -1,6 +1,7 @@
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { RESET_TASK, registerDbCommand } from '../src/commands/db'
+import { DATABASE_RESET } from '../src/backend'
+import { registerDbCommand } from '../src/commands/db'
 import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../src/docker'
 
 let projectDir: string
@@ -75,7 +76,7 @@ describe('spree db:reset', () => {
 
     await runDbReset('--yes')
 
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
+    expect(dockerComposeRun).toHaveBeenCalledWith(DATABASE_RESET, '/proj', { captureStderr: true })
     // Nothing to stop when the stack is already down.
     expect(dockerCompose).not.toHaveBeenCalled()
   })
@@ -86,7 +87,7 @@ describe('spree db:reset', () => {
     await runDbReset('--yes')
 
     expect(dockerCompose).toHaveBeenCalledWith(['stop', 'web', 'worker'], '/proj')
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
+    expect(dockerComposeRun).toHaveBeenCalledWith(DATABASE_RESET, '/proj', { captureStderr: true })
     // stop must precede the destructive run.
     const stopOrder = vi.mocked(dockerCompose).mock.invocationCallOrder[0]
     const runOrder = vi.mocked(dockerComposeRun).mock.invocationCallOrder[0]
@@ -99,7 +100,7 @@ describe('spree db:reset', () => {
     await runDbReset('--yes')
 
     expect(dockerCompose).toHaveBeenCalledWith(['stop', 'web', 'worker'], '/proj')
-    expect(dockerComposeRun).toHaveBeenCalledWith(RESET_TASK, '/proj', { captureStderr: true })
+    expect(dockerComposeRun).toHaveBeenCalledWith(DATABASE_RESET, '/proj', { captureStderr: true })
   })
 
   it('refuses in a monorepo edge project before touching the stack', async () => {

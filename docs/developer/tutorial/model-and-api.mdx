@@ -144,14 +144,14 @@ curl -H "X-Spree-API-Key: pk_YOUR_KEY" \
 A brand on its own is a list. Adding a `brand_id` to products is what makes it useful in steps 2 and 3:
 
 ```bash
-spree generate migration AddBrandToSpreeProducts brand:belongs_to
+spree exec bin/rails generate migration AddBrandToSpreeProducts brand:belongs_to
 spree migrate
 ```
 
 Then connect the two models. Extending a core model like `Spree::Product` is the one place this step needs backend code — a [decorator](/developer/customization/decorators) adds behavior to a core class without forking it. The generator writes the file:
 
 ```bash
-spree generate model_decorator Product
+spree exec bin/rails generate spree:model_decorator Product
 ```
 
 Add one line inside the generated `prepended` block:

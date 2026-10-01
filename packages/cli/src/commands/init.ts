@@ -5,6 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
+import { SEED_TASK, spreeTask } from '../backend.js'
 import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
@@ -15,10 +16,10 @@ import {
   warnDashboardNotRunnable,
 } from '../dashboard-server.js'
 import {
+  captureTask,
   dockerCompose,
   prepareDatabase,
   primeBundleVolume,
-  rakeTask,
   streamLogs,
 } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
@@ -104,9 +105,9 @@ export async function runFirstRunSetup(flags: {
   s.start('Seeding database...')
   // Omitted entirely when unresolved — the seed treats blank values as "no
   // admin" and prints a setup link instead, which we surface on the card
-  // below (rakeTask captures stdout rather than streaming it).
-  const seedOutput = await rakeTask(
-    'db:seed',
+  // below (captureTask captures stdout rather than streaming it).
+  const seedOutput = await captureTask(
+    SEED_TASK,
     ctx.projectDir,
     adminEmail && adminPassword
       ? { ADMIN_EMAIL: adminEmail, ADMIN_PASSWORD: adminPassword }
@@ -141,7 +142,7 @@ export async function runFirstRunSetup(flags: {
   const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
-    await rakeTask('spree:load_sample_data', ctx.projectDir)
+    await captureTask(spreeTask('load_sample_data'), ctx.projectDir)
     s.stop('Sample data loaded.')
   } else if (sampleData) {
     p.log.info(
@@ -150,7 +151,7 @@ export async function runFirstRunSetup(flags: {
   }
 
   s.start('Indexing products for search...')
-  await rakeTask('spree:search:reindex', ctx.projectDir)
+  await captureTask(spreeTask('search:reindex'), ctx.projectDir)
   s.stop('Search index ready.')
 
   writeProjectSetupMarker(ctx.projectDir)
@@ -183,7 +184,7 @@ export async function runFirstRunSetup(flags: {
           `  ${pc.cyan(
             setupToken
               ? `${setupBase}/setup?token=${setupToken}`
-              : 'run `spree run bin/rails spree:setup:token` for the setup link',
+              : 'run `spree task setup:token` for the setup link',
           )}`,
         ]
 
@@ -310,11 +311,11 @@ async function waitForHealthy(port: number): Promise<void> {
 }
 
 async function fetchApiKey(projectDir: string): Promise<string> {
-  const stdout = await rakeTask('spree:cli:ensure_api_key', projectDir)
+  const stdout = await captureTask(spreeTask('cli:ensure_api_key'), projectDir)
 
   const match = stdout.match(/pk_[A-Za-z0-9_-]+/)
   if (!match) {
-    throw new Error(`Could not extract API key from Rails output: ${stdout}`)
+    throw new Error(`Could not extract API key from the backend output: ${stdout}`)
   }
   return match[0]
 }

@@ -16,7 +16,7 @@ import { dockerCompose, prepareDatabase } from '../docker.js'
 export function registerEjectCommand(program: Command) {
   program
     .command('eject')
-    .description('Switch to the dev compose: bind-mount the Rails app with hot reload')
+    .description('Switch to the dev compose: bind-mount the backend source with hot reload')
     .action(async () => {
       const ctx = detectProject()
 
@@ -69,7 +69,7 @@ export function registerEjectCommand(program: Command) {
 
       p.note(
         [
-          `The Rails API is now bind-mounted from ${pc.bold(`./${apiDir}`)} — edits are live.`,
+          `The backend is now bind-mounted from ${pc.bold(`./${apiDir}`)} — edits are live.`,
           '',
           `The dev stack uses its own ${pc.bold('spree_development')} database (just`,
           `created and seeded). Load demo products with ${pc.bold('spree sample-data')}.`,
@@ -77,7 +77,7 @@ export function registerEjectCommand(program: Command) {
           'You can now customize:',
           `  ${pc.dim(`${apiDir}/app/`)}             — models, controllers, services (instant reload)`,
           `  ${pc.dim(`${apiDir}/config/`)}          — Rails configuration (instant reload)`,
-          `  ${pc.dim(`${apiDir}/Gemfile`)}          — add gems via ${pc.bold('spree bundle add <gem>')}`,
+          `  ${pc.dim(`${apiDir}/Gemfile`)}          — add extensions via ${pc.bold('spree add <extension>')}`,
           '',
           `Rebuild only on Dockerfile / .ruby-version changes: ${pc.bold('spree build')}`,
         ].join('\n'),

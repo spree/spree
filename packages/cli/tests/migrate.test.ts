@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerMigrateCommand } from '../src/commands/migrate'
-import { dockerComposeExec, dockerComposeExecOrRun, isServiceRunning } from '../src/docker'
+import { dockerComposeExecOrRun } from '../src/docker'
 
 let projectDir: string
 
@@ -10,9 +10,7 @@ vi.mock('../src/context', () => ({
 }))
 
 vi.mock('../src/docker', () => ({
-  dockerComposeExec: vi.fn().mockResolvedValue(undefined),
   dockerComposeExecOrRun: vi.fn().mockResolvedValue(undefined),
-  isServiceRunning: vi.fn().mockResolvedValue(true),
 }))
 
 vi.mock('@clack/prompts', () => ({ note: vi.fn() }))
@@ -20,42 +18,40 @@ vi.mock('@clack/prompts', () => ({ note: vi.fn() }))
 async function runMigrate(argv: string[]): Promise<void> {
   // The real root program enables positional options (src/index.ts), which
   // commander requires for subcommands using passThroughOptions.
-  const program = new Command().enablePositionalOptions()
+  const program = new Command().enablePositionalOptions().exitOverride()
   registerMigrateCommand(program)
   await program.parseAsync(argv, { from: 'user' })
 }
 
+// Branching (exec vs one-off run vs monorepo-edge refusal) is covered by
+// dockerComposeExecOrRun's own tests in docker.test.ts; here we only assert
+// the commands delegate with the right argv.
 describe('spree migrate', () => {
+  let stderr: ReturnType<typeof vi.spyOn>
+
   beforeEach(() => {
     projectDir = '/proj'
     vi.clearAllMocks()
-    vi.mocked(isServiceRunning).mockResolvedValue(true)
     vi.spyOn(console, 'log').mockImplementation(() => {})
+    stderr = vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('runs install + migrate as separate steps when web is up', async () => {
-    await runMigrate(['migrate', 'VERSION=20260101000000'])
+  it('installs and runs pending migrations in one invocation', async () => {
+    await runMigrate(['migrate'])
 
-    expect(dockerComposeExec).toHaveBeenNthCalledWith(
-      1,
-      ['bin/rails', 'spree:install:migrations'],
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'spree:install:migrations', 'db:migrate'],
       '/proj',
+      { edgeHint: expect.any(String) },
     )
-    expect(dockerComposeExec).toHaveBeenNthCalledWith(
-      2,
-      ['bin/rails', 'db:migrate', 'VERSION=20260101000000'],
-      '/proj',
-    )
-    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
+    expect(stderr).not.toHaveBeenCalled()
   })
 
-  it('collapses both steps into one one-off invocation when web is down', async () => {
-    vi.mocked(isServiceRunning).mockResolvedValue(false)
-
+  it('still forwards raw migrate args, with a deprecation notice', async () => {
     await runMigrate(['migrate', 'VERSION=20260101000000'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
@@ -63,19 +59,34 @@ describe('spree migrate', () => {
       '/proj',
       { edgeHint: expect.any(String) },
     )
-    expect(dockerComposeExec).not.toHaveBeenCalled()
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('deprecated'))
   })
 
-  // Branching (exec vs one-off run vs monorepo-edge refusal) for the
-  // subcommands below is covered by dockerComposeExecOrRun's own tests in
-  // docker.test.ts; here we only assert they delegate with the right argv.
-  it('migrate:rollback delegates with forwarded args', async () => {
+  it('migrate:rollback --steps rolls back n migrations', async () => {
+    await runMigrate(['migrate:rollback', '--steps', '2'])
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
+      ['bin/rails', 'db:rollback', 'STEP=2'],
+      '/proj',
+    )
+    expect(stderr).not.toHaveBeenCalled()
+  })
+
+  it('migrate:rollback STEP=n still works and points at --steps', async () => {
     await runMigrate(['migrate:rollback', 'STEP=2'])
 
     expect(dockerComposeExecOrRun).toHaveBeenCalledWith(
       ['bin/rails', 'db:rollback', 'STEP=2'],
       '/proj',
     )
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining('--steps 2'))
+  })
+
+  it('migrate:rollback rejects a non-positive --steps', async () => {
+    await expect(runMigrate(['migrate:rollback', '--steps', '0'])).rejects.toThrow(
+      /positive whole number/,
+    )
+    expect(dockerComposeExecOrRun).not.toHaveBeenCalled()
   })
 
   it('migrate:status delegates', async () => {

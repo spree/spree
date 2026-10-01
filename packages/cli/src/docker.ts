@@ -1,6 +1,7 @@
 import * as p from '@clack/prompts'
 import { type Options as ExecaOptions, execa } from 'execa'
 import pc from 'picocolors'
+import { backendTaskCommand, PREPARE_DATABASE } from './backend.js'
 import { hasMonorepoSpreePath } from './context.js'
 
 export async function dockerCompose(args: string[], projectDir: string, options?: ExecaOptions) {
@@ -40,14 +41,14 @@ export async function primeBundleVolume(
   }
 }
 
-export async function rakeTask(
+export async function captureTask(
   task: string,
   projectDir: string,
   env?: Record<string, string>,
 ): Promise<string> {
-  const stdout = await dockerComposeCapture(['bin/rails', task], projectDir, { env })
+  const stdout = await dockerComposeCapture(backendTaskCommand(task), projectDir, { env })
 
-  // Rails boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
+  // Backend boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
   return stdout
     .split('\n')
     .filter((line) => !line.startsWith('['))
@@ -108,11 +109,11 @@ export interface DockerComposeExecOptions {
 }
 
 // Run a command inside a service container. The foundation for `spree exec`,
-// `spree rails`, `spree bundle`, `spree rake`, and `spree console`.
+// `spree task`, `spree test`, and `spree console`.
 //
 // Defaults to the `web` service and an interactive TTY. Pass `tty: false`
 // (which adds `-T`) for non-interactive callers that capture stdout — those
-// should use `rakeTask` above, which already does this.
+// should use `captureTask` above, which already does this.
 //
 // stdio is inherited so the command behaves transparently: a Rails console
 // stays interactive, a `bundle add` prints progress, an error exits with the
@@ -203,7 +204,7 @@ export async function prepareDatabase(
 ): Promise<void> {
   const stdio = options?.stdio ?? 'pipe'
   await dockerCompose(['up', '-d', '--wait', 'postgres'], projectDir, { stdio })
-  await dockerCompose(['run', '--rm', '--build', 'web', 'bin/rails', 'db:prepare'], projectDir, {
+  await dockerCompose(['run', '--rm', '--build', 'web', ...PREPARE_DATABASE], projectDir, {
     stdio,
   })
 }
@@ -249,7 +250,7 @@ async function resolveComposeMode(
 // Run a command in the service's container, transparently falling back to a
 // one-off `compose run` when the long-running container is down. This is the
 // shared shape behind every app-facing command (`spree migrate`, `spree
-// bundle`, `spree console`, `spree rake`, …): exec into the live container if
+// test`, `spree console`, `spree task`, …): exec into the live container if
 // it's up, otherwise boot a fresh one-off against the same warm DB/volumes.
 export async function dockerComposeExecOrRun(
   argv: string[],
@@ -266,7 +267,7 @@ export async function dockerComposeExecOrRun(
 }
 
 // Captured-output twin of dockerComposeExecOrRun, for callers that parse
-// stdout (rakeTask, `bundle list`). Non-interactive (`-T`) so a TTY never
+// stdout (captureTask, `bundle list`). Non-interactive (`-T`) so a TTY never
 // mangles the captured stream; compose's own progress noise goes to stderr,
 // which stays off stdout and is buffered onto ExecaError for failure paths.
 export async function dockerComposeCapture(

@@ -3,24 +3,25 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { LIST_PACKAGES, MIGRATE, UPGRADE, updatePackagesCommand } from '../backend.js'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
 import { dockerComposeCapture, dockerComposeExecOrRun, isServiceRunning } from '../docker.js'
 
-// Sequences bundle update + db:migrate + spree:upgrade rake. Flags map
-// to env vars on the inner rake task: --plan → DRY_RUN, --step → STEP,
-// --to → TO. --plan and --step skip the bundle + migrate pre-steps.
+// Sequences the Spree package update, migrations and the upgrade task. Flags
+// map to env vars on the upgrade task: --plan → DRY_RUN, --step → STEP,
+// --to → TO. --plan and --step skip the update + migrate pre-steps.
 export function registerUpgradeCommand(program: Command): void {
   program
     .command('upgrade')
-    .description('Walk through a Spree version upgrade (bundle + migrate + spree:upgrade)')
+    .description('Walk through a Spree version upgrade (update Spree, migrate, run upgrade steps)')
     .option(
       '--plan',
-      'list the data backfills a run would execute — for the installed Spree version, or the --to version (DRY_RUN=1); skip bundle + migrate',
+      'list the data backfills a run would execute — for the installed Spree version, or the --to version; skips the update + migrate steps',
     )
-    .option('--step <id>', 'run a single rake step by id (skips bundle + migrate)')
+    .option('--step <id>', 'run a single upgrade step by id (skips the update + migrate steps)')
     .option(
       '--to <version>',
-      'explicit target version (auto-detected from installed gem otherwise)',
+      'explicit target version (auto-detected from the installed Spree otherwise)',
     )
     .option('--yes', 'skip prompts on automated steps')
     .action(async (flags: { plan?: boolean; step?: string; to?: string; yes?: boolean }) => {
@@ -40,7 +41,7 @@ export function registerUpgradeCommand(program: Command): void {
     })
 }
 
-// Upgrade migrates the DB and runs spree:upgrade rake against the project's
+// Upgrade migrates the DB and runs the upgrade task against the project's
 // REAL Postgres + warm bundle_cache. A one-off `compose run` reaches the same
 // named volumes (`run`'s depends_on cold-starts postgres, like db:reset), so
 // each step falls back to one when web is down. Cheap pre-checks: monorepo-edge
@@ -70,7 +71,7 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
       `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
       '',
       `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
-      '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+      '.env file), and make sure Docker is running.',
     ])
   }
 }
@@ -78,7 +79,7 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
 async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Promise<void> {
   if (!flags.yes) {
     const confirmed = await p.confirm({
-      message: 'Run `bundle update` to bump Spree gems?',
+      message: 'Update the Spree packages?',
       initialValue: true,
     })
     if (p.isCancel(confirmed)) {
@@ -86,7 +87,7 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
       process.exit(0)
     }
     if (!confirmed) {
-      p.log.info('Skipping `bundle update`.')
+      p.log.info('Skipping the Spree package update.')
       return
     }
   }
@@ -100,8 +101,8 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
     )
   }
 
-  p.log.step(pc.bold(`bundle update ${spreeGems.join(' ')}`))
-  await dockerComposeExecOrRun(['bundle', 'update', ...spreeGems], projectDir)
+  p.log.step(pc.bold(`Updating ${spreeGems.join(' ')}`))
+  await dockerComposeExecOrRun(updatePackagesCommand(spreeGems), projectDir)
 }
 
 export async function detectSpreeGems(projectDir: string): Promise<string[]> {
@@ -110,7 +111,7 @@ export async function detectSpreeGems(projectDir: string): Promise<string[]> {
     // with zero spree gems, so a nonzero exit unambiguously means bundler
     // itself errored (out-of-sync lockfile, un-checked-out git source) — no
     // exit-code disambiguation against grep's "no match" needed.
-    const stdout = await dockerComposeCapture(['bundle', 'list', '--name-only'], projectDir)
+    const stdout = await dockerComposeCapture(LIST_PACKAGES, projectDir)
     return stdout
       .split('\n')
       .map((line) => line.trim())
@@ -121,7 +122,7 @@ export async function detectSpreeGems(projectDir: string): Promise<string[]> {
     // into a misleading "No Spree gems detected".
     throw new Error(
       'Could not list gems in the web container — the bundle looks out of sync.\n' +
-        'Run `spree bundle install` first, then re-run `spree upgrade`.' +
+        'Run `spree exec bundle install` first, then re-run `spree upgrade`.' +
         (e.stderr?.trim() ? `\n\n${e.stderr.trim()}` : ''),
     )
   }
@@ -142,22 +143,22 @@ async function runMigrate(projectDir: string, flags: { yes?: boolean }): Promise
       return
     }
   }
-  p.log.step(pc.bold('spree:install:migrations + db:migrate'))
-  await dockerComposeExecOrRun(['bin/rails', 'spree:install:migrations', 'db:migrate'], projectDir)
+  p.log.step(pc.bold('Installing + running pending migrations'))
+  await dockerComposeExecOrRun(MIGRATE, projectDir)
 }
 
 async function runRakeUpgrade(
   projectDir: string,
   flags: { plan?: boolean; step?: string; to?: string },
 ): Promise<void> {
-  // Flags map to env vars so prod (`STEP=channels rake spree:upgrade`) and dev share the same path.
+  // Flags map to env vars so production and dev runs share the same path.
   const env: Record<string, string> = {}
   if (flags.plan) env.DRY_RUN = '1'
   if (flags.step) env.STEP = flags.step
   if (flags.to) env.TO = flags.to
 
-  p.log.step(pc.bold('spree:upgrade'))
-  await dockerComposeExecOrRun(['bin/rake', 'spree:upgrade'], projectDir, { env })
+  p.log.step(pc.bold('Running upgrade steps'))
+  await dockerComposeExecOrRun(UPGRADE, projectDir, { env })
 }
 
 // The server upgrade never touches frontend source — SDK bumps go through
@@ -183,7 +184,7 @@ export function sdkAdvisory(projectDir: string): string {
 function printPostUpgradeReminder(projectDir: string): void {
   p.note(
     [
-      `The manifest only ran ${pc.bold('rake-automatable')} steps.`,
+      `The manifest only ran the ${pc.bold('automatable')} steps.`,
       '',
       "Don't forget the manual parts from the upgrade doc:",
       `  ${pc.dim('- Compare your scheduled jobs (config/recurring.yml) with the upgrade guide')}`,

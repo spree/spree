@@ -103,7 +103,7 @@ describe('detectSpreeGems', () => {
           'The git source https://github.com/spree/spree.git is not yet checked out. Please run bundle install',
       })
     })
-    await expect(detectSpreeGems('/proj')).rejects.toThrow(/spree bundle install/)
+    await expect(detectSpreeGems('/proj')).rejects.toThrow(/spree exec bundle install/)
     await expect(detectSpreeGems('/proj')).rejects.toThrow(/not yet checked out/)
   })
 

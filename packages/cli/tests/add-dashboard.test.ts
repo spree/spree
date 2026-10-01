@@ -3,10 +3,24 @@ import os from 'node:os'
 import path from 'node:path'
 import { execa } from 'execa'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { addApp, ensureDashboardDevEnv } from '../src/commands/add.js'
+import { addApp, addExtension, ensureDashboardDevEnv } from '../src/commands/add.js'
+import {
+  dockerCompose,
+  dockerComposeCapture,
+  dockerComposeExecOrRun,
+  isServiceRunning,
+} from '../src/docker.js'
 import type { ProjectContext } from '../src/types.js'
 
 vi.mock('execa', () => ({ execa: vi.fn(async () => ({})) }))
+
+vi.mock('../src/docker.js', () => ({
+  appServices: vi.fn(async () => ['web']),
+  dockerCompose: vi.fn(async () => ({})),
+  dockerComposeCapture: vi.fn(async () => ''),
+  dockerComposeExecOrRun: vi.fn(async () => undefined),
+  isServiceRunning: vi.fn(async () => false),
+}))
 
 // The two apps `spree add` scaffolds. Both go through addApp, so the same
 // battery runs against each — the seller panel is not a second-class path.
@@ -163,5 +177,47 @@ describe('ensureDashboardDevEnv', () => {
     fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
     expect(ensureDashboardDevEnv(projectDir, 3999)).toBe('untouched')
     expect(fs.existsSync(envPath())).toBe(false)
+  })
+})
+
+describe('addExtension', () => {
+  const ctx: ProjectContext = { mode: 'docker', projectDir: '/proj', port: 3000 }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('adds the package and runs the install generator the extension ships', async () => {
+    vi.mocked(dockerComposeCapture).mockResolvedValueOnce('Spree:\n  spree_stripe:install\n')
+
+    await addExtension(ctx, 'spree_stripe')
+
+    expect(dockerComposeExecOrRun).toHaveBeenNthCalledWith(
+      1,
+      ['bundle', 'add', 'spree_stripe'],
+      '/proj',
+      expect.any(Object),
+    )
+    expect(dockerComposeExecOrRun).toHaveBeenNthCalledWith(
+      2,
+      ['bin/rails', 'generate', 'spree_stripe:install'],
+      '/proj',
+    )
+  })
+
+  it('skips the installer when the extension ships none', async () => {
+    vi.mocked(dockerComposeCapture).mockResolvedValueOnce('Spree:\n  spree:api_resource\n')
+
+    await addExtension(ctx, 'spree_brands')
+
+    expect(dockerComposeExecOrRun).toHaveBeenCalledTimes(1)
+  })
+
+  it('restarts a running stack so the server loads the extension', async () => {
+    vi.mocked(isServiceRunning).mockResolvedValueOnce(true)
+
+    await addExtension(ctx, 'spree_brands')
+
+    expect(dockerCompose).toHaveBeenCalledWith(['restart', 'web'], '/proj')
   })
 })

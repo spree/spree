@@ -21,13 +21,11 @@ const DOCS_URL =
 export function registerEncryptionCommand(program: Command): void {
   const encryption = program
     .command('encryption')
-    .description('Manage Active Record encryption keys')
+    .description('Manage the keys that encrypt sensitive data at rest')
 
   encryption
     .command('init')
-    .description(
-      'Generate Active Record encryption keys and add them to .env (never overwrites existing keys)',
-    )
+    .description('Generate encryption keys and add them to .env (never overwrites existing keys)')
     .option('--print', 'only print a fresh set of keys (e.g. for your hosting provider)')
     .addHelpText(
       'after',
@@ -82,7 +80,7 @@ export function initEncryption(projectDir: string): void {
   }
 
   writeEnvAtomically(envPath, withEncryptionKeys(content, generateEncryptionKeys()))
-  p.log.success('Added Active Record encryption keys to .env.')
+  p.log.success('Added encryption keys to .env.')
 
   p.note(
     [

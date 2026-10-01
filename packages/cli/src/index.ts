@@ -23,12 +23,12 @@ import { registerRailsCommand } from './commands/rails.js'
 import { registerRakeCommand } from './commands/rake.js'
 import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
-import { registerRspecCommand } from './commands/rspec.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
 import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
+import { registerTestCommand } from './commands/test.js'
 import { registerUpdateCommand } from './commands/update.js'
 import { registerUpgradeCommand } from './commands/upgrade.js'
 import { registerUserCommand } from './commands/user.js'
@@ -38,8 +38,8 @@ const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
   .version(VERSION)
-  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task/rspec)
-  // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
+  // Required by passThroughOptions on subcommands (exec/task/test/generate)
+  // so flags like `ls -la` or `spree test --fail-fast` reach the inner command
   // instead of being parsed as options of the spree subcommand.
   .enablePositionalOptions()
   // "did you mean …" on an unknown command/option (on by default; explicit so
@@ -77,18 +77,20 @@ registerBuildCommand(program)
 registerGenerateCommand(program)
 registerMigrateCommand(program)
 registerDbCommand(program)
-registerRoutesCommand(program)
 registerUpgradeCommand(program)
 
 // Run things inside the container
 registerExecCommand(program)
-registerRailsCommand(program)
-registerBundleCommand(program)
-registerRakeCommand(program)
 registerTaskCommand(program)
-registerRspecCommand(program)
+registerTestCommand(program)
 registerConsoleCommand(program)
 registerShellCommand(program)
+
+// Deprecated Rails-named commands, removed in Spree 7 (docs/plans/6.0-backend-agnostic-cli.md)
+registerRailsCommand(program)
+registerRakeCommand(program)
+registerBundleCommand(program)
+registerRoutesCommand(program)
 
 // Spree-specific helpers
 registerUserCommand(program)

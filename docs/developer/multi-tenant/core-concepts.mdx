@@ -21,7 +21,7 @@ When creating a new model that you want to be tenanted remember to inherit from 
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree generate model Spree::NewModel tenant:references name:string --parent SpreeMultiTenant::Base
+spree exec bin/rails generate spree:model Spree::NewModel tenant:references name:string --parent SpreeMultiTenant::Base
 ```
 
 ```bash Without Spree CLI

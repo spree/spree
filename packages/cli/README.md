@@ -20,14 +20,17 @@ Run from your Spree project directory:
 | `spree update` | Pull the latest Spree image and restart (runs migrations automatically) |
 | `spree eject` | Switch from the prebuilt image to building from `backend/` |
 | `spree add dashboard` | Add the React Dashboard (Developer Preview) to an existing project |
+| `spree add <extension>` | Install an extension (e.g. `spree add spree_stripe`) |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
-| `spree console` / `spree shell` / `spree logs` | Rails console, container shell, log tailing |
+| `spree console` / `spree shell` / `spree logs` | Backend console, container shell, log tailing |
 | `spree migrate` / `spree seed` / `spree sample-data` | Database tasks |
-| `spree generate …` | Spree generators (models, API resources, subscribers, migrations) |
+| `spree generate api_resource …` | Scaffold a Store + Admin API resource |
+| `spree task <name>` | Run a Spree maintenance task (e.g. `search:reindex`) |
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
-| `spree encryption init` | Add Active Record encryption keys to `.env` (`--print` to only print a set) |
+| `spree encryption init` | Add encryption keys to `.env` (`--print` to only print a set) |
 | `spree api get/post/patch/delete <path>` | Call the Admin API directly (`spree api endpoints` lists routes + scopes) |
-| `spree rspec` | Run the backend test suite inside the container |
+| `spree test` | Run the backend test suite inside the container |
+| `spree exec <command>` | Run any other command inside the container |
 
 ## Documentation
 

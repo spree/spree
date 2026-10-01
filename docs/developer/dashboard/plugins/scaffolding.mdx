@@ -43,7 +43,7 @@ npx @spree/cli plugin new my-plugin
 The CLI prompts for:
 
 - **Plugin name** — slug (kebab-case), used for package names and i18n keys
-- **Ruby gem name** — only matters if you later add a Rails engine
+- **Backend package name** — only matters if you later add a backend half
 - **Module name** — PascalCase, used as the React component prefix (`MyPluginCard`)
 - **npm scope** — e.g., `@acme`
 - **Author + email** — for `package.json` and `LICENSE`; prefilled from `git config user.name` / `user.email`
@@ -53,7 +53,7 @@ Every prompt has a matching flag:
 
 ```bash
 npx @spree/cli plugin new my-plugin \
-  --ruby-name spree_my_plugin \
+  --backend-name spree_my_plugin \
   --module-name MyPlugin \
   --npm-scope @acme \
   --author "Ada Lovelace" \
@@ -68,7 +68,7 @@ For CI and scripted use, `-y` / `--yes` accepts the default for anything the fla
 npx @spree/cli plugin new my-plugin -y
 ```
 
-`--force` overwrites an existing directory. `--no-dashboard` and `--no-engine` are reserved for when engine scaffolding lands — today the dashboard package is the only half the CLI generates, so `--no-dashboard` leaves nothing to scaffold.
+`--force` overwrites an existing directory. `--no-dashboard` and `--no-backend` are reserved for when backend scaffolding lands — today the dashboard package is the only half the CLI generates, so `--no-dashboard` leaves nothing to scaffold.
 
 ## After scaffolding
 

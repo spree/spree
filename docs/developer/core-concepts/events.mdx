@@ -83,7 +83,7 @@ A subscriber is a small class that names the events it wants and does something 
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree generate subscriber OrderPlaced order.placed
+spree exec bin/rails generate spree:subscriber OrderPlaced order.placed
 ```
 
 ```bash Without Spree CLI

@@ -2,9 +2,10 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { printTable } from 'console-table-printer'
 import pc from 'picocolors'
+import { spreeTask } from '../backend.js'
 import { mintApiKey } from '../config.js'
 import { detectProject } from '../context.js'
-import { rakeTask } from '../docker.js'
+import { captureTask } from '../docker.js'
 
 export function registerApiKeyCommand(program: Command): void {
   const apiKey = program.command('api-key').description('Manage API keys')
@@ -114,7 +115,7 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Fetching API keys...')
 
-      const stdout = await rakeTask('spree:cli:list_api_keys', ctx.projectDir)
+      const stdout = await captureTask(spreeTask('cli:list_api_keys'), ctx.projectDir)
       s.stop('')
 
       const lines = stdout.trim().split('\n').filter(Boolean)
@@ -149,7 +150,7 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Revoking API key...')
 
-      const stdout = await rakeTask('spree:cli:revoke_api_key', ctx.projectDir, {
+      const stdout = await captureTask(spreeTask('cli:revoke_api_key'), ctx.projectDir, {
         ID: id,
       })
       const name = stdout.trim()

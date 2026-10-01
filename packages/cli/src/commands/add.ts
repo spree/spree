@@ -5,9 +5,22 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import {
+  addPackageCommand,
+  extensionInstallGenerator,
+  LIST_GENERATORS,
+  runGeneratorCommand,
+} from '../backend.js'
 import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT, SELLER_DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
+import {
+  appServices,
+  dockerCompose,
+  dockerComposeCapture,
+  dockerComposeExecOrRun,
+  isServiceRunning,
+} from '../docker.js'
 import type { ProjectContext } from '../types.js'
 
 /**
@@ -55,14 +68,15 @@ interface AddDashboardOptions {
   quiet?: boolean
 }
 
-// `spree add <thing>` — bolt an optional component onto an existing project.
-// Dashboard and seller panel for now; storefront parity is planned (see
-// docs/plans/5.6-project-layout-and-dashboard.md).
+// `spree add <thing>` — bolt an optional component onto an existing project:
+// the dashboard or seller panel apps (storefront parity is planned, see
+// docs/plans/5.6-project-layout-and-dashboard.md), or any Spree extension by
+// its package name (`spree add spree_stripe`).
 export function registerAddCommand(program: Command) {
   program
     .command('add')
-    .description('Add an optional component to your project')
-    .argument('<thing>', 'Component to add: dashboard or seller-dashboard')
+    .description('Add an app (dashboard, seller-dashboard) or an extension to your project')
+    .argument('<thing>', 'dashboard, seller-dashboard, or an extension package (e.g. spree_stripe)')
     .option(
       '--template <src>',
       'Starter template: git URL or local path (default: the template bundled with the CLI; env SPREE_DASHBOARD_TEMPLATE / SPREE_SELLER_DASHBOARD_TEMPLATE overrides)',
@@ -73,10 +87,16 @@ export function registerAddCommand(program: Command) {
       async (thing: string, flags: { template?: string; install: boolean; quiet?: boolean }) => {
         const app = APPS[thing]
         if (!app) {
-          console.error(
-            `\n${pc.red('Error:')} Unknown component: ${thing}. Try: ${Object.keys(APPS).join(', ')}\n`,
-          )
-          process.exit(2)
+          if (!EXTENSION_NAME.test(thing)) {
+            console.error(
+              `\n${pc.red('Error:')} Unknown component: ${thing}. Try ${Object.keys(APPS).join(', ')}, or an extension package name such as spree_stripe.\n`,
+            )
+            process.exit(2)
+          }
+          p.intro(pc.bgCyan(pc.black(` Spree extension: ${thing} `)))
+          await addExtension(detectProject(), thing)
+          p.outro('Done!')
+          return
         }
 
         p.intro(pc.bgCyan(pc.black(` Spree ${app.label} `)))
@@ -90,6 +110,33 @@ export function registerAddCommand(program: Command) {
         p.outro('Done!')
       },
     )
+}
+
+const EXTENSION_NAME = /^[a-z][a-z0-9_-]*$/
+
+/**
+ * Install an extension package and run its install generator when it ships
+ * one, then restart a running stack so the server loads it.
+ */
+export async function addExtension(ctx: ProjectContext, name: string): Promise<void> {
+  p.log.step(`Adding ${pc.bold(name)}...`)
+  await dockerComposeExecOrRun(addPackageCommand(name), ctx.projectDir, {
+    edgeHint: 'the edge stack installs extensions from the monorepo',
+  })
+
+  const installer = extensionInstallGenerator(name)
+  const generators = await dockerComposeCapture(LIST_GENERATORS, ctx.projectDir)
+  if (generators.split(/\s+/).includes(installer)) {
+    p.log.step(`Running the ${pc.bold(name)} installer...`)
+    await dockerComposeExecOrRun(runGeneratorCommand(installer), ctx.projectDir)
+  }
+
+  if (await isServiceRunning('web', ctx.projectDir)) {
+    const s = p.spinner()
+    s.start('Restarting the app to load the extension...')
+    await dockerCompose(['restart', ...(await appServices(ctx.projectDir))], ctx.projectDir)
+    s.stop('App restarted.')
+  }
 }
 
 /**

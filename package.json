@@ -23,7 +23,7 @@
     "server:teardown": "bash scripts/server-teardown.sh",
     "server:console": "cd server && spree console",
     "server:logs": "cd server && spree logs",
-    "server:seed": "cd server && spree rails db:seed",
+    "server:seed": "cd server && spree exec bin/rails db:seed",
     "server:load_sample_data": "cd server && spree task load_sample_data",
     "dashboard:dev": "turbo build --filter='@spree/dashboard-starter^...' && pnpm --dir packages/dashboard-starter dev --port 5173 --strictPort",
     "seller:dev": "turbo build --filter='@spree/seller-dashboard-starter^...' && pnpm --dir packages/seller-dashboard-starter dev --port 5174 --strictPort",

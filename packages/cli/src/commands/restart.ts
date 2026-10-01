@@ -6,7 +6,7 @@ import { appServices, dockerCompose } from '../docker.js'
 export function registerRestartCommand(program: Command): void {
   program
     .command('restart')
-    .description('Restart web + worker in place (does not reload Gemfile or compose changes)')
+    .description('Restart web + worker in place (does not reload dependency or compose changes)')
     .action(async () => {
       const ctx = detectProject()
 

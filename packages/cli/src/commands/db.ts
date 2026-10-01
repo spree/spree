@@ -1,6 +1,7 @@
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { DATABASE_RESET } from '../backend.js'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
 import {
   appServices,
@@ -9,15 +10,6 @@ import {
   dockerComposeRun,
   isServiceRunning,
 } from '../docker.js'
-
-export const RESET_TASK = [
-  'bin/rails',
-  'db:drop',
-  'db:create',
-  'spree:install:migrations',
-  'db:migrate',
-  'db:seed',
-]
 
 export function registerDbCommand(program: Command): void {
   program
@@ -57,8 +49,8 @@ export function registerDbCommand(program: Command): void {
         }
       }
 
-      // The long-running web (Rails) + worker (Sidekiq) containers hold pooled
-      // connections to spree_development. Rails' db:drop issues a PLAIN
+      // The long-running web + worker containers hold pooled
+      // connections to spree_development. The drop issues a PLAIN
       // `DROP DATABASE` (no WITH FORCE), which PostgreSQL rejects while any other
       // session is connected — so a reset against a running stack deadlocks. We
       // stop both regardless of which is up (the worker alone holds up to
@@ -82,7 +74,7 @@ export function registerDbCommand(program: Command): void {
           `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
           '',
           `Run ${pc.bold('spree db:reset')} from your project root (the directory holding the`,
-          '.env with SECRET_KEY_BASE), and make sure Docker is running.',
+          '.env file), and make sure Docker is running.',
         ])
       }
 
@@ -98,7 +90,7 @@ export function registerDbCommand(program: Command): void {
         // for service_healthy) but never restarts web/worker, so nothing reopens
         // a blocking connection. Works whether the stack was up, down, or partial.
         // captureStderr so the Postgres "being accessed" error below is matchable.
-        await dockerComposeRun(RESET_TASK, ctx.projectDir, { captureStderr: true })
+        await dockerComposeRun(DATABASE_RESET, ctx.projectDir, { captureStderr: true })
       } catch (err) {
         const stderr = String((err as { stderr?: string }).stderr ?? (err as Error).message ?? '')
         if (/being accessed by other users|55006/.test(stderr)) {

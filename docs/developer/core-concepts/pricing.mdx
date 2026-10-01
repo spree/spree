@@ -329,7 +329,7 @@ Retention defaults to 30 days, set per store with the `price_history_retention_d
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:price_history:prune
+spree task price_history:prune
 ```
 
 ```bash Without Spree CLI
@@ -345,7 +345,7 @@ After enabling price history on an existing store, seed the current prices as a 
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree rake spree:price_history:seed
+spree task price_history:seed
 ```
 
 ```bash Without Spree CLI

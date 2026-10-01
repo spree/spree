@@ -102,7 +102,7 @@ Spree provides generators to create decorator files with the correct structure:
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree generate model_decorator Spree::Product
+spree exec bin/rails generate spree:model_decorator Spree::Product
 ```
 
 ```bash Without Spree CLI
@@ -130,7 +130,7 @@ end
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-spree generate controller_decorator Spree::Api::V3::Admin::ProductsController
+spree exec bin/rails generate spree:controller_decorator Spree::Api::V3::Admin::ProductsController
 ```
 
 ```bash Without Spree CLI
@@ -300,7 +300,7 @@ The most common reason to decorate: restrict a listing beyond what the store
 scope already does.
 
 ```bash
-spree generate controller_decorator Spree::Api::V3::Admin::ProductsController
+spree exec bin/rails generate spree:controller_decorator Spree::Api::V3::Admin::ProductsController
 ```
 
 ```ruby server/app/controllers/spree/api/v3/admin/products_controller_decorator.rb
