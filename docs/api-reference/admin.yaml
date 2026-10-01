@@ -7793,6 +7793,13 @@ paths:
         description: A language code, or `any` (the default)
         schema:
           type: string
+      - name: lock_version
+        in: query
+        required: false
+        description: The draft's `lock_version` as last seen; a draft saved since
+          is refused with 409
+        schema:
+          type: integer
       responses:
         '200':
           description: email template reverted
@@ -8031,6 +8038,13 @@ paths:
         description: A language code, or `any` (the default)
         schema:
           type: string
+      - name: lock_version
+        in: query
+        required: false
+        description: The draft's `lock_version` as last seen; a draft saved since
+          is refused with 409
+        schema:
+          type: integer
       responses:
         '200':
           description: draft discarded
@@ -8190,6 +8204,10 @@ paths:
                 language:
                   type: string
                   example: any
+                lock_version:
+                  type: integer
+                  description: The draft's `lock_version` as reviewed; a draft saved
+                    since is refused with 409
   "/api/v3/admin/email_templates/{email_template_id}/preview":
     parameters:
     - name: email_template_id
