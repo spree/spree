@@ -5124,8 +5124,7 @@
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
-        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
-        "email_templates": "Edytuj e-maile, które otrzymują klienci"
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
       },
       "groups": {
         "audit": "Audyt",
@@ -5163,8 +5162,7 @@
         "webhooks": "Webhooki",
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
-        "marketplace": "Ustawienia",
-        "email_templates": "Szablony e-maili"
+        "marketplace": "Ustawienia"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

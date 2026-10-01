@@ -3,7 +3,6 @@ import {
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
-  FileCodeIcon,
   GlobeIcon,
   GlobeLockIcon,
   KeyRoundIcon,
@@ -78,26 +77,23 @@ settingsNav.add({
   key: 'settings.emails',
   labelKey: 'admin.settings_nav.items.emails',
   descriptionKey: 'admin.settings_nav.descriptions.emails',
-  keywords: ['notifications', 'transactional', 'sender', 'from address'],
+  keywords: [
+    'notifications',
+    'transactional',
+    'sender',
+    'from address',
+    'template',
+    'liquid',
+    'mjml',
+    'order confirmation',
+    'branding',
+  ],
   path: '/emails',
   icon: MailIcon,
   group: 'store',
   position: 200,
   subject: Subject.Store,
   action: 'update',
-})
-
-settingsNav.add({
-  key: 'settings.email_templates',
-  labelKey: 'admin.settings_nav.items.email_templates',
-  descriptionKey: 'admin.settings_nav.descriptions.email_templates',
-  keywords: ['email', 'template', 'liquid', 'mjml', 'order confirmation', 'branding'],
-  path: '/emails/templates',
-  icon: FileCodeIcon,
-  group: 'store',
-  position: 210,
-  subject: Subject.EmailTemplate,
-  action: 'read',
 })
 
 settingsNav.add({

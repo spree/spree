@@ -5049,8 +5049,7 @@
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
-        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
-        "email_templates": "编辑客户收到的邮件"
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
       },
       "groups": {
         "audit": "审计",
@@ -5088,8 +5087,7 @@
         "webhooks": "Webhooks",
         "package_types": "包装类型",
         "suppliers": "供应商",
-        "marketplace": "设置",
-        "email_templates": "邮件模板"
+        "marketplace": "设置"
       },
       "breadcrumbs": {
         "marketplace": "平台"

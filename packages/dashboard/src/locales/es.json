@@ -4139,8 +4139,7 @@
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
-        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
-        "email_templates": "Edita los correos que reciben los clientes"
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4178,8 +4177,7 @@
         "webhooks": "Webhooks",
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
-        "marketplace": "Configuración",
-        "email_templates": "Plantillas de correo"
+        "marketplace": "Configuración"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

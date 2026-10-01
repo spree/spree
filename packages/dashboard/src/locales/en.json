@@ -5060,8 +5060,7 @@
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
-        "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
-        "email_templates": "Edit the emails customers receive"
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
       },
       "groups": {
         "audit": "Audit",
@@ -5099,8 +5098,7 @@
         "webhooks": "Webhooks",
         "package_types": "Package types",
         "suppliers": "Suppliers",
-        "marketplace": "Settings",
-        "email_templates": "Email templates"
+        "marketplace": "Settings"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
