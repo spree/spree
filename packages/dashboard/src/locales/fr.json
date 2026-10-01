@@ -4131,7 +4131,7 @@
         "customers": "Comptes clients, adresses, cartes et groupes",
         "dashboard": "Analyses des ventes et des performances",
         "delivery_methods": "Options de livraison, tarifs et règles qui les conditionnent",
-        "email_templates": "Modèles d'e-mails clients, mise en page et image de marque des e-mails",
+        "email_templates": "Modèles d'e-mails clients et mise en page des e-mails",
         "fulfillments": "Préparer, expédier et suivre les commandes",
         "gift_cards": "Cartes cadeaux et lots de cartes cadeaux",
         "integrations": "Identifiants et connexions des fournisseurs",

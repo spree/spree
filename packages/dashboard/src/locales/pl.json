@@ -4185,7 +4185,7 @@
         "customers": "Konta klientów, adresy, karty i grupy",
         "dashboard": "Analizy sprzedaży i wyników",
         "delivery_methods": "Opcje wysyłki, stawki i reguły, które nimi sterują",
-        "email_templates": "Szablony e-maili do klientów, układ e-maili i wygląd marki",
+        "email_templates": "Szablony e-maili do klientów i układ e-maili",
         "fulfillments": "Pakowanie, wysyłka i śledzenie realizacji",
         "gift_cards": "Karty podarunkowe i ich partie",
         "integrations": "Dane dostępowe i połączenia dostawców",

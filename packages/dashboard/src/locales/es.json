@@ -4051,7 +4051,7 @@
         "customers": "Cuentas, direcciones, tarjetas y grupos de clientes",
         "dashboard": "Análisis de ventas y rendimiento",
         "delivery_methods": "Opciones de envío, tarifas y las reglas que las controlan",
-        "email_templates": "Plantillas de correo para clientes, el diseño del correo y la marca",
+        "email_templates": "Plantillas de correo para clientes y el diseño del correo",
         "fulfillments": "Armar, despachar y rastrear cumplimientos de pedidos",
         "gift_cards": "Tarjetas de regalo y lotes de tarjetas",
         "integrations": "Credenciales y conexiones de proveedores",

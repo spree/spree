@@ -23,6 +23,14 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PreviewsController, type: 
     expect(json_response['variables']['user']).to include('first_name' => 'Ann')
   end
 
+  it 'previews unsaved branding without saving it' do
+    post :create, params: { email_template_id: id, branding: { card_color: '#123456', font: 'georgia' } }, as: :json
+
+    expect(json_response['html']).to include('#123456', 'Georgia')
+    expect(json_response['variables']['store']['branding']).to include('card_color' => '#123456')
+    expect(store.reload.preferred_email_card_color).to be_nil
+  end
+
   it 'says what is wrong and where when the template does not render' do
     post :create, params: { email_template_id: id, body: "<mj-section>\n{% if %}</mj-section>" }, as: :json
 

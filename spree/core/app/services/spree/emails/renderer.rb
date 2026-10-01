@@ -34,9 +34,11 @@ module Spree
       # @param currency [String, nil] what `money` formats in, defaults to the store's
       # @param strict [Boolean] whether an unknown variable raises; defaults to
       #   true in development and test, false in production
-      def initialize(resolver:, store:, currency: nil, strict: Rails.env.local?)
+      # @param branding [Hash] unsaved branding values over the store's, for previews
+      def initialize(resolver:, store:, currency: nil, strict: Rails.env.local?, branding: {})
         @resolver = resolver
         @store = store
+        @branding = branding
         @currency = currency.presence || store.default_currency
         @strict = strict
       end
@@ -112,7 +114,7 @@ module Spree
 
       def base_assigns
         @base_assigns ||= {
-          'store' => JSON.parse(Spree::Emails::StoreSerializer.new(@store).serialize),
+          'store' => JSON.parse(Spree::Emails::StoreSerializer.new(@store, params: { branding: @branding }).serialize),
           'locale' => I18n.locale.to_s
         }
       end
