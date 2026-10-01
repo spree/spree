@@ -231,6 +231,10 @@ module Spree
 
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
+    # The variants of a product relation, as a subquery. Unordered, because a
+    # listing's sort would otherwise land inside the IN.
+    scope :for_products, ->(products) { where(product_id: products.reorder(nil).select(Spree::Product.arel_table[:id])) }
+
     # Variants the shop sells in this currency. Base prices only: a price
     # list's rows are what one audience pays under an agreement, and a ladder
     # holds several rows for one variant, so a contract-only variant is not
