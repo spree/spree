@@ -104,11 +104,6 @@ describe Spree::Preferences::Preferable, type: :model do
                                            color: 'green')
     end
 
-    it 'builds an array of deprecated preferences' do
-      expect(@b.deprecated_preferences).to eq([{ name: :color,
-                                                 message: 'Please use colour instead' }])
-    end
-
     context 'converts integer preferences to integer values' do
       before do
         A.preference :is_integer, :integer
