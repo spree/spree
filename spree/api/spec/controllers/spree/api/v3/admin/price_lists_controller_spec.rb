@@ -466,6 +466,28 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
     end
   end
 
+  describe 'extension-contributed attributes' do
+    around do |example|
+      original = Spree::PriceList.additional_permitted_attributes
+      example.run
+      Spree::PriceList.additional_permitted_attributes = original
+    end
+
+    it 'permits an attribute the model declares' do
+      Spree::PriceList.additional_permitted_attributes += [:erp_reference]
+
+      expect_any_instance_of(described_class).to receive(:permitted_params).at_least(:once).and_wrap_original do |original|
+        result = original.call
+        expect(result.keys).to include('erp_reference')
+        result.except('erp_reference')
+      end
+
+      patch :update, params: { id: price_list.prefixed_id, erp_reference: 'PL-42' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'PATCH #update — prices nullability contract' do
     let(:product) { create(:product) }
     let(:variant) { product.default_variant }
