@@ -23,6 +23,13 @@ class Spree::Base < ApplicationRecord
   # rather than assigning, so extensions don't clobber each other.
   class_attribute :additional_permitted_attributes, instance_writer: false, default: [].freeze
 
+  # The Seller API's counterpart, kept separate because sellers write a
+  # narrower set than operators: an attribute an extension makes writable for
+  # admins stays admin-only unless it is also declared here.
+  #
+  #   Spree::Product.additional_seller_permitted_attributes += [:brand_id]
+  class_attribute :additional_seller_permitted_attributes, instance_writer: false, default: [].freeze
+
   # Backfills preferences added to the class after this row was last saved, so
   # a reader never sees nil for a newly defined preference. Only missing keys
   # are assigned: assigning unconditionally would dirty every record on load,

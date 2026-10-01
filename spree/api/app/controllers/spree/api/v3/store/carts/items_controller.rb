@@ -97,7 +97,7 @@ module Spree
             private
 
             def variant
-              @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
+              @variant ||= @cart.orderable_variants.find_by_prefix_id!(permitted_params[:variant_id])
             end
 
             # Extension attributes ride in `options`, which is how AddItem

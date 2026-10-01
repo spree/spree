@@ -158,7 +158,8 @@ Seven checks run on every cart read:
   **An empty `requirements` array does not guarantee completion will succeed.** What a
   cart reports is the *advisory* set. Completing one additionally checks stock
   (`out_of_stock`, `discontinued`), negotiated quantity rules
-  (`quantity_rule_violated`) and the guest-checkout policy
+  (`quantity_rule_violated`), whether each product is still in the buyer's
+  [catalogs](/developer/core-concepts/catalogs) (`not_orderable`) and the guest-checkout policy
   (`guest_checkout_not_allowed`) — each of which has to load line items, so they are
   held back to keep reading a cart cheap. Treat a failed completion as a normal path,
   not an exception.

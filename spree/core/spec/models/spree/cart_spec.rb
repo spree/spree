@@ -230,6 +230,51 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#orderable_variants' do
+    let(:company) { create(:company, store: store) }
+    let(:catalog) { create(:catalog, store: store) }
+    let(:listed) { create(:product, store: store) }
+    let(:hidden) { create(:product, store: store) }
+    let(:cart) { create(:cart, store: store, customer: customer) }
+
+    before do
+      create(:catalog_product, catalog: catalog, product: listed)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      create(:company_membership, company: company, customer: customer)
+    end
+
+    it "narrows to the catalogs of the buyer's company" do
+      expect(cart.orderable_variants).to include(listed.default_variant)
+      expect(cart.orderable_variants).not_to include(hidden.default_variant)
+    end
+
+    # A buyer in two companies has no sole standing, so only the company the
+    # cart names can say which agreement applies.
+    it 'answers from the company the cart is for' do
+      other_company = create(:company, store: store)
+      other_catalog = create(:catalog, store: store)
+      create(:catalog_product, catalog: other_catalog, product: hidden)
+      create(:catalog_assignment, catalog: other_catalog, assignable: other_company)
+      create(:company_membership, company: other_company, customer: customer)
+      cart.update!(company: other_company)
+
+      expect(cart.orderable_variants).to include(hidden.default_variant)
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a catalog product not published on the cart's channel" do
+      listed.product_publications.destroy_all
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a product whose publication on the cart's channel has ended" do
+      listed.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+  end
+
   describe '#remove_out_of_stock_items!' do
     let(:cart) { create(:cart_with_line_items, store: store, customer: customer) }
 

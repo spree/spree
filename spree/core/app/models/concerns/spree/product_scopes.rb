@@ -219,6 +219,15 @@ module Spree
         channel = Spree::Current.channel
         return where(discontinue_on: [nil, Time.current.beginning_of_minute..]) unless channel
 
+        not_discontinued_on(channel)
+      end
+
+      # Published on the channel and not yet unpublished from it — a channel
+      # publication's end date is the product's discontinuation there.
+      #
+      # @param channel [Spree::Channel]
+      # @return [ActiveRecord::Relation<Spree::Product>]
+      def self.not_discontinued_on(channel)
         for_channel(channel).where(Spree::ProductPublication.table_name => { unpublished_at: [nil, Time.current.beginning_of_minute..] })
       end
 

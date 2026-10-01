@@ -1,4 +1,4 @@
-import { formatStoreDateTime, PageHeader } from '@spree/dashboard-core'
+import { formatStoreDateTime, PageHeader, Slot } from '@spree/dashboard-core'
 import { DropdownMenuItem, ResourceLayout, StatusBadge } from '@spree/dashboard-ui'
 import { XCircleIcon } from '@spree/dashboard-ui/icons'
 import { useParams } from '@tanstack/react-router'
@@ -113,6 +113,7 @@ export function OrderPage() {
             <OrderCustomerCard order={order} />
             <SpecialInstructionsCard order={order} />
             <InternalNoteCard order={order} />
+            <Slot name="seller.order.form_sidebar" context={{ order }} />
           </>
         }
       />

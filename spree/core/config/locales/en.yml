@@ -787,6 +787,7 @@ en:
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       invalid_price: Price must be a non-negative number
+      not_orderable: "%{li_name} is not available to order. Remove it to continue."
       out_of_stock: "%{li_name} was removed because it was sold out"
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
