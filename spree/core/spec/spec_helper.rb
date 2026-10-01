@@ -56,6 +56,7 @@ require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/action_text'
 require 'spree/testing_support/emails'
+require 'spree/testing_support/editable_email_templates'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'

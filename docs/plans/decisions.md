@@ -20,6 +20,35 @@ Rejected: sending the client's `expected_total` with completion (the `Carts::Com
 
 **Plans amended:** `6.0-fulfillment-and-delivery.md` (Rebuild triggers).
 
+## 2026-10-01: Merchants edit email templates one language at a time, in readable text
+
+**Context:** Spree's email templates print their text through translation keys (`{{ 'order_mailer.payment_link_email.message' | t: store_name: store.name }}`), so one file serves every language. In the dashboard editor a merchant cannot read those keys, and cannot change the text behind them. Other platforms with an email editor show merchants plain text and treat each language as its own copy.
+
+**Decision:** Spree's files keep their translation keys. When a merchant edits a template for a language, the editor writes the keys out as text in that language, in the subject and the body, with each value as the variable the template passed (`Dear {{ order.customer_name }},`); the edit is that language's version. A key that cannot be written out exactly (a plural form, a missing translation) is left as it was. The editor no longer offers "All languages"; the API keeps accepting `any`, and a version for every language published earlier still applies to languages without their own, which the editor says.
+
+**Consequences:** Languages nobody edited keep Spree's translated default, so an English edit never reaches French customers in English. The same change in several languages is made in each. Supersedes the "one template for every language" part of the 2026-09-30 entry for the dashboard.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
+## 2026-10-01: Building the email editor settled its API shape, branding and sample data
+
+**Context:** Implementing `6.0-email-template-editor.md` met details the design left loose: how the API names a template and its language, how the editor shows what an upgrade changed in a default, where branding is edited, what a new store previews, and whether the generated email types get Zod schemas.
+
+**Decision:** The API names a template by its key with dots (`spree.order_mailer.confirm_email`) and picks the version with a `language` parameter, because `locale` already sets the response's language. Templates and drafts store the default they started from as `base_subject` and `base_body`, so the editor can show what changed; reading a template returns the default and the base, with no separate diff endpoint, and saving a draft with `rebase` keeps the merchant's version as based on the new default. The editable registry is `Spree.editable_email_templates` in core, filled by `spree_emails`. Branding is six store preferences edited through the store settings endpoint under the settings permission; only `#RRGGBB` colors and fonts from a fixed list reach an email, and the preview takes unsaved values. Emails built from a record have no in-memory sample: a store with no such record is told there is nothing to preview with yet, and publishing such an email checks its syntax only. The `Email*` types are generated into their own folder of `@spree/admin-sdk` without Zod schemas, since the order email's schema is too large for TypeScript to emit and nothing validates email data at runtime.
+
+**Consequences:** Type generation for every SDK now runs from `spree_emails`, where both the API and email serializers load. A brand-new store cannot preview its order emails until it has an order. The earlier entry's Zod schemas for email types and the in-memory fallback for previews no longer apply.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
+## 2026-10-01: The email editor's variables come from generated types, and reverted templates keep their history
+
+**Context:** Building the email template editor (`6.0-email-template-editor.md`) left three details open: how autocomplete learns each email's variables, how two admins editing one draft avoid overwriting each other, and what reverting to the default does to a template's history.
+
+**Decision:** Typelizer is added to `spree_emails` and generates `Email*` TypeScript types for the email serializers into `@spree/admin-sdk`, turned into Zod schemas by the existing pipeline. A hand-written manifest in the dashboard maps each editable email to its variables and their schemas, and the preview response returns the data it rendered with for example values; there is no variables API. Drafts carry Rails' `lock_version` and `updated_by`, so a stale save is refused naming who changed it. Reverting marks the published row `reverted` (`has_status`) instead of deleting it; the lookup reads only `published` rows and a later publish reuses the row, so history survives.
+
+**Consequences:** Which variables each email receives is kept in step with its mailer by hand in the manifest; their fields cannot drift because they are generated. Extensions adding a customer email add a manifest entry through a dashboard plugin.
+
+**Plans amended:** `6.0-email-template-editor.md`.
 
 ## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
 

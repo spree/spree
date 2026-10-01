@@ -21,6 +21,16 @@ module CodeSamplesHelper
     })
   JS
 
+  # For endpoints only a signed-in admin can call (they act on that admin).
+  ADMIN_SDK_JWT_CLIENT_INIT = <<~JS.strip
+    import { createAdminClient } from '@spree/admin-sdk'
+
+    const client = createAdminClient({
+      baseUrl: 'https://your-store.com',
+      jwtToken: 'eyJhbGciOi...',
+    })
+  JS
+
   SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/sdk/examples', __dir__)
   ADMIN_SDK_EXAMPLES_ROOT = File.expand_path('../../../../packages/admin-sdk/examples', __dir__)
 
@@ -66,13 +76,13 @@ module CodeSamplesHelper
   # `createAdminClient`. Also emits a matching `spree api` CLI sample, derived
   # from the operation's verb + path, so every documented Admin endpoint shows
   # SDK *and* CLI usage side by side (à la Stripe's per-endpoint CLI tab).
-  def admin_sdk_example(name)
+  def admin_sdk_example(name, signed_in: false)
     source = EXAMPLE_CACHE[[:admin, name]] ||= load_example_body(ADMIN_SDK_EXAMPLES_ROOT, name, 'Admin SDK')
     code_samples(
       {
         lang: 'javascript',
         label: 'Spree Admin SDK',
-        source: "#{ADMIN_SDK_CLIENT_INIT}\n\n#{source}\n"
+        source: "#{signed_in ? ADMIN_SDK_JWT_CLIENT_INIT : ADMIN_SDK_CLIENT_INIT}\n\n#{source}\n"
       }
     )
     admin_cli_example(sdk_body_json(source), sdk_call_has_args(source))

@@ -9,7 +9,7 @@ Every email Spree sends — order confirmations, shipping notices, password rese
 To change an email, you copy its template into your app and edit it. Nothing else changes: Spree still picks the recipient, the language and the sender, and delivers the email through your [SMTP provider](/developer/providers/emails).
 
 <Note>
-  Templates read plain data — the same fields the [Store API](/api-reference/store-api/introduction) returns, plus what only an email needs — never Ruby objects. The same template can later run outside Ruby, and merchants will be able to edit templates safely from the dashboard.
+  Templates read plain data — the same fields the [Store API](/api-reference/store-api/introduction) returns, plus what only an email needs — never Ruby objects. The same template can run outside Ruby, and merchants can edit customer emails safely from the dashboard.
 </Note>
 
 ## Where templates live
@@ -103,6 +103,73 @@ Nothing is escaped in the text version.
 In development and test, a variable that does not exist raises an error instead of printing nothing, so `{{ order.nubmer }}` fails your spec rather than sending a blank. In production it prints nothing. A template that loops endlessly fails that one email instead of stalling your background jobs.
 
 To look at every email with real data, open the mailer previews at `/rails/mailers` on your Spree server.
+
+## Templates merchants edit in the dashboard
+
+Merchants can edit the emails their customers receive in **Settings → Emails → Templates**, along with the layout and the shared blocks in `spree/shared`. An edit is saved as a draft and goes live when published; publishing renders it with the store's own data first and refuses a template that does not render. An email built from a record the store does not have yet, such as an order confirmation in a store with no orders, is checked for template syntax only. Staff, store-owner and seller emails are not editable and always render from files.
+
+A store's published template comes first, so the lookup for an editable email is:
+
+1. the store's published template in the email's language
+2. the store's published template for every language
+3. your app's file
+4. Spree's file
+
+Your file stays the default the dashboard starts from and reverts to, so overriding a template in code and letting merchants edit it work together. When a Spree upgrade or a change to your file alters a default a merchant has customized, the dashboard tells them and shows what changed.
+
+The same operations are open to integrations through the [Admin API](/api-reference/admin-api/introduction), with the `email_templates` permission:
+
+<Tabs>
+  <Tab title="Admin SDK">
+    ```typescript
+    const preview = await client.emailTemplates.preview('spree.order_mailer.confirm_email', {
+      body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
+    })
+
+    await client.emailTemplates.draft.update('spree.order_mailer.confirm_email', {
+      body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
+    })
+    await client.emailTemplates.publish('spree.order_mailer.confirm_email')
+    ```
+  </Tab>
+  <Tab title="cURL">
+    ```bash
+    curl -X PUT https://your-store.com/api/v3/admin/email_templates/spree.order_mailer.confirm_email/draft \
+      -H "X-Spree-Api-Key: sk_xxx" -H "Content-Type: application/json" \
+      -d '{"body": "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>"}'
+
+    curl -X POST https://your-store.com/api/v3/admin/email_templates/spree.order_mailer.confirm_email/publication \
+      -H "X-Spree-Api-Key: sk_xxx"
+    ```
+  </Tab>
+</Tabs>
+
+### Branding
+
+Merchants set the colors and font of their customer emails in **Settings → Emails**, without touching a template. Templates read them from [`store.branding`](/developer/customization/email-variables#store), and Spree's layout uses them throughout. If you override the layout or a template, read colors and fonts from `store.branding` rather than writing them in, so a store's branding keeps applying.
+
+### Making your own customer email editable
+
+A customer email your app adds can be edited like Spree's own. Register it with a class that builds the data its preview renders with:
+
+```ruby server/config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.editable_email_templates.register(
+    'spree/review_mailer/request_email', kind: :email, sample: 'ReviewRequestSample'
+  )
+end
+```
+
+```ruby server/app/services/review_request_sample.rb
+# Previews with the store's latest completed order, or the one the merchant picks.
+class ReviewRequestSample < Spree::Emails::Samples::Order
+  def variables
+    { order: super[:order], review_url: placeholder_url('reviews/new') }
+  end
+end
+```
+
+A sample builds from the record the merchant picked, else the store's latest one; a store with none is told there is nothing to preview with yet. Pass placeholder URLs, never real tokens, and register only emails your customers receive.
 
 ## Your own mailers
 

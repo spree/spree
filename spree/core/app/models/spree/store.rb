@@ -13,6 +13,7 @@ module Spree
     include Spree::Stores::Setup
     include Spree::Stores::Markets
     include Spree::Stores::Channels
+    include Spree::Stores::EmailBranding
     include Spree::StoreDataSources
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
@@ -300,6 +301,8 @@ module Spree
     has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     has_many :webhook_endpoints, class_name: 'Spree::WebhookEndpoint', dependent: :destroy, inverse_of: :store
+    has_many :email_templates, class_name: 'Spree::EmailTemplate', dependent: :destroy, inverse_of: :store
+    has_many :email_template_drafts, class_name: 'Spree::EmailTemplateDraft', dependent: :destroy, inverse_of: :store
     has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
     has_many :channels, class_name: 'Spree::Channel', dependent: :destroy

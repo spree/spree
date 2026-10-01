@@ -2143,6 +2143,25 @@
           "label": "Standardsteuer auf Provision",
           "help": "Wird auf Ihre Provision berechnet, wenn weder der Provisionssatz noch Ihr Steueranbieter einen eigenen Satz nennt. Bei 0 belassen, wenn auf Ihre Gebühr keine Steuer anfällt.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Akzentfarbe"
+        },
+        "preferred_email_background_color": {
+          "label": "Hintergrundfarbe"
+        },
+        "preferred_email_card_color": {
+          "label": "Kartenfarbe"
+        },
+        "preferred_email_text_color": {
+          "label": "Textfarbe"
+        },
+        "preferred_email_heading_color": {
+          "label": "Überschriftenfarbe"
+        },
+        "preferred_email_font": {
+          "label": "Schrift",
+          "help": "E-Mail-Programme, die sie nicht laden können, verwenden eine ähnliche Schrift."
         }
       },
       "store_credit": {
@@ -3784,7 +3803,21 @@
           "section_delivery": "Zustellung",
           "section_logo": "Logo",
           "subtitle": "Absenderadressen, Benachrichtigungen und das in Transaktions-E-Mails eingebettete Logo.",
-          "title": "E-Mail-Einstellungen"
+          "title": "E-Mail-Einstellungen",
+          "branding": {
+            "title": "Branding",
+            "description": "Farben und Schrift für jede Kunden-E-Mail. Lassen Sie eine Farbe leer, um den Standard zu behalten.",
+            "default_color": "Standard",
+            "fonts": {
+              "inter": "Inter (Standard)",
+              "system": "Systemschrift",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -4077,6 +4110,7 @@
         "customers": "Kundenkonten, Adressen, Karten und Gruppen",
         "dashboard": "Umsatz- und Leistungsanalysen",
         "delivery_methods": "Versandoptionen, Tarife und die Regeln, die sie steuern",
+        "email_templates": "Kunden-E-Mail-Vorlagen und das E-Mail-Layout",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
         "integrations": "Anbieter-Zugangsdaten und Verbindungen",
@@ -4128,6 +4162,7 @@
         "customers": "Kunden",
         "dashboard": "Dashboard",
         "delivery_methods": "Versandarten",
+        "email_templates": "E-Mail-Vorlagen",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
         "integrations": "Integrationen",
@@ -6017,6 +6052,165 @@
       "no_customer": "Kein Kunde",
       "page": {
         "subtitle": "Was der Shop an Guthaben schuldet, über alle Kunden hinweg."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Einstellungen",
+        "templates": "Vorlagen"
+      },
+      "list": {
+        "description": "Bearbeiten Sie die E-Mails, die Kunden erhalten. Änderungen werden als Entwurf gespeichert und erreichen Kunden erst nach dem Veröffentlichen.",
+        "groups": {
+          "email": {
+            "title": "Kunden-E-Mails",
+            "description": "Jede E-Mail, die ein Kunde von Ihrem Shop erhalten kann."
+          },
+          "layout": {
+            "title": "Layout",
+            "description": "Kopfzeile, Fußzeile und Stile rund um jede Kunden-E-Mail."
+          },
+          "partial": {
+            "title": "Gemeinsame Bausteine",
+            "description": "Teile, die mehrere E-Mails verwenden, etwa die Artikelliste und die Summen."
+          }
+        },
+        "empty": "Hier lassen sich keine E-Mail-Vorlagen bearbeiten. Kunden-E-Mail-Vorlagen kommen mit dem Spree-E-Mail-Paket."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Bestellbestätigung",
+        "order_mailer_cancel_email": "Bestellung storniert",
+        "order_mailer_payment_link_email": "Zahlungslink",
+        "order_group_mailer_confirm_email": "Bestellbestätigung mit mehreren Verkäufern",
+        "fulfillment_mailer_fulfilled_email": "Bestellung versandt",
+        "return_mailer_refunded_email": "Rücksendung erstattet",
+        "digital_asset_mailer_files_ready_email": "Downloads bereit",
+        "customer_mailer_password_reset_email": "Passwort zurücksetzen",
+        "customer_mailer_data_export_email": "Export persönlicher Daten bereit",
+        "newsletter_mailer_email_confirmation": "Newsletter-Bestätigung",
+        "company_mailer_invitation_email": "Firmeneinladung",
+        "spree_base_mailer": "E-Mail-Layout",
+        "shared_line_item": "Artikel",
+        "shared_order_summary": "Bestellübersicht",
+        "shared_purchase_totals": "Summen",
+        "shared_fulfillment_group": "Sendung",
+        "shared_summary_row": "Übersichtszeile"
+      },
+      "badges": {
+        "customized": "Angepasst",
+        "default": "Standard",
+        "draft": "Entwurf",
+        "default_updated": "Von Spree aktualisiert",
+        "unsaved": "Ungespeicherte Änderungen",
+        "showing_draft": "Entwurf – Kunden erhalten die veröffentlichte Version",
+        "showing_published": "Veröffentlicht – das erhalten Kunden",
+        "showing_default": "Spree-Standard – das erhalten Kunden"
+      },
+      "actions": {
+        "save_draft": "Entwurf speichern",
+        "publish": "Veröffentlichen",
+        "discard_draft": "Entwurf verwerfen",
+        "revert": "Auf Standard zurücksetzen",
+        "send_test": "Test-E-Mail senden",
+        "history": "Verlauf"
+      },
+      "confirm": {
+        "discard_title": "Diesen Entwurf verwerfen?",
+        "discard_message": "Ihre unveröffentlichten Änderungen werden gelöscht. Kunden erhalten weiterhin die veröffentlichte Version.",
+        "revert_title": "Auf den Spree-Standard zurücksetzen?",
+        "revert_message": "Kunden erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können.",
+        "restore_title": "Diese Version wiederherstellen?",
+        "restore_message": "Diese Version ersetzt den Entwurf. Veröffentlichen Sie sie, damit Kunden sie erhalten.",
+        "leave_title": "Ohne Speichern verlassen?",
+        "leave_message": "Ihre ungespeicherten Änderungen an dieser Vorlage gehen verloren.",
+        "leave": "Verlassen",
+        "revert_every_language_message": "Kunden in allen Sprachen erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können."
+      },
+      "editor": {
+        "title": "Vorlage",
+        "subject": "Betreff",
+        "body": "Vorlagencode",
+        "language": "Sprache"
+      },
+      "preview": {
+        "title": "Vorschau",
+        "frame_title": "E-Mail-Vorschau",
+        "subject": "Betreff: {{subject}}",
+        "html": "E-Mail",
+        "text": "Nur Text",
+        "desktop": "Desktop-Breite",
+        "mobile": "Mobile Breite",
+        "shown_in": "Anzeigen in",
+        "record": "Vorschau mit Datensatz",
+        "unavailable": "Die Vorschau konnte nicht angezeigt werden.",
+        "needs_permission": "Vorschauen werden für Personen erstellt, die E-Mail-Vorlagen bearbeiten dürfen.",
+        "latest_record": "Neuester"
+      },
+      "problems": {
+        "title": "Diese Vorlage lässt sich nicht darstellen",
+        "on_line": "Zeile {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Von Spree aktualisiert",
+        "description": "Spree hat den Standard dieser Vorlage geändert, seit Ihre Version daraus entstanden ist. Vergleichen Sie beide, bevor Sie sich entscheiden.",
+        "compare": "Vergleichen",
+        "dialog_title": "Was sich am Spree-Standard geändert hat",
+        "dialog_description": "Links der Standard, aus dem Ihre Version entstanden ist. Rechts der aktuelle Standard.",
+        "before": "Ihre Version basiert auf",
+        "after": "Aktueller Spree-Standard",
+        "keep_mine": "Meine Version behalten",
+        "start_over": "Mit dem neuen Standard beginnen"
+      },
+      "history": {
+        "title": "Verlauf",
+        "description": "Jede in dieser Sprache veröffentlichte Version, die neueste zuerst.",
+        "empty": "Noch nichts veröffentlicht.",
+        "latest": "Neueste",
+        "version": "Version {{number}}",
+        "restore": "Wiederherstellen"
+      },
+      "conflict": {
+        "title": "Jemand anderes hat diesen Entwurf gespeichert",
+        "keep_editing": "Weiter bearbeiten",
+        "reload": "Deren Version laden",
+        "overwrite": "Meine Version darüber speichern"
+      },
+      "variables": {
+        "title": "Variablen",
+        "description": "Daten, die diese E-Mail anzeigen kann. Beginnen Sie im Code eine Variable zu tippen, um alle ihre Felder zu sehen.",
+        "order": "Die Bestellung mit Artikeln, Adressen und Summen.",
+        "resend": "Ob es sich um eine erneut gesendete Kopie handelt.",
+        "payment_url": "Der Link, über den der Kunde bezahlt.",
+        "order_group": "Eine auf mehrere Verkäufer aufgeteilte Bestellung.",
+        "fulfillment": "Die Sendung mit ihrer Sendungsverfolgung.",
+        "return": "Die Rücksendung und was erstattet wurde.",
+        "downloads": "Die Dateien, die der Kunde herunterladen kann.",
+        "customer": "Der Kunde, an den die E-Mail geht.",
+        "reset_url": "Der Link zum Festlegen eines neuen Passworts.",
+        "download_url": "Der Link zum Herunterladen des Exports.",
+        "expires_at": "Wann der Link nicht mehr funktioniert.",
+        "confirmation_url": "Der Link, der das Abonnement bestätigt.",
+        "company": "Die Firma, zu der der Kunde eingeladen ist.",
+        "accept_url": "Der Link, der die Einladung annimmt.",
+        "store": "Ihr Shop: Name, Links, Logo und Branding.",
+        "locale": "Die Sprache, in der die E-Mail gesendet wird.",
+        "insert": "{{variable}} einfügen"
+      },
+      "messages": {
+        "draft_saved": "Entwurf gespeichert",
+        "draft_discarded": "Entwurf verworfen",
+        "published": "Veröffentlicht. Kunden erhalten ab sofort diese Version.",
+        "reverted": "Auf den Spree-Standard zurückgesetzt",
+        "restored": "Version in den Entwurf übernommen",
+        "test_sent": "Test-E-Mail an {{email}} gesendet"
+      },
+      "errors": {
+        "load_failed": "E-Mail-Vorlagen konnten nicht geladen werden",
+        "not_allowed": "Sie dürfen E-Mail-Vorlagen nicht ansehen",
+        "test_email_failed": "Die Test-E-Mail konnte nicht gesendet werden"
+      },
+      "every_language": {
+        "notice": "Kunden in allen Sprachen erhalten diese Version, bis Sie eine für {{language}} veröffentlichen."
       }
     }
   }

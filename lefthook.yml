@@ -5,7 +5,11 @@ pre-commit:
       stage_fixed: true
       run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typelizer-and-zod:
-      glob: "spree/api/app/serializers/**/*.rb"
+      glob:
+        - "spree/api/app/serializers/**/*.rb"
+        - "spree/emails/app/serializers/**/*.rb"
+        - "spree/core/app/serializers/spree/emails/**/*.rb"
+        - "spree/*/config/initializers/typelizer.rb"
       run: |
         echo "Serializer changes detected — regenerating TypeScript types and Zod schemas..."
         cd spree/api && bundle exec rake typelizer:generate && cd ../..

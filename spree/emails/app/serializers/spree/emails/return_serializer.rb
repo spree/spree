@@ -1,6 +1,8 @@
 module Spree
   module Emails
     class ReturnSerializer < Spree::Api::V3::ReturnSerializer
+      typelize display_refunded_total: :string
+
       # What was actually paid back — not the Store API's refund_total, which
       # is the figure the return was expected to refund.
       attribute :display_refunded_total do |return_record|

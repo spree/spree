@@ -2161,6 +2161,25 @@
           "label": "الضريبة الافتراضية على العمولة",
           "help": "تُحتسب على عمولتك عندما لا تحدد نسبة العمولة ولا مزود الضرائب نسبة خاصة. اتركها 0 إذا كانت عمولتك غير خاضعة للضريبة.",
           "suffix": "٪"
+        },
+        "preferred_email_accent_color": {
+          "label": "لون التمييز"
+        },
+        "preferred_email_background_color": {
+          "label": "لون الخلفية"
+        },
+        "preferred_email_card_color": {
+          "label": "لون البطاقة"
+        },
+        "preferred_email_text_color": {
+          "label": "لون النص"
+        },
+        "preferred_email_heading_color": {
+          "label": "لون العناوين"
+        },
+        "preferred_email_font": {
+          "label": "الخط",
+          "help": "تستخدم تطبيقات البريد التي لا يمكنها تحميله خطًا مشابهًا."
         }
       },
       "store_credit": {
@@ -3812,7 +3831,21 @@
           "section_delivery": "توصيل",
           "section_logo": "الشعار",
           "subtitle": "عناوين المرسل والإشعارات والشعار المضمن في رسائل البريد الإلكتروني الخاصة بالمعاملات.",
-          "title": "إعدادات Email"
+          "title": "إعدادات Email",
+          "branding": {
+            "title": "الهوية البصرية",
+            "description": "ألوان وخط كل رسالة للعملاء. اترك اللون فارغًا للإبقاء على الافتراضي.",
+            "default_color": "افتراضي",
+            "fonts": {
+              "inter": "Inter (افتراضي)",
+              "system": "خط النظام",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -4105,6 +4138,7 @@
         "customers": "حسابات العملاء والعناوين والبطاقات والمجموعات",
         "dashboard": "تحليلات المبيعات والأداء",
         "delivery_methods": "خيارات الشحن والأسعار والقواعد التي تتحكم بها",
+        "email_templates": "قوالب رسائل العملاء وتخطيط البريد الإلكتروني",
         "fulfillments": "تجهيز الطلبات وشحنها وتتبعها",
         "gift_cards": "بطاقات الهدايا ودفعاتها",
         "integrations": "بيانات اعتماد مزوّدي الخدمة واتصالاتهم",
@@ -4156,6 +4190,7 @@
         "customers": "العملاء",
         "dashboard": "Dashboard",
         "delivery_methods": "طرق التوصيل",
+        "email_templates": "قوالب البريد الإلكتروني",
         "fulfillments": "Fulfillments",
         "gift_cards": "بطاقات الهدايا",
         "integrations": "عمليات التكامل",
@@ -6057,6 +6092,165 @@
       "no_customer": "بدون عميل",
       "page": {
         "subtitle": "ما يدين به المتجر من أرصدة مدفوعة مسبقًا لجميع العملاء."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "الإعدادات",
+        "templates": "القوالب"
+      },
+      "list": {
+        "description": "عدّل الرسائل التي يتلقاها العملاء. تُحفظ التغييرات كمسودة ولا تصل إلى العملاء إلا بعد نشرها.",
+        "groups": {
+          "email": {
+            "title": "رسائل العملاء",
+            "description": "كل رسالة يمكن أن يتلقاها العميل من متجرك."
+          },
+          "layout": {
+            "title": "التخطيط",
+            "description": "الترويسة والتذييل والأنماط حول كل رسالة للعملاء."
+          },
+          "partial": {
+            "title": "أجزاء مشتركة",
+            "description": "أجزاء تستخدمها عدة رسائل، مثل قائمة المنتجات والإجماليات."
+          }
+        },
+        "empty": "لا توجد هنا قوالب رسائل قابلة للتعديل. تأتي قوالب رسائل العملاء مع حزمة رسائل Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "تأكيد الطلب",
+        "order_mailer_cancel_email": "إلغاء الطلب",
+        "order_mailer_payment_link_email": "رابط الدفع",
+        "order_group_mailer_confirm_email": "تأكيد طلب من عدة بائعين",
+        "fulfillment_mailer_fulfilled_email": "شحن الطلب",
+        "return_mailer_refunded_email": "استرداد المرتجع",
+        "digital_asset_mailer_files_ready_email": "التنزيلات جاهزة",
+        "customer_mailer_password_reset_email": "إعادة تعيين كلمة المرور",
+        "customer_mailer_data_export_email": "تصدير البيانات الشخصية جاهز",
+        "newsletter_mailer_email_confirmation": "تأكيد النشرة البريدية",
+        "company_mailer_invitation_email": "دعوة إلى شركة",
+        "spree_base_mailer": "تخطيط الرسائل",
+        "shared_line_item": "منتج",
+        "shared_order_summary": "ملخص الطلب",
+        "shared_purchase_totals": "الإجماليات",
+        "shared_fulfillment_group": "شحنة",
+        "shared_summary_row": "سطر الملخص"
+      },
+      "badges": {
+        "customized": "مخصص",
+        "default": "افتراضي",
+        "draft": "مسودة",
+        "default_updated": "حدّثه Spree",
+        "unsaved": "تغييرات غير محفوظة",
+        "showing_draft": "مسودة — يتلقى العملاء النسخة المنشورة",
+        "showing_published": "منشور — ما يتلقاه العملاء",
+        "showing_default": "القالب الافتراضي من Spree — ما يتلقاه العملاء"
+      },
+      "actions": {
+        "save_draft": "حفظ المسودة",
+        "publish": "نشر",
+        "discard_draft": "تجاهل المسودة",
+        "revert": "العودة إلى الافتراضي",
+        "send_test": "إرسال رسالة تجريبية",
+        "history": "السجل"
+      },
+      "confirm": {
+        "discard_title": "تجاهل هذه المسودة؟",
+        "discard_message": "ستُحذف تغييراتك غير المنشورة. يستمر العملاء في تلقي النسخة المنشورة.",
+        "revert_title": "العودة إلى القالب الافتراضي من Spree؟",
+        "revert_message": "سيتلقى العملاء من الآن رسالة Spree الافتراضية وستُحذف المسودة. تبقى النسخ المنشورة في السجل لتتمكن من استعادة إحداها لاحقًا.",
+        "restore_title": "استعادة هذه النسخة؟",
+        "restore_message": "تحل هذه النسخة محل المسودة. انشرها ليتلقاها العملاء.",
+        "leave_title": "المغادرة دون حفظ؟",
+        "leave_message": "ستفقد تغييراتك غير المحفوظة على هذا القالب.",
+        "leave": "مغادرة",
+        "revert_every_language_message": "سيتلقى العملاء بكل اللغات من الآن رسالة Spree الافتراضية وستُحذف المسودة. تبقى النسخ المنشورة في السجل لتتمكن من استعادة إحداها لاحقًا."
+      },
+      "editor": {
+        "title": "القالب",
+        "subject": "الموضوع",
+        "body": "شيفرة القالب",
+        "language": "اللغة"
+      },
+      "preview": {
+        "title": "معاينة",
+        "frame_title": "معاينة الرسالة",
+        "subject": "الموضوع: {{subject}}",
+        "html": "الرسالة",
+        "text": "نص عادي",
+        "desktop": "عرض الحاسوب",
+        "mobile": "عرض الهاتف",
+        "shown_in": "عرض داخل",
+        "record": "معاينة باستخدام سجل",
+        "unavailable": "تعذر عرض المعاينة.",
+        "needs_permission": "تُعرض المعاينات لمن يملك صلاحية تعديل قوالب الرسائل.",
+        "latest_record": "الأحدث"
+      },
+      "problems": {
+        "title": "لا يمكن عرض هذا القالب",
+        "on_line": "السطر {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "حدّثه Spree",
+        "description": "غيّر Spree القالب الافتراضي منذ إنشاء نسختك منه. قارن بينهما قبل أن تقرر.",
+        "compare": "مقارنة",
+        "dialog_title": "ما الذي تغيّر في القالب الافتراضي من Spree",
+        "dialog_description": "على اليسار القالب الافتراضي الذي أُنشئت منه نسختك، وعلى اليمين القالب الافتراضي الحالي.",
+        "before": "بدأت نسختك من",
+        "after": "القالب الافتراضي الحالي من Spree",
+        "keep_mine": "الاحتفاظ بنسختي",
+        "start_over": "البدء من القالب الافتراضي الجديد"
+      },
+      "history": {
+        "title": "السجل",
+        "description": "كل نسخة نُشرت بهذه اللغة، الأحدث أولًا.",
+        "empty": "لم يُنشر أي شيء بعد.",
+        "latest": "الأحدث",
+        "version": "النسخة {{number}}",
+        "restore": "استعادة"
+      },
+      "conflict": {
+        "title": "حفظ شخص آخر هذه المسودة",
+        "keep_editing": "متابعة التعديل",
+        "reload": "تحميل نسخته",
+        "overwrite": "حفظ نسختي فوق نسخته"
+      },
+      "variables": {
+        "title": "المتغيرات",
+        "description": "البيانات التي يمكن أن تعرضها هذه الرسالة. ابدأ بكتابة متغير في الشيفرة لرؤية جميع حقوله.",
+        "order": "الطلب مع منتجاته وعناوينه وإجمالياته.",
+        "resend": "ما إذا كانت هذه نسخة أُعيد إرسالها.",
+        "payment_url": "الرابط الذي يدفع منه العميل.",
+        "order_group": "طلب مقسّم بين عدة بائعين.",
+        "fulfillment": "الشحنة مع رقم تتبعها.",
+        "return": "المرتجع وما تم استرداده.",
+        "downloads": "الملفات التي يمكن للعميل تنزيلها.",
+        "customer": "العميل الذي تُرسل إليه الرسالة.",
+        "reset_url": "رابط اختيار كلمة مرور جديدة.",
+        "download_url": "رابط تنزيل ملف التصدير.",
+        "expires_at": "متى يتوقف الرابط عن العمل.",
+        "confirmation_url": "الرابط الذي يؤكد الاشتراك.",
+        "company": "الشركة التي دُعي إليها العميل.",
+        "accept_url": "الرابط الذي يقبل الدعوة.",
+        "store": "متجرك: الاسم والروابط والشعار والهوية البصرية.",
+        "locale": "اللغة التي تُرسل بها الرسالة.",
+        "insert": "إدراج {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "تم حفظ المسودة",
+        "draft_discarded": "تم تجاهل المسودة",
+        "published": "تم النشر. سيتلقى العملاء هذه النسخة من الآن.",
+        "reverted": "تمت العودة إلى القالب الافتراضي من Spree",
+        "restored": "تمت استعادة النسخة إلى المسودة",
+        "test_sent": "تم إرسال رسالة تجريبية إلى {{email}}"
+      },
+      "errors": {
+        "load_failed": "تعذر تحميل قوالب الرسائل",
+        "not_allowed": "ليست لديك صلاحية عرض قوالب الرسائل",
+        "test_email_failed": "تعذر إرسال الرسالة التجريبية"
+      },
+      "every_language": {
+        "notice": "يتلقى العملاء بكل اللغات هذه النسخة حتى تنشر نسخة باللغة {{language}}."
       }
     }
   }

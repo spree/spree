@@ -2143,6 +2143,25 @@
           "label": "Taxe par défaut sur la commission",
           "help": "Appliquée à votre commission quand ni le taux de commission ni votre fournisseur de taxes n’indique son propre taux. Laissez 0 si votre commission n’est pas taxée.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Couleur d'accent"
+        },
+        "preferred_email_background_color": {
+          "label": "Couleur de fond"
+        },
+        "preferred_email_card_color": {
+          "label": "Couleur de la carte"
+        },
+        "preferred_email_text_color": {
+          "label": "Couleur du texte"
+        },
+        "preferred_email_heading_color": {
+          "label": "Couleur des titres"
+        },
+        "preferred_email_font": {
+          "label": "Police",
+          "help": "Les applications de messagerie qui ne peuvent pas la charger utilisent une police similaire."
         }
       },
       "store_credit": {
@@ -3784,7 +3803,21 @@
           "section_delivery": "Distribution",
           "section_logo": "Logo",
           "subtitle": "Adresses d'expéditeur, notifications et logo intégré aux e-mails transactionnels.",
-          "title": "Paramètres d'e-mail"
+          "title": "Paramètres d'e-mail",
+          "branding": {
+            "title": "Image de marque",
+            "description": "Couleurs et police de chaque e-mail client. Laissez une couleur vide pour garder celle par défaut.",
+            "default_color": "Par défaut",
+            "fonts": {
+              "inter": "Inter (par défaut)",
+              "system": "Police du système",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -4077,6 +4110,7 @@
         "customers": "Comptes clients, adresses, cartes et groupes",
         "dashboard": "Analyses des ventes et des performances",
         "delivery_methods": "Options de livraison, tarifs et règles qui les conditionnent",
+        "email_templates": "Modèles d'e-mails clients et mise en page des e-mails",
         "fulfillments": "Préparer, expédier et suivre les commandes",
         "gift_cards": "Cartes cadeaux et lots de cartes cadeaux",
         "integrations": "Identifiants et connexions des fournisseurs",
@@ -4128,6 +4162,7 @@
         "customers": "Clients",
         "dashboard": "Tableau de bord",
         "delivery_methods": "Modes de livraison",
+        "email_templates": "Modèles d'e-mail",
         "fulfillments": "Exécutions des commandes",
         "gift_cards": "Cartes cadeaux",
         "integrations": "Intégrations",
@@ -6017,6 +6052,165 @@
       "no_customer": "Aucun client",
       "page": {
         "subtitle": "Total des avoirs dus par la boutique, tous clients confondus."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Paramètres",
+        "templates": "Modèles"
+      },
+      "list": {
+        "description": "Modifiez les e-mails que reçoivent vos clients. Les modifications sont enregistrées en brouillon et n'atteignent les clients qu'une fois publiées.",
+        "groups": {
+          "email": {
+            "title": "E-mails clients",
+            "description": "Chaque e-mail qu'un client peut recevoir de votre boutique."
+          },
+          "layout": {
+            "title": "Mise en page",
+            "description": "L'en-tête, le pied de page et les styles autour de chaque e-mail client."
+          },
+          "partial": {
+            "title": "Blocs partagés",
+            "description": "Éléments utilisés par plusieurs e-mails, comme la liste des articles et les totaux."
+          }
+        },
+        "empty": "Aucun modèle d'e-mail n'est modifiable ici. Les modèles d'e-mails clients sont fournis par le paquet e-mails de Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Confirmation de commande",
+        "order_mailer_cancel_email": "Commande annulée",
+        "order_mailer_payment_link_email": "Lien de paiement",
+        "order_group_mailer_confirm_email": "Confirmation de commande multi-vendeurs",
+        "fulfillment_mailer_fulfilled_email": "Commande expédiée",
+        "return_mailer_refunded_email": "Retour remboursé",
+        "digital_asset_mailer_files_ready_email": "Téléchargements prêts",
+        "customer_mailer_password_reset_email": "Réinitialisation du mot de passe",
+        "customer_mailer_data_export_email": "Export des données personnelles prêt",
+        "newsletter_mailer_email_confirmation": "Confirmation de la newsletter",
+        "company_mailer_invitation_email": "Invitation d'entreprise",
+        "spree_base_mailer": "Mise en page des e-mails",
+        "shared_line_item": "Article",
+        "shared_order_summary": "Récapitulatif de commande",
+        "shared_purchase_totals": "Totaux",
+        "shared_fulfillment_group": "Expédition",
+        "shared_summary_row": "Ligne de récapitulatif"
+      },
+      "badges": {
+        "customized": "Personnalisé",
+        "default": "Par défaut",
+        "draft": "Brouillon",
+        "default_updated": "Mis à jour par Spree",
+        "unsaved": "Modifications non enregistrées",
+        "showing_draft": "Brouillon – les clients reçoivent la version publiée",
+        "showing_published": "Publié – ce que reçoivent les clients",
+        "showing_default": "Modèle par défaut de Spree – ce que reçoivent les clients"
+      },
+      "actions": {
+        "save_draft": "Enregistrer le brouillon",
+        "publish": "Publier",
+        "discard_draft": "Abandonner le brouillon",
+        "revert": "Revenir au modèle par défaut",
+        "send_test": "Envoyer un e-mail de test",
+        "history": "Historique"
+      },
+      "confirm": {
+        "discard_title": "Abandonner ce brouillon ?",
+        "discard_message": "Vos modifications non publiées sont supprimées. Les clients continuent de recevoir la version publiée.",
+        "revert_title": "Revenir au modèle par défaut de Spree ?",
+        "revert_message": "Les clients reçoivent désormais l'e-mail par défaut de Spree et le brouillon est supprimé. Les versions publiées restent dans l'historique pour être restaurées plus tard.",
+        "restore_title": "Restaurer cette version ?",
+        "restore_message": "Cette version remplace le brouillon. Publiez-la pour que les clients la reçoivent.",
+        "leave_title": "Quitter sans enregistrer ?",
+        "leave_message": "Vos modifications non enregistrées de ce modèle seront perdues.",
+        "leave": "Quitter",
+        "revert_every_language_message": "Les clients de toutes les langues reçoivent désormais l'e-mail par défaut de Spree et le brouillon est supprimé. Les versions publiées restent dans l'historique pour être restaurées plus tard."
+      },
+      "editor": {
+        "title": "Modèle",
+        "subject": "Objet",
+        "body": "Code du modèle",
+        "language": "Langue"
+      },
+      "preview": {
+        "title": "Aperçu",
+        "frame_title": "Aperçu de l'e-mail",
+        "subject": "Objet : {{subject}}",
+        "html": "E-mail",
+        "text": "Texte brut",
+        "desktop": "Largeur ordinateur",
+        "mobile": "Largeur mobile",
+        "shown_in": "Afficher dans",
+        "record": "Aperçu avec l'enregistrement",
+        "unavailable": "L'aperçu n'a pas pu être affiché.",
+        "needs_permission": "Les aperçus sont générés pour les personnes autorisées à modifier les modèles d'e-mail.",
+        "latest_record": "Le plus récent"
+      },
+      "problems": {
+        "title": "Ce modèle ne s'affiche pas",
+        "on_line": "Ligne {{line}} : {{message}}"
+      },
+      "default_update": {
+        "title": "Mis à jour par Spree",
+        "description": "Spree a modifié son modèle par défaut depuis que votre version en a été tirée. Comparez les deux avant de décider.",
+        "compare": "Comparer",
+        "dialog_title": "Ce qui a changé dans le modèle par défaut de Spree",
+        "dialog_description": "À gauche, le modèle par défaut dont votre version est issue. À droite, le modèle par défaut actuel.",
+        "before": "Votre version est issue de",
+        "after": "Modèle par défaut actuel de Spree",
+        "keep_mine": "Garder ma version",
+        "start_over": "Repartir du nouveau modèle"
+      },
+      "history": {
+        "title": "Historique",
+        "description": "Chaque version publiée dans cette langue, de la plus récente à la plus ancienne.",
+        "empty": "Rien n'a encore été publié.",
+        "latest": "La plus récente",
+        "version": "Version {{number}}",
+        "restore": "Restaurer"
+      },
+      "conflict": {
+        "title": "Quelqu'un d'autre a enregistré ce brouillon",
+        "keep_editing": "Continuer la modification",
+        "reload": "Charger sa version",
+        "overwrite": "Enregistrer ma version par-dessus"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Les données que cet e-mail peut afficher. Commencez à saisir une variable dans le code pour voir tous ses champs.",
+        "order": "La commande, avec ses articles, adresses et totaux.",
+        "resend": "S'il s'agit d'une copie renvoyée.",
+        "payment_url": "Le lien où le client paie.",
+        "order_group": "Une commande répartie entre plusieurs vendeurs.",
+        "fulfillment": "L'expédition et son suivi.",
+        "return": "Le retour et ce qui a été remboursé.",
+        "downloads": "Les fichiers que le client peut télécharger.",
+        "customer": "Le client destinataire de l'e-mail.",
+        "reset_url": "Le lien pour choisir un nouveau mot de passe.",
+        "download_url": "Le lien pour télécharger l'export.",
+        "expires_at": "Quand le lien cesse de fonctionner.",
+        "confirmation_url": "Le lien qui confirme l'abonnement.",
+        "company": "L'entreprise à laquelle le client est invité.",
+        "accept_url": "Le lien qui accepte l'invitation.",
+        "store": "Votre boutique : nom, liens, logo et image de marque.",
+        "locale": "La langue dans laquelle l'e-mail est envoyé.",
+        "insert": "Insérer {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Brouillon enregistré",
+        "draft_discarded": "Brouillon abandonné",
+        "published": "Publié. Les clients reçoivent désormais cette version.",
+        "reverted": "Retour au modèle par défaut de Spree",
+        "restored": "Version restaurée dans le brouillon",
+        "test_sent": "E-mail de test envoyé à {{email}}"
+      },
+      "errors": {
+        "load_failed": "Impossible de charger les modèles d'e-mail",
+        "not_allowed": "Vous n'avez pas l'autorisation de voir les modèles d'e-mail",
+        "test_email_failed": "Impossible d'envoyer l'e-mail de test"
+      },
+      "every_language": {
+        "notice": "Les clients de toutes les langues reçoivent cette version jusqu'à ce que vous en publiiez une pour {{language}}."
       }
     }
   }

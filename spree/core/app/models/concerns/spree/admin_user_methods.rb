@@ -128,10 +128,14 @@ module Spree
     # @param model [Class]
     # @param name [Symbol] the acted_by association
     def clear_actor(model, name)
+      columns = Spree::ActedBy.columns_for(name, nil)
+      # Append-only tables (revisions) have no updated_at to stamp.
+      columns = columns.merge(updated_at: Time.current) if model.column_names.include?('updated_at')
+
       model.
         where(:"#{name}_id" => id).
         where(:"#{name}_type" => [self.class.polymorphic_name, nil]).
-        update_all(Spree::ActedBy.columns_for(name, nil).merge(updated_at: Time.current))
+        update_all(columns)
     end
   end
 end
