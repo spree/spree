@@ -124,9 +124,12 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
     end.to_sql)
   end
 
+  # The default store, or the oldest one when none is marked default, so an
+  # existing installation id always has somewhere to go. Only an installation
+  # with no store at all has nothing for it to identify.
   def default_store_row
     stores = Arel::Table.new(:spree_stores)
-    query = stores.project(stores[:id], stores[:preferences]).where(stores[:default].eq(true)).order(stores[:id]).take(1)
+    query = stores.project(stores[:id], stores[:preferences]).order(stores[:default].desc, stores[:id].asc).take(1)
     query = query.where(stores[:deleted_at].eq(nil)) if column_exists?(:spree_stores, :deleted_at)
     connection.select_one(query)
   end
