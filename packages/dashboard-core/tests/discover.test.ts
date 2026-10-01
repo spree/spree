@@ -194,4 +194,19 @@ describe('discoverDashboardPluginManifests', () => {
 
     expect(manifest.routesDir).toBe(path.join(fixture.root, 'node_modules/@acme/plugin/src/routes'))
   })
+
+  it('reports the seller-panel routes directory separately from the dashboard one', () => {
+    fixture.writeDep('@acme/plugin', {
+      spree: { dashboard: { plugin: true, sellerRoutes: './seller-routes' } },
+    })
+    fs.mkdirSync(path.join(fixture.root, 'node_modules/@acme/plugin/seller-routes'))
+    fixture.writeHost({ '@acme/plugin': '1.0.0' })
+
+    const [manifest] = discoverDashboardPluginManifests({ root: fixture.root })
+
+    expect(manifest.routesDir).toBeUndefined()
+    expect(manifest.sellerRoutesDir).toBe(
+      path.join(fixture.root, 'node_modules/@acme/plugin/seller-routes'),
+    )
+  })
 })

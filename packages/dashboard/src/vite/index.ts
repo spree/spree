@@ -19,17 +19,11 @@ import {
   type SpreeDashboardPluginOptions as CoreOptions,
   spreeDashboardPlugin as spreeDashboardCorePlugin,
 } from '@spree/dashboard-core/vite'
-import {
-  discoverDashboardPluginManifests,
-  linkedPackagePath,
-} from '@spree/dashboard-core/vite/discover'
+import { linkedPackagePath } from '@spree/dashboard-core/vite/discover'
+import { resolveRouteMounts } from '@spree/dashboard-core/vite/route-mounts'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { index, layout, physical, rootRoute, route } from '@tanstack/virtual-file-routes'
 import type { PluginOption } from 'vite'
-// Explicit .js extension: this entry ships compiled (dist/vite-plugin), where
-// the specifier must name the real emitted file — tsup transpiles 1:1 without
-// rewriting import paths. Bundlers map .js back to the .ts source.
-import { assertNoRouteCollisions, type RouteSource } from './route-collisions.js'
 
 export interface SpreeDashboardPluginOptions extends CoreOptions {
   /**
@@ -39,6 +33,14 @@ export interface SpreeDashboardPluginOptions extends CoreOptions {
    * pages the upgrade added or moved.
    */
   generatedRouteTree?: string
+  /**
+   * The host app's own route files, relative to the host root, compiled into
+   * the same tree as the shell's and plugins' pages so links to them are
+   * type-checked. Mounted under `/$storeId` when the directory exists;
+   * `false` turns it off.
+   * @default 'src/routes'
+   */
+  routes?: string | false
   /**
    * Host project root. Defaults to `process.cwd()` — correct when Vite runs
    * from the package directory, which is how the starter and every
@@ -57,9 +59,12 @@ export function spreeDashboardPlugin(options: SpreeDashboardPluginOptions = {}):
  * The TanStack Router generator, configured with a virtual route config that
  * mirrors the shell's top-level layout skeleton and physically mounts:
  *
- *   - the shell's `_authenticated/$storeId` pages, and
+ *   - the shell's `_authenticated/$storeId` pages,
  *   - each plugin's declared routes directory (the `spree.dashboard.routes`
- *     marker), under the same authenticated store scope.
+ *     marker), and
+ *   - the host app's own routes directory,
+ *
+ * all under the same authenticated store scope.
  *
  * The skeleton names the shell's top-level route files explicitly; when the
  * shell grows a new top-level route it must be added here. The shell's own
@@ -78,28 +83,14 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
     path.join(path.dirname(shellEntry), 'routes'),
   )
 
-  const manifests = discoverDashboardPluginManifests(
-    { root: hostRoot, onWarn: (msg) => console.warn(`[@spree/dashboard/vite] ${msg}`) },
-    options.plugins,
-  )
-  const routedPlugins = manifests.filter((m): m is typeof m & { routesDir: string } =>
-    Boolean(m.routesDir),
-  )
-
-  // Pre-flight: fail on route-path collisions with an error naming the
-  // offending packages (the shell counts as `@spree/dashboard`), before the
-  // generator's file-path-only error would fire.
-  const sources: RouteSource[] = [
-    { label: '@spree/dashboard', routesDir: shellRoutesDir },
-    ...routedPlugins.map((m) => ({ label: m.name, routesDir: m.routesDir })),
-  ]
-  assertNoRouteCollisions(sources)
-
-  // POSIX-normalize: the generator expects forward slashes; path.relative
-  // emits backslashes on Windows.
-  const pluginMounts = routedPlugins.map((m) =>
-    physical('', path.relative(shellRoutesDir, m.routesDir).split(path.sep).join('/')),
-  )
+  const extraMounts = resolveRouteMounts({
+    hostRoot,
+    shell: { label: '@spree/dashboard', routesDir: shellRoutesDir },
+    panel: 'dashboard',
+    plugins: options.plugins,
+    hostRoutes: options.routes,
+    onWarn: (msg) => console.warn(`[@spree/dashboard/vite] ${msg}`),
+  }).map((dir) => physical('', dir))
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
@@ -111,7 +102,7 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
       index('_authenticated/index.tsx'),
       route('/$storeId', '_authenticated/$storeId.tsx', [
         physical('', '_authenticated/$storeId'),
-        ...pluginMounts,
+        ...extraMounts,
       ]),
     ]),
   ])

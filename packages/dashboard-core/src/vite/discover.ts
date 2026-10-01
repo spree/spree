@@ -39,6 +39,14 @@ export interface DashboardPluginManifest {
    * Compiled into the host's route tree by `@spree/dashboard/vite`.
    */
   routesDir?: string
+  /**
+   * Absolute path to the plugin's seller-panel file-routes directory, when the
+   * marker declares one (`"sellerRoutes": "./src/seller-routes"`). Compiled
+   * into the host's route tree by `@spree/seller-dashboard/vite`. Separate
+   * from `routesDir` because every route file names its panel's scope
+   * (`$storeId` or `$sellerId`) in its path, so a folder fits one panel only.
+   */
+  sellerRoutesDir?: string
 }
 
 /**
@@ -68,12 +76,13 @@ export function discoverDashboardPluginManifests(
       manifests.push({ name })
       continue
     }
-    const routes = pkg.spree?.dashboard?.routes
+    const marker = pkg.spree?.dashboard
+    const resolveDir = (dir: string | undefined) =>
+      dir ? linkedPackagePath(root, name, path.resolve(path.dirname(manifestPath), dir)) : undefined
     manifests.push({
       name,
-      routesDir: routes
-        ? linkedPackagePath(root, name, path.resolve(path.dirname(manifestPath), routes))
-        : undefined,
+      routesDir: resolveDir(marker?.routes),
+      sellerRoutesDir: resolveDir(marker?.sellerRoutes),
     })
   }
   return manifests
@@ -168,6 +177,7 @@ interface PluginManifest {
     dashboard?: {
       plugin?: boolean
       routes?: string
+      sellerRoutes?: string
     }
   }
 }

@@ -12,7 +12,9 @@
 // in locales/ and merge in with `i18n.addResourceBundle`.
 //
 // Example — add a reviews page and drop the built-in team screen. A page
-// needs both a `routes` entry and a nav entry with the same path:
+// needs both a `routes` entry and a nav entry with the same path. (Or make the
+// page a route file in src/routes/, compiled into the typed route tree so
+// links to it are checked — then only the nav entry goes here.)
 //
 //   import { defineDashboardPlugin } from '@spree/seller-dashboard'
 //   import { ReviewsPage } from './pages/reviews'

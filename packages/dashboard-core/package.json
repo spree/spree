@@ -36,6 +36,14 @@
       "types": "./src/vite/discover.ts",
       "default": "./dist/vite/discover.js"
     },
+    "./vite/route-collisions": {
+      "types": "./src/vite/route-collisions.ts",
+      "default": "./dist/vite/route-collisions.js"
+    },
+    "./vite/route-mounts": {
+      "types": "./src/vite/route-mounts.ts",
+      "default": "./dist/vite/route-mounts.js"
+    },
     "./providers/*": "./src/providers/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./hooks/use-command-palette": "./src/hooks/use-command-palette.tsx",

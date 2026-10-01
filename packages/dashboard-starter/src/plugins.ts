@@ -23,6 +23,9 @@
 //     routes: [{ key: 'analytics', path: '/analytics', component: AnalyticsPage }],
 //   })
 //
+// Or make the page a route file in src/routes/: it compiles into the typed
+// route tree so links to it are checked, and only the nav entry goes here.
+//
 // Docs: https://spreecommerce.org/docs/developer/dashboard/customization/quickstart
 
 import { i18n } from '@spree/dashboard'

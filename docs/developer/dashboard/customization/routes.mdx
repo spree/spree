@@ -8,10 +8,13 @@ description: Mount custom pages under your dashboard's `/$storeId/...` path. Sup
 Examples here import from `@spree/dashboard`, which re-exports the framework and the design system for host applications. A **distributed plugin** imports `@spree/dashboard-core` and `@spree/dashboard-ui` directly instead — it extends the shell rather than shipping it. See [plugin overview](/developer/dashboard/plugins/overview).
 </Note>
 
-The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom pages have two mechanisms:
+The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom pages have three mechanisms:
 
 1. **File routes** (packaged plugins — preferred): the plugin ships ordinary TanStack route files, and the host build compiles them into its typed route tree. Typed `<Link>`s with no casts, route-level code splitting, `validateSearch`, loaders — full router citizenship.
-2. **Route registry** (in-app & dynamic): `defineDashboardPlugin({ routes })` entries matched at navigation time by a catch-all dispatcher at `/_authenticated/$storeId/$`. Use for host-app customizations (`plugins.ts`) and anything registered conditionally at runtime. File routes always win over the registry — the catch-all is the lowest-priority match.
+2. **Your app's own file routes**: the same, for pages that live in your host app. Put route files in `src/routes/` and they compile into the same typed tree.
+3. **Route registry** (dynamic): `defineDashboardPlugin({ routes })` entries matched at navigation time by a catch-all dispatcher at `/_authenticated/$storeId/$`. Use for anything registered conditionally at runtime. File routes always win over the registry — the catch-all is the lowest-priority match.
+
+All three work in the [seller panel](#seller-panel) too.
 
 ## File routes (packaged plugins)
 
@@ -71,6 +74,23 @@ Rename one of the routes, or drop the plugin that shouldn't own it. (Duplicate p
 The collision check only sees **file routes**. If a runtime-registry route (below) uses the same URL as a compiled file route, there's no build error — the file route silently wins on every navigation, because the registry's catch-all is the lowest-priority match. If a page you registered at runtime never renders, check whether an installed plugin claims the same path.
 </Warning>
 
+## File routes in your app
+
+Pages that belong to your app rather than to a plugin go in your host app's `src/routes/` directory. The build compiles them into the same route tree as the dashboard's own pages, so links to them are type-checked and they get every router feature a plugin's file routes get:
+
+```tsx src/routes/reports.tsx
+import { createFileRoute } from '@tanstack/react-router'
+import { ReportsPage } from '../pages/reports'
+
+export const Route = createFileRoute('/_authenticated/$storeId/reports')({
+  component: ReportsPage,
+})
+```
+
+The same rules as plugin file routes apply: commit the full path literal, and a path that a built-in page or an installed plugin already owns fails the build with a [collision error](#route-collisions) naming your app. Restart the dev server after adding the directory for the first time. To read routes from another directory, pass it to the Vite plugin — `spreeDashboardPlugin({ routes: 'src/pages/routes' })` — or pass `routes: false` to turn this off.
+
+Add a nav entry pointing at the page from `plugins.ts`, the same as for any other page.
+
 ## Runtime route registry (in-app & dynamic)
 
 Register from your host app's `plugins.ts` (or a plugin that genuinely needs runtime registration):
@@ -89,8 +109,6 @@ defineDashboardPlugin({
 ```
 
 `path` is **relative** to `/$storeId` — the dispatcher prepends the prefix at match time. So `/reports` matches the URL `/store_xyz/reports`. The leading `/` is required.
-
-The [seller panel](/developer/how-to/build-a-marketplace#customizing-it) has the same dispatcher, scoped by seller instead of store: `path` is relative to `/$sellerId`, and the page receives the seller's id in its `storeId` prop. The registry is the only way to add a page there — the seller panel does not mount packaged plugins' file routes.
 
 ## Path parameters
 
@@ -183,6 +201,33 @@ import { Link } from '@tanstack/react-router'
 ```
 
 The casts bypass TanStack Router's static type-checking (custom routes aren't in the generated route tree, so neither the path nor its params exist as types). Params are passed as a keyed object — each key fills the matching `$name` token.
+
+If the page doesn't need to be registered at runtime, make it a [file route in your app](#file-routes-in-your-app) instead, and its links are checked like any other.
+
+## Seller panel
+
+The [seller panel](/developer/how-to/build-a-marketplace#customizing-it) supports all three mechanisms, scoped by seller instead of store:
+
+- **Plugin file routes** come from a separate `sellerRoutes` directory in the plugin's marker, because each route file names its panel in its path. One package can serve both panels:
+
+  ```jsonc
+  // package.json
+  "spree": { "dashboard": { "plugin": true, "routes": "./src/routes", "sellerRoutes": "./src/seller-routes" } }
+  ```
+
+- **Your app's file routes** live in the seller panel host app's `src/routes/`, configured on `spreeSellerDashboardPlugin` the same way.
+- **Registry routes** have a `path` relative to `/$sellerId`, and the page receives the seller's id in its `storeId` prop.
+
+Seller route files start with `/_authenticated/$sellerId/`:
+
+```tsx src/seller-routes/reviews.index.tsx
+import { createFileRoute } from '@tanstack/react-router'
+import { SellerReviewsPage } from '../pages/seller-reviews'
+
+export const Route = createFileRoute('/_authenticated/$sellerId/reviews/')({
+  component: SellerReviewsPage,
+})
+```
 
 ## Order of operations
 

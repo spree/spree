@@ -95,7 +95,7 @@ Declare your package as a dashboard plugin in its own `package.json`:
 }
 ```
 
-`routes` (optional) points at your TanStack file-routes directory; the host build compiles it into its typed route tree — see the [routes guide](/developer/dashboard/customization/routes).
+`routes` (optional) points at your TanStack file-routes directory; the host build compiles it into its typed route tree — see the [routes guide](/developer/dashboard/customization/routes). `sellerRoutes` (optional) does the same for pages in the [seller panel](/developer/dashboard/customization/routes#seller-panel).
 
 This marker is what powers **auto-discovery**: when a host calls `spreeDashboardPlugin()` without an explicit `plugins` array (the default), the Vite plugin walks the host's `package.json` deps + devDeps, reads each one's manifest, and picks up anything with `spree.dashboard.plugin: true`. The host doesn't have to know your plugin's name — `pnpm add @your-scope/your-plugin` is the entire installation step.
 

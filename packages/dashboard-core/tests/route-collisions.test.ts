@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { assertNoRouteCollisions, type RouteSource } from './route-collisions'
+import { assertNoRouteCollisions, type RouteSource } from '../src/vite/route-collisions'
 
 describe('assertNoRouteCollisions', () => {
   let root: string

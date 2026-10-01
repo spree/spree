@@ -11,7 +11,12 @@ import { defineConfig } from 'tsup'
 // other via explicit ./name.js specifiers, which stay valid in the emitted
 // output.
 export default defineConfig({
-  entry: ['src/vite/index.ts', 'src/vite/discover.ts'],
+  entry: [
+    'src/vite/index.ts',
+    'src/vite/discover.ts',
+    'src/vite/route-collisions.ts',
+    'src/vite/route-mounts.ts',
+  ],
   outDir: 'dist/vite',
   format: ['esm'],
   target: 'node20',

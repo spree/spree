@@ -5,6 +5,7 @@ import {
   spreeDashboardPlugin as spreeDashboardCorePlugin,
 } from '@spree/dashboard-core/vite'
 import { linkedPackagePath } from '@spree/dashboard-core/vite/discover'
+import { resolveRouteMounts } from '@spree/dashboard-core/vite/route-mounts'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { index, layout, physical, rootRoute, route } from '@tanstack/virtual-file-routes'
 import type { PluginOption } from 'vite'
@@ -17,6 +18,14 @@ export interface SpreeSellerDashboardPluginOptions extends CoreOptions {
    * upgrade added or moved.
    */
   generatedRouteTree?: string
+  /**
+   * The host app's own route files, relative to the host root, compiled into
+   * the same tree as the panel's and plugins' pages so links to them are
+   * type-checked. Mounted under `/$sellerId` when the directory exists;
+   * `false` turns it off.
+   * @default 'src/routes'
+   */
+  routes?: string | false
   /**
    * Host project root. Defaults to `process.cwd()` — correct when Vite runs
    * from the package directory, which is how the starter operates.
@@ -53,7 +62,9 @@ export function spreeSellerDashboardPlugin(
 /**
  * The TanStack Router generator, configured with a virtual route config
  * mirroring the panel's layout skeleton: public sign-in, then an
- * authenticated branch whose pages all hang off a seller.
+ * authenticated branch whose pages all hang off a seller — the panel's own,
+ * each plugin's `spree.dashboard.sellerRoutes` directory, and the host app's
+ * own routes directory.
  */
 function sellerRouterPlugin(hostRoot: string, options: SpreeSellerDashboardPluginOptions) {
   const fromHost = createRequire(path.join(hostRoot, 'package.json'))
@@ -67,6 +78,15 @@ function sellerRouterPlugin(hostRoot: string, options: SpreeSellerDashboardPlugi
     path.join(path.dirname(shellEntry), 'routes'),
   )
 
+  const extraMounts = resolveRouteMounts({
+    hostRoot,
+    shell: { label: '@spree/seller-dashboard', routesDir: shellRoutesDir },
+    panel: 'seller',
+    plugins: options.plugins,
+    hostRoutes: options.routes,
+    onWarn: (msg) => console.warn(`[@spree/seller-dashboard/vite] ${msg}`),
+  }).map((dir) => physical('', dir))
+
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
     route('/forgot-password', 'forgot-password.tsx'),
@@ -76,6 +96,7 @@ function sellerRouterPlugin(hostRoot: string, options: SpreeSellerDashboardPlugi
       index('_authenticated/index.tsx'),
       route('/$sellerId', '_authenticated/$sellerId.tsx', [
         physical('', '_authenticated/$sellerId'),
+        ...extraMounts,
       ]),
     ]),
   ])
