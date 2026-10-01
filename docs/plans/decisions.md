@@ -99,6 +99,16 @@ Rejected:
 
 **Plans amended:** `6.0-tax-provider.md` (contract, Internal refund limit, "Post-sale tax", lifecycle integration points, Phase 6 follow-ups, Constraints on Current Work), `6.0-returns-exchanges-claims.md` (key decisions, ReturnLineItem, ExchangeLineItem and ClaimLineItem notes, refunding, exchange workflow, Constraints on Current Work, resolved question 7).
 
+## 2026-10-01: The email editor's variables come from generated types, and reverted templates keep their history
+
+**Context:** Building the email template editor (`6.0-email-template-editor.md`) left three details open: how autocomplete learns each email's variables, how two admins editing one draft avoid overwriting each other, and what reverting to the default does to a template's history.
+
+**Decision:** Typelizer is added to `spree_emails` and generates `Email*` TypeScript types for the email serializers into `@spree/admin-sdk`, turned into Zod schemas by the existing pipeline. A hand-written manifest in the dashboard maps each editable email to its variables and their schemas, and the preview response returns the data it rendered with for example values; there is no variables API. Drafts carry Rails' `lock_version` and `updated_by`, so a stale save is refused naming who changed it. Reverting marks the published row `reverted` (`has_status`) instead of deleting it; the lookup reads only `published` rows and a later publish reuses the row, so history survives.
+
+**Consequences:** Which variables each email receives is kept in step with its mailer by hand in the manifest; their fields cannot drift because they are generated. Extensions adding a customer email add a manifest entry through a dashboard plugin.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
 ## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
 
 **Context:** Since the Liquid and MJML plan, every email renders from a template only a developer can change. The end goal was always merchant editing; this settles its shape.
