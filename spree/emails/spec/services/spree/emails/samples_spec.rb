@@ -40,6 +40,13 @@ describe 'editable email samples' do
     end.to raise_error(ActiveRecord::RecordNotFound)
   end
 
+  it "offers the store's latest records to pick from, and none for an email that needs no record" do
+    order = create(:completed_order_with_totals, store: store, completed_at: 1.minute.from_now)
+
+    expect(Spree::Emails::Samples::Order.new(store: store).recent_records.first).to have_attributes(id: order.prefixed_id, label: order.number)
+    expect(Spree::Emails::Samples::PasswordReset.new(store: store).recent_records).to eq([])
+  end
+
   it 'says so when the store has nothing to preview with' do
     Spree::OrderGroup.where(store: store).delete_all
 

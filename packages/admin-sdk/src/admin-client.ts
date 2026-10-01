@@ -436,6 +436,7 @@ import type {
   EmailTemplate,
   EmailTemplatePreview,
   EmailTemplateRevision,
+  EmailTemplateSampleRecord,
   Exchange,
   Export,
   Fee,
@@ -5843,6 +5844,20 @@ export class AdminClient {
         ...options,
         body: params ?? {},
       }),
+
+    sampleRecords: {
+      /** The store's latest records the template can be previewed with, newest first. */
+      list: (
+        id: string,
+        params?: { email_key?: string },
+        options?: RequestOptions,
+      ): Promise<{ data: EmailTemplateSampleRecord[] }> =>
+        this.request<{ data: EmailTemplateSampleRecord[] }>(
+          'GET',
+          `/email_templates/${id}/sample_records`,
+          { ...options, params },
+        ),
+    },
 
     revisions: {
       /** Published versions in one language, newest first. */

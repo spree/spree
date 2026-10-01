@@ -375,6 +375,38 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
     end
   end
 
+  path '/api/v3/admin/email_templates/{email_template_id}/sample_records' do
+    parameter name: :email_template_id, in: :path, type: :string, required: true,
+              description: 'The template key with dots'
+
+    get 'List records to preview an email template with' do
+      tags 'Email Templates'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        The store's five latest records the template can be previewed with,
+        newest first, to pass as `record_id` to the preview. For the layout
+        and partials, those of the email `email_key` names. Empty for an
+        email that needs no record.
+      DESC
+      admin_scope :write, :email_templates
+
+      admin_sdk_example 'email-templates/sample-records'
+
+      include_context 'with admin auth parameters'
+      parameter name: :email_key, in: :query, type: :string, required: false,
+                description: 'For the layout or a partial, the email to show it in'
+
+      response '200', 'records found' do
+        before { create(:order, store: store) }
+
+        run_test! do |response|
+          expect(JSON.parse(response.body)['data'].size).to eq(1)
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/email_templates/{email_template_id}/revisions' do
     parameter name: :email_template_id, in: :path, type: :string, required: true,
               description: 'The template key with dots'

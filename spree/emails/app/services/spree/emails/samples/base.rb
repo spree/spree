@@ -33,6 +33,19 @@ module Spree
           raise NotImplementedError
         end
 
+        # @param limit [Integer]
+        # @return [Array<Spree::EmailTemplates::SampleRecord>] the store's latest
+        #   records the email can be previewed with; empty when it needs none
+        def recent_records(limit: 5)
+          return [] unless self.class.record_type
+
+          records.limit(limit).map do |record|
+            Spree::EmailTemplates::SampleRecord.new(
+              id: record.prefixed_id, label: record.try(:number).presence || record.prefixed_id, created_at: record.created_at
+            )
+          end
+        end
+
         # @return [String] the currency the email's amounts are in
         def currency
           (self.class.record_type && record.try(:currency)).presence || store.default_currency

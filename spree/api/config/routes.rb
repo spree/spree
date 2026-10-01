@@ -304,6 +304,7 @@ Spree::Core::Engine.add_routes do
             resource :publication, only: [:create]
             resource :preview, only: [:create]
             resource :test_email, only: [:create]
+            resources :sample_records, only: [:index]
             resources :revisions, only: [:index], constraints: { id: %r{[^/]+} } do
               resource :restoration, only: [:create]
             end

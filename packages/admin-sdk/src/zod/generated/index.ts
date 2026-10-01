@@ -53,6 +53,7 @@ export { EmailTemplateSchema, type EmailTemplate } from './EmailTemplate';
 export { EmailTemplateDraftSchema, type EmailTemplateDraft } from './EmailTemplateDraft';
 export { EmailTemplatePreviewSchema, type EmailTemplatePreview } from './EmailTemplatePreview';
 export { EmailTemplateRevisionSchema, type EmailTemplateRevision } from './EmailTemplateRevision';
+export { EmailTemplateSampleRecordSchema, type EmailTemplateSampleRecord } from './EmailTemplateSampleRecord';
 export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';

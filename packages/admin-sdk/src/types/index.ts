@@ -64,6 +64,7 @@ export type { default as EmailTemplate } from './generated/EmailTemplate'
 export type { default as EmailTemplateDraft } from './generated/EmailTemplateDraft'
 export type { default as EmailTemplatePreview } from './generated/EmailTemplatePreview'
 export type { default as EmailTemplateRevision } from './generated/EmailTemplateRevision'
+export type { default as EmailTemplateSampleRecord } from './generated/EmailTemplateSampleRecord'
 // Named enums — open string unions for lists an extension may extend (statuses, fee kinds)
 export type * from './generated/Enums'
 export type { default as Exchange } from './generated/Exchange'

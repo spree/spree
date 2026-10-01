@@ -158,6 +158,7 @@ module Spree
         admin_email_template_draft_serializer: 'Spree::Api::V3::Admin::EmailTemplateDraftSerializer',
         admin_email_template_revision_serializer: 'Spree::Api::V3::Admin::EmailTemplateRevisionSerializer',
         admin_email_template_preview_serializer: 'Spree::Api::V3::Admin::EmailTemplatePreviewSerializer',
+        admin_email_template_sample_record_serializer: 'Spree::Api::V3::Admin::EmailTemplateSampleRecordSerializer',
         admin_exchange_serializer: 'Spree::Api::V3::Admin::ExchangeSerializer',
         admin_exchange_line_item_serializer: 'Spree::Api::V3::Admin::ExchangeLineItemSerializer',
         admin_claim_serializer: 'Spree::Api::V3::Admin::ClaimSerializer',
