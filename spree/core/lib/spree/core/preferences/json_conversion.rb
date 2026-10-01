@@ -123,20 +123,6 @@ module Spree
         end
       end
 
-      # Converts a column of arbitrary YAML values (not only hashes) into a JSON
-      # column — `spree_preferences.value`.
-      #
-      # @return [Integer] the number of rows written
-      def convert_values(table, source:, target:)
-        rows = rows_with(table, source, ['id', source])
-
-        rows.count do |row|
-          value = parse_yaml(row[source], table, row['id'])
-          write(table, row['id'], target => JSON.generate(value.as_json))
-          true
-        end
-      end
-
       private
 
       attr_reader :connection, :log

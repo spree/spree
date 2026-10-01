@@ -245,21 +245,24 @@ module Spree
   end
 
   # Stable anonymous identifier for this Spree installation. Generated once,
-  # persisted in `spree_preferences` and reused afterwards. It identifies the
-  # installation only
+  # kept on the default store and reused afterwards. It identifies the
+  # installation only.
   #
-  # Deliberately not memoized: the persisted row is the single source of
-  # truth, and the unique key makes processes that race to generate the first
-  # value all return the winning row's.
+  # Deliberately not memoized: the stored preference is the single source of
+  # truth, so processes that race to generate the first value converge on the
+  # one saved last at their next read instead of each holding a different id
+  # for their lifetime.
   #
-  # @return [String] UUID
+  # @return [String, nil] UUID, or nil before the default store exists
   def self.install_id
-    Spree::Preference.find_by(key: INSTALL_ID_KEY)&.value.presence ||
-      Spree::Preference.create_or_find_by!(key: INSTALL_ID_KEY) { |preference| preference.value = SecureRandom.uuid }.value
-  end
+    store = Spree::Store.default
+    return if store.nil?
 
-  INSTALL_ID_KEY = 'spree/install_id'.freeze
-  private_constant :INSTALL_ID_KEY
+    store.preferred_install_id.presence || SecureRandom.uuid.tap do |id|
+      store.preferred_install_id = id
+      store.update_columns(preferences: store.preferences)
+    end
+  end
 
   # Used to configure Spree.
   #
