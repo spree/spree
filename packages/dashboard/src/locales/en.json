@@ -6123,16 +6123,14 @@
         "restore_message": "This version replaces the draft. Publish it for customers to receive it.",
         "leave_title": "Leave without saving?",
         "leave_message": "Your unsaved changes to this template will be lost.",
-        "leave": "Leave"
+        "leave": "Leave",
+        "revert_every_language_message": "Customers in every language receive Spree's default email from now on and the draft is deleted. Published versions stay in the history, so you can restore one later."
       },
       "editor": {
         "title": "Template",
         "subject": "Subject",
         "body": "Template code",
         "language": "Language"
-      },
-      "languages": {
-        "any": "All languages"
       },
       "preview": {
         "title": "Preview",
@@ -6210,6 +6208,9 @@
         "load_failed": "Couldn't load email templates",
         "not_allowed": "You don't have permission to view email templates",
         "test_email_failed": "Couldn't send the test email"
+      },
+      "every_language": {
+        "notice": "Customers in every language receive this version until you publish one for {{language}}."
       }
     }
   }

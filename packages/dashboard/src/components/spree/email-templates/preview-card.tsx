@@ -199,7 +199,8 @@ export function EmailTemplatePreviewCard({
 /** Which email a layout or partial is previewed inside. */
 function ShownInField({ preview }: { preview: LivePreview }) {
   const { t } = useTranslation()
-  const { data: templates } = useEmailTemplates()
+  const { defaultLocale } = useStore()
+  const { data: templates } = useEmailTemplates(defaultLocale)
   const emailOptions = (templates?.data ?? [])
     .filter((entry) => entry.kind === 'email')
     .map((entry) => ({ value: entry.id, label: emailTemplateName(t, entry.key) }))

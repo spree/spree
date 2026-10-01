@@ -6123,16 +6123,14 @@
         "restore_message": "Cette version remplace le brouillon. Publiez-la pour que les clients la reçoivent.",
         "leave_title": "Quitter sans enregistrer ?",
         "leave_message": "Vos modifications non enregistrées de ce modèle seront perdues.",
-        "leave": "Quitter"
+        "leave": "Quitter",
+        "revert_every_language_message": "Les clients de toutes les langues reçoivent désormais l'e-mail par défaut de Spree et le brouillon est supprimé. Les versions publiées restent dans l'historique pour être restaurées plus tard."
       },
       "editor": {
         "title": "Modèle",
         "subject": "Objet",
         "body": "Code du modèle",
         "language": "Langue"
-      },
-      "languages": {
-        "any": "Toutes les langues"
       },
       "preview": {
         "title": "Aperçu",
@@ -6210,6 +6208,9 @@
         "load_failed": "Impossible de charger les modèles d'e-mail",
         "not_allowed": "Vous n'avez pas l'autorisation de voir les modèles d'e-mail",
         "test_email_failed": "Impossible d'envoyer l'e-mail de test"
+      },
+      "every_language": {
+        "notice": "Les clients de toutes les langues reçoivent cette version jusqu'à ce que vous en publiiez une pour {{language}}."
       }
     }
   }

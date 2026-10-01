@@ -6110,16 +6110,14 @@
         "restore_message": "此版本将替换草稿。发布后客户才会收到。",
         "leave_title": "不保存就离开？",
         "leave_message": "您对此模板未保存的更改将会丢失。",
-        "leave": "离开"
+        "leave": "离开",
+        "revert_every_language_message": "从现在起所有语言的客户都将收到 Spree 的默认邮件，草稿将被删除。已发布的版本保留在历史记录中，以后可以恢复。"
       },
       "editor": {
         "title": "模板",
         "subject": "主题",
         "body": "模板代码",
         "language": "语言"
-      },
-      "languages": {
-        "any": "所有语言"
       },
       "preview": {
         "title": "预览",
@@ -6197,6 +6195,9 @@
         "load_failed": "无法加载邮件模板",
         "not_allowed": "您没有查看邮件模板的权限",
         "test_email_failed": "无法发送测试邮件"
+      },
+      "every_language": {
+        "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
     }
   }
