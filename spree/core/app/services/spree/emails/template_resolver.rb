@@ -16,6 +16,12 @@ module Spree
 
       class InvalidKey < ArgumentError; end
 
+      # @param options [Hash] see {#initialize}
+      # @return [Spree::Emails::TemplateResolver] searching the directories Spree's mailers render from
+      def self.for_mailers(**options)
+        new(Spree::BaseMailer.view_paths.paths.map(&:path), **options)
+      end
+
       # @param view_paths [Array<String, Pathname>] directories to search, highest precedence first
       # @param store [Spree::Store, nil] the store whose published templates apply
       # @param locale [String, Symbol, nil] the email's language

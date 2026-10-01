@@ -18,11 +18,7 @@ module Spree
                 store: current_store, key: email_template.key, locale: language, actor: current_actor,
                 lock_version: params[:lock_version].presence
               )
-              return render_stale_draft if result.error&.value == :stale
-              return render_template_problems(result.value) if result.error&.value == :invalid_template
-              return render_result_error(result) unless result.success?
-
-              render json: serialize_email_template(reload: true), status: :created
+              render_email_template_result(result, status: :created)
             end
           end
         end

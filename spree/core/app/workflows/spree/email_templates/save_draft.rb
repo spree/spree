@@ -22,7 +22,7 @@ module Spree
       private
 
       def draft
-        @draft ||= store.email_template_drafts.find_or_initialize_by(key: key, locale: locale.presence || Spree::EmailTemplate::ANY_LOCALE)
+        @draft ||= store.email_template_drafts.find_or_initialize_by(key: key, locale: locale)
       end
 
       def ensure_editable
@@ -60,7 +60,7 @@ module Spree
       end
 
       def default
-        @default ||= Spree::Emails::TemplateResolver.new(Spree::BaseMailer.view_paths.paths.map(&:path)).find_default(key)
+        @default ||= Spree::Emails::TemplateResolver.for_mailers.find_default(key)
       end
     end
   end

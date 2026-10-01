@@ -8,9 +8,8 @@ module Spree
     class Revert < Spree::Workflow
       def perform(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, actor: nil, lock_version: nil)
         super
-        locale_value = locale.presence || Spree::EmailTemplate::ANY_LOCALE
-        template = store.email_templates.find_by(key: key, locale: locale_value)
-        draft = store.email_template_drafts.find_by(key: key, locale: locale_value)
+        template = store.email_templates.find_by(key: key, locale: locale)
+        draft = store.email_template_drafts.find_by(key: key, locale: locale)
         return failure(nil, :stale) if draft && !lock_version.nil? && lock_version.to_i != draft.lock_version
 
         ApplicationRecord.transaction do

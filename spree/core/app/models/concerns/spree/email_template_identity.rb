@@ -13,7 +13,7 @@ module Spree
     included do
       include Spree::SingleStoreResource
 
-      normalizes :locale, with: ->(locale) { locale.to_s.strip.presence || ANY_LOCALE }
+      normalizes :locale, with: ->(locale) { locale.to_s.strip.presence || ANY_LOCALE }, apply_to_nil: true
 
       validates :key, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id, :locale] }
       validates :locale, format: { with: LOCALE_FORMAT }

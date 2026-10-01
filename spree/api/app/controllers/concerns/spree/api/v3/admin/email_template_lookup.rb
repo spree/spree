@@ -41,6 +41,23 @@ module Spree
             Spree.api.admin_email_template_serializer
           end
 
+          # Renders the template as it stands after a workflow ran, or why the
+          # workflow refused.
+          def render_email_template_result(result, status: :ok)
+            return render_stale_draft if result.error&.value == :stale
+            return render_template_problems(result.value) if result.error&.value == :invalid_template
+            return render_result_error(result) unless result.success?
+
+            render json: serialize_email_template(reload: true), status: status
+          end
+
+          # Every published version of the template in the requested language.
+          def email_template_revisions
+            Spree::EmailTemplateRevision.where(
+              email_template: current_store.email_templates.for_key(email_template.key, language)
+            )
+          end
+
           # An unsaved subject and body are previewed only when sent, so an
           # empty body still previews as empty. `branding` previews unsaved
           # colors and font.

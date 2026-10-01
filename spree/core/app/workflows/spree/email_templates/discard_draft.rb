@@ -5,7 +5,7 @@ module Spree
     class DiscardDraft < Spree::Workflow
       def perform(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, lock_version: nil)
         super
-        draft = store.email_template_drafts.find_by(key: key, locale: locale.presence || Spree::EmailTemplate::ANY_LOCALE)
+        draft = store.email_template_drafts.find_by(key: key, locale: locale)
         return success(nil) unless draft
         return failure(nil, :stale) if !lock_version.nil? && lock_version.to_i != draft.lock_version
 

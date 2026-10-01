@@ -30,7 +30,7 @@ module Spree
       private
 
       def draft
-        @draft ||= store.email_template_drafts.find_by(key: key, locale: locale.presence || Spree::EmailTemplate::ANY_LOCALE)
+        @draft ||= store.email_template_drafts.find_by(key: key, locale: locale)
       end
 
       def template
