@@ -19,6 +19,7 @@ module Spree
       validates :locale, format: { with: LOCALE_FORMAT }
       validates :body, :base_body, presence: true
       validate :key_editable
+      validate :locale_supported
 
       scope :for_key, ->(key, locale = ANY_LOCALE) { where(key: key, locale: locale) }
     end
@@ -40,6 +41,12 @@ module Spree
 
     def key_editable
       errors.add(:key, :invalid) if key.present? && definition.nil?
+    end
+
+    def locale_supported
+      return if locale == ANY_LOCALE || store.nil?
+
+      errors.add(:locale, :inclusion) unless store.supported_locales_list.include?(locale)
     end
   end
 end

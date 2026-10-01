@@ -38,7 +38,7 @@ module Spree
           @record ||= if record_id
                         records.find_by_prefix_id!(record_id)
                       else
-                        records.first || raise(Spree::EmailTemplates::NoSampleRecord, Spree.t('emails.samples.no_record', record: self.class.record_type.to_s.humanize.downcase))
+                        records.first || raise(Spree::EmailTemplates::NoSampleRecord, Spree.t('email_templates.no_sample_record', record: self.class.record_type.to_s.humanize.downcase))
                       end
         end
 

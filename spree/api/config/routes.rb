@@ -296,6 +296,19 @@ Spree::Core::Engine.add_routes do
             end
           end
         end
+        # Addressed by template key with dots (`spree.order_mailer.confirm_email`).
+        resources :email_templates, only: [:index, :show, :destroy], format: false,
+                                    constraints: { id: /[a-z0-9_.]+/, email_template_id: /[a-z0-9_.]+/ } do
+          scope module: :email_templates do
+            resource :draft, only: [:update, :destroy]
+            resource :publication, only: [:create]
+            resource :preview, only: [:create]
+            resource :test_email, only: [:create]
+            resources :revisions, only: [:index], constraints: { id: %r{[^/]+} } do
+              resource :restoration, only: [:create]
+            end
+          end
+        end
         resources :roles, only: [:index, :show, :create, :update, :destroy]
         resources :permissions, only: [:index]
 

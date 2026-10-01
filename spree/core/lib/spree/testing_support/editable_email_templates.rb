@@ -34,6 +34,9 @@ end
 RSpec.shared_context 'with an editable email template' do
   let(:editable_key) { 'spree/admin_user_mailer/password_reset_email' }
 
+  # Templates have per-language versions only in the store's languages.
+  before { allow_any_instance_of(Spree::Store).to receive(:supported_locales_list).and_return(%w[de en fr]) }
+
   around do |example|
     registry = Spree.editable_email_templates
     previous = registry[editable_key]

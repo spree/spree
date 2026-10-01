@@ -3122,3 +3122,31 @@ export interface StoreCreditListResponse {
   data: StoreCredit[]
   meta: StoreCreditListMeta
 }
+
+export type EmailTemplateLanguageParams = {
+  /** A language code, or `any` (the default) for the version every language uses. */
+  language?: string
+}
+
+export interface EmailTemplateDraftParams extends EmailTemplateLanguageParams {
+  subject?: string | null
+  body?: string
+  /** The `lock_version` the draft was loaded with. A save from an older copy is refused with 409. */
+  lock_version?: number
+}
+
+export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams {
+  /** An unsaved subject, in place of the current one. */
+  subject?: string | null
+  /** An unsaved body, in place of the current one. */
+  body?: string
+  /** The record to build sample data from; the store's latest matching record otherwise. */
+  record_id?: string
+  /** For the layout or a partial, the email to show it in. */
+  email_key?: string
+}
+
+export interface EmailTemplateRestoreParams extends EmailTemplateLanguageParams {
+  /** The open draft's `lock_version`, when there is one. */
+  lock_version?: number
+}

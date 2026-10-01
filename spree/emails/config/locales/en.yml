@@ -33,9 +33,6 @@ en:
         store_team: "%{store_name} Team"
         subject: Your files are ready
         thanks: Thank you for your business.
-    emails:
-      samples:
-        no_record: There is no %{record} in this store to preview this email with yet.
     fulfillment_mailer:
       fulfilled_email:
         dear_customer: Dear %{name},

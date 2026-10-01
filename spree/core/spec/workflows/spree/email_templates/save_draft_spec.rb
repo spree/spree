@@ -29,6 +29,20 @@ describe Spree::EmailTemplates::SaveDraft do
     expect(draft.base_body).to eq('Old default')
   end
 
+  it "starts a shared partial from its file" do
+    Spree.editable_email_templates.register('spree/shared/summary_row', kind: :partial)
+    path = Rails.root.join('app/views/spree/shared/_summary_row.liquid')
+    FileUtils.mkdir_p(path.dirname)
+    File.write(path, '<mj-text>{{ label }}</mj-text>')
+
+    draft = described_class.new.call(store: store, key: 'spree/shared/summary_row', attributes: { subject: nil }).value
+
+    expect(draft.body).to eq('<mj-text>{{ label }}</mj-text>')
+  ensure
+    Spree.editable_email_templates.delete('spree/shared/summary_row')
+    FileUtils.rm_f(path)
+  end
+
   it 'refuses a save made from a stale copy' do
     draft = save({ body: 'first' }).value
     save({ body: 'second', lock_version: draft.lock_version })

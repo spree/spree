@@ -38,7 +38,7 @@ module Spree
       # @return [Spree::Emails::Template, nil]
       def find_default(key)
         validate!(key)
-        find_file(key, '.liquid')
+        Spree.editable_email_templates[key]&.kind == :partial ? partial_file(key) : find_file(key, '.liquid')
       end
 
       # A hand-written plain-text part. A store's saved template has none, so
@@ -57,11 +57,7 @@ module Spree
       # @return [Spree::Emails::Template, nil] the store's version, or "spree/shared/_line_item.liquid"
       def find_partial(name)
         validate!(name)
-        override = @drafts[name] || stored(name)
-        return override if override
-
-        *folders, file = name.split('/')
-        find_file([*folders, "_#{file}"].join('/'), '.liquid')
+        @drafts[name] || stored(name) || partial_file(name)
       end
 
       private
@@ -75,6 +71,11 @@ module Spree
         record = @store.email_templates.published.where(key: key, locale: [@locale, Spree::EmailTemplate::ANY_LOCALE]).
                  min_by { |template| template.locale == Spree::EmailTemplate::ANY_LOCALE ? 1 : 0 }
         @stored[key] = record && Template.new(key: key, subject: record.subject, body: record.body)
+      end
+
+      def partial_file(name)
+        *folders, file = name.split('/')
+        find_file([*folders, "_#{file}"].join('/'), '.liquid')
       end
 
       def find_file(key, extension)
