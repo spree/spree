@@ -15,8 +15,8 @@ module Spree
         raise Liquid::FileSystemError, "No such email partial: #{name}" unless partial
 
         partial.body
-      rescue Spree::Emails::TemplateResolver::InvalidKey => e
-        raise Liquid::FileSystemError, e.message
+      rescue Spree::Emails::TemplateResolver::InvalidKey
+        raise Liquid::FileSystemError, 'Invalid email partial name'
       end
     end
   end

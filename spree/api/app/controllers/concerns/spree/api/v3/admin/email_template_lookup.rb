@@ -72,8 +72,8 @@ module Spree
           # Samples show a real record of the store (the latest order, a
           # company), so previewing one needs permission to read it.
           def authorize_sample_data!
-            sample = build_preview.email.sample_class
-            missing = Array(sample.try(:required_permissions)).reject { |key| holds_permission?(key) }
+            missing = sample_classes.flat_map { |sample| Array(sample.try(:required_permissions)) }.uniq.
+                      reject { |key| holds_permission?(key) }
             return if missing.empty?
 
             render_error(
@@ -82,6 +82,16 @@ module Spree
               status: :forbidden,
               details: { required_scope: missing.first }
             )
+          end
+
+          # A preview shows one email; publishing the layout or a partial
+          # renders every email, so it needs what all of their samples need.
+          def sample_classes
+            if action_name == 'create' && controller_name == 'publications' && !email_template.definition.email?
+              Spree.editable_email_templates.emails.map(&:sample_class)
+            else
+              [build_preview.email.sample_class]
+            end
           end
 
           def build_preview

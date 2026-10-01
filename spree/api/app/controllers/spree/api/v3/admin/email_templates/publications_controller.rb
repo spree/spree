@@ -6,6 +6,8 @@ module Spree
           class PublicationsController < Admin::BaseController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
+            before_action :authorize_sample_data!
+
             # POST /api/v3/admin/email_templates/:email_template_id/publication
             #
             # Makes the draft live. A draft that does not render with sample data
