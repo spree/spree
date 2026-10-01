@@ -4077,7 +4077,7 @@
         "customers": "Customer accounts, addresses, cards and groups",
         "dashboard": "Sales and performance analytics",
         "delivery_methods": "Shipping options, rates and the rules that gate them",
-        "email_templates": "Customer email templates, the email layout and branding",
+        "email_templates": "Customer email templates and the email layout",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
         "integrations": "Provider credentials and connections",

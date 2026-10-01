@@ -42,11 +42,13 @@ module Spree
           end
 
           # An unsaved subject and body are previewed only when sent, so an
-          # empty body still previews as empty.
+          # empty body still previews as empty. `branding` previews unsaved
+          # colors and font.
           def preview_arguments
             arguments = params.permit(:record_id, :subject, :body).to_h.symbolize_keys
             arguments[:locale] = language
             arguments[:email_key] = params[:email_key].to_s.tr('.', '/').presence
+            arguments[:branding] = params.fetch(:branding, {}).permit(*Spree::Emails::Branding.attribute_names).to_h
             arguments
           end
 

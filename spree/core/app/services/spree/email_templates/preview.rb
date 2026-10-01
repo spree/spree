@@ -22,8 +22,9 @@ module Spree
       # @param record_id [String, nil] the prefixed id of the record to build sample data from
       # @param email_key [String, nil] for the layout or a partial, the email to show it in
       # @param strict [Boolean] whether an unknown variable raises
+      # @param branding [Hash] unsaved branding values (see Spree::Emails::Branding)
       def initialize(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, subject: nil, body: nil,
-                     record_id: nil, email_key: nil, strict: false)
+                     record_id: nil, email_key: nil, strict: false, branding: {})
         @store = store
         @key = key
         @locale = locale.presence || Spree::EmailTemplate::ANY_LOCALE
@@ -32,6 +33,7 @@ module Spree
         @record_id = record_id
         @email_key = email_key
         @strict = strict
+        @branding = branding
       end
 
       # @return [Spree::Emails::RenderedEmail]
@@ -40,7 +42,8 @@ module Spree
         sample = email.sample_class.new(store: @store, record_id: @record_id)
 
         in_locale do
-          renderer = Spree::Emails::Renderer.new(resolver: resolver, store: @store, currency: sample.currency, strict: @strict)
+          renderer = Spree::Emails::Renderer.new(resolver: resolver, store: @store, currency: sample.currency, strict: @strict,
+                                                 branding: @branding)
           sample_variables = sample.variables
           @variables = renderer.variables(sample_variables)
           @rendered = renderer.render(resolver.find(email.key), sample_variables)

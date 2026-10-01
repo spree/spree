@@ -4067,7 +4067,7 @@
         "customers": "客户账户、地址、卡片与分组",
         "dashboard": "销售与业绩分析",
         "delivery_methods": "配送选项、费率及其适用规则",
-        "email_templates": "客户邮件模板、邮件布局和品牌样式",
+        "email_templates": "客户邮件模板和邮件布局",
         "fulfillments": "打包、发货并跟踪订单履约",
         "gift_cards": "礼品卡及其批次",
         "integrations": "服务商凭据与连接",

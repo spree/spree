@@ -265,7 +265,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         matching record, or the one `record_id` names, and returns the email
         with the variables it was rendered with. An unsaved `subject` and
         `body` take the place of the current version. The layout and partials
-        render inside an email, `email_key` or the first one.
+        render inside an email, `email_key` or the first one. `branding`
+        previews colors and a font before they are saved to the store.
       DESC
       admin_scope :write, :email_templates
 
@@ -279,7 +280,19 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
           subject: { type: :string, example: 'Reset your {{ store.name }} password' },
           body: { type: :string, example: '<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>' },
           record_id: { type: :string, example: 'or_m3Rp9wXz', description: 'The record to build sample data from' },
-          email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' }
+          email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' },
+          branding: {
+            type: :object,
+            description: "Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix",
+            properties: {
+              accent_color: { type: :string, example: '#FF5500' },
+              background_color: { type: :string },
+              card_color: { type: :string },
+              text_color: { type: :string },
+              heading_color: { type: :string },
+              font: { type: :string, enum: Spree::Emails::Branding::FONTS.keys }
+            }
+          }
         }
       }
 

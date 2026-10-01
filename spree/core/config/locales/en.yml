@@ -1409,7 +1409,7 @@ en:
           description: Sales and performance analytics
           label: Analytics dashboard
         email_templates:
-          description: Customer email templates, the email layout and branding
+          description: Customer email templates and the email layout
           label: Email templates
         fulfillments:
           description: Pack, ship and track order fulfillments

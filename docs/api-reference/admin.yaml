@@ -7445,59 +7445,62 @@ paths:
                   key: layouts/spree/base_mailer
                   subject:
                   body: |
-                    <mjml lang="{{ locale }}">
+                    {% assign brand = store.branding %}<mjml lang="{{ locale }}">
                       <mj-head>
                         <mj-title>{{ subject }}</mj-title>
+                        {% if brand.font_url %}<mj-font name="{{ brand.font_family | split: ',' | first }}" href="{{ brand.font_url }}" />{% endif %}
                         <mj-attributes>
-                          <mj-all font-family="Inter, Helvetica, Arial, sans-serif" />
+                          <mj-all font-family="{{ brand.font_family }}" />
                           <mj-section padding="0" />
                           <mj-column padding="0" />
-                          <mj-text padding="0" color="#726A6A" font-size="14px" line-height="1.6" align="center" />
-                          <mj-button background-color="#FFFFFF" border="1px solid #E8E9E9" border-radius="8px" color="#1F2222" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
-                          <mj-table padding="0" color="#726A6A" font-size="14px" line-height="1.6" />
-                          <mj-class name="heading" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="#332C2C" css-class="heading" />
-                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="#332C2C" />
+                          <mj-text padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" align="center" />
+                          <mj-button background-color="{{ brand.button_color }}" border="{{ brand.button_border }}" border-radius="8px" color="{{ brand.button_text_color }}" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
+                          <mj-table padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" />
+                          <mj-class name="heading" font-family="{{ brand.heading_font_family }}" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="{{ brand.heading_color }}" css-class="heading" />
+                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="{{ brand.heading_color }}" />
                           <mj-class name="lead" padding="12px 0 0" />
                           <mj-class name="note" padding="24px 0 0" font-size="13px" css-class="note" />
-                          <mj-class name="section-heading" padding="48px 0 16px" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
+                          <mj-class name="section-heading" padding="48px 0 16px" font-family="{{ brand.heading_font_family }}" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
                           <mj-class name="body" padding="16px 0 0" align="left" />
                           <mj-class name="footer" padding="12px 0 0" font-size="11px" line-height="1.5" />
                         </mj-attributes>
                         <mj-style>
+                          {% if brand.font == 'inter' %}
                           @font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
-                          a { color: #332C2C; }
+                          {% endif %}
+                          a { color: {{ brand.link_color }}; }
                           .hero > table { max-width: 420px; margin: 0 auto; }
-                          .note a { color: #726A6A; word-break: break-all; }
-                          .footer a { color: #726A6A; }
+                          .note a { color: {{ brand.text_color }}; word-break: break-all; }
+                          .footer a { color: {{ brand.text_color }}; }
                           .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
                           .item_image { padding: 8px; width: 96px; }
                           .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
                           .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
                           .item_info { padding: 8px 16px 8px 8px; }
-                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; text-decoration: none; }
-                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
+                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; text-decoration: none; }
+                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
                           .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
-                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
-                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; }
-                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A; }
-                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: #332C2C; }
+                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: {{ brand.text_color }}; }
+                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: {{ brand.heading_color }}; }
                           .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
-                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: #332C2C; }
+                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: {{ brand.heading_color }}; }
                           .summary_total .summary_value { font-weight: 600; }
-                          .mailer_hero h1 { margin: 0; font-family: Geist, Inter, Helvetica, Arial, sans-serif; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: #332C2C; }
+                          .mailer_hero h1 { margin: 0; font-family: {{ brand.heading_font_family }}; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: {{ brand.heading_color }}; }
                           .mailer_hero p { margin: 12px 0 0; }
-                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: #332C2C; }
+                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: {{ brand.heading_color }}; }
                           .mailer_hero .sub { margin-top: 24px; font-size: 13px; }
                           @media only screen and (max-width: 600px) {
                             .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
                           }
                         </mj-style>
                       </mj-head>
-                      <mj-body background-color="#FFFFFF" width="640px">
-                        <mj-wrapper background-color="#F6F6F6" padding="56px 24px">
+                      <mj-body background-color="{{ brand.background_color }}" width="640px">
+                        <mj-wrapper background-color="{{ brand.card_color }}" padding="56px 24px">
                           <mj-section padding="0 0 32px">
                             <mj-column>
                               {% if store.logo_url and store.logo_width %}
@@ -7505,7 +7508,7 @@ paths:
                               {% elsif store.logo_url %}
                                 <mj-text><a href="{{ store.url }}"><img src="{{ store.logo_url }}" alt="{{ store.name }}" height="32" style="height: 32px; width: auto; border: 0;" /></a></mj-text>
                               {% else %}
-                                <mj-text font-size="22px" font-weight="700" color="#332C2C" text-transform="uppercase"><a href="{{ store.url }}" style="color: #332C2C; text-decoration: none;">{{ store.name }}</a></mj-text>
+                                <mj-text font-size="22px" font-weight="700" color="{{ brand.heading_color }}" text-transform="uppercase"><a href="{{ store.url }}" style="color: {{ brand.heading_color }}; text-decoration: none;">{{ store.name }}</a></mj-text>
                               {% endif %}
                             </mj-column>
                           </mj-section>
@@ -7528,59 +7531,62 @@ paths:
                   published_at:
                   default_subject:
                   default_body: |
-                    <mjml lang="{{ locale }}">
+                    {% assign brand = store.branding %}<mjml lang="{{ locale }}">
                       <mj-head>
                         <mj-title>{{ subject }}</mj-title>
+                        {% if brand.font_url %}<mj-font name="{{ brand.font_family | split: ',' | first }}" href="{{ brand.font_url }}" />{% endif %}
                         <mj-attributes>
-                          <mj-all font-family="Inter, Helvetica, Arial, sans-serif" />
+                          <mj-all font-family="{{ brand.font_family }}" />
                           <mj-section padding="0" />
                           <mj-column padding="0" />
-                          <mj-text padding="0" color="#726A6A" font-size="14px" line-height="1.6" align="center" />
-                          <mj-button background-color="#FFFFFF" border="1px solid #E8E9E9" border-radius="8px" color="#1F2222" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
-                          <mj-table padding="0" color="#726A6A" font-size="14px" line-height="1.6" />
-                          <mj-class name="heading" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="#332C2C" css-class="heading" />
-                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="#332C2C" />
+                          <mj-text padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" align="center" />
+                          <mj-button background-color="{{ brand.button_color }}" border="{{ brand.button_border }}" border-radius="8px" color="{{ brand.button_text_color }}" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
+                          <mj-table padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" />
+                          <mj-class name="heading" font-family="{{ brand.heading_font_family }}" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="{{ brand.heading_color }}" css-class="heading" />
+                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="{{ brand.heading_color }}" />
                           <mj-class name="lead" padding="12px 0 0" />
                           <mj-class name="note" padding="24px 0 0" font-size="13px" css-class="note" />
-                          <mj-class name="section-heading" padding="48px 0 16px" font-family="Geist, Inter, Helvetica, Arial, sans-serif" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
+                          <mj-class name="section-heading" padding="48px 0 16px" font-family="{{ brand.heading_font_family }}" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
                           <mj-class name="body" padding="16px 0 0" align="left" />
                           <mj-class name="footer" padding="12px 0 0" font-size="11px" line-height="1.5" />
                         </mj-attributes>
                         <mj-style>
+                          {% if brand.font == 'inter' %}
                           @font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
                           @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
-                          a { color: #332C2C; }
+                          {% endif %}
+                          a { color: {{ brand.link_color }}; }
                           .hero > table { max-width: 420px; margin: 0 auto; }
-                          .note a { color: #726A6A; word-break: break-all; }
-                          .footer a { color: #726A6A; }
+                          .note a { color: {{ brand.text_color }}; word-break: break-all; }
+                          .footer a { color: {{ brand.text_color }}; }
                           .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
                           .item_image { padding: 8px; width: 96px; }
                           .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
                           .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
                           .item_info { padding: 8px 16px 8px 8px; }
-                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; text-decoration: none; }
-                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
+                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; text-decoration: none; }
+                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
                           .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
-                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
-                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; }
-                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A; }
-                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: #332C2C; }
+                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: {{ brand.text_color }}; }
+                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: {{ brand.heading_color }}; }
                           .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
-                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: #332C2C; }
+                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: {{ brand.heading_color }}; }
                           .summary_total .summary_value { font-weight: 600; }
-                          .mailer_hero h1 { margin: 0; font-family: Geist, Inter, Helvetica, Arial, sans-serif; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: #332C2C; }
+                          .mailer_hero h1 { margin: 0; font-family: {{ brand.heading_font_family }}; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: {{ brand.heading_color }}; }
                           .mailer_hero p { margin: 12px 0 0; }
-                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: #332C2C; }
+                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: {{ brand.heading_color }}; }
                           .mailer_hero .sub { margin-top: 24px; font-size: 13px; }
                           @media only screen and (max-width: 600px) {
                             .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
                           }
                         </mj-style>
                       </mj-head>
-                      <mj-body background-color="#FFFFFF" width="640px">
-                        <mj-wrapper background-color="#F6F6F6" padding="56px 24px">
+                      <mj-body background-color="{{ brand.background_color }}" width="640px">
+                        <mj-wrapper background-color="{{ brand.card_color }}" padding="56px 24px">
                           <mj-section padding="0 0 32px">
                             <mj-column>
                               {% if store.logo_url and store.logo_width %}
@@ -7588,7 +7594,7 @@ paths:
                               {% elsif store.logo_url %}
                                 <mj-text><a href="{{ store.url }}"><img src="{{ store.logo_url }}" alt="{{ store.name }}" height="32" style="height: 32px; width: auto; border: 0;" /></a></mj-text>
                               {% else %}
-                                <mj-text font-size="22px" font-weight="700" color="#332C2C" text-transform="uppercase"><a href="{{ store.url }}" style="color: #332C2C; text-decoration: none;">{{ store.name }}</a></mj-text>
+                                <mj-text font-size="22px" font-weight="700" color="{{ brand.heading_color }}" text-transform="uppercase"><a href="{{ store.url }}" style="color: {{ brand.heading_color }}; text-decoration: none;">{{ store.name }}</a></mj-text>
                               {% endif %}
                             </mj-column>
                           </mj-section>
@@ -8200,7 +8206,8 @@ paths:
         matching record, or the one `record_id` names, and returns the email
         with the variables it was rendered with. An unsaved `subject` and
         `body` take the place of the current version. The layout and partials
-        render inside an email, `email_key` or the first one.
+        render inside an email, `email_key` or the first one. `branding`
+        previews colors and a font before they are saved to the store.
 
 
         **Required scope:** `write_email_templates` (for API-key authentication).
@@ -8243,60 +8250,134 @@ paths:
               example:
                 id:
                 subject: ''
-                html: |-
-                  <!doctype html><html lang="en" dir="auto" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head><title></title><!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]--><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-                  <style type="text/css">
-                  #outlook a { padding: 0; }
-                  body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-                  table, td { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-                  img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-                  p { display: block; margin: 13px 0; }
-                  </style>
-                  <!--[if mso]>
-                  <noscript>
-                  <xml>
-                  <o:OfficeDocumentSettings>
-                    <o:AllowPNG/>
-                    <o:PixelsPerInch>96</o:PixelsPerInch>
-                  </o:OfficeDocumentSettings>
-                  </xml>
-                  </noscript>
-                  <![endif]-->
-                  <!--[if lte mso 11]>
-                  <style type="text/css">
-                  .mj-outlook-group-fix { width:100% !important; }
-                  </style>
-                  <![endif]-->
-                  <style type="text/css">@media only screen and (min-width:480px) { .mj-column-per-100 { width:100% !important; max-width:100%; }  }</style><style media="screen and (min-width:480px)">.moz-text-html .mj-column-per-100 { width:100% !important; max-width:100%; } </style><style type="text/css">@font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
-                        @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
-                        @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
-                        @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
-                        a { color: #332C2C; }
-                        .hero > table { max-width: 420px; margin: 0 auto; }
-                        .note a { color: #726A6A; word-break: break-all; }
-                        .footer a { color: #726A6A; }
-                        .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
-                        .item_image { padding: 8px; width: 96px; }
-                        .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
-                        .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
-                        .item_info { padding: 8px 16px 8px 8px; }
-                        .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; text-decoration: none; }
-                        .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
-                        .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
-                        .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: #726A6A; }
-                        .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C; }
-                        .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A; }
-                        .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: #332C2C; }
-                        .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
-                        .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: #332C2C; }
-                        .summary_total .summary_value { font-weight: 600; }
-                        .mailer_hero h1 { margin: 0; font-family: Geist, Inter, Helvetica, Arial, sans-serif; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: #332C2C; }
-                        .mailer_hero p { margin: 12px 0 0; }
-                        .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: #332C2C; }
-                        .mailer_hero .sub { margin-top: 24px; font-size: 13px; }
-                        @media only screen and (max-width: 600px) {
-                          .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
-                        }</style></head><body style="word-spacing:normal;background-color:#FFFFFF;"><div lang="en" dir="auto" style="background-color:#FFFFFF;"><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#F6F6F6" align="center" width="640" style="width:640px;"><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]--><div style="background:#F6F6F6;background-color:#F6F6F6;margin:0px auto;max-width:640px;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" style="background:#F6F6F6;background-color:#F6F6F6;width:100%;"><tbody><tr><td style="direction:ltr;font-size:0px;padding:56px 24px;text-align:center;"><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><td width="640px"><![endif]--><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" width="592" style="width:592px;"><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]--><div style="margin:0px auto;max-width:592px;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" style="width:100%;"><tbody><tr><td style="direction:ltr;font-size:0px;padding:0 0 32px;text-align:center;"><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><![endif]--><!--[if mso | IE]><td style="vertical-align:top;width:592px;"><![endif]--><div class="mj-outlook-group-fix mj-column-per-100" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td style="vertical-align:top;padding:0;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td align="center" style="font-size:0px;padding:0;word-break:break-word;"><div style="font-family:Inter, Helvetica, Arial, sans-serif;font-size:22px;font-weight:700;line-height:1.6;text-align:center;text-transform:uppercase;color:#332C2C;"><a href="http://www.example.com:3000" style="color: #332C2C; text-decoration: none;">Spree Test Store</a></div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr><tr><td width="640px"><![endif]--><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" width="592" style="width:592px;"><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]--><div style="margin:0px auto;max-width:592px;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" style="width:100%;"><tbody><tr><td style="direction:ltr;font-size:0px;padding:0;text-align:center;"><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><![endif]--><!--[if mso | IE]><td style="vertical-align:top;width:592px;"><![endif]--><div class="mj-outlook-group-fix mj-column-per-100" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td style="vertical-align:top;padding:0;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td align="center" style="font-size:0px;padding:0;word-break:break-word;"><div style="font-family:Inter, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.6;text-align:center;color:#726A6A;">Hi Ann</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr></table><![endif]--></td></tr></tbody></table></div><!--[if mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" width="640" style="width:640px;"><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]--><div style="margin:0px auto;max-width:640px;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" style="width:100%;"><tbody><tr><td style="direction:ltr;font-size:0px;padding:64px 24px;text-align:center;"><!--[if mso | IE]><table border="0" cellpadding="0" cellspacing="0" role="presentation"><tr><![endif]--><!--[if mso | IE]><td style="vertical-align:top;width:640px;"><![endif]--><div class="mj-outlook-group-fix mj-column-per-100" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td style="vertical-align:top;padding:0;"><table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"><tbody><tr><td align="center" class="footer" style="font-size:0px;padding:0;word-break:break-word;"><div style="font-family:Inter, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:center;color:#726A6A;"><a href="http://www.example.com:3000" style="font-weight: 500; text-decoration: none;">Spree Test Store</a></div></td></tr><tr><td align="center" class="footer" style="font-size:0px;padding:12px 0 0;word-break:break-word;"><div style="font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;"><a href="mailto:support@example.com">support@example.com</a></div></td></tr><tr><td align="center" style="font-size:0px;padding:20px 0 0;word-break:break-word;"><div style="font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;">&copy; 2026 Spree Test Store</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if mso | IE]></td></tr></table><![endif]--></div></body></html>
+                html: "<!doctype html><html lang=\"en\" dir=\"auto\" xmlns=\"http://www.w3.org/1999/xhtml\"
+                  xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><title></title><!--[if
+                  !mso]><!--><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><!--<![endif]--><meta
+                  http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta
+                  name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<style
+                  type=\"text/css\">\n#outlook a { padding: 0; }\nbody { margin: 0;
+                  padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust:
+                  100%; }\ntable, td { border-collapse: collapse; mso-table-lspace:
+                  0pt; mso-table-rspace: 0pt; }\nimg { border: 0; height: auto; line-height:
+                  100%; outline: none; text-decoration: none; -ms-interpolation-mode:
+                  bicubic; }\np { display: block; margin: 13px 0; }\n</style>\n<!--[if
+                  mso]>\n<noscript>\n<xml>\n<o:OfficeDocumentSettings>\n  <o:AllowPNG/>\n
+                  \ <o:PixelsPerInch>96</o:PixelsPerInch>\n</o:OfficeDocumentSettings>\n</xml>\n</noscript>\n<![endif]-->\n<!--[if
+                  lte mso 11]>\n<style type=\"text/css\">\n.mj-outlook-group-fix {
+                  width:100% !important; }\n</style>\n<![endif]-->\n<style type=\"text/css\">@media
+                  only screen and (min-width:480px) { .mj-column-per-100 { width:100%
+                  !important; max-width:100%; }  }</style><style media=\"screen and
+                  (min-width:480px)\">.moz-text-html .mj-column-per-100 { width:100%
+                  !important; max-width:100%; } </style><style type=\"text/css\">@font-face
+                  { font-family: \"Geist\"; font-style: normal; font-weight: 500 700;
+                  src: url(\"https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2\")
+                  format(\"woff2\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 400 450; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf\")
+                  format(\"truetype\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 500; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf\")
+                  format(\"truetype\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 600; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf\")
+                  format(\"truetype\"); }\n      \n      a { color: #332C2C; }\n      .hero
+                  > table { max-width: 420px; margin: 0 auto; }\n      .note a { color:
+                  #726A6A; word-break: break-all; }\n      .footer a { color: #726A6A;
+                  }\n      .item { width: 100%; background-color: #F0F0F0; border-radius:
+                  16px; margin: 0 0 8px; }\n      .item_image { padding: 8px; width:
+                  96px; }\n      .item_thumb { display: block; width: 80px; height:
+                  auto; border-radius: 12px; }\n      .item_thumb_placeholder { width:
+                  80px; height: 80px; background-color: #E4E4E4; border-radius: 12px;
+                  }\n      .item_info { padding: 8px 16px 8px 8px; }\n      .item_name
+                  { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C;
+                  text-decoration: none; }\n      .item_meta { margin: 2px 0 0; font-size:
+                  13px; line-height: 1.5; color: #726A6A; }\n      .item_amount {
+                  padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap;
+                  }\n      .item_qty { margin: 0; font-size: 13px; line-height: 1.5;
+                  color: #726A6A; }\n      .item_price { margin: 2px 0 0; font-size:
+                  15px; line-height: 1.5; font-weight: 500; color: #332C2C; }\n      .summary
+                  td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A;
+                  }\n      .summary_value { font-size: 15px; font-weight: 500; text-align:
+                  right; white-space: nowrap; color: #332C2C; }\n      .summary_sub
+                  { display: block; font-size: 13px; line-height: 1.5; }\n      .summary_total
+                  td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight:
+                  500; color: #332C2C; }\n      .summary_total .summary_value { font-weight:
+                  600; }\n      .mailer_hero h1 { margin: 0; font-family: Geist, Inter,
+                  Helvetica, Arial, sans-serif; font-size: 40px; line-height: 1.2;
+                  letter-spacing: -0.8px; font-weight: 700; color: #332C2C; }\n      .mailer_hero
+                  p { margin: 12px 0 0; }\n      .mailer_hero .greeting { margin-top:
+                  24px; font-size: 15px; font-weight: 500; color: #332C2C; }\n      .mailer_hero
+                  .sub { margin-top: 24px; font-size: 13px; }\n      @media only screen
+                  and (max-width: 600px) {\n        .heading div { font-size: 32px
+                  !important; letter-spacing: -0.64px !important; }\n      }</style></head><body
+                  style=\"word-spacing:normal;background-color:#FFFFFF;\"><div lang=\"en\"
+                  dir=\"auto\" style=\"background-color:#FFFFFF;\"><!--[if mso | IE]><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  bgcolor=\"#F6F6F6\" align=\"center\" width=\"640\" style=\"width:640px;\"><tr><td
+                  style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"background:#F6F6F6;background-color:#F6F6F6;margin:0px auto;max-width:640px;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  align=\"center\" style=\"background:#F6F6F6;background-color:#F6F6F6;width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:56px 24px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><td width=\"640px\"><![endif]--><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\" align=\"center\" width=\"592\" style=\"width:592px;\"><tr><td
+                  style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:592px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:0 0 32px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:592px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" style=\"font-size:0px;padding:0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:22px;font-weight:700;line-height:1.6;text-align:center;text-transform:uppercase;color:#332C2C;\"><a
+                  href=\"http://www.example.com:3000\" style=\"color: #332C2C; text-decoration:
+                  none;\">Spree Test Store</a></div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr><tr><td
+                  width=\"640px\"><![endif]--><!--[if mso | IE]><table border=\"0\"
+                  cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" align=\"center\"
+                  width=\"592\" style=\"width:592px;\"><tr><td style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:592px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:0;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:592px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" style=\"font-size:0px;padding:0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.6;text-align:center;color:#726A6A;\">Hi
+                  Ann</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  align=\"center\" width=\"640\" style=\"width:640px;\"><tr><td style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:640px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:64px 24px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:640px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" class=\"footer\"
+                  style=\"font-size:0px;padding:0;word-break:break-word;\"><div style=\"font-family:Inter,
+                  Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:center;color:#726A6A;\"><a
+                  href=\"http://www.example.com:3000\" style=\"font-weight: 500; text-decoration:
+                  none;\">Spree Test Store</a></div></td></tr><tr><td align=\"center\"
+                  class=\"footer\" style=\"font-size:0px;padding:12px 0 0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;\"><a
+                  href=\"mailto:support@example.com\">support@example.com</a></div></td></tr><tr><td
+                  align=\"center\" style=\"font-size:0px;padding:20px 0 0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;\">&copy;
+                  2026 Spree Test Store</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--></div></body></html>"
                 text: |
                   Spree Test Store (http://www.example.com:3000)
 
@@ -8320,6 +8401,20 @@ paths:
                     support_email: support@example.com
                     logo_url:
                     logo_width:
+                    branding:
+                      background_color: "#FFFFFF"
+                      card_color: "#F6F6F6"
+                      text_color: "#726A6A"
+                      heading_color: "#332C2C"
+                      accent_color:
+                      link_color: "#332C2C"
+                      button_color: "#FFFFFF"
+                      button_text_color: "#1F2222"
+                      button_border: '1px solid #E8E9E9'
+                      font: inter
+                      font_family: Inter, Helvetica, Arial, sans-serif
+                      heading_font_family: Geist, Inter, Helvetica, Arial, sans-serif
+                      font_url:
                   locale: en
                   user:
                     first_name: Ann
@@ -8351,6 +8446,32 @@ paths:
                   type: string
                   example: spree.order_mailer.confirm_email
                   description: For the layout or a partial, the email to show it in
+                branding:
+                  type: object
+                  description: Unsaved colors and font to preview, named like the
+                    store's `preferred_email_*` settings without the prefix
+                  properties:
+                    accent_color:
+                      type: string
+                      example: "#FF5500"
+                    background_color:
+                      type: string
+                    card_color:
+                      type: string
+                    text_color:
+                      type: string
+                    heading_color:
+                      type: string
+                    font:
+                      type: string
+                      enum:
+                      - inter
+                      - system
+                      - helvetica
+                      - georgia
+                      - roboto
+                      - lato
+                      - merriweather
   "/api/v3/admin/email_templates/{email_template_id}/test_email":
     parameters:
     - name: email_template_id
@@ -24032,6 +24153,12 @@ paths:
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 preferred_send_consumer_transactional_emails: true
+                preferred_email_accent_color:
+                preferred_email_background_color:
+                preferred_email_card_color:
+                preferred_email_text_color:
+                preferred_email_heading_color:
+                preferred_email_font:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
@@ -24365,6 +24492,12 @@ paths:
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 preferred_send_consumer_transactional_emails: true
+                preferred_email_accent_color:
+                preferred_email_background_color:
+                preferred_email_card_color:
+                preferred_email_text_color:
+                preferred_email_heading_color:
+                preferred_email_font:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
@@ -49655,6 +49788,32 @@ components:
           nullable: true
         preferred_send_consumer_transactional_emails:
           type: boolean
+        preferred_email_accent_color:
+          type: string
+          nullable: true
+        preferred_email_background_color:
+          type: string
+          nullable: true
+        preferred_email_card_color:
+          type: string
+          nullable: true
+        preferred_email_text_color:
+          type: string
+          nullable: true
+        preferred_email_heading_color:
+          type: string
+          nullable: true
+        preferred_email_font:
+          type: string
+          nullable: true
+          enum:
+          - inter
+          - system
+          - helvetica
+          - georgia
+          - roboto
+          - lato
+          - merriweather
         preferred_admin_locale:
           type: string
           nullable: true
@@ -49783,6 +49942,12 @@ components:
       - customer_support_email
       - new_order_notifications_email
       - preferred_send_consumer_transactional_emails
+      - preferred_email_accent_color
+      - preferred_email_background_color
+      - preferred_email_card_color
+      - preferred_email_text_color
+      - preferred_email_heading_color
+      - preferred_email_font
       - preferred_admin_locale
       - preferred_timezone
       - preferred_weight_unit

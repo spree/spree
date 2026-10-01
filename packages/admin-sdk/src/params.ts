@@ -106,6 +106,18 @@ export interface StoreUpdateParams {
   new_order_notifications_email?: string | null
   /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
   preferred_send_consumer_transactional_emails?: boolean
+  /** Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with. */
+  preferred_email_accent_color?: string | null
+  /** Customer email page background, as `#RRGGBB`. */
+  preferred_email_background_color?: string | null
+  /** Customer email card behind the content, as `#RRGGBB`. */
+  preferred_email_card_color?: string | null
+  /** Customer email body text, as `#RRGGBB`. */
+  preferred_email_text_color?: string | null
+  /** Customer email headings and emphasized text, as `#RRGGBB`. */
+  preferred_email_heading_color?: string | null
+  /** Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`. */
+  preferred_email_font?: string | null
   /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
   mailer_logo?: string | null
   /** Where prices come from: a registered provider key, or `internal`. */
@@ -3144,6 +3156,15 @@ export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams 
   record_id?: string
   /** For the layout or a partial, the email to show it in. */
   email_key?: string
+  /** Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix. */
+  branding?: {
+    accent_color?: string | null
+    background_color?: string | null
+    card_color?: string | null
+    text_color?: string | null
+    heading_color?: string | null
+    font?: string | null
+  }
 }
 
 export interface EmailTemplateRestoreParams extends EmailTemplateLanguageParams {

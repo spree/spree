@@ -22,7 +22,10 @@ Rails.application.config.after_initialize do
   Spree::Emails::StoreSerializer.typelize(
     id: :string, name: :string, address: [:string, nullable: true], mail_from_address: :string, default_currency: :string,
     default_locale: :string, url: :string, support_email: :string, logo_url: [:string, nullable: true],
-    logo_width: [:number, nullable: true]
+    logo_width: [:number, nullable: true],
+    branding: '{ background_color: string; card_color: string; text_color: string; heading_color: string; ' \
+              'accent_color: string | null; link_color: string; button_color: string; button_text_color: string; ' \
+              'button_border: string; font: string; font_family: string; heading_font_family: string; font_url: string | null }'
   )
 
   # Staff emails are not editable, so their data has no type.
