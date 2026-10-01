@@ -323,6 +323,13 @@
       "title": "Einnahmen"
     }
   },
+  "errors": {
+    "forbidden_description": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
+    "forbidden_title": "Nicht berechtigt",
+    "not_found_description": "Die gesuchte Seite existiert nicht.",
+    "not_found_title": "Seite nicht gefunden",
+    "page_failed_title": "Diese Seite konnte nicht dargestellt werden"
+  },
   "forgot_password": {
     "back_to_login": "Zurück zur Anmeldung",
     "email": "E-Mail",

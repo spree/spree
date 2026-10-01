@@ -90,6 +90,8 @@ defineDashboardPlugin({
 
 `path` is **relative** to `/$storeId` — the dispatcher prepends the prefix at match time. So `/reports` matches the URL `/store_xyz/reports`. The leading `/` is required.
 
+The [seller panel](/developer/how-to/build-a-marketplace#customizing-it) has the same dispatcher, scoped by seller instead of store: `path` is relative to `/$sellerId`, and the page receives the seller's id in its `storeId` prop. The registry is the only way to add a page there — the seller panel does not mount packaged plugins' file routes.
+
 ## Path parameters
 
 TanStack-Router-style `$name` tokens match a single non-empty segment:

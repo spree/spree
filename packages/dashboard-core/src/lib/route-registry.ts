@@ -4,8 +4,9 @@ import type { SubjectName } from './permissions'
 
 /**
  * Dashboard route contributed by a plugin. Mounted under the dashboard's
- * `/_authenticated/$storeId/_plugins/$` catch-all, which reads this registry
- * at render time and dispatches based on the splat path.
+ * `/_authenticated/$storeId/$` catch-all (`/_authenticated/$sellerId/$` in
+ * the seller panel), which reads this registry at render time and dispatches
+ * based on the splat path.
  *
  * Path patterns use TanStack-Router-style param tokens (`$brandId`) inside the
  * plugin's namespace. The dashboard strips the `/$storeId/` prefix before
@@ -31,7 +32,8 @@ export interface RouteEntry {
    * - `params`: extracted path params (e.g. matching `/brands/$brandId`
    *   against `/brands/br_abc` yields `{ brandId: 'br_abc' }`)
    * - `storeId`: the current store — every plugin route is implicitly scoped
-   *   under `/$storeId/...`
+   *   under `/$storeId/...`. In the seller panel, where routes are scoped
+   *   under `/$sellerId/...`, this carries the current seller's id instead.
    * - `searchParams`: the URL search-state object from TanStack Router. Use
    *   this with `<ResourceTable searchParams={searchParams} ... />` so
    *   filter/sort/pagination round-trip through the URL.

@@ -323,6 +323,13 @@
       "title": "الأرباح"
     }
   },
+  "errors": {
+    "forbidden_description": "ليس لديك إذن لعرض هذه الصفحة.",
+    "forbidden_title": "غير مصرح",
+    "not_found_description": "الصفحة التي تبحث عنها غير موجودة.",
+    "not_found_title": "الصفحة غير موجودة",
+    "page_failed_title": "تعذّر عرض هذه الصفحة"
+  },
   "forgot_password": {
     "back_to_login": "العودة إلى تسجيل الدخول",
     "email": "البريد الإلكتروني",

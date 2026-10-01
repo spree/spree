@@ -11,14 +11,16 @@
 // resource, the same layout the seller panel uses internally. Translations go
 // in locales/ and merge in with `i18n.addResourceBundle`.
 //
-// Example — add a payouts page and drop the built-in team screen:
+// Example — add a reviews page and drop the built-in team screen. A page
+// needs both a `routes` entry and a nav entry with the same path:
 //
 //   import { defineDashboardPlugin } from '@spree/seller-dashboard'
-//   import { PayoutsPage } from './pages/payouts'
+//   import { ReviewsPage } from './pages/reviews'
 //
 //   defineDashboardPlugin({
+//     routes: [{ key: 'reviews', path: '/reviews', component: ReviewsPage }],
 //     nav: {
-//       add: [{ key: 'payouts', label: 'Payouts', path: '/payouts', position: 300 }],
+//       add: [{ key: 'reviews', label: 'Reviews', path: '/reviews', position: 300 }],
 //       remove: ['team'],
 //     },
 //     slots: {

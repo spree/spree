@@ -702,11 +702,12 @@ By default the seller panel, same as dashboard is build with Spree docker image 
 
 ```tsx apps/seller-dashboard/src/plugins.ts
 import { defineDashboardPlugin } from '@spree/seller-dashboard'
-import { PayoutsPage } from './pages/payouts'
+import { ReviewsPage } from './pages/reviews'
 
 defineDashboardPlugin({
+  routes: [{ key: 'reviews', path: '/reviews', component: ReviewsPage }],
   nav: {
-    add: [{ key: 'payouts', label: 'Payouts', path: '/payouts', position: 300 }],
+    add: [{ key: 'reviews', label: 'Reviews', path: '/reviews', position: 300 }],
     remove: ['team'],
   },
   slots: {
@@ -721,12 +722,16 @@ Import everything from `@spree/seller-dashboard` — it re-exports both the fram
 |---|---|
 | Add or remove a nav entry | `nav.add` / `nav.remove` in `defineDashboardPlugin` |
 | Inject a widget into a built-in page | A [slot](/developer/dashboard/customization/slots) |
-| Add a page | A [route](/developer/dashboard/customization/routes) plus a nav entry |
+| Add a page | A `routes` entry plus a nav entry with the same path, as in the example above |
 | Add a table column | The [table registry](/developer/dashboard/customization/tables) |
 | Change wording | [Translations](/developer/dashboard/customization/translations) merged with `i18n.addResourceBundle` |
 | Install a third-party plugin | `npm add <plugin>` and restart — the Vite plugin picks it up from your dependencies |
 
 The seller panel currently exposes just two slots, both on its team page: `seller.team.actions` and `seller.team.after`. (`seller.form_main` and `seller.form_sidebar` sound related but belong to the *admin* dashboard's seller detail page — they are for the operator's view of a seller, not the seller's own.) See the [slots catalog](/developer/dashboard/slots-catalog) for their contexts. To put a widget anywhere else in the panel, add a route rather than looking for a slot that is not there yet.
+
+<Note>
+The seller panel renders pages registered through `routes` in `defineDashboardPlugin` — the [route registry](/developer/dashboard/customization/routes). It does not mount the route files a packaged plugin declares with `spree.dashboard.routes`; those only reach the admin dashboard. Every page path is relative to the seller, so `/reviews` opens at `/sellers/<seller id>/reviews`, and the page component receives the seller's id in its `storeId` prop.
+</Note>
 
 <Note>
 **White-labelling is theming and copy, not a branding config object.** There is no logo or brand-name setting to fill in. You restyle by owning the Tailwind layer in your host app, and you re-word by overriding translation keys. Both are real customization paths — there is simply no shortcut that skips them.

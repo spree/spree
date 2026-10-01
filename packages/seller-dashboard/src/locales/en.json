@@ -323,6 +323,13 @@
       "empty": "No earnings yet."
     }
   },
+  "errors": {
+    "forbidden_description": "You don’t have permission to view this page.",
+    "forbidden_title": "Not authorized",
+    "not_found_description": "The page you’re looking for doesn’t exist.",
+    "not_found_title": "Page not found",
+    "page_failed_title": "This page failed to render"
+  },
   "forgot_password": {
     "back_to_login": "Back to sign in",
     "email": "Email",

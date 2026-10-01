@@ -323,6 +323,13 @@
       "title": "收入"
     }
   },
+  "errors": {
+    "forbidden_description": "您没有权限查看此页面。",
+    "forbidden_title": "未授权",
+    "not_found_description": "您访问的页面不存在。",
+    "not_found_title": "页面未找到",
+    "page_failed_title": "此页面渲染失败"
+  },
   "forgot_password": {
     "back_to_login": "返回登录",
     "email": "邮箱",

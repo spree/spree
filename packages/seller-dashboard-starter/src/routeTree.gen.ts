@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './../node_modules/@spree/seller-dashb
 import { Route as SettingsRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/settings'
 import { Route as ProfileRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/profile'
 import { Route as OnboardingRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/onboarding'
+import { Route as SplatRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/$'
 import { Route as SettingsIndexRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/settings/index'
 import { Route as ProductsIndexRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/products/index'
 import { Route as PayoutsIndexRouteImport } from './../node_modules/@spree/seller-dashboard/src/routes/_authenticated/$sellerId/payouts/index'
@@ -88,6 +89,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => authenticatedSellerIdRoute,
+} as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => authenticatedSellerIdRoute,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof resetPasswordRoute
   '/$sellerId': typeof authenticatedSellerIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
+  '/$sellerId/$': typeof SplatRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId/settings': typeof SettingsRouteWithChildren
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof resetPasswordRoute
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/': typeof authenticatedIndexRoute
+  '/$sellerId/$': typeof SplatRoute
   '/$sellerId/onboarding': typeof OnboardingRoute
   '/$sellerId/profile': typeof ProfileRoute
   '/$sellerId': typeof IndexRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/_authenticated/$sellerId': typeof authenticatedSellerIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/_authenticated/': typeof authenticatedIndexRoute
+  '/_authenticated/$sellerId/$': typeof SplatRoute
   '/_authenticated/$sellerId/onboarding': typeof OnboardingRoute
   '/_authenticated/$sellerId/profile': typeof ProfileRoute
   '/_authenticated/$sellerId/settings': typeof SettingsRouteWithChildren
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/$sellerId'
     | '/accept-invitation/$invitationId'
+    | '/$sellerId/$'
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId/settings'
@@ -273,6 +283,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/accept-invitation/$invitationId'
     | '/'
+    | '/$sellerId/$'
     | '/$sellerId/onboarding'
     | '/$sellerId/profile'
     | '/$sellerId'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$sellerId'
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
+    | '/_authenticated/$sellerId/$'
     | '/_authenticated/$sellerId/onboarding'
     | '/_authenticated/$sellerId/profile'
     | '/_authenticated/$sellerId/settings'
@@ -404,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/$sellerId/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof authenticatedSellerIdRoute
+    }
+    '/_authenticated/$sellerId/$': {
+      id: '/_authenticated/$sellerId/$'
+      path: '/$'
+      fullPath: '/$sellerId/$'
+      preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof authenticatedSellerIdRoute
     }
     '/_authenticated/$sellerId/settings/': {
@@ -530,6 +549,7 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 )
 
 interface authenticatedSellerIdRouteChildren {
+  SplatRoute: typeof SplatRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRouteWithChildren
@@ -545,6 +565,7 @@ interface authenticatedSellerIdRouteChildren {
 }
 
 const authenticatedSellerIdRouteChildren: authenticatedSellerIdRouteChildren = {
+  SplatRoute: SplatRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRouteWithChildren,

@@ -323,6 +323,13 @@
       "title": "Revenus"
     }
   },
+  "errors": {
+    "forbidden_description": "Vous n’avez pas la permission de voir cette page.",
+    "forbidden_title": "Non autorisé",
+    "not_found_description": "La page que vous recherchez n’existe pas.",
+    "not_found_title": "Page introuvable",
+    "page_failed_title": "Le rendu de cette page a échoué"
+  },
   "forgot_password": {
     "back_to_login": "Retour à la connexion",
     "email": "E-mail",

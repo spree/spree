@@ -323,6 +323,13 @@
       "title": "Zarobki"
     }
   },
+  "errors": {
+    "forbidden_description": "Nie masz uprawnień do wyświetlenia tej strony.",
+    "forbidden_title": "Brak uprawnień",
+    "not_found_description": "Strona, której szukasz, nie istnieje.",
+    "not_found_title": "Nie znaleziono strony",
+    "page_failed_title": "Nie udało się wyświetlić tej strony"
+  },
   "forgot_password": {
     "back_to_login": "Wróć do logowania",
     "email": "E-mail",
