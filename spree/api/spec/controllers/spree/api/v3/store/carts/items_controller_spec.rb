@@ -157,6 +157,14 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
 
         expect(response).to have_http_status(:not_found)
       end
+
+      it "refuses a product already unpublished from the cart's channel" do
+        product.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
