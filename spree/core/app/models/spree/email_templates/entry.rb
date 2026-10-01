@@ -34,7 +34,7 @@ module Spree
       # @param locale [String]
       # @return [Spree::EmailTemplates::Entry]
       # @raise [ActiveRecord::RecordNotFound] when no editable template has that id
-      def self.find(store, id, locale: Spree::EmailTemplate::ANY_LOCALE)
+      def self.for_id(store, id, locale: Spree::EmailTemplate::ANY_LOCALE)
         definition = Spree.editable_email_templates[id.to_s.tr('.', '/')]
         raise ActiveRecord::RecordNotFound, "Couldn't find email template #{id}" unless definition
 

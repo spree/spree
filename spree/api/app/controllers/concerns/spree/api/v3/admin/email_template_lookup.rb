@@ -21,7 +21,7 @@ module Spree
           attr_reader :email_template
 
           def load_email_template
-            @email_template = Spree::EmailTemplates::Entry.find(
+            @email_template = Spree::EmailTemplates::Entry.for_id(
               current_store, params[:email_template_id] || params[:id], locale: language
             )
           end

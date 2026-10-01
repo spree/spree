@@ -7402,41 +7402,19 @@ paths:
             application/json:
               example:
                 data:
-                - id: spree.admin_user_mailer.password_reset_email
-                  key: spree/admin_user_mailer/password_reset_email
-                  subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                    | t }}"
-                  body: |
-                    {% assign name = user.first_name | default: user.email %}
-                    <mj-section>
-                      <mj-column css-class="hero">
-                        <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                        <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                        <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                        <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                        <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                        <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                      </mj-column>
-                    </mj-section>
+                - id: spree.order_mailer.confirm_email
+                  key: spree/order_mailer/confirm_email
+                  subject: Order {{ order.number }} confirmed
+                  body: "<mj-section><mj-column><mj-text>Thanks for your order, {{
+                    order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                   language: any
                   customized_languages: []
                   kind: email
                   customized: false
                   published_at:
-                  default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                    | t }}"
-                  default_body: |
-                    {% assign name = user.first_name | default: user.email %}
-                    <mj-section>
-                      <mj-column css-class="hero">
-                        <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                        <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                        <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                        <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                        <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                        <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                      </mj-column>
-                    </mj-section>
+                  default_subject: Order {{ order.number }} confirmed
+                  default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                    {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                   default_changed: false
                   base_subject:
                   base_body:
@@ -7687,48 +7665,27 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
-                subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
                 language: any
                 customized_languages: []
                 kind: email
                 customized: false
                 published_at:
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
                 draft:
                   id: etdr_UkLWZg9DAJ
                   subject: Reset {{ store.name }}
-                  body: "<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>"
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
                   lock_version: 0
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -7806,41 +7763,19 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
-                subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
                 language: any
                 customized_languages: []
                 kind: email
                 customized: false
                 published_at:
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: false
                 base_subject:
                 base_body:
@@ -7912,48 +7847,27 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
-                subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
                 language: any
                 customized_languages: []
                 kind: email
                 customized: false
                 published_at:
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: false
                 base_subject:
                 base_body:
                 draft:
                   id: etdr_UkLWZg9DAJ
-                  subject: Reset your {{ store.name }} password
-                  body: "<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>"
+                  subject: Your order {{ order.number }} is confirmed
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
                   lock_version: 0
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -7985,11 +7899,11 @@ paths:
                   example: any
                 subject:
                   type: string
-                  example: Reset your {{ store.name }} password
+                  example: Your order {{ order.number }} is confirmed
                 body:
                   type: string
-                  example: "<mj-section><mj-column><mj-text>Hi {{ user.first_name
-                    }}</mj-text></mj-column></mj-section>"
+                  example: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
                 lock_version:
                   type: integer
                   example: 0
@@ -8051,41 +7965,19 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
-                subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
                 language: any
                 customized_languages: []
                 kind: email
                 customized: false
                 published_at:
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: false
                 base_subject:
                 base_body:
@@ -8150,30 +8042,20 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
                 subject: Reset {{ store.name }}
-                body: "<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>"
+                body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>"
                 language: any
                 customized_languages:
                 - any
                 kind: email
                 customized: true
                 published_at: '2026-01-15T12:00:00Z'
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
@@ -8187,11 +8069,12 @@ paths:
               example:
                 error:
                   code: email_template_invalid
-                  message: 'Liquid error (line 1): undefined variable nickname'
+                  message: 'Liquid error (line 1): undefined variable nubmer'
                   details:
                     problems:
-                    - email: spree.admin_user_mailer.password_reset_email
-                      message: 'Liquid error (line 1): undefined variable nickname'
+                    - email: spree.order_mailer.confirm_email
+                      locale: any
+                      message: 'Liquid error (line 1): undefined variable nubmer'
                       line: 1
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
@@ -8371,8 +8254,8 @@ paths:
                   width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
                   border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
                   width=\"100%\"><tbody><tr><td align=\"center\" style=\"font-size:0px;padding:0;word-break:break-word;\"><div
-                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.6;text-align:center;color:#726A6A;\">Hi
-                  Ann</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.6;text-align:center;color:#726A6A;\">Thanks,
+                  Ann Lee!</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
                   mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
                   mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
                   mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]><table
@@ -8403,14 +8286,14 @@ paths:
                 text: |
                   Spree Test Store (http://www.example.com:3000)
 
-                  Hi Ann
+                  Thanks, Ann Lee!
 
                   Spree Test Store (http://www.example.com:3000)
 
                   support@example.com
 
                   © 2026 Spree Test Store
-                email_key: spree.admin_user_mailer.password_reset_email
+                email_key: spree.order_mailer.confirm_email
                 variables:
                   store:
                     id: store_UkLWZg9DAJ
@@ -8441,6 +8324,9 @@ paths:
                   user:
                     first_name: Ann
                     email: ann@example.com
+                  order:
+                    number: R123456789
+                    customer_name: Ann Lee
                   reset_url: http://www.example.com:3000/reset-password?token=preview
               schema:
                 "$ref": "#/components/schemas/EmailTemplatePreview"
@@ -8455,11 +8341,11 @@ paths:
                   example: any
                 subject:
                   type: string
-                  example: Reset your {{ store.name }} password
+                  example: Your order {{ order.number }} is confirmed
                 body:
                   type: string
-                  example: "<mj-section><mj-column><mj-text>Hi {{ user.first_name
-                    }}</mj-text></mj-column></mj-section>"
+                  example: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
                 record_id:
                   type: string
                   example: or_m3Rp9wXz
@@ -8508,13 +8394,10 @@ paths:
       - Email Templates
       security:
       - bearer_auth: []
-      description: |-
+      description: |
         Sends the template, rendered as the preview renders it, to the
         signed-in admin, and never to another address: the sample data comes
         from a real customer's records. Takes the same body as the preview.
-
-
-        **Required scope:** `write_email_templates` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
         label: Spree Admin SDK
@@ -8526,7 +8409,8 @@ paths:
             secretKey: 'sk_xxx',
           })
 
-          // Always sent to the signed-in admin.
+          // Sent to the signed-in admin, so this needs a client created with `jwtToken`;
+          // a secret key has no inbox and is refused.
           const { sent_to } = await client.emailTemplates.sendTest('spree.order_mailer.confirm_email', {
             body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
           })
@@ -8739,8 +8623,8 @@ paths:
           content:
             application/json:
               example:
-                id: spree.admin_user_mailer.password_reset_email
-                key: spree/admin_user_mailer/password_reset_email
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
                 subject: Reset {{ store.name }}
                 body: "<mj-section><mj-column><mj-text>Hello</mj-text></mj-column></mj-section>"
                 language: any
@@ -8749,27 +8633,17 @@ paths:
                 kind: email
                 customized: true
                 published_at: '2026-01-15T12:00:00Z'
-                default_subject: "{{ store.name }} {{ 'admin_user_mailer.password_reset_email.subject'
-                  | t }}"
-                default_body: |
-                  {% assign name = user.first_name | default: user.email %}
-                  <mj-section>
-                    <mj-column css-class="hero">
-                      <mj-text mj-class="heading">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-text>
-                      <mj-text mj-class="greeting">{{ 'admin_user_mailer.password_reset_email.greeting' | t: name: name }}</mj-text>
-                      <mj-text mj-class="lead">{{ 'admin_user_mailer.password_reset_email.instructions' | t: store_name: store.name }}</mj-text>
-                      <mj-button href="{{ reset_url }}">{{ 'admin_user_mailer.password_reset_email.action' | t }}</mj-button>
-                      <mj-text mj-class="note">{{ 'admin_user_mailer.password_reset_email.expiry_notice' | t }}</mj-text>
-                      <mj-text mj-class="note" padding="16px 0 0">{{ 'admin_user_mailer.password_reset_email.ignore_notice' | t }}</mj-text>
-                    </mj-column>
-                  </mj-section>
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
                 draft:
                   id: etdr_UkLWZg9DAJ
                   subject: Reset {{ store.name }}
-                  body: "<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>"
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
                   lock_version: 0
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
