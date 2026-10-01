@@ -5,13 +5,14 @@ Rake::Task.define_task(:environment) unless Rake::Task.task_defined?(:environmen
 load SpreeStripe::Engine.root.join('lib', 'tasks', 'migrate_webhook_keys.rake')
 
 describe SpreeStripe::WebhookKeysMigrator do
-
   let(:connection) { ActiveRecord::Base.connection }
   let(:gateway) { create(:stripe_gateway) }
 
-  # The legacy tables are gone from 6.0 schemas, so the example builds them in
-  # the shape a 5.x install left behind.
-  before do
+  # The legacy tables are gone from 6.0 schemas, so they are built in the
+  # shape a 5.x install left behind — once, outside the example's transaction,
+  # because MySQL commits any open transaction when a table is created.
+  before(:all) do
+    connection = ActiveRecord::Base.connection
     connection.create_table(described_class::LEGACY_KEYS_TABLE, force: true) do |t|
       t.string :stripe_id
       t.string :signing_secret
@@ -22,17 +23,19 @@ describe SpreeStripe::WebhookKeysMigrator do
       t.bigint :webhook_key_id
       t.timestamps
     end
+  end
 
+  after(:all) do
+    ActiveRecord::Base.connection.drop_table described_class::LEGACY_KEYS_TABLE, if_exists: true
+    ActiveRecord::Base.connection.drop_table described_class::LEGACY_JOIN_TABLE, if_exists: true
+  end
+
+  before do
     key = described_class.new.send(:key_model).create!(stripe_id: 'we_legacy', signing_secret: 'whsec_legacy')
     connection.insert(
       "INSERT INTO #{described_class::LEGACY_JOIN_TABLE} (payment_method_id, webhook_key_id, created_at, updated_at) " \
       "VALUES (#{gateway.id}, #{key.id}, #{connection.quote(Time.current)}, #{connection.quote(Time.current)})"
     )
-  end
-
-  after do
-    connection.drop_table described_class::LEGACY_KEYS_TABLE, if_exists: true
-    connection.drop_table described_class::LEGACY_JOIN_TABLE, if_exists: true
   end
 
   it 'moves the signing secret into the encrypted column, never into preferences' do
