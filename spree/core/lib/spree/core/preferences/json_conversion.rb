@@ -15,19 +15,15 @@ module Spree
         ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, ActiveSupport::HashWithIndifferentAccess
       ].freeze
 
-      # Tiers move from a hash keyed by threshold to a list of objects, because
-      # a JSON object key is always a string.
-      TIERED_CALCULATORS = %w[Spree::Calculator::TieredPercent Spree::Calculator::TieredFlatRate].freeze
-
       class UnreadableRowError < StandardError; end
 
-      # Whether a row's class is a tiered calculator, or an application's
-      # subclass of one.
+      # Whether a row's class keeps a tier ladder, which moves from a hash keyed
+      # by threshold to a list, because a JSON object key is always a string.
       #
       # @param model [Class, nil] the class the row's `type` names
       # @return [Boolean]
       def self.tiered_calculator?(model)
-        model.is_a?(Class) && TIERED_CALCULATORS.any? { |name| model <= name.constantize }
+        model.is_a?(Class) && model.include?(Spree::Calculator::Tiers)
       end
 
       # @param connection [ActiveRecord::ConnectionAdapters::AbstractAdapter]
@@ -156,7 +152,7 @@ module Spree
         return unless tiers.is_a?(Hash) && self.class.tiered_calculator?(model)
 
         preferences['tiers'] = tiers.map { |threshold, value| { 'threshold' => threshold.to_s, 'value' => value.to_s } }.
-                               sort_by { |tier| BigDecimal(tier['threshold'], exception: false) || 0 }
+                               sort_by { |tier| Spree::Calculator::Tiers.decimal(tier['threshold']) || 0 }
       end
 
       def extract_secrets(preferences, type, table, id)

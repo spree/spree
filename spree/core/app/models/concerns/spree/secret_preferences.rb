@@ -35,12 +35,6 @@ module Spree
       end
     end
 
-    class_methods do
-      def stores_secret_preferences?
-        true
-      end
-    end
-
     # Both columns as they should be stored, when `preferences` holds a secret
     # — one assigned as part of a whole hash, or one the upgrade has not moved
     # yet. A secret found there is the newer value and wins.

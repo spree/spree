@@ -37,7 +37,7 @@ module Spree
       # @param amount [Numeric]
       # @return [BigDecimal, nil] nil when the amount reaches no tier
       def tier_value_for(amount)
-        tier_pairs.reverse.detect { |threshold, _| amount >= threshold }&.last
+        tier_pairs.reverse_each.detect { |threshold, _| amount >= threshold }&.last
       end
 
       private

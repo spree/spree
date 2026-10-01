@@ -285,10 +285,7 @@ module Spree
     end
 
     def public_preferences
-      values = preference_values
-      public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = values[key]
-      end
+      public_preference_keys.index_with { |key| get_preference(key) }
     end
 
     # @deprecated Use {#storefront_visible?}; removed in 6.1.
