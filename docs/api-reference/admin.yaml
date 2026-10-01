@@ -8406,7 +8406,7 @@ paths:
 
           const client = createAdminClient({
             baseUrl: 'https://your-store.com',
-            secretKey: 'sk_xxx',
+            jwtToken: 'eyJhbGciOi...',
           })
 
           // Sent to the signed-in admin, so this needs a client created with `jwtToken`;

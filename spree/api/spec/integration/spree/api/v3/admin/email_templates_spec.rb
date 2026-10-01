@@ -349,7 +349,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         from a real customer's records. Takes the same body as the preview.
       DESC
 
-      admin_sdk_example 'email-templates/send-test'
+      admin_sdk_example 'email-templates/send-test', signed_in: true
 
       include_context 'with admin auth parameters'
       parameter name: :body, in: :body, schema: {
