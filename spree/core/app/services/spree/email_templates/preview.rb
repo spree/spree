@@ -39,7 +39,6 @@ module Spree
       # @return [Spree::Emails::RenderedEmail]
       # @raise [Spree::EmailTemplates::NoSampleRecord] when the store has no record to build the sample from
       def call
-        check_visible_text if @strict && !@body.nil?
         sample = email.sample_class.new(store: @store, record_id: @record_id)
 
         in_locale do
@@ -62,17 +61,6 @@ module Spree
       end
 
       private
-
-      # Text a merchant types between components would be rendered invisible;
-      # saying where is kinder than a preview in which nothing changes.
-      def check_visible_text
-        hidden = Spree::Emails::InvisibleTextCheck.call(@body, top_level_shown: definition.email?).first
-        return unless hidden
-
-        error = Spree::EmailTemplates::InvisibleText.new(Spree.t('email_templates.invisible_text', text: hidden[:text]))
-        error.line_number = hidden[:line]
-        raise error
-      end
 
       def definition
         Spree.editable_email_templates[@key] || raise(ArgumentError, "#{@key} is not an editable email template")
