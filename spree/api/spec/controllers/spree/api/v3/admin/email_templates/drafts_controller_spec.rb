@@ -55,5 +55,14 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::DraftsController, type: :c
       expect(json_response['draft']).to be_nil
       expect(store.email_template_drafts.count).to eq(0)
     end
+
+    it 'keeps with 409 a draft saved after the one the admin saw' do
+      create(:email_template_draft, store: store, key: editable_key).update!(body: 'Newer')
+
+      delete :destroy, params: { email_template_id: id, lock_version: 0 }, as: :json
+
+      expect(response).to have_http_status(:conflict)
+      expect(store.email_template_drafts.count).to eq(1)
+    end
   end
 end

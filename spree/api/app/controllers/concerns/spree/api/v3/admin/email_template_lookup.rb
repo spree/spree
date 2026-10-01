@@ -52,6 +52,21 @@ module Spree
             arguments
           end
 
+          # Samples show a real record of the store (the latest order, a
+          # company), so previewing one needs permission to read it.
+          def authorize_sample_data!
+            sample = build_preview.email.sample_class
+            missing = Array(sample.try(:required_permissions)).reject { |key| holds_permission?(key) }
+            return if missing.empty?
+
+            render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+              message: Spree.t('email_templates.sample_needs_permission', permissions: missing.to_sentence),
+              status: :forbidden,
+              details: { required_scope: missing.first }
+            )
+          end
+
           def build_preview
             Spree::EmailTemplates::Preview.new(store: current_store, key: email_template.key, strict: true, **preview_arguments)
           end
@@ -67,9 +82,9 @@ module Spree
             )
           end
 
+          # Attributed to the template being edited, whose lines the editor marks.
           def render_render_error(error)
-            email = params[:email_key].presence || email_template.id
-            render_template_problems([{ email: email.to_s, message: error.message, line: error.try(:line_number) }])
+            render_template_problems([{ email: email_template.id, message: error.message, line: error.try(:line_number) }])
           end
 
           def render_no_sample(error)

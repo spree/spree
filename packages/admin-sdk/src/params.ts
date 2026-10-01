@@ -3140,6 +3140,11 @@ export type EmailTemplateLanguageParams = {
   language?: string
 }
 
+export type EmailTemplateVersionParams = EmailTemplateLanguageParams & {
+  /** The draft's `lock_version` as last seen. A draft saved since is refused with 409. */
+  lock_version?: number
+}
+
 export interface EmailTemplateDraftParams extends EmailTemplateLanguageParams {
   subject?: string | null
   body?: string

@@ -13,6 +13,12 @@ module Spree
           nil
         end
 
+        # @return [Array<String>] the permission keys a caller needs to see this
+        #   sample, since it shows a real record's data
+        def self.required_permissions
+          record_type ? %w[read_orders] : []
+        end
+
         attr_reader :store, :record_id
 
         # @param store [Spree::Store]

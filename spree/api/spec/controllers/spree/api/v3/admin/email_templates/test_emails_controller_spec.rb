@@ -19,6 +19,16 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::TestEmailsController, type
     expect(json_response['sent_to']).to eq(admin_user.email)
   end
 
+  it 'delivers it, with unsaved branding' do
+    perform_enqueued_jobs do
+      post :create, params: { email_template_id: id, branding: { card_color: '#123456' } }, as: :json
+    end
+
+    delivered = ActionMailer::Base.deliveries.last
+    expect(delivered.to).to eq([admin_user.email])
+    expect(delivered.html_part.body.to_s).to include('#123456')
+  end
+
   it 'sends nothing for a template that does not render' do
     expect do
       post :create, params: { email_template_id: id, body: '{{ user.nickname }}' }, as: :json

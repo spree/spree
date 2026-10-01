@@ -30,7 +30,11 @@ module Spree
             def destroy
               authorize! :update, Spree::EmailTemplate
 
-              current_store.email_template_drafts.for_key(email_template.key, language).destroy_all
+              result = Spree.email_template_discard_draft_workflow.call(
+                store: current_store, key: email_template.key, locale: language, lock_version: params[:lock_version].presence
+              )
+              return render_stale_draft if result.error&.value == :stale
+
               render json: serialize_email_template(reload: true)
             end
           end

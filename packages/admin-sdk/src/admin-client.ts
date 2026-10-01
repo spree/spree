@@ -269,6 +269,7 @@ import type {
   EmailTemplateLanguageParams,
   EmailTemplatePreviewParams,
   EmailTemplateRestoreParams,
+  EmailTemplateVersionParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
   ExchangeReceiveParams,
@@ -5782,7 +5783,7 @@ export class AdminClient {
     /** Goes back to Spree's default and discards the draft. Published versions stay in the history. */
     revert: (
       id: string,
-      params?: EmailTemplateLanguageParams,
+      params?: EmailTemplateVersionParams,
       options?: RequestOptions,
     ): Promise<EmailTemplate> =>
       this.request<EmailTemplate>('DELETE', `/email_templates/${id}`, { ...options, params }),
@@ -5801,7 +5802,7 @@ export class AdminClient {
 
       delete: (
         id: string,
-        params?: EmailTemplateLanguageParams,
+        params?: EmailTemplateVersionParams,
         options?: RequestOptions,
       ): Promise<EmailTemplate> =>
         this.request<EmailTemplate>('DELETE', `/email_templates/${id}/draft`, {
@@ -5813,7 +5814,7 @@ export class AdminClient {
     /** Makes the draft live; refused with 422 and each problem's email and line when it does not render. */
     publish: (
       id: string,
-      params?: EmailTemplateLanguageParams,
+      params?: EmailTemplateVersionParams,
       options?: RequestOptions,
     ): Promise<EmailTemplate> =>
       this.request<EmailTemplate>('POST', `/email_templates/${id}/publication`, {

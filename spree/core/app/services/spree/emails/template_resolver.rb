@@ -11,6 +11,9 @@ module Spree
     class TemplateResolver
       KEY_FORMAT = %r{\A[a-z0-9_]+(?:/[a-z0-9_]+)*\z}
 
+      # @return [Spree::Store, nil] the store whose published templates apply
+      attr_reader :store
+
       class InvalidKey < ArgumentError; end
 
       # @param view_paths [Array<String, Pathname>] directories to search, highest precedence first

@@ -4,17 +4,23 @@ module Spree
     # receive it (see Spree::EmailTemplates::Check); a draft that does not
     # render is refused with what is wrong and where, so an email already
     # being sent can never break. Publishing records a revision and clears
-    # the draft.
+    # the draft. Given the `lock_version` the draft was reviewed at, a draft
+    # saved since is refused rather than published unseen.
     class Publish < Spree::Workflow
-      def perform(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, actor: nil)
+      def perform(store:, key:, locale: Spree::EmailTemplate::ANY_LOCALE, actor: nil, lock_version: nil)
         super
         step :ensure_draft
+        step :ensure_current
         step :check
 
-        ApplicationRecord.transaction do
-          step :publish
-          step :record_revision
-          step :clear_draft
+        begin
+          ApplicationRecord.transaction do
+            step :publish
+            step :record_revision
+            step :clear_draft
+          end
+        rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotUnique
+          failure(nil, :stale)
         end
 
         template.publish_event('email_template.published')
@@ -33,6 +39,10 @@ module Spree
 
       def ensure_draft
         failure(nil, :no_draft) unless draft
+      end
+
+      def ensure_current
+        failure(nil, :stale) if !lock_version.nil? && lock_version.to_i != draft.lock_version
       end
 
       def check

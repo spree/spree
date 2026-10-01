@@ -2,6 +2,10 @@ module Spree
   module Emails
     module Samples
       class Fulfillment < Base
+        def self.required_permissions
+          %w[read_orders read_fulfillments]
+        end
+
         def self.record_type
           'fulfillment'
         end

@@ -15,8 +15,10 @@ module Spree
               authorize! :update, Spree::EmailTemplate
 
               result = Spree.email_template_publish_workflow.call(
-                store: current_store, key: email_template.key, locale: language, actor: current_actor
+                store: current_store, key: email_template.key, locale: language, actor: current_actor,
+                lock_version: params[:lock_version].presence
               )
+              return render_stale_draft if result.error&.value == :stale
               return render_template_problems(result.value) if result.error&.value == :invalid_template
               return render_result_error(result) unless result.success?
 
