@@ -24,6 +24,7 @@ module Spree
       def variables
         {
           user: { 'first_name' => 'Ann', 'email' => 'ann@example.com' },
+          order: { 'number' => 'R123456789', 'customer_name' => 'Ann Lee' },
           reset_url: "#{@store.storefront_url}/reset-password?token=preview"
         }
       end
@@ -43,9 +44,12 @@ RSpec.shared_context 'with an editable email template' do
     previous_layout = registry['layouts/spree/base_mailer']
     registry.register(editable_key, kind: :email, sample: 'Spree::TestingSupport::EmailTemplateSample')
     registry.register('layouts/spree/base_mailer', kind: :layout)
-    example.run
-  ensure
-    previous ? registry.register(previous.key, kind: previous.kind, sample: previous.sample) : registry.delete(editable_key)
-    previous_layout ? registry.register(previous_layout.key, kind: :layout) : registry.delete('layouts/spree/base_mailer')
+
+    begin
+      example.run
+    ensure
+      previous ? registry.register(previous.key, kind: previous.kind, sample: previous.sample) : registry.delete(editable_key)
+      previous_layout ? registry.register(previous_layout.key, kind: :layout) : registry.delete('layouts/spree/base_mailer')
+    end
   end
 end

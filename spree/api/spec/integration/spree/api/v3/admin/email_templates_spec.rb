@@ -6,11 +6,29 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
   include_context 'API v3 Admin'
   include_context 'with an editable email template'
 
+  # The test app ships no customer emails, so the reference documents an
+  # order confirmation from a fixture file.
+  let(:editable_key) { 'spree/order_mailer/confirm_email' }
+  let(:fixture_path) { Rails.root.join('app/views/spree/order_mailer/confirm_email.liquid') }
+
+  around do |example|
+    FileUtils.mkdir_p(fixture_path.dirname)
+    File.write(fixture_path, <<~LIQUID)
+      ---
+      subject: "Order {{ order.number }} confirmed"
+      ---
+      <mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name }}!</mj-text></mj-column></mj-section>
+    LIQUID
+    example.run
+  ensure
+    FileUtils.rm_rf(fixture_path.dirname)
+  end
+
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
   let(:'x-spree-api-key') { secret_api_key.plaintext_token }
   let(:id) { editable_key.tr('/', '.') }
   let(:email_template_id) { id }
-  let(:body_mjml) { '<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>' }
+  let(:body_mjml) { '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>' }
 
   shared_context 'with admin auth parameters' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -147,15 +165,15 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         type: :object,
         properties: {
           language: { type: :string, example: 'any' },
-          subject: { type: :string, example: 'Reset your {{ store.name }} password' },
-          body: { type: :string, example: '<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>' },
+          subject: { type: :string, example: 'Your order {{ order.number }} is confirmed' },
+          body: { type: :string, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>' },
           lock_version: { type: :integer, example: 0 },
           rebase: { type: :boolean, description: "Marks the draft as based on Spree's current default, after reviewing what changed in it" }
         }
       }
 
       response '200', 'draft saved' do
-        let(:body) { { subject: 'Reset your {{ store.name }} password', body: body_mjml } }
+        let(:body) { { subject: 'Your order {{ order.number }} is confirmed', body: body_mjml } }
 
         schema '$ref' => '#/components/schemas/EmailTemplate'
 
@@ -247,13 +265,13 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
       response '422', 'the draft does not render' do
         let(:body) { {} }
 
-        before { create(:email_template_draft, store: store, key: editable_key, body: '{{ user.nickname }}') }
+        before { create(:email_template_draft, store: store, key: editable_key, body: '{{ order.nubmer }}') }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test! do |response|
           problems = JSON.parse(response.body)['error']['details']['problems']
-          expect(problems.first['message']).to include('nickname')
+          expect(problems.first['message']).to include('nubmer')
         end
       end
     end
@@ -285,8 +303,8 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         type: :object,
         properties: {
           language: { type: :string, example: 'any' },
-          subject: { type: :string, example: 'Reset your {{ store.name }} password' },
-          body: { type: :string, example: '<mj-section><mj-column><mj-text>Hi {{ user.first_name }}</mj-text></mj-column></mj-section>' },
+          subject: { type: :string, example: 'Your order {{ order.number }} is confirmed' },
+          body: { type: :string, example: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>' },
           record_id: { type: :string, example: 'or_m3Rp9wXz', description: 'The record to build sample data from' },
           email_key: { type: :string, example: 'spree.order_mailer.confirm_email', description: 'For the layout or a partial, the email to show it in' },
           branding: {
@@ -310,7 +328,7 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         schema '$ref' => '#/components/schemas/EmailTemplatePreview'
 
         run_test! do |response|
-          expect(JSON.parse(response.body)['html']).to include('Hi Ann')
+          expect(JSON.parse(response.body)['html']).to include('Thanks, Ann Lee!')
         end
       end
     end
@@ -330,7 +348,6 @@ RSpec.describe 'Admin Email Templates API', type: :request, swagger_doc: 'api-re
         signed-in admin, and never to another address: the sample data comes
         from a real customer's records. Takes the same body as the preview.
       DESC
-      admin_scope :write, :email_templates
 
       admin_sdk_example 'email-templates/send-test'
 

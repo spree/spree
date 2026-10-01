@@ -106,7 +106,7 @@ To look at every email with real data, open the mailer previews at `/rails/maile
 
 ## Templates merchants edit in the dashboard
 
-Merchants can edit the emails their customers receive in **Settings → Emails → Templates**, along with the layout and the shared blocks in `spree/shared`. An edit is saved as a draft and goes live when published; publishing renders it with the store's own data first and refuses a template that does not render. Staff, store-owner and seller emails are not editable and always render from files.
+Merchants can edit the emails their customers receive in **Settings → Emails → Templates**, along with the layout and the shared blocks in `spree/shared`. An edit is saved as a draft and goes live when published; publishing renders it with the store's own data first and refuses a template that does not render. An email built from a record the store does not have yet, such as an order confirmation in a store with no orders, is checked for template syntax only. Staff, store-owner and seller emails are not editable and always render from files.
 
 A store's published template comes first, so the lookup for an editable email is:
 
