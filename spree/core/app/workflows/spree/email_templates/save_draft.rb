@@ -6,7 +6,9 @@ module Spree
     # remembers that default so an upgrade changing it can be spotted.
     #
     # A save carrying an older `lock_version` than the draft has is refused,
-    # so two admins editing at once cannot overwrite each other.
+    # so two admins editing at once cannot overwrite each other. `rebase`
+    # marks the draft as based on Spree's current default, for a merchant who
+    # reviewed an upgraded default and keeps their own version.
     class SaveDraft < Spree::Workflow
       def perform(store:, key:, attributes:, locale: Spree::EmailTemplate::ANY_LOCALE, actor: nil)
         super
@@ -34,6 +36,7 @@ module Spree
 
       def save
         start_from_current if draft.new_record?
+        rebase if ActiveModel::Type::Boolean.new.cast(attributes[:rebase])
         draft.subject = attributes[:subject] if attributes.key?(:subject)
         draft.body = attributes[:body] if attributes.key?(:body)
         draft.updated_by = actor
@@ -42,12 +45,20 @@ module Spree
 
       def start_from_current
         published = store.email_templates.published.find_by(key: key, locale: draft.locale)
-        default = Spree::Emails::TemplateResolver.new(Spree::BaseMailer.view_paths.paths.map(&:path)).find_default(key)
 
         draft.subject = published&.subject || default&.subject
         draft.body = published&.body || default&.body
         draft.base_subject = published ? published.base_subject : default&.subject
         draft.base_body = published ? published.base_body : default&.body
+      end
+
+      def rebase
+        draft.base_subject = default&.subject
+        draft.base_body = default&.body
+      end
+
+      def default
+        @default ||= Spree::Emails::TemplateResolver.new(Spree::BaseMailer.view_paths.paths.map(&:path)).find_default(key)
       end
     end
   end

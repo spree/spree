@@ -3158,6 +3158,8 @@ export interface EmailTemplateDraftParams extends EmailTemplateLanguageParams {
   body?: string
   /** The `lock_version` the draft was loaded with. A save from an older copy is refused with 409. */
   lock_version?: number
+  /** Marks the draft as based on Spree's current default, after reviewing what changed in it. */
+  rebase?: boolean
 }
 
 export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams {
