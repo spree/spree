@@ -121,24 +121,18 @@ describe Spree do
   end
 
   describe '.install_id' do
-    let(:store) { Spree::Preferences::Store.instance }
-
-    around do |example|
-      store.delete('spree/install_id')
-      example.run
-      store.delete('spree/install_id')
-    end
+    before { Spree::Preference.where(key: 'spree/install_id').delete_all }
 
     it 'generates a UUID, persists it and returns the same value on subsequent calls' do
       id = described_class.install_id
 
       expect(id).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(store.get('spree/install_id') { nil }).to eq(id)
+      expect(Spree::Preference.find_by(key: 'spree/install_id').value).to eq(id)
       expect(described_class.install_id).to eq(id)
     end
 
-    it 'reuses an identifier already persisted in the preferences store' do
-      store.set('spree/install_id', 'already-persisted-id')
+    it 'reuses an identifier already persisted' do
+      create(:preference, key: 'spree/install_id', value: 'already-persisted-id')
 
       expect(described_class.install_id).to eq('already-persisted-id')
     end
