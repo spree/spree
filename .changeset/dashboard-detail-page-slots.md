@@ -1,0 +1,6 @@
+---
+"@spree/dashboard": minor
+"@spree/seller-dashboard": minor
+---
+
+Plugins can now add cards to more detail pages. The admin dashboard has new slots on the seller payout, catalog, price list, promotion, purchase order, stock transfer and webhook endpoint pages, and the catalog page now saves extension fields bound with `useHostForm()`. The seller panel has new slots on its product, order, payout and profile pages. The slots catalog lists every slot and the context it receives.

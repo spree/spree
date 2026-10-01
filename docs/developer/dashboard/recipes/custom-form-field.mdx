@@ -157,7 +157,7 @@ Extension fields are validated by the **server** — a Rails validation failing 
 
 ### Which forms support this
 
-`useHostForm()` works wherever a built-in form exposes its form context — currently the **product** (edit + new), **category** (edit + new), and **store settings** forms, with matching slots (`product.form_sidebar`, `category.form_sidebar`, `store.form_main`) and form keys (`product`, `category`, `store`). Orders and customers have no page-wide form — their sheets own their edits — so slot widgets there manage their own persistence; use `useOptionalHostForm()` to write a widget that adapts to both contexts.
+`useHostForm()` works wherever a built-in form exposes its form context — currently the **product** (edit + new), **category** (edit + new), **collection**, **catalog**, and **store settings** forms, with matching slots (`product.form_sidebar`, `category.form_sidebar`, `collection.form_sidebar`, `catalog.form_sidebar`, `store.form_main`) and form keys (`product`, `category`, `collection`, `catalog`, `store`). The [slots catalog](/developer/dashboard/slots-catalog#detail-page-slots) marks which pages have a host form. Orders and customers have no page-wide form — their sheets own their edits — so slot widgets there manage their own persistence; use `useOptionalHostForm()` to write a widget that adapts to both contexts.
 
 ## Which path should I pick?
 

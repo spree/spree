@@ -333,6 +333,7 @@ export function PriceListForm({
             <>
               <BasicsCard form={form} />
               <ScheduleCard form={form} />
+              <Slot name="price_list.form_sidebar" context={{ priceList, mode }} />
             </>
           }
         />

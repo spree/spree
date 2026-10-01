@@ -12,6 +12,7 @@ import {
   type ProductFormValues,
   productFormSchema,
   productToFormValues,
+  Slot,
   VariantsCard,
   variantToWirePayload,
 } from '@spree/dashboard-core'
@@ -241,6 +242,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 />
               )}
               <CategorizationCard form={form} />
+              <Slot name="seller.product.form_sidebar" context={{ product, mode }} />
             </>
           }
         />

@@ -3,8 +3,11 @@ import type { Catalog, CatalogProduct } from '@spree/admin-sdk'
 import type { PanelImport } from '@spree/dashboard-core'
 import {
   adminClient,
+  extensionFormValues,
+  extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
+  Slot,
   Subject,
   usePermissions,
 } from '@spree/dashboard-core'
@@ -30,7 +33,7 @@ import {
 import { PauseIcon, PlayIcon, TableIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { type UseFormReturn, useForm } from 'react-hook-form'
+import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CatalogAudienceCard } from '../../../../../components/spree/catalog-audience'
 import {
@@ -131,7 +134,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   const form = useForm<CatalogFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(catalogFormSchema) as any,
-    defaultValues: CATALOG_DEFAULTS,
+    defaultValues: { ...CATALOG_DEFAULTS, ...extensionFormValues('catalog', null) },
   })
 
   const pricingMode = form.watch('pricing_mode')
@@ -165,6 +168,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       // form seeded per page would send one page's terms as the whole set
       // and clear every other page's (docs/plans/6.0-volume-pricing.md).
       staged_terms: {},
+      ...extensionFormValues('catalog', catalog),
     })
   }, [catalog, form])
 
@@ -207,6 +211,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       return
     }
 
+    // Read before any reset — extension values live in raw form state (the
+    // Zod parse behind `values` strips keys the schema doesn't know).
+    const extensionValues = extensionSubmitValues('catalog', form)
+
     try {
       // A product on its way out takes its terms with it, so its cells are
       // dropped rather than sent — the save would otherwise re-create rows
@@ -217,12 +225,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       )
 
       await saveMutation.mutateAsync({
-        attributes: catalogValuesToParams(values, savedPricingMode),
+        attributes: { ...catalogValuesToParams(values, savedPricingMode), ...extensionValues },
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
         quantityRules: stagedTermsToParams(terms),
       })
-      form.reset({ ...values, staged_products: { adds: [], removes: [] } })
+      form.reset({ ...values, ...extensionValues, staged_products: { adds: [], removes: [] } })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
@@ -230,165 +238,170 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   return (
     <ProductMembershipStagingProvider form={form} name="staged_products">
-      <form onSubmit={form.handleSubmit(handleSave)}>
-        <ResourceLayout
-          header={
-            <PageHeader
-              title={catalog.name}
-              badges={
-                <ActiveBadge
-                  active={catalog.active}
-                  activeLabel={t('admin.common.active')}
-                  inactiveLabel={t('admin.common.inactive')}
-                />
-              }
-              backTo="products/catalogs"
-              resource={{ id: catalog.id }}
-              jsonPreview={{
-                title: `Catalog ${catalog.name}`,
-                fetch: () =>
-                  adminClient.catalogs.get(catalog.id, {
-                    expand: ['assignments', 'price_list', 'price_list.price_rules'],
-                  }),
-                endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
-                resolveLink: spreeJsonLinkResolver(storeId),
-              }}
-              onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
-              deleteLabel={t('admin.catalogs.detail.delete_label')}
-              deleteConfirmTitle={t('admin.catalogs.delete_confirm.title')}
-              deleteConfirmMessage={t('admin.catalogs.delete_confirm.message', {
-                name: catalog.name,
-              })}
-              actions={
-                canEdit ? (
-                  <>
-                    {/* Going live sits beside Save rather than in the form:
+      {/* FormProvider exposes the form to `catalog.form_sidebar` widgets, so
+          inputs bound via `useHostForm()` save with this page. */}
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(handleSave)}>
+          <ResourceLayout
+            header={
+              <PageHeader
+                title={catalog.name}
+                badges={
+                  <ActiveBadge
+                    active={catalog.active}
+                    activeLabel={t('admin.common.active')}
+                    inactiveLabel={t('admin.common.inactive')}
+                  />
+                }
+                backTo="products/catalogs"
+                resource={{ id: catalog.id }}
+                jsonPreview={{
+                  title: `Catalog ${catalog.name}`,
+                  fetch: () =>
+                    adminClient.catalogs.get(catalog.id, {
+                      expand: ['assignments', 'price_list', 'price_list.price_rules'],
+                    }),
+                  endpoint: `/api/v3/admin/catalogs/${catalog.id}`,
+                  resolveLink: spreeJsonLinkResolver(storeId),
+                }}
+                onDelete={permissions.can('destroy', Subject.Catalog) ? handleDelete : undefined}
+                deleteLabel={t('admin.catalogs.detail.delete_label')}
+                deleteConfirmTitle={t('admin.catalogs.delete_confirm.title')}
+                deleteConfirmMessage={t('admin.catalogs.delete_confirm.message', {
+                  name: catalog.name,
+                })}
+                actions={
+                  canEdit ? (
+                    <>
+                      {/* Going live sits beside Save rather than in the form:
                         it is an act on the catalog, not a field of it, so it
                         neither waits for a Save nor is undone by a Discard.
                         Pricing is offered on the assortment rows instead —
                         that is where the products being priced are. */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={activate.isPending || deactivate.isPending}
-                      onClick={handleActivation}
-                    >
-                      {catalog.active ? (
-                        <PauseIcon className="size-4" />
-                      ) : (
-                        <PlayIcon className="size-4" />
-                      )}
-                      {catalog.active
-                        ? t('admin.catalogs.actions.deactivate')
-                        : t('admin.catalogs.actions.activate')}
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={form.formState.isSubmitting || !form.formState.isDirty}
-                    >
-                      {form.formState.isSubmitting
-                        ? t('admin.actions.saving')
-                        : t('admin.actions.save')}
-                    </Button>
-                  </>
-                ) : undefined
-              }
-            />
-          }
-          main={
-            <>
-              {form.formState.errors.root?.message && (
-                <p
-                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                  role="alert"
-                >
-                  {form.formState.errors.root.message}
-                </p>
-              )}
-              <DeferredProductMembershipCard
-                parentId={catalog.id}
-                storeId={storeId}
-                canEdit={canEdit}
-                useProducts={useCatalogProducts}
-                listMembersPage={listCatalogProductsPage}
-                translationNamespace="admin.catalogs"
-                // What the agreement charges and what it demands, on the rows
-                // the merchant already curates. A product this catalog lists
-                // but does not price is only visible if the two sit together
-                // (docs/plans/6.0-catalog-agreement-rework.md).
-                // Pricing belongs on the rows being priced, not only in the
-                // card that names the mode.
-                headerActions={
-                  canEdit && catalog.price_list && pricingMode === 'fixed' ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setPriceEditorOpen(true)}
-                    >
-                      <TableIcon className="size-4" />
-                      {t('admin.catalogs.edit_prices_cta')}
-                    </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={activate.isPending || deactivate.isPending}
+                        onClick={handleActivation}
+                      >
+                        {catalog.active ? (
+                          <PauseIcon className="size-4" />
+                        ) : (
+                          <PlayIcon className="size-4" />
+                        )}
+                        {catalog.active
+                          ? t('admin.catalogs.actions.deactivate')
+                          : t('admin.catalogs.actions.activate')}
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                      >
+                        {form.formState.isSubmitting
+                          ? t('admin.actions.saving')
+                          : t('admin.actions.save')}
+                      </Button>
+                    </>
                   ) : undefined
                 }
-                // Each variant priced on its own row: a product's variants can
-                // be priced differently and carry different ladders
-                // (docs/plans/6.0-volume-pricing.md).
-                renderSubRows={(products) =>
-                  catalogVariantRows<CatalogProduct>({
-                    products,
-                    variantsOf: (product) => product.catalog_variants,
-                  })
-                }
-                extraColumns={(products) =>
-                  mergeExtraColumns(
-                    catalogPriceColumns({
-                      headers: {
-                        price: t('admin.catalogs.prices.column_price'),
-                        source: t('admin.catalogs.prices.column_source'),
-                      },
-                    }),
-                    catalogTermColumns({
-                      form,
-                      canEdit,
-                      savedTermFor: savedTermLookup(products),
-                      headers: {
-                        // Short column headers — the card's own title already
-                        // says these are quantity terms. The full names stay as
-                        // the inputs' accessible labels.
-                        minimum: t('admin.catalogs.terms.column_minimum'),
-                        multiple: t('admin.catalogs.terms.column_multiple'),
-                        minimumLabel: t('admin.fields.minimum_order_quantity.label'),
-                        multipleLabel: t('admin.fields.order_multiple.label'),
-                        minimumHelp: t('admin.catalogs.terms.help.minimum'),
-                        multipleHelp: t('admin.catalogs.terms.help.multiple'),
-                        invalid: t('admin.catalogs.terms.validation.positive_integer'),
-                        mixed: t('admin.catalogs.terms.mixed'),
-                        defaultHint: t('admin.catalogs.terms.inherits'),
-                      },
-                    }),
-                  )
-                }
               />
-            </>
-          }
-          sidebar={
-            <>
-              <CatalogSettingsCard form={form} canEdit={canEdit} />
-              <CatalogPricingCard
-                catalog={catalog}
-                form={form}
-                canEdit={canEdit}
-                priceEditorOpen={priceEditorOpen}
-                onPriceEditorOpenChange={setPriceEditorOpen}
-                onImportCreated={(imp) => wizard.open(imp.id)}
-              />
-              <CatalogTermsCard form={form} canEdit={canEdit} />
-              <CatalogAudienceCard form={form} canEdit={canEdit} />
-            </>
-          }
-        />
-      </form>
+            }
+            main={
+              <>
+                {form.formState.errors.root?.message && (
+                  <p
+                    className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                    role="alert"
+                  >
+                    {form.formState.errors.root.message}
+                  </p>
+                )}
+                <DeferredProductMembershipCard
+                  parentId={catalog.id}
+                  storeId={storeId}
+                  canEdit={canEdit}
+                  useProducts={useCatalogProducts}
+                  listMembersPage={listCatalogProductsPage}
+                  translationNamespace="admin.catalogs"
+                  // What the agreement charges and what it demands, on the rows
+                  // the merchant already curates. A product this catalog lists
+                  // but does not price is only visible if the two sit together
+                  // (docs/plans/6.0-catalog-agreement-rework.md).
+                  // Pricing belongs on the rows being priced, not only in the
+                  // card that names the mode.
+                  headerActions={
+                    canEdit && catalog.price_list && pricingMode === 'fixed' ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setPriceEditorOpen(true)}
+                      >
+                        <TableIcon className="size-4" />
+                        {t('admin.catalogs.edit_prices_cta')}
+                      </Button>
+                    ) : undefined
+                  }
+                  // Each variant priced on its own row: a product's variants can
+                  // be priced differently and carry different ladders
+                  // (docs/plans/6.0-volume-pricing.md).
+                  renderSubRows={(products) =>
+                    catalogVariantRows<CatalogProduct>({
+                      products,
+                      variantsOf: (product) => product.catalog_variants,
+                    })
+                  }
+                  extraColumns={(products) =>
+                    mergeExtraColumns(
+                      catalogPriceColumns({
+                        headers: {
+                          price: t('admin.catalogs.prices.column_price'),
+                          source: t('admin.catalogs.prices.column_source'),
+                        },
+                      }),
+                      catalogTermColumns({
+                        form,
+                        canEdit,
+                        savedTermFor: savedTermLookup(products),
+                        headers: {
+                          // Short column headers — the card's own title already
+                          // says these are quantity terms. The full names stay as
+                          // the inputs' accessible labels.
+                          minimum: t('admin.catalogs.terms.column_minimum'),
+                          multiple: t('admin.catalogs.terms.column_multiple'),
+                          minimumLabel: t('admin.fields.minimum_order_quantity.label'),
+                          multipleLabel: t('admin.fields.order_multiple.label'),
+                          minimumHelp: t('admin.catalogs.terms.help.minimum'),
+                          multipleHelp: t('admin.catalogs.terms.help.multiple'),
+                          invalid: t('admin.catalogs.terms.validation.positive_integer'),
+                          mixed: t('admin.catalogs.terms.mixed'),
+                          defaultHint: t('admin.catalogs.terms.inherits'),
+                        },
+                      }),
+                    )
+                  }
+                />
+              </>
+            }
+            sidebar={
+              <>
+                <CatalogSettingsCard form={form} canEdit={canEdit} />
+                <CatalogPricingCard
+                  catalog={catalog}
+                  form={form}
+                  canEdit={canEdit}
+                  priceEditorOpen={priceEditorOpen}
+                  onPriceEditorOpenChange={setPriceEditorOpen}
+                  onImportCreated={(imp) => wizard.open(imp.id)}
+                />
+                <CatalogTermsCard form={form} canEdit={canEdit} />
+                <CatalogAudienceCard form={form} canEdit={canEdit} />
+                <Slot name="catalog.form_sidebar" context={{ catalog, canEdit }} />
+              </>
+            }
+          />
+        </form>
+      </FormProvider>
       <ImportWizardDialog importId={wizard.importId} onClose={wizard.close} />
     </ProductMembershipStagingProvider>
   )

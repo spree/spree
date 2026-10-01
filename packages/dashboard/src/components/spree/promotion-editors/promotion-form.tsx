@@ -312,6 +312,7 @@ export function PromotionForm({
             <BasicsCard form={form} />
             <TriggerCard mode={mode} form={form} promotion={promotion} />
             <ScheduleCard form={form} />
+            <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
           </>
         }
       />
