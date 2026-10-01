@@ -457,6 +457,43 @@ describe Spree::Cart, type: :model do
         cart.update_columns(completed_at: Time.current)
         expect(Spree::Cart.find(cart.id).rebuild_fulfillments!).to be_nil
       end
+
+      context 'without a destination' do
+        let(:cart) { create(:cart_with_line_items, store: store, email: 'buyer@example.com') }
+        let!(:pickup_location) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any', store: store) }
+
+        before { create(:pickup_delivery_method, store: store) }
+
+        it 'proposes nothing rather than preselecting pickup' do
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_empty
+          expect(cart.shipping_address_required?).to be(true)
+        end
+
+        it 'proposes nothing when an item is added' do
+          Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+
+          expect(cart.fulfillments.reload).to be_empty
+        end
+
+        it 'proposes pickup once the customer chooses a pickup location' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to be_pickup
+        end
+
+        it 'proposes straight away when no item ships to an address' do
+          cart.line_items.first.update!(variant: create(:digital_product, store: store).default_variant)
+          create(:digital_delivery_method, store: store)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_present
+        end
+      end
     end
 
     describe '#prune_undeliverable_fulfillments!' do
