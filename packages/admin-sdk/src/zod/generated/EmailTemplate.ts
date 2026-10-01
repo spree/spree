@@ -14,6 +14,7 @@ export const EmailTemplateSchema = z.object({
   published_at: z.string().nullable(),
   default_subject: z.string().nullable(),
   default_body: z.string(),
+  published_language: z.string().nullable(),
   default_changed: z.boolean(),
   base_subject: z.string().nullable(),
   base_body: z.string().nullable(),

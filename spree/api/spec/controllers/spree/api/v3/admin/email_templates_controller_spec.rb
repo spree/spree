@@ -36,6 +36,22 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplatesController, type: :controlle
       expect(json_response['draft']['updated_by']['label']).to be_present
     end
 
+    it "writes Spree's translation keys out as text for one language" do
+      get :show, params: { id: id, language: 'en' }, as: :json
+
+      expect(json_response['body']).not_to include("| t")
+      expect(json_response['body']).to include(Spree.t('admin_user_mailer.password_reset_email.action'))
+      expect(json_response['default_body']).to eq(json_response['body'])
+    end
+
+    it 'shows the version for every language, saying so, when one language has none of its own' do
+      create(:email_template, store: store, key: editable_key, body: 'For everyone')
+
+      get :show, params: { id: id, language: 'de' }, as: :json
+
+      expect(json_response).to include('body' => 'For everyone', 'customized' => true, 'published_language' => 'any')
+    end
+
     it 'reads the version for the language asked for' do
       create(:email_template, store: store, key: editable_key, locale: 'de', body: 'German')
 

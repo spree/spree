@@ -20,6 +20,14 @@ describe Spree::EmailTemplates::SaveDraft do
     expect(draft.updated_by).to eq(admin)
   end
 
+  it 'starts a language version with the text written out in that language' do
+    draft = save({ subject: nil }, locale: 'en').value
+
+    expect(draft.body).not_to include('| t')
+    expect(draft.body).to include(Spree.t('admin_user_mailer.password_reset_email.action'))
+    expect(draft.base_body).to include("'admin_user_mailer.password_reset_email.action' | t")
+  end
+
   it 'starts from the published version when the store has one' do
     create(:email_template, store: store, key: editable_key, subject: 'Published', base_body: 'Old default')
 
