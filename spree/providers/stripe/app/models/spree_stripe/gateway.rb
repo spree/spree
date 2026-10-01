@@ -50,12 +50,10 @@ module SpreeStripe
     #
     # @return [Boolean]
     def only_webhook_registration_changed?
-      before, after = saved_change_to_preferences
-      return false unless before.is_a?(Hash) && after.is_a?(Hash)
+      return false if previously_new_record?
 
-      changed = (before.keys | after.keys).reject { |key| before[key] == after[key] }
-
-      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key.to_sym) }
+      changed = previously_changed_preference_names
+      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key) }
     end
 
     # Endpoints are registered per Stripe account, so a rotated key leaves the

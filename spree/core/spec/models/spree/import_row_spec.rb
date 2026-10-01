@@ -102,8 +102,10 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
       end
 
       it 'memoizes the result' do
-        expect(JSON).to receive(:parse).once.and_call_original
+        allow(JSON).to receive(:parse).and_call_original
         2.times { import_row.data_json }
+
+        expect(JSON).to have_received(:parse).with(import_row.data).once
       end
     end
 

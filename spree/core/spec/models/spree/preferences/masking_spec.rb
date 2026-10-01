@@ -95,7 +95,7 @@ RSpec.describe Spree::Preferences::Masking do
       result = described_class.serialize(preferable)
 
       expect(result['api_key']).to eq('pk_live_visible')
-      expect(result['ratio']).to eq(0.25)
+      expect(result['ratio']).to eq('0.25')
       expect(result['enabled']).to be false
     end
 

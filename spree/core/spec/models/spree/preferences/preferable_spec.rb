@@ -166,17 +166,18 @@ describe Spree::Preferences::Preferable, type: :model do
         A.preference :if_decimal, :decimal
       end
 
-      it 'returns a BigDecimal' do
+      it 'returns a BigDecimal, stored as its exact string' do
         @a.set_preference(:if_decimal, 3.3)
-        expect(@a.preferences[:if_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:if_decimal)).to eq(BigDecimal('3.3'))
+        expect(@a.preferences[:if_decimal]).to eq('3.3')
       end
 
       it 'with strings' do
         @a.set_preference(:if_decimal, '3.3')
-        expect(@a.preferences[:if_decimal]).to eq(3.3)
+        expect(@a.get_preference(:if_decimal)).to eq(3.3)
 
         @a.set_preference(:if_decimal, '')
-        expect(@a.preferences[:if_decimal]).to eq(0.0)
+        expect(@a.get_preference(:if_decimal)).to eq(0.0)
       end
     end
 
@@ -197,13 +198,13 @@ describe Spree::Preferences::Preferable, type: :model do
 
       it 'converts string to BigDecimal when present' do
         @a.set_preference(:nullable_decimal, '3.14')
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('3.14'))
-        expect(@a.preferences[:nullable_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('3.14'))
+        expect(@a.get_preference(:nullable_decimal).class).to eq(BigDecimal)
       end
 
       it 'preserves decimal values' do
         @a.set_preference(:nullable_decimal, 9.99)
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('9.99'))
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('9.99'))
       end
     end
 
@@ -390,7 +391,7 @@ describe Spree::Preferences::Preferable, type: :model do
         def self.up
           create_table :pref_tests do |t|
             t.string :col
-            t.text :preferences
+            t.json :preferences
           end
         end
 
@@ -406,6 +407,7 @@ describe Spree::Preferences::Preferable, type: :model do
       class PrefTest < Spree::Base
         preference :pref_test_pref, :string, default: 'abc'
         preference :pref_test_any, :any, default: []
+        preference :pref_test_decimal, :decimal, default: 0
       end
     end
 
@@ -454,6 +456,42 @@ describe Spree::Preferences::Preferable, type: :model do
       @pt1.id = @pt.id
       @pt1.save!
       expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
+    end
+
+    describe 'JSON storage' do
+      it 'restores a decimal exactly after a round trip' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
+
+        expect(PrefTest.find(@pt.id).preferred_pref_test_decimal).to eq(BigDecimal('19.99'))
+      end
+
+      it 'reads stored keys with indifferent access' do
+        @pt.update!(preferred_pref_test_pref: 'xyz')
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferences[:pref_test_pref]).to eq('xyz')
+        expect(reloaded.preferences['pref_test_pref']).to eq('xyz')
+      end
+
+      it 'does not mark a loaded record as changed' do
+        expect(PrefTest.find(@pt.id).changed?).to be(false)
+      end
+
+      it 'does not report a change when a decimal is set to the value it holds' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
+        reloaded = PrefTest.find(@pt.id)
+        reloaded.preferred_pref_test_decimal = BigDecimal('19.99')
+
+        expect(reloaded.preferred_pref_test_decimal_changed?).to be(false)
+      end
+
+      it 'refuses to load a row still holding YAML' do
+        ActiveRecord::Base.connection.exec_update(
+          "UPDATE pref_tests SET preferences = #{ActiveRecord::Base.connection.quote(YAML.dump({ pref_test_pref: 'x' }).to_json)} WHERE id = #{@pt.id}"
+        )
+
+        expect { PrefTest.find(@pt.id) }.to raise_error(Spree::Preferences::LegacyYamlError, /spree:upgrade:preferences_json/)
+      end
     end
 
     describe 'preference change tracking methods' do

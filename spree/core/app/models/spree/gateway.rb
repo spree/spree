@@ -49,7 +49,7 @@ module Spree
     end
 
     def options
-      preferences.each_with_object({}) { |(key, value), memo| memo[key.to_sym] = value; }
+      preference_values.symbolize_keys
     end
 
     def method_missing(method, *args)

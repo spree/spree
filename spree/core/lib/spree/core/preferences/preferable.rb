@@ -8,7 +8,7 @@
 #
 # Examples:
 #
-#   # Spree::Base includes Preferable and defines preferences as a serialized
+#   # Spree::Base includes Preferable and stores preferences in a JSON
 #   # column.
 #   class Settings < Spree::Base
 #     preference :color,       :string,  default: 'red'
@@ -27,18 +27,19 @@
 #   s.preferred_temperature # => 24
 #
 #   # Modifications have been made to the .preferences hash
-#   s.preferences #=> {color: 'blue', temperature: 24}
+#   s.preferences #=> {'color' => 'blue', 'temperature' => 24}
 #
 #   # Save the changes. All handled by activerecord
 #   s.save!
 
+require 'spree/core/preferences/json_coder'
 require 'spree/core/preferences/preferable_class_methods'
 
 module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   included do
-    serialize :preferences, type: Hash, coder: YAML if defined?(serialize)
+    serialize :preferences, coder: Spree::Preferences::JsonCoder if defined?(serialize)
     extend Spree::Preferences::PreferableClassMethods
   end
 
@@ -136,14 +137,76 @@ module Spree::Preferences::Preferable
 
   def clear_preferences
     preferences.keys.each { |pref| preferences.delete pref }
+    secret_preferences&.clear if stores_secret_preferences?
   end
 
   def restore_preferences_for(preference_keys)
-    preference_keys.each { |pref| preferences[pref] = preference_default(pref) }
+    preference_keys.each { |pref| preference_storage(pref)[pref] = preference_default(pref) }
+  end
+
+  # Whether this record keeps `:password` preferences apart, in its encrypted
+  # `secret_preferences` column (see {Spree::SecretPreferences}).
+  #
+  # @return [Boolean]
+  def stores_secret_preferences?
+    self.class.stores_secret_preferences?
+  end
+
+  # Every preference value, secrets included — what `preferences` alone held
+  # before secrets moved to their own column. Secrets read through their
+  # `preferred_*` reader, so a default applies.
+  #
+  # @return [ActiveSupport::HashWithIndifferentAccess]
+  def preference_values
+    (preferences || {}).to_h.with_indifferent_access.merge(
+      self.class.secret_preference_names.index_with { |name| get_preference(name) }
+    )
+  end
+
+  # The stored value of a preference, before its default applies. A secret
+  # found in `preferences` wins over the encrypted column: it is either a
+  # newer value assigned as part of a whole hash, waiting for the save that
+  # moves it across, or one the upgrade has not moved yet — the writer always
+  # removes that copy, so it is never stale.
+  #
+  # @param name [Symbol, String]
+  # @return [Object] the stored value, or the block's result when nothing is stored
+  def stored_preference(name)
+    if secret_preference?(name)
+      (preferences || {}).fetch(name) { (secret_preferences || {}).fetch(name) { return yield } }
+    else
+      (preferences || {}).fetch(name) { yield }
+    end
+  end
+
+  # Fills in the declared default of every preference this record has no
+  # stored value for, so a preference added to the class after the row was
+  # saved never reads as missing. Secrets are left out: their defaults are read
+  # through the `preferred_*` reader, never copied into storage.
+  def backfill_default_preferences
+    secrets = self.class.secret_preference_names
+    missing = default_preferences.reject { |name, _| preferences.key?(name) || secrets.include?(name) }
+    self.preferences = preferences.merge(missing) if missing.any?
+  end
+
+  # Names of the preferences the last save changed, across both the plain and
+  # the secret column.
+  #
+  # @return [Array<Symbol>]
+  def previously_changed_preference_names
+    %w[preferences secret_preferences].flat_map do |column|
+      before, after = previous_changes[column]
+      next [] if before.nil? && after.nil?
+
+      before = before || {}
+      after = after || {}
+      (before.keys | after.keys).reject { |key| before[key] == after[key] }
+    end.map(&:to_sym).uniq
   end
 
   def preference_change(name, changes_or_previous_changes)
-    preference_changes = changes_or_previous_changes.with_indifferent_access.fetch('preferences', [{}, {}])
+    column = preference_column(name)
+    preference_changes = changes_or_previous_changes.with_indifferent_access.fetch(column, [{}, {}])
     before_preferences = preference_changes[0] || {}
     after_preferences = preference_changes[1] || {}
 
@@ -153,6 +216,23 @@ module Spree::Preferences::Preferable
   end
 
   private
+
+  def preference_column(name)
+    secret_preference?(name) ? 'secret_preferences' : 'preferences'
+  end
+
+  def secret_preference?(name)
+    stores_secret_preferences? && self.class.secret_preference_names.include?(name.to_sym)
+  end
+
+  # The hash a preference is written to.
+  def preference_storage(name)
+    if secret_preference?(name)
+      self.secret_preferences ||= {}
+    else
+      self.preferences ||= {}
+    end
+  end
 
   def convert_preference_value(value, type, nullable: false)
     case type
@@ -221,7 +301,7 @@ module Spree::Preferences::Preferable
         value.to_time
       end
     # Kept as the `yyyy-MM-dd` string it arrived as rather than coerced to a
-    # Time. Preferences are YAML-serialized, and what a date *means* depends on
+    # Time. Preferences are stored as JSON, and what a date *means* depends on
     # the store's timezone, which this method has no access to: coercing here
     # would freeze the value against the server's zone and move the operator's
     # deadline by hours. The reader owns that (see

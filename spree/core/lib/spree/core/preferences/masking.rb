@@ -60,7 +60,10 @@ module Spree
         return {} if preferable.nil?
 
         preferable.preference_schema.each_with_object({}) do |field, hash|
-          value = preferable.preferences[field[:key]]
+          # The stored value only, never the default — an unset secret must not
+          # reveal what it would fall back to — read through the record,
+          # because a secret lives in its own column.
+          value = preferable.stored_preference(field[:key]) { nil }
           hash[field[:key_string] || field[:key].to_s] = field[:type] == :password ? mask(value) : value
         end
       end

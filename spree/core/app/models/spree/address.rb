@@ -7,7 +7,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
 
-    serialize :preferences, type: Hash, coder: YAML, default: {}
+    serialize :preferences, coder: Spree::Preferences::JsonCoder, default: {}
 
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',

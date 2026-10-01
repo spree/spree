@@ -1,18 +1,55 @@
 module Spree::Preferences
   module PreferableClassMethods
+    # Bumped by every declaration anywhere, so a class's cached view of its
+    # preferences is rebuilt when an ancestor gains one after the class was
+    # loaded — a decorator adding a secret to Spree::PaymentMethod, say.
+    @declarations = 0
+
+    class << self
+      attr_accessor :declarations
+    end
+
     # Declaration order, so an admin form can present preferences the way
     # their author grouped them — credentials before the optional settings
     # that depend on them. `defined_preferences` reads Ruby's own `methods`,
     # whose order is an implementation detail, so it cannot answer this.
     def declared_preference_order
-      @declared_preference_order ||= begin
-        inherited = superclass.respond_to?(:declared_preference_order) ? superclass.declared_preference_order : []
-        inherited.dup
+      declared_preference_types.keys
+    end
+
+    # Each declared preference's type, including those inherited, known from
+    # the declarations alone — without building a record.
+    #
+    # @return [Hash{Symbol => Symbol}]
+    def declared_preference_types
+      preference_declarations_cache[:types] ||= begin
+        inherited = superclass.respond_to?(:declared_preference_types) ? superclass.declared_preference_types : {}
+        inherited.merge(own_preference_types).freeze
       end
     end
 
+    # Names of the `:password` preferences, which a model including
+    # {Spree::SecretPreferences} stores encrypted in `secret_preferences`.
+    #
+    # @return [Array<Symbol>]
+    def secret_preference_names
+      preference_declarations_cache[:secrets] ||= declared_preference_types.filter_map { |name, type| name if type == :password }.freeze
+    end
+
+    # Whether `:password` preferences are kept apart in an encrypted column.
+    # {Spree::SecretPreferences} turns this on.
+    def stores_secret_preferences?
+      false
+    end
+
     def preference(name, type, *args)
-      declared_preference_order << name.to_sym unless declared_preference_order.include?(name.to_sym)
+      if type == :password && self < ActiveRecord::Base && !stores_secret_preferences?
+        raise ArgumentError, "#{self.name} declares the secret preference `#{name}` but cannot encrypt it. " \
+                             'Include Spree::SecretPreferences and add a `secret_preferences` text column to its table.'
+      end
+
+      own_preference_types[name.to_sym] = type
+      PreferableClassMethods.declarations += 1
       options = args.extract_options!
       options.assert_valid_keys(:default, :deprecated, :in, :internal, :nullable, :parse_on_set)
       default = options[:default]
@@ -26,14 +63,10 @@ module Spree::Preferences
       nullable = options[:nullable]
       parse_on_set = options[:parse_on_set]
 
-      # cache_key will be nil for new objects, then if we check if there
-      # is a pending preference before going to default
       define_method preference_getter_method(name) do
-        # Rows persisted before the model gained preferences can load with a
-        # NULL column — treat that as "no stored preferences".
-        (preferences || {}).fetch(name) do
-          default.call
-        end
+        value = stored_preference(name) { return default.call }
+        # JSON keeps a decimal as its exact string; the declared type restores it.
+        type == :decimal && value.is_a?(String) ? value.to_d : value
       end
 
       define_method preference_setter_method(name) do |value|
@@ -45,15 +78,24 @@ module Spree::Preferences
           value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
         end
         value = convert_preference_value(value, type, nullable: nullable)
-        self.preferences = {} if preferences.nil?
-        preferences[name] = value
+        # A decimal is kept in the exact-string form JSON stores, so a record
+        # read back from the database and one just written compare equal and
+        # setting the same value is not a change. The reader restores it.
+        preference_storage(name)[name] = type == :decimal ? value.as_json : value
 
         Spree::Deprecation.warn("`#{name}` is deprecated. #{deprecated}") if deprecated
 
         # If this is an activerecord object, we need to inform
         # ActiveRecord::Dirty that this value has changed, since this is an
         # in-place update to the preferences hash.
-        preferences_will_change! if respond_to?(:preferences_will_change!)
+        if secret_preference?(name)
+          # A copy assigned as part of a whole hash would otherwise outlive the
+          # value written here and be moved over it on save.
+          preferences_will_change! if preferences&.delete(name)
+          secret_preferences_will_change!
+        elsif respond_to?(:preferences_will_change!)
+          preferences_will_change!
+        end
       end
 
       define_method preference_default_getter_method(name), &default
@@ -78,7 +120,7 @@ module Spree::Preferences
       end
 
       define_method prefers_query_method(name) do
-        preferences.fetch(name).to_b
+        stored_preference(name) { raise KeyError, "key not found: #{name.inspect}" }.to_b
       end
 
       define_method preference_change_method(name) do
@@ -164,6 +206,21 @@ module Spree::Preferences
 
     def preference_previous_changed_method(name)
       "preferred_#{name}_previously_changed?".to_sym
+    end
+
+    private
+
+    def own_preference_types
+      @own_preference_types ||= {}
+    end
+
+    def preference_declarations_cache
+      generation = PreferableClassMethods.declarations
+      unless @preference_declarations_generation == generation
+        @preference_declarations_generation = generation
+        @preference_declarations_cache = {}
+      end
+      @preference_declarations_cache
     end
   end
 end

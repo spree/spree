@@ -35,6 +35,22 @@ steps:
 
       Idempotent, and a no-op on an already-consolidated schema.
 
+  - id: preferences_json
+    name: "Check for preferences still stored as YAML"
+    task: "spree:upgrade:preferences_json"
+    notes: |
+      Spree 6.0 stores preferences as JSON instead of YAML, and keeps secrets
+      (preferences declared as passwords, such as gateway API keys) in a
+      separate secret_preferences column. The migration converts every row and
+      moves every secret itself, so a normal db:migrate needs nothing from this
+      step.
+
+      This is a safety net: it converts any row still holding YAML, and moves
+      the secrets of a class that was not loaded when the migration ran, such
+      as one from an extension gem installed afterwards.
+
+      Idempotent, and a no-op once everything is converted.
+
   - id: migrate_media_class_names
     name: "Rewrite stored Spree::Asset and Spree::Image class names"
     task: "spree:migrate_media_class_names"
@@ -715,3 +731,18 @@ steps:
       predates the upgrade.
 
       Idempotent, and safe to re-run at any time to repair drift.
+
+  - id: encrypt_secret_preferences
+    name: "Encrypt gateway and integration secrets"
+    task: "spree:upgrade:encrypt_secret_preferences"
+    notes: |
+      The 6.0 migration moves existing secrets into the secret_preferences
+      column in plain text, so it never needs encryption keys. They stay
+      readable and are encrypted the next time their record is saved. This step
+      encrypts them all now.
+
+      Skips with a note when Active Record encryption keys are not configured;
+      see the encryption section of the upgrade guide to add them, then run
+      this step again.
+
+      Idempotent.
