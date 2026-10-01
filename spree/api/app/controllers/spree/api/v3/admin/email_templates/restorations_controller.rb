@@ -8,14 +8,20 @@ module Spree
 
             # POST /api/v3/admin/email_templates/:email_template_id/revisions/:revision_id/restoration
             #
-            # Copies the revision into the draft, to be published like any change.
+            # Copies the revision into the language's draft, to be published
+            # like any change. A language without a version of its own can
+            # restore one of the version for every language its customers get.
             def create
               authorize! :update, Spree::EmailTemplate
 
-              revision = email_template_revisions.find_by_prefix_id!(params[:revision_id])
+              revision = Spree::EmailTemplateRevision.where(
+                email_template: current_store.email_templates.where(
+                  key: email_template.key, locale: [language, Spree::EmailTemplate::ANY_LOCALE]
+                )
+              ).find_by_prefix_id!(params[:revision_id])
 
               result = Spree.email_template_restore_revision_workflow.call(
-                revision: revision, actor: current_actor, lock_version: params[:lock_version]
+                revision: revision, actor: current_actor, lock_version: params[:lock_version], locale: language
               )
               render_email_template_result(result, status: :created)
             end
