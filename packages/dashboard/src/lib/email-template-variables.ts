@@ -1,4 +1,5 @@
 import type {
+  Address,
   Company,
   Customer,
   EmailFulfillment,
@@ -38,6 +39,31 @@ const ORDER_FIELDS = [
   'billing_address',
   'payments',
 ] as const satisfies FieldsOf<EmailOrder>
+
+/**
+ * Fields of objects a sample record often lacks (a pickup order has no
+ * shipping address), so they are suggested even when the preview has none.
+ */
+const ADDRESS_FIELDS = [
+  'first_name',
+  'last_name',
+  'full_name',
+  'company',
+  'address1',
+  'address2',
+  'city',
+  'postal_code',
+  'state_name',
+  'state_code',
+  'country_name',
+  'country_code',
+  'phone',
+] as const satisfies FieldsOf<Address>
+
+const NESTED_FIELDS: Record<string, readonly string[]> = {
+  billing_address: ADDRESS_FIELDS,
+  shipping_address: ADDRESS_FIELDS,
+}
 
 const order = variable('order', ORDER_FIELDS)
 const resend = variable('resend')
@@ -113,6 +139,20 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<string, EmailTemplateVariable[]> =
 /** The variables a template receives: its own, then the shared ones. */
 export function templateVariables(templateId: string): EmailTemplateVariable[] {
   return [...(EMAIL_TEMPLATE_VARIABLES[templateId] ?? []), ...SHARED_EMAIL_VARIABLES]
+}
+
+/**
+ * Every dotted path the manifest documents for a template: each variable,
+ * its highlighted fields, and the fields of those that are objects.
+ */
+export function documentedPaths(templateId: string): string[] {
+  return templateVariables(templateId).flatMap(({ name, fields = [] }) => [
+    name,
+    ...fields.flatMap((field) => [
+      `${name}.${field}`,
+      ...(NESTED_FIELDS[field] ?? []).map((nested) => `${name}.${field}.${nested}`),
+    ]),
+  ])
 }
 
 /** Spree's own Liquid filters, on top of Liquid's standard ones. */

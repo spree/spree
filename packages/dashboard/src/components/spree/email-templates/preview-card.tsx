@@ -31,7 +31,11 @@ import {
   useEmailTemplates,
 } from '../../../hooks/use-email-templates'
 import { emailTemplateName } from '../../../lib/email-template-name'
-import { flattenVariables, templateVariables } from '../../../lib/email-template-variables'
+import {
+  documentedPaths,
+  flattenVariables,
+  templateVariables,
+} from '../../../lib/email-template-variables'
 import { EmailPreviewFrame, type EmailPreviewWidth } from './email-preview-frame'
 
 /** How long typing pauses before a preview is rendered again. */
@@ -111,9 +115,9 @@ export function useLivePreview(
       info: descriptions.get(path),
     }))
     const known = new Set(fromPreview.map((completion) => completion.label))
-    const documentedOnly = documented
-      .filter((variable) => !known.has(variable.name))
-      .map((variable) => ({ label: variable.name, info: descriptions.get(variable.name) }))
+    const documentedOnly = documentedPaths(templateId)
+      .filter((path) => !known.has(path))
+      .map((path) => ({ label: path, info: descriptions.get(path) }))
     return [...fromPreview, ...documentedOnly]
   }, [data, templateId, t])
 
