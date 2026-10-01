@@ -264,7 +264,7 @@ These slots are on the store owner's seller management pages in the admin dashbo
 
 Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way, in the seller panel's own plugins. Their names start with `seller.` followed by the page — `seller.form_main` and `seller.form_sidebar` above belong to the admin dashboard instead.
 
-None of the seller panel pages are host forms yet: widgets save via their own Seller API calls.
+The product page is a host form with the form key `seller.product`: fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
 
 | Slot | Where | Context |
 |---|---|---|
