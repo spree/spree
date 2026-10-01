@@ -69,6 +69,11 @@ module Spree
         @drafts[name] || stored(name) || partial_file(name)
       end
 
+      # @return [Boolean] whether a store's published template answered any lookup so far
+      def stored_templates_used?
+        @stored.values.any?
+      end
+
       private
 
       attr_reader :view_paths

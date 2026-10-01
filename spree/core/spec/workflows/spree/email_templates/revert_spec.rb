@@ -29,4 +29,11 @@ describe Spree::EmailTemplates::Revert do
     expect(result.error.value).to eq(:stale)
     expect(template.reload).to be_published
   end
+
+  it 'refuses when the draft the admin saw was published or discarded since' do
+    store.email_template_drafts.destroy_all
+
+    expect(described_class.new.call(store: store, key: editable_key, actor: admin, lock_version: 0).error.value).to eq(:stale)
+    expect(template.reload).to be_published
+  end
 end

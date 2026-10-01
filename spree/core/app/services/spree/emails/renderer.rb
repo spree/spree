@@ -23,6 +23,9 @@ module Spree
         def environment
           @environment ||= Liquid::Environment.build(error_mode: :strict) do |environment|
             environment.register_filter(Spree::Emails::Filters)
+            # `include` takes a variable as the partial name, which would echo
+            # data back in its error message; `render` only takes a fixed name.
+            environment.tags.delete('include')
             environment.register_tag('capture', Spree::Core::Emails::EscapedOutput::Capture)
             environment.register_tag('cycle', Spree::Core::Emails::EscapedOutput::Cycle)
           end

@@ -60,6 +60,22 @@ describe Spree::AdminUserMailer, type: :mailer do
       end
     end
 
+    context "when Spree's own template fails, with no store version" do
+      include_context 'with an editable email template'
+
+      it 'raises once, without reporting a store template failure' do
+        allow(Spree::Emails::Template).to receive(:new).and_wrap_original do |original, **arguments|
+          template = original.call(**arguments)
+          allow(template).to receive(:body).and_return('<mj-section><mj-column><mj-text>{{ 1 | divided_by: 0 }}</mj-text></mj-column></mj-section>') if arguments[:key] == editable_key
+          template
+        end
+        allow(Rails.error).to receive(:report)
+
+        expect { described_class.password_reset_email(admin_user, token, store).message }.to raise_error(Liquid::ZeroDivisionError)
+        expect(Rails.error).not_to have_received(:report)
+      end
+    end
+
     context 'when the admin has a dashboard language set' do
       around do |example|
         previous = I18n.available_locales

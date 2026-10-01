@@ -31,7 +31,10 @@ module Spree
 
       def ensure_current
         expected = attributes[:lock_version]
-        failure(nil, :stale) if draft.persisted? && !expected.nil? && expected.to_i != draft.lock_version
+        return if expected.nil?
+
+        # A draft that is gone was published or discarded since it was loaded.
+        failure(nil, :stale) if draft.new_record? || expected.to_i != draft.lock_version
       end
 
       def save

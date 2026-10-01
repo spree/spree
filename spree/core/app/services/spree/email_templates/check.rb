@@ -39,11 +39,11 @@ module Spree
                     email_key: email_key, strict: true).call
         nil
       rescue Spree::EmailTemplates::NoSampleRecord
-        syntax_problem(email_key)
+        syntax_problem(email_key)&.merge(locale: locale)
       rescue Liquid::Error => e
-        { email: email_key, message: e.message, line: e.line_number }
+        { email: email_key, locale: locale, message: e.message, line: e.line_number }
       rescue MRML::Error => e
-        { email: email_key, message: e.message, line: nil }
+        { email: email_key, locale: locale, message: e.message, line: nil }
       end
 
       def syntax_problem(email_key)

@@ -132,7 +132,7 @@ module Spree
       resolver = email_resolver(template)
       email_renderer(resolver).render(find_email_template(resolver, template), assigns)
     rescue Liquid::Error, MRML::Error => e
-      raise unless resolver&.store
+      raise unless resolver&.stored_templates_used?
 
       Rails.error.report(e, context: { email_template: template, store_id: current_store&.id })
       fallback = email_resolver

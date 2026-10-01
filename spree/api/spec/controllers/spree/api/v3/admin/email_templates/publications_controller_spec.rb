@@ -42,6 +42,21 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::PublicationsController, ty
     expect(response).to have_http_status(:conflict)
   end
 
+  context 'when publishing the layout without permission to read the records its emails show' do
+    let(:headers) { { 'x-spree-api-key' => create(:api_key, :secret, store: store, scopes: %w[write_email_templates]).plaintext_token } }
+
+    before { allow(Spree::TestingSupport::EmailTemplateSample).to receive(:required_permissions).and_return(%w[read_orders]) }
+
+    it 'is refused, since the check renders every email with real records' do
+      create(:email_template_draft, store: store, key: 'layouts/spree/base_mailer',
+                                    body: File.read(Spree::Core::Engine.root.join('app/views/layouts/spree/base_mailer.liquid')))
+
+      post :create, params: { email_template_id: 'layouts.spree.base_mailer' }, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   it 'refuses when there is no draft' do
     post :create, params: { email_template_id: id }, as: :json
 
