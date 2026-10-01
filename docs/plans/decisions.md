@@ -99,6 +99,16 @@ Rejected:
 
 **Plans amended:** `6.0-tax-provider.md` (contract, Internal refund limit, "Post-sale tax", lifecycle integration points, Phase 6 follow-ups, Constraints on Current Work), `6.0-returns-exchanges-claims.md` (key decisions, ReturnLineItem, ExchangeLineItem and ClaimLineItem notes, refunding, exchange workflow, Constraints on Current Work, resolved question 7).
 
+## 2026-10-01: Merchants edit email templates one language at a time, in readable text
+
+**Context:** Spree's email templates print their text through translation keys (`{{ 'order_mailer.payment_link_email.message' | t: store_name: store.name }}`), so one file serves every language. In the dashboard editor a merchant cannot read those keys, and cannot change the text behind them. Other platforms with an email editor show merchants plain text and treat each language as its own copy.
+
+**Decision:** Spree's files keep their translation keys. When a merchant edits a template for a language, the editor writes the keys out as text in that language, in the subject and the body, with each value as the variable the template passed (`Dear {{ order.customer_name }},`); the edit is that language's version. A key that cannot be written out exactly (a plural form, a missing translation) is left as it was. The editor no longer offers "All languages"; the API keeps accepting `any`, and a version for every language published earlier still applies to languages without their own, which the editor says.
+
+**Consequences:** Languages nobody edited keep Spree's translated default, so an English edit never reaches French customers in English. The same change in several languages is made in each. Supersedes the "one template for every language" part of the 2026-09-30 entry for the dashboard.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
 ## 2026-10-01: Building the email editor settled its API shape, branding and sample data
 
 **Context:** Implementing `6.0-email-template-editor.md` met details the design left loose: how the API names a template and its language, how the editor shows what an upgrade changed in a default, where branding is edited, what a new store previews, and whether the generated email types get Zod schemas.

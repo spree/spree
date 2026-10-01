@@ -7415,6 +7415,7 @@ paths:
                   default_subject: Order {{ order.number }} confirmed
                   default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                     {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                  published_language:
                   default_changed: false
                   base_subject:
                   base_body:
@@ -7588,6 +7589,7 @@ paths:
                         </mj-section>
                       </mj-body>
                     </mjml>
+                  published_language:
                   default_changed: false
                   base_subject:
                   base_body:
@@ -7678,6 +7680,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
@@ -7776,6 +7779,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
                 default_changed: false
                 base_subject:
                 base_body:
@@ -7860,6 +7864,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
                 default_changed: false
                 base_subject:
                 base_body:
@@ -7978,6 +7983,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
                 default_changed: false
                 base_subject:
                 base_body:
@@ -8056,6 +8062,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language: any
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
@@ -8636,6 +8643,7 @@ paths:
                 default_subject: Order {{ order.number }} confirmed
                 default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
                   {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language: any
                 default_changed: true
                 base_subject: Reset {{ store.name }}
                 base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
@@ -52478,6 +52486,9 @@ components:
           nullable: true
         default_body:
           type: string
+        published_language:
+          type: string
+          nullable: true
         default_changed:
           type: boolean
         base_subject:
@@ -52502,6 +52513,7 @@ components:
       - published_at
       - default_subject
       - default_body
+      - published_language
       - default_changed
       - base_subject
       - base_body
