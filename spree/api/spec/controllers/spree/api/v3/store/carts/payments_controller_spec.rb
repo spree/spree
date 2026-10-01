@@ -52,8 +52,11 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
       expect(json_response['error']['code']).to eq('payment_session_required')
     end
 
+    # Rejected even when the customer has a balance to spend, because a balance
+    # may span several credits and each one is a payment of its own.
     it 'points store credit at the store credits endpoint' do
       store_credit_method = create(:store_credit_payment_method, store: store)
+      create(:store_credit, customer: user, store: store, currency: order.currency)
 
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: store_credit_method.prefixed_id }
 
@@ -90,17 +93,6 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
       post :create, params: { cart_id: order.prefixed_id, payment_method_id: inactive.prefixed_id }
 
       expect(response).to have_http_status(:not_found)
-    end
-
-    it 'rejects store credit, which is applied through its own endpoint' do
-      store_credit_method = create(:store_credit_payment_method, store: store)
-      create(:store_credit, customer: user, store: store, currency: order.currency)
-
-      post :create, params: { cart_id: order.prefixed_id, payment_method_id: store_credit_method.prefixed_id }
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['code']).to eq('payment_method_unavailable')
-      expect(order.reload.payments).to be_empty
     end
 
     it 'returns not found for invalid payment method' do
