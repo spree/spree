@@ -240,17 +240,15 @@ module Spree
       payment_method.payment_source_class.unscoped { super }
     end
 
+    # @return [BigDecimal]
     def max_amount
       return amount if owner.nil?
 
       amount_from_order = owner.total - owner.payment_total
+      return amount_from_order unless source.is_a?(Spree::StoreCredit)
 
-      if payment_method&.store_credit?
-        store_credits = owner.available_store_credits
-        store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
-      else
-        amount_from_order
-      end
+      # The credit backing the payment can only pay up to its own amount_remaining
+      [source.amount_remaining, amount_from_order].min
     end
 
     def amount=(amount)

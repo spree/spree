@@ -23,6 +23,27 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
       expect(order.reload.payments.store_credits.count).to eq(1)
     end
 
+    context 'when the balance is spread over several credits' do
+      let!(:order) { create(:cart_with_line_items, customer: user, store: store, line_items_price: 30) }
+      # 35 available, no single credit covering the cart's 30.
+      let!(:store_credit) { create(:store_credit, customer: user, store: store, amount: 20) }
+      let!(:newer_store_credit) { create(:store_credit, customer: user, store: store, amount: 15) }
+
+      it 'draws from each credit in turn to cover the cart' do
+        post :create, params: { cart_id: order.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['store_credit_total']).to eq('30.0')
+        expect(json_response['amount_due']).to eq('0.0')
+        expect(json_response['covered_by_store_credit']).to be(true)
+
+        payments = order.reload.payments.store_credits.valid
+        expect(payments.map { |payment| [payment.source, payment.amount] }).to contain_exactly(
+          [store_credit, 20.0], [newer_store_credit, 10.0]
+        )
+      end
+    end
+
     context 'without available store credit' do
       let(:user_without_credit) { create(:user) }
       let!(:order_without_credit) { create(:cart_with_line_items, customer: user_without_credit, store: store) }
