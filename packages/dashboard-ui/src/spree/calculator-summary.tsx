@@ -106,8 +106,10 @@ function formatField(
   if (field.type === 'boolean') {
     return value ? humanize(field.key) : null
   }
-  if (Array.isArray(value)) return value.length ? `${humanize(field.key)}: ${value.length}` : null
-  if (typeof value === 'object') return null
+  if (field.type === 'array') {
+    return Array.isArray(value) && value.length ? `${humanize(field.key)}: ${value.length}` : null
+  }
+  if (field.type === 'hash') return null
   return `${humanize(field.key)}: ${value}`
 }
 

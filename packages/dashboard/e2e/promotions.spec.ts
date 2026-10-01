@@ -90,7 +90,7 @@ async function addTieredPercentAction(page: Page, tiers: [string, string][]) {
   }
 }
 
-async function openAdjustmentAction(page: Page) {
+async function openAdjustmentAction(page: Page, calculator: RegExp) {
   await page
     .locator('div.items-stretch')
     .filter({ hasText: /create whole-order adjustment/i })
@@ -101,9 +101,7 @@ async function openAdjustmentAction(page: Page) {
   await expect(page.getByRole('heading', { name: /^create whole-order adjustment$/i })).toBeVisible(
     { timeout: 5_000 },
   )
-  await expect(page.locator('#calculator-type')).toContainText(/tiered percent/i, {
-    timeout: 10_000,
-  })
+  await expect(page.locator('#calculator-type')).toContainText(calculator, { timeout: 10_000 })
 }
 
 // The server keeps each number as an exact decimal, so 100 reads back as
@@ -389,17 +387,7 @@ test.describe('promotions', () => {
 
     await submitCreate(page, name)
 
-    await page
-      .locator('div.items-stretch')
-      .filter({ hasText: /create whole-order adjustment/i })
-      .first()
-      .getByRole('button')
-      .first()
-      .click()
-    await expect(
-      page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
-    ).toBeVisible({ timeout: 5_000 })
-    await expect(calculatorSelect).toContainText(/flat rate/i, { timeout: 10_000 })
+    await openAdjustmentAction(page, /flat rate/i)
   })
 
   test('creates a promotion with a Create Adjustment action', async ({ page }) => {
@@ -443,7 +431,7 @@ test.describe('promotions', () => {
 
     await submitCreate(page, name)
 
-    await openAdjustmentAction(page)
+    await openAdjustmentAction(page, /tiered percent/i)
     await expectTiers(page, [
       ['100', '10'],
       ['250', '15'],
@@ -463,7 +451,7 @@ test.describe('promotions', () => {
     await saveEditor(page)
     await submitCreate(page, name)
 
-    await openAdjustmentAction(page)
+    await openAdjustmentAction(page, /tiered percent/i)
     const dialog = page.getByRole('dialog')
     await dialog
       .getByRole('button', { name: /^remove tier$/i })
@@ -481,7 +469,7 @@ test.describe('promotions', () => {
     // Read back from the server, not from the form's memory.
     await page.reload()
     await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
-    await openAdjustmentAction(page)
+    await openAdjustmentAction(page, /tiered percent/i)
     await expectTiers(page, [['250', '20']])
   })
 

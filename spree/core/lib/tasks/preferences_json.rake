@@ -8,7 +8,7 @@ module Spree
     def self.models
       Rails.application.eager_load!
       Spree::Base.descendants.select do |model|
-        model.stores_secret_preferences? && model.base_class == model && model.table_exists?
+        model.include?(Spree::SecretPreferences) && model.base_class == model && model.table_exists?
       end
     end
 

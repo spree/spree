@@ -209,8 +209,8 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       # A value that is not a number is kept as written, so two such tiers
       # cannot collapse into one nil key.
       preferences['tiers'] = tiers.to_h do |tier|
-        [BigDecimal(tier['threshold'].to_s, exception: false) || tier['threshold'],
-         BigDecimal(tier['value'].to_s, exception: false) || tier['value']]
+        [Spree::Calculator::Tiers.decimal(tier['threshold']) || tier['threshold'],
+         Spree::Calculator::Tiers.decimal(tier['value']) || tier['value']]
       end
     end
 
@@ -218,20 +218,8 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       return unless model.respond_to?(:declared_preference_types)
 
       model.declared_preference_types.each do |name, type|
-        value = preferences[name.to_s]
-        next unless value.is_a?(String)
-
-        case type
-        when :decimal then preferences[name.to_s] = BigDecimal(value, exception: false) || value
-        when :datetime then preferences[name.to_s] = parse_time(value)
-        end
+        preferences[name.to_s] = Spree::Preferences::Preferable.restore_value(preferences[name.to_s], type) if preferences.key?(name.to_s)
       end
-    end
-
-    def parse_time(value)
-      Time.iso8601(value)
-    rescue ArgumentError
-      value
     end
   end
 end

@@ -37,12 +37,6 @@ module Spree::Preferences
       preference_declarations_cache[:secrets] ||= declared_preference_types.filter_map { |name, type| name if type == :password }.freeze
     end
 
-    # Whether `:password` preferences are kept apart in an encrypted column.
-    # {Spree::SecretPreferences} turns this on.
-    def stores_secret_preferences?
-      false
-    end
-
     # Declares a typed preference with a `preferred_<name>` reader and writer
     # and a `prefers_<name>?` query. On a model, the value lives in the
     # `preferences` column (`secret_preferences` for a `:password` one) as a
@@ -52,7 +46,7 @@ module Spree::Preferences
     def preference(name, type, *args)
       name = name.to_sym
       secret = type == :password
-      if secret && !stores_secret_preferences?
+      if secret && !include?(Spree::SecretPreferences)
         raise ArgumentError, "#{self.name} declares the secret preference `#{name}` but cannot encrypt it. " \
                              'Include Spree::SecretPreferences and add a `secret_preferences` text column to its table.'
       end
@@ -80,7 +74,7 @@ module Spree::Preferences
       # Overrides the store accessor's reader and writer, which treat a missing
       # key as nil; here a missing key means the declared default.
       define_method(:"preferred_#{name}") do
-        restore_preference_value(stored_preference(name) { return preference_default(name) }, type)
+        Spree::Preferences::Preferable.restore_value(stored_preference(name) { return preference_default(name) }, type)
       end
 
       define_method(:"preferred_#{name}=") do |value|

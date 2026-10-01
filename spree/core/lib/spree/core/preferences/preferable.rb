@@ -23,6 +23,25 @@ module Spree::Preferences::Preferable
     extend Spree::Preferences::PreferableClassMethods
   end
 
+  # JSON keeps decimals and times as strings; the declared type turns them
+  # back into a BigDecimal and a time. Anything else, or a string that does
+  # not parse, comes back as stored.
+  #
+  # @param value [Object] a value as JSON stores it
+  # @param type [Symbol] the preference's declared type
+  # @return [Object]
+  def self.restore_value(value, type)
+    return value unless value.is_a?(String)
+
+    case type
+    when :decimal then BigDecimal(value, exception: false) || value
+    when :datetime then Time.zone.iso8601(value)
+    else value
+    end
+  rescue ArgumentError
+    value
+  end
+
   def get_preference(name)
     has_preference! name
     public_send(:"preferred_#{name}")
@@ -112,8 +131,8 @@ module Spree::Preferences::Preferable
   # `preferred_*` reader, never copied into storage.
   def backfill_default_preferences
     secrets = self.class.secret_preference_names
-    missing = default_preferences.reject { |name, _| preferences.key?(name) || secrets.include?(name) }
-    self.preferences = preferences.merge(missing) if missing.any?
+    missing = defined_preferences.reject { |name| preferences.key?(name) || secrets.include?(name) }
+    self.preferences = preferences.merge(missing.index_with { |name| preference_default(name) }) if missing.any?
   end
 
   # Names of the preferences the last save changed, secrets included.
@@ -167,18 +186,6 @@ module Spree::Preferences::Preferable
     else
       self.preferences = (preferences || {}).with_indifferent_access.merge(name => value)
     end
-  end
-
-  def restore_preference_value(value, type)
-    return value unless value.is_a?(String)
-
-    case type
-    when :decimal then value.to_d
-    when :datetime then Time.zone.iso8601(value)
-    else value
-    end
-  rescue ArgumentError
-    value
   end
 
   def convert_preference_value(value, type, nullable: false)
