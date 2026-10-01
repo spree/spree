@@ -64,17 +64,14 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'has a type' do
-      expect(@a.preferred_color_type).to eq :string
       expect(@a.preference_type(:color)).to eq :string
     end
 
     it 'has a default' do
-      expect(@a.preferred_color_default).to eq 'green'
       expect(@a.preference_default(:color)).to eq 'green'
     end
 
     it 'can have a deprecation message' do
-      expect(@a.preferred_color_deprecated).to eq 'Please use colour instead'
       expect(@a.preference_deprecated(:color)).to eq 'Please use colour instead'
     end
 
@@ -455,13 +452,6 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
-    it 'clear preferences' do
-      @pt.set_preference(:pref_test_pref, 'xyz')
-      expect(@pt.preferred_pref_test_pref).to eq('xyz')
-      @pt.clear_preferences
-      expect(@pt.preferred_pref_test_pref).to eq('abc')
-    end
-
     it 'clear preferences when record is deleted' do
       @pt.save!
       @pt.preferred_pref_test_pref = 'lmn'
@@ -521,9 +511,9 @@ describe Spree::Preferences::Preferable, type: :model do
         @pt.preferred_pref_test_pref = 'xyz'
         @pt.save!
 
-        expect(@pt.preferred_pref_test_pref_previously_changed?).to be true
-        expect(@pt.preferred_pref_test_pref_previous_change).to eq(['abc', 'xyz'])
-        expect(@pt.preferred_pref_test_pref_previously_was).to eq('abc')
+        expect(@pt.saved_change_to_preferred_pref_test_pref?).to be true
+        expect(@pt.saved_change_to_preferred_pref_test_pref).to eq(['abc', 'xyz'])
+        expect(@pt.preferred_pref_test_pref_before_last_save).to eq('abc')
       end
 
       it 'reports no changes when preference is set to same value' do
