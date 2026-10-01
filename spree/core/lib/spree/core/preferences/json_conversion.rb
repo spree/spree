@@ -51,8 +51,11 @@ module Spree
       # @param id [Object] the row's primary key
       # @param assignments [Hash{String => String}] column names and the values to write
       def write(table, id, assignments)
-        sets = assignments.map { |column, value| "#{connection.quote_column_name(column)} = #{connection.quote(value)}" }
-        connection.exec_update("UPDATE #{quoted(table)} SET #{sets.join(', ')} WHERE id = #{connection.quote(id)}")
+        arel_table = Arel::Table.new(table)
+        update = Arel::UpdateManager.new(arel_table).
+                 set(assignments.map { |column, value| [arel_table[column], value] }).
+                 where(arel_table[:id].eq(id))
+        connection.update(update)
       end
 
       # Tables with a `preferences` column that a model storing Spree
@@ -104,9 +107,7 @@ module Spree
       def convert_table(table, source: 'preferences', target: 'preferences')
         typed = connection.column_exists?(table, :type)
         secrets_column = connection.column_exists?(table, :secret_preferences)
-        columns = ['id', source, ('type' if typed)].compact.map { |column| connection.quote_column_name(column) }
-
-        rows = connection.select_all("SELECT #{columns.join(', ')} FROM #{quoted(table)} WHERE #{connection.quote_column_name(source)} IS NOT NULL")
+        rows = rows_with(table, source, ['id', source, ('type' if typed)].compact)
 
         rows.count do |row|
           preferences, already_json = read(row[source], table, row['id'])
@@ -128,7 +129,7 @@ module Spree
       #
       # @return [Integer] the number of rows written
       def convert_values(table, source:, target:)
-        rows = connection.select_all("SELECT id, #{connection.quote_column_name(source)} FROM #{quoted(table)} WHERE #{connection.quote_column_name(source)} IS NOT NULL")
+        rows = rows_with(table, source, ['id', source])
 
         rows.count do |row|
           value = parse_yaml(row[source], table, row['id'])
@@ -186,8 +187,10 @@ module Spree
         secrets
       end
 
-      def quoted(table)
-        connection.quote_table_name(table)
+      # The given columns of every row whose `present` column is not NULL.
+      def rows_with(table, present, columns)
+        arel_table = Arel::Table.new(table)
+        connection.select_all(arel_table.project(*columns.map { |column| arel_table[column] }).where(arel_table[present].not_eq(nil)))
       end
     end
   end
