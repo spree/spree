@@ -80,9 +80,7 @@ module Spree::Preferences
       # Overrides the store accessor's reader and writer, which treat a missing
       # key as nil; here a missing key means the declared default.
       define_method(:"preferred_#{name}") do
-        value = stored_preference(name) { return preference_default(name) }
-        # JSON keeps a decimal as its exact string; the declared type restores it.
-        type == :decimal && value.is_a?(String) ? value.to_d : value
+        restore_preference_value(stored_preference(name) { return preference_default(name) }, type)
       end
 
       define_method(:"preferred_#{name}=") do |value|

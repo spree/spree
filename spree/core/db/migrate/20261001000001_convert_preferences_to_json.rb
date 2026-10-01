@@ -121,7 +121,7 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
         preferences.merge!(decode(decrypt(row['secret_preferences'])) || {}) if secrets
         model = typed ? conversion.model_for(row['type']) : nil
         restore_tiers(preferences, model)
-        restore_decimals(preferences, model)
+        restore_typed_values(preferences, model)
 
         yaml = YAML.dump(preferences.transform_keys(&:to_sym))
         conversion.write(table, row['id'], target => inside_json ? JSON.generate(yaml) : yaml)
@@ -180,13 +180,24 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       end
     end
 
-    def restore_decimals(preferences, model)
+    def restore_typed_values(preferences, model)
       return unless model.respond_to?(:declared_preference_types)
 
       model.declared_preference_types.each do |name, type|
         value = preferences[name.to_s]
-        preferences[name.to_s] = BigDecimal(value, exception: false) || value if type == :decimal && value.is_a?(String)
+        next unless value.is_a?(String)
+
+        case type
+        when :decimal then preferences[name.to_s] = BigDecimal(value, exception: false) || value
+        when :datetime then preferences[name.to_s] = parse_time(value)
+        end
       end
+    end
+
+    def parse_time(value)
+      Time.iso8601(value)
+    rescue ArgumentError
+      value
     end
   end
 end
