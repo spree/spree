@@ -719,10 +719,19 @@ module Spree
 
     def ensure_default_exists_and_is_unique
       if default
+        inherit_install_id if will_save_change_to_default?
         Spree::Store.where.not(id: id).update_all(default: false)
       elsif Spree::Store.where(default: true).count.zero?
         self.default = true
       end
+    end
+
+    # The installation id lives on the default store; a store taking over that
+    # role takes the id with it, so the installation keeps one identity.
+    def inherit_install_id
+      return if preferred_install_id.present?
+
+      self.preferred_install_id = Spree::Store.where(default: true).where.not(id: id).first&.preferred_install_id
     end
 
     def should_generate_new_friendly_id?

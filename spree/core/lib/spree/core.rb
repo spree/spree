@@ -226,18 +226,20 @@ module Spree
   # installation only.
   #
   # Deliberately not memoized: the stored preference is the single source of
-  # truth, so processes that race to generate the first value converge on the
-  # one saved last at their next read instead of each holding a different id
-  # for their lifetime.
+  # truth. The first value is generated under a row lock and checked again
+  # after the reload, so processes that race to create it all return the same
+  # id, and no store setting saved meanwhile is overwritten.
   #
   # @return [String, nil] UUID, or nil before the default store exists
   def self.install_id
     store = Spree::Store.default
     return if store.nil?
 
-    store.preferred_install_id.presence || SecureRandom.uuid.tap do |id|
-      store.preferred_install_id = id
-      store.update_columns(preferences: store.preferences)
+    store.preferred_install_id.presence || store.with_lock do
+      store.preferred_install_id.presence || SecureRandom.uuid.tap do |id|
+        store.preferred_install_id = id
+        store.update_columns(preferences: store.preferences)
+      end
     end
   end
 
