@@ -259,17 +259,18 @@ en:
               must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         spree/calculator/tiered_flat_rate:
           attributes:
-            base:
-              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
             preferred_tiers:
-              should_be_hash: should be a hash
+              should_be_list: should be a list of tiers, each with a threshold and a value
+              thresholds_should_be_positive_number: should all have a threshold larger than 0
+              thresholds_should_be_unique: should not repeat a threshold
+              values_should_be_number: should all have a value of 0 or more
         spree/calculator/tiered_percent:
           attributes:
-            base:
-              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
-              values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
-              should_be_hash: should be a hash
+              should_be_list: should be a list of tiers, each with a threshold and a value
+              thresholds_should_be_positive_number: should all have a threshold larger than 0
+              thresholds_should_be_unique: should not repeat a threshold
+              values_should_be_percent: should all have a value between 0% and 100%
         spree/catalog:
           attributes:
             base:
