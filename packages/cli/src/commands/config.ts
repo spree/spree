@@ -13,6 +13,7 @@ import { handleApiError } from '../api/output.js'
 import {
   type ApplyResult,
   applyPlan,
+  assertPrunable,
   ConfigValidationError,
   introspect,
   loadConfig,
@@ -22,13 +23,13 @@ import {
   planHasDeletes,
   planHasErrors,
   planToJson,
-  presentSections,
   renderConfigYaml,
   renderPlan,
   renderReport,
   reportHasFailures,
   SECTION_NAMES,
   type SectionName,
+  type SpreeConfig,
 } from '../config/index.js'
 import { detectProject } from '../context.js'
 
@@ -84,7 +85,14 @@ export function resolveConfigFile(flag: string | undefined, cwd = process.cwd())
   }
 }
 
-/** Parses `--prune a,b`, refusing names that are not sections. */
+/** Parses `--prune a,b`, refusing names that are not sections or may not be pruned. */
+export function parsePrune(value: string | undefined): SectionName[] {
+  const sections = parseSections(value, '--prune')
+  assertPrunable(sections)
+  return sections
+}
+
+/** Parses a comma-separated section list, refusing names that are not sections. */
 export function parseSections(value: string | undefined, flag: string): SectionName[] {
   if (!value) return []
   const names = value
@@ -123,9 +131,9 @@ function readConfigOrExit(file: string) {
   }
 }
 
-/** Refuses a deploy whose key lacks a section's write scope, naming the fix. */
-async function ensureScopes(client: AdminClient, sections: SectionName[]): Promise<void> {
-  const missing = await missingScopes(client, sections)
+/** Refuses a deploy whose key lacks a scope the file needs, naming the fix. */
+async function ensureScopes(client: AdminClient, config: SpreeConfig): Promise<void> {
+  const missing = await missingScopes(client, config)
   if (!missing || missing.length === 0) return
   process.stderr.write(
     `${pc.red('error:')} this key lacks the scopes the file needs: ${missing.join(', ')}\n` +
@@ -177,7 +185,7 @@ export function registerConfigCommand(program: Command): void {
   ).action(async (flags: PlanFlags) => {
     const file = resolveConfigFile(flags.config)
     const { config: loaded } = readConfigOrExit(file)
-    const prune = parseSections(flags.prune, '--prune')
+    const prune = parsePrune(flags.prune)
     let baseUrl: string | undefined
     try {
       const { client, credentials } = await clientFor(flags)
@@ -205,13 +213,13 @@ export function registerConfigCommand(program: Command): void {
     .action(async (flags: DeployFlags) => {
       const file = resolveConfigFile(flags.config)
       const { config: loaded } = readConfigOrExit(file)
-      const prune = parseSections(flags.prune, '--prune')
+      const prune = parsePrune(flags.prune)
       const json = flags.format === 'json'
       let baseUrl: string | undefined
       try {
         const { client, credentials } = await clientFor(flags)
         baseUrl = credentials.baseUrl
-        await ensureScopes(client, presentSections(loaded))
+        await ensureScopes(client, loaded)
         const plan = await planConfig(loaded, client, { prune })
 
         // One output path whatever happens: JSON gets the plan plus the

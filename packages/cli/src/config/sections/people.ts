@@ -20,6 +20,8 @@ const CUSTOMER_ATTRIBUTES: (keyof CustomerEntry)[] = [
 export const customers: Section<CustomerEntry, Customer> = {
   name: 'customers',
   scope: 'write_customers',
+  pruneRefusal:
+    'customer accounts belong to the whole installation, not to one store, so a file cannot know which to delete',
   introspectByDefault: false,
   path: '/customers',
   keyAttribute: 'email',
@@ -70,6 +72,7 @@ const STATUS_ACTIONS: Record<string, string> = { approved: 'approve', suspended:
 export const sellers: Section<SellerEntry, Seller> = {
   name: 'sellers',
   scope: 'write_sellers',
+  pruneRefusal: 'a seller carries orders, payouts and transfers; remove one from the dashboard',
   introspectByDefault: true,
   path: '/sellers',
   keyAttribute: 'slug',

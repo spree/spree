@@ -5,7 +5,16 @@ import type {
 import { numericString } from '../diff.js'
 import type { DeliveryMethodEntry, DeliveryZoneEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
-import { FIRST_PARTY, keysOf, type Payload, pick, present, refs, type Section } from './section.js'
+import {
+  FIRST_PARTY,
+  keysOf,
+  type Payload,
+  partialIdList,
+  pick,
+  present,
+  refs,
+  type Section,
+} from './section.js'
 
 // The SDK's generated types plus the index signature, so a section can read
 // both declared attributes and the associations an `expand` adds.
@@ -16,7 +25,14 @@ interface ZoneMember {
   member_type: string
   country_code: string | null
   state_code: string | null
+  postal_code_prefix?: string | null
+  postal_code_from?: string | null
+  postal_code_to?: string | null
 }
+
+/** Country and state members are the file's; postal-code ranges are kept as they are. */
+const isFileMember = (member: ZoneMember) =>
+  member.member_type === 'country' || member.member_type === 'state'
 
 function membersPayload(entry: DeliveryZoneEntry): ZoneMember[] | undefined {
   if (!entry.countries && !entry.states) return undefined
@@ -64,7 +80,34 @@ export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
   },
   async current(live) {
     const members = (live.members as ZoneMember[] | undefined) ?? []
-    return { ...live, members: sortedMembers(members) }
+    return { ...live, members: sortedMembers(members.filter(isFileMember)) }
+  },
+  async update(live, payload, _entry, ctx) {
+    // The members write replaces the set, so the ones the file cannot
+    // express go back in unchanged.
+    const kept = ((live.members as ZoneMember[] | undefined) ?? [])
+      .filter((member) => !isFileMember(member))
+      .map(
+        ({
+          member_type,
+          country_code,
+          state_code,
+          postal_code_prefix,
+          postal_code_from,
+          postal_code_to,
+        }) => ({
+          member_type,
+          country_code,
+          state_code,
+          postal_code_prefix,
+          postal_code_from,
+          postal_code_to,
+        }),
+      )
+    const body = Array.isArray(payload.members)
+      ? { ...payload, members: [...(payload.members as ZoneMember[]), ...kept] }
+      : payload
+    return ctx.client.request<DeliveryZone>('PATCH', `/delivery_zones/${live.id}`, { body })
   },
   async toFile(live) {
     const members = (live.members as ZoneMember[] | undefined) ?? []
@@ -98,6 +141,9 @@ const METHOD_ATTRIBUTES: (keyof DeliveryMethodEntry)[] = [
   'estimated_transit_business_days_min',
   'estimated_transit_business_days_max',
 ]
+
+// Pickup may also run from sellers' warehouses, which the file cannot name.
+const methodPickupLocations = partialIdList('stock_locations', 'stock_location_ids')
 
 function isEmptyPreference(value: unknown): boolean {
   if (value === null || value === undefined) return true
@@ -142,6 +188,12 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
         payload.calculator_preferences = entry.calculator.preferences
     }
     return payload
+  },
+  current: (live, ctx, desired) => methodPickupLocations.current(live, ctx, desired),
+  async update(live, payload, _entry, ctx) {
+    return ctx.client.request<DeliveryMethod>('PATCH', `/delivery_methods/${live.id}`, {
+      body: await methodPickupLocations.write(live, payload, ctx),
+    })
   },
   async toFile(live, ctx) {
     const entry: DeliveryMethodEntry = present(

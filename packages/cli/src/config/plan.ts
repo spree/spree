@@ -2,7 +2,7 @@ import { RunContext } from './context.js'
 import { diffAttributes } from './diff.js'
 import { ConfigError } from './errors.js'
 import type { SpreeConfig } from './schema.js'
-import { type AnySection, ORDERED_SECTIONS, SOURCES } from './sections/index.js'
+import { type AnySection, ORDERED_SECTIONS, SECTIONS, SOURCES } from './sections/index.js'
 import type {
   ConfigClient,
   LiveRecord,
@@ -48,7 +48,7 @@ async function planSingleton(section: AnySection, ctx: RunContext): Promise<Plan
   const payload = await section.desired(entry, ctx, path)
   const changes = diffAttributes(
     payload,
-    await (section.current ? section.current(live, ctx, payload) : live),
+    await (section.current ? section.current(live, ctx, payload, entry) : live),
   )
   return [
     operation(section, {
@@ -115,9 +115,17 @@ async function planCollection(
       )
       continue
     }
+    const match = matches[0]
     let payload: Record<string, unknown>
+    let changes: ReturnType<typeof diffAttributes> = []
     try {
       payload = await section.desired(entry, ctx, path)
+      if (match) {
+        changes = diffAttributes(
+          payload,
+          await (section.current ? section.current(match, ctx, payload, entry) : match),
+        )
+      }
     } catch (error) {
       if (error instanceof ConfigError) {
         operations.push(operation(section, { kind: 'error', key, path, message: error.message }))
@@ -125,15 +133,10 @@ async function planCollection(
       }
       throw error
     }
-    const match = matches[0]
     if (!match) {
       operations.push(operation(section, { kind: 'create', key, path, entry, payload }))
       continue
     }
-    const changes = diffAttributes(
-      payload,
-      await (section.current ? section.current(match, ctx, payload) : match),
-    )
     operations.push(
       operation(section, {
         kind: changes.length ? 'update' : 'unchanged',
@@ -164,6 +167,15 @@ async function planCollection(
   return operations
 }
 
+/** Refuses a prune list naming a section whose live records a file must never delete. */
+export function assertPrunable(sections: SectionName[]): void {
+  const refused = sections.filter((name) => SECTIONS[name]?.pruneRefusal)
+  if (!refused.length) return
+  throw new Error(
+    refused.map((name) => `${name} cannot be pruned: ${SECTIONS[name].pruneRefusal}`).join('\n'),
+  )
+}
+
 /**
  * Reads the live store and classifies every entry of every present section
  * as create, update, unchanged or error, and live records absent from the
@@ -175,6 +187,7 @@ export async function planConfig(
   client: ConfigClient,
   options: PlanOptions = {},
 ): Promise<PlannedRun> {
+  assertPrunable(options.prune ?? [])
   const ctx = new RunContext(client, config, SOURCES)
   const prune = new Set(options.prune ?? [])
   const sections: PlannedSection[] = []
