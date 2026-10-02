@@ -5157,7 +5157,8 @@
       "check_failed_message": "Nie udało się połączyć z serwerem, aby sprawdzić, czy ta instalacja wymaga konfiguracji. Upewnij się, że działa, i spróbuj ponownie.",
       "provisioning": "Przygotowywanie sklepu…",
       "provisioning_failed": "Twoje konto jest gotowe, ale nie udało się skonfigurować domyślnych ustawień sklepu (magazyn, strefy dostaw, kategorie podatkowe).",
-      "provisioning_retry": "Spróbuj ponownie"
+      "provisioning_retry": "Spróbuj ponownie",
+      "provisioning_continue": "Przejdź do panelu"
     },
     "staff": {
       "actions": {

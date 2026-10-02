@@ -381,12 +381,11 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
- * Deploys the store's configuration against the freshly seeded server: the
- * store defaults first when this install skipped the setup screen (which
- * otherwise deploys them), then the project's `spree.config.yml` — the
- * store's declared shape, committed with the project. The project's own key
- * is read-only by design, so a write key is minted for this run and revoked
- * as soon as the deploy is over.
+ * On a scripted install, which has no setup screen, deploys the store
+ * defaults and then the project's `spree.config.yml` — the store's declared
+ * shape, committed with the project — against the freshly seeded server. The
+ * project's own key is read-only by design, so a write key is minted for
+ * this run and revoked as soon as the deploy is over.
  */
 async function deployStoreConfiguration(
   projectDir: string,
@@ -394,6 +393,17 @@ async function deployStoreConfiguration(
   { provision }: { provision: boolean },
 ): Promise<void> {
   const file = path.join(projectDir, DEFAULT_CONFIG_FILE)
+  // Without a scripted admin the store is claimed on the setup screen, which
+  // deploys the defaults the project file may refer to; deploying it before
+  // that would fail on every such reference.
+  if (!provision) {
+    if (fs.existsSync(file)) {
+      p.log.info(
+        `${DEFAULT_CONFIG_FILE} is deployed after first-run setup: run \`spree config deploy\` once the store is set up.`,
+      )
+    }
+    return
+  }
   let config: ReturnType<typeof loadConfig>['config'] | null = null
   if (fs.existsSync(file)) {
     try {
@@ -403,7 +413,6 @@ async function deployStoreConfiguration(
       p.log.warn(`Skipping ${DEFAULT_CONFIG_FILE}: ${error.message}`)
     }
   }
-  if (!provision && !config) return
 
   const s = p.spinner()
   // Setup still stands without the deploy; it can be run by hand.
@@ -413,7 +422,7 @@ async function deployStoreConfiguration(
       `${error instanceof Error ? error.message : String(error)}\nRun \`spree config provision\` and \`spree config deploy\` once the app is up.`,
     )
   }
-  s.start(provision ? 'Setting up store defaults...' : `Deploying ${DEFAULT_CONFIG_FILE}...`)
+  s.start('Setting up store defaults...')
   // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
   // run: the fixed name supersedes the leftover key.
   let token: string
@@ -432,7 +441,7 @@ async function deployStoreConfiguration(
   const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
   try {
     const results = [
-      ...(provision ? (await provisionStore(client)).results : []),
+      ...(await provisionStore(client)).results,
       ...(config ? (await deployConfig(config, client)).results : []),
     ]
     const report = { results }

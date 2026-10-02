@@ -89,6 +89,11 @@ commission_rates:
     enabled: false
 
 seller_requirements:
+  # In the order a seller meets them: agree to the terms, say who you are,
+  # tell us where to invoice and where returns go, have a way to ship, then
+  # list something. Only kinds that ask a question Spree knows how to answer:
+  # an attestation, a document or a manual check means nothing until the
+  # operator has written what it asks for.
   - type: accept_terms
   - type: complete_profile
   - type: billing_address

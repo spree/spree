@@ -5093,7 +5093,8 @@
       "check_failed_message": "Le serveur est injoignable pour vérifier si cette installation doit être configurée. Vérifiez qu'il est démarré, puis réessayez.",
       "provisioning": "Préparation de votre boutique…",
       "provisioning_failed": "Votre compte est prêt, mais les réglages par défaut de la boutique (entrepôt, zones de livraison, catégories de taxe) n'ont pas pu être configurés.",
-      "provisioning_retry": "Réessayer"
+      "provisioning_retry": "Réessayer",
+      "provisioning_continue": "Continuer vers le tableau de bord"
     },
     "staff": {
       "actions": {

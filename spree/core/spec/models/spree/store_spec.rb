@@ -1439,6 +1439,18 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(store.saved_reports.find_by(name: 'Top products').reporting_query.dimensions.first[:dimension].name).to eq(:product)
     end
 
+    # Stores upgraded from before saved reports existed get them from the
+    # upgrade step, which must not bring back a built-in the merchant deleted.
+    it 'adds the presets to a store that has none, and leaves one that has any alone' do
+      store.saved_reports.delete_all
+
+      expect { store.create_built_in_reports }.to change { store.saved_reports.seeded.count }
+        .from(0).to(described_class::REPORTS.size)
+
+      store.saved_reports.seeded.first.destroy!
+      expect { store.create_built_in_reports }.not_to change { store.saved_reports.count }
+    end
+
     # Validation proves a preset query names real members; only running it
     # proves the compiler can express that combination against a database.
     it 'presets only queries that actually execute' do

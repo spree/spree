@@ -165,13 +165,7 @@ function SetupForm({
 
   // The store's defaults (warehouse, delivery zones, tax categories) are
   // shaped by the country just chosen, so they are deployed only now.
-  const provisionAndContinue = async (store: { storeId: string | null; storeName: string }) => {
-    try {
-      await provision.mutateAsync()
-    } catch {
-      return
-    }
-
+  const continueToStore = (store: { storeId: string | null; storeName: string }) => {
     toastManager.add({
       type: 'success',
       title: t('admin.setup.welcome_title'),
@@ -183,6 +177,17 @@ function SetupForm({
     // of zeroes. A payload carrying no store falls through to the index
     // redirect, which resolves one for itself.
     onCompleted(store.storeId)
+  }
+
+  // The store's defaults (warehouse, delivery zones, tax categories) are
+  // shaped by the country just chosen, so they are deployed only now.
+  const provisionAndContinue = async (store: { storeId: string | null; storeName: string }) => {
+    try {
+      await provision.mutateAsync(store.storeId)
+    } catch {
+      return
+    }
+    continueToStore(store)
   }
 
   const onSubmit = async (data: SetupFormValues) => {
@@ -328,6 +333,16 @@ function SetupForm({
             <p className="text-sm text-destructive">{t('admin.setup.provisioning_failed')}</p>
             <Button type="button" className="w-full" onClick={() => provisionAndContinue(claimed)}>
               {t('admin.setup.provisioning_retry')}
+            </Button>
+            {/* The account exists either way; whatever was created stays, and
+                the rest can be added from Settings. */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => continueToStore(claimed)}
+            >
+              {t('admin.setup.provisioning_continue')}
             </Button>
           </div>
         ) : (

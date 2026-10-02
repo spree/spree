@@ -5093,7 +5093,8 @@
       "check_failed_message": "The server couldn't be reached to check whether this installation needs setup. Make sure it is running, then try again.",
       "provisioning": "Preparing your store…",
       "provisioning_failed": "Your account is ready, but the store's defaults (warehouse, delivery zones, tax categories) could not be set up.",
-      "provisioning_retry": "Try again"
+      "provisioning_retry": "Try again",
+      "provisioning_continue": "Continue to the dashboard"
     },
     "staff": {
       "actions": {

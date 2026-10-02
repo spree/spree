@@ -715,3 +715,13 @@ steps:
       predates the upgrade.
 
       Idempotent, and safe to re-run at any time to repair drift.
+
+  - id: create_built_in_reports
+    name: "Add the built-in saved reports to every store"
+    task: "spree:upgrade:create_built_in_reports"
+    notes: |
+      Saved reports are new in 6.0. A store created on 6.0 gets the twenty
+      built-in reports with it; a store that predates them gets them here.
+
+      Idempotent — a store that already has any built-in report is skipped,
+      so one the merchant deleted is not brought back.
