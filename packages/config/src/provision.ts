@@ -2,6 +2,7 @@ import { deployConfig, reportHasFailures } from './apply.js'
 import { COUNTRY_TEMPLATE, STORE_DEFAULTS } from './generated/templates.js'
 import { parseConfig, type Variables } from './load.js'
 import type { SpreeConfig } from './schema.js'
+import { ORDERED_SECTIONS } from './sections/index.js'
 import type { ApplyReport, ConfigClient } from './types.js'
 
 interface LiveStore {
@@ -46,26 +47,32 @@ function merge(...configs: SpreeConfig[]): SpreeConfig {
   return merged as SpreeConfig
 }
 
-/** Type shorthands the installation has registered, from a `…/types` endpoint. */
-async function registeredTypes(client: ConfigClient, path: string): Promise<Set<string>> {
-  const { data } = await client.request<{ data: { type: string }[] }>('GET', path)
-  return new Set(data.map((entry) => entry.type))
-}
-
 /**
  * Drops the defaults an installation cannot hold: a host app may unregister a
  * seller requirement kind or a payment method type, and the store's other
- * defaults must not fail on its account. The payment method list omits types
- * the store already has, which is harmless — those are left alone anyway.
+ * defaults must not fail on its account. Sections whose entries are typed
+ * declare where their registered types are listed. A payment method list
+ * omits types the store already has, which is harmless: those are left
+ * alone anyway.
  */
-async function withoutUnregistered(config: SpreeConfig, client: ConfigClient) {
-  const kinds = await registeredTypes(client, '/seller_requirements/types')
-  const methods = await registeredTypes(client, '/payment_methods/types')
-  return {
-    ...config,
-    seller_requirements: config.seller_requirements?.filter((entry) => kinds.has(entry.type)),
-    payment_methods: config.payment_methods?.filter((entry) => methods.has(entry.type)),
-  }
+async function withoutUnregistered(
+  config: SpreeConfig,
+  client: ConfigClient,
+): Promise<SpreeConfig> {
+  const typed = ORDERED_SECTIONS.filter((section) => section.typesPath && config[section.name])
+  const registered = await Promise.all(
+    typed.map((section) =>
+      client.request<{ data: { type: string }[] }>('GET', section.typesPath as string),
+    ),
+  )
+  const filtered: Record<string, unknown> = { ...config }
+  typed.forEach((section, index) => {
+    const types = new Set(registered[index].data.map((entry) => entry.type))
+    filtered[section.name] = (config[section.name] as { type: string }[]).filter((entry) =>
+      types.has(entry.type),
+    )
+  })
+  return filtered as SpreeConfig
 }
 
 export interface DefaultsOptions {
