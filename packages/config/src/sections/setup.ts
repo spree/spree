@@ -24,7 +24,7 @@ import {
   type SellerRequirementEntry,
 } from '../schema.js'
 import type { LiveRecord, SectionName } from '../types.js'
-import { type Payload, pick, plainSection, preferencesFromLive } from './section.js'
+import { type Payload, pick, plainSection, scalarPreferences } from './section.js'
 
 // The SDK's generated types plus the index signature, so a section can read
 // both declared attributes and the associations an `expand` adds.
@@ -47,19 +47,16 @@ export const paymentMethods = plainSection<PaymentMethodEntry, PaymentMethod>({
   key: 'name',
   attributes: PAYMENT_METHOD_ATTRIBUTES,
   defaults: { active: true, storefront_visible: true },
+  fixedOnCreate: ['type'],
+  typesPath: '/payment_methods/types',
   async desired(entry) {
     return { ...pick(entry, PAYMENT_METHOD_ATTRIBUTES), type: entry.type }
   },
-  async update(live, payload, _entry, ctx) {
-    const { type: _type, ...body } = payload
-    return ctx.client.request<PaymentMethod>('PATCH', `/payment_methods/${live.id}`, { body })
-  },
   async toFile(live) {
-    const entry = pick(live as unknown as PaymentMethodEntry, PAYMENT_METHOD_ATTRIBUTES)
-    for (const [attribute, value] of Object.entries({ active: true, storefront_visible: true })) {
-      if (entry[attribute] === value) delete entry[attribute]
-    }
-    return { ...entry, type: String(live.type) } as PaymentMethodEntry
+    return {
+      ...pick(live as unknown as PaymentMethodEntry, PAYMENT_METHOD_ATTRIBUTES),
+      type: String(live.type),
+    } as PaymentMethodEntry
   },
 })
 
@@ -100,6 +97,8 @@ export const sellerRequirements = plainSection<SellerRequirementEntry, SellerReq
   // uses, so the section is listed whole.
   filterable: false,
   attributes: SELLER_REQUIREMENT_ATTRIBUTES,
+  fixedOnCreate: ['type'],
+  typesPath: '/seller_requirements/types',
   async desired(entry) {
     const payload: Payload = pick(entry, SELLER_REQUIREMENT_ATTRIBUTES)
     if (entry.preferences) payload.preferences = entry.preferences
@@ -108,22 +107,8 @@ export const sellerRequirements = plainSection<SellerRequirementEntry, SellerReq
   async current(live) {
     return { ...live, type: live.kind }
   },
-  async update(live, payload, _entry, ctx) {
-    const { type: _type, ...body } = payload
-    return ctx.client.request<SellerRequirement>('PATCH', `/seller_requirements/${live.id}`, {
-      body,
-    })
-  },
   async toFile(live) {
-    const preferences = preferencesFromLive({
-      id: live.id,
-      ...Object.fromEntries(
-        Object.entries((live.preferences as Record<string, unknown>) ?? {}).map(([key, value]) => [
-          `preferred_${key}`,
-          value,
-        ]),
-      ),
-    })
+    const preferences = scalarPreferences(live.preferences ?? {})
     return {
       type: String(live.kind),
       required: live.required,

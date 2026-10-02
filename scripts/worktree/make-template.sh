@@ -61,9 +61,10 @@ echo "▸ Deploying the store defaults"
 pnpm turbo build --filter=@spree/config --output-logs=errors-only >/dev/null
 port=4100
 while ! port_free "$port"; do port=$((port + 1)); done
-token=$(cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails runner \
-  'print "\n__TOKEN__" + Spree::Store.default.api_keys.create!(name: "worktree template", key_type: "secret", scopes: ["write_all"]).plaintext_token')
-token="${token##*__TOKEN__}"
+# The same task `spree init` mints its deploy key with. Boot can print
+# warnings first, so the token is the last line.
+token=$(cd server && DATABASE_NAME="$TEMPLATE_DB" NAME="worktree template" KEY_TYPE=secret \
+  SCOPES=write_all REPLACE=true bin/rails spree:cli:create_api_key | tail -n 1)
 pidfile="$(pwd)/server/tmp/pids/template-provision.pid"
 (cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails server -p "$port" -P "$pidfile" -d >/dev/null)
 stop_server() { [ -f "$pidfile" ] && kill "$(cat "$pidfile")" 2>/dev/null; rm -f "$pidfile"; }
@@ -72,7 +73,5 @@ for _ in $(seq 1 60); do curl -sf "http://localhost:$port/up" >/dev/null && brea
 node scripts/worktree/provision-template.mjs "http://localhost:$port" "$token"
 stop_server
 trap - EXIT
-(cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails runner \
-  'Spree::ApiKey.find_by(name: "worktree template")&.revoke!')
 
 echo "✓ $TEMPLATE_DB ready — new worktrees copy it via createdb -T"

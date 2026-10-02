@@ -120,6 +120,12 @@ function SetupLoader({
   return <SetupForm token={token} onStarted={onStarted} onCompleted={onCompleted} />
 }
 
+/** The store first-run setup just claimed. */
+interface ClaimedStore {
+  storeId: string | null
+  storeName: string
+}
+
 function SetupForm({
   token,
   onStarted,
@@ -163,9 +169,7 @@ function SetupForm({
   })
   const countries = countriesQuery.data?.countries ?? []
 
-  // The store's defaults (warehouse, delivery zones, tax categories) are
-  // shaped by the country just chosen, so they are deployed only now.
-  const continueToStore = (store: { storeId: string | null; storeName: string }) => {
+  const continueToStore = (store: ClaimedStore) => {
     toastManager.add({
       type: 'success',
       title: t('admin.setup.welcome_title'),
@@ -181,7 +185,7 @@ function SetupForm({
 
   // The store's defaults (warehouse, delivery zones, tax categories) are
   // shaped by the country just chosen, so they are deployed only now.
-  const provisionAndContinue = async (store: { storeId: string | null; storeName: string }) => {
+  const provisionAndContinue = async (store: ClaimedStore) => {
     try {
       await provision.mutateAsync(store.storeId)
     } catch {

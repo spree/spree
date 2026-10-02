@@ -12,10 +12,8 @@ module Spree
         Spree::Events.disable do
           ActiveRecord::Base.no_touching do
             Stores.call
-            Spree::Store.find_each do |store|
-              Roles.call(store: store)
-              ApiKeys.call(store: store)
-            end
+            Roles.call
+            ApiKeys.call
             AdminUser.call
           end
         end

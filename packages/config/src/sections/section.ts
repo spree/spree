@@ -26,6 +26,11 @@ export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
   sequential?: boolean
   /** Why `--prune` may never name this section, when it may not. */
   pruneRefusal?: string
+  /**
+   * The endpoint listing the `type` shorthands the installation has
+   * registered, for a section whose entries are typed subclasses.
+   */
+  typesPath?: string
   /** Listed by `introspect` when no `--include` is given. */
   introspectByDefault: boolean
   entries(config: SpreeConfig): Entry[]
@@ -65,20 +70,34 @@ export function preferencesPayload(preferences: Record<string, unknown> | undefi
 
 export type PreferenceValue = string | number | boolean | null
 
-/** The `preferred_*` attributes of a live record, back in file form. Only scalars: a file cannot carry the rest. */
+/** The scalar values of a preferences hash: a file cannot carry the rest. */
+export function scalarPreferences(
+  preferences: Record<string, unknown>,
+  only?: string[],
+): Record<string, PreferenceValue> {
+  const scalars: Record<string, PreferenceValue> = {}
+  for (const [key, value] of Object.entries(preferences)) {
+    if (value === null || value === undefined) continue
+    if (!['string', 'number', 'boolean'].includes(typeof value)) continue
+    if (only && !only.includes(key)) continue
+    scalars[key] = value as PreferenceValue
+  }
+  return scalars
+}
+
+/** The `preferred_*` attributes of a live record, back in file form. */
 export function preferencesFromLive(
   live: LiveRecord,
   only?: string[],
 ): Record<string, PreferenceValue> {
-  const preferences: Record<string, PreferenceValue> = {}
-  for (const [attribute, value] of Object.entries(live)) {
-    if (!attribute.startsWith('preferred_') || value === null || value === undefined) continue
-    if (!['string', 'number', 'boolean'].includes(typeof value)) continue
-    const key = attribute.slice('preferred_'.length)
-    if (only && !only.includes(key)) continue
-    preferences[key] = value as PreferenceValue
-  }
-  return preferences
+  return scalarPreferences(
+    Object.fromEntries(
+      Object.entries(live)
+        .filter(([attribute]) => attribute.startsWith('preferred_'))
+        .map(([attribute, value]) => [attribute.slice('preferred_'.length), value]),
+    ),
+    only,
+  )
 }
 
 /** Resolves a list of natural keys to ids (or pending refs), reporting against `path`. */
@@ -176,6 +195,8 @@ type PlainOptions<Entry, Live extends LiveRecord> = Omit<
   attributes: readonly (keyof Entry & string)[]
   /** Values `introspect` leaves out because the API sets them anyway. */
   defaults?: Partial<Record<keyof Entry & string, unknown>>
+  /** Attributes the API sets on create and ignores afterwards; left out of updates. */
+  fixedOnCreate?: readonly (keyof Entry & string)[]
   desired?: Section<Entry, Live>['desired']
   toFile?: Section<Entry, Live>['toFile']
 }
@@ -183,14 +204,16 @@ type PlainOptions<Entry, Live extends LiveRecord> = Omit<
 /**
  * A section whose entries are plain attributes of one Admin API resource,
  * listed and keyed on one of them, at `/<section name>`. Anything beyond that
- * (references, nested writes) overrides `desired` and `toFile`.
+ * (references, nested writes) overrides `desired` and `toFile`; whatever
+ * `toFile` returns still has the `defaults` taken out.
  */
 export function plainSection<Entry extends object, Live extends LiveRecord>(
   options: PlainOptions<Entry, Live>,
 ): Section<Entry, Live> {
-  const { key, attributes, defaults = {}, ...rest } = options
+  const { key, attributes, defaults = {}, fixedOnCreate = [], toFile, ...rest } = options
+  const path = `/${options.name}`
   return {
-    path: `/${options.name}`,
+    path,
     keyAttribute: key,
     filterable: true,
     entries: (config) => (config[options.name] ?? []) as Entry[],
@@ -198,13 +221,24 @@ export function plainSection<Entry extends object, Live extends LiveRecord>(
     async desired(entry) {
       return pick(entry, attributes)
     },
-    async toFile(live) {
-      const entry = present(live as unknown as Entry, attributes)
+    ...(fixedOnCreate.length
+      ? {
+          async update(live: Live, payload: Payload, _entry: Entry, ctx: RunContext) {
+            const body = { ...payload }
+            for (const attribute of fixedOnCreate) delete body[attribute]
+            return ctx.client.request<Live>('PATCH', `${path}/${live.id}`, { body })
+          },
+        }
+      : {}),
+    ...rest,
+    async toFile(live, ctx) {
+      const entry = toFile
+        ? await toFile(live, ctx)
+        : (present(live as unknown as Entry, attributes) as Entry)
       for (const [attribute, value] of Object.entries(defaults)) {
         if (entry[attribute as keyof Entry] === value) delete entry[attribute as keyof Entry]
       }
-      return entry as Entry
+      return entry
     },
-    ...rest,
   }
 }
