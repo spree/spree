@@ -289,41 +289,24 @@ module Spree
     yield(Spree::Dependencies)
   end
 
+  def self.spree_config
+    Rails.application.config.spree
+  end
+  private_class_method :spree_config
+
   # Environment accessors for easier configuration access
   # Instead of Rails.application.config.spree.payment_methods
   # you can use Spree.payment_methods
 
-  def self.calculators
-    Rails.application.config.spree.calculators
-  end
-
-  def self.calculators=(value)
-    Rails.application.config.spree.calculators = value
-  end
-
-  def self.validators
-    Rails.application.config.spree.validators
-  end
-
-  def self.validators=(value)
-    Rails.application.config.spree.validators = value
-  end
-
-  def self.payment_methods
-    Rails.application.config.spree.payment_methods
-  end
-
-  def self.payment_methods=(value)
-    Rails.application.config.spree.payment_methods = value
-  end
-
-  def self.adjusters
-    Rails.application.config.spree.adjusters
-  end
-
-  def self.adjusters=(value)
-    Rails.application.config.spree.adjusters = value
-  end
+  singleton_class.delegate :calculators, :calculators=, :validators, :validators=, :payment_methods, :payment_methods=,
+                           :adjusters, :adjusters=, :fulfillment_providers, :fulfillment_providers=, :tracking_carriers,
+                           :tracking_carriers=, :stock_splitters, :stock_splitters=, :delivery_method_rules,
+                           :delivery_method_rules=, :order_routing, :order_routing=, :promotions, :promotions=,
+                           :line_item_comparison_hooks, :line_item_comparison_hooks=, :data_feed_types, :data_feed_types=,
+                           :export_types, :export_types=, :import_types, :import_types=, :taxon_rules, :taxon_rules=,
+                           :translatable_resources, :translatable_resources=, :custom_fields, :integrations, :integrations=,
+                           :pricing, :pricing=,
+                           to: :spree_config
 
   # Model names a {Spree::Media} row may be placed on — where a file *lives*.
   # The viewable column is polymorphic, so this is what keeps it from accepting
@@ -335,13 +318,7 @@ module Spree
   #   Spree.media_viewable_types += ['MyApp::Lookbook']
   #
   # @return [Array<String>]
-  def self.media_viewable_types
-    Rails.application.config.spree.media_viewable_types
-  end
-
-  def self.media_viewable_types=(value)
-    Rails.application.config.spree.media_viewable_types = value
-  end
+  singleton_class.delegate :media_viewable_types, :media_viewable_types=, to: :spree_config
 
   # The tax engine used when a market names none — the fallback behind
   # {Spree::Purchase::Taxation#tax_provider}, which is what call sites actually
@@ -370,60 +347,30 @@ module Spree
   # name and finding out at checkout.
   #
   # @return [Array<Class>]
-  def self.tax_providers
-    Rails.application.config.spree.tax_providers
-  end
-
-  def self.tax_providers=(value)
-    Rails.application.config.spree.tax_providers = value
-  end
+  singleton_class.delegate :tax_providers, :tax_providers=, to: :spree_config
 
   # Pricing engines a store can be pointed at. Connector gems append their own,
   # so a merchant picks from what is actually installed.
   #
   # @return [Array<Class>]
-  def self.pricing_providers
-    Rails.application.config.spree.pricing_providers
-  end
-
-  def self.pricing_providers=(value)
-    Rails.application.config.spree.pricing_providers = value
-  end
+  singleton_class.delegate :pricing_providers, :pricing_providers=, to: :spree_config
 
   # Inventory sources a store can be pointed at.
   #
   # @return [Array<Class>]
-  def self.inventory_providers
-    Rails.application.config.spree.inventory_providers
-  end
-
-  def self.inventory_providers=(value)
-    Rails.application.config.spree.inventory_providers = value
-  end
+  singleton_class.delegate :inventory_providers, :inventory_providers=, to: :spree_config
 
   # How sellers get paid. Core ships {Spree::PayoutProvider::System}, which
   # keeps the books and leaves the operator to settle; a provider gem appends
   # one that moves the money itself.
   #
   # @return [Array<Class>]
-  def self.payout_providers
-    Rails.application.config.spree.payout_providers
-  end
-
-  def self.payout_providers=(value)
-    Rails.application.config.spree.payout_providers = value
-  end
+  singleton_class.delegate :payout_providers, :payout_providers=, to: :spree_config
 
   # The provider a store pays through when it has named none.
   #
   # @return [Class]
-  def self.default_payout_provider
-    Rails.application.config.spree.default_payout_provider
-  end
-
-  def self.default_payout_provider=(value)
-    Rails.application.config.spree.default_payout_provider = value
-  end
+  singleton_class.delegate :default_payout_provider, :default_payout_provider=, to: :spree_config
 
   # Validator enforcing the password policy on the default auth models
   # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
@@ -437,80 +384,24 @@ module Spree
   #   Spree.password_validator = MyApp::PasswordValidator
   #
   # @return [Class]
-  def self.password_validator
-    Rails.application.config.spree.password_validator
-  end
+  singleton_class.delegate :password_validator, :password_validator=, to: :spree_config
 
-  def self.password_validator=(value)
-    Rails.application.config.spree.password_validator = value
-  end
-
-  def self.fulfillment_providers
-    Rails.application.config.spree.fulfillment_providers
-  end
-
-  def self.fulfillment_providers=(value)
-    Rails.application.config.spree.fulfillment_providers = value
-  end
-
-  def self.tracking_carriers
-    Rails.application.config.spree.tracking_carriers
-  end
-
-  def self.tracking_carriers=(value)
-    Rails.application.config.spree.tracking_carriers = value
-  end
-
-
-  def self.stock_splitters
-    Rails.application.config.spree.stock_splitters
-  end
-
-  def self.stock_splitters=(value)
-    Rails.application.config.spree.stock_splitters = value
-  end
 
   # Commission rule kinds selectable on a commission rate.
   #
   # @return [Array<Class>]
-  def self.commission_rules
-    Rails.application.config.spree.commission_rules
-  end
-
-  def self.commission_rules=(value)
-    Rails.application.config.spree.commission_rules = value
-  end
+  singleton_class.delegate :commission_rules, :commission_rules=, to: :spree_config
 
   # Seller onboarding requirement kinds an operator can configure
   # (docs/plans/6.0-seller-onboarding-requirements.md).
   #
   # @return [Array<Class>]
-  def self.seller_requirements
-    Rails.application.config.spree.seller_requirements
-  end
-
-  def self.seller_requirements=(value)
-    Rails.application.config.spree.seller_requirements = value
-  end
-
-  def self.delivery_method_rules
-    Rails.application.config.spree.delivery_method_rules
-  end
-
-  def self.delivery_method_rules=(value)
-    Rails.application.config.spree.delivery_method_rules = value
-  end
+  singleton_class.delegate :seller_requirements, :seller_requirements=, to: :spree_config
 
   # Quoting strategies selectable on a delivery method.
   #
   # @return [Array<Class>]
-  def self.delivery_rate_providers
-    Rails.application.config.spree.delivery_rate_providers
-  end
-
-  def self.delivery_rate_providers=(value)
-    Rails.application.config.spree.delivery_rate_providers = value
-  end
+  singleton_class.delegate :delivery_rate_providers, :delivery_rate_providers=, to: :spree_config
 
   # Re-resolves every provider registry entry by name, in place.
   #
@@ -539,80 +430,12 @@ module Spree
   # deliverable elsewhere (a licensing system, a code pool).
   #
   # @return [Array<Class>]
-  def self.digital_asset_providers
-    Rails.application.config.spree.digital_asset_providers
-  end
-
-  def self.digital_asset_providers=(value)
-    Rails.application.config.spree.digital_asset_providers = value
-  end
+  singleton_class.delegate :digital_asset_providers, :digital_asset_providers=, to: :spree_config
 
   # Fulfillment profile kinds selectable when creating a profile.
   #
   # @return [Array<Class>]
-  def self.delivery_profile_types
-    Rails.application.config.spree.delivery_profile_types
-  end
-
-  def self.delivery_profile_types=(value)
-    Rails.application.config.spree.delivery_profile_types = value
-  end
-
-  def self.order_routing
-    Rails.application.config.spree.order_routing
-  end
-
-  def self.order_routing=(value)
-    Rails.application.config.spree.order_routing = value
-  end
-
-  def self.promotions
-    Rails.application.config.spree.promotions
-  end
-
-  def self.promotions=(value)
-    Rails.application.config.spree.promotions = value
-  end
-
-  def self.line_item_comparison_hooks
-    Rails.application.config.spree.line_item_comparison_hooks
-  end
-
-  def self.line_item_comparison_hooks=(value)
-    Rails.application.config.spree.line_item_comparison_hooks = value
-  end
-
-  def self.data_feed_types
-    Rails.application.config.spree.data_feed_types
-  end
-
-  def self.data_feed_types=(value)
-    Rails.application.config.spree.data_feed_types = value
-  end
-
-  def self.export_types
-    Rails.application.config.spree.export_types
-  end
-
-  def self.export_types=(value)
-    Rails.application.config.spree.export_types = value
-  end
-
-  def self.import_types
-    Rails.application.config.spree.import_types
-  end
-
-  def self.import_types=(value)
-    Rails.application.config.spree.import_types = value
-  end
-
-  def self.taxon_rules
-    Rails.application.config.spree.taxon_rules
-  end
-
-  def self.taxon_rules=(value)
-    Rails.application.config.spree.taxon_rules = value
-  end
+  singleton_class.delegate :delivery_profile_types, :delivery_profile_types=, to: :spree_config
 
   # Class-name strings (`'Spree::Product'`, `'Spree::Order'`,
   # `Spree.customer_class.to_s`, plus any registered by apps) for resources that
@@ -621,13 +444,7 @@ module Spree
   # the list in an initializer:
   #
   #   Spree.taggable_types << 'MyApp::Seller'
-  def self.taggable_types
-    Rails.application.config.spree.taggable_types
-  end
-
-  def self.taggable_types=(value)
-    Rails.application.config.spree.taggable_types = value
-  end
+  singleton_class.delegate :taggable_types, :taggable_types=, to: :spree_config
 
   # Class-name strings for the models that may be recorded as having performed
   # an action — what an `acted_by` association's `*_type` column is allowed to
@@ -640,13 +457,7 @@ module Spree
   # See docs/plans/6.0-action-actors.md.
   #
   # @return [Array<String>]
-  def self.actor_classes
-    Rails.application.config.spree.actor_classes
-  end
-
-  def self.actor_classes=(value)
-    Rails.application.config.spree.actor_classes = value
-  end
+  singleton_class.delegate :actor_classes, :actor_classes=, to: :spree_config
 
 
   # Registry of the Getting Started onboarding tasks shown on the admin
@@ -657,29 +468,9 @@ module Spree
     @store_setup_tasks ||= Spree::SetupTasks.new
   end
 
-  def self.translatable_resources
-    Rails.application.config.spree.translatable_resources
-  end
-
-  def self.translatable_resources=(value)
-    Rails.application.config.spree.translatable_resources = value
-  end
-
-  def self.custom_fields
-    Rails.application.config.spree.custom_fields
-  end
-
   def self.metafields
     Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
     custom_fields
-  end
-
-  def self.integrations
-    Rails.application.config.spree.integrations
-  end
-
-  def self.integrations=(value)
-    Rails.application.config.spree.integrations = value
   end
 
   # Registry mapping a numbered resource to the generator that produces its
@@ -689,30 +480,14 @@ module Spree
   # @return [Spree::NumberGenerators::Registry]
   # @example Custom order numbers
   #   Spree.number_generators[:order] = 'MyApp::BranchOrderNumbers'
-  def self.number_generators
-    Rails.application.config.spree.number_generators
-  end
+  singleton_class.delegate :number_generators, to: :spree_config
 
   # Event subscribers that handle lifecycle and custom events
   # @example Adding a custom subscriber
   #   Spree.subscribers << MyApp::OrderNotificationSubscriber
   # @example Removing a built-in subscriber
   #   Spree.subscribers.delete(Spree::ExportSubscriber)
-  def self.subscribers
-    Rails.application.config.spree.subscribers
-  end
-
-  def self.subscribers=(value)
-    Rails.application.config.spree.subscribers = value
-  end
-
-  def self.pricing
-    Rails.application.config.spree.pricing
-  end
-
-  def self.pricing=(value)
-    Rails.application.config.spree.pricing = value
-  end
+  singleton_class.delegate :subscribers, :subscribers=, to: :spree_config
 
   # Registry of authentication strategy classes for the Store API.
   # @return [Spree::Authentication::StrategyRegistry]
@@ -720,29 +495,17 @@ module Spree
   #   Spree.store_authentication_strategies.add(:auth0, MyApp::Auth::Auth0Strategy)
   # @example Removing a strategy
   #   Spree.store_authentication_strategies.remove(:email)
-  def self.store_authentication_strategies
-    Rails.application.config.spree.store_authentication_strategies
-  end
-
   # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Store API authentication dispatch
   # @return [Spree::Authentication::StrategyRegistry] the assigned registry
-  def self.store_authentication_strategies=(value)
-    Rails.application.config.spree.store_authentication_strategies = value
-  end
+  singleton_class.delegate :store_authentication_strategies, :store_authentication_strategies=, to: :spree_config
 
   # Registry of authentication strategy classes for the Admin API.
   # @return [Spree::Authentication::StrategyRegistry]
   # @example Registering an SSO strategy for admin users
   #   Spree.admin_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
-  def self.admin_authentication_strategies
-    Rails.application.config.spree.admin_authentication_strategies
-  end
-
   # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Admin API authentication dispatch
   # @return [Spree::Authentication::StrategyRegistry] the assigned registry
-  def self.admin_authentication_strategies=(value)
-    Rails.application.config.spree.admin_authentication_strategies = value
-  end
+  singleton_class.delegate :admin_authentication_strategies, :admin_authentication_strategies=, to: :spree_config
 
   # Registry of authentication strategy classes for the Seller API.
   #
@@ -754,26 +517,14 @@ module Spree
   # @return [Spree::Authentication::StrategyRegistry]
   # @example Registering an SSO strategy for seller users
   #   Spree.seller_authentication_strategies.add(:okta, MyApp::Auth::OktaStrategy)
-  def self.seller_authentication_strategies
-    Rails.application.config.spree.seller_authentication_strategies
-  end
-
   # @param value [Spree::Authentication::StrategyRegistry] the registry to use for Seller API authentication dispatch
   # @return [Spree::Authentication::StrategyRegistry] the assigned registry
-  def self.seller_authentication_strategies=(value)
-    Rails.application.config.spree.seller_authentication_strategies = value
-  end
+  singleton_class.delegate :seller_authentication_strategies, :seller_authentication_strategies=, to: :spree_config
 
   # Semantic reporting registry — the queryable metric/dimension vocabulary.
   #
   # @return [Spree::Reporting::Registry]
-  def self.reporting
-    Rails.application.config.spree.reporting
-  end
-
-  def self.reporting=(value)
-    Rails.application.config.spree.reporting = value
-  end
+  singleton_class.delegate :reporting, :reporting=, to: :spree_config
 
   # The permission catalog — the grant vocabulary shared by staff roles and
   # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
