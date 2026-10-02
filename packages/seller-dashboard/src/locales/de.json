@@ -536,6 +536,8 @@
         "receive": "Annehmen",
         "refund": "Erstatten",
         "refund_total": "Erstattung gesamt: {{amount}}",
+        "refunded": "Erstattet: {{amount}}",
+        "refunded_of": "Erstattet: {{amount}} von {{total}}",
         "title": "Rücksendungen"
       },
       "statuses": {

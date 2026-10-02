@@ -3412,6 +3412,8 @@
             "complete_title": "Zakończ zwrot",
             "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "refund_total": "Kwota zwrotu",
+            "refunded": "Zwrócono",
+            "refunded_of": "{{amount}} z {{total}}",
             "resellable": "Nadaje się do sprzedaży",
             "returning_to": "Zwrot do {{name}}"
           },

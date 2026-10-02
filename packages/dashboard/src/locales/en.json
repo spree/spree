@@ -3374,6 +3374,8 @@
             "complete_title": "Complete return",
             "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_total": "Refund total",
+            "refunded": "Refunded",
+            "refunded_of": "{{amount}} of {{total}}",
             "resellable": "Resellable",
             "returning_to": "Returning to {{name}}"
           },

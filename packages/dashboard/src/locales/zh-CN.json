@@ -3364,6 +3364,8 @@
             "complete_title": "完成退货",
             "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "refund_total": "退款总额",
+            "refunded": "已退款",
+            "refunded_of": "{{amount}} / {{total}}",
             "resellable": "可再销售",
             "returning_to": "退回至 {{name}}"
           },

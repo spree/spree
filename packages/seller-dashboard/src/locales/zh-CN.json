@@ -535,6 +535,8 @@
         "receive": "接收",
         "refund": "退款",
         "refund_total": "退款合计：{{amount}}",
+        "refunded": "已退款：{{amount}}",
+        "refunded_of": "已退款：{{amount}} / {{total}}",
         "title": "退货"
       },
       "statuses": {

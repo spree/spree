@@ -3374,6 +3374,8 @@
             "complete_title": "Clôturer le retour",
             "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "refund_total": "Total du remboursement",
+            "refunded": "Remboursé",
+            "refunded_of": "{{amount}} sur {{total}}",
             "resellable": "Revendable",
             "returning_to": "Retour vers {{name}}"
           },

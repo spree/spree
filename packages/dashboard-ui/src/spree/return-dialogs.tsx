@@ -144,6 +144,41 @@ export function returnOwesNothing(refundableTotal: string): boolean {
   return Number(refundableTotal) === 0
 }
 
+/** The money figures a return's card summarises. */
+export type ReturnRefundFigures = {
+  status: string
+  refund_total: string
+  display_refund_total: string
+  refunded_total: string
+  display_refunded_total: string
+}
+
+/**
+ * What a return's card reports: what it is owed until it is refunded, then
+ * what actually went back — which a merchant keeping a restocking fee makes
+ * less than it was owed, so that case also names the full amount.
+ */
+export function returnRefundSummary(
+  returnRecord: ReturnRefundFigures,
+):
+  | { kind: 'owed'; amount: string }
+  | { kind: 'refunded'; amount: string }
+  | { kind: 'refunded_short'; amount: string; total: string } {
+  if (returnRecord.status !== 'refunded') {
+    return { kind: 'owed', amount: returnRecord.display_refund_total }
+  }
+
+  if (Number(returnRecord.refunded_total) < Number(returnRecord.refund_total)) {
+    return {
+      kind: 'refunded_short',
+      amount: returnRecord.display_refunded_total,
+      total: returnRecord.display_refund_total,
+    }
+  }
+
+  return { kind: 'refunded', amount: returnRecord.display_refunded_total }
+}
+
 /**
  * Gives the money back: how much, and by what means. A return owed nothing
  * (a free gift sent back) is completed instead, with nothing to choose.

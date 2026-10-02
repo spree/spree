@@ -18,6 +18,7 @@ import {
   ReturnReceiveDialog,
   ReturnRefundDialog,
   returnOwesNothing,
+  returnRefundSummary,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -196,12 +197,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 )}
               </CardContent>
 
-              <CardFooter className="justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t('admin.pages.orders.detail.returns.refund_total')}
-                </span>
-                <span className="font-medium">{returnRecord.display_refund_total}</span>
-              </CardFooter>
+              <RefundSummaryFooter returnRecord={returnRecord} />
             </Card>
           ))}
         </CardContent>
@@ -317,6 +313,29 @@ function ReturnLabel({
         {isBuying ? t('admin.actions.saving') : t('admin.pages.orders.detail.returns.buy_label')}
       </Button>
     </CardContent>
+  )
+}
+
+function RefundSummaryFooter({ returnRecord }: { returnRecord: Return }) {
+  const { t } = useTranslation()
+  const summary = returnRefundSummary(returnRecord)
+
+  return (
+    <CardFooter className="justify-between text-sm">
+      <span className="text-muted-foreground">
+        {summary.kind === 'owed'
+          ? t('admin.pages.orders.detail.returns.refund_total')
+          : t('admin.pages.orders.detail.returns.refunded')}
+      </span>
+      <span className="font-medium">
+        {summary.kind === 'refunded_short'
+          ? t('admin.pages.orders.detail.returns.refunded_of', {
+              amount: summary.amount,
+              total: summary.total,
+            })
+          : summary.amount}
+      </span>
+    </CardFooter>
   )
 }
 

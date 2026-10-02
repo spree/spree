@@ -3374,6 +3374,8 @@
             "complete_title": "Retoure abschließen",
             "nothing_owed": "Für diese Retoure ist nichts geschuldet, daher wird kein Geld erstattet. Mit dem Abschließen wird die Retoure geschlossen.",
             "refund_total": "Erstattungssumme",
+            "refunded": "Erstattet",
+            "refunded_of": "{{amount}} von {{total}}",
             "resellable": "Wiederverkäuflich",
             "returning_to": "Rücksendung an {{name}}"
           },

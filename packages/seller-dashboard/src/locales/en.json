@@ -536,6 +536,8 @@
         "receive": "Receive",
         "refund": "Refund",
         "refund_total": "Refund total: {{amount}}",
+        "refunded": "Refunded: {{amount}}",
+        "refunded_of": "Refunded: {{amount}} of {{total}}",
         "title": "Returns"
       },
       "statuses": {

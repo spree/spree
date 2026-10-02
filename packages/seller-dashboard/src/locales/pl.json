@@ -538,6 +538,8 @@
         "receive": "Przyjmij",
         "refund": "Zwrot pieniędzy",
         "refund_total": "Łączny zwrot: {{amount}}",
+        "refunded": "Zwrócono: {{amount}}",
+        "refunded_of": "Zwrócono: {{amount}} z {{total}}",
         "title": "Zwroty"
       },
       "statuses": {

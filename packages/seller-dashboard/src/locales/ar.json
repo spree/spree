@@ -540,6 +540,8 @@
         "receive": "استلام",
         "refund": "رد المبلغ",
         "refund_total": "إجمالي الاسترداد: {{amount}}",
+        "refunded": "تم الاسترداد: {{amount}}",
+        "refunded_of": "تم الاسترداد: {{amount}} من {{total}}",
         "title": "المرتجعات"
       },
       "statuses": {

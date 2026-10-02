@@ -320,6 +320,8 @@
             "complete_title": "Completar devolución",
             "nothing_owed": "No se debe nada en esta devolución, así que no se reembolsa dinero. Al completarla, la devolución se cierra.",
             "refund_total": "Total del reembolso",
+            "refunded": "Reembolsado",
+            "refunded_of": "{{amount}} de {{total}}",
             "resellable": "Revendible",
             "returning_to": "Devolviendo a {{name}}"
           },
