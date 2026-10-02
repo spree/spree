@@ -289,9 +289,6 @@ module Spree
       relation.where(conditions.reduce(:or)).distinct
     end
 
-    # Backward compatibility alias — remove in Spree 6.0
-    scope :multi_search, ->(*args) { search(*args) }
-
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 

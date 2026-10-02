@@ -22,7 +22,7 @@ defineTable('orders', {
   title: i18n.t('admin.nav.orders'),
   docsPath: 'orders/processing-orders',
   description: i18n.t('admin.table_descriptions.orders'),
-  searchParam: 'multi_search',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.orders.table.search_placeholder'),
   defaultSort: { field: 'completed_at', direction: 'desc' },
   emptyIcon: <ShoppingCartIcon className="size-8 text-muted-foreground" />,

@@ -619,6 +619,7 @@ module Spree
           Spree::SellerTransferSubscriber,
           Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
+          Spree::ImportEmailSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,

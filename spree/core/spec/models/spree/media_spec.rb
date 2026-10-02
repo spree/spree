@@ -43,14 +43,14 @@ describe Spree::Media, type: :model do
   describe 'store' do
     it 'follows the product it is placed on' do
       product = create(:product)
-      media = create(:image, viewable: product)
+      media = create(:media, viewable: product)
 
       expect(media.store).to eq(product.store)
     end
 
     it 'follows the variant product for a variant-pinned row' do
       variant = create(:variant)
-      media = create(:asset, viewable: variant)
+      media = create(:media, viewable: variant)
 
       expect(media.store).to eq(variant.product.store)
     end
@@ -58,14 +58,14 @@ describe Spree::Media, type: :model do
     # A library upload has no viewable to follow, so it belongs to the store
     # whose dashboard uploaded it.
     it 'falls back to the current store when unplaced' do
-      media = create(:image, viewable: nil)
+      media = create(:media, viewable: nil)
 
       expect(media.viewable).to be_nil
       expect(media.store).to eq(Spree::Store.default)
     end
 
     it 'is required' do
-      media = build(:image, viewable: nil)
+      media = build(:media, viewable: nil)
       media.store = nil
       allow(Spree::Current).to receive(:store).and_return(nil)
 
@@ -76,7 +76,7 @@ describe Spree::Media, type: :model do
 
   describe 'viewable types' do
     def media_on(type)
-      build(:image, viewable: nil).tap do |media|
+      build(:media, viewable: nil).tap do |media|
         media.viewable_type = type
         media.viewable_id = 1
       end
@@ -108,7 +108,7 @@ describe Spree::Media, type: :model do
     # Between db:migrate and spree:upgrade:backfill_media_store_ids every
     # existing row carries nil. Editing one must not fail validation.
     it 'adopts a store on its next save' do
-      media = create(:image, viewable: create(:product))
+      media = create(:media, viewable: create(:product))
       described_class.unscoped.where(id: media.id).update_all(store_id: nil)
 
       legacy = described_class.find(media.id)
@@ -119,7 +119,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'still refuses moving a row between stores' do
-      media = create(:image, viewable: create(:product))
+      media = create(:media, viewable: create(:product))
       media.store = create(:store)
 
       expect(media.save).to be(false)
@@ -128,8 +128,8 @@ describe Spree::Media, type: :model do
   end
 
   describe 'library scopes' do
-    let!(:placed) { create(:image, viewable: create(:product)) }
-    let!(:unplaced) { create(:image, viewable: nil) }
+    let!(:placed) { create(:media, viewable: create(:product)) }
+    let!(:unplaced) { create(:media, viewable: nil) }
 
     it 'separates placed rows from library uploads' do
       expect(described_class.attached).to include(placed)
@@ -140,7 +140,7 @@ describe Spree::Media, type: :model do
   end
 
   describe '.distinct_by_file' do
-    let(:source) { create(:image, viewable: create(:product)) }
+    let(:source) { create(:media, viewable: create(:product)) }
 
     it 'keeps one row per shared file' do
       copy = source.duplicate_for(create(:product))
@@ -152,7 +152,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'keeps rows whose files differ' do
-      other = create(:image, viewable: create(:product))
+      other = create(:media, viewable: create(:product))
 
       result = described_class.distinct_by_file.where(id: [source.id, other.id])
 
@@ -178,7 +178,7 @@ describe Spree::Media, type: :model do
   end
 
   describe '#duplicate_for' do
-    let(:source) { create(:image, viewable: create(:product), alt: 'Front view') }
+    let(:source) { create(:media, viewable: create(:product), alt: 'Front view') }
     let(:target) { create(:product) }
 
     # The whole point of the design: placing a file elsewhere costs a row, not
@@ -263,19 +263,19 @@ describe Spree::Media, type: :model do
   describe '#product' do
     it 'returns the product when viewable is a Variant' do
       variant = create(:variant)
-      asset = create(:asset, viewable: variant)
+      asset = create(:media, viewable: variant)
       expect(asset.product).to eq(variant.product)
     end
 
     it 'returns the product when viewable is a Product' do
       product = create(:product)
-      asset = create(:image, viewable: product)
+      asset = create(:media, viewable: product)
       expect(asset.product).to eq(product)
     end
   end
 
   describe '#focal_point' do
-    let(:asset) { build(:asset, focal_point_x: 0.5, focal_point_y: 0.3) }
+    let(:asset) { build(:media, focal_point_x: 0.5, focal_point_y: 0.3) }
 
     it 'returns hash with x and y' do
       expect(asset.focal_point).to eq({ x: 0.5, y: 0.3 })
@@ -288,7 +288,7 @@ describe Spree::Media, type: :model do
   end
 
   describe '#focal_point=' do
-    let(:asset) { build(:asset) }
+    let(:asset) { build(:media) }
 
     it 'sets x and y from hash' do
       asset.focal_point = { x: 0.25, y: 0.75 }
@@ -307,14 +307,14 @@ describe Spree::Media, type: :model do
   describe 'media_type' do
     it 'accepts valid media types' do
       %w[image video external_video].each do |type|
-        asset = build(:asset, media_type: type)
+        asset = build(:media, media_type: type)
         asset.valid?
         expect(asset.errors[:media_type]).to be_empty
       end
     end
 
     it 'rejects invalid media types' do
-      asset = build(:asset, media_type: 'audio')
+      asset = build(:media, media_type: 'audio')
       expect(asset).not_to be_valid
       expect(asset.errors[:media_type]).to be_present
     end
@@ -330,19 +330,19 @@ describe Spree::Media, type: :model do
     end
 
     it 'answers a predicate per media type' do
-      expect(build(:asset)).to be_image
-      expect(build(:video_asset)).to be_video
-      expect(build(:external_video_asset)).to be_external_video
+      expect(build(:media)).to be_image
+      expect(build(:video_media)).to be_video
+      expect(build(:external_video_media)).to be_external_video
     end
   end
 
   describe 'video' do
     it 'accepts an uploaded video file' do
-      expect(build(:video_asset)).to be_valid
+      expect(build(:video_media)).to be_valid
     end
 
     it 'requires a file, not a URL' do
-      asset = build(:asset, media_type: 'video')
+      asset = build(:media, media_type: 'video')
       asset.attachment.detach
 
       expect(asset).not_to be_valid
@@ -350,7 +350,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'rejects a file type browsers cannot play' do
-      asset = build(:asset, media_type: 'video')
+      asset = build(:media, media_type: 'video')
       asset.attachment.attach(
         io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt'),
         filename: 'text-file.txt',
@@ -362,57 +362,57 @@ describe Spree::Media, type: :model do
     end
 
     it 'reports as playable' do
-      expect(build(:video_asset).playable_video?).to be(true)
-      expect(build(:external_video_asset).playable_video?).to be(true)
-      expect(build(:asset).playable_video?).to be(false)
+      expect(build(:video_media).playable_video?).to be(true)
+      expect(build(:external_video_media).playable_video?).to be(true)
+      expect(build(:media).playable_video?).to be(false)
     end
   end
 
   describe 'external video' do
     it 'accepts a YouTube link' do
-      expect(build(:external_video_asset)).to be_valid
+      expect(build(:external_video_media)).to be_valid
     end
 
     it 'accepts a Vimeo link' do
-      expect(build(:external_video_asset, external_video_url: 'https://vimeo.com/123456789')).to be_valid
+      expect(build(:external_video_media, external_video_url: 'https://vimeo.com/123456789')).to be_valid
     end
 
     it 'requires a URL' do
-      asset = build(:external_video_asset, external_video_url: nil)
+      asset = build(:external_video_media, external_video_url: nil)
 
       expect(asset).not_to be_valid
       expect(asset.errors[:external_video_url]).to be_present
     end
 
     it 'rejects a link Spree cannot embed' do
-      asset = build(:external_video_asset, external_video_url: 'https://example.com/clip.mp4')
+      asset = build(:external_video_media, external_video_url: 'https://example.com/clip.mp4')
 
       expect(asset).not_to be_valid
       expect(asset.errors[:external_video_url]).to include('must be a YouTube or Vimeo link')
     end
 
     it 'needs no attachment' do
-      asset = build(:external_video_asset)
+      asset = build(:external_video_media)
 
       expect(asset.attachment).not_to be_attached
       expect(asset).to be_valid
     end
 
     it 'exposes the parsed video' do
-      asset = build(:external_video_asset)
+      asset = build(:external_video_media)
 
       expect(asset.external_video.provider).to eq('youtube')
       expect(asset.external_video.embed_url).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
     end
 
     it 'strips whitespace around the URL' do
-      asset = build(:external_video_asset, external_video_url: '  https://vimeo.com/123456789  ')
+      asset = build(:external_video_media, external_video_url: '  https://vimeo.com/123456789  ')
 
       expect(asset.external_video_url).to eq('https://vimeo.com/123456789')
     end
 
     it 're-parses after the URL changes' do
-      asset = build(:external_video_asset)
+      asset = build(:external_video_media)
       expect(asset.external_video.provider).to eq('youtube')
 
       asset.external_video_url = 'https://vimeo.com/123456789'
@@ -424,7 +424,7 @@ describe Spree::Media, type: :model do
         io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
         filename: 'poster.jpg', content_type: 'image/jpeg'
       )
-      asset = build(:external_video_asset, external_video_url: 'https://example.com/nope')
+      asset = build(:external_video_media, external_video_url: 'https://example.com/nope')
       asset.poster_signed_id = poster.signed_id
 
       # The record is invalid, so nothing should reach storage.
@@ -437,7 +437,7 @@ describe Spree::Media, type: :model do
         io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'),
         filename: 'poster.jpg', content_type: 'image/jpeg'
       )
-      asset = create(:external_video_asset)
+      asset = create(:external_video_media)
       asset.update!(poster_signed_id: poster.signed_id)
       expect(asset.reload.poster).to be_attached
 
@@ -447,7 +447,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'rejects a signed id it cannot resolve' do
-      asset = build(:external_video_asset, poster_signed_id: 'not-a-real-signed-id')
+      asset = build(:external_video_media, poster_signed_id: 'not-a-real-signed-id')
 
       # A tampered id raises inside attach, which would be a 500 after the row
       # was already written — it has to fail as a validation instead.
@@ -456,7 +456,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'rejects a poster that is not a web image' do
-      asset = build(:external_video_asset)
+      asset = build(:external_video_media)
       asset.poster.attach(
         io: File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt'),
         filename: 'notes.txt', content_type: 'text/plain'
@@ -467,7 +467,7 @@ describe Spree::Media, type: :model do
     end
 
     it 'falls back to the provider thumbnail when no poster was uploaded' do
-      video = build(:external_video_asset)
+      video = build(:external_video_media)
 
       expect(video.still_image).to be_nil
       expect(video.provider_still_url).to eq('https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg')
@@ -478,12 +478,12 @@ describe Spree::Media, type: :model do
     let(:product) { create(:product) }
 
     it 'increments media_count on product when image is created' do
-      expect { create(:image, viewable: product) }
+      expect { create(:media, viewable: product) }
         .to change { product.reload.media_count }.by(1)
     end
 
     it 'decrements media_count on product when image is destroyed' do
-      image = create(:image, viewable: product)
+      image = create(:media, viewable: product)
       expect { image.destroy }.to change { product.reload.media_count }.by(-1)
     end
   end
@@ -492,12 +492,12 @@ describe Spree::Media, type: :model do
     let(:product) { create(:product) }
 
     it 'sets product primary_media_id when image is created' do
-      image = create(:image, viewable: product)
+      image = create(:media, viewable: product)
       expect(product.reload.primary_media_id).to eq(image.id)
     end
 
     it 'clears product primary_media_id when image is destroyed' do
-      image = create(:image, viewable: product)
+      image = create(:media, viewable: product)
       image.destroy
       expect(product.reload.primary_media_id).to be_nil
     end
@@ -509,14 +509,14 @@ describe Spree::Media, type: :model do
   describe 'orphan asset (viewable_type set, viewable_id nil)' do
     it 'creates and destroys without raising' do
       asset = nil
-      expect { asset = create(:image, viewable_type: 'Spree::Product', viewable_id: nil) }.not_to raise_error
+      expect { asset = create(:media, viewable_type: 'Spree::Product', viewable_id: nil) }.not_to raise_error
       expect(asset.viewable).to be_nil
       expect { asset.destroy! }.not_to raise_error
     end
   end
 
   describe 'delegated methods' do
-    let(:asset) { create(:image) }
+    let(:asset) { create(:media) }
     let(:attachment) { asset.attachment }
 
     before do
@@ -557,8 +557,8 @@ describe Spree::Media, type: :model do
   describe '.with_session_uploaded_assets_uuid' do
     subject { described_class.with_session_uploaded_assets_uuid(uuid) }
 
-    let!(:assets) { create_list(:asset, 2, session_id: uuid) }
-    let!(:other_assets) { create_list(:asset, 2, session_id: SecureRandom.uuid) }
+    let!(:assets) { create_list(:media, 2, session_id: uuid) }
+    let!(:other_assets) { create_list(:media, 2, session_id: SecureRandom.uuid) }
 
     let(:uuid) { SecureRandom.uuid }
 
@@ -574,7 +574,7 @@ describe Spree::Media, type: :model do
 
     describe '.with_external_url' do
       it 'returns assets with the given external URL' do
-        asset = create(:asset)
+        asset = create(:media)
         asset.set_custom_field('external.url', 'https://example.com/Example-Image-001.png')
         expect(described_class.with_external_url('https://example.com/Example-Image-001.png')).to include(asset)
       end
@@ -586,13 +586,13 @@ describe Spree::Media, type: :model do
 
     describe '#external_url' do
       it 'returns the external URL' do
-        asset = create(:asset)
+        asset = create(:media)
         asset.set_custom_field('external.url', 'https://example.com/Example-Image-001.png')
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
 
       it 'returns nil if the external URL is blank' do
-        asset = create(:asset)
+        asset = create(:media)
         expect(asset.external_url).to be_nil
       end
 
@@ -611,7 +611,7 @@ describe Spree::Media, type: :model do
 
     describe '#external_url=' do
       it 'sets the external URL' do
-        asset = create(:asset)
+        asset = create(:media)
         asset.external_url = 'https://example.com/Example-Image-001.png'
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end

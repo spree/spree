@@ -10,7 +10,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
   let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, custom_fields) }
   let(:default_publication) { product.product_publications.find_by(channel: store.default_channel) }
 
-  let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+  let!(:variant_images) { create_list(:media, 3, viewable: variant) }
 
   describe '#call' do
     subject { presenter.call }

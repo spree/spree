@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:shipping_method) { create(:shipping_method) }
+  let!(:shipping_method) { create(:delivery_method) }
   let!(:order) do
     create(:cart_with_line_items, store: store, customer: user).tap do |o|
       o.update!(email: user.email, ship_address: create(:address))

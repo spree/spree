@@ -6,7 +6,7 @@ module Spree
       subject { Spree::PromotionHandler::FreeShipping.new(order) }
 
       let(:order) { create(:order) }
-      let(:shipment) { create(:shipment, order: order) }
+      let(:shipment) { create(:fulfillment, order: order) }
 
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 

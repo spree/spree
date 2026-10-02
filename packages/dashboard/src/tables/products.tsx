@@ -13,7 +13,7 @@ defineTable('products', {
   docsPath: 'products/creating-products',
   description: i18n.t('admin.table_descriptions.products'),
   title: i18n.t('admin.nav.products'),
-  searchParam: 'multi_search',
+  searchParam: 'search',
   searchPlaceholder: i18n.t('admin.common.search_placeholder'),
   defaultSort: { field: 'updated_at', direction: 'desc' },
   emptyIcon: <PackageIcon className="size-8 text-muted-foreground" />,

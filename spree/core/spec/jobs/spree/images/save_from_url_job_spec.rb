@@ -49,7 +49,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     end
 
     context "when image already exists with the given external_url" do
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       before do
         image.external_url = external_url.strip
@@ -108,7 +108,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
         image.save!
       end
 
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it "does not download the image" do
         expect(SsrfFilter).not_to receive(:get)

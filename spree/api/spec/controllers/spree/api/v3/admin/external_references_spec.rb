@@ -183,7 +183,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, 'upsert by external id', 
   # on the row. A DAM re-posting an asset it already synced must not have them
   # reinterpreted as attributes by the update action.
   it 'accepts a replay carrying the create payload\'s fetch keys' do
-    media = create(:image, viewable: product)
+    media = create(:media, viewable: product)
     media.set_external_id('dam', 'ASSET-1')
 
     expect do

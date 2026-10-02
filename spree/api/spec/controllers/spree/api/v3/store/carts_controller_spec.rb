@@ -144,6 +144,16 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   end
 
   describe 'POST #create' do
+    it 'creates the cart through the configured carts create service' do
+      custom_service = Class.new(Spree::Carts::Create)
+      allow(Spree).to receive(:carts_create_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).and_call_original
+
+      post :create
+
+      expect(response).to have_http_status(:created)
+    end
+
     it 'creates a new cart' do
       expect do
         post :create
@@ -540,7 +550,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       let(:country) { Spree::Country.by_iso('US') }
       let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
       let!(:zone) { create(:zone) }
-      let!(:shipping_method) { create(:shipping_method) }
+      let!(:shipping_method) { create(:delivery_method) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -558,6 +568,19 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_present
+      end
+
+      it 'advances through the configured checkout advance service' do
+        address = create(:address, customer: user, country: country, state: us_state)
+        cart.update!(email: 'customer@example.com', ship_address: address)
+        cart.fulfillments.delete_all
+        custom_service = Class.new(Spree::Checkout::Advance)
+        allow(Spree).to receive(:checkout_advance_service).and_return(custom_service)
+        expect(custom_service).to receive(:call).with(order: cart).and_call_original
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
       end
 
       it 'surfaces a delivery_unavailable warning when the cart cannot be delivered' do
@@ -626,10 +649,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     let(:country) { Spree::Country.by_iso('US') }
     let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
     let!(:zone) { create(:zone) }
-    let!(:shipping_method) { create(:shipping_method) }
+    let!(:shipping_method) { create(:delivery_method) }
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    it 'updates the cart through the configured carts update service' do
+      custom_service = Class.new(Spree::Carts::Update)
+      allow(Spree).to receive(:carts_update_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(hash_including(cart: order)).and_call_original
+
+      patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }
+
+      expect(response).to have_http_status(:ok)
     end
 
     it 'accepts shipping_address_id to use an existing address' do
@@ -1099,7 +1132,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
-      create(:shipping_method) if Spree::DeliveryMethod.none?
+      create(:delivery_method) if Spree::DeliveryMethod.none?
     end
 
     it 'completes the checkout' do
@@ -1181,7 +1214,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'completes via spree token' do
-        create(:shipping_method) if Spree::DeliveryMethod.none?
+        create(:delivery_method) if Spree::DeliveryMethod.none?
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_order.token
 

@@ -295,7 +295,7 @@ module Spree
     # (mirrors Order#remove_out_of_stock_items!).
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
+      result = Spree.cart_remove_out_of_stock_items_service.call(cart: self)
       return self unless result.success?
 
       cart, _messages, new_warnings = result.value

@@ -51,4 +51,20 @@ RSpec.describe Spree::DigitalAssetEmailSubscriber do
       subscriber.send(:send_files_ready_email, mock_event(order))
     end
   end
+
+  describe 'through the registered subscribers', events: true do
+    before do
+      digital_asset = create(:digital_asset, variant: line_item.variant)
+      create(:digital_link, digital_asset: digital_asset, line_item: line_item)
+    end
+
+    it 'sends the files-ready email when the links are resent' do
+      perform_enqueued_jobs do
+        expect { order.publish_event('order.resend_digital_links_email') }.
+          to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      expect(ActionMailer::Base.deliveries.last.to).to eq([order.email])
+    end
+  end
 end

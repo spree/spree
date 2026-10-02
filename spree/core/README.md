@@ -28,8 +28,8 @@ All models are namespaced under `Spree::` and include:
 - `Spree::Product` / `Spree::Variant` - Product catalog
 - `Spree::Order` / `Spree::LineItem` - Order management
 - `Spree::Payment` / `Spree::PaymentMethod` - Payment processing
-- `Spree::Shipment` / `Spree::ShippingMethod` - Shipping and fulfillment
-- `Spree::Taxon` / `Spree::Taxonomy` - Product categorization
+- `Spree::Fulfillment` / `Spree::DeliveryMethod` - Shipping and fulfillment
+- `Spree::Category` / `Spree::Collection` - Product categorization
 - `Spree::Store` - Multi-store support
 - `Spree::Promotion` - Promotions and discounts
 - `Spree::GiftCard` - Gift card functionality

@@ -320,6 +320,14 @@ describe Spree::Cart, type: :model do
       end
     end
 
+    it 'uses the configured remove out of stock items service' do
+      custom_service = Class.new(Spree::Carts::RemoveOutOfStockItems)
+      allow(Spree).to receive(:cart_remove_out_of_stock_items_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(cart: cart).and_call_original
+
+      cart.remove_out_of_stock_items!
+    end
+
     context 'when cart is empty' do
       let(:order) { create(:order, store: store, customer: user) }
 
@@ -432,7 +440,7 @@ describe Spree::Cart, type: :model do
     let(:state) { country.states.first || create(:state, country: country) }
     let!(:zone) { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |method|
+      create(:delivery_method).tap do |method|
         method.calculator.preferred_amount = 5
         method.calculator.save
       end
@@ -441,7 +449,7 @@ describe Spree::Cart, type: :model do
     let(:ship_address) { create(:address, country: country, state: state) }
     let(:cart) { create(:cart_with_line_items, store: store, ship_address: ship_address, email: 'buyer@example.com') }
     let(:express) do
-      create(:shipping_method, name: 'Express').tap do |method|
+      create(:delivery_method, name: 'Express').tap do |method|
         method.calculator.preferred_amount = 15
         method.calculator.save
       end

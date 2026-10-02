@@ -22,7 +22,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '200', 'delivery methods found' do
-        before { create(:shipping_method, name: 'UPS Ground') }
+        before { create(:delivery_method, name: 'UPS Ground') }
 
         run_test! do |response|
           data = JSON.parse(response.body)

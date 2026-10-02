@@ -16,7 +16,7 @@ module Spree
     let!(:zone)   { create(:zone) }
     let!(:other_zone)  { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -210,7 +210,7 @@ module Spree
         context 'when an admin chose a rate' do
           let(:initial_address) { create(:address, customer: user, country: country, state: state) }
           let!(:express) do
-            create(:shipping_method, name: 'Express').tap do |method|
+            create(:delivery_method, name: 'Express').tap do |method|
               method.calculator.preferred_amount = 15
               method.calculator.save
             end
