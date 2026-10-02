@@ -10,7 +10,6 @@ module Spree
 
     MATCH_POLICIES = %w[all any].freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     # The owning agreement, or nil for a standalone list. An owned list is
     # reached only through its catalog — generic rule matching skips it in
     # SQL (see .for_context) — so a deactivated catalog's list goes dormant

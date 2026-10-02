@@ -43,7 +43,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     # The cart this group was completed from — unique, and the replay key that
     # makes a retried completion return this group instead of building another.

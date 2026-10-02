@@ -911,7 +911,6 @@ require 'spree/checkout/requirements'
 require 'spree/core/controller_helpers/store'
 
 require 'spree/core/preferences/store'
-require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
 

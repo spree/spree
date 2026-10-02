@@ -13,7 +13,6 @@ module Spree
 
     encrypts :secret_key, deterministic: true if Rails.configuration.active_record.encryption.include?(:primary_key)
 
-    belongs_to :store, class_name: 'Spree::Store'
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
     validates :url, presence: true

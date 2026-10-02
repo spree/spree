@@ -572,17 +572,14 @@ module Spree
       end
 
       config.to_prepare do
-        # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(
           File.join(
             File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
           )
         ) - I18n.load_path))
 
-        # Load application's model / class decorators
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
-          Rails.configuration.cache_classes ? require(c) : load(c)
-        end
+        ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
+        ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]
 
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers
