@@ -9,12 +9,11 @@
   "files": [
     "bin",
     "dist",
-    "schemas",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup && node scripts/emit-config-schema.mjs",
+    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
     "dev": "node scripts/bundle-spec.mjs && tsup --watch",
     "test": "node scripts/bundle-spec.mjs && vitest run",
     "typecheck": "node scripts/bundle-spec.mjs && tsc --noEmit",
@@ -23,8 +22,7 @@
     "format": "biome format --write src tests",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
-    "generate:spec": "node scripts/bundle-spec.mjs",
-    "generate:config-schema": "tsup && node scripts/emit-config-schema.mjs"
+    "generate:spec": "node scripts/bundle-spec.mjs"
   },
   "keywords": [
     "spree",
@@ -62,23 +60,18 @@
   },
   "devDependencies": {
     "@spree/admin-sdk": "workspace:^",
+    "@spree/config": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
-    "yaml": "catalog:",
-    "zod": "catalog:"
+    "yaml": "catalog:"
   },
   "engines": {
     "node": ">=20"
   },
   "exports": {
-    ".": "./dist/index.js",
-    "./config": {
-      "types": "./dist/config/index.d.ts",
-      "default": "./dist/config/index.js"
-    },
-    "./schemas/spree-config.json": "./schemas/spree-config.json"
+    ".": "./dist/index.js"
   }
 }

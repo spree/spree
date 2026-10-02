@@ -4,17 +4,17 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import * as p from '@clack/prompts'
 import { createAdminClient } from '@spree/admin-sdk'
-import type { Command } from 'commander'
-import { execa } from 'execa'
-import pc from 'picocolors'
-import { SEED_TASK, spreeTask } from '../backend.js'
 import {
   ConfigValidationError,
   deployConfig,
   loadConfig,
   renderReport,
   reportHasFailures,
-} from '../config/index.js'
+} from '@spree/config/node'
+import type { Command } from 'commander'
+import { execa } from 'execa'
+import pc from 'picocolors'
+import { SEED_TASK, spreeTask } from '../backend.js'
 import {
   mintApiKey,
   mintProjectCredentials,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { diffAttributes, valuesEqual } from '../src/config/index'
-import { canonicalMarkup } from '../src/config/sections/catalog'
+import { diffAttributes, valuesEqual } from '../src/node'
+import { canonicalMarkup } from '../src/sections/catalog'
 
 describe('valuesEqual', () => {
   it('bridges a number in the file against a numeric string from the API', () => {
