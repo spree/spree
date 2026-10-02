@@ -8,10 +8,6 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
   # rules, commission rules) keeps it. Dropped on the way back down.
   CONVERTED_TABLES_REGISTRY = :spree_converted_preference_tables
 
-  # The one row `spree_preferences` still held. It moves onto the default
-  # store, and the table is dropped.
-  INSTALL_ID_KEY = 'spree/install_id'.freeze
-
   # The conversion lives here rather than in the upgrade rake task because the
   # manifest runs AFTER db:migrate — a task scheduled there would find the YAML
   # column already replaced. Secrets are moved in plain text, so this needs no
@@ -40,7 +36,6 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
       end
     end
 
-    move_install_id_to_default_store
     drop_table :spree_preferences, if_exists: true
   end
 
@@ -52,7 +47,12 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
   # can be resolved; anything else comes back as the string JSON held.
   def down
     restore = Restore.new(connection, conversion)
-    restore_spree_preferences_table
+    create_table :spree_preferences, if_not_exists: true do |t|
+      t.text :value
+      t.string :key
+      t.timestamps
+      t.index :key, unique: true
+    end
 
     converted = converted_tables
     conversion.preference_tables.each do |table|
@@ -84,65 +84,6 @@ class ConvertPreferencesToJson < ActiveRecord::Migration[8.1]
 
   def conversion
     @conversion ||= Spree::Preferences::JsonConversion.new(connection, log: ->(message) { say(message, true) })
-  end
-
-  def move_install_id_to_default_store
-    return unless table_exists?(:spree_preferences)
-
-    legacy = Arel::Table.new(:spree_preferences)
-    raw = connection.select_value(legacy.project(legacy[:value]).where(legacy[:key].eq(INSTALL_ID_KEY)))
-    install_id = parse_install_id(raw)
-    store = default_store_row
-    return if install_id.blank? || store.nil?
-
-    preferences = decode_preferences(store['preferences']).merge('install_id' => install_id)
-    conversion.write('spree_stores', store['id'], 'preferences' => JSON.generate(preferences))
-  end
-
-  def restore_spree_preferences_table
-    create_table :spree_preferences, if_not_exists: true do |t|
-      t.text :value
-      t.string :key
-      t.timestamps
-      t.index :key, unique: true
-    end
-
-    store = default_store_row
-    return if store.nil?
-
-    preferences = decode_preferences(store['preferences'])
-    install_id = preferences.delete('install_id')
-    conversion.write('spree_stores', store['id'], 'preferences' => JSON.generate(preferences))
-    return if install_id.blank?
-
-    legacy = Arel::Table.new(:spree_preferences)
-    now = Time.current
-    execute(Arel::InsertManager.new.tap do |insert|
-      insert.into(legacy)
-      insert.insert([[legacy[:key], INSTALL_ID_KEY], [legacy[:value], YAML.dump(install_id)],
-                     [legacy[:created_at], now], [legacy[:updated_at], now]])
-    end.to_sql)
-  end
-
-  # The default store, or the oldest one when none is marked default, so an
-  # existing installation id always has somewhere to go. Only an installation
-  # with no store at all has nothing for it to identify.
-  def default_store_row
-    stores = Arel::Table.new(:spree_stores)
-    query = stores.project(stores[:id], stores[:preferences]).order(stores[:default].desc, stores[:id].asc).take(1)
-    query = query.where(stores[:deleted_at].eq(nil)) if column_exists?(:spree_stores, :deleted_at)
-    connection.select_one(query)
-  end
-
-  def parse_install_id(raw)
-    value = YAML.safe_load(raw.to_s)
-    value if value.is_a?(String)
-  rescue Psych::Exception
-    nil
-  end
-
-  def decode_preferences(raw)
-    (raw.is_a?(String) ? JSON.parse(raw) : raw).to_h
   end
 
   class Restore
