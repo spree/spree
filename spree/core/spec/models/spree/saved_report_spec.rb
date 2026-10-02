@@ -38,4 +38,15 @@ RSpec.describe Spree::SavedReport, type: :model do
 
     expect { report.reload.destroy! }.to change(described_class, :count).by(-1)
   end
+
+  # Validation proves a built-in report's query names real members; only
+  # running it proves the compiler can express that combination.
+  it 'ships built-in reports whose queries actually execute' do
+    create(:completed_order_with_totals, store: store, completed_at: 3.days.ago)
+
+    Spree::Store::REPORTS.each do |report|
+      query = Spree::Reporting::Query.new(store: store, params: report[:query].deep_symbolize_keys)
+      expect { query.execute }.not_to raise_error, "#{report[:key]} failed"
+    end
+  end
 end
