@@ -148,6 +148,36 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it 're-sends a canceled replacement fulfillment named as the source' do
+      line_item = order.line_items.first
+      replacement_variant = create(:variant, product: line_item.product)
+      canceled = order.fulfillments.create!(stock_location: shipment.stock_location, cost: 0, status: 'canceled')
+      canceled.fulfillment_items.create!(order: order, line_item: line_item, variant: replacement_variant, quantity: 1, status: 'on_hand', replacement: true)
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: canceled.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:created), response.body
+      expect(json_response['items']).to contain_exactly(include('variant_id' => replacement_variant.prefixed_id, 'quantity' => 1))
+      expect(shipment.reload.fulfillment_items.where(line_item: line_item).sum(:quantity)).to eq(line_item.quantity)
+    end
+
+    it 'returns 404 for a source fulfillment belonging to another order' do
+      foreign_fulfillment = create(:order_ready_to_ship, store: store).fulfillments.first
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: foreign_fulfillment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(foreign_fulfillment.reload.fulfillment_items).to be_present
+    end
   end
 
   describe 'POST #create with a stock location of another store' do
