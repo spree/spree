@@ -76,7 +76,7 @@
   "devDependencies": {
     "@playwright/test": "catalog:",
     "@spree/admin-sdk": "workspace:^",
-    "@spree/cli": "workspace:^",
+    "@spree/config": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-plugin-example": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
