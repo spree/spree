@@ -14,13 +14,11 @@ module Spree
 
           actor_attributes :created_by
 
-          many :claim_line_items,
-               resource: proc { Spree.api.admin_claim_line_item_serializer },
-               if: proc { expand?('claim_line_items') }
+          expandable :many, :claim_line_items, :admin_claim_line_item_serializer
 
-          one :reason, resource: proc { Spree.api.admin_claim_reason_serializer }, if: proc { expand?('reason') }
-          one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
-          many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+          expandable :one, :reason, :admin_claim_reason_serializer
+          expandable :one, :order, :admin_order_serializer
+          expandable :many, :refunds, :admin_refund_serializer
         end
       end
     end

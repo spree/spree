@@ -24,9 +24,7 @@ module Spree
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :delivery_profile_id do |product|
-            product.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile
 
           # The live row in the review trail: who submitted, who decided,
           # when, and what the seller was told. Expanded rather than always
@@ -43,17 +41,9 @@ module Spree
             product.seller&.name
           end
 
-          one :seller,
-              resource: proc { Spree.api.admin_seller_serializer },
-              if: proc { expand?('seller') }
+          expandable :one, :seller, :admin_seller_serializer
 
-          attribute :product_type_id do |product|
-            product.product_type&.prefixed_id
-          end
-
-          attribute :tax_category_id do |product|
-            product.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :product_type, :tax_category
 
           attribute :price do |product|
             price = price_for(product.default_variant)
@@ -71,17 +61,11 @@ module Spree
           end
 
           # Admin uses admin variant serializer
-          many :variants,
-               resource: proc { Spree.api.admin_variant_serializer },
-               if: proc { expand?('variants') }
+          expandable :many, :variants, :admin_variant_serializer
 
-          one :default_variant,
-              resource: proc { Spree.api.admin_variant_serializer },
-              if: proc { expand?('default_variant') }
+          expandable :one, :default_variant, :admin_variant_serializer
 
-          one :primary_media,
-              resource: proc { Spree.api.admin_media_serializer },
-              if: proc { expand?('primary_media') }
+          expandable :one, :primary_media, :admin_media_serializer
 
           many :gallery_media,
                key: :media,
@@ -90,17 +74,11 @@ module Spree
 
           # Read/write symmetry: the product accepts inline `digital_assets` on
           # create, so it exposes them (opt-in via ?expand=digital_assets).
-          many :digital_assets,
-               resource: proc { Spree.api.admin_digital_asset_serializer },
-               if: proc { expand?('digital_assets') }
+          expandable :many, :digital_assets, :admin_digital_asset_serializer
 
-          many :option_types,
-               resource: proc { Spree.api.admin_option_type_serializer },
-               if: proc { expand?('option_types') }
+          expandable :many, :option_types, :admin_option_type_serializer
 
-          many :option_values,
-               resource: proc { Spree.api.admin_option_value_serializer },
-               if: proc { expand?('option_values') }
+          expandable :many, :option_values, :admin_option_value_serializer
 
           many :categories,
                proc { |categories, params|
@@ -110,25 +88,15 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
 
-          many :collections,
-               resource: proc { Spree.api.admin_collection_serializer },
-               if: proc { expand?('collections') }
+          expandable :many, :collections, :admin_collection_serializer
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable :many, :custom_fields, :admin_custom_field_serializer
 
-          many :product_publications,
-               resource: proc { Spree.api.admin_product_publication_serializer },
-               if: proc { expand?('product_publications') }
+          expandable :many, :product_publications, :admin_product_publication_serializer
 
-          many :channels,
-               resource: proc { Spree.api.admin_channel_serializer },
-               if: proc { expand?('channels') }
+          expandable :many, :channels, :admin_channel_serializer
 
-          one :product_type,
-              resource: proc { Spree.api.admin_product_type_serializer },
-              if: proc { expand?('product_type') }
+          expandable :one, :product_type, :admin_product_type_serializer
         end
       end
     end

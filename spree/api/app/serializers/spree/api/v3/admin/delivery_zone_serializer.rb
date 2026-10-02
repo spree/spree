@@ -9,19 +9,13 @@ module Spree
 
           attributes created_at: :iso8601, updated_at: :iso8601
 
-          attribute :delivery_profile_id do |record|
-            record.delivery_profile&.prefixed_id
-          end
-
-          attribute :delivery_origin_group_id do |record|
-            record.delivery_origin_group&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile, :delivery_origin_group
 
           attribute :delivery_method_ids do |record|
             record.delivery_methods.map(&:prefixed_id)
           end
 
-          many :members, resource: proc { Spree.api.admin_delivery_zone_member_serializer }, if: proc { expand?('members') }
+          expandable :many, :members, :admin_delivery_zone_member_serializer
         end
       end
     end

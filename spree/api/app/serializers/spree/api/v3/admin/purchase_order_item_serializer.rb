@@ -32,25 +32,13 @@ module Spree
             item.unit_cost&.to_s
           end
 
-          attribute :total_cost do |item|
-            item.total_cost.to_s
-          end
-
-          attribute :display_unit_cost do |item|
-            item.display_unit_cost.to_s
-          end
-
-          attribute :display_total_cost do |item|
-            item.display_total_cost.to_s
-          end
+          string_attributes :total_cost, :display_unit_cost, :display_total_cost
 
           attribute :purchase_order_id do |item|
             Spree::PurchaseOrder.prefixed_id_for(item.purchase_order_id)
           end
 
-          attribute :variant_id do |item|
-            item.variant&.prefixed_id
-          end
+          prefixed_id_attributes :variant
 
           # The product the line's variant belongs to, so a line can link
           # straight to the screen where that SKU's stock lives.

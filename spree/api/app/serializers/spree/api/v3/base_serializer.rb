@@ -22,9 +22,36 @@ module Spree
         # (product prices AND cart/order/line-item totals) is gated from one
         # place instead of per-attribute opt-in.
         def self.money_attributes(*names)
+          typelize(**names.index_with { [:string, nullable: true] })
+
           names.each do |name|
             attribute(name) { |object| object.public_send(name) unless params[:hide_prices] }
           end
+        end
+
+        # Declares `<association>_id` attributes carrying the associated
+        # record's prefixed id, or nil when there is none. Pass
+        # `seller_id: :resolved_seller` when the attribute name and the
+        # association it reads differ.
+        def self.prefixed_id_attributes(*associations, **renamed)
+          associations.index_by { |association| :"#{association}_id" }.merge(renamed).each do |name, association|
+            attribute(name) { |object| object.public_send(association)&.prefixed_id }
+          end
+        end
+
+        # Declares attributes rendered as strings, so decimals and money keep
+        # their exact form instead of becoming JSON numbers.
+        def self.string_attributes(*names)
+          names.each do |name|
+            attribute(name) { |object| object.public_send(name).to_s }
+          end
+        end
+
+        # Declares an association rendered only when the request expands it
+        # (`?expand=customer`). `serializer` names the `Spree.api` setting
+        # resolving the serializer class, so host apps can swap it.
+        def self.expandable(kind, name, serializer)
+          public_send(kind, name, resource: proc { Spree.api.public_send(serializer) }, if: proc { expand?(name.to_s) })
         end
 
         # Declares the wire form of an `acted_by` association: the actor's

@@ -13,17 +13,13 @@ module Spree
                    :meta_title, :meta_description, :meta_keywords,
                    :children_count
 
-        attribute :parent_id do |category|
-          category.parent&.prefixed_id
-        end
+        prefixed_id_attributes :parent
 
         attribute :description do |category|
           Spree::RichTextHelper.to_plain_text(category.description)
         end
 
-        attribute :description_html do |category|
-          category.description_html
-        end
+        attributes :description_html
 
         attribute :image_url do |category|
           image_url_for(category.image)
@@ -33,32 +29,20 @@ module Spree
           image_url_for(category.square_image)
         end
 
-        attribute :is_root do |category|
-          category.root?
-        end
+        attribute :is_root, &:root?
 
-        attribute :is_child do |category|
-          category.child?
-        end
+        attribute :is_child, &:child?
 
-        attribute :is_leaf do |category|
-          category.leaf?
-        end
+        attribute :is_leaf, &:leaf?
 
         # Conditional associations
         # Note: We pass empty expand to nested categories to prevent infinite recursion
         # (e.g., ancestors trying to load their own ancestors)
-        one :parent,
-            resource: proc { Spree.api.category_serializer },
-            if: proc { expand?('parent') }
+        expandable :one, :parent, :category_serializer
 
-        many :children,
-             resource: proc { Spree.api.category_serializer },
-             if: proc { expand?('children') }
+        expandable :many, :children, :category_serializer
 
-        many :ancestors,
-             resource: proc { Spree.api.category_serializer },
-             if: proc { expand?('ancestors') }
+        expandable :many, :ancestors, :category_serializer
 
         many :storefront_custom_fields,
              key: :custom_fields,

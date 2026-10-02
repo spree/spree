@@ -18,31 +18,11 @@ module Spree
 
         attributes :number, :email, :currency
 
-        attribute :total do |group|
-          group.total.to_s
-        end
-
-        attribute :display_total do |group|
-          group.display_total.to_s
-        end
-
-        attribute :item_total do |group|
-          group.item_total.to_s
-        end
-
-        attribute :display_item_total do |group|
-          group.display_item_total.to_s
-        end
+        string_attributes :total, :display_total, :item_total, :display_item_total
 
         # Rolled up across the children rather than stored, so it can never
         # disagree with the orders it describes.
-        attribute :fulfillment_status do |group|
-          group.fulfillment_status
-        end
-
-        attribute :payment_status do |group|
-          group.payment_status
-        end
+        attributes :fulfillment_status, :payment_status
 
         attribute :completed_at do |group|
           group.created_at

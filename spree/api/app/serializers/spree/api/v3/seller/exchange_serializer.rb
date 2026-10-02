@@ -14,15 +14,11 @@ module Spree
 
           attributes :memo
 
-          attribute :stock_location_id do |exchange|
-            exchange.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
-          many :exchange_line_items,
-               resource: proc { Spree.api.seller_exchange_line_item_serializer },
-               if: proc { expand?('exchange_line_items') }
+          expandable :many, :exchange_line_items, :seller_exchange_line_item_serializer
 
-          one :reason, resource: proc { Spree.api.seller_reason_serializer }, if: proc { expand?('reason') }
+          expandable :one, :reason, :seller_reason_serializer
         end
       end
     end

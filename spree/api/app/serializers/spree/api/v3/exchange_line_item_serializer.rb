@@ -21,45 +21,15 @@ module Spree
 
         # What the customer paid for the units coming back, after discounts
         # and with their tax.
-        attribute :original_price do |line|
-          line.original_price.to_s
-        end
+        string_attributes :original_price
 
         # The replacement at the same discount, with its own tax.
-        attribute :new_variant_price do |line|
-          line.new_variant_price.to_s
-        end
+        string_attributes :new_variant_price, :price_difference, :original_tax_total, :new_tax_total
 
-        attribute :price_difference do |line|
-          line.price_difference.to_s
-        end
+        prefixed_id_attributes :original_variant, :new_variant, :line_item, :fulfillment_item
 
-        attribute :original_tax_total do |line|
-          line.original_tax_total.to_s
-        end
-
-        attribute :new_tax_total do |line|
-          line.new_tax_total.to_s
-        end
-
-        attribute :original_variant_id do |line|
-          line.original_variant&.prefixed_id
-        end
-
-        attribute :new_variant_id do |line|
-          line.new_variant&.prefixed_id
-        end
-
-        attribute :line_item_id do |line|
-          line.line_item&.prefixed_id
-        end
-
-        attribute :fulfillment_item_id do |line|
-          line.fulfillment_item&.prefixed_id
-        end
-
-        one :original_variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('original_variant') }
-        one :new_variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('new_variant') }
+        expandable :one, :original_variant, :variant_serializer
+        expandable :one, :new_variant, :variant_serializer
       end
     end
   end

@@ -30,13 +30,7 @@ module Spree
             tax_rate.amount_percentage&.to_f
           end
 
-          attribute :tax_category_id do |tax_rate|
-            tax_rate.tax_category&.prefixed_id
-          end
-
-          attribute :store_id do |tax_rate|
-            tax_rate.store&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category, :store
 
           # The jurisdiction the rate taxes, as codes: a null country means every
           # country, and a country with no state means the whole country. Read

@@ -36,17 +36,11 @@ module Spree
           # shape of a policy (with `created_at`), which is what the seller
           # SDK's generated type and this branch's OpenAPI schema promise.
           _attributes.delete(:policies)
-          many :policies,
-               resource: proc { Spree.api.seller_policy_serializer },
-               if: proc { expand?('policies') }
+          expandable :many, :policies, :seller_policy_serializer
 
-          attribute :on_holiday do |seller|
-            seller.on_holiday?
-          end
+          attribute :on_holiday, &:on_holiday?
 
-          attribute :sellable do |seller|
-            seller.sellable?
-          end
+          attribute :sellable, &:sellable?
 
           # What this seller prices in. Theirs by way of the marketplace: a
           # seller has no currency of their own, so the store's is the answer

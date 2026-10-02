@@ -27,9 +27,7 @@ module Spree
             stock_level.stock_location&.name
           end
 
-          attribute :product_id do |stock_level|
-            stock_level.product&.prefixed_id
-          end
+          prefixed_id_attributes :product
 
           attribute :options_text do |stock_level|
             stock_level.variant&.options_text.presence
@@ -51,13 +49,9 @@ module Spree
             stock_level.available_count.to_i
           end
 
-          one :stock_location,
-              resource: proc { Spree.api.admin_stock_location_serializer },
-              if: proc { expand?('stock_location') }
+          expandable :one, :stock_location, :admin_stock_location_serializer
 
-          one :variant,
-              resource: proc { Spree.api.admin_variant_serializer },
-              if: proc { expand?('variant') }
+          expandable :one, :variant, :admin_variant_serializer
         end
       end
     end

@@ -19,16 +19,12 @@ module Spree
 
           attributes :email, :error_message, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :customer_id do |data_request|
-            data_request.customer&.prefixed_id
-          end
+          prefixed_id_attributes :customer
 
           # Null when the subject asked for it themselves.
-          attribute :requested_by_id do |data_request|
-            data_request.requested_by&.prefixed_id
-          end
+          prefixed_id_attributes :requested_by
 
-          one :customer, resource: proc { Spree.api.admin_customer_serializer }, if: proc { expand?('customer') }
+          expandable :one, :customer, :admin_customer_serializer
         end
       end
     end

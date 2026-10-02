@@ -16,21 +16,13 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           # Override inherited associations to use admin serializers
-          one :parent,
-              resource: proc { Spree.api.admin_category_serializer },
-              if: proc { expand?('parent') }
+          expandable :one, :parent, :admin_category_serializer
 
-          many :children,
-               resource: proc { Spree.api.admin_category_serializer },
-               if: proc { expand?('children') }
+          expandable :many, :children, :admin_category_serializer
 
-          many :ancestors,
-               resource: proc { Spree.api.admin_category_serializer },
-               if: proc { expand?('ancestors') }
+          expandable :many, :ancestors, :admin_category_serializer
 
-          many :custom_fields,
-               resource: proc { Spree.api.admin_custom_field_serializer },
-               if: proc { expand?('custom_fields') }
+          expandable :many, :custom_fields, :admin_custom_field_serializer
         end
       end
     end

@@ -21,9 +21,7 @@ module Spree
           Spree::RichTextHelper.to_plain_text(seller.about)
         end
 
-        attribute :about_html do |seller|
-          seller.about_html
-        end
+        attributes :about_html
 
         attribute :logo_url do |seller|
           image_url_for(seller.logo)
@@ -41,9 +39,7 @@ module Spree
         # because a policy body is a whole legal document: a marketplace's
         # seller listing would otherwise carry every seller's full text on
         # every page. A product page reaches them as `expand=seller.policies`.
-        many :policies,
-             resource: proc { Spree.api.policy_serializer },
-             if: proc { expand?('policies') }
+        expandable :many, :policies, :policy_serializer
       end
     end
   end

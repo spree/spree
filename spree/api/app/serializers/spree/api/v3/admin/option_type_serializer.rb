@@ -10,9 +10,7 @@ module Spree
           attributes :metadata, :filterable,
                      created_at: :iso8601, updated_at: :iso8601
 
-          many :option_values,
-               resource: proc { Spree.api.admin_option_value_serializer },
-               if: proc { expand?('option_values') }
+          expandable :many, :option_values, :admin_option_value_serializer
         end
       end
     end

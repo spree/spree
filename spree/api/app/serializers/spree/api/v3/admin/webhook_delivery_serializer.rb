@@ -38,9 +38,7 @@ module Spree
             Spree::WebhookPayloadRedaction.split(delivery.payload).first
           end
 
-          attribute :webhook_endpoint_id do |delivery|
-            delivery.webhook_endpoint&.prefixed_id
-          end
+          prefixed_id_attributes :webhook_endpoint
 
           # Delegated from the parent endpoint — saves callers from having to
           # join the endpoint payload to show "where did this delivery go?".

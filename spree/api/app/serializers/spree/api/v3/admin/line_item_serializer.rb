@@ -44,9 +44,7 @@ module Spree
           # Empty on a shop-price or hand-negotiated line. Names ride along
           # beside the ids so a page of lines does not cost a request each to
           # label, as `company_name` already does.
-          attribute :price_list_id do |line_item|
-            line_item.price_list&.prefixed_id
-          end
+          prefixed_id_attributes :price_list
 
           attribute :price_list_name do |line_item|
             line_item.price_list&.name
@@ -64,28 +62,20 @@ module Spree
             line_item.cost_price&.to_s
           end
 
-          attribute :tax_category_id do |line_item|
-            line_item.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category
 
           # Override inherited associations to use admin serializers
           many :option_values, resource: proc { Spree.api.admin_option_value_serializer }
           many :digital_links, resource: proc { Spree.api.admin_digital_link_serializer }
-          many :tax_lines, resource: proc { Spree.api.admin_tax_line_serializer }, if: proc { expand?('tax_lines') }
+          expandable :many, :tax_lines, :admin_tax_line_serializer
 
           # `seller_id` comes from the store serializer; the expand resolves
           # to the operator's view of the seller rather than the public one.
-          one :seller,
-              resource: proc { Spree.api.admin_seller_serializer },
-              if: proc { expand?('seller') }
+          expandable :one, :seller, :admin_seller_serializer
 
-          one :variant,
-              resource: proc { Spree.api.admin_variant_serializer },
-              if: proc { expand?('variant') }
+          expandable :one, :variant, :admin_variant_serializer
 
-          one :tax_category,
-              resource: proc { Spree.api.admin_tax_category_serializer },
-              if: proc { expand?('tax_category') }
+          expandable :one, :tax_category, :admin_tax_category_serializer
 
         end
       end

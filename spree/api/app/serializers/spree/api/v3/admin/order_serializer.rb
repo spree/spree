@@ -74,9 +74,7 @@ module Spree
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preferred_stock_location_id do |order|
-            order.preferred_stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :preferred_stock_location
 
           # Our own endpoint rather than a pre-signed storage URL: the
           # controller streams the bytes, so admin auth runs on every download
@@ -90,9 +88,7 @@ module Spree
           # Which company node the order is for, so the dashboard can show and
           # change it. Read back from the column rather than #resolved_company:
           # a placed order must report what it was stamped with.
-          attribute :company_id do |order|
-            order.company&.prefixed_id
-          end
+          prefixed_id_attributes :company
 
           attribute :company_name do |order|
             order.company&.name
@@ -100,13 +96,9 @@ module Spree
 
           # Whose sale this is — nil on the operator's own goods. The full
           # profile is `?expand=seller`.
-          attribute :seller_id do |order|
-            order.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
-          one :seller,
-              resource: proc { Spree.api.admin_seller_serializer },
-              if: proc { expand?('seller') }
+          expandable :one, :seller, :admin_seller_serializer
 
           # The checkout this order was placed in, when it was placed alongside
           # others.
@@ -136,9 +128,7 @@ module Spree
           # secret key names the key.
           actor_attributes :approver, :canceler, :created_by
 
-          attribute :cancel_reason_id do |order|
-            order.cancel_reason&.prefixed_id
-          end
+          prefixed_id_attributes :cancel_reason
 
           # The reason's name alongside its id, so an order list can show why
           # each canceled order was called off without expanding a record per
@@ -147,9 +137,7 @@ module Spree
             order.cancel_reason&.name
           end
 
-          attribute :customer_id do |order|
-            order.customer&.prefixed_id
-          end
+          prefixed_id_attributes :customer
 
           # Override inherited associations to use admin serializers
           # Renamed from the store's `discounts` key: on the admin surface that
@@ -163,44 +151,32 @@ module Spree
           _attributes.delete(:fees)
           many :order_promotions, key: :applied_promotions, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('applied_promotions') }
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
-          many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
-          many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
+          expandable :many, :fulfillments, :admin_fulfillment_serializer
+          expandable :many, :payments, :admin_payment_serializer
           # An order from a split checkout has no payments of its own; what it
           # has is a share of each payment made against its group.
-          many :payment_splits, resource: proc { Spree.api.admin_payment_split_serializer }, if: proc { expand?('payment_splits') }
+          expandable :many, :payment_splits, :admin_payment_split_serializer
 
-          one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
-          one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
+          expandable :one, :billing_address, :admin_address_serializer
+          expandable :one, :shipping_address, :admin_address_serializer
           one :gift_card, resource: proc { Spree.api.admin_gift_card_serializer }
-          one :cart, resource: proc { Spree.api.admin_cart_serializer }, if: proc { expand?('cart') }
+          expandable :one, :cart, :admin_cart_serializer
           one :market, resource: proc { Spree.api.admin_market_serializer }
-          one :channel, resource: proc { Spree.api.admin_channel_serializer }, if: proc { expand?('channel') }
-          one :preferred_stock_location,
-              resource: proc { Spree.api.admin_stock_location_serializer },
-              if: proc { expand?('preferred_stock_location') }
+          expandable :one, :channel, :admin_channel_serializer
+          expandable :one, :preferred_stock_location, :admin_stock_location_serializer
 
-          many :payment_methods, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_methods') }
+          expandable :many, :payment_methods, :admin_payment_method_serializer
 
-          one :customer,
-              resource: proc { Spree.api.admin_customer_serializer },
-              if: proc { expand?('customer') }
+          expandable :one, :customer, :admin_customer_serializer
 
-          one :cancel_reason,
-              resource: proc { Spree.api.admin_order_cancellation_reason_serializer },
-              if: proc { expand?('cancel_reason') }
+          expandable :one, :cancel_reason, :admin_order_cancellation_reason_serializer
 
 
-          many :returns,
-               resource: proc { Spree.api.admin_return_serializer },
-               if: proc { expand?('returns') }
+          expandable :many, :returns, :admin_return_serializer
 
-          many :exchanges,
-               resource: proc { Spree.api.admin_exchange_serializer },
-               if: proc { expand?('exchanges') }
+          expandable :many, :exchanges, :admin_exchange_serializer
 
-          many :claims,
-               resource: proc { Spree.api.admin_claim_serializer },
-               if: proc { expand?('claims') }
+          expandable :many, :claims, :admin_claim_serializer
 
           # What the forwarder quoted against, frozen onto the rates this
           # order shipped under. Back-office only: a buyer is told what their

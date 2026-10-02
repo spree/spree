@@ -28,9 +28,7 @@ module Spree
           # Which seller runs this method, so the operator's list can say
           # whose it is. Null is the marketplace's own
           # (docs/plans/6.0-multi-vendor-marketplace.md, Decision 13).
-          attribute :seller_id do |record|
-            record.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           attribute :seller_name do |record|
             record.seller&.name
@@ -42,21 +40,7 @@ module Spree
           # eligibility without a request per method.
           many :delivery_method_rules, key: :rules, resource: proc { Spree.api.admin_delivery_method_rule_serializer }
 
-          attribute :tax_category_id do |record|
-            record.tax_category&.prefixed_id
-          end
-
-          attribute :delivery_profile_id do |record|
-            record.delivery_profile&.prefixed_id
-          end
-
-          attribute :delivery_origin_group_id do |record|
-            record.delivery_origin_group&.prefixed_id
-          end
-
-          attribute :delivery_zone_id do |record|
-            record.delivery_zone&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category, :delivery_profile, :delivery_origin_group, :delivery_zone
 
           attribute :stock_location_ids do |record|
             record.pickup_locations.map(&:prefixed_id)

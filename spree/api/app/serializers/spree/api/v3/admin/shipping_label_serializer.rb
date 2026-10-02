@@ -28,31 +28,19 @@ module Spree
           attributes :source, :status, :carrier, :carrier_name, :service, :tracking_number, :currency, :format,
                      :external_id, :metadata, refunded_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :owner_id do |shipping_label|
-            shipping_label.owner&.prefixed_id
-          end
+          prefixed_id_attributes :owner
 
           attribute :owner_type do |shipping_label|
             shipping_label.owner_type == 'Spree::Return' ? 'return' : 'fulfillment'
           end
 
-          attribute :cost do |shipping_label|
-            shipping_label.cost.to_s
-          end
+          string_attributes :cost, :display_cost
 
-          attribute :display_cost do |shipping_label|
-            shipping_label.display_cost.to_s
-          end
-
-          attribute :integration_id do |shipping_label|
-            shipping_label.integration&.prefixed_id
-          end
+          prefixed_id_attributes :integration
 
           # Whether the file is still being fetched from the carrier; the
           # download proxies the provider's copy meanwhile.
-          attribute :file_pending do |shipping_label|
-            shipping_label.file_pending?
-          end
+          attribute :file_pending, &:file_pending?
 
           # Our own endpoint rather than a storage URL: the controller streams
           # the bytes, so admin auth runs on every print.

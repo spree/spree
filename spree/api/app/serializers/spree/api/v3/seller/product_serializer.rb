@@ -20,30 +20,18 @@ module Spree
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :product_type_id do |product|
-            product.product_type&.prefixed_id
-          end
+          prefixed_id_attributes :product_type, :delivery_profile
 
-          attribute :delivery_profile_id do |product|
-            product.delivery_profile&.prefixed_id
-          end
+          expandable :many, :variants, :seller_variant_serializer
 
-          many :variants,
-               resource: proc { Spree.api.seller_variant_serializer },
-               if: proc { expand?('variants') }
-
-          one :default_variant,
-              resource: proc { Spree.api.seller_variant_serializer },
-              if: proc { expand?('default_variant') }
+          expandable :one, :default_variant, :seller_variant_serializer
 
           many :gallery_media,
                key: :media,
                resource: proc { Spree.api.seller_media_serializer },
                if: proc { expand?('media') }
 
-          many :option_types,
-               resource: proc { Spree.api.option_type_serializer },
-               if: proc { expand?('option_types') }
+          expandable :many, :option_types, :option_type_serializer
 
           # Why the marketplace sent this back, so the panel can show it
           # against a rejected listing without a second request. Expanded

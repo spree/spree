@@ -13,11 +13,9 @@ module Spree
 
           attributes :memo
 
-          many :claim_line_items,
-               resource: proc { Spree.api.seller_claim_line_item_serializer },
-               if: proc { expand?('claim_line_items') }
+          expandable :many, :claim_line_items, :seller_claim_line_item_serializer
 
-          one :reason, resource: proc { Spree.api.seller_reason_serializer }, if: proc { expand?('reason') }
+          expandable :one, :reason, :seller_reason_serializer
         end
       end
     end

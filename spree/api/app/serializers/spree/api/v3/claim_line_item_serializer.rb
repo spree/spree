@@ -20,50 +20,17 @@ module Spree
 
         attributes :quantity, :send_replacement, :description
 
-        attribute :refund_amount do |line|
-          line.refund_amount.to_s
-        end
+        string_attributes :refund_amount
 
         # What the customer actually paid for these units, tax included — the
         # ceiling the resolve workflow enforces, and what the dashboard offers
         # when the claim carries no explicit amount.
-        attribute :paid_amount do |line|
-          line.paid_amount.to_s
-        end
+        string_attributes :paid_amount, :pre_tax_amount, :included_tax_total, :additional_tax_total, :tax_total,
+                          :display_refund_amount
 
-        attribute :pre_tax_amount do |line|
-          line.pre_tax_amount.to_s
-        end
+        prefixed_id_attributes :variant, :replacement_variant, :line_item
 
-        attribute :included_tax_total do |line|
-          line.included_tax_total.to_s
-        end
-
-        attribute :additional_tax_total do |line|
-          line.additional_tax_total.to_s
-        end
-
-        attribute :tax_total do |line|
-          line.tax_total.to_s
-        end
-
-        attribute :display_refund_amount do |line|
-          line.display_refund_amount.to_s
-        end
-
-        attribute :variant_id do |line|
-          line.variant&.prefixed_id
-        end
-
-        attribute :replacement_variant_id do |line|
-          line.replacement_variant&.prefixed_id
-        end
-
-        attribute :line_item_id do |line|
-          line.line_item&.prefixed_id
-        end
-
-        one :variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('variant') }
+        expandable :one, :variant, :variant_serializer
       end
     end
   end

@@ -25,16 +25,12 @@ module Spree
 
           # Minimums are few (one per currency) and the card renders them
           # inline, so they ride along rather than costing a second request.
-          many :order_minimums,
-               resource: proc { Spree.api.admin_catalog_order_minimum_serializer },
-               if: proc { expand?('order_minimums') }
+          expandable :many, :order_minimums, :admin_catalog_order_minimum_serializer
 
           # The owned list rides along so the agreement editor can render its
           # pricing without a second request — the catalog page is where an
           # owned list is edited (docs/plans/6.0-catalog-agreement-rework.md).
-          one :price_list,
-              resource: proc { Spree.api.admin_price_list_serializer },
-              if: proc { expand?('price_list') }
+          expandable :one, :price_list, :admin_price_list_serializer
 
           many :catalog_assignments, key: :assignments,
                resource: proc { Spree.api.admin_catalog_assignment_serializer },

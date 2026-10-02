@@ -5,23 +5,12 @@ module Spree
         typelize variant_id: :string, wishlist_id: :string, quantity: :number,
                  product_id: :string
 
-        attribute :variant_id do |wishlist_item|
-          wishlist_item.variant&.prefixed_id
-        end
-
-        attribute :product_id do |wishlist_item|
-          wishlist_item.product&.prefixed_id
-        end
-
-        attribute :wishlist_id do |wishlist_item|
-          wishlist_item.wishlist&.prefixed_id
-        end
+        prefixed_id_attributes :variant, :product, :wishlist
 
         attributes :quantity
 
         one :variant, resource: proc { Spree.api.variant_serializer }
-        one :product, resource: proc { Spree.api.product_serializer },
-            if: proc { expand?('product') }
+        expandable :one, :product, :product_serializer
       end
     end
   end

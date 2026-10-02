@@ -17,9 +17,7 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           # The sale row a credit gives back.
-          attribute :original_tax_line_id do |record|
-            record.original_tax_line&.prefixed_id
-          end
+          prefixed_id_attributes :original_tax_line
         end
       end
     end

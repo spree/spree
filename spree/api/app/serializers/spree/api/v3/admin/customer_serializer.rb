@@ -28,9 +28,7 @@ module Spree
             user.anonymized_at&.iso8601
           end
 
-          attribute :anonymized do |user|
-            user.anonymized?
-          end
+          attribute :anonymized, &:anonymized?
 
           attribute :tags do |user|
             user.tags.map(&:name) # not pluck as we preload tags
@@ -44,13 +42,7 @@ module Spree
             user.respond_to?(:internal_note) ? user.internal_note.presence : nil
           end
 
-          attribute :default_billing_address_id do |user|
-            user.bill_address&.prefixed_id
-          end
-
-          attribute :default_shipping_address_id do |user|
-            user.ship_address&.prefixed_id
-          end
+          prefixed_id_attributes default_billing_address_id: :bill_address, default_shipping_address_id: :ship_address
 
           # Order aggregates: prefer attributes precomputed on the scope (see
           # CustomersController#scope) to avoid N+1 on list endpoints. Fall
@@ -76,7 +68,7 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          many :addresses, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('addresses') }
+          expandable :many, :addresses, :admin_address_serializer
           one :bill_address, key: :default_billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_billing_address') }
           one :ship_address, key: :default_shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_shipping_address') }
 
@@ -90,27 +82,19 @@ module Spree
             user.newsletter_subscriber(store)
           end
 
-          many :orders,
-               resource: proc { Spree.api.admin_order_serializer },
-               if: proc { expand?('orders') }
+          expandable :many, :orders, :admin_order_serializer
 
-          many :store_credits,
-               resource: proc { Spree.api.admin_store_credit_serializer },
-               if: proc { expand?('store_credits') }
+          expandable :many, :store_credits, :admin_store_credit_serializer
 
           attribute :customer_group_ids do |user|
             user.customer_groups.map(&:prefixed_id)
           end
 
-          many :customer_groups,
-               resource: proc { Spree.api.admin_customer_group_serializer },
-               if: proc { expand?('customer_groups') }
+          expandable :many, :customer_groups, :admin_customer_group_serializer
 
           # Membership rows only — standing over a parent is a question for the
           # standing filter, not a claim of membership.
-          many :companies,
-               resource: proc { Spree.api.admin_company_serializer },
-               if: proc { expand?('companies') }
+          expandable :many, :companies, :admin_company_serializer
         end
       end
     end

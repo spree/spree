@@ -53,9 +53,7 @@ module Spree
           many :price_adjustment_tiers,
                resource: proc { Spree.api.admin_price_adjustment_tier_serializer }
 
-          many :price_rules,
-               resource: proc { Spree.api.admin_price_rule_serializer },
-               if: proc { expand?('price_rules') }
+          expandable :many, :price_rules, :admin_price_rule_serializer
         end
       end
     end

@@ -21,53 +21,16 @@ module Spree
 
         attributes :quantity, :received_quantity, :resellable
 
-        attribute :pre_tax_amount do |line|
-          line.pre_tax_amount.to_s
-        end
-
-        attribute :display_pre_tax_amount do |line|
-          line.display_pre_tax_amount.to_s
-        end
-
-        attribute :included_tax_total do |line|
-          line.included_tax_total.to_s
-        end
-
-        attribute :additional_tax_total do |line|
-          line.additional_tax_total.to_s
-        end
-
-        attribute :tax_total do |line|
-          line.tax_total.to_s
-        end
-
-        attribute :display_tax_total do |line|
-          line.display_tax_total.to_s
-        end
+        string_attributes :pre_tax_amount, :display_pre_tax_amount, :included_tax_total, :additional_tax_total,
+                          :tax_total, :display_tax_total
 
         # What the line refunds, tax included — for the units that arrived
         # once the warehouse has counted.
-        attribute :refund_amount do |line|
-          line.refund_amount.to_s
-        end
+        string_attributes :refund_amount, :display_refund_amount
 
-        attribute :display_refund_amount do |line|
-          line.display_refund_amount.to_s
-        end
+        prefixed_id_attributes :variant, :line_item, :fulfillment_item
 
-        attribute :variant_id do |line|
-          line.variant&.prefixed_id
-        end
-
-        attribute :line_item_id do |line|
-          line.line_item&.prefixed_id
-        end
-
-        attribute :fulfillment_item_id do |line|
-          line.fulfillment_item&.prefixed_id
-        end
-
-        one :variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('variant') }
+        expandable :one, :variant, :variant_serializer
       end
     end
   end

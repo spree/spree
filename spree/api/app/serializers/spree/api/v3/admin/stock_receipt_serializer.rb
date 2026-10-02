@@ -28,9 +28,7 @@ module Spree
             receipt.receivable_type.demodulize.underscore
           end
 
-          attribute :receivable_id do |receipt|
-            receipt.receivable&.prefixed_id
-          end
+          prefixed_id_attributes :receivable
 
           actor_attributes :received_by
 
@@ -38,9 +36,7 @@ module Spree
             receipt.items.size
           end
 
-          many :items,
-               resource: proc { Spree.api.admin_stock_receipt_item_serializer },
-               if: proc { expand?('items') }
+          expandable :many, :items, :admin_stock_receipt_item_serializer
         end
       end
     end

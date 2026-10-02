@@ -17,32 +17,18 @@ module Spree
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :stock_location_id do |return_record|
-            return_record.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           actor_attributes :created_by
 
-          attribute :refunded_total do |return_record|
-            return_record.refunded_total.to_s
-          end
+          string_attributes :refunded_total, :display_refunded_total, :refundable_total
 
-          attribute :display_refunded_total do |return_record|
-            return_record.display_refunded_total.to_s
-          end
+          expandable :many, :return_line_items, :admin_return_line_item_serializer
 
-          attribute :refundable_total do |return_record|
-            return_record.refundable_total.to_s
-          end
-
-          many :return_line_items,
-               resource: proc { Spree.api.admin_return_line_item_serializer },
-               if: proc { expand?('return_line_items') }
-
-          one :reason, resource: proc { Spree.api.admin_return_reason_serializer }, if: proc { expand?('reason') }
-          one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
-          one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
-          many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
+          expandable :one, :reason, :admin_return_reason_serializer
+          expandable :one, :order, :admin_order_serializer
+          expandable :one, :stock_location, :admin_stock_location_serializer
+          expandable :many, :refunds, :admin_refund_serializer
 
           # Paperwork the provider produced beside the label: a cross-border
           # return is declared like any other export.

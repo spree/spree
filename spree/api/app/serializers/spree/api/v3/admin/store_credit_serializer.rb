@@ -16,27 +16,15 @@ module Spree
           attributes :memo, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :amount_authorized do |store_credit|
-            store_credit.amount_authorized.to_s
-          end
+          string_attributes :amount_authorized
 
           # Answers the same question as the `outstanding` filter, so the row
           # and the filter cannot disagree.
-          attribute :outstanding do |store_credit|
-            store_credit.outstanding?
-          end
+          attribute :outstanding, &:outstanding?
 
-          attribute :display_amount_authorized do |store_credit|
-            store_credit.display_amount_authorized.to_s
-          end
+          string_attributes :display_amount_authorized
 
-          attribute :customer_id do |store_credit|
-            store_credit.customer&.prefixed_id
-          end
-
-          attribute :created_by_id do |store_credit|
-            store_credit.created_by&.prefixed_id
-          end
+          prefixed_id_attributes :customer, :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
           # that issued it, or null when an admin issued it by hand. The type
@@ -56,13 +44,9 @@ module Spree
             Spree::Base.polymorphic_prefixed_id(store_credit.originator_type, store_credit.originator_id)
           end
 
-          one :customer,
-              resource: proc { Spree.api.admin_customer_serializer },
-              if: proc { expand?('customer') }
+          expandable :one, :customer, :admin_customer_serializer
 
-          one :created_by,
-              resource: proc { Spree.api.admin_admin_user_serializer },
-              if: proc { expand?('created_by') }
+          expandable :one, :created_by, :admin_admin_user_serializer
         end
       end
     end

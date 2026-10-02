@@ -13,7 +13,7 @@ module Spree
             line.line_item&.name || line.variant&.name
           end
 
-          one :variant, resource: proc { Spree.api.seller_variant_serializer }, if: proc { expand?('variant') }
+          expandable :one, :variant, :seller_variant_serializer
         end
       end
     end

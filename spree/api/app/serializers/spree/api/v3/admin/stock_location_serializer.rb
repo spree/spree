@@ -22,17 +22,13 @@ module Spree
                      :pickup_ready_in_minutes, :pickup_instructions,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :seller_id do |stock_location|
-            stock_location.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           attribute :seller_name do |stock_location|
             stock_location.seller&.name
           end
 
-          one :seller,
-              resource: proc { Spree.api.admin_seller_serializer },
-              if: proc { expand?('seller') }
+          expandable :one, :seller, :admin_seller_serializer
         end
       end
     end

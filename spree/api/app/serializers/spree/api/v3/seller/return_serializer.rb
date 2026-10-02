@@ -21,29 +21,17 @@ module Spree
 
           attributes :memo
 
-          attribute :stock_location_id do |return_record|
-            return_record.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
-          attribute :refunded_total do |return_record|
-            return_record.refunded_total.to_s
-          end
+          string_attributes :refunded_total
 
           # What the refund dialog opens on — never more than this may be
           # given back, whatever amount is typed.
-          attribute :refundable_total do |return_record|
-            return_record.refundable_total.to_s
-          end
+          string_attributes :refundable_total, :display_refunded_total
 
-          attribute :display_refunded_total do |return_record|
-            return_record.display_refunded_total.to_s
-          end
+          expandable :many, :return_line_items, :seller_return_line_item_serializer
 
-          many :return_line_items,
-               resource: proc { Spree.api.seller_return_line_item_serializer },
-               if: proc { expand?('return_line_items') }
-
-          one :reason, resource: proc { Spree.api.seller_reason_serializer }, if: proc { expand?('reason') }
+          expandable :one, :reason, :seller_reason_serializer
         end
       end
     end

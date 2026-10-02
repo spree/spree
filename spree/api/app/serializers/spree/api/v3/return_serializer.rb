@@ -21,30 +21,12 @@ module Spree
 
         attributes :number, :status
 
-        attribute :order_id do |return_record|
-          return_record.order&.prefixed_id
-        end
+        prefixed_id_attributes :order, :reason
 
-        attribute :reason_id do |return_record|
-          return_record.reason&.prefixed_id
-        end
-
-        attribute :refund_total do |return_record|
-          return_record.refund_total.to_s
-        end
-
-        attribute :display_refund_total do |return_record|
-          return_record.display_refund_total.to_s
-        end
+        string_attributes :refund_total, :display_refund_total
 
         # The tax inside refund_total.
-        attribute :refund_tax_total do |return_record|
-          return_record.refund_tax_total.to_s
-        end
-
-        attribute :display_refund_tax_total do |return_record|
-          return_record.display_refund_tax_total.to_s
-        end
+        string_attributes :refund_tax_total, :display_refund_tax_total
 
         attribute :approved_at do |return_record|
           return_record.approved_at&.iso8601
@@ -62,11 +44,9 @@ module Spree
           return_record.canceled_at&.iso8601
         end
 
-        one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
+        expandable :one, :reason, :return_reason_serializer
 
-        many :return_line_items,
-             resource: proc { Spree.api.return_line_item_serializer },
-             if: proc { expand?('return_line_items') }
+        expandable :many, :return_line_items, :return_line_item_serializer
       end
     end
   end

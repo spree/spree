@@ -18,10 +18,8 @@ module Spree
             line.new_variant&.name
           end
 
-          one :original_variant, resource: proc { Spree.api.seller_variant_serializer },
-                                 if: proc { expand?('original_variant') }
-          one :new_variant, resource: proc { Spree.api.seller_variant_serializer },
-                            if: proc { expand?('new_variant') }
+          expandable :one, :original_variant, :seller_variant_serializer
+          expandable :one, :new_variant, :seller_variant_serializer
         end
       end
     end

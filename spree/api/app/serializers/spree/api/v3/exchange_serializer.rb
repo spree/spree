@@ -18,21 +18,9 @@ module Spree
 
         attributes :number, :status
 
-        attribute :order_id do |exchange|
-          exchange.order&.prefixed_id
-        end
+        prefixed_id_attributes :order, :reason
 
-        attribute :reason_id do |exchange|
-          exchange.reason&.prefixed_id
-        end
-
-        attribute :price_difference do |exchange|
-          exchange.price_difference.to_s
-        end
-
-        attribute :display_price_difference do |exchange|
-          exchange.display_price_difference.to_s
-        end
+        string_attributes :price_difference, :display_price_difference
 
         attribute :approved_at do |exchange|
           exchange.approved_at&.iso8601
@@ -50,11 +38,9 @@ module Spree
           exchange.canceled_at&.iso8601
         end
 
-        one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
+        expandable :one, :reason, :return_reason_serializer
 
-        many :exchange_line_items,
-             resource: proc { Spree.api.exchange_line_item_serializer },
-             if: proc { expand?('exchange_line_items') }
+        expandable :many, :exchange_line_items, :exchange_line_item_serializer
       end
     end
   end

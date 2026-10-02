@@ -48,22 +48,16 @@ module Spree
             variant.total_on_hand.to_i if variant.should_track_inventory?
           end
 
-          one :primary_media,
-              resource: proc { Spree.api.seller_media_serializer },
-              if: proc { expand?('primary_media') }
+          expandable :one, :primary_media, :seller_media_serializer
 
           many :gallery_media,
                key: :media,
                resource: proc { Spree.api.seller_media_serializer },
                if: proc { expand?('media') }
 
-          many :prices,
-               resource: proc { Spree.api.price_serializer },
-               if: proc { expand?('prices') }
+          expandable :many, :prices, :price_serializer
 
-          many :stock_levels,
-               resource: proc { Spree.api.seller_stock_level_serializer },
-               if: proc { expand?('stock_levels') }
+          expandable :many, :stock_levels, :seller_stock_level_serializer
         end
       end
     end

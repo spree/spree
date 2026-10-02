@@ -10,17 +10,9 @@ module Spree
 
         attributes :action, :authorization_code
 
-        attribute :display_action do |event|
-          event.display_action
-        end
+        attributes :display_action
 
-        attribute :amount do |event|
-          event.amount.to_s
-        end
-
-        attribute :display_amount do |event|
-          event.display_amount.to_s
-        end
+        string_attributes :amount, :display_amount
 
         attributes created_at: :iso8601
       end

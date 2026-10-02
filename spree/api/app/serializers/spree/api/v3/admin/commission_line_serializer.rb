@@ -57,9 +57,7 @@ module Spree
             line.seller&.name
           end
 
-          one :commission_rate,
-              resource: proc { Spree.api.admin_commission_rate_serializer },
-              if: proc { expand?('commission_rate') }
+          expandable :one, :commission_rate, :admin_commission_rate_serializer
         end
       end
     end

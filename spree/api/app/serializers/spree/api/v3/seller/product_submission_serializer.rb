@@ -20,9 +20,7 @@ module Spree
           # Carried for the event payload, which is this serializer's other
           # job: a subscriber holding only the submission id would have to
           # fetch the row back to learn which product was decided on.
-          attribute :product_id do |submission|
-            submission.product&.prefixed_id
-          end
+          prefixed_id_attributes :product
         end
       end
     end

@@ -21,34 +21,13 @@ module Spree
         # the one contact detail that lets a marketplace's customer be taken
         # off it, and it is not needed to pack, post or invoice.
         class OrderSerializer < V3::BaseSerializer
-          typelize number: :string,
-                   customer_note: [:string, nullable: true],
-                   currency: :string,
+          typelize number: :string, customer_note: [:string, nullable: true], currency: :string,
                    total_quantity: :number,
                    fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                    payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
-                   status: [:string, enum: Spree::Order::STATUSES],
-                   item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
-                   delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
-                   discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
-                   adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],
-                   included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
-                   additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
-                   tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
-                   total: [:string, nullable: true], display_total: [:string, nullable: true],
-                   payment_total: [:string, nullable: true], display_payment_total: [:string, nullable: true],
-                   amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
-                   commission_amount_total: [:string, nullable: true],
-                   display_commission_amount_total: [:string, nullable: true],
-                   commission_tax_total: [:string, nullable: true],
-                   display_commission_tax_total: [:string, nullable: true],
-                   commission_total: [:string, nullable: true],
-                   display_commission_total: [:string, nullable: true],
-                   canceled_at: [:string, nullable: true],
-                   cancel_reason_name: [:string, nullable: true],
-                   cancel_note: [:string, nullable: true],
-                   internal_note: [:string, nullable: true],
-                   internal_note_html: [:string, nullable: true]
+                   status: [:string, enum: Spree::Order::STATUSES], canceled_at: [:string, nullable: true],
+                   cancel_reason_name: [:string, nullable: true], cancel_note: [:string, nullable: true],
+                   internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true]
 
           attributes :number, :customer_note, :currency, :total_quantity,
                      :status, :fulfillment_status, :payment_status,
@@ -107,8 +86,7 @@ module Spree
           # page reads it, the list never does. Empty on an order that did not
           # split — a single-seller basket keeps the payment on the order
           # itself, and that payment stays the marketplace's.
-          many :payment_splits, resource: proc { Spree.api.seller_payment_split_serializer },
-                                if: proc { expand?('payment_splits') }
+          expandable :many, :payment_splits, :seller_payment_split_serializer
           many :fulfillments, resource: proc { Spree.api.seller_fulfillment_serializer }
           one :shipping_address, resource: proc { Spree.api.address_serializer }
           one :billing_address, resource: proc { Spree.api.address_serializer }

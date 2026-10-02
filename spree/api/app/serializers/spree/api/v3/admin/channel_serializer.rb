@@ -23,9 +23,7 @@ module Spree
 
           # When set, only the default catalog's products are visible on this
           # channel; unset means every publication.
-          attribute :default_catalog_id do |record|
-            record.default_catalog&.prefixed_id
-          end
+          prefixed_id_attributes :default_catalog
         end
       end
     end
