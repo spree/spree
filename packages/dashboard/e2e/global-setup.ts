@@ -1,7 +1,13 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createAdminClient } from '@spree/admin-sdk'
-import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/config/node'
+import {
+  deployConfig,
+  loadConfig,
+  provisionStore,
+  renderReport,
+  reportHasFailures,
+} from '@spree/config/node'
 import {
   FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,
@@ -190,6 +196,13 @@ export default async function globalSetup() {
     secretKey: deployToken,
     retry: false,
   })
+  // The defaults every store starts with, as first-run setup deploys them;
+  // the country-shaped ones are left out, since the fixtures declare the
+  // warehouses the specs use.
+  const defaults = await provisionStore(client, { country: false })
+  if (reportHasFailures(defaults)) {
+    throw new Error(`Deploying the store defaults failed:\n${renderReport(defaults)}`)
+  }
   const report = await deployConfig(config, client, { prune: ['products'] })
   if (reportHasFailures(report)) {
     throw new Error(`Deploying e2e/fixtures/store.yml failed:\n${renderReport(report)}`)

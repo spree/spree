@@ -5,6 +5,8 @@
 import { type ChildProcess, execSync, spawn } from 'node:child_process'
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { createAdminClient } from '@spree/admin-sdk'
+import { provisionStore, renderReport, reportHasFailures } from '@spree/config'
 
 const API_GEM_DIR = resolve(__dirname, '../../../../spree/api')
 const RAILS = 'bundle exec spec/dummy/bin/rails'
@@ -70,17 +72,21 @@ function waitForServer(url: string, timeoutMs = 30_000): Promise<void> {
   })
 }
 
+// The seeds, and a secret key for deploying the store defaults through the
+// Admin API once the server is up.
+const SEED_RUBY = [
+  'Spree::Seeds::All.call',
+  'key = Spree::Store.default.api_keys.create!(name: "SDK integration setup", key_type: "secret", scopes: ["write_all"])',
+  'puts "DEPLOY_TOKEN=#{key.plaintext_token}"',
+].join('; ')
+
 export async function setup() {
-  // 1. Seed + load sample data
-  execSync(`${RAILS} runner "Spree::Seeds::All.call; Spree::SampleData::Loader.call"`, execOpts)
+  // 1. Seed
+  const seeded = execSync(`${RAILS} runner '${SEED_RUBY}'`, execOpts)
+  const deployToken = seeded.match(/DEPLOY_TOKEN=(\S+)/)?.[1]
+  if (!deployToken) throw new Error(`Failed to read the deploy key:\n${seeded}`)
 
-  // 2. Extract credentials and write to temp file (shared with test files)
-  const output = execSync(`${RAILS} runner '${CREDENTIALS_RUBY}'`, execOpts)
-  const jsonMatch = output.match(/\{.*\}\s*$/)
-  if (!jsonMatch) throw new Error(`Failed to parse credentials:\n${output}`)
-  writeFileSync(CREDENTIALS_FILE, jsonMatch[0])
-
-  // 3. Boot Rails server
+  // 2. Boot Rails server
   serverProcess = spawn(
     'bundle',
     ['exec', 'spec/dummy/bin/rails', 'server', '-p', PORT, '-e', 'test'],
@@ -97,6 +103,25 @@ export async function setup() {
   })
 
   await waitForServer(`http://localhost:${PORT}/api/v3/store/products`)
+
+  // 3. Store defaults (sample data builds on them), then sample data
+  const report = await provisionStore(
+    createAdminClient({
+      baseUrl: `http://localhost:${PORT}`,
+      secretKey: deployToken,
+      retry: false,
+    }),
+  )
+  if (reportHasFailures(report)) {
+    throw new Error(`Deploying the store defaults failed:\n${renderReport(report)}`)
+  }
+  execSync(`${RAILS} runner "Spree::SampleData::Loader.call"`, { ...execOpts, timeout: 600_000 })
+
+  // 4. Extract credentials and write to temp file (shared with test files)
+  const output = execSync(`${RAILS} runner '${CREDENTIALS_RUBY}'`, execOpts)
+  const jsonMatch = output.match(/\{.*\}\s*$/)
+  if (!jsonMatch) throw new Error(`Failed to parse credentials:\n${output}`)
+  writeFileSync(CREDENTIALS_FILE, jsonMatch[0])
 }
 
 export async function teardown() {

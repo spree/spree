@@ -21,6 +21,7 @@ import {
   SECTION_NAMES,
   type SectionName,
   type SpreeConfig,
+  storeDefaults,
 } from '@spree/config/node'
 import { type Command, Option } from 'commander'
 import pc from 'picocolors'
@@ -143,6 +144,78 @@ async function ensureScopes(client: AdminClient, config: SpreeConfig): Promise<v
   process.exit(2)
 }
 
+/**
+ * Plans a configuration against the store, shows the diff, confirms and
+ * applies it. `label` names what the store is compared with in messages.
+ */
+async function deploy(
+  flags: DeployFlags,
+  label: string,
+  load: (client: AdminClient) => Promise<SpreeConfig>,
+): Promise<void> {
+  const prune = parsePrune(flags.prune)
+  const json = flags.format === 'json'
+  let baseUrl: string | undefined
+  try {
+    const { client, credentials } = await clientFor(flags)
+    baseUrl = credentials.baseUrl
+    const loaded = await load(client)
+    await ensureScopes(client, loaded)
+    const plan = await planConfig(loaded, client, { prune })
+
+    // One output path whatever happens: JSON gets the plan plus the
+    // outcome, text gets the diff on stderr and the outcome on stdout.
+    const finish = (outcome: DeployOutcome, exitCode: number): never => {
+      if (json) {
+        const results = outcome.results?.map((result) => ({
+          path: result.operation.path,
+          key: result.operation.key,
+          kind: result.operation.kind,
+          status: result.status,
+          message: result.message,
+          details: result.details,
+        }))
+        process.stdout.write(`${JSON.stringify({ plan: planToJson(plan), ...outcome, results })}\n`)
+      } else if (outcome.results?.length)
+        process.stdout.write(`${renderReport({ results: outcome.results })}\n`)
+      else if (outcome.reason) process.stderr.write(`${pc.red('error:')} ${outcome.reason}\n`)
+      else
+        process.stderr.write(`${pc.green('✓')} ${credentials.baseUrl} already matches ${label}.\n`)
+      process.exit(exitCode)
+    }
+
+    if (!json) process.stderr.write(`${renderPlan(plan, { verbose: flags.verbose })}\n\n`)
+    if (planHasErrors(plan))
+      finish({ applied: false, reason: 'the plan has errors; nothing was written.' }, 2)
+    if (flags.failOnDelete && planHasDeletes(plan)) {
+      finish(
+        {
+          applied: false,
+          reason: 'the plan contains deletes and --fail-on-delete is set; nothing was written.',
+        },
+        1,
+      )
+    }
+    if (!planHasChanges(plan)) finish({ applied: true, results: [] }, 0)
+    // JSON output is for scripts, which cannot answer a prompt.
+    if (!flags.yes && !json && process.stdin.isTTY) {
+      const answer = await p.confirm({
+        message: `Apply these changes to ${credentials.baseUrl}?`,
+        initialValue: true,
+      })
+      if (p.isCancel(answer) || !answer) {
+        p.cancel('Nothing was written.')
+        process.exit(1)
+      }
+    }
+
+    const report = await applyPlan(plan)
+    finish({ applied: true, results: report.results }, reportHasFailures(report) ? 1 : 0)
+  } catch (error) {
+    handleApiError(error, { baseUrl })
+  }
+}
+
 export function registerConfigCommand(program: Command): void {
   const config = program
     .command('config')
@@ -160,6 +233,7 @@ export function registerConfigCommand(program: Command): void {
       '  spree config deploy --prune products           # apply, deleting products missing from the file',
       '  spree config deploy --fail-on-delete --yes     # CI: refuse any delete, skip the prompt',
       '  spree config introspect --out spree.config.yml # write the live configuration to a file',
+      '  spree config provision                         # give a new store its defaults (setup does this for you)',
     ].join('\n'),
   )
 
@@ -213,70 +287,23 @@ export function registerConfigCommand(program: Command): void {
     .action(async (flags: DeployFlags) => {
       const file = resolveConfigFile(flags.config)
       const { config: loaded } = readConfigOrExit(file)
-      const prune = parsePrune(flags.prune)
-      const json = flags.format === 'json'
-      let baseUrl: string | undefined
-      try {
-        const { client, credentials } = await clientFor(flags)
-        baseUrl = credentials.baseUrl
-        await ensureScopes(client, loaded)
-        const plan = await planConfig(loaded, client, { prune })
+      await deploy(flags, file, async () => loaded)
+    })
 
-        // One output path whatever happens: JSON gets the plan plus the
-        // outcome, text gets the diff on stderr and the outcome on stdout.
-        const finish = (outcome: DeployOutcome, exitCode: number): never => {
-          if (json) {
-            const results = outcome.results?.map((result) => ({
-              path: result.operation.path,
-              key: result.operation.key,
-              kind: result.operation.kind,
-              status: result.status,
-              message: result.message,
-              details: result.details,
-            }))
-            process.stdout.write(
-              `${JSON.stringify({ plan: planToJson(plan), ...outcome, results })}\n`,
-            )
-          } else if (outcome.results?.length)
-            process.stdout.write(`${renderReport({ results: outcome.results })}\n`)
-          else if (outcome.reason) process.stderr.write(`${pc.red('error:')} ${outcome.reason}\n`)
-          else
-            process.stderr.write(
-              `${pc.green('✓')} ${credentials.baseUrl} already matches ${file}.\n`,
-            )
-          process.exit(exitCode)
-        }
-
-        if (!json) process.stderr.write(`${renderPlan(plan, { verbose: flags.verbose })}\n\n`)
-        if (planHasErrors(plan))
-          finish({ applied: false, reason: 'the plan has errors; nothing was written.' }, 2)
-        if (flags.failOnDelete && planHasDeletes(plan)) {
-          finish(
-            {
-              applied: false,
-              reason: 'the plan contains deletes and --fail-on-delete is set; nothing was written.',
-            },
-            1,
-          )
-        }
-        if (!planHasChanges(plan)) finish({ applied: true, results: [] }, 0)
-        // JSON output is for scripts, which cannot answer a prompt.
-        if (!flags.yes && !json && process.stdin.isTTY) {
-          const answer = await p.confirm({
-            message: `Apply these changes to ${credentials.baseUrl}?`,
-            initialValue: true,
-          })
-          if (p.isCancel(answer) || !answer) {
-            p.cancel('Nothing was written.')
-            process.exit(1)
-          }
-        }
-
-        const report = await applyPlan(plan)
-        finish({ applied: true, results: report.results }, reportHasFailures(report) ? 1 : 0)
-      } catch (error) {
-        handleApiError(error, { baseUrl })
-      }
+  withCredentialFlags(
+    config
+      .command('provision')
+      .description(
+        "Deploy the defaults every new store starts with, shaped by the store's country",
+      ),
+  )
+    .option('--verbose', 'list unchanged records too')
+    .addOption(
+      new Option('--format <format>', 'output format').choices(['text', 'json']).default('text'),
+    )
+    .option('-y, --yes', 'apply without asking (implied by a non-interactive run)')
+    .action(async (flags: DeployFlags) => {
+      await deploy(flags, 'the store defaults', (client) => storeDefaults(client))
     })
 
   withCredentialFlags(

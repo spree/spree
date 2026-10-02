@@ -98,8 +98,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # @spree/config deploys the store defaults before sample data loads.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/config
 
       - name: Setup test app
         working-directory: spree/api

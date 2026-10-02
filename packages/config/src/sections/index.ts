@@ -1,7 +1,7 @@
 import type { SectionSource } from '../context.js'
 import type { SectionName } from '../types.js'
-import { categories, products } from './catalog.js'
-import { deliveryMethods, deliveryZones } from './delivery.js'
+import { categories, products, productTypes } from './catalog.js'
+import { deliveryMethods, deliveryProfiles, deliveryZones, packageTypes } from './delivery.js'
 import { customers, sellers } from './people.js'
 import type { AnySection } from './section.js'
 import {
@@ -13,6 +13,17 @@ import {
   suppliers,
   taxCategories,
 } from './settings.js'
+import {
+  allowedOrigins,
+  apiKeys,
+  claimReasons,
+  commissionRates,
+  orderCancellationReasons,
+  paymentMethods,
+  refundReasons,
+  returnReasons,
+  sellerRequirements,
+} from './setup.js'
 
 /**
  * Sections in dependency order: a section comes after every section it can
@@ -29,13 +40,25 @@ export const ORDERED_SECTIONS: AnySection[] = [
   markets,
   customerGroups,
   taxCategories,
+  deliveryProfiles,
   deliveryZones,
   deliveryMethods,
+  packageTypes,
+  paymentMethods,
   suppliers,
+  productTypes,
   categories,
   products,
   customers,
   sellers,
+  returnReasons,
+  claimReasons,
+  refundReasons,
+  orderCancellationReasons,
+  commissionRates,
+  sellerRequirements,
+  apiKeys,
+  allowedOrigins,
 ] as unknown as AnySection[]
 
 export const SECTIONS = Object.fromEntries(
@@ -44,11 +67,12 @@ export const SECTIONS = Object.fromEntries(
 
 /** Resources the file references by key but does not manage. */
 const REFERENCE_SOURCES: Record<string, SectionSource> = {
-  product_types: {
-    path: '/product_types',
-    readScope: 'read_product_types',
-    keyAttribute: 'name',
-    filterable: true,
+  // Reference data every key may read; listed whole (it is not paginated).
+  countries: {
+    path: '/countries',
+    readScope: 'read_settings',
+    keyAttribute: 'iso',
+    filterable: false,
   },
 }
 

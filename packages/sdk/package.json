@@ -91,6 +91,8 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "devDependencies": {
+    "@spree/admin-sdk": "workspace:^",
+    "@spree/config": "workspace:^",
     "@spree/sdk-core": "workspace:*",
     "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.5",

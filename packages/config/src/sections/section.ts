@@ -139,7 +139,7 @@ export function partialIdList(section: string, attribute: string) {
 }
 
 /** Copies the attributes the file may set, dropping undefined ones. */
-export function pick<T extends object>(source: T, attributes: (keyof T)[]): Payload {
+export function pick<T extends object>(source: T, attributes: readonly (keyof T)[]): Payload {
   const payload: Payload = {}
   for (const attribute of attributes) {
     const value = source[attribute]
@@ -149,7 +149,7 @@ export function pick<T extends object>(source: T, attributes: (keyof T)[]): Payl
 }
 
 /** The attributes of a live record worth writing to a file: set, and not empty. */
-export function present<T extends object>(source: T, attributes: (keyof T)[]): Partial<T> {
+export function present<T extends object>(source: T, attributes: readonly (keyof T)[]): Partial<T> {
   const entry: Partial<T> = {}
   for (const attribute of attributes) {
     const value = source[attribute]
@@ -162,3 +162,49 @@ export function present<T extends object>(source: T, attributes: (keyof T)[]): P
 
 /** Operator-owned rows only, on tables a marketplace's sellers also write to. */
 export const FIRST_PARTY = { 'q[seller_id_null]': 1 } as const
+
+type PlainOptions<Entry, Live extends LiveRecord> = Omit<
+  Section<Entry, Live>,
+  'entries' | 'entryKey' | 'keyAttribute' | 'path' | 'filterable' | 'desired' | 'toFile'
+> & {
+  /** The live attribute holding the key, when the API reads it back under another name. */
+  keyAttribute?: string
+  filterable?: boolean
+  /** The attribute the section matches on. */
+  key: keyof Entry & string
+  /** Attributes written as they are, from the file to the API and back. */
+  attributes: readonly (keyof Entry & string)[]
+  /** Values `introspect` leaves out because the API sets them anyway. */
+  defaults?: Partial<Record<keyof Entry & string, unknown>>
+  desired?: Section<Entry, Live>['desired']
+  toFile?: Section<Entry, Live>['toFile']
+}
+
+/**
+ * A section whose entries are plain attributes of one Admin API resource,
+ * listed and keyed on one of them, at `/<section name>`. Anything beyond that
+ * (references, nested writes) overrides `desired` and `toFile`.
+ */
+export function plainSection<Entry extends object, Live extends LiveRecord>(
+  options: PlainOptions<Entry, Live>,
+): Section<Entry, Live> {
+  const { key, attributes, defaults = {}, ...rest } = options
+  return {
+    path: `/${options.name}`,
+    keyAttribute: key,
+    filterable: true,
+    entries: (config) => (config[options.name] ?? []) as Entry[],
+    entryKey: (entry) => String(entry[key]),
+    async desired(entry) {
+      return pick(entry, attributes)
+    },
+    async toFile(live) {
+      const entry = present(live as unknown as Entry, attributes)
+      for (const [attribute, value] of Object.entries(defaults)) {
+        if (entry[attribute as keyof Entry] === value) delete entry[attribute as keyof Entry]
+      }
+      return entry as Entry
+    },
+    ...rest,
+  }
+}

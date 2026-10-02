@@ -7,6 +7,7 @@ import {
   ConfigValidationError,
   deployConfig,
   loadConfig,
+  provisionStore,
   renderReport,
   reportHasFailures,
 } from '@spree/config/node'
@@ -148,7 +149,10 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
-  await deployProjectConfig(ctx.projectDir, ctx.port)
+  // A scripted install has no setup screen to deploy the store defaults.
+  await deployStoreConfiguration(ctx.projectDir, ctx.port, {
+    provision: Boolean(adminEmail && adminPassword),
+  })
 
   await installAppDeps(ctx.projectDir, 'storefront')
   await installAppDeps(ctx.projectDir, 'dashboard')
@@ -377,36 +381,39 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
- * Deploys the project's `spree.config.yml` — the store's declared shape,
- * committed with the project — against the freshly seeded server. The
- * project's own key is read-only by design, so a write key is minted for
- * this run and revoked as soon as the deploy is over. A project without the
- * file (scaffolded by an older create-spree-app) is left alone.
+ * Deploys the store's configuration against the freshly seeded server: the
+ * store defaults first when this install skipped the setup screen (which
+ * otherwise deploys them), then the project's `spree.config.yml` — the
+ * store's declared shape, committed with the project. The project's own key
+ * is read-only by design, so a write key is minted for this run and revoked
+ * as soon as the deploy is over.
  */
-async function deployProjectConfig(projectDir: string, port: number): Promise<void> {
+async function deployStoreConfiguration(
+  projectDir: string,
+  port: number,
+  { provision }: { provision: boolean },
+): Promise<void> {
   const file = path.join(projectDir, DEFAULT_CONFIG_FILE)
-  if (!fs.existsSync(file)) return
-
-  let config: ReturnType<typeof loadConfig>['config']
-  try {
-    ;({ config } = loadConfig(file))
-  } catch (error) {
-    if (error instanceof ConfigValidationError) {
+  let config: ReturnType<typeof loadConfig>['config'] | null = null
+  if (fs.existsSync(file)) {
+    try {
+      ;({ config } = loadConfig(file))
+    } catch (error) {
+      if (!(error instanceof ConfigValidationError)) throw error
       p.log.warn(`Skipping ${DEFAULT_CONFIG_FILE}: ${error.message}`)
-      return
     }
-    throw error
   }
+  if (!provision && !config) return
 
   const s = p.spinner()
-  // Setup still stands without the deploy; the file can be applied by hand.
+  // Setup still stands without the deploy; it can be run by hand.
   const skipDeploy = (error: unknown) => {
-    s.stop(pc.yellow(`Could not deploy ${DEFAULT_CONFIG_FILE}.`))
+    s.stop(pc.yellow('Could not configure the store.'))
     p.log.warn(
-      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config deploy\` once the app is up.`,
+      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config provision\` and \`spree config deploy\` once the app is up.`,
     )
   }
-  s.start(`Deploying ${DEFAULT_CONFIG_FILE}...`)
+  s.start(provision ? 'Setting up store defaults...' : `Deploying ${DEFAULT_CONFIG_FILE}...`)
   // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
   // run: the fixed name supersedes the leftover key.
   let token: string
@@ -424,16 +431,19 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
 
   const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
   try {
-    const report = await deployConfig(config, client)
+    const results = [
+      ...(provision ? (await provisionStore(client)).results : []),
+      ...(config ? (await deployConfig(config, client)).results : []),
+    ]
+    const report = { results }
     if (reportHasFailures(report)) {
-      s.stop(pc.yellow(`${DEFAULT_CONFIG_FILE} deployed with failures.`))
+      s.stop(pc.yellow('Store configured with failures.'))
       p.log.warn(renderReport(report))
     } else {
-      const written = report.results.length
       s.stop(
-        written
-          ? `${DEFAULT_CONFIG_FILE} deployed (${written} record${written === 1 ? '' : 's'} written).`
-          : `${DEFAULT_CONFIG_FILE} deployed (nothing to change).`,
+        results.length
+          ? `Store configured (${results.length} record${results.length === 1 ? '' : 's'} written).`
+          : 'Store configured (nothing to change).',
       )
     }
   } catch (error) {

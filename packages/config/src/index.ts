@@ -3,13 +3,13 @@
  * plans the changes a live store needs to match it, applies them through the
  * Admin API, and reads a store back into the file format.
  */
-export { applyPlan, reportHasFailures } from './apply.js'
+export { applyPlan, deployConfig, reportHasFailures } from './apply.js'
 export { RunContext } from './context.js'
 export { diffAttributes, PendingRef, valuesEqual } from './diff.js'
 export { ConfigError, DanglingReferenceError } from './errors.js'
 export type { IntrospectOptions } from './introspect.js'
 export { introspect, renderConfigYaml } from './introspect.js'
-export type { ConfigIssue, LoadedConfig } from './load.js'
+export type { ConfigIssue, LoadedConfig, Variables } from './load.js'
 export {
   ConfigValidationError,
   formatPath,
@@ -26,6 +26,8 @@ export {
   planOperations,
   presentSections,
 } from './plan.js'
+export type { DefaultsOptions } from './provision.js'
+export { provisionStore, storeDefaults } from './provision.js'
 export type { RenderOptions } from './render.js'
 export { countByKind, planToJson, renderPlan, renderReport, summaryLine } from './render.js'
 export type {
@@ -63,18 +65,3 @@ export type {
   SectionPlan,
 } from './types.js'
 export { SECTION_NAMES } from './types.js'
-
-import { applyPlan } from './apply.js'
-import { planConfig } from './plan.js'
-import type { SpreeConfig } from './schema.js'
-import type { ApplyReport, ConfigClient, PlanOptions } from './types.js'
-
-/** Plan and apply in one call — what the dashboard e2e setup and `spree init` use. */
-export async function deployConfig(
-  config: SpreeConfig,
-  client: ConfigClient,
-  options: PlanOptions = {},
-): Promise<ApplyReport> {
-  const run = await planConfig(config, client, options)
-  return applyPlan(run)
-}

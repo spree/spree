@@ -23,14 +23,15 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsup && node scripts/emit-schema.mjs",
+    "build": "rm -rf dist && node scripts/embed-templates.mjs && tsup && node scripts/emit-schema.mjs",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src tests",
     "lint:fix": "biome check --fix src tests",
     "format": "biome format --write src tests",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "generate": "node scripts/extract-writable.mjs && node scripts/embed-templates.mjs"
   },
   "keywords": [
     "spree",
