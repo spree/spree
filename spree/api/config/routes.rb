@@ -1,6 +1,7 @@
 Spree::Core::Engine.add_routes do
   namespace :api, defaults: { format: 'json' } do
-    namespace :v3 do
+    # A JSON API has no form pages, so no resource gets `new` or `edit` routes.
+    namespace :v3, except: [:new, :edit] do
       namespace :store do
         # Authentication
         post 'auth/login', to: 'auth#create'

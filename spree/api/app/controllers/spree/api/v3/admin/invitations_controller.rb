@@ -34,13 +34,6 @@ module Spree
             render json: serialize_resource(@resource)
           end
 
-          # Invitations are immutable post-create — UI calls `resend` for
-          # token rotation, `destroy` to revoke. Clearing the action set
-          # keeps the surface honest if a client ever fires PATCH directly.
-          def update
-            head :method_not_allowed
-          end
-
           protected
 
           def model_class
