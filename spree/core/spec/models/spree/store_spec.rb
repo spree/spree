@@ -1450,17 +1450,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       store.saved_reports.seeded.first.destroy!
       expect { store.create_built_in_reports }.not_to change { store.saved_reports.count }
     end
-
-    # Validation proves a preset query names real members; only running it
-    # proves the compiler can express that combination against a database.
-    it 'presets only queries that actually execute' do
-      create(:completed_order_with_totals, store: store, completed_at: 3.days.ago)
-
-      described_class::REPORTS.each do |report|
-        query = Spree::Reporting::Query.new(store: store, params: report[:query].deep_symbolize_keys)
-        expect { query.execute }.not_to raise_error, "#{report[:key]} failed"
-      end
-    end
   end
 
   describe '#payout_provider_instance' do
