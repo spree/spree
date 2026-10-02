@@ -21,10 +21,6 @@ module Spree
               authorize!(:show, @parent)
             end
 
-            def parent_association
-              :variants
-            end
-
             def scope_includes
               [:prices, stock_levels: :stock_location]
             end

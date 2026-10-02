@@ -12,10 +12,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :gift_cards
-            end
-
             def model_class
               Spree::GiftCard
             end

@@ -49,10 +49,6 @@ module Spree
                                    .find_by_prefix_id!(params[:channel_id])
           end
 
-          def parent_association
-            :order_routing_rules
-          end
-
           private
 
           def build_subclassed_resource(klass, attrs)

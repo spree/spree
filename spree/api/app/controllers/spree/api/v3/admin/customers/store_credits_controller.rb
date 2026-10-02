@@ -62,10 +62,6 @@ module Spree
 
             protected
 
-            def parent_association
-              :store_credits
-            end
-
             # Customers are global; store credits belong to a store, so the
             # nested collection is bound to the current store.
             def scope

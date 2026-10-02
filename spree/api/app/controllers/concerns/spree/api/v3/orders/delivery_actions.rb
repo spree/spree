@@ -28,11 +28,7 @@ module Spree
                 **resource_permitted_attributes.index_with { |key| delivery_params[key] }
               )
 
-              if result.success?
-                render json: serialize_resource(result.value), status: :created
-              else
-                render_result_error(result)
-              end
+              render_result(result, status: :created)
             end
           end
 

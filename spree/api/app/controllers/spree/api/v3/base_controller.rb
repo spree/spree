@@ -70,6 +70,16 @@ module Spree
           request.headers['x-spree-token']
         end
 
+        # Renders a workflow's result: the serialized record on success, its
+        # errors otherwise.
+        def render_result(result, status: :ok)
+          if result.success?
+            render json: serialize_resource(result.value), status: status
+          else
+            render_result_error(result)
+          end
+        end
+
         # Renders a failed service/workflow Result: validation errors become a
         # 422 field-error payload, anything else a plain service error. Shared
         # by both APIs — Store endpoints surface workflow failures (a rejected

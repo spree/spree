@@ -22,10 +22,6 @@ module Spree
             Spree.api.admin_company_serializer
           end
 
-          def scope
-            super.for_store(current_store)
-          end
-
           def collection_includes
             [:children, :memberships, :external_references]
           end
