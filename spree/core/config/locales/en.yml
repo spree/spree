@@ -710,7 +710,6 @@ en:
     canceled_at: Canceled at
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
-    cannot_empty: Cannot empty order.
     capture: Capture
     capture_events: Capture events
     cart: Cart

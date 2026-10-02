@@ -426,7 +426,7 @@ New seams with no legacy counterpart:
 | `order_discount_create_service` | `Spree::Orders::Discounts::Create` | renamed from `order_add_manual_discount_service` (never released) |
 | `order_update_statuses_service` | `Spree::Orders::UpdateStatuses` | the sole status writer |
 
-Removed keys (their classes no longer exist): `carts_validate_service` (completion validation is `Spree::Checkout::Requirements` directly), plus the dead legacy `Spree::Cart::*` service namespace registrations.
+Removed keys (their classes no longer exist): `carts_validate_service` (completion validation is `Spree::Checkout::Requirements` directly), `cart_empty_service` and `payment_create_service` (see [Unused services are gone](#unused-services-are-gone)), plus the dead legacy `Spree::Cart::*` service namespace registrations.
 
 If you override a workflow seam, subclass the shipped workflow (or implement the same `perform` keyword contract) — workflow arguments are plain Ruby keywords, so a mismatch raises `ArgumentError` at call time, not silently.
 
@@ -514,6 +514,16 @@ Two behavior notes for extension authors: `Spree::Metadata` no longer includes t
 **Definitions now belong to a store.** They used to be global, shared by every store in an installation. `db:migrate` assigns every existing definition to the default store and gives it a `filter_key` column (the `cf_…` identifier that used to be recomputed on every read). Read them through the store — `store.custom_field_definitions` — rather than the class; the admin endpoint is store-scoped, so a definition belonging to another store now returns 404 instead of being readable and editable.
 
 Single-store installations notice nothing. **A multi-store installation ends up with its whole schema on the default store**, and its other stores start empty: create the fields you want on each store, or run `bin/rake spree:upgrade:backfill_custom_field_definition_stores` first if the migration ran before any store existed. Existing values keep pointing at the definitions they always did, which is why the rows are not copied — copies would render blank anyway. Two definitions whose `namespace`/`key` pair flattens to one `cf_…` key (`("a_b", "c")` and `("a", "b_c")`) can no longer coexist in a store; the migration suffixes the later one and names it in its output so you can rename it.
+
+### Unused services are gone
+
+These had no caller left in Spree, so they are removed with no replacement shim. Setting or reading their `Spree::Dependencies` keys now raises `NoMethodError`.
+
+| Removed | Use instead |
+|---|---|
+| `Spree::PromotionHandler::Page` (activating a promotion by visiting its `path`) | apply the promotion with a coupon code, or as an automatic promotion |
+| `Spree::Carts::Empty` and `cart_empty_service` | remove items through the Store API cart items endpoints, or delete the cart with `Spree.cart_destroy_service` |
+| `Spree::Payments::Create` and `payment_create_service` | the Store API payments endpoint, `Spree::StoreCredits::Apply` or `Spree.gift_card_apply_workflow` |
 
 ### The Legacy order-routing strategy is gone
 

@@ -422,7 +422,7 @@ module Spree
       end
 
       it 'does not buy twice when a label was bought beforehand' do
-        Spree.fulfillment_purchase_label_workflow.call(fulfillment: fulfillment)
+        Spree.shipping_label_purchase_workflow.call(owner: fulfillment)
 
         subject.call(fulfillment: fulfillment)
 
