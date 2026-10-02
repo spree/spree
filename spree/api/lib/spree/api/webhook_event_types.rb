@@ -126,10 +126,13 @@ module Spree
             updated_at: z.string().nullable(),
           })
 
+          type WebhookEventName =
+          #{entries.map { |entry| "  | '#{entry.name}'" }.join("\n")}
+
           /** The Zod schema for each webhook event's `data`, for `constructWebhookEvent`'s `schemas` option. */
-          export const webhookEventSchemas = {
+          export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> = {
           #{entries.map { |entry| "  '#{entry.name}': #{type_name(entry)}Schema," }.join("\n")}
-          } as const
+          }
         TS
       end
     end
