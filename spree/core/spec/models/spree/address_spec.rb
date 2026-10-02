@@ -1028,6 +1028,25 @@ describe Spree::Address, type: :model do
 
         expect(address.reload.state_code).to eq('BE')
       end
+
+      it 'drops the stored code when the country changes after a successful validation' do
+        expect(address).to be_valid
+
+        address.country_code = 'HU'
+        address.valid?
+
+        expect(address.state_code).to be_nil
+      end
+
+      it 'drops a code resolved from state_name when the country changes before saving' do
+        address.assign_attributes(state_name: 'New York')
+        expect(address).to be_valid
+
+        address.country_code = 'HU'
+        address.valid?
+
+        expect(address.state_code).to be_nil
+      end
     end
   end
 

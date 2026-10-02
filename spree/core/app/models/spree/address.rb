@@ -569,7 +569,6 @@ module Spree
         # country the address just moved off — so drop it and let the other
         # handles (a state_name, or nothing) decide.
         self[:state_code] = resolved
-        @state_code_resolved = true if resolved
         return if resolved
       end
 
@@ -579,23 +578,24 @@ module Spree
       return if matched.blank?
 
       self[:state_code] = matched
-      @state_code_resolved = true
+      @state_code_resolved_for = [country_code, matched]
       self.state_name = nil
     end
 
     # Only a saved address has a stored code that can go stale. A code the
-    # caller sent, or one this address already resolved in an earlier
-    # validation pass of the same save, never is; an unsaved code left behind
-    # by a rejected update is.
+    # caller sent, or one an earlier validation pass resolved from a name for
+    # the same country, never is; an unsaved code left behind by a rejected
+    # update is.
     def stored_state_code_stale?
-      return false if new_record? || @state_code_submitted || @state_code_resolved
+      return false if new_record? || @state_code_submitted
+      return false if @state_code_resolved_for == [country_code, self[:state_code]]
 
       (will_save_change_to_state_name? && state_name.present?) || will_save_change_to_country_code?
     end
 
     def forget_submitted_state_code
       @state_code_submitted = false
-      @state_code_resolved = false
+      @state_code_resolved_for = nil
     end
 
     def clear_state
