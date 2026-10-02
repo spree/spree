@@ -135,10 +135,11 @@ bundle exec rake spree:backfill_order_coupon_codes
 ### Markets on orders
 
 ```bash
+bundle exec rake spree:markets:migrate_checkout_zones
 bundle exec rake spree:backfill_order_markets
 ```
 
-Orders missing a market get the store default — `market` is required on carts and orders in 6.0.
+A store without a market gets a default one covering its old checkout zone's countries (or its default country), and the checkout zone is cleared. Orders missing a market then get the store default — `market` is required on carts and orders in 6.0.
 
 ### Fill in the stock level counters
 
