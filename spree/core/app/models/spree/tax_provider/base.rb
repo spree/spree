@@ -139,11 +139,10 @@ module Spree
       # Replace-all per item, as +estimate+: the rows are rewritten when the
       # warehouse counts what arrived and again when the money goes back.
       #
-      # The default is the recorded share — each credited unit's part of every
-      # row the sale actually charged, row by row, so every rate and
-      # jurisdiction is given back as it was charged. A provider may quote the
-      # credit instead, for example at the original +tax_date+, but must answer
-      # in the same rows.
+      # A provider may quote the credit, for example at the original
+      # +tax_date+, or give back the recorded share of what the sale charged —
+      # {Spree::TaxProvider::RecordedShare}, which Internal uses. Either way
+      # it answers in the same rows.
       #
       # @param order [Spree::Order] a placed order
       # @param items [Array<Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem>]
@@ -155,7 +154,7 @@ module Spree
       # @return [void]
       # @raise [Spree::Tax::ProviderError] when the credit could not be worked out
       def estimate_refund(order, items, amounts: nil, tax_date: nil)
-        Spree::TaxProvider::RecordedShare.new(order: order, items: items, amounts: amounts).call
+        raise NotImplementedError, "Please implement 'estimate_refund' in your tax provider: #{self.class.name}"
       end
 
       # Taxes the replacement an exchange sends out, as a new sale, and writes

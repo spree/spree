@@ -9,8 +9,8 @@ module Spree
     # versioned, so a rate edited since the sale would otherwise refund a
     # figure nobody was charged.
     #
-    # Public so a provider that quotes credits of its own can still answer in
-    # the recorded share where it has nothing better to say.
+    # Internal's answer to +estimate_refund+. Public so any other provider can
+    # answer with it too, rather than quoting the credit itself.
     class RecordedShare
       # @param order [Spree::Order]
       # @param items [Array<Spree::ReturnLineItem, Spree::ClaimLineItem, Spree::ExchangeLineItem>]

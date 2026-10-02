@@ -41,6 +41,15 @@ module Spree
         items.each { |item| tax_item(owner, item, rates, exemptions) }
       end
 
+      # Gives back each credited unit's share of the TaxLines the sale actually
+      # charged (see Spree::TaxProvider::RecordedShare). TaxRate rows are not
+      # versioned, so this engine can never recompute at a past date —
+      # +tax_date+ is accepted and ignored, and the rows are the only record
+      # of what the customer paid.
+      def estimate_refund(order, items, amounts: nil, tax_date: nil)
+        Spree::TaxProvider::RecordedShare.new(order: order, items: items, amounts: amounts).call
+      end
+
       # Taxed like any line of the order, under the replacement's own category
       # and at the order's tax address. +tax_date+ is ignored for the reason
       # given on #estimate.
