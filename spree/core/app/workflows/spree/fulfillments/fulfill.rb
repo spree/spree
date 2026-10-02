@@ -70,7 +70,7 @@ module Spree
         # box, hand it over), and the ordering that lets the shipped email
         # carry the tracking number the provider discovered instead of racing
         # it. No-op when a label was already bought through
-        # Spree::Fulfillments::PurchaseLabel (the flow where a failure is
+        # Spree::ShippingLabels::Purchase (the flow where a failure is
         # loud), or when the provider has no dispatch mechanics (Manual). A
         # failure here still degrades to "no label yet" — a carrier outage
         # must never stop a merchant recording a parcel that physically left.
