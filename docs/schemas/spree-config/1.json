@@ -1549,6 +1549,11 @@
             "type": "string",
             "minLength": 1
           },
+          "position": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
           "name": {
             "type": "string"
           },

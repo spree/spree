@@ -5,6 +5,7 @@ import {
   type ApplyReport,
   type ApplyResult,
   applyPlan,
+  applyProvisioning,
   assertPrunable,
   ConfigValidationError,
   introspect,
@@ -24,7 +25,6 @@ import {
   type SectionName,
   type SpreeConfig,
   storeDefaults,
-  warehouseLast,
 } from '@spree/config/node'
 import { type Command, Option } from 'commander'
 import pc from 'picocolors'
@@ -318,7 +318,7 @@ export function registerConfigCommand(program: Command): void {
       // missing is created, through the same ordered deploy setup uses.
       await deploy(flags, 'the store defaults', (client) => storeDefaults(client), {
         createOnly: true,
-        apply: (plan) => applyPlan(warehouseLast(plan)),
+        apply: applyProvisioning,
       })
     })
 
