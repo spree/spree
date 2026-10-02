@@ -4,7 +4,9 @@ import type { ZodError } from 'zod'
 import { ConfigError } from './errors.js'
 import { configSchema, type SpreeConfig } from './schema.js'
 
-const PLACEHOLDER = /\$\{([A-Za-z_][A-Za-z0-9_]*)\}/g
+// `$${NAME}` is the escape for a literal `${NAME}`.
+const PLACEHOLDER = /\$(\$?)\{([A-Za-z_][A-Za-z0-9_]*)\}/g
+const WHOLE_PLACEHOLDER = /^\$\{[A-Za-z_][A-Za-z0-9_]*\}$/
 
 /** A validation problem with the file, one per offending value. */
 export interface ConfigIssue {
@@ -44,14 +46,19 @@ export function formatPath(segments: (string | number | symbol)[]): string {
  * Replaces `${ENV_VAR}` in every string with the variable's value, so a
  * committed file can carry a customer password or a provider key without
  * holding it. A missing variable is a file error, reported with its path.
+ * Paths whose whole value was one placeholder are collected in `whole`, so
+ * a number or a flag read from the environment can be typed afterwards.
  */
 export function substituteEnv(
   value: unknown,
   env: NodeJS.ProcessEnv,
   path: (string | number)[] = [],
+  whole?: Set<string>,
 ): unknown {
   if (typeof value === 'string') {
-    return value.replace(PLACEHOLDER, (_match, name: string) => {
+    if (WHOLE_PLACEHOLDER.test(value)) whole?.add(formatPath(path))
+    return value.replace(PLACEHOLDER, (match, escaped: string, name: string) => {
+      if (escaped) return match.slice(1)
       const resolved = env[name]
       if (resolved === undefined) {
         throw new ConfigError(`environment variable ${name} is not set`, formatPath(path))
@@ -60,13 +67,52 @@ export function substituteEnv(
     })
   }
   if (Array.isArray(value))
-    return value.map((item, index) => substituteEnv(item, env, [...path, index]))
+    return value.map((item, index) => substituteEnv(item, env, [...path, index], whole))
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, substituteEnv(item, env, [...path, key])]),
+      Object.entries(value).map(([key, item]) => [
+        key,
+        substituteEnv(item, env, [...path, key], whole),
+      ]),
     )
   }
   return value
+}
+
+/**
+ * An environment variable is always text, so `stock: ${STOCK}` arrives as
+ * `"5"`. Where the schema wanted a number or a flag at a path that was
+ * nothing but a placeholder, the text is converted and the file checked again.
+ */
+function typePlaceholders(value: unknown, error: ZodError, whole: Set<string>): unknown | null {
+  const copy = structuredClone(value)
+  let changed = false
+  for (const issue of error.issues) {
+    if (issue.code !== 'invalid_type' || !['number', 'boolean'].includes(issue.expected)) continue
+    const path = issue.path.filter(
+      (segment): segment is string | number => typeof segment !== 'symbol',
+    )
+    if (!path.length || !whole.has(formatPath(path))) continue
+    const parent = path
+      .slice(0, -1)
+      .reduce<Record<string | number, unknown>>(
+        (node, segment) => node[segment] as Record<string | number, unknown>,
+        copy as Record<string | number, unknown>,
+      )
+    const text = String(parent[path[path.length - 1]]).trim()
+    const typed =
+      issue.expected === 'number'
+        ? text !== '' && Number.isFinite(Number(text))
+          ? Number(text)
+          : undefined
+        : text === 'true' || text === 'false'
+          ? text === 'true'
+          : undefined
+    if (typed === undefined) continue
+    parent[path[path.length - 1]] = typed
+    changed = true
+  }
+  return changed ? copy : null
 }
 
 function issuesFrom(error: ZodError, lineOf: (path: (string | number)[]) => number | undefined) {
@@ -106,8 +152,9 @@ export function parseConfig(source: string, env: NodeJS.ProcessEnv = process.env
   }
 
   let substituted: unknown
+  const whole = new Set<string>()
   try {
-    substituted = substituteEnv(raw, env)
+    substituted = substituteEnv(raw, env, [], whole)
   } catch (error) {
     if (error instanceof ConfigError) {
       throw new ConfigValidationError([{ path: error.path, message: error.message }])
@@ -115,7 +162,11 @@ export function parseConfig(source: string, env: NodeJS.ProcessEnv = process.env
     throw error
   }
 
-  const result = configSchema.safeParse(substituted)
+  let result = configSchema.safeParse(substituted)
+  if (!result.success && whole.size) {
+    const typed = typePlaceholders(substituted, result.error, whole)
+    if (typed) result = configSchema.safeParse(typed)
+  }
   if (!result.success) throw new ConfigValidationError(issuesFrom(result.error, lineOf))
 
   const sections = Object.keys(raw as object).filter((key) => key !== 'version')

@@ -13,6 +13,8 @@ export interface LiveSection {
 
 export interface SectionSource {
   path: string
+  /** The scope a key needs to list this resource. */
+  readScope: string
   keyAttribute: string
   /** Whether `q[<key>_in]` filters on the key; otherwise the section is listed whole. */
   filterable: boolean
