@@ -177,7 +177,13 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
     delete 'Delete a price' do
       tags 'Pricing'
       security [api_key: [], bearer_auth: []]
-      description 'Soft-deletes the price (acts_as_paranoid).'
+      description <<~DESC
+        Soft-deletes the price. Refused with a validation error
+        (`leaves_a_rising_ladder`) when the deletion would leave a quantity
+        break costing more than what a buyer pays below it: deleting a list's
+        price for one unit hands the units below the first break to the shop
+        price, so that break must not cost more than the shop price.
+      DESC
       admin_scope :write, :products
 
       admin_sdk_example 'prices/delete'
@@ -191,6 +197,23 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
 
         run_test! do
           expect(list_price.reload.deleted_at).not_to be_nil
+        end
+      end
+
+      response '422', 'deletion would leave a break above the shop price' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_list) { create(:price_list, store: store) }
+        let!(:bottom) { create(:price, variant: variant, price_list: catalog_list, currency: 'USD', amount: 50.0) }
+        let!(:quantity_break) do
+          create(:price, variant: variant, price_list: catalog_list, currency: 'USD', min_quantity: 100, amount: 45.0)
+        end
+        let(:id) { bottom.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'details', 'base', 0, 'code')).to eq('leaves_a_rising_ladder')
+          expect(bottom.reload.deleted_at).to be_nil
         end
       end
     end
@@ -293,7 +316,13 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Soft-deletes each price in `ids`. Returns the count actually destroyed.'
+      description <<~DESC
+        Soft-deletes every price in `ids`, or none of them. The batch is judged
+        on what it leaves, so a list's price for one unit can be deleted
+        together with the breaks above it, but not on its own when that would
+        leave a break costing more than the shop price (`price_rises_with_quantity`).
+        Returns the number of prices deleted.
+      DESC
       admin_scope :write, :products
 
       admin_sdk_example 'prices/bulk-destroy'
@@ -320,6 +349,23 @@ RSpec.describe 'Admin Prices API', type: :request, swagger_doc: 'api-reference/a
           data = JSON.parse(response.body)
           expect(data).to eq('price_count' => 1)
           expect(list_price.reload.deleted_at).not_to be_nil
+        end
+      end
+
+      response '422', 'batch would leave a break above the shop price' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:catalog_list) { create(:price_list, store: store) }
+        let!(:bottom) { create(:price, variant: variant, price_list: catalog_list, currency: 'USD', amount: 50.0) }
+        let!(:quantity_break) do
+          create(:price, variant: variant, price_list: catalog_list, currency: 'USD', min_quantity: 100, amount: 45.0)
+        end
+        let(:body) { { ids: [list_price.prefixed_id, bottom.prefixed_id] } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('price_rises_with_quantity')
+          expect(list_price.reload.deleted_at).to be_nil
         end
       end
     end

@@ -425,6 +425,9 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('price_rises_with_quantity')
+      expect(json_response['error']['details']['ladders'].first).to include(
+        'variant_id' => variant.prefixed_id, 'price_list_id' => price_list.prefixed_id, 'min_quantity' => 100
+      )
       expect(Spree::Price.where(variant: variant, currency: 'USD', price_list: price_list)).to be_empty
     end
 
@@ -512,12 +515,63 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
     end
   end
 
+  # The variant's shop price is 19.99, so a break at 25.00 charges more at 100
+  # units than the shop price does at 99 once the bottom rung is gone (V-3727).
+  shared_context 'a ladder resting on its bottom rung' do
+    let(:ladder_list) { create(:price_list, store: store) }
+    let!(:bottom) { create(:price, variant: variant, price_list: ladder_list, currency: 'USD', amount: 30.0) }
+    let!(:break_above_base) do
+      create(:price, variant: variant, price_list: ladder_list, currency: 'USD', min_quantity: 100, amount: 25.0)
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    include_context 'a ladder resting on its bottom rung'
+
+    it 'refuses deleting a bottom rung under a break above the shop price' do
+      delete :destroy, params: { id: bottom.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['details']['base'].first).to include('code' => 'leaves_a_rising_ladder')
+      expect(json_response['error']['message']).to include('100 units')
+      expect(bottom.reload.deleted_at).to be_nil
+    end
+
+    it 'deletes a break' do
+      delete :destroy, params: { id: break_above_base.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(break_above_base.reload.deleted_at).not_to be_nil
+    end
+  end
+
   describe 'DELETE #bulk_destroy' do
     let!(:to_delete) do
       create(:price, variant: variant, price_list: price_list, currency: 'USD', amount: 5.0)
     end
     let!(:to_keep) do
       create(:price, variant: variant, price_list: price_list, currency: 'EUR', amount: 4.0)
+    end
+
+    context 'when the batch leaves a ladder rising' do
+      include_context 'a ladder resting on its bottom rung'
+
+      it 'deletes none of the batch' do
+        delete :bulk_destroy, params: { ids: [to_keep.prefixed_id, bottom.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('price_rises_with_quantity')
+        expect(to_keep.reload.deleted_at).to be_nil
+        expect(bottom.reload.deleted_at).to be_nil
+      end
+
+      it 'deletes a bottom rung together with the break above it' do
+        delete :bulk_destroy, params: { ids: [bottom.prefixed_id, break_above_base.prefixed_id] }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['price_count']).to eq(2)
+      end
     end
 
     it 'soft-deletes the listed prices and reports the count' do
@@ -529,6 +583,19 @@ RSpec.describe Spree::Api::V3::Admin::PricesController, type: :controller do
       expect(json_response['price_count']).to eq(1)
       expect(to_delete.reload.deleted_at).not_to be_nil
       expect(to_keep.reload.deleted_at).to be_nil
+    end
+
+    it 'answers 422 and deletes nothing when another callback refuses a row' do
+      allow_any_instance_of(Spree::Price).to receive(:destroy!) do |price|
+        price.errors.add(:base, 'is locked')
+        raise ActiveRecord::RecordNotDestroyed.new('refused', price)
+      end
+
+      delete :bulk_destroy, params: { ids: [to_delete.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(to_delete.reload.deleted_at).to be_nil
     end
 
     it 'returns 422 when ids is missing' do

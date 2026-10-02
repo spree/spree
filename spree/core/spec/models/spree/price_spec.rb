@@ -651,5 +651,56 @@ describe Spree::Price, type: :model do
       expect(Spree::Price.new(variant: variant, currency: 'USD', price_list: price_list,
                               min_quantity: 1, amount: 25.00)).to be_valid
     end
+
+    context 'when a rung is deleted' do
+      # The break above then answers to the base price, so 100 units would cost
+      # more each than 99 (V-3727).
+      it 'refuses deleting the bottom rung under a break above the base price' do
+        bottom = rung(1, 12.00)
+        rung(100, 11.00)
+
+        expect(bottom.destroy).to be(false)
+        expect(bottom.errors[:base].first).to include('100')
+        expect(bottom.reload.deleted_at).to be_nil
+      end
+
+      it 'accepts deleting the bottom rung under a break that undercuts the base price' do
+        bottom = rung(1, 12.00)
+        rung(100, 9.00)
+
+        expect(bottom.destroy).to be_truthy
+      end
+
+      # The base price is written last, so the cascade reaches the bottom rung
+      # while the floor it would be judged against still stands.
+      it 'accepts deleting the variant along with the ladder' do
+        rung(1, 12.00)
+        rung(100, 11.00)
+        variant.prices.base_prices.delete_all
+        create(:price, variant: variant, currency: 'USD', amount: 10.00)
+
+        expect(variant.reload.destroy).to be_truthy
+        expect(Spree::Price.where(variant: variant, price_list: price_list)).to be_empty
+      end
+
+      it 'accepts hard-deleting the variant along with the ladder' do
+        rung(1, 12.00)
+        rung(100, 11.00)
+        variant.prices.base_prices.delete_all
+        create(:price, variant: variant, currency: 'USD', amount: 10.00)
+
+        variant.reload.really_destroy!
+
+        expect(Spree::Price.with_deleted.where(variant_id: variant.id)).to be_empty
+      end
+
+      it 'accepts deleting the rows of a deleted price list' do
+        bottom = rung(1, 12.00)
+        rung(100, 11.00)
+        price_list.destroy
+
+        expect(bottom.reload.destroy).to be_truthy
+      end
+    end
   end
 end
