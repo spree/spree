@@ -134,7 +134,7 @@ They are configuration files like any other, shipped with `@spree/config`, and d
 
 - **First-run setup** deploys them as soon as you say where the store sells from.
 - **`spree init`** deploys them on scripted installs (`--admin-email`), which have no setup screen.
-- **`spree config provision`** deploys them by hand: on a store set up from a script, or to finish a setup that was interrupted. It only creates what is missing and never changes a default you have since edited, so running it again is safe. `--no-country` leaves out the country-shaped defaults.
+- **`spree config provision`** deploys them by hand: on a store set up from a script, or to finish a setup that was interrupted. It only creates what is missing and never changes a default you have since edited, so running it again is safe.
 
 A default whose type an installation has not registered (a seller requirement kind or a payment method an app removed) is skipped rather than failing the rest.
 
