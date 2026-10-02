@@ -111,27 +111,25 @@ module Spree
             end
 
             if (rising = result.error&.value.try(:[], :rising_ladders))
-              return render_error(
-                code: 'price_rises_with_quantity',
-                message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.price_rises_with_quantity').upcase_first,
-                status: :unprocessable_content,
-                details: { ladders: rising }
-              )
+              return render_rising_ladders(rising)
             end
 
             render json: result.value
           end
 
-          # Soft-deletes the listed prices.
+          # Soft-deletes the listed prices, all or none, judged on the ladders
+          # the whole batch leaves.
           #
           # @return [void]
           def bulk_destroy
             authorize! :destroy, Spree::Price
 
-            destroy_scope = scope.where(id: decode_ids(params[:ids]))
-            destroyed = destroy_scope.count(&:destroy)
+            result = Spree::Prices::BulkDestroy.call(prices: scope.where(id: decode_ids(params[:ids])))
+            return render_rising_ladders(result.error.value[:rising_ladders]) if result.failure?
 
-            render json: { price_count: destroyed }
+            render json: result.value
+          rescue ActiveRecord::RecordNotDestroyed => e
+            render_validation_error(e.record.errors.presence || e.message)
           end
 
           protected
@@ -186,6 +184,20 @@ module Spree
 
           def bulk_record_count_key
             :price_count
+          end
+
+          def render_rising_ladders(ladders)
+            render_error(
+              code: 'price_rises_with_quantity',
+              message: I18n.t('activerecord.errors.models.spree/price_list.attributes.base.price_rises_with_quantity').upcase_first,
+              status: :unprocessable_content,
+              details: {
+                ladders: ladders.map do |ladder|
+                  ladder.merge(variant_id: Spree::Variant.prefixed_id_for(ladder[:variant_id]),
+                               price_list_id: Spree::PriceList.prefixed_id_for(ladder[:price_list_id]))
+                end
+              }
+            )
           end
 
           def require_prices!
