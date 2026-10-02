@@ -150,7 +150,7 @@ module Spree
       total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
       order_group_id po_number
     ]
-    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
+    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -159,8 +159,8 @@ module Spree
       seller: %w[email considered_risky coupon_code]
     }
     self.private_ransackable_scopes = {
-      store: %w[search multi_search],
-      seller: %w[search multi_search]
+      store: %w[search],
+      seller: %w[search]
     }
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
@@ -352,9 +352,6 @@ module Spree
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
     end
-
-    # Backward compatibility alias — remove in Spree 6.0
-    def self.multi_search(query) = search(query)
 
     # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
     # @param param [String] the prefixed ID, number, or integer id to search for
