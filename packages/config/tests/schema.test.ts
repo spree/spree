@@ -1,8 +1,9 @@
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { toJsonSchema } from '../src/node'
-import { CHANNEL_PREFERENCES, STORE_PREFERENCES } from '../src/schema'
+import { writablePreferences } from '../src/spec'
 
 const PACKAGE_COPY = resolve(import.meta.dirname, '../schemas/spree-config.json')
 const DOCS_COPY = resolve(import.meta.dirname, '../../../docs/schemas/spree-config/1.json')
@@ -34,12 +35,27 @@ function permittedPreferences(controller: string): string[] {
 }
 
 // A preference the controller does not permit is dropped without an error,
-// so the file's list must be exactly the controller's.
+// so the spec the file's preferences come from must list exactly the
+// controller's.
 describe('preference keys', () => {
   it.each([
-    ['store', 'store_controller.rb', STORE_PREFERENCES],
-    ['channels', 'channels_controller.rb', CHANNEL_PREFERENCES],
-  ])('%s accepts exactly what the Admin API permits', (_section, controller, keys) => {
-    expect([...keys].sort()).toEqual(permittedPreferences(controller).sort())
+    ['store', 'store_controller.rb'],
+    ['channels', 'channels_controller.rb'],
+  ] as const)('%s accepts exactly what the Admin API permits', (resource, controller) => {
+    expect([...writablePreferences(resource)].sort()).toEqual(
+      permittedPreferences(controller).sort(),
+    )
+  })
+})
+
+// The section attributes come from the Admin API spec and the templates are
+// embedded for the browser; both generated files must match their sources.
+describe('generated sources', () => {
+  it.each(['extract-writable.mjs', 'embed-templates.mjs'])('%s output is up to date', (script) => {
+    expect(() =>
+      execFileSync('node', [resolve(import.meta.dirname, '../scripts', script), '--check'], {
+        stdio: 'pipe',
+      }),
+    ).not.toThrow()
   })
 })

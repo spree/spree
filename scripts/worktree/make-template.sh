@@ -53,4 +53,26 @@ echo "▸ Rebuilding $TEMPLATE_DB (full migration run + seeds, ~4-5 min)"
   ADMIN_EMAIL="spree@example.com" ADMIN_PASSWORD="spree123" \
   bin/rails db:drop db:create spree:install:migrations db:migrate db:seed)
 
+# The seed creates only the store and its admin; the defaults a store trades
+# with (tax categories, warehouse, delivery zones, reasons) are deployed by
+# @spree/config through the Admin API, as first-run setup does. Boot a server
+# on the template for that, on a free port, and stop it afterwards.
+echo "▸ Deploying the store defaults"
+pnpm turbo build --filter=@spree/config --output-logs=errors-only >/dev/null
+port=4100
+while ! port_free "$port"; do port=$((port + 1)); done
+token=$(cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails runner \
+  'print "\n__TOKEN__" + Spree::Store.default.api_keys.create!(name: "worktree template", key_type: "secret", scopes: ["write_all"]).plaintext_token')
+token="${token##*__TOKEN__}"
+pidfile="$(pwd)/server/tmp/pids/template-provision.pid"
+(cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails server -p "$port" -P "$pidfile" -d >/dev/null)
+stop_server() { [ -f "$pidfile" ] && kill "$(cat "$pidfile")" 2>/dev/null; rm -f "$pidfile"; }
+trap stop_server EXIT
+for _ in $(seq 1 60); do curl -sf "http://localhost:$port/up" >/dev/null && break; sleep 1; done
+node scripts/worktree/provision-template.mjs "http://localhost:$port" "$token"
+stop_server
+trap - EXIT
+(cd server && DATABASE_NAME="$TEMPLATE_DB" bin/rails runner \
+  'Spree::ApiKey.find_by(name: "worktree template")&.revoke!')
+
 echo "✓ $TEMPLATE_DB ready — new worktrees copy it via createdb -T"
