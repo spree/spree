@@ -1,3 +1,13 @@
+## 2026-10-02: A refunded return leaves nothing owed on the order
+
+**Context:** Every order refunded through a return read as owing the refund back. Reproduced on R1004: total $50.26, paid $50.26, a return refunded $25.00 to the card. The admin summary showed payment total $25.26 and an outstanding balance of $25.00 in red, and the payment dialog pre-filled $25.00 to charge again. R1001, refunded before V-3725's fix, read the same. `Carts::RecalculateTotals` nets refunds out of `payment_total`, and `Order#outstanding_balance` is `total − payment_total`, so a refund for goods that came back raised the balance by exactly its amount. 5.x added the money returned through reimbursements back (`reimbursement_paid_total`); the legacy drop removed that term in the belief that netting refunds already covered it, and the returns plan recorded that reasoning. Store-credit refunds were never affected, as they write no refund row.
+
+**Decision:** `outstanding_balance` subtracts `returned_items_refund_total` — refunds whose originator is a return, claim or exchange — restoring what the reimbursement term did. A refund with no originator still raises the balance: money handed back for nothing is owed again, as in 5.x.
+
+**Consequences:** `amount_due`, which the Admin, Store and Seller APIs serve and the dashboard shows, reads zero after a refunded return. An exchange's balance owed still shows, because it is a fee on the order rather than a refund. The column `payment_total` is unchanged; only the balance reads differently.
+
+**Plans amended:** `6.0-returns-exchanges-claims.md` (Implementation Status — the `outstanding_balance` note).
+
 ## 2026-10-01: A buyer can buy only what their catalogs show them (V-3722)
 
 **Context:** Catalogs narrowed the product listing and product reads, but the cart looked variants up across the whole store. A company buyer whose catalog hid a product could add it by sending its variant id, and check out with it; the same lookup let a shopper add a product not published on their channel. A product read answered 404 for both. Blocking adds alone would not close it: a guest cart claimed after sign-in, a cart switched to another company, or a catalog edited while a cart is open all leave a hidden line in the cart without any add.
