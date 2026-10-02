@@ -1,4 +1,3 @@
-import fs from 'node:fs'
 import { LineCounter, parseDocument } from 'yaml'
 import type { ZodError } from 'zod'
 import { ConfigError } from './errors.js'
@@ -171,8 +170,4 @@ export function parseConfig(source: string, env: NodeJS.ProcessEnv = process.env
 
   const sections = Object.keys(raw as object).filter((key) => key !== 'version')
   return { config: result.data, sections }
-}
-
-export function loadConfig(file: string, env: NodeJS.ProcessEnv = process.env): LoadedConfig {
-  return parseConfig(fs.readFileSync(file, 'utf-8'), env)
 }

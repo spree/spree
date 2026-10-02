@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { toJsonSchema } from '../src/config/index'
-import { CHANNEL_PREFERENCES, STORE_PREFERENCES } from '../src/config/schema'
+import { toJsonSchema } from '../src/node'
+import { CHANNEL_PREFERENCES, STORE_PREFERENCES } from '../src/schema'
 
 const PACKAGE_COPY = resolve(import.meta.dirname, '../schemas/spree-config.json')
 const DOCS_COPY = resolve(import.meta.dirname, '../../../docs/schemas/spree-config/1.json')
