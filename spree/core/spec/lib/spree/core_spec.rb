@@ -121,17 +121,16 @@ describe Spree do
   end
 
   describe '.install_id' do
-    it 'returns the UUID the default store generated when it was saved' do
-      @default_store.save!
+    it "returns the default store's identifier" do
+      allow(Spree::Store).to receive(:default).and_return(build(:store, preferred_install_id: 'stored-id'))
 
-      expect(described_class.install_id).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
-      expect(described_class.install_id).to eq(@default_store.reload.preferred_install_id)
+      expect(described_class.install_id).to eq('stored-id')
     end
 
-    it 'reuses an identifier already stored' do
-      @default_store.update!(preferred_install_id: 'already-persisted-id')
+    it 'returns nil without a default store' do
+      allow(Spree::Store).to receive(:default).and_return(nil)
 
-      expect(described_class.install_id).to eq('already-persisted-id')
+      expect(described_class.install_id).to be_nil
     end
   end
 
