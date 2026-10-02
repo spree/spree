@@ -1,5 +1,5 @@
 /**
- * `@spree/cli/config` — the configurator engine. Reads a `spree.config.yml`,
+ * `@spree/config` — the configurator engine. Reads a `spree.config.yml`,
  * plans the changes a live store needs to match it, applies them through the
  * Admin API, and reads a store back into the file format.
  */
@@ -13,7 +13,6 @@ export type { ConfigIssue, LoadedConfig } from './load.js'
 export {
   ConfigValidationError,
   formatPath,
-  loadConfig,
   parseConfig,
   substituteEnv,
 } from './load.js'

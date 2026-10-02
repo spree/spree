@@ -3,16 +3,16 @@ import { platform } from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import { createAdminClient } from '@spree/admin-sdk'
-import type { Command } from 'commander'
-import { execa, execaCommand } from 'execa'
-import pc from 'picocolors'
 import {
   ConfigValidationError,
   deployConfig,
   loadConfig,
   renderReport,
   reportHasFailures,
-} from '../config/index.js'
+} from '@spree/config/node'
+import type { Command } from 'commander'
+import { execa, execaCommand } from 'execa'
+import pc from 'picocolors'
 import {
   mintApiKey,
   mintProjectCredentials,

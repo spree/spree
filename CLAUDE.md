@@ -33,6 +33,7 @@ Use `/project:create-plan` and `/project:update-plan` for plan management, and `
 | `packages/seller-sdk` | `@spree/seller-sdk` — TypeScript Seller API client |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
+| `packages/config` | `@spree/config` — the configurator engine: plans and deploys a `spree.config.yml` (and Spree's store defaults) through the Admin API. Browser-safe main entry; `@spree/config/node` adds file loading |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
 | `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
 | `storefront/` | Next.js storefront cloned from `spree/storefront` branch `6-0-dev` (.gitignored, provisioned per worktree; keeps its `.git` — commit and push from inside it) |
@@ -71,7 +72,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 | Gem dependencies | `cd server && bundle install` (the gem home is shared across worktrees, so this is fast) |
 | Need sample data (products + images) | `cd server && bin/rails spree:load_sample_data` — per worktree, on demand; takes minutes and hits the network |
 | Rails console / database | `cd server && bin/rails console`; the DB is `spree_dev_<branch>` on `localhost:5432` |
-| E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`, which builds `@spree/cli` itself — the suite deploys its fixtures through it) |
+| E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`, which builds `@spree/config` itself — the suite deploys its fixtures through it) |
 | Read an email the app sent | Mailpit catches everything: <http://localhost:8025>. `brew install mailpit && brew services start mailpit` if it is not running — without it the starter falls back to a delivery method that does not exist and every send raises |
 | Store API serializers or SDK code, and the storefront is running | Re-run `pnpm wt:storefront` — it rebuilds the SDK and copies it in. Run the [type generation pipeline](#type-generation-pipeline) first if you changed serializers |
 | Meilisearch search provider | Optional: `brew install meilisearch`, run it, set `MEILISEARCH_URL` in `server/.env`, `bin/rails spree:search:reindex` |
