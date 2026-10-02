@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
   before { request.headers.merge!(headers) }
 
   let(:query) { { 'metrics' => %w[total_sales orders], 'dimensions' => %w[channel], 'sort' => '-total_sales' } }
-  let!(:report) { create(:saved_report, store: store, name: 'Sales by channel', query: query) }
+  let!(:report) { create(:saved_report, store: store, name: 'Channel mix', query: query) }
 
   describe 'GET #index' do
     it "lists the store's saved reports" do
@@ -17,14 +17,17 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
       get :index, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |r| r['name'] }).to eq(['Sales by channel'])
+      # Every store also carries its built-in reports.
+      names = json_response['data'].map { |r| r['name'] }
+      expect(names).to include('Channel mix')
+      expect(names).not_to include('Elsewhere')
       expect(json_response['data'].first['id']).to start_with('sq_')
     end
   end
 
   describe 'POST #create' do
     it 'saves a compilable query and records the author' do
-      post :create, params: { name: 'Top products', query: { metrics: %w[net_sales], dimensions: %w[product], limit: 10 } }, as: :json
+      post :create, params: { name: 'Best sellers', query: { metrics: %w[net_sales], dimensions: %w[product], limit: 10 } }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['query']['metrics']).to eq(%w[net_sales])
@@ -50,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::Reporting::SavedReportsController, type: :
     end
 
     it 'updates the name and query' do
-      patch :update, params: { id: report.prefixed_id, name: 'Sales by market', query: query.merge('dimensions' => %w[market]) }, as: :json
+      patch :update, params: { id: report.prefixed_id, name: 'Market mix', query: query.merge('dimensions' => %w[market]) }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(report.reload.query['dimensions']).to eq(%w[market])

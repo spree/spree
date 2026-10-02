@@ -4,19 +4,6 @@
 # above a spend threshold, hidden below it.
 store = Spree::Current.store
 
-# The zones are created from the store's country at first-run setup, so an
-# install that has not been set up yet has none. Provision them here from
-# whatever country the store already names rather than abort — sample data
-# should be loadable on a bare seed.
-if store.delivery_zones.where(name: %w[Domestic International]).count < 2
-  Spree::Stores::ProvisionDefaults.call(
-    store: store,
-    country: store.default_country || Spree::Country.by_iso('US'),
-    locale: store.default_locale
-  )
-  store.reload
-end
-
 # A realistic shipping box (imperial units — the demo store is US): its weight
 # rides on every parcel and its dimensions feed dimensional-weight pricing,
 # without which carrier quotes under-price bulky-but-light items. Created only

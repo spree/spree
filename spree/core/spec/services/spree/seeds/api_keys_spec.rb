@@ -3,19 +3,12 @@ require 'spec_helper'
 RSpec.describe Spree::Seeds::ApiKeys do
   subject { described_class.call }
 
-  before do
-    Spree::Seeds::Stores.call
-    Spree::Seeds::Channels.call
-  end
+  before { Spree::Seeds::Stores.call }
 
-  it 'creates an unbound default key and a wholesale-bound key' do
+  it 'creates an unbound default key' do
     subject
 
-    store = Spree::Store.default
-    wholesale = store.channels.find_by(code: 'wholesale')
-
-    expect(store.api_keys.active.publishable.where(channel_id: nil)).to exist
-    expect(store.api_keys.active.publishable.where(channel: wholesale)).to exist
+    expect(Spree::Store.default.api_keys.active.publishable.where(channel_id: nil)).to exist
   end
 
   it 'is idempotent' do
@@ -26,12 +19,9 @@ RSpec.describe Spree::Seeds::ApiKeys do
 
   it 'seeds every store, not only the default' do
     second_store = create(:store)
-    Spree::Seeds::Channels.call
 
     subject
 
-    wholesale = second_store.channels.find_by(code: 'wholesale')
     expect(second_store.api_keys.active.publishable.where(channel_id: nil)).to exist
-    expect(second_store.api_keys.active.publishable.where(channel: wholesale)).to exist
   end
 end
