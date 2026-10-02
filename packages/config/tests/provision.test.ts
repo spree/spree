@@ -95,7 +95,9 @@ describe('provisionStore', () => {
     expect(domestic?.delivery_profile_id).toBe(api.all('/delivery_profiles')[0].id)
     const international = api.all('/delivery_zones').find((zone) => zone.name === 'International')
     expect(
-      (international?.members as { country_code: string }[]).map((m) => m.country_code),
+      (international?.members as { country_code: string }[] | undefined)?.map(
+        (m) => m.country_code,
+      ),
     ).toEqual(['DE', 'US'])
     const key = api.all('/api_keys')[0]
     expect(key).toMatchObject({ name: 'Storefront (Wholesale)', key_type: 'publishable' })
