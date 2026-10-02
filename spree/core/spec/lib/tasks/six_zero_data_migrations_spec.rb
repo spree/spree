@@ -14,6 +14,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'deliveries_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'markets.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
   end
@@ -527,6 +528,31 @@ describe '6.0 data migration tasks' do
     it 'is idempotent' do
       run_task('spree:migrate_incomplete_orders_to_carts')
       expect { run_task('spree:migrate_incomplete_orders_to_carts') }.not_to change(Spree::Cart, :count)
+    end
+  end
+
+  describe 'spree:markets:migrate_checkout_zones' do
+    let(:legacy_store) { create(:store) }
+    let(:zone) { create(:zone, name: 'Checkout Zone', kind: 'country') }
+
+    before do
+      legacy_zone_member(zone, Spree::Country.by_iso('DE'))
+      legacy_zone_member(zone, Spree::Country.by_iso('FR'))
+      legacy_store.markets.delete_all
+      legacy_store.update_column(:checkout_zone_id, zone.id)
+    end
+
+    it 'turns the checkout zone into a default market once' do
+      expect do
+        run_task('spree:markets:migrate_checkout_zones')
+        run_task('spree:markets:migrate_checkout_zones')
+      end.to change { legacy_store.markets.count }.from(0).to(1)
+
+      legacy_store.reload
+      market = legacy_store.markets.first
+      expect(market).to be_default
+      expect(market.country_codes).to eq(%w[DE FR])
+      expect(legacy_store.read_attribute(:checkout_zone_id)).to be_nil
     end
   end
 
