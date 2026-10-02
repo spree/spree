@@ -77,6 +77,13 @@ RSpec.describe 'refunding a child order of a split checkout' do
       expect(Spree::Refund.find_by(originator: return_record).order).to eq(order)
     end
 
+    # The refund went back for goods the customer returned, so the checkout
+    # owes nothing more than it did before.
+    it 'leaves nothing more owed on the checkout' do
+      expect { described_class.call(return_record: return_record, amount: 10) }.
+        not_to(change { Spree::OrderGroup.find(group.id).outstanding_balance })
+    end
+
     it 'leaves the sibling share untouched' do
       expect {
         described_class.call(return_record: return_record, amount: 10)

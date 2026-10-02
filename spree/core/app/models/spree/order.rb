@@ -701,11 +701,15 @@ module Spree
       end
     end
 
-    # What refunds for returns, claims and exchanges have given back.
+    # What refunds for returns, claims and exchanges have given back. Read off
+    # loaded refunds when a list preloaded them, as {#refunds_total} is, since
+    # every order serializer asks for it.
     #
     # @return [BigDecimal]
     def returned_items_refund_total
-      refunds.where(originator_type: %w[Spree::Return Spree::Claim Spree::Exchange]).sum(:amount)
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+
+      refunds.for_returned_items.sum(:amount)
     end
 
 

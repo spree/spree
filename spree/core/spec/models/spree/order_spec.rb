@@ -438,6 +438,18 @@ describe Spree::Order, type: :model do
 
       expect(order.outstanding_balance).to eq(25)
     end
+
+    it 'refuses a payment charging again for the goods that came back' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(build(:payment, order: order, amount: 25)).not_to be_valid
+    end
+
+    it 'reads the same from refunds a list already loaded' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(Spree::Order.includes(:refunds).find(order.id).outstanding_balance).to eq(0)
+    end
   end
 
   describe '#display_outstanding_balance' do

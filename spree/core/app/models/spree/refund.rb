@@ -33,6 +33,20 @@ module Spree
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
     validate :order_is_covered_by_payment, on: :create
 
+    # Refunds for goods that came back, which settle what the customer owed
+    # for them rather than leaving it owed again.
+    scope :for_returned_items, -> { where(originator_type: returned_item_originators) }
+
+    # @return [Array<String>]
+    def self.returned_item_originators
+      [Spree::Return, Spree::Claim, Spree::Exchange].map(&:polymorphic_name)
+    end
+
+    # @return [Boolean]
+    def for_returned_items?
+      self.class.returned_item_originators.include?(originator_type)
+    end
+
     attr_reader :response
 
     delegate :currency, to: :payment
