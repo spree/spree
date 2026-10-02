@@ -212,7 +212,7 @@ delivery_methods:
     api.seed('/customer_groups', [])
     const original = api.request
     api.request = async (method, path, options) => {
-      if (method === 'POST' && (options?.body as { name: string }).name === 'Bad') {
+      if (method === 'POST' && (options?.body as { name: string } | undefined)?.name === 'Bad') {
         const error = new Error('Validation failed') as Error & { status: number; details: unknown }
         error.status = 422
         error.details = { name: [{ code: 'taken', message: 'has already been taken' }] }
@@ -355,7 +355,9 @@ products:
     expect(kinds(await planConfig(sameOptions, api))).toEqual({ 'products/tee': 'unchanged' })
     await applyPlan(plan)
     const patch = api.calls.find((call) => call.method === 'PATCH')
-    expect((patch?.body as { variants: { id: string }[] }).variants[0].id).toBe('variant_9')
+    expect((patch?.body as { variants: { id: string }[] } | undefined)?.variants[0].id).toBe(
+      'variant_9',
+    )
     expect(api.all('/products')[0].product_publications).toEqual([
       { channel_id: online.id, unpublished_at: null },
     ])
@@ -694,7 +696,7 @@ products:
     )
     await deployConfig(config, api)
     const create = api.calls.find((call) => call.method === 'POST' && call.path === '/products')
-    expect((create?.body as { variants: Payload[] }).variants).toEqual([
+    expect((create?.body as { variants: Payload[] } | undefined)?.variants).toEqual([
       { sku: 'TEE', prices: [{ currency: 'USD', compare_at_amount: 40 }] },
     ])
   })
@@ -727,7 +729,7 @@ products:
 
     await deployConfig(file('Classic Tee'), api)
     const patch = api.calls.find((call) => call.method === 'PATCH')
-    expect((patch?.body as { variants: Payload[] }).variants).toEqual([
+    expect((patch?.body as { variants: Payload[] } | undefined)?.variants).toEqual([
       { id: 'variant_1', sku: 'TEE' },
     ])
   })
@@ -807,7 +809,9 @@ products:
     const patch = api.calls.find(
       (call) => call.method === 'PATCH' && call.path.startsWith('/products/'),
     )
-    expect((patch?.body as { description: string }).description).toBe('<p>Heavy cotton</p>')
+    expect((patch?.body as { description: string } | undefined)?.description).toBe(
+      '<p>Heavy cotton</p>',
+    )
   })
 
   it('refuses to approve a seller that has not started onboarding, naming why', async () => {
