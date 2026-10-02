@@ -31,16 +31,14 @@ module Spree
         store.channels.each { |channel| channel.add_products(product_ids) }
       end
 
-      # Cheap proxy for "the base seeds have run". Countries and states are
-      # reference data now, so the marker is a seeded role instead.
-      def seeds_loaded?
-        Spree::Role.exists?(name: 'admin')
-      end
+      # Sample data builds on the store defaults (tax categories, the digital
+      # profile, the warehouse and delivery zones), which only the
+      # configurator deploys, so it refuses a store that never got them.
+      def ensure_store_provisioned(store)
+        return if store&.provisioned?
 
-      def ensure_seeds_loaded
-        return if seeds_loaded?
-
-        Spree::Seeds::All.call
+        raise StoreNotProvisioned,
+              'This store has not been provisioned. Finish first-run setup, or run `spree config provision`, then load sample data.'
       end
 
       def without_geocoding

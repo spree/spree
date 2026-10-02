@@ -14,6 +14,8 @@ module Spree
     include Spree::Stores::Markets
     include Spree::Stores::Channels
     include Spree::Stores::EmailBranding
+    include Spree::Stores::Location
+    include Spree::Stores::BuiltInReports
     include Spree::StoreDataSources
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement

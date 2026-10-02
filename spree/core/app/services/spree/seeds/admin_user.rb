@@ -35,17 +35,17 @@ module Spree
         return unless store&.persisted?
 
         store.add_user(user)
-        provision_store_defaults(store)
+        relocate_store(store)
       end
 
       # This install never sees the setup screen, so the country question is
       # answered by the environment instead — defaulting to the US, which is
-      # what these installs got when the seeds hardcoded it.
-      def provision_store_defaults(store)
+      # what these installs got when the seeds hardcoded it. The defaults
+      # shaped by the answer are deployed afterwards (`spree config provision`).
+      def relocate_store(store)
         country = Spree::Country.by_iso(ENV.fetch('STORE_COUNTRY', 'US')) || Spree::Country.by_iso('US')
 
-        Spree::Stores::ProvisionDefaults.call(
-          store: store,
+        store.relocate(
           country: country,
           locale: ENV['STORE_LOCALE'].presence,
           currency: ENV['STORE_CURRENCY'].presence

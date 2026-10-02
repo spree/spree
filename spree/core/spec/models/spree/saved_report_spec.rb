@@ -4,7 +4,7 @@ RSpec.describe Spree::SavedReport, type: :model do
   let(:store) { @default_store }
 
   it 'saves a compilable query' do
-    report = described_class.new(store: store, name: 'Sales by channel',
+    report = described_class.new(store: store, name: 'Channel mix',
                                  query: { 'metrics' => %w[total_sales], 'dimensions' => %w[channel] })
     expect(report).to be_valid
     expect(report.reporting_query.metrics.map(&:name)).to eq([:total_sales])
@@ -24,8 +24,8 @@ RSpec.describe Spree::SavedReport, type: :model do
   end
 
   it 'keeps names unique per store' do
-    create(:saved_report, store: store, name: 'Top products', query: { 'metrics' => %w[units_sold] })
-    dup = described_class.new(store: store, name: 'top products', query: { 'metrics' => %w[units_sold] })
+    create(:saved_report, store: store, name: 'Best sellers', query: { 'metrics' => %w[units_sold] })
+    dup = described_class.new(store: store, name: 'best sellers', query: { 'metrics' => %w[units_sold] })
     expect(dup).not_to be_valid
   end
 
