@@ -87,7 +87,7 @@ Three rules govern the file:
 - **References use natural keys.** A delivery method names its zone, a product names its categories and channels, a variant names the warehouse its stock sits in. A reference to something that exists neither in the file nor on the store is reported, with its line, before anything is written.
 - **Secrets come from the environment.** `${VAR}` anywhere in the file is replaced with the variable's value at deploy time, so a committed file carries no passwords. A missing variable stops the run. Write `$${VAR}` for a literal `${VAR}`. A value that is nothing but a placeholder, such as `stock: ${OPENING_STOCK}`, is read as a number or `true`/`false` wherever the file expects one.
 
-The header line points editors at the published JSON Schema, so VS Code and every editor with a YAML language server autocomplete keys and flag mistakes inline. The same schema is what the CLI validates with, and it is also shipped inside the package at `@spree/cli/schemas/spree-config.json`.
+The header line points editors at the published JSON Schema, so VS Code and every editor with a YAML language server autocomplete keys and flag mistakes inline. The same schema is what the CLI validates with, and it is also shipped inside the package at `@spree/config/schemas/spree-config.json`.
 
 ### Sections and their keys
 
@@ -177,7 +177,7 @@ The reconciliation engine is a library first and a command second. The dashboard
 
 ```ts
 import { createAdminClient } from '@spree/admin-sdk'
-import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/cli/config'
+import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/config/node'
 
 const { config } = loadConfig('fixtures/store.yml')
 const client = createAdminClient({ baseUrl, secretKey })

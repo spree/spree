@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  ConfigValidationError,
-  parseConfig,
-  substituteEnv,
-  toJsonSchema,
-} from '../src/config/index'
+import { ConfigValidationError, parseConfig, substituteEnv, toJsonSchema } from '../src/node'
 
 describe('parseConfig', () => {
   it('parses YAML into a typed config and lists the sections present', () => {

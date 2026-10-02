@@ -11,8 +11,8 @@ import {
   planToJson,
   renderPlan,
   reportHasFailures,
-} from '../src/config/index'
-import { FakeApi } from './config-fake-api'
+} from '../src/node'
+import { FakeApi } from './fake-api'
 
 type Payload = Record<string, unknown>
 

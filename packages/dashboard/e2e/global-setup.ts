@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { createAdminClient } from '@spree/admin-sdk'
-import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/cli/config'
+import { deployConfig, loadConfig, renderReport, reportHasFailures } from '@spree/config/node'
 import {
   FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,

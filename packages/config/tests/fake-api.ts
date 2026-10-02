@@ -1,4 +1,4 @@
-import type { ConfigClient, RequestOptions } from '../src/config/types'
+import type { ConfigClient, RequestOptions } from '../src/types'
 
 type Record_ = Record<string, unknown> & { id: string }
 
