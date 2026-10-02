@@ -728,7 +728,7 @@ Every transactional email now renders from a Liquid template written in MJML ins
 Other changes that come with it:
 
 - **Subjects moved into the templates.** Each template's front matter holds its subject. `Spree::BaseMailer#order_email_subject` is removed.
-- **The mailer view helpers are removed.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are gone. Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`.
+- **The mailer view helpers are removed.** `Spree::MailHelper` (`name_for`), `Spree::BaseHelper` (`spree_storefront_resource_url`), `Spree::FulfillmentHelper` and `Spree::DigitalAssetHelper` are gone, and so are `spree_image_tag` and `spree_asset_aspect_ratio` from `Spree::ImagesHelper` (`spree_image_url` stays). Templates get the same values as serializer fields, such as `order.customer_name` and `item.url`.
 - **Every email has a plain-text part**, generated from the HTML. Seven emails that had none now have one.
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
 - **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
