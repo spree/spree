@@ -307,7 +307,7 @@ RSpec.describe Spree::Export, :job, type: :model do
       it 'exports a searched product list' do
         create(:product, name: 'Findable Widget')
         product_export = Spree::Exports::Products.create!(
-          store: store, user: user, format: 'csv', search_params: { multi_search: 'Findable' }.to_json
+          store: store, user: user, format: 'csv', search_params: { search: 'Findable' }.to_json
         )
 
         expect { product_export.generate }.to change(product_export.attachment, :attached?).from(false).to(true)

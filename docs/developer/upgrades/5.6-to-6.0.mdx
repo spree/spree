@@ -494,6 +494,7 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 | `Spree::Image::Configuration::ActiveStorage` | deleted — an empty no-op module; all logic lives in `Spree::Asset` |
 | `Spree::OrderRouting::Strategy::Legacy` | `Spree::OrderRouting::Strategy::Rules` (see below) |
 | `private_metafields` association | read `custom_fields` and filter, or query `Spree::CustomField.admin_only` |
+| `multi_search` (`Product`, `Variant`, `Order`, customers; also `q[multi_search]` in the Admin API) and `Searchable.sanitize_query_for_multi_search` / `.multi_search_condition` | `search` / `q[search]`, `sanitize_query_for_search` / `search_condition`. Saved exports or links still using `multi_search` lose their filter |
 
 ### Custom fields replace metafields
 
