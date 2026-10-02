@@ -24,7 +24,7 @@ module Spree
       end
 
       it 'update shipment total' do
-        create(:shipment, order: order, cost: 10)
+        create(:fulfillment, order: order, cost: 10)
         order.reload
         updater.update_shipment_total
         expect(order.shipment_total).to eq(10)
@@ -275,7 +275,7 @@ module Spree
     shared_context 'with original shipping method gone backend only' do
       before do
         order.fulfillments.first.delivery_method.update(storefront_visible: false)
-        create(:shipping_method) # create a storefront-visible shipping method
+        create(:delivery_method) # create a storefront-visible shipping method
       end
     end
 
@@ -291,7 +291,7 @@ module Spree
       end
 
       describe '#update_shipments' do
-        let(:shipment) { create(:shipment, order: order) }
+        let(:shipment) { create(:fulfillment, order: order) }
         let(:shipments) { [shipment] }
 
         it 'updates each shipment' do
@@ -331,7 +331,7 @@ module Spree
     end
 
     context 'incomplete order' do
-      let(:shipment) { create(:shipment) }
+      let(:shipment) { create(:fulfillment) }
       let(:shipments) { [shipment] }
 
       it 'doesnt update payment state' do

@@ -106,7 +106,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     it 'quotes for a cart-owned package against the cart ship address' do
       cart = create(:cart, store: store, ship_address: create(:address))
       create(:line_item, cart: cart, order: nil)
-      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
 
       sent_to_address = nil
       allow(shipment_service).to receive(:create) do |params|
@@ -125,7 +125,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     it 'declines to quote when the owner has no ship address yet' do
       cart = create(:cart, store: store, ship_address: nil)
       create(:line_item, cart: cart, order: nil)
-      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
 
       expect(provider.estimates(fulfillment.to_package)).to eq([])
     end

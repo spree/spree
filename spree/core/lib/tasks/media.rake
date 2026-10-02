@@ -31,9 +31,9 @@ namespace :spree do
       # Subquery (not pluck) so the product set doesn't materialize in Ruby —
       # important for catalogs with millions of products.
       variant_product_ids = Spree::Variant
-                              .joins("INNER JOIN #{Spree::Asset.table_name} ON " \
-                                     "#{Spree::Asset.table_name}.viewable_id = #{Spree::Variant.table_name}.id " \
-                                     "AND #{Spree::Asset.table_name}.viewable_type = 'Spree::Variant'")
+                              .joins("INNER JOIN #{Spree::Media.table_name} ON " \
+                                     "#{Spree::Media.table_name}.viewable_id = #{Spree::Variant.table_name}.id " \
+                                     "AND #{Spree::Media.table_name}.viewable_type = 'Spree::Variant'")
                               .select(:product_id)
 
       relation = Spree::Product.where(id: variant_product_ids)

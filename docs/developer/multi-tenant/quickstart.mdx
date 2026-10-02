@@ -217,7 +217,7 @@ it in the scope of the tenant instead, so the same email can exist across differ
 ```ruby server/app/models/spree/user.rb
 class Spree::User < Spree.base_class
   include Spree::UserAddress
-  include Spree::UserMethods
+  include Spree::CustomerMethods
   include Spree::UserPaymentSource
   include SpreeMultiTenant::CustomerUserConcern # added by the generator
 

@@ -114,7 +114,7 @@ Machine washable.</g:description>')
       let!(:variant) { nil }
 
       before do
-        product.default_variant.images << create(:image)
+        product.default_variant.images << create(:media)
       end
 
       it 'includes default variant in feed' do

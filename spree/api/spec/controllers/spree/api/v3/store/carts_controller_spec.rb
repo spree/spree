@@ -540,7 +540,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       let(:country) { Spree::Country.by_iso('US') }
       let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
       let!(:zone) { create(:zone) }
-      let!(:shipping_method) { create(:shipping_method) }
+      let!(:shipping_method) { create(:delivery_method) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -626,7 +626,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     let(:country) { Spree::Country.by_iso('US') }
     let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
     let!(:zone) { create(:zone) }
-    let!(:shipping_method) { create(:shipping_method) }
+    let!(:shipping_method) { create(:delivery_method) }
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -1099,7 +1099,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
-      create(:shipping_method) if Spree::DeliveryMethod.none?
+      create(:delivery_method) if Spree::DeliveryMethod.none?
     end
 
     it 'completes the checkout' do
@@ -1181,7 +1181,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'completes via spree token' do
-        create(:shipping_method) if Spree::DeliveryMethod.none?
+        create(:delivery_method) if Spree::DeliveryMethod.none?
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_order.token
 

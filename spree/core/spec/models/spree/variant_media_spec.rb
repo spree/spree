@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::VariantMedia, type: :model do
   let(:product) { create(:product) }
   let(:variant) { create(:variant, product: product) }
-  let(:asset) { create(:image, viewable: product) }
+  let(:asset) { create(:media, viewable: product) }
 
   describe 'validations' do
     it 'is valid when the asset belongs to the variant product' do
@@ -12,7 +12,7 @@ RSpec.describe Spree::VariantMedia, type: :model do
     end
 
     it 'rejects an asset attached to a different product' do
-      other_asset = create(:image, viewable: create(:product))
+      other_asset = create(:media, viewable: create(:product))
       vm = described_class.new(variant: variant, asset: other_asset)
       expect(vm).not_to be_valid
       expect(vm.errors[:asset]).to be_present
@@ -39,7 +39,7 @@ RSpec.describe Spree::VariantMedia, type: :model do
   describe 'thumbnail propagation' do
     let(:product_for_thumb) { create(:product) }
     let(:variant_for_thumb) { create(:variant, product: product_for_thumb) }
-    let(:product_asset) { create(:image, viewable: product_for_thumb) }
+    let(:product_asset) { create(:media, viewable: product_for_thumb) }
 
     it 'sets the variant primary_media_id when the link is created' do
       expect {
@@ -71,7 +71,7 @@ end
 RSpec.describe Spree::Media, type: :model do
   describe '#variant_ids=' do
     let(:product) { create(:product) }
-    let(:product_asset) { create(:image, viewable: product) }
+    let(:product_asset) { create(:media, viewable: product) }
     let!(:variant_a) { create(:variant, product: product) }
     let!(:variant_b) { create(:variant, product: product) }
 
@@ -122,7 +122,7 @@ RSpec.describe Spree::Media, type: :model do
     end
 
     it 'is a no-op for variant-pinned assets (legacy viewable_type)' do
-      legacy_asset = create(:image, viewable: variant_a)
+      legacy_asset = create(:media, viewable: variant_a)
 
       expect {
         legacy_asset.variant_ids = [variant_b.to_param]
@@ -143,7 +143,7 @@ RSpec.describe Spree::Variant, type: :model do
     let(:variant) { create(:variant, product: product) }
 
     context 'with associated media linked from the product' do
-      let!(:product_asset) { create(:image, viewable: product) }
+      let!(:product_asset) { create(:media, viewable: product) }
       let!(:link) { Spree::VariantMedia.create!(variant: variant, asset: product_asset) }
 
       it 'returns associated_media from gallery_media' do
@@ -160,8 +160,8 @@ RSpec.describe Spree::Variant, type: :model do
     end
 
     context 'with multiple linked assets' do
-      let!(:second_asset) { create(:image, viewable: product) }
-      let!(:first_asset)  { create(:image, viewable: product) }
+      let!(:second_asset) { create(:media, viewable: product) }
+      let!(:first_asset)  { create(:media, viewable: product) }
 
       before do
         # Reverse position order: first_asset is created second but pinned to the
@@ -179,7 +179,7 @@ RSpec.describe Spree::Variant, type: :model do
     end
 
     context 'with only direct images (legacy path)' do
-      let!(:direct_image) { create(:image, viewable: variant) }
+      let!(:direct_image) { create(:media, viewable: variant) }
 
       it 'returns direct images from gallery_media' do
         expect(variant.gallery_media.to_a).to eq([direct_image])

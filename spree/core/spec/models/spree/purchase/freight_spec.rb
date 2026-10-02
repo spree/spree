@@ -18,7 +18,7 @@ RSpec.describe Spree::Purchase::Freight do
     end
 
     def select_freight_rate(cart, snapshot)
-      fulfillment = create(:shipment, cart: cart, order: nil)
+      fulfillment = create(:fulfillment, cart: cart, order: nil)
       create(:delivery_rate, fulfillment: fulfillment, selected: true, unpriced: true, cost: 0,
                              metadata: { 'freight_summary' => snapshot })
     end
@@ -69,7 +69,7 @@ RSpec.describe Spree::Purchase::Freight do
     before { create(:line_item, order: order, variant: variant, quantity: 24) }
 
     it 'reads what the freight rate froze rather than the live catalog' do
-      fulfillment = create(:shipment, order: order)
+      fulfillment = create(:fulfillment, order: order)
       snapshot = Spree::FreightSummary.new(
         lines: [Spree::FreightSummary::Line.new(units: 24, cartons: 2, pallets: 1, complete: true)]
       ).as_json
@@ -85,7 +85,7 @@ RSpec.describe Spree::Purchase::Freight do
     # Two freight shipments are still one load to the forwarder.
     it 'sums the frozen summaries across every fulfillment' do
       2.times do
-        fulfillment = create(:shipment, order: order)
+        fulfillment = create(:fulfillment, order: order)
         snapshot = Spree::FreightSummary.new(
           lines: [Spree::FreightSummary::Line.new(units: 12, cartons: 1, pallets: 1,
                                                   volume: BigDecimal('0.03'), complete: true)]
@@ -104,7 +104,7 @@ RSpec.describe Spree::Purchase::Freight do
     # part rounded its cartons up, so adding them would invent a pallet.
     it 're-rounds a variant split across consignments rather than adding' do
       [3, 9].each do |units|
-        fulfillment = create(:shipment, order: order)
+        fulfillment = create(:fulfillment, order: order)
         snapshot = Spree::FreightSummary.new(
           lines: [Spree::FreightSummary::Line.new(variant_id: 'variant_abc', units: units,
                                                   units_per_carton: 12, cartons_per_pallet: 40,
@@ -124,7 +124,7 @@ RSpec.describe Spree::Purchase::Freight do
     # The sale already happened. Re-deriving it would mean a carton size
     # corrected next month silently rewrites what shipped last month.
     it 'reports nothing rather than re-deriving when no rate froze a summary' do
-      create(:shipment, order: order)
+      create(:fulfillment, order: order)
 
       expect(order.reload.freight_summary).to be_nil
     end

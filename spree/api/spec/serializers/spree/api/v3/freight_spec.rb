@@ -35,7 +35,7 @@ RSpec.describe 'freight serialization' do
 
     def select_freight_rate(cart, **line)
       snapshot = Spree::FreightSummary.new(lines: [Spree::FreightSummary::Line.new(**line)]).as_json
-      fulfillment = create(:shipment, cart: cart, order: nil)
+      fulfillment = create(:fulfillment, cart: cart, order: nil)
       create(:delivery_rate, fulfillment: fulfillment, selected: true, unpriced: true, cost: 0,
                              metadata: { 'freight_summary' => snapshot })
     end
@@ -77,7 +77,7 @@ RSpec.describe 'freight serialization' do
     # The rate says quoted-after-review; the fulfillment's own shipping line
     # must not undercut it with $0.00.
     it 'carries the unpriced flag and label through the fulfillment' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
       fulfillment.reload.update_amounts
 
@@ -91,7 +91,7 @@ RSpec.describe 'freight serialization' do
     # one saying "quoted after review" while the other says $0.00 is the
     # free-shipping lie in a different field.
     it 'says the same on every money display, and is not free' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true, selected: true)
       fulfillment.reload.update_amounts
 
@@ -102,7 +102,7 @@ RSpec.describe 'freight serialization' do
     end
 
     it 'stays money for a priced fulfillment' do
-      fulfillment = create(:shipment)
+      fulfillment = create(:fulfillment)
       create(:delivery_rate, fulfillment: fulfillment, cost: 12, selected: true)
       fulfillment.reload.update_amounts
 
@@ -114,7 +114,7 @@ RSpec.describe 'freight serialization' do
   end
 
   describe Spree::Api::V3::DeliveryRateSerializer do
-    let(:fulfillment) { create(:shipment) }
+    let(:fulfillment) { create(:fulfillment) }
 
     it 'says a freight rate is unpriced rather than free' do
       rate = create(:delivery_rate, fulfillment: fulfillment, cost: 0, unpriced: true)

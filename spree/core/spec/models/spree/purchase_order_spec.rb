@@ -70,11 +70,11 @@ module Spree
       # A line shows the variant's own image, and the product's when the
       # variant has none — the fallback an order's line item already uses.
       it 'shows the variant image, or the product image when there is none' do
-        product_image = create(:image, viewable: item.variant.product)
+        product_image = create(:media, viewable: item.variant.product)
 
         expect(item.reload.thumbnail).to eq(product_image)
 
-        variant_image = create(:image, viewable: item.variant)
+        variant_image = create(:media, viewable: item.variant)
 
         expect(item.reload.thumbnail).to eq(variant_image)
       end
