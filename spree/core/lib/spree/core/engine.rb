@@ -37,12 +37,6 @@ module Spree
                                :taxon_rules,
                                :collection_rules,
                                :time_based_collection_rules,
-                               :themes,
-                               :theme_layout_sections,
-                               :pages,
-                               :page_sections,
-                               :page_blocks,
-                               :reports,
                                :translatable_resources,
                                :taggable_types,
                                :actor_classes,
@@ -58,15 +52,9 @@ module Spree
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
       OrderRoutingEnvironment = Struct.new(:strategies, :rules)
-      # Spree::Validators, not a Struct: the sets carry register/unregister so
-      # a host can drop a core rule (see Spree.validators.addresses).
-      SpreeValidators = Spree::Validators
       CustomFieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
-
-      # Add app/subscribers to autoload paths
-      config.paths.add 'app/subscribers', eager_load: true
 
       # Register bundled ActionMailer previews so they show up at /rails/mailers
       # without the host app having to copy any files.
@@ -77,14 +65,30 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+        # Spree::Validators, not a Struct: the sets carry register/unregister so
+        # a host can drop a core rule (see Spree.validators.addresses).
+        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Validators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+
+        # Registries are seeded before application initializers so extensions
+        # and host apps can append their own entries from initializer files.
+        # Core's defaults are concatenated in after_initialize below.
+        %i[subscribers actor_classes commission_rules delivery_method_rules seller_requirements
+           delivery_rate_providers tax_providers pricing_providers inventory_providers
+           payout_providers digital_asset_providers delivery_profile_types].each do |registry|
+          app.config.spree[registry] = []
+        end
+        app.config.spree.line_item_comparison_hooks = Set.new
+        app.config.spree.order_routing = OrderRoutingEnvironment.new([], [])
+        app.config.spree.custom_fields = CustomFieldsEnvironment.new([], [])
+        app.config.spree.promotions = PromoEnvironment.new([])
+        app.config.spree.pricing = PricingEnvironment.new([])
 
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time])
         Spree::Config = app.config.spree.preferences
-        Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
+        app.deprecators[:spree] = Spree::Deprecation
       end
 
       # Runs after initializers so an explicitly assigned preference — which
@@ -105,32 +109,10 @@ module Spree
         app.middleware.use ::I18n::Middleware
       end
 
-      initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
-        # Initialize subscribers array early so engines can add subscribers via initializers
-        app.config.spree.subscribers = []
-      end
-
-      # Seeded before application initializers so an extension registering an
-      # actor class has something to append to. The defaults are unioned in
-      # after initialization, where Spree.admin_user_class is finally known.
-      initializer 'spree.register.actor_classes', before: :load_config_initializers do |app|
-        app.config.spree.actor_classes = []
-      end
-
-      initializer 'spree.register.calculators', before: :after_initialize do |app|
-      end
-
       # Seeded before application initializers so a host's
       # `config/initializers/spree.rb` can register custom generators.
       initializer 'spree.register.number_generators', before: :load_config_initializers do |app|
         app.config.spree.number_generators = Spree::NumberGenerators::Registry.new
-      end
-
-      initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
-      end
-
-      initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
-        app.config.spree.line_item_comparison_hooks = Set.new
       end
 
       # The one eligibility rule core ships: a per-market return window,
@@ -141,100 +123,12 @@ module Spree
         Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
       end
 
-      initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
-      end
-
-      initializer 'spree.register.adjustable_adjusters' do |app|
-      end
-
-      # Seed the order routing registries early so engines and apps can append
-      # their own strategies / rule kinds from initializer files. Core's defaults
-      # are concatenated in after_initialize below.
-      initializer 'spree.register.order_routing', before: :load_config_initializers do |app|
-        app.config.spree.order_routing = OrderRoutingEnvironment.new
-        app.config.spree.order_routing.strategies = []
-        app.config.spree.order_routing.rules = []
-      end
-
-      # Seeded early for the same reason as order routing: initializer files
-      # append custom rule kinds. Core defaults concatenate in after_initialize.
-      initializer 'spree.register.commission_rules', before: :load_config_initializers do |app|
-        app.config.spree.commission_rules = []
-      end
-
-      initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
-        app.config.spree.delivery_method_rules = []
-      end
-
-      # Seeded early like the other kind registries: an initializer file adds
-      # a marketplace's own requirement kinds, core's concatenate after.
-      initializer 'spree.register.seller_requirements', before: :load_config_initializers do |app|
-        app.config.spree.seller_requirements = []
-      end
-
-      initializer 'spree.register.delivery_rate_providers', before: :load_config_initializers do |app|
-        app.config.spree.delivery_rate_providers = []
-      end
-
-      # Same reason again: a tax provider gem, or a host app, registers its
-      # engine from an initializer file. Core's Internal concatenates below.
-      initializer 'spree.register.tax_providers', before: :load_config_initializers do |app|
-        app.config.spree.tax_providers = []
-      end
-
-      # Same reason as the tax providers above: a connector gem registers its
-      # engine from an initializer file, and core's Internal concatenates below.
-      initializer 'spree.register.pricing_providers', before: :load_config_initializers do |app|
-        app.config.spree.pricing_providers = []
-      end
-
-      initializer 'spree.register.inventory_providers', before: :load_config_initializers do |app|
-        app.config.spree.inventory_providers = []
-      end
-
-      # How sellers get paid. A provider gem — the Stripe Connect one, or a
-      # marketplace's own — registers from an initializer file; core's
-      # record-only System concatenates below.
-      initializer 'spree.register.payout_providers', before: :load_config_initializers do |app|
-        app.config.spree.payout_providers = []
-      end
-
-      initializer 'spree.register.digital_asset_providers', before: :load_config_initializers do |app|
-        app.config.spree.digital_asset_providers = []
-      end
-
-      initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
-        app.config.spree.delivery_profile_types = []
-      end
-
-      initializer 'spree.register.custom_fields' do |app|
-        app.config.spree.custom_fields = CustomFieldsEnvironment.new
-        app.config.spree.custom_fields.types = []
-        app.config.spree.custom_fields.enabled_resources = []
-      end
-
       # Seed the reporting vocabulary before app initializers so applications
       # and extensions can register their own metrics/dimensions in
       # config/initializers (see docs/plans/6.0-analytics-semantic-layer.md).
       initializer 'spree.register.reporting', before: :load_config_initializers do |app|
         app.config.spree.reporting = Spree::Reporting::Registry.new
         Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
-      end
-
-      # We need to define promotions rules here so extensions and existing apps
-      # can add their custom classes on their initializer files
-      initializer 'spree.promo.environment' do |app|
-        app.config.spree.promotions = PromoEnvironment.new
-        app.config.spree.promotions.rules = []
-      end
-
-      initializer 'spree.promo.register.promotion.calculators' do |app|
-      end
-
-      # Pricing configuration for price lists and price rules
-      initializer 'spree.pricing.environment', after: 'spree.environment' do |app|
-        app.config.spree.pricing = PricingEnvironment.new
-        app.config.spree.pricing.rules = []
       end
 
       # Country and subdivision names are translated by the countries gem, which
@@ -290,7 +184,6 @@ module Spree
           Spree::Category
           Spree::Collection
         ]
-
 
         # The fallback engine when a market names none (see docs/plans/6.0-tax-provider.md).
         # Assigned only if an initializer file has not already named one — an app
@@ -352,7 +245,6 @@ module Spree
           'poczta_polska' => { name: 'Poczta Polska', url: 'https://emonitoring.poczta-polska.pl/?numer=:tracking' },
           'deutsche_post' => { name: 'Deutsche Post DHL', url: 'https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=:tracking' }
         }
-
 
         # Quoting strategies selectable on a delivery method. Internal prices
         # through the method's calculator; carrier gems append theirs.
@@ -638,9 +530,6 @@ module Spree
         Rails.application.config.spree.seller_authentication_strategies = Spree::Authentication::StrategyRegistry.new(
           email: Spree::Authentication::Strategies::EmailPasswordStrategy
         )
-      end
-
-      initializer 'spree.promo.register.promotions.actions' do |app|
       end
 
       # filter sensitive information during logging

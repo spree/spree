@@ -57,9 +57,7 @@ module Spree
         {
           product_id: product_id,
           collection_id: collection.id,
-          position: position,
-          created_at: Time.current,
-          updated_at: Time.current
+          position: position
         }
       end
     end

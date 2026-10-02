@@ -314,8 +314,6 @@ module Spree
                        .pluck(:variant_id, :currency)
                        .to_set
 
-      now = Time.current
-
       prices_to_insert = variant_ids.flat_map do |variant_id|
         currencies.filter_map do |currency|
           next if existing.include?([variant_id, currency])
@@ -325,9 +323,7 @@ module Spree
             currency: currency,
             amount: nil,
             min_quantity: 1,
-            price_list_id: id,
-            created_at: now,
-            updated_at: now
+            price_list_id: id
           }
         end
       end

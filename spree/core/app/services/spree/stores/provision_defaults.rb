@@ -167,15 +167,12 @@ module Spree
         missing = isos - existing.reload.pluck(:country_code)
         return if missing.empty?
 
-        now = Time.current
         Spree::DeliveryZoneMember.insert_all(
           missing.map do |iso|
             {
               delivery_zone_id: zone.id,
               member_type: 'country',
-              country_code: iso,
-              created_at: now,
-              updated_at: now
+              country_code: iso
             }
           end
         )

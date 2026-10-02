@@ -4,11 +4,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    if Rails::VERSION::STRING >= '7.1.0'
-      has_secure_token on: :save
-    else
-      has_secure_token
-    end
+    has_secure_token on: :save
 
     if defined?(Spree::Security::DigitalLinks)
       include Spree::Security::DigitalLinks

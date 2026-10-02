@@ -1,4 +1,3 @@
-require 'ostruct'
 require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'active_job/railtie'
@@ -120,7 +119,7 @@ module Spree
   end
 
   def self.queues
-    @@queues ||= OpenStruct.new(
+    @@queues ||= ActiveSupport::OrderedOptions.new.update(
       default: :default,
       events: :default,
       exports: :default,
@@ -152,7 +151,7 @@ module Spree
 
       # @deprecated Renamed with the stock level rename in 6.0; removed in 6.1.
       #
-      # The writer matters as much as the reader here: this is an OpenStruct, so
+      # The writer matters as much as the reader here: these are ordered options, so
       # an existing initializer assigning the old name would quietly define a
       # field nobody reads and its jobs would fall back to the default queue.
       queues.define_singleton_method(:stock_location_stock_items) do

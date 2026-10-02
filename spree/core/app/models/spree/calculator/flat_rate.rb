@@ -1,5 +1,3 @@
-require_dependency 'spree/calculator'
-
 module Spree
   class Calculator::FlatRate < Calculator
     preference :amount, :decimal, default: 0

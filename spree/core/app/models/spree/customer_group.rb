@@ -48,7 +48,6 @@ module Spree
       # Get existing user IDs to avoid duplicates
       existing_user_ids = customer_group_users.where(customer_id: user_ids).pluck(:customer_id).map(&:to_s).to_set
 
-      now = Time.current
       user_type = Spree.customer_class.to_s
 
       records_to_insert = user_ids.filter_map do |user_id|
@@ -57,9 +56,7 @@ module Spree
         {
           customer_group_id: id,
           user_id: user_id,
-          user_type: user_type,
-          created_at: now,
-          updated_at: now
+          user_type: user_type
         }
       end
 

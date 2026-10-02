@@ -15,10 +15,6 @@ module Spree
                      scope: ->(rule) { rule.promotion.store.customer_groups }
                    )
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def customer_groups
           return Spree::CustomerGroup.none if preferred_customer_group_ids.blank?
 

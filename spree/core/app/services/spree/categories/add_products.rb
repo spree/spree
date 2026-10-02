@@ -19,9 +19,7 @@ module Spree
             {
               category_id: category_id,
               product_id: product_id,
-              position: (position += 1),
-              created_at: Time.current,
-              updated_at: Time.current
+              position: (position += 1)
             }
           end
         end

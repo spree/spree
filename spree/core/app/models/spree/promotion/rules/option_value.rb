@@ -13,9 +13,6 @@ module Spree
 
         # @param promotable [Object]
         # @return [Boolean]
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
 
         # @return [ActiveRecord::Relation<Spree::OptionValue>]
         def option_values

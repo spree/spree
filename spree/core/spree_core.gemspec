@@ -57,7 +57,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'name_of_person', '~> 1.1'
   s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'oj', '~> 3.16'
-  s.add_dependency 'ostruct'
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'loofah', '~> 2.21'
   s.add_dependency 'rails-html-sanitizer', '~> 1.6'

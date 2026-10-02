@@ -17,8 +17,8 @@ module Spree
       all.select { |rule| rule.applicable?(promotable) }
     end
 
-    def applicable?(_promotable)
-      raise 'applicable? should be implemented in a sub-class of Spree::PromotionRule'
+    def applicable?(promotable)
+      promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
     end
 
     def eligible?(_promotable, _options = {})
