@@ -11,4 +11,8 @@ class Spree::CustomerPreview < ActionMailer::Preview
       Spree::PreviewData.store(locale)
     )
   end
+
+  def data_export_email
+    Spree::CustomerMailer.data_export_email(Spree::DataRequest.access.with_status(:completed).last)
+  end
 end
