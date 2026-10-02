@@ -321,4 +321,138 @@ describe Spree::TaxProvider::Internal, type: :model do
     end
   end
 
+  describe '#estimate_refund' do
+    let(:order) { create(:shipped_order, line_items_count: 1, line_items_price: 25) }
+    let(:line_item) { order.line_items.first }
+    let(:return_record) { create(:return, order: order, store: order.store) }
+    let(:line) { return_record.return_line_items.first }
+
+    def charge(amount, **attributes)
+      create(:tax_line, line_item: line_item, order: order, amount: amount, **attributes)
+    end
+
+    def credits(item = line)
+      item.tax_lines.credits.order(:id)
+    end
+
+    it 'gives back the unit its share of every row the sale charged, row by row' do
+      line_item.update_columns(quantity: 2)
+      state = charge(2.0, rate: 0.04, label: 'NY State')
+      city = charge(2.25, rate: 0.045, label: 'NYC', country_code: 'US', state_code: 'NY')
+
+      provider.estimate_refund(order, [line])
+
+      expect(credits.map(&:amount)).to eq([1.0, 1.13])
+      expect(credits.map(&:original_tax_line)).to eq([state, city])
+      expect(credits.last).to have_attributes(rate: 0.045, label: 'NYC', provider_id: 'internal',
+                                              included: false, country_code: 'US', state_code: 'NY', order: order)
+    end
+
+    # Rounding each unit on its own would credit 2.26 of the city's 2.25.
+    it 'never gives a row back past what earlier credits left of it' do
+      line_item.update_columns(quantity: 2)
+      charge(2.0, rate: 0.04)
+      charge(2.25, rate: 0.045)
+      provider.estimate_refund(order, [line])
+
+      second = create(:return, order: order, store: order.store).return_line_items.first
+      provider.estimate_refund(order, [second])
+
+      expect(credits(second).map(&:amount)).to eq([1.0, 1.12])
+      expect(Spree::TaxLine.credits.sum(:amount)).to eq(4.25)
+    end
+
+    it 'repeats a zero-rated treatment as a zero credit' do
+      charge(0, rate: 0, taxability_reason: 'zero_rated')
+
+      provider.estimate_refund(order, [line])
+
+      expect(credits.sole).to have_attributes(amount: 0, taxability_reason: 'zero_rated')
+    end
+
+    it 'replaces its own rows rather than adding to them' do
+      charge(2.5, rate: 0.1)
+
+      2.times { provider.estimate_refund(order, [line]) }
+
+      expect(credits.sole.amount).to eq(2.5)
+    end
+
+    it 'writes nothing for a line that gives no units back' do
+      charge(2.5, rate: 0.1)
+      provider.estimate_refund(order, [line])
+      return_record.update!(status: 'canceled')
+
+      provider.estimate_refund(order, [line])
+
+      expect(credits).to be_empty
+    end
+
+    # A restocking fee kept: half the money goes back, so half the tax does.
+    it 'gives back only the share of the tax the refunded money carries' do
+      charge(2.5, rate: 0.1)
+
+      provider.estimate_refund(order, [line], amounts: { line => line.credited_worth / 2 })
+
+      expect(credits.sole.amount).to eq(1.25)
+    end
+
+    it 'leaves the sale rows as they were' do
+      sale = charge(2.5, rate: 0.1)
+
+      provider.estimate_refund(order, [line])
+
+      expect(order.tax_lines.reload).to eq([sale])
+      expect(sale.reload.amount).to eq(2.5)
+    end
+  end
+
+  describe '#estimate_replacement' do
+    let(:exchange) { create(:exchange) }
+    let(:order) { exchange.order }
+    let(:line) { exchange.exchange_line_items.first }
+    let!(:rate) do
+      create(:tax_rate, country_code: order.tax_address.country.iso, amount: 0.2,
+                        tax_category: line.new_variant.tax_category, included_in_price: true)
+    end
+
+    it 'taxes the replacement as a sale of its own' do
+      provider.estimate_replacement(order, [line])
+
+      row = line.tax_lines.charges.sole
+      expect(row.amount).to eq((line.taxable_basis / 1.2 * 0.2).round(2))
+      expect(row).to have_attributes(included: true, tax_rate: rate, order: order, credit: false)
+      expect(order.tax_lines.reload).to be_empty
+    end
+
+    it 'leaves the credit for the units coming back alone' do
+      credit = create(:tax_line, order: order, line_item: nil, exchange_line_item: line, credit: true, amount: 1)
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.credits).to eq([credit])
+    end
+
+    it 'writes nothing once the exchange is canceled' do
+      provider.estimate_replacement(order, [line])
+      exchange.update!(status: 'canceled')
+
+      provider.estimate_replacement(order, [line])
+
+      expect(line.tax_lines.reload).to be_empty
+    end
+
+    # The carve-out names the line being replaced, which is the line whose
+    # treatment the replacement takes over.
+    it 'taxes the replacement of a line the buyer carved out of an exemption' do
+      carved_out = Spree::TaxExemption.new(
+        reason_code: 'resale',
+        item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: line.line_item.prefixed_id, exempt: false)]
+      )
+
+      provider.estimate_replacement(order, [line], exemptions: [carved_out])
+
+      expect(line.tax_lines.charges.sole.taxability_reason).to eq('standard_rated')
+    end
+  end
 end

@@ -2666,6 +2666,7 @@
           "discounts_empty": "No discounts on this order yet.",
           "fee_kind_cod": "Cash on delivery",
           "fee_kind_duty": "Duty",
+          "fee_kind_exchange": "Exchange",
           "fee_kind_gift_wrap": "Gift wrap",
           "fee_kind_handling": "Handling",
           "fee_kind_payment": "Payment fee",
@@ -3325,7 +3326,8 @@
             },
             "confirm": {
               "cancel_confirm": "Cancel exchange",
-              "cancel_dismiss": "Keep exchange"
+              "cancel_dismiss": "Keep exchange",
+              "balance_due": "The replacement costs more than what came back. Shipping it adds the difference to the order as a balance due, for you to collect. Nothing is charged automatically."
             },
             "create_title": "New exchange",
             "empty": "No exchanges for this order.",
@@ -3362,6 +3364,7 @@
             "received_of": "{{received}} of {{requested}} received",
             "received_quantity": "Received",
             "refund_amount": "Amount",
+            "refund_includes_tax": "The full amount includes {{tax}} of tax. A smaller amount gives back tax in the same proportion.",
             "refund_method": "Refund to",
             "refund_methods": {
               "original_payment": "Original payment",
@@ -3371,6 +3374,8 @@
             "complete_title": "Complete return",
             "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_total": "Refund total",
+            "refunded": "Refunded",
+            "refunded_of": "{{amount}} of {{total}}",
             "resellable": "Resellable",
             "returning_to": "Returning to {{name}}"
           },

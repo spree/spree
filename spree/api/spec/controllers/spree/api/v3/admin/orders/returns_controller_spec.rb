@@ -28,6 +28,24 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ReturnsController, type: :controll
       expect(json_response['memo']).to eq('Too small')
     end
 
+    it 'offers the tax the customer paid with the price' do
+      line_item = fulfillment_item.line_item
+      create(:tax_line, order: order, line_item: line_item, amount: 1, rate: 0.1, label: 'Sales tax 10%')
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        expand: 'return_line_items,return_line_items.tax_lines',
+        items: [{ fulfillment_item_id: fulfillment_item.prefixed_id, quantity: 1 }]
+      }, as: :json
+
+      line = json_response['return_line_items'].sole
+      expect(json_response['refund_total']).to eq((line_item.price + 1).to_s)
+      expect(json_response['refund_tax_total']).to eq('1.0')
+      expect(line).to include('pre_tax_amount' => line_item.price.to_s, 'additional_tax_total' => '1.0',
+                              'refund_amount' => (line_item.price + 1).to_s)
+      expect(line['tax_lines'].sole).to include('credit' => true, 'amount' => '1.0', 'return_line_item_id' => line['id'])
+    end
+
     it 'rejects returning more than was fulfilled' do
       post :create, params: {
         order_id: order.prefixed_id,

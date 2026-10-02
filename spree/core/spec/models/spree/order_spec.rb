@@ -416,6 +416,42 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#outstanding_balance' do
+    let(:order) { create(:shipped_order) }
+    let(:payment) { order.payments.completed.first }
+
+    def refund(**attributes)
+      create(:refund, payment: payment, amount: 25, **attributes)
+      # What RecalculateTotals persists: payments less their refunds.
+      order.update_columns(payment_total: order.total - 25)
+    end
+
+    # The customer was refunded for goods they sent back, so nothing is owed.
+    it 'owes nothing once a return is refunded' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(order.outstanding_balance).to eq(0)
+    end
+
+    it 'owes what was refunded for nothing in return' do
+      refund
+
+      expect(order.outstanding_balance).to eq(25)
+    end
+
+    it 'refuses a payment charging again for the goods that came back' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(build(:payment, order: order, amount: 25)).not_to be_valid
+    end
+
+    it 'reads the same from refunds a list already loaded' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(Spree::Order.includes(:refunds).find(order.id).outstanding_balance).to eq(0)
+    end
+  end
+
   describe '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)

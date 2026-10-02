@@ -382,7 +382,7 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 ### Other behavioral changes
 
 - **`Return#refunded_total` counts store credits.** Store credit is a separate ledger and never creates a `Spree::Refund` row, so the old sum reported zero for a store-credit refund.
-- **`Order#outstanding_balance` dropped its reimbursement term** rather than replacing it — refunds already net out of `payment_total`, so that term was double-counting.
+- **`Order#outstanding_balance` replaced its reimbursement term** with refunds made for returns, claims and exchanges (`returned_items_refund_total`). Those refunds net out of `payment_total`, and adding them back is what keeps a refunded return from reading as a balance due. A refund made for nothing in return still reads as owed, as in 5.x.
 - **The reimbursement email is now `Spree::ReturnMailer#refunded_email`**, sent on `return.refunded` (in the optional `spree_emails` gem, like the other transactional mail).
 - **`Refund#originator`** points at the new records.
 - Events are `return.requested` / `.approved` / `.received` / `.refunded` / `.canceled`, and the matching `exchange.*` and `claim.*` families.

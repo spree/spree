@@ -138,6 +138,7 @@ export function CreateClaimDialog({
         label: unitLabel(item),
         quantity: item.quantity,
         discountedAmount: item.discounted_amount,
+        additionalTaxTotal: item.additional_tax_total,
       }))}
       currencySymbol={currencySymbol}
       reasonField={<ClaimReasonField value={reasonId} onChange={setReasonId} />}

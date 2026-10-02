@@ -51,6 +51,9 @@ export const FEE_KINDS = ['surcharge', 'handling', 'gift_wrap', 'cod', 'payment'
 
 export type FeeKind = (typeof FEE_KINDS)[number]
 
+/** Kinds Spree writes itself — labelled on the order, never offered when adding a fee. */
+export const SYSTEM_FEE_KINDS = ['exchange'] as const
+
 /**
  * One row of the order edit table. Everything here is a primitive on purpose:
  * embedding an SDK entity would make react-hook-form's `Path<T>` walk the whole

@@ -234,7 +234,10 @@ module Spree
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
-    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    # Sale rows only: the order's totals are re-summed from this association,
+    # and tax given back on a return, claim or exchange is not tax charged.
+    has_many :tax_lines, -> { sale }, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :post_sale_tax_lines, -> { post_sale }, class_name: 'Spree::TaxLine', dependent: :destroy
     # delete, not destroy: the snapshot is readonly once written, and destroy
     # refuses readonly records. It has no dependents of its own.
     has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', as: :owner,
@@ -681,16 +684,29 @@ module Spree
       end
     end
 
-    # Refunds are already netted out of payment_total by
-    # Spree::Carts::RecalculateTotals, so returns and claims need no separate
-    # term here — the legacy reimbursement payout was the only one that sat
-    # outside that sum.
+    # Refunds are netted out of payment_total by Spree::Carts::RecalculateTotals,
+    # which is right for money handed back for nothing. A refund for goods that
+    # came back on a return, claim or exchange also settles what the customer
+    # owed for them, so it is added back here — the job the legacy
+    # reimbursement total did. Without it every refunded return read as a
+    # balance due, and the payment dialog offered to charge it again.
     def outstanding_balance
       if canceled?
         -1 * payment_total
       else
-        total - payment_total
+        total - payment_total - returned_items_refund_total
       end
+    end
+
+    # What refunds for returns, claims and exchanges have given back. Read off
+    # loaded refunds when a list preloaded them, as {#refunds_total} is, since
+    # every order serializer asks for it.
+    #
+    # @return [BigDecimal]
+    def returned_items_refund_total
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+
+      refunds.for_returned_items.sum(:amount)
     end
 
 

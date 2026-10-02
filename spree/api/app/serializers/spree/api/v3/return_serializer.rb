@@ -12,6 +12,8 @@ module Spree
                  reason_id: [:string, nullable: true],
                  refund_total: :string,
                  display_refund_total: :string,
+                 refund_tax_total: :string,
+                 display_refund_tax_total: :string,
                  approved_at: [:string, nullable: true],
                  received_at: [:string, nullable: true],
                  refunded_at: [:string, nullable: true],
@@ -33,6 +35,15 @@ module Spree
 
         attribute :display_refund_total do |return_record|
           return_record.display_refund_total.to_s
+        end
+
+        # The tax inside refund_total.
+        attribute :refund_tax_total do |return_record|
+          return_record.refund_tax_total.to_s
+        end
+
+        attribute :display_refund_tax_total do |return_record|
+          return_record.display_refund_tax_total.to_s
         end
 
         attribute :approved_at do |return_record|

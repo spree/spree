@@ -244,6 +244,9 @@ module Spree
       return amount if owner.nil?
 
       amount_from_order = owner.total - owner.payment_total
+      # A refund for returned goods settled what was owed for them; without
+      # this the order would accept a fresh charge for goods it took back.
+      amount_from_order -= owner.returned_items_refund_total if owner.respond_to?(:returned_items_refund_total)
 
       if payment_method&.store_credit?
         store_credits = owner.available_store_credits

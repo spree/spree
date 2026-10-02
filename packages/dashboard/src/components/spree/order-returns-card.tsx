@@ -18,6 +18,7 @@ import {
   ReturnReceiveDialog,
   ReturnRefundDialog,
   returnOwesNothing,
+  returnRefundSummary,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -196,12 +197,7 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                 )}
               </CardContent>
 
-              <CardFooter className="justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {t('admin.pages.orders.detail.returns.refund_total')}
-                </span>
-                <span className="font-medium">{returnRecord.display_refund_total}</span>
-              </CardFooter>
+              <RefundSummaryFooter returnRecord={returnRecord} />
             </Card>
           ))}
         </CardContent>
@@ -320,6 +316,29 @@ function ReturnLabel({
   )
 }
 
+function RefundSummaryFooter({ returnRecord }: { returnRecord: Return }) {
+  const { t } = useTranslation()
+  const summary = returnRefundSummary(returnRecord)
+
+  return (
+    <CardFooter className="justify-between text-sm">
+      <span className="text-muted-foreground">
+        {summary.kind === 'owed'
+          ? t('admin.pages.orders.detail.returns.refund_total')
+          : t('admin.pages.orders.detail.returns.refunded')}
+      </span>
+      <span className="font-medium">
+        {summary.kind === 'refunded_short'
+          ? t('admin.pages.orders.detail.returns.refunded_of', {
+              amount: summary.amount,
+              total: summary.total,
+            })
+          : summary.amount}
+      </span>
+    </CardFooter>
+  )
+}
+
 function ReturnLineRow({ line, status }: { line: ReturnLineItem; status: string }) {
   const { t } = useTranslation()
   const received = ['received', 'refunded'].includes(status)
@@ -389,6 +408,11 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      refundTaxTotal={
+        Number(returnRecord.refund_tax_total) > 0
+          ? returnRecord.display_refund_tax_total
+          : undefined
+      }
       currencySymbol={currencySymbol}
       onClose={onClose}
       onSubmit={onSubmit}
