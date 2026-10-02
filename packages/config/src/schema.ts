@@ -192,6 +192,7 @@ export const SELLER_ATTRIBUTES = [
 export const REASON_ATTRIBUTES = ['name', 'active'] as const
 export const COMMISSION_RATE_ATTRIBUTES = [
   'code',
+  'position',
   'name',
   'enabled',
   'kind',

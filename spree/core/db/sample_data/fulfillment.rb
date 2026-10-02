@@ -41,10 +41,12 @@ end
 domestic = store.delivery_zones.find_by(name: 'Domestic')
 international = store.delivery_zones.find_by(name: 'International')
 
+# Created by the store defaults. A store whose default warehouse exists
+# without them (one made on demand before the defaults were deployed) is not
+# provisioned yet, so the background loader retries rather than exiting.
 if domestic.nil? || international.nil?
-  # abort, not exit: exit reports success and would silently skip the payment
-  # methods and promotions the loader still has to seed.
-  abort "Couldn't provision the Domestic/International delivery zones for this store."
+  raise Spree::SampleData::StoreNotProvisioned,
+        'This store has no Domestic and International delivery zones. Run `spree config provision`, then load sample data.'
 end
 
 currency = store.default_currency

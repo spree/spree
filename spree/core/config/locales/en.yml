@@ -1443,8 +1443,6 @@ en:
           description: Webhook endpoints and deliveries
           label: Webhooks
     phone: Phone
-    pickup:
-      store_pickup: Store Pickup
     po_document_invalid: A purchase order document must be a PDF, image or Word file of %{size} or less.
     po_document_invalid_signed_id: The purchase order document reference is not valid.
     po_document_missing: This order has no attached purchase order document.
@@ -1958,14 +1956,6 @@ en:
     search: Search
     search_by: 'Search by:'
     security: Security
-    seed:
-      commission_rates:
-        marketplace_default: Marketplace default
-      delivery_profiles:
-        digital: Digital
-      product_types:
-        default: Default
-        digital: Digital
     select: Select
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.

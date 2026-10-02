@@ -7,8 +7,13 @@ import { provisionStore, renderReport, reportHasFailures } from '@spree/config'
 
 const [baseUrl, secretKey] = process.argv.slice(2)
 const client = createAdminClient({ baseUrl, secretKey, retry: false })
-const report = await provisionStore(client)
-await client.apiKeys.revoke((await client.apiKeys.current()).id)
+// Revoked whatever happens: the template is copied into every new worktree.
+let report
+try {
+  report = await provisionStore(client)
+} finally {
+  await client.apiKeys.revoke((await client.apiKeys.current()).id)
+}
 if (reportHasFailures(report)) {
   console.error(renderReport(report))
   process.exit(1)

@@ -9,6 +9,7 @@ import {
   planHasErrors,
   planOperations,
   planToJson,
+  renderConfigYaml,
   renderPlan,
   reportHasFailures,
 } from '../src/node'
@@ -542,6 +543,23 @@ describe('introspect', () => {
         },
       ],
     })
+  })
+})
+
+describe('introspect numbers', () => {
+  it('writes decimals the API reads back as strings as numbers', async () => {
+    const api = new FakeApi()
+    api.seed('/commission_rates', [
+      {
+        code: 'marketplace-default',
+        name: 'Marketplace default',
+        kind: 'percentage',
+        value: '0.0',
+      },
+    ])
+    const config = await introspect(api, { include: ['commission_rates'] })
+    expect(config.commission_rates?.[0]).toMatchObject({ value: 0 })
+    expect(() => parseConfig(renderConfigYaml(config))).not.toThrow()
   })
 })
 

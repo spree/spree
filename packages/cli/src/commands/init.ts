@@ -150,7 +150,7 @@ export async function runFirstRunSetup(flags: {
   s.stop('API keys configured.')
 
   // A scripted install has no setup screen to deploy the store defaults.
-  await deployStoreConfiguration(ctx.projectDir, ctx.port, {
+  const provisioned = await deployStoreConfiguration(ctx.projectDir, ctx.port, {
     provision: Boolean(adminEmail && adminPassword),
   })
 
@@ -160,11 +160,17 @@ export async function runFirstRunSetup(flags: {
 
   // Sample-data imports need an admin as their owner; without credentials
   // the seed minted none, and the setup screen offers the load instead.
-  const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
+  // Sample data builds on the store defaults, so it waits for a store that
+  // got them; `spree sample-data` loads it once `spree config provision` has.
+  const sampleDataLoaded = sampleData && provisioned
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
     s.stop('Sample data loaded.')
+  } else if (sampleData && adminEmail && adminPassword) {
+    p.log.warn(
+      'Sample data skipped: the store defaults are missing. Run `spree config provision`, then `spree sample-data`.',
+    )
   } else if (sampleData) {
     p.log.info(
       'Sample data: tick "Load sample data" on the setup screen, or run `spree sample-data` any time later.',
@@ -385,13 +391,14 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
  * defaults and then the project's `spree.config.yml` — the store's declared
  * shape, committed with the project — against the freshly seeded server. The
  * project's own key is read-only by design, so a write key is minted for
- * this run and revoked as soon as the deploy is over.
+ * this run and revoked as soon as the deploy is over. Answers whether the
+ * store defaults were all written, which sample data needs.
  */
 async function deployStoreConfiguration(
   projectDir: string,
   port: number,
   { provision }: { provision: boolean },
-): Promise<void> {
+): Promise<boolean> {
   const file = path.join(projectDir, DEFAULT_CONFIG_FILE)
   // Without a scripted admin the store is claimed on the setup screen, which
   // deploys the defaults the project file may refer to; deploying it before
@@ -402,7 +409,7 @@ async function deployStoreConfiguration(
         `${DEFAULT_CONFIG_FILE} is deployed after first-run setup: run \`spree config deploy\` once the store is set up.`,
       )
     }
-    return
+    return false
   }
   let config: ReturnType<typeof loadConfig>['config'] | null = null
   if (fs.existsSync(file)) {
@@ -435,13 +442,16 @@ async function deployStoreConfiguration(
     })
   } catch (error) {
     skipDeploy(error)
-    return
+    return false
   }
 
   const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
+  let provisioned = false
   try {
+    const defaults = await provisionStore(client)
+    provisioned = !reportHasFailures(defaults)
     const results = [
-      ...(await provisionStore(client)).results,
+      ...defaults.results,
       ...(config ? (await deployConfig(config, client)).results : []),
     ]
     const report = { results }
@@ -469,6 +479,7 @@ async function deployStoreConfiguration(
       )
     }
   }
+  return provisioned
 }
 
 /**

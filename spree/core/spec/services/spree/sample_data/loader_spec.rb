@@ -69,11 +69,9 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
   end
 
   describe 'product types' do
-    # The seeds add Default and Digital; the sample data adds one type per family.
+    # The store defaults add Default and Digital; the sample data adds one type per family.
     let(:sample_product_types) do
-      Spree::ProductType.where.not(name: [
-        I18n.t('spree.seed.product_types.default'), I18n.t('spree.seed.product_types.digital')
-      ])
+      Spree::ProductType.where.not(name: %w[Default Digital])
     end
 
     it 'creates one type per product family rather than a single catch-all' do
