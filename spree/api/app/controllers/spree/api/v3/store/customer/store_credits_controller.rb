@@ -12,10 +12,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :store_credits
-            end
-
             def scope
               super.for_store(current_store).where(currency: current_currency)
             end
@@ -27,7 +23,6 @@ module Spree
             def serializer_class
               Spree.api.store_credit_serializer
             end
-
           end
         end
       end

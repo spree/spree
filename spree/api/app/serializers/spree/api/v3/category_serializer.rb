@@ -13,17 +13,13 @@ module Spree
                    :meta_title, :meta_description, :meta_keywords,
                    :children_count
 
-        attribute :parent_id do |category|
-          category.parent&.prefixed_id
-        end
+        prefixed_id_attributes :parent
 
         attribute :description do |category|
           Spree::RichTextHelper.to_plain_text(category.description)
         end
 
-        attribute :description_html do |category|
-          category.description_html
-        end
+        attributes :description_html
 
         attribute :image_url do |category|
           image_url_for(category.image)
@@ -33,17 +29,11 @@ module Spree
           image_url_for(category.square_image)
         end
 
-        attribute :is_root do |category|
-          category.root?
-        end
+        attribute :is_root, &:root?
 
-        attribute :is_child do |category|
-          category.child?
-        end
+        attribute :is_child, &:child?
 
-        attribute :is_leaf do |category|
-          category.leaf?
-        end
+        attribute :is_leaf, &:leaf?
 
         # Conditional associations
         # Note: We pass empty expand to nested categories to prevent infinite recursion

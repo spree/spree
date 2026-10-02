@@ -16,9 +16,7 @@ module Spree
 
           # What the panel filters the picker by, so a zone is only offered
           # under the profile it belongs to.
-          attribute :delivery_profile_id do |record|
-            record.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile
         end
       end
     end

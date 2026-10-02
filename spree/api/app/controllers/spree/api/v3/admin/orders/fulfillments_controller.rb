@@ -43,11 +43,7 @@ module Spree
                   metadata: create_params[:metadata]&.to_h
                 )
 
-                if result.success?
-                  render json: serialize_resource(result.value), status: :created
-                else
-                  render_result_error(result)
-                end
+                render_result(result, status: :created)
               end
             end
 
@@ -63,11 +59,7 @@ module Spree
                   notify_customer: notify_customer?(mark_delivered_params[:notify_customer])
                 )
 
-                if result.success?
-                  render json: serialize_resource(result.value)
-                else
-                  render_result_error(result)
-                end
+                render_result(result)
               end
             end
 

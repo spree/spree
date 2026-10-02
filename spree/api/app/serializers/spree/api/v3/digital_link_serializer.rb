@@ -16,17 +16,11 @@ module Spree
           digital_link.expires_at&.iso8601
         end
 
-        attribute :authorizable do |digital_link|
-          digital_link.authorizable?
-        end
+        attribute :authorizable, &:authorizable?
 
-        attribute :expired do |digital_link|
-          digital_link.expired?
-        end
+        attribute :expired, &:expired?
 
-        attribute :access_limit_exceeded do |digital_link|
-          digital_link.access_limit_exceeded?
-        end
+        attribute :access_limit_exceeded, &:access_limit_exceeded?
       end
     end
   end

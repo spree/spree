@@ -6,13 +6,9 @@ module Spree
 
         attributes :name, :token
 
-        attribute :is_default do |wishlist|
-          wishlist.is_default?
-        end
+        attribute :is_default, &:is_default?
 
-        attribute :is_private do |wishlist|
-          wishlist.is_private?
-        end
+        attribute :is_private, &:is_private?
 
         many :wishlist_items,
              key: :items,

@@ -1,7 +1,7 @@
 module Spree
   module Claims
     class Cancel < Spree::Workflow
-      include Spree::Refunds::TaxCredit
+      include Spree::PostSale::Cancellation
 
       hooks :validate, :after_cancel
 
@@ -9,36 +9,13 @@ module Spree
       # @param reason [String, nil]
       def perform(claim:, reason: nil)
         super
-
-        step :ensure_cancellable
-        run_hooks :validate
-
-        ApplicationRecord.transaction do
-          step :mark_canceled
-          step :clear_tax
-        end
-
-        run_hooks :after_cancel
-        claim.publish_event('claim.canceled')
-        success(claim.reload)
+        cancel
       end
 
       private
 
-      def ensure_cancellable
-        return if claim.open? || claim.approved?
-
-        failure(claim, :not_cancellable)
-      end
-
-      def mark_canceled
-        memo = [claim.memo, reason].compact_blank.join("\n")
-        claim.update!(status: 'canceled', canceled_at: Time.current, memo: memo.presence)
-      end
-
-      def clear_tax
-        clear_tax_credit(claim)
-      end
+      def post_sale_record = claim
+      def cancellable_statuses = %w[open approved]
     end
   end
 end

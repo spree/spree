@@ -45,11 +45,7 @@ module Spree
                 **fulfill_workflow_options
               )
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
           end
 
@@ -60,11 +56,7 @@ module Spree
             with_order_lock do
               result = Spree.fulfillment_cancel_workflow.call(fulfillment: @resource)
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
           end
 

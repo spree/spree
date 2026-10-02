@@ -18,9 +18,7 @@ module Spree
 
           attributes :id, :kind, :name, :description, :required, :position, :status, :action_url, :blocker
 
-          attribute :blocking do |status|
-            status.blocking?
-          end
+          attribute :blocking, &:blocking?
 
           attribute :accepts_submissions do |status|
             status.requirement.class.accepts_submissions?
@@ -36,15 +34,11 @@ module Spree
 
           # The document this line asks for, so the panel can offer to create
           # exactly that policy. Null for every other kind.
-          attribute :required_policy_name do |status|
-            status.required_policy_name
-          end
+          attributes :required_policy_name
 
           # The marketplace terms this line asks the seller to accept. Null
           # for every other kind, and null while nothing has been written.
-          attribute :terms_html do |status|
-            status.terms_html
-          end
+          attributes :terms_html
 
           one :submission,
               resource: proc { Spree.api.seller_requirement_submission_serializer },

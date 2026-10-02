@@ -17,9 +17,7 @@ module Spree
             rule.class.api_type
           end
 
-          attribute :price_list_id do |rule|
-            rule.price_list&.prefixed_id
-          end
+          prefixed_id_attributes :price_list
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema

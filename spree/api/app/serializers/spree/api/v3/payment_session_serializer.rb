@@ -16,19 +16,13 @@ module Spree
           session.amount&.to_s
         end
 
-        attribute :payment_method_id do |session|
-          session.payment_method&.prefixed_id
-        end
+        prefixed_id_attributes :payment_method
 
         # Bridge: reports the owner (cart during checkout, order after
         # completion) until clients migrate to cart_id/order_id.
-        attribute :order_id do |session|
-          session.owner&.prefixed_id
-        end
+        prefixed_id_attributes order_id: :owner
 
-        attribute :cart_id do |session|
-          session.cart&.prefixed_id
-        end
+        prefixed_id_attributes :cart
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }
         one :payment, resource: proc { Spree.api.payment_serializer },

@@ -25,7 +25,6 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::HasListPosition
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :channel, class_name: 'Spree::Channel'
 
     attribute :active, :boolean, default: true

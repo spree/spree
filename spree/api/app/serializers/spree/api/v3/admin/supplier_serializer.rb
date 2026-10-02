@@ -29,9 +29,7 @@ module Spree
 
           # Lets the dashboard hide the delete control rather than offer one
           # the model will refuse.
-          attribute :can_be_deleted do |supplier|
-            supplier.can_be_deleted?
-          end
+          attribute :can_be_deleted, &:can_be_deleted?
         end
       end
     end

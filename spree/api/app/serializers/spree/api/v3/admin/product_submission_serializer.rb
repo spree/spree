@@ -14,13 +14,7 @@ module Spree
 
           attributes :metadata, updated_at: :iso8601
 
-          attribute :submitted_by_id do |submission|
-            submission.submitted_by&.prefixed_id
-          end
-
-          attribute :reviewed_by_id do |submission|
-            submission.reviewed_by&.prefixed_id
-          end
+          prefixed_id_attributes :submitted_by, :reviewed_by
 
           # An operator reading the trail wants a name, not an id to resolve.
           attribute :reviewed_by_name do |submission|
@@ -29,9 +23,7 @@ module Spree
 
           # Distinguishes "the store approves listings automatically" from a
           # decision whose author we failed to record.
-          attribute :auto_approved do |submission|
-            submission.auto_approved?
-          end
+          attribute :auto_approved, &:auto_approved?
         end
       end
     end

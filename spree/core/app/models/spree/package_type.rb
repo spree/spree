@@ -18,7 +18,6 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Metadata
 
-    belongs_to :store, class_name: 'Spree::Store'
 
     # Whose packaging this is. Nil is the marketplace's own row — the shared
     # vocabulary every seller may pack into — and a seller's rows are theirs

@@ -26,7 +26,6 @@ module Spree
     # stays closed — an unrecognised value would silently do nothing.
     RESOLUTIONS = %w[refund replacement refund_and_replacement].freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :claims
     belongs_to :reason, class_name: 'Spree::ClaimReason', optional: true, inverse_of: :claims
     acted_by :created_by

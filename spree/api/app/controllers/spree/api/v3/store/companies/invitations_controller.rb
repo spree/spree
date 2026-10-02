@@ -38,10 +38,6 @@ module Spree
             def scope
               action_name == 'index' ? @parent.invitations.pending : @parent.invitations
             end
-
-            def parent_association
-              :invitations
-            end
           end
         end
       end

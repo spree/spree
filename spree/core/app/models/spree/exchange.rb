@@ -24,7 +24,6 @@ module Spree
     has_status :requested, :approved, :received, :fulfilled, :canceled,
                default: :requested
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :exchanges
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
     belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :exchanges

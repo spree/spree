@@ -14,10 +14,7 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           # The tax inside the amount, when what was refunded carried tax.
-          attribute :tax_amount do |refund|
-            refund.tax_amount.to_s
-          end
-
+          attributes tax_amount: :string
           # Who issued it — an admin user, or the API key an integration
           # refunded through.
           actor_attributes :refunder

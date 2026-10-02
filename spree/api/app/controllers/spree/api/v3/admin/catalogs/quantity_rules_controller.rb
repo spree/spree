@@ -52,10 +52,6 @@ module Spree
               @catalog.quantity_rules
             end
 
-            def parent_association
-              :quantity_rules
-            end
-
             private
 
             # Products resolve through this store, so an id belonging to

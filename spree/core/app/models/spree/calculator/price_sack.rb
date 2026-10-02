@@ -1,5 +1,3 @@
-require_dependency 'spree/calculator'
-
 module Spree
   class Calculator::PriceSack < Calculator
     preference :minimal_amount, :decimal, default: 0

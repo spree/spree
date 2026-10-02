@@ -191,12 +191,6 @@ module Spree
       Spree.import_retry_failed_rows_workflow.call(import: self).success?
     end
 
-    # Returns true if the import is in mapping state
-    # @return [Boolean]
-    def mapping?
-      status == 'mapping'
-    end
-
     # Returns true if the import is processing or completed mapping
     # @return [Boolean]
     def processing?

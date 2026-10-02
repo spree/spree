@@ -1,5 +1,3 @@
-require_dependency 'spree/payment/processing'
-
 module Spree
   class Payment < Spree.base_class
     has_prefix_id :py  # Stripe: py_

@@ -18,22 +18,9 @@ module Spree
 
         attributes :number, :status
 
-        attribute :order_id do |exchange|
-          exchange.order&.prefixed_id
-        end
+        prefixed_id_attributes :order, :reason
 
-        attribute :reason_id do |exchange|
-          exchange.reason&.prefixed_id
-        end
-
-        attribute :price_difference do |exchange|
-          exchange.price_difference.to_s
-        end
-
-        attribute :display_price_difference do |exchange|
-          exchange.display_price_difference.to_s
-        end
-
+        attributes price_difference: :string, display_price_difference: :string
         attribute :approved_at do |exchange|
           exchange.approved_at&.iso8601
         end

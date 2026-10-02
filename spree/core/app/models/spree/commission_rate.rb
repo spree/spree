@@ -43,7 +43,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     # Every amount this rate states, one row per currency: what a flat fee
     # charges, and the floor and cap a percentage charges within. A flat rate
     # with no amount for the sale's currency does not apply to it (see

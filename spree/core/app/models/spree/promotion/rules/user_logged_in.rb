@@ -8,10 +8,6 @@ module Spree
           'customer_logged_in'
         end
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible?(order, _options = {})
           unless order.customer.present?
             eligibility_errors.add(:base, eligibility_error_message(:no_user_specified))

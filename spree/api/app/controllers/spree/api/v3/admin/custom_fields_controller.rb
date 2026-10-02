@@ -43,10 +43,6 @@ module Spree
             Spree.api.admin_custom_field_serializer
           end
 
-          def parent_association
-            :custom_fields
-          end
-
           def set_parent
             # Routes always mount this controller under a recognized parent, so
             # `parent_lookup` matches in normal flows. The explicit raise is a

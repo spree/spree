@@ -1,5 +1,3 @@
-require_dependency 'spree/data_feed'
-
 module Spree
   class DataFeed::Google < DataFeed
     class << self

@@ -44,9 +44,7 @@ module Spree
           # Empty on a shop-price or hand-negotiated line. Names ride along
           # beside the ids so a page of lines does not cost a request each to
           # label, as `company_name` already does.
-          attribute :price_list_id do |line_item|
-            line_item.price_list&.prefixed_id
-          end
+          prefixed_id_attributes :price_list
 
           attribute :price_list_name do |line_item|
             line_item.price_list&.name
@@ -64,9 +62,7 @@ module Spree
             line_item.cost_price&.to_s
           end
 
-          attribute :tax_category_id do |line_item|
-            line_item.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category
 
           # Override inherited associations to use admin serializers
           many :option_values, resource: proc { Spree.api.admin_option_value_serializer }

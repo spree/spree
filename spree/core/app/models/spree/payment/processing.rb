@@ -1,5 +1,3 @@
-require_dependency 'spree/payment/gateway_options'
-
 module Spree
   class Payment < Spree.base_class
     # Gateway mechanics shared by the payments workflows and the payment

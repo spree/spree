@@ -56,22 +56,14 @@ module Spree
 
               result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
 
             # PATCH /api/v3/admin/orders/:order_id/payments/:id/void
             def void
               result = Spree.payment_void_workflow.call(payment: @resource)
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
 
             protected
@@ -82,10 +74,6 @@ module Spree
 
             def serializer_class
               Spree.api.admin_payment_serializer
-            end
-
-            def parent_association
-              :payments
             end
 
             def permitted_params

@@ -23,13 +23,7 @@ module Spree
           # it — whose it is. A null `seller_id` means the operator's own.
           # The name rides along so the list can show who without a second
           # request per row.
-          attribute :store_id do |export|
-            export.store&.prefixed_id
-          end
-
-          attribute :seller_id do |export|
-            export.seller&.prefixed_id
-          end
+          prefixed_id_attributes :store, :seller
 
           attribute :seller_name do |export|
             export.seller&.name

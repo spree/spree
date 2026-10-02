@@ -49,10 +49,6 @@ module Spree
           @eligible_product_ids ||= product_promotion_rules.pluck(:product_id)
         end
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible?(order, _options = {})
           return true if eligible_product_ids.empty?
 
