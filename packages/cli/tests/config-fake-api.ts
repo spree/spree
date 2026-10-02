@@ -47,6 +47,12 @@ export class FakeApi implements ConfigClient {
       return this.publish(options.body, true) as T
     if (method === 'POST' && path === '/products/bulk_remove_from_channels')
       return this.publish(options.body, false) as T
+    const reposition = path.match(/^\/categories\/([^/]+)\/reposition$/)
+    if (method === 'PATCH' && reposition) {
+      const record = this.find('/categories', reposition[1])
+      record.parent_id = (options.body as { new_parent_id?: string }).new_parent_id ?? null
+      return record as T
+    }
     const action = path.match(/^(\/[a-z_]+)\/([^/]+)\/(approve|suspend)$/)
     if (method === 'PATCH' && action) {
       const record = this.find(action[1], action[2])
@@ -143,6 +149,7 @@ export class FakeApi implements ConfigClient {
     params: NonNullable<RequestOptions['params']>,
   ): { data: Record_[]; meta: { pages: number; next: number | null } } {
     let records = this.all(path)
+    if (params['q[seller_id_null]']) records = records.filter((record) => !record.seller_id)
     for (const [key, value] of Object.entries(params)) {
       const match = key.match(/^q\[(\w+)_in\]\[\]$/)
       if (!match) continue

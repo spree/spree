@@ -82,6 +82,20 @@ describe('substituteEnv', () => {
     expect(result).toEqual({ customers: [{ email: 'a@example.com', password: 'secret' }] })
   })
 
+  it('keeps an escaped placeholder as literal text', () => {
+    expect(substituteEnv({ note: `$$${'{PRICE}'} off` }, {})).toEqual({ note: `$${'{PRICE}'} off` })
+  })
+
+  it('types a number or a flag that is a whole placeholder where the schema wants one', () => {
+    const { config } = parseConfig(
+      `version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: $${'{SKU}'}\n    stock:\n      Warehouse: $${'{STOCK}'}\nchannels:\n  - code: online\n    name: Online\n    active: $${'{ACTIVE}'}\n`,
+      { SKU: '007', STOCK: '5', ACTIVE: 'false' },
+    )
+    // The SKU stays text: only values the schema types are converted.
+    expect(config.products?.[0]).toMatchObject({ sku: '007', stock: { Warehouse: 5 } })
+    expect(config.channels?.[0].active).toBe(false)
+  })
+
   it('names the missing variable and where it was used', () => {
     expect(() => substituteEnv({ customers: [{ password: `$${'{MISSING}'}` }] }, {})).toThrow(
       /MISSING is not set/,
