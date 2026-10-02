@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import {
+  type ApplyReport,
   type ApplyResult,
   applyPlan,
   assertPrunable,
@@ -9,11 +10,13 @@ import {
   introspect,
   loadConfig,
   missingScopes,
+  type PlannedRun,
   planConfig,
   planHasChanges,
   planHasDeletes,
   planHasErrors,
   planToJson,
+  provisionStore,
   renderConfigYaml,
   renderPlan,
   renderReport,
@@ -152,7 +155,14 @@ async function deploy(
   flags: DeployFlags,
   label: string,
   load: (client: AdminClient) => Promise<SpreeConfig>,
-  { createOnly = false }: { createOnly?: boolean } = {},
+  {
+    createOnly = false,
+    apply = (plan) => applyPlan(plan),
+  }: {
+    createOnly?: boolean
+    /** How the confirmed plan is applied; the plan itself by default. */
+    apply?: (plan: PlannedRun, client: AdminClient) => Promise<ApplyReport>
+  } = {},
 ): Promise<void> {
   const prune = parsePrune(flags.prune)
   const json = flags.format === 'json'
@@ -210,7 +220,7 @@ async function deploy(
       }
     }
 
-    const report = await applyPlan(plan)
+    const report = await apply(plan, client)
     finish({ applied: true, results: report.results }, reportHasFailures(report) ? 1 : 0)
   } catch (error) {
     handleApiError(error, { baseUrl })
@@ -303,19 +313,13 @@ export function registerConfigCommand(program: Command): void {
       new Option('--format <format>', 'output format').choices(['text', 'json']).default('text'),
     )
     .option('-y, --yes', 'apply without asking (implied by a non-interactive run)')
-    .option(
-      '--no-country',
-      'leave out the country-shaped defaults (warehouse, delivery zones, pickup, parcel box)',
-    )
-    .action(async (flags: DeployFlags & { country: boolean }) => {
+    .action(async (flags: DeployFlags) => {
       // Defaults the merchant has since changed are left alone: only what is
-      // missing is created.
-      await deploy(
-        flags,
-        'the store defaults',
-        (client) => storeDefaults(client, { country: flags.country }),
-        { createOnly: true },
-      )
+      // missing is created, through the same ordered deploy setup uses.
+      await deploy(flags, 'the store defaults', (client) => storeDefaults(client), {
+        createOnly: true,
+        apply: (_plan, client) => provisionStore(client),
+      })
     })
 
   withCredentialFlags(
