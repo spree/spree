@@ -1011,6 +1011,23 @@ describe Spree::Address, type: :model do
 
         expect(address.reload.state_code).to eq('MD')
       end
+
+      it 'lets a later state_name win over an unsaved code from a failed update' do
+        expect(address.update(state_code: 'CA', firstname: '')).to be(false)
+
+        address.update!(firstname: 'Ada', state_name: 'Maryland', postal_code: '21201')
+
+        expect(address.reload.state_code).to eq('MD')
+      end
+
+      it 'keeps a code resolved from state_name when validated before saving' do
+        address.assign_attributes(country_code: 'HU', state_name: 'Békés', postal_code: '5600')
+
+        expect(address).to be_valid
+        address.save!
+
+        expect(address.reload.state_code).to eq('BE')
+      end
     end
   end
 
