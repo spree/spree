@@ -148,4 +148,37 @@ describe('provisionStore', () => {
     const creates = api.calls.filter((call) => call.method === 'POST').map((call) => call.path)
     expect(creates.at(-1)).toBe('/stock_locations')
   })
+
+  it('still creates the warehouse, last, when another default fails', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    const original = api.request
+    api.request = async (method, path, options) => {
+      if (method === 'POST' && path === '/allowed_origins') throw new Error('refused')
+      return original(method, path, options)
+    }
+
+    const report = await provisionStore(api)
+
+    expect(report.results.filter((result) => result.status === 'failed')).toHaveLength(1)
+    const creates = api.calls.filter((call) => call.method === 'POST').map((call) => call.path)
+    expect(creates.at(-1)).toBe('/stock_locations')
+  })
+
+  // Matching is by name, so a renamed default would otherwise come back as a
+  // second one and take the default flag.
+  it('leaves out a default the store already has another of', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    api.seed('/tax_categories', [{ name: 'Standard rate', is_default: true }])
+    api.seed('/package_types', [{ name: 'Our box', kind: 'box', default: true }])
+
+    await provisionStore(api)
+
+    expect(api.all('/tax_categories').map((category) => category.name)).toEqual([
+      'Standard rate',
+      'Non-taxable',
+    ])
+    expect(api.all('/package_types').map((box) => box.name)).toEqual(['Our box'])
+  })
 })
