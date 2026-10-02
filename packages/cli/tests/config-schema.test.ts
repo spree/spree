@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { toJsonSchema } from '../src/config/index'
+import { CHANNEL_PREFERENCES, STORE_PREFERENCES } from '../src/config/schema'
 
 const PACKAGE_COPY = resolve(import.meta.dirname, '../schemas/spree-config.json')
 const DOCS_COPY = resolve(import.meta.dirname, '../../../docs/schemas/spree-config/1.json')
@@ -15,5 +16,30 @@ describe('published JSON Schema', () => {
     ['the docs copy', DOCS_COPY],
   ])('%s matches the schema the engine validates with', (_label, file) => {
     expect(JSON.parse(readFileSync(file, 'utf-8'))).toEqual(toJsonSchema())
+  })
+})
+
+const ADMIN_CONTROLLERS = resolve(
+  import.meta.dirname,
+  '../../../spree/api/app/controllers/spree/api/v3/admin',
+)
+
+/** The `preferred_*` names a controller permits, deprecated ones excluded. */
+function permittedPreferences(controller: string): string[] {
+  const source = readFileSync(resolve(ADMIN_CONTROLLERS, controller), 'utf-8')
+  const deprecated = new Set(['auto_capture'])
+  return [...source.matchAll(/:preferred_(\w+)/g)]
+    .map((match) => match[1])
+    .filter((name) => !deprecated.has(name))
+}
+
+// A preference the controller does not permit is dropped without an error,
+// so the file's list must be exactly the controller's.
+describe('preference keys', () => {
+  it.each([
+    ['store', 'store_controller.rb', STORE_PREFERENCES],
+    ['channels', 'channels_controller.rb', CHANNEL_PREFERENCES],
+  ])('%s accepts exactly what the Admin API permits', (_section, controller, keys) => {
+    expect([...keys].sort()).toEqual(permittedPreferences(controller).sort())
   })
 })

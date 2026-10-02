@@ -10,10 +10,77 @@ import { z } from 'zod'
 const nonEmpty = z.string().min(1)
 const isoCountry = z.string().regex(/^[A-Z]{2}$/, 'an ISO 3166-1 alpha-2 country code such as US')
 const isoCurrency = z.string().regex(/^[A-Z]{3}$/, 'an ISO 4217 currency code such as USD')
+// The API saves slugs and permalinks in a normalized form (lower case,
+// hyphenated). A key written any other way would never match its own record,
+// so the next deploy would try to create it again; the file must hold the
+// saved form.
+const slug = z
+  .string()
+  .regex(
+    /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/,
+    'lowercase letters and digits joined by single hyphens, e.g. `classic-tee`, the form the API saves',
+  )
+const permalink = z
+  .string()
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/,
+    'lowercase segments joined by hyphens and slashes, e.g. `clothing/t-shirts`, the form the API saves',
+  )
 const scalar = z.union([z.string(), z.number(), z.boolean(), z.null()])
-const preferences = z
-  .record(z.string(), scalar)
-  .describe('Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`.')
+
+// The preferences each endpoint permits. Rails drops any other key without a
+// word, so an unlisted key would read as a change on every deploy; the file
+// refuses it instead. Kept in step with the controllers by config-schema.test.
+export const STORE_PREFERENCES = [
+  'admin_locale',
+  'timezone',
+  'weight_unit',
+  'unit_system',
+  'storefront_access',
+  'storefront_url',
+  'guest_checkout',
+  'always_include_confirm_step',
+  'company_field_enabled',
+  'address_requires_company',
+  'address_requires_phone',
+  'capture_method',
+  'auto_capture_on_dispatch',
+  'track_inventory_levels',
+  'stock_reservations_enabled',
+  'low_stock_threshold',
+  'tax_using_ship_address',
+  'track_price_history',
+  'show_products_without_price',
+  'disable_sku_validation',
+  'order_routing_strategy',
+  'pricing_provider',
+  'inventory_provider',
+  'pricing_provider_failure_policy',
+  'inventory_provider_failure_policy',
+  'payout_provider',
+  'default_payouts_schedule_interval',
+  'default_minimum_payout_amount',
+  'auto_approve_sellers',
+  'auto_approve_seller_products',
+  'send_seller_transactional_emails',
+  'default_commission_tax_rate',
+  'document_number_format',
+  'order_number_prefix',
+  'order_number_suffix',
+  'order_number_sequence_start',
+  'send_consumer_transactional_emails',
+] as const
+
+export const CHANNEL_PREFERENCES = [
+  'order_routing_strategy',
+  'storefront_access',
+  'guest_checkout',
+] as const
+
+const preferencesOf = (keys: readonly [string, ...string[]]) =>
+  z
+    .partialRecord(z.enum(keys), scalar)
+    .describe('Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`.')
 const money = z.number().nonnegative()
 const moneyByCurrency = z
   .record(isoCurrency, money)
@@ -28,7 +95,7 @@ export const storeSchema = z
     mail_from_address: z.string().optional(),
     customer_support_email: z.string().optional(),
     new_order_notifications_email: z.string().nullable().optional(),
-    preferences: preferences.optional(),
+    preferences: preferencesOf(STORE_PREFERENCES).optional(),
   })
   .strict()
   .describe(
@@ -42,7 +109,7 @@ export const channelSchema = z
     active: z.boolean().optional(),
     default: z.boolean().optional(),
     stock_locations: z.array(nonEmpty).optional().describe('Stock location names.'),
-    preferences: preferences.optional(),
+    preferences: preferencesOf(CHANNEL_PREFERENCES).optional(),
   })
   .strict()
 
@@ -155,7 +222,7 @@ export const supplierSchema = z
 
 export const categorySchema = z
   .object({
-    permalink: nonEmpty.describe(
+    permalink: permalink.describe(
       'Full path, e.g. `clothing/t-shirts`; the parent is the path without its last segment.',
     ),
     name: nonEmpty,
@@ -189,7 +256,7 @@ export const variantSchema = z
 
 export const productSchema = z
   .object({
-    slug: nonEmpty,
+    slug,
     name: nonEmpty,
     status: z.enum(['draft', 'active', 'archived']).optional(),
     description: z.string().nullable().optional(),
@@ -210,14 +277,28 @@ export const productSchema = z
       .describe('Option variants; the whole set, since variants absent here are removed.'),
   })
   .strict()
-  .refine((product) => !(product.variants && (product.sku || product.prices || product.stock)), {
-    message:
-      'a product declares either `variants` or the simple-product `sku`/`prices`/`stock`, not both',
-  })
+  .refine(
+    (product) =>
+      !(
+        product.variants &&
+        (product.sku || product.prices || product.compare_at_prices || product.stock)
+      ),
+    {
+      message:
+        'a product declares either `variants` or the simple-product `sku`/`prices`/`stock`, not both',
+    },
+  )
+  // The variant is matched on its SKU; without one there is nothing to match,
+  // and an invented SKU would rename the live one.
+  .refine(
+    (product) => product.sku || !(product.prices || product.compare_at_prices || product.stock),
+    { message: 'a simple product that sets prices or stock needs its `sku`', path: ['sku'] },
+  )
 
 export const customerSchema = z
   .object({
-    email: z.string().email(),
+    // Accounts match on email case-insensitively, as sign-in does.
+    email: z.string().trim().toLowerCase().email(),
     first_name: z.string().nullable().optional(),
     last_name: z.string().nullable().optional(),
     phone: z.string().nullable().optional(),
@@ -230,7 +311,7 @@ export const customerSchema = z
 
 export const sellerSchema = z
   .object({
-    slug: nonEmpty,
+    slug,
     name: nonEmpty,
     status: z
       .enum(['approved', 'suspended'])

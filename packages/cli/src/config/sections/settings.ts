@@ -21,6 +21,7 @@ import {
   FIRST_PARTY,
   keysOf,
   type Payload,
+  partialIdList,
   pick,
   preferencesFromLive,
   preferencesPayload,
@@ -50,6 +51,7 @@ export const store: Section<StoreEntry, Store> = {
   name: 'store',
   scope: 'write_settings',
   singleton: true,
+  pruneRefusal: 'the store row is never deleted',
   introspectByDefault: true,
   path: '/store',
   keyAttribute: 'id',
@@ -85,6 +87,9 @@ export const store: Section<StoreEntry, Store> = {
 
 const CHANNEL_ATTRIBUTES: (keyof ChannelEntry)[] = ['code', 'name', 'active', 'default']
 
+// A channel may also sell from sellers' warehouses, which the file cannot name.
+const channelStockLocations = partialIdList('stock_locations', 'stock_location_ids')
+
 export const channels: Section<ChannelEntry, Channel> = {
   name: 'channels',
   scope: 'write_settings',
@@ -103,6 +108,12 @@ export const channels: Section<ChannelEntry, Channel> = {
       stock_location_ids: await refs(ctx, 'stock_locations', entry.stock_locations, path),
       ...preferencesPayload(entry.preferences),
     }
+  },
+  current: (live, ctx, desired) => channelStockLocations.current(live, ctx, desired),
+  async update(live, payload, _entry, ctx) {
+    return ctx.client.request<Channel>('PATCH', `/channels/${live.id}`, {
+      body: await channelStockLocations.write(live, payload, ctx),
+    })
   },
   async toFile(live, ctx) {
     const entry = present(live as unknown as ChannelEntry, CHANNEL_ATTRIBUTES)
@@ -142,16 +153,33 @@ export const markets: Section<MarketEntry, Market> = {
       country_codes: entry.countries,
     }
   },
-  async toFile(live) {
+  // The API counts the default locale as supported whether or not it was
+  // listed, so the file need not repeat it.
+  async current(live, _ctx, desired) {
+    const wanted = desired.supported_locales as string[] | undefined
+    if (!wanted) return live
+    const implied = desired.default_locale ?? live.default_locale
     return {
-      ...present(live as unknown as MarketEntry, [
-        'name',
-        'currency',
-        'default_locale',
-        'supported_locales',
-        'default',
-        'tax_inclusive',
-      ]),
+      ...live,
+      supported_locales: (live.supported_locales ?? []).filter(
+        (locale) => locale !== implied || wanted.includes(locale),
+      ),
+    }
+  },
+  async toFile(live) {
+    const entry = present(live as unknown as MarketEntry, [
+      'name',
+      'currency',
+      'default_locale',
+      'default',
+      'tax_inclusive',
+    ])
+    const supported = (live.supported_locales ?? []).filter(
+      (locale) => locale !== live.default_locale,
+    )
+    return {
+      ...entry,
+      ...(supported.length ? { supported_locales: supported } : {}),
       countries: (live.country_codes as string[]) ?? [],
     } as MarketEntry
   },
@@ -222,7 +250,9 @@ const STOCK_LOCATION_ATTRIBUTES: (keyof StockLocationEntry)[] = [
 
 export const stockLocations: Section<StockLocationEntry, StockLocation> = {
   name: 'stock_locations',
-  scope: 'write_stock',
+  // Stock locations are store-wide administration: writes need the settings scope.
+  scope: 'write_settings',
+  readScope: 'read_stock',
   introspectByDefault: true,
   path: '/stock_locations',
   keyAttribute: 'name',

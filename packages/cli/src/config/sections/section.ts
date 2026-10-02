@@ -6,11 +6,6 @@ import type { AttributeChange, LiveRecord, SectionName } from '../types.js'
 export type Payload = Record<string, unknown>
 
 /**
- * How one section of the file maps onto one Admin API resource: which
- * records it lists, how a file entry becomes a request body, how a live
- * record reads back as an entry, and any writes beyond the resource itself.
- */
-/**
  * How one section of the file maps onto one Admin API resource.
  *
  * `Entry` is the file's own shape (inferred from the section's Zod schema)
@@ -19,22 +14,30 @@ export type Payload = Record<string, unknown>
  * compile error rather than a silent `undefined`.
  */
 export interface Section<Entry = unknown, Live extends LiveRecord = LiveRecord>
-  extends Omit<SectionSource, 'fileKeys'> {
+  extends Omit<SectionSource, 'fileKeys' | 'readScope'> {
   name: SectionName
   /** The write scope a secret key needs to deploy this section. */
   scope: string
+  /** The scope listing it needs, when it is not the write scope's `read_` twin. */
+  readScope?: string
   /** The store section: one record, update only. */
   singleton?: boolean
   /** Entries write one at a time, in order (parents before children). */
   sequential?: boolean
+  /** Why `--prune` may never name this section, when it may not. */
+  pruneRefusal?: string
   /** Listed by `introspect` when no `--include` is given. */
   introspectByDefault: boolean
   entries(config: SpreeConfig): Entry[]
   entryKey(entry: Entry): string
   /** Request body for the entry, references resolved to ids or pending refs. */
   desired(entry: Entry, ctx: RunContext, path: string): Promise<Payload>
-  /** The live record in the same attribute vocabulary as `desired`, for comparison; the record itself when not given. */
-  current?(live: Live, ctx: RunContext, desired?: Payload): Promise<Payload>
+  /**
+   * The live record in the same attribute vocabulary as `desired`, for
+   * comparison; the record itself when not given. Throws a ConfigError when
+   * the entry cannot be applied to this record.
+   */
+  current?(live: Live, ctx: RunContext, desired: Payload, entry: Entry): Promise<Payload>
   /** Natural keys of other sections this section's entries refer to, so they load in one request per section. */
   references?(config: SpreeConfig): Partial<Record<string, string[]>>
   create?(payload: Payload, entry: Entry, ctx: RunContext): Promise<Live>
@@ -95,6 +98,44 @@ export async function keysOf(ctx: RunContext, section: string, ids: unknown): Pr
     (Array.isArray(ids) ? (ids as string[]) : []).map((id) => ctx.keyOf(section, id)),
   )
   return keys.filter((key): key is string => key !== null)
+}
+
+/**
+ * Splits a live id list into the ids the file can name and those it cannot
+ * (a seller's warehouse, outside the first-party listing). The file manages
+ * only the first; the second is carried through every write untouched.
+ */
+export async function partitionIds(
+  ctx: RunContext,
+  section: string,
+  ids: unknown,
+): Promise<{ named: string[]; unnamed: string[] }> {
+  const named: string[] = []
+  const unnamed: string[] = []
+  for (const id of Array.isArray(ids) ? (ids as string[]) : []) {
+    if ((await ctx.keyOf(section, id)) === null) unnamed.push(id)
+    else named.push(id)
+  }
+  return { named, unnamed }
+}
+
+/**
+ * Compares and writes a reference list the file manages only partly: the
+ * comparison sees the ids the file can name, and the write keeps the rest.
+ */
+export function partialIdList(section: string, attribute: string) {
+  return {
+    async current(live: LiveRecord, ctx: RunContext, desired: Payload): Promise<Payload> {
+      if (desired[attribute] === undefined) return live
+      const { named } = await partitionIds(ctx, section, live[attribute])
+      return { ...live, [attribute]: named }
+    },
+    async write(live: LiveRecord, payload: Payload, ctx: RunContext): Promise<Payload> {
+      if (!Array.isArray(payload[attribute])) return payload
+      const { unnamed } = await partitionIds(ctx, section, live[attribute])
+      return { ...payload, [attribute]: [...(payload[attribute] as string[]), ...unnamed] }
+    },
+  }
 }
 
 /** Copies the attributes the file may set, dropping undefined ones. */

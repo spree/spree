@@ -46,6 +46,7 @@ export const SECTIONS = Object.fromEntries(
 const REFERENCE_SOURCES: Record<string, SectionSource> = {
   product_types: {
     path: '/product_types',
+    readScope: 'read_product_types',
     keyAttribute: 'name',
     filterable: true,
   },
@@ -56,7 +57,11 @@ export const SOURCES: Record<string, SectionSource> = {
   ...Object.fromEntries(
     ORDERED_SECTIONS.map((section) => [
       section.name,
-      { ...section, fileKeys: (config) => section.entries(config).map(section.entryKey) },
+      {
+        ...section,
+        readScope: section.readScope ?? section.scope.replace(/^write_/, 'read_'),
+        fileKeys: (config) => section.entries(config).map(section.entryKey),
+      },
     ]),
   ),
 }

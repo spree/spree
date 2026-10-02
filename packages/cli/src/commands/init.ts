@@ -399,15 +399,28 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
   }
 
   const s = p.spinner()
+  // Setup still stands without the deploy; the file can be applied by hand.
+  const skipDeploy = (error: unknown) => {
+    s.stop(pc.yellow(`Could not deploy ${DEFAULT_CONFIG_FILE}.`))
+    p.log.warn(
+      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config deploy\` once the app is up.`,
+    )
+  }
   s.start(`Deploying ${DEFAULT_CONFIG_FILE}...`)
   // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
   // run: the fixed name supersedes the leftover key.
-  const token = await mintApiKey(projectDir, {
-    name: 'spree init (config deploy)',
-    keyType: 'secret',
-    scopes: ['write_all'],
-    replace: true,
-  })
+  let token: string
+  try {
+    token = await mintApiKey(projectDir, {
+      name: 'spree init (config deploy)',
+      keyType: 'secret',
+      scopes: ['write_all'],
+      replace: true,
+    })
+  } catch (error) {
+    skipDeploy(error)
+    return
+  }
 
   const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
   try {
@@ -424,11 +437,7 @@ async function deployProjectConfig(projectDir: string, port: number): Promise<vo
       )
     }
   } catch (error) {
-    // Setup still stands without the deploy; the file can be applied by hand.
-    s.stop(pc.yellow(`Could not deploy ${DEFAULT_CONFIG_FILE}.`))
-    p.log.warn(
-      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config deploy\` once the app is up.`,
-    )
+    skipDeploy(error)
   } finally {
     // The key exists for this deploy only; revoking it through the API needs
     // no rake round-trip and works whether or not the deploy succeeded.
