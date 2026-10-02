@@ -85,7 +85,7 @@ Three rules govern the file:
 
 - **Only sections present in the file are managed.** A file with just `delivery_zones` and `delivery_methods` touches nothing else. Inside a section, live records absent from the file are left alone unless the section is pruned (see below).
 - **References use natural keys.** A delivery method names its zone, a product names its categories and channels, a variant names the warehouse its stock sits in. A reference to something that exists neither in the file nor on the store is reported, with its line, before anything is written.
-- **Secrets come from the environment.** `${VAR}` anywhere in the file is replaced with the variable's value at deploy time, so a committed file carries no passwords. A missing variable stops the run.
+- **Secrets come from the environment.** `${VAR}` anywhere in the file is replaced with the variable's value at deploy time, so a committed file carries no passwords. A missing variable stops the run. Write `$${VAR}` for a literal `${VAR}`. A value that is nothing but a placeholder, such as `stock: ${OPENING_STOCK}`, is read as a number or `true`/`false` wherever the file expects one.
 
 The header line points editors at the published JSON Schema, so VS Code and every editor with a YAML language server autocomplete keys and flag mistakes inline. The same schema is what the CLI validates with, and it is also shipped inside the package at `@spree/cli/schemas/spree-config.json`.
 
@@ -95,19 +95,25 @@ The header line points editors at the published JSON Schema, so VS Code and ever
 |---|---|---|
 | `store` | the one store | update only: name, contact addresses and `preferences` |
 | `stock_locations` | `name` | |
-| `channels` | `code` | `stock_locations` by name, `preferences` without the `preferred_` prefix |
-| `markets` | `name` | `currency`, `countries`, `default_locale`; this is where currency and country live |
+| `channels` | `code` | `stock_locations` by name, `preferences` without the `preferred_` prefix (`order_routing_strategy`, `storefront_access`, `guest_checkout`) |
+| `markets` | `name` | `currency`, `countries`, `default_locale`, `supported_locales`; this is where currency and country live. The default locale always counts as supported, so the list need not repeat it |
 | `customer_groups` | `name` | |
 | `tax_categories` | `name` | `default: true` marks the store default |
-| `delivery_zones` | `name` | `countries` and `states` members |
+| `delivery_zones` | `name` | `countries` and `states` members; postal-code members added in the dashboard are kept as they are |
 | `delivery_methods` | `name` | `delivery_zone` by name, `calculator` with `type` and `preferences`, `pickup_locations` by stock location name; unique per store and owner |
 | `suppliers` | `name` | |
-| `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing` |
-| `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants` |
-| `customers` | `email` | `customer_groups` by name; `password` is set on create only |
+| `categories` | `permalink` | the full path, so `clothing/t-shirts` nests under `clothing`; `description` is HTML |
+| `products` | `slug` | `categories` by permalink, `channels` by code; a simple product carries `sku`, `prices` and `stock` itself, a product with options lists `variants`; `description` is HTML |
+| `customers` | `email` | `customer_groups` by name; `password` is set on create only. Emails are compared ignoring case |
 | `sellers` | `slug` | `status: approved` or `suspended` once onboarding has started |
 
-Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy.
+Slugs and permalinks are written the way the store saves them: lowercase letters and digits joined by hyphens (`classic-tee`, `clothing/t-shirts`). The file refuses any other spelling, because the store would rewrite it and the next deploy would no longer find the record.
+
+Prices are keyed by currency and stock by stock location name. A product's `variants` list is the whole set: a variant missing from it is removed on deploy. A simple product that sets `prices` or `stock` needs its `sku`, and the simple form is refused for a product whose variants have options, since it would replace them all.
+
+**Stock is opening stock.** The file's quantities are written when a variant is created. After that, counts change with every sale and delivery, so a deploy never compares or overwrites them. Manage ongoing stock levels in the dashboard or through the [Admin API](/developer/cli/admin-api).
+
+**The file manages only what it can name.** A marketplace channel or pickup method may use sellers' warehouses, which the file does not list. A deploy keeps those links, so capturing a store with `introspect` and deploying it back never removes them.
 
 ## Diff and deploy
 
@@ -123,9 +129,11 @@ spree config deploy --fail-on-delete            # refuse any plan that contains 
 
 Deletes are opt-in per section through `--prune`. Without it a deploy only creates and updates, and `diff` reports live records absent from the file as not managed, so a stale record is visible without being at risk. `--fail-on-delete` is the CI guard: a plan that would delete anything stops the run before touching the store.
 
+Three sections can never be pruned: `store`, `customers` (customer accounts belong to the whole installation, not to one store) and `sellers` (a seller carries orders and payouts; remove one from the dashboard).
+
 ## Credentials
 
-Credentials resolve exactly as for [`spree api`](/developer/cli/admin-api): flags, then `SPREE_API_KEY` and `SPREE_BASE_URL`, then the project's own key, then a saved profile. A deploy needs write scopes for every section in the file (`write_settings`, `write_products`, `write_customers`, …). The key's scopes are checked first and the missing ones are named, with the command that mints a key that has them, before anything is written. Inside a project the auto-minted key is read-only by design, so `spree init` mints a short-lived write key for its own deploy and revokes it afterwards; for day-to-day deploys create one:
+Credentials resolve exactly as for [`spree api`](/developer/cli/admin-api): flags, then `SPREE_API_KEY` and `SPREE_BASE_URL`, then the project's own key, then a saved profile. A deploy needs the write scope of every section in the file (`write_settings`, `write_products`, `write_customers`, …) and the read scope of every section its references point at, such as `read_stock` for the warehouses a product's stock names. The key's scopes are checked first and the missing ones are named, with the command that mints a key that has them, before anything is written. Inside a project the auto-minted key is read-only by design, so `spree init` mints a short-lived write key for its own deploy and revokes it afterwards; for day-to-day deploys create one:
 
 ```bash
 spree api-key create --name "Config deploy" --type secret --scopes write_all
@@ -154,7 +162,7 @@ spree config deploy
 
 ## Introspect
 
-`spree config introspect` reads the live store and writes it out in the file format: ids, timestamps and computed values stripped, references written as natural keys, the `$schema` header on top. By default it reads every section but products and customers, since a large catalog belongs in the [CSV import and export](/developer/customization/imports) pipeline rather than a hand-edited file; `--include products` adds it.
+`spree config introspect` reads the live store and writes it out in the file format: ids, timestamps and computed values stripped, references written as natural keys, descriptions as their HTML, the `$schema` header on top. A variant with no SKU is written without one, and the file then asks for a SKU before it can be deployed. By default it reads every section but products and customers, since a large catalog belongs in the [CSV import and export](/developer/customization/imports) pipeline rather than a hand-edited file; `--include products` adds it.
 
 ```bash
 spree config introspect --out spree.config.yml

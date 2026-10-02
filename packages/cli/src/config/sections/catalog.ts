@@ -1,5 +1,6 @@
 import type { Category as SdkCategory, Product as SdkProduct } from '@spree/admin-sdk'
 import type { RunContext } from '../context.js'
+import { ConfigError } from '../errors.js'
 import type { CategoryEntry, ProductEntry, VariantEntry } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import { FIRST_PARTY, type Payload, pick, present, refs, type Section } from './section.js'
@@ -16,31 +17,49 @@ function parentPermalink(permalink: string): string | null {
   return index === -1 ? null : permalink.slice(0, index)
 }
 
+const ENTITIES: Record<string, string> = {
+  nbsp: ' ',
+  amp: '&',
+  quot: '"',
+  apos: "'",
+  lsquo: '\u2018',
+  rsquo: '\u2019',
+  ldquo: '\u201C',
+  rdquo: '\u201D',
+  ndash: '\u2013',
+  mdash: '\u2014',
+  hellip: '\u2026',
+}
+
 /**
- * What the Admin API reports for a rich-text field: its plain-text rendering,
- * tags dropped and whitespace collapsed. Comparing the file's own value the
- * same way keeps a description with markup, or a YAML block scalar, from
- * diffing against itself on every run.
+ * Rich text in a form two equal descriptions share: the API stores sanitized
+ * markup (entities escaped, the file's line breaks kept), so the file's value
+ * and `description_html` are compared with whitespace collapsed and entities
+ * decoded. `&lt;` and `&gt;` stay encoded, so literal text never equals a tag.
  */
-export function plainText(value: unknown): string | null {
+export function canonicalMarkup(value: unknown): string | null {
   if (typeof value !== 'string') return (value as string | null) ?? null
-  const entities: Record<string, string> = {
-    '&nbsp;': ' ',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&amp;': '&',
-  }
-  return (
-    value
-      .replace(/<[^>]*>/g, ' ')
-      // One pass over the entities, so an escaped entity (`&amp;lt;`) decodes to
-      // the text `&lt;` rather than being unescaped twice into `<`.
-      .replace(/&(?:nbsp|lt|gt|quot|amp|#39);/g, (entity) => entities[entity] ?? entity)
-      .replace(/\s+/g, ' ')
-      .trim()
-  )
+  return value
+    .replace(/>\s+</g, '><')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, name: string) => {
+      if (name[0] === '#') {
+        const code =
+          name[1].toLowerCase() === 'x'
+            ? Number.parseInt(name.slice(2), 16)
+            : Number.parseInt(name.slice(1), 10)
+        return code === 60 || code === 62 ? entity : String.fromCodePoint(code)
+      }
+      return ENTITIES[name.toLowerCase()] ?? entity
+    })
+}
+
+/** The live markup in canonical form, when the desired payload sets a description. */
+function descriptionPair(desired: Payload, live: LiveRecord) {
+  return desired.description === undefined
+    ? {}
+    : { description: canonicalMarkup(live.description_html ?? null) }
 }
 
 const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [
@@ -69,14 +88,14 @@ export const categories: Section<CategoryEntry, Category> = {
     const parent = parentPermalink(entry.permalink)
     return {
       ...pick(entry, CATEGORY_ATTRIBUTES),
-      ...(entry.description !== undefined ? { description: plainText(entry.description) } : {}),
+      ...(entry.description !== undefined
+        ? { description: canonicalMarkup(entry.description) }
+        : {}),
       parent_id: parent ? await ctx.ref('categories', parent, path) : null,
     }
   },
-  async current(live, _ctx, desired = {}) {
-    return desired.description !== undefined
-      ? { ...live, description: plainText(live.description) }
-      : live
+  async current(live, _ctx, desired) {
+    return { ...live, ...descriptionPair(desired, live) }
   },
   async create(payload, entry, ctx) {
     return ctx.client.request<Category>('POST', '/categories', {
@@ -87,15 +106,27 @@ export const categories: Section<CategoryEntry, Category> = {
     })
   },
   async update(live, payload, entry, ctx) {
+    const { parent_id: parentId, ...body } = payload
+    // The update ignores a blank parent, so moving a category to the top
+    // level goes through the reposition action.
+    if (parentId === null && live.parent_id) {
+      await ctx.client.request('PATCH', `/categories/${live.id}/reposition`, {
+        body: { new_position: 0 },
+      })
+    }
     return ctx.client.request<Category>('PATCH', `/categories/${live.id}`, {
       body: {
-        ...payload,
+        ...body,
+        ...(parentId ? { parent_id: parentId } : {}),
         ...(entry.description !== undefined ? { description: entry.description } : {}),
       },
     })
   },
   async toFile(live) {
-    return present(live as unknown as CategoryEntry, CATEGORY_ATTRIBUTES) as CategoryEntry
+    return present(
+      { ...live, description: live.description_html } as unknown as CategoryEntry,
+      CATEGORY_ATTRIBUTES,
+    ) as CategoryEntry
   },
 }
 
@@ -166,10 +197,10 @@ interface LivePublication {
 /** The variants a product entry declares: its list, or the one simple-product variant. */
 function entryVariants(entry: ProductEntry): VariantEntry[] {
   if (entry.variants) return entry.variants
-  if (!entry.sku && !entry.prices && !entry.compare_at_prices && !entry.stock) return []
+  if (!entry.sku) return []
   return [
     {
-      sku: entry.sku ?? entry.slug.toUpperCase(),
+      sku: entry.sku,
       ...(entry.prices ? { prices: entry.prices } : {}),
       ...(entry.compare_at_prices ? { compare_at_prices: entry.compare_at_prices } : {}),
       ...(entry.stock ? { stock: entry.stock } : {}),
@@ -235,10 +266,10 @@ function liveOptions(live: LiveVariant, desired: Payload | undefined): OptionPai
 }
 
 /**
- * A live variant in the payload vocabulary. Prices and stock levels come
- * back whole, not trimmed to what the file names: the product write replaces
- * both sets, so a currency or warehouse the file omits is about to be
- * removed and has to appear in the diff rather than vanish silently.
+ * A live variant in the payload vocabulary. Prices come back whole, not
+ * trimmed to what the file names: the product write replaces the set, so a
+ * currency the file omits is about to be removed and has to appear in the
+ * diff rather than vanish silently.
  */
 function liveVariantPayload(live: LiveVariant, desired: Payload | undefined): Payload {
   const payload: Payload = { ...pick(live as unknown as VariantEntry, VARIANT_ATTRIBUTES) }
@@ -306,7 +337,7 @@ export const products: Section<ProductEntry, Product> = {
   },
   async desired(entry, ctx, path) {
     const payload: Payload = pick(entry, PRODUCT_ATTRIBUTES)
-    if (entry.description !== undefined) payload.description = plainText(entry.description)
+    if (entry.description !== undefined) payload.description = canonicalMarkup(entry.description)
     if (entry.product_type)
       payload.product_type_id = await ctx.ref('product_types', entry.product_type, path)
     if (entry.tax_category)
@@ -324,15 +355,26 @@ export const products: Section<ProductEntry, Product> = {
     }
     return payload
   },
-  async current(live, ctx, desired = {}) {
+  async current(live, ctx, desired, entry) {
     const desiredVariants = (desired.variants as Payload[] | undefined) ?? []
     const liveVariants = (live.variants as LiveVariant[] | undefined) ?? []
+    // The product write replaces the whole variant set, so the one variant of
+    // the simple-product form would delete every option variant.
+    if (entry.sku && !entry.variants) {
+      const optioned = liveVariants.filter((variant) => variant.option_values?.length)
+      if (liveVariants.length > 1 || optioned.length) {
+        throw new ConfigError(
+          `the live product has ${liveVariants.length} variant${liveVariants.length === 1 ? '' : 's'} with options; declare them under \`variants\`, since the simple-product \`sku\` would replace them all`,
+          entry.slug,
+        )
+      }
+    }
     const channels = (
       await Promise.all(publishedChannelIds(live).map((id) => ctx.keyOf('channels', id)))
     ).filter((code): code is string => code !== null)
     return {
       ...live,
-      ...(desired.description !== undefined ? { description: plainText(live.description) } : {}),
+      ...descriptionPair(desired, live),
       category_ids: ((live.categories as LiveRecord[] | undefined) ?? []).map(
         (category) => category.id,
       ),
@@ -340,15 +382,20 @@ export const products: Section<ProductEntry, Product> = {
       variants: sortVariants(
         liveVariants.map((variant) => {
           const wanted = desiredVariants.find((candidate) => candidate.sku === variant.sku)
-          return sortStockLevels(liveVariantPayload(variant, wanted))
+          const payload = liveVariantPayload(variant, wanted)
+          // Stock is opening stock: once a variant exists its counts move with
+          // sales and receipts, so the file's figure is never compared again.
+          if (wanted) payload.stock_levels = wanted.stock_levels
+          else delete payload.stock_levels
+          return sortStockLevels(payload)
         }),
       ),
     }
   },
   async create(payload, entry, ctx) {
     const { channels: _channels, ...body } = payload
-    // The comparison used the plain-text rendering; the write sends the
-    // markup the file holds.
+    // The comparison used the canonical form; the write sends the markup the
+    // file holds.
     if (entry.description !== undefined) body.description = entry.description
     return ctx.client.request<Product>('POST', '/products', {
       params: { expand: PRODUCT_EXPAND.join(',') },
@@ -364,7 +411,9 @@ export const products: Section<ProductEntry, Product> = {
     if (Array.isArray(body.variants)) {
       body.variants = (body.variants as Payload[]).map((variant) => {
         const match = liveVariants.find((candidate) => candidate.sku === variant.sku)
-        return match ? { id: match.id, ...variant } : variant
+        if (!match) return variant
+        const { stock_levels: _opening, ...rest } = variant
+        return { id: match.id, ...rest }
       })
     }
     return ctx.client.request<Product>('PATCH', `/products/${live.id}`, {
@@ -396,8 +445,10 @@ export const products: Section<ProductEntry, Product> = {
     }
   },
   async toFile(live, ctx) {
+    // The markup, not the plain-text `description`: a file captured from the
+    // plain rendering would flatten the formatting on its next deploy.
     const entry: ProductEntry = present(
-      live as unknown as ProductEntry,
+      { ...live, description: live.description_html } as unknown as ProductEntry,
       PRODUCT_ATTRIBUTES,
     ) as ProductEntry
     if (live.product_type_id) {
@@ -425,7 +476,7 @@ export const products: Section<ProductEntry, Product> = {
     const simple = variants.length === 1 && !variants[0].options
     if (simple) {
       const [only] = variants
-      entry.sku = only.sku
+      if (only.sku) entry.sku = only.sku
       if (only.prices) entry.prices = only.prices
       if (only.compare_at_prices) entry.compare_at_prices = only.compare_at_prices
       if (only.stock) entry.stock = only.stock
@@ -443,7 +494,8 @@ async function variantToFile(live: LiveVariant, ctx: RunContext): Promise<Varian
   for (const dimension of ['weight', 'height', 'width', 'depth'] as const) {
     if (entry[dimension] === 0) delete entry[dimension]
   }
-  if (!entry.sku) entry.sku = String(live.id)
+  // A variant without a SKU is written without one: the file then fails
+  // validation until someone gives it a real SKU, rather than adopting an id.
   const options = Object.fromEntries(
     (live.option_values ?? []).map((value) => [value.option_type_name, value.label ?? value.name]),
   )

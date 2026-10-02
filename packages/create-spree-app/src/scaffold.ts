@@ -18,6 +18,7 @@ import { envContent } from './templates/env.js'
 import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
+import { spreeConfigContent } from './templates/spree-config.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
 import {
   dlxCommand,
@@ -105,6 +106,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
+  fs.writeFileSync(path.join(projectDir, 'spree.config.yml'), spreeConfigContent())
 
   s.stop('Project structure created.')
 
