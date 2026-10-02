@@ -71,17 +71,25 @@ module Spree
       ].freeze
 
       included do
-        after_create :create_built_in_reports
+        after_create :insert_built_in_reports
       end
 
-      # Adds the preset reports to a store that has none — a new store, or one
-      # upgraded from before saved reports existed. A store that already has
-      # any is left alone, so a built-in the merchant deleted stays deleted.
+      # Adds the preset reports to a store that has none — one upgraded from
+      # before saved reports existed. A store that already has any is left
+      # alone, so a built-in the merchant deleted stays deleted.
       #
-      # @return [void]
+      # @return [Boolean] whether the reports were added
       def create_built_in_reports
-        return if saved_reports.seeded.exists?
+        return false if saved_reports.seeded.exists?
 
+        insert_built_in_reports
+        true
+      end
+
+      private
+
+      # Inserted in one statement: every query is fixed above.
+      def insert_built_in_reports
         now = Time.current
         Spree::SavedReport.insert_all(
           REPORTS.map do |report|

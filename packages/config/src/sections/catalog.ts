@@ -17,6 +17,7 @@ import {
 import type { LiveRecord } from '../types.js'
 import {
   FIRST_PARTY,
+  keysOf,
   type Payload,
   pick,
   plainSection,
@@ -401,9 +402,7 @@ export const products: Section<ProductEntry, Product> = {
         )
       }
     }
-    const channels = (
-      await Promise.all(publishedChannelIds(live).map((id) => ctx.keyOf('channels', id)))
-    ).filter((code): code is string => code !== null)
+    const channels = await keysOf(ctx, 'channels', publishedChannelIds(live))
     return {
       ...live,
       ...descriptionPair(desired, live),
@@ -495,9 +494,7 @@ export const products: Section<ProductEntry, Product> = {
       String(category.permalink),
     )
     if (categories.length) entry.categories = categories
-    const channels = (
-      await Promise.all(publishedChannelIds(live).map((id) => ctx.keyOf('channels', id)))
-    ).filter((code): code is string => code !== null)
+    const channels = await keysOf(ctx, 'channels', publishedChannelIds(live))
     if (channels.length) entry.channels = channels
 
     const variants = await Promise.all(

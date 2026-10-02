@@ -43,11 +43,7 @@ export const deliveryProfiles = plainSection<DeliveryProfileEntry, DeliveryProfi
   key: 'name',
   attributes: DELIVERY_PROFILE_ATTRIBUTES,
   defaults: { default: false, kind: 'shipping' },
-  // The kind is fixed once the profile exists; the API ignores it on update.
-  async update(live, payload, _entry, ctx) {
-    const { kind: _kind, ...body } = payload
-    return ctx.client.request<DeliveryProfile>('PATCH', `/delivery_profiles/${live.id}`, { body })
-  },
+  fixedOnCreate: ['kind'],
   async current(live, _ctx, desired) {
     return desired.kind === undefined ? live : { ...live, kind: desired.kind }
   },
