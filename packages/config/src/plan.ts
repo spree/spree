@@ -49,6 +49,12 @@ async function planSingleton(
   const [entry] = section.entries(ctx.config)
   const live = await ctx.client.request<LiveRecord>('GET', section.path)
   const path = section.name
+  // The store always exists, so a create-only run has nothing to do with it.
+  if (createOnly) {
+    return [
+      operation(section, { kind: 'unchanged', key: section.name, path, changes: [], entry, live }),
+    ]
+  }
   const payload = await section.desired(entry, ctx, path)
   const changes = diffAttributes(
     payload,
@@ -56,10 +62,10 @@ async function planSingleton(
   )
   return [
     operation(section, {
-      kind: changes.length && !createOnly ? 'update' : 'unchanged',
+      kind: changes.length ? 'update' : 'unchanged',
       key: section.name,
       path,
-      changes: createOnly ? [] : changes,
+      changes,
       entry,
       live,
       payload,
@@ -96,9 +102,11 @@ async function planCollection(
 
   // Every key the entries refer to, one request per target section, so the
   // reference lookups below hit the cache instead of the network.
-  for (const [target, referenced] of Object.entries(section.references?.(ctx.config) ?? {})) {
-    if (referenced?.length) await ctx.load(target, [...new Set(referenced)])
-  }
+  await Promise.all(
+    Object.entries(section.references?.(ctx.config) ?? {})
+      .filter(([, referenced]) => referenced?.length)
+      .map(([target, referenced]) => ctx.load(target, [...new Set(referenced)])),
+  )
   const live = await ctx.load(section.name, keys)
   // Records the file does not declare are found from a key-only listing,
   // so pruning a catalog never expands every product it is about to keep.
@@ -121,6 +129,14 @@ async function planCollection(
       continue
     }
     const match = matches[0]
+    // A create-only run leaves every existing record alone, so it has
+    // nothing to compare them with.
+    if (match && createOnly) {
+      operations.push(
+        operation(section, { kind: 'unchanged', key, path, changes: [], entry, live: match }),
+      )
+      continue
+    }
     let payload: Record<string, unknown>
     let changes: ReturnType<typeof diffAttributes> = []
     try {
@@ -144,10 +160,10 @@ async function planCollection(
     }
     operations.push(
       operation(section, {
-        kind: changes.length && !createOnly ? 'update' : 'unchanged',
+        kind: changes.length ? 'update' : 'unchanged',
         key,
         path,
-        changes: createOnly ? [] : changes,
+        changes,
         entry,
         live: match,
         payload,

@@ -14,10 +14,8 @@ module Spree
             fresh_database = Spree::Store.none?
 
             Stores.call
-            Spree::Store.find_each do |store|
-              Roles.call(store: store)
-              ApiKeys.call(store: store)
-            end
+            Roles.call
+            ApiKeys.call
             AdminUser.call
 
             # A database created by today's schema has no historical data to
