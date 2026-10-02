@@ -89,6 +89,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
             example: %w[de en]
           },
           tax_inclusive: { type: :boolean, default: false, description: 'Display prices with tax included.' },
+          tax_provider: { type: :string, nullable: true, description: 'Tax provider class from `GET /tax_providers`. Blank uses the default.' },
           default: { type: :boolean, default: false, description: 'Setting to true demotes the previous default.' },
           position: { type: :integer, description: 'Sort order within the store; lower = first.' },
           country_codes: {
@@ -201,6 +202,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           default_locale: { type: :string },
           supported_locales: { type: :array, items: { type: :string } },
           tax_inclusive: { type: :boolean },
+          tax_provider: { type: :string, nullable: true, description: 'Tax provider class from `GET /tax_providers`. Blank uses the default.' },
           default: { type: :boolean },
           position: { type: :integer },
           country_codes: { type: :array, items: { type: :string } }

@@ -62,6 +62,11 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
           phone: { type: :string },
           accepts_email_marketing: { type: :boolean },
           internal_note: { type: :string },
+          password: { type: :string, format: :password, writeOnly: true },
+          password_confirmation: { type: :string, format: :password, writeOnly: true },
+          selected_locale: { type: :string, nullable: true, example: 'en' },
+          avatar: { type: :string, nullable: true, description: 'Signed blob id of an uploaded image.' },
+          customer_group_ids: { type: :array, items: { type: :string }, description: 'Replaces the customer group memberships.' },
           tags: { type: :array, items: { type: :string } },
           metadata: { type: :object }
         }
@@ -133,6 +138,11 @@ RSpec.describe 'Admin Customers API', type: :request, swagger_doc: 'api-referenc
           phone: { type: :string },
           accepts_email_marketing: { type: :boolean },
           internal_note: { type: :string },
+          password: { type: :string, format: :password, writeOnly: true },
+          password_confirmation: { type: :string, format: :password, writeOnly: true },
+          selected_locale: { type: :string, nullable: true, example: 'en' },
+          avatar: { type: :string, nullable: true, description: 'Signed blob id of an uploaded image.' },
+          customer_group_ids: { type: :array, items: { type: :string }, description: 'Replaces the customer group memberships.' },
           tags: { type: :array, items: { type: :string } },
           metadata: { type: :object }
         }

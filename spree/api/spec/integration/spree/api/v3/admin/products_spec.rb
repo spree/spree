@@ -2,6 +2,175 @@
 
 require 'swagger_helper'
 
+# Create and update accept the same attributes, so they document one shape.
+PRODUCT_PRICE_SCHEMA = {
+  type: :object,
+  required: %w[currency amount],
+  properties: {
+    currency: { type: :string, example: 'USD' },
+    amount: { type: :string, example: '29.99' },
+    compare_at_amount: { type: :string, nullable: true, example: '39.99' }
+  }
+}.freeze
+
+PRODUCT_WRITE_SCHEMA = {
+  type: :object,
+  properties: {
+    name: { type: :string, example: 'Premium T-Shirt' },
+    description: { type: :string },
+    slug: { type: :string },
+    status: { type: :string, enum: %w[draft active archived],
+              description: 'Review statuses (`proposed`, `rejected`) are ignored here — use `approve`/`reject`.' },
+    meta_title: { type: :string, nullable: true },
+    meta_description: { type: :string, nullable: true },
+    meta_keywords: { type: :string, nullable: true },
+    tax_category_id: { type: :string, nullable: true, description: 'Tax category ID' },
+    product_type_id: { type: :string, nullable: true },
+    delivery_profile_id: { type: :string, nullable: true },
+    promotionable: { type: :boolean },
+    category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
+    collection_ids: { type: :array, items: { type: :string },
+                      description: 'Manual collection membership. Automatic collections are kept as they are.' },
+    tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
+    metadata: { type: :object },
+    prices: {
+      type: :array,
+      description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
+      items: PRODUCT_PRICE_SCHEMA
+    },
+    custom_fields: {
+      type: :array,
+      description: 'Custom field values, each naming its definition.',
+      items: {
+        type: :object,
+        properties: {
+          id: { type: :string, description: 'An existing value to update.' },
+          custom_field_definition_id: { type: :string },
+          value: { description: 'A scalar, an array or an object, depending on the definition.' }
+        }
+      }
+    },
+    media: {
+      type: :array,
+      description: 'Entries with `id` update existing media; entries with `signed_id` attach a new upload.',
+      items: {
+        type: :object,
+        properties: {
+          id: { type: :string },
+          signed_id: { type: :string, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          source_media_id: { type: :string },
+          alt: { type: :string, nullable: true },
+          position: { type: :integer },
+          media_type: { type: :string, enum: %w[image video external_video] },
+          external_video_url: { type: :string, nullable: true },
+          poster_signed_id: { type: :string, nullable: true },
+          focal_point_x: { type: :number, nullable: true },
+          focal_point_y: { type: :number, nullable: true },
+          variant_ids: { type: :array, items: { type: :string } }
+        }
+      }
+    },
+    digital_assets: {
+      type: :array,
+      description: 'Downloadable files. Entries with `id` update an existing asset rather than adding one.',
+      items: {
+        type: :object,
+        properties: {
+          id: { type: :string },
+          signed_id: { type: :string, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          variant_id: { type: :string },
+          provider_type: { type: :string },
+          authorized_clicks: { type: :integer, nullable: true },
+          authorized_days: { type: :integer, nullable: true },
+          provider_settings: { type: :object }
+        }
+      }
+    },
+    product_publications: {
+      type: :array,
+      description: 'Channel publications for the product.',
+      items: {
+        type: :object,
+        properties: {
+          id: { type: :string },
+          channel_id: { type: :string },
+          published_at: { type: :string, format: 'date-time', nullable: true },
+          unpublished_at: { type: :string, format: 'date-time', nullable: true }
+        }
+      }
+    },
+    variants: {
+      type: :array,
+      description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
+      items: {
+        type: :object,
+        properties: {
+          id: { type: :string, description: 'An existing variant to update.' },
+          sku: { type: :string },
+          barcode: { type: :string, nullable: true },
+          cost_price: { type: :string, nullable: true },
+          cost_currency: { type: :string, nullable: true },
+          weight: { type: :number, nullable: true },
+          height: { type: :number, nullable: true },
+          width: { type: :number, nullable: true },
+          depth: { type: :number, nullable: true },
+          weight_unit: { type: :string, nullable: true, enum: %w[g kg lb oz] },
+          dimensions_unit: { type: :string, nullable: true, enum: %w[mm cm in ft] },
+          hs_code: { type: :string, nullable: true },
+          country_of_origin: { type: :string, nullable: true },
+          customs_description: { type: :string, nullable: true },
+          minimum_order_quantity: { type: :integer, nullable: true },
+          order_multiple: { type: :integer, nullable: true },
+          purchase_unit: { type: :string, nullable: true },
+          units_per_carton: { type: :integer, nullable: true },
+          carton_package_type_id: { type: :string, nullable: true },
+          carton_weight: { type: :number, nullable: true },
+          cartons_per_pallet: { type: :integer, nullable: true },
+          seller_id: { type: :string, nullable: true },
+          delivery_profile_id: { type: :string, nullable: true },
+          track_inventory: { type: :boolean },
+          preorderable: { type: :boolean },
+          preorder_ships_at: { type: :string, format: 'date-time', nullable: true },
+          backorder_limit: { type: :integer, nullable: true },
+          tax_category_id: { type: :string, nullable: true },
+          position: { type: :integer },
+          options: {
+            type: :array,
+            description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
+            items: {
+              type: :object,
+              required: %w[name value],
+              properties: {
+                name: { type: :string, example: 'size' },
+                value: { type: :string, example: 'Small' }
+              }
+            }
+          },
+          prices: {
+            type: :array,
+            description: 'Per-currency prices. Upserted by currency.',
+            items: PRODUCT_PRICE_SCHEMA
+          },
+          stock_levels: {
+            type: :array,
+            description: 'Per-stock-location inventory. Upserted by stock_location_id.',
+            items: {
+              type: :object,
+              required: %w[stock_location_id count_on_hand],
+              properties: {
+                id: { type: :string },
+                stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
+                count_on_hand: { type: :integer, example: 50 },
+                backorderable: { type: :boolean }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}.freeze
+
 RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
@@ -74,80 +243,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, enum: %w[draft active archived] },
-          tax_category_id: { type: :string, description: 'Tax category ID' },
-          category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
-          tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
-          prices: {
-            type: :array,
-            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          variants: {
-            type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
-            items: {
-              type: :object,
-              properties: {
-                sku: { type: :string },
-                options: {
-                  type: :array,
-                  description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
-                  items: {
-                    type: :object,
-                    required: %w[name value],
-                    properties: {
-                      name: { type: :string, example: 'size' },
-                      value: { type: :string, example: 'Small' }
-                    }
-                  }
-                },
-                prices: {
-                  type: :array,
-                  description: 'Per-currency prices. Upserted by currency.',
-                  items: {
-                    type: :object,
-                    required: %w[currency amount],
-                    properties: {
-                      currency: { type: :string, example: 'USD' },
-                      amount: { type: :string, example: '29.99' },
-                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-                    }
-                  }
-                },
-                stock_levels: {
-                  type: :array,
-                  description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-                  items: {
-                    type: :object,
-                    required: %w[stock_location_id count_on_hand],
-                    properties: {
-                      stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                      count_on_hand: { type: :integer, example: 50 },
-                      backorderable: { type: :boolean }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        required: %w[name]
-      }
+      parameter name: :body, in: :body, schema: PRODUCT_WRITE_SCHEMA.merge(required: %w[name])
 
       response '201', 'product created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -227,79 +323,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       parameter name: :Authorization, in: :header, type: :string, required: true,
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          name: { type: :string, example: 'Premium T-Shirt' },
-          description: { type: :string },
-          slug: { type: :string },
-          status: { type: :string, enum: %w[draft active archived] },
-          tax_category_id: { type: :string, description: 'Tax category ID' },
-          category_ids: { type: :array, items: { type: :string }, description: 'Array of category IDs' },
-          tags: { type: :array, items: { type: :string }, example: %w[eco sale] },
-          prices: {
-            type: :array,
-            description: 'Shorthand for a simple (no-options) product: per-currency prices that forward to the product\'s sole variant. For products with options, set prices per variant under `variants:` instead.',
-            items: {
-              type: :object,
-              required: %w[currency amount],
-              properties: {
-                currency: { type: :string, example: 'USD' },
-                amount: { type: :string, example: '29.99' },
-                compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-              }
-            }
-          },
-          variants: {
-            type: :array,
-            description: 'Array of variant payloads. Variants can declare multiple option pairs via `options:` and per-currency prices via `prices:`. Stock counts go in `stock_levels:` (per stock location).',
-            items: {
-              type: :object,
-              properties: {
-                sku: { type: :string },
-                options: {
-                  type: :array,
-                  description: 'One pair per option type the variant participates in (e.g. size + color). Option types and values are auto-created if missing.',
-                  items: {
-                    type: :object,
-                    required: %w[name value],
-                    properties: {
-                      name: { type: :string, example: 'size' },
-                      value: { type: :string, example: 'Small' }
-                    }
-                  }
-                },
-                prices: {
-                  type: :array,
-                  description: 'Per-currency prices. Upserted by currency.',
-                  items: {
-                    type: :object,
-                    required: %w[currency amount],
-                    properties: {
-                      currency: { type: :string, example: 'USD' },
-                      amount: { type: :string, example: '29.99' },
-                      compare_at_amount: { type: :string, nullable: true, example: '39.99' }
-                    }
-                  }
-                },
-                stock_levels: {
-                  type: :array,
-                  description: 'Per-stock-location inventory. Upserted by stock_location_id.',
-                  items: {
-                    type: :object,
-                    required: %w[stock_location_id count_on_hand],
-                    properties: {
-                      stock_location_id: { type: :string, description: 'Stock location ID (e.g. sloc_xxx)' },
-                      count_on_hand: { type: :integer, example: 50 },
-                      backorderable: { type: :boolean }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      parameter name: :body, in: :body, schema: PRODUCT_WRITE_SCHEMA
 
       response '200', 'product updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }

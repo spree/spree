@@ -61,7 +61,9 @@ RSpec.describe 'Admin API Keys API', type: :request, swagger_doc: 'api-reference
         properties: {
           name: { type: :string, example: 'Backend integration' },
           key_type: { type: :string, enum: %w[publishable secret] },
-          scopes: { type: :array, items: { type: :string }, example: %w[read_orders write_orders] }
+          scopes: { type: :array, items: { type: :string }, example: %w[read_orders write_orders] },
+          channel_id: { type: :string, nullable: true,
+                        description: 'Channel a publishable key is bound to. Cannot be changed after creation.' }
         }
       }
 

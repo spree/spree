@@ -2,6 +2,23 @@
 
 require 'swagger_helper'
 
+# Create and update accept the same attributes, so they document one shape.
+SUPPLIER_WRITE_PROPERTIES = {
+  name: { type: :string, example: 'Northwind Trading' },
+  contact_name: { type: :string, nullable: true, example: 'Dana Okafor' },
+  email: { type: :string, nullable: true, example: 'sales@northwind.test' },
+  phone: { type: :string, nullable: true, example: '555-0100' },
+  notes: { type: :string, nullable: true },
+  address1: { type: :string, nullable: true, example: '1 Warehouse Way' },
+  address2: { type: :string, nullable: true },
+  city: { type: :string, nullable: true, example: 'Brooklyn' },
+  state_code: { type: :string, nullable: true, example: 'NY' },
+  state_name: { type: :string, nullable: true },
+  country_code: { type: :string, nullable: true, example: 'US' },
+  postal_code: { type: :string, nullable: true, example: '11201' },
+  metadata: { type: :object, nullable: true }
+}.freeze
+
 RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
@@ -76,21 +93,7 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
                 description: 'Bearer token for admin authentication'
       parameter name: :supplier, in: :body, required: true, schema: {
         type: :object,
-        properties: {
-          name: { type: :string, example: 'Northwind Trading' },
-          contact_name: { type: :string, nullable: true, example: 'Dana Okafor' },
-          email: { type: :string, nullable: true, example: 'sales@northwind.test' },
-          phone: { type: :string, nullable: true, example: '555-0100' },
-          notes: { type: :string, nullable: true },
-          address1: { type: :string, nullable: true, example: '1 Warehouse Way' },
-          address2: { type: :string, nullable: true },
-          city: { type: :string, nullable: true, example: 'Brooklyn' },
-          state_code: { type: :string, nullable: true, example: 'NY' },
-          state_name: { type: :string, nullable: true },
-          country_code: { type: :string, nullable: true, example: 'US' },
-          postal_code: { type: :string, nullable: true, example: '11201' },
-          metadata: { type: :object, nullable: true }
-        },
+        properties: SUPPLIER_WRITE_PROPERTIES,
         required: %w[name]
       }
 
@@ -170,12 +173,7 @@ RSpec.describe 'Admin Suppliers API', type: :request, swagger_doc: 'api-referenc
                 description: 'Bearer token for admin authentication'
       parameter name: :supplier, in: :body, required: true, schema: {
         type: :object,
-        properties: {
-          name: { type: :string },
-          contact_name: { type: :string, nullable: true },
-          email: { type: :string, nullable: true },
-          phone: { type: :string, nullable: true }
-        }
+        properties: SUPPLIER_WRITE_PROPERTIES
       }
 
       response '200', 'supplier updated' do

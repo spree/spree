@@ -2,8 +2,8 @@
 
 require 'swagger_helper'
 
-# Both seller addresses accept the same keys, so they document the same shape —
-# a bare `type: :object` on one of them would leave SDK consumers without any
+# The seller's billing address is written inline, so it documents its full
+# shape — a bare `type: :object` would leave SDK consumers without any
 # property types for it.
 SELLER_ADDRESS_SCHEMA = {
   type: :object,
@@ -23,6 +23,19 @@ SELLER_ADDRESS_SCHEMA = {
     state_code: { type: :string, example: 'NY' },
     state_name: { type: :string, example: 'New York' },
     label: { type: :string, example: 'Head office' }
+  }
+}.freeze
+
+SELLER_CUSTOM_FIELDS_SCHEMA = {
+  type: :array,
+  description: 'Custom field values, each naming its definition.',
+  items: {
+    type: :object,
+    properties: {
+      id: { type: :string, description: 'An existing value to update.' },
+      custom_field_definition_id: { type: :string },
+      value: { description: 'A scalar, an array or an object, depending on the definition.' }
+    }
   }
 }.freeze
 
@@ -115,7 +128,16 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
           payouts_schedule_interval: {
             type: :string, enum: %w[daily weekly biweekly monthly manual], nullable: true
           },
-          minimum_payout_amount: { type: :string, example: '25.0', nullable: true }
+          minimum_payout_amount: { type: :number, example: 25.0, nullable: true },
+          holiday_mode_until: { type: :string, format: 'date-time', nullable: true },
+          legal_name: { type: :string, example: 'Northwind Books Ltd', nullable: true },
+          registration_number: { type: :string, example: '01234567', nullable: true },
+          logo: { type: :string, nullable: true, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          square_logo: { type: :string, nullable: true },
+          cover_photo: { type: :string, nullable: true },
+          billing_address: SELLER_ADDRESS_SCHEMA,
+          custom_fields: SELLER_CUSTOM_FIELDS_SCHEMA,
+          metadata: { type: :object }
         }
       }
 
@@ -202,11 +224,17 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
         type: :object,
         properties: {
           name: { type: :string, example: 'Sparks Audio Ltd' },
+          slug: { type: :string, example: 'sparks-audio' },
+          contact_email: { type: :string, example: 'hi@sparks.example', nullable: true },
           billing_email: { type: :string, example: 'billing@sparks.example', nullable: true },
+          about: { type: :string, nullable: true },
+          legal_name: { type: :string, example: 'Sparks Audio Ltd', nullable: true },
+          registration_number: { type: :string, example: '01234567', nullable: true },
+          tax_remittance: { type: :string, enum: %w[seller platform] },
           payouts_schedule_interval: {
             type: :string, enum: %w[daily weekly biweekly monthly manual], nullable: true
           },
-          minimum_payout_amount: { type: :string, example: '25.0', nullable: true },
+          minimum_payout_amount: { type: :number, example: 25.0, nullable: true },
           holiday_mode_until: { type: :string, format: 'date-time', nullable: true },
           logo: {
             type: :string, nullable: true,
@@ -217,7 +245,8 @@ RSpec.describe 'Admin Sellers API', type: :request, swagger_doc: 'api-reference/
           square_logo: { type: :string, nullable: true },
           cover_photo: { type: :string, nullable: true },
           billing_address: SELLER_ADDRESS_SCHEMA,
-          returns_address: SELLER_ADDRESS_SCHEMA
+          custom_fields: SELLER_CUSTOM_FIELDS_SCHEMA,
+          metadata: { type: :object }
         }
       }
 

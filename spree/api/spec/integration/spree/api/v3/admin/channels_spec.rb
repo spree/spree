@@ -62,7 +62,10 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
           preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
                                          description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
           preferred_guest_checkout: { type: :boolean, nullable: true,
-                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
+                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' },
+          default_catalog_id: { type: :string, nullable: true, description: 'Catalog the channel prices and lists from. `null` clears it.' },
+          stock_location_ids: { type: :array, items: { type: :string },
+                                description: 'Replaces the stock locations this channel fulfills from. Empty means every location.' }
         }
       }
 
@@ -124,7 +127,10 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
           preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
                                          description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
           preferred_guest_checkout: { type: :boolean, nullable: true,
-                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
+                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' },
+          default_catalog_id: { type: :string, nullable: true, description: 'Catalog the channel prices and lists from. `null` clears it.' },
+          stock_location_ids: { type: :array, items: { type: :string },
+                                description: 'Replaces the stock locations this channel fulfills from. Empty means every location.' }
         }
       }
 

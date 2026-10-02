@@ -57,7 +57,21 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
           permalink: { type: :string },
           meta_title: { type: :string },
           meta_description: { type: :string },
-          meta_keywords: { type: :string }
+          meta_keywords: { type: :string },
+          image: { type: :string, nullable: true, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          square_image: { type: :string, nullable: true, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          custom_fields: {
+            type: :array,
+            description: 'Custom field values, each naming its definition.',
+            items: {
+              type: :object,
+              properties: {
+                id: { type: :string, description: 'An existing value to update.' },
+                custom_field_definition_id: { type: :string },
+                value: { description: 'A scalar, an array or an object, depending on the definition.' }
+              }
+            }
+          }
         },
         required: %w[name]
       }
@@ -143,7 +157,21 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
           permalink: { type: :string },
           meta_title: { type: :string },
           meta_description: { type: :string },
-          meta_keywords: { type: :string }
+          meta_keywords: { type: :string },
+          image: { type: :string, nullable: true, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          square_image: { type: :string, nullable: true, description: 'ActiveStorage signed id of a direct-uploaded file.' },
+          custom_fields: {
+            type: :array,
+            description: 'Custom field values, each naming its definition.',
+            items: {
+              type: :object,
+              properties: {
+                id: { type: :string, description: 'An existing value to update.' },
+                custom_field_definition_id: { type: :string },
+                value: { description: 'A scalar, an array or an object, depending on the definition.' }
+              }
+            }
+          }
         }
       }
 

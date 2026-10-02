@@ -2,6 +2,23 @@
 
 require 'swagger_helper'
 
+# Create and update accept the same attributes (plus `type` on create), so
+# they document one shape.
+PAYMENT_METHOD_WRITE_PROPERTIES = {
+  name: { type: :string, example: 'Pay by check' },
+  description: { type: :string, nullable: true },
+  active: { type: :boolean },
+  storefront_visible: { type: :boolean },
+  capture_method: { type: :string, nullable: true, enum: %w[checkout on_dispatch manual],
+                    description: 'When the customer is charged. `null` follows the store setting.' },
+  auto_capture: { type: :boolean, nullable: true, description: 'Legacy flag. Prefer `capture_method`.' },
+  position: { type: :integer },
+  preferences: { type: :object,
+                 description: 'Provider configuration, per the `preference_schema` from `GET /payment_methods/types`. ' \
+                              'Unknown keys are ignored, and a masked secret sent back unchanged keeps the stored value.' },
+  metadata: { type: :object }
+}.freeze
+
 RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-reference/admin.yaml' do
   include_context 'API v3 Admin'
 
@@ -32,6 +49,50 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
           data = JSON.parse(response.body)
           expect(data['data']).to be_an(Array)
         end
+      end
+    end
+
+    post 'Create a payment method' do
+      tags 'Payment Methods'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Installs a payment provider on the store. `type` picks the provider by
+        its shorthand from `GET /payment_methods/types` (for example `check`,
+        `store_credit` or `bogus`) and cannot be changed afterwards.
+      DESC
+      admin_scope :write, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[type name],
+        properties: {
+          type: { type: :string, example: 'check', description: 'Provider shorthand from `GET /payment_methods/types`.' },
+          **PAYMENT_METHOD_WRITE_PROPERTIES
+        }
+      }
+
+      response '201', 'payment method created' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { type: 'check', name: 'Pay by check', active: true } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Pay by check')
+          expect(data['type']).to eq('check')
+        end
+      end
+
+      response '422', 'unknown provider type' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { type: 'not_a_provider', name: 'Mystery' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
       end
     end
   end
@@ -99,6 +160,34 @@ RSpec.describe 'Admin Payment Methods API', type: :request, swagger_doc: 'api-re
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['id']).to eq(payment_method.prefixed_id)
+        end
+      end
+    end
+
+    patch 'Update a payment method' do
+      tags 'Payment Methods'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Updates a payment method. Its provider `type` is fixed at creation.'
+      admin_scope :write, :settings
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: PAYMENT_METHOD_WRITE_PROPERTIES
+      }
+
+      response '200', 'payment method updated' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:body) { { name: 'Check (Updated)', capture_method: 'manual' } }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq('Check (Updated)')
+          expect(payment_method.reload.capture_method).to eq('manual')
         end
       end
     end

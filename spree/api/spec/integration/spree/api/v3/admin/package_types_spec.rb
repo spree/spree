@@ -95,7 +95,8 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
           weight: { type: :number, example: 25 },
           max_weight: { type: :number, example: 1500 },
           weight_unit: { type: :string, enum: Spree::Variant::WEIGHT_UNITS, example: 'kg' },
-          default: { type: :boolean, example: false }
+          default: { type: :boolean, example: false },
+          metadata: { type: :object }
         },
         required: %w[name kind]
       }
@@ -189,7 +190,8 @@ RSpec.describe 'Admin Package Types API', type: :request, swagger_doc: 'api-refe
           weight: { type: :number, example: 25 },
           max_weight: { type: :number, example: 1500 },
           weight_unit: { type: :string, enum: Spree::Variant::WEIGHT_UNITS, example: 'kg' },
-          default: { type: :boolean, example: false }
+          default: { type: :boolean, example: false },
+          metadata: { type: :object }
         }
       }
 

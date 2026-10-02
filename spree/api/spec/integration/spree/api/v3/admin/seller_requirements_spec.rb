@@ -88,7 +88,10 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
           active: { type: :boolean, example: true },
           position: { type: :integer, example: 1, description: 'Place in the checklist.' },
           preferences: { type: :object, example: { accepted_content_types: ['application/pdf'] },
-                         description: 'Configuration for this kind, per its `preference_schema`.' }
+                         description: 'Configuration for this kind, per its `preference_schema`.' },
+          custom_field_definition_ids: { type: :array, items: { type: :string },
+                                         description: 'For the `required_custom_fields` kind: the fields a seller must fill in.' },
+          metadata: { type: :object }
         }
       }
 
@@ -192,7 +195,10 @@ RSpec.describe 'Admin Seller Requirements API', type: :request, swagger_doc: 'ap
           required: { type: :boolean, example: false },
           active: { type: :boolean, example: true },
           position: { type: :integer, example: 2 },
-          preferences: { type: :object, example: { minimum_count: 3 } }
+          preferences: { type: :object, example: { minimum_count: 3 } },
+          custom_field_definition_ids: { type: :array, items: { type: :string },
+                                         description: 'For the `required_custom_fields` kind: the fields a seller must fill in.' },
+          metadata: { type: :object }
         }
       }
 
