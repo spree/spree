@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=../schemas/spree-config.json
+#
+# The defaults whose shape depends on where the store sells from: its
+# warehouse, delivery zones and rates, pickup, and parcel box. Deployed with
+# store-defaults.yml once the store's country is known; the store's own
+# country, currency and default market are set by first-run setup.
+#
+# Variables: ${STORE_COUNTRY} (ISO code), ${STORE_COUNTRY_NAME},
+# ${STORE_CURRENCY}, and the parcel box in the store's units:
+# ${BOX_LENGTH} ${BOX_WIDTH} ${BOX_HEIGHT} ${DIMENSIONS_UNIT} ${BOX_WEIGHT}
+# ${WEIGHT_UNIT}.
+version: 1
+
+stock_locations:
+  - name: Shop location
+    country_code: ${STORE_COUNTRY}
+    default: true
+    active: true
+    propagate_all_variants: false
+    # A counter to collect from is what makes pickup real.
+    pickup_enabled: true
+
+delivery_zones:
+  # The General profile is created with the store itself.
+  - name: Domestic
+    description: ${STORE_COUNTRY_NAME}
+    delivery_profile: General
+    countries:
+      - ${STORE_COUNTRY}
+  - name: International
+    description: Everywhere else
+    delivery_profile: General
+    all_countries_except:
+      - ${STORE_COUNTRY}
+
+delivery_methods:
+  - name: Standard
+    delivery_profile: General
+    delivery_zone: Domestic
+    calculator:
+      type: flat_rate
+      preferences:
+        amount: 5
+        currency: ${STORE_CURRENCY}
+  - name: International Shipping
+    delivery_profile: General
+    delivery_zone: International
+    calculator:
+      type: flat_rate
+      preferences:
+        amount: 20
+        currency: ${STORE_CURRENCY}
+  # Collection at the counter: no zone, every pickup-enabled location.
+  - name: Store Pickup
+    delivery_profile: General
+    fulfillment_provider: Spree::FulfillmentProvider::Pickup
+    storefront_visible: true
+    calculator:
+      type: flat_rate
+      preferences:
+        amount: 0
+        currency: ${STORE_CURRENCY}
+
+package_types:
+  - name: Shipping box
+    kind: box
+    default: true
+    length: ${BOX_LENGTH}
+    width: ${BOX_WIDTH}
+    height: ${BOX_HEIGHT}
+    dimensions_unit: ${DIMENSIONS_UNIT}
+    weight: ${BOX_WEIGHT}
+    weight_unit: ${WEIGHT_UNIT}

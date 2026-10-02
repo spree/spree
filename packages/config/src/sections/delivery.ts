@@ -1,9 +1,21 @@
 import type {
   DeliveryMethod as SdkDeliveryMethod,
+  DeliveryProfile as SdkDeliveryProfile,
   DeliveryZone as SdkDeliveryZone,
+  PackageType as SdkPackageType,
 } from '@spree/admin-sdk'
+import type { RunContext } from '../context.js'
 import { numericString } from '../diff.js'
-import type { DeliveryMethodEntry, DeliveryZoneEntry } from '../schema.js'
+import {
+  DELIVERY_METHOD_ATTRIBUTES,
+  DELIVERY_PROFILE_ATTRIBUTES,
+  DELIVERY_ZONE_ATTRIBUTES,
+  type DeliveryMethodEntry,
+  type DeliveryProfileEntry,
+  type DeliveryZoneEntry,
+  PACKAGE_TYPE_ATTRIBUTES,
+  type PackageTypeEntry,
+} from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import {
   FIRST_PARTY,
@@ -11,6 +23,7 @@ import {
   type Payload,
   partialIdList,
   pick,
+  plainSection,
   present,
   refs,
   type Section,
@@ -19,7 +32,35 @@ import {
 // The SDK's generated types plus the index signature, so a section can read
 // both declared attributes and the associations an `expand` adds.
 type DeliveryMethod = SdkDeliveryMethod & LiveRecord
+type DeliveryProfile = SdkDeliveryProfile & LiveRecord
 type DeliveryZone = SdkDeliveryZone & LiveRecord
+type PackageType = SdkPackageType & LiveRecord
+
+export const deliveryProfiles = plainSection<DeliveryProfileEntry, DeliveryProfile>({
+  name: 'delivery_profiles',
+  scope: 'write_settings',
+  introspectByDefault: true,
+  key: 'name',
+  attributes: DELIVERY_PROFILE_ATTRIBUTES,
+  defaults: { default: false, kind: 'shipping' },
+  // The kind is fixed once the profile exists; the API ignores it on update.
+  async update(live, payload, _entry, ctx) {
+    const { kind: _kind, ...body } = payload
+    return ctx.client.request<DeliveryProfile>('PATCH', `/delivery_profiles/${live.id}`, { body })
+  },
+  async current(live, _ctx, desired) {
+    return desired.kind === undefined ? live : { ...live, kind: desired.kind }
+  },
+})
+
+export const packageTypes = plainSection<PackageTypeEntry, PackageType>({
+  name: 'package_types',
+  scope: 'write_package_types',
+  introspectByDefault: true,
+  key: 'name',
+  attributes: PACKAGE_TYPE_ATTRIBUTES,
+  defaults: { default: false },
+})
 
 interface ZoneMember {
   member_type: string
@@ -34,10 +75,25 @@ interface ZoneMember {
 const isFileMember = (member: ZoneMember) =>
   member.member_type === 'country' || member.member_type === 'state'
 
-function membersPayload(entry: DeliveryZoneEntry): ZoneMember[] | undefined {
-  if (!entry.countries && !entry.states) return undefined
+/** The country codes a zone names: its list, or every known country but the excluded ones. */
+async function zoneCountries(
+  entry: DeliveryZoneEntry,
+  ctx: RunContext,
+): Promise<string[] | undefined> {
+  if (!entry.all_countries_except) return entry.countries
+  const excluded = new Set(entry.all_countries_except)
+  const known = await ctx.load('countries')
+  return [...known.byKey.keys()].filter((code) => !excluded.has(code))
+}
+
+async function membersPayload(
+  entry: DeliveryZoneEntry,
+  ctx: RunContext,
+): Promise<ZoneMember[] | undefined> {
+  const countries = await zoneCountries(entry, ctx)
+  if (!countries && !entry.states) return undefined
   return [
-    ...(entry.countries ?? []).map((code) => ({
+    ...(countries ?? []).map((code) => ({
       member_type: 'country',
       country_code: code,
       state_code: null,
@@ -71,10 +127,16 @@ export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
   expand: ['members'],
   entries: (config) => config.delivery_zones ?? [],
   entryKey: (entry) => entry.name,
-  async desired(entry) {
-    const members = membersPayload(entry)
+  references: (config) => ({
+    delivery_profiles: (config.delivery_zones ?? []).flatMap((zone) => zone.delivery_profile ?? []),
+  }),
+  async desired(entry, ctx, path) {
+    const members = await membersPayload(entry, ctx)
     return {
-      ...pick(entry, ['name', 'description']),
+      ...pick(entry, DELIVERY_ZONE_ATTRIBUTES),
+      ...(entry.delivery_profile
+        ? { delivery_profile_id: await ctx.ref('delivery_profiles', entry.delivery_profile, path) }
+        : {}),
       ...(members ? { members: sortedMembers(members) } : {}),
     }
   },
@@ -109,7 +171,7 @@ export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
       : payload
     return ctx.client.request<DeliveryZone>('PATCH', `/delivery_zones/${live.id}`, { body })
   },
-  async toFile(live) {
+  async toFile(live, ctx) {
     const members = (live.members as ZoneMember[] | undefined) ?? []
     const countries = members
       .filter((member) => member.member_type === 'country' && member.country_code)
@@ -123,24 +185,17 @@ export const deliveryZones: Section<DeliveryZoneEntry, DeliveryZone> = {
         country: member.country_code as string,
         state: member.state_code as string,
       }))
+    const profile = live.delivery_profile_id
+      ? await ctx.keyOf('delivery_profiles', String(live.delivery_profile_id))
+      : null
     return {
-      ...present(live as unknown as DeliveryZoneEntry, ['name', 'description']),
+      ...present(live as unknown as DeliveryZoneEntry, DELIVERY_ZONE_ATTRIBUTES),
+      ...(profile ? { delivery_profile: profile } : {}),
       ...(countries.length ? { countries } : {}),
       ...(states.length ? { states } : {}),
     } as DeliveryZoneEntry
   },
 }
-
-const METHOD_ATTRIBUTES: (keyof DeliveryMethodEntry)[] = [
-  'name',
-  'code',
-  'admin_name',
-  'storefront_visible',
-  'available_to_sellers',
-  'tracking_url',
-  'estimated_transit_business_days_min',
-  'estimated_transit_business_days_max',
-]
 
 // Pickup may also run from sellers' warehouses, which the file cannot name.
 const methodPickupLocations = partialIdList('stock_locations', 'stock_location_ids')
@@ -169,13 +224,16 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
   references: (config) => {
     const methods = config.delivery_methods ?? []
     return {
+      delivery_profiles: methods.flatMap((method) => method.delivery_profile ?? []),
       delivery_zones: methods.flatMap((method) => method.delivery_zone ?? []),
       tax_categories: methods.flatMap((method) => method.tax_category ?? []),
       stock_locations: methods.flatMap((method) => method.pickup_locations ?? []),
     }
   },
   async desired(entry, ctx, path) {
-    const payload: Payload = pick(entry, METHOD_ATTRIBUTES)
+    const payload: Payload = pick(entry, DELIVERY_METHOD_ATTRIBUTES)
+    if (entry.delivery_profile)
+      payload.delivery_profile_id = await ctx.ref('delivery_profiles', entry.delivery_profile, path)
     if (entry.delivery_zone)
       payload.delivery_zone_id = await ctx.ref('delivery_zones', entry.delivery_zone, path)
     if (entry.tax_category)
@@ -198,10 +256,16 @@ export const deliveryMethods: Section<DeliveryMethodEntry, DeliveryMethod> = {
   async toFile(live, ctx) {
     const entry: DeliveryMethodEntry = present(
       live as unknown as DeliveryMethodEntry,
-      METHOD_ATTRIBUTES,
+      DELIVERY_METHOD_ATTRIBUTES,
     ) as DeliveryMethodEntry
     if (entry.storefront_visible === true) delete entry.storefront_visible
     if (entry.available_to_sellers === false) delete entry.available_to_sellers
+    if (entry.fulfillment_provider === 'Spree::FulfillmentProvider::Manual')
+      delete entry.fulfillment_provider
+    if (live.delivery_profile_id) {
+      const profile = await ctx.keyOf('delivery_profiles', String(live.delivery_profile_id))
+      if (profile) entry.delivery_profile = profile
+    }
     if (live.delivery_zone_id) {
       const zone = await ctx.keyOf('delivery_zones', String(live.delivery_zone_id))
       if (zone) entry.delivery_zone = zone

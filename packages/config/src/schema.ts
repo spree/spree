@@ -1,10 +1,21 @@
 import { z } from 'zod'
+import {
+  type AttributeOf,
+  attributeSchema,
+  type Resource,
+  specShape,
+  writablePreferences,
+} from './spec.js'
 
 /**
  * The shape of `spree.config.yml`. Sections mirror Admin API resources but
  * are written the way a person writes them: references by natural key, prices
  * keyed by currency, stock keyed by warehouse name, preferences without the
  * `preferred_` prefix.
+ *
+ * Plain attributes come from the Admin API spec (`spec.ts`); only what a
+ * person writes differently from the API (keys, references, nested shapes) is
+ * spelled out here.
  */
 
 const nonEmpty = z.string().min(1)
@@ -27,75 +38,186 @@ const permalink = z
     'lowercase segments joined by hyphens and slashes, e.g. `clothing/t-shirts`, the form the API saves',
   )
 const scalar = z.union([z.string(), z.number(), z.boolean(), z.null()])
-
-// The preferences each endpoint permits. Rails drops any other key without a
-// word, so an unlisted key would read as a change on every deploy; the file
-// refuses it instead. Kept in step with the controllers by config-schema.test.
-export const STORE_PREFERENCES = [
-  'admin_locale',
-  'timezone',
-  'weight_unit',
-  'unit_system',
-  'storefront_access',
-  'storefront_url',
-  'guest_checkout',
-  'always_include_confirm_step',
-  'company_field_enabled',
-  'address_requires_company',
-  'address_requires_phone',
-  'capture_method',
-  'auto_capture_on_dispatch',
-  'track_inventory_levels',
-  'stock_reservations_enabled',
-  'low_stock_threshold',
-  'tax_using_ship_address',
-  'track_price_history',
-  'show_products_without_price',
-  'disable_sku_validation',
-  'order_routing_strategy',
-  'pricing_provider',
-  'inventory_provider',
-  'pricing_provider_failure_policy',
-  'inventory_provider_failure_policy',
-  'payout_provider',
-  'default_payouts_schedule_interval',
-  'default_minimum_payout_amount',
-  'auto_approve_sellers',
-  'auto_approve_seller_products',
-  'send_seller_transactional_emails',
-  'default_commission_tax_rate',
-  'document_number_format',
-  'order_number_prefix',
-  'order_number_suffix',
-  'order_number_sequence_start',
-  'send_consumer_transactional_emails',
-] as const
-
-export const CHANNEL_PREFERENCES = [
-  'order_routing_strategy',
-  'storefront_access',
-  'guest_checkout',
-] as const
-
-const preferencesOf = (keys: readonly [string, ...string[]]) =>
-  z
-    .partialRecord(z.enum(keys), scalar)
-    .describe('Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`.')
 const money = z.number().nonnegative()
 const moneyByCurrency = z
   .record(isoCurrency, money)
   .describe('Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`.')
 const stockByLocation = z
   .record(nonEmpty, z.number().int().nonnegative())
-  .describe('Quantity on hand per stock location name.')
+  .describe(
+    'Opening stock per stock location name, written when the variant is created and never compared again.',
+  )
+const names = (description: string) => z.array(nonEmpty).optional().describe(description)
+
+/**
+ * The preferences a resource permits, typed from the spec and without the
+ * `preferred_` prefix. Rails drops any other key without a word, so an
+ * unlisted key would read as a change on every deploy; the file refuses it.
+ */
+function preferencesOf(resource: Resource) {
+  return z
+    .object(
+      Object.fromEntries(
+        writablePreferences(resource).map((key) => [
+          key,
+          attributeSchema(resource, `preferred_${key}` as AttributeOf<typeof resource>).optional(),
+        ]),
+      ),
+    )
+    .strict()
+    .describe('Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`.')
+}
+
+// --- Attributes each section writes as they are -----------------------------
+
+export const STORE_ATTRIBUTES = [
+  'name',
+  'mail_from_address',
+  'customer_support_email',
+  'new_order_notifications_email',
+] as const
+export const CHANNEL_ATTRIBUTES = ['code', 'name', 'active', 'default'] as const
+export const MARKET_ATTRIBUTES = [
+  'name',
+  'currency',
+  'default_locale',
+  'supported_locales',
+  'default',
+  'tax_inclusive',
+] as const
+export const CUSTOMER_GROUP_ATTRIBUTES = ['name', 'description'] as const
+export const TAX_CATEGORY_ATTRIBUTES = ['name', 'tax_code', 'description'] as const
+export const DELIVERY_PROFILE_ATTRIBUTES = ['name', 'kind', 'default'] as const
+export const DELIVERY_ZONE_ATTRIBUTES = ['name', 'description'] as const
+export const DELIVERY_METHOD_ATTRIBUTES = [
+  'name',
+  'code',
+  'admin_name',
+  'fulfillment_provider',
+  'storefront_visible',
+  'available_to_sellers',
+  'tracking_url',
+  'estimated_transit_business_days_min',
+  'estimated_transit_business_days_max',
+] as const
+export const PACKAGE_TYPE_ATTRIBUTES = [
+  'name',
+  'kind',
+  'length',
+  'width',
+  'height',
+  'dimensions_unit',
+  'weight',
+  'max_weight',
+  'weight_unit',
+  'default',
+] as const
+export const PAYMENT_METHOD_ATTRIBUTES = [
+  'name',
+  'description',
+  'active',
+  'storefront_visible',
+  'capture_method',
+  'position',
+] as const
+export const STOCK_LOCATION_ATTRIBUTES = [
+  'name',
+  'admin_name',
+  'active',
+  'default',
+  'kind',
+  'backorderable_default',
+  'propagate_all_variants',
+  'pickup_enabled',
+  'returns_enabled',
+  'address1',
+  'address2',
+  'city',
+  'zipcode',
+  'country_code',
+  'state_code',
+  'state_name',
+  'phone',
+  'company',
+] as const
+export const SUPPLIER_ATTRIBUTES = [
+  'name',
+  'contact_name',
+  'email',
+  'phone',
+  'notes',
+  'address1',
+  'address2',
+  'city',
+  'state_name',
+  'state_code',
+  'country_code',
+  'postal_code',
+] as const
+export const PRODUCT_TYPE_ATTRIBUTES = ['name'] as const
+export const CATEGORY_ATTRIBUTES = [
+  'permalink',
+  'name',
+  'description',
+  'meta_title',
+  'meta_description',
+  'meta_keywords',
+] as const
+export const PRODUCT_ATTRIBUTES = [
+  'slug',
+  'name',
+  'status',
+  'description',
+  'tags',
+  'meta_title',
+  'meta_description',
+] as const
+export const CUSTOMER_ATTRIBUTES = [
+  'email',
+  'first_name',
+  'last_name',
+  'phone',
+  'accepts_email_marketing',
+  'tags',
+] as const
+export const SELLER_ATTRIBUTES = [
+  'slug',
+  'name',
+  'contact_email',
+  'billing_email',
+  'legal_name',
+  'registration_number',
+  'tax_remittance',
+] as const
+export const REASON_ATTRIBUTES = ['name', 'active'] as const
+export const COMMISSION_RATE_ATTRIBUTES = [
+  'code',
+  'name',
+  'enabled',
+  'kind',
+  'value',
+  'tax_inclusive',
+  'include_shipping',
+  'commission_tax_rate',
+] as const
+export const SELLER_REQUIREMENT_ATTRIBUTES = [
+  'type',
+  'name',
+  'description',
+  'required',
+  'active',
+  'position',
+] as const
+export const API_KEY_ATTRIBUTES = ['name', 'key_type', 'scopes'] as const
+export const ALLOWED_ORIGIN_ATTRIBUTES = ['origin'] as const
+
+// --- Sections ----------------------------------------------------------------
 
 export const storeSchema = z
   .object({
+    ...specShape('store', STORE_ATTRIBUTES),
     name: nonEmpty.optional(),
-    mail_from_address: z.string().optional(),
-    customer_support_email: z.string().optional(),
-    new_order_notifications_email: z.string().nullable().optional(),
-    preferences: preferencesOf(STORE_PREFERENCES).optional(),
+    preferences: preferencesOf('store').optional(),
   })
   .strict()
   .describe(
@@ -104,54 +226,62 @@ export const storeSchema = z
 
 export const channelSchema = z
   .object({
+    ...specShape('channels', CHANNEL_ATTRIBUTES),
     code: nonEmpty,
     name: nonEmpty,
-    active: z.boolean().optional(),
-    default: z.boolean().optional(),
-    stock_locations: z.array(nonEmpty).optional().describe('Stock location names.'),
-    preferences: preferencesOf(CHANNEL_PREFERENCES).optional(),
+    stock_locations: names('Stock location names.'),
+    preferences: preferencesOf('channels').optional(),
   })
   .strict()
 
 export const marketSchema = z
   .object({
+    ...specShape('markets', MARKET_ATTRIBUTES),
     name: nonEmpty,
     currency: isoCurrency,
     countries: z.array(isoCountry).min(1),
-    default_locale: z.string().optional(),
-    supported_locales: z.array(z.string()).optional(),
-    default: z.boolean().optional(),
-    tax_inclusive: z.boolean().optional(),
   })
   .strict()
 
 export const customerGroupSchema = z
-  .object({
-    name: nonEmpty,
-    description: z.string().nullable().optional(),
-  })
+  .object({ ...specShape('customer_groups', CUSTOMER_GROUP_ATTRIBUTES), name: nonEmpty })
   .strict()
 
 export const taxCategorySchema = z
   .object({
+    ...specShape('tax_categories', TAX_CATEGORY_ATTRIBUTES),
     name: nonEmpty,
-    tax_code: z.string().nullable().optional(),
-    description: z.string().nullable().optional(),
-    default: z.boolean().optional(),
+    default: z.boolean().optional().describe('Marks the store default tax category.'),
   })
   .strict()
 
+export const deliveryProfileSchema = z
+  .object({
+    ...specShape('delivery_profiles', DELIVERY_PROFILE_ATTRIBUTES),
+    name: nonEmpty,
+  })
+  .strict()
+  .describe('`kind` is set when the profile is created and cannot change afterwards.')
+
 export const deliveryZoneSchema = z
   .object({
+    ...specShape('delivery_zones', DELIVERY_ZONE_ATTRIBUTES),
     name: nonEmpty,
-    description: z.string().nullable().optional(),
+    delivery_profile: nonEmpty.optional().describe('Delivery profile name.'),
     countries: z.array(isoCountry).optional(),
+    all_countries_except: z
+      .array(isoCountry)
+      .optional()
+      .describe('Every country the store knows except these, e.g. an "everywhere else" zone.'),
     states: z
       .array(z.object({ country: isoCountry, state: nonEmpty }).strict())
       .optional()
       .describe('State members, as country and state code pairs.'),
   })
   .strict()
+  .refine((zone) => !(zone.countries && zone.all_countries_except), {
+    message: 'a zone lists either `countries` or `all_countries_except`, not both',
+  })
 
 export const calculatorSchema = z
   .object({
@@ -162,74 +292,59 @@ export const calculatorSchema = z
 
 export const deliveryMethodSchema = z
   .object({
+    ...specShape('delivery_methods', DELIVERY_METHOD_ATTRIBUTES),
     name: nonEmpty,
-    code: z.string().nullable().optional(),
-    admin_name: z.string().nullable().optional(),
+    delivery_profile: nonEmpty.optional().describe('Delivery profile name.'),
     delivery_zone: nonEmpty.optional().describe('Delivery zone name.'),
     calculator: calculatorSchema.optional(),
-    storefront_visible: z.boolean().optional(),
-    available_to_sellers: z.boolean().optional(),
-    tracking_url: z.string().nullable().optional(),
     tax_category: nonEmpty.optional().describe('Tax category name.'),
-    pickup_locations: z
-      .array(nonEmpty)
-      .optional()
-      .describe('Stock location names a pickup method offers as collection points.'),
-    estimated_transit_business_days_min: z.number().int().positive().nullable().optional(),
-    estimated_transit_business_days_max: z.number().int().positive().nullable().optional(),
+    pickup_locations: names('Stock location names a pickup method offers as collection points.'),
+  })
+  .strict()
+
+export const packageTypeSchema = z
+  .object({ ...specShape('package_types', PACKAGE_TYPE_ATTRIBUTES), name: nonEmpty })
+  .strict()
+
+export const paymentMethodSchema = z
+  .object({
+    ...specShape('payment_methods', PAYMENT_METHOD_ATTRIBUTES),
+    name: nonEmpty,
+    type: nonEmpty.describe('Payment method type shorthand, e.g. `store_credit`. Set on create.'),
   })
   .strict()
 
 export const stockLocationSchema = z
   .object({
+    ...specShape('stock_locations', STOCK_LOCATION_ATTRIBUTES),
     name: nonEmpty,
-    admin_name: z.string().nullable().optional(),
-    active: z.boolean().optional(),
-    default: z.boolean().optional(),
-    kind: z.string().optional(),
-    backorderable_default: z.boolean().optional(),
-    propagate_all_variants: z.boolean().optional(),
-    pickup_enabled: z.boolean().optional(),
-    returns_enabled: z.boolean().optional(),
-    address1: z.string().nullable().optional(),
-    address2: z.string().nullable().optional(),
-    city: z.string().nullable().optional(),
-    zipcode: z.string().nullable().optional(),
     country_code: isoCountry.nullable().optional(),
-    state_code: z.string().nullable().optional(),
-    state_name: z.string().nullable().optional(),
-    phone: z.string().nullable().optional(),
-    company: z.string().nullable().optional(),
   })
   .strict()
 
 export const supplierSchema = z
   .object({
+    ...specShape('suppliers', SUPPLIER_ATTRIBUTES),
     name: nonEmpty,
-    contact_name: z.string().nullable().optional(),
-    email: z.string().nullable().optional(),
-    phone: z.string().nullable().optional(),
-    notes: z.string().nullable().optional(),
-    address1: z.string().nullable().optional(),
-    address2: z.string().nullable().optional(),
-    city: z.string().nullable().optional(),
-    state_name: z.string().nullable().optional(),
-    state_code: z.string().nullable().optional(),
     country_code: isoCountry.nullable().optional(),
-    postal_code: z.string().nullable().optional(),
+  })
+  .strict()
+
+export const productTypeSchema = z
+  .object({
+    ...specShape('product_types', PRODUCT_TYPE_ATTRIBUTES),
+    name: nonEmpty,
+    delivery_profile: nonEmpty.optional().describe('Delivery profile name.'),
   })
   .strict()
 
 export const categorySchema = z
   .object({
+    ...specShape('categories', CATEGORY_ATTRIBUTES),
     permalink: permalink.describe(
       'Full path, e.g. `clothing/t-shirts`; the parent is the path without its last segment.',
     ),
     name: nonEmpty,
-    description: z.string().nullable().optional(),
-    meta_title: z.string().nullable().optional(),
-    meta_description: z.string().nullable().optional(),
-    meta_keywords: z.string().nullable().optional(),
   })
   .strict()
 
@@ -256,21 +371,17 @@ export const variantSchema = z
 
 export const productSchema = z
   .object({
+    ...specShape('products', PRODUCT_ATTRIBUTES),
     slug,
     name: nonEmpty,
-    status: z.enum(['draft', 'active', 'archived']).optional(),
-    description: z.string().nullable().optional(),
     product_type: nonEmpty.optional().describe('Product type name.'),
     tax_category: nonEmpty.optional().describe('Tax category name.'),
-    categories: z.array(nonEmpty).optional().describe('Category permalinks.'),
-    channels: z.array(nonEmpty).optional().describe('Channel codes the product is published on.'),
-    tags: z.array(nonEmpty).optional(),
-    meta_title: z.string().nullable().optional(),
-    meta_description: z.string().nullable().optional(),
+    categories: names('Category permalinks.'),
+    channels: names('Channel codes the product is published on.'),
     sku: nonEmpty.optional().describe('SKU of a simple product (one without option variants).'),
     prices: moneyByCurrency.optional().describe('Prices of a simple product.'),
     compare_at_prices: moneyByCurrency.optional(),
-    stock: stockByLocation.optional().describe('Stock of a simple product.'),
+    stock: stockByLocation.optional(),
     variants: z
       .array(variantSchema)
       .optional()
@@ -297,20 +408,17 @@ export const productSchema = z
 
 export const customerSchema = z
   .object({
+    ...specShape('customers', CUSTOMER_ATTRIBUTES),
     // Accounts match on email case-insensitively, as sign-in does.
     email: z.string().trim().toLowerCase().email(),
-    first_name: z.string().nullable().optional(),
-    last_name: z.string().nullable().optional(),
-    phone: z.string().nullable().optional(),
     password: nonEmpty.optional().describe('Set on create; never read back.'),
-    accepts_email_marketing: z.boolean().optional(),
-    tags: z.array(nonEmpty).optional(),
-    customer_groups: z.array(nonEmpty).optional().describe('Customer group names.'),
+    customer_groups: names('Customer group names.'),
   })
   .strict()
 
 export const sellerSchema = z
   .object({
+    ...specShape('sellers', SELLER_ATTRIBUTES),
     slug,
     name: nonEmpty,
     status: z
@@ -319,30 +427,72 @@ export const sellerSchema = z
       .describe(
         'Moves the seller through approve or suspend. A seller can be approved once onboarding has started; a freshly created one cannot.',
       ),
-    contact_email: z.string().nullable().optional(),
-    billing_email: z.string().nullable().optional(),
-    legal_name: z.string().nullable().optional(),
-    registration_number: z.string().nullable().optional(),
-    tax_remittance: z.string().optional(),
   })
+  .strict()
+
+const reasonSchema = (
+  resource: 'return_reasons' | 'claim_reasons' | 'refund_reasons' | 'order_cancellation_reasons',
+) => z.object({ ...specShape(resource, REASON_ATTRIBUTES), name: nonEmpty }).strict()
+
+export const returnReasonSchema = reasonSchema('return_reasons')
+export const claimReasonSchema = reasonSchema('claim_reasons')
+export const refundReasonSchema = reasonSchema('refund_reasons')
+export const orderCancellationReasonSchema = reasonSchema('order_cancellation_reasons')
+
+export const commissionRateSchema = z
+  .object({ ...specShape('commission_rates', COMMISSION_RATE_ATTRIBUTES), code: nonEmpty })
+  .strict()
+
+export const sellerRequirementSchema = z
+  .object({
+    ...specShape('seller_requirements', SELLER_REQUIREMENT_ATTRIBUTES),
+    type: nonEmpty.describe('Requirement type shorthand, e.g. `accept_terms`.'),
+    preferences: z.record(z.string(), scalar).optional(),
+  })
+  .strict()
+
+export const apiKeySchema = z
+  .object({
+    ...specShape('api_keys', API_KEY_ATTRIBUTES),
+    name: nonEmpty,
+    key_type: z.enum(['publishable', 'secret']),
+    channel: nonEmpty.optional().describe('Channel code a publishable key is bound to.'),
+  })
+  .strict()
+  .describe('Created once and never updated; the token is never written to the file.')
+
+export const allowedOriginSchema = z
+  .object({ ...specShape('allowed_origins', ALLOWED_ORIGIN_ATTRIBUTES), origin: nonEmpty })
   .strict()
 
 export const configSchema = z
   .object({
     version: z.literal(1),
     store: storeSchema.optional(),
+    stock_locations: z.array(stockLocationSchema).optional(),
     channels: z.array(channelSchema).optional(),
     markets: z.array(marketSchema).optional(),
     customer_groups: z.array(customerGroupSchema).optional(),
     tax_categories: z.array(taxCategorySchema).optional(),
+    delivery_profiles: z.array(deliveryProfileSchema).optional(),
     delivery_zones: z.array(deliveryZoneSchema).optional(),
     delivery_methods: z.array(deliveryMethodSchema).optional(),
-    stock_locations: z.array(stockLocationSchema).optional(),
+    package_types: z.array(packageTypeSchema).optional(),
+    payment_methods: z.array(paymentMethodSchema).optional(),
     suppliers: z.array(supplierSchema).optional(),
+    product_types: z.array(productTypeSchema).optional(),
     categories: z.array(categorySchema).optional(),
     products: z.array(productSchema).optional(),
     customers: z.array(customerSchema).optional(),
     sellers: z.array(sellerSchema).optional(),
+    return_reasons: z.array(returnReasonSchema).optional(),
+    claim_reasons: z.array(claimReasonSchema).optional(),
+    refund_reasons: z.array(refundReasonSchema).optional(),
+    order_cancellation_reasons: z.array(orderCancellationReasonSchema).optional(),
+    commission_rates: z.array(commissionRateSchema).optional(),
+    seller_requirements: z.array(sellerRequirementSchema).optional(),
+    api_keys: z.array(apiKeySchema).optional(),
+    allowed_origins: z.array(allowedOriginSchema).optional(),
   })
   .strict()
 
@@ -352,15 +502,24 @@ export type ChannelEntry = z.infer<typeof channelSchema>
 export type MarketEntry = z.infer<typeof marketSchema>
 export type CustomerGroupEntry = z.infer<typeof customerGroupSchema>
 export type TaxCategoryEntry = z.infer<typeof taxCategorySchema>
+export type DeliveryProfileEntry = z.infer<typeof deliveryProfileSchema>
 export type DeliveryZoneEntry = z.infer<typeof deliveryZoneSchema>
 export type DeliveryMethodEntry = z.infer<typeof deliveryMethodSchema>
+export type PackageTypeEntry = z.infer<typeof packageTypeSchema>
+export type PaymentMethodEntry = z.infer<typeof paymentMethodSchema>
 export type StockLocationEntry = z.infer<typeof stockLocationSchema>
 export type SupplierEntry = z.infer<typeof supplierSchema>
+export type ProductTypeEntry = z.infer<typeof productTypeSchema>
 export type CategoryEntry = z.infer<typeof categorySchema>
 export type VariantEntry = z.infer<typeof variantSchema>
 export type ProductEntry = z.infer<typeof productSchema>
 export type CustomerEntry = z.infer<typeof customerSchema>
 export type SellerEntry = z.infer<typeof sellerSchema>
+export type ReasonEntry = z.infer<typeof returnReasonSchema>
+export type CommissionRateEntry = z.infer<typeof commissionRateSchema>
+export type SellerRequirementEntry = z.infer<typeof sellerRequirementSchema>
+export type ApiKeyEntry = z.infer<typeof apiKeySchema>
+export type AllowedOriginEntry = z.infer<typeof allowedOriginSchema>
 
 /** Where editors fetch the schema from; written into every generated file. */
 export const SCHEMA_URL = 'https://spreecommerce.org/docs/schemas/spree-config/1.json'
