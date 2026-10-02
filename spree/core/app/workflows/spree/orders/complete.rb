@@ -221,9 +221,10 @@ module Spree
       # order.completed is a one-release alias for 5.x webhook consumers;
       # wildcard subscribers dedupe on the metadata marker.
       def publish_order_placed
-        payload = order.event_payload.merge(notify_customer: order.notify_customer)
-        order.publish_event('order.placed', payload)
-        order.publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
+        metadata = { notify_customer: order.notify_customer }
+        payload = order.event_payload
+        order.publish_event('order.placed', payload, metadata)
+        order.publish_event('order.completed', payload, metadata.merge(deprecated_alias_of: 'order.placed'))
       end
 
       # Places the orders the division produced beside this one.
@@ -246,10 +247,7 @@ module Spree
 
         return unless order_group.orders.all?(&:placed?)
 
-        order_group.publish_event(
-          'order_group.completed',
-          order_group.event_payload.merge(notify_customer: @notify_customer_of_purchase)
-        )
+        order_group.publish_event('order_group.completed', nil, notify_customer: @notify_customer_of_purchase)
       end
 
       def place_sibling(sibling)

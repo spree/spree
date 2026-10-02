@@ -38,6 +38,7 @@ module Spree
     include Spree::StorePreferences
 
     publishes_lifecycle_events
+    publishes_events :activated, :approved, :archived, :back_in_stock, :drafted, :out_of_stock, :proposed, :rejected
 
     MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images

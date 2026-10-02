@@ -1,0 +1,28 @@
+module Spree
+  module Api
+    module V3
+      # The marketplace's answer on a listing, as the seller sees it and as
+      # the `product_submission.*` webhook events carry it.
+      #
+      # The reviewer's identity is deliberately absent: a seller needs to
+      # know what to change, not which member of the marketplace's staff
+      # decided (docs/plans/6.0-seller-product-submission.md).
+      class ProductSubmissionSerializer < BaseSerializer
+        typelize status: [:string, enum: Spree::ProductSubmission.statuses, enum_type_name: 'ProductSubmissionStatus'],
+                 product_id: :string,
+                 review_note: [:string, nullable: true],
+                 reviewed_at: [:string, nullable: true]
+
+        attributes :status, :review_note,
+                   reviewed_at: :iso8601,
+                   created_at: :iso8601
+
+        # A subscriber holding only the submission id would otherwise have to
+        # fetch the row back to learn which product was decided on.
+        attribute :product_id do |submission|
+          submission.product&.prefixed_id
+        end
+      end
+    end
+  end
+end

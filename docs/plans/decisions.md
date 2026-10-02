@@ -6008,3 +6008,40 @@ country picker or its own provisioning. `ProvisionDefaults` previously
 documented exactly two callers — that list grows as flows are added, but the
 rule it protects stands: never wire it to a settings screen, since re-running
 it against a configured store is a data reset.
+
+## 2026-09-29 — Webhook payloads stay on Store serializers; every event is declared
+
+Plan: `6.0-typed-webhook-events.md`.
+
+About 110 webhook events were string literals spread across models,
+workflows and controllers, the dashboard kept its own copy of the list, and
+`@spree/sdk/webhooks` typed every payload as `unknown`.
+
+**Decision.** Webhook payloads use the Store API serializers: the
+customer-facing shape already shipped, with no back-office fields.
+Integrations that need admin data fetch it from the Admin API by the IDs in
+the payload, under a scoped secret key, which is how Stripe's thin events and
+Medusa work and the same bound Saleor and Shopify reach by limiting payloads
+to what the receiver may read. Every event is declared on the model whose
+record is the payload (`publishes_events` / `publishes_event`), forming
+`Spree::Events.catalog`. That catalog generates the event types and Zod
+schemas in `@spree/sdk/webhooks` and serves the dashboard's picker. Hand-built
+payload hashes become event serializers. Publishing an undeclared event
+raises in development and test and warns in production. Rejected: Admin
+payloads (they push internal notes, IP addresses and card-check results to
+any endpoint), a central registry file (two places to edit per event),
+scoping webhook endpoints (left out deliberately, its own plan if revisited).
+
+**Consequences for other work.** A new event is declared with
+`publishes_event` in the same change that publishes it, and its payload is a
+record's Store serializer or a dedicated event serializer, never a hash.
+Facts that are not part of the record go in `metadata`. Webhook payloads must
+not switch to Admin serializers. `WEBHOOK_EVENT_GROUPS` in the dashboard is
+frozen until it is replaced by the catalog endpoint.
+
+**Addendum (2026-09-30).** Credential rules live in the catalog too.
+`customer.password_reset_requested` is a credential event: it reaches only an
+endpoint that names it, and naming it needs `write_customers`. The staff and
+seller reset requests are declared `webhook: false` and never reach any
+webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
+subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.

@@ -18,6 +18,7 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
+    publishes_events :captured, :completed, :paid, :refunded, :voided
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze

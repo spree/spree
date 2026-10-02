@@ -15,6 +15,9 @@ module Spree
     include Spree::Fulfillment::CustomEvents
 
     publishes_lifecycle_events
+    publishes_events :canceled, :delivered, :fulfilled
+    publishes_event 'shipment.shipped', deprecated_alias_of: 'fulfillment.fulfilled'
+    publishes_event 'shipment.canceled', deprecated_alias_of: 'fulfillment.canceled'
 
     with_options inverse_of: :fulfillments do
       belongs_to :address, class_name: 'Spree::Address', optional: true

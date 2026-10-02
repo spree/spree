@@ -99,7 +99,11 @@ namespace :typelizer do
       end
     end
 
+    require Spree::Api::Engine.root.join('lib/spree/api/webhook_event_types').to_s
+    Spree::Api::WebhookEventTypes.new.write!(api_root.join('../..'))
+
     puts "Generated types → packages/sdk/src/types/generated/ & packages/admin-sdk/src/types/generated/"
+    puts "Generated webhook events → packages/sdk/src/webhooks/generated/"
   end
 
   desc 'Clean and regenerate TypeScript types'

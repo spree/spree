@@ -51,6 +51,9 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed, :shipped,
+                     :resend_confirmation_email, :resend_digital_links_email
+    publishes_event :completed, deprecated_alias_of: 'order.placed'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences

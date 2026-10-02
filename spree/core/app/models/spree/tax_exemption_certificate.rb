@@ -9,6 +9,8 @@ module Spree
   # valid in one state and not the next is the ordinary case, and the country
   # and state columns say exactly where it holds.
   class TaxExemptionCertificate < Spree.base_class
+    publishes_event :verified
+
     has_prefix_id :cert
 
     include Spree::HasStatus
