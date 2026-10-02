@@ -207,7 +207,32 @@ curl -X PATCH 'https://api.mystore.com/api/v3/admin/orders/or_xxx/claims/claim_x
 
 A replacement creates a new [fulfillment](/developer/core-concepts/fulfillments) on the original order, so the customer doesn't have to place a second one.
 
-The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is.
+The replacement is filed under the order line it replaces, but it doesn't count toward that line's quantity. Editing the line later, from a claim or an [exchange](#exchanges), adds or removes only the goods the customer paid for and leaves the replacement where it is. Adding a fulfillment for that line works the same way: it takes only the goods the customer paid for, and the replacement stays in its own fulfillment.
+
+If a replacement's fulfillment is canceled, for example because the courier lost the booking, send the goods again by naming that fulfillment as the source of a new one. The new fulfillment takes everything the canceled one held and reserves its stock again. It is priced like any new fulfillment, so pass `cost: 0` to carry over the canceled fulfillment's delivery cost instead, which keeps a free replacement free.
+
+<CodeGroup>
+
+```typescript Admin SDK
+await adminClient.orders.fulfillments.create('or_xxx', {
+  stock_location_id: 'sloc_xxx',
+  source_fulfillment_id: 'ful_xxx', // the canceled replacement fulfillment
+  cost: 0,
+})
+```
+
+```bash cURL
+curl -X POST 'https://api.mystore.com/api/v3/admin/orders/or_xxx/fulfillments' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "stock_location_id": "sloc_xxx",
+    "source_fulfillment_id": "ful_xxx",
+    "cost": 0
+  }'
+```
+
+</CodeGroup>
 
 A claim never refunds more than the customer paid for the claimed items after discounts, tax included. Each claim line reports that ceiling as `paid_amount`, and the `refund_amount` you enter for a line includes its tax. The tax goes back in proportion to the money: refunding half of what a line is worth gives back half its tax, and resolving with a replacement alone gives none back.
 

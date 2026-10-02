@@ -7832,7 +7832,7 @@ paths:
       - api_key: []
         bearer_auth: []
       description: |-
-        Manually creates a fulfillment on a completed order, bypassing order routing — for example to mirror a shipment handled by an external carrier or 3PL. Moves the requested line item quantities out of their current fulfillments; when `items` is omitted, every not-yet-shipped unit is moved. Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier). When `delivery_method_id` is omitted, the fulfillment inherits the delivery method and cost of the source fulfillment(s) it fully drains — keeping the order total unchanged; partially drained splits get no carrier when shipped, and pending fulfillments are otherwise (re)priced by the standard rate engine, which selects the lowest-cost available rate. Pass `cost` to set an explicit shipping cost instead (e.g. the 3PL price) — note this changes the order total and payment state, and is guaranteed to persist only with `status: 'shipped'` (pending fulfillments are re-priced by the rate engine).
+        Manually creates a fulfillment on a completed order, bypassing order routing — for example to mirror a shipment handled by an external carrier or 3PL. Moves the requested line item quantities out of their current fulfillments; when `items` is omitted, every not-yet-shipped unit is moved. Exchange and claim replacements are moved only out of a named `source_fulfillment_id`, which is how a canceled replacement is sent again. Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier). When `delivery_method_id` is omitted, the fulfillment inherits the delivery method and cost of the source fulfillment(s) it fully drains — keeping the order total unchanged; partially drained splits get no carrier when shipped, and pending fulfillments are otherwise (re)priced by the standard rate engine, which selects the lowest-cost available rate. Pass `cost` to set an explicit shipping cost instead (e.g. the 3PL price) — note this changes the order total and payment state, and is guaranteed to persist only with `status: 'shipped'` (pending fulfillments are re-priced by the rate engine).
 
         **Required scope:** `write_fulfillments` (for API-key authentication).
       x-codeSamples:
@@ -7951,6 +7951,11 @@ paths:
                 stock_location_id:
                   type: string
                   description: Stock location the fulfillment ships from
+                source_fulfillment_id:
+                  type: string
+                  description: The only fulfillment of this order to move units from,
+                    its exchange and claim replacements included. Omit to take the
+                    customer's bought units from every unshipped fulfillment
                 tracking:
                   type: string
                   example: INPOST-12345

@@ -96,6 +96,13 @@ module Spree
         expect(fulfillment.cost).to eq(fulfillment.selected_shipping_rate.cost)
       end
 
+      it 'leaves the cost of the shipment it took units from' do
+        source_shipment.update_column(:cost, 3)
+
+        expect(execute.success?).to eq(true)
+        expect(source_shipment.reload.cost).to eq(3)
+      end
+
       context 'with a quantity larger than a single unit' do
         let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
 
@@ -108,6 +115,73 @@ module Spree
           expect(fulfillment.inventory_units.sum(:quantity)).to eq(2)
           expect(source_shipment.reload.inventory_units.sum(:quantity)).to eq(1)
         end
+      end
+    end
+
+    # A replacement is filed under the line it replaces, so it sits among
+    # that line's units. The line's own unit is backordered here, which sorts
+    # the in-stock replacement ahead of it.
+    describe 'with an exchange replacement on the line' do
+      let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
+      let(:line_item) { line_items.first }
+      let(:params) { { order: order, stock_location: stock_location, items: [{ line_item: line_item, quantity: 1 }] } }
+      let!(:replacement_fulfillment) do
+        order.fulfillments.create!(stock_location: stock_location, cost: 0).tap do |parcel|
+          parcel.add_delivery_method(source_shipment.delivery_method, true)
+          parcel.fulfillment_items.create!(
+            order: order, line_item: line_item, variant: create(:variant, product: line_item.product),
+            quantity: 1, status: 'on_hand', replacement: true
+          )
+        end
+      end
+
+      before { line_item.fulfillment_items.where(replacement: false).update_all(status: 'backordered') }
+
+      it "fulfils the line's own unit and leaves the replacement as it was" do
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(
+          have_attributes(variant_id: line_item.variant_id, quantity: 1, replacement: false)
+        )
+        expect(replacement_fulfillment.reload.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+        expect(replacement_fulfillment.cost).to eq(0)
+      end
+
+      it 'does not count the replacement as a unit it can fulfil' do
+        params[:items] = [{ line_item: line_item, quantity: 2 }]
+
+        expect(execute.success?).to eq(false)
+        expect(execute.error.to_s).to eq(
+          Spree.t('fulfillments.errors.insufficient_quantity', item: line_item.prefixed_id, requested: 2, available: 1)
+        )
+      end
+
+      it 'leaves the replacement where it is when items are omitted' do
+        params.delete(:items)
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(replacement: false))
+        expect(replacement_fulfillment.reload.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+      end
+
+      it "moves the replacement out of its own fulfillment when that one is named" do
+        params[:source_fulfillment] = replacement_fulfillment
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+        expect(source_shipment.reload.fulfillment_items.sum(:quantity)).to eq(1)
+      end
+
+      # The canceled parcel can never ship, so naming it is the only way to
+      # send the replacement again.
+      it 're-sends a canceled replacement fulfillment, promising its stock again' do
+        replacement_variant = replacement_fulfillment.fulfillment_items.first.variant
+        Spree.fulfillment_cancel_workflow.call(fulfillment: replacement_fulfillment)
+        params.merge!(source_fulfillment: replacement_fulfillment.reload, items: nil)
+
+        expect(replacement_fulfillment).to be_canceled
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(variant_id: replacement_variant.id, replacement: true))
+        expect(fulfillment.allocated_quantities[replacement_variant.id].to_i).to eq(1)
       end
     end
 

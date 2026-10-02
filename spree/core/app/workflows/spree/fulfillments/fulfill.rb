@@ -56,9 +56,12 @@ module Spree
 
         # The split has to land before the provider is involved: the label is
         # for the actual parcel, and a partial shipment's parcel only exists
-        # after the split.
-        ApplicationRecord.transaction do
+        # after the split. requires_new: #call rescues a failure, so joining a
+        # caller's open transaction (the API's order lock) would let it commit
+        # a split the shelf check refused.
+        ApplicationRecord.transaction(requires_new: true) do
           step :split_off_requested_units
+          step :ensure_shelf_can_cover_dispatch
           step :apply_tracking
         end
 
@@ -106,7 +109,6 @@ module Spree
 
         ensure_order_placed
         ensure_ready_to_hand_over
-        ensure_shelf_can_cover_dispatch
         ensure_requested_units_available
       end
 
@@ -163,7 +165,10 @@ module Spree
       #
       # Refused here rather than at the stock write so it renders as a 422 the
       # merchant can act on, instead of a validation exception surfacing from
-      # inside the dispatch transaction.
+      # inside the dispatch transaction. Checked after the split, which the
+      # refusal rolls back, so a partial dispatch is measured on the units that
+      # actually moved: a line's request can move a replacement of another
+      # variant.
       def ensure_shelf_can_cover_dispatch
         return if force
 
@@ -173,7 +178,7 @@ module Spree
         variants = Spree::Variant.with_deleted.where(id: quantities.keys).index_by(&:id)
 
         quantities.each do |variant_id, quantity|
-          stock_level = @source.stock_location.stock_level(variant_id)
+          stock_level = @fulfillment.stock_location.stock_level(variant_id)
           next if stock_level.nil? || stock_level.count_on_hand >= quantity
 
           failure(
@@ -186,28 +191,18 @@ module Spree
         end
       end
 
-      # What each variant will actually ship: its outstanding promise, capped
-      # by what this dispatch covers. A partial dispatch splits first and the
-      # split carries min(promise, moved quantity), so the two agree.
+      # What each variant will actually ship: the parcel's outstanding promise,
+      # capped by the units it holds.
       #
       # @return [Hash{Integer => Integer}]
       def dispatch_quantity_by_variant
-        held = @source.fulfillment_items.group(:variant_id).sum(:quantity)
-
-        allocated = @source.allocated_quantities
+        allocated = @fulfillment.allocated_quantities
         return {} if allocated.empty?
 
-        wanted =
-          if @requested.empty?
-            held
-          else
-            @requested.each_with_object(Hash.new(0)) do |item, totals|
-              totals[item[:line_item].variant_id] += item[:quantity]
-            end
-          end
+        held = @fulfillment.fulfillment_items.group(:variant_id).sum(:quantity)
 
         allocated.each_with_object({}) do |(variant_id, promised), totals|
-          quantity = [promised, wanted[variant_id].to_i].min
+          quantity = [promised, held[variant_id].to_i].min
           totals[variant_id] = quantity if quantity.positive?
         end
       end
@@ -244,6 +239,7 @@ module Spree
           order: @source.order,
           stock_location: @source.stock_location,
           items: @requested,
+          source_fulfillment: @source,
           delivery_method: @source.delivery_method,
           # Delivery was bought once, at checkout. Charging the rate again
           # would bill the customer for the warehouse's decision.
