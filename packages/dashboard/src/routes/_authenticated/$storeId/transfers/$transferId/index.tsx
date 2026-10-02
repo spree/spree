@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   PageHeader,
+  Slot,
   Subject,
   useResourceKey,
   useStockLocations,
@@ -105,7 +106,12 @@ function StockTransferDetailPage() {
           />
         </>
       }
-      sidebar={<SummaryCard transfer={transfer} />}
+      sidebar={
+        <>
+          <SummaryCard transfer={transfer} />
+          <Slot name="stock_transfer.form_sidebar" context={{ transfer }} />
+        </>
+      }
     />
   )
 }

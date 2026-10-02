@@ -4,9 +4,35 @@ sidebarTitle: Slots catalog
 description: Every named slot the dashboard renders today. Each entry lists the host page, the slot name, and the context the slot's components receive.
 ---
 
-This is the canonical list of slots the dashboard currently exposes. The source of truth is the `<Slot name="…">` call sites in the dashboard source (linked under Reference below); each entry here records the host page, the slot name, and the context your component receives.
+This is the canonical list of slots the admin dashboard and the seller panel currently expose. The source of truth is the `<Slot name="…">` call sites in the dashboard source (linked under Reference below); each entry here records the host page, the slot name, and the context your component receives.
 
 If you need a new injection point in a built-in page, open a PR adding `<Slot name="..." context={...} />` and a documentation entry here — that's the contract for new slots.
+
+## At a glance
+
+| Area | Page | Slots |
+|---|---|---|
+| Every page | Page header | `page.actions`, `page.actions_dropdown` |
+| Every page | Tabbed sub-navigation | `page.tabs` |
+| Products | Product | `product.form_sidebar` |
+| Products | Category | `category.form_sidebar` |
+| Products | Collection | `collection.form_sidebar` |
+| Products | Catalog | `catalog.form_sidebar` |
+| Products | Price list | `price_list.form_sidebar`, `price_list.rule_form.<type>` |
+| Orders | Order | `order.form_sidebar` |
+| Customers | Customer | `customer.form_sidebar` |
+| Customers | Company | `company.form_main`, `company.form_sidebar`, `company_membership.*` |
+| Promotions | Promotion | `promotion.form_sidebar`, `promotion.rule_form.<type>`, `promotion.action_form.<type>` |
+| Inventory | Purchase order | `purchase_order.form_sidebar` |
+| Inventory | Stock transfer | `stock_transfer.form_sidebar` |
+| Sellers | Seller | `seller.form_main`, `seller.form_sidebar` |
+| Sellers | Seller payout | `seller_payout.form_main`, `seller_payout.form_sidebar` |
+| Settings | Store | `store.form_main` |
+| Settings | Payment method | `payment_method.*.<provider>` |
+| Settings | Webhook endpoint | `webhook_endpoint.form_sidebar` |
+| Onboarding | Getting started | `getting-started.task.<name>` |
+| Sign-in | No store access | `no_store_access` |
+| Seller panel | Product, order, payout, profile, team | `seller.product.*`, `seller.order.*`, `seller.payout.*`, `seller.profile.*`, `seller.team.*` |
 
 ## Ambient context
 
@@ -43,112 +69,6 @@ Rendered by `<PageHeader>` (`@spree/dashboard-core/components/page-header.tsx`) 
 | Use | Add menu items (`<DropdownMenuItem>`) for secondary actions |
 | Context | `{ resource, ...slotContext }` — same as `page.actions` |
 
-## Detail-page form slots
-
-The resource detail pages each render a slot below their built-in cards. The context key matches the resource name.
-
-**Host form:** on pages marked *host form: yes*, the slot renders inside the page's own `<form>` and the form context is exposed — widgets can bind inputs via [`useHostForm()`](/developer/dashboard/recipes/custom-form-field) that hydrate, dirty-track, and save with the page's Save button. On pages without one, widgets own their persistence (use `useOptionalHostForm()` to adapt).
-
-### `product.form_sidebar`
-
-| Where | Product detail page (`products/$productId`), end of the sidebar column |
-|---|---|
-| Use | Add a card scoped to the product being edited (e.g., a "Brand" picker, wishlist stats, sync status from an external system) |
-| Context | `{ product }` — the full `Product` record from the Admin API |
-| Host form | **Yes** — form key `product` |
-
-### `category.form_sidebar`
-
-| Where | Category detail page (`products/categories/$categoryId`), end of the sidebar column |
-|---|---|
-| Use | Category-scoped cards — merchandising rules, feed settings, external sync state |
-| Context | `{ category }` — the `Category` record (may be briefly `undefined` while refetching) |
-| Host form | **Yes** — form key `category` |
-
-### `store.form_main`
-
-| Where | Store settings page (`settings/store`), end of the main column |
-|---|---|
-| Use | Store-level settings a plugin owns — integration toggles, account linking |
-| Context | `{ store }` — the full `Store` record |
-| Host form | **Yes** — form key `store` |
-
-### `order.form_sidebar`
-
-| Where | Order detail page (`orders/$orderId`), end of the sidebar column |
-|---|---|
-| Use | Fraud-check status, shipping-integration state, loyalty points earned |
-| Context | `{ order }` — the full `Order` record |
-| Host form | No — widgets save via their own API calls |
-
-### `customer.form_sidebar`
-
-| Where | Customer detail page (`customers/$customerId`), end of the sidebar column |
-|---|---|
-| Use | Loyalty status, support-ticket summary, external CRM links |
-| Context | `{ customer }` — the full `Customer` record |
-| Host form | No — the page edits through sheets; widgets save via their own API calls |
-
-### `collection.form_sidebar`
-
-| Where | Collection detail page (`products/collections/$collectionId`), end of the sidebar column |
-|---|---|
-| Use | Collection-scoped cards — merchandising rules, feed settings, external sync state |
-| Context | `{ collection }` — the `Collection` record |
-| Host form | **Yes** — form key `collection` |
-
-### `company.form_main`
-
-| Where | Company detail page, end of the main column |
-|---|---|
-| Use | B2B account cards — credit terms, approval settings, external account references |
-| Context | `{ company, kind, canEdit }` — `kind` is the company's own `kind`, `canEdit` whether the viewer may write |
-| Host form | No — the widget owns its persistence |
-
-### `company.form_sidebar`
-
-| Where | Company detail page, end of the sidebar column |
-|---|---|
-| Use | Narrow company-scoped cards alongside the main form |
-| Context | `{ company, kind, canEdit }` |
-| Host form | No |
-
-## Seller panel slots
-
-Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way.
-
-### `seller.form_main`
-
-| Where | Seller detail page, end of the main column |
-|---|---|
-| Use | Seller-scoped cards — payout configuration, onboarding state, compliance records |
-| Context | `{ seller, canEdit }` |
-| Host form | No |
-
-### `seller.form_sidebar`
-
-| Where | Seller detail page, end of the sidebar column |
-|---|---|
-| Use | Narrow seller-scoped cards |
-| Context | `{ seller, canEdit }` |
-| Host form | No |
-
-### `seller.team.actions`
-
-| Where | Seller team screen, in the header's action area |
-|---|---|
-| Use | Team-level actions — bulk invite, export, an external directory sync |
-| Context | `{ sellerId }` |
-| Host form | No |
-
-### `seller.team.after`
-
-| Where | Seller team screen, below the member list |
-|---|---|
-| Use | Anything that belongs under the team — audit log, role explainer, seat usage |
-| Context | `{ sellerId }` |
-| Host form | No |
-
 ## Page tabs slot
 
 ### `page.tabs` (default)
@@ -162,32 +82,273 @@ Rendered by `<PageTabs>` at the right edge of any tabbed sub-nav.
 
 Some pages override `slotName` to scope tabs to a single resource (e.g., `slotName="order.tabs"`). The catalog will grow these as we wire them up; today only the default `page.tabs` name is in production use.
 
-## Payment method editor slots (dynamic)
+## Detail-page slots
+
+Every resource detail page renders a slot at the end of its sidebar column, and some also at the end of the main column. The slot name starts with the resource name, and the context key matches it.
+
+**Host form.** On pages marked *host form: yes*, the slot renders inside the page's own `<form>` and exposes it — widgets can bind inputs via [`useHostForm()`](/developer/dashboard/recipes/custom-form-field) that hydrate, dirty-track, and save with the page's Save button. The form key is what you register extension fields under in `formFields`. On every other page, widgets own their persistence; use `useOptionalHostForm()` to write a widget that adapts to both.
+
+<Note>
+On host-form pages your widget renders inside the page's `<form>` element, so a `<Button>` in it submits the page unless you give it `type="button"`.
+</Note>
+
+### Products
+
+#### `product.form_sidebar`
+
+| Where | Product detail page (`products/$productId`), end of the sidebar column |
+|---|---|
+| Use | Add a card scoped to the product being edited (e.g., a "Brand" picker, wishlist stats, sync status from an external system) |
+| Context | `{ product }` — the full `Product` record from the Admin API |
+| Host form | **Yes** — form key `product` |
+
+#### `category.form_sidebar`
+
+| Where | Category detail page (`products/categories/$categoryId`), end of the sidebar column |
+|---|---|
+| Use | Category-scoped cards — merchandising rules, feed settings, external sync state |
+| Context | `{ category }` — the `Category` record (may be briefly `undefined` while refetching) |
+| Host form | **Yes** — form key `category` |
+
+#### `collection.form_sidebar`
+
+| Where | Collection detail page (`products/collections/$collectionId`), end of the sidebar column |
+|---|---|
+| Use | Collection-scoped cards — merchandising rules, feed settings, external sync state |
+| Context | `{ collection }` — the `Collection` record |
+| Host form | **Yes** — form key `collection` |
+
+#### `catalog.form_sidebar`
+
+| Where | Catalog detail page (`products/catalogs/$catalogId`), end of the sidebar column |
+|---|---|
+| Use | B2B catalog cards — ERP contract references, approval state, export settings |
+| Context | `{ catalog, canEdit }` — the `Catalog` record; `canEdit` is whether the viewer may update it |
+| Host form | **Yes** — form key `catalog` |
+
+#### `price_list.form_sidebar`
+
+| Where | Price list create and detail pages (`products/price-lists/new`, `products/price-lists/$priceListId`), end of the sidebar column |
+|---|---|
+| Use | Price-list cards — sync state with an external pricing engine, audit notes |
+| Context | `{ priceList, mode }` — `mode` is `'create'` or `'edit'`; `priceList` is `undefined` in create mode |
+| Host form | **Yes** — form key `price_list` |
+
+### Orders and customers
+
+#### `order.form_sidebar`
+
+| Where | Order detail page (`orders/$orderId`), end of the sidebar column |
+|---|---|
+| Use | Fraud-check status, shipping-integration state, loyalty points earned |
+| Context | `{ order }` — the full `Order` record |
+| Host form | No — widgets save via their own API calls |
+
+#### `customer.form_sidebar`
+
+| Where | Customer detail page (`customers/$customerId`), end of the sidebar column |
+|---|---|
+| Use | Loyalty status, support-ticket summary, external CRM links |
+| Context | `{ customer }` — the full `Customer` record |
+| Host form | No — the page edits through sheets; widgets save via their own API calls |
+
+#### `company.form_main`
+
+| Where | Company detail page (`companies/$companyId`), end of the main column |
+|---|---|
+| Use | B2B account cards — credit terms, approval settings, external account references |
+| Context | `{ company, kind, canEdit }` — `kind` is the company's own `kind`, `canEdit` whether the viewer may write |
+| Host form | No — the widget owns its persistence |
+
+#### `company.form_sidebar`
+
+| Where | Company detail page, end of the sidebar column |
+|---|---|
+| Use | Narrow company-scoped cards alongside the main form |
+| Context | `{ company, kind, canEdit }` |
+| Host form | No |
+
+#### Company membership slots
+
+The company's member list and its "Add member" sheet carry three smaller slots, built for an extension that gives members roles.
+
+| Slot | Where | Context |
+|---|---|---|
+| `company_membership.row_meta` | Under each member's email in the member list | `{ membership, companyId, canEdit }` |
+| `company_membership.row_actions` | Each member's actions menu, above "Remove member" — render `<DropdownMenuItem>`s | `{ membership, companyId }` |
+| `company_membership.form_fields` | The "Add member" sheet, below the email field. **Replaces** a built-in note about roles | `{ companyId, onChange }` — call `onChange(params)` and those params are merged into the request that adds the member |
+
+### Promotions
+
+#### `promotion.form_sidebar`
+
+| Where | Promotion create and detail pages (`promotions/new`, `promotions/$promotionId`), end of the sidebar column |
+|---|---|
+| Use | Campaign attribution, budget tracking, external coupon-system sync |
+| Context | `{ promotion, mode }` — `mode` is `'create'` or `'edit'`; `promotion` is `undefined` in create mode |
+| Host form | **Yes** — form key `promotion` |
+
+### Inventory
+
+#### `purchase_order.form_sidebar`
+
+| Where | Purchase order detail page (`purchase-orders/$purchaseOrderId`), end of the sidebar column |
+|---|---|
+| Use | Supplier portal links, ERP sync status, landed-cost notes |
+| Context | `{ purchaseOrder }` — the full `PurchaseOrder` record |
+| Host form | No |
+
+#### `stock_transfer.form_sidebar`
+
+| Where | Stock transfer detail page (`transfers/$transferId`), end of the sidebar column |
+|---|---|
+| Use | Carrier tracking, warehouse-system sync status |
+| Context | `{ transfer }` — the full `StockTransfer` record |
+| Host form | No |
+
+### Sellers (marketplace)
+
+These slots are on the store owner's seller management pages in the admin dashboard. For the seller's own view, see the seller panel slots below.
+
+#### `seller.form_main`
+
+| Where | Seller detail page (`sellers/$sellerId`), end of the main column |
+|---|---|
+| Use | Seller-scoped cards — payout configuration, onboarding state, compliance records |
+| Context | `{ seller, canEdit }` — the full `Seller` record; `canEdit` is whether the viewer may update it |
+| Host form | No |
+
+#### `seller.form_sidebar`
+
+| Where | Seller detail page, end of the sidebar column |
+|---|---|
+| Use | Narrow seller-scoped cards — risk score, verification status, external account links |
+| Context | `{ seller, canEdit }` |
+| Host form | No |
+
+#### `seller_payout.form_main`
+
+| Where | Seller payout detail page (`sellers/payouts/$payoutId`), end of the main column |
+|---|---|
+| Use | Payout-scoped cards — remittance advice, the transfer as seen by the payment provider |
+| Context | `{ payout }` — the full `SellerPayout` record |
+| Host form | No |
+
+#### `seller_payout.form_sidebar`
+
+| Where | Seller payout detail page, end of the sidebar column |
+|---|---|
+| Use | Accounting-system sync status, links to the provider's dashboard |
+| Context | `{ payout }` |
+| Host form | No |
+
+### Settings
+
+#### `store.form_main`
+
+| Where | Store settings page (`settings/store`), end of the main column |
+|---|---|
+| Use | Store-level settings a plugin owns — integration toggles, account linking |
+| Context | `{ store }` — the full `Store` record |
+| Host form | **Yes** — form key `store` |
+
+#### `webhook_endpoint.form_sidebar`
+
+| Where | Webhook endpoint detail page (`settings/webhooks/$webhookEndpointId`), end of the sidebar column |
+|---|---|
+| Use | Notes on the receiving system, links to its logs, a "send test event" action |
+| Context | `{ endpoint }` — the full `WebhookEndpoint` record |
+| Host form | No |
+
+## Seller panel slots
+
+Rendered by the marketplace seller panel (`@spree/seller-dashboard`) rather than the admin dashboard, and registered the same way, in the seller panel's own plugins. Their names start with `seller.` followed by the page — `seller.form_main` and `seller.form_sidebar` above belong to the admin dashboard instead.
+
+The product page is a host form with the form key `seller.product`: fields a widget binds with `useHostForm()` save with the product. The Seller API accepts only the attributes your extension declares in `additional_seller_permitted_attributes` — see [Writable by sellers](/developer/customization/api#writable-by-sellers). The other seller panel pages have no page-wide form, so widgets there save via their own Seller API calls.
+
+| Slot | Where | Context |
+|---|---|---|
+| `seller.product.form_sidebar` | Product create and edit pages, end of the sidebar column | `{ product, mode }` — `mode` is `'new'` or `'edit'`; `product` is `undefined` while creating |
+| `seller.order.form_sidebar` | Order detail page, end of the sidebar column | `{ order }` |
+| `seller.payout.form_sidebar` | Payout detail page, end of the sidebar column | `{ payout }` |
+| `seller.profile.form_main` | Profile page, end of the main column | `{ profile }` |
+| `seller.profile.form_sidebar` | Profile page, end of the sidebar column | `{ profile }` |
+| `seller.team.actions` | Team page, in the header's action area — bulk invite, export, an external directory sync | `{ sellerId }` |
+| `seller.team.after` | Team page, below the member list — audit log, role explainer, seat usage | `{ sellerId }` |
+
+## Replaceable slots
+
+These slots render built-in content when nothing is registered. Registering a component **replaces** that content rather than adding to it.
+
+### `no_store_access`
+
+| Where | The screen shown to a signed-in admin who has a role on no store |
+|---|---|
+| Use | Replace the built-in "no access" message — for example, with a request-access form or a link to your own onboarding |
+| Context | `{ user, signOut }` — `user` is the signed-in admin; `signOut()` ends the session |
+
+Import the name as `NO_STORE_ACCESS_SLOT` from `@spree/dashboard-core` rather than typing it.
+
+### `getting-started.task.<name>`
+
+| Where | The body of one step on the Getting Started checklist (`getting-started`) |
+|---|---|
+| Use | Replace a step's description and link with your own flow — or give a setup task your extension added on the backend its own UI |
+| Context | `{ task, store, storeId }` — `task` is the `SetupTask` record (`name`, `done`, …) |
+
+`<name>` is the task's `name` as the API returns it.
+
+## Editor slots (dynamic)
+
+Promotions, price lists, and payment methods each pick their editor by type. The slot names are computed from the type's `api_type` shorthand, so registering against the right name is what hooks your editor in. The promotion and price list editor slots **replace** the built-in editor, which is generated from the type's preference schema.
+
+### `promotion.rule_form.<type>`
+
+| Where | The sheet that edits one promotion rule (e.g. `promotion.rule_form.product`) |
+|---|---|
+| Use | A custom editor for a rule whose settings don't fit the generated form |
+| Context | `{ draft, onSave, onClose }` — edit `draft` locally and call `onSave(next)`; the promotion saves everything when the merchant clicks Save |
+
+### `promotion.action_form.<type>`
+
+| Where | The sheet that edits one promotion action (e.g. `promotion.action_form.free_shipping`) |
+|---|---|
+| Use | A custom editor for an action — calculators, line-item pickers |
+| Context | `{ draft, onSave, onClose }` — same as rules |
+
+### `price_list.rule_form.<type>`
+
+| Where | The sheet that edits one price list rule (e.g. `price_list.rule_form.volume_rule`) |
+|---|---|
+| Use | A custom editor for a price rule |
+| Context | `{ draft, onSave, onClose }` — same as promotion rules |
+
+### Payment method editor slots
 
 Used by `<PaymentMethodForm>` to let payment-provider plugins replace pieces of the editor sheet. The slot names are computed per provider type (`stripe`, `bogus`, …), so registering against the right name is what hooks your editor in.
 
-### `payment_method.guide.<providerType>`
+#### `payment_method.guide.<providerType>`
 
 | Where | Above the preferences form |
 |---|---|
 | Use | Banner explaining what the integration does, what credentials to use, links to provider docs |
 | Context | `PaymentMethodEditorContext` (see below) |
 
-### `payment_method.form.<providerType>`
+#### `payment_method.form.<providerType>`
 
 | Where | In place of the auto-generated preferences form |
 |---|---|
 | Use | Render a custom React form when the provider's preferences are too complex for the generated UI (multi-step OAuth, environment switchers, …) |
 | Context | `PaymentMethodEditorContext` |
 
-### `payment_method.actions.<providerType>`
+#### `payment_method.actions.<providerType>`
 
 | Where | Sheet footer, before Save/Cancel |
 |---|---|
 | Use | Provider-specific action buttons — "Test connection", "Rotate keys", "Open dashboard in provider" |
 | Context | `PaymentMethodEditorContext` |
 
-### `PaymentMethodEditorContext`
+#### `PaymentMethodEditorContext`
 
 ```ts
 interface PaymentMethodEditorContext {
@@ -219,10 +380,11 @@ Use these instead of constructing the string yourself, so a rename in one place 
 
 If a built-in page should expose a new injection point:
 
-1. Pick a name (`<resource>.<area>`, e.g., `order.timeline`)
+1. Pick a name (`<resource>.<area>`, e.g., `order.timeline`; `seller.<page>.<area>` in the seller panel)
 2. Add `<Slot name="..." context={{ resource: order, /* ... */ }} />` at the call site
-3. Document the slot here — host, intent, context shape
-4. Open the PR
+3. If the slot sits inside the page's form, make it a host form: wrap the form in `<FormProvider>`, hydrate with `extensionFormValues('<resource>', record)`, and merge `extensionSubmitValues('<resource>', form)` into the save payload — the collection page is the reference
+4. Document the slot here — host, intent, context shape, and form key
+5. Open the PR
 
 The slot is not "live" until the docs land — without an entry here, no plugin author knows it exists.
 

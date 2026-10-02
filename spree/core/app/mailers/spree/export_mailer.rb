@@ -4,10 +4,9 @@ module Spree
       @export = export
 
       with_store_locale(@export.store) do
-        mail(
-          to: @export.user.email,
-          subject: Spree.t('export_mailer.export_done.subject', export_number: @export.number).to_s,
-          store_url: current_store.url
+        mail_template(
+          { export: email_data(@export, Spree::Emails::ExportSerializer) },
+          to: @export.user.email, store_url: current_store.url
         )
       end
     end

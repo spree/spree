@@ -60,7 +60,7 @@ module Spree
 
       # Preprocessed product image variant sizes at 2x retina resolution.
       # These variants are generated on upload to reduce runtime processing.
-      # When using spree_image_tag, pass variant option instead of width and height.
+      # Pass the variant to spree_image_url instead of a width and height.
       #
       # Default sizes:
       #   mini (128x128)     - admin thumbnails, checkout line items

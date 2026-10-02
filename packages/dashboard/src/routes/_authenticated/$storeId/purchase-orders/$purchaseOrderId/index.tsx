@@ -3,6 +3,7 @@ import {
   adminClient,
   Can,
   PageHeader,
+  Slot,
   Subject,
   useResourceKey,
   useStore,
@@ -96,7 +97,12 @@ function PurchaseOrderDetailPage() {
           />
         </>
       }
-      sidebar={<SummaryCard purchaseOrder={purchaseOrder} />}
+      sidebar={
+        <>
+          <SummaryCard purchaseOrder={purchaseOrder} />
+          <Slot name="purchase_order.form_sidebar" context={{ purchaseOrder }} />
+        </>
+      }
     />
   )
 }

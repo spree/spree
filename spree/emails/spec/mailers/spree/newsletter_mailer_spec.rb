@@ -19,7 +19,7 @@ describe Spree::NewsletterMailer, type: :mailer do
         message = described_class.email_confirmation(subscriber)
 
         expect(message.from).to eq(['hello@second.example.com'])
-        expect(message.body.encoded).to include('Second Store')
+        expect(email_body(message)).to include('Second Store')
       end
     end
 
@@ -27,13 +27,13 @@ describe Spree::NewsletterMailer, type: :mailer do
       it 'builds the confirmation link from the redirect URL with the verification token appended' do
         message = described_class.email_confirmation(subscriber, redirect_url: 'https://storefront.example.com/newsletter/confirm')
 
-        expect(message.body.encoded).to include("https://storefront.example.com/newsletter/confirm?token=#{subscriber.verification_token}")
+        expect(email_body(message)).to include("https://storefront.example.com/newsletter/confirm?token=#{subscriber.verification_token}")
       end
 
       it 'merges the token into an existing query string instead of appending a new one' do
         message = described_class.email_confirmation(subscriber, redirect_url: 'https://storefront.example.com/newsletter/confirm?source=footer')
 
-        expect(message.body.encoded).to include("https://storefront.example.com/newsletter/confirm?source=footer&amp;token=#{subscriber.verification_token}")
+        expect(email_body(message)).to include("https://storefront.example.com/newsletter/confirm?source=footer&amp;token=#{subscriber.verification_token}")
       end
 
       it 'preserves a URL fragment when appending the token' do
@@ -43,7 +43,7 @@ describe Spree::NewsletterMailer, type: :mailer do
         )
 
         # The token belongs in the query string, not after the fragment.
-        expect(message.body.encoded).to include(
+        expect(email_body(message)).to include(
           "https://storefront.example.com/account?token=#{subscriber.verification_token}#newsletter"
         )
       end
@@ -53,8 +53,8 @@ describe Spree::NewsletterMailer, type: :mailer do
       it 'falls back to the store storefront URL' do
         message = described_class.email_confirmation(subscriber)
 
-        expect(message.body.encoded).to include(store.storefront_url.to_s)
-        expect(message.body.encoded).to include("token=#{subscriber.verification_token}")
+        expect(email_body(message)).to include(store.storefront_url.to_s)
+        expect(email_body(message)).to include("token=#{subscriber.verification_token}")
       end
     end
 

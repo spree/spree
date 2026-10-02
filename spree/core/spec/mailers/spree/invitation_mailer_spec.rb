@@ -25,7 +25,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       # delivering from a background job.
       it 'brands the email with the invitation store, not the default store' do
         expect(mail.from).to eq(['hello@second.example.com'])
-        expect(mail.body.encoded).to include('Second Store')
+        expect(email_body(mail)).to include('Second Store')
       end
     end
 
@@ -60,9 +60,9 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
 
       it 'uses spree.admin_invitation_url for the accept link' do
-        expect(mail.body.encoded).to include(Spree.t(:accept))
-        expect(mail.body.encoded).to include(legacy_admin_url)
-        expect(mail.body.encoded).not_to include(spa_acceptance_url)
+        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(legacy_admin_url)
+        expect(email_body(mail)).not_to include(spa_acceptance_url)
       end
     end
 
@@ -78,13 +78,13 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
 
       it 'uses the admin_invitation_acceptance helper for the accept link' do
-        expect(mail.body.encoded).to include(Spree.t(:accept))
-        expect(mail.body.encoded).to include(spa_acceptance_url)
-        expect(mail.body.encoded).not_to include(legacy_admin_url)
+        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(spa_acceptance_url)
+        expect(email_body(mail)).not_to include(legacy_admin_url)
       end
 
       it 'honors Spree::Config[:admin_url] in the rendered URL' do
-        expect(mail.body.encoded).to include(
+        expect(email_body(mail)).to include(
           "https://admin.example.com/accept-invitation/#{invitation.prefixed_id}"
         )
       end
@@ -103,10 +103,10 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
         after { Spree::Config[:seller_panel_url] = nil }
 
         it 'points at the seller panel rather than the dashboard' do
-          expect(mail.body.encoded).to include(
+          expect(email_body(mail)).to include(
             "https://sellers.example.com/accept-invitation/#{invitation.prefixed_id}"
           )
-          expect(mail.body.encoded).not_to include('https://admin.example.com/accept-invitation')
+          expect(email_body(mail)).not_to include('https://admin.example.com/accept-invitation')
         end
       end
 
@@ -131,7 +131,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       # Falls through to the store's storefront URL — keeps the dummy/test
       # app + all-in-one installs working without any Spree::Config setup.
       it 'falls back to the storefront URL' do
-        expect(mail.body.encoded).to match(%r{accept-invitation/#{invitation.prefixed_id}\?token=#{invitation.token}})
+        expect(email_body(mail)).to match(%r{accept-invitation/#{invitation.prefixed_id}\?token=#{invitation.token}})
       end
     end
   end
@@ -152,7 +152,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
     end
 
     it 'includes the invitee name in the body' do
-      expect(mail.body.encoded).to include(invitee.name)
+      expect(email_body(mail)).to include(invitee.name)
     end
 
     it 'sends to the correct recipient' do

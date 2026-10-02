@@ -158,7 +158,8 @@ Seven checks run on every cart read:
   **An empty `requirements` array does not guarantee completion will succeed.** What a
   cart reports is the *advisory* set. Completing one additionally checks stock
   (`out_of_stock`, `discontinued`), negotiated quantity rules
-  (`quantity_rule_violated`) and the guest-checkout policy
+  (`quantity_rule_violated`), whether each product is still in the buyer's
+  [catalogs](/developer/core-concepts/catalogs) (`not_orderable`) and the guest-checkout policy
   (`guest_checkout_not_allowed`) — each of which has to load line items, so they are
   held back to keep reading a cart cheap. Treat a failed completion as a normal path,
   not an exception.
@@ -234,6 +235,8 @@ To add your own step or requirement, see
   </Step>
   <Step title="Choose delivery">
     Each [fulfillment](/developer/core-concepts/fulfillments) offers delivery rates. Pick one per fulfillment.
+
+    A cart has no fulfillments until it has a shipping address or a pickup location, unless none of its items ships to an address (a digital-only cart has them straight away). Saving a different address replaces the fulfillments, under new ids, with the cheapest shipping rate selected, so show the customer the new options before taking payment.
 
     ```typescript Store SDK
     const cart = await client.carts.get(cartId)

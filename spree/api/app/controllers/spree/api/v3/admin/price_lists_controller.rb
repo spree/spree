@@ -124,6 +124,7 @@ module Spree
           def permitted_params
             normalize_params(
               params.permit(
+                *model_additional_permitted_attributes,
                 :name, :description, :position,
                 :starts_at, :ends_at, :match_policy,
                 :price_adjustment_percentage, :adjust_compare_at,

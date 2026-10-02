@@ -16,7 +16,7 @@ describe Spree::SellerUserMailer, type: :mailer do
     it 'links with the reset token' do
       message = described_class.password_reset_email(seller_user, token, store)
 
-      expect(message.body.encoded).to include("token=#{token}")
+      expect(email_body(message)).to include("token=#{token}")
     end
 
     it 'prefers the redirect URL when the API validated one' do
@@ -24,7 +24,7 @@ describe Spree::SellerUserMailer, type: :mailer do
         seller_user, token, store, redirect_url: 'https://sellers.example.com/reset-password'
       )
 
-      expect(message.body.encoded).to include("https://sellers.example.com/reset-password?token=#{token}")
+      expect(email_body(message)).to include("https://sellers.example.com/reset-password?token=#{token}")
     end
 
     # The point of the separate mailer: without a redirect URL the link must
@@ -35,7 +35,7 @@ describe Spree::SellerUserMailer, type: :mailer do
 
       message = described_class.password_reset_email(seller_user, token, store)
 
-      expect(message.body.encoded).to include("https://sellers.example.com/reset-password?token=#{token}")
+      expect(email_body(message)).to include("https://sellers.example.com/reset-password?token=#{token}")
     end
   end
 end

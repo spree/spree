@@ -13,7 +13,7 @@ Spree handles two categories of emails:
 
 ## Customer-Facing Emails
 
-By default, **Spree sends all customer transactional emails itself**. This works for every client of the API: mobile apps, custom frontends, POS integrations — no storefront required. Delivery uses the same [SMTP configuration](#configuration) as system emails.
+By default, **Spree sends all customer transactional emails itself**. This works for every client of the API: mobile apps, custom frontends, POS integrations — no storefront required. Delivery uses the same [SMTP configuration](#configuration) as system emails, and every email renders from a Liquid template you can override — see [Email Templates](/developer/customization/emails).
 
 Customer emails can be turned off in the admin under **Settings → Emails** — do this when your storefront takes over sending them (below), otherwise customers receive both.
 
