@@ -41,7 +41,11 @@ function operation(
   return { section: section.name, ...partial }
 }
 
-async function planSingleton(section: AnySection, ctx: RunContext): Promise<PlannedOperation[]> {
+async function planSingleton(
+  section: AnySection,
+  ctx: RunContext,
+  createOnly: boolean,
+): Promise<PlannedOperation[]> {
   const [entry] = section.entries(ctx.config)
   const live = await ctx.client.request<LiveRecord>('GET', section.path)
   const path = section.name
@@ -52,10 +56,10 @@ async function planSingleton(section: AnySection, ctx: RunContext): Promise<Plan
   )
   return [
     operation(section, {
-      kind: changes.length ? 'update' : 'unchanged',
+      kind: changes.length && !createOnly ? 'update' : 'unchanged',
       key: section.name,
       path,
-      changes,
+      changes: createOnly ? [] : changes,
       entry,
       live,
       payload,
@@ -67,6 +71,7 @@ async function planCollection(
   section: AnySection,
   ctx: RunContext,
   prune: boolean,
+  createOnly: boolean,
 ): Promise<PlannedOperation[]> {
   const entries = section.entries(ctx.config)
   const keys = entries.map((entry) => section.entryKey(entry))
@@ -139,10 +144,10 @@ async function planCollection(
     }
     operations.push(
       operation(section, {
-        kind: changes.length ? 'update' : 'unchanged',
+        kind: changes.length && !createOnly ? 'update' : 'unchanged',
         key,
         path,
-        changes,
+        changes: createOnly ? [] : changes,
         entry,
         live: match,
         payload,
@@ -195,8 +200,8 @@ export async function planConfig(
   for (const section of ORDERED_SECTIONS) {
     if (config[section.name] === undefined) continue
     const operations = section.singleton
-      ? await planSingleton(section, ctx)
-      : await planCollection(section, ctx, prune.has(section.name))
+      ? await planSingleton(section, ctx, options.createOnly ?? false)
+      : await planCollection(section, ctx, prune.has(section.name), options.createOnly ?? false)
     sections.push({ section: section.name, operations })
   }
 

@@ -1,4 +1,4 @@
-import { deployConfig } from './apply.js'
+import { deployConfig, reportHasFailures } from './apply.js'
 import { COUNTRY_TEMPLATE, STORE_DEFAULTS } from './generated/templates.js'
 import { parseConfig, type Variables } from './load.js'
 import type { SpreeConfig } from './schema.js'
@@ -16,12 +16,13 @@ const POUND_IN: Record<string, number> = { lb: 1, oz: 16, kg: 0.45359237, g: 453
 /**
  * The parcel box every store starts with, in the units the store already
  * uses so the figures read the way a merchant would write them. Its tare is
- * half a pound, converted rather than restated under another unit's label.
+ * half a pound, converted rather than restated under another unit's label,
+ * to the two decimals the API stores.
  */
 function boxVariables(store: LiveStore): Variables {
   const metric = store.preferred_unit_system === 'metric'
   const weightUnit = store.preferred_weight_unit ?? (metric ? 'kg' : 'lb')
-  const weight = Math.round(0.5 * (POUND_IN[weightUnit] ?? 1) * 1000) / 1000
+  const weight = Math.round(0.5 * (POUND_IN[weightUnit] ?? 1) * 100) / 100
   return {
     BOX_LENGTH: metric ? '30' : '12',
     BOX_WIDTH: metric ? '23' : '9',
@@ -45,6 +46,28 @@ function merge(...configs: SpreeConfig[]): SpreeConfig {
   return merged as SpreeConfig
 }
 
+/** Type shorthands the installation has registered, from a `…/types` endpoint. */
+async function registeredTypes(client: ConfigClient, path: string): Promise<Set<string>> {
+  const { data } = await client.request<{ data: { type: string }[] }>('GET', path)
+  return new Set(data.map((entry) => entry.type))
+}
+
+/**
+ * Drops the defaults an installation cannot hold: a host app may unregister a
+ * seller requirement kind or a payment method type, and the store's other
+ * defaults must not fail on its account. The payment method list omits types
+ * the store already has, which is harmless — those are left alone anyway.
+ */
+async function withoutUnregistered(config: SpreeConfig, client: ConfigClient) {
+  const kinds = await registeredTypes(client, '/seller_requirements/types')
+  const methods = await registeredTypes(client, '/payment_methods/types')
+  return {
+    ...config,
+    seller_requirements: config.seller_requirements?.filter((entry) => kinds.has(entry.type)),
+    payment_methods: config.payment_methods?.filter((entry) => methods.has(entry.type)),
+  }
+}
+
 export interface DefaultsOptions {
   /**
    * Include the country-shaped defaults (warehouse, delivery zones and
@@ -56,8 +79,9 @@ export interface DefaultsOptions {
 
 /**
  * The defaults a store starts with, filled in for the store's country,
- * currency and units. The store must already know where it sells from:
- * first-run setup (or the seed on a scripted install) sets that first.
+ * currency and units, less any type the installation has not registered.
+ * The store must already know where it sells from: first-run setup (or the
+ * seed on a scripted install) sets that first.
  */
 export async function storeDefaults(
   client: ConfigClient,
@@ -73,20 +97,34 @@ export async function storeDefaults(
     STORE_CURRENCY: store.default_currency,
     ...boxVariables(store),
   }
-  return merge(
-    parseConfig(STORE_DEFAULTS, variables).config,
-    ...(withCountry ? [parseConfig(COUNTRY_TEMPLATE, variables).config] : []),
+  return withoutUnregistered(
+    merge(
+      parseConfig(STORE_DEFAULTS, variables).config,
+      ...(withCountry ? [parseConfig(COUNTRY_TEMPLATE, variables).config] : []),
+    ),
+    client,
   )
 }
 
 /**
- * Deploys the defaults every new store starts with. Safe to run again: the
- * engine only creates what is missing, so an interrupted run is finished by
- * the next one, and a store that already has them is left alone.
+ * Deploys the defaults every new store starts with. Only what is missing is
+ * created: a default the merchant has since changed (a rate, a zone, which
+ * tax category is the default) is left as it is, so running this again,
+ * after an interrupted setup or by hand, never undoes their work.
+ *
+ * The default warehouse is created last, once everything else is in place,
+ * because the store reads its presence as "provisioned" — sample data waits
+ * for it.
  */
 export async function provisionStore(
   client: ConfigClient,
   options: DefaultsOptions = {},
 ): Promise<ApplyReport> {
-  return deployConfig(await storeDefaults(client, options), client)
+  const { stock_locations: stockLocations, ...rest } = await storeDefaults(client, options)
+  const first = await deployConfig(rest, client, { createOnly: true })
+  if (!stockLocations || reportHasFailures(first)) return first
+  const last = await deployConfig({ version: 1, stock_locations: stockLocations }, client, {
+    createOnly: true,
+  })
+  return { results: [...first.results, ...last.results] }
 }
