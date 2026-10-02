@@ -89,6 +89,7 @@ module Spree
     before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
 
+    after_validation :forget_submitted_state_code, if: -> { errors.any? }
     after_save :forget_submitted_state_code
 
     after_create :set_user_attributes, if: -> { customer_owned? }

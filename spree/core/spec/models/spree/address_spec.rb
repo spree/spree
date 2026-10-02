@@ -1003,6 +1003,14 @@ describe Spree::Address, type: :model do
 
         expect(address.reload.state_code).to eq('NY')
       end
+
+      it 'lets a later update submit a new region after a failed one' do
+        expect(address.update(state_code: 'NY', firstname: '')).to be(false)
+
+        address.update!(firstname: 'Ada', state_name: 'Maryland', postal_code: '21201')
+
+        expect(address.reload.state_code).to eq('MD')
+      end
     end
   end
 
