@@ -149,20 +149,25 @@ describe('provisionStore', () => {
     expect(creates.at(-1)).toBe('/stock_locations')
   })
 
-  it('still creates the warehouse, last, when another default fails', async () => {
+  // The warehouse marks the store provisioned, and queued sample data waits
+  // for it, so it waits for every other default; a retry finishes the job.
+  it('holds the warehouse back until every other default is written', async () => {
     const api = new FakeApi()
     polishStore(api)
     const original = api.request
+    let refuse = true
     api.request = async (method, path, options) => {
-      if (method === 'POST' && path === '/allowed_origins') throw new Error('refused')
+      if (refuse && method === 'POST' && path === '/allowed_origins') throw new Error('refused')
       return original(method, path, options)
     }
 
     const report = await provisionStore(api)
-
     expect(report.results.filter((result) => result.status === 'failed')).toHaveLength(1)
-    const creates = api.calls.filter((call) => call.method === 'POST').map((call) => call.path)
-    expect(creates.at(-1)).toBe('/stock_locations')
+    expect(api.all('/stock_locations')).toEqual([])
+
+    refuse = false
+    await provisionStore(api)
+    expect(api.all('/stock_locations').map((location) => location.name)).toEqual(['Shop location'])
   })
 
   // Matching is by name, so a renamed default would otherwise come back as a

@@ -1,4 +1,4 @@
-import { applyPlan } from './apply.js'
+import { applyPlan, reportHasFailures } from './apply.js'
 import { listAll } from './client.js'
 import { COUNTRY_TEMPLATE, STORE_DEFAULTS } from './generated/templates.js'
 import { parseConfig, type Variables } from './load.js'
@@ -150,34 +150,31 @@ export async function storeDefaults(
 }
 
 /**
- * A provisioning plan with the default warehouse applied last. The store
- * reads that warehouse as "provisioned" and sample data waits for it, so it
- * must not exist until every other default has been written. Nothing in the
- * defaults refers to a stock location, so moving the section is safe.
+ * Applies a provisioning plan with the default warehouse last, and only once
+ * every other default was written. The store reads that warehouse as
+ * "provisioned" and queued sample data waits for it, so it must not exist
+ * while anything else is missing; a retry creates it once the rest is in
+ * place. Nothing in the defaults refers to a stock location.
  */
-export function warehouseLast(plan: PlannedRun): PlannedRun {
+export async function applyProvisioning(plan: PlannedRun): Promise<ApplyReport> {
   const isWarehouse = (section: PlannedRun['sections'][number]) =>
     section.section === 'stock_locations'
-  return {
-    ...plan,
-    sections: [
-      ...plan.sections.filter((section) => !isWarehouse(section)),
-      ...plan.sections.filter(isWarehouse),
-    ],
-  }
+  const rest = await applyPlan({ ...plan, sections: plan.sections.filter((s) => !isWarehouse(s)) })
+  if (reportHasFailures(rest)) return rest
+  const warehouse = await applyPlan({ ...plan, sections: plan.sections.filter(isWarehouse) })
+  return { results: [...rest.results, ...warehouse.results] }
 }
 
 /**
  * Deploys the defaults every new store starts with. Only what is missing is
  * created: a default the merchant has since changed (a rate, a zone, which
  * tax category is the default) is left as it is, so running this again,
- * after an interrupted setup or by hand, never undoes their work. A failed
- * default is reported and the rest are still written.
+ * after an interrupted setup or by hand, never undoes their work.
  */
 export async function provisionStore(
   client: ConfigClient,
   options: DefaultsOptions = {},
 ): Promise<ApplyReport> {
   const plan = await planConfig(await storeDefaults(client, options), client, { createOnly: true })
-  return applyPlan(warehouseLast(plan))
+  return applyProvisioning(plan)
 }
