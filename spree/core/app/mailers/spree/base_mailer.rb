@@ -70,6 +70,14 @@ module Spree
 
     protected
 
+    # Locale for an email to a staff member or seller: their own dashboard
+    # language, then the store's admin locale, then nil — which lets
+    # with_store_locale fall back to the store's default. Blank or unavailable
+    # values fall through.
+    def staff_locale(user, store)
+      [user.try(:selected_locale), store&.preferred_admin_locale].find { |locale| I18n.locale_available?(locale) }
+    end
+
     # Renders the current action's email from its Liquid template and builds
     # the message. The template's front matter supplies the subject, and the
     # plain-text part is generated from the HTML unless a `.text.liquid` sits

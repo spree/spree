@@ -57,21 +57,29 @@ module Spree
     ActiveRecord::Base.connection.adapter_name.match?(/mysql|trilogy/i)
   end
 
+  # Class settings hold a name rather than the class itself, so a reloaded
+  # class is never served stale.
+  def self.resolve_class_setting(name, value, constantize)
+    raise "Spree.#{name} MUST be a String or Symbol object, not a Class object." if value.is_a?(Class)
+    return unless value.is_a?(String) || value.is_a?(Symbol)
+
+    constantize ? value.to_s.constantize : value.to_s
+  end
+  private_class_method :resolve_class_setting
+
+  def self.storage_service_name(value)
+    return Rails.application.config.active_storage.service unless value
+
+    value.to_sym if value.is_a?(String) || value.is_a?(Symbol)
+  end
+  private_class_method :storage_service_name
+
   def self.base_class(constantize: true)
-    @@base_class ||= 'Spree::Base'
-    if @@base_class.is_a?(Class)
-      raise 'Spree.base_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@base_class.is_a?(String) || @@base_class.is_a?(Symbol)
-      constantize ? @@base_class.to_s.constantize : @@base_class.to_s
-    end
+    resolve_class_setting(:base_class, @@base_class ||= 'Spree::Base', constantize)
   end
 
   def self.customer_class(constantize: true)
-    if @@customer_class.is_a?(Class)
-      raise 'Spree.customer_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@customer_class.is_a?(String) || @@customer_class.is_a?(Symbol)
-      constantize ? @@customer_class.to_s.constantize : @@customer_class.to_s
-    end
+    resolve_class_setting(:customer_class, @@customer_class, constantize)
   end
 
   # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.1.
@@ -87,35 +95,15 @@ module Spree
   end
 
   def self.admin_user_class(constantize: true)
-    if @@admin_user_class.is_a?(Class)
-      raise 'Spree.admin_user_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@admin_user_class.is_a?(String) || @@admin_user_class.is_a?(Symbol)
-      constantize ? @@admin_user_class.to_s.constantize : @@admin_user_class.to_s
-    end
+    resolve_class_setting(:admin_user_class, @@admin_user_class, constantize)
   end
 
   def self.private_storage_service_name
-    if @@private_storage_service_name
-      if @@private_storage_service_name.is_a?(String) || @@private_storage_service_name.is_a?(Symbol)
-        @@private_storage_service_name.to_sym
-      end
-    else
-      Rails.application.config.active_storage.service
-    end
+    storage_service_name(@@private_storage_service_name)
   end
 
   def self.public_storage_service_name
-    if @@public_storage_service_name
-      if @@public_storage_service_name.is_a?(String) || @@public_storage_service_name.is_a?(Symbol)
-        @@public_storage_service_name.to_sym
-      end
-    else
-      Rails.application.config.active_storage.service
-    end
-  end
-
-  def self.root_domain
-    @@root_domain
+    storage_service_name(@@public_storage_service_name)
   end
 
   def self.queues
@@ -210,17 +198,7 @@ module Spree
   # @param constantize [Boolean] whether to return the class or the string
   # @return [Class, String] the adapter class or its name
   def self.events_adapter_class(constantize: true)
-    @@events_adapter_class ||= 'Spree::Events::Adapters::ActiveSupportNotifications'
-
-    if @@events_adapter_class.is_a?(Class)
-      raise 'Spree.events_adapter_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@events_adapter_class.is_a?(String) || @@events_adapter_class.is_a?(Symbol)
-      constantize ? @@events_adapter_class.to_s.constantize : @@events_adapter_class.to_s
-    end
-  end
-
-  def self.google_places_api_key
-    @@google_places_api_key
+    resolve_class_setting(:events_adapter_class, @@events_adapter_class ||= 'Spree::Events::Adapters::ActiveSupportNotifications', constantize)
   end
 
   def self.always_use_translations?

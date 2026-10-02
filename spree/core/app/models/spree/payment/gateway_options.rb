@@ -10,40 +10,19 @@ module Spree
 
       attr_reader :payment, :order
       delegate :currency, to: :payment
-      delegate :email, to: :order
-
-      def statement_descriptor_suffix
-        order.number
-      end
-
-      def customer
-        order.email
-      end
-
-      def customer_id
-        order.customer_id
-      end
-
-      def ip
-        order.last_ip_address
-      end
-
-      # The payment number already names its order (`R1001-P1`), so this is
-      # the payment number alone rather than the two concatenated.
-      def order_id
-        payment.number
-      end
-
-      def payment_id
-        payment.number
-      end
-
+      delegate :email, :customer_id, to: :order
       # Stable handle for a gateway to find its own payment back. The derived
       # number cannot be queried (its column is NULL on 6.0 rows) and shifts
       # if an earlier sibling is destroyed — nothing durable may key on it.
-      def payment_prefixed_id
-        payment.prefixed_id
-      end
+      delegate :prefixed_id, to: :payment, prefix: true
+
+      def statement_descriptor_suffix = order.number
+      def customer = order.email
+      def ip = order.last_ip_address
+      # The payment number already names its order (`R1001-P1`), so this is
+      # the payment number alone rather than the two concatenated.
+      def order_id = payment.number
+      def payment_id = payment.number
 
       # Built on the prefixed ID, not the number: a derived number shifts if
       # an earlier sibling payment is destroyed, and a shifted idempotency
@@ -77,29 +56,12 @@ module Spree
       end
 
       def hash_methods
-        [
-          :email,
-          :customer,
-          :customer_id,
-          :ip,
-          :order_id,
-          :payment_id,
-          :payment_prefixed_id,
-          :idempotency_key,
-          :shipping,
-          :tax,
-          :subtotal,
-          :discount,
-          :currency,
-          :billing_address,
-          :shipping_address
-        ]
+        %i[email customer customer_id ip order_id payment_id payment_prefixed_id idempotency_key shipping tax
+           subtotal discount currency billing_address shipping_address]
       end
 
       def to_hash
-        Hash[hash_methods.map do |method|
-          [method, send(method)]
-        end]
+        hash_methods.index_with { |method| send(method) }
       end
 
       private
