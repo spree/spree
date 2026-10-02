@@ -9,16 +9,17 @@ module Spree
       # and restored afterwards.
       #
       # @param store [Spree::Store, nil] the store to load into; defaults to
-      #   the default store, resolved after the seeds so a bare install works
+      #   the default store
+      # @raise [Spree::SampleData::StoreNotProvisioned] when the store never
+      #   got its defaults
       # @return [Spree::ServiceModule::Result]
       def call(store: nil)
+        @store = store || Spree::Store.default
+        ensure_store_provisioned(@store)
+
         Spree::Events.disable do
           without_geocoding do
             ActiveRecord::Base.no_touching do
-              puts 'Running seeds first...' unless seeds_loaded?
-              ensure_seeds_loaded
-
-              @store = store || Spree::Store.default
               Spree::Current.set(store: @store) { load_sample_data }
             end
           end
