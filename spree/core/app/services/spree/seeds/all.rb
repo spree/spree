@@ -1,22 +1,21 @@
 module Spree
   module Seeds
+    # Seeds only what has no Admin API by design: the store row, its immutable
+    # admin role, its first publishable key and the first admin. Everything a
+    # store trades with — tax categories, channels, reasons, the warehouse,
+    # delivery zones — is the configurator's store defaults, deployed once the
+    # store knows where it sells from (docs/plans/6.0-cli-configurator.md).
     class All
       prepend Spree::ServiceModule::Base
 
       def call
         Spree::Events.disable do
           ActiveRecord::Base.no_touching do
-            # GEO — countries and states are reference data supplied by the
-            # countries gem, and zones are migration-only, so none of them
-            # are seeded.
-
             Stores.call
-            Spree::Store.find_each { |store| StoreResources.call(store: store) }
-            # The warehouse, delivery zones and pickup are not seeded: their
-            # shape depends on which country the shop sells from, and nobody
-            # has answered that yet. Spree::Stores::ProvisionDefaults builds
-            # them from the merchant's answer — at first-run setup, or here
-            # when ADMIN_EMAIL/ADMIN_PASSWORD name an install that skips it.
+            Spree::Store.find_each do |store|
+              Roles.call(store: store)
+              ApiKeys.call(store: store)
+            end
             AdminUser.call
           end
         end

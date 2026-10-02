@@ -20,9 +20,8 @@ RSpec.describe 'a typical commission setup' do
   let(:first_party) { create(:product, store: store) }
 
   before do
-    Spree::Seeds::CommissionRates.call
-    store.commission_rates.find_by(code: Spree::Seeds::CommissionRates::DEFAULT_CODE).
-      update!(enabled: true, value: 20)
+    # The marketplace's catch-all rate the store defaults create, switched on.
+    create(:commission_rate, store: store, name: 'Marketplace default', code: 'marketplace-default', value: 20)
 
     seller_deal = create(:commission_rate, store: store, name: 'Acme deal', value: 12)
     create(:commission_seller_rule, commission_rate: seller_deal, sellers: [seller])

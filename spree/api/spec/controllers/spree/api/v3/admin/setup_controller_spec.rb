@@ -131,9 +131,10 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(response.cookies['spree_admin_refresh_token']).to be_present
       end
 
-      # The whole point of asking for a country: the store, its market and
-      # everything shaped by geography agree on where the shop is.
-      it 'provisions the store for the chosen country, deriving the currency' do
+      # The whole point of asking for a country: the store and its market
+      # agree on where the shop is. What is shaped by that answer (warehouse,
+      # delivery zones) is deployed by the dashboard afterwards.
+      it 'moves the store to the chosen country, deriving the currency' do
         post :create, params: valid_params.merge(country_code: 'de', locale: 'de'), as: :json
 
         expect(response).to have_http_status(:ok)
@@ -143,8 +144,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.default_currency).to eq('EUR')
         expect(store.default_locale).to eq('de')
         expect(store.default_market.country_codes).to eq(['DE'])
-        expect(store.stock_locations.find_by(default: true).country_code).to eq('DE')
-        expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
+        expect(store).not_to be_provisioned
       end
 
       # Setup asks for one language, so it has to reach the back office as
@@ -225,18 +225,10 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
       end
     end
 
-    # The store is always provisioned for US by default; choosing a different
-    # country at setup must move everything, not just work on a bare store.
+    # The store is seeded as a US store; choosing another country at setup
+    # must move it, not just work on a store that never had one.
     context 'when changing the country and currency' do
-      before do
-        Spree::Stores::ProvisionDefaults.call(store: @default_store, country: Spree::Country.by_iso('US'))
-        @default_store.stock_locations.find_by(default: true).update!(
-          address1: '417 Montgomery St', city: 'San Francisco',
-          state_code: 'CA', state_name: 'California', zipcode: '94104'
-        )
-      end
-
-      it 'moves the whole store to the newly chosen country and currency' do
+      it 'moves the store and its default market to the newly chosen country and currency' do
         post :create, params: valid_params.merge(country_code: 'GB'), as: :json
 
         expect(response).to have_http_status(:ok)
@@ -246,31 +238,7 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
         expect(store.default_currency).to eq('GBP')
         expect(store.default_market.country_codes).to eq(['GB'])
         expect(store.default_market.currency).to eq('GBP')
-
-        domestic = store.delivery_zones.find_by(name: 'Domestic')
-        international = store.delivery_zones.find_by(name: 'International')
-        expect(domestic.members.pluck(:country_code)).to eq(['GB'])
-        expect(international.members.where(country_code: 'US')).to exist
-        expect(international.members.where(country_code: 'GB')).not_to exist
-
-        expect(store.delivery_methods.find_by(name: 'Standard').calculator.preferred_currency).to eq('GBP')
-
-        location = store.stock_locations.find_by(default: true)
-        expect(location.country_code).to eq('GB')
-        expect(location.state_code).to be_nil
-        expect(location.state_name).to be_nil
-        expect(location.address1).to be_nil
-      end
-
-      it 'keeps the warehouse address when the chosen country matches it' do
-        post :create, params: valid_params, as: :json
-
-        expect(response).to have_http_status(:ok)
-
-        location = @default_store.reload.stock_locations.find_by(default: true)
-        expect(location.country_code).to eq('US')
-        expect(location.state_code).to eq('CA')
-        expect(location.address1).to eq('417 Montgomery St')
+        expect(store.markets.count).to eq(1)
       end
     end
 

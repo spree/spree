@@ -1,10 +1,9 @@
-# Wholesale demo setup on top of the gated channel seeded by
-# Spree::Seeds::Channels: an approved demo buyer and a customer-group price
+# Wholesale demo setup on top of the gated channel the store defaults create: an approved demo buyer and a customer-group price
 # list, so a fresh install can walk the whole B2B portal story — sign in as
 # the buyer, see wholesale prices, check out on the wholesale channel.
 store = Spree::Current.store
 
-wholesale_group = store.customer_groups.find_or_create_by!(name: Spree::Seeds::CustomerGroups::WHOLESALE_NAME)
+wholesale_group = store.customer_groups.find_or_create_by!(name: 'Wholesale')
 
 buyer = Spree.customer_class.find_by(email: 'wholesale@example.com')
 if buyer.nil?

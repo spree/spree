@@ -1,12 +1,11 @@
 module Spree
-  module Seeds
-    # The classic report set every store starts with on the Reports page.
-    # Idempotent per store (matched by name); merchants can edit or delete
-    # them, so a missing seeded report is not recreated once removed by hand —
-    # only never-created ones are added.
-    class SavedReports
-      prepend Spree::ServiceModule::Base
-      include StoreScoped
+  module Stores
+    # The preset reports every store starts with. They are product
+    # definitions rather than merchant configuration — translated, read-only
+    # (`seeded`), and found by the dashboard under their translated name — so
+    # the store creates them itself, the way it creates its default channel.
+    module BuiltInReports
+      extend ActiveSupport::Concern
 
       REPORTS = [
         { key: 'sales_over_time',
@@ -71,35 +70,29 @@ module Spree
                    'time_range' => { 'preset' => 'last_4_weeks' } } }
       ].freeze
 
-      private
-
-      def seed(store)
-        # Compared case-insensitively like the model's uniqueness rule, so a
-        # merchant's own "top products" never makes a re-seed raise.
-        existing = store.saved_reports.pluck(:name).map(&:downcase).to_set
-
-        REPORTS.each do |report|
-          # Every locale's name for this report, not just the current one:
-          # the name is translated, so a store seeded in one language and
-          # re-seeded in another would otherwise recognise none of its own
-          # built-ins and create a second full set.
-          next if known_names(report[:key]).intersect?(existing)
-
-          store.saved_reports.create!(
-            name: Spree.t("reporting.seeds.#{report[:key]}.name"),
-            description: Spree.t("reporting.seeds.#{report[:key]}.description"),
-            query: report[:query],
-            seeded: true
-          )
-        end
+      included do
+        after_create :create_built_in_reports
       end
 
-      # The downcased name this report carries in every locale core ships.
-      def known_names(key)
-        @known_names ||= {}
-        @known_names[key] ||= Spree.available_locales.filter_map do |locale|
-          Spree.t("reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
-        end.to_set
+      private
+
+      # Inserted in one statement: every queried report is fixed above, and a
+      # new store has none to collide with.
+      def create_built_in_reports
+        now = Time.current
+        Spree::SavedReport.insert_all(
+          REPORTS.map do |report|
+            {
+              store_id: id,
+              name: Spree.t("reporting.seeds.#{report[:key]}.name"),
+              description: Spree.t("reporting.seeds.#{report[:key]}.description"),
+              query: report[:query],
+              seeded: true,
+              created_at: now,
+              updated_at: now
+            }
+          end
+        )
       end
     end
   end
