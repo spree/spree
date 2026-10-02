@@ -7,6 +7,9 @@ import { configSchema, type SpreeConfig } from './schema.js'
 const PLACEHOLDER = /\$(\$?)\{([A-Za-z_][A-Za-z0-9_]*)\}/g
 const WHOLE_PLACEHOLDER = /^\$\{[A-Za-z_][A-Za-z0-9_]*\}$/
 
+/** Values `${NAME}` placeholders resolve to: the environment, or a template's variables. */
+export type Variables = Record<string, string | undefined>
+
 /** A validation problem with the file, one per offending value. */
 export interface ConfigIssue {
   path: string
@@ -50,7 +53,7 @@ export function formatPath(segments: (string | number | symbol)[]): string {
  */
 export function substituteEnv(
   value: unknown,
-  env: NodeJS.ProcessEnv,
+  env: Variables,
   path: (string | number)[] = [],
   whole?: Set<string>,
 ): unknown {
@@ -128,7 +131,10 @@ function issuesFrom(error: ZodError, lineOf: (path: (string | number)[]) => numb
  * config. Every problem is reported with its path and line before any
  * network call happens.
  */
-export function parseConfig(source: string, env: NodeJS.ProcessEnv = process.env): LoadedConfig {
+export function parseConfig(
+  source: string,
+  env: Variables = globalThis.process?.env ?? {},
+): LoadedConfig {
   const lineCounter = new LineCounter()
   const document = parseDocument(source, { lineCounter })
   if (document.errors.length > 0) {

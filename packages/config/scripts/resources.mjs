@@ -1,0 +1,30 @@
+// Admin API resources the configurator manages, by their path under
+// /api/v3/admin. A section for a resource not listed here cannot derive its
+// attributes; the spec test fails until it is added.
+export const RESOURCES = [
+  'store',
+  'stock_locations',
+  'channels',
+  'markets',
+  'customer_groups',
+  'tax_categories',
+  'delivery_profiles',
+  'delivery_zones',
+  'delivery_methods',
+  'package_types',
+  'payment_methods',
+  'product_types',
+  'suppliers',
+  'categories',
+  'products',
+  'customers',
+  'sellers',
+  'return_reasons',
+  'claim_reasons',
+  'refund_reasons',
+  'order_cancellation_reasons',
+  'commission_rates',
+  'seller_requirements',
+  'api_keys',
+  'allowed_origins',
+]

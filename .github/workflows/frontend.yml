@@ -252,8 +252,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # @spree/config deploys the store defaults before sample data loads.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/config
 
       # Same cached test app as the dashboard E2E job; see there.
       - name: Restore dummy Rails app

@@ -1,5 +1,6 @@
 import type { Customer as SdkCustomer, Seller as SdkSeller } from '@spree/admin-sdk'
 import type { CustomerEntry, SellerEntry } from '../schema.js'
+import { CUSTOMER_ATTRIBUTES, SELLER_ATTRIBUTES } from '../schema.js'
 import type { LiveRecord } from '../types.js'
 import { keysOf, type Payload, pick, present, refs, type Section } from './section.js'
 
@@ -7,15 +8,6 @@ import { keysOf, type Payload, pick, present, refs, type Section } from './secti
 // both declared attributes and the associations an `expand` adds.
 type Customer = SdkCustomer & LiveRecord
 type Seller = SdkSeller & LiveRecord
-
-const CUSTOMER_ATTRIBUTES: (keyof CustomerEntry)[] = [
-  'email',
-  'first_name',
-  'last_name',
-  'phone',
-  'accepts_email_marketing',
-  'tags',
-]
 
 export const customers: Section<CustomerEntry, Customer> = {
   name: 'customers',
@@ -56,16 +48,6 @@ export const customers: Section<CustomerEntry, Customer> = {
     return entry
   },
 }
-
-const SELLER_ATTRIBUTES: (keyof SellerEntry)[] = [
-  'slug',
-  'name',
-  'contact_email',
-  'billing_email',
-  'legal_name',
-  'registration_number',
-  'tax_remittance',
-]
 
 const STATUS_ACTIONS: Record<string, string> = { approved: 'approve', suspended: 'suspend' }
 

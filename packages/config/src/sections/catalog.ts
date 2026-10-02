@@ -1,14 +1,65 @@
-import type { Category as SdkCategory, Product as SdkProduct } from '@spree/admin-sdk'
+import type {
+  Category as SdkCategory,
+  Product as SdkProduct,
+  ProductType as SdkProductType,
+} from '@spree/admin-sdk'
 import type { RunContext } from '../context.js'
 import { ConfigError } from '../errors.js'
-import type { CategoryEntry, ProductEntry, VariantEntry } from '../schema.js'
+import {
+  CATEGORY_ATTRIBUTES,
+  type CategoryEntry,
+  PRODUCT_ATTRIBUTES,
+  PRODUCT_TYPE_ATTRIBUTES,
+  type ProductEntry,
+  type ProductTypeEntry,
+  type VariantEntry,
+} from '../schema.js'
 import type { LiveRecord } from '../types.js'
-import { FIRST_PARTY, type Payload, pick, present, refs, type Section } from './section.js'
+import {
+  FIRST_PARTY,
+  type Payload,
+  pick,
+  plainSection,
+  present,
+  refs,
+  type Section,
+} from './section.js'
 
 // The SDK's generated types plus the index signature, so a section can read
 // both declared attributes and the associations an `expand` adds.
 type Category = SdkCategory & LiveRecord
 type Product = SdkProduct & LiveRecord
+type ProductType = SdkProductType & LiveRecord
+
+// --- Product types ---------------------------------------------------------
+
+export const productTypes = plainSection<ProductTypeEntry, ProductType>({
+  name: 'product_types',
+  scope: 'write_product_types',
+  introspectByDefault: true,
+  key: 'name',
+  attributes: PRODUCT_TYPE_ATTRIBUTES,
+  references: (config) => ({
+    delivery_profiles: (config.product_types ?? []).flatMap((type) => type.delivery_profile ?? []),
+  }),
+  async desired(entry, ctx, path) {
+    return {
+      ...pick(entry, PRODUCT_TYPE_ATTRIBUTES),
+      ...(entry.delivery_profile
+        ? { delivery_profile_id: await ctx.ref('delivery_profiles', entry.delivery_profile, path) }
+        : {}),
+    }
+  },
+  async toFile(live, ctx) {
+    const profile = live.delivery_profile_id
+      ? await ctx.keyOf('delivery_profiles', String(live.delivery_profile_id))
+      : null
+    return {
+      ...present(live as unknown as ProductTypeEntry, PRODUCT_TYPE_ATTRIBUTES),
+      ...(profile ? { delivery_profile: profile } : {}),
+    } as ProductTypeEntry
+  },
+})
 
 // --- Categories ------------------------------------------------------------
 
@@ -61,15 +112,6 @@ function descriptionPair(desired: Payload, live: LiveRecord) {
     ? {}
     : { description: canonicalMarkup(live.description_html ?? null) }
 }
-
-const CATEGORY_ATTRIBUTES: (keyof CategoryEntry)[] = [
-  'permalink',
-  'name',
-  'description',
-  'meta_title',
-  'meta_description',
-  'meta_keywords',
-]
 
 export const categories: Section<CategoryEntry, Category> = {
   name: 'categories',
@@ -139,16 +181,6 @@ const PRODUCT_EXPAND = [
   'variants.option_values',
   'categories',
   'product_publications',
-]
-
-const PRODUCT_ATTRIBUTES: (keyof ProductEntry)[] = [
-  'slug',
-  'name',
-  'status',
-  'description',
-  'tags',
-  'meta_title',
-  'meta_description',
 ]
 
 const VARIANT_ATTRIBUTES: (keyof VariantEntry)[] = [

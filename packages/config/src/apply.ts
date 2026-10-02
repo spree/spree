@@ -1,7 +1,8 @@
 import { inBatches } from './client.js'
-import type { PlannedOperation, PlannedRun } from './plan.js'
+import { type PlannedOperation, type PlannedRun, planConfig } from './plan.js'
+import type { SpreeConfig } from './schema.js'
 import { type AnySection, SECTIONS } from './sections/index.js'
-import type { ApplyReport, ApplyResult, LiveRecord } from './types.js'
+import type { ApplyReport, ApplyResult, ConfigClient, LiveRecord, PlanOptions } from './types.js'
 
 /** Writes within a section that run at once. */
 const CONCURRENCY = 4
@@ -108,4 +109,13 @@ export async function applyPlan(run: PlannedRun): Promise<ApplyReport> {
 
 export function reportHasFailures(report: ApplyReport): boolean {
   return report.results.some((result) => result.status === 'failed')
+}
+
+/** Plan and apply in one call. */
+export async function deployConfig(
+  config: SpreeConfig,
+  client: ConfigClient,
+  options: PlanOptions = {},
+): Promise<ApplyReport> {
+  return applyPlan(await planConfig(config, client, options))
 }
