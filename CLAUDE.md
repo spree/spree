@@ -748,6 +748,7 @@ Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
+- NEVER update or save the shared default store (`@default_store`) in specs — it outlives the example, so the change leaks into other specs. Stub what the code reads (`allow(Spree::Store).to receive(:default).and_return(build(:store, ...))`) or create a separate store
 - Don't over-engineer or repeat tests
 - Fold specs into the existing describe blocks, use context blocks for different scenarios, NEVER create new test files for a single new scenario unless it is a completely new feature
 
