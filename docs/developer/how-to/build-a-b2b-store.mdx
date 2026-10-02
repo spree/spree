@@ -30,7 +30,7 @@ You need a running Spree 6 project and admin credentials. B2B trading uses the s
 | Store API | The storefront, a buyer portal or a mobile app | [`@spree/sdk`](/api-reference/store-api/introduction) |
 | Admin API | ERP, CRM and back-office integrations | [`@spree/admin-sdk`](/api-reference/admin-api/introduction) |
 
-Every new store is seeded with the basics of a wholesale setup:
+Every new store starts with the basics of a wholesale setup, from the [store defaults](/developer/cli/configurator#store-defaults):
 
 - a **Wholesale** sales channel (code `wholesale`) that requires sign-in and does not allow guest checkout
 - a **Wholesale** customer group
@@ -206,7 +206,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/companies/comp_xxx/addresses'
 
 ## Segment individual buyers with customer groups
 
-For buyers who are not purchasing for a company, a customer group is the audience. The seeded **Wholesale** group is where approved trade accounts land, and the [wholesale portal](#run-the-wholesale-portal) treats membership of it as approval.
+For buyers who are not purchasing for a company, a customer group is the audience. The default **Wholesale** group is where approved trade accounts land, and the [wholesale portal](#run-the-wholesale-portal) treats membership of it as approval.
 
 <CodeGroup>
 
@@ -530,7 +530,7 @@ A channel's **default catalog** applies to everyone buying through it who is not
 A request reaches the wholesale channel in one of two ways:
 
 - the `X-Spree-Channel: wholesale` header, which the Store SDK sends when created with `channel: 'wholesale'`
-- a publishable key bound to the channel, like the one seeded for every store
+- a publishable key bound to the channel, like the one every store starts with
 
 **Read more:** [Storefront access gating](/developer/core-concepts/channels#storefront-access-gating), [Storefront access defaults](/developer/core-concepts/stores#storefront-access-defaults), [Sales Channels (operator guide)](/user/settings/sales-channels).
 
