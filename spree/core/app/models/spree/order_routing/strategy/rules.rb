@@ -23,7 +23,7 @@ module Spree
           estimate_rates(packages)
         end
 
-        # Stock decrement / restock today happens via Spree::Shipment's state
+        # Stock decrement / restock today happens via Spree::Fulfillment's state
         # machine (after_ship / after_cancel). The strategy methods below are
         # part of the contract for the future reservation + typed-movement
         # phase — see 6.0-stock-reservations.md and 6.0-typed-stock-movements.md.

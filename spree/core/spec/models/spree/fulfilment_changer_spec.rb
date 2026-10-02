@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::FulfilmentChanger do
+describe Spree::FulfillmentChanger do
   subject { shipment_splitter.run! }
 
   let(:variant) { create(:variant) }
@@ -386,7 +386,7 @@ describe Spree::FulfilmentChanger do
     end
 
     it 'removes the current shipment' do
-      expect { subject }.to change { Spree::Shipment.count }.by(-1)
+      expect { subject }.to change { Spree::Fulfillment.count }.by(-1)
     end
   end
 
@@ -397,13 +397,13 @@ describe Spree::FulfilmentChanger do
     let(:desired_shipment) { order.shipments.build(stock_location: current_shipment.stock_location) }
 
     it 'adds the desired inventory units to the desired shipment' do
-      expect { subject }.to change { Spree::Shipment.count }.by(1)
+      expect { subject }.to change { Spree::Fulfillment.count }.by(1)
     end
 
     it 'updates desired shipment cost after selecting the shipping rate' do
-      Spree::ShippingMethod.delete_all
+      Spree::DeliveryMethod.delete_all
       calculator = Spree::Calculator::Shipping::FlatRate.create!(preferred_amount: 10)
-      shipping_method_that_should_be_selected = create(:shipping_method, calculator: calculator)
+      shipping_method_that_should_be_selected = create(:delivery_method, calculator: calculator)
 
       subject
 

@@ -20,7 +20,7 @@ FactoryBot.define do
 
     after(:build) do |package, evaluator|
       evaluator.variants_contents.each do |variant, count|
-        package.add_multiple build_list(:inventory_unit, count, variant: variant)
+        package.add_multiple build_list(:fulfillment_item, count, variant: variant)
       end
     end
 

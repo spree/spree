@@ -4,7 +4,7 @@ module Spree
   RSpec.describe Carts::Update do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let!(:store_stock_location) { create(:stock_location, store: store, backorderable_default: true) }
-    let!(:store_delivery_method) { create(:shipping_method, store: store) }
+    let!(:store_delivery_method) { create(:delivery_method, store: store) }
     let(:user) { create(:user) }
     let(:cart) { create(:cart_with_line_items, customer: user, store: store, currency: 'USD') }
 
@@ -369,8 +369,8 @@ module Spree
             # A guest's edit updates the address row in place, so only the
             # fields a quote reads can tell a new destination from a correction.
             context 'when a guest who chose a rate edits the address' do
-              let!(:standard) { create(:shipping_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) } }
-              let!(:express) { create(:shipping_method, name: 'Express', store: store).tap { |method| method.calculator.update!(preferred_amount: 15) } }
+              let!(:standard) { create(:delivery_method, name: 'Standard', store: store).tap { |method| method.calculator.update!(preferred_amount: 5) } }
+              let!(:express) { create(:delivery_method, name: 'Express', store: store).tap { |method| method.calculator.update!(preferred_amount: 15) } }
               let(:cart) do
                 create(:cart_with_line_items, store: store, customer: nil, email: 'guest@example.com',
                                               ship_address: create(:address, country: country, state: state),
@@ -860,7 +860,7 @@ module Spree
         let(:country) { Spree::Country.by_iso('US') }
         let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let!(:zone) { create(:zone) }
-        let!(:shipping_method) { create(:shipping_method) }
+        let!(:shipping_method) { create(:delivery_method) }
         let(:address_params) do
           {
             first_name: 'Buyer', last_name: 'McGee',
@@ -935,7 +935,7 @@ module Spree
         subject { described_class.call(cart: cart, params: params) }
 
         let!(:cart) { create(:cart_with_line_items, store: store) }
-        let!(:shipping_method) { create(:shipping_method) }
+        let!(:shipping_method) { create(:delivery_method) }
         let(:country) { Spree::Country.by_iso('US') }
         let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let(:params) do

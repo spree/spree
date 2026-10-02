@@ -2,7 +2,7 @@ module Spree
   module Payments
     # @deprecated Unused since 6.0 and removed in 7.0. Nothing in Spree
     #   calls this: the storefront creates payments through the Store API
-    #   controller, store credit through Spree::Checkout::AddStoreCredit,
+    #   controller, store credit through Spree::StoreCredits::Apply,
     #   gift cards through Spree::GiftCards::Apply, and a partial capture's
     #   remainder through Spree::Payment#split_uncaptured_amount.
     #

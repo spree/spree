@@ -29,7 +29,7 @@ module Spree
           raise NotImplementedError, "#{self.class} must implement #for_allocation"
         end
 
-        # @param fulfillment [Spree::Shipment]
+        # @param fulfillment [Spree::Fulfillment]
         def for_sale(fulfillment:)
           raise NotImplementedError, "#{self.class} must implement #for_sale"
         end

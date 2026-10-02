@@ -4,7 +4,7 @@ describe Spree::ImagesHelper, type: :helper do
   let(:store) { @default_store }
   let(:product) { create(:product) }
   let(:image) do
-    product_image = create(:image, viewable: product)
+    product_image = create(:media, viewable: product)
     product_image.attachment.attach(
       io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
       filename: 'thinking-cat.jpg',

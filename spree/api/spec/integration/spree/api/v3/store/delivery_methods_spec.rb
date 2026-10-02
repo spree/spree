@@ -22,7 +22,7 @@ RSpec.describe 'Store Delivery Methods API', type: :request, swagger_doc: 'api-r
 
       response '200', 'delivery methods found' do
         before do
-          create(:shipping_method, name: 'Standard')
+          create(:delivery_method, name: 'Standard')
           create(:pickup_delivery_method, name: 'Store pickup')
         end
 

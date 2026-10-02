@@ -9,7 +9,7 @@ describe Spree::Calculator::PriceSack, type: :model do
     calculator
   end
   let(:order) { create(:order) }
-  let(:shipment) { create(:shipment) }
+  let(:shipment) { create(:fulfillment) }
 
   before { allow(shipment).to receive_messages amount: 10 }
 

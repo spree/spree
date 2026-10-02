@@ -179,8 +179,8 @@ describe Spree::OrderInventory, type: :model do
       let!(:variant) { subject.variant }
       let!(:inventory_units_for_item) do
         [
-          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'shipped'),
-          create(:inventory_unit, variant_id: variant.id, quantity: 1, state: 'on_hand')
+          create(:fulfillment_item, variant_id: variant.id, quantity: 1, state: 'shipped'),
+          create(:fulfillment_item, variant_id: variant.id, quantity: 1, state: 'on_hand')
         ]
       end
 

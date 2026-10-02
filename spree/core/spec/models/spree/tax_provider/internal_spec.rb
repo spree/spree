@@ -219,7 +219,7 @@ describe Spree::TaxProvider::Internal, type: :model do
     context 'with a classified delivery charge' do
       let(:fulfillment) { order.fulfillments.first }
       let(:reduced_rate_category) { create(:tax_category, name: "Reduced #{Time.current.to_f}") }
-      let(:delivery_method) { create(:shipping_method, tax_category: reduced_rate_category) }
+      let(:delivery_method) { create(:delivery_method, tax_category: reduced_rate_category) }
 
       before do
         fulfillment.delivery_rates.destroy_all
