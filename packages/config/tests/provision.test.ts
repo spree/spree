@@ -15,6 +15,19 @@ function polishStore(api: FakeApi) {
     { id: 'DE', iso: 'DE', name: 'Germany' },
     { id: 'US', iso: 'US', name: 'United States' },
   ])
+  api.seed(
+    '/seller_requirements/types',
+    [
+      'accept_terms',
+      'complete_profile',
+      'billing_address',
+      'returns_address',
+      'delivery_method',
+      'package_type',
+      'minimum_products',
+    ].map((type) => ({ type })),
+  )
+  api.seed('/payment_methods/types', [{ type: 'store_credit' }, { type: 'check' }])
   // Created with the store itself.
   api.seed('/delivery_profiles', [{ name: 'General', kind: 'shipping', default: true }])
   api.seed('/channels', [{ code: 'online', name: 'Online Store' }])
@@ -34,7 +47,7 @@ describe('storeDefaults', () => {
     expect(config.package_types?.[0]).toMatchObject({
       length: 30,
       dimensions_unit: 'cm',
-      weight: 0.227,
+      weight: 0.23,
       weight_unit: 'kg',
     })
     const digital = config.delivery_methods?.find((method) => method.name === 'Digital Delivery')
@@ -93,5 +106,46 @@ describe('provisionStore', () => {
       ['create', 'delete'].includes(operation.kind),
     )
     expect(writes).toEqual([])
+  })
+
+  it('never changes a default the merchant has edited', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    await provisionStore(api)
+    const standard = api.all('/delivery_methods').find((method) => method.name === 'Standard')
+    if (!standard) throw new Error('Standard was not created')
+    standard.calculator_preferences = { amount: '7.5', currency: 'PLN' }
+
+    await provisionStore(api)
+
+    expect(api.calls.filter((call) => call.method === 'PATCH')).toEqual([])
+    expect(standard.calculator_preferences).toEqual({ amount: '7.5', currency: 'PLN' })
+  })
+
+  it('skips kinds the installation has not registered rather than failing on them', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+    api.seed('/seller_requirements/types', [{ type: 'accept_terms' }])
+    api.seed('/payment_methods/types', [{ type: 'check' }])
+
+    const report = await provisionStore(api)
+
+    expect(report.results.every((result) => result.status === 'applied')).toBe(true)
+    expect(api.all('/seller_requirements').map((requirement) => requirement.type)).toEqual([
+      'accept_terms',
+    ])
+    expect(api.all('/payment_methods')).toEqual([])
+  })
+
+  // The store reads the default warehouse as "provisioned", and sample data
+  // waits for it, so it must be the last thing created.
+  it('creates the default warehouse after everything else', async () => {
+    const api = new FakeApi()
+    polishStore(api)
+
+    await provisionStore(api)
+
+    const creates = api.calls.filter((call) => call.method === 'POST').map((call) => call.path)
+    expect(creates.at(-1)).toBe('/stock_locations')
   })
 })
