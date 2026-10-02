@@ -320,6 +320,14 @@ describe Spree::Cart, type: :model do
       end
     end
 
+    it 'uses the configured remove out of stock items service' do
+      custom_service = Class.new(Spree::Carts::RemoveOutOfStockItems)
+      allow(Spree).to receive(:cart_remove_out_of_stock_items_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(cart: cart).and_call_original
+
+      cart.remove_out_of_stock_items!
+    end
+
     context 'when cart is empty' do
       let(:order) { create(:order, store: store, customer: user) }
 

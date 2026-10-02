@@ -83,7 +83,7 @@ module Spree
       Spree::Deprecation.warn('Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.1. This method now works only on Spree::Cart objects')
 
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
+      result = Spree.cart_remove_out_of_stock_items_service.call(cart: self)
       return self unless result.success?
 
       order, _messages, new_warnings = result.value
