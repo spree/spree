@@ -1,3 +1,13 @@
+## 2026-10-02: First-run setup keeps the store's own location in Ruby; sample data waits for provisioning
+
+**Context:** Building the 2026-10-01 decision showed that the bootstrap market is matched on `name` and created before the country is known, so a configurator template cannot move it, and that the sample-data job queued by the setup request would race the browser's deploy.
+
+**Decision:** The setup endpoint (and the seed on scripted installs) relocates the store and its default market in Ruby (`Spree::Store#relocate`); the country template builds the warehouse, delivery profile, zones, methods, pickup and package type. Sample data stays on the setup request, but the loader waits until `Spree::Store#provisioned?` and refuses on an unprovisioned store everywhere else. The built-in saved reports move from the seeds to a store callback.
+
+**Consequences:** `Spree::Store#provisioned?` is the one test of whether the defaults were deployed. An interrupted setup has no automatic resume; `spree config provision` finishes it. The store row's country is never a configurator concern.
+
+**Plans amended:** `6.0-cli-configurator.md` (Key Decisions).
+
 ## 2026-10-01: Store setup leaves Ruby: per-store defaults and the country template become configurator files
 
 **Context:** The configurator (`6.0-cli-configurator.md`) shipped as an addition on top of Ruby: its 2026-09-14 decisions kept `Spree::Seeds::All` whole because "a Rails app must seed without Node", and left first-run provisioning in `Spree::Stores::ProvisionDefaults`. That keeps about 600 lines of per-store seed services and the country-shaped provisioning in Ruby, and every default would have to be written again once the server side moves away from Rails.
