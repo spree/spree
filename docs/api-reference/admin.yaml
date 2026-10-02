@@ -46883,6 +46883,8 @@ components:
           "$ref": "#/components/schemas/Actor"
         refunded_total:
           type: string
+        display_refunded_total:
+          type: string
         refundable_total:
           type: string
         order:
@@ -46925,6 +46927,7 @@ components:
       - created_by_id
       - created_by_type
       - refunded_total
+      - display_refunded_total
       - refundable_total
       - documents
       - labels
