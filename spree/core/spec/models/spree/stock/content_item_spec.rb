@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Stock::ContentItem, type: :model do
   subject { described_class.new(inventory_unit) }
 
-  let(:inventory_unit) { create(:inventory_unit, variant: variant) }
+  let(:inventory_unit) { create(:fulfillment_item, variant: variant) }
   let(:variant) { create(:variant, weight: 25.0) }
 
   context '#volume' do

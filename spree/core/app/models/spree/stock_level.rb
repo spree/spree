@@ -100,7 +100,7 @@ module Spree
     }
 
     def backordered_inventory_units
-      Spree::InventoryUnit.backordered_for_stock_level(self)
+      Spree::FulfillmentItem.backordered_for_stock_level(self)
     end
 
     # @api private

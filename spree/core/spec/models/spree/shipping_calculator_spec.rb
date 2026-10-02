@@ -6,10 +6,10 @@ module Spree
 
     let(:variant1) { create(:variant, price: 10) }
     let(:variant2) { create(:variant, price: 20) }
-    let(:shipment) { build(:shipment) }
+    let(:shipment) { build(:fulfillment) }
 
-    let(:inventory_unit1) { build(:inventory_unit, quantity: 2, variant: variant1, line_item: line_item1) }
-    let(:inventory_unit2) { build(:inventory_unit, quantity: 1, variant: variant2, line_item: line_item2) }
+    let(:inventory_unit1) { build(:fulfillment_item, quantity: 2, variant: variant1, line_item: line_item1) }
+    let(:inventory_unit2) { build(:fulfillment_item, quantity: 1, variant: variant2, line_item: line_item2) }
     let(:inventory_units) { [inventory_unit1, inventory_unit2] }
 
     let(:line_item1) { build(:line_item, variant: variant1, price: 10) }

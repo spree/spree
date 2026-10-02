@@ -9,6 +9,7 @@ module Spree
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Refunds::TaxCredit
 
       hooks :validate, :before_refund, :after_refund
 
@@ -29,6 +30,8 @@ module Spree
 
         run_hooks :validate
         run_hooks :before_refund
+
+        step :settle_tax unless @amount_to_refund.zero?
 
         # Nothing is owed (a free gift sent back), so the return closes
         # without a refund row, store credit or tax credit.
@@ -66,8 +69,20 @@ module Spree
         received = return_record.return_line_items.select { |line| line.refund_amount.positive? }
         return if received.empty?
 
-        order = return_record.order
-        order.tax_provider.refund(order, received, amount: @amount_to_refund, tax_date: order.completed_at)
+        file_tax_credit(return_record, received, @amount_to_refund)
+      end
+
+      # Rewrites the credit rows for what actually goes back — the units that
+      # arrived, and of those only the part of their worth being refunded —
+      # before any money moves, so the refund carries exactly the tax the rows
+      # record.
+      def settle_tax
+        lines = return_record.return_line_items.to_a
+        short = @amount_to_refund < return_record.refund_total
+        amounts = allocate_refund(@amount_to_refund, lines.index_with(&:refund_amount), return_record.currency) if short
+
+        with_tax_provider(return_record) { return_record.settle_tax!(amounts: amounts) }
+        @tax_amount = return_record.credited_tax_total
       end
 
       def internal_refund?
@@ -118,7 +133,8 @@ module Spree
           order: return_record.order,
           amount: @amount_to_refund,
           record: return_record,
-          refunder: refunder
+          refunder: refunder,
+          tax_amount: @tax_amount
         )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?

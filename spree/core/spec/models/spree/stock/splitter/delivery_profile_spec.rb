@@ -18,8 +18,8 @@ module Spree
           a = create(:variant, product: product)
           b = create(:variant, product: product, delivery_profile: oversized)
 
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: a))
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: b))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: a))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: b))
 
           expect(result.size).to eq(2)
           expect(result.map(&:delivery_profile)).to contain_exactly(standard, oversized)
@@ -30,8 +30,8 @@ module Spree
           a = create(:variant, product: product)
           b = create(:variant, product: product)
 
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: a))
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: b))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: a))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: b))
 
           expect(result.size).to eq(1)
         end
@@ -47,8 +47,8 @@ module Spree
           mine = create(:variant, product: product, seller: seller, delivery_profile: standard)
           theirs = create(:variant, product: product, seller: other_seller, delivery_profile: oversized)
 
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: mine))
-          package.add_multiple(build_list(:inventory_unit, 1, :without_assoc, variant: theirs))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: mine))
+          package.add_multiple(build_list(:fulfillment_item, 1, :without_assoc, variant: theirs))
 
           expect(result.size).to eq(2)
           expect(result.map(&:delivery_profile)).to contain_exactly(standard, oversized)

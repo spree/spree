@@ -2666,6 +2666,7 @@
           "discounts_empty": "Noch keine Rabatte für diese Bestellung.",
           "fee_kind_cod": "Nachnahme",
           "fee_kind_duty": "Zoll",
+          "fee_kind_exchange": "Umtausch",
           "fee_kind_gift_wrap": "Geschenkverpackung",
           "fee_kind_handling": "Bearbeitung",
           "fee_kind_payment": "Zahlungsgebühr",
@@ -3325,7 +3326,8 @@
             },
             "confirm": {
               "cancel_confirm": "Umtausch stornieren",
-              "cancel_dismiss": "Umtausch behalten"
+              "cancel_dismiss": "Umtausch behalten",
+              "balance_due": "Der Ersatz kostet mehr als die zurückgesendete Ware. Beim Versand wird die Differenz der Bestellung als offener Betrag hinzugefügt, den Sie einziehen. Es wird nichts automatisch belastet."
             },
             "create_title": "Neuer Umtausch",
             "empty": "Kein Umtausch für diese Bestellung.",
@@ -3362,6 +3364,7 @@
             "received_of": "{{received}} von {{requested}} erhalten",
             "received_quantity": "Erhalten",
             "refund_amount": "Betrag",
+            "refund_includes_tax": "Der volle Betrag enthält {{tax}} Steuern. Bei einem kleineren Betrag wird die Steuer anteilig erstattet.",
             "refund_method": "Erstatten an",
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
@@ -3371,6 +3374,8 @@
             "complete_title": "Retoure abschließen",
             "nothing_owed": "Für diese Retoure ist nichts geschuldet, daher wird kein Geld erstattet. Mit dem Abschließen wird die Retoure geschlossen.",
             "refund_total": "Erstattungssumme",
+            "refunded": "Erstattet",
+            "refunded_of": "{{amount}} von {{total}}",
             "resellable": "Wiederverkäuflich",
             "returning_to": "Rücksendung an {{name}}"
           },

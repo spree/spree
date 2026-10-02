@@ -7,6 +7,8 @@ module Spree
     # holding the customer's items, and the way out is a refund, not a
     # cancellation.
     class Cancel < Spree::Workflow
+      include Spree::Refunds::TaxCredit
+
       hooks :validate, :after_cancel
 
       # @param return_record [Spree::Return]
@@ -19,6 +21,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_canceled
+          step :clear_tax
         end
 
         # Carrier I/O, after the status is committed: a customer who abandons
@@ -46,6 +49,10 @@ module Spree
       def mark_canceled
         memo = [return_record.memo, reason].compact_blank.join("\n")
         return_record.update!(status: 'canceled', canceled_at: Time.current, memo: memo.presence)
+      end
+
+      def clear_tax
+        clear_tax_credit(return_record)
       end
     end
   end

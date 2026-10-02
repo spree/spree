@@ -10,8 +10,10 @@ module Spree
     # Extensions may append their own kinds — the list is validated, not frozen.
     # `duty` rows are written by a duties provider's adjuster and snapshot the
     # classification they were calculated from in `metadata` — never re-derive
-    # a duty from the live catalog.
-    KINDS = %w[surcharge handling gift_wrap cod payment duty]
+    # a duty from the live catalog. `exchange` is what a customer owes when an
+    # exchange's replacement costs more, put on the order for the merchant to
+    # collect.
+    KINDS = %w[surcharge handling gift_wrap cod payment duty exchange]
 
     has_prefix_id :fee
 

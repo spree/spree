@@ -86,8 +86,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
 
       describe '#shipments' do
-        let!(:shipment) { create(:shipment, order: order) }
-        let!(:shipment_2) { create(:shipment, order: order_2) }
+        let!(:shipment) { create(:fulfillment, order: order) }
+        let!(:shipment_2) { create(:fulfillment, order: order_2) }
 
         it { expect(subject.shipments).to eq([shipment]) }
       end
@@ -104,8 +104,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       describe '#inventory_units' do
         let(:product) { create(:product, store: subject) }
         let(:product_2) { create(:product, store: other_store) }
-        let!(:inventory_unit) { create(:inventory_unit, variant: product.default_variant, order: order) }
-        let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.default_variant, order: order_2) }
+        let!(:inventory_unit) { create(:fulfillment_item, variant: product.default_variant, order: order) }
+        let!(:inventory_unit_2) { create(:fulfillment_item, variant: product_2.default_variant, order: order_2) }
 
         it { expect(subject.inventory_units).to eq([inventory_unit]) }
       end
@@ -300,7 +300,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         before do
           zone = create(:delivery_zone)
           zone.members.create!(member_type: 'country', country_code: country.iso)
-          create(:shipping_method, delivery_zone: zone)
+          create(:delivery_method, delivery_zone: zone)
           store.default_country_code = country.iso
         end
 
@@ -863,7 +863,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       before do
         zone.members.create!(member_type: 'country', country_code: country1.iso)
         zone.members.create!(member_type: 'country', country_code: country2.iso)
-        create(:shipping_method, delivery_zone: zone)
+        create(:delivery_method, delivery_zone: zone)
       end
 
       it 'returns countries from those zones' do
@@ -879,7 +879,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       before do
         zone.members.create!(member_type: 'state', country_code: state.country_code, state_code: state.abbr)
-        create(:shipping_method, delivery_zone: zone)
+        create(:delivery_method, delivery_zone: zone)
       end
 
       it 'returns countries inferred from state-type zones' do
@@ -917,8 +917,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       before do
         zone1.members.create!(member_type: 'country', country_code: country.iso)
         zone2.members.create!(member_type: 'country', country_code: country.iso)
-        create(:shipping_method, delivery_zone: zone1)
-        create(:shipping_method, delivery_zone: zone2)
+        create(:delivery_method, delivery_zone: zone1)
+        create(:delivery_method, delivery_zone: zone2)
       end
 
       it 'deduplicates countries' do

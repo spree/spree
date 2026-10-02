@@ -255,9 +255,18 @@ module Spree
       association(:orders).reset
     end
 
+    # Refunds for goods that came back settle what was owed for them, as on
+    # {Spree::Order#outstanding_balance}, so they do not count as uncollected.
+    #
     # @return [BigDecimal] still to collect across the whole checkout
     def outstanding_balance
-      total - payment_total
+      total - payment_total - returned_items_refund_total
+    end
+
+    # @return [BigDecimal] what refunds for returns, claims and exchanges on
+    #   this checkout's payments have given back
+    def returned_items_refund_total
+      Spree::Refund.for_returned_items.where(payment_id: payments.completed.select(:id)).sum(:amount)
     end
 
     # @return [Boolean]

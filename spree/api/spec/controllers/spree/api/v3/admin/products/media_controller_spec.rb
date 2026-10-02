@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
   include_context 'API v3 Admin authenticated'
 
   let!(:product) { create(:product) }
-  let!(:image) { create(:image, viewable: product) }
+  let!(:image) { create(:media, viewable: product) }
 
   before { request.headers.merge!(headers) }
 
@@ -112,7 +112,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
       end
 
       context 'with variant_ids on a product-level asset' do
-        let!(:product_asset) { create(:image, viewable: product) }
+        let!(:product_asset) { create(:media, viewable: product) }
         let!(:variant_a) { create(:variant, product: product) }
         let!(:variant_b) { create(:variant, product: product) }
 
@@ -170,7 +170,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
     end
 
     context 'with legacy default-variant-pinned assets' do
-      let!(:legacy_variant_image) { create(:image, viewable: product.default_variant) }
+      let!(:legacy_variant_image) { create(:media, viewable: product.default_variant) }
 
       it 'still surfaces legacy assets in the listing' do
         get :index, params: { product_id: product.prefixed_id }, as: :json
@@ -232,7 +232,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
     describe 'PATCH #update' do
       let!(:video) do
-        create(:external_video_asset, viewable: product,
+        create(:external_video_media, viewable: product,
                                       external_video_url: 'https://vimeo.com/123456789')
       end
 
@@ -282,7 +282,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
       end
 
       it 'attaches a poster to an existing video' do
-        video = create(:external_video_asset, viewable: product,
+        video = create(:external_video_media, viewable: product,
                                               external_video_url: 'https://vimeo.com/123456789')
 
         patch :update, params: {
@@ -314,7 +314,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
   describe 'variant assets' do
     let!(:variant) { create(:variant, product: product) }
-    let!(:variant_image) { create(:image, viewable: variant) }
+    let!(:variant_image) { create(:media, viewable: variant) }
 
     describe 'GET #index' do
       it 'returns media for the variant' do
@@ -490,7 +490,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
 
     context 'with a source from another store' do
       let(:other_store) { create(:store) }
-      let(:foreign_image) { create(:image, viewable: create(:product, store: other_store)) }
+      let(:foreign_image) { create(:media, viewable: create(:product, store: other_store)) }
 
       it 'returns 404 rather than copying across stores' do
         post :create, params: {

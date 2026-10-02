@@ -14,6 +14,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'deliveries_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'markets.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'capture_methods_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_stock_movements_migration.rake')
   end
@@ -92,7 +93,7 @@ describe '6.0 data migration tasks' do
     end
 
     it 'marks digital-delivery methods and converts display_on' do
-      digital_method = create(:shipping_method)
+      digital_method = create(:delivery_method)
       digital_method.calculator.destroy!
       Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
       # A 5.x row as it arrives post-migration: storefront_visible at the
@@ -109,7 +110,7 @@ describe '6.0 data migration tasks' do
     # The conversion is one-shot: it clears display_on as it goes, so a later
     # re-run cannot undo a visibility change an admin made in the meantime.
     it 'does not revert a later admin visibility change on re-run' do
-      method = create(:shipping_method)
+      method = create(:delivery_method)
       method.update_columns(storefront_visible: true, display_on: 'back_end')
 
       run_task('spree:migrate_shipping_to_delivery')
@@ -132,10 +133,10 @@ describe '6.0 data migration tasks' do
 
   describe 'spree:backfill_delivery_and_stock_store_ids' do
     it 'assigns the default store to unbound rows and skips bound ones' do
-      bound = create(:shipping_method)
+      bound = create(:delivery_method)
       other_store = create(:store)
       bound.update_columns(store_id: other_store.id)
-      legacy_method = create(:shipping_method)
+      legacy_method = create(:delivery_method)
       legacy_method.update_columns(store_id: nil)
       legacy_location = create(:stock_location)
       legacy_location.update_columns(store_id: nil)
@@ -163,7 +164,7 @@ describe '6.0 data migration tasks' do
 
     it 'folds a non-narrowing category into the store default profile' do
       category = legacy_category!('Default Category')
-      method = create(:shipping_method, store: store)
+      method = create(:delivery_method, store: store)
       method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
       Spree::DeliveryMethod.unscoped.where(store: store).find_each do |delivery_method|
         method_categories.find_or_create_by!(shipping_method_id: delivery_method.id, shipping_category_id: category.id)
@@ -179,8 +180,8 @@ describe '6.0 data migration tasks' do
 
     it 'keeps a narrowing category as a profile and moves its solely-linked method in' do
       category = legacy_category!('Oversized')
-      oversized_method = create(:shipping_method, store: store, name: 'Freight')
-      create(:shipping_method, store: store, name: 'Regular')
+      oversized_method = create(:delivery_method, store: store, name: 'Freight')
+      create(:delivery_method, store: store, name: 'Regular')
       method_categories.create!(shipping_method_id: oversized_method.id, shipping_category_id: category.id)
       product = create(:product, store: store)
       product.update_columns(delivery_profile_id: category.id)
@@ -197,7 +198,7 @@ describe '6.0 data migration tasks' do
     it 'detects a digital-only category as a Digital profile' do
       category = legacy_category!('Digital Goods')
       digital_method = create(:digital_delivery_method, store: store)
-      create(:shipping_method, store: store)
+      create(:delivery_method, store: store)
       method_categories.create!(shipping_method_id: digital_method.id, shipping_category_id: category.id)
       product = create(:product, store: store)
       product.update_columns(delivery_profile_id: category.id)
@@ -211,8 +212,8 @@ describe '6.0 data migration tasks' do
 
     it 'is idempotent' do
       category = legacy_category!('Oversized')
-      method = create(:shipping_method, store: store, name: 'Freight')
-      create(:shipping_method, store: store, name: 'Regular')
+      method = create(:delivery_method, store: store, name: 'Freight')
+      create(:delivery_method, store: store, name: 'Regular')
       method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
       product = create(:product, store: store)
       product.update_columns(delivery_profile_id: category.id)
@@ -402,7 +403,7 @@ describe '6.0 data migration tasks' do
         legacy_zone_member(zone, country)
       end
     end
-    let!(:delivery_method) { create(:shipping_method) }
+    let!(:delivery_method) { create(:delivery_method) }
 
     before do
       delivery_method.update_columns(delivery_zone_id: zone.id)
@@ -530,6 +531,31 @@ describe '6.0 data migration tasks' do
     end
   end
 
+  describe 'spree:markets:migrate_checkout_zones' do
+    let(:legacy_store) { create(:store) }
+    let(:zone) { create(:zone, name: 'Checkout Zone', kind: 'country') }
+
+    before do
+      legacy_zone_member(zone, Spree::Country.by_iso('DE'))
+      legacy_zone_member(zone, Spree::Country.by_iso('FR'))
+      legacy_store.markets.delete_all
+      legacy_store.update_column(:checkout_zone_id, zone.id)
+    end
+
+    it 'turns the checkout zone into a default market once' do
+      expect do
+        run_task('spree:markets:migrate_checkout_zones')
+        run_task('spree:markets:migrate_checkout_zones')
+      end.to change { legacy_store.markets.count }.from(0).to(1)
+
+      legacy_store.reload
+      market = legacy_store.markets.first
+      expect(market).to be_default
+      expect(market.country_codes).to eq(%w[DE FR])
+      expect(legacy_store.read_attribute(:checkout_zone_id)).to be_nil
+    end
+  end
+
   describe 'spree:backfill_order_markets' do
     it 'assigns the store default market to orders missing one' do
       order = create(:order, store: store)
@@ -557,7 +583,7 @@ describe '6.0 data migration tasks' do
       stranger = create(:order, store: store)
       cart = create(:cart, store: store)
       create(:line_item, cart: cart, order: nil)
-      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
       fulfillment.fulfillment_items.update_all(order_id: stranger.id)
 
       run_task('spree:repair_cart_fulfillment_item_orders')

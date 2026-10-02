@@ -332,6 +332,21 @@ describe Spree::Preferences::Preferable, type: :model do
       it 'with single array' do
         expect { @a.set_preference(:is_hash, ['key']) }.to raise_error(ArgumentError)
       end
+
+      it 'with permitted strong parameters' do
+        parameters = ActionController::Parameters.new(amounts: { 'EUR' => '15.0' }).permit(amounts: {})
+
+        @a.set_preference(:is_hash, parameters[:amounts])
+
+        expect(@a.preferences[:is_hash]).to eq('EUR' => '15.0')
+        expect(@a.preferences[:is_hash]).to be_is_a(Hash)
+      end
+
+      it 'with unpermitted strong parameters' do
+        parameters = ActionController::Parameters.new('EUR' => '15.0')
+
+        expect { @a.set_preference(:is_hash, parameters) }.to raise_error(ActionController::UnfilteredParameters)
+      end
     end
 
     # Deliberately not coerced to a Date: a date's meaning depends on the

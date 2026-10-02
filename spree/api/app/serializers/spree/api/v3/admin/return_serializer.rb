@@ -12,6 +12,7 @@ module Spree
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    refunded_total: :string,
+                   display_refunded_total: :string,
                    refundable_total: :string
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
@@ -24,6 +25,10 @@ module Spree
 
           attribute :refunded_total do |return_record|
             return_record.refunded_total.to_s
+          end
+
+          attribute :display_refunded_total do |return_record|
+            return_record.display_refunded_total.to_s
           end
 
           attribute :refundable_total do |return_record|

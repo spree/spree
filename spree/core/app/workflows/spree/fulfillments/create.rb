@@ -1,6 +1,6 @@
 module Spree
   module Fulfillments
-    # Manually creates a fulfillment (Spree::Shipment) on a completed order,
+    # Manually creates a fulfillment (Spree::Fulfillment) on a completed order,
     # bypassing order routing. Moves the requested quantities of each line
     # item's not-yet-shipped inventory units out of their current shipments
     # into the new fulfillment, mirroring externally-managed fulfillment
@@ -46,7 +46,7 @@ module Spree
       # @param source_fulfillment [Spree::Fulfillment, nil] the only fulfillment units are moved from;
       #   nil takes the customer's bought units from every unshipped fulfillment on the order
       # @param tracking [String, nil] carrier tracking number
-      # @param delivery_method [Spree::ShippingMethod, nil] carrier; stored as the selected rate.
+      # @param delivery_method [Spree::DeliveryMethod, nil] carrier; stored as the selected rate.
       #   Defaults to the delivery method of the drained source fulfillment(s)
       # @param cost [String, Numeric, nil] explicit shipping cost (e.g. the 3PL's price).
       #   Defaults to the summed cost of the drained source fulfillment(s), keeping the
@@ -215,7 +215,7 @@ module Spree
       # carries each moved unit's allocation across with it so the promise
       # follows the fulfillment that will ship it.
       #
-      # @return [Array<Spree::Shipment>] the shipments units were taken from
+      # @return [Array<Spree::Fulfillment>] the shipments units were taken from
       def move_units(order, fulfillment, requested, units_by_line_item)
         source_shipments = []
         stock_moves = Hash.new(0)
@@ -286,7 +286,7 @@ module Spree
       # deleted along with the shipment. The delivery method lookup costs
       # queries, so it is skipped when the caller provided its own.
       #
-      # @return [Hash] `{ cost: BigDecimal, delivery_method: Spree::ShippingMethod or nil }`
+      # @return [Hash] `{ cost: BigDecimal, delivery_method: Spree::DeliveryMethod or nil }`
       def destroy_drained_shipments(source_shipments, capture_delivery_method:)
         inherited = { cost: 0, delivery_method: nil }
 

@@ -28,7 +28,7 @@ module Spree
             # `status: 'shipped'` — pending fulfillments are re-priced by the
             # rate engine.
             def create
-              authorize!(:create, Spree::Shipment)
+              authorize!(:create, Spree::Fulfillment)
 
               with_order_lock do
                 result = Spree.fulfillment_create_workflow.call(
@@ -127,7 +127,7 @@ module Spree
             def delivery_method_for_create
               return if create_params[:delivery_method_id].blank?
 
-              Spree::ShippingMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
+              Spree::DeliveryMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
             end
 
             def source_fulfillment_for_create

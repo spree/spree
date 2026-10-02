@@ -10,6 +10,8 @@ module Spree
                  original_price: :string,
                  new_variant_price: :string,
                  price_difference: :string,
+                 original_tax_total: :string,
+                 new_tax_total: :string,
                  original_variant_id: [:string, nullable: true],
                  new_variant_id: [:string, nullable: true],
                  line_item_id: [:string, nullable: true],
@@ -17,16 +19,27 @@ module Spree
 
         attributes :quantity, :received_quantity, :resellable
 
+        # What the customer paid for the units coming back, after discounts
+        # and with their tax.
         attribute :original_price do |line|
           line.original_price.to_s
         end
 
+        # The replacement at the same discount, with its own tax.
         attribute :new_variant_price do |line|
           line.new_variant_price.to_s
         end
 
         attribute :price_difference do |line|
           line.price_difference.to_s
+        end
+
+        attribute :original_tax_total do |line|
+          line.original_tax_total.to_s
+        end
+
+        attribute :new_tax_total do |line|
+          line.new_tax_total.to_s
         end
 
         attribute :original_variant_id do |line|

@@ -272,7 +272,8 @@
             },
             "confirm": {
               "cancel_confirm": "Cancelar cambio",
-              "cancel_dismiss": "Mantener cambio"
+              "cancel_dismiss": "Mantener cambio",
+              "balance_due": "El reemplazo cuesta más que lo devuelto. Al enviarlo, la diferencia se añade al pedido como saldo pendiente para que lo cobres. No se cobra nada automáticamente."
             },
             "create_title": "Nuevo cambio",
             "empty": "Sin cambios para este pedido.",
@@ -309,6 +310,7 @@
             "received_of": "{{received}} de {{requested}} recibidos",
             "received_quantity": "Recibidos",
             "refund_amount": "Monto",
+            "refund_includes_tax": "El importe completo incluye {{tax}} de impuestos. Un importe menor devuelve los impuestos en la misma proporción.",
             "refund_method": "Reembolsar a",
             "refund_methods": {
               "original_payment": "Pago original",
@@ -318,6 +320,8 @@
             "complete_title": "Completar devolución",
             "nothing_owed": "No se debe nada en esta devolución, así que no se reembolsa dinero. Al completarla, la devolución se cierra.",
             "refund_total": "Total del reembolso",
+            "refunded": "Reembolsado",
+            "refunded_of": "{{amount}} de {{total}}",
             "resellable": "Revendible",
             "returning_to": "Devolviendo a {{name}}"
           },
@@ -2409,6 +2413,7 @@
           "discounts_empty": "Todavía no hay descuentos en este pedido.",
           "fee_kind_cod": "Pago contra entrega",
           "fee_kind_duty": "Arancel",
+          "fee_kind_exchange": "Cambio",
           "fee_kind_gift_wrap": "Envoltura para regalo",
           "fee_kind_handling": "Gestión",
           "fee_kind_payment": "Cargo por pago",

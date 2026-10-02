@@ -5,9 +5,9 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
 
   include_context 'API v3 Store'
 
-  let!(:shipping_method) { create(:shipping_method, name: 'Standard', storefront_visible: true) }
+  let!(:shipping_method) { create(:delivery_method, name: 'Standard', storefront_visible: true) }
   let!(:pickup_method) { create(:pickup_delivery_method, name: 'Store pickup', storefront_visible: true) }
-  let!(:hidden_method) { create(:shipping_method, name: 'Internal', storefront_visible: false) }
+  let!(:hidden_method) { create(:delivery_method, name: 'Internal', storefront_visible: false) }
 
   before { request.headers['X-Spree-Api-Key'] = api_key.token }
 

@@ -18,6 +18,12 @@ describe 'rendered emails', type: :mailer do
   let(:order_group) { create(:order_group, :with_parcels, store: store, sellers_count: 2) }
   let(:seller) { create(:seller, store: store, name: payload, contact_email: 'seller@example.com') }
   let(:company) { create(:company, store: store, name: payload) }
+  let(:order_with_downloads) do
+    create(:completed_order_with_totals, store: store).tap do |order|
+      line_item = order.line_items.first
+      create(:digital_link, line_item: line_item, digital_asset: create(:digital_asset, variant: line_item.variant))
+    end
+  end
 
   let(:emails) do
     {
@@ -28,6 +34,7 @@ describe 'rendered emails', type: :mailer do
       'purchase confirmation' => Spree::OrderGroupMailer.confirm_email(order_group),
       'new purchase notification' => Spree::OrderGroupMailer.store_owner_notification_email(order_group),
       'fulfillment' => Spree::FulfillmentMailer.fulfilled_email(create(:shipped_order, store: store).fulfillments.first),
+      'files ready' => Spree::DigitalAssetMailer.files_ready_email(order_with_downloads),
       'refund' => Spree::ReturnMailer.refunded_email(create(:received_return, store: store)),
       'password reset' => Spree::CustomerMailer.password_reset_email(create(:user, first_name: payload), 'token', store),
       'data export' => Spree::CustomerMailer.data_export_email(create(:data_request, store: store)),

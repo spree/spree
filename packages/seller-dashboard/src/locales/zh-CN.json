@@ -148,6 +148,7 @@
             "receive_title": "接收退货商品",
             "received_quantity": "已接收",
             "refund_amount": "金额",
+            "refund_includes_tax": "全额包含 {{tax}} 税费。退款金额较小时，税费按相同比例退还。",
             "refund_method": "退款至",
             "refund_methods": {
               "original_payment": "原支付方式",
@@ -518,6 +519,7 @@
         "cancel_message": "客户会收到不再继续处理的通知。",
         "cancel_title": "取消此换货？",
         "fulfill": "寄出替换件",
+        "balance_due_confirm": "替换商品比退回的商品更贵。发出替换商品会将差额作为待付余额添加到订单中。不会自动扣款。",
         "price_difference": "差价：{{amount}}",
         "receive": "接收",
         "title": "换货"
@@ -533,6 +535,8 @@
         "receive": "接收",
         "refund": "退款",
         "refund_total": "退款合计：{{amount}}",
+        "refunded": "已退款：{{amount}}",
+        "refunded_of": "已退款：{{amount}} / {{total}}",
         "title": "退货"
       },
       "statuses": {

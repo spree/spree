@@ -49,7 +49,7 @@ module Spree
     describe 'moving all unfulfilled items (items omitted)' do
       it 'creates a fulfillment holding every unshipped unit and destroys the drained source' do
         expect(execute.success?).to eq(true)
-        expect(fulfillment).to be_kind_of(Spree::Shipment)
+        expect(fulfillment).to be_kind_of(Spree::Fulfillment)
         expect(order.reload.shipments).to contain_exactly(fulfillment)
         expect(fulfillment.inventory_units.sum(:quantity)).to eq(line_items.sum(&:quantity))
       end
@@ -222,7 +222,7 @@ module Spree
     end
 
     describe 'delivery method' do
-      let(:delivery_method) { create(:shipping_method) }
+      let(:delivery_method) { create(:delivery_method) }
       let(:params) { { order: order, stock_location: stock_location, delivery_method: delivery_method } }
 
       it 'keeps the delivery method selected through the rate refresh' do
@@ -239,7 +239,7 @@ module Spree
       end
 
       it 'inherits the first non-nil method when draining sources with different carriers' do
-        other_method = create(:shipping_method)
+        other_method = create(:delivery_method)
         second_source = order.shipments.create!(stock_location: stock_location)
         second_source.add_shipping_method(other_method, true)
         line_items.last.inventory_units.update_all(shipment_id: second_source.id)
@@ -277,7 +277,7 @@ module Spree
       end
 
       it 'prices the carrier rate at the given cost' do
-        params[:delivery_method] = create(:shipping_method)
+        params[:delivery_method] = create(:delivery_method)
 
         expect(execute.success?).to eq(true)
         expect(fulfillment.selected_shipping_rate.cost).to eq(BigDecimal('7.42'))
@@ -370,7 +370,7 @@ module Spree
       end
 
       it 'freezes the inherited cost and carrier, keeping the order total unchanged' do
-        delivery_method = create(:shipping_method)
+        delivery_method = create(:delivery_method)
         params[:delivery_method] = delivery_method
 
         # Settle factory-persisted totals before measuring invariance.

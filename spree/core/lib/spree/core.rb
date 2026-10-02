@@ -766,7 +766,6 @@ module Spree
   end
 
   # Semantic reporting registry — the queryable metric/dimension vocabulary.
-  # Not to be confused with +Spree.analytics+ (storefront event tracking).
   #
   # @return [Spree::Reporting::Registry]
   def self.reporting
@@ -775,29 +774,6 @@ module Spree
 
   def self.reporting=(value)
     Rails.application.config.spree.reporting = value
-  end
-
-  def self.analytics
-    @analytics ||= AnalyticsConfig.new
-  end
-
-  # Group analytics configuration options together, but still make it backwards compatible.
-  class AnalyticsConfig
-    def events
-      Rails.application.config.spree.analytics_events
-    end
-
-    def events=(value)
-      Rails.application.config.spree.analytics_events = value
-    end
-
-    def handlers
-      Rails.application.config.spree.analytics_event_handlers
-    end
-
-    def handlers=(value)
-      Rails.application.config.spree.analytics_event_handlers = value
-    end
   end
 
   # The permission catalog — the grant vocabulary shared by staff roles and
@@ -910,7 +886,6 @@ require 'spree/core/version'
 require 'spree/core/number_generator'
 require 'spree/number_generators/registry'
 require 'spree/migrations'
-require 'spree/translation_migrations'
 require 'spree/validators'
 require 'spree/core/engine'
 
@@ -922,7 +897,6 @@ require 'spree/translations'
 require 'spree/money'
 require 'spree/service_module'
 require 'spree/workflow'
-require 'spree/analytics'
 require 'spree/reporting'
 require 'spree/events'
 require 'spree/store_scope_guard'
@@ -947,3 +921,4 @@ require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
 require 'spree/core/pricing/resolver'
+require 'spree/core/tax/provider_error'

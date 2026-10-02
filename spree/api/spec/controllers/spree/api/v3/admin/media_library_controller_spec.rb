@@ -6,8 +6,8 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
   include_context 'API v3 Admin authenticated'
 
   let!(:product) { create(:product) }
-  let!(:placed) { create(:image, viewable: product) }
-  let!(:unplaced) { create(:image, viewable: nil) }
+  let!(:placed) { create(:media, viewable: product) }
+  let!(:unplaced) { create(:media, viewable: nil) }
 
   before { request.headers.merge!(headers) }
 
@@ -71,7 +71,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
 
     context 'with media belonging to another store' do
       let(:other_store) { create(:store) }
-      let!(:foreign) { create(:image, viewable: create(:product, store: other_store)) }
+      let!(:foreign) { create(:media, viewable: create(:product, store: other_store)) }
 
       it 'lists only this store' do
         get :index, as: :json

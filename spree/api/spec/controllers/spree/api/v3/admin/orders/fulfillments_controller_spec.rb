@@ -47,7 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['tracking']).to eq('INPOST-123')
       expect(json_response['items'].sum { |item| item['quantity'] }).to eq(order.line_items.sum(:quantity))
       expect(order.reload.shipments.count).to eq(1)
-      expect(Spree::Shipment.exists?(shipment.id)).to be(false)
+      expect(Spree::Fulfillment.exists?(shipment.id)).to be(false)
     end
 
     it 'creates a fulfillment for explicit items, keeping the source shipment' do
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'attaches the delivery method as the selected rate' do
-      delivery_method = create(:shipping_method)
+      delivery_method = create(:delivery_method)
 
       post :create, params: {
         order_id: order.prefixed_id,
@@ -252,7 +252,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'selects a delivery rate by prefixed ID' do
-      new_rate = create(:shipping_rate, shipment: shipment, cost: 20, selected: false)
+      new_rate = create(:delivery_rate, shipment: shipment, cost: 20, selected: false)
 
       patch :update, params: {
         order_id: order.prefixed_id,

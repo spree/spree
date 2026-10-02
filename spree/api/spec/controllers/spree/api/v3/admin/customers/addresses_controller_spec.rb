@@ -144,7 +144,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
     end
 
     context 'when the address is referenced by a shipment' do
-      let!(:shipment) { create(:shipment, address: address) }
+      let!(:shipment) { create(:fulfillment, address: address) }
 
       it 'soft-deletes the address, keeping the shipment association intact' do
         expect {

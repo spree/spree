@@ -62,11 +62,11 @@ import {
   showsTaxabilityReason,
   type TaxLineGroup,
 } from '../../../lib/tax-line-groups'
-import { FEE_KINDS } from '../../../schemas/order'
+import { FEE_KINDS, SYSTEM_FEE_KINDS } from '../../../schemas/order'
 
 /** The API accepts any kind string, so unknown values fall back to the raw value. */
 function feeKindLabel(kind: string) {
-  return (FEE_KINDS as readonly string[]).includes(kind)
+  return ([...FEE_KINDS, ...SYSTEM_FEE_KINDS] as readonly string[]).includes(kind)
     ? i18n.t(`admin.orders.detail.adjustment_lines.fee_kind_${kind}`)
     : kind
 }

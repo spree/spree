@@ -135,10 +135,11 @@ bundle exec rake spree:backfill_order_coupon_codes
 ### Markets on orders
 
 ```bash
+bundle exec rake spree:markets:migrate_checkout_zones
 bundle exec rake spree:backfill_order_markets
 ```
 
-Orders missing a market get the store default — `market` is required on carts and orders in 6.0.
+A store without a market gets a default one covering its old checkout zone's countries (or its default country), and the checkout zone is cleared. Orders missing a market then get the store default — `market` is required on carts and orders in 6.0.
 
 ### Fill in the stock level counters
 
@@ -381,7 +382,7 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 ### Other behavioral changes
 
 - **`Return#refunded_total` counts store credits.** Store credit is a separate ledger and never creates a `Spree::Refund` row, so the old sum reported zero for a store-credit refund.
-- **`Order#outstanding_balance` dropped its reimbursement term** rather than replacing it — refunds already net out of `payment_total`, so that term was double-counting.
+- **`Order#outstanding_balance` replaced its reimbursement term** with refunds made for returns, claims and exchanges (`returned_items_refund_total`). Those refunds net out of `payment_total`, and adding them back is what keeps a refunded return from reading as a balance due. A refund made for nothing in return still reads as owed, as in 5.x.
 - **The reimbursement email is now `Spree::ReturnMailer#refunded_email`**, sent on `return.refunded` (in the optional `spree_emails` gem, like the other transactional mail).
 - **`Refund#originator`** points at the new records.
 - Events are `return.requested` / `.approved` / `.received` / `.refunded` / `.canceled`, and the matching `exchange.*` and `claim.*` families.
@@ -494,6 +495,7 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 | `Spree::Image::Configuration::ActiveStorage` | deleted — an empty no-op module; all logic lives in `Spree::Asset` |
 | `Spree::OrderRouting::Strategy::Legacy` | `Spree::OrderRouting::Strategy::Rules` (see below) |
 | `private_metafields` association | read `custom_fields` and filter, or query `Spree::CustomField.admin_only` |
+| `multi_search` (`Product`, `Variant`, `Order`, customers; also `q[multi_search]` in the Admin API) and `Searchable.sanitize_query_for_multi_search` / `.multi_search_condition` | `search` / `q[search]`, `sanitize_query_for_search` / `search_condition`. Saved exports or links still using `multi_search` lose their filter |
 
 ### Custom fields replace metafields
 

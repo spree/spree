@@ -10,7 +10,7 @@ module Spree
     let(:state)   { country.states.first || create(:state, country: country) }
     let!(:zone)   { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
