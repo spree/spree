@@ -377,6 +377,8 @@ en:
           attributes:
             amount:
               leaves_a_rising_ladder: would leave the price from %{quantity} units at %{amount}, above the %{floor} a buyer pays below that quantity
+            base:
+              leaves_a_rising_ladder: removing this price would leave the price from %{quantity} units at %{amount}, above the %{floor} a buyer pays below that quantity
             min_quantity:
               requires_price_list: quantity breaks can only be set on a price list
               too_many_breaks: a variant can carry at most %{count} quantity breaks on one price list

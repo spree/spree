@@ -7,6 +7,10 @@ module Spree
     # row whoever asked for it.
     attr_accessor :price_source
 
+    # Set by Spree::Prices::BulkDestroy, which has already judged the ladders
+    # its whole batch leaves.
+    attr_accessor :skip_ladder_check
+
     has_prefix_id :price
 
     include Spree::VatPriceCalculation
@@ -31,6 +35,9 @@ module Spree
 
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
+    # Prepended so a refused deletion stops before the callbacks registered
+    # above (price histories, the lifecycle event payload) run.
+    before_destroy :ensure_ladder_survives_removal, prepend: true
     after_save :record_price_history, if: :should_record_price_history?
 
     # legacy behavior
@@ -255,6 +262,45 @@ module Spree
       nil
     end
 
+    # The ladders that removing these prices would leave charging more for a
+    # bigger order. Removing a ladder's bottom rung is how: the next rung then
+    # answers to the base price. Judged on what the whole set leaves, so a
+    # bottom rung removed together with the breaks above it is allowed. A
+    # ladder on a deleted list is skipped, since no buyer pays it.
+    #
+    # @param prices [Array<Spree::Price>]
+    # @return [Array<Hash>] `[{ variant_id:, currency:, price_list_id:, min_quantity:, amount:, floor: }, ...]`
+    def self.rising_ladders_without(prices)
+      rungs = prices.select { |price| price.price_list_id.present? && !price.amount.nil? }
+      return [] if rungs.empty?
+
+      removed_ids = prices.map(&:id)
+      variant_ids = rungs.map(&:variant_id).uniq
+      currencies = rungs.map(&:currency).uniq
+      live_list_ids = Spree::PriceList.where(id: rungs.map(&:price_list_id).uniq).ids.to_set
+
+      remaining = where(variant_id: variant_ids, currency: currencies, price_list_id: live_list_ids.to_a).
+                  where.not(amount: nil).where.not(id: removed_ids).
+                  pluck(:variant_id, :currency, :price_list_id, :min_quantity, :amount).
+                  group_by { |row| row.first(3) }
+      floors = base_prices.where(variant_id: variant_ids, currency: currencies).
+               where.not(amount: nil).where.not(id: removed_ids).
+               pluck(:variant_id, :currency, :amount).
+               to_h { |variant_id, currency, amount| [[variant_id, currency], amount] }
+
+      ladders = rungs.map { |price| [price.variant_id, price.currency, price.price_list_id] }.uniq
+      ladders.filter_map do |variant_id, currency, list_id|
+        next unless live_list_ids.include?(list_id)
+
+        ladder = remaining.fetch([variant_id, currency, list_id], []).map { |row| row.last(2) }.sort_by(&:first)
+        breach = rising_rung(ladder, floors[[variant_id, currency]])
+        next if breach.nil?
+
+        { variant_id: variant_id, currency: currency, price_list_id: list_id,
+          min_quantity: breach[0], amount: breach[1], floor: breach[2] }
+      end
+    end
+
     # Whether this row is a quantity break rather than the list's ordinary
     # price for the variant.
     # @return [Boolean]
@@ -308,10 +354,28 @@ module Spree
       breach = affected_ladders.lazy.filter_map { |list_id, floor| self.class.rising_rung(resulting_ladder(list_id), floor) }.first
       return if breach.nil?
 
-      errors.add(:amount, :leaves_a_rising_ladder,
-                 quantity: breach[0],
-                 amount: Spree::Money.new(breach[1], currency: currency),
-                 floor: Spree::Money.new(breach[2], currency: currency))
+      add_rising_ladder_error(:amount, *breach)
+    end
+
+    # A deletion is held to the same rule as a save. Skipped when the variant
+    # is destroyed along with its prices: a soft delete cascades as
+    # `destroyed_by_association`, and paranoia's `really_destroy!` marks each
+    # row deleted before running its callbacks.
+    def ensure_ladder_survives_removal
+      return if skip_ladder_check || destroyed_by_association || deleted?
+
+      breach = self.class.rising_ladders_without([self]).first
+      return if breach.nil?
+
+      add_rising_ladder_error(:base, *breach.values_at(:min_quantity, :amount, :floor))
+      throw(:abort)
+    end
+
+    def add_rising_ladder_error(attribute, quantity, rung_amount, floor)
+      errors.add(attribute, :leaves_a_rising_ladder,
+                 quantity: quantity,
+                 amount: Spree::Money.new(rung_amount, currency: currency),
+                 floor: Spree::Money.new(floor, currency: currency))
     end
 
     # The ladders this row can disturb, each with the floor it falls through
