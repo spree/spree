@@ -53,6 +53,7 @@ export const packageTypes = plainSection<PackageTypeEntry, PackageType>({
   name: 'package_types',
   scope: 'write_package_types',
   introspectByDefault: true,
+  listParams: FIRST_PARTY,
   key: 'name',
   attributes: PACKAGE_TYPE_ATTRIBUTES,
   defaults: { default: false },
