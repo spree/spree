@@ -182,7 +182,7 @@ spree config deploy
 <Tabs>
   <Tab title="Staging from CI">
     ```yaml .github/workflows/deploy-config.yml
-    - run: npx spree config deploy --yes --fail-on-delete
+    - run: npx @spree/cli config deploy --yes --fail-on-delete
       env:
         SPREE_BASE_URL: https://staging.example.com
         SPREE_API_KEY: ${{ secrets.SPREE_STAGING_API_KEY }}
