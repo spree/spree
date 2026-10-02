@@ -687,16 +687,25 @@ module Spree
       end
     end
 
-    # Refunds are already netted out of payment_total by
-    # Spree::Carts::RecalculateTotals, so returns and claims need no separate
-    # term here — the legacy reimbursement payout was the only one that sat
-    # outside that sum.
+    # Refunds are netted out of payment_total by Spree::Carts::RecalculateTotals,
+    # which is right for money handed back for nothing. A refund for goods that
+    # came back on a return, claim or exchange also settles what the customer
+    # owed for them, so it is added back here — the job the legacy
+    # reimbursement total did. Without it every refunded return read as a
+    # balance due, and the payment dialog offered to charge it again.
     def outstanding_balance
       if canceled?
         -1 * payment_total
       else
-        total - payment_total
+        total - payment_total - returned_items_refund_total
       end
+    end
+
+    # What refunds for returns, claims and exchanges have given back.
+    #
+    # @return [BigDecimal]
+    def returned_items_refund_total
+      refunds.where(originator_type: %w[Spree::Return Spree::Claim Spree::Exchange]).sum(:amount)
     end
 
 
