@@ -144,7 +144,6 @@ export function returnOwesNothing(refundableTotal: string): boolean {
   return Number(refundableTotal) === 0
 }
 
-/** The money figures a return's card summarises. */
 export type ReturnRefundFigures = {
   status: string
   refund_total: string
@@ -154,9 +153,11 @@ export type ReturnRefundFigures = {
 }
 
 /**
- * What a return's card reports: what it is owed until it is refunded, then
+ * What a return's card reports: what it is owed until money goes back, then
  * what actually went back — which a merchant keeping a restocking fee makes
- * less than it was owed, so that case also names the full amount.
+ * less than it was owed, so that case also names the full amount. Money that
+ * went back counts even before the return is marked refunded: a refund that
+ * succeeded on one payment and was declined on the next leaves it received.
  */
 export function returnRefundSummary(
   returnRecord: ReturnRefundFigures,
@@ -164,11 +165,13 @@ export function returnRefundSummary(
   | { kind: 'owed'; amount: string }
   | { kind: 'refunded'; amount: string }
   | { kind: 'refunded_short'; amount: string; total: string } {
-  if (returnRecord.status !== 'refunded') {
+  const refunded = Number(returnRecord.refunded_total)
+
+  if (returnRecord.status !== 'refunded' && refunded === 0) {
     return { kind: 'owed', amount: returnRecord.display_refund_total }
   }
 
-  if (Number(returnRecord.refunded_total) < Number(returnRecord.refund_total)) {
+  if (refunded < Number(returnRecord.refund_total)) {
     return {
       kind: 'refunded_short',
       amount: returnRecord.display_refunded_total,
