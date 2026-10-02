@@ -13,12 +13,19 @@ module Spree
     # new fulfillment, unless the caller provides its own +cost+ /
     # +delivery_method+.
     #
+    # Order-wide, replacement units sent by an exchange or a claim are never
+    # moved: they belong to the record that sent them, not to the goods the
+    # customer bought on the line they are filed under. Given a
+    # +source_fulfillment+, units move only out of that one, replacements
+    # included — splitting a parcel, or re-sending a canceled one, moves what
+    # that parcel holds.
+    #
     # The resulting cost is frozen only for fulfillments registered with
-    # status: 'shipped' (rate refresh skips shipped shipments). Pending/ready
-    # fulfillments participate in the standard rate machinery — this workflow
-    # re-prices them from the delivery method calculators before the final
-    # totals recalculation (repricing a completed order's delivery is an
-    # explicit post-placement edit, never a side effect of a totals refresh).
+    # status: 'shipped' (rate refresh skips shipped shipments). A pending new
+    # fulfillment participates in the standard rate machinery — this workflow
+    # re-prices it from the delivery method calculators before the final
+    # totals recalculation. Only the new fulfillment is re-priced; the order's
+    # other fulfillments keep their cost.
     #
     # In the workflow tier for its hooks and its transaction discipline:
     # 3PL and courier integrations need to contribute provider payload and
@@ -35,7 +42,9 @@ module Spree
       # @param order [Spree::Order] completed order to fulfill
       # @param stock_location [Spree::StockLocation] location the fulfillment ships from
       # @param items [Array<Hash>, nil] `[{ line_item: Spree::LineItem, quantity: Integer }]`;
-      #   nil fulfills every not-yet-shipped unit on the order
+      #   nil moves every not-yet-shipped unit, drawn as +source_fulfillment+ describes
+      # @param source_fulfillment [Spree::Fulfillment, nil] the only fulfillment units are moved from;
+      #   nil takes the customer's bought units from every unshipped fulfillment on the order
       # @param tracking [String, nil] carrier tracking number
       # @param delivery_method [Spree::ShippingMethod, nil] carrier; stored as the selected rate.
       #   Defaults to the delivery method of the drained source fulfillment(s)
@@ -47,7 +56,7 @@ module Spree
       # @param status [String, nil] pass 'shipped' to register an already-shipped fulfillment
       # @param metadata [Hash, nil] metadata stored on the fulfillment
       # @return [Spree::ServiceModule::Result] the created shipment on success
-      def perform(order:, stock_location:, items: nil, tracking: nil, delivery_method: nil, cost: nil, status: nil, metadata: nil)
+      def perform(order:, stock_location:, items: nil, source_fulfillment: nil, tracking: nil, delivery_method: nil, cost: nil, status: nil, metadata: nil)
         super
 
         step :ensure_valid_status
@@ -126,38 +135,32 @@ module Spree
         mark_shipped(fulfillment) if status == 'shipped'
       end
 
-      def reprice_and_recalculate
-        reprice_pending_fulfillments(order.reload)
-        order.recalculate_totals!
-      end
-
-      # Moved here from the old updater completed-order branch: pending/ready
-      # fulfillments re-price from backoffice-visible delivery methods;
-      # fulfilled ones keep their frozen cost.
-      #
       # A caller that priced this parcel itself is honoured rather than
-      # re-quoted.
-      def reprice_pending_fulfillments(order)
-        order.fulfillments.each do |candidate|
-          next unless candidate.persisted?
-          next if candidate.fulfilled?
-          next if @requested_cost && candidate.id == fulfillment.id
-
-          candidate.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
-          candidate.update_amounts
+      # re-quoted, and a shipped one keeps its frozen cost.
+      def reprice_and_recalculate
+        unless @requested_cost || fulfillment.fulfilled?
+          fulfillment.reload.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
+          fulfillment.update_amounts
         end
+
+        order.reload.recalculate_totals!
       end
 
       # Units that can still be moved into a manual fulfillment: on-hand or
-      # backordered units sitting in shipments that haven't shipped. A
-      # canceled shipment's units are included — cancellation kills that
-      # attempt, not the obligation to ship, so the goods are still owed and
-      # a fresh fulfillment is the only way left to send them (the canceled
-      # record itself can never be fulfilled). Loaded in one query, on-hand
-      # first so moved units stay shippable, grouped by line item for both
-      # validation and moving.
+      # backordered units sitting in shipments that haven't shipped — the
+      # source's own units when one is named, otherwise the customer's bought
+      # units across the order. A canceled shipment's units are included —
+      # cancellation kills that attempt, not the obligation to ship, so the
+      # goods are still owed and a fresh fulfillment is the only way left to
+      # send them (the canceled record itself can never be fulfilled). Loaded
+      # in one query, bought before replacement (a request names only the
+      # line) and on-hand first so moved units stay shippable, grouped by line
+      # item for both validation and moving.
       def fulfillable_units(order)
-        order.fulfillment_items.
+        units = order.fulfillment_items
+        units = source_fulfillment ? units.where(fulfillment_id: source_fulfillment.id).order(:replacement) : units.where(replacement: false)
+
+        units.
           on_hand_or_backordered.
           joins(:fulfillment).
           merge(Spree::Fulfillment.ready_or_pending.or(Spree::Fulfillment.canceled)).
