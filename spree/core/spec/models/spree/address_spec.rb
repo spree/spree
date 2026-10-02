@@ -966,6 +966,88 @@ describe Spree::Address, type: :model do
         expect(address.state).to eq(state)
       end
     end
+
+    # NY is New York in the US and Nyíregyháza in Hungary, so a stored code can
+    # look valid after the address moves country.
+    describe 'updating the region of a saved address' do
+      let(:address) { create(:address, country: country, state: state) }
+
+      it 'resolves a submitted state_name instead of keeping the stored code' do
+        address.update!(country_code: 'HU', state_name: 'Békés', postal_code: '5600')
+
+        expect(address.reload.state_code).to eq('BE')
+        expect(address.state_name).to be_nil
+      end
+
+      it 'resolves a submitted state_name within the same country' do
+        address.update!(state_name: 'Maryland', postal_code: '21201')
+
+        expect(address.reload.state_code).to eq('MD')
+      end
+
+      it 'drops the stored code when only the country changes' do
+        address.assign_attributes(country_code: 'HU', postal_code: '5600')
+        address.valid?
+
+        expect(address.state_code).to be_nil
+      end
+
+      it 'lets an explicit state_code win over state_name' do
+        address.update!(country_code: 'HU', state_code: 'NY', state_name: 'Békés', postal_code: '4400')
+
+        expect(address.reload.state_code).to eq('NY')
+      end
+
+      it 'keeps the stored code when the update leaves the region alone' do
+        address.update!(city: 'Albany')
+
+        expect(address.reload.state_code).to eq('NY')
+      end
+
+      it 'lets a later update submit a new region after a failed one' do
+        expect(address.update(state_code: 'NY', firstname: '')).to be(false)
+
+        address.update!(firstname: 'Ada', state_name: 'Maryland', postal_code: '21201')
+
+        expect(address.reload.state_code).to eq('MD')
+      end
+
+      it 'lets a later state_name win over an unsaved code from a failed update' do
+        expect(address.update(state_code: 'CA', firstname: '')).to be(false)
+
+        address.update!(firstname: 'Ada', state_name: 'Maryland', postal_code: '21201')
+
+        expect(address.reload.state_code).to eq('MD')
+      end
+
+      it 'keeps a code resolved from state_name when validated before saving' do
+        address.assign_attributes(country_code: 'HU', state_name: 'Békés', postal_code: '5600')
+
+        expect(address).to be_valid
+        address.save!
+
+        expect(address.reload.state_code).to eq('BE')
+      end
+
+      it 'drops the stored code when the country changes after a successful validation' do
+        expect(address).to be_valid
+
+        address.country_code = 'HU'
+        address.valid?
+
+        expect(address.state_code).to be_nil
+      end
+
+      it 'drops a code resolved from state_name when the country changes before saving' do
+        address.assign_attributes(state_name: 'New York')
+        expect(address).to be_valid
+
+        address.country_code = 'HU'
+        address.valid?
+
+        expect(address.state_code).to be_nil
+      end
+    end
   end
 
   # The pre-6.0 names stay callable for one release. Nothing in core calls
