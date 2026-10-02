@@ -1,8 +1,10 @@
-import { deployConfig, reportHasFailures } from './apply.js'
+import { applyPlan } from './apply.js'
+import { listAll } from './client.js'
 import { COUNTRY_TEMPLATE, STORE_DEFAULTS } from './generated/templates.js'
 import { parseConfig, type Variables } from './load.js'
+import { type PlannedRun, planConfig } from './plan.js'
 import type { SpreeConfig } from './schema.js'
-import { ORDERED_SECTIONS } from './sections/index.js'
+import { ORDERED_SECTIONS, SECTIONS } from './sections/index.js'
 import type { ApplyReport, ConfigClient } from './types.js'
 
 interface LiveStore {
@@ -75,6 +77,42 @@ async function withoutUnregistered(
   return filtered as SpreeConfig
 }
 
+/** Sections with one default record, and the attribute the API reads it back as. */
+const SINGLE_DEFAULTS = [
+  { section: 'tax_categories', live: 'is_default' },
+  { section: 'stock_locations', live: 'default' },
+  { section: 'package_types', live: 'default' },
+] as const
+
+/**
+ * Leaves out a default the store already has another of. Matching is by
+ * name, so a merchant who renamed the default tax category, warehouse or box
+ * would otherwise get a second one that takes the default flag from theirs.
+ */
+async function withoutCompetingDefaults(
+  config: SpreeConfig,
+  client: ConfigClient,
+): Promise<SpreeConfig> {
+  const declared = SINGLE_DEFAULTS.filter(({ section }) =>
+    (config[section] as { default?: boolean }[] | undefined)?.some((entry) => entry.default),
+  )
+  const taken = await Promise.all(
+    declared.map(async ({ section, live }) => {
+      const { path, listParams } = SECTIONS[section]
+      const records = await listAll(client, path, listParams ?? {})
+      return records.some((record) => record[live] === true)
+    }),
+  )
+  const filtered: Record<string, unknown> = { ...config }
+  declared.forEach(({ section }, index) => {
+    if (!taken[index]) return
+    filtered[section] = (config[section] as { default?: boolean }[]).filter(
+      (entry) => !entry.default,
+    )
+  })
+  return filtered as SpreeConfig
+}
+
 export interface DefaultsOptions {
   /**
    * Include the country-shaped defaults (warehouse, delivery zones and
@@ -104,34 +142,42 @@ export async function storeDefaults(
     STORE_CURRENCY: store.default_currency,
     ...boxVariables(store),
   }
-  return withoutUnregistered(
-    merge(
-      parseConfig(STORE_DEFAULTS, variables).config,
-      ...(withCountry ? [parseConfig(COUNTRY_TEMPLATE, variables).config] : []),
-    ),
-    client,
+  const defaults = merge(
+    parseConfig(STORE_DEFAULTS, variables).config,
+    ...(withCountry ? [parseConfig(COUNTRY_TEMPLATE, variables).config] : []),
   )
+  return withoutCompetingDefaults(await withoutUnregistered(defaults, client), client)
+}
+
+/**
+ * A provisioning plan with the default warehouse applied last. The store
+ * reads that warehouse as "provisioned" and sample data waits for it, so it
+ * must not exist until every other default has been written. Nothing in the
+ * defaults refers to a stock location, so moving the section is safe.
+ */
+export function warehouseLast(plan: PlannedRun): PlannedRun {
+  const isWarehouse = (section: PlannedRun['sections'][number]) =>
+    section.section === 'stock_locations'
+  return {
+    ...plan,
+    sections: [
+      ...plan.sections.filter((section) => !isWarehouse(section)),
+      ...plan.sections.filter(isWarehouse),
+    ],
+  }
 }
 
 /**
  * Deploys the defaults every new store starts with. Only what is missing is
  * created: a default the merchant has since changed (a rate, a zone, which
  * tax category is the default) is left as it is, so running this again,
- * after an interrupted setup or by hand, never undoes their work.
- *
- * The default warehouse is created last, once everything else is in place,
- * because the store reads its presence as "provisioned" — sample data waits
- * for it.
+ * after an interrupted setup or by hand, never undoes their work. A failed
+ * default is reported and the rest are still written.
  */
 export async function provisionStore(
   client: ConfigClient,
   options: DefaultsOptions = {},
 ): Promise<ApplyReport> {
-  const { stock_locations: stockLocations, ...rest } = await storeDefaults(client, options)
-  const first = await deployConfig(rest, client, { createOnly: true })
-  if (!stockLocations || reportHasFailures(first)) return first
-  const last = await deployConfig({ version: 1, stock_locations: stockLocations }, client, {
-    createOnly: true,
-  })
-  return { results: [...first.results, ...last.results] }
+  const plan = await planConfig(await storeDefaults(client, options), client, { createOnly: true })
+  return applyPlan(warehouseLast(plan))
 }

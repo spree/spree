@@ -57,6 +57,5 @@ describe('generated sources', () => {
         stdio: 'pipe',
       }),
     ).not.toThrow()
-    // Parsing the whole Admin API spec takes seconds on a CI runner.
-  }, 60_000)
+  }, 60_000) // parsing the whole Admin API spec takes seconds on a CI runner
 })
