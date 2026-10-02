@@ -152,6 +152,7 @@ async function deploy(
   flags: DeployFlags,
   label: string,
   load: (client: AdminClient) => Promise<SpreeConfig>,
+  { createOnly = false }: { createOnly?: boolean } = {},
 ): Promise<void> {
   const prune = parsePrune(flags.prune)
   const json = flags.format === 'json'
@@ -161,7 +162,7 @@ async function deploy(
     baseUrl = credentials.baseUrl
     const loaded = await load(client)
     await ensureScopes(client, loaded)
-    const plan = await planConfig(loaded, client, { prune })
+    const plan = await planConfig(loaded, client, { prune, createOnly })
 
     // One output path whatever happens: JSON gets the plan plus the
     // outcome, text gets the diff on stderr and the outcome on stdout.
@@ -302,8 +303,19 @@ export function registerConfigCommand(program: Command): void {
       new Option('--format <format>', 'output format').choices(['text', 'json']).default('text'),
     )
     .option('-y, --yes', 'apply without asking (implied by a non-interactive run)')
-    .action(async (flags: DeployFlags) => {
-      await deploy(flags, 'the store defaults', (client) => storeDefaults(client))
+    .option(
+      '--no-country',
+      'leave out the country-shaped defaults (warehouse, delivery zones, pickup, parcel box)',
+    )
+    .action(async (flags: DeployFlags & { country: boolean }) => {
+      // Defaults the merchant has since changed are left alone: only what is
+      // missing is created.
+      await deploy(
+        flags,
+        'the store defaults',
+        (client) => storeDefaults(client, { country: flags.country }),
+        { createOnly: true },
+      )
     })
 
   withCredentialFlags(
