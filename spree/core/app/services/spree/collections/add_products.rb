@@ -2,8 +2,9 @@ module Spree
   module Collections
     class AddProducts
       prepend Spree::ServiceModule::Base
+      include Spree::ProductMemberships
 
-      # Adds the given products to the given collections (manual curation), in bulk.
+      # Adds the given products to the given collections, in bulk.
       #
       # @param collections [Array<Spree::Collection>]
       # @param products [Array<Spree::Product>]
@@ -11,29 +12,17 @@ module Spree
       def call(collections:, products:)
         return if collections.blank? || products.blank?
 
-        product_collections_params = collections.pluck(:id).flat_map do |collection_id|
-          position = Spree::ProductCollection.where(collection_id: collection_id).count
-
-          products.pluck(:id).map do |product_id|
-            {
-              collection_id: collection_id,
-              product_id: product_id,
-              position: (position += 1)
-            }
-          end
-        end
-        Spree::ProductCollection.insert_all(product_collections_params)
-
-        collection_ids = collections.pluck(:id)
-        product_ids = products.pluck(:id)
-        collection_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }
-        product_ids.each { |id| Spree::Product.reset_counters(id, :product_collections) }
-
-        Spree::Product.where(id: product_ids).touch_all
-        products.each(&:enqueue_search_index)
-        Spree::Collection.where(id: collection_ids).touch_all
-
+        add_memberships(collections, products)
         success(true)
+      end
+
+      private
+
+      def membership_class = Spree::ProductCollection
+      def group_class = Spree::Collection
+
+      def refresh_group_counters(collection_ids)
+        collection_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }
       end
     end
   end
