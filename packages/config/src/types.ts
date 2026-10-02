@@ -88,4 +88,9 @@ export interface ApplyReport {
 export interface PlanOptions {
   /** Sections whose live records absent from the file become deletes. */
   prune?: SectionName[]
+  /**
+   * Create what is missing and leave every existing record as it is, however
+   * it differs from the file — for defaults a merchant is free to change.
+   */
+  createOnly?: boolean
 }
