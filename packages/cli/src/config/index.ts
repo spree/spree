@@ -19,6 +19,7 @@ export {
 } from './load.js'
 export type { PlannedOperation, PlannedRun, PlannedSection } from './plan.js'
 export {
+  assertPrunable,
   planConfig,
   planHasChanges,
   planHasDeletes,

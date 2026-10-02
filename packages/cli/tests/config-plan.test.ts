@@ -90,6 +90,14 @@ tax_categories:
     expect(renderPlan(plan)).toContain('- VIP')
   })
 
+  it('refuses to prune sections whose records a file must never delete', async () => {
+    const api = new FakeApi()
+    const { config } = parseConfig('version: 1\ncustomers: []\n')
+    await expect(planConfig(config, api, { prune: ['customers'] })).rejects.toThrow(
+      /customers cannot be pruned/,
+    )
+  })
+
   it('refuses a key shared by several live records and a duplicate in the file', async () => {
     const api = new FakeApi()
     api.seed('/customer_groups', [{ name: 'Wholesale' }, { name: 'Wholesale' }])
@@ -352,6 +360,98 @@ products:
     ])
   })
 
+  it('moves a category to the top level through the reposition action', async () => {
+    const api = new FakeApi()
+    api.seed('/categories', [
+      { id: 'clothing', permalink: 'clothing', name: 'Clothing', parent_id: null },
+      { id: 'shirts', permalink: 't-shirts', name: 'T-Shirts', parent_id: 'clothing' },
+    ])
+    const { config } = parseConfig(
+      'version: 1\ncategories:\n  - permalink: t-shirts\n    name: T-Shirts\n',
+    )
+    await deployConfig(config, api)
+    expect(api.calls).toContainEqual(
+      expect.objectContaining({ method: 'PATCH', path: '/categories/shirts/reposition' }),
+    )
+    expect(kinds(await planConfig(config, api))).toEqual({ 'categories/t-shirts': 'unchanged' })
+  })
+
+  it("keeps a channel's seller warehouses and a zone's postal-code members the file cannot name", async () => {
+    const api = new FakeApi()
+    api.seed('/stock_locations', [{ name: 'Warehouse' }, { name: 'Seller', seller_id: 'seller_1' }])
+    const [warehouse, sellerLocation] = api.all('/stock_locations')
+    api.seed('/channels', [
+      { code: 'online', name: 'Online', stock_location_ids: [warehouse.id, sellerLocation.id] },
+    ])
+    const postal = {
+      member_type: 'postal_code',
+      country_code: 'US',
+      state_code: null,
+      postal_code_prefix: '100',
+      postal_code_from: null,
+      postal_code_to: null,
+    }
+    api.seed('/delivery_zones', [
+      {
+        name: 'Domestic',
+        members: [{ member_type: 'country', country_code: 'US', state_code: null }, postal],
+      },
+    ])
+    const unchanged = parseConfig(`
+version: 1
+channels:
+  - code: online
+    name: Online
+    stock_locations: [Warehouse]
+delivery_zones:
+  - name: Domestic
+    countries: [US]
+`).config
+    expect(kinds(await planConfig(unchanged, api))).toEqual({
+      'channels/online': 'unchanged',
+      'delivery_zones/Domestic': 'unchanged',
+    })
+
+    const changed = parseConfig(`
+version: 1
+channels:
+  - code: online
+    name: Online Store
+    stock_locations: [Warehouse]
+delivery_zones:
+  - name: Domestic
+    countries: [US, CA]
+`).config
+    await deployConfig(changed, api)
+    expect(api.all('/channels')[0].stock_location_ids).toEqual([warehouse.id, sellerLocation.id])
+    expect(api.all('/delivery_zones')[0].members).toContainEqual(postal)
+  })
+
+  it('does not report the default locale a market always supports as a change', async () => {
+    const api = new FakeApi()
+    api.seed('/markets', [
+      {
+        name: 'Germany',
+        currency: 'EUR',
+        country_codes: ['DE'],
+        default_locale: 'de',
+        supported_locales: ['de', 'en'],
+      },
+    ])
+    const { config } = parseConfig(`
+version: 1
+markets:
+  - name: Germany
+    currency: EUR
+    countries: [DE]
+    default_locale: de
+    supported_locales: [en]
+`)
+    expect(kinds(await planConfig(config, api))).toEqual({ 'markets/Germany': 'unchanged' })
+    const captured = await introspect(api, { include: ['markets'] })
+    expect(captured.markets?.[0]).toMatchObject({ default_locale: 'de', supported_locales: ['en'] })
+  })
+
   it('reports a plan error as a failed result so a scripted deploy stops', async () => {
     const api = new FakeApi()
     api.seed('/stock_locations', [])
@@ -449,14 +549,30 @@ describe('missingScopes', () => {
   it('names the write scopes the key lacks, and accepts write_all', async () => {
     const api = new FakeApi()
     api.scopes = ['read_all', 'write_products']
-    expect(await missingScopes(api, ['products', 'channels', 'customers'])).toEqual([
-      'write_settings',
-      'write_customers',
-    ])
+    const { config } = parseConfig('version: 1\nproducts: []\nchannels: []\ncustomers: []\n')
+    expect(await missingScopes(api, config)).toEqual(['write_settings', 'write_customers'])
     api.scopes = ['write_all']
-    expect(await missingScopes(api, ['products'])).toEqual([])
+    expect(await missingScopes(api, config)).toEqual([])
     api.scopes = null
-    expect(await missingScopes(api, ['products'])).toBeNull()
+    expect(await missingScopes(api, config)).toBeNull()
+  })
+
+  it('names the read scopes the references need, which a write scope implies only for itself', async () => {
+    const api = new FakeApi()
+    api.scopes = ['write_products', 'write_settings']
+    const { config } = parseConfig(`
+version: 1
+products:
+  - slug: tee
+    name: Tee
+    sku: TEE
+    stock: { Warehouse: 5 }
+    channels: [online]
+stock_locations:
+  - name: Warehouse
+`)
+    // Stock locations are written with the settings scope but listed with the stock one.
+    expect(await missingScopes(api, config)).toEqual(['read_stock'])
   })
 })
 
@@ -496,7 +612,7 @@ describe('edge cases', () => {
 })
 
 describe('products', () => {
-  it('shows a price and a stock level the file omits as removals, since the write replaces both sets', async () => {
+  it('shows a price the file omits as a removal, since the write replaces the set', async () => {
     const api = new FakeApi()
     api.seed('/stock_locations', [{ name: 'Warehouse' }, { name: 'Overflow' }])
     const [warehouse, overflow] = api.all('/stock_locations')
@@ -546,8 +662,8 @@ products:
     const plan = await planConfig(config, api)
     expect(kinds(plan)).toEqual({ 'products/tee': 'update' })
     const change = planOperations(plan)[0].changes?.find((entry) => entry.attribute === 'variants')
-    // The live side still carries EUR and the second warehouse, so the diff
-    // shows what the deploy is about to drop.
+    // The live side still carries EUR, so the diff shows what the deploy is
+    // about to drop.
     expect(JSON.stringify(change?.from)).toMatch(/EUR/)
     expect(JSON.stringify(change?.to)).not.toMatch(/EUR/)
   })
@@ -556,7 +672,7 @@ products:
     const api = new FakeApi()
     api.seed('/products', [])
     const { config } = parseConfig(
-      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    compare_at_prices: { USD: 40 }\n',
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    compare_at_prices: { USD: 40 }\n',
     )
     await deployConfig(config, api)
     const create = api.calls.find((call) => call.method === 'POST' && call.path === '/products')
@@ -565,10 +681,99 @@ products:
     ])
   })
 
-  it('compares a description the way the API renders it, and writes the markup the file holds', async () => {
+  it('treats stock as opening stock: a sold-down count is no change, and an update never sends it', async () => {
+    const api = new FakeApi()
+    api.seed('/stock_locations', [{ name: 'Warehouse' }])
+    const [warehouse] = api.all('/stock_locations')
+    api.seed('/products', [
+      {
+        slug: 'tee',
+        name: 'Tee',
+        categories: [],
+        variants: [
+          {
+            id: 'variant_1',
+            sku: 'TEE',
+            option_values: [],
+            prices: [],
+            stock_levels: [{ stock_location_id: warehouse.id, count_on_hand: 3 }],
+          },
+        ],
+      },
+    ])
+    const file = (name: string) =>
+      parseConfig(
+        `version: 1\nproducts:\n  - slug: tee\n    name: ${name}\n    sku: TEE\n    stock: { Warehouse: 100 }\n`,
+      ).config
+    expect(kinds(await planConfig(file('Tee'), api))).toEqual({ 'products/tee': 'unchanged' })
+
+    await deployConfig(file('Classic Tee'), api)
+    const patch = api.calls.find((call) => call.method === 'PATCH')
+    expect((patch?.body as { variants: Payload[] }).variants).toEqual([
+      { id: 'variant_1', sku: 'TEE' },
+    ])
+  })
+
+  it('refuses the simple-product form on a product whose variants have options', async () => {
     const api = new FakeApi()
     api.seed('/products', [
-      { slug: 'tee', name: 'Tee', description: 'Soft cotton', categories: [], variants: [] },
+      {
+        slug: 'tee',
+        name: 'Tee',
+        categories: [],
+        variants: [
+          { id: 'v1', sku: 'TEE-S', option_values: [{ option_type_name: 'size', name: 's' }] },
+          { id: 'v2', sku: 'TEE-M', option_values: [{ option_type_name: 'size', name: 'm' }] },
+        ],
+      },
+    ])
+    const { config } = parseConfig(
+      'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    sku: TEE\n    prices: { USD: 10 }\n',
+    )
+    const plan = await planConfig(config, api)
+    expect(planOperations(plan)[0]).toMatchObject({
+      kind: 'error',
+      message: expect.stringMatching(/2 variants with options; declare them under `variants`/),
+    })
+  })
+
+  it('needs a SKU for a simple product with prices or stock', () => {
+    expect(() =>
+      parseConfig('version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    prices: { USD: 10 }\n'),
+    ).toThrow(/products\[0\]\.sku/)
+  })
+
+  it('introspects the description markup and leaves a SKU-less variant without a SKU', async () => {
+    const api = new FakeApi()
+    api.seed('/products', [
+      {
+        slug: 'tee',
+        name: 'Tee',
+        description: 'Soft cotton',
+        description_html: '<p><b>Soft</b> cotton</p>',
+        categories: [],
+        variants: [{ id: 'variant_1', sku: null, option_values: [], prices: [], stock_levels: [] }],
+      },
+    ])
+    const config = await introspect(api, { include: ['products'] })
+    expect(config.products?.[0]).toEqual({
+      slug: 'tee',
+      name: 'Tee',
+      description: '<p><b>Soft</b> cotton</p>',
+    })
+  })
+
+  it('compares a description against the stored markup, and writes the markup the file holds', async () => {
+    const api = new FakeApi()
+    api.seed('/products', [
+      {
+        slug: 'tee',
+        name: 'Tee',
+        description: 'Soft cotton',
+        description_html: '<p>Soft cotton</p>',
+        categories: [],
+        variants: [],
+      },
     ])
     const { config } = parseConfig(
       'version: 1\nproducts:\n  - slug: tee\n    name: Tee\n    description: "<p>Soft cotton</p>"\n',
