@@ -32,8 +32,7 @@ module Spree
             item.unit_cost&.to_s
           end
 
-          string_attributes :total_cost, :display_unit_cost, :display_total_cost
-
+          attributes total_cost: :string, display_unit_cost: :string, display_total_cost: :string
           attribute :purchase_order_id do |item|
             Spree::PurchaseOrder.prefixed_id_for(item.purchase_order_id)
           end

@@ -21,8 +21,7 @@ module Spree
 
         prefixed_id_attributes :order, :reason
 
-        string_attributes :refund_total, :display_refund_total
-
+        attributes refund_total: :string, display_refund_total: :string
         attribute :approved_at do |claim|
           claim.approved_at&.iso8601
         end
@@ -39,9 +38,11 @@ module Spree
           claim.canceled_at&.iso8601
         end
 
-        expandable :one, :reason, :claim_reason_serializer
+        one :reason, resource: proc { Spree.api.claim_reason_serializer }, if: proc { expand?('reason') }
 
-        expandable :many, :claim_line_items, :claim_line_item_serializer
+        many :claim_line_items,
+             resource: proc { Spree.api.claim_line_item_serializer },
+             if: proc { expand?('claim_line_items') }
       end
     end
   end

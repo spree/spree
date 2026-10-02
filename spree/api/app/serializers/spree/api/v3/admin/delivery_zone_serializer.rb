@@ -15,7 +15,7 @@ module Spree
             record.delivery_methods.map(&:prefixed_id)
           end
 
-          expandable :many, :members, :admin_delivery_zone_member_serializer
+          many :members, resource: proc { Spree.api.admin_delivery_zone_member_serializer }, if: proc { expand?('members') }
         end
       end
     end

@@ -35,13 +35,21 @@ module Spree
 
           attribute :editable, &:editable?
 
-          expandable :many, :items, :admin_stock_transfer_item_serializer
+          many :items,
+               resource: proc { Spree.api.admin_stock_transfer_item_serializer },
+               if: proc { expand?('items') }
 
-          expandable :many, :stock_receipts, :admin_stock_receipt_serializer
+          many :stock_receipts,
+               resource: proc { Spree.api.admin_stock_receipt_serializer },
+               if: proc { expand?('stock_receipts') }
 
-          expandable :one, :source_location, :admin_stock_location_serializer
+          one :source_location,
+              resource: proc { Spree.api.admin_stock_location_serializer },
+              if: proc { expand?('source_location') }
 
-          expandable :one, :destination_location, :admin_stock_location_serializer
+          one :destination_location,
+              resource: proc { Spree.api.admin_stock_location_serializer },
+              if: proc { expand?('destination_location') }
         end
       end
     end

@@ -6,9 +6,8 @@ module Spree
                  display_amount: :string, display_amount_used: :string, display_amount_remaining: :string,
                  currency: :string
 
-        string_attributes :amount, :amount_used, :amount_remaining, :display_amount, :display_amount_used,
-                          :display_amount_remaining
-
+        attributes amount: :string, amount_used: :string, amount_remaining: :string, display_amount: :string,
+                   display_amount_used: :string, display_amount_remaining: :string
         attributes :currency
       end
     end

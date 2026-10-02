@@ -38,11 +38,17 @@ module Spree
         # Conditional associations
         # Note: We pass empty expand to nested categories to prevent infinite recursion
         # (e.g., ancestors trying to load their own ancestors)
-        expandable :one, :parent, :category_serializer
+        one :parent,
+            resource: proc { Spree.api.category_serializer },
+            if: proc { expand?('parent') }
 
-        expandable :many, :children, :category_serializer
+        many :children,
+             resource: proc { Spree.api.category_serializer },
+             if: proc { expand?('children') }
 
-        expandable :many, :ancestors, :category_serializer
+        many :ancestors,
+             resource: proc { Spree.api.category_serializer },
+             if: proc { expand?('ancestors') }
 
         many :storefront_custom_fields,
              key: :custom_fields,

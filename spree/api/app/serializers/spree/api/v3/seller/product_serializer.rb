@@ -22,16 +22,22 @@ module Spree
 
           prefixed_id_attributes :product_type, :delivery_profile
 
-          expandable :many, :variants, :seller_variant_serializer
+          many :variants,
+               resource: proc { Spree.api.seller_variant_serializer },
+               if: proc { expand?('variants') }
 
-          expandable :one, :default_variant, :seller_variant_serializer
+          one :default_variant,
+              resource: proc { Spree.api.seller_variant_serializer },
+              if: proc { expand?('default_variant') }
 
           many :gallery_media,
                key: :media,
                resource: proc { Spree.api.seller_media_serializer },
                if: proc { expand?('media') }
 
-          expandable :many, :option_types, :option_type_serializer
+          many :option_types,
+               resource: proc { Spree.api.option_type_serializer },
+               if: proc { expand?('option_types') }
 
           # Why the marketplace sent this back, so the panel can show it
           # against a rejected listing without a second request. Expanded

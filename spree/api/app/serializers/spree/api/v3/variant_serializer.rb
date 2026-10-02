@@ -116,7 +116,9 @@ module Spree
         end
 
         # Conditional associations
-        expandable :one, :primary_media, :media_serializer
+        one :primary_media,
+            resource: proc { Spree.api.media_serializer },
+            if: proc { expand?('primary_media') }
 
         many :gallery_media,
              key: :media,

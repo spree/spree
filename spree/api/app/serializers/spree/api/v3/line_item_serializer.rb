@@ -52,7 +52,9 @@ module Spree
           image_url_for(line_item.thumbnail)
         end
 
-        expandable :one, :seller, :seller_serializer
+        one :seller,
+            resource: proc { Spree.api.seller_serializer },
+            if: proc { expand?('seller') }
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
         # Download links carry a bearer token; only the buyer gets them.
@@ -60,7 +62,7 @@ module Spree
         # Tax hangs off its adjustable, never off the cart or order: the
         # exactly-one-adjustable rule makes the nested view complete, and the
         # owner already carries the tax totals.
-        expandable :many, :tax_lines, :tax_line_serializer
+        many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
       end
     end
   end

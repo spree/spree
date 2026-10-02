@@ -14,8 +14,7 @@ module Spree
         attributes :email,
                    created_at: :iso8601, updated_at: :iso8601
 
-        string_attributes :status
-
+        attributes status: :string
         # `"store"` / `"admin_user"`, not the polymorphic class names.
         attribute :resource_type do |invitation|
           Spree::Base.polymorphic_api_type(invitation.resource_type)

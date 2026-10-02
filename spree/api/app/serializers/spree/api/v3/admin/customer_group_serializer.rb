@@ -16,7 +16,9 @@ module Spree
           # because a group can hold tens of thousands of users — embedding the
           # whole list on every group fetch would explode the index payload.
           # Pass `expand=customers` when you need them inline (single-record reads only).
-          expandable :many, :customers, :admin_customer_serializer
+          many :customers,
+               resource: proc { Spree.api.admin_customer_serializer },
+               if: proc { expand?('customers') }
         end
       end
     end

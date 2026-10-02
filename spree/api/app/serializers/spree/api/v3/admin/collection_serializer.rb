@@ -14,10 +14,14 @@ module Spree
           attributes :automatic, :rules_match_policy, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          expandable :many, :rules, :admin_collection_rule_serializer
+          many :rules,
+               resource: proc { Spree.api.admin_collection_rule_serializer },
+               if: proc { expand?('rules') }
 
           # Override inherited custom_fields to use the admin serializer.
-          expandable :many, :custom_fields, :admin_custom_field_serializer
+          many :custom_fields,
+               resource: proc { Spree.api.admin_custom_field_serializer },
+               if: proc { expand?('custom_fields') }
         end
       end
     end

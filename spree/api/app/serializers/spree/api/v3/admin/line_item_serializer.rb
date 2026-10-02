@@ -67,15 +67,21 @@ module Spree
           # Override inherited associations to use admin serializers
           many :option_values, resource: proc { Spree.api.admin_option_value_serializer }
           many :digital_links, resource: proc { Spree.api.admin_digital_link_serializer }
-          expandable :many, :tax_lines, :admin_tax_line_serializer
+          many :tax_lines, resource: proc { Spree.api.admin_tax_line_serializer }, if: proc { expand?('tax_lines') }
 
           # `seller_id` comes from the store serializer; the expand resolves
           # to the operator's view of the seller rather than the public one.
-          expandable :one, :seller, :admin_seller_serializer
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
-          expandable :one, :variant, :admin_variant_serializer
+          one :variant,
+              resource: proc { Spree.api.admin_variant_serializer },
+              if: proc { expand?('variant') }
 
-          expandable :one, :tax_category, :admin_tax_category_serializer
+          one :tax_category,
+              resource: proc { Spree.api.admin_tax_category_serializer },
+              if: proc { expand?('tax_category') }
 
         end
       end

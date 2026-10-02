@@ -21,8 +21,7 @@ module Spree
           Spree::Import.api_type_for(import.type)
         end
 
-        string_attributes :status
-
+        attributes status: :string
         # Which marketplace this import belongs to, and — when a seller ran it —
         # whose it is. A null `seller_id` means the operator's own.
         prefixed_id_attributes :store, :seller

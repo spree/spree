@@ -21,7 +21,7 @@ module Spree
           attributes :name, :selected, :cost, :total,
                      :carrier, :service_level, :estimated_delivery_date
 
-          string_attributes :display_cost, :display_total
+          attributes display_cost: :string, display_total: :string
         end
       end
     end

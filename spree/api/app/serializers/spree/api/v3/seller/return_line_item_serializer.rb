@@ -16,7 +16,7 @@ module Spree
             line.line_item&.name || line.variant&.name
           end
 
-          expandable :one, :variant, :seller_variant_serializer
+          one :variant, resource: proc { Spree.api.seller_variant_serializer }, if: proc { expand?('variant') }
         end
       end
     end

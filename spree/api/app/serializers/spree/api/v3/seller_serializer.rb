@@ -39,7 +39,9 @@ module Spree
         # because a policy body is a whole legal document: a marketplace's
         # seller listing would otherwise carry every seller's full text on
         # every page. A product page reaches them as `expand=seller.policies`.
-        expandable :many, :policies, :policy_serializer
+        many :policies,
+             resource: proc { Spree.api.policy_serializer },
+             if: proc { expand?('policies') }
       end
     end
   end

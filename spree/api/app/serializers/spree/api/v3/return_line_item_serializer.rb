@@ -21,16 +21,14 @@ module Spree
 
         attributes :quantity, :received_quantity, :resellable
 
-        string_attributes :pre_tax_amount, :display_pre_tax_amount, :included_tax_total, :additional_tax_total,
-                          :tax_total, :display_tax_total
-
+        attributes pre_tax_amount: :string, display_pre_tax_amount: :string, included_tax_total: :string,
+                   additional_tax_total: :string, tax_total: :string, display_tax_total: :string
         # What the line refunds, tax included — for the units that arrived
         # once the warehouse has counted.
-        string_attributes :refund_amount, :display_refund_amount
-
+        attributes refund_amount: :string, display_refund_amount: :string
         prefixed_id_attributes :variant, :line_item, :fulfillment_item
 
-        expandable :one, :variant, :variant_serializer
+        one :variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('variant') }
       end
     end
   end

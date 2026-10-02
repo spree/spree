@@ -7,8 +7,8 @@ module Spree
         class ExchangeLineItemSerializer < V3::ExchangeLineItemSerializer
           attributes created_at: :iso8601, updated_at: :iso8601
 
-          expandable :one, :original_variant, :admin_variant_serializer
-          expandable :one, :new_variant, :admin_variant_serializer
+          one :original_variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('original_variant') }
+          one :new_variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('new_variant') }
         end
       end
     end

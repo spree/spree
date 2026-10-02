@@ -39,21 +39,6 @@ module Spree
           end
         end
 
-        # Declares attributes rendered as strings, so decimals and money keep
-        # their exact form instead of becoming JSON numbers.
-        def self.string_attributes(*names)
-          names.each do |name|
-            attribute(name) { |object| object.public_send(name).to_s }
-          end
-        end
-
-        # Declares an association rendered only when the request expands it
-        # (`?expand=customer`). `serializer` names the `Spree.api` setting
-        # resolving the serializer class, so host apps can swap it.
-        def self.expandable(kind, name, serializer)
-          public_send(kind, name, resource: proc { Spree.api.public_send(serializer) }, if: proc { expand?(name.to_s) })
-        end
-
         # Declares the wire form of an `acted_by` association: the actor's
         # prefixed id, the kind of actor it is, and the expansion. Both
         # halves read off the columns, so naming an actor costs no query and

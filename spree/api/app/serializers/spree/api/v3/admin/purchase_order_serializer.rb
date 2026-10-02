@@ -56,17 +56,24 @@ module Spree
 
           attribute :editable, &:editable?
 
-          string_attributes :subtotal, :display_subtotal
-
+          attributes subtotal: :string, display_subtotal: :string
           prefixed_id_attributes :supplier, :destination_location
 
-          expandable :many, :items, :admin_purchase_order_item_serializer
+          many :items,
+               resource: proc { Spree.api.admin_purchase_order_item_serializer },
+               if: proc { expand?('items') }
 
-          expandable :many, :stock_receipts, :admin_stock_receipt_serializer
+          many :stock_receipts,
+               resource: proc { Spree.api.admin_stock_receipt_serializer },
+               if: proc { expand?('stock_receipts') }
 
-          expandable :one, :supplier, :admin_supplier_serializer
+          one :supplier,
+              resource: proc { Spree.api.admin_supplier_serializer },
+              if: proc { expand?('supplier') }
 
-          expandable :one, :destination_location, :admin_stock_location_serializer
+          one :destination_location,
+              resource: proc { Spree.api.admin_stock_location_serializer },
+              if: proc { expand?('destination_location') }
         end
       end
     end

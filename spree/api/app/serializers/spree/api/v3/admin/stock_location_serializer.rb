@@ -28,7 +28,9 @@ module Spree
             stock_location.seller&.name
           end
 
-          expandable :one, :seller, :admin_seller_serializer
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
         end
       end
     end

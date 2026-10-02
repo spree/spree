@@ -20,17 +20,15 @@ module Spree
 
         attributes :quantity, :send_replacement, :description
 
-        string_attributes :refund_amount
-
+        attributes refund_amount: :string
         # What the customer actually paid for these units, tax included — the
         # ceiling the resolve workflow enforces, and what the dashboard offers
         # when the claim carries no explicit amount.
-        string_attributes :paid_amount, :pre_tax_amount, :included_tax_total, :additional_tax_total, :tax_total,
-                          :display_refund_amount
-
+        attributes paid_amount: :string, pre_tax_amount: :string, included_tax_total: :string,
+                   additional_tax_total: :string, tax_total: :string, display_refund_amount: :string
         prefixed_id_attributes :variant, :replacement_variant, :line_item
 
-        expandable :one, :variant, :variant_serializer
+        one :variant, resource: proc { Spree.api.variant_serializer }, if: proc { expand?('variant') }
       end
     end
   end

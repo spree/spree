@@ -29,10 +29,14 @@ module Spree
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes
           # `expand=customer,created_by` to populate the row chips.
-          expandable :one, :customer, :admin_customer_serializer
+          one :customer,
+              resource: proc { Spree.api.admin_customer_serializer },
+              if: proc { expand?('customer') }
 
           # Admin who issued the card.
-          expandable :one, :created_by, :admin_admin_user_serializer
+          one :created_by,
+              resource: proc { Spree.api.admin_admin_user_serializer },
+              if: proc { expand?('created_by') }
 
           # Batch the card was issued as part of (bulk-issue flow). The
           # `Spree::GiftCard#batch` association is keyed off
@@ -44,7 +48,9 @@ module Spree
               if: proc { expand?('gift_card_batch') }
 
           # Orders that consumed the card. Detail-only — pass `expand=orders`.
-          expandable :many, :orders, :admin_order_serializer
+          many :orders,
+               resource: proc { Spree.api.admin_order_serializer },
+               if: proc { expand?('orders') }
         end
       end
     end

@@ -16,9 +16,11 @@ module Spree
 
           prefixed_id_attributes :stock_location
 
-          expandable :many, :exchange_line_items, :seller_exchange_line_item_serializer
+          many :exchange_line_items,
+               resource: proc { Spree.api.seller_exchange_line_item_serializer },
+               if: proc { expand?('exchange_line_items') }
 
-          expandable :one, :reason, :seller_reason_serializer
+          one :reason, resource: proc { Spree.api.seller_reason_serializer }, if: proc { expand?('reason') }
         end
       end
     end

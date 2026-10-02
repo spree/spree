@@ -18,8 +18,7 @@ module Spree
 
         attributes :number, :email, :currency
 
-        string_attributes :total, :display_total, :item_total, :display_item_total
-
+        attributes total: :string, display_total: :string, item_total: :string, display_item_total: :string
         # Rolled up across the children rather than stored, so it can never
         # disagree with the orders it describes.
         attributes :fulfillment_status, :payment_status

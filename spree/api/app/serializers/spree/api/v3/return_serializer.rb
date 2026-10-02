@@ -23,11 +23,9 @@ module Spree
 
         prefixed_id_attributes :order, :reason
 
-        string_attributes :refund_total, :display_refund_total
-
+        attributes refund_total: :string, display_refund_total: :string
         # The tax inside refund_total.
-        string_attributes :refund_tax_total, :display_refund_tax_total
-
+        attributes refund_tax_total: :string, display_refund_tax_total: :string
         attribute :approved_at do |return_record|
           return_record.approved_at&.iso8601
         end
@@ -44,9 +42,11 @@ module Spree
           return_record.canceled_at&.iso8601
         end
 
-        expandable :one, :reason, :return_reason_serializer
+        one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
 
-        expandable :many, :return_line_items, :return_line_item_serializer
+        many :return_line_items,
+             resource: proc { Spree.api.return_line_item_serializer },
+             if: proc { expand?('return_line_items') }
       end
     end
   end

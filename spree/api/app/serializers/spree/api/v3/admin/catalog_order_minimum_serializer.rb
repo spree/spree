@@ -9,7 +9,7 @@ module Spree
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 
-          string_attributes :amount, :display_amount
+          attributes amount: :string, display_amount: :string
         end
       end
     end

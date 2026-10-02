@@ -36,7 +36,9 @@ module Spree
             receipt.items.size
           end
 
-          expandable :many, :items, :admin_stock_receipt_item_serializer
+          many :items,
+               resource: proc { Spree.api.admin_stock_receipt_item_serializer },
+               if: proc { expand?('items') }
         end
       end
     end

@@ -15,7 +15,8 @@ Rails.application.config.after_initialize do
     config.plugin_configs = {
       alba: {
         ts_mapper: Typelizer::SerializerPlugins::Alba::ALBA_TS_MAPPER.merge(
-          'iso8601' => { type: :string }
+          'iso8601' => { type: :string },
+          'string' => { type: :string }
         )
       }
     }

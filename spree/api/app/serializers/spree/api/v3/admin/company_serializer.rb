@@ -19,11 +19,17 @@ module Spree
           # The member count covers the node's whole subtree
           attributes :members_count
 
-          expandable :many, :children, :admin_company_serializer
+          many :children,
+               resource: proc { Spree.api.admin_company_serializer },
+               if: proc { expand?('children') }
 
-          expandable :many, :addresses, :admin_address_serializer
+          many :addresses,
+               resource: proc { Spree.api.admin_address_serializer },
+               if: proc { expand?('addresses') }
 
-          expandable :many, :memberships, :admin_company_membership_serializer
+          many :memberships,
+               resource: proc { Spree.api.admin_company_membership_serializer },
+               if: proc { expand?('memberships') }
         end
       end
     end

@@ -16,14 +16,12 @@ module Spree
           attributes :memo, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          string_attributes :amount_authorized
-
+          attributes amount_authorized: :string
           # Answers the same question as the `outstanding` filter, so the row
           # and the filter cannot disagree.
           attribute :outstanding, &:outstanding?
 
-          string_attributes :display_amount_authorized
-
+          attributes display_amount_authorized: :string
           prefixed_id_attributes :customer, :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
@@ -44,9 +42,13 @@ module Spree
             Spree::Base.polymorphic_prefixed_id(store_credit.originator_type, store_credit.originator_id)
           end
 
-          expandable :one, :customer, :admin_customer_serializer
+          one :customer,
+              resource: proc { Spree.api.admin_customer_serializer },
+              if: proc { expand?('customer') }
 
-          expandable :one, :created_by, :admin_admin_user_serializer
+          one :created_by,
+              resource: proc { Spree.api.admin_admin_user_serializer },
+              if: proc { expand?('created_by') }
         end
       end
     end

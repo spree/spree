@@ -68,7 +68,7 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          expandable :many, :addresses, :admin_address_serializer
+          many :addresses, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('addresses') }
           one :bill_address, key: :default_billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_billing_address') }
           one :ship_address, key: :default_shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_shipping_address') }
 
@@ -82,19 +82,27 @@ module Spree
             user.newsletter_subscriber(store)
           end
 
-          expandable :many, :orders, :admin_order_serializer
+          many :orders,
+               resource: proc { Spree.api.admin_order_serializer },
+               if: proc { expand?('orders') }
 
-          expandable :many, :store_credits, :admin_store_credit_serializer
+          many :store_credits,
+               resource: proc { Spree.api.admin_store_credit_serializer },
+               if: proc { expand?('store_credits') }
 
           attribute :customer_group_ids do |user|
             user.customer_groups.map(&:prefixed_id)
           end
 
-          expandable :many, :customer_groups, :admin_customer_group_serializer
+          many :customer_groups,
+               resource: proc { Spree.api.admin_customer_group_serializer },
+               if: proc { expand?('customer_groups') }
 
           # Membership rows only — standing over a parent is a question for the
           # standing filter, not a claim of membership.
-          expandable :many, :companies, :admin_company_serializer
+          many :companies,
+               resource: proc { Spree.api.admin_company_serializer },
+               if: proc { expand?('companies') }
         end
       end
     end

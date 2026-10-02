@@ -12,8 +12,7 @@ module Spree
 
         attributes :display_action
 
-        string_attributes :amount, :display_amount
-
+        attributes amount: :string, display_amount: :string
         attributes created_at: :iso8601
       end
     end

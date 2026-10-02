@@ -49,9 +49,13 @@ module Spree
             stock_level.available_count.to_i
           end
 
-          expandable :one, :stock_location, :admin_stock_location_serializer
+          one :stock_location,
+              resource: proc { Spree.api.admin_stock_location_serializer },
+              if: proc { expand?('stock_location') }
 
-          expandable :one, :variant, :admin_variant_serializer
+          one :variant,
+              resource: proc { Spree.api.admin_variant_serializer },
+              if: proc { expand?('variant') }
         end
       end
     end

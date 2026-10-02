@@ -98,7 +98,9 @@ module Spree
           # profile is `?expand=seller`.
           prefixed_id_attributes :seller
 
-          expandable :one, :seller, :admin_seller_serializer
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
           # The checkout this order was placed in, when it was placed alongside
           # others.
@@ -151,32 +153,44 @@ module Spree
           _attributes.delete(:fees)
           many :order_promotions, key: :applied_promotions, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('applied_promotions') }
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
-          expandable :many, :fulfillments, :admin_fulfillment_serializer
-          expandable :many, :payments, :admin_payment_serializer
+          many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
+          many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
           # An order from a split checkout has no payments of its own; what it
           # has is a share of each payment made against its group.
-          expandable :many, :payment_splits, :admin_payment_split_serializer
+          many :payment_splits, resource: proc { Spree.api.admin_payment_split_serializer }, if: proc { expand?('payment_splits') }
 
-          expandable :one, :billing_address, :admin_address_serializer
-          expandable :one, :shipping_address, :admin_address_serializer
+          one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
+          one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
           one :gift_card, resource: proc { Spree.api.admin_gift_card_serializer }
-          expandable :one, :cart, :admin_cart_serializer
+          one :cart, resource: proc { Spree.api.admin_cart_serializer }, if: proc { expand?('cart') }
           one :market, resource: proc { Spree.api.admin_market_serializer }
-          expandable :one, :channel, :admin_channel_serializer
-          expandable :one, :preferred_stock_location, :admin_stock_location_serializer
+          one :channel, resource: proc { Spree.api.admin_channel_serializer }, if: proc { expand?('channel') }
+          one :preferred_stock_location,
+              resource: proc { Spree.api.admin_stock_location_serializer },
+              if: proc { expand?('preferred_stock_location') }
 
-          expandable :many, :payment_methods, :admin_payment_method_serializer
+          many :payment_methods, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_methods') }
 
-          expandable :one, :customer, :admin_customer_serializer
+          one :customer,
+              resource: proc { Spree.api.admin_customer_serializer },
+              if: proc { expand?('customer') }
 
-          expandable :one, :cancel_reason, :admin_order_cancellation_reason_serializer
+          one :cancel_reason,
+              resource: proc { Spree.api.admin_order_cancellation_reason_serializer },
+              if: proc { expand?('cancel_reason') }
 
 
-          expandable :many, :returns, :admin_return_serializer
+          many :returns,
+               resource: proc { Spree.api.admin_return_serializer },
+               if: proc { expand?('returns') }
 
-          expandable :many, :exchanges, :admin_exchange_serializer
+          many :exchanges,
+               resource: proc { Spree.api.admin_exchange_serializer },
+               if: proc { expand?('exchanges') }
 
-          expandable :many, :claims, :admin_claim_serializer
+          many :claims,
+               resource: proc { Spree.api.admin_claim_serializer },
+               if: proc { expand?('claims') }
 
           # What the forwarder quoted against, frozen onto the rates this
           # order shipped under. Back-office only: a buyer is told what their

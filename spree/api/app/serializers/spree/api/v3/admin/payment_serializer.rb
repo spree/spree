@@ -17,12 +17,11 @@ module Spree
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
                      created_at: :iso8601, updated_at: :iso8601
 
-          string_attributes :captured_amount
-
+          attributes captured_amount: :string
           prefixed_id_attributes :order
 
           # Override inherited associations to use admin serializers
-          expandable :one, :payment_method, :admin_payment_method_serializer
+          one :payment_method, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_method') }
 
           attribute :source do |payment|
             next nil if payment.source.blank?
@@ -39,13 +38,19 @@ module Spree
             serializer.new(payment.source).to_h
           end
 
-          expandable :one, :order, :admin_order_serializer
+          one :order,
+              resource: proc { Spree.api.admin_order_serializer },
+              if: proc { expand?('order') }
 
-          expandable :many, :refunds, :admin_refund_serializer
+          many :refunds,
+               resource: proc { Spree.api.admin_refund_serializer },
+               if: proc { expand?('refunds') }
 
           # How a payment made against an order group is shared between the
           # orders in it; empty on a payment made against a single order.
-          expandable :many, :payment_splits, :admin_payment_split_serializer
+          many :payment_splits,
+               resource: proc { Spree.api.admin_payment_split_serializer },
+               if: proc { expand?('payment_splits') }
         end
       end
     end

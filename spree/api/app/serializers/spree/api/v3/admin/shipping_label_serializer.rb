@@ -34,8 +34,7 @@ module Spree
             shipping_label.owner_type == 'Spree::Return' ? 'return' : 'fulfillment'
           end
 
-          string_attributes :cost, :display_cost
-
+          attributes cost: :string, display_cost: :string
           prefixed_id_attributes :integration
 
           # Whether the file is still being fetched from the carrier; the

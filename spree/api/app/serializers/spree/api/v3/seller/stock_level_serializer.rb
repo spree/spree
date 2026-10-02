@@ -17,7 +17,9 @@ module Spree
             stock_level.available_count.to_i
           end
 
-          expandable :one, :stock_location, :seller_stock_location_serializer
+          one :stock_location,
+              resource: proc { Spree.api.seller_stock_location_serializer },
+              if: proc { expand?('stock_location') }
         end
       end
     end

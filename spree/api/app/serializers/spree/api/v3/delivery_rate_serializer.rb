@@ -33,9 +33,8 @@ module Spree
         # froze it here when it quoted.
         one :freight_summary, resource: proc { Spree.api.freight_summary_serializer }
 
-        string_attributes :display_cost, :display_total, :display_additional_tax_total, :display_included_tax_total,
-                          :display_tax_total
-
+        attributes display_cost: :string, display_total: :string, display_additional_tax_total: :string,
+                   display_included_tax_total: :string, display_tax_total: :string
         one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
       end
     end

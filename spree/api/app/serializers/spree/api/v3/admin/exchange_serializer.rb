@@ -17,12 +17,14 @@ module Spree
 
           actor_attributes :created_by
 
-          expandable :many, :exchange_line_items, :admin_exchange_line_item_serializer
+          many :exchange_line_items,
+               resource: proc { Spree.api.admin_exchange_line_item_serializer },
+               if: proc { expand?('exchange_line_items') }
 
-          expandable :one, :reason, :admin_return_reason_serializer
-          expandable :one, :order, :admin_order_serializer
-          expandable :one, :stock_location, :admin_stock_location_serializer
-          expandable :many, :refunds, :admin_refund_serializer
+          one :reason, resource: proc { Spree.api.admin_return_reason_serializer }, if: proc { expand?('reason') }
+          one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
+          one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
+          many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
         end
       end
     end

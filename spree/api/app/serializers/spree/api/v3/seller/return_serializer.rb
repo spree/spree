@@ -23,15 +23,15 @@ module Spree
 
           prefixed_id_attributes :stock_location
 
-          string_attributes :refunded_total
-
+          attributes refunded_total: :string
           # What the refund dialog opens on — never more than this may be
           # given back, whatever amount is typed.
-          string_attributes :refundable_total, :display_refunded_total
+          attributes refundable_total: :string, display_refunded_total: :string
+          many :return_line_items,
+               resource: proc { Spree.api.seller_return_line_item_serializer },
+               if: proc { expand?('return_line_items') }
 
-          expandable :many, :return_line_items, :seller_return_line_item_serializer
-
-          expandable :one, :reason, :seller_reason_serializer
+          one :reason, resource: proc { Spree.api.seller_reason_serializer }, if: proc { expand?('reason') }
         end
       end
     end

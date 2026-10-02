@@ -24,7 +24,7 @@ module Spree
           # Null when the subject asked for it themselves.
           prefixed_id_attributes :requested_by
 
-          expandable :one, :customer, :admin_customer_serializer
+          one :customer, resource: proc { Spree.api.admin_customer_serializer }, if: proc { expand?('customer') }
         end
       end
     end

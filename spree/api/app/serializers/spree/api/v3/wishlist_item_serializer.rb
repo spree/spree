@@ -10,7 +10,8 @@ module Spree
         attributes :quantity
 
         one :variant, resource: proc { Spree.api.variant_serializer }
-        expandable :one, :product, :product_serializer
+        one :product, resource: proc { Spree.api.product_serializer },
+            if: proc { expand?('product') }
       end
     end
   end

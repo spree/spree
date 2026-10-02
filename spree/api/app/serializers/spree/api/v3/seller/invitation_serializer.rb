@@ -10,7 +10,7 @@ module Spree
           attributes :email,
                      created_at: :iso8601, expires_at: :iso8601, accepted_at: :iso8601
 
-          string_attributes :status
+          attributes status: :string
         end
       end
     end

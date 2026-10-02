@@ -42,16 +42,20 @@ module Spree
 
           # Override inherited associations to use admin serializers
           many :deliveries, resource: proc { Spree.api.admin_delivery_serializer }
-          expandable :one, :delivery_method, :admin_delivery_method_serializer
-          expandable :one, :stock_location, :admin_stock_location_serializer
-          expandable :many, :delivery_rates, :admin_delivery_rate_serializer
-          expandable :many, :tax_lines, :admin_tax_line_serializer
+          one :delivery_method, resource: proc { Spree.api.admin_delivery_method_serializer }, if: proc { expand?('delivery_method') }
+          one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
+          many :delivery_rates, resource: proc { Spree.api.admin_delivery_rate_serializer }, if: proc { expand?('delivery_rates') }
+          many :tax_lines, resource: proc { Spree.api.admin_tax_line_serializer }, if: proc { expand?('tax_lines') }
 
           # The units in this fulfillment — the dashboard needs them to offer
           # what can actually be returned or exchanged.
-          expandable :many, :fulfillment_items, :admin_fulfillment_item_serializer
+          many :fulfillment_items,
+               resource: proc { Spree.api.admin_fulfillment_item_serializer },
+               if: proc { expand?('fulfillment_items') }
 
-          expandable :one, :order, :admin_order_serializer
+          one :order,
+              resource: proc { Spree.api.admin_order_serializer },
+              if: proc { expand?('order') }
 
         end
       end

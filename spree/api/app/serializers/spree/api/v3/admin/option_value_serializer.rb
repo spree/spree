@@ -8,7 +8,9 @@ module Spree
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          expandable :one, :option_type, :admin_option_type_serializer
+          one :option_type,
+              resource: proc { Spree.api.admin_option_type_serializer },
+              if: proc { expand?('option_type') }
         end
       end
     end

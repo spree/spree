@@ -100,22 +100,34 @@ module Spree
         prefixed_id_attributes :seller
 
         # Conditional associations
-        expandable :one, :seller, :seller_serializer
+        one :seller,
+            resource: proc { Spree.api.seller_serializer },
+            if: proc { expand?('seller') }
 
-        expandable :one, :primary_media, :media_serializer
+        one :primary_media,
+            resource: proc { Spree.api.media_serializer },
+            if: proc { expand?('primary_media') }
 
         many :gallery_media,
              key: :media,
              resource: proc { Spree.api.media_serializer },
              if: proc { expand?('media') }
 
-        expandable :many, :variants, :variant_serializer
+        many :variants,
+             resource: proc { Spree.api.variant_serializer },
+             if: proc { expand?('variants') }
 
-        expandable :one, :default_variant, :variant_serializer
+        one :default_variant,
+            resource: proc { Spree.api.variant_serializer },
+            if: proc { expand?('default_variant') }
 
-        expandable :many, :option_types, :option_type_serializer
+        many :option_types,
+             resource: proc { Spree.api.option_type_serializer },
+             if: proc { expand?('option_types') }
 
-        expandable :many, :option_values, :option_value_serializer
+        many :option_values,
+             resource: proc { Spree.api.option_value_serializer },
+             if: proc { expand?('option_values') }
 
         many :categories,
              proc { |categories, params|

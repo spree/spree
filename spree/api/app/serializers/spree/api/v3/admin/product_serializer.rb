@@ -41,7 +41,9 @@ module Spree
             product.seller&.name
           end
 
-          expandable :one, :seller, :admin_seller_serializer
+          one :seller,
+              resource: proc { Spree.api.admin_seller_serializer },
+              if: proc { expand?('seller') }
 
           prefixed_id_attributes :product_type, :tax_category
 
@@ -61,11 +63,17 @@ module Spree
           end
 
           # Admin uses admin variant serializer
-          expandable :many, :variants, :admin_variant_serializer
+          many :variants,
+               resource: proc { Spree.api.admin_variant_serializer },
+               if: proc { expand?('variants') }
 
-          expandable :one, :default_variant, :admin_variant_serializer
+          one :default_variant,
+              resource: proc { Spree.api.admin_variant_serializer },
+              if: proc { expand?('default_variant') }
 
-          expandable :one, :primary_media, :admin_media_serializer
+          one :primary_media,
+              resource: proc { Spree.api.admin_media_serializer },
+              if: proc { expand?('primary_media') }
 
           many :gallery_media,
                key: :media,
@@ -74,11 +82,17 @@ module Spree
 
           # Read/write symmetry: the product accepts inline `digital_assets` on
           # create, so it exposes them (opt-in via ?expand=digital_assets).
-          expandable :many, :digital_assets, :admin_digital_asset_serializer
+          many :digital_assets,
+               resource: proc { Spree.api.admin_digital_asset_serializer },
+               if: proc { expand?('digital_assets') }
 
-          expandable :many, :option_types, :admin_option_type_serializer
+          many :option_types,
+               resource: proc { Spree.api.admin_option_type_serializer },
+               if: proc { expand?('option_types') }
 
-          expandable :many, :option_values, :admin_option_value_serializer
+          many :option_values,
+               resource: proc { Spree.api.admin_option_value_serializer },
+               if: proc { expand?('option_values') }
 
           many :categories,
                proc { |categories, params|
@@ -88,15 +102,25 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
 
-          expandable :many, :collections, :admin_collection_serializer
+          many :collections,
+               resource: proc { Spree.api.admin_collection_serializer },
+               if: proc { expand?('collections') }
 
-          expandable :many, :custom_fields, :admin_custom_field_serializer
+          many :custom_fields,
+               resource: proc { Spree.api.admin_custom_field_serializer },
+               if: proc { expand?('custom_fields') }
 
-          expandable :many, :product_publications, :admin_product_publication_serializer
+          many :product_publications,
+               resource: proc { Spree.api.admin_product_publication_serializer },
+               if: proc { expand?('product_publications') }
 
-          expandable :many, :channels, :admin_channel_serializer
+          many :channels,
+               resource: proc { Spree.api.admin_channel_serializer },
+               if: proc { expand?('channels') }
 
-          expandable :one, :product_type, :admin_product_type_serializer
+          one :product_type,
+              resource: proc { Spree.api.admin_product_type_serializer },
+              if: proc { expand?('product_type') }
         end
       end
     end

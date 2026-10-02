@@ -7,8 +7,8 @@ module Spree
         class ClaimLineItemSerializer < V3::ClaimLineItemSerializer
           attributes created_at: :iso8601, updated_at: :iso8601
 
-          expandable :one, :variant, :admin_variant_serializer
-          expandable :one, :replacement_variant, :admin_variant_serializer
+          one :variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('variant') }
+          one :replacement_variant, resource: proc { Spree.api.admin_variant_serializer }, if: proc { expand?('replacement_variant') }
         end
       end
     end
