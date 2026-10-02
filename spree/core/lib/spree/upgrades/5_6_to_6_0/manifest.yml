@@ -763,7 +763,6 @@ steps:
 
       Idempotent.
 
-<<<<<<< HEAD
   - id: assign_upload_stores
     name: "Record which store owns every uploaded file"
     task: "spree:uploads:assign_stores"
@@ -782,7 +781,7 @@ steps:
       Run AFTER the steps that create or move attachments (media, categories,
       returns), so their files are covered. Idempotent — files that already
       have a store are skipped.
-=======
+
   - id: create_built_in_reports
     name: "Add the built-in saved reports to every store"
     task: "spree:upgrade:create_built_in_reports"
@@ -792,4 +791,3 @@ steps:
 
       Idempotent — a store that already has any built-in report is skipped,
       so one the merchant deleted is not brought back.
->>>>>>> b2c02d9ca5 (Fixed store defaults review findings)

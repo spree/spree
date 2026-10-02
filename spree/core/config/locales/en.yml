@@ -1141,8 +1141,6 @@ en:
           description: Webhook endpoints and deliveries
           label: Webhooks
     phone: Phone
-    pickup:
-      store_pickup: Store Pickup
     po_document_invalid: A purchase order document must be a PDF, image, Word document, spreadsheet or CSV file of %{size} or less.
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
@@ -1598,14 +1596,6 @@ en:
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
-    seed:
-      commission_rates:
-        marketplace_default: Marketplace default
-      delivery_profiles:
-        digital: Digital
-      product_types:
-        default: Default
-        digital: Digital
     selected_quantity_not_available: selected of %{item} is not available.
     seller: Seller
     seller_access_denied: You do not have access to this seller.

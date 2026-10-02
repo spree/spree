@@ -57,7 +57,11 @@ function SetupPage() {
       <SetupLoader
         token={token}
         onStarted={() => setSettingUp(true)}
-        onCompleted={setSetupStoreId}
+        onCompleted={(storeId) => {
+          // With no store to land on, the signed-in redirect above resolves one.
+          if (storeId) setSetupStoreId(storeId)
+          else setSettingUp(false)
+        }}
       />
     </AuthShell>
   )

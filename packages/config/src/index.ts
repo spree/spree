@@ -27,7 +27,7 @@ export {
   presentSections,
 } from './plan.js'
 export type { DefaultsOptions } from './provision.js'
-export { provisionStore, storeDefaults } from './provision.js'
+export { provisionStore, storeDefaults, warehouseLast } from './provision.js'
 export type { RenderOptions } from './render.js'
 export { countByKind, planToJson, renderPlan, renderReport, summaryLine } from './render.js'
 export type {

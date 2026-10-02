@@ -1,6 +1,7 @@
 import type { RunContext, SectionSource } from '../context.js'
 import type { PendingRef } from '../diff.js'
 import type { SpreeConfig } from '../schema.js'
+import { numbersAsNumbers } from '../spec.js'
 import type { AttributeChange, LiveRecord, SectionName } from '../types.js'
 
 export type Payload = Record<string, unknown>
@@ -232,9 +233,10 @@ export function plainSection<Entry extends object, Live extends LiveRecord>(
       : {}),
     ...rest,
     async toFile(live, ctx) {
-      const entry = toFile
-        ? await toFile(live, ctx)
-        : (present(live as unknown as Entry, attributes) as Entry)
+      const entry = numbersAsNumbers(
+        options.name,
+        toFile ? await toFile(live, ctx) : (present(live as unknown as Entry, attributes) as Entry),
+      )
       for (const [attribute, value] of Object.entries(defaults)) {
         if (entry[attribute as keyof Entry] === value) delete entry[attribute as keyof Entry]
       }

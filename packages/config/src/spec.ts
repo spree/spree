@@ -69,6 +69,23 @@ export function writableAttributes(resource: Resource): string[] {
   return [...names].filter((name) => !property(resource, name)?.deprecated)
 }
 
+/**
+ * A live record's attributes as the file writes them: the API reads decimals
+ * back as strings ("12.0"), and the file types them as numbers.
+ */
+export function numbersAsNumbers<T extends object>(resource: string, entry: T): T {
+  if (!(resource in WRITABLE)) return entry
+  const out = { ...entry } as Record<string, unknown>
+  for (const [attribute, value] of Object.entries(out)) {
+    const type = property(resource as Resource, attribute)?.type
+    if ((type === 'number' || type === 'integer') && typeof value === 'string' && value.trim()) {
+      const number = Number(value)
+      if (Number.isFinite(number)) out[attribute] = number
+    }
+  }
+  return out as T
+}
+
 /** The `preferred_*` attributes the resource accepts, without the prefix. */
 export function writablePreferences(resource: Resource): [string, ...string[]] {
   const names = writableAttributes(resource)

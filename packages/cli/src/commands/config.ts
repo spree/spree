@@ -16,7 +16,6 @@ import {
   planHasDeletes,
   planHasErrors,
   planToJson,
-  provisionStore,
   renderConfigYaml,
   renderPlan,
   renderReport,
@@ -25,6 +24,7 @@ import {
   type SectionName,
   type SpreeConfig,
   storeDefaults,
+  warehouseLast,
 } from '@spree/config/node'
 import { type Command, Option } from 'commander'
 import pc from 'picocolors'
@@ -161,7 +161,7 @@ async function deploy(
   }: {
     createOnly?: boolean
     /** How the confirmed plan is applied; the plan itself by default. */
-    apply?: (plan: PlannedRun, client: AdminClient) => Promise<ApplyReport>
+    apply?: (plan: PlannedRun) => Promise<ApplyReport>
   } = {},
 ): Promise<void> {
   const prune = parsePrune(flags.prune)
@@ -220,7 +220,7 @@ async function deploy(
       }
     }
 
-    const report = await apply(plan, client)
+    const report = await apply(plan)
     finish({ applied: true, results: report.results }, reportHasFailures(report) ? 1 : 0)
   } catch (error) {
     handleApiError(error, { baseUrl })
@@ -318,7 +318,7 @@ export function registerConfigCommand(program: Command): void {
       // missing is created, through the same ordered deploy setup uses.
       await deploy(flags, 'the store defaults', (client) => storeDefaults(client), {
         createOnly: true,
-        apply: (_plan, client) => provisionStore(client),
+        apply: (plan) => applyPlan(warehouseLast(plan)),
       })
     })
 

@@ -81,8 +81,11 @@ order_cancellation_reasons:
   - name: Order expired
 
 commission_rates:
-  # The marketplace's catch-all rate, off until the operator sets one.
+  # The marketplace's catch-all rate, off until the operator sets one. Rates
+  # are tried from the top and new ones are added there, so it sits far below
+  # any narrower rate the operator adds.
   - code: marketplace-default
+    position: 1000
     name: Marketplace default
     kind: percentage
     value: 0
