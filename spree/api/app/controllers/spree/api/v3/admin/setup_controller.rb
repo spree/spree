@@ -68,7 +68,8 @@ module Spree
             end
 
             # Outside the lock: the loader needs the admin committed, and it
-            # runs for minutes, so it is queued rather than awaited.
+            # runs for minutes, so it is queued rather than awaited. It waits
+            # until the dashboard has deployed the store defaults.
             Spree::SampleData::LoadJob.perform_later(store.id) if sample_data_requested?
 
             refresh_token = Spree::RefreshToken.create_for(user, audience: JWT_AUDIENCE_ADMIN, request_env: request_env_for_token)
@@ -187,15 +188,15 @@ module Spree
           # depends on it existing) — setup claims and renames it rather than
           # creating a second one, and spends the token.
           #
-          # The country-shaped defaults (market, warehouse, delivery zones,
-          # pickup) are built here rather than seeded, because the seed ran
-          # before anyone had said where the shop sells from.
+          # The store moves to the merchant's country here, because the seed ran
+          # before anyone had said where the shop sells from. The defaults
+          # shaped by that answer (warehouse, delivery zones, pickup) are
+          # deployed by the dashboard right after, through the Admin API.
           def adopt_default_store(user, store)
             store.update!(store_params.merge(setup_token: nil))
             store.add_user(user)
 
-            Spree::Stores::ProvisionDefaults.call(
-              store: store,
+            store.relocate(
               country: country,
               locale: params[:locale].presence,
               currency: params[:currency].presence

@@ -58,6 +58,12 @@ importers:
       '@changesets/cli':
         specifier: ^2.31.0
         version: 2.31.0(@types/node@25.6.0)
+      '@spree/admin-sdk':
+        specifier: workspace:*
+        version: link:packages/admin-sdk
+      '@spree/config':
+        specifier: workspace:*
+        version: link:packages/config
       turbo:
         specifier: ^2.9.14
         version: 2.9.18
@@ -122,6 +128,9 @@ importers:
       '@spree/admin-sdk':
         specifier: workspace:^
         version: link:../admin-sdk
+      '@spree/config':
+        specifier: workspace:^
+        version: link:../config
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -137,6 +146,34 @@ importers:
       yaml:
         specifier: ^2.8.4
         version: 2.8.4
+
+  packages/config:
+    dependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
+      yaml:
+        specifier: ^2.8.4
+        version: 2.8.4
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.26)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(msw@2.14.3(@types/node@25.6.0)(typescript@6.0.3))(vite@8.0.16(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.4))
 
   packages/create-spree-app:
     dependencies:
@@ -195,6 +232,9 @@ importers:
       '@spree/admin-sdk':
         specifier: workspace:^
         version: link:../admin-sdk
+      '@spree/config':
+        specifier: workspace:^
+        version: link:../config
       '@spree/dashboard-core':
         specifier: workspace:^
         version: link:../dashboard-core
@@ -650,6 +690,12 @@ importers:
 
   packages/sdk:
     devDependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
+      '@spree/config':
+        specifier: workspace:^
+        version: link:../config
       '@spree/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core

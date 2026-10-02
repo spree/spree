@@ -22,14 +22,14 @@ RSpec.describe Spree::Seeds::AdminUser do
     end
 
     # This install never sees the setup screen, so the seed answers the
-    # country question itself — defaulting to what it hardcoded before.
-    it 'provisions the country-shaped defaults as US by default' do
+    # country question itself — defaulting to what it hardcoded before. The
+    # defaults shaped by the answer come from `spree config provision`.
+    it 'places the store in the US by default' do
       subject
 
       store = @default_store.reload
       expect(store.default_country_code).to eq('US')
-      expect(store.stock_locations.find_by(default: true).country_code).to eq('US')
-      expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['US'])
+      expect(store).not_to be_provisioned
     end
 
     context 'with STORE_COUNTRY and STORE_LOCALE set' do
@@ -45,14 +45,14 @@ RSpec.describe Spree::Seeds::AdminUser do
         )
       end
 
-      it 'provisions the store for that country' do
+      it 'places the store in that country' do
         subject
 
         store = @default_store.reload
         expect(store.default_country_code).to eq('DE')
         expect(store.default_currency).to eq('EUR')
         expect(store.default_locale).to eq('de')
-        expect(store.delivery_zones.find_by(name: 'Domestic').members.pluck(:country_code)).to eq(['DE'])
+        expect(store.default_market.country_codes).to eq(['DE'])
       end
     end
 

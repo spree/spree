@@ -5079,7 +5079,11 @@
       "rate_limited_title": "尝试次数过多",
       "rate_limited_message": "短时间内检查设置的次数过多。请等待一分钟后重试。",
       "check_failed_title": "无法检查设置",
-      "check_failed_message": "无法连接服务器以检查此安装是否需要设置。请确认服务器正在运行，然后重试。"
+      "check_failed_message": "无法连接服务器以检查此安装是否需要设置。请确认服务器正在运行，然后重试。",
+      "provisioning": "正在准备您的商店…",
+      "provisioning_failed": "您的账户已就绪，但无法设置商店的默认配置（仓库、配送区域、税种）。",
+      "provisioning_retry": "重试",
+      "provisioning_continue": "继续前往仪表板"
     },
     "staff": {
       "actions": {

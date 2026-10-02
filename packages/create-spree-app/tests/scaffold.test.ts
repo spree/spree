@@ -132,6 +132,7 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, 'package.json'))).toBe(true)
     expect(fs.existsSync(path.join(projectDir, 'README.md'))).toBe(true)
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
+    expect(fs.existsSync(path.join(projectDir, 'spree.config.yml'))).toBe(true)
   })
 
   // Sample data must never ride along with first-run setup: setup configures

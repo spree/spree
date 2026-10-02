@@ -5090,7 +5090,11 @@
       "rate_limited_title": "Too many attempts",
       "rate_limited_message": "Setup was checked too many times in a short period. Wait a minute, then try again.",
       "check_failed_title": "Couldn't check setup",
-      "check_failed_message": "The server couldn't be reached to check whether this installation needs setup. Make sure it is running, then try again."
+      "check_failed_message": "The server couldn't be reached to check whether this installation needs setup. Make sure it is running, then try again.",
+      "provisioning": "Preparing your store…",
+      "provisioning_failed": "Your account is ready, but the store's defaults (warehouse, delivery zones, tax categories) could not be set up.",
+      "provisioning_retry": "Try again",
+      "provisioning_continue": "Continue to the dashboard"
     },
     "staff": {
       "actions": {

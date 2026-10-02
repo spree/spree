@@ -137,31 +137,4 @@ RSpec.describe Spree::SellerRequirement, type: :model do
       expect(result.error.value.full_messages.join).to match(/file is required/i)
     end
   end
-
-  describe '.provision_defaults' do
-    it 'writes the default checklist in order' do
-      store.seller_requirements.destroy_all
-
-      described_class.provision_defaults(store)
-
-      expect(store.seller_requirements.reload.map(&:class)).to eq(
-        [
-          Spree::SellerRequirements::AcceptTerms,
-          Spree::SellerRequirements::CompleteProfile,
-          Spree::SellerRequirements::BillingAddress,
-          Spree::SellerRequirements::ReturnsAddress,
-          Spree::SellerRequirements::DeliveryMethod,
-          Spree::SellerRequirements::PackageType,
-          Spree::SellerRequirements::MinimumProducts
-        ]
-      )
-    end
-
-    it 'does not duplicate what the store already has' do
-      store.seller_requirements.destroy_all
-      described_class.provision_defaults(store)
-
-      expect { described_class.provision_defaults(store) }.not_to change { store.seller_requirements.reload.count }
-    end
-  end
 end

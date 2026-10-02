@@ -354,7 +354,9 @@ RSpec.describe Spree::Api::V3::Admin::SellersController, type: :controller do
   describe 'the onboarding checklist on a page of sellers' do
     it 'reads every seller’s box in one query' do
       store.seller_requirements.destroy_all
-      Spree::SellerRequirement.provision_defaults(store)
+      %w[AcceptTerms CompleteProfile BillingAddress DeliveryMethod PackageType].each do |kind|
+        store.seller_requirements.create!(type: "Spree::SellerRequirements::#{kind}")
+      end
       4.times do |index|
         seller = create(:seller, :approved, store: store, name: "Box Seller #{index}")
         create(:package_type, :measured_default_box, store: store, seller: seller)

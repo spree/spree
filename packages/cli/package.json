@@ -12,7 +12,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
+    "build": "pnpm run clean && node scripts/bundle-spec.mjs && node ../../scripts/sync-starter.mjs templates/dashboard-starter && node ../../scripts/sync-starter.mjs templates/seller-dashboard-starter seller-dashboard-starter && tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -56,6 +56,7 @@
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@spree/admin-sdk": "workspace:^",
+    "@spree/config": "workspace:^",
     "@types/node": "^25.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3",
@@ -64,5 +65,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js"
   }
 }

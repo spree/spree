@@ -118,7 +118,8 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
             description: "'local' = items at this location only; 'any' = transfer-eligible (ship-to-store)."
           },
           pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
-          pickup_instructions: { type: :string, nullable: true }
+          pickup_instructions: { type: :string, nullable: true },
+          returns_enabled: { type: :boolean, description: 'Whether customers can send returns to this location.' }
         },
         required: %w[name]
       }
@@ -236,7 +237,8 @@ RSpec.describe 'Admin Stock Locations API', type: :request, swagger_doc: 'api-re
           pickup_enabled: { type: :boolean },
           pickup_stock_policy: { type: :string, enum: Spree::StockLocation::PICKUP_STOCK_POLICIES },
           pickup_ready_in_minutes: { type: :number, nullable: true, minimum: 0 },
-          pickup_instructions: { type: :string, nullable: true }
+          pickup_instructions: { type: :string, nullable: true },
+          returns_enabled: { type: :boolean, description: 'Whether customers can send returns to this location.' }
         }
       }
 

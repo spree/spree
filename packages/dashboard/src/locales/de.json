@@ -5090,7 +5090,11 @@
       "rate_limited_title": "Zu viele Versuche",
       "rate_limited_message": "Die Einrichtung wurde in kurzer Zeit zu oft abgefragt. Warte eine Minute und versuche es dann erneut.",
       "check_failed_title": "Einrichtung konnte nicht geprüft werden",
-      "check_failed_message": "Der Server war nicht erreichbar, um zu prüfen, ob diese Installation eingerichtet werden muss. Stelle sicher, dass er läuft, und versuche es erneut."
+      "check_failed_message": "Der Server war nicht erreichbar, um zu prüfen, ob diese Installation eingerichtet werden muss. Stelle sicher, dass er läuft, und versuche es erneut.",
+      "provisioning": "Ihr Shop wird vorbereitet…",
+      "provisioning_failed": "Ihr Konto ist bereit, aber die Standardeinstellungen des Shops (Lager, Versandzonen, Steuerkategorien) konnten nicht eingerichtet werden.",
+      "provisioning_retry": "Erneut versuchen",
+      "provisioning_continue": "Weiter zum Dashboard"
     },
     "staff": {
       "actions": {

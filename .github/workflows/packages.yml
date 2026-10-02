@@ -98,8 +98,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # @spree/config deploys the store defaults before sample data loads.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/config
 
       - name: Setup test app
         working-directory: spree/api
@@ -498,13 +499,14 @@ jobs:
 
       # As in the seller job: prepublishOnly compiles the Vite-plugin entries
       # with tsup, so the workspace dependency graph must be built first.
+      # @spree/config publishes first: the dashboard's setup screen runs it.
       - name: Build
         run: pnpm turbo build --filter=@spree/dashboard
 
       - name: Publish unpublished versions (dependency order)
         run: |
           set -euo pipefail
-          for pkg in dashboard-ui dashboard-core dashboard; do
+          for pkg in config dashboard-ui dashboard-core dashboard; do
             cd "packages/$pkg"
             NAME=$(node -p "require('./package.json').name")
             VERSION=$(node -p "require('./package.json').version")

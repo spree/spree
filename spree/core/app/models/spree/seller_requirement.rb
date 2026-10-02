@@ -50,43 +50,6 @@ module Spree
     scope :active, -> { where(active: true) }
     scope :required, -> { where(required: true) }
 
-    # The kinds a marketplace starts with, in the order a seller meets them:
-    # agree to the terms, say who you are, tell us where to invoice and where
-    # returns go, have a way to ship, then list something.
-    #
-    # Only the kinds that ask a question core already knows how to answer.
-    # The generic ones (an attestation, a document, a manual check) are absent
-    # on purpose — they mean nothing until the operator has written what they
-    # are asking for.
-    DEFAULT_KINDS = %w[
-      Spree::SellerRequirements::AcceptTerms
-      Spree::SellerRequirements::CompleteProfile
-      Spree::SellerRequirements::BillingAddress
-      Spree::SellerRequirements::ReturnsAddress
-      Spree::SellerRequirements::DeliveryMethod
-      Spree::SellerRequirements::PackageType
-      Spree::SellerRequirements::MinimumProducts
-    ].freeze
-
-    # Writes the default checklist for a store, skipping kinds it already
-    # has. Idempotent, so a store seeded before a kind existed picks it up on
-    # the next run — but a requirement the operator deleted stays deleted
-    # only until then, which is the same bargain the seeded commission rate
-    # makes.
-    #
-    # @param store [Spree::Store]
-    # @return [Array<Spree::SellerRequirement>] the rows created
-    def self.provision_defaults(store)
-      registered = Spree.seller_requirements.map(&:to_s)
-      # `reorder(nil)`: the association orders by position, and PostgreSQL
-      # refuses SELECT DISTINCT with an ORDER BY on a column it does not select.
-      existing = store.seller_requirements.where(type: DEFAULT_KINDS).reorder(nil).distinct.pluck(:type)
-
-      ((DEFAULT_KINDS & registered) - existing).map do |kind|
-        store.seller_requirements.create!(type: kind)
-      end
-    end
-
     # @return [String] the localized name of the kind, used by operator pickers
     def self.human_name
       Spree.t("seller_requirement_types.#{api_type}.name", default: api_type.titleize)

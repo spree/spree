@@ -1,3 +1,25 @@
+## 2026-10-02: First-run setup keeps the store's own location in Ruby; sample data waits for provisioning
+
+**Context:** Building the 2026-10-01 decision showed that the bootstrap market is matched on `name` and created before the country is known, so a configurator template cannot move it, and that the sample-data job queued by the setup request would race the browser's deploy.
+
+**Decision:** The setup endpoint (and the seed on scripted installs) relocates the store and its default market in Ruby (`Spree::Store#relocate`); the country template builds the warehouse, delivery profile, zones, methods, pickup and package type. Sample data stays on the setup request, but the loader waits until `Spree::Store#provisioned?` and refuses on an unprovisioned store everywhere else. The built-in saved reports move from the seeds to a store callback.
+
+**Consequences:** `Spree::Store#provisioned?` is the one test of whether the defaults were deployed. An interrupted setup has no automatic resume; `spree config provision` finishes it. The store row's country is never a configurator concern.
+
+**Plans amended:** `6.0-cli-configurator.md` (Key Decisions).
+
+## 2026-10-01: Store setup leaves Ruby: per-store defaults and the country template become configurator files
+
+**Context:** The configurator (`6.0-cli-configurator.md`) shipped as an addition on top of Ruby: its 2026-09-14 decisions kept `Spree::Seeds::All` whole because "a Rails app must seed without Node", and left first-run provisioning in `Spree::Stores::ProvisionDefaults`. That keeps about 600 lines of per-store seed services and the country-shaped provisioning in Ruby, and every default would have to be written again once the server side moves away from Rails.
+
+**Decision:** Ruby seeds keep only what has no API by design: the store row, the admin role, the first admin and the first API key. Everything `Spree::Seeds::StoreResources` creates becomes a defaults file in the configurator format, and the market, warehouse, delivery zones and pickup that `ProvisionDefaults` builds become a template filled with the merchant's country, currency and locale. Both ship with the engine, which moves out of `@spree/cli` into its own `@spree/config` package, and are deployed by `spree init`, the setup screen and hosted signup. Section attributes are derived from the Admin OpenAPI request bodies instead of hand-written per section.
+
+Rejected: keeping the seeds for 6.0 and moving in 6.1, which leaves two sources of defaults for a release; and a Ruby reader for the same format, which would duplicate the engine and contradicts the configurator's "no Ruby-side YAML loader" constraint.
+
+**Consequences:** A Rails-only install that never runs the CLI or the setup screen starts with an empty store until something deploys the defaults file; 6.0 no longer promises otherwise. Setup becomes several Admin API calls rather than one Ruby transaction, so an interrupted setup is finished by deploying again. A new per-store default goes into the defaults file and a new country-shaped default into the template; both Ruby services only shrink until they are deleted. Admin endpoints must document their full request body, since sections derive from it.
+
+**Plans amended:** `6.0-cli-configurator.md` (Key Decisions, Migration Path, Constraints), `6.0-store-context-and-first-run-setup.md` (superseding note on `ProvisionDefaults`).
+
 ## 2026-10-01: A buyer can buy only what their catalogs show them (V-3722)
 
 **Context:** Catalogs narrowed the product listing and product reads, but the cart looked variants up across the whole store. A company buyer whose catalog hid a product could add it by sending its variant id, and check out with it; the same lookup let a shopper add a product not published on their channel. A product read answered 404 for both. Blocking adds alone would not close it: a guest cart claimed after sign-in, a cart switched to another company, or a catalog edited while a cart is open all leave a hidden line in the cart without any add.
@@ -5794,6 +5816,50 @@ declared in a config file. Credential attributes on payment methods and
 integrations must never read back in plain text through the Admin API;
 `introspect` relies on that. Do not add a Ruby-side YAML loader to core.
 
+## 2026-09-14 — Project setup asks nothing the setup screen already asks; configurator ships in stages
+
+Plan: `6.0-cli-configurator.md`.
+
+Building the configurator raised three calls about first-run setup and two
+about the configurator's own first release.
+
+**The scaffolded `spree.config.yml` is a skeleton.** First-run setup already
+asks the merchant for the store name, country, currency and locale and builds
+the default market, warehouse and delivery zones from those answers. A file
+that pre-filled a `store` or `markets` section would be deployed before the
+merchant opens that screen and would revert their answers on the next deploy.
+So `create-spree-app` gains no store prompts, the file ships with commented
+sections only, `spree init` still deploys it (a no-op until the team fills it
+in), and `spree config introspect` captures the store into the file afterwards.
+
+**`spree init` stops prompting for an admin.** The setup link the seed prints
+is the default path; `--admin-email` / `--admin-password` stay for scripted
+installs. Because sample data needs an admin to own its imports, the setup
+screen gains a "Load sample data" checkbox: the setup request accepts
+`sample_data` and enqueues a job that runs the loader once the admin exists.
+`create-spree-app` and `spree init` no longer ask about sample data;
+`SPREE_SAMPLE_DATA` and `spree sample-data` remain for scripts and for later.
+
+**Natural keys get validations now and indexes later.** The audit found keys
+with no uniqueness guard (tax rate, delivery method, payment method and price
+list names, webhook endpoint URL, API key name), keys guarded by validation
+only, and the reason lists guarded by an index only. Store-scoped uniqueness
+validations land with the configurator; unique indexes need a dedupe task for
+installations that already hold duplicates and ship separately. The engine
+refuses to reconcile an entry whose key matches more than one live record.
+
+**The first release covers what the e2e suite and the scaffold need:** store,
+channels, markets, customer groups, tax categories, delivery zones and methods,
+stock locations, suppliers, categories, products with variants, prices and
+stock, customers, sellers. The other sections in the plan's key table follow
+in a second pull request on the same engine. The `store` section carries the
+name, contact addresses and preferences only; currency, locale and country
+are market attributes, and markets keep `name` as their key.
+
+**Consequences for other work.** A `store` section never carries currency,
+locale or country. Nothing a scaffold writes may pre-fill what first-run setup
+owns. A new natural key gets a store-scoped validation and an index in the same
+change.
 
 ## 2026-09-15 — Admin MCP ships in 6.0 over a core agent-tool registry; the assistant follows it
 
@@ -5924,6 +5990,7 @@ call from core is cached, run from a job, short-timeout, failure-cached.
 Env-backed booleans read through `Spree::Config` must be cast: the `env:`
 option on `preference` returns the raw string. Cross-page notices go through
 the `AppShell` `banner` slot, nowhere else.
+
 ## 2026-09-15 — Store setup is one step, shared by self-hosted and hosted signup
 
 Plans: `6.0-store-context-and-first-run-setup.md`, `6.0-cli-configurator.md`.

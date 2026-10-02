@@ -27,6 +27,7 @@ Run from your Spree project directory:
 | `spree user create` / `spree api-key …` | Admin users and scoped API keys |
 | `spree encryption init` | Add Active Record encryption keys to `.env` (`--print` to only print a set) |
 | `spree api get/post/patch/delete <path>` | Call the Admin API directly (`spree api endpoints` lists routes + scopes) |
+| `spree config validate/diff/deploy/introspect` | Declarative store configuration: reconcile `spree.config.yml` against any instance through the Admin API |
 | `spree rspec` | Run the backend test suite inside the container |
 
 ## Documentation

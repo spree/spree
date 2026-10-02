@@ -4,7 +4,7 @@ RSpec.describe Spree::SavedReport, type: :model do
   let(:store) { @default_store }
 
   it 'saves a compilable query' do
-    report = described_class.new(store: store, name: 'Sales by channel',
+    report = described_class.new(store: store, name: 'Channel mix',
                                  query: { 'metrics' => %w[total_sales], 'dimensions' => %w[channel] })
     expect(report).to be_valid
     expect(report.reporting_query.metrics.map(&:name)).to eq([:total_sales])
@@ -24,8 +24,8 @@ RSpec.describe Spree::SavedReport, type: :model do
   end
 
   it 'keeps names unique per store' do
-    create(:saved_report, store: store, name: 'Top products', query: { 'metrics' => %w[units_sold] })
-    dup = described_class.new(store: store, name: 'top products', query: { 'metrics' => %w[units_sold] })
+    create(:saved_report, store: store, name: 'Best sellers', query: { 'metrics' => %w[units_sold] })
+    dup = described_class.new(store: store, name: 'best sellers', query: { 'metrics' => %w[units_sold] })
     expect(dup).not_to be_valid
   end
 
@@ -37,5 +37,16 @@ RSpec.describe Spree::SavedReport, type: :model do
     expect(report.errors.details[:base]).to include(hash_including(error: :seeded_report_read_only))
 
     expect { report.reload.destroy! }.to change(described_class, :count).by(-1)
+  end
+
+  # Validation proves a built-in report's query names real members; only
+  # running it proves the compiler can express that combination.
+  it 'ships built-in reports whose queries actually execute' do
+    create(:completed_order_with_totals, store: store, completed_at: 3.days.ago)
+
+    Spree::Store::REPORTS.each do |report|
+      query = Spree::Reporting::Query.new(store: store, params: report[:query].deep_symbolize_keys)
+      expect { query.execute }.not_to raise_error, "#{report[:key]} failed"
+    end
   end
 end

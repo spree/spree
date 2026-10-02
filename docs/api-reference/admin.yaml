@@ -2754,6 +2754,11 @@ paths:
                   example:
                   - read_orders
                   - write_orders
+                channel_id:
+                  type: string
+                  nullable: true
+                  description: Channel a publishable key is bound to. Cannot be changed
+                    after creation.
   "/api/v3/admin/api_keys/{id}":
     get:
       summary: Show an API key
@@ -3238,6 +3243,28 @@ paths:
                   type: string
                 meta_keywords:
                   type: string
+                image:
+                  type: string
+                  nullable: true
+                  description: ActiveStorage signed id of a direct-uploaded file.
+                square_image:
+                  type: string
+                  nullable: true
+                  description: ActiveStorage signed id of a direct-uploaded file.
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
               required:
               - name
   "/api/v3/admin/categories/{id}":
@@ -3404,6 +3431,28 @@ paths:
                   type: string
                 meta_keywords:
                   type: string
+                image:
+                  type: string
+                  nullable: true
+                  description: ActiveStorage signed id of a direct-uploaded file.
+                square_image:
+                  type: string
+                  nullable: true
+                  description: ActiveStorage signed id of a direct-uploaded file.
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
     delete:
       summary: Delete a category
       tags:
@@ -3933,6 +3982,17 @@ paths:
                   nullable: true
                   description: Whether guests can check out without an account. `null`
                     inherits the store setting.
+                default_catalog_id:
+                  type: string
+                  nullable: true
+                  description: Catalog the channel prices and lists from. `null` clears
+                    it.
+                stock_location_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Replaces the stock locations this channel fulfills
+                    from. Empty means every location.
   "/api/v3/admin/channels/{id}":
     parameters:
     - name: id
@@ -4084,6 +4144,17 @@ paths:
                   nullable: true
                   description: Whether guests can check out without an account. `null`
                     inherits the store setting.
+                default_catalog_id:
+                  type: string
+                  nullable: true
+                  description: Catalog the channel prices and lists from. `null` clears
+                    it.
+                stock_location_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Replaces the stock locations this channel fulfills
+                    from. Empty means every location.
     delete:
       summary: Delete a channel
       tags:
@@ -6779,6 +6850,27 @@ paths:
                   type: boolean
                 internal_note:
                   type: string
+                password:
+                  type: string
+                  format: password
+                  writeOnly: true
+                password_confirmation:
+                  type: string
+                  format: password
+                  writeOnly: true
+                selected_locale:
+                  type: string
+                  nullable: true
+                  example: en
+                avatar:
+                  type: string
+                  nullable: true
+                  description: Signed blob id of an uploaded image.
+                customer_group_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Replaces the customer group memberships.
                 tags:
                   type: array
                   items:
@@ -6974,6 +7066,27 @@ paths:
                   type: boolean
                 internal_note:
                   type: string
+                password:
+                  type: string
+                  format: password
+                  writeOnly: true
+                password_confirmation:
+                  type: string
+                  format: password
+                  writeOnly: true
+                selected_locale:
+                  type: string
+                  nullable: true
+                  example: en
+                avatar:
+                  type: string
+                  nullable: true
+                  description: Signed blob id of an uploaded image.
+                customer_group_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Replaces the customer group memberships.
                 tags:
                   type: array
                   items:
@@ -11378,6 +11491,11 @@ paths:
                   type: boolean
                   default: false
                   description: Display prices with tax included.
+                tax_provider:
+                  type: string
+                  nullable: true
+                  description: Tax provider class from `GET /tax_providers`. Blank
+                    uses the default.
                 default:
                   type: boolean
                   default: false
@@ -11584,6 +11702,11 @@ paths:
                     type: string
                 tax_inclusive:
                   type: boolean
+                tax_provider:
+                  type: string
+                  nullable: true
+                  description: Tax provider class from `GET /tax_providers`. Blank
+                    uses the default.
                 default:
                   type: boolean
                 position:
@@ -14205,7 +14328,7 @@ paths:
                 total_quantity: 0
                 coupon_code:
                 fulfillment_status:
-                payment_status:
+                payment_status: none
                 completed_at:
                 item_total: '0.0'
                 display_item_total: "$0.00"
@@ -15182,6 +15305,109 @@ paths:
                   in: 1
                   previous:
                   next:
+    post:
+      summary: Create a payment method
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Installs a payment provider on the store. `type` picks the provider by
+        its shorthand from `GET /payment_methods/types` (for example `check`,
+        `store_credit` or `bogus`) and cannot be changed afterwards.
+
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: payment method created
+          content:
+            application/json:
+              example:
+                id: pm_gbHJdmfrXB
+                name: Pay by check
+                description:
+                type: check
+                session_required: false
+                source_required: false
+                metadata: {}
+                active: true
+                auto_capture:
+                capture_method:
+                resolved_capture_method: checkout
+                storefront_visible: true
+                position: 2
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                preferences: {}
+                preference_schema: []
+        '422':
+          description: unknown provider type
+          content:
+            application/json:
+              example:
+                error:
+                  code: unknown_payment_method_type
+                  message: Unknown type
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - type
+              - name
+              properties:
+                type:
+                  type: string
+                  example: check
+                  description: Provider shorthand from `GET /payment_methods/types`.
+                name:
+                  type: string
+                  example: Pay by check
+                description:
+                  type: string
+                  nullable: true
+                active:
+                  type: boolean
+                storefront_visible:
+                  type: boolean
+                capture_method:
+                  type: string
+                  nullable: true
+                  enum:
+                  - checkout
+                  - on_dispatch
+                  - manual
+                  description: When the customer is charged. `null` follows the store
+                    setting.
+                auto_capture:
+                  type: boolean
+                  nullable: true
+                  description: Legacy flag. Prefer `capture_method`.
+                position:
+                  type: integer
+                preferences:
+                  type: object
+                  description: Provider configuration, per the `preference_schema`
+                    from `GET /payment_methods/types`. Unknown keys are ignored, and
+                    a masked secret sent back unchanged keeps the stored value.
+                metadata:
+                  type: object
   "/api/v3/admin/payment_methods/types":
     get:
       summary: List available payment provider types
@@ -15305,7 +15531,7 @@ paths:
             application/json:
               example:
                 id: pm_UkLWZg9DAJ
-                name: Check 4
+                name: Check 6
                 description:
                 type: check
                 session_required: false
@@ -15321,6 +15547,94 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 preferences: {}
                 preference_schema: []
+    patch:
+      summary: Update a payment method
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a payment method. Its provider `type` is fixed at creation.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment method updated
+          content:
+            application/json:
+              example:
+                id: pm_UkLWZg9DAJ
+                name: Check (Updated)
+                description:
+                type: check
+                session_required: false
+                source_required: false
+                metadata: {}
+                active: true
+                auto_capture:
+                capture_method: manual
+                resolved_capture_method: manual
+                storefront_visible: true
+                position: 1
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                preferences: {}
+                preference_schema: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Pay by check
+                description:
+                  type: string
+                  nullable: true
+                active:
+                  type: boolean
+                storefront_visible:
+                  type: boolean
+                capture_method:
+                  type: string
+                  nullable: true
+                  enum:
+                  - checkout
+                  - on_dispatch
+                  - manual
+                  description: When the customer is charged. `null` follows the store
+                    setting.
+                auto_capture:
+                  type: boolean
+                  nullable: true
+                  description: Legacy flag. Prefer `capture_method`.
+                position:
+                  type: integer
+                preferences:
+                  type: object
+                  description: Provider configuration, per the `preference_schema`
+                    from `GET /payment_methods/types`. Unknown keys are ignored, and
+                    a masked secret sent back unchanged keeps the stored value.
+                metadata:
+                  type: object
   "/api/v3/admin/orders/{order_id}/payments":
     get:
       summary: List payments
@@ -17917,14 +18231,40 @@ paths:
                   - draft
                   - active
                   - archived
+                  description: Review statuses (`proposed`, `rejected`) are ignored
+                    here — use `approve`/`reject`.
+                meta_title:
+                  type: string
+                  nullable: true
+                meta_description:
+                  type: string
+                  nullable: true
+                meta_keywords:
+                  type: string
+                  nullable: true
                 tax_category_id:
                   type: string
+                  nullable: true
                   description: Tax category ID
+                product_type_id:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  nullable: true
+                promotionable:
+                  type: boolean
                 category_ids:
                   type: array
                   items:
                     type: string
                   description: Array of category IDs
+                collection_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Manual collection membership. Automatic collections
+                    are kept as they are.
                 tags:
                   type: array
                   items:
@@ -17932,6 +18272,8 @@ paths:
                   example:
                   - eco
                   - sale
+                metadata:
+                  type: object
                 prices:
                   type: array
                   description: 'Shorthand for a simple (no-options) product: per-currency
@@ -17953,6 +18295,105 @@ paths:
                         type: string
                         nullable: true
                         example: '39.99'
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
+                media:
+                  type: array
+                  description: Entries with `id` update existing media; entries with
+                    `signed_id` attach a new upload.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      signed_id:
+                        type: string
+                        description: ActiveStorage signed id of a direct-uploaded
+                          file.
+                      source_media_id:
+                        type: string
+                      alt:
+                        type: string
+                        nullable: true
+                      position:
+                        type: integer
+                      media_type:
+                        type: string
+                        enum:
+                        - image
+                        - video
+                        - external_video
+                      external_video_url:
+                        type: string
+                        nullable: true
+                      poster_signed_id:
+                        type: string
+                        nullable: true
+                      focal_point_x:
+                        type: number
+                        nullable: true
+                      focal_point_y:
+                        type: number
+                        nullable: true
+                      variant_ids:
+                        type: array
+                        items:
+                          type: string
+                digital_assets:
+                  type: array
+                  description: Downloadable files. Entries with `id` update an existing
+                    asset rather than adding one.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      signed_id:
+                        type: string
+                        description: ActiveStorage signed id of a direct-uploaded
+                          file.
+                      variant_id:
+                        type: string
+                      provider_type:
+                        type: string
+                      authorized_clicks:
+                        type: integer
+                        nullable: true
+                      authorized_days:
+                        type: integer
+                        nullable: true
+                      provider_settings:
+                        type: object
+                product_publications:
+                  type: array
+                  description: Channel publications for the product.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      channel_id:
+                        type: string
+                      published_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      unpublished_at:
+                        type: string
+                        format: date-time
+                        nullable: true
                 variants:
                   type: array
                   description: Array of variant payloads. Variants can declare multiple
@@ -17961,8 +18402,100 @@ paths:
                   items:
                     type: object
                     properties:
+                      id:
+                        type: string
+                        description: An existing variant to update.
                       sku:
                         type: string
+                      barcode:
+                        type: string
+                        nullable: true
+                      cost_price:
+                        type: string
+                        nullable: true
+                      cost_currency:
+                        type: string
+                        nullable: true
+                      weight:
+                        type: number
+                        nullable: true
+                      height:
+                        type: number
+                        nullable: true
+                      width:
+                        type: number
+                        nullable: true
+                      depth:
+                        type: number
+                        nullable: true
+                      weight_unit:
+                        type: string
+                        nullable: true
+                        enum:
+                        - g
+                        - kg
+                        - lb
+                        - oz
+                      dimensions_unit:
+                        type: string
+                        nullable: true
+                        enum:
+                        - mm
+                        - cm
+                        - in
+                        - ft
+                      hs_code:
+                        type: string
+                        nullable: true
+                      country_of_origin:
+                        type: string
+                        nullable: true
+                      customs_description:
+                        type: string
+                        nullable: true
+                      minimum_order_quantity:
+                        type: integer
+                        nullable: true
+                      order_multiple:
+                        type: integer
+                        nullable: true
+                      purchase_unit:
+                        type: string
+                        nullable: true
+                      units_per_carton:
+                        type: integer
+                        nullable: true
+                      carton_package_type_id:
+                        type: string
+                        nullable: true
+                      carton_weight:
+                        type: number
+                        nullable: true
+                      cartons_per_pallet:
+                        type: integer
+                        nullable: true
+                      seller_id:
+                        type: string
+                        nullable: true
+                      delivery_profile_id:
+                        type: string
+                        nullable: true
+                      track_inventory:
+                        type: boolean
+                      preorderable:
+                        type: boolean
+                      preorder_ships_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      backorder_limit:
+                        type: integer
+                        nullable: true
+                      tax_category_id:
+                        type: string
+                        nullable: true
+                      position:
+                        type: integer
                       options:
                         type: array
                         description: One pair per option type the variant participates
@@ -18008,6 +18541,8 @@ paths:
                           - stock_location_id
                           - count_on_hand
                           properties:
+                            id:
+                              type: string
                             stock_location_id:
                               type: string
                               description: Stock location ID (e.g. sloc_xxx)
@@ -18293,14 +18828,40 @@ paths:
                   - draft
                   - active
                   - archived
+                  description: Review statuses (`proposed`, `rejected`) are ignored
+                    here — use `approve`/`reject`.
+                meta_title:
+                  type: string
+                  nullable: true
+                meta_description:
+                  type: string
+                  nullable: true
+                meta_keywords:
+                  type: string
+                  nullable: true
                 tax_category_id:
                   type: string
+                  nullable: true
                   description: Tax category ID
+                product_type_id:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  nullable: true
+                promotionable:
+                  type: boolean
                 category_ids:
                   type: array
                   items:
                     type: string
                   description: Array of category IDs
+                collection_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Manual collection membership. Automatic collections
+                    are kept as they are.
                 tags:
                   type: array
                   items:
@@ -18308,6 +18869,8 @@ paths:
                   example:
                   - eco
                   - sale
+                metadata:
+                  type: object
                 prices:
                   type: array
                   description: 'Shorthand for a simple (no-options) product: per-currency
@@ -18329,6 +18892,105 @@ paths:
                         type: string
                         nullable: true
                         example: '39.99'
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
+                media:
+                  type: array
+                  description: Entries with `id` update existing media; entries with
+                    `signed_id` attach a new upload.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      signed_id:
+                        type: string
+                        description: ActiveStorage signed id of a direct-uploaded
+                          file.
+                      source_media_id:
+                        type: string
+                      alt:
+                        type: string
+                        nullable: true
+                      position:
+                        type: integer
+                      media_type:
+                        type: string
+                        enum:
+                        - image
+                        - video
+                        - external_video
+                      external_video_url:
+                        type: string
+                        nullable: true
+                      poster_signed_id:
+                        type: string
+                        nullable: true
+                      focal_point_x:
+                        type: number
+                        nullable: true
+                      focal_point_y:
+                        type: number
+                        nullable: true
+                      variant_ids:
+                        type: array
+                        items:
+                          type: string
+                digital_assets:
+                  type: array
+                  description: Downloadable files. Entries with `id` update an existing
+                    asset rather than adding one.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      signed_id:
+                        type: string
+                        description: ActiveStorage signed id of a direct-uploaded
+                          file.
+                      variant_id:
+                        type: string
+                      provider_type:
+                        type: string
+                      authorized_clicks:
+                        type: integer
+                        nullable: true
+                      authorized_days:
+                        type: integer
+                        nullable: true
+                      provider_settings:
+                        type: object
+                product_publications:
+                  type: array
+                  description: Channel publications for the product.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      channel_id:
+                        type: string
+                      published_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      unpublished_at:
+                        type: string
+                        format: date-time
+                        nullable: true
                 variants:
                   type: array
                   description: Array of variant payloads. Variants can declare multiple
@@ -18337,8 +18999,100 @@ paths:
                   items:
                     type: object
                     properties:
+                      id:
+                        type: string
+                        description: An existing variant to update.
                       sku:
                         type: string
+                      barcode:
+                        type: string
+                        nullable: true
+                      cost_price:
+                        type: string
+                        nullable: true
+                      cost_currency:
+                        type: string
+                        nullable: true
+                      weight:
+                        type: number
+                        nullable: true
+                      height:
+                        type: number
+                        nullable: true
+                      width:
+                        type: number
+                        nullable: true
+                      depth:
+                        type: number
+                        nullable: true
+                      weight_unit:
+                        type: string
+                        nullable: true
+                        enum:
+                        - g
+                        - kg
+                        - lb
+                        - oz
+                      dimensions_unit:
+                        type: string
+                        nullable: true
+                        enum:
+                        - mm
+                        - cm
+                        - in
+                        - ft
+                      hs_code:
+                        type: string
+                        nullable: true
+                      country_of_origin:
+                        type: string
+                        nullable: true
+                      customs_description:
+                        type: string
+                        nullable: true
+                      minimum_order_quantity:
+                        type: integer
+                        nullable: true
+                      order_multiple:
+                        type: integer
+                        nullable: true
+                      purchase_unit:
+                        type: string
+                        nullable: true
+                      units_per_carton:
+                        type: integer
+                        nullable: true
+                      carton_package_type_id:
+                        type: string
+                        nullable: true
+                      carton_weight:
+                        type: number
+                        nullable: true
+                      cartons_per_pallet:
+                        type: integer
+                        nullable: true
+                      seller_id:
+                        type: string
+                        nullable: true
+                      delivery_profile_id:
+                        type: string
+                        nullable: true
+                      track_inventory:
+                        type: boolean
+                      preorderable:
+                        type: boolean
+                      preorder_ships_at:
+                        type: string
+                        format: date-time
+                        nullable: true
+                      backorder_limit:
+                        type: integer
+                        nullable: true
+                      tax_category_id:
+                        type: string
+                        nullable: true
+                      position:
+                        type: integer
                       options:
                         type: array
                         description: One pair per option type the variant participates
@@ -18384,6 +19138,8 @@ paths:
                           - stock_location_id
                           - count_on_hand
                           properties:
+                            id:
+                              type: string
                             stock_location_id:
                               type: string
                               description: Stock location ID (e.g. sloc_xxx)
@@ -22316,7 +23072,8 @@ paths:
                 data:
                 - type: create_line_items
                   label: Create line items
-                  description: Populates the cart with the specified quantity of variant
+                  description: Adds the specified quantity of a variant to the cart
+                    free of charge
                   preference_schema: []
                 - type: create_item_adjustments
                   label: Create per-line-item adjustment
@@ -23354,8 +24111,20 @@ paths:
                 name:
                   type: string
                   example: My Store
+                mail_from_address:
+                  type: string
+                  example: no-reply@example.com
+                customer_support_email:
+                  type: string
+                  nullable: true
+                  example: support@example.com
+                new_order_notifications_email:
+                  type: string
+                  nullable: true
+                  example: orders@example.com
                 preferred_admin_locale:
                   type: string
+                  nullable: true
                   example: en
                 preferred_timezone:
                   type: string
@@ -23366,6 +24135,104 @@ paths:
                 preferred_unit_system:
                   type: string
                   example: metric
+                preferred_storefront_access:
+                  type: string
+                  enum:
+                  - public
+                  - prices_hidden
+                  - login_required
+                preferred_storefront_url:
+                  type: string
+                  nullable: true
+                preferred_guest_checkout:
+                  type: boolean
+                preferred_always_include_confirm_step:
+                  type: boolean
+                preferred_company_field_enabled:
+                  type: boolean
+                preferred_address_requires_company:
+                  type: boolean
+                preferred_address_requires_phone:
+                  type: boolean
+                preferred_capture_method:
+                  type: string
+                  enum:
+                  - checkout
+                  - on_dispatch
+                  - manual
+                preferred_auto_capture:
+                  type: boolean
+                  deprecated: true
+                  description: Superseded by `preferred_capture_method`.
+                preferred_auto_capture_on_dispatch:
+                  type: boolean
+                preferred_track_inventory_levels:
+                  type: boolean
+                preferred_stock_reservations_enabled:
+                  type: boolean
+                preferred_low_stock_threshold:
+                  type: integer
+                preferred_tax_using_ship_address:
+                  type: boolean
+                preferred_track_price_history:
+                  type: boolean
+                preferred_show_products_without_price:
+                  type: boolean
+                preferred_disable_sku_validation:
+                  type: boolean
+                preferred_order_routing_strategy:
+                  type: string
+                preferred_pricing_provider:
+                  type: string
+                preferred_inventory_provider:
+                  type: string
+                preferred_pricing_provider_failure_policy:
+                  type: string
+                  enum:
+                  - fallback
+                  - strict
+                preferred_inventory_provider_failure_policy:
+                  type: string
+                  enum:
+                  - fallback
+                  - strict
+                preferred_payout_provider:
+                  type: string
+                  nullable: true
+                preferred_default_payouts_schedule_interval:
+                  type: string
+                  enum:
+                  - daily
+                  - weekly
+                  - biweekly
+                  - monthly
+                  - manual
+                preferred_default_minimum_payout_amount:
+                  type: number
+                preferred_auto_approve_sellers:
+                  type: boolean
+                preferred_auto_approve_seller_products:
+                  type: boolean
+                preferred_send_seller_transactional_emails:
+                  type: boolean
+                preferred_send_consumer_transactional_emails:
+                  type: boolean
+                preferred_default_commission_tax_rate:
+                  type: number
+                preferred_document_number_format:
+                  type: string
+                  enum:
+                  - sequential
+                  - random
+                preferred_order_number_prefix:
+                  type: string
+                preferred_order_number_suffix:
+                  type: string
+                preferred_order_number_sequence_start:
+                  type: integer
+                mailer_logo:
+                  type: string
+                  description: Signed blob id of an uploaded logo.
   "/api/v3/admin/tags":
     get:
       summary: List tags
@@ -23435,6 +24302,235 @@ paths:
                   code: invalid_taggable_type
                   message: taggable_type must be one of Spree::Product, Spree::Order,
                     Spree::Customer
+  "/api/v3/admin/tax_categories":
+    get:
+      summary: List tax categories
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the store's tax categories. A category groups products that are
+        taxed alike (clothing, food, digital goods); tax rates then say what
+        each category is charged in each jurisdiction. Products without a
+        category fall back to the store's default one.
+
+
+        **Required scope:** `read_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name (contains)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tax categories found
+          content:
+            application/json:
+              example:
+                data:
+                - id: taxcat_UkLWZg9DAJ
+                  name: Clothing
+                  tax_code: PC040100
+                  description: Accusamus architecto mollitia possimus eos tempore
+                    laudantium.
+                  is_default: false
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/TaxCategory"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a tax category
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Adds a tax category to this store. Names are unique per store, ignoring case.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: tax category created
+          content:
+            application/json:
+              example:
+                id: taxcat_gbHJdmfrXB
+                name: Food
+                tax_code: PF050001
+                description:
+                is_default: true
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/TaxCategory"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - code: blank
+                      message: can't be blank
+                      specific: false
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  example: Food
+                tax_code:
+                  type: string
+                  nullable: true
+                  example: PF050001
+                  description: Product tax code an external tax provider classifies
+                    these products by.
+                description:
+                  type: string
+                  nullable: true
+                is_default:
+                  type: boolean
+                  description: Setting to true demotes the previous default.
+  "/api/v3/admin/tax_categories/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Tax category ID
+      schema:
+        type: string
+    patch:
+      summary: Update a tax category
+      tags:
+      - Settings
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `write_settings` (for API-key authentication)."
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: tax category updated
+          content:
+            application/json:
+              example:
+                id: taxcat_UkLWZg9DAJ
+                name: Apparel
+                tax_code: PC040000
+                description: Illo sapiente voluptatibus dignissimos autem.
+                is_default: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+              schema:
+                "$ref": "#/components/schemas/TaxCategory"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                tax_code:
+                  type: string
+                  nullable: true
+                description:
+                  type: string
+                  nullable: true
+                is_default:
+                  type: boolean
+                  description: Setting to true demotes the previous default.
   "/api/v3/admin/tax_rates":
     get:
       summary: List tax rates
@@ -25682,6 +26778,9 @@ paths:
                 pickup_instructions:
                   type: string
                   nullable: true
+                returns_enabled:
+                  type: boolean
+                  description: Whether customers can send returns to this location.
               required:
               - name
   "/api/v3/admin/stock_locations/{id}":
@@ -25949,6 +27048,9 @@ paths:
                 pickup_instructions:
                   type: string
                   nullable: true
+                returns_enabled:
+                  type: boolean
+                  description: Whether customers can send returns to this location.
     delete:
       summary: Delete a stock location
       tags:
@@ -27769,7 +28871,7 @@ paths:
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
                 disabled_at:
-                secret_key: f44b508d518f47b9d42ae8a67ba913f7f7c4ee25be2e4dda1fbc06370fe29854
+                secret_key: 507fa8041773b106ae4242f7458a20bdbf22bcda1eaaafaafe5199e035271094
                 last_delivery_at:
                 recent_delivery_count: 0
                 recent_failure_count: 0
@@ -28116,13 +29218,13 @@ paths:
                 updated_at: '2026-01-15T12:00:00.000Z'
                 delivered_at:
                 payload:
-                  id: 98bd6b06-c704-47e3-a821-f23f15825658
+                  id: 163e6ba9-6301-4d28-a9a3-a65cd4861bd1
                   name: webhook.test
                   created_at: '2026-01-15T12:00:00Z'
                   data:
                     message: This is a test webhook from Spree.
                   metadata:
-                    spree_version: 6.0.0.beta2
+                    spree_version: 6.0.0.beta4
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks/orders
   "/api/v3/admin/webhook_endpoints/{id}/enable":
@@ -30267,8 +31369,8 @@ paths:
                   - fixed
                   example: percentage
                 value:
-                  type: string
-                  example: '12.5'
+                  type: number
+                  example: 12.5
                   description: A percentage (10 = 10%) or a flat amount, per `kind`.
                 amounts:
                   type: object
@@ -30309,10 +31411,12 @@ paths:
                     by currency. Each holds only in its own currency; a sale in a
                     currency with no bounds is charged unbounded.
                 commission_tax_rate:
-                  type: string
-                  example: '0.21'
+                  type: number
+                  example: 0.21
                   nullable: true
                   description: A fraction, not a percentage. Null asks the tax engine.
+                metadata:
+                  type: object
                 rules:
                   type: array
                   description: The full targeting; what you send replaces what the
@@ -30602,35 +31706,103 @@ paths:
               properties:
                 name:
                   type: string
-                  example: Standard
+                  example: Audio sellers
+                code:
+                  type: string
+                  example: audio
+                  nullable: true
+                  description: Your own identifier for this rate; unique per store.
                 enabled:
                   type: boolean
                   example: true
                 position:
                   type: integer
                   example: 1
-                value:
+                  description: Place in the list. Rates resolve top-down, so 1 is
+                    tried first. New rates are created at the top; send this to move
+                    one.
+                kind:
                   type: string
-                  example: '15.0'
+                  enum:
+                  - percentage
+                  - fixed
+                  example: percentage
+                value:
+                  type: number
+                  example: 12.5
+                  description: A percentage (10 = 10%) or a flat amount, per `kind`.
+                amounts:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    USD: '2.50'
+                    EUR: '2.00'
+                  description: What a flat fee charges, keyed by currency. A currency
+                    with no amount is one this rate does not charge — those sales
+                    fall to the next rate. Ignored for a percentage.
+                tax_inclusive:
+                  type: boolean
+                  example: false
+                  description: Charge on the price including the customer's VAT. Left
+                    off, commission is charged on the seller's net revenue, which
+                    is the usual basis where the fee is taxed as its own supply.
+                include_shipping:
+                  type: boolean
+                  example: false
+                  description: Also charge commission on the seller's delivery revenue.
+                bounds:
+                  type: object
+                  additionalProperties:
+                    type: object
+                    properties:
+                      min_amount:
+                        type: string
+                        nullable: true
+                      max_amount:
+                        type: string
+                        nullable: true
+                  example:
+                    USD:
+                      min_amount: '1.0'
+                      max_amount: '50.0'
+                  description: The floor and cap a percentage charges within, keyed
+                    by currency. Each holds only in its own currency; a sale in a
+                    currency with no bounds is charged unbounded.
+                commission_tax_rate:
+                  type: number
+                  example: 0.21
+                  nullable: true
+                  description: A fraction, not a percentage. Null asks the tax engine.
+                metadata:
+                  type: object
                 rules:
                   type: array
+                  description: The full targeting; what you send replaces what the
+                    rate holds.
                   items:
                     type: object
                     properties:
                       id:
                         type: string
+                        description: Present for an existing rule; omit to create
+                          one.
                       type:
                         type: string
-                        example: category_rule
+                        example: seller_rule
+                        description: A kind from /commission_rates/rule_types.
                       preferences:
                         type: object
                         example:
-                          category_ids:
-                          - ctg_a1b2c3
+                          seller_ids:
+                          - sel_a1b2c3
+                        description: Configuration for the kind, per its preference_schema.
                       product_ids:
                         type: array
                         items:
                           type: string
+                        description: For kinds that name products, which are kept
+                          outside preferences.
     delete:
       summary: Delete a commission rate
       tags:
@@ -31925,6 +33097,8 @@ paths:
                   description: Registered profile kind; defaults to shipping.
                 default:
                   type: boolean
+                position:
+                  type: integer
                 stock_location_ids:
                   type: array
                   items:
@@ -32095,6 +33269,8 @@ paths:
                   type: string
                 default:
                   type: boolean
+                position:
+                  type: integer
                 stock_location_ids:
                   type: array
                   items:
@@ -32329,13 +33505,31 @@ paths:
                   type: string
                   nullable: true
                   example: Spree::FulfillmentProvider::Manual
+                  description: A provider from `GET /delivery_methods/fulfillment_providers`.
+                rate_provider:
+                  type: string
+                  nullable: true
+                  example: Spree::DeliveryRateProvider::Internal
+                  description: A provider from `GET /delivery_methods/rate_providers`.
+                    Blank uses the internal calculator.
+                pickup_point_provider:
+                  type: string
+                  nullable: true
                 delivery_profile_id:
                   type: string
                   nullable: true
                   example: fp_86Rf07xd4z
+                delivery_origin_group_id:
+                  type: string
+                  nullable: true
+                delivery_zone_id:
+                  type: string
+                  nullable: true
                 storefront_visible:
                   type: boolean
                   example: true
+                available_to_sellers:
+                  type: boolean
                 tracking_url:
                   type: string
                   nullable: true
@@ -32355,11 +33549,271 @@ paths:
                   type: object
                   example:
                     amount: 12.5
+                markup_flat:
+                  type: number
+                  description: Handling fee added to every provider quote.
+                markup_percent:
+                  type: number
+                  description: Percentage added to every provider quote.
+                stock_location_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Pickup locations for a pickup method. Replaces the
+                    full set.
+                rules:
+                  type: array
+                  description: Eligibility rules. What you send replaces what the
+                    method holds.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Present for an existing rule; omit to create
+                          one.
+                      type:
+                        type: string
+                        example: weight_rule
+                        description: channel_rule, company_rule, excluded_products_rule,
+                          item_total_rule, volume_rule, weight_rule, or a registered
+                          extension kind.
+                      active:
+                        type: boolean
+                      preferences:
+                        type: object
+                      product_ids:
+                        type: array
+                        items:
+                          type: string
+                        description: For kinds that name products, which are kept
+                          outside preferences.
+                services:
+                  type: array
+                  description: Carrier services offered by a provider-priced method.
+                    What you send replaces what the method holds.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      carrier:
+                        type: string
+                        example: UPS
+                      service:
+                        type: string
+                        example: Ground
+                      label:
+                        type: string
+                        nullable: true
+                      markup_flat:
+                        type: number
+                        nullable: true
+                      markup_percent:
+                        type: number
+                        nullable: true
+                      position:
+                        type: integer
+              required:
+              - name
+  "/api/v3/admin/delivery_methods/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Delivery method ID
+      schema:
+        type: string
+    patch:
+      summary: Update delivery method
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a delivery method. Sending `rules` or `services` replaces the full set.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery method updated
+          content:
+            application/json:
+              example:
+                id: dm_UkLWZg9DAJ
+                name: UPS Ground (Updated)
+                code: UPS_GROUND_2
+                estimated_transit_business_days_min:
+                estimated_transit_business_days_max: 5
+                digital: false
+                pickup: false
+                pickup_point: false
+                admin_name:
+                fulfillment_provider: Spree::FulfillmentProvider::Manual
+                pickup_point_provider:
+                rate_provider:
+                storefront_visible: true
+                tracking_url:
+                markup_flat: '0.0'
+                markup_percent: '0.0'
+                available_to_sellers: false
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                deleted_at:
+                seller_id:
+                seller_name:
+                services: []
+                rules: []
+                tax_category_id:
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_origin_group_id: og_UkLWZg9DAJ
+                delivery_zone_id:
+                stock_location_ids: []
+                calculator_type: flat_rate
+                calculator_preferences:
+                  amounts: {}
+                  amount: '10.0'
+                  currency: USD
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Express
+                admin_name:
+                  type: string
+                  nullable: true
+                code:
+                  type: string
+                  nullable: true
+                fulfillment_provider:
+                  type: string
+                  nullable: true
+                  example: Spree::FulfillmentProvider::Manual
+                  description: A provider from `GET /delivery_methods/fulfillment_providers`.
+                rate_provider:
+                  type: string
+                  nullable: true
+                  example: Spree::DeliveryRateProvider::Internal
+                  description: A provider from `GET /delivery_methods/rate_providers`.
+                    Blank uses the internal calculator.
+                pickup_point_provider:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  nullable: true
+                  example: fp_86Rf07xd4z
+                delivery_origin_group_id:
+                  type: string
+                  nullable: true
                 delivery_zone_id:
                   type: string
                   nullable: true
-              required:
-              - name
+                storefront_visible:
+                  type: boolean
+                  example: true
+                available_to_sellers:
+                  type: boolean
+                tracking_url:
+                  type: string
+                  nullable: true
+                estimated_transit_business_days_min:
+                  type: integer
+                  nullable: true
+                estimated_transit_business_days_max:
+                  type: integer
+                  nullable: true
+                tax_category_id:
+                  type: string
+                  nullable: true
+                calculator_type:
+                  type: string
+                  example: flat_rate
+                calculator_preferences:
+                  type: object
+                  example:
+                    amount: 12.5
+                markup_flat:
+                  type: number
+                  description: Handling fee added to every provider quote.
+                markup_percent:
+                  type: number
+                  description: Percentage added to every provider quote.
+                stock_location_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: Pickup locations for a pickup method. Replaces the
+                    full set.
+                rules:
+                  type: array
+                  description: Eligibility rules. What you send replaces what the
+                    method holds.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Present for an existing rule; omit to create
+                          one.
+                      type:
+                        type: string
+                        example: weight_rule
+                        description: channel_rule, company_rule, excluded_products_rule,
+                          item_total_rule, volume_rule, weight_rule, or a registered
+                          extension kind.
+                      active:
+                        type: boolean
+                      preferences:
+                        type: object
+                      product_ids:
+                        type: array
+                        items:
+                          type: string
+                        description: For kinds that name products, which are kept
+                          outside preferences.
+                services:
+                  type: array
+                  description: Carrier services offered by a provider-priced method.
+                    What you send replaces what the method holds.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      carrier:
+                        type: string
+                        example: UPS
+                      service:
+                        type: string
+                        example: Ground
+                      label:
+                        type: string
+                        nullable: true
+                      markup_flat:
+                        type: number
+                        nullable: true
+                      markup_percent:
+                        type: number
+                        nullable: true
+                      position:
+                        type: integer
   "/api/v3/admin/delivery_methods/calculators":
     get:
       summary: List delivery calculators
@@ -32576,8 +34030,16 @@ paths:
                 description:
                   type: string
                   nullable: true
+                delivery_profile_id:
+                  type: string
+                  nullable: true
+                  description: Defaults to the store default profile.
+                delivery_origin_group_id:
+                  type: string
+                  nullable: true
                 members:
                   type: array
+                  description: Replaces the full member set.
                   items:
                     type: object
                     properties:
@@ -32607,6 +34069,117 @@ paths:
                     - member_type
               required:
               - name
+  "/api/v3/admin/delivery_zones/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Delivery zone ID
+      schema:
+        type: string
+    patch:
+      summary: Update delivery zone
+      tags:
+      - Delivery
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Updates a delivery zone. Sending `members` replaces the full member set.
+
+        **Required scope:** `write_settings` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to embed, e.g. `members`
+        schema:
+          type: string
+      responses:
+        '200':
+          description: delivery zone updated
+          content:
+            application/json:
+              example:
+                id: dz_UkLWZg9DAJ
+                name: US East Coast
+                description: Omnis ipsam provident laboriosam est.
+                members:
+                - id: dzm_UkLWZg9DAJ
+                  member_type: country
+                  country_code: US
+                  state_code:
+                  postal_code_prefix:
+                  postal_code_from:
+                  postal_code_to:
+                  country_name: United States
+                  state_name:
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                created_at: '2026-01-15T12:00:00.000Z'
+                updated_at: '2026-01-15T12:00:00.000Z'
+                delivery_profile_id: fp_UkLWZg9DAJ
+                delivery_origin_group_id: og_UkLWZg9DAJ
+                delivery_method_ids: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: US North-East
+                description:
+                  type: string
+                  nullable: true
+                delivery_profile_id:
+                  type: string
+                  nullable: true
+                  description: Defaults to the store default profile.
+                delivery_origin_group_id:
+                  type: string
+                  nullable: true
+                members:
+                  type: array
+                  description: Replaces the full member set.
+                  items:
+                    type: object
+                    properties:
+                      member_type:
+                        type: string
+                        enum:
+                        - country
+                        - state
+                        - postal_code
+                      country_code:
+                        type: string
+                        nullable: true
+                        example: US
+                      state_code:
+                        type: string
+                        nullable: true
+                      postal_code_prefix:
+                        type: string
+                        nullable: true
+                      postal_code_from:
+                        type: string
+                        nullable: true
+                      postal_code_to:
+                        type: string
+                        nullable: true
+                    required:
+                    - member_type
   "/api/v3/admin/integrations":
     get:
       summary: List integrations
@@ -32930,13 +34503,13 @@ paths:
                   video_embed_url:
                   video_url:
                   poster_url:
-                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg
-                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/thinking-cat.jpg
-                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/thinking-cat.jpg
-                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/thinking-cat.jpg
-                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/thinking-cat.jpg
-                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/thinking-cat.jpg
-                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/thinking-cat.jpg
+                  original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/thinking-cat.jpg
+                  mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1665396ddfb2fc55549300e978a9aab00c6e7c46/thinking-cat.jpg
+                  small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b558f22c1c6287ae0af2a6e9d9c0633f549ea0b2/thinking-cat.jpg
+                  medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0c74ae4ab7b74c59f98cda3cc85dda4003629a03/thinking-cat.jpg
+                  large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--03bc3eb060785e85a16bb6655d9161cb136b4e6d/thinking-cat.jpg
+                  xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--507a97638b297e1e5de039e31051bea04c3c07bc/thinking-cat.jpg
+                  og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--debc9529cf40791fa0d9938667ac3b28aca5b285/thinking-cat.jpg
                   external_references: {}
                   created_at: '2026-01-15T12:00:00.000Z'
                   updated_at: '2026-01-15T12:00:00.000Z'
@@ -32944,10 +34517,10 @@ paths:
                   filename: thinking-cat.jpg
                   content_type: image/jpeg
                   byte_size: 18090
-                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/thinking-cat.jpg
-                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
+                  embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--15e2486f61a3b5666b8ae382f6d0404dc6c3162b/thinking-cat.jpg
+                  signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd
                   viewable_id: prod_UkLWZg9DAJ
-                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg?disposition=attachment
+                  download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/thinking-cat.jpg?disposition=attachment
                   metadata: {}
                   viewable_type: product
                 meta:
@@ -33018,13 +34591,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/library-upload.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/library-upload.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/library-upload.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/library-upload.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/library-upload.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/library-upload.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/library-upload.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/library-upload.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1665396ddfb2fc55549300e978a9aab00c6e7c46/library-upload.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b558f22c1c6287ae0af2a6e9d9c0633f549ea0b2/library-upload.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0c74ae4ab7b74c59f98cda3cc85dda4003629a03/library-upload.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--03bc3eb060785e85a16bb6655d9161cb136b4e6d/library-upload.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--507a97638b297e1e5de039e31051bea04c3c07bc/library-upload.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--debc9529cf40791fa0d9938667ac3b28aca5b285/library-upload.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -33032,10 +34605,10 @@ paths:
                 filename: library-upload.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/library-upload.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--15e2486f61a3b5666b8ae382f6d0404dc6c3162b/library-upload.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45
                 viewable_id:
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--77436642b5a367321ca4aa243635450a505a66c9/library-upload.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--97df3a7fe94f177d8a98a1d48d0629a768b65e45/library-upload.jpg?disposition=attachment
                 metadata: {}
                 viewable_type:
               schema:
@@ -33192,13 +34765,13 @@ paths:
                 video_embed_url:
                 video_url:
                 poster_url:
-                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg
-                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--842df2157f0239c97e8da1cb68e59bad0bb1c65c/thinking-cat.jpg
-                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--efc4098d67c95b766076ffd76169e7d49199c517/thinking-cat.jpg
-                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--e5a1c73260840c5ab2bb78ebed47f7f5db621e85/thinking-cat.jpg
-                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--60df672360d3d2c45cd72572b2e6faf9882995e1/thinking-cat.jpg
-                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--74872e2b62fcbb93875b99ea99356c004855f9d3/thinking-cat.jpg
-                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--e97abb6268b26c7a282c61cd0aedea525f75a555/thinking-cat.jpg
+                original_url: http://localhost:3000/rails/active_storage/blobs/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/thinking-cat.jpg
+                mini_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjgsMTI4XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--1665396ddfb2fc55549300e978a9aab00c6e7c46/thinking-cat.jpg
+                small_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyNTYsMjU2XSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--b558f22c1c6287ae0af2a6e9d9c0633f549ea0b2/thinking-cat.jpg
+                medium_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls0MDAsNDAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--0c74ae4ab7b74c59f98cda3cc85dda4003629a03/thinking-cat.jpg
+                large_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOls3MjAsNzIwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--03bc3eb060785e85a16bb6655d9161cb136b4e6d/thinking-cat.jpg
+                xlarge_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsyMDAwLDIwMDBdLCJzYXZlciI6eyJzdHJpcCI6dHJ1ZSwicXVhbGl0eSI6NzUsImxvc3NsZXNzIjpmYWxzZSwiYWxwaGFfcSI6ODUsInJlZHVjdGlvbl9lZmZvcnQiOjYsInNtYXJ0X3N1YnNhbXBsZSI6dHJ1ZX19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--507a97638b297e1e5de039e31051bea04c3c07bc/thinking-cat.jpg
+                og_image_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2ZpbGwiOlsxMjAwLDYzMF0sInNhdmVyIjp7InN0cmlwIjp0cnVlLCJxdWFsaXR5Ijo3NSwibG9zc2xlc3MiOmZhbHNlLCJhbHBoYV9xIjo4NSwicmVkdWN0aW9uX2VmZm9ydCI6Niwic21hcnRfc3Vic2FtcGxlIjp0cnVlfX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--debc9529cf40791fa0d9938667ac3b28aca5b285/thinking-cat.jpg
                 external_references: {}
                 created_at: '2026-01-15T12:00:00.000Z'
                 updated_at: '2026-01-15T12:00:00.000Z'
@@ -33206,10 +34779,10 @@ paths:
                 filename: thinking-cat.jpg
                 content_type: image/jpeg
                 byte_size: 18090
-                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--8bb0d93bcda0e7a158700e75fe6ce3f53ca8d223/thinking-cat.jpg
-                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc
+                embed_url: http://localhost:3000/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplX3RvX2xpbWl0IjpbMTIwMCwxMjAwXSwic2F2ZXIiOnsic3RyaXAiOnRydWUsInF1YWxpdHkiOjc1LCJsb3NzbGVzcyI6ZmFsc2UsImFscGhhX3EiOjg1LCJyZWR1Y3Rpb25fZWZmb3J0Ijo2LCJzbWFydF9zdWJzYW1wbGUiOnRydWV9fSwicHVyIjoidmFyaWF0aW9uIn19--15e2486f61a3b5666b8ae382f6d0404dc6c3162b/thinking-cat.jpg
+                signed_id: eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd
                 viewable_id: prod_gbHJdmfrXB
-                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--118079e2383257795a7c941f07809ce1d921cedc/thinking-cat.jpg?disposition=attachment
+                download_url: http://localhost:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--def5e65d2cd319f98abf75aa061677959c5291bd/thinking-cat.jpg?disposition=attachment
                 metadata: {}
                 viewable_type: product
               schema:
@@ -34355,6 +35928,8 @@ paths:
                 default:
                   type: boolean
                   example: false
+                metadata:
+                  type: object
               required:
               - name
               - kind
@@ -34556,6 +36131,8 @@ paths:
                 default:
                   type: boolean
                   example: false
+                metadata:
+                  type: object
     delete:
       summary: Delete a package type
       tags:
@@ -36363,6 +37940,14 @@ paths:
                     accepted_content_types:
                     - application/pdf
                   description: Configuration for this kind, per its `preference_schema`.
+                custom_field_definition_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: 'For the `required_custom_fields` kind: the fields
+                    a seller must fill in.'
+                metadata:
+                  type: object
   "/api/v3/admin/seller_requirements/types":
     get:
       summary: List seller requirement kinds
@@ -36737,6 +38322,14 @@ paths:
                   type: object
                   example:
                     minimum_count: 3
+                custom_field_definition_ids:
+                  type: array
+                  items:
+                    type: string
+                  description: 'For the `required_custom_fields` kind: the fields
+                    a seller must fill in.'
+                metadata:
+                  type: object
     delete:
       summary: Delete a seller requirement
       tags:
@@ -37074,9 +38667,89 @@ paths:
                   - manual
                   nullable: true
                 minimum_payout_amount:
-                  type: string
-                  example: '25.0'
+                  type: number
+                  example: 25.0
                   nullable: true
+                holiday_mode_until:
+                  type: string
+                  format: date-time
+                  nullable: true
+                legal_name:
+                  type: string
+                  example: Northwind Books Ltd
+                  nullable: true
+                registration_number:
+                  type: string
+                  example: '01234567'
+                  nullable: true
+                logo:
+                  type: string
+                  nullable: true
+                  description: ActiveStorage signed id of a direct-uploaded file.
+                square_logo:
+                  type: string
+                  nullable: true
+                cover_photo:
+                  type: string
+                  nullable: true
+                billing_address:
+                  type: object
+                  description: The seller's own address, written inline. There is
+                    no `billing_address_id` — an address belongs to whoever it was
+                    created for, so it is never referenced by id here.
+                  properties:
+                    first_name:
+                      type: string
+                      example: Ada
+                    last_name:
+                      type: string
+                      example: Lovelace
+                    company:
+                      type: string
+                      example: Sparks Audio Ltd
+                    address1:
+                      type: string
+                      example: 1 Seller Way
+                    address2:
+                      type: string
+                      example: Unit 4
+                    city:
+                      type: string
+                      example: London
+                    postal_code:
+                      type: string
+                      example: EC1A 1BB
+                    phone:
+                      type: string
+                      example: "+44 20 7946 0000"
+                    country_code:
+                      type: string
+                      example: GB
+                    state_code:
+                      type: string
+                      example: NY
+                    state_name:
+                      type: string
+                      example: New York
+                    label:
+                      type: string
+                      example: Head office
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
+                metadata:
+                  type: object
   "/api/v3/admin/sellers/{id}":
     parameters:
     - name: id
@@ -37308,10 +38981,33 @@ paths:
                 name:
                   type: string
                   example: Sparks Audio Ltd
+                slug:
+                  type: string
+                  example: sparks-audio
+                contact_email:
+                  type: string
+                  example: hi@sparks.example
+                  nullable: true
                 billing_email:
                   type: string
                   example: billing@sparks.example
                   nullable: true
+                about:
+                  type: string
+                  nullable: true
+                legal_name:
+                  type: string
+                  example: Sparks Audio Ltd
+                  nullable: true
+                registration_number:
+                  type: string
+                  example: '01234567'
+                  nullable: true
+                tax_remittance:
+                  type: string
+                  enum:
+                  - seller
+                  - platform
                 payouts_schedule_interval:
                   type: string
                   enum:
@@ -37322,8 +39018,8 @@ paths:
                   - manual
                   nullable: true
                 minimum_payout_amount:
-                  type: string
-                  example: '25.0'
+                  type: number
+                  example: 25.0
                   nullable: true
                 holiday_mode_until:
                   type: string
@@ -37383,48 +39079,22 @@ paths:
                     label:
                       type: string
                       example: Head office
-                returns_address:
+                custom_fields:
+                  type: array
+                  description: Custom field values, each naming its definition.
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: An existing value to update.
+                      custom_field_definition_id:
+                        type: string
+                      value:
+                        description: A scalar, an array or an object, depending on
+                          the definition.
+                metadata:
                   type: object
-                  description: The seller's own address, written inline. There is
-                    no `billing_address_id` — an address belongs to whoever it was
-                    created for, so it is never referenced by id here.
-                  properties:
-                    first_name:
-                      type: string
-                      example: Ada
-                    last_name:
-                      type: string
-                      example: Lovelace
-                    company:
-                      type: string
-                      example: Sparks Audio Ltd
-                    address1:
-                      type: string
-                      example: 1 Seller Way
-                    address2:
-                      type: string
-                      example: Unit 4
-                    city:
-                      type: string
-                      example: London
-                    postal_code:
-                      type: string
-                      example: EC1A 1BB
-                    phone:
-                      type: string
-                      example: "+44 20 7946 0000"
-                    country_code:
-                      type: string
-                      example: GB
-                    state_code:
-                      type: string
-                      example: NY
-                    state_name:
-                      type: string
-                      example: New York
-                    label:
-                      type: string
-                      example: Head office
     delete:
       summary: Delete a seller
       tags:
@@ -40123,14 +41793,50 @@ paths:
               properties:
                 name:
                   type: string
+                  example: Northwind Trading
                 contact_name:
                   type: string
                   nullable: true
+                  example: Dana Okafor
                 email:
                   type: string
                   nullable: true
+                  example: sales@northwind.test
                 phone:
                   type: string
+                  nullable: true
+                  example: 555-0100
+                notes:
+                  type: string
+                  nullable: true
+                address1:
+                  type: string
+                  nullable: true
+                  example: 1 Warehouse Way
+                address2:
+                  type: string
+                  nullable: true
+                city:
+                  type: string
+                  nullable: true
+                  example: Brooklyn
+                state_code:
+                  type: string
+                  nullable: true
+                  example: NY
+                state_name:
+                  type: string
+                  nullable: true
+                country_code:
+                  type: string
+                  nullable: true
+                  example: US
+                postal_code:
+                  type: string
+                  nullable: true
+                  example: '11201'
+                metadata:
+                  type: object
                   nullable: true
         required: true
     delete:
@@ -44747,6 +46453,10 @@ components:
           type: number
         includes_first_party:
           type: boolean
+        confirmation_delivered:
+          type: boolean
+        store_owner_notification_delivered:
+          type: boolean
         created_at:
           type: string
         updated_at:
@@ -44774,6 +46484,8 @@ components:
       - cart_id
       - seller_count
       - includes_first_party
+      - confirmation_delivered
+      - store_owner_notification_delivered
       - created_at
       - updated_at
       - payments

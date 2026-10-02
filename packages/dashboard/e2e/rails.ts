@@ -14,11 +14,8 @@ export function rmIfExists(path: string) {
   }
 }
 
-/**
- * Runs Ruby in the dummy app and returns the JSON object it prints last —
- * whatever the script needs to hand back to the specs.
- */
-export function runRailsBootstrap(ruby: string, env: NodeJS.ProcessEnv): string {
+/** Runs Ruby in the dummy app and returns what it printed. */
+export function runRails(ruby: string, env: NodeJS.ProcessEnv, label = 'Rails runner'): string {
   // The script goes through argv to sidestep shell quoting (the Ruby contains
   // both single and double quotes).
   const result = spawnSync('bundle', ['exec', 'spec/dummy/bin/rails', 'runner', ruby], {
@@ -29,11 +26,20 @@ export function runRailsBootstrap(ruby: string, env: NodeJS.ProcessEnv): string 
     env,
   })
   if (result.status !== 0) {
-    throw new Error(`Bootstrap runner failed:\n${result.stderr}\n${result.stdout}`)
+    throw new Error(`${label} failed:\n${result.stderr}\n${result.stdout}`)
   }
-  const jsonMatch = result.stdout.match(/\{.*\}\s*$/)
+  return result.stdout
+}
+
+/**
+ * Runs Ruby in the dummy app and returns the JSON object it prints last —
+ * whatever the script needs to hand back to the specs.
+ */
+export function runRailsBootstrap(ruby: string, env: NodeJS.ProcessEnv): string {
+  const output = runRails(ruby, env, 'Bootstrap runner')
+  const jsonMatch = output.match(/\{.*\}\s*$/)
   if (!jsonMatch) {
-    throw new Error(`Failed to parse bootstrap output:\n${result.stdout}`)
+    throw new Error(`Failed to parse bootstrap output:\n${output}`)
   }
   return jsonMatch[0]
 }

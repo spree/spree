@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { AuthShell } from '../components/spree/auth-shell'
 import { StoreSetupFields } from '../components/spree/store-setup-fields'
+import { useProvisionStore } from '../hooks/use-provision-store'
 import { type SetupFormValues, setupFormSchema } from '../schemas/auth'
 
 const setupSearchSchema = z.object({
@@ -30,12 +31,15 @@ function SetupPage() {
   // store index — so the store setup just claimed is held here and the guard
   // routes to its checklist instead.
   const [setupStoreId, setSetupStoreId] = useState<string | null>(null)
+  // Signing in happens before the store defaults are deployed, so the form
+  // stays mounted (and the guard below waits) until that finishes too.
+  const [settingUp, setSettingUp] = useState(false)
 
   if (setupStoreId) {
     return <Navigate to="/$storeId/getting-started" params={{ storeId: setupStoreId }} replace />
   }
 
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated && !settingUp) return <Navigate to="/" replace />
 
   if (!token) {
     return (
@@ -50,16 +54,26 @@ function SetupPage() {
 
   return (
     <AuthShell>
-      <SetupLoader token={token} onCompleted={setSetupStoreId} />
+      <SetupLoader
+        token={token}
+        onStarted={() => setSettingUp(true)}
+        onCompleted={(storeId) => {
+          // With no store to land on, the signed-in redirect above resolves one.
+          if (storeId) setSetupStoreId(storeId)
+          else setSettingUp(false)
+        }}
+      />
     </AuthShell>
   )
 }
 
 function SetupLoader({
   token,
+  onStarted,
   onCompleted,
 }: {
   token: string
+  onStarted: () => void
   onCompleted: (storeId: string | null) => void
 }) {
   const { t } = useTranslation()
@@ -107,18 +121,30 @@ function SetupLoader({
     )
   }
 
-  return <SetupForm token={token} onCompleted={onCompleted} />
+  return <SetupForm token={token} onStarted={onStarted} onCompleted={onCompleted} />
+}
+
+/** The store first-run setup just claimed. */
+interface ClaimedStore {
+  storeId: string | null
+  storeName: string
 }
 
 function SetupForm({
   token,
+  onStarted,
   onCompleted,
 }: {
   token: string
+  onStarted: () => void
   onCompleted: (storeId: string | null) => void
 }) {
   const { t } = useTranslation()
   const { completeSetup, isLoading } = useAuth()
+  const provision = useProvisionStore()
+  // Set once the account exists: the setup token is spent, so a failed
+  // provisioning step is retried on its own rather than by resubmitting.
+  const [claimed, setClaimed] = useState<{ storeId: string | null; storeName: string } | null>(null)
 
   const form = useForm<SetupFormValues>({
     resolver: zodResolver(setupFormSchema),
@@ -147,24 +173,39 @@ function SetupForm({
   })
   const countries = countriesQuery.data?.countries ?? []
 
+  const continueToStore = (store: ClaimedStore) => {
+    toastManager.add({
+      type: 'success',
+      title: t('admin.setup.welcome_title'),
+      description: t('admin.setup.welcome_description', { store: store.storeName }),
+    })
+
+    // A merchant who has just claimed the installation has an empty store,
+    // so the checklist is the useful landing place rather than a dashboard
+    // of zeroes. A payload carrying no store falls through to the index
+    // redirect, which resolves one for itself.
+    onCompleted(store.storeId)
+  }
+
+  // The store's defaults (warehouse, delivery zones, tax categories) are
+  // shaped by the country just chosen, so they are deployed only now.
+  const provisionAndContinue = async (store: ClaimedStore) => {
+    try {
+      await provision.mutateAsync(store.storeId)
+    } catch {
+      return
+    }
+    continueToStore(store)
+  }
+
   const onSubmit = async (data: SetupFormValues) => {
+    onStarted()
     try {
       const session = await completeSetup({ ...data, setup_token: token })
       const store = session.user?.stores?.[0]
-
-      toastManager.add({
-        type: 'success',
-        title: t('admin.setup.welcome_title'),
-        description: t('admin.setup.welcome_description', {
-          store: store?.name ?? data.store_name,
-        }),
-      })
-
-      // A merchant who has just claimed the installation has an empty store,
-      // so the checklist is the useful landing place rather than a dashboard
-      // of zeroes. A payload carrying no store falls through to the index
-      // redirect, which resolves one for itself.
-      onCompleted(store?.id ?? null)
+      const claim = { storeId: store?.id ?? null, storeName: store?.name ?? data.store_name }
+      setClaimed(claim)
+      await provisionAndContinue(claim)
     } catch (err) {
       const e = err as SpreeError
       if (e?.status === 404) {
@@ -295,9 +336,36 @@ function SetupForm({
             </div>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? t('admin.setup.completing') : t('admin.setup.complete')}
-        </Button>
+        {claimed && provision.isError ? (
+          <div className="grid gap-3">
+            <p className="text-sm text-destructive">{t('admin.setup.provisioning_failed')}</p>
+            <Button type="button" className="w-full" onClick={() => provisionAndContinue(claimed)}>
+              {t('admin.setup.provisioning_retry')}
+            </Button>
+            {/* The account exists either way; whatever was created stays, and
+                the rest can be added from Settings. */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => continueToStore(claimed)}
+            >
+              {t('admin.setup.provisioning_continue')}
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || provision.isPending || claimed !== null}
+          >
+            {provision.isPending
+              ? t('admin.setup.provisioning')
+              : isLoading
+                ? t('admin.setup.completing')
+                : t('admin.setup.complete')}
+          </Button>
+        )}
       </form>
     </>
   )

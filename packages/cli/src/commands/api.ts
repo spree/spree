@@ -1,8 +1,8 @@
-import { createAdminClient } from '@spree/admin-sdk'
 import { type Command, Option } from 'commander'
 import { printTable } from 'console-table-printer'
 import pc from 'picocolors'
 import { NO_BODY, readBody } from '../api/body.js'
+import { type CredentialFlags, clientFor, withCredentialFlags } from '../api/client.js'
 import { handleApiError, type OutputFormat, printResult } from '../api/output.js'
 import { buildParams, normalizePath } from '../api/params.js'
 import {
@@ -12,13 +12,9 @@ import {
   pingCredentials,
 } from '../api/ping.js'
 import { getSchema, listEndpoints, loadBundledSpec } from '../api/spec.js'
-import { type ResolvedCredentials, resolveCredentials } from '../config.js'
+import { resolveCredentials } from '../config.js'
 
-interface SharedFlags {
-  profile?: string
-  baseUrl?: string
-  apiKey?: string
-  storeId?: string
+interface SharedFlags extends CredentialFlags {
   format?: OutputFormat
 }
 
@@ -36,18 +32,6 @@ function collect(value: string, previous: string[]): string[] {
   return [...previous, value]
 }
 
-/** Credential flags shared by every subcommand that hits the API. */
-function withCredentialFlags(command: Command): Command {
-  return command
-    .option('--profile <name>', 'use a saved profile (see `spree auth`)')
-    .option('--base-url <url>', 'store URL (overrides profile/env/project)')
-    .option(
-      '--api-key <key>',
-      'secret API key (prefer SPREE_API_KEY — flags leak into shell history)',
-    )
-    .option('--store-id <id>', 'X-Spree-Store-Id for hosts serving multiple stores')
-}
-
 /** The `--format json|table` option, shared by the verbs and `endpoints`. */
 function formatOption(): Option {
   return new Option('--format <format>', 'output format').choices(['json', 'table']).default('json')
@@ -56,22 +40,6 @@ function formatOption(): Option {
 /** Credential flags plus `--format` for verbs that render a response. */
 function withSharedFlags(command: Command): Command {
   return withCredentialFlags(command).addOption(formatOption())
-}
-
-async function clientFor(
-  flags: SharedFlags,
-): Promise<{ client: ReturnType<typeof createAdminClient>; credentials: ResolvedCredentials }> {
-  const credentials = await resolveCredentials({
-    baseUrl: flags.baseUrl,
-    apiKey: flags.apiKey,
-    profile: flags.profile,
-  })
-  const client = createAdminClient({
-    baseUrl: credentials.baseUrl,
-    secretKey: credentials.apiKey,
-    ...(flags.storeId ? { storeId: flags.storeId } : {}),
-  })
-  return { client, credentials }
 }
 
 export function registerApiCommand(program: Command): void {

@@ -49,6 +49,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
           name: { type: :string, example: 'Oversized' },
           kind: { type: :string, example: 'shipping', description: 'Registered profile kind; defaults to shipping.' },
           default: { type: :boolean },
+          position: { type: :integer },
           stock_location_ids: { type: :array, items: { type: :string }, description: 'Empty means every store location.' }
         },
         required: %w[name]
@@ -128,6 +129,7 @@ RSpec.describe 'Admin Delivery Profiles API', type: :request, swagger_doc: 'api-
         properties: {
           name: { type: :string },
           default: { type: :boolean },
+          position: { type: :integer },
           stock_location_ids: { type: :array, items: { type: :string } }
         }
       }

@@ -66,6 +66,7 @@
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@spree/admin-sdk": "workspace:^",
+    "@spree/config": "workspace:^",
     "@spree/dashboard-core": "workspace:^",
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-hotkeys": "^0.10.0",

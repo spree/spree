@@ -2,10 +2,24 @@ import fs from 'node:fs'
 import { platform } from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
+import { createAdminClient } from '@spree/admin-sdk'
+import {
+  ConfigValidationError,
+  deployConfig,
+  loadConfig,
+  provisionStore,
+  renderReport,
+  reportHasFailures,
+} from '@spree/config/node'
 import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
-import { mintProjectCredentials, writeAdminEmail, writeProjectSetupMarker } from '../config.js'
+import {
+  mintApiKey,
+  mintProjectCredentials,
+  writeAdminEmail,
+  writeProjectSetupMarker,
+} from '../config.js'
 import { DASHBOARD_PORT, STOREFRONT_PORT } from '../constants.js'
 import { detectProject, isEjectedProject, readSampleDataFromEnv } from '../context.js'
 import {
@@ -22,6 +36,7 @@ import {
   streamLogs,
 } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
+import { DEFAULT_CONFIG_FILE } from './config.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -29,7 +44,9 @@ const HEALTH_CHECK_TIMEOUT_MS = 120_000
 export function registerInitCommand(program: Command): void {
   program
     .command('init')
-    .description('First-run setup: start services, seed the database, configure API keys')
+    .description(
+      'First-run setup: start services, seed, configure API keys, deploy spree.config.yml',
+    )
     .option('--no-sample-data', 'skip loading sample data on scripted installs (see --admin-email)')
     .option('--no-open', 'skip opening browser')
     .option(
@@ -132,17 +149,28 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
+  // A scripted install has no setup screen to deploy the store defaults.
+  const provisioned = await deployStoreConfiguration(ctx.projectDir, ctx.port, {
+    provision: Boolean(adminEmail && adminPassword),
+  })
+
   await installAppDeps(ctx.projectDir, 'storefront')
   await installAppDeps(ctx.projectDir, 'dashboard')
   ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
   // Sample-data imports need an admin as their owner; without credentials
   // the seed minted none, and the setup screen offers the load instead.
-  const sampleDataLoaded = sampleData && Boolean(adminEmail && adminPassword)
+  // Sample data builds on the store defaults, so it waits for a store that
+  // got them; `spree sample-data` loads it once `spree config provision` has.
+  const sampleDataLoaded = sampleData && provisioned
   if (sampleDataLoaded) {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
     s.stop('Sample data loaded.')
+  } else if (sampleData && adminEmail && adminPassword) {
+    p.log.warn(
+      'Sample data skipped: the store defaults are missing. Run `spree config provision`, then `spree sample-data`.',
+    )
   } else if (sampleData) {
     p.log.info(
       'Sample data: tick "Load sample data" on the setup screen, or run `spree sample-data` any time later.',
@@ -359,6 +387,102 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
 }
 
 /**
+ * On a scripted install, which has no setup screen, deploys the store
+ * defaults and then the project's `spree.config.yml` — the store's declared
+ * shape, committed with the project — against the freshly seeded server. The
+ * project's own key is read-only by design, so a write key is minted for
+ * this run and revoked as soon as the deploy is over. Answers whether the
+ * store defaults were all written, which sample data needs.
+ */
+async function deployStoreConfiguration(
+  projectDir: string,
+  port: number,
+  { provision }: { provision: boolean },
+): Promise<boolean> {
+  const file = path.join(projectDir, DEFAULT_CONFIG_FILE)
+  // Without a scripted admin the store is claimed on the setup screen, which
+  // deploys the defaults the project file may refer to; deploying it before
+  // that would fail on every such reference.
+  if (!provision) {
+    if (fs.existsSync(file)) {
+      p.log.info(
+        `${DEFAULT_CONFIG_FILE} is deployed after first-run setup: run \`spree config deploy\` once the store is set up.`,
+      )
+    }
+    return false
+  }
+  let config: ReturnType<typeof loadConfig>['config'] | null = null
+  if (fs.existsSync(file)) {
+    try {
+      ;({ config } = loadConfig(file))
+    } catch (error) {
+      if (!(error instanceof ConfigValidationError)) throw error
+      p.log.warn(`Skipping ${DEFAULT_CONFIG_FILE}: ${error.message}`)
+    }
+  }
+
+  const s = p.spinner()
+  // Setup still stands without the deploy; it can be run by hand.
+  const skipDeploy = (error: unknown) => {
+    s.stop(pc.yellow('Could not configure the store.'))
+    p.log.warn(
+      `${error instanceof Error ? error.message : String(error)}\nRun \`spree config provision\` and \`spree config deploy\` once the app is up.`,
+    )
+  }
+  s.start('Setting up store defaults...')
+  // A revoke that did not happen (Ctrl-C mid-deploy) must not block the next
+  // run: the fixed name supersedes the leftover key.
+  let token: string
+  try {
+    token = await mintApiKey(projectDir, {
+      name: 'spree init (config deploy)',
+      keyType: 'secret',
+      scopes: ['write_all'],
+      replace: true,
+    })
+  } catch (error) {
+    skipDeploy(error)
+    return false
+  }
+
+  const client = createAdminClient({ baseUrl: `http://localhost:${port}`, secretKey: token })
+  let provisioned = false
+  try {
+    const defaults = await provisionStore(client)
+    provisioned = !reportHasFailures(defaults)
+    const results = [
+      ...defaults.results,
+      ...(config ? (await deployConfig(config, client)).results : []),
+    ]
+    const report = { results }
+    if (reportHasFailures(report)) {
+      s.stop(pc.yellow('Store configured with failures.'))
+      p.log.warn(renderReport(report))
+    } else {
+      s.stop(
+        results.length
+          ? `Store configured (${results.length} record${results.length === 1 ? '' : 's'} written).`
+          : 'Store configured (nothing to change).',
+      )
+    }
+  } catch (error) {
+    skipDeploy(error)
+  } finally {
+    // The key exists for this deploy only; revoking it through the API needs
+    // no rake round-trip and works whether or not the deploy succeeded.
+    try {
+      const current = await client.apiKeys.current()
+      await client.apiKeys.revoke(current.id)
+    } catch {
+      p.log.warn(
+        'Could not revoke the deploy key; revoke "spree init (config deploy)" with `spree api-key revoke`.',
+      )
+    }
+  }
+  return provisioned
+}
+
+/**
  * Admin credentials come from flags only, for scripted installs that want a
  * known account. Without them no admin is seeded and the first one is created
  * in the dashboard's own setup screen, which the seed's one-time link opens —
@@ -370,8 +494,7 @@ function resolveAdminCredentials(flags: { adminEmail?: string; adminPassword?: s
 } {
   const { adminEmail, adminPassword } = flags
 
-  // Validate before Docker starts — the alternative is failing after the
-  // image pull and seed, minutes later.
+  // Checked here rather than after Docker start and seeding, minutes later.
   if (adminEmail && !adminEmail.includes('@')) {
     p.cancel(`Invalid --admin-email: ${adminEmail}`)
     process.exit(1)

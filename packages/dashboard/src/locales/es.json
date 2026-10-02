@@ -5702,7 +5702,11 @@
       "rate_limited_title": "Demasiados intentos",
       "rate_limited_message": "La configuración se ha consultado demasiadas veces en poco tiempo. Espera un minuto y vuelve a intentarlo.",
       "check_failed_title": "No se pudo comprobar la configuración",
-      "check_failed_message": "No se pudo contactar con el servidor para comprobar si esta instalación necesita configurarse. Asegúrate de que está en marcha y vuelve a intentarlo."
+      "check_failed_message": "No se pudo contactar con el servidor para comprobar si esta instalación necesita configurarse. Asegúrate de que está en marcha y vuelve a intentarlo.",
+      "provisioning": "Preparando tu tienda…",
+      "provisioning_failed": "Tu cuenta está lista, pero no se pudieron configurar los valores predeterminados de la tienda (almacén, zonas de envío, categorías de impuestos).",
+      "provisioning_retry": "Intentar de nuevo",
+      "provisioning_continue": "Continuar al panel"
     },
     "tax_rates": {
       "add_cta": "Agregar tasa de impuesto",
