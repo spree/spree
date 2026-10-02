@@ -230,6 +230,16 @@ If you are writing a provider, these are the calls Spree makes after the sale:
 | `refund` | After the money has moved | Files the credit with your service — no more than the credit lines hold |
 | `commit_replacement` | After an exchange is fulfilled | Files the replacement sale |
 
+`estimate_refund` and `estimate_replacement` have no default — a provider without them cannot open a return, claim or exchange. To give back exactly what the sale charged, as Spree's own rates do, answer `estimate_refund` with `Spree::TaxProvider::RecordedShare`:
+
+```ruby server/app/models/my_app/tax_provider.rb
+def estimate_refund(order, items, amounts: nil, tax_date: nil)
+  Spree::TaxProvider::RecordedShare.new(order: order, items: items, amounts: amounts).call
+end
+```
+
+`refund` and `commit_replacement` are optional: by default they do nothing, which suits a service that keeps no record of sales.
+
 ## Tax-exempt customers
 
 Business customers are often exempt, and the paperwork is real. Spree records a customer's or company's **tax identifier** — a VAT number, an ABN — and can validate it. Companies can also hold exemption certificates, scoped to the country or state that issued them.
