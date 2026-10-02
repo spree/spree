@@ -1,15 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
-import { type Command, Option } from 'commander'
-import pc from 'picocolors'
-import {
-  type AdminClient,
-  type CredentialFlags,
-  clientFor,
-  withCredentialFlags,
-} from '../api/client.js'
-import { handleApiError } from '../api/output.js'
 import {
   type ApplyResult,
   applyPlan,
@@ -30,7 +21,16 @@ import {
   SECTION_NAMES,
   type SectionName,
   type SpreeConfig,
-} from '../config/index.js'
+} from '@spree/config/node'
+import { type Command, Option } from 'commander'
+import pc from 'picocolors'
+import {
+  type AdminClient,
+  type CredentialFlags,
+  clientFor,
+  withCredentialFlags,
+} from '../api/client.js'
+import { handleApiError } from '../api/output.js'
 import { detectProject } from '../context.js'
 
 export const DEFAULT_CONFIG_FILE = 'spree.config.yml'
