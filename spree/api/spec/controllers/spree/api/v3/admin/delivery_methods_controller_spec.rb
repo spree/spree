@@ -234,6 +234,22 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
 
+    it 'stores per-currency amounts' do
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        calculator_type: 'flat_rate',
+        calculator_preferences: { amount: 20, currency: 'USD', amounts: { 'EUR' => '15.0' } }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['calculator_preferences']['amounts']).to eq('EUR' => '15.0')
+
+      calculator = delivery_method.reload.calculator
+      expect(calculator.preferred_amounts).to eq('EUR' => '15.0')
+      expect(calculator.amount_for('EUR')).to eq(15.0)
+      expect(calculator.amount_for('USD')).to eq(20)
+    end
+
     # The dashboard sheet saves basics and conditions together.
     it 'saves nested eligibility rules alongside the method' do
       product = create(:product)

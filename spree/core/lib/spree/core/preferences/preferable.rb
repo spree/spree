@@ -195,6 +195,8 @@ module Spree::Preferences::Preferable
       case value.class.to_s
       when 'Hash'
         value
+      when 'ActionController::Parameters'
+        value.to_h
       when 'String'
         # only works with hashes whose keys are strings
         JSON.parse value.gsub('=>', ':')
