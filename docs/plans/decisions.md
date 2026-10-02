@@ -1,3 +1,15 @@
+## 2026-10-01: Store setup leaves Ruby: per-store defaults and the country template become configurator files
+
+**Context:** The configurator (`6.0-cli-configurator.md`) shipped as an addition on top of Ruby: its 2026-09-14 decisions kept `Spree::Seeds::All` whole because "a Rails app must seed without Node", and left first-run provisioning in `Spree::Stores::ProvisionDefaults`. That keeps about 600 lines of per-store seed services and the country-shaped provisioning in Ruby, and every default would have to be written again once the server side moves away from Rails.
+
+**Decision:** Ruby seeds keep only what has no API by design: the store row, the admin role, the first admin and the first API key. Everything `Spree::Seeds::StoreResources` creates becomes a defaults file in the configurator format, and the market, warehouse, delivery zones and pickup that `ProvisionDefaults` builds become a template filled with the merchant's country, currency and locale. Both ship with the engine, which moves out of `@spree/cli` into its own `@spree/config` package, and are deployed by `spree init`, the setup screen and hosted signup. Section attributes are derived from the Admin OpenAPI request bodies instead of hand-written per section.
+
+Rejected: keeping the seeds for 6.0 and moving in 6.1, which leaves two sources of defaults for a release; and a Ruby reader for the same format, which would duplicate the engine and contradicts the configurator's "no Ruby-side YAML loader" constraint.
+
+**Consequences:** A Rails-only install that never runs the CLI or the setup screen starts with an empty store until something deploys the defaults file; 6.0 no longer promises otherwise. Setup becomes several Admin API calls rather than one Ruby transaction, so an interrupted setup is finished by deploying again. A new per-store default goes into the defaults file and a new country-shaped default into the template; both Ruby services only shrink until they are deleted. Admin endpoints must document their full request body, since sections derive from it.
+
+**Plans amended:** `6.0-cli-configurator.md` (Key Decisions, Migration Path, Constraints), `6.0-store-context-and-first-run-setup.md` (superseding note on `ProvisionDefaults`).
+
 ## 2026-09-30: A return owed nothing completes at zero
 
 **Context:** Once a returned free gift was valued at what the customer paid for it (entry below), its return could never be closed. Reproduced on R1009: a Tee with a free pink Polo, the Polo returned alone, approved and received with a refund total of $0.00. `Returns::Refund` refused any amount that was not positive ("There is nothing left to refund on this return."), and `Returns::Cancel` only accepts requested or approved returns, so the return sat at `received` for good. It kept counting in the dashboard's open-returns counter and the open filter, the customer's return page never showed it finished, and `return.refunded` never reached webhooks. Any return whose refund works out to zero was caught the same way, including one where nothing that arrived was worth anything. Money was never at stake.
