@@ -288,10 +288,14 @@ module Spree
       new_ids = product_ids.uniq.select { |id| allowed_ids.include?(id) && !taken_ids.include?(id) }
       return 0 if new_ids.empty?
 
+      now = Time.current
+
       rows = new_ids.map do |product_id|
         {
           catalog_id: id,
-          product_id: product_id
+          product_id: product_id,
+          created_at: now,
+          updated_at: now
         }
       end
 

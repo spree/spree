@@ -6,7 +6,12 @@ module Spree
       def call(promotion:, quantity: 10)
         Spree::CouponCode.transaction do
           Spree::CouponCode.insert_all(
-            Array.new(quantity) { { promotion_id: promotion.id, code: create_code(promotion.code_prefix) } }
+            Array.new(quantity) do
+              {
+                promotion_id: promotion.id, code: create_code(promotion.code_prefix),
+                created_at: Time.current, updated_at: Time.current
+              }
+            end
           )
         end
 

@@ -10,7 +10,10 @@ module Spree
       rows = groups.pluck(:id).flat_map do |group_id|
         position = membership_class.where(group_key => group_id).count
         products.pluck(:id).map do |product_id|
-          { group_key => group_id, product_id: product_id, position: (position += 1) }
+          {
+            group_key => group_id, product_id: product_id, position: (position += 1),
+            created_at: Time.current, updated_at: Time.current
+          }
         end
       end
       membership_class.insert_all(rows)
@@ -27,7 +30,10 @@ module Spree
 
         rows = group_ids.flat_map do |group_id|
           membership_class.where(group_key => group_id).order(:position).pluck(:product_id).map.with_index(1) do |product_id, position|
-            { group_key => group_id, product_id: product_id, position: position }
+            {
+              group_key => group_id, product_id: product_id, position: position,
+              created_at: Time.current, updated_at: Time.current
+            }
           end
         end
         membership_class.upsert_all(rows, unique_by: ([group_key, :product_id] unless Spree.mysql?)) if rows.any?
