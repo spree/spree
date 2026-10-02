@@ -20,7 +20,14 @@
           "type": "string"
         },
         "customer_support_email": {
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "new_order_notifications_email": {
           "anyOf": [
@@ -34,427 +41,179 @@
         },
         "preferences": {
           "type": "object",
-          "propertyNames": {
-            "type": "string",
-            "enum": [
-              "admin_locale",
-              "timezone",
-              "weight_unit",
-              "unit_system",
-              "storefront_access",
-              "storefront_url",
-              "guest_checkout",
-              "always_include_confirm_step",
-              "company_field_enabled",
-              "address_requires_company",
-              "address_requires_phone",
-              "capture_method",
-              "auto_capture_on_dispatch",
-              "track_inventory_levels",
-              "stock_reservations_enabled",
-              "low_stock_threshold",
-              "tax_using_ship_address",
-              "track_price_history",
-              "show_products_without_price",
-              "disable_sku_validation",
-              "order_routing_strategy",
-              "pricing_provider",
-              "inventory_provider",
-              "pricing_provider_failure_policy",
-              "inventory_provider_failure_policy",
-              "payout_provider",
-              "default_payouts_schedule_interval",
-              "default_minimum_payout_amount",
-              "auto_approve_sellers",
-              "auto_approve_seller_products",
-              "send_seller_transactional_emails",
-              "default_commission_tax_rate",
-              "document_number_format",
-              "order_number_prefix",
-              "order_number_suffix",
-              "order_number_sequence_start",
-              "send_consumer_transactional_emails"
-            ]
-          },
-          "additionalProperties": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "number"
-              },
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "description": "Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`."
-        }
-      },
-      "additionalProperties": false,
-      "description": "The store row seeded at install. Updated only; currency, locale and country are market attributes."
-    },
-    "channels": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "active": {
-            "type": "boolean"
-          },
-          "default": {
-            "type": "boolean"
-          },
-          "stock_locations": {
-            "description": "Stock location names.",
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "preferences": {
-            "type": "object",
-            "propertyNames": {
-              "type": "string",
-              "enum": [
-                "order_routing_strategy",
-                "storefront_access",
-                "guest_checkout"
-              ]
-            },
-            "additionalProperties": {
+          "properties": {
+            "admin_locale": {
               "anyOf": [
                 {
                   "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "boolean"
                 },
                 {
                   "type": "null"
                 }
               ]
             },
-            "description": "Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`."
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "markets": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "currency": {
-            "type": "string",
-            "pattern": "^[A-Z]{3}$"
-          },
-          "countries": {
-            "minItems": 1,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "pattern": "^[A-Z]{2}$"
-            }
-          },
-          "default_locale": {
-            "type": "string"
-          },
-          "supported_locales": {
-            "type": "array",
-            "items": {
+            "timezone": {
               "type": "string"
-            }
-          },
-          "default": {
-            "type": "boolean"
-          },
-          "tax_inclusive": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "name",
-          "currency",
-          "countries"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "customer_groups": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "tax_categories": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "tax_code": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "default": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "delivery_zones": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "countries": {
-            "type": "array",
-            "items": {
+            },
+            "weight_unit": {
+              "type": "string"
+            },
+            "unit_system": {
+              "type": "string"
+            },
+            "storefront_access": {
               "type": "string",
-              "pattern": "^[A-Z]{2}$"
-            }
-          },
-          "states": {
-            "description": "State members, as country and state code pairs.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "country": {
-                  "type": "string",
-                  "pattern": "^[A-Z]{2}$"
-                },
-                "state": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              },
-              "required": [
-                "country",
-                "state"
-              ],
-              "additionalProperties": false
-            }
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "delivery_methods": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "code": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "admin_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "delivery_zone": {
-            "description": "Delivery zone name.",
-            "type": "string",
-            "minLength": 1
-          },
-          "calculator": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "minLength": 1,
-                "description": "Calculator type shorthand, e.g. `flat_rate`."
-              },
-              "preferences": {
-                "type": "object",
-                "propertyNames": {
+              "enum": [
+                "public",
+                "prices_hidden",
+                "login_required"
+              ]
+            },
+            "storefront_url": {
+              "anyOf": [
+                {
                   "type": "string"
                 },
-                "additionalProperties": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "number"
-                    },
-                    {
-                      "type": "boolean"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
+                {
+                  "type": "null"
                 }
-              }
+              ]
             },
-            "required": [
-              "type"
-            ],
-            "additionalProperties": false
-          },
-          "storefront_visible": {
-            "type": "boolean"
-          },
-          "available_to_sellers": {
-            "type": "boolean"
-          },
-          "tracking_url": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "tax_category": {
-            "description": "Tax category name.",
-            "type": "string",
-            "minLength": 1
-          },
-          "pickup_locations": {
-            "description": "Stock location names a pickup method offers as collection points.",
-            "type": "array",
-            "items": {
+            "guest_checkout": {
+              "type": "boolean"
+            },
+            "always_include_confirm_step": {
+              "type": "boolean"
+            },
+            "company_field_enabled": {
+              "type": "boolean"
+            },
+            "address_requires_company": {
+              "type": "boolean"
+            },
+            "address_requires_phone": {
+              "type": "boolean"
+            },
+            "capture_method": {
               "type": "string",
-              "minLength": 1
+              "enum": [
+                "checkout",
+                "on_dispatch",
+                "manual"
+              ]
+            },
+            "auto_capture_on_dispatch": {
+              "type": "boolean"
+            },
+            "track_inventory_levels": {
+              "type": "boolean"
+            },
+            "stock_reservations_enabled": {
+              "type": "boolean"
+            },
+            "low_stock_threshold": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "tax_using_ship_address": {
+              "type": "boolean"
+            },
+            "track_price_history": {
+              "type": "boolean"
+            },
+            "show_products_without_price": {
+              "type": "boolean"
+            },
+            "disable_sku_validation": {
+              "type": "boolean"
+            },
+            "order_routing_strategy": {
+              "type": "string"
+            },
+            "pricing_provider": {
+              "type": "string"
+            },
+            "inventory_provider": {
+              "type": "string"
+            },
+            "pricing_provider_failure_policy": {
+              "type": "string",
+              "enum": [
+                "fallback",
+                "strict"
+              ]
+            },
+            "inventory_provider_failure_policy": {
+              "type": "string",
+              "enum": [
+                "fallback",
+                "strict"
+              ]
+            },
+            "payout_provider": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "default_payouts_schedule_interval": {
+              "type": "string",
+              "enum": [
+                "daily",
+                "weekly",
+                "biweekly",
+                "monthly",
+                "manual"
+              ]
+            },
+            "default_minimum_payout_amount": {
+              "type": "number"
+            },
+            "auto_approve_sellers": {
+              "type": "boolean"
+            },
+            "auto_approve_seller_products": {
+              "type": "boolean"
+            },
+            "send_seller_transactional_emails": {
+              "type": "boolean"
+            },
+            "send_consumer_transactional_emails": {
+              "type": "boolean"
+            },
+            "default_commission_tax_rate": {
+              "type": "number"
+            },
+            "document_number_format": {
+              "type": "string",
+              "enum": [
+                "sequential",
+                "random"
+              ]
+            },
+            "order_number_prefix": {
+              "type": "string"
+            },
+            "order_number_suffix": {
+              "type": "string"
+            },
+            "order_number_sequence_start": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
             }
           },
-          "estimated_transit_business_days_min": {
-            "anyOf": [
-              {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "estimated_transit_business_days_max": {
-            "anyOf": [
-              {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "additionalProperties": false
-      }
+          "additionalProperties": false,
+          "description": "Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`."
+        }
+      },
+      "additionalProperties": false,
+      "description": "The store row seeded at install. Updated only; currency, locale and country are market attributes."
     },
     "stock_locations": {
       "type": "array",
@@ -482,7 +241,12 @@
             "type": "boolean"
           },
           "kind": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "warehouse",
+              "store",
+              "fulfillment_center"
+            ]
           },
           "backorderable_default": {
             "type": "boolean"
@@ -590,6 +354,550 @@
         },
         "required": [
           "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "stock_locations": {
+            "description": "Stock location names.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "order_routing_strategy": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "storefront_access": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "public",
+                      "prices_hidden",
+                      "login_required"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "guest_checkout": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "description": "Preferences without the `preferred_` prefix, e.g. `guest_checkout: false`."
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "markets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "default_locale": {
+            "type": "string"
+          },
+          "supported_locales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "tax_inclusive": {
+            "type": "boolean"
+          },
+          "countries": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "currency",
+          "countries"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "customer_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tax_categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tax_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default": {
+            "description": "Marks the store default tax category.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "delivery_profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string"
+          },
+          "default": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false,
+        "description": "`kind` is set when the profile is created and cannot change afterwards."
+      }
+    },
+    "delivery_zones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delivery_profile": {
+            "description": "Delivery profile name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          },
+          "all_countries_except": {
+            "description": "Every country the store knows except these, e.g. an \"everywhere else\" zone.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          },
+          "states": {
+            "description": "State members, as country and state code pairs.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "country": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "state": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "country",
+                "state"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "delivery_methods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "admin_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fulfillment_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "storefront_visible": {
+            "type": "boolean"
+          },
+          "available_to_sellers": {
+            "type": "boolean"
+          },
+          "tracking_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "estimated_transit_business_days_min": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "estimated_transit_business_days_max": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "delivery_profile": {
+            "description": "Delivery profile name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "delivery_zone": {
+            "description": "Delivery zone name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "calculator": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Calculator type shorthand, e.g. `flat_rate`."
+              },
+              "preferences": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "tax_category": {
+            "description": "Tax category name.",
+            "type": "string",
+            "minLength": 1
+          },
+          "pickup_locations": {
+            "description": "Stock location names a pickup method offers as collection points.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "package_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "box",
+              "envelope",
+              "carton",
+              "pallet",
+              "container"
+            ]
+          },
+          "length": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "dimensions_unit": {
+            "type": "string",
+            "enum": [
+              "mm",
+              "cm",
+              "in",
+              "ft"
+            ]
+          },
+          "weight": {
+            "type": "number"
+          },
+          "max_weight": {
+            "type": "number"
+          },
+          "weight_unit": {
+            "type": "string",
+            "enum": [
+              "g",
+              "kg",
+              "lb",
+              "oz"
+            ]
+          },
+          "default": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "payment_methods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "storefront_visible": {
+            "type": "boolean"
+          },
+          "capture_method": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "checkout",
+                  "on_dispatch",
+                  "manual"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Payment method type shorthand, e.g. `store_credit`. Set on create."
+          }
+        },
+        "required": [
+          "name",
+          "type"
         ],
         "additionalProperties": false
       }
@@ -721,6 +1029,27 @@
         "additionalProperties": false
       }
     },
+    "product_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "delivery_profile": {
+            "description": "Delivery profile name.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
     "categories": {
       "type": "array",
       "items": {
@@ -736,44 +1065,16 @@
             "minLength": 1
           },
           "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           },
           "meta_title": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           },
           "meta_description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           },
           "meta_keywords": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           }
         },
         "required": [
@@ -805,6 +1106,25 @@
             ]
           },
           "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "meta_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "meta_description": {
             "anyOf": [
               {
                 "type": "string"
@@ -840,33 +1160,6 @@
               "minLength": 1
             }
           },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "meta_title": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "meta_description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "sku": {
             "description": "SKU of a simple product (one without option variants).",
             "type": "string",
@@ -897,7 +1190,6 @@
             "description": "Amount per currency, e.g. `{ USD: 29.99, EUR: 27.9 }`."
           },
           "stock": {
-            "description": "Stock of a simple product.",
             "type": "object",
             "propertyNames": {
               "type": "string",
@@ -907,7 +1199,8 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 9007199254740991
-            }
+            },
+            "description": "Opening stock per stock location name, written when the variant is created and never compared again."
           },
           "variants": {
             "description": "Option variants; the whole set, since variants absent here are removed.",
@@ -966,7 +1259,7 @@
                     "minimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "description": "Quantity on hand per stock location name."
+                  "description": "Opening stock per stock location name, written when the variant is created and never compared again."
                 },
                 "barcode": {
                   "anyOf": [
@@ -1058,39 +1351,13 @@
             "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
           },
           "first_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           },
           "last_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "type": "string"
           },
           "phone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "password": {
-            "description": "Set on create; never read back.",
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "accepts_email_marketing": {
             "type": "boolean"
@@ -1098,9 +1365,13 @@
           "tags": {
             "type": "array",
             "items": {
-              "type": "string",
-              "minLength": 1
+              "type": "string"
             }
+          },
+          "password": {
+            "description": "Set on create; never read back.",
+            "type": "string",
+            "minLength": 1
           },
           "customer_groups": {
             "description": "Customer group names.",
@@ -1129,14 +1400,6 @@
           "name": {
             "type": "string",
             "minLength": 1
-          },
-          "status": {
-            "description": "Moves the seller through approve or suspend. A seller can be approved once onboarding has started; a freshly created one cannot.",
-            "type": "string",
-            "enum": [
-              "approved",
-              "suspended"
-            ]
           },
           "contact_email": {
             "anyOf": [
@@ -1179,12 +1442,256 @@
             ]
           },
           "tax_remittance": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "seller",
+              "platform"
+            ]
+          },
+          "status": {
+            "description": "Moves the seller through approve or suspend. A seller can be approved once onboarding has started; a freshly created one cannot.",
+            "type": "string",
+            "enum": [
+              "approved",
+              "suspended"
+            ]
           }
         },
         "required": [
           "slug",
           "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "return_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "claim_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "refund_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "order_cancellation_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "commission_rates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "percentage",
+              "fixed"
+            ]
+          },
+          "value": {
+            "type": "number"
+          },
+          "tax_inclusive": {
+            "type": "boolean"
+          },
+          "include_shipping": {
+            "type": "boolean"
+          },
+          "commission_tax_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "seller_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Requirement type shorthand, e.g. `accept_terms`."
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "preferences": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "api_keys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "key_type": {
+            "type": "string",
+            "enum": [
+              "publishable",
+              "secret"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "channel": {
+            "description": "Channel code a publishable key is bound to.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "key_type"
+        ],
+        "additionalProperties": false,
+        "description": "Created once and never updated; the token is never written to the file."
+      }
+    },
+    "allowed_origins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "origin": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "origin"
         ],
         "additionalProperties": false
       }

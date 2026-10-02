@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=../schemas/spree-config.json
+#
+# What every new Spree store starts with, deployed by first-run setup,
+# `spree init` and `spree config provision`. Nothing here depends on where the
+# store sells from except the currency of the digital delivery rate; the
+# country-shaped defaults are in country.yml.
+#
+# Variables: ${STORE_CURRENCY}.
+version: 1
+
+channels:
+  # The Online Store channel is created with the store itself.
+  - code: wholesale
+    name: Wholesale
+    preferences:
+      storefront_access: login_required
+      guest_checkout: false
+
+customer_groups:
+  - name: Wholesale
+
+tax_categories:
+  - name: Default
+    default: true
+  - name: Non-taxable
+
+delivery_profiles:
+  - name: Digital
+    kind: digital
+
+delivery_methods:
+  - name: Digital Delivery
+    delivery_profile: Digital
+    fulfillment_provider: Spree::FulfillmentProvider::Digital
+    storefront_visible: true
+    calculator:
+      type: digital_delivery
+      preferences:
+        currency: ${STORE_CURRENCY}
+
+payment_methods:
+  - name: Store Credit
+    type: store_credit
+    description: Store Credit
+    active: true
+
+product_types:
+  - name: Default
+  - name: Digital
+    delivery_profile: Digital
+
+return_reasons:
+  - name: Better price available
+  - name: Missed estimated delivery date
+  - name: Missing parts or accessories
+  - name: Damaged/Defective
+  - name: Different from what was ordered
+  - name: Different from description
+  - name: No longer needed/wanted
+  - name: Accidental order
+  - name: Unauthorized purchase
+
+claim_reasons:
+  - name: Arrived damaged
+  - name: Never arrived
+  - name: Wrong item sent
+  - name: Missing item from order
+  - name: Item not as described
+
+refund_reasons:
+  # Refunds raised by processing a return are filed under this one.
+  - name: Return processing
+
+order_cancellation_reasons:
+  - name: Customer changed their mind
+  - name: Payment declined
+  - name: Suspected fraud
+  - name: Out of stock
+  - name: Duplicate order
+  - name: Staff error
+  - name: Order expired
+
+commission_rates:
+  # The marketplace's catch-all rate, off until the operator sets one.
+  - code: marketplace-default
+    name: Marketplace default
+    kind: percentage
+    value: 0
+    enabled: false
+
+seller_requirements:
+  - type: accept_terms
+  - type: complete_profile
+  - type: billing_address
+  - type: returns_address
+  - type: delivery_method
+  - type: package_type
+  - type: minimum_products
+
+api_keys:
+  # Storefronts of the wholesale channel authenticate with this key.
+  - name: Storefront (Wholesale)
+    key_type: publishable
+    channel: wholesale
+
+allowed_origins:
+  - origin: http://localhost
