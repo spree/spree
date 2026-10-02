@@ -258,8 +258,8 @@ reports. Its visualization is inferred from the query's shape rather than
 configured: a time dimension charts, any other dimension ranks, no dimension
 shows totals.
 
-Nine built-in reports are seeded per store. They are read-only on the model,
-not merely in the UI — copy one to change it.
+Every store is created with twenty built-in reports. They are read-only on the
+model, not merely in the UI — copy one to change it.
 
 CSV export rides the existing [export pipeline](/developer/core-concepts/imports-exports)
 as `Spree::Exports::Report`, so it inherits the background job, attachment and

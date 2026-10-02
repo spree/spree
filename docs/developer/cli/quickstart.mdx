@@ -161,7 +161,7 @@ spree open
 
 ### `spree seed`
 
-Seed the database.
+Seed the database: the store, its admin role and first API key, and the first admin when `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set. The defaults a store trades with come from [`spree config provision`](/developer/cli/configurator#store-defaults), which first-run setup runs for you.
 
 ```bash
 spree seed
@@ -169,7 +169,7 @@ spree seed
 
 ### `spree sample-data`
 
-Load sample products, categories, and images.
+Load sample products, categories, and images. The store needs its [defaults](/developer/cli/configurator#store-defaults) first: finish first-run setup, or run `spree config provision`.
 
 ```bash
 spree sample-data
@@ -228,6 +228,7 @@ spree config validate                    # schema check, offline
 spree config diff                        # what deploy would change
 spree config deploy --fail-on-delete     # apply; refuse any delete (CI guard)
 spree config introspect --out store.yml  # capture the live store into a file
+spree config provision                   # give a store its defaults (setup does this for you)
 ```
 
 ### `spree auth`
