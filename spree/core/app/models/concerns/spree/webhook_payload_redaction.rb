@@ -92,6 +92,45 @@ module Spree
       end
     end
 
+    # Whether a persisted payload had credentials withheld from it — a slot
+    # {split} would redact still holds {REDACTION_PLACEHOLDER}. Such a payload
+    # cannot be sent again as-is: the withheld values never reached the
+    # database.
+    #
+    # Only redactable slots count, judged by the same rules as {split}. A
+    # customer note or any other free-form value that happens to read
+    # `[REDACTED]` withheld nothing, so it does not mark the payload.
+    #
+    # @param payload [Hash] a payload as persisted
+    # @return [Boolean]
+    def self.redacted?(payload)
+      return false unless payload.is_a?(Hash)
+
+      gift_card_event = event_name_of(payload).start_with?(GIFT_CARD_EVENT_PREFIX)
+
+      [payload[:data], payload['data']].any? do |data|
+        holds_placeholder?(data, [ROOT_SEGMENT], gift_card_event)
+      end
+    end
+
+    def self.holds_placeholder?(node, path, gift_card_event)
+      case node
+      when Array
+        node.each_with_index.any? { |element, index| holds_placeholder?(element, path + [index.to_s], gift_card_event) }
+      when Hash
+        node.any? do |key, value|
+          if redactable?(key, value, path, gift_card_event)
+            value == REDACTION_PLACEHOLDER
+          else
+            holds_placeholder?(value, path + [key.to_s], gift_card_event)
+          end
+        end
+      else
+        false
+      end
+    end
+    private_class_method :holds_placeholder?
+
     # Walks a hash replacing sensitive values, recording each one against its
     # path so two secrets sharing a key name (`client_secret` at the top level
     # and inside `external_data`) cannot overwrite one another.
@@ -104,7 +143,7 @@ module Spree
       node.to_h do |key, value|
         key_path = path + [key.to_s]
 
-        if sensitive?(key, value) || gift_card_code?(key, value, path, gift_card_event)
+        if redactable?(key, value, path, gift_card_event)
           secrets[secret_key_for(key_path)] = value
           [key, REDACTION_PLACEHOLDER]
         else
@@ -138,6 +177,14 @@ module Spree
       end
     end
     private_class_method :restore
+
+    # Whether {split} withholds the value at +key+ under +path+. The one
+    # definition {redact} and {redacted?} share, so detection can never drift
+    # from what is actually redacted.
+    def self.redactable?(key, value, path, gift_card_event)
+      sensitive?(key, value) || gift_card_code?(key, value, path, gift_card_event)
+    end
+    private_class_method :redactable?
 
     def self.sensitive?(key, value)
       SENSITIVE_PAYLOAD_KEYS.include?(key.to_s) && scalar?(value)

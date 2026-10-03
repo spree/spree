@@ -2114,6 +2114,7 @@ en:
     view: View
     visibility: Visibility
     void: Void
+    webhook_delivery_redacted_payload_not_redeliverable: This delivery can't be sent again because its payload carried credentials (such as a password reset token or payment secret) that are not kept in the delivery log. Trigger the action again to send a new event.
     webhook_endpoints: Webhook Endpoints
     webhook_mailer:
       endpoint_disabled:
