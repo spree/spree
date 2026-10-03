@@ -11,6 +11,30 @@ module Spree
       }.to change { order.reload.line_items.count }.by(-1)
     end
 
+    context 'on a placed order' do
+      let(:order) { create(:completed_order_with_totals, line_items_count: 2, store: @default_store) }
+
+      it 'recalculates the order totals' do
+        remaining = order.line_items.where.not(id: line_item.id).sum { |item| item.price * item.quantity }
+
+        described_class.call(order: order, line_item: line_item)
+
+        order.reload
+        expect(order.item_total).to eq(remaining)
+        expect(order.total).to eq(order.item_total + order.delivery_total + order.adjustment_total)
+      end
+
+      it 'keeps the line item when the recalculation fails' do
+        failed = Spree::ServiceModule::Result.new(false, order, 'recalculation failed')
+        allow(Spree::Orders::Recalculate).to receive(:call).and_return(failed)
+
+        result = described_class.call(order: order, line_item: line_item)
+
+        expect(result).to eq(failed)
+        expect(order.line_items.reload).to include(line_item)
+      end
+    end
+
     # Draft-order edits apply whole or fail; only carts get the cart
     # workflow's warn-and-skip contract, so this must not route there.
     it 'uses the order workflow, not the cart one' do
