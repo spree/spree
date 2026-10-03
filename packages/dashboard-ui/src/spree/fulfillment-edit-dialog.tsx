@@ -10,7 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Field, FieldError, FieldLabel } from '../ui/field'
+import { Field, FieldDescription, FieldError, FieldLabel } from '../ui/field'
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 /** A shelf a parcel can ship from, already labelled by the caller. */
@@ -25,9 +26,16 @@ export type FulfillmentRateOption = {
   label: string
 }
 
+export type FulfillmentCostState = {
+  current: string
+  overridden: boolean
+  currencySymbol: string
+}
+
 export type FulfillmentEditValues = {
   stockLocationId: string
   selectedDeliveryRateId: string
+  cost: string | null
 }
 
 /**
@@ -44,6 +52,9 @@ export type FulfillmentEditValues = {
  * that cannot cover the parcel; a seller sees only their own), and both own
  * their mutations. This holds the shape and the coupling rule so the two
  * cannot drift.
+ *
+ * The delivery cost field renders only when `cost` is passed — what the
+ * customer is charged is the operator's call, so the seller panel omits it.
  */
 export function FulfillmentEditDialog({
   open,
@@ -52,6 +63,7 @@ export function FulfillmentEditDialog({
   rateOptions,
   currentOriginId,
   currentRateId,
+  cost,
   onSubmit,
   pending = false,
   errorMessage,
@@ -62,6 +74,7 @@ export function FulfillmentEditDialog({
   rateOptions: FulfillmentRateOption[]
   currentOriginId: string
   currentRateId: string
+  cost?: FulfillmentCostState
   /**
    * Applies the change. Returning `'requote'` keeps the dialog open and
    * re-seeds it from the caller's refreshed record — the origin moved, so the
@@ -69,7 +82,7 @@ export function FulfillmentEditDialog({
    */
   onSubmit: (
     values: FulfillmentEditValues,
-    changed: { origin: boolean; rate: boolean },
+    changed: { origin: boolean; rate: boolean; cost: boolean },
   ) => Promise<'requote' | 'done'>
   pending?: boolean
   errorMessage?: string
@@ -78,6 +91,11 @@ export function FulfillmentEditDialog({
 
   const [originId, setOriginId] = useState(currentOriginId)
   const [rateId, setRateId] = useState(currentRateId)
+  // An empty field means "charge the delivery method's price". A cost the
+  // rate set is left out of it, or it would go stale the moment the method
+  // changes and read as a price someone chose.
+  const manualCost = cost?.overridden ? cost.current : ''
+  const [costValue, setCostValue] = useState(manualCost)
 
   // A re-quote lands as a changed record: the caller has moved the parcel and
   // the server has re-selected a method for the new origin. Adopt that pick,
@@ -89,13 +107,23 @@ export function FulfillmentEditDialog({
     seededOrigin.current = currentOriginId
     setOriginId(currentOriginId)
     setRateId(currentRateId)
-  }, [currentOriginId, currentRateId])
+    setCostValue(manualCost)
+  }, [currentOriginId, currentRateId, manualCost])
 
   // The rates on the record were quoted for the origin it currently has. Once
   // a different one is picked they describe a route no longer on offer, so the
   // method field stands down until the server re-quotes.
   const originMoved = originId !== currentOriginId
   const originMissing = originId.length === 0
+
+  // Clearing a price set by hand hands the parcel back to its rate; typing one
+  // where the rate decides sets it. Compared as numbers: the record says "5.0"
+  // where a merchant types "5.00".
+  const costBlank = costValue.trim() === ''
+  const costReverting = !!cost?.overridden && costBlank
+  const costChanged =
+    !!cost &&
+    (costBlank ? cost.overridden : !cost.overridden || Number(costValue) !== Number(cost.current))
 
   async function handleSubmit(event: React.FormEvent) {
     // The order page renders its cards inside their own forms — without
@@ -105,8 +133,12 @@ export function FulfillmentEditDialog({
     if (originMissing) return
 
     const outcome = await onSubmit(
-      { stockLocationId: originId, selectedDeliveryRateId: rateId },
-      { origin: originMoved, rate: rateId !== currentRateId },
+      {
+        stockLocationId: originId,
+        selectedDeliveryRateId: rateId,
+        cost: costBlank ? null : costValue,
+      },
+      { origin: originMoved, rate: rateId !== currentRateId, cost: costChanged },
     )
 
     if (outcome === 'done') onOpenChange(false)
@@ -185,6 +217,33 @@ export function FulfillmentEditDialog({
                 </span>
               )}
             </Field>
+
+            {cost && (
+              <Field>
+                <FieldLabel htmlFor="fulfillment-cost">
+                  {t('admin.orders.detail.fulfillments.delivery_cost')}
+                </FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon>
+                    <InputGroupText>{cost.currencySymbol}</InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="fulfillment-cost"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={costValue}
+                    placeholder={t('admin.orders.detail.fulfillments.delivery_cost_placeholder')}
+                    onChange={(event) => setCostValue(event.target.value)}
+                  />
+                </InputGroup>
+                <FieldDescription>
+                  {costReverting
+                    ? t('admin.orders.detail.fulfillments.delivery_cost_reverting')
+                    : t('admin.orders.detail.fulfillments.delivery_cost_help')}
+                </FieldDescription>
+              </Field>
+            )}
           </DialogBody>
 
           <DialogFooter>
