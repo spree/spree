@@ -48,6 +48,24 @@ module Spree
         expect(ready_cart.completing_at).to be_nil
       end
 
+      # order.created is a public webhook, and integrations record the order
+      # from it — one announced at zero was recorded at zero.
+      it 'announces the new order with the totals it was placed at', events: true do
+        announced = {}
+        allow_any_instance_of(Spree::Order).to receive(:publish_event).and_wrap_original do |method, name, *args|
+          announced[name] ||= method.receiver.attributes.slice('item_total', 'total', 'total_quantity')
+          method.call(name, *args)
+        end
+
+        subject
+
+        expect(announced['order.created']).to eq(
+          'item_total' => ready_cart.item_total,
+          'total' => ready_cart.total,
+          'total_quantity' => ready_cart.total_quantity
+        )
+      end
+
       it 'copies line items, fulfillments and addresses — never sharing rows' do
         order = subject.value
 

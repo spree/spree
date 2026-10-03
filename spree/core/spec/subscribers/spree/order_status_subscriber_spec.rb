@@ -106,6 +106,55 @@ RSpec.describe Spree::OrderStatusSubscriber do
     expect(order.reload.payment_status).to eq('paid')
   end
 
+  # order.paid is a public webhook: the order it carries has to read paid,
+  # which it cannot until this subscriber has rolled the payment up.
+  describe 'order.paid', events: true do
+    let(:order) { create(:order_with_line_items, store: @default_store) }
+    let(:announced) { [] }
+
+    before do
+      order.update_columns(status: 'draft', completed_at: nil, payment_status: 'none')
+
+      allow_any_instance_of(Spree::Order).to receive(:publish_event).and_wrap_original do |method, name, *args|
+        announced << method.receiver.attributes.slice('payment_status', 'payment_total') if name == 'order.paid'
+        method.call(name, *args)
+      end
+    end
+
+    it 'announces the order once, already reading paid' do
+      create(:payment, order: order, cart: nil, amount: order.total, status: 'pending').capture!
+
+      expect(announced).to eq([{ 'payment_status' => 'paid', 'payment_total' => order.total }])
+    end
+
+    # A run holding a copy from before the order settled must neither write
+    # its older status back over paid nor let a later run announce it again.
+    it 'announces the order once when a stale copy recomputes after it settled' do
+      Spree::Events.disable do
+        create(:payment, order: order, cart: nil, amount: order.total - 1, status: 'completed')
+      end
+      Spree::Orders::UpdateStatuses.call(order: order)
+      stale_copy = Spree::Order.find(order.id)
+
+      Spree::Events.disable do
+        create(:payment, order: order, cart: nil, amount: 1, status: 'completed')
+      end
+      Spree::Orders::UpdateStatuses.call(order: order)
+      Spree::Orders::UpdateStatuses.call(order: stale_copy)
+      Spree::Orders::UpdateStatuses.call(order: order)
+
+      expect(stale_copy.payment_status).to eq('paid')
+      expect(order.reload.payment_status).to eq('paid')
+      expect(announced.size).to eq(1)
+    end
+
+    it 'stays quiet while a balance is outstanding' do
+      create(:payment, order: order, cart: nil, amount: order.total - 1, status: 'pending').capture!
+
+      expect(announced).to be_empty
+    end
+  end
+
   # The order used to be updated from two places at once — an after_save
   # callback on Payment and these events — so one capture recomputed it four
   # times. The whole duplication was invisible because events are disabled in
