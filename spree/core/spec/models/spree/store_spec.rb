@@ -136,6 +136,20 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   context 'Callbacks' do
+    describe '#set_install_id' do
+      it 'generates a UUID when the store is saved without one' do
+        store = create(:store)
+
+        expect(store.preferred_install_id).to match(/\A\h{8}-\h{4}-\h{4}-\h{4}-\h{12}\z/)
+      end
+
+      it 'keeps an identifier the store already has' do
+        store = create(:store, preferred_install_id: 'already-persisted-id')
+
+        expect(store.reload.preferred_install_id).to eq('already-persisted-id')
+      end
+    end
+
     # Pinned: store provisioning (first-run setup, enterprise multi-tenant)
     # leans on the single-default invariant this callback maintains.
     describe '#ensure_default_exists_and_is_unique' do

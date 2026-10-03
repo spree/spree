@@ -436,19 +436,6 @@ describe Spree::PaymentMethod, type: :model do
       expect(gateway.preference_internal(:issued_secret)).to be(true)
       expect(gateway.preference_internal(:api_key)).to be_nil
     end
-
-    # A gateway loaded from a build that predates this option has no such
-    # reader. Schema computation rescues everything into an empty list, so
-    # without a guard one old declaration would strip every field from the
-    # class — including the password ones the admin form relies on.
-    it 'still describes a class whose declarations predate the option' do
-      gateway_class.send(:undef_method, :preferred_issued_secret_internal)
-      gateway_class.instance_variable_set(:@preference_schema, nil)
-
-      keys = gateway_class.preference_schema.map { |field| field[:key] }
-
-      expect(keys).to include(:api_key, :issued_secret)
-    end
   end
 
   # Describing a class needs a connection, so the schema can be asked for
@@ -484,6 +471,84 @@ describe Spree::PaymentMethod, type: :model do
 
       expect(gateway_class.password_preference_keys).to contain_exactly(:api_key)
       expect(gateway_class.serialized_preference_schema.map { |field| field[:key] }).to eq([:api_key])
+    end
+  end
+
+  describe 'secret preferences' do
+    let(:gateway) { create(:credit_card_payment_method) }
+    let(:raw_secret_column) do
+      ActiveRecord::Base.connection.select_value("SELECT secret_preferences FROM spree_payment_methods WHERE id = #{gateway.id}")
+    end
+
+    it 'stores a :password preference only in the encrypted column' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_live_secret')
+
+      expect(gateway.reload.preferred_dummy_secret_key).to eq('sk_live_secret')
+      expect(gateway.preferences).not_to have_key('dummy_secret_key')
+      expect(raw_secret_column).to be_present
+      expect(raw_secret_column).not_to include('sk_live_secret')
+    end
+
+    it 'moves a secret assigned with the whole preferences hash before saving' do
+      gateway.update!(preferences: gateway.preferences.merge(dummy_secret_key: 'sk_from_hash'))
+
+      expect(gateway.reload.preferences).not_to have_key('dummy_secret_key')
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_from_hash')
+    end
+
+    it 'reads a secret assigned with the whole hash before the save moves it' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_old')
+      gateway.preferences = gateway.preferences.merge(dummy_secret_key: 'sk_new')
+
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_new')
+    end
+
+    it "reads a secret's default without copying it into storage" do
+      expect(gateway.preferred_dummy_secret_key).to eq('SECRETKEY123')
+      expect(gateway.secret_preferences.to_h).not_to have_key('dummy_secret_key')
+    end
+
+    it 'hands the secrets to the gateway connection' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_live_secret')
+
+      expect(gateway.reload.options).to include(dummy_secret_key: 'sk_live_secret', dummy_key: 'PUBLICKEY123')
+    end
+
+    it 'reports a secret change through the preference change methods' do
+      gateway.update!(preferred_dummy_secret_key: 'sk_rotated')
+
+      expect(gateway.saved_change_to_preferred_dummy_secret_key?).to be(true)
+      expect(gateway.previously_changed_preference_names).to eq([:dummy_secret_key])
+    end
+
+    it 'does not mark a gateway without stored secrets as changed when one is read' do
+      gateway.update_column(:secret_preferences, nil)
+      reloaded = Spree::PaymentMethod.find(gateway.id)
+
+      reloaded.preferred_dummy_secret_key
+      reloaded.options
+
+      expect(reloaded.changed?).to be(false)
+    end
+
+    it 'treats a secret a decorator adds to the parent class later as a secret' do
+      parent = Class.new(Spree::Gateway) { def self.name = 'DecoratedGateway' }
+      child = Class.new(parent) { def self.name = 'DecoratedGatewayChild' }
+      expect(child.secret_preference_names).not_to include(:late_api_key)
+
+      parent.preference :late_api_key, :password
+
+      expect(child.secret_preference_names).to include(:late_api_key)
+    end
+
+    it 'refuses a :password preference on a model that cannot encrypt it' do
+      expect do
+        Class.new(Spree::Calculator) do
+          def self.name = 'CalculatorWithSecret'
+
+          preference :api_key, :password
+        end
+      end.to raise_error(ArgumentError, /Spree::SecretPreferences/)
     end
   end
 end

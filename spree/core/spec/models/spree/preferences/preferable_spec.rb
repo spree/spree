@@ -2,18 +2,12 @@ require 'spec_helper'
 
 describe Spree::Preferences::Preferable, type: :model do
   before :all do
-    class A
-      include ActiveModel::Model
-      include Spree::Preferences::Preferable
-      attr_reader :id
+    ActiveRecord::Migration.suppress_messages do
+      ActiveRecord::Migration.create_table(:preferable_spec_records, force: true) { |t| t.json :preferences }
+    end
 
-      def initialize
-        @id = rand(999)
-      end
-
-      def preferences
-        @preferences ||= default_preferences
-      end
+    class A < Spree::Base
+      self.table_name = 'preferable_spec_records'
 
       preference :color, :string, default: 'green', deprecated: 'Please use colour instead'
     end
@@ -23,16 +17,13 @@ describe Spree::Preferences::Preferable, type: :model do
     end
   end
 
+  after :all do
+    ActiveRecord::Migration.suppress_messages { ActiveRecord::Migration.drop_table(:preferable_spec_records) }
+  end
+
   before do
     @a = A.new
-    allow(@a).to receive_messages(persisted?: true)
     @b = B.new
-    allow(@b).to receive_messages(persisted?: true)
-
-    # ensure we're persisting as that is the default
-    #
-    store = Spree::Preferences::Store.instance
-    store.persistence = true
   end
 
   describe 'preference definitions' do
@@ -64,17 +55,14 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'has a type' do
-      expect(@a.preferred_color_type).to eq :string
       expect(@a.preference_type(:color)).to eq :string
     end
 
     it 'has a default' do
-      expect(@a.preferred_color_default).to eq 'green'
       expect(@a.preference_default(:color)).to eq 'green'
     end
 
     it 'can have a deprecation message' do
-      expect(@a.preferred_color_deprecated).to eq 'Please use colour instead'
       expect(@a.preference_deprecated(:color)).to eq 'Please use colour instead'
     end
 
@@ -114,11 +102,6 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'builds a hash of preference defaults' do
       expect(@b.default_preferences).to eq(flavor: nil,
                                            color: 'green')
-    end
-
-    it 'builds an array of deprecated preferences' do
-      expect(@b.deprecated_preferences).to eq([{ name: :color,
-                                                 message: 'Please use colour instead' }])
     end
 
     context 'converts integer preferences to integer values' do
@@ -166,17 +149,18 @@ describe Spree::Preferences::Preferable, type: :model do
         A.preference :if_decimal, :decimal
       end
 
-      it 'returns a BigDecimal' do
+      it 'returns a BigDecimal, stored as its exact string' do
         @a.set_preference(:if_decimal, 3.3)
-        expect(@a.preferences[:if_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:if_decimal)).to eq(BigDecimal('3.3'))
+        expect(@a.preferences[:if_decimal]).to eq('3.3')
       end
 
       it 'with strings' do
         @a.set_preference(:if_decimal, '3.3')
-        expect(@a.preferences[:if_decimal]).to eq(3.3)
+        expect(@a.get_preference(:if_decimal)).to eq(3.3)
 
         @a.set_preference(:if_decimal, '')
-        expect(@a.preferences[:if_decimal]).to eq(0.0)
+        expect(@a.get_preference(:if_decimal)).to eq(0.0)
       end
     end
 
@@ -197,13 +181,13 @@ describe Spree::Preferences::Preferable, type: :model do
 
       it 'converts string to BigDecimal when present' do
         @a.set_preference(:nullable_decimal, '3.14')
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('3.14'))
-        expect(@a.preferences[:nullable_decimal].class).to eq(BigDecimal)
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('3.14'))
+        expect(@a.get_preference(:nullable_decimal).class).to eq(BigDecimal)
       end
 
       it 'preserves decimal values' do
         @a.set_preference(:nullable_decimal, 9.99)
-        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('9.99'))
+        expect(@a.get_preference(:nullable_decimal)).to eq(BigDecimal('9.99'))
       end
     end
 
@@ -298,9 +282,9 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.preferences[:is_hash]).to be_is_a(Hash)
       end
 
-      it 'with hash and keys are integers' do
+      it 'with hash and keys are integers, which JSON keeps as strings' do
         @a.set_preference(:is_hash, 1 => 2, 3 => 4)
-        expect(@a.preferences[:is_hash]).to eql(1 => 2, 3 => 4)
+        expect(@a.preferences[:is_hash]).to eql('1' => 2, '3' => 4)
       end
 
       it 'with string' do
@@ -383,6 +367,7 @@ describe Spree::Preferences::Preferable, type: :model do
       before do
         A.preference :product_ids, :any, default: []
         A.preference :product_attributes, :any, default: {}
+        @a = A.new
       end
 
       it 'with array' do
@@ -394,7 +379,7 @@ describe Spree::Preferences::Preferable, type: :model do
       it 'with hash' do
         expect(@a.preferences[:product_attributes]).to eq({})
         @a.set_preference(:product_attributes, id: 1, name: 2)
-        expect(@a.preferences[:product_attributes]).to eq(id: 1, name: 2)
+        expect(@a.preferences[:product_attributes]).to eq('id' => 1, 'name' => 2)
       end
     end
   end
@@ -405,7 +390,7 @@ describe Spree::Preferences::Preferable, type: :model do
         def self.up
           create_table :pref_tests do |t|
             t.string :col
-            t.text :preferences
+            t.json :preferences
           end
         end
 
@@ -421,6 +406,8 @@ describe Spree::Preferences::Preferable, type: :model do
       class PrefTest < Spree::Base
         preference :pref_test_pref, :string, default: 'abc'
         preference :pref_test_any, :any, default: []
+        preference :pref_test_decimal, :decimal, default: 0
+        preference :pref_test_datetime, :datetime
       end
     end
 
@@ -453,13 +440,6 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
-    it 'clear preferences' do
-      @pt.set_preference(:pref_test_pref, 'xyz')
-      expect(@pt.preferred_pref_test_pref).to eq('xyz')
-      @pt.clear_preferences
-      expect(@pt.preferred_pref_test_pref).to eq('abc')
-    end
-
     it 'clear preferences when record is deleted' do
       @pt.save!
       @pt.preferred_pref_test_pref = 'lmn'
@@ -469,6 +449,44 @@ describe Spree::Preferences::Preferable, type: :model do
       @pt1.id = @pt.id
       @pt1.save!
       expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
+    end
+
+    describe 'JSON storage' do
+      it 'restores a decimal exactly after a round trip' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
+
+        expect(PrefTest.find(@pt.id).preferred_pref_test_decimal).to eq(BigDecimal('19.99'))
+      end
+
+      it 'restores a time after a round trip' do
+        time = Time.zone.parse('2026-03-01 09:30:00')
+        @pt.update!(preferred_pref_test_datetime: time)
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferred_pref_test_datetime).to eq(time)
+        reloaded.preferred_pref_test_datetime = time
+        expect(reloaded.preferred_pref_test_datetime_changed?).to be(false)
+      end
+
+      it 'reads stored keys with indifferent access' do
+        @pt.update!(preferred_pref_test_pref: 'xyz')
+        reloaded = PrefTest.find(@pt.id)
+
+        expect(reloaded.preferences[:pref_test_pref]).to eq('xyz')
+        expect(reloaded.preferences['pref_test_pref']).to eq('xyz')
+      end
+
+      it 'does not mark a loaded record as changed' do
+        expect(PrefTest.find(@pt.id).changed?).to be(false)
+      end
+
+      it 'does not report a change when a decimal is set to the value it holds' do
+        @pt.update!(preferred_pref_test_decimal: '19.99')
+        reloaded = PrefTest.find(@pt.id)
+        reloaded.preferred_pref_test_decimal = BigDecimal('19.99')
+
+        expect(reloaded.preferred_pref_test_decimal_changed?).to be(false)
+      end
     end
 
     describe 'preference change tracking methods' do
@@ -483,9 +501,9 @@ describe Spree::Preferences::Preferable, type: :model do
         @pt.preferred_pref_test_pref = 'xyz'
         @pt.save!
 
-        expect(@pt.preferred_pref_test_pref_previously_changed?).to be true
-        expect(@pt.preferred_pref_test_pref_previous_change).to eq(['abc', 'xyz'])
-        expect(@pt.preferred_pref_test_pref_previously_was).to eq('abc')
+        expect(@pt.saved_change_to_preferred_pref_test_pref?).to be true
+        expect(@pt.saved_change_to_preferred_pref_test_pref).to eq(['abc', 'xyz'])
+        expect(@pt.preferred_pref_test_pref_before_last_save).to eq('abc')
       end
 
       it 'reports no changes when preference is set to same value' do

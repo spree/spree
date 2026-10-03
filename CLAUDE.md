@@ -190,6 +190,7 @@ end
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
 - Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
+- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys; secrets are `:password` preferences, stored encrypted in a `secret_preferences` `text` column
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
@@ -747,6 +748,7 @@ Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
+- NEVER update or save the shared default store (`@default_store`) in specs — it outlives the example, so the change leaks into other specs. Stub what the code reads (`allow(Spree::Store).to receive(:default).and_return(build(:store, ...))`) or create a separate store
 - Don't over-engineer or repeat tests
 - Fold specs into the existing describe blocks, use context blocks for different scenarios, NEVER create new test files for a single new scenario unless it is a completely new feature
 

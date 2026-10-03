@@ -18,24 +18,22 @@ describe Spree::Calculator::TieredPercent, type: :model do
       it { is_expected.to be false }
     end
 
-    context 'when tiers is not a hash' do
+    context 'when tiers is not a list of tiers' do
       before { calculator.preferred_tiers = ['nope', 0] }
 
       it { is_expected.to be false }
     end
 
-    context 'when tiers is a hash' do
-      context 'and one of the keys is not a positive number' do
-        before { calculator.preferred_tiers = { 'nope' => 20 } }
+    context 'when a threshold is not a positive number' do
+      before { calculator.preferred_tiers = [{ threshold: 'nope', value: 20 }] }
 
-        it { is_expected.to be false }
-      end
+      it { is_expected.to be false }
+    end
 
-      context 'and one of the values is not a percent' do
-        before { calculator.preferred_tiers = { 10 => 110 } }
+    context 'when a rate is not a percent' do
+      before { calculator.preferred_tiers = [{ threshold: 10, value: 110 }] }
 
-        it { is_expected.to be false }
-      end
+      it { is_expected.to be false }
     end
   end
 
@@ -46,10 +44,10 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
     before do
       calculator.preferred_base_percent = 10
-      calculator.preferred_tiers = {
-        100 => 15,
-        200 => 20
-      }
+      calculator.preferred_tiers = [
+        { threshold: 100, value: 15 },
+        { threshold: 200, value: 20 }
+      ]
     end
 
     context 'when amount falls within the first tier' do
@@ -61,7 +59,15 @@ describe Spree::Calculator::TieredPercent, type: :model do
     context 'when amount falls within the second tier' do
       before { allow(line_item).to receive_messages(amount: 150) }
 
-      it { is_expected.to eq 22 }
+      it { is_expected.to eq 22.5 }
+    end
+  end
+
+  context 'when saved and loaded again' do
+    it 'keeps the tiers as a list with exact decimals' do
+      calculator.update!(preferred_tiers: [{ threshold: '100.5', value: '12.5' }])
+
+      expect(described_class.find(calculator.id).preferred_tiers).to eq([{ 'threshold' => '100.5', 'value' => '12.5' }])
     end
   end
 end
