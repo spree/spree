@@ -16,8 +16,8 @@ interface ErrorStateProps {
   title?: ReactNode
   /** Smaller text below the title. Pass an Error and we'll show its message. */
   description?: ReactNode
-  /** Error object — when supplied, its message is shown if `description` is omitted. */
-  error?: Error | null
+  /** What was thrown — when it is an Error, its message is shown if `description` is omitted. */
+  error?: unknown
   /** Called by the retry button. When omitted, the button is hidden. */
   onRetry?: () => void
   /** Override the retry label. Default "Try again". */
@@ -33,7 +33,10 @@ export function ErrorState({ title, description, error, onRetry, retryLabel }: E
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('admin.errors.generic')
   const resolvedRetryLabel = retryLabel ?? t('admin.components.error_state.retry')
-  const message = description ?? error?.message ?? t('admin.errors.unexpected_retry')
+  const message =
+    description ??
+    (error instanceof Error ? error.message : null) ??
+    t('admin.errors.unexpected_retry')
 
   return (
     <Empty>
