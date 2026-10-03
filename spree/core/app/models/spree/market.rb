@@ -4,6 +4,7 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasListPosition
+    include Spree::LocaleSettings
 
     acts_as_paranoid
     acts_as_list scope: :store_id
