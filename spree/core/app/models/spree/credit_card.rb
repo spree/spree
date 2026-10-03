@@ -42,6 +42,7 @@ module Spree
     # twice for a user and payment method. Guest payment sources are not saved
     # cards owned by a customer, so they are excluded from this validation.
     validate :fingerprint_not_duplicated, if: -> { fingerprint.present? && user_id.present? }
+    validate :not_already_in_wallet, on: :create
 
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :capturable, -> { where.not(gateway_customer_profile_id: nil).or(where.not(gateway_payment_profile_id: nil)) }
@@ -193,6 +194,18 @@ module Spree
       duplicates = duplicates.where.not(id: id) if persisted?
 
       errors.add(:fingerprint, :taken) if duplicates.exists?
+    end
+
+    def not_already_in_wallet
+      return if imported || user_id.blank? || gateway_payment_profile_id.blank?
+
+      duplicates = self.class.where(
+        user_id: user_id,
+        payment_method_id: payment_method_id,
+        gateway_payment_profile_id: gateway_payment_profile_id
+      )
+
+      errors.add(:base, :already_saved) if duplicates.exists?
     end
 
     def require_card_numbers?
