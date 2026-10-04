@@ -16,12 +16,15 @@ module SpreeStripe
       SETUP_FUTURE_USAGE = 'off_session'.freeze
 
       # Not a decision about the intent. A timeout and an outage may not have
-      # arrived; a rate limit was turned away before Stripe looked. A refusal
-      # of the cancel itself is an InvalidRequestError and stays out of this list.
+      # arrived; a rate limit was turned away before Stripe looked; a bad key
+      # or a missing permission never reached the intent. A refusal of the
+      # cancel itself is an InvalidRequestError and stays out of this list.
       RETRYABLE_STRIPE_ERRORS = [
         Stripe::APIConnectionError,
         Stripe::RateLimitError,
-        Stripe::APIError
+        Stripe::APIError,
+        Stripe::AuthenticationError,
+        Stripe::PermissionError
       ].freeze
 
       def session_required?
@@ -135,9 +138,9 @@ module SpreeStripe
       # session is never shown as canceled while its money stands. An intent
       # already canceled at Stripe, or unknown to the account the keys now
       # reach, can no longer be paid, so its session is canceled all the same.
-      # A timeout, a rate limit or an outage is raised as Stripe's own error:
-      # wrapped as a refusal, the unused-session job would count the intent
-      # handled while the buyer can still pay it.
+      # A timeout, a rate limit, an outage, or rejected credentials is raised
+      # as Stripe's own error: wrapped as a refusal, the unused-session job
+      # would count the intent handled while the buyer can still pay it.
       #
       # @param payment_session [Spree::PaymentSessions::Stripe]
       # @return [Boolean] whether the session was canceled
@@ -249,7 +252,12 @@ module SpreeStripe
         update_payment_session(payment_session: payment_session, amount: total,
                                external_data: { 'ephemeral_key_secret' => ephemeral_key }.compact)
         true
-      rescue Spree::Core::GatewayError
+      rescue Spree::Core::GatewayError => error
+        # The key and the amount update report every Stripe failure as
+        # GatewayError. A timeout or a rejected key is not a refusal to
+        # reuse: canceling here drops an intent the buyer can still pay.
+        raise error.cause if RETRYABLE_STRIPE_ERRORS.any? { |error_class| error.cause.is_a?(error_class) }
+
         false
       end
 

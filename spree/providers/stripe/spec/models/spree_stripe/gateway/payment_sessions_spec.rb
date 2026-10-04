@@ -268,6 +268,36 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           end
         end
       end
+
+      context 'when the ephemeral key cannot be refreshed' do
+        before do
+          allow(gateway).to receive(:create_ephemeral_key).and_call_original
+          allow(Stripe::EphemeralKey).to receive(:create).and_raise(Stripe::APIConnectionError, 'timed out')
+        end
+
+        it 'fails the request and leaves the intent open' do
+          expect(gateway).not_to receive(:cancel_payment_intent)
+          expect(gateway).not_to receive(:create_payment_intent)
+
+          expect { subject }.to raise_error(Spree::Core::GatewayError, 'timed out')
+          expect(pending_session.reload.status).to eq('pending')
+        end
+      end
+
+      context 'when the amount cannot be updated' do
+        before do
+          allow(gateway).to receive(:update_payment_intent).and_call_original
+          allow(Stripe::PaymentIntent).to receive(:update).and_raise(Stripe::RateLimitError, 'rate limit')
+        end
+
+        it 'fails the request and leaves the intent open' do
+          expect(gateway).not_to receive(:cancel_payment_intent)
+          expect(gateway).not_to receive(:create_payment_intent)
+
+          expect { subject }.to raise_error(Spree::Core::GatewayError, 'rate limit')
+          expect(pending_session.reload.status).to eq('pending')
+        end
+      end
     end
   end
 
@@ -319,13 +349,28 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           expect(payment_session.reload.status).to eq('pending')
         end
       end
+
+      context 'and the follow-up read is rejected before Stripe looks at the intent' do
+        before do
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_unused_123').
+            and_raise(Stripe::AuthenticationError, 'Invalid API Key provided')
+        end
+
+        it 'raises that error instead of a refusal' do
+          expect { gateway.cancel_payment_session(payment_session: payment_session) }.
+            to raise_error(Stripe::AuthenticationError)
+          expect(payment_session.reload.status).to eq('pending')
+        end
+      end
     end
 
     context 'when Stripe cannot be asked' do
       [
         [Stripe::APIConnectionError, 'timed out'],
         [Stripe::RateLimitError, 'rate limit'],
-        [Stripe::APIError, 'internal error']
+        [Stripe::APIError, 'internal error'],
+        [Stripe::AuthenticationError, 'Invalid API Key provided'],
+        [Stripe::PermissionError, 'The provided key does not have the required permissions']
       ].each do |error_class, message|
         it "raises #{error_class} and leaves the session pending" do
           allow(gateway).to receive(:cancel_payment_intent).and_raise(error_class, message)
