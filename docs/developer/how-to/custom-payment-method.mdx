@@ -173,7 +173,7 @@ end
 ```
 
 <Warning>
-If your provider lets each open session be paid on its own (as Stripe does with PaymentIntents), a customer with two open sessions can be charged twice — for example, with checkout open in two tabs. Have `create_payment_session` return the cart's pending session for your gateway, updated to the new amount, instead of opening another one, and implement `cancel_payment_session`. The built-in Stripe gateway does both. If you leave out `cancel_payment_session`, sessions still pending when the order is placed stay open at your provider.
+If your provider lets each open session be paid on its own (as Stripe does with PaymentIntents), a customer with two open sessions can be charged twice — for example, with checkout open in two tabs. Have `create_payment_session` cancel the cart's open sessions for your gateway before opening a new one, and implement `cancel_payment_session`. Leave a session the provider has already accepted, and do not open another. The built-in Stripe gateway does both. If you leave out `cancel_payment_session`, sessions still pending when the order is placed stay open at your provider.
 </Warning>
 
 ### How the Frontend Uses It

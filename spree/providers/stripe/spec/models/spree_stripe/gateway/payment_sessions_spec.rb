@@ -145,7 +145,8 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
     end
 
     # Every open intent can be paid on its own, so a second one on the same
-    # cart charged the buyer twice (V-3726).
+    # cart charged the buyer twice (V-3726). A new session is opened every
+    # time; the earlier ones are canceled first.
     context 'when the owner already has a pending session' do
       let!(:pending_session) do
         create(:stripe_payment_session, owner: order, payment_method: gateway, amount: 20.0,
@@ -157,138 +158,53 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
       let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'requires_payment_method', payment_method: { type: 'card' }) }
 
       before do
-        allow(gateway).to receive(:update_payment_intent)
         allow(gateway).to receive(:cancel_payment_intent)
         allow(gateway).to receive(:retrieve_payment_intent).with('pi_existing_123').and_return(stripe_intent)
       end
 
-      it 'hands it back re-priced instead of opening another intent' do
+      it 'cancels it and opens a new intent' do
+        expect(gateway).to receive(:cancel_payment_intent).with('pi_existing_123')
+
+        session = subject
+        expect(session.external_id).to eq('pi_new_intent_123')
+        expect(session).not_to eq(pending_session)
+        expect(pending_session.reload.status).to eq('canceled')
+      end
+
+      it 'cancels nothing when any open session has already been paid' do
+        paid_session = create(:stripe_payment_session, owner: order, payment_method: gateway, amount: 20.0,
+                                                       customer: customer, external_id: 'pi_paid_123',
+                                                       external_data: { 'client_secret' => 'pi_secret_paid' })
+        paid_intent = Stripe::StripeObject.construct_from(id: 'pi_paid_123', status: 'succeeded', payment_method: { type: 'card' })
+        allow(gateway).to receive(:retrieve_payment_intent).with('pi_paid_123').and_return(paid_intent)
+        expect(gateway).not_to receive(:cancel_payment_intent)
         expect(gateway).not_to receive(:create_payment_intent)
-        expect(gateway).to receive(:update_payment_intent).with('pi_existing_123', order.display_total.cents, order, nil)
 
-        expect { expect(subject).to eq(pending_session) }.not_to change(Spree::PaymentSession, :count)
-        expect(pending_session.reload.amount).to eq(order.total)
-        expect(pending_session.external_data['client_secret']).to eq('pi_secret_old')
+        expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
+        expect(pending_session.reload.status).to eq('pending')
+        expect(paid_session.reload.status).to eq('pending')
       end
 
-      it 'refreshes the ephemeral key, which Stripe expires after an hour' do
-        subject
-        expect(pending_session.reload.external_data['ephemeral_key_secret']).to eq('ek_test_secret')
+      it 'cancels every open session, not only the latest' do
+        other_session = create(:stripe_payment_session, owner: order, payment_method: gateway, amount: 20.0,
+                                                        customer: customer, external_id: 'pi_other_123',
+                                                        external_data: { 'client_secret' => 'pi_secret_other' })
+        other_intent = Stripe::StripeObject.construct_from(id: 'pi_other_123', status: 'requires_payment_method', payment_method: { type: 'card' })
+        allow(gateway).to receive(:retrieve_payment_intent).with('pi_other_123').and_return(other_intent)
+        expect(gateway).to receive(:cancel_payment_intent).with('pi_other_123')
+        expect(gateway).to receive(:cancel_payment_intent).with('pi_existing_123')
+
+        expect(subject.external_id).to eq('pi_new_intent_123')
+        expect(other_session.reload.status).to eq('canceled')
+        expect(pending_session.reload.status).to eq('canceled')
       end
 
-      context 'for another saved card' do
-        subject { gateway.create_payment_session(order: order, external_data: { stripe_payment_method_id: 'pm_card_other' }) }
-
-        it 'cancels it and opens a new intent' do
-          expect(gateway).to receive(:cancel_payment_intent).with('pi_existing_123')
-
-          expect(subject.external_id).to eq('pi_new_intent_123')
-          expect(pending_session.reload.status).to eq('canceled')
-        end
-      end
-
-      context 'when the buyer has signed in since' do
-        before { pending_session.update_columns(customer_id: nil) }
-
-        it 'cancels it and opens a new intent for their Stripe customer' do
-          expect(subject.external_id).to eq('pi_new_intent_123')
-          expect(pending_session.reload.status).to eq('canceled')
-        end
-      end
-
-      context 'when Stripe will not re-price it' do
+      context 'when Stripe cannot be reached to cancel it' do
         before do
-          allow(gateway).to receive(:update_payment_intent).and_raise(Spree::Core::GatewayError, 'You cannot update this PaymentIntent')
-        end
-
-        it 'cancels it and opens a new intent rather than blocking the cart' do
-          expect(gateway).to receive(:cancel_payment_intent).with('pi_existing_123')
-
-          expect(subject.external_id).to eq('pi_new_intent_123')
-          expect(pending_session.reload.status).to eq('canceled')
-        end
-
-        context 'and Stripe cannot be reached to cancel it' do
-          before do
-            allow(gateway).to receive(:cancel_payment_intent).and_raise(Stripe::APIConnectionError, 'timed out')
-          end
-
-          it 'fails the request and leaves the intent open' do
-            expect(gateway).not_to receive(:create_payment_intent)
-
-            expect { subject }.to raise_error(Spree::Core::GatewayError, 'timed out')
-            expect(pending_session.reload.status).to eq('pending')
-          end
-        end
-
-        context 'because it has been paid' do
-          let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'succeeded', payment_method: { type: 'card' }) }
-
-          it 'opens no second intent and keeps the payment' do
-            expect(gateway).not_to receive(:create_payment_intent)
-            expect(gateway).not_to receive(:cancel_payment_intent)
-
-            expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
-            expect(pending_session.reload.status).to eq('pending')
-          end
-
-          it 'answers the same while the session is being settled' do
-            pending_session.update_columns(status: 'processing')
-
-            expect(gateway).not_to receive(:create_payment_intent)
-            expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
-          end
-        end
-
-        context 'because a card charge is still processing' do
-          let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'processing', payment_method: { type: 'card' }) }
-
-          it 'opens no second intent and leaves the charge in flight' do
-            expect(gateway).not_to receive(:create_payment_intent)
-            expect(gateway).not_to receive(:cancel_payment_intent)
-
-            expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
-            expect(pending_session.reload.status).to eq('pending')
-          end
-        end
-
-        context 'because it was canceled on Stripe' do
-          let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'canceled', payment_method: { type: 'card' }) }
-
-          before do
-            allow(gateway).to receive(:cancel_payment_intent).
-              and_raise(Stripe::InvalidRequestError.new('You cannot cancel this PaymentIntent because it has a status of canceled.', nil))
-          end
-
-          it 'replaces it, since nobody can pay it any more' do
-            expect(subject.external_id).to eq('pi_new_intent_123')
-            expect(pending_session.reload.status).to eq('canceled')
-          end
-        end
-
-        context 'because the Stripe account no longer has it' do
-          before do
-            allow(gateway).to receive(:retrieve_payment_intent).with('pi_existing_123').
-              and_raise(Stripe::InvalidRequestError.new('No such payment_intent', nil, code: 'resource_missing'))
-            allow(gateway).to receive(:cancel_payment_intent).
-              and_raise(Stripe::InvalidRequestError.new('No such payment_intent', nil, code: 'resource_missing'))
-          end
-
-          it 'replaces it' do
-            expect(subject.external_id).to eq('pi_new_intent_123')
-            expect(pending_session.reload.status).to eq('canceled')
-          end
-        end
-      end
-
-      context 'when the ephemeral key cannot be refreshed' do
-        before do
-          allow(gateway).to receive(:create_ephemeral_key).and_call_original
-          allow(Stripe::EphemeralKey).to receive(:create).and_raise(Stripe::APIConnectionError, 'timed out')
+          allow(gateway).to receive(:cancel_payment_intent).and_raise(Stripe::APIConnectionError, 'timed out')
         end
 
         it 'fails the request and leaves the intent open' do
-          expect(gateway).not_to receive(:cancel_payment_intent)
           expect(gateway).not_to receive(:create_payment_intent)
 
           expect { subject }.to raise_error(Spree::Core::GatewayError, 'timed out')
@@ -296,18 +212,62 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         end
       end
 
-      context 'when the amount cannot be updated' do
-        before do
-          allow(gateway).to receive(:update_payment_intent).and_call_original
-          allow(Stripe::PaymentIntent).to receive(:update).and_raise(Stripe::RateLimitError, 'rate limit')
+      context 'because it has been paid' do
+        let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'succeeded', payment_method: { type: 'card' }) }
+
+        it 'opens no second intent and keeps the payment' do
+          expect(gateway).not_to receive(:create_payment_intent)
+          expect(gateway).not_to receive(:cancel_payment_intent)
+
+          expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
+          expect(pending_session.reload.status).to eq('pending')
         end
 
-        it 'fails the request and leaves the intent open' do
-          expect(gateway).not_to receive(:cancel_payment_intent)
-          expect(gateway).not_to receive(:create_payment_intent)
+        it 'answers the same while the session is being settled' do
+          pending_session.update_columns(status: 'processing')
 
-          expect { subject }.to raise_error(Spree::Core::GatewayError, 'rate limit')
+          expect(gateway).not_to receive(:create_payment_intent)
+          expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
+        end
+      end
+
+      context 'because a card charge is still processing' do
+        let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'processing', payment_method: { type: 'card' }) }
+
+        it 'opens no second intent and leaves the charge in flight' do
+          expect(gateway).not_to receive(:create_payment_intent)
+          expect(gateway).not_to receive(:cancel_payment_intent)
+
+          expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
           expect(pending_session.reload.status).to eq('pending')
+        end
+      end
+
+      context 'because it was canceled on Stripe' do
+        let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'canceled', payment_method: { type: 'card' }) }
+
+        before do
+          allow(gateway).to receive(:cancel_payment_intent).
+            and_raise(Stripe::InvalidRequestError.new('You cannot cancel this PaymentIntent because it has a status of canceled.', nil))
+        end
+
+        it 'opens a new intent and marks the local session canceled' do
+          expect(subject.external_id).to eq('pi_new_intent_123')
+          expect(pending_session.reload.status).to eq('canceled')
+        end
+      end
+
+      context 'because the Stripe account no longer has it' do
+        before do
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_existing_123').
+            and_raise(Stripe::InvalidRequestError.new('No such payment_intent', nil, code: 'resource_missing'))
+          allow(gateway).to receive(:cancel_payment_intent).
+            and_raise(Stripe::InvalidRequestError.new('No such payment_intent', nil, code: 'resource_missing'))
+        end
+
+        it 'opens a new intent and marks the local session canceled' do
+          expect(subject.external_id).to eq('pi_new_intent_123')
+          expect(pending_session.reload.status).to eq('canceled')
         end
       end
     end

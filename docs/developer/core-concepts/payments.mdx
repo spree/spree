@@ -244,10 +244,10 @@ sequenceDiagram
     The frontend calls the API to create a Payment Session for a specific payment method and order. Spree calls the gateway to create a provider-side session (e.g., Stripe PaymentIntent, Adyen Session) and returns the session data including a `client_secret` for the frontend SDK.
 
     <Info>
-    Create the payment session **after** the shipping method is selected, so the amount includes shipping costs. If the order total changes (e.g., customer selects a different shipping rate or applies a coupon), update the session with the new amount rather than creating another one.
+    Create the payment session **after** the shipping method is selected, so the amount includes shipping costs. If the order total changes (a different shipping rate, a coupon), create the session again.
     </Info>
 
-    A cart has at most one open session per gateway. Asking Stripe for a session again (a reloaded checkout page, a second tab) returns the cart's pending session with its amount brought up to date, because every open Stripe PaymentIntent can be paid on its own. If that session has already been paid, the request fails with a `gateway_error` instead of opening a second one. Once the order is placed, a background job cancels any session still pending — for example, one left behind when the customer switched to a different payment method — so it can no longer be paid.
+    A cart has at most one open session per gateway. Asking Stripe for a session again (a reloaded checkout page, a second tab) cancels the cart's open session and opens a new one, because every open Stripe PaymentIntent can be paid on its own. If that session has already been paid, the request fails with a `gateway_error` and the paid session stays open. Once the order is placed, a background job cancels any session still pending — for example, one left behind when the customer switched to a different payment method — so it can no longer be paid.
   </Step>
   <Step title="Customer pays on the frontend">
     The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server — it goes directly to the payment provider, ensuring [PCI compliance](/developer/security/pci_compliance). If the payment requires **3D Secure** authentication or redirects to an offsite gateway (CashApp, Klarna, etc.), the gateway SDK handles it automatically.
