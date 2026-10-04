@@ -41,7 +41,7 @@ module Spree
     end
 
     def reply_to_address
-      current_store.customer_support_email.presence || current_store.mail_from_address
+      current_store.support_email_address
     end
 
     def money(amount, currency = nil)
@@ -50,25 +50,70 @@ module Spree
     end
     helper_method :money
 
+    # Wraps HTML a mailer rendered from its own ERB views in the Liquid email
+    # layout, so every email a Spree mailer sends carries the store's logo,
+    # header and footer. Called by `layouts/spree/base_mailer.html.erb`.
+    #
+    # @param html [String] the rendered view
+    # @return [ActiveSupport::SafeBuffer]
+    def render_in_email_layout(html)
+      email_renderer.wrap(html, subject: message.subject).html_safe
+    end
+    helper_method :render_in_email_layout
+
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-
-      if @_store_locale_active
-        super
-      else
-        # Subclasses that call `mail` without wrapping their action in
-        # `with_store_locale` (e.g. extension mailers) still get the
-        # store default locale, as `mail` applied before Spree 5.6.
-        with_store_locale(current_store) { super }
-      end
+      # Mailers that don't wrap their action in `with_store_locale` still get
+      # the store's default locale, as `mail` applied before Spree 5.6.
+      in_store_locale { super }
     end
 
     protected
 
-    # The "<store> <subject> #<number>" subject line shared by customer-facing
-    # order emails, with the optional [RESEND] prefix.
-    def order_email_subject(store, subject, number, resend: false)
-      "#{resend ? "[#{Spree.t(:resend).upcase}] " : ''}#{store.name} #{subject} ##{number}"
+    # Renders the current action's email from its Liquid template and builds
+    # the message. The template's front matter supplies the subject, and the
+    # plain-text part is generated from the HTML unless a `.text.liquid` sits
+    # next to the template.
+    #
+    # @param assigns [Hash] the template's variables — serializer output and
+    #   mailer-built values such as token-carrying URLs, never models
+    # @param template [String] the template key, defaults to the action's view path
+    # @param headers [Hash] mail headers (`to:`, `store_url:`, ...)
+    # @return [Mail::Message]
+    def mail_template(assigns = {}, template: "#{mailer_name}/#{action_name}", **headers)
+      in_store_locale do
+        email_template = email_resolver.find(template) || raise(ArgumentError, "Missing email template #{template}.liquid")
+        email = email_renderer.render(email_template, assigns)
+
+        mail(headers.merge(subject: email.subject)) do |format|
+          format.text { render plain: email.text, layout: false }
+          format.html { render html: email.html.html_safe, layout: false }
+        end
+      end
+    end
+
+    # The currency an email's amounts are in: its order's, else the store's.
+    #
+    # @return [String]
+    def email_currency
+      (@order || @order_group)&.currency || current_store.default_currency
+    end
+
+    # A record as its template reads it: the serializer's JSON, the same data
+    # a renderer outside Ruby would receive. Download links and other bearer
+    # tokens stay out; the mailer builds any URL that carries one.
+    #
+    # @param object [Object, nil] the record
+    # @param serializer [Class] an email serializer
+    # @param params [Hash] serializer params, over the email's store, currency and locale
+    # @return [Hash, nil]
+    def email_data(object, serializer, **params)
+      return if object.nil?
+
+      params = { store: current_store, currency: email_currency, locale: I18n.locale.to_s,
+                 storefront_url: current_store.storefront_url.to_s.chomp('/'),
+                 hide_credentials: true }.merge(params)
+      JSON.parse(serializer.new(object, params: params).serialize)
     end
 
     # URI-based merge preserves existing query params and fragments so the token
@@ -85,6 +130,18 @@ module Spree
     end
 
     private
+
+    def email_resolver
+      @email_resolver ||= Spree::Emails::TemplateResolver.new(self.class.view_paths.paths.map(&:path))
+    end
+
+    def email_renderer
+      Spree::Emails::Renderer.new(resolver: email_resolver, store: current_store, currency: email_currency)
+    end
+
+    def in_store_locale(&block)
+      @_store_locale_active ? yield : with_store_locale(current_store, &block)
+    end
 
     # this ensures that ActionMailer::Base.default_url_options[:host] is always set
     # this is only a fail-safe solution if developer didn't set this in environment files

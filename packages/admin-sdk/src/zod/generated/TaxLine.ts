@@ -5,11 +5,15 @@ export const TaxLineSchema = z.object({
   id: z.string(),
   label: z.string(),
   included: z.boolean(),
+  credit: z.boolean(),
   rate: z.string(),
   tax_rate_id: z.string().nullable(),
   line_item_id: z.string().nullable(),
   fulfillment_id: z.string().nullable(),
   fee_id: z.string().nullable(),
+  return_line_item_id: z.string().nullable(),
+  claim_line_item_id: z.string().nullable(),
+  exchange_line_item_id: z.string().nullable(),
   amount: z.string(),
   display_amount: z.string(),
   provider_id: z.string().nullable(),
@@ -20,6 +24,7 @@ export const TaxLineSchema = z.object({
   data: z.record(z.string(), z.unknown()).nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  original_tax_line_id: z.string().nullable(),
 });
 
 export type TaxLine = z.infer<typeof TaxLineSchema>;

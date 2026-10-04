@@ -2690,6 +2690,7 @@
           "discounts_empty": "Brak rabatów dla tego zamówienia.",
           "fee_kind_cod": "Płatność przy odbiorze",
           "fee_kind_duty": "Cło",
+          "fee_kind_exchange": "Wymiana",
           "fee_kind_gift_wrap": "Pakowanie na prezent",
           "fee_kind_handling": "Koszt obsługi",
           "fee_kind_payment": "Opłata za płatność",
@@ -3363,7 +3364,8 @@
             },
             "confirm": {
               "cancel_confirm": "Anuluj wymianę",
-              "cancel_dismiss": "Zachowaj wymianę"
+              "cancel_dismiss": "Zachowaj wymianę",
+              "balance_due": "Zamiennik kosztuje więcej niż zwrócony towar. Jego wysłanie doda różnicę do zamówienia jako kwotę do zapłaty, którą pobierzesz. Nic nie zostanie pobrane automatycznie."
             },
             "create_title": "Nowa wymiana",
             "empty": "Brak wymian dla tego zamówienia.",
@@ -3400,6 +3402,7 @@
             "received_of": "Otrzymano {{received}} z {{requested}}",
             "received_quantity": "Otrzymano",
             "refund_amount": "Kwota",
+            "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwróć na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
@@ -3409,6 +3412,8 @@
             "complete_title": "Zakończ zwrot",
             "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "refund_total": "Kwota zwrotu",
+            "refunded": "Zwrócono",
+            "refunded_of": "{{amount}} z {{total}}",
             "resellable": "Nadaje się do sprzedaży",
             "returning_to": "Zwrot do {{name}}"
           },

@@ -1,4 +1,4 @@
-import { PageHeader } from '@spree/dashboard-core'
+import { PageHeader, Slot } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -84,7 +84,12 @@ export function ProfilePage() {
     <>
       <ResourceLayout
         header={<PageHeader title={profile.name} subtitle={t('profile.subtitle')} />}
-        main={<BrandCard profile={profile} onEdit={() => setEditing(true)} />}
+        main={
+          <>
+            <BrandCard profile={profile} onEdit={() => setEditing(true)} />
+            <Slot name="seller.profile.form_main" context={{ profile }} />
+          </>
+        }
         sidebar={
           <>
             <StandingCard profile={profile} />
@@ -95,6 +100,7 @@ export function ProfilePage() {
             <SellerAddressCard profile={profile} />
             <SellerReturnsLocationCard />
             <SettlementCard profile={profile} />
+            <Slot name="seller.profile.form_sidebar" context={{ profile }} />
           </>
         }
       />

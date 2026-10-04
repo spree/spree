@@ -72,4 +72,17 @@ RSpec.describe Spree::DataRequestEmailSubscriber do
       subscriber.handle(mock_event(data_request.reload))
     end
   end
+
+  describe 'through the registered subscribers', events: true do
+    let(:data_request) { create(:data_request, store: store, customer: customer) }
+
+    it 'emails the download link once the request is fulfilled' do
+      perform_enqueued_jobs do
+        expect { Spree::DataRequests::Fulfill.call(data_request: data_request) }.
+          to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      expect(ActionMailer::Base.deliveries.last.to).to eq([data_request.reload.email])
+    end
+  end
 end

@@ -26,6 +26,9 @@ module Spree
           Spree::ReturnEmailSubscriber,
           Spree::NewsletterSubscriberEmailSubscriber,
           Spree::CustomerEmailSubscriber,
+          Spree::DataRequestEmailSubscriber,
+          Spree::CompanyEmailSubscriber,
+          Spree::DigitalAssetEmailSubscriber,
           Spree::SellerEmailSubscriber
         ]
       end

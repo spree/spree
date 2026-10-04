@@ -182,6 +182,8 @@ The three ways of reaching a buyer are tried in turn, and the first one that fin
 
 Gated storefront access is checked before any of this — a shopper who has to sign in never reaches catalog resolution.
 
+What a shopper can see is also what they can buy. Adding a product outside their catalogs, or one not published on the cart's channel, answers `404` — the same as reading that product. A cart can still come to hold one without an add: a guest cart claimed after signing in, a cart switched to another company, or a catalog edited while the cart was open. Completing checkout checks every line again and refuses such a cart with a `not_orderable` [requirement](/developer/core-concepts/carts) naming the product, until the shopper removes it. Free items a promotion adds are no exception, so keep gift products inside the catalogs of the buyers the promotion targets. Staff keying in a draft order are not restricted.
+
 <Warning>
 **A company buyer never picks up their customer group's catalogs.** As soon as any catalog is assigned to their company or one above it, that is their agreement, and group assignments are not consulted for them.
 

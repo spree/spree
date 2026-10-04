@@ -838,7 +838,7 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
 
     context 'when default variant has images' do
-      let!(:image) { create(:image, viewable: product.default_variant) }
+      let!(:image) { create(:media, viewable: product.default_variant) }
 
       it 'returns the default variant image' do
         expect(product.reload.primary_media).to eq(image)
@@ -846,7 +846,7 @@ describe Spree::Product, type: :model do
 
       context 'with variants that also have images' do
         let!(:variant) { create(:variant, product: product) }
-        let!(:variant_image) { create(:image, viewable: variant) }
+        let!(:variant_image) { create(:media, viewable: variant) }
 
         it 'returns the default variant image (default variant takes priority)' do
           expect(product.reload.primary_media).to eq(image)
@@ -856,7 +856,7 @@ describe Spree::Product, type: :model do
 
     context 'when default variant has no images but variant does' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:variant_image) { create(:image, viewable: variant) }
+      let!(:variant_image) { create(:media, viewable: variant) }
 
       it 'returns the variant image' do
         expect(product.reload.primary_media).to eq(variant_image)
@@ -874,18 +874,18 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
 
     it 'returns product-level assets' do
-      image = create(:image, viewable: product)
+      image = create(:media, viewable: product)
       expect(product.media).to include(image)
     end
 
     it 'does not include variant images' do
-      variant_image = create(:image, viewable: product.default_variant)
+      variant_image = create(:media, viewable: product.default_variant)
       expect(product.media).not_to include(variant_image)
     end
 
     it 'is ordered by position' do
-      img2 = create(:image, viewable: product, position: 2)
-      img1 = create(:image, viewable: product, position: 1)
+      img2 = create(:media, viewable: product, position: 2)
+      img1 = create(:media, viewable: product, position: 1)
       expect(product.media.to_a).to eq([img1, img2])
     end
   end
@@ -894,13 +894,13 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
 
     it 'returns product media when present' do
-      product_image = create(:image, viewable: product)
-      create(:image, viewable: product.default_variant)
+      product_image = create(:media, viewable: product)
+      create(:media, viewable: product.default_variant)
       expect(product.reload.gallery_media).to include(product_image)
     end
 
     it 'falls back to variant_images when no product media' do
-      variant_image = create(:image, viewable: product.default_variant)
+      variant_image = create(:media, viewable: product.default_variant)
       expect(product.reload.gallery_media).to include(variant_image)
     end
   end
@@ -909,12 +909,12 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
 
     it 'uses product media first' do
-      product_image = create(:image, viewable: product)
+      product_image = create(:media, viewable: product)
       expect(product.reload.primary_media_id).to eq(product_image.id)
     end
 
     it 'falls back to variant images when no product media' do
-      variant_image = create(:image, viewable: product.default_variant)
+      variant_image = create(:media, viewable: product.default_variant)
       product.update_thumbnail!
       expect(product.reload.primary_media_id).to eq(variant_image.id)
     end
@@ -930,7 +930,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when default variant has images' do
-      let!(:image) { create(:image, viewable: product.default_variant) }
+      let!(:image) { create(:media, viewable: product.default_variant) }
 
       it 'returns true' do
         expect(product.reload.has_variant_images?).to be true
@@ -939,7 +939,7 @@ describe Spree::Product, type: :model do
 
     context 'when a variant has images' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it 'returns true' do
         expect(product.reload.has_variant_images?).to be true
@@ -947,7 +947,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant_images are preloaded' do
-      let!(:image) { create(:image, viewable: product.default_variant) }
+      let!(:image) { create(:media, viewable: product.default_variant) }
 
       it 'uses loaded association' do
         loaded_product = Spree::Product.includes(:variant_images).find(product.id)
@@ -978,7 +978,7 @@ describe Spree::Product, type: :model do
 
     context 'when any variant has images' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it 'returns true' do
         expect(product.reload.has_images?).to be true
@@ -996,7 +996,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when default variant has media' do
-      let!(:images) { create_list(:image, 2, viewable: product.default_variant) }
+      let!(:images) { create_list(:media, 2, viewable: product.default_variant) }
 
       it 'returns total media count' do
         expect(product.reload.media_count).to eq(2)
@@ -1004,7 +1004,7 @@ describe Spree::Product, type: :model do
 
       context 'when variant also has media' do
         let!(:variant) { create(:variant, product: product) }
-        let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+        let!(:variant_images) { create_list(:media, 3, viewable: variant) }
 
         it 'returns total across all variants' do
           expect(product.reload.media_count).to eq(5)
@@ -1014,7 +1014,7 @@ describe Spree::Product, type: :model do
 
     context 'when only variant has media' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+      let!(:variant_images) { create_list(:media, 3, viewable: variant) }
 
       it 'returns the variant media count' do
         expect(product.reload.media_count).to eq(3)
@@ -1032,7 +1032,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when the default variant has images' do
-      let!(:image) { create(:image, viewable: product.default_variant) }
+      let!(:image) { create(:media, viewable: product.default_variant) }
 
       it 'returns the default variant' do
         expect(product.reload.variant_for_images).to eq(product.default_variant)
@@ -1041,7 +1041,7 @@ describe Spree::Product, type: :model do
 
     context 'when only a non-default variant has images' do
       let!(:variant2) { create(:variant, product: product) }
-      let!(:image) { create(:image, viewable: variant2) }
+      let!(:image) { create(:media, viewable: variant2) }
 
       it 'returns the variant with images' do
         product.reload
@@ -1061,7 +1061,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant has only one image' do
-      let!(:image) { create(:image, viewable: product.default_variant) }
+      let!(:image) { create(:media, viewable: product.default_variant) }
 
       it 'returns nil' do
         expect(product.reload.secondary_image).to be_nil
@@ -1069,8 +1069,8 @@ describe Spree::Product, type: :model do
     end
 
     context 'when variant has multiple images' do
-      let!(:image1) { create(:image, viewable: product.default_variant, position: 1) }
-      let!(:image2) { create(:image, viewable: product.default_variant, position: 2) }
+      let!(:image1) { create(:media, viewable: product.default_variant, position: 1) }
+      let!(:image2) { create(:media, viewable: product.default_variant, position: 2) }
 
       it 'returns the second image' do
         expect(product.reload.secondary_image).to eq(image2)
@@ -1079,8 +1079,8 @@ describe Spree::Product, type: :model do
 
     context 'when images are on a option variant' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:image1) { create(:image, viewable: variant, position: 1) }
-      let!(:image2) { create(:image, viewable: variant, position: 2) }
+      let!(:image1) { create(:media, viewable: variant, position: 1) }
+      let!(:image2) { create(:media, viewable: variant, position: 2) }
 
       it 'returns the second image from that variant' do
         product.reload
@@ -1092,7 +1092,7 @@ describe Spree::Product, type: :model do
   describe 'image methods with eager loading' do
     let(:product) { create(:product) }
     let!(:variant) { create(:variant, product: product) }
-    let!(:image) { create(:image, viewable: variant) }
+    let!(:image) { create(:media, viewable: variant) }
 
     let(:storefront_includes) do
       [
@@ -2294,7 +2294,7 @@ describe Spree::Product, type: :model do
 
     context 'with media model instances' do
       it 'passes through to ActiveRecord setter' do
-        image = build(:image)
+        image = build(:media)
         image.attachment.attach(io: File.open(fixture_path), filename: 'cat.jpg', content_type: 'image/jpeg')
 
         product.media = [image]

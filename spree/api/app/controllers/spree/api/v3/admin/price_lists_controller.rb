@@ -3,8 +3,7 @@ module Spree
     module V3
       module Admin
         # Admin CRUD for `Spree::PriceList`, plus the lifecycle transitions
-        # (`activate` / `deactivate`) and the spreadsheet's data feed
-        # (`prices`).
+        # (`activate` / `deactivate`).
         #
         # Everything writable on the list itself — name, schedule, match
         # policy, nested rules (`rules: [...]`), and individual price
@@ -25,7 +24,7 @@ module Spree
           # before_actions by method name, so this would otherwise
           # *replace* the parent's narrower filter and break the standard
           # actions. Wrapping it under a different name keeps both.
-          before_action :load_member_resource, only: [:activate, :deactivate, :prices]
+          before_action :load_member_resource, only: [:activate, :deactivate]
 
           # GET /api/v3/admin/price_lists/price_rule_types
           #
@@ -69,29 +68,6 @@ module Spree
             end
           end
 
-          # GET /api/v3/admin/price_lists/:id/prices
-          #
-          # The spreadsheet editor's data source. Returns every Price row
-          # in this list (filtered by `?currency=`), eager-loading
-          # `variant.product` + option values so each cell can render
-          # product name, variant options and SKU without N+1.
-          def prices
-            authorize! :read, @resource
-            currency = params[:currency].presence || current_store.default_currency
-            prices = @resource.prices
-                              .includes(variant: [:product, { option_values: :option_type }])
-                              .where(currency: currency)
-                              .joins(variant: :product)
-                              .order(Arel.sql("#{Spree::Product.table_name}.name ASC"))
-                              .order(Arel.sql("#{Spree::Variant.table_name}.position ASC"))
-                              .order(min_quantity: :asc)
-
-            render json: {
-              data: prices.map { |p| serialize_price(p) },
-              meta: { currency: currency, count: prices.size }
-            }
-          end
-
           protected
 
           def model_class
@@ -124,6 +100,7 @@ module Spree
           def permitted_params
             normalize_params(
               params.permit(
+                *model_additional_permitted_attributes,
                 :name, :description, :position,
                 :starts_at, :ends_at, :match_policy,
                 :price_adjustment_percentage, :adjust_compare_at,
@@ -138,36 +115,12 @@ module Spree
 
           # Loads the record without the action-derived authorization
           # `set_resource` runs (which would check `:activate` /
-          # `:deactivate` / `:prices` — actions that abilities don't
-          # grant). The per-action methods below explicitly call
-          # `authorize!` with the standard action that ability rules
-          # actually mention (`:update` / `:read`).
+          # `:deactivate` — actions that abilities don't grant). The
+          # per-action methods explicitly call `authorize!` with
+          # `:update`, which ability rules actually mention.
           def load_member_resource
             @resource = find_resource
           end
-
-          # Hand-rolled flat shape for the spreadsheet — keeps the payload
-          # narrow (no nested variant/product/option_value objects) and
-          # avoids paying for the admin Price serializer when we only need
-          # ~6 fields per row. The grouping the UI does (rows → product
-          # header) is driven entirely off `product_id`/`product_name`.
-          def serialize_price(price)
-            variant = price.variant
-            product = variant.product
-            {
-              id: price.prefixed_id,
-              variant_id: variant.prefixed_id,
-              product_id: product.prefixed_id,
-              product_name: product.name,
-              variant_label: variant.options_text.presence,
-              sku: variant.sku,
-              currency: price.currency,
-              min_quantity: price.min_quantity,
-              amount: price.amount&.to_s,
-              compare_at_amount: price.compare_at_amount&.to_s
-            }
-          end
-
         end
       end
     end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::UserMethods do
+describe Spree::CustomerMethods do
   let(:test_user) { create :user }
   let!(:another_user) { create(:user) }
   let(:current_store) { @default_store }

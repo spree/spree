@@ -21,17 +21,21 @@ module Spree
             # Manually registers a fulfillment on a completed order (external
             # carrier / 3PL sync), bypassing order routing. Moves the requested
             # line item quantities out of their routed fulfillments; when
-            # `items` is omitted, everything not yet shipped is moved. An
-            # explicit `cost` persists only with `status: 'shipped'` — pending
-            # fulfillments are re-priced by the rate engine.
+            # `items` is omitted, everything not yet shipped is moved. Exchange
+            # and claim replacements are moved only out of a named
+            # `source_fulfillment_id`, which is how a canceled replacement is
+            # sent again. An explicit `cost` persists only with
+            # `status: 'shipped'` — pending fulfillments are re-priced by the
+            # rate engine.
             def create
-              authorize!(:create, Spree::Shipment)
+              authorize!(:create, Spree::Fulfillment)
 
               with_order_lock do
                 result = Spree.fulfillment_create_workflow.call(
                   order: @order,
                   stock_location: stock_location_for_create,
                   items: items_for_create,
+                  source_fulfillment: source_fulfillment_for_create,
                   tracking: create_params[:tracking],
                   delivery_method: delivery_method_for_create,
                   cost: create_params[:cost],
@@ -105,7 +109,7 @@ module Spree
             end
 
             def create_params
-              @create_params ||= params.permit(:stock_location_id, :tracking, :delivery_method_id, :cost, :status, metadata: {}, items: [:item_id, :quantity])
+              @create_params ||= params.permit(:stock_location_id, :source_fulfillment_id, :tracking, :delivery_method_id, :cost, :status, metadata: {}, items: [:item_id, :quantity])
             end
 
             def mark_delivered_params
@@ -123,7 +127,13 @@ module Spree
             def delivery_method_for_create
               return if create_params[:delivery_method_id].blank?
 
-              Spree::ShippingMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
+              Spree::DeliveryMethod.accessible_by(current_ability, :show).find_by_prefix_id!(create_params[:delivery_method_id])
+            end
+
+            def source_fulfillment_for_create
+              return if create_params[:source_fulfillment_id].blank?
+
+              @order.fulfillments.find_by_prefix_id!(create_params[:source_fulfillment_id])
             end
 
             def items_for_create

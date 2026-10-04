@@ -37,7 +37,6 @@ module Spree
         order_update_item_service: 'Spree::Orders::UpdateItem',
         order_remove_line_item_service: 'Spree::Orders::RemoveLineItem',
         order_remove_item_service: 'Spree::Orders::RemoveItem',
-        cart_empty_service: 'Spree::Carts::Empty',
         cart_destroy_service: 'Spree::Carts::Destroy',
         cart_associate_service: 'Spree::Carts::Associate',
         cart_remove_out_of_stock_items_service: 'Spree::Carts::RemoveOutOfStockItems',
@@ -83,7 +82,6 @@ module Spree
         fulfillment_fulfill_workflow: 'Spree::Fulfillments::Fulfill',
         fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
         fulfillment_mark_delivered_workflow: 'Spree::Fulfillments::MarkDelivered',
-        fulfillment_purchase_label_workflow: 'Spree::Fulfillments::PurchaseLabel',
 
         # shipping labels + deliveries
         shipping_label_purchase_workflow: 'Spree::ShippingLabels::Purchase',
@@ -97,7 +95,6 @@ module Spree
         fulfillment_stand_down_service: 'Spree::Fulfillments::StandDownProvider',
         fulfillment_recalculate_delivery_service: 'Spree::Fulfillments::RecalculateDelivery',
         delivery_destroy_service: 'Spree::Deliveries::Destroy',
-        return_purchase_label_workflow: 'Spree::Returns::PurchaseLabel',
 
         # inventory operations
         stock_level_correct_service: 'Spree::StockLevels::Correct',
@@ -242,7 +239,6 @@ module Spree
         # payment is arranged (deposits, net terms).
         purchase_amount_due_at_checkout_service: 'Spree::Purchases::AmountDueAtCheckout',
 
-        payment_create_service: 'Spree::Payments::Create',
         payment_process_workflow: 'Spree::Payments::Process',
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_void_workflow: 'Spree::Payments::Void',

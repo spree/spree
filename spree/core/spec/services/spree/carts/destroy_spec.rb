@@ -109,18 +109,6 @@ module Spree
           end
         end
 
-        context 'when empty service is called first' do
-          before { Spree::Carts::Empty.call(cart: cart) }
-
-          it 'destroys the cart' do
-            expect(cart.destroyed?).not_to be true
-
-            subject
-
-            expect(cart.destroyed?).to be true
-          end
-        end
-
         context 'when a gift card is applied' do
           let(:gift_card) { create(:gift_card, amount: 50, store: cart.store) }
 

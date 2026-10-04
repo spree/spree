@@ -302,9 +302,6 @@ module Spree
       where(id: (product_ids + custom_field_ids).uniq.compact)
     }
 
-    # Backward compatibility alias — remove in Spree 6.0
-    scope :multi_search, ->(*args) { search(*args) }
-
     scope :archivable, -> { where(status: %w[active draft]) }
     scope :by_source, ->(source) { send(source) }
     scope :published, -> { where(status: 'active') }
@@ -375,7 +372,7 @@ module Spree
     self.storefront_ransackable_associations = %w[tags categories collections]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
-                                             search multi_search in_stock out_of_stock with_option_value_ids
+                                             search in_stock out_of_stock with_option_value_ids
 
                                              ascend_by_price descend_by_price]
 

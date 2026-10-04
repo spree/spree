@@ -2659,6 +2659,7 @@
           "discounts_empty": "该订单暂无折扣。",
           "fee_kind_cod": "货到付款",
           "fee_kind_duty": "关税",
+          "fee_kind_exchange": "换货",
           "fee_kind_gift_wrap": "礼品包装",
           "fee_kind_handling": "手续费",
           "fee_kind_payment": "支付手续费",
@@ -3315,7 +3316,8 @@
             },
             "confirm": {
               "cancel_confirm": "取消换货",
-              "cancel_dismiss": "保留换货"
+              "cancel_dismiss": "保留换货",
+              "balance_due": "替换商品比退回的商品更贵。发出替换商品会将差额作为待付余额添加到订单中，由您收取。不会自动扣款。"
             },
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
@@ -3352,6 +3354,7 @@
             "received_of": "已收到 {{received}} / {{requested}}",
             "received_quantity": "已收到",
             "refund_amount": "金额",
+            "refund_includes_tax": "全额包含 {{tax}} 税费。退款金额较小时，税费按相同比例退还。",
             "refund_method": "退款至",
             "refund_methods": {
               "original_payment": "原支付方式",
@@ -3361,6 +3364,8 @@
             "complete_title": "完成退货",
             "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "refund_total": "退款总额",
+            "refunded": "已退款",
+            "refunded_of": "{{amount}} / {{total}}",
             "resellable": "可再销售",
             "returning_to": "退回至 {{name}}"
           },

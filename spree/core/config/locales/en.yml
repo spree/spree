@@ -121,8 +121,6 @@ en:
         phone: Shipping address phone
         postal_code: Shipping address zip code
         state: Shipping address state
-      spree/page_link:
-        open_in_new_tab: Open in new tab
       spree/payment:
         amount: Amount
         number: Number
@@ -334,14 +332,6 @@ en:
               content_type: has not allowed content type
             type:
               inclusion: is not included in the list of allowed types
-        spree/legacy_user:
-          attributes:
-            bill_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
-            ship_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
         spree/line_item:
           attributes:
             currency:
@@ -441,10 +431,6 @@ en:
               must_be_legal_entity: must be a legal entity, not a division
             value:
               invalid: does not look like a valid %{kind} registration
-        spree/taxon_image:
-          attributes:
-            attachment:
-              not_allowed_content_type: has not allowed content type
         spree/user:
           attributes:
             bill_address_id:
@@ -479,12 +465,6 @@ en:
       spree/classification:
         one: Classification
         other: Classifications
-      spree/cms_page:
-        one: Page
-        other: Pages
-      spree/cms_section:
-        one: Section
-        other: Sections
       spree/country:
         one: Country
         other: Countries
@@ -521,18 +501,6 @@ en:
       spree/order:
         one: Order
         other: Orders
-      spree/page:
-        one: Page
-        other: Pages
-      spree/page_block:
-        one: Page Block
-        other: Page Blocks
-      spree/page_link:
-        one: Page Link
-        other: Page Links
-      spree/page_section:
-        one: Page Section
-        other: Page Sections
       spree/payment:
         one: Payment
         other: Payments
@@ -626,12 +594,6 @@ en:
       spree/taxonomy:
         one: Category
         other: Categories
-      spree/theme:
-        one: Theme
-        other: Themes
-      spree/tracker:
-        one: Tracker
-        other: Trackers
       spree/user:
         one: User
         other: Users
@@ -641,9 +603,6 @@ en:
       spree/zone:
         one: Zone
         other: Zones
-  address_book:
-    save: Save
-    successfully_created: New address has been successfully created
   errors:
     messages:
       already_confirmed: was already confirmed
@@ -666,14 +625,7 @@ en:
     percentage:
       format:
         precision: 1
-  pagination:
-    first: "&laquo;"
-    last: "&raquo;"
-    next: "&rsaquo;"
-    previous: "&lsaquo;"
-    truncate: "&hellip;"
   spree:
-    abbreviation: Abbreviation
     accept: Accept
     acceptance_status: Acceptance status
     accepted: Accepted
@@ -684,28 +636,20 @@ en:
     active: Active
     add: Add
     add_customers: Add Customers
-    add_product: Add Product
     add_products: Add Products
-    add_store: New Store
-    add_store_credit: Add Store Credit
     added_to_cart: Added to cart successfully!
     additional_item: Additional Item
     address: Address
     address1: Address
     address2: Address (contd.)
-    address_book:
-      add_house_number: Add a house number if you have one
-    address_not_owned_by_user: The specified address does not belong to this user.
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
-    adjustment_amount: Amount
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Included in Price)"
     adjustment_total: Adjustment Total
-    adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
     admin_locale: Admin locale
     admin_user_mailer:
@@ -719,7 +663,6 @@ en:
     administration: Administration
     advertise: Advertise
     all: All
-    all_products: All products
     allowed_origin: Allowed Origin
     allowed_origins: Allowed Origins
     alternative_phone: Alternative Phone
@@ -735,14 +678,10 @@ en:
     api_keys: API Keys
     apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
-    apply_store_credit: Apply Store Credit
     approve: approve
     approved_at: Approved at
     approver: Approver
     assets: Media
-    at_symbol: "@"
-    attachments: Attachments
-    author: Author
     authorized: Authorized
     auto_capture: Auto Capture
     availability: availability
@@ -771,13 +710,8 @@ en:
     canceled_at: Canceled at
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
-    cannot_empty: Cannot empty order.
-    cannot_empty_completed_order: Order has already been processed so it cannot be emptied
-    cannot_return_more_than_bought_quantity: Cannot return more than bought quantity.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Verification Code (CVC)
-    card_number: Card Number
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.
@@ -786,6 +720,7 @@ en:
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       invalid_price: Price must be a non-negative number
+      not_orderable: "%{li_name} is not available to order. Remove it to continue."
       out_of_stock: "%{li_name} was removed because it was sold out"
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
@@ -813,8 +748,6 @@ en:
     choose_currency: Choose Currency
     city: City
     clear: Clear
-    clear_all: Clear all
-    clear_cache: Clear Cache
     clone: Clone
     close: Close
     closed: Closed
@@ -830,7 +763,6 @@ en:
         description: Products carrying a matching tag
         name: Tag
     color_code: Color Code
-    colors: Colors
     commission_rule_types:
       category_rule:
         description: Charges this rate only for products in the selected categories, and anything filed beneath them
@@ -853,26 +785,18 @@ en:
     compare_at_price: Compare at price
     complete: complete
     configuration: Configuration
-    configurations: Configurations
     confirm: Confirm
     contact: Contact
     contact_phone: Contact phone
     content: Content
-    continue: Continue
     continue_shopping: Continue shopping
     copy: Copy
-    copy_link: Copy link
     cost_currency: Cost Currency
     cost_price: Cost Price
     count_on_hand: Count On Hand
     countries: Countries
     country: Country
     country_name: Name
-    country_names:
-      CA: Canada
-      FRA: France
-      ITA: Italy
-      US: United States of America
     coupon: Coupon
     coupon_code: Coupon code
     coupon_code_already_applied: The coupon code has already been applied to this order
@@ -887,7 +811,6 @@ en:
     coupon_code_used: The coupon code you entered has already been used. Please try again.
     coupon_codes: Coupon codes
     create: Create
-    create_new: Create new
     created_at: Created at
     created_by: Created by
     credit: Credit
@@ -911,15 +834,11 @@ en:
     customer_groups: Customer Groups
     customer_support_email: Customer Support Email
     customers: Customers
-    cut: Cut
-    cvv: CVV
-    cvv_response: CVV Response
     data_request_errors:
       already_anonymized: This customer's personal data has already been erased
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
     date: Date
-    date_range: Date Range
     default: Default
     default_billing_address: Default billing address
     default_country: Default Country
@@ -928,7 +847,6 @@ en:
     default_shipping_address: Default shipping address
     default_stock_location_name: Shop location
     default_tax: Default Tax
-    default_tax_zone: Default Tax Zone
     default_wishlist_name: Wishlist
     delete: Delete
     deleted: Deleted
@@ -964,7 +882,6 @@ en:
     destination: Destination
     destroy: Destroy
     details: Details
-    developers: Developers
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
@@ -983,7 +900,6 @@ en:
     download: Download
     draft: Draft
     duplicate: Duplicate
-    duplicating: Duplicating
     edit: Edit
     eligibility_errors:
       messages:
@@ -1082,9 +998,8 @@ en:
         get_shipping_rates:
           no_line_items: To generate Shipping Rates you need to add some Line Items to Order
           no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
-    estimated_transit_business_days: Estimated transit business days
     event: Event
-    excl: excl.
+    exchange_fee_label: Exchange %{number}
     existing_address: Existing address
     expiration: Expiration
     expired: Expired
@@ -1098,21 +1013,17 @@ en:
       thanks: Thank you,
     extension: Extension
     facebook: Facebook
-    featured_image: Featured image
     field: Field
     filename: Filename
     filled: Filled
     filter: Filter
     filterable: Filterable
-    finalize: Finalize
-    finalized: Finalized
     first_item: First Item
     first_name: First Name
     firstname: First Name
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
-    fonts: Fonts
     footer: Footer
     forbidden: Access denied
     free: Free
@@ -1164,7 +1075,6 @@ en:
     gift_cards: Gift Cards
     guest_checkout: Guest Checkout
     guest_checkout_not_allowed: You must be signed in to complete checkout.
-    has_no_shipped_units: has no shipped units
     height: Height
     hide: Hide
     home: Home
@@ -1174,9 +1084,6 @@ en:
     idempotency_key_reused: This Idempotency-Key has already been used with different request parameters.
     image: Image
     images: Images
-    immediately: Immediately
-    implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
-    implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
     import_has_no_failed_rows: This import has no failed rows to retry.
     import_mailer:
@@ -1191,7 +1098,6 @@ en:
     import_not_processing: This import is not processing.
     in_stock: In Stock
     inactive: Inactive
-    incl: incl.
     included_in_price: Included in Price
     incomplete: Incomplete
     instagram: Instagram
@@ -1200,8 +1106,6 @@ en:
     integrations: Integrations
     internal_note: Internal Note
     internationalization: Internationalization
-    invalid_credit_card: Invalid credit card.
-    invalid_exchange_variant: Invalid exchange variant.
     invalid_password: Invalid password.
     inventory: Inventory
     invitation_accepted: Invitation accepted!
@@ -1221,12 +1125,10 @@ en:
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
     invitations: Invitations
-    invited_by: Invited by
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
     item: Item
-    item_description: Item Description
     item_total: Item Total
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     key: Key
@@ -1236,7 +1138,6 @@ en:
     last_name: Last Name
     lastname: Last Name
     line_item: Line Item
-    line_item_adjustments: Line item adjustments
     line_items: Line items
     link: Link
     list: List
@@ -1255,7 +1156,6 @@ en:
     mailer_logo: Mailer logo (JPG or PNG images only)
     make_active_at: Make Active At
     manual: Manual
-    manual_intervention_required: Manual intervention required
     market: Market
     market_ids: Markets
     markets: Markets
@@ -1275,23 +1175,15 @@ en:
     min_quantity: Min Quantity
     minimal_amount: Minimal Amount
     month: Month
-    more: More
     move: Move
     my_account: My Account
     my_orders: My Orders
     name: Name
-    name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     navigation: Navigation
     never: Never
     new: New
-    new_address: New address
-    new_image: New Image
-    new_order: New Order
     new_order_notifications_email: New Order Notifications Email
-    new_price_list: New Price List
     new_product: New Product
-    new_promotion: New Promotion
-    new_state: New State
     new_user: New User
     new_variant: New Variant
     newsletter_subscribers: Newsletter Subscribers
@@ -1299,12 +1191,10 @@ en:
     no_cc_type: N/A
     no_payment_found: No payment found
     no_refundable_payments: There is no payment left on this order to refund.
-    no_report_data: No report data
     none: None
     normal_amount: Normal Amount
     not: not
     not_available: N/A
-    not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: "%{resource} is not found"
     not_received: This return cannot be refunded until its items are marked received.
     note: Note
@@ -1327,7 +1217,6 @@ en:
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
-    order_resumed: Order resumed
     order_routing:
       strategies:
         legacy: Legacy
@@ -1356,7 +1245,6 @@ en:
     password: Password
     password_required_to_create_account: Password is required to create your account.
     path: Path
-    pay: Pay
     payment: Payment
     payment_method: Payment Method
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
@@ -1450,7 +1338,6 @@ en:
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
     policies: Policies
-    powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
     pre_tax_total: Pre-Tax Total
     presentation: Presentation
@@ -1481,7 +1368,6 @@ en:
     process: Process
     processing: Processing
     product: Product
-    product_has_no_description: This product has no description
     product_name: Product Name
     product_properties: Product Properties
     product_translations: Product Translations
@@ -1599,8 +1485,6 @@ en:
     refunds: Refunds
     register: Register
     registration: Registration
-    reimburse: Reimburse
-    reimbursed: Reimbursed
     reject: Reject
     rejected: Rejected
     remember_me: Remember me
@@ -1922,7 +1806,6 @@ en:
     required_fields: required fields
     resellable: Resellable
     resend: Resend
-    reset_password: Reset my password
     resource: Resource
     response_code: Response Code
     resume: resume
@@ -1930,7 +1813,6 @@ en:
     return: return
     return_errors:
       outside_window: This order is outside the %{days}-day return window
-    return_quantity: Return Quantity
     returned: Returned
     returns: Returns
     returns_policy: Returns Policy
@@ -1948,14 +1830,12 @@ en:
     rules: Rules
     safe: Safe
     sale: Sale
-    sales_total: Sales Total
     saving: Saving
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
     scopes: Scopes
     search: Search
-    search_by: 'Search by:'
     security: Security
     seed:
       commission_rates:
@@ -1966,7 +1846,6 @@ en:
         default: Default
         digital: Digital
     select: Select
-    select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
     seller: Seller
     seller_access_denied: You do not have access to this seller.
@@ -2024,16 +1903,13 @@ en:
         instructions: We received a request to reset the password for your %{store_name} seller account. Click the button below to choose a new password.
         subject: Password Reset Instructions
     send_consumer_transactional_emails: Send Customer Transactional Emails
-    seo: SEO
     seo_title: SEO Title
     server: Server
     settings: Settings
     ship: Ship
     ship_address: Ship Address
-    ship_to: 'Shipping to:'
     ship_total: Ship Total
     shipment: Shipment
-    shipment_adjustments: Shipment adjustments
     shipment_state: Shipment State
     shipments: Shipments
     shipped: Shipped
@@ -2042,7 +1918,6 @@ en:
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
     shipping_flexible_rate: Flexible Rate per package item
-    shipping_instructions: Shipping Instructions
     shipping_labels:
       errors:
         already_purchased: This parcel already has an active shipping label
@@ -2065,22 +1940,14 @@ en:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_zone: Shipping Zone
     shopping_cart: Shopping Cart
     show: Show
-    show_deleted: Show Deleted
-    show_discontinued: Show Discontinued
-    show_only_complete_orders: Only show complete orders
     show_rate_in_label: Show rate in label
     sign_up: Sign Up
-    site_name: Site name
     size: Size
     sku: SKU
-    skus: SKUs
     slug: Slug
-    social: Social
     sort_a_to_z: A-Z
-    sort_by: Sort by
     sort_high_to_low: high-low
     sort_low_to_high: low-high
     sort_z_to_a: Z-A
@@ -2118,11 +1985,6 @@ en:
     stock_receipt:
       errors:
         nothing_counted: A line on a delivery must count at least one unit, accepted or rejected
-      rejection_reasons:
-        damaged: Damaged
-        expired: Expired
-        other: Other
-        wrong_item: Wrong item
     stock_transfer:
       errors:
         already_closed: This transfer has already been completed or cancelled
@@ -2164,13 +2026,9 @@ en:
       unable_to_void: 'Unable to void code: %{auth_code}'
     store_credit_using_gift_card_error: You can't apply store credit after you applied a gift card.
     store_credits: Store Credits
-    store_default: Default store
     store_name: Store name
     stores: Stores
-    street_address: Street Address
-    subscribed: Subscribed
     subtotal: Subtotal
-    subtract: Subtract
     success: Success
     summary: Summary
     support: Support
@@ -2200,14 +2058,12 @@ en:
       gb_vat: UK VAT
       us_ein: US EIN
     tax_inclusive: Tax inclusive
+    tax_provider_unavailable: The tax service could not work out the tax to give back. Try again in a few minutes.
     tax_rates: Tax Rates
     taxes: Taxes
     taxon: Taxon
     taxonomies: Categories
     taxonomy: Category
-    taxonomy_brands_name: Brands
-    taxonomy_categories_name: Categories
-    taxonomy_collections_name: Collections
     taxons: Categories
     terms_of_service: Terms of Service
     test: Test
@@ -2229,7 +2085,6 @@ en:
     tracking_number: Tracking Number
     tracking_url: Tracking URL
     transaction_id: Transaction ID
-    transfer_to_location: Transfer To
     translations: Translations
     tree: Tree
     twitter: Twitter
@@ -2282,6 +2137,3 @@ en:
     zone: Zone
     zone_ids: Zones
     zones: Zones
-  views:
-    pagination:
-      truncate: Truncate

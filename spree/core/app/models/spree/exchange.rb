@@ -17,6 +17,7 @@ module Spree
     include Spree::HasStatus
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
 
@@ -52,6 +53,19 @@ module Spree
 
     def display_price_difference
       Spree::Money.new(price_difference, currency: currency)
+    end
+
+    def taxed_lines
+      exchange_line_items
+    end
+
+    private
+
+    # The replacement is a sale of its own, taxed as the order would be today
+    # rather than read off the original line, whose category it may not share.
+    def estimate_tax(lines, amounts: nil)
+      super
+      order.tax_provider.estimate_replacement(order, lines, **order.tax_estimate_inputs)
     end
   end
 end

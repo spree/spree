@@ -212,6 +212,13 @@ export interface FulfillmentCreateParams {
   /** Stock location the fulfillment ships from */
   stock_location_id: string
   /**
+   * The only fulfillment of this order (`ful_…`) to move units from, its
+   * exchange and claim replacements included — how a canceled replacement is
+   * sent again. Omitted, the customer's bought units are taken from every
+   * unshipped fulfillment.
+   */
+  source_fulfillment_id?: string
+  /**
    * Carrier tracking number, or a full `https://` tracking link — a full URL
    * is served back as `tracking_url` unchanged instead of being templated
    * into the delivery method's tracking URL.

@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, 'split checkout', type: :
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
     request.headers['Authorization'] = "Bearer #{jwt_token}"
-    create(:shipping_method) if Spree::DeliveryMethod.none?
+    create(:delivery_method) if Spree::DeliveryMethod.none?
   end
 
   # A basket of the operator's own goods plus one seller's — the mixed case.

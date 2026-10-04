@@ -385,10 +385,6 @@
       "destination": "/v5/developer/customization/routes"
     },
     {
-      "source": "/developer/customization/emails",
-      "destination": "/v5/developer/customization/emails"
-    },
-    {
       "source": "/developer/core-concepts/adjustments",
       "destination": "/developer/core-concepts/fees"
     },
@@ -905,7 +901,9 @@
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
                       "developer/customization/permissions",
-                      "developer/customization/decorators"
+                      "developer/customization/decorators",
+                      "developer/customization/emails",
+                      "developer/customization/email-variables"
                     ],
                     "icon": "code"
                   },

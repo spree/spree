@@ -20,6 +20,7 @@ module Spree
     include Spree::HasStatus
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
 
@@ -118,9 +119,14 @@ module Spree
       received? || refunded?
     end
 
-    # What the customer is owed for the items being returned.
+    # What the customer is owed for the items being returned, tax included.
     def refund_total
       return_line_items.sum(&:refund_amount)
+    end
+
+    # The tax inside {#refund_total}.
+    def refund_tax_total
+      return_line_items.sum(&:refund_tax_amount)
     end
 
     # What a refund from this return paid for, line by line. Only ever what
@@ -136,6 +142,20 @@ module Spree
         next if amount.zero?
 
         amounts[line.line_item_id] += amount
+      end
+    end
+
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is
+    # recorded.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      return {} unless counted?
+
+      return_line_items.each_with_object(Hash.new(0)) do |line, taxes|
+        next if line.refund_amount.zero? || !line.settles_tax?
+
+        taxes[line.line_item_id] += line.refund_tax_amount
       end
     end
 
@@ -156,6 +176,14 @@ module Spree
 
     def display_refunded_total
       Spree::Money.new(refunded_total, currency: currency)
+    end
+
+    def display_refund_tax_total
+      Spree::Money.new(refund_tax_total, currency: currency)
+    end
+
+    def taxed_lines
+      return_line_items
     end
   end
 end

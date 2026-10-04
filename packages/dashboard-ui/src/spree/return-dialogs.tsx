@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog'
-import { Field, FieldLabel } from '../ui/field'
+import { Field, FieldDescription, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '../ui/input-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -144,21 +144,63 @@ export function returnOwesNothing(refundableTotal: string): boolean {
   return Number(refundableTotal) === 0
 }
 
+export type ReturnRefundFigures = {
+  status: string
+  refund_total: string
+  display_refund_total: string
+  refunded_total: string
+  display_refunded_total: string
+}
+
+/**
+ * What a return's card reports: what it is owed until money goes back, then
+ * what actually went back — which a merchant keeping a restocking fee makes
+ * less than it was owed, so that case also names the full amount. Money that
+ * went back counts even before the return is marked refunded: a refund that
+ * succeeded on one payment and was declined on the next leaves it received.
+ */
+export function returnRefundSummary(
+  returnRecord: ReturnRefundFigures,
+):
+  | { kind: 'owed'; amount: string }
+  | { kind: 'refunded'; amount: string }
+  | { kind: 'refunded_short'; amount: string; total: string } {
+  const refunded = Number(returnRecord.refunded_total)
+
+  if (returnRecord.status !== 'refunded' && refunded === 0) {
+    return { kind: 'owed', amount: returnRecord.display_refund_total }
+  }
+
+  if (refunded < Number(returnRecord.refund_total)) {
+    return {
+      kind: 'refunded_short',
+      amount: returnRecord.display_refunded_total,
+      total: returnRecord.display_refund_total,
+    }
+  }
+
+  return { kind: 'refunded', amount: returnRecord.display_refunded_total }
+}
+
 /**
  * Gives the money back: how much, and by what means. A return owed nothing
  * (a free gift sent back) is completed instead, with nothing to choose.
  *
  * The currency symbol comes from the caller — the operator's panel reads it
  * from the store it is looking at, and a seller has no currency of their own.
+ * `refundTaxTotal` is the formatted tax inside `refundableTotal`, shown so a
+ * merchant knows the pre-filled amount gives the tax back too.
  */
 export function ReturnRefundDialog({
   refundableTotal,
+  refundTaxTotal,
   currencySymbol,
   onClose,
   onSubmit,
   pending = false,
 }: {
   refundableTotal: string
+  refundTaxTotal?: string
   currencySymbol: string
   onClose: () => void
   onSubmit: (params: { refundMethod: RefundMethod; amount?: string }) => void
@@ -214,6 +256,13 @@ export function ReturnRefundDialog({
                     onChange={(event) => setAmount(event.target.value)}
                   />
                 </InputGroup>
+                {refundTaxTotal && (
+                  <FieldDescription>
+                    {t('admin.pages.orders.detail.returns.refund_includes_tax', {
+                      tax: refundTaxTotal,
+                    })}
+                  </FieldDescription>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="refund-method">

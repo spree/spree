@@ -213,6 +213,19 @@ already permits replaces its filter rather than widening it.
   that add real database columns.
 </Note>
 
+### Writable by sellers
+
+The Seller API accepts a narrower set of attributes than the Admin API, so the
+list above does not apply to it — an attribute you open to operators stays
+operator-only. To let sellers write it too, for example from a field on the
+seller panel's product page, declare it again on the seller list:
+
+```ruby config/initializers/spree.rb
+Spree::Product.additional_seller_permitted_attributes += [:brand_id]
+```
+
+Only declare attributes a seller may safely set on their own records.
+
 Two endpoints deliberately ignore this hook because their parameters are
 authorization data rather than resource data: API keys and invitations.
 

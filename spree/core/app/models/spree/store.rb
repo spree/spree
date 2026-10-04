@@ -543,6 +543,21 @@ module Spree
       allowed_origins.any? { |allowed_origin| allowed_origin.matches?(url) }
     end
 
+    # The logo emails show: the dedicated mailer logo, else the store logo.
+    #
+    # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
+    def email_logo
+      logo = mailer_logo.attached? ? mailer_logo : self.logo
+      logo if logo.attached? && logo.variable?
+    end
+
+    # The address customers are told to write to: the support address, else the sender address.
+    #
+    # @return [String, nil]
+    def support_email_address
+      customer_support_email.presence || mail_from_address
+    end
+
     # Returns the states available for checkout for the store
     # @param country [Spree::Country] the country to get the states for
     # @return [Array<Spree::State>]

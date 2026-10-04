@@ -26,7 +26,7 @@ module Spree
             # with_order_lock, and a read must not 409 against the fence.
             if @cart.ship_address_id.present? && @cart.fulfillments.empty? && !@cart.completion_claimed?
               ActiveRecord::Base.connected_to(role: :writing) do
-                with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+                with_order_lock { Spree.checkout_advance_service.call(order: @cart) }
               end
             end
 
@@ -40,7 +40,7 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree::Carts::Create.call(
+            result = Spree.carts_create_service.call(
               params: permitted_params.merge(
                 customer: current_user,
                 store: current_store,
@@ -65,7 +65,7 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree::Carts::Update.call(
+              result = Spree.carts_update_service.call(
                 cart: @cart,
                 params: permitted_params
               )

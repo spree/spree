@@ -2666,6 +2666,7 @@
           "discounts_empty": "Aucune remise sur cette commande pour le moment.",
           "fee_kind_cod": "Paiement à la livraison",
           "fee_kind_duty": "Droits de douane",
+          "fee_kind_exchange": "Échange",
           "fee_kind_gift_wrap": "Emballage cadeau",
           "fee_kind_handling": "Manutention",
           "fee_kind_payment": "Frais de paiement",
@@ -3325,7 +3326,8 @@
             },
             "confirm": {
               "cancel_confirm": "Annuler l'échange",
-              "cancel_dismiss": "Conserver l'échange"
+              "cancel_dismiss": "Conserver l'échange",
+              "balance_due": "Le remplacement coûte plus cher que l'article retourné. Son envoi ajoute la différence à la commande comme solde dû, à encaisser par vos soins. Rien n'est débité automatiquement."
             },
             "create_title": "Nouvel échange",
             "empty": "Aucun échange pour cette commande.",
@@ -3362,6 +3364,7 @@
             "received_of": "{{received}} sur {{requested}} reçus",
             "received_quantity": "Reçu",
             "refund_amount": "Montant",
+            "refund_includes_tax": "Le montant total comprend {{tax}} de taxes. Un montant inférieur rembourse les taxes dans la même proportion.",
             "refund_method": "Rembourser sur",
             "refund_methods": {
               "original_payment": "Paiement d’origine",
@@ -3371,6 +3374,8 @@
             "complete_title": "Clôturer le retour",
             "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "refund_total": "Total du remboursement",
+            "refunded": "Remboursé",
+            "refunded_of": "{{amount}} sur {{total}}",
             "resellable": "Revendable",
             "returning_to": "Retour vers {{name}}"
           },

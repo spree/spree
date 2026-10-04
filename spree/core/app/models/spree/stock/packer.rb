@@ -35,8 +35,8 @@ module Spree
             next unless stock_location.stocks? variant
 
             on_hand, backordered = stock_location.fill_status(variant, unit.quantity)
-            package.add(InventoryUnit.split(unit, backordered), :backordered) if backordered.positive?
-            package.add(InventoryUnit.split(unit, on_hand), :on_hand) if on_hand.positive?
+            package.add(FulfillmentItem.split(unit, backordered), :backordered) if backordered.positive?
+            package.add(FulfillmentItem.split(unit, on_hand), :on_hand) if on_hand.positive?
           else
             package.add unit
           end

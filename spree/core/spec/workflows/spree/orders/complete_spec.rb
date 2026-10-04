@@ -121,7 +121,7 @@ module Spree
     end
 
     it 'leaves the fulfillment unfulfilled until someone hands it over' do
-      Spree::Shipment.create(order: order, stock_location: create(:stock_location))
+      Spree::Fulfillment.create(order: order, stock_location: create(:stock_location))
       order.shipments.reload
 
       allow(order).to receive_messages(paid?: true, complete?: true)
@@ -133,7 +133,7 @@ module Spree
 
     it 'does not sell inventory units if track_inventory_levels is false' do
       stub_store_preferences(track_inventory_levels: false)
-      expect(Spree::InventoryUnit).not_to receive(:sell_units)
+      expect(Spree::FulfillmentItem).not_to receive(:sell_units)
       described_class.call(order: order)
     end
 

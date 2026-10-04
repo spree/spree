@@ -13,10 +13,9 @@ module Spree
       @reset_url = password_reset_url(token, store, redirect_url)
 
       with_store_locale(store, preferred_locale(seller_user, store)) do
-        mail(
-          to: seller_user.email,
-          subject: "#{store.name} #{Spree.t('seller_user_mailer.password_reset_email.subject')}",
-          store_url: store.formatted_url
+        mail_template(
+          { user: email_data(seller_user, Spree::Emails::UserSerializer), reset_url: @reset_url },
+          to: seller_user.email, store_url: store.formatted_url
         )
       end
     end

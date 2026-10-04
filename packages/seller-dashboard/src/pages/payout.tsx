@@ -1,4 +1,4 @@
-import { formatStoreDateTime, PageHeader } from '@spree/dashboard-core'
+import { formatStoreDateTime, PageHeader, Slot } from '@spree/dashboard-core'
 import {
   Card,
   CardHeader,
@@ -134,20 +134,23 @@ export function PayoutPage() {
         </Card>
       }
       sidebar={
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('payouts.detail.settlement')}</CardTitle>
-          </CardHeader>
-          <div className="flex flex-col gap-3 px-6 pb-6">
-            <ReadRow label={t('payouts.columns.amount')}>{payout.display_amount}</ReadRow>
-            <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
-            <ReadRow label={t('payouts.detail.period')}>
-              {payout.period_start && payout.period_end
-                ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
-                : null}
-            </ReadRow>
-          </div>
-        </Card>
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('payouts.detail.settlement')}</CardTitle>
+            </CardHeader>
+            <div className="flex flex-col gap-3 px-6 pb-6">
+              <ReadRow label={t('payouts.columns.amount')}>{payout.display_amount}</ReadRow>
+              <ReadRow label={t('payouts.columns.reference')}>{payout.reference}</ReadRow>
+              <ReadRow label={t('payouts.detail.period')}>
+                {payout.period_start && payout.period_end
+                  ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
+                  : null}
+              </ReadRow>
+            </div>
+          </Card>
+          <Slot name="seller.payout.form_sidebar" context={{ payout }} />
+        </>
       }
     />
   )

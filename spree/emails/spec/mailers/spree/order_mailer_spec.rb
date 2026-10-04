@@ -181,8 +181,8 @@ describe Spree::OrderMailer, type: :mailer do
       body = described_class.confirm_email(order).text_part.body.to_s
 
       expect(body).to match(/Free Shipping -\$5\.00/)
-      expect(body).to match(/#{Spree.t(:shipping)}: .*\$5\.00/)
-      expect(body).not_to match(/#{Spree.t(:shipping)}: .*\$0\.00/)
+      expect(body).to match(/#{Spree.t(:shipping)} .*\$5\.00/)
+      expect(body).not_to match(/#{Spree.t(:shipping)} .*\$0\.00/)
     end
   end
 
@@ -379,7 +379,7 @@ describe Spree::OrderMailer, type: :mailer do
       expect(payment_link_email.from).to contain_exactly(store.mail_from_address)
       expect(payment_link_email.to).to contain_exactly(order_for_payment.email)
       expect(payment_link_email.subject).to eq("Payment link for order ##{order_for_payment.number}")
-      expect(payment_link_email.body.to_s).to include(payment_url)
+      expect(email_body(payment_link_email)).to include(payment_url)
     end
   end
 end

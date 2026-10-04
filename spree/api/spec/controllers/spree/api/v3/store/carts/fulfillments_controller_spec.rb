@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
   include_context 'API v3 Store'
 
-  let!(:shipping_method) { create(:shipping_method) }
+  let!(:shipping_method) { create(:delivery_method) }
   let!(:order) do
     create(:cart_with_line_items, customer: user, store: store).tap do |o|
       o.update!(email: user.email, ship_address: create(:address))
@@ -24,13 +24,13 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
   describe 'PATCH #update' do
     context 'when selecting a different delivery rate' do
-      let(:cheaper_shipping_method) { create(:shipping_method, name: 'Cheap Shipping') }
-      let(:expensive_shipping_method) { create(:shipping_method, name: 'Express Shipping') }
+      let(:cheaper_shipping_method) { create(:delivery_method, name: 'Cheap Shipping') }
+      let(:expensive_shipping_method) { create(:delivery_method, name: 'Express Shipping') }
 
       before do
         fulfillment.delivery_rates.delete_all
-        create(:shipping_rate, shipment: fulfillment, shipping_method: cheaper_shipping_method, cost: 5, selected: true)
-        create(:shipping_rate, shipment: fulfillment, shipping_method: expensive_shipping_method, cost: 25, selected: false)
+        create(:delivery_rate, shipment: fulfillment, shipping_method: cheaper_shipping_method, cost: 5, selected: true)
+        create(:delivery_rate, shipment: fulfillment, shipping_method: expensive_shipping_method, cost: 25, selected: false)
         fulfillment.reload
         order.set_fulfillments_cost
       end

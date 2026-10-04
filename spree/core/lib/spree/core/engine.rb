@@ -48,8 +48,6 @@ module Spree
                                :actor_classes,
                                :custom_fields,
                                :reporting,
-                               :analytics_events,
-                               :analytics_event_handlers,
                                :integrations,
                                :number_generators,
                                :subscribers,
@@ -603,33 +601,6 @@ module Spree
           Spree.customer_class
         ]
 
-        Rails.application.config.spree.analytics_events = {
-          product_viewed: 'Product Viewed',
-          product_list_viewed: 'Product List Viewed',
-          product_searched: 'Product Searched',
-          product_added: 'Product Added',
-          product_removed: 'Product Removed',
-
-          product_added_to_wishlist: 'Product Added to Wishlist',
-          product_removed_from_wishlist: 'Product Removed from Wishlist',
-
-          subscribed_to_newsletter: 'Subscribed to Newsletter',
-          unsubscribed_from_newsletter: 'Unsubscribed from Newsletter',
-
-          payment_info_entered: 'Payment Info Entered',
-          coupon_entered: 'Coupon Entered',
-          coupon_removed: 'Coupon Removed',
-          coupon_applied: 'Coupon Applied',
-          coupon_denied: 'Coupon Denied',
-
-          checkout_started: 'Checkout Started',
-          checkout_email_entered: 'Checkout Email Entered',
-          checkout_step_viewed: 'Checkout Step Viewed',
-          checkout_step_completed: 'Checkout Step Completed',
-          order_completed: 'Order Completed',
-        }
-        Rails.application.config.spree.analytics_event_handlers = []
-
         Rails.application.config.spree.integrations = []
 
         Rails.application.config.spree.validators.addresses = [
@@ -648,6 +619,7 @@ module Spree
           Spree::SellerTransferSubscriber,
           Spree::SellerTransferReversalSubscriber,
           Spree::ExportSubscriber,
+          Spree::ImportEmailSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::SellerOnboardingSubscriber,
           Spree::AdminUserEmailSubscriber,

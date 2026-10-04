@@ -351,7 +351,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
 
       response '200', 'cart completed' do
         let(:completable_order) do
-          create(:shipping_method)
+          create(:delivery_method)
           order = create(:cart_with_line_items, store: store, customer: user)
           order.update!(email: user.email, ship_address: create(:address), bill_address: create(:address))
           order.rebuild_fulfillments!

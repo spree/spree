@@ -79,7 +79,7 @@ The entry-level `if` predicate also exists, but it only receives the slot's own 
 
 ## Binding to the host form
 
-Slots on form pages (product, category, store settings — see the [slots catalog](/developer/dashboard/slots-catalog#detail-page-form-slots) for which) render **inside the page's `<form>`** and expose its react-hook-form instance. A widget can register inputs against it with `useHostForm()` — they hydrate from the API, flip the Save button on change, and persist in the page's own save, with no save logic in the widget:
+Slots on form pages (product, category, collection, catalog, price list, promotion, store settings — see the [slots catalog](/developer/dashboard/slots-catalog#detail-page-slots) for which) render **inside the page's `<form>`** and expose its react-hook-form instance. A widget can register inputs against it with `useHostForm()` — they hydrate from the API, flip the Save button on change, and persist in the page's own save, with no save logic in the widget:
 
 ```tsx
 import { useHostForm } from '@spree/dashboard'

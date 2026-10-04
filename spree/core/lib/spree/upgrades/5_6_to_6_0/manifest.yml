@@ -288,6 +288,20 @@ steps:
       with one statement scoped to the rows still missing a code, so an
       interrupted run picks up where it stopped.
 
+  - id: migrate_checkout_zones
+    name: "Convert checkout zones to markets"
+    task: "spree:markets:migrate_checkout_zones"
+    notes: |
+      Markets replace the store's checkout zone in Spree 6. Stores that have
+      no market yet get a default one covering their checkout zone's
+      countries, or their default country when no zone was set, and the
+      checkout zone is cleared.
+
+      Run before migrate_tax_zones, which matches zone price rules against a
+      store's markets, and before backfill_order_markets, which assigns each
+      store's default market to its orders. Idempotent: stores that already
+      have a market are skipped.
+
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
     task: "spree:upgrade:migrate_promotion_option_value_rules"

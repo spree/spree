@@ -4,6 +4,8 @@ module Spree
     # merchant holds the customer's items and must either fulfill the
     # replacement or refund.
     class Cancel < Spree::Workflow
+      include Spree::Refunds::TaxCredit
+
       hooks :validate, :after_cancel
 
       # @param exchange [Spree::Exchange]
@@ -16,6 +18,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :mark_canceled
+          step :clear_tax
         end
 
         run_hooks :after_cancel
@@ -34,6 +37,10 @@ module Spree
       def mark_canceled
         memo = [exchange.memo, reason].compact_blank.join("\n")
         exchange.update!(status: 'canceled', canceled_at: Time.current, memo: memo.presence)
+      end
+
+      def clear_tax
+        clear_tax_credit(exchange)
       end
     end
   end

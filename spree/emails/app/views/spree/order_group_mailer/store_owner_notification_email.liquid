@@ -1,0 +1,11 @@
+---
+subject: "{{ 'order_group_mailer.store_owner_notification_email.subject' | t: store_name: store.name }}"
+---
+{% assign heading = 'order_group_mailer.store_owner_notification_email.purchase_summary' | t: number: order_group.number %}
+<mj-section>
+  <mj-column css-class="hero">
+    <mj-text mj-class="heading">{{ 'order_group_mailer.store_owner_notification_email.heading' | t }}</mj-text>
+    <mj-text mj-class="lead">{{ 'order_group_mailer.store_owner_notification_email.instructions' | t: count: order_group.order_count }}</mj-text>
+  </mj-column>
+</mj-section>
+{% render 'spree/shared/order_summary', heading: heading, purchase: order_group, items: order_group.items, totals: true %}

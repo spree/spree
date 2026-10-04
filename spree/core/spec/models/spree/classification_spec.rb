@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Classification, type: :model do
+  describe ProductCategory, type: :model do
     let(:store) { @default_store }
 
     # Regression test for #3494
@@ -97,7 +97,7 @@ module Spree
 
       # The direct category-side classification_count was dropped in 6.0; the category
       # now tracks membership via the descendant-inclusive products_count, kept in
-      # sync by the Classification create/destroy callbacks (a leaf category's
+      # sync by the ProductCategory create/destroy callbacks (a leaf category's
       # products_count equals its direct count).
       describe 'products_count on category' do
         it 'increments when a classification is created' do

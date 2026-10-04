@@ -15,6 +15,7 @@ import {
   ReturnReceiveDialog,
   ReturnRefundDialog,
   returnOwesNothing,
+  returnRefundSummary,
   StatusBadge,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -137,11 +138,7 @@ export function ReturnsCard({ order }: { order: Order }) {
                 {returnRecord.return_line_items?.map((line) => (
                   <ReturnLineRow key={line.id} line={line} />
                 ))}
-                <p className="text-muted-foreground text-sm">
-                  {t('orders.post_sale.returns.refund_total', {
-                    amount: returnRecord.display_refund_total,
-                  })}
-                </p>
+                <RefundSummary returnRecord={returnRecord} />
               </CardContent>
             </Card>
           ))
@@ -165,6 +162,22 @@ export function ReturnsCard({ order }: { order: Order }) {
         />
       )}
     </Card>
+  )
+}
+
+function RefundSummary({ returnRecord }: { returnRecord: Return }) {
+  const { t } = useTranslation()
+  const summary = returnRefundSummary(returnRecord)
+
+  return (
+    <p className="text-muted-foreground text-sm">
+      {summary.kind === 'owed' &&
+        t('orders.post_sale.returns.refund_total', { amount: summary.amount })}
+      {summary.kind === 'refunded' &&
+        t('orders.post_sale.returns.refunded', { amount: summary.amount })}
+      {summary.kind === 'refunded_short' &&
+        t('orders.post_sale.returns.refunded_of', { amount: summary.amount, total: summary.total })}
+    </p>
   )
 }
 
@@ -247,6 +260,11 @@ function RefundDialog({
   return (
     <ReturnRefundDialog
       refundableTotal={returnRecord.refundable_total}
+      refundTaxTotal={
+        Number(returnRecord.refund_tax_total) > 0
+          ? returnRecord.display_refund_tax_total
+          : undefined
+      }
       currencySymbol={currencySymbol}
       onClose={() => onOpenChange(false)}
       pending={refund.isPending}
