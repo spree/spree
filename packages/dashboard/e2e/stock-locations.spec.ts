@@ -60,6 +60,9 @@ test.describe('stock locations', () => {
     await openRowMenu(page, name)
     await page.getByRole('menuitem', { name: /^delete$/i }).click()
     await expect(page.getByRole('heading', { name: /delete stock location\?/i })).toBeVisible()
+    await expect(page.getByRole('dialog')).toContainText(
+      /stock levels at this location will be deleted as well/i,
+    )
     await page
       .getByRole('dialog')
       .getByRole('button', { name: /^delete$/i })

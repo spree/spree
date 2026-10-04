@@ -5217,7 +5217,7 @@
       "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
       "create_label": "Créer un emplacement de stock",
       "delete_confirm": {
-        "message": "{{name}} sera supprimé. Les articles en stock à cet emplacement ne sont pas supprimés.",
+        "message": "{{name}} sera supprimé. Les niveaux de stock à cet emplacement seront également supprimés.",
         "title": "Supprimer l'emplacement de stock ?"
       },
       "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",

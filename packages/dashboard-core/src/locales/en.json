@@ -1403,7 +1403,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location will be deleted as well.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",

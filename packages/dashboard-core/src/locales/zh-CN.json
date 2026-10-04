@@ -1401,7 +1401,7 @@
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
       "create_label": "创建库存地点",
       "delete_confirm": {
-        "message": "{{name}} 将被移除。此地点的库存项不会被删除。",
+        "message": "{{name}} 将被移除。此地点的库存水平也将被删除。",
         "title": "删除库存地点？"
       },
       "edit_description": "更新名称、地址、自提或库存策略。",

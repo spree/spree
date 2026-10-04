@@ -4791,7 +4791,7 @@
       "create_description": "Agregá un depósito, una tienda o un punto de retiro para cumplir pedidos desde ahí.",
       "create_label": "Crear ubicación de stock",
       "delete_confirm": {
-        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación no se borran.",
+        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación también se eliminarán.",
         "title": "¿Eliminar ubicación de stock?"
       },
       "edit_description": "Actualizá el nombre, la dirección, el retiro o las políticas de stock.",

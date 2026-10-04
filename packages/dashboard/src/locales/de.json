@@ -5217,7 +5217,7 @@
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
       "create_label": "Lagerort erstellen",
       "delete_confirm": {
-        "message": "{{name}} wird entfernt. Bestandsartikel an diesem Standort werden nicht gelöscht.",
+        "message": "{{name}} wird entfernt. Bestände an diesem Standort werden ebenfalls gelöscht.",
         "title": "Lagerort löschen?"
       },
       "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
