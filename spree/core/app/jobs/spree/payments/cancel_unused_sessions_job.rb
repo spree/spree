@@ -8,6 +8,13 @@ module Spree
     class CancelUnusedSessionsJob < Spree::BaseJob
       include ActiveJob::Continuable
 
+      # Continuable resumes only after a cursor is saved. The first session
+      # has none, so an outage there would drop the job and leave the intent
+      # payable. A refusal never reaches this retry: #cancel reports it.
+      retry_on StandardError, wait: :polynomially_longer, attempts: 5
+      # Must come after `retry_on StandardError` so DeserializationError lands in discard.
+      discard_on ActiveJob::DeserializationError
+
       # Placement can run inside a webhook's transaction; enqueued before it
       # commits, the job could read the order before its sessions moved onto it.
       self.enqueue_after_transaction_commit = true
