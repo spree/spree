@@ -60,6 +60,27 @@ module Spree
       end
     end
 
+    # A buyer who switched method, or checked out in a second tab, leaves a
+    # session behind that could still be paid after placement (V-3726).
+    describe 'payment sessions left unused' do
+      let(:draft) { create(:order_ready_to_ship, store: store) }
+      let!(:unused_session) { create(:bogus_payment_session, order: draft) }
+
+      before { draft.update_columns(status: 'draft', completed_at: nil) }
+
+      it 'queues their cancellation' do
+        expect { described_class.call(order: draft, payment_pending: true) }.
+          to have_enqueued_job(Spree::Payments::CancelUnusedSessionsJob).with(draft.id)
+      end
+
+      it 'queues nothing when every session settled a payment' do
+        draft.payments.first.update_columns(response_code: unused_session.external_id)
+
+        expect { described_class.call(order: draft, payment_pending: true) }.
+          not_to have_enqueued_job(Spree::Payments::CancelUnusedSessionsJob)
+      end
+    end
+
     it 'is idempotent — an already placed order halts successfully with no side effects' do
       order.update_columns(completed_at: Time.current, status: 'placed')
 

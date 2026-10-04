@@ -101,6 +101,12 @@ RSpec.describe Spree::PaymentSession, type: :model do
         expect(payment_session.cancel).to be true
         expect(payment_session.status).to eq('canceled')
       end
+
+      it 'transitions from failed to canceled' do
+        payment_session.fail
+        expect(payment_session.cancel).to be true
+        expect(payment_session.status).to eq('canceled')
+      end
     end
 
     describe '#expire' do

@@ -158,11 +158,23 @@ class MyGateway < Spree::PaymentMethod
     payment_session
   end
 
+  # Cancel a session the customer left behind, so it can no longer be paid.
+  # Spree calls this from a background job, once the order is placed, for
+  # every session still pending with nothing paid through it.
+  def cancel_payment_session(payment_session:)
+    MyProvider::Client.new(preferred_api_key).cancel_session(payment_session.external_id)
+    payment_session.cancel
+  end
+
   def payment_icon_name
     'my-gateway'
   end
 end
 ```
+
+<Warning>
+If your provider lets each open session be paid on its own (as Stripe does with PaymentIntents), a customer with two open sessions can be charged twice — for example, with checkout open in two tabs. Have `create_payment_session` cancel the cart's open sessions for your gateway before opening a new one, and implement `cancel_payment_session`. Leave a session the provider has already accepted, and do not open another. The built-in Stripe gateway does both. If you leave out `cancel_payment_session`, sessions still pending when the order is placed stay open at your provider.
+</Warning>
 
 ### How the Frontend Uses It
 
@@ -195,7 +207,7 @@ const order = await client.carts.complete(cart.id, options)
 ```
 
 <Info>
-**Important:** Always create the payment session **after** shipping is selected. If the order total changes (shipping rate change, coupon applied), create a new payment session with the updated amount. The `complete` call in step 5 only handles payment — step 6 finalizes the order.
+**Important:** Always create the payment session **after** shipping is selected. If the order total changes (shipping rate change, coupon applied), update the session with the new amount (`client.carts.paymentSessions.update`) rather than creating another one. The `complete` call in step 5 only handles payment — step 6 finalizes the order.
 </Info>
 
 ## Step 4: Handle Webhooks (Recommended)
