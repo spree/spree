@@ -56,6 +56,12 @@ module SpreeStripe
         reused_session = open_session && reuse_payment_session(open_session, order, total, stripe_payment_method_id)
         return reused_session if reused_session
 
+        # A finished session is no longer active, so the lookup above skips it.
+        # Opening another intent then would charge the buyer a second time.
+        if order.payment_sessions.where(payment_method: self, status: 'completed').exists?
+          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+        end
+
         gateway_customer = fetch_or_create_customer(order: order)
 
         response = create_payment_intent(
@@ -224,7 +230,7 @@ module SpreeStripe
         # Stripe would cancel an authorization or a debit in flight; a payment
         # the buyer has already made is never dropped to make way for another.
         payment_intent = find_payment_intent(payment_session.external_id)
-        if payment_intent && payment_intent_accepted?(payment_intent)
+        if payment_intent && payment_intent_in_progress?(payment_intent)
           raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
         end
 
@@ -234,6 +240,13 @@ module SpreeStripe
         # Checkout speaks GatewayError. The unused-session job does not: it
         # retries these, and has to see them unwrapped.
         raise Spree::Core::GatewayError, error.message
+      end
+
+      # A card can sit in `processing` while its charge is in flight.
+      # `payment_intent_accepted?` does not record that yet, and canceling
+      # the intent can drop or refund the charge.
+      def payment_intent_in_progress?(payment_intent)
+        payment_intent.status == 'processing' || payment_intent_accepted?(payment_intent)
       end
 
       # The intent's Stripe customer, currency and card are fixed when it opens.

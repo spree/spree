@@ -240,6 +240,18 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           end
         end
 
+        context 'because a card charge is still processing' do
+          let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'processing', payment_method: { type: 'card' }) }
+
+          it 'opens no second intent and leaves the charge in flight' do
+            expect(gateway).not_to receive(:create_payment_intent)
+            expect(gateway).not_to receive(:cancel_payment_intent)
+
+            expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
+            expect(pending_session.reload.status).to eq('pending')
+          end
+        end
+
         context 'because it was canceled on Stripe' do
           let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'canceled', payment_method: { type: 'card' }) }
 
@@ -297,6 +309,19 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           expect { subject }.to raise_error(Spree::Core::GatewayError, 'rate limit')
           expect(pending_session.reload.status).to eq('pending')
         end
+      end
+    end
+
+    context 'when the cart already has a paid session' do
+      let!(:completed_session) do
+        create(:stripe_payment_session, :completed, owner: order, payment_method: gateway, amount: order.total)
+      end
+
+      it 'opens no second intent' do
+        expect(gateway).not_to receive(:create_payment_intent)
+
+        expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress'))
+        expect(completed_session.reload.status).to eq('completed')
       end
     end
   end
