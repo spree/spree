@@ -15,6 +15,15 @@ module SpreeStripe
       MANUAL_CAPTURE_METHOD = 'manual'.freeze
       SETUP_FUTURE_USAGE = 'off_session'.freeze
 
+      # Not a decision about the intent. A timeout and an outage may not have
+      # arrived; a rate limit was turned away before Stripe looked. A refusal
+      # of the cancel itself is an InvalidRequestError and stays out of this list.
+      RETRYABLE_STRIPE_ERRORS = [
+        Stripe::APIConnectionError,
+        Stripe::RateLimitError,
+        Stripe::APIError
+      ].freeze
+
       def session_required?
         true
       end
@@ -126,15 +135,21 @@ module SpreeStripe
       # session is never shown as canceled while its money stands. An intent
       # already canceled at Stripe, or unknown to the account the keys now
       # reach, can no longer be paid, so its session is canceled all the same.
+      # A timeout, a rate limit or an outage is raised as Stripe's own error:
+      # wrapped as a refusal, the unused-session job would count the intent
+      # handled while the buyer can still pay it.
       #
       # @param payment_session [Spree::PaymentSessions::Stripe]
       # @return [Boolean] whether the session was canceled
       # @raise [Spree::Core::GatewayError] when Stripe refuses
+      # @raise [Stripe::StripeError] when Stripe could not be asked
       def cancel_payment_session(payment_session:)
-        protect_from_error { cancel_payment_intent(payment_session.external_id) }
+        cancel_payment_intent(payment_session.external_id)
         payment_session.cancel
-      rescue Spree::Core::GatewayError => error
-        raise error unless payment_intent_unpayable?(payment_session.external_id)
+      rescue *RETRYABLE_STRIPE_ERRORS
+        raise
+      rescue Stripe::StripeError => error
+        raise Spree::Core::GatewayError, error.message unless payment_intent_unpayable?(payment_session.external_id)
 
         payment_session.cancel
       end
@@ -212,6 +227,10 @@ module SpreeStripe
 
         cancel_payment_session(payment_session: payment_session)
         nil
+      rescue *RETRYABLE_STRIPE_ERRORS => error
+        # Checkout speaks GatewayError. The unused-session job does not: it
+        # retries these, and has to see them unwrapped.
+        raise Spree::Core::GatewayError, error.message
       end
 
       # The intent's Stripe customer, currency and card are fixed when it opens.
@@ -239,6 +258,8 @@ module SpreeStripe
         retrieve_payment_intent(payment_intent_id)
       rescue Stripe::InvalidRequestError => error
         raise Spree::Core::GatewayError, error.message unless error.code == 'resource_missing'
+      rescue *RETRYABLE_STRIPE_ERRORS
+        raise
       rescue Stripe::StripeError => error
         raise Spree::Core::GatewayError, error.message
       end

@@ -1,9 +1,10 @@
 module Spree
   module Payments
     # Cancels the payment sessions an order was placed without, so none of
-    # them can still be paid. The cursor is the last session handled, so a
-    # resume does not ask the provider again about sessions it already
-    # refused.
+    # them can still be paid. The cursor is the last session handled. A
+    # refusal is handled: asking again cannot change it. A session the
+    # provider could not be reached about is not, so a later run asks
+    # again. The buyer already holds that session's client secret.
     class CancelUnusedSessionsJob < Spree::BaseJob
       include ActiveJob::Continuable
 
@@ -35,8 +36,12 @@ module Spree
 
       def cancel(payment_session)
         payment_session.payment_method.cancel_payment_session(payment_session: payment_session)
-      rescue StandardError => error
-        # A refusal usually means the session was paid after all; retrying
+      rescue Spree::Core::GatewayError => error
+        # An unknown outcome is not a refusal. Cancel can be asked again;
+        # counting it handled leaves the intent payable.
+        raise if error.is_a?(Spree::Core::AmbiguousGatewayError)
+
+        # A refusal means the session was paid after all; retrying
         # cannot change that, and the order is placed either way.
         Rails.error.report(
           error,

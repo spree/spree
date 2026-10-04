@@ -208,6 +208,19 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           expect(pending_session.reload.status).to eq('canceled')
         end
 
+        context 'and Stripe cannot be reached to cancel it' do
+          before do
+            allow(gateway).to receive(:cancel_payment_intent).and_raise(Stripe::APIConnectionError, 'timed out')
+          end
+
+          it 'fails the request and leaves the intent open' do
+            expect(gateway).not_to receive(:create_payment_intent)
+
+            expect { subject }.to raise_error(Spree::Core::GatewayError, 'timed out')
+            expect(pending_session.reload.status).to eq('pending')
+          end
+        end
+
         context 'because it has been paid' do
           let(:stripe_intent) { Stripe::StripeObject.construct_from(id: 'pi_existing_123', status: 'succeeded', payment_method: { type: 'card' }) }
 
@@ -291,6 +304,34 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
           gateway.cancel_payment_session(payment_session: payment_session)
 
           expect(payment_session.reload.status).to eq('canceled')
+        end
+      end
+
+      context 'and the follow-up read cannot reach Stripe' do
+        before do
+          allow(gateway).to receive(:retrieve_payment_intent).with('pi_unused_123').
+            and_raise(Stripe::APIConnectionError, 'timed out')
+        end
+
+        it 'raises the timeout instead of a refusal' do
+          expect { gateway.cancel_payment_session(payment_session: payment_session) }.
+            to raise_error(Stripe::APIConnectionError)
+          expect(payment_session.reload.status).to eq('pending')
+        end
+      end
+    end
+
+    context 'when Stripe cannot be asked' do
+      [
+        [Stripe::APIConnectionError, 'timed out'],
+        [Stripe::RateLimitError, 'rate limit'],
+        [Stripe::APIError, 'internal error']
+      ].each do |error_class, message|
+        it "raises #{error_class} and leaves the session pending" do
+          allow(gateway).to receive(:cancel_payment_intent).and_raise(error_class, message)
+
+          expect { gateway.cancel_payment_session(payment_session: payment_session) }.to raise_error(error_class)
+          expect(payment_session.reload.status).to eq('pending')
         end
       end
     end

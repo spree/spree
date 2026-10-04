@@ -142,6 +142,11 @@ module Spree
     # gateway that cannot cancel at the provider must not report as canceled
     # a session that can still be paid.
     #
+    # Raise Spree::Core::GatewayError only for a refusal, such as a session
+    # that was already paid. A timeout, a rate limit or an outage is raised
+    # as itself. Callers that treat those as a refusal leave a session the
+    # buyer can still pay.
+    #
     # @param payment_session [Spree::PaymentSession]
     # @return [Boolean] whether the session was canceled
     # @raise [Spree::Core::GatewayError] when the provider refuses, e.g. the

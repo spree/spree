@@ -52,6 +52,43 @@ RSpec.describe Spree::Payments::CancelUnusedSessionsJob, type: :job do
       ActiveJob::Base.queue_adapter = original
     end
 
+    it 'asks again about a session the provider could not be reached about' do
+      other_session = create(:bogus_payment_session, order: order, payment_method: unused_session.payment_method)
+      second_session = [unused_session, other_session].max_by(&:id)
+      attempts = 0
+      allow_any_instance_of(Spree::PaymentSessions::Bogus).to receive(:cancel).and_wrap_original do |method, *arguments|
+        if method.receiver.id == second_session.id
+          attempts += 1
+          raise Timeout::Error, 'timed out' if attempts == 1
+        end
+
+        method.call(*arguments)
+      end
+
+      described_class.perform_later(order.id)
+      perform_enqueued_jobs
+
+      expect(second_session.reload.status).to eq('pending')
+
+      perform_enqueued_jobs
+
+      expect(attempts).to eq(2)
+      expect(second_session.reload.status).to eq('canceled')
+    end
+
+    it 'leaves the first session pending when the provider cannot be reached' do
+      allow_any_instance_of(Spree::PaymentSessions::Bogus).to receive(:cancel).
+        and_raise(Spree::Core::AmbiguousGatewayError, 'connection timed out')
+      allow(Rails.error).to receive(:report)
+
+      described_class.perform_later(order.id)
+
+      expect { perform_enqueued_jobs }.to raise_error(Spree::Core::AmbiguousGatewayError)
+      expect(unused_session.reload.status).to eq('pending')
+      expect(Rails.error).not_to have_received(:report).
+        with(anything, hash_including(source: 'spree.payments.cancel_unused_sessions'))
+    end
+
     it 'does not ask the provider again about a session it already refused' do
       other_session = create(:bogus_payment_session, order: order, payment_method: unused_session.payment_method)
       first_session, second_session = [unused_session, other_session].sort_by(&:id)
