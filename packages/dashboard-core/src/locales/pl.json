@@ -1418,7 +1418,7 @@
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",
       "create_label": "Utwórz lokalizację magazynową",
       "delete_confirm": {
-        "message": "{{name}} zostanie usunięta. Produkty na stanie w tej lokalizacji nie zostaną usunięte.",
+        "message": "{{name}} zostanie usunięta. Poziomy zapasów w tej lokalizacji również zostaną usunięte.",
         "title": "Usunąć lokalizację magazynową?"
       },
       "edit_description": "Zaktualizuj nazwę, adres, odbiór lub zasady dotyczące zapasów.",
