@@ -12,6 +12,14 @@ RSpec.describe Spree::Payments::CancelUnusedSessionsJob, type: :job do
     expect(unused_session.reload.status).to eq('canceled')
   end
 
+  it 'asks the provider to cancel a failed session nothing was paid through' do
+    unused_session.update_columns(status: 'failed')
+
+    described_class.perform_now(order.id)
+
+    expect(unused_session.reload.status).to eq('canceled')
+  end
+
   it 'leaves a session that settled a payment alone' do
     order.payments.first.update_columns(response_code: unused_session.external_id)
 

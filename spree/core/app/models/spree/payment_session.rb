@@ -28,7 +28,9 @@ module Spree
 
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
-    scope :unused, -> { pending.where.missing(:payment) }
+    # A declined confirm marks the session failed while its intent can still
+    # be paid, so placement has to cancel those too.
+    scope :unused, -> { where(status: %w[pending failed]).where.missing(:payment) }
 
     before_validation :set_defaults_from_order, on: :create
 

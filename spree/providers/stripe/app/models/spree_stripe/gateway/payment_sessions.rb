@@ -62,6 +62,10 @@ module SpreeStripe
           raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
         end
 
+        # A failed confirm leaves the intent payable. Cancel it before another
+        # one opens, or the buyer can still pay both.
+        retire_failed_payment_sessions(order)
+
         gateway_customer = fetch_or_create_customer(order: order)
 
         response = create_payment_intent(
@@ -239,6 +243,19 @@ module SpreeStripe
       rescue *RETRYABLE_STRIPE_ERRORS => error
         # Checkout speaks GatewayError. The unused-session job does not: it
         # retries these, and has to see them unwrapped.
+        raise Spree::Core::GatewayError, error.message
+      end
+
+      def retire_failed_payment_sessions(order)
+        order.payment_sessions.where(payment_method: self, status: 'failed').find_each do |payment_session|
+          payment_intent = find_payment_intent(payment_session.external_id)
+          if payment_intent && payment_intent_in_progress?(payment_intent)
+            raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+          end
+
+          cancel_payment_session(payment_session: payment_session)
+        end
+      rescue *RETRYABLE_STRIPE_ERRORS => error
         raise Spree::Core::GatewayError, error.message
       end
 
