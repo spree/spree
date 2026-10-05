@@ -4151,7 +4151,8 @@
           "revoke_hint": "You can revoke this at any time under Settings → Connected apps.",
           "approve": "Allow access",
           "deny": "Cancel",
-          "invalid_request": "This authorization request is not valid. Start again from the application that sent you here."
+          "invalid_request": "This authorization request is not valid. Start again from the application that sent you here.",
+          "decision_failed": "The decision could not be recorded. Try again."
         }
       }
     },
@@ -6315,7 +6316,8 @@
       "allow_writes": "Let this agent make changes",
       "allow_writes_help": "Leave off for an agent that only reads. A key that can change things can also cancel orders and issue refunds.",
       "mint_failed": "The key could not be created.",
-      "consumer_title": "Claude Desktop, claude.ai and ChatGPT"
+      "consumer_title": "Claude Desktop, claude.ai and ChatGPT",
+      "client_id_help": "If the connector asks for a client ID, use the one for your client — these are issued per store."
     }
   }
 }

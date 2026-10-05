@@ -4151,7 +4151,8 @@
           "revoke_hint": "Vous pouvez révoquer cet accès à tout moment dans Paramètres → Applications connectées.",
           "approve": "Autoriser l’accès",
           "deny": "Annuler",
-          "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici."
+          "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici.",
+          "decision_failed": "La décision n’a pas pu être enregistrée. Réessayez."
         }
       }
     },
@@ -6315,7 +6316,8 @@
       "allow_writes": "Autoriser cet agent à apporter des modifications",
       "allow_writes_help": "Laissez désactivé pour un agent qui ne fait que lire. Une clé qui peut modifier peut aussi annuler des commandes et émettre des remboursements.",
       "mint_failed": "La clé n’a pas pu être créée.",
-      "consumer_title": "Claude Desktop, claude.ai et ChatGPT"
+      "consumer_title": "Claude Desktop, claude.ai et ChatGPT",
+      "client_id_help": "Si le connecteur demande un identifiant client, utilisez celui de votre client — ils sont émis par boutique."
     }
   }
 }

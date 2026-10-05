@@ -4151,7 +4151,8 @@
           "revoke_hint": "Sie können dies jederzeit unter Einstellungen → Verbundene Apps widerrufen.",
           "approve": "Zugriff erlauben",
           "deny": "Abbrechen",
-          "invalid_request": "Diese Autorisierungsanfrage ist ungültig. Beginnen Sie erneut in der Anwendung, die Sie hierher geschickt hat."
+          "invalid_request": "Diese Autorisierungsanfrage ist ungültig. Beginnen Sie erneut in der Anwendung, die Sie hierher geschickt hat.",
+          "decision_failed": "Die Entscheidung konnte nicht gespeichert werden. Versuchen Sie es erneut."
         }
       }
     },
@@ -6315,7 +6316,8 @@
       "allow_writes": "Diesem Agenten Änderungen erlauben",
       "allow_writes_help": "Für einen Agenten, der nur liest, ausgeschaltet lassen. Ein Schlüssel mit Schreibrechten kann auch Bestellungen stornieren und Rückerstattungen auslösen.",
       "mint_failed": "Der Schlüssel konnte nicht erstellt werden.",
-      "consumer_title": "Claude Desktop, claude.ai und ChatGPT"
+      "consumer_title": "Claude Desktop, claude.ai und ChatGPT",
+      "client_id_help": "Falls der Connector eine Client-ID verlangt, verwenden Sie die für Ihren Client — diese werden pro Shop vergeben."
     }
   }
 }

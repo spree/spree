@@ -4141,7 +4141,8 @@
           "revoke_hint": "您可以随时在“设置 → 已连接的应用”中撤销。",
           "approve": "允许访问",
           "deny": "取消",
-          "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。"
+          "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。",
+          "decision_failed": "无法记录此决定，请重试。"
         }
       }
     },
@@ -6302,7 +6303,8 @@
       "allow_writes": "允许此代理进行更改",
       "allow_writes_help": "仅读取的代理请保持关闭。可更改数据的密钥同样可以取消订单和发起退款。",
       "mint_failed": "无法创建密钥。",
-      "consumer_title": "Claude Desktop、claude.ai 和 ChatGPT"
+      "consumer_title": "Claude Desktop、claude.ai 和 ChatGPT",
+      "client_id_help": "如果连接器需要客户端 ID，请使用对应客户端的 ID——它们按店铺分别签发。"
     }
   }
 }

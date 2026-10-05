@@ -52,8 +52,8 @@ module Spree
             # Applications holding a live token, as a subquery so nothing is
             # loaded just to be counted.
             def connected_application_ids
-              Spree::OauthAccessToken.
-                where(revoked_at: nil, resource_owner_type: Spree.admin_user_class.name).
+              Spree::OauthAccessToken.not_expired.
+                where(resource_owner_type: Spree.admin_user_class.name).
                 where(application_id: current_store.oauth_applications.select(:id)).
                 select(:application_id)
             end

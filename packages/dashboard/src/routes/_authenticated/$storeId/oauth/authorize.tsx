@@ -2,6 +2,7 @@ import { PageHeader } from '@spree/dashboard-core'
 import { Alert, AlertDescription, Button, Card, CardContent, Skeleton } from '@spree/dashboard-ui'
 import { CheckIcon, ShieldIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
@@ -36,14 +37,29 @@ function OauthAuthorizePage() {
   const search = Route.useSearch()
   const { data, isLoading, error } = useOauthAuthorization(search)
   const errorDetail = error instanceof Error ? error.message : undefined
+  const [decisionError, setDecisionError] = useState<string | null>(null)
   const { data: catalog } = usePermissionCatalog()
   const approve = useApproveOauthAuthorization()
   const deny = useDenyOauthAuthorization()
 
   // The decision ends the flow by handing the browser back to the client, so
   // a full navigation rather than a router push.
-  const leaveTo = (redirectUri: string) => {
-    window.location.href = redirectUri
+  //
+  // A rejected decision leaves the merchant here, and without the catch they
+  // would sit on an unchanged screen with no sign the click did anything.
+  async function decide(mutation: typeof approve | typeof deny) {
+    setDecisionError(null)
+
+    try {
+      const result = await mutation.mutateAsync(search)
+      window.location.href = result.redirect_uri
+    } catch (failure) {
+      setDecisionError(
+        failure instanceof Error
+          ? failure.message
+          : t('admin.pages.oauth.authorize.decision_failed'),
+      )
+    }
   }
 
   const pending = approve.isPending || deny.isPending
@@ -111,24 +127,17 @@ function OauthAuthorizePage() {
                   </AlertDescription>
                 </Alert>
 
+                {decisionError ? (
+                  <Alert variant="destructive">
+                    <AlertDescription>{decisionError}</AlertDescription>
+                  </Alert>
+                ) : null}
+
                 <div className="flex gap-3">
-                  <Button
-                    disabled={pending}
-                    onClick={async () => {
-                      const result = await approve.mutateAsync(search)
-                      leaveTo(result.redirect_uri)
-                    }}
-                  >
+                  <Button disabled={pending} onClick={() => decide(approve)}>
                     {t('admin.pages.oauth.authorize.approve')}
                   </Button>
-                  <Button
-                    variant="outline"
-                    disabled={pending}
-                    onClick={async () => {
-                      const result = await deny.mutateAsync(search)
-                      leaveTo(result.redirect_uri)
-                    }}
-                  >
+                  <Button variant="outline" disabled={pending} onClick={() => decide(deny)}>
                     {t('admin.pages.oauth.authorize.deny')}
                   </Button>
                 </div>

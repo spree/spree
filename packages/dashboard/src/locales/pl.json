@@ -4205,7 +4205,8 @@
           "revoke_hint": "Możesz odebrać dostęp w dowolnym momencie w Ustawienia → Połączone aplikacje.",
           "approve": "Zezwól na dostęp",
           "deny": "Anuluj",
-          "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała."
+          "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała.",
+          "decision_failed": "Nie udało się zapisać decyzji. Spróbuj ponownie."
         }
       }
     },
@@ -6383,7 +6384,8 @@
       "allow_writes": "Pozwól temu agentowi wprowadzać zmiany",
       "allow_writes_help": "Zostaw wyłączone dla agenta, który tylko czyta. Klucz, który może zmieniać dane, może też anulować zamówienia i wystawiać zwroty.",
       "mint_failed": "Nie udało się utworzyć klucza.",
-      "consumer_title": "Claude Desktop, claude.ai i ChatGPT"
+      "consumer_title": "Claude Desktop, claude.ai i ChatGPT",
+      "client_id_help": "Jeśli konektor poprosi o identyfikator klienta, użyj tego dla swojego klienta — są wydawane osobno dla każdego sklepu."
     }
   }
 }

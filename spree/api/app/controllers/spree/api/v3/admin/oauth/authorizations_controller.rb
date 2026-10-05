@@ -36,14 +36,11 @@ module Spree
             end
 
             def create
-              authorization = ::Doorkeeper::OAuth::Authorization::Code.new(@pre_auth, current_actor)
-              authorization.issue_token!
-
-              render json: { redirect_uri: authorization.callback.redirect_uri }
+              render json: { redirect_uri: code_request.authorize.redirect_uri }
             end
 
             def destroy
-              render json: { redirect_uri: denied_redirect_uri }
+              render json: { redirect_uri: code_request.deny.redirect_uri }
             end
 
             private
@@ -118,13 +115,12 @@ module Spree
               @pre_auth.client&.application&.name.presence || 'An application'
             end
 
-            def denied_redirect_uri
-              uri = URI.parse(@pre_auth.redirect_uri.to_s)
-              query = Rack::Utils.parse_nested_query(uri.query.to_s)
-              query['error'] = 'access_denied'
-              query['state'] = params[:state] if params[:state].present?
-              uri.query = query.to_query
-              uri.to_s
+            # Doorkeeper's own request object builds both redirects. Hand-
+            # rolling them means getting out-of-band clients, fragment
+            # response mode and the RFC 9207 issuer parameter right by hand,
+            # which is exactly the work the gem is here to do.
+            def code_request
+              @code_request ||= ::Doorkeeper::OAuth::CodeRequest.new(@pre_auth, current_actor)
             end
           end
         end
