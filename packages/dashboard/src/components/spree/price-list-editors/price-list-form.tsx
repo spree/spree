@@ -198,7 +198,11 @@ export function PriceListForm({
     // Zod parse behind `values` strips keys the schema doesn't know).
     const extensionValues = extensionSubmitValues('price_list', form)
     try {
-      await onSubmit({ ...priceListValuesToParams(values), ...extensionValues })
+      const loaded =
+        mode === 'edit' && priceList
+          ? adjustmentTiersFormValues(priceList.price_adjustment_tiers)
+          : undefined
+      await onSubmit({ ...priceListValuesToParams(values, loaded), ...extensionValues })
       // Membership flushes after the list itself saves, so a validation
       // failure aborts before any membership write.
       if (priceList) {

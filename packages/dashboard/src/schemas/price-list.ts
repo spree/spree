@@ -209,7 +209,22 @@ export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
 
 export function priceListValuesToParams(
   v: PriceListFormValues,
+  /**
+   * The ladder as it was loaded. When the merchant left it untouched it is
+   * not sent: the form edits one direction for the whole ladder, so
+   * re-sending a stored ladder that mixes discounts and markups would flip
+   * the minority rows on a save that never concerned them.
+   */
+  loaded?: Pick<PriceListFormValues, 'adjustment_tiers' | 'adjustment_direction'>,
 ): PriceListCreateParams & PriceListUpdateParams {
+  // The payload is the whole ladder, so a band the merchant deleted is a
+  // band absent from this array rather than one marked for removal.
+  const tiers = adjustmentTiersPayload(v.adjustment_tiers, v.adjustment_direction)
+  const tiersUnchanged =
+    loaded !== undefined &&
+    JSON.stringify(tiers) ===
+      JSON.stringify(adjustmentTiersPayload(loaded.adjustment_tiers, loaded.adjustment_direction))
+
   return {
     name: v.name,
     description: blankToNull(v.description),
@@ -217,9 +232,7 @@ export function priceListValuesToParams(
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
     rules: v.rules.map(ruleDraftToPayload),
-    // The payload is the whole ladder, so a band the merchant deleted is a
-    // band absent from this array rather than one marked for removal.
-    price_adjustment_tiers: adjustmentTiersPayload(v.adjustment_tiers, v.adjustment_direction),
+    ...(tiersUnchanged ? {} : { price_adjustment_tiers: tiers }),
   }
 }
 

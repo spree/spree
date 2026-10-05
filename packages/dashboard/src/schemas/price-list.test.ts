@@ -25,6 +25,38 @@ describe('priceListValuesToParams', () => {
   })
 })
 
+describe('priceListValuesToParams with a loaded ladder', () => {
+  // A ladder written through the API may mix a discount and a markup; the form
+  // shows one direction, so re-sending it unedited would flip the markup.
+  const stored = adjustmentTiersFormValues([
+    { id: 'pat_1', min_quantity: 10, percentage: '-10.0' },
+    { id: 'pat_2', min_quantity: 50, percentage: '5.0' },
+  ] as never)
+
+  it('leaves an untouched ladder out of the payload', () => {
+    const params = priceListValuesToParams(
+      { ...PRICE_LIST_DEFAULTS, name: 'Renamed', ...stored },
+      stored,
+    )
+
+    expect(params).not.toHaveProperty('price_adjustment_tiers')
+  })
+
+  it('sends the ladder once the merchant edits it', () => {
+    const params = priceListValuesToParams(
+      {
+        ...PRICE_LIST_DEFAULTS,
+        name: 'Volume',
+        adjustment_direction: 'decrease',
+        adjustment_tiers: [{ min_quantity: '10', percentage: '15' }],
+      },
+      stored,
+    )
+
+    expect(params.price_adjustment_tiers).toEqual([{ min_quantity: 10, percentage: '-15' }])
+  })
+})
+
 describe('adjustmentTiersFormValues', () => {
   it('reads stored tiers back as a direction and magnitudes', () => {
     expect(
