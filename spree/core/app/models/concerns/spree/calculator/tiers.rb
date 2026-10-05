@@ -43,12 +43,19 @@ module Spree
       private
 
       # Tiers that are not numbers are skipped: validation refuses them on
-      # save, but an unsaved calculator can still be asked to compute.
+      # save, but an unsaved calculator can still be asked to compute. Tiers
+      # still in the pre-6.0 hash keyed by threshold, left by an upgrade that
+      # could not convert them, keep discounting until they are converted.
       #
       # @return [Array<Array(BigDecimal, BigDecimal)>] threshold and value, lowest threshold first
       def tier_pairs
-        pairs = preferred_tiers.map { |tier| [Tiers.decimal(tier['threshold']), Tiers.decimal(tier['value'])] }
-        pairs.select(&:all?).sort_by(&:first)
+        tiers = preferred_tiers
+        pairs = case tiers
+                when Hash then tiers.to_a
+                when Array then tiers.grep(Hash).map { |tier| tier.values_at('threshold', 'value') }
+                else []
+                end
+        pairs.map { |threshold, value| [Tiers.decimal(threshold), Tiers.decimal(value)] }.select(&:all?).sort_by(&:first)
       end
 
       def preferred_tiers_content

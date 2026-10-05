@@ -83,7 +83,9 @@ module Spree
       # @return [Integer] the number of rows written
       def convert_text_table(table)
         type = connection.native_database_types.key?(:jsonb) ? :jsonb : :json
-        connection.add_column(table, :preferences_json, type)
+        # Left behind by an earlier run that stopped on an unreadable row, on a
+        # database that cannot roll back schema changes.
+        connection.add_column(table, :preferences_json, type) unless connection.column_exists?(table, :preferences_json)
         converted = convert_table(table, target: 'preferences_json')
         connection.remove_column(table, :preferences)
         connection.rename_column(table, :preferences_json, :preferences)

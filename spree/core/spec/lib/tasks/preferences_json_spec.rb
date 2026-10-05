@@ -166,6 +166,13 @@ describe 'preferences stored as JSON' do
         value = connection.select_value("SELECT preferences FROM #{table_name}")
         expect(value.is_a?(String) ? JSON.parse(value) : value).to eq('limit' => 5)
       end
+
+      it 'finishes a conversion an earlier run left half done' do
+        connection.add_column table_name, :preferences_json, :json
+
+        expect { task.invoke }.to output(/#{table_name}: 1 rows converted/).to_stdout
+        expect(connection.column_exists?(table_name, :preferences_json)).to be(false)
+      end
     end
 
     # A secret left in `preferences` is what a class unloaded at migration time

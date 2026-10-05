@@ -70,6 +70,15 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
       it('skips it') { is_expected.to eq 22.5 }
     end
+
+    context 'when the tiers are still a hash keyed by threshold, as before 6.0' do
+      before do
+        calculator.preferences = calculator.preferences.merge(tiers: { '100' => '15', '200' => '20' })
+        allow(line_item).to receive_messages(amount: 150)
+      end
+
+      it('still applies them') { is_expected.to eq 22.5 }
+    end
   end
 
   context 'when saved and loaded again' do
