@@ -162,6 +162,18 @@ describe Spree::Preferences::Preferable, type: :model do
         @a.set_preference(:if_decimal, '')
         expect(@a.get_preference(:if_decimal)).to eq(0.0)
       end
+
+      it 'stores and returns a decimal default as a BigDecimal, so setting the same amount is not a change' do
+        A.preference :decimal_with_default, :decimal, default: 0.0
+        record = A.create!
+        loaded = A.find(record.id)
+
+        expect(loaded.preferences[:decimal_with_default]).to eq('0.0')
+        expect(loaded.preferred_decimal_with_default).to be_a(BigDecimal)
+
+        loaded.preferred_decimal_with_default = 0
+        expect(loaded).not_to be_changed
+      end
     end
 
     context 'converts nullable decimal preferences' do

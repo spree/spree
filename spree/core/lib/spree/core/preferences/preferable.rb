@@ -139,7 +139,7 @@ module Spree::Preferences::Preferable
     return if missing.empty?
 
     already_changed = attribute_changed?(:preferences)
-    self.preferences = preferences.merge(missing.index_with { |name| preference_default(name) })
+    self.preferences = preferences.merge(missing.index_with { |name| stored_default(name) })
     clear_attribute_change(:preferences) if persisted? && !already_changed
   end
 
@@ -155,6 +155,17 @@ module Spree::Preferences::Preferable
   def preference_definition(name)
     has_preference! name
     self.class.preference_definitions[name.to_sym]
+  end
+
+  # A declared default in the form JSON stores, as the writer would store it,
+  # so a decimal default reads back as a BigDecimal and setting the same
+  # amount is not a change.
+  def stored_default(name)
+    default = preference_default(name)
+    type = preference_type(name)
+    return default if default.nil? || %i[decimal datetime].exclude?(type)
+
+    convert_preference_value(default, type, nullable: true).as_json
   end
 
   # Only a class that stores secrets can declare one, so the names say it all.

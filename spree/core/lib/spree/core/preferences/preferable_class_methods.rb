@@ -74,7 +74,7 @@ module Spree::Preferences
       # Overrides the store accessor's reader and writer, which treat a missing
       # key as nil; here a missing key means the declared default.
       define_method(:"preferred_#{name}") do
-        Spree::Preferences::Preferable.restore_value(stored_preference(name) { return preference_default(name) }, type)
+        Spree::Preferences::Preferable.restore_value(stored_preference(name) { stored_default(name) }, type)
       end
 
       define_method(:"preferred_#{name}=") do |value|
