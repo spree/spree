@@ -6285,6 +6285,19 @@
       "every_language": {
         "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
+    },
+    "mcp_connect": {
+      "open_cta": "连接代理",
+      "title": "连接代理",
+      "subtitle": "让 AI 助手访问此店铺。复制适用于您客户端的设置并粘贴。",
+      "mint_help": "系统会为代理创建一个只读密钥。若要允许其进行更改，请改在“API 密钥”页面创建具有所需权限的密钥。",
+      "mint_cta": "创建密钥",
+      "mint_denied": "您没有创建 API 密钥的权限。",
+      "token_shown_once": "请立即复制下面的设置——密钥仅显示这一次。",
+      "tab_other": "其他",
+      "cursor_path": "保存为项目中的 .cursor/mcp.json，或保存为您个人的 ~/.cursor/mcp.json。",
+      "vscode_path": "保存为项目中的 .vscode/mcp.json。",
+      "consumer_note": "Claude Desktop、claude.ai 和 ChatGPT 改为通过登录连接——将店铺网址粘贴到客户端并批准请求。"
     }
   }
 }

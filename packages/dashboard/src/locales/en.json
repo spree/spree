@@ -6298,6 +6298,19 @@
       "every_language": {
         "notice": "Customers in every language receive this version until you publish one for {{language}}."
       }
+    },
+    "mcp_connect": {
+      "open_cta": "Connect an agent",
+      "title": "Connect an agent",
+      "subtitle": "Give an AI assistant access to this store. Copy the setup for your client and paste it in.",
+      "mint_help": "A read-only key is created for the agent. To let it make changes, create a key with the scopes you want on the API keys page instead.",
+      "mint_cta": "Create a key",
+      "mint_denied": "You do not have permission to create API keys.",
+      "token_shown_once": "Copy the setup below now — the key is shown only this once.",
+      "tab_other": "Anything else",
+      "cursor_path": "Save as .cursor/mcp.json in your project, or ~/.cursor/mcp.json for yourself.",
+      "vscode_path": "Save as .vscode/mcp.json in your project.",
+      "consumer_note": "Claude Desktop, claude.ai and ChatGPT connect by signing in instead — paste the store URL into the client and approve the request."
     }
   }
 }

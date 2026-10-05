@@ -6366,6 +6366,19 @@
       "every_language": {
         "notice": "Klienci we wszystkich językach otrzymują tę wersję, dopóki nie opublikujesz wersji dla języka {{language}}."
       }
+    },
+    "mcp_connect": {
+      "open_cta": "Połącz agenta",
+      "title": "Połącz agenta",
+      "subtitle": "Daj asystentowi AI dostęp do tego sklepu. Skopiuj konfigurację dla swojego klienta i wklej ją.",
+      "mint_help": "Dla agenta tworzony jest klucz tylko do odczytu. Aby mógł wprowadzać zmiany, utwórz klucz z wybranymi uprawnieniami na stronie Klucze API.",
+      "mint_cta": "Utwórz klucz",
+      "mint_denied": "Nie masz uprawnień do tworzenia kluczy API.",
+      "token_shown_once": "Skopiuj konfigurację teraz — klucz jest pokazywany tylko ten jeden raz.",
+      "tab_other": "Coś innego",
+      "cursor_path": "Zapisz jako .cursor/mcp.json w projekcie lub ~/.cursor/mcp.json dla siebie.",
+      "vscode_path": "Zapisz jako .vscode/mcp.json w projekcie.",
+      "consumer_note": "Claude Desktop, claude.ai i ChatGPT łączą się przez zalogowanie — wklej adres sklepu w kliencie i zatwierdź prośbę."
     }
   }
 }

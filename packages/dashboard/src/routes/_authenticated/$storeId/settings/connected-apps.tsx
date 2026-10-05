@@ -2,6 +2,7 @@ import type { OauthApplication } from '@spree/admin-sdk'
 import { PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
+  Button,
   Card,
   CardContent,
   RelativeTime,
@@ -16,7 +17,9 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { McpConnectSheet } from '../../../../components/spree/mcp-connect-sheet'
 import { useOauthApplications, useRevokeOauthApplication } from '../../../../hooks/use-oauth'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/connected-apps')({
@@ -29,6 +32,7 @@ function ConnectedAppsSettingsPage() {
   const { data, isLoading } = useOauthApplications()
   const revoke = useRevokeOauthApplication()
   const { permissions } = usePermissions()
+  const [connectOpen, setConnectOpen] = useState(false)
 
   const applications = data?.data ?? []
   const canRevoke = permissions.can('update', Subject.Store)
@@ -52,7 +56,14 @@ function ConnectedAppsSettingsPage() {
       <PageHeader
         title={t('admin.pages.settings.connected_apps.title')}
         description={t('admin.pages.settings.connected_apps.subtitle')}
+        actions={
+          <Button size="sm" onClick={() => setConnectOpen(true)}>
+            {t('admin.mcp_connect.open_cta')}
+          </Button>
+        }
       />
+
+      <McpConnectSheet open={connectOpen} onOpenChange={setConnectOpen} />
 
       <Card>
         <CardContent className="p-0">
