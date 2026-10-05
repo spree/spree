@@ -138,6 +138,24 @@ module Spree
             oauth_token
           end
 
+          # A token selects its own store, the way a secret key does.
+          #
+          # An MCP client sends a URL and a bearer token and nothing else — it
+          # has no way to set the store header the Admin API otherwise uses —
+          # so without this a token granted for any store but the default one
+          # would be measured against the default store's resource identifier
+          # and always fail its audience check.
+          def resolve_admin_store
+            application_store || super
+          end
+
+          def application_store
+            return if bearer_value.blank?
+            return if bearer_value.start_with?(Spree::ApiKey::PREFIXES['secret'])
+
+            Spree::OauthAccessToken.by_token(bearer_value)&.application&.store
+          end
+
           def oauth_token
             return @oauth_token if defined?(@oauth_token)
 

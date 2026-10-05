@@ -43,14 +43,27 @@ module Spree
                 select(:application_id)
             end
 
+            # Scopes come from the live tokens, not the registration: a
+            # client is registered once and granted per consent, so the
+            # registration's own `scopes` column stays empty and what the
+            # merchant actually approved lives on the tokens.
             def serialize(application)
+              tokens = live_tokens_by_application[application.id].to_a
+
               {
                 id: application.prefixed_id,
                 name: application.name,
-                scopes: application.scopes.to_a.sort,
-                last_used_at: application.last_used_at,
+                scopes: tokens.flat_map { |token| token.scopes.to_a }.uniq.sort,
+                last_used_at: tokens.map(&:created_at).max,
                 created_at: application.created_at
               }
+            end
+
+            def live_tokens_by_application
+              @live_tokens_by_application ||=
+                Spree::OauthAccessToken.where(revoked_at: nil).
+                where(resource_owner_type: Spree.admin_user_class.name).
+                group_by(&:application_id)
             end
           end
         end

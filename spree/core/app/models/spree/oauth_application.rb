@@ -21,11 +21,14 @@ module Spree
              foreign_key: :application_id,
              dependent: :destroy
 
-    # When someone last used this application, for the connections screen.
+    # When this application was last granted a token that is still live.
+    # Revoked and expired tokens are excluded, so a merchant who has just
+    # revoked an app does not see a recent timestamp suggesting it still
+    # works.
     #
     # @return [ActiveSupport::TimeWithZone, nil]
     def last_used_at
-      access_tokens.order(:created_at).last&.created_at
+      access_tokens.where(revoked_at: nil).maximum(:created_at)
     end
   end
 end
