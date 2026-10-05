@@ -6033,8 +6033,9 @@
       },
       "table": {
         "search_placeholder": "Rechercher dans les notes…",
-        "empty": "Aucun avoir. Émettez-en un depuis une fiche client."
+        "empty": "Aucun avoir."
       },
+      "issue_description": "Choisissez un client et le montant à ajouter à son compte.",
       "no_customer": "Aucun client",
       "page": {
         "subtitle": "Total des avoirs dus par la boutique, tous clients confondus."

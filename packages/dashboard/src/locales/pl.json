@@ -6101,8 +6101,9 @@
       },
       "table": {
         "search_placeholder": "Szukaj w notatkach…",
-        "empty": "Brak środków. Wystaw je z profilu klienta."
+        "empty": "Brak środków."
       },
+      "issue_description": "Wybierz klienta i kwotę, którą chcesz dodać do jego konta.",
       "no_customer": "Brak klienta",
       "page": {
         "subtitle": "Ile sklep jest winien w środkach, w rozbiciu na wszystkich klientów."

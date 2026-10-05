@@ -5003,8 +5003,9 @@
       },
       "table": {
         "search_placeholder": "Buscar notas…",
-        "empty": "Todavía no hay créditos de tienda. Emití uno desde el perfil de un cliente."
+        "empty": "Todavía no hay créditos de tienda."
       },
+      "issue_description": "Elegí un cliente y el monto que querés sumar a su cuenta.",
       "no_customer": "Sin cliente",
       "page": {
         "subtitle": "Lo que la tienda debe en saldos prepagos, en todos los clientes."

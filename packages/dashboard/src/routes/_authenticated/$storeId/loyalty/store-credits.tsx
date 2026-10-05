@@ -1,5 +1,11 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { PageHeader, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
+import {
+  Can,
+  PageHeader,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -17,11 +23,13 @@ import {
   Skeleton,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PlusIcon } from '@spree/dashboard-ui/icons'
 import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
 import {
   listStoreCredits,
   useStoreCredit,
@@ -44,16 +52,15 @@ export const Route = createFileRoute('/_authenticated/$storeId/loyalty/store-cre
 const LIST_EXPAND = ['customer', 'created_by']
 
 /**
- * What the store owes in prepaid balances, across every customer.
- *
- * Read-only: a credit belongs to one customer and is issued, edited and
- * deleted on that customer's profile. This page answers how much is owed, to
- * whom, and why.
+ * What the store owes in prepaid balances, across every customer, and where a
+ * credit can be issued to any of them. Editing and deleting stay on the
+ * customer's profile. This page answers how much is owed, to whom, and why.
  */
 function StoreCreditsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
+  const [issueOpen, setIssueOpen] = useState(false)
   // Mirrored from the list response rather than fetched separately, so the
   // cards always describe the same filtered set as the rows. `queryFn` only
   // runs on an actual fetch, so the last totals are kept across a cached
@@ -86,8 +93,17 @@ function StoreCreditsPage() {
       <div className="flex flex-col gap-6">
         <PageHeader
           title={t('admin.nav.store_credits')}
-          subtitle={t('admin.store_credits.page.subtitle')}
+          description={t('admin.store_credits.page.subtitle')}
+          docsPath="loyalty/store-credits-list"
           sticky={false}
+          actions={
+            <Can I="create" a={Subject.StoreCredit}>
+              <Button size="sm" onClick={() => setIssueOpen(true)}>
+                <PlusIcon className="size-4" />
+                {t('admin.pages.customers.detail.issue_credit')}
+              </Button>
+            </Can>
+          }
         />
 
         <OutstandingTotals totals={totals} stale={refetching} />
@@ -108,6 +124,12 @@ function StoreCreditsPage() {
           hideHeader
         />
       </div>
+
+      <IssueStoreCreditDialog
+        open={issueOpen}
+        onOpenChange={setIssueOpen}
+        onIssued={(credit) => openCredit(credit.id)}
+      />
 
       {search.credit && (
         // Keyed by the credit so a deep link from one credit to another

@@ -35,6 +35,29 @@ test.describe('store credits', () => {
     await expect(row.getByText('$40.00').first()).toBeVisible()
   })
 
+  test('issues a credit to a customer picked on the page', async ({ page }) => {
+    const creds = await login(page)
+    const memo = `E2E loyalty credit ${Date.now()}`
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await expect(page.getByRole('link', { name: /learn more/i })).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByPlaceholder(/search customers/i).fill(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await page
+      .getByRole('option', { name: new RegExp(escapeRegex(FIXTURE_PROMO_CUSTOMER_EMAIL)) })
+      .first()
+      .click()
+    await dialog.getByLabel(/amount/i).fill('15')
+    await dialog.getByLabel(/memo/i).fill(memo)
+    await dialog.getByRole('button', { name: /^issue store credit$/i }).click()
+
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText(memo)).toBeVisible({ timeout: 15_000 })
+    await expect(sheet.getByText('$15.00').first()).toBeVisible()
+  })
+
   test('opens a credit and follows it to the customer', async ({ page }) => {
     const creds = await login(page)
     const memo = `E2E refund credit ${Date.now()}`
