@@ -62,11 +62,16 @@ module Spree
 
             private
 
-            # Applications holding a live token, as a subquery so nothing is
-            # loaded just to be counted.
+            # Applications that can still reach the store, as a subquery so
+            # nothing is loaded just to be counted.
+            #
+            # Revocation, not expiry, is the test: a refresh token outlives
+            # the access token beside it, so an application whose access has
+            # lapsed can mint more. Hiding it here would leave a merchant
+            # unable to revoke something that still works.
             def connected_application_ids
-              Spree::OauthAccessToken.not_expired.
-                where(resource_owner_type: Spree.admin_user_class.name).
+              Spree::OauthAccessToken.
+                where(revoked_at: nil, resource_owner_type: Spree.admin_user_class.name).
                 where(application_id: current_store.oauth_applications.select(:id)).
                 select(:application_id)
             end
