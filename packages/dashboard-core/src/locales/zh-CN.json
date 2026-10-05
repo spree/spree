@@ -1575,6 +1575,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "选择税务类别",
+      "tax": {
+        "apply_to_variants_help": "此分类适用于未设置专属税务分类的每个变体。保存后，这些变体将使用此设置。",
+        "variant_overrides_heading": "已设置专属税务分类的变体",
+        "variant_overrides_description": "这些变体将保留其分类，直到您清除覆盖。其他变体遵循上方的产品分类。",
+        "clear_variant_override": "使用产品分类"
+      },
       "transfers": {
         "create_description": "在库存地点之间调拨库存，或从外部供应商收货。",
         "delete_confirm": {
