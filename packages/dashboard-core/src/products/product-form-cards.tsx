@@ -24,6 +24,8 @@ import {
   useOptionalStore,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardAction,
@@ -37,7 +39,6 @@ import {
   ContextMenuTrigger,
   DragHandle,
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
   Input,
@@ -60,6 +61,7 @@ import {
   FolderTreeIcon,
   ImageIcon,
   ImagePlusIcon,
+  InfoIcon,
   LibraryIcon,
   Loader2Icon,
   PencilIcon,
@@ -70,7 +72,13 @@ import {
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type UseFormReturn,
+  useFormState,
+  useWatch,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
@@ -1171,6 +1179,8 @@ export function TaxCard({ form }: FormCardProps) {
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
   const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  const { dirtyFields } = useFormState({ control: form.control, name: 'tax_category_id' })
+  const showApplyToVariantsNotice = Boolean(dirtyFields.tax_category_id) && variants.length > 1
   const overrides = useMemo(
     () =>
       variants
@@ -1224,8 +1234,14 @@ export function TaxCard({ form }: FormCardProps) {
               </Select>
             )}
           />
-          <FieldDescription>{t('admin.products.tax.apply_to_variants_help')}</FieldDescription>
         </Field>
+
+        {showApplyToVariantsNotice && (
+          <Alert variant="info">
+            <InfoIcon />
+            <AlertDescription>{t('admin.products.tax.apply_to_variants_help')}</AlertDescription>
+          </Alert>
+        )}
 
         {overrides.length > 0 && (
           <div className="rounded-md border bg-muted/30 p-3 text-sm">
