@@ -4084,7 +4084,8 @@
           "table": {
             "name": "Application",
             "access": "Access",
-            "last_used": "Last used"
+            "last_used": "Last used",
+            "authorized_by": "Approved by"
           },
           "revoke_confirm": {
             "title": "Revoke access?",

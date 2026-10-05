@@ -15,6 +15,8 @@ module Spree
           typelize name: :string,
                    scopes: [:string, multi: true],
                    last_used_at: [:string, nullable: true],
+                   authorized_at: [:string, nullable: true],
+                   authorized_by: [:string, nullable: true],
                    redirect_uri: [:string, nullable: true]
 
           attributes :name, :redirect_uri, created_at: :iso8601, updated_at: :iso8601
@@ -25,6 +27,17 @@ module Spree
 
           attribute :last_used_at do |application|
             application.last_used_at&.iso8601
+          end
+
+          attribute :authorized_at do |application|
+            application.authorized_at&.iso8601
+          end
+
+          # Who allowed this, in the words a person is known by. On the screen
+          # that decides whether to revoke, the permission alone is half the
+          # story.
+          attribute :authorized_by do |application|
+            application.authorized_by.try(:actor_label)
           end
         end
       end
