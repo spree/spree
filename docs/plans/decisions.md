@@ -6189,6 +6189,98 @@ seller reset requests are declared `webhook: false` and never reach any
 webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
 subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.
 
+## 2026-10-05 — MCP consumer reach needs OAuth; nothing else is both interoperable and merchant-grade
+
+The Admin MCP server shipped in 6.0 authenticates with a secret key in a
+header, which reaches agents whose configuration a developer edits and no
+further. Reviewing that against what merchants actually need closed every
+alternative to OAuth 2.1, so `6.0-mcp-oauth` plans it and it ships in the
+same pull request.
+
+**A developer-only MCP server is worse than none.** The `spree api` CLI
+already serves agents with a shell, with full endpoint coverage and pipeable
+output. An MCP server reaching only that audience is a second surface to
+maintain that loses to the first, so consumer reach is the feature's
+acceptance criterion rather than an enhancement to it.
+
+**A stdio bridge does not deliver it.** Shipping a local proxy that injects
+the header is the common pattern among self-hosted platforms (GitLab,
+WooCommerce and BigCommerce all document one), and it does unblock desktop
+clients. But it needs Node, a global install and a hand-edited
+`claude_desktop_config.json` — a developer workflow. Anyone who can do it can
+use the CLI. Packaging it as a desktop extension removes the JSON editing and
+not the install, and reaches one vendor's client only.
+
+**Vendor header features do not deliver it either.** Anthropic's
+`static_headers` lets a merchant paste a key with no terminal, but it is in
+beta behind per-organization gating, carries an open bug where the configured
+header is ignored in favour of an OAuth flow, is an organization-wide
+credential that cannot identify the calling user, and is Anthropic's alone.
+Building the merchant path on it would mean Spree stores connect from Claude
+and from nothing else.
+
+**OAuth is what the clients that matter actually require**, and the spec is
+clear that authorization is optional — so the key-based server is already
+compliant and OAuth is about reach, not correctness. Hosted connectors
+(claude.ai, ChatGPT) fetch the URL from the vendor's own servers, so no local
+process can help them, and OAuth 2.1 is the single interoperable way in.
+
+**Consequences for other work.** The key path stays permanently rather than
+being retired by OAuth; it is how CI jobs, server-side integrations and
+editors authenticate, and commercetools ships both for the same reason. A 401
+on the MCP endpoint is now reserved for an authorization challenge, so
+permission refusals must stay where they already are: `{ error: '…' }`
+inside a 200 JSON-RPC response, which is where MCP puts tool-level failures.
+Promoting one to a 401 would send consumer clients into a re-authorization
+loop. `6.0-platform-auth` phase 7 makes
+Spree an OIDC *client* and does not provide any of this; the two share a spec
+family and almost no code.
+
+## 2026-10-05 — A delegated grant narrows the user's authority; it never inherits it
+
+The OAuth grant an admin approves for an agent carries scopes, and
+`Spree::AgentTools::Context` now takes `granted_scopes:` so those scopes
+intersect with what the user's own role allows. Without the intersection the
+context read only the CanCanCan ability, so a merchant who consented to
+reading products handed over all 64 tools, refunds included.
+
+Two rules the intersection has to keep. It only ever **narrows**: a grant
+naming every key in the catalog still gives a limited role nothing extra, so a
+compromised client cannot widen its own reach. And it applies to record checks
+too, not just to which tools are offered — being handed a read tool is not
+permission to write through it, so `can?` consults the grant before the
+ability.
+
+**Consequences for other work.** Anything that builds a `Context` for a caller
+acting *on behalf of* a person must pass `granted_scopes:`; omitting it means
+the full ability, which is right for the dashboard assistant (the admin is
+acting directly) and wrong for any delegated credential. The MCP endpoint is
+the worked example.
+
+## 2026-10-05 — OAuth lives in spree_api, its tables and models in spree_core
+
+Making Spree an OAuth 2.1 authorization server is platform infrastructure, not
+an MCP detail: `5.5-admin-api-key-scopes` already recorded that a public app
+marketplace would reuse the same scope vocabulary, and merchant-approved
+integrations and storefront customer login are the same flow with a different
+client. So the Doorkeeper configuration sits in `spree_api`, beside the
+authentication it extends, and protected resources register themselves —
+`Spree::Api::Oauth.register_resource(:mcp) { |store| … }` — rather than the
+authorization server knowing about MCP.
+
+The tables and the three models (`Spree::OauthApplication`,
+`OauthAccessGrant`, `OauthAccessToken`, named as they were before 5.4) are in
+`spree_core` for a blunter reason: a migration in `spree_api/db/migrate` is
+only copied by `spree_api:install:migrations`, because the engine names
+differ, while every upgrade guide tells people to run
+`spree:install:migrations`. Left there the tables would silently never be
+created on upgrade. `Spree::ApiKey` is already in core for the same reason.
+
+**Consequences for other work.** `doorkeeper` is a `spree_core` dependency,
+pinned to `~> 6.0.0.rc2` because that is the first release carrying RFC 8707
+resource indicators; relax it to `~> 6.0` once 6.0.0 is final. A new engine
+that needs its own migrations must either live in core or document its own
+install task — do not assume `spree:install:migrations` covers it.
 ## 2026-10-06 — The products CSV carries each location's shelf count
 
 **Context:** The products export filled `inventory_count` from
