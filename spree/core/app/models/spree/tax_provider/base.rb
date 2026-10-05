@@ -21,6 +21,16 @@ module Spree
         []
       end
 
+      # Whether this provider reads {Spree::Market#tax_inclusive}. The admin
+      # shows a market's switch only when its provider does, so a provider that
+      # decides inclusiveness another way (Internal reads each
+      # TaxRate#included_in_price) never presents a switch with no effect.
+      #
+      # @return [Boolean]
+      def self.uses_market_tax_inclusive?
+        false
+      end
+
       # Whether this provider can be selected for a store. External providers
       # override it to require a connected integration or credentials.
       #
@@ -67,6 +77,7 @@ module Spree
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
+          uses_market_tax_inclusive: uses_market_tax_inclusive?,
           default: name == Spree.default_tax_provider.to_s
         }
       end

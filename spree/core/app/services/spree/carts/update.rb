@@ -8,9 +8,14 @@ module Spree
         @params = params.to_h.deep_symbolize_keys
         was_in_checkout = cart.in_checkout?
 
-        ApplicationRecord.transaction do
+        # requires_new: the rescues below sit outside the block, so joining the
+        # Store API's cart lock would let it commit an address row already
+        # saved in place for an update that was then refused.
+        ApplicationRecord.transaction(requires_new: true) do
           assign_cart_attributes
-          clear_shipping_address_if_outside_market
+          # Settled now rather than on save, so the saved defaults filled in
+          # below are matched against the market the cart is moving to.
+          cart.settle_market
           assign_address(:shipping_address)
           assign_address(:billing_address)
           assign_default_addresses
@@ -215,18 +220,6 @@ module Spree
         market = cart.store.markets.find_by_prefix_id!(params[:market_id])
         cart.market = market
         cart.skip_market_resolution = true
-      end
-
-      # When the market changes, clear the shipping address if its country
-      # is not part of the new market. The market dictates which countries
-      # are available for checkout.
-      def clear_shipping_address_if_outside_market
-        return unless cart.market_id_changed? && cart.ship_address&.country_code.present?
-
-        unless cart.market.country_codes.include?(cart.ship_address.country_code)
-          cart.ship_address = nil
-          @address_invalidated = true
-        end
       end
 
       # Three-way dispatch on the cart→checkout transition:

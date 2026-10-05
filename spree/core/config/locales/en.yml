@@ -744,6 +744,7 @@ en:
       order_minimum_not_met: Orders must come to at least %{minimum}. Add %{shortfall} more to check out.
       payment_required: Add a payment method
       po_number_required: A purchase order number is required for this account
+      ship_address_outside_market: The %{market} market does not sell to %{country}. Choose a shipping address in one of its countries.
       ship_address_required: Shipping address is required
     choose_currency: Choose Currency
     city: City

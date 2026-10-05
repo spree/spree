@@ -51,6 +51,9 @@ module Spree
         order ||= @store.orders.new
         order.errors.add(:po_document, :po_document_upload_incomplete, message: Spree.t(:po_document_upload_incomplete))
         failure(order, order.errors.full_messages.to_sentence)
+      ensure
+        # A market named for this call only; later saves of the order follow its address again.
+        order&.skip_market_resolution = nil
       end
 
       private
@@ -60,7 +63,7 @@ module Spree
           customer: @customer,
           created_by: @created_by,
           email: @params[:email] || @customer&.email,
-          currency: @params[:currency].presence&.upcase || @store.default_currency,
+          currency: @params[:currency].presence&.upcase,
           locale: @params[:locale] || Spree::Current.locale,
           customer_note: @params[:customer_note],
           po_number: @params[:po_number],
@@ -74,7 +77,8 @@ module Spree
         # signed blob id, so it assigns like any other attribute.
         attrs[:po_document] = @params[:po_document] if @params[:po_document].present?
 
-        attrs[:market] = resolve_market if @params[:market_id].present?
+        # A market staff name outranks the one the shipping address would pick.
+        attrs.merge!(market: resolve_market, skip_market_resolution: true) if @params[:market_id].present?
         attrs[:channel] = resolve_channel if @params[:channel_id].present?
         attrs[:company] = resolve_company if @params[:company_id].present?
         attrs[:preferred_stock_location] = resolve_preferred_stock_location if @params[:preferred_stock_location_id].present?
