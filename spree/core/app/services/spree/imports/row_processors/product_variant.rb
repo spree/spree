@@ -313,11 +313,11 @@ module Spree
         def find_or_create_option_type!(label)
           cached_lookup(:option_type, label) do
             begin
-              store_option_types.search_by_name(label).first || store_option_types.create!(label: label)
+              store_option_types.with_name(label).first || store_option_types.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              store_option_types.search_by_name(label).first!
+              store_option_types.with_name(label).first!
             end
           end
         end
@@ -329,11 +329,11 @@ module Spree
         def find_or_create_option_value!(option_type, label)
           cached_lookup(:option_value, option_type.id, label) do
             begin
-              option_type.option_values.search_by_name(label).first || option_type.option_values.create!(label: label)
+              option_type.option_values.with_name(label).first || option_type.option_values.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              option_type.option_values.search_by_name(label).first!
+              option_type.option_values.with_name(label).first!
             end
           end
         end

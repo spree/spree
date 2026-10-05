@@ -303,6 +303,32 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(size_option_type.option_values.find_by(label: 'XS')).to be_present
     end
 
+    context 'when an existing option value contains the imported one as a substring' do
+      let(:color) { Spree::OptionType.find_by!(name: 'color') }
+      let!(:black_and_red) { create(:option_value, name: 'black-and-red', label: 'Black and Red', option_type: color) }
+      let!(:red) { create(:option_value, name: 'red', label: 'Red', option_type: color) }
+
+      let(:row_data) { super().merge('option1_value' => 'Red') }
+
+      it 'picks the exactly matching option value' do
+        expect(variant.option_values).to include(red)
+        expect(variant.option_values).not_to include(black_and_red)
+      end
+
+      it 'does not create a duplicate option value' do
+        expect { subject.process! }.not_to change { color.option_values.count }
+      end
+    end
+
+    context 'when an existing option type contains the imported one as a substring' do
+      let!(:color_family) { create(:option_type, name: 'color-family', label: 'Color Family', store: store) }
+
+      it 'picks the exactly matching option type' do
+        expect(variant.option_values.map(&:option_type)).not_to include(color_family)
+        expect(variant.option_values.map { |ov| ov.option_type.label }).to include('Color')
+      end
+    end
+
     context 'when another store has an option type with the same name' do
       let!(:foreign_fabric) { create(:option_type, name: 'fabric', label: 'Fabric', store: create(:store)) }
       let(:row_data) { super().merge('option3_name' => 'Fabric', 'option3_value' => 'Cotton') }
@@ -317,13 +343,13 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     context 'when a concurrent worker has already created the option type/value' do
       # Simulates two Sidekiq workers racing on the same option name during a CSV import.
-      # Force search_by_name to miss on the initial lookup so create! runs, then return
+      # Force with_name to miss on the initial lookup so create! runs, then return
       # real results on retry so the rescue path can find the peer's record.
-      # Option values don't need stubbing — they don't exist yet, so search_by_name
+      # Option values don't need stubbing — they don't exist yet, so with_name
       # naturally misses and create! succeeds.
       before do
         seen_option_types = Set.new
-        allow(Spree::OptionType).to receive(:search_by_name).and_wrap_original do |original, query|
+        allow(Spree::OptionType).to receive(:with_name).and_wrap_original do |original, query|
           seen_option_types.add?(query) ? Spree::OptionType.none : original.call(query)
         end
       end
@@ -338,8 +364,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       context 'when the create! reaches the DB and the unique index rejects it' do
         # Mirrors the production race: validator passed (peer not committed yet) but
         # the INSERT collides at the DB once the peer commits. Pre-create the peer rows
-        # so find_by!/search_by_name can locate them on retry.
-        # Option values are pre-created, so search_by_name naturally finds them.
+        # so find_by!/with_name can locate them on retry.
+        # Option values are pre-created, so with_name naturally finds them.
         let!(:color_blue) { create(:option_value, name: 'Blue', label: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
         let!(:size_xs) { create(:option_value, name: 'XS', label: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
 
