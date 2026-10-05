@@ -54,13 +54,14 @@ class CreateSpreeOauthTables < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :spree_oauth_access_tokens, :refresh_token, unique: true
-    # Hashed tokens are long, so the lookup index covers a prefix on MySQL,
-    # where a full-length text index is rejected.
+    # Hashed tokens are long, so both lookup indexes cover a prefix on MySQL,
+    # where an index over a full-length text column is rejected outright.
     if connection.adapter_name.match?(/mysql/i)
       add_index :spree_oauth_access_tokens, :token, unique: true, length: 255
+      add_index :spree_oauth_access_tokens, :refresh_token, unique: true, length: 255
     else
       add_index :spree_oauth_access_tokens, :token, unique: true
+      add_index :spree_oauth_access_tokens, :refresh_token, unique: true
     end
   end
 end

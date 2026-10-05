@@ -18,9 +18,13 @@ module Spree
       end
 
       # Applied from the engine so an installation gets a correct, locked-down
-      # authorization server by adding the gem. A host that needs to change
-      # something calls `Doorkeeper.configure` afterwards, which wins.
-      initializer 'spree.api.oauth', after: :load_config_initializers do |_app|
+      # authorization server by adding the gem.
+      #
+      # Before host initializers, not after: `Doorkeeper.configure` replaces
+      # the whole configuration, so running later would silently discard a
+      # host's own `config/initializers/doorkeeper.rb`. This way the host's
+      # file wins, which is what "configure it yourself" has to mean.
+      initializer 'spree.api.oauth', before: :load_config_initializers do |_app|
         Spree::Api::Oauth.configure!
       end
 

@@ -19,6 +19,7 @@ module Spree
             skip_scope_check!(jwt_only: true)
 
             before_action :require_signed_in_admin!
+            before_action :require_client_of_this_store!
             before_action :load_pre_authorization
 
             def show
@@ -52,6 +53,21 @@ module Spree
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
                 message: 'Only a signed-in admin user can authorize an application.',
                 status: :forbidden
+              )
+            end
+
+            # Doorkeeper resolves a client id globally, so without this an
+            # admin of one store could consent to another store's registered
+            # client. Reading it through the store's own association turns
+            # that into a 404, the same defence every other admin lookup
+            # uses.
+            def require_client_of_this_store!
+              return if current_store.oauth_applications.exists?(uid: params[:client_id])
+
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:record_not_found],
+                message: 'Unknown application.',
+                status: :not_found
               )
             end
 

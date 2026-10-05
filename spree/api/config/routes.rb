@@ -1084,15 +1084,33 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  # The authorization server's own endpoints: /oauth/token, /oauth/revoke and
-  # RFC 8414 metadata. Outside the versioned API namespace — the OAuth
-  # protocol is not a Spree API resource and its paths are fixed by the spec
-  # and by what clients expect to find.
+  # The authorization server's own endpoints: /oauth/authorize, /oauth/token,
+  # /oauth/revoke and RFC 8414 metadata. Outside the versioned API namespace —
+  # the OAuth protocol is not a Spree API resource and its paths are fixed by
+  # the spec and by what clients expect to find.
   #
-  # The authorization and application controllers are skipped: consent is
-  # rendered by the dashboard against the JSON endpoints under
-  # /api/v3/admin/oauth, so Doorkeeper's HTML screens are never reached.
+  # `authorizations` is NOT skipped. Skipping it would leave the metadata
+  # document without an `authorization_endpoint`, which is required for the
+  # code flow, so a consumer client would have nowhere to send the browser.
+  # The controller is Spree's own and redirects to the dashboard's consent
+  # screen instead of rendering Doorkeeper's HTML.
+  #
+  # The application-management controllers stay skipped: connected apps are
+  # managed through /api/v3/admin/oauth/applications, under the Admin API's
+  # own authentication.
+  # `controllers` is a block method, not an option to `use_doorkeeper`.
+  #
+  # Doorkeeper's own controllers need a leading slash because these routes are
+  # drawn inside Spree::Core::Engine, which isolates the namespace — a bare
+  # `doorkeeper/tokens` resolves as `Spree::Doorkeeper::Tokens` and fails on
+  # the first request. Spree's own authorizations controller is named from the
+  # application root WITHOUT a slash, because the metadata document builds its
+  # URL with `url_for(controller: "/#{name}")` and adds the slash itself.
   use_doorkeeper scope: 'oauth' do
-    skip_controllers :authorizations, :applications, :authorized_applications
+    controllers authorizations: 'api/v3/oauth/authorizations',
+                tokens: '/doorkeeper/tokens',
+                token_info: '/doorkeeper/token_info',
+                metadata: '/spree/api/v3/oauth/server_metadata'
+    skip_controllers :applications, :authorized_applications
   end
 end
