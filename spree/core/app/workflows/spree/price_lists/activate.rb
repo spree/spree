@@ -24,17 +24,24 @@ module Spree
 
       private
 
-      # A list with no rules, no catalog and no products applies to everyone
-      # and prices nothing. A draft may sit in that state while it is built;
-      # making it live is refused so that emptiness reads as the mistake it
-      # is rather than silently going nowhere.
+      # A list with no rules, no catalog, no products and no quantity
+      # discount applies to everyone and prices nothing. A draft may sit in
+      # that state while it is built; making it live is refused so that
+      # emptiness reads as the mistake it is rather than silently going
+      # nowhere. Quantity tiers alone are a store-wide volume discount, which
+      # prices every variant that reaches them.
       def require_something_to_apply_to
-        return if price_list.catalog_id.present?
-        return if price_list.price_rules.any?
-        return if price_list.prices.exists?
+        return if something_to_apply_to?
 
         price_list.errors.add(:base, :nothing_to_apply_to)
         failure(price_list)
+      end
+
+      def something_to_apply_to?
+        price_list.catalog_id.present? ||
+          price_list.price_rules.any? ||
+          price_list.price_adjustment_tiers.any? ||
+          price_list.prices.exists?
       end
 
       def scheduled?

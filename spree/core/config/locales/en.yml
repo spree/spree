@@ -380,7 +380,7 @@ en:
               duplicate_quantity: each quantity break must have its own quantity
               invalid_quantity: each quantity break must start at a whole number of units
               negative_price: a price cannot be below zero
-              nothing_to_apply_to: has no rules, no catalog and no products, so it would apply to nothing. Add one before activating.
+              nothing_to_apply_to: has no rules, no catalog, no products and no quantity discount, so it would apply to nothing. Add one before activating.
               price_rises_with_quantity: a quantity break cannot cost more than the price a buyer pays below it
               quantity_on_base_price: a shop price applies at every quantity, so it cannot start at one. Remove the quantity, or pick a price list to put the break on.
             ends_at:

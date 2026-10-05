@@ -41,6 +41,13 @@ RSpec.describe 'Spree::PriceLists status workflows' do
       expect(described_class.call(price_list: price_list)).to be_success
     end
 
+    it 'accepts a store-wide list carrying only quantity tiers' do
+      price_list = create(:price_list)
+      create(:price_adjustment_tier, price_list: price_list, min_quantity: 10, percentage: -10)
+
+      expect(described_class.call(price_list: price_list.reload)).to be_success
+    end
+
     it 'accepts a catalog-owned list with nothing else' do
       catalog = create(:catalog, store: @default_store)
       price_list = create(:price_list, store: @default_store, catalog: catalog)
