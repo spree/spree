@@ -14,7 +14,10 @@ Rails.application.config.after_initialize do
 
   Spree::Emails::AmountLineSerializer.typelize(label: [:string, nullable: true], amount: :string, display_amount: :string)
   Spree::Emails::FulfillmentGroupSerializer.typelize(name: [:string, nullable: true], display_cost: :string,
-                                                     seller_names: [:string, multi: true])
+                                                     seller_names: [:string, multi: true],
+                                                     # Declared before Typelizer's hooks were attached, so it
+                                                     # cannot tell this association is a list.
+                                                     items: [:EmailParcelItem, multi: true])
   Spree::Emails::ParcelItemSerializer.typelize(
     id: :string, name: :string, quantity: :number, sku: [:string, nullable: true], options_text: [:string, nullable: true],
     display_price: :string, display_amount: :string, url: [:string, nullable: true], image_url: [:string, nullable: true]
