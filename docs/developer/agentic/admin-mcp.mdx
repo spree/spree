@@ -20,9 +20,34 @@ https://your-store.com/api/v3/admin/mcp
   ```
 </Note>
 
+## Two ways to connect
+
+| | Who it is for | What the agent may do |
+| --- | --- | --- |
+| **Sign in** (OAuth) | A merchant connecting a consumer client — claude.ai, Claude Desktop, ChatGPT | What the signed-in person approves, never more than their own role allows |
+| **A secret API key** | A developer configuring an agent they run themselves — Claude Code, Cursor, VS Code, your own code | Exactly the scopes on the key |
+
+Signing in needs nothing created first: paste your store's MCP URL into the client, and it will walk you through approving access. Everything below the next section is the key-based path.
+
+## Signing in
+
+A consumer client asks for your store URL, then opens a Spree page listing what it wants to do. Approve it and the client is connected; nothing is copied or pasted.
+
+```text
+https://your-store.com/api/v3/admin/mcp
+```
+
+What you approve matters more than it looks:
+
+- **An agent never gets more than you have.** The grant narrows your own permissions, so a staff member who cannot issue refunds cannot approve an agent that can.
+- **Only what you approved.** Approving product access does not quietly include orders — the tools for anything else are not even offered.
+- **Revoke whenever you like.** **Settings → Connected apps** lists everything connected, with the last time each was used. Revoking stops it on its next call.
+
+Each person connects for themselves, so an agent's actions are recorded against the person who approved it.
+
 ## Mint a key first
 
-The credential is an ordinary Spree secret API key, and its scopes decide what the agent is even told exists. A key that can read orders is never shown a refund tool.
+For an agent you run yourself, the credential is an ordinary Spree secret API key, and its scopes decide what the agent is even told exists. A key that can read orders is never shown a refund tool.
 
 1. In the dashboard, go to **Settings → API keys** and create a **secret** key.
 2. Name it after the agent that will hold it — "Claude Code, orders" — so you know what you are revoking later.
@@ -35,7 +60,7 @@ Revoking the key in the dashboard is the off switch, and it takes effect on the 
   Give an agent the narrowest scopes that let it do its job. A tool that moves money — refunds, payment capture — is offered to any key holding `write_orders`, and the only thing standing between the model and the action is your client's confirmation prompt.
 </Warning>
 
-## Setup
+## Setup with a key
 
 The key travels as a header on every request. Spree accepts it as `X-Spree-API-Key` — the Admin API's own header — or as `Authorization: Bearer`, for clients that only offer a bearer-token field.
 
@@ -107,7 +132,7 @@ The key travels as a header on every request. Spree accepts it as `X-Spree-API-K
 </Tabs>
 
 <Note>
-  Claude Desktop's connector UI and claude.ai's hosted connectors expect OAuth rather than a header, so they cannot reach this endpoint yet. Every client above can.
+  Every client above carries the key in its own configuration. A consumer connector — claude.ai, Claude Desktop's connector UI, ChatGPT — has nowhere to put one: it connects from the vendor's servers rather than your machine. Those sign in instead, as described above.
 </Note>
 
 ## What the agent can do
@@ -196,7 +221,7 @@ A tool is offered only to a credential holding its `permission`, so a key that c
 
 ## Choosing between this and the CLI
 
-If your agent has a shell, the [`spree api` CLI](/developer/cli/admin-api) is usually the better tool: it reaches every endpoint, handles bulk work, and its output can be piped into other commands. This server is for agents that cannot shell out, and for conversational work where a job-shaped tool beats composing raw HTTP calls.
+The [`spree api` CLI](/developer/cli/admin-api) reaches every endpoint, handles bulk work, and its output pipes into other commands, so an agent with a shell should generally use it. Reach for this server when the shell is not available, or when the work is conversational — a tool shaped like "cancel this order" gives a model far less room to go wrong than composing the HTTP call itself, and each one runs the same workflow the dashboard runs.
 
 ## See also
 
