@@ -12,6 +12,14 @@ module Spree
         class MetadataController < ActionController::API
           include Spree::Core::ControllerHelpers::Store
 
+          # A public discovery document, read before any credential exists.
+          # The module has to be included because `ActionController::API`
+          # carries no forgery protection at all — declaring `:null_session`
+          # states that this endpoint changes nothing, rather than leaving
+          # that true only by accident of the base class.
+          include ActionController::RequestForgeryProtection
+          protect_from_forgery with: :null_session
+
           # The `resource` value must equal the URL the client was pointed at,
           # path and all, or a consumer client refuses to continue — so it is
           # echoed from the registered identifier rather than rebuilt here.
