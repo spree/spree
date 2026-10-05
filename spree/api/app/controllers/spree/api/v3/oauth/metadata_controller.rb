@@ -10,21 +10,20 @@ module Spree
         # resource. It is deliberately unauthenticated: a client has no
         # credential at the point it asks.
         class MetadataController < ActionController::API
-          include Spree::Core::ControllerHelpers::Store
 
           # A public discovery document, read before any credential exists.
           # The module has to be included because `ActionController::API`
-          # carries no forgery protection at all — declaring `:null_session`
-          # states that this endpoint changes nothing, rather than leaving
-          # that true only by accident of the base class.
+          # carries none of it; `:exception` is free here because the only
+          # action is a GET, which forgery protection never applies to.
           include ActionController::RequestForgeryProtection
-          protect_from_forgery with: :null_session
+          protect_from_forgery with: :exception
 
           # The `resource` value must equal the URL the client was pointed at,
           # path and all, or a consumer client refuses to continue — so it is
-          # echoed from the registered identifier rather than rebuilt here.
+          # built from this request's own origin rather than from anything
+          # configured elsewhere.
           def show
-            resource = Spree::Api::Oauth.resource_identifier(params[:resource_key], current_store)
+            resource = Spree::Api::Oauth.resource_identifier(params[:resource_key], request.base_url)
             return head :not_found if resource.blank?
 
             render json: {
@@ -42,8 +41,10 @@ module Spree
 
           private
 
+          # The authorization server's own origin. This request reached it, so
+          # the origin it arrived on is the one a client can use.
           def issuer
-            ::Doorkeeper.config.issuer.presence || current_store.formatted_url
+            ::Doorkeeper.config.issuer.presence || request.base_url
           end
         end
       end

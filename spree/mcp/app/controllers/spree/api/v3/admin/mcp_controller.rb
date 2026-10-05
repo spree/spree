@@ -109,10 +109,10 @@ module Spree
           # RFC 6750: the challenge names where to discover the authorization
           # server, which is how a consumer client starts its own sign-in.
           #
-          # Both URLs are built from the store, so they carry the same scheme
-          # and host by construction. A client compares their origins, and
-          # http-versus-https is enough for it to decide the document
-          # describes a different resource and stop.
+          # Both URLs are built from the origin this request arrived on, so
+          # they match what the client used and each other. A client compares
+          # them, and a different scheme or host is enough for it to decide
+          # the document describes another resource and stop.
           #
           # No `scope`: it is a SHOULD, and listing every grantable key makes
           # a header several kilobytes long. A client reads the real list from
@@ -120,8 +120,8 @@ module Spree
           def oauth_challenge
             format(
               'Bearer realm="%<realm>s", resource_metadata="%<metadata>s"',
-              realm: Spree::Api::Oauth.resource_identifier(:mcp, current_store),
-              metadata: "#{current_store.formatted_url}/api/v3/oauth/protected-resource/mcp"
+              realm: Spree::Api::Oauth.resource_identifier(:mcp, request.base_url),
+              metadata: "#{request.base_url}/api/v3/oauth/protected-resource/mcp"
             )
           end
 
@@ -172,11 +172,18 @@ module Spree
           # whole point of the audience is that a token minted for another
           # resource cannot be replayed against this one, and a token with no
           # audience cannot be shown to have been issued for this endpoint.
+          # Compared by path: a token minted through one hostname must keep
+          # working through another the same deployment answers on, while a
+          # token naming a different resource entirely is still refused.
           def audience_matches?(token)
-            expected = Spree::Api::Oauth.resource_identifier(:mcp, current_store)
+            expected = Spree::Api::Oauth.resources[:mcp]
             return false if expected.blank?
 
-            token.resource.to_s.split.include?(expected)
+            token.resource.to_s.split.any? do |indicator|
+              URI.parse(indicator).path == expected
+            rescue URI::InvalidURIError
+              false
+            end
           end
 
           def oauth_resource_owner

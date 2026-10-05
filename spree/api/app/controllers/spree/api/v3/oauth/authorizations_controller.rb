@@ -18,11 +18,12 @@ module Spree
           include Spree::Core::ControllerHelpers::Store
 
           # The authorization endpoint is reached by a cross-site GET on
-          # purpose — a client sends the browser here — so a forgery token
-          # cannot be required. It is safe to leave open because the action
-          # only redirects: nothing is granted until the merchant submits
-          # consent to the Admin API, which does carry its own session.
-          protect_from_forgery with: :null_session
+          # purpose — a client sends the browser here — and forgery
+          # protection never applies to a GET, so `:exception` costs nothing
+          # while leaving the endpoint reachable. Nothing is granted here
+          # either way: the action only redirects, and consent is submitted
+          # to the Admin API under the merchant's own session.
+          protect_from_forgery with: :exception
 
           # Carried across to the dashboard. Everything else is dropped, so a
           # crafted link cannot smuggle extra parameters into the consent page.
