@@ -96,7 +96,7 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
   if (spreeGems.length === 0) {
     throw new Error(
       'No Spree gems detected in Gemfile.lock. ' +
-        'Confirm the project has `gem "spree"` (or `spree_core`/`spree_admin`) in its Gemfile.',
+        'Confirm the project has `gem "spree"` (or `spree_core`) in its Gemfile.',
     )
   }
 

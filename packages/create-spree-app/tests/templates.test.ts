@@ -201,11 +201,9 @@ describe('readmeContent', () => {
     expect(content).toContain('cd apps/dashboard\nyarn run dev')
   })
 
-  it('includes the React Dashboard section when included', () => {
+  it('includes the Admin Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
-    expect(content).toContain('### The React Dashboard')
-    // The dashboard's dev server IS the admin in Spree 6 — the Rails admin
-    // engine is gone, so the README must not point at /admin.
+    expect(content).toContain('### The Admin Dashboard')
     expect(content).toContain('http://localhost:5173')
     expect(content).not.toMatch(/classic admin/i)
     expect(content).not.toContain('localhost:3000/admin')
@@ -213,9 +211,10 @@ describe('readmeContent', () => {
     expect(content).toContain('docs/developer/dashboard')
   })
 
-  it('omits the React Dashboard section by default', () => {
+  it('points at the built-in dashboard when apps/dashboard was skipped', () => {
     const content = readmeContent('my-store', true, 3000)
-    expect(content).not.toContain('React Dashboard')
+    expect(content).not.toContain('### The Admin Dashboard')
+    expect(content).toContain('http://localhost:3000/dashboard')
   })
 })
 
@@ -237,6 +236,12 @@ describe('rootClaudeMdContent', () => {
 
   it('omits apps/dashboard by default', () => {
     expect(rootClaudeMdContent(true)).not.toContain('apps/dashboard')
+  })
+
+  it('omits the seller panel when it was not installed', () => {
+    const content = rootClaudeMdContent(true, true, 'pnpm', false)
+    expect(content).toContain('apps/dashboard/AGENTS.md')
+    expect(content).not.toContain('apps/seller-dashboard')
   })
 })
 
@@ -280,6 +285,13 @@ describe('dependabotContent', () => {
     const content = dependabotContent(true, true)
     expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/dashboard"')
     expect(content).toContain('dashboard-security:')
+  })
+
+  it('adds the seller panel npm ecosystem only when it was installed', () => {
+    expect(dependabotContent(true, true, true)).toContain(
+      'package-ecosystem: npm\n    directory: "/apps/seller-dashboard"',
+    )
+    expect(dependabotContent(true, true)).not.toContain('/apps/seller-dashboard')
   })
 
   it('omits the dashboard ecosystem by default', () => {
