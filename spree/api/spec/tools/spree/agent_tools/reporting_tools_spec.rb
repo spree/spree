@@ -39,6 +39,21 @@ RSpec.describe 'agent reporting tools' do
   end
 
   describe 'query_report' do
+    # A grouped row holds a raw primary key. Handing a model
+    # `{"product" => 3}` answers "which products sell best" with a number it
+    # cannot read, so the key is resolved the same way the Admin API
+    # resolves it.
+    it 'names what a dimension grouped by' do
+      product = create(:product, store: store, name: 'Rotary Shaver 9000')
+      order = create(:completed_order_with_totals, store: store)
+      order.line_items.first.update!(variant: product.master)
+
+      result = tool('query_report').call(metrics: ['units_sold'], dimensions: ['product'])
+
+      expect(result[:error]).to be_nil
+      expect(result[:rows].map { |row| row[:dimensions][:product] }).to include('Rotary Shaver 9000')
+    end
+
     before { create(:completed_order_with_totals, store: store) }
 
     it 'answers with totals' do

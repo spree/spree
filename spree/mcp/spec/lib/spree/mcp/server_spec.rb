@@ -154,6 +154,19 @@ RSpec.describe Spree::Mcp::Server do
       expect(text.length).to be < structured.length
     end
 
+    # The other half of the rule. A client may render the structured half,
+    # the text half, or both — the protocol does not say — so a result whose
+    # whole body is the answer has to carry it in the text. Naming the keys
+    # and trusting the client to look elsewhere left a model reading
+    # "Returned meta, families, metrics…" where it asked for the schema.
+    it 'carries the answer as text when the payload is not a record list' do
+      response = call('tools/call', name: 'describe_reporting', arguments: {})
+      text = response.dig('result', 'content', 0, 'text').to_s
+
+      expect(text).to include('metrics')
+      expect(JSON.parse(text)).to include('families')
+    end
+
     it 'says what a payload holds when the tool offers no summary' do
       create_list(:product, 2, store: store)
 

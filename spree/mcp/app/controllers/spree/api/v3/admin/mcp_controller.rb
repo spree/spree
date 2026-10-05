@@ -18,22 +18,16 @@ module Spree
         class McpController < Spree::Api::V3::Admin::BaseController
           # The scope gate is per tool, not per request: a call carries the
           # tool it wants inside the JSON-RPC body, and every tool already
-          # declares the permission it needs. Checking one scope for the whole
-          # endpoint would mean either refusing a key that may legitimately
-          # read, or waving through a write the key cannot make.
+          # declares the permission it needs. Checking one grant's scopes for
+          # the whole endpoint would mean either refusing a read it covers or
+          # waving through a write it does not.
           skip_scope_check!
 
           # Prepended so it answers before the inherited authentication does.
           # The generic "Authentication required" is useless to an agent: this
           # text is what both the model and the person actually read when a
-          # client is misconfigured, so it has to say which credential to
-          # send and where it comes from.
-          #
-          # A JWT is still refused. It belongs to a signed-in admin in a
-          # browser, and a dashboard session is not what should drive an
-          # agent — the dashboard assistant is that path, over the same
-          # registry.
-          prepend_before_action :require_agent_credential!
+          # client is misconfigured.
+          prepend_before_action :require_oauth_token!
 
           def create
             render json: server.handle_json(request.body.read), content_type: 'application/json'
@@ -41,14 +35,17 @@ module Spree
 
           protected
 
-          # An OAuth token is a third credential the inherited concern knows
-          # nothing about, so it is resolved here. The grant already bound
-          # the token to a real admin user and this request's audience check
-          # confirmed it was issued for this store's endpoint, which is the
-          # same assurance `require_store_membership!` gives a JWT.
+          # The only credential this endpoint takes. An agent acts for a
+          # person, so it carries that person's grant: the token names who
+          # approved it and what they allowed, both of which a standing key
+          # cannot express. A secret key authenticates the rest of the Admin
+          # API and the `spree api` CLI; it is deliberately not accepted
+          # here.
+          #
+          # The grant already bound the token to a real admin user and the
+          # audience check confirmed it was issued for this endpoint, which
+          # is the assurance `require_store_membership!` gives a JWT.
           def authenticate_admin!
-            return super if current_oauth_token.blank?
-
             owner = oauth_resource_owner
             return false if owner.nil?
 
@@ -57,28 +54,11 @@ module Spree
             true
           end
 
-          # The key in either of the two forms clients offer. Several MCP
-          # clients have a bearer-token field and no way to set a custom
-          # header, so a secret key is accepted there too. The `sk_` prefix
-          # keeps it unambiguous against the JWTs the Admin API also accepts
-          # in `Authorization`, and a JWT presented here resolves to no key
-          # and is refused below.
-          def extract_api_key
-            super.presence || bearer_secret_key
-          end
-
           private
 
           # Split rather than matched: a regex with `\s+(.+)` backtracks on a
           # header of many spaces, and this one is attacker-supplied on an
           # unauthenticated request.
-          def bearer_secret_key
-            value = bearer_value
-            value if value&.start_with?(Spree::ApiKey::PREFIXES['secret'])
-          end
-
-          # Split rather than matched, for the same reason: this header is
-          # attacker-supplied on an unauthenticated request.
           def bearer_value
             scheme, value = request.headers['Authorization'].to_s.split(' ', 2)
             return unless scheme&.casecmp?('Bearer')
@@ -90,20 +70,16 @@ module Spree
             Spree::Mcp::Server.for(agent_context)
           end
 
-          # Either credential resolves into the same context, so the tool
-          # catalog never learns which one a request used. A key's authority
-          # is its scopes; a token's is the admin user's own permissions,
-          # resolved fresh here rather than frozen when the token was issued.
+          # The caller's authority is the admin user's own permissions,
+          # narrowed by what they consented to — resolved on every request
+          # rather than frozen when the token was issued, so narrowing a role
+          # takes effect immediately.
           def agent_context
-            if current_oauth_token.present?
-              Spree::AgentTools::Context.new(
-                store: current_store,
-                user: oauth_resource_owner,
-                granted_scopes: current_oauth_token.scopes.to_a
-              )
-            else
-              Spree::AgentTools::Context.new(store: current_store, api_key: current_api_key)
-            end
+            Spree::AgentTools::Context.new(
+              store: current_store,
+              user: oauth_resource_owner,
+              granted_scopes: current_oauth_token.scopes.to_a
+            )
           end
 
           # RFC 6750: the challenge names where to discover the authorization
@@ -147,12 +123,7 @@ module Spree
             return @bearer_access_token if defined?(@bearer_access_token)
 
             raw = bearer_value
-            @bearer_access_token =
-              if raw.blank? || raw.start_with?(Spree::ApiKey::PREFIXES['secret'])
-                nil
-              else
-                Spree::OauthAccessToken.by_token(raw)
-              end
+            @bearer_access_token = raw.present? ? Spree::OauthAccessToken.by_token(raw) : nil
           end
 
           # The token this request may actually act on: live, and issued for
@@ -198,8 +169,11 @@ module Spree
           # token a merchant approved. A 401 carries the OAuth challenge, so
           # a consumer client that arrives with nothing discovers how to sign
           # in rather than simply failing.
-          def require_agent_credential!
-            return if secret_api_key.present? || current_oauth_token.present?
+          # A 401 carrying the discovery header, which is how a client that
+          # arrived with nothing learns where to sign in rather than simply
+          # failing.
+          def require_oauth_token!
+            return if current_oauth_token.present?
 
             response.headers['WWW-Authenticate'] = oauth_challenge
 
@@ -208,11 +182,11 @@ module Spree
               id: nil,
               error: {
                 code: -32_001,
-                message: 'Authentication is required. Either sign in through this store (your ' \
-                         'client will offer that when it reads the challenge on this response), ' \
-                         'or send a secret API key as `X-Spree-API-Key: sk_…` or ' \
-                         '`Authorization: Bearer sk_…` — mint one in the dashboard under ' \
-                         'Settings → API keys, granting only the scopes this agent needs.'
+                message: 'Sign in to this store to continue. Your client will offer that when ' \
+                         'it reads the challenge on this response. A Spree API key is not ' \
+                         'accepted here — an agent acts for a person, so it carries that ' \
+                         "person's own permissions. Use the `spree api` CLI for scripted " \
+                         'access that cannot sign in.'
               }
             }, status: :unauthorized
           end

@@ -103,10 +103,34 @@ module Spree
         # record into the model's context twice — on exactly the results the
         # design requires to stay compact. Without a summary this says what
         # came back, and the structured half carries it.
+        # What the model reads.
+        #
+        # A client may render the structured half, the text half, or both —
+        # the protocol does not say — so the text has to carry the answer
+        # rather than point at it. Naming the keys and trusting the client to
+        # look elsewhere leaves a model with nothing to work from.
+        #
+        # The exception is a list of records: those already carry a summary
+        # line, and repeating every row would put the payload into the
+        # model's context twice on exactly the results meant to stay compact.
         def text_for(result)
           return result.to_s unless result.is_a?(Hash)
 
-          result[:summary].presence || describe(result)
+          summary = result[:summary].presence
+          return summary if summary
+          return describe(result) if record_list?(result)
+
+          JSON.generate(result)
+        end
+
+        # A page of records the caller can fetch individually.
+        #
+        # Only `records` counts. A report's rows look similar but are
+        # computed figures that exist nowhere else — summarising them as
+        # "returned 2 results" hands the model a row count where it asked
+        # for the numbers.
+        def record_list?(result)
+          result.key?(:records)
         end
 
         # A sentence about a payload that carries no summary of its own: what
