@@ -58,13 +58,16 @@ export function IntegrationCard({
 }) {
   // The value the merchant just chose, shown until the saved record agrees.
   const [optimisticChecked, setOptimisticChecked] = useState<boolean | null>(null)
+  // Mirrors `saveInFlight` for rendering: while a save is open the record can
+  // still hold the value from before it, which must not end the optimistic one.
+  const [saving, setSaving] = useState(false)
   const savedChecked = toggle?.checked
 
   useEffect(() => {
-    if (optimisticChecked !== null && savedChecked === optimisticChecked) {
+    if (!saving && optimisticChecked !== null && savedChecked === optimisticChecked) {
       setOptimisticChecked(null)
     }
-  }, [savedChecked, optimisticChecked])
+  }, [saving, savedChecked, optimisticChecked])
 
   const displayedStatus: IntegrationCardStatus =
     optimisticChecked === null ? status : optimisticChecked ? 'active' : 'inactive'
@@ -77,6 +80,7 @@ export function IntegrationCard({
 
   function save(checked: boolean, request: Promise<boolean>) {
     saveInFlight.current = true
+    setSaving(true)
     request.then(
       (kept) => settle(checked, kept),
       () => settle(checked, null),
@@ -85,6 +89,7 @@ export function IntegrationCard({
 
   function settle(requested: boolean, kept: boolean | null) {
     saveInFlight.current = false
+    setSaving(false)
     const next = queuedChecked.current
     queuedChecked.current = null
     if (next !== null && next !== kept) {

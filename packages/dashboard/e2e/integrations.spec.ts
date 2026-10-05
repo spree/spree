@@ -126,11 +126,15 @@ test.describe('integrations', () => {
       const firstSaveHeld = new Promise<void>((resolve) => {
         releaseFirstSave = resolve
       })
+      let releaseSecondSave: () => void = () => {}
+      const secondSaveHeld = new Promise<void>((resolve) => {
+        releaseSecondSave = resolve
+      })
       let saves = 0
       await page.route(`**/api/v3/admin/payment_methods/${id}`, async (route) => {
         if (route.request().method() !== 'PATCH') return route.fallback()
         saves += 1
-        if (saves === 1) await firstSaveHeld
+        await (saves === 1 ? firstSaveHeld : secondSaveHeld)
         await route.fallback()
       })
 
@@ -139,8 +143,34 @@ test.describe('integrations', () => {
       await toggle.click()
       await expect(toggle).toBeChecked()
 
+      // Once the first save lands the list is refetched holding its value
+      // (off). The switch must keep showing the latest choice regardless.
+      const listRefetched = page.waitForResponse(
+        (res) => res.request().method() === 'GET' && /\/payment_methods\?/.test(res.url()),
+      )
       releaseFirstSave()
       await expect.poll(() => saves, { timeout: 15_000 }).toBe(2)
+      await listRefetched
+      await expect(toggle).toBeChecked()
+
+      releaseSecondSave()
+
+      // The second save is forwarded, not awaited, by the route; wait for the
+      // server to hold the final choice before reloading to read it back.
+      await expect
+        .poll(
+          async () => {
+            const res = await page.request.get(`/api/v3/admin/payment_methods/${id}`, {
+              headers: {
+                'X-Spree-Store-Id': creds.store_id,
+                Authorization: `Bearer ${creds.accessToken}`,
+              },
+            })
+            return ((await res.json()) as { active: boolean }).active
+          },
+          { timeout: 15_000 },
+        )
+        .toBe(true)
 
       await page.unrouteAll({ behavior: 'wait' })
       await page.reload()
