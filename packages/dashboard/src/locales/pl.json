@@ -2441,7 +2441,7 @@
       "configure_cta": "Konfiguruj",
       "connect_cta": "Połącz",
       "connect_description": "Wprowadź dane dostępowe tego dostawcy. Zapis je przechowuje; aktywacja weryfikuje połączenie.",
-      "description": "Połącz usługi dostawców z tym sklepem. Dane dostępowe są przechowywane per sklep i używane przez dostawców dostaw, podatków i innych.",
+      "description": "Połącz dostawców płatności i inne usługi z tym sklepem. Dane dostępowe są przechowywane osobno dla każdego sklepu i używane przez kasę, dostawę, podatki i innych dostawców.",
       "disconnect": "Rozłącz",
       "disconnect_confirm": {
         "message": "Rozłączyć {{name}}? Zapisane dane dostępowe zostaną usunięte, a korzystający z nich dostawcy przestaną działać.",
@@ -2454,18 +2454,24 @@
       },
       "groups": {
         "other": "Inne",
+        "payments": "Płatności",
         "shipping": "Dostawa",
         "tax": "Podatki"
       },
+      "manage_payment_methods": "Zarządzaj metodami płatności",
       "messages": {
         "connected": "Integracja połączona",
         "disconnected": "Integracja rozłączona",
         "updated": "Integracja zaktualizowana"
       },
+      "setup_guide": "Instrukcja konfiguracji",
       "status": {
         "active": "Aktywna",
         "connected_inactive": "Połączona (nieaktywna)",
         "not_connected": "Niepołączona"
+      },
+      "tabs": {
+        "all": "Wszystkie"
       },
       "test": {
         "failure": "Połączenie nieudane.",
@@ -2474,7 +2480,9 @@
         "success": "Połączenie udane.",
         "testing": "Testowanie…"
       },
+      "test_mode": "Tryb testowy",
       "title": "Integracje",
+      "toggle_label": "Włącz lub wyłącz {{name}}",
       "view_cta": "Zobacz"
     },
     "invitation": {

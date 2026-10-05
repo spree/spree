@@ -2423,7 +2423,7 @@
       "configure_cta": "Configure",
       "connect_cta": "Connect",
       "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
-      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "description": "Connect payment providers and other services to this store. Credentials are stored per store and used by checkout, delivery, tax and other providers.",
       "disconnect": "Disconnect",
       "disconnect_confirm": {
         "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working.",
@@ -2436,18 +2436,24 @@
       },
       "groups": {
         "other": "Other",
+        "payments": "Payments",
         "shipping": "Shipping",
         "tax": "Tax"
       },
+      "manage_payment_methods": "Manage payment methods",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
         "updated": "Integration updated"
       },
+      "setup_guide": "Setup guide",
       "status": {
         "active": "Active",
         "connected_inactive": "Connected (inactive)",
         "not_connected": "Not connected"
+      },
+      "tabs": {
+        "all": "All"
       },
       "test": {
         "failure": "Connection failed.",
@@ -2456,7 +2462,9 @@
         "success": "Connection successful.",
         "testing": "Testing…"
       },
+      "test_mode": "Test mode",
       "title": "Integrations",
+      "toggle_label": "Turn {{name}} on or off",
       "view_cta": "View"
     },
     "invitation": {

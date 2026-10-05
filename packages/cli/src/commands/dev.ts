@@ -24,7 +24,7 @@ export function registerDevCommand(program: Command): void {
   program
     .command('dev')
     .description(
-      'Run the app in the foreground — the API, plus the React Dashboard dev server when apps/dashboard exists; Ctrl+C stops them',
+      'Run the app in the foreground — the API, plus the Admin Dashboard dev server when apps/dashboard exists; Ctrl+C stops them',
     )
     .action(async () => {
       const ctx = detectProject()

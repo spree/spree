@@ -19,6 +19,8 @@ export const PaymentMethodSchema = z.object({
   updated_at: z.string(),
   preferences: z.record(z.string(), z.unknown()),
   preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.string()).optional() })),
+  logo_url: z.string().nullable(),
+  docs_url: z.string().nullable(),
 });
 
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
