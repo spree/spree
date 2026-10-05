@@ -1,59 +1,106 @@
 ---
 title: "Returns & Reasons"
-description: "Define the return, claim, and refund reasons your team chooses from when handling returns."
+description: "Learn how to set up the reasons your team picks from when handling returns, claims, refunds and cancellations in Spree Commerce."
 ---
 
-Returns management is a crucial part of ecommerce operations. It builds customer trust, streamlines support workflows, and helps maintain clarity around inventory and financial adjustments.
+Every time your team sends money back, takes goods back, or calls off an order, Spree asks them why. This screen holds the lists they pick from.
 
-Not all ecommerce platforms offer built-in tools for managing returns, but fortunately Spree does — no extra plugins or custom development needed.
+Keeping these as fixed lists rather than free text is what makes the answers countable. "Damaged in transit" chosen 40 times this month is a conversation with your carrier. Forty differently worded notes are not.
 
-Before you start processing returns, it is worth setting up the three lists of reasons Spree uses. Each answers a different question, which is why they are kept apart: mixing them together makes your reporting far less useful.
+To manage them, navigate to **Settings → Returns & reasons**, under the **Shipping & delivery** group.
 
-## Return Reasons
+![The Returns and reasons page, showing the four separate reason lists](/docs/images/user/settings/returns-and-reasons/1-returns-and-reasons.png)
 
-Return reasons record why a customer is sending something back. They apply to both returns and exchanges.
+## The Four Lists
 
-Typical examples are "Wrong size", "No longer needed", "Different from description", and "Arrived too late".
+The page holds four independent lists, each in its own card. A reason added to one does not appear in the others, because each answers a different question.
 
-Each reason has two fields:
+### Return Reasons
 
-- **Name**: the reason itself, as your team and customers will see it.
-- **Status**: whether the reason is available for use. Setting a reason to inactive hides it from new returns without deleting the history of returns that already used it.
+Why a customer is sending something back. Shared by returns and exchanges, so one list covers both.
 
-## Claim Reasons
+These are the reasons your team picks when a customer wants to send goods back, and they are the most revealing list on the page. Read together over a few months they tell you whether you have a product problem, a sizing problem, a photography problem or a delivery problem.
 
-Claim reasons record what went wrong with a delivery — problems on your end rather than a customer changing their mind.
+A new store arrives with nine:
 
-Typical examples are "Arrived damaged", "Never arrived", "Wrong item sent", and "Missing item from order".
+- Accidental order
+- Better price available
+- Damaged/Defective
+- Different from description
+- Different from what was ordered
+- Missed estimated delivery date
+- Missing parts or accessories
+- No longer needed/wanted
+- Unauthorized purchase
 
-They have the same two fields as return reasons: a name and a status.
+It's worth noting that these reasons can separate causes you control from causes you do not. For exmaple, "Different from description" is something you can fix. "No longer needed/wanted" is not.
 
-<Note>
-  Claims also have a separate **type** field — damaged, missing, wrong item, or other — which is a broader grouping than the reason. Your developers can add more types if the standard four do not fit your business.
-</Note>
+### Claim Reasons
 
-## Refund Reasons
+What went wrong with a delivery: damaged, missing or wrong item.
 
-Refund reasons explain why money was sent back. They are used internally for tracking, reporting, and communication across teams, and they apply to any refund, whether or not a return was involved.
+A claim is opened when the order did not arrive as it should have, rather than when the customer simply wants to send something back. The distinction matters because a claim usually means a cost to recover from a carrier or a supplier, where a return is a normal cost of selling.
 
-Typical examples are "Return processing" and "Order cancelled".
+A new store arrives with five:
 
-## Managing reasons
+- Arrived damaged
+- Item not as described
+- Missing item from order
+- Never arrived
+- Wrong item sent
 
-All three lists live together under **Settings → Returns & reasons**. Spree seeds a starting set when your store is created, so returns, claims, and refunds work out of the box, and you can add, rename, deactivate, or delete entries from there.
+<Note>Ideally, claim reasons should convey what went wrong on your side rather than issues reported on the customer side. Mixing the two makes it impossible to tell a preference problem from a fulfilment problem, which is the main thing this list is for.</Note>
 
-Each reason has two fields: its **name**, and whether it is **available on new records**. Turning that switch off retires a reason — it stops appearing when staff open a new return, claim, or refund, while every record that already used it keeps its explanation.
+### Refund Reasons
 
-A reason that is already attached to a record cannot be deleted, because the records that used it would lose their explanation. Those reasons are marked **In use**. Deactivate one instead to retire it, and rename it at any time — every record pointing at it follows the new name.
+Why money went back. Used for reporting across every refund.
 
-## What about return windows and restocking fees?
+This list applies to any refund, whether or not goods came back. That makes it the one your finance team is most likely to want extended, because "Return processing" does not distinguish a goodwill gesture from a price correction from a cancelled order.
 
-Spree does not ship with a fixed return window, restocking fee, or final-sale setting. Return policy varies enormously between merchants, and often has to differ by country for legal reasons — the European Union, for example, requires a minimum withdrawal period that many other markets do not.
+A new store arrives with one, **Return processing**, so this is usually the first list worth adding to.
 
-Rather than guessing, Spree gives your developers a place to attach your own policy when a return is created. A common arrangement enforces the policy for customers opening returns themselves, while letting your staff override it, so a supervisor can accept a late return for a loyal customer without needing any code changes.
+### Order Cancellation Reasons
 
-## Processing Returns
+Why an order was called off before it shipped. Staff pick one when cancelling.
 
-Once your reasons are set up, you are ready to handle returns, exchanges, and claims.
+A new store arrives with seven:
 
-To learn how, see [Returns → Returns Processing](/user/orders/returns).
+- Customer changed their mind
+- Duplicate order
+- Order expired
+- Out of stock
+- Payment declined
+- Staff error
+- Suspected fraud
+
+These reasons separate cancellations you can do something about from the ones you cannot. A rise in **Out of stock** or **Payment declined** points at a problem worth fixing, where **Customer changed their mind** is a normal risk of selling.
+
+<Note>A reason is not required when cancelling an order. The picker reads **No reason given** until somebody chooses one, so cancellations can still go unexplained even with the list in place.</Note>
+
+## How to Add a Reason
+
+Find the card for the kind of reason you are adding, then click **Add reason** on that card.
+
+<Warning>All four cards carry a button labelled **Add reason**. The card you click on decides which list the reason joins, and a reason cannot be moved afterwards.</Warning>
+
+- **Name** - A description of the reason that staff will pick from a dropdown. Keep it short and unambiguous.
+- **Available on new records** - On by default. Controls whether the reason is offered when staff open a new return, claim, refund or cancellation.
+
+Click **Create**.
+
+## How to Retire a Reason
+
+A reason that has been used on a record carries an **In use** badge, and can be edited but not deleted. That is deliberate: deleting it would leave those past records without an explanation.
+
+To stop offering a reason without losing your history, open it and turn off **Available on new records**. It disappears from the dropdowns staff see, and every record that already used it keeps its reason.
+
+Unused reasons can be deleted outright from the row menu.
+
+<Note>Renaming a reason is safe. Every record pointing at it follows the new name, so correcting a spelling or sharpening the wording does not orphan anything.</Note>
+
+## Further Reading
+
+- [<u>Returns</u>](/user/orders/returns) - Processing a return once the reasons are set up
+- [<u>Claims</u>](/user/orders/claims) - Handling a delivery that went wrong
+- [<u>Refunding Orders</u>](/user/orders/refunding-orders) - Sending money back
+- [<u>Policies</u>](/user/settings/policies) - Publishing your returns policy
