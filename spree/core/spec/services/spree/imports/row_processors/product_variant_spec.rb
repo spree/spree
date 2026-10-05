@@ -711,6 +711,79 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  # How a Spree export and a Shopify export both write a multi-variant product:
+  # the product's own attributes sit on its first variant's row.
+  context 'when importing a row carrying both product attributes and options' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'linen-shirt',
+        'sku' => 'LINEN-SHIRT-BLUE',
+        'name' => 'Linen Shirt',
+        'status' => 'active',
+        'description' => 'Breathable linen.',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'product_type' => 'Apparel',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue'
+      )
+    end
+
+    it 'creates the product and the option variant from the one row' do
+      variant = subject.process!
+      product = variant.product
+
+      expect(product.slug).to eq 'linen-shirt'
+      expect(product.name).to eq 'Linen Shirt'
+      expect(product.status).to eq 'active'
+      expect(product.description).to eq 'Breathable linen.'
+      expect(product.product_type.name).to eq 'Apparel'
+
+      expect(variant.sku).to eq 'LINEN-SHIRT-BLUE'
+      expect(variant.option_values.map(&:label)).to eq ['Blue']
+      expect(variant.price_in('USD').amount.to_f).to eq 62.99
+    end
+
+    it 'leaves no option-less placeholder variant behind' do
+      product = subject.process!.product
+
+      expect(product.variants.reload.count).to eq 1
+      expect(product.default_variant.option_values.map(&:label)).to eq ['Blue']
+    end
+
+    context 'when the product already exists' do
+      let!(:existing_product) { create(:product, slug: 'linen-shirt', name: 'Old Name', status: 'draft') }
+
+      it 'updates the product-level fields' do
+        product = subject.process!.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.name).to eq 'Linen Shirt'
+        expect(product.status).to eq 'active'
+      end
+    end
+
+    context 'followed by the product\'s remaining variant rows' do
+      let(:second_row) do
+        create(:import_row, import: import, data: csv_row_hash(
+          'slug' => 'linen-shirt',
+          'sku' => 'LINEN-SHIRT-RED',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'option1_name' => 'Color',
+          'option1_value' => 'Red'
+        ).to_json)
+      end
+
+      it 'keeps every variant' do
+        product = subject.process!.product
+        described_class.new(second_row).process!
+
+        expect(product.variants.reload.flat_map { |v| v.option_values.map(&:label) }).to contain_exactly('Blue', 'Red')
+      end
+    end
+  end
+
   context 'when importing a variant row with options but slug is missing' do
     let(:row_data) do
       csv_row_hash(

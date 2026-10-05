@@ -91,9 +91,17 @@ module Spree
           product.update_column(:default_variant_id, product.variants.reload.first&.id)
         end
 
+        # Whether this row carries the product itself, as opposed to only one of
+        # its variants. A row is a product row when it has no options at all, or
+        # when it names the product alongside them — an export (and Shopify's
+        # own CSV) writes the product's attributes on its first variant's row,
+        # so that row has to both create the product and create a variant.
+        def product_row?
+          options.empty? || has_product_attributes?
+        end
+
         def ensure_product_exists
-          if options.empty?
-            # For product/header rows (no options), create or update the product
+          if product_row?
             product = Spree::Product.new
             if attributes['slug'].present?
               existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
@@ -167,9 +175,12 @@ module Spree
         end
 
         def assign_attributes_to_product(product)
-          # set the SKU on a product/header row so process! updates the default variant instead of creating a new one
           if product.new_record?
             product.slug = attributes['slug']
+            # Only an option-less row's SKU belongs to the product's own variant,
+            # so process! updates that variant instead of creating a second one.
+            # On a row that also carries options the SKU identifies that option
+            # variant, which process! creates for itself.
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
             product.store = store
             # A seller's import creates the seller's products. Without this the
@@ -197,11 +208,9 @@ module Spree
             product.status = to_spree_status(attributes['status'])
           end
 
-          if options.empty?
-            if attributes['product_type'].present?
-              product_type = prepare_product_type
-              product.product_type = product_type if product_type.present?
-            end
+          if attributes['product_type'].present?
+            product_type = prepare_product_type
+            product.product_type = product_type if product_type.present?
           end
 
           product
