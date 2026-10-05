@@ -85,6 +85,100 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
 
       expect(response).to have_http_status(:unauthorized)
     end
+
+    # An unauthenticated request has to tell a consumer client where to sign
+    # in, otherwise there is nothing for it to act on: hosted connectors read
+    # this header and start the flow themselves.
+    it 'challenges an anonymous request with the discovery document' do
+      post_rpc('tools/list')
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.headers['WWW-Authenticate']).to include(
+        'resource_metadata="', '/api/v3/oauth/protected-resource/mcp'
+      )
+    end
+
+    it 'names the same scheme and host in the realm and the metadata URL' do
+      post_rpc('tools/list')
+
+      challenge = response.headers['WWW-Authenticate']
+      realm = challenge[/realm="([^"]+)"/, 1]
+      metadata = challenge[/resource_metadata="([^"]+)"/, 1]
+
+      expect(URI.parse(metadata).origin).to eq(URI.parse(realm).origin)
+    end
+  end
+
+  # A merchant grants part of their own authority to a client. Two properties
+  # carry the whole arrangement: the grant can only narrow what the user may
+  # do, and a token issued for some other resource cannot be replayed here.
+  describe 'OAuth authentication' do
+    let(:admin) { create(:admin_user) }
+    let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp, store) }
+    let(:application) do
+      store.oauth_applications.create!(
+        name: 'Probe', redirect_uri: 'https://example.test/callback', confidential: false
+      )
+    end
+
+    def oauth_token(scopes:, audience: resource, owner: admin)
+      Spree::OauthAccessToken.create!(
+        application: application, resource_owner: owner,
+        scopes: Array(scopes).join(' '), expires_in: 2.hours.to_i, resource: audience
+      ).token
+    end
+
+    def post_with_token(raw_token, method = 'tools/list')
+      post_rpc(method, headers: { 'Authorization' => "Bearer #{raw_token}" })
+    end
+
+    it 'authenticates a token and acts as its owner' do
+      body = post_with_token(oauth_token(scopes: 'read_products'))
+
+      expect(response).to have_http_status(:ok)
+      expect(body['result']['tools']).to be_present
+    end
+
+    it 'narrows the catalog to what the merchant consented to' do
+      granted = post_with_token(oauth_token(scopes: 'read_products'))['result']['tools']
+      key_offers = post_rpc('tools/list', headers: { 'X-Spree-API-Key' => token })['result']['tools']
+
+      expect(granted.size).to be < key_offers.size
+      expect(granted.map { |tool| tool['name'] }).not_to include('orders_cancel')
+    end
+
+    it 'refuses a token issued for another resource' do
+      post_with_token(oauth_token(scopes: 'read_products', audience: "#{resource}/other"))
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    # Stricter than Doorkeeper's own comparison, which treats two blanks as a
+    # match: a token that names no audience cannot be shown to have been
+    # issued for this endpoint.
+    it 'refuses a token with no audience at all' do
+      post_with_token(oauth_token(scopes: 'read_products', audience: nil))
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'refuses a revoked token' do
+      raw = oauth_token(scopes: 'read_products')
+      Spree::OauthAccessToken.by_token(raw).update!(revoked_at: Time.current)
+
+      post_with_token(raw)
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'refuses an expired token' do
+      raw = oauth_token(scopes: 'read_products')
+      Spree::OauthAccessToken.by_token(raw).update!(created_at: 3.hours.ago)
+
+      post_with_token(raw)
+
+      expect(response).to have_http_status(:unauthorized)
+    end
   end
 
   describe 'tenancy' do
