@@ -14,11 +14,10 @@ module Spree
 
           # A public discovery document, read before any credential exists.
           # The module has to be included because `ActionController::API`
-          # carries no forgery protection at all — declaring `:null_session`
-          # states that this endpoint changes nothing, rather than leaving
-          # that true only by accident of the base class.
+          # carries none of it; `:exception` is free here because the only
+          # action is a GET, which forgery protection never applies to.
           include ActionController::RequestForgeryProtection
-          protect_from_forgery with: :null_session
+          protect_from_forgery with: :exception
 
           # The `resource` value must equal the URL the client was pointed at,
           # path and all, or a consumer client refuses to continue — so it is
