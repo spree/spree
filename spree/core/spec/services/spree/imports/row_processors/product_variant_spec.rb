@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
+  include ActiveJob::TestHelper
+
   subject { described_class.new(row) }
 
   let(:store) { Spree::Store.default }
@@ -654,6 +656,36 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           subject.process!
         }.to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
           .with(product.id, store.id, [])
+      end
+    end
+
+    context 'when the file has no category columns' do
+      let!(:category) { create(:category, store: store) }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue'
+        )
+      end
+
+      before do
+        product.categories = [category]
+        import.mappings.where(schema_field: %w[category1 category2 category3]).update_all(file_column: nil)
+      end
+
+      it 'does not enqueue CreateCategoriesJob' do
+        expect {
+          subject.process!
+        }.not_to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+      end
+
+      it 'leaves the existing categories in place' do
+        perform_enqueued_jobs { subject.process! }
+
+        expect(product.reload.categories).to contain_exactly(category)
       end
     end
 

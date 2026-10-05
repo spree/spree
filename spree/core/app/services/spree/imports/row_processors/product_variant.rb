@@ -3,6 +3,7 @@ module Spree
     module RowProcessors
       class ProductVariant < Base
         OPTION_TYPES_COUNT = 3
+        CATEGORY_FIELDS = %w[category1 category2 category3].freeze
 
         def initialize(row, **)
           super
@@ -384,7 +385,7 @@ module Spree
         end
 
         def has_product_attributes?
-          %w[name status description category1 category2 category3].any? { |key| attributes[key].present? }
+          (%w[name status description] + CATEGORY_FIELDS).any? { |key| attributes[key].present? }
         end
 
         def handle_custom_fields(product)
@@ -451,6 +452,7 @@ module Spree
         # seller audience in the permission catalog at all.
         def handle_categories(product)
           return if seller.present?
+          return unless category_columns_mapped?
 
           names = prepare_taxon_pretty_names
           return Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, names) if import.preferred_inline
@@ -459,11 +461,19 @@ module Spree
         end
 
         def prepare_taxon_pretty_names
-          [
-            attributes['category1'],
-            attributes['category2'],
-            attributes['category3']
-          ].compact_blank.map(&:strip).uniq
+          CATEGORY_FIELDS.map { |field| attributes[field] }.compact_blank.map(&:strip).uniq
+        end
+
+        # A blank category cell means "file this product under nothing", and
+        # CreateCategoriesJob assigns the list wholesale to honour that. A file
+        # that carries no category columns at all means something different —
+        # it simply doesn't speak about categories — so without this a Shopify
+        # export, or any spreadsheet that omits them, would unfile every
+        # product it touched.
+        def category_columns_mapped?
+          cached_lookup(:category_columns_mapped) do
+            import.mappings.mapped.any? { |mapping| CATEGORY_FIELDS.include?(mapping.schema_field) }
+          end
         end
 
         def to_spree_status(status)
