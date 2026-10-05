@@ -343,6 +343,18 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.connected-apps',
+  labelKey: 'admin.settings_nav.items.connected_apps',
+  descriptionKey: 'admin.settings_nav.descriptions.connected_apps',
+  keywords: ['oauth', 'agents', 'mcp', 'integrations', 'revoke'],
+  path: '/connected-apps',
+  icon: PlugIcon,
+  group: 'developer',
+  position: 150,
+  subject: Subject.Store,
+})
+
+settingsNav.add({
   key: 'settings.webhooks',
   labelKey: 'admin.settings_nav.items.webhooks',
   descriptionKey: 'admin.settings_nav.descriptions.webhooks',
