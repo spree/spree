@@ -294,14 +294,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response).to have_http_status(:ok)
       expect(json_response['data']).to be_an(Array)
       types = json_response['data'].map { |entry| entry['type'] }
-      expect(types).to include('bogus', 'store_credit')
-    end
-
-    it 'filters out providers that opt out of the admin picker' do
-      get :types, as: :json
-
-      types = json_response['data'].map { |entry| entry['type'] }
-      expect(types).not_to include('custom_payment_source_method')
+      expect(types).to include('bogus', 'store_credit', 'custom_payment_source_method')
     end
 
     it 'filters out providers already installed in the current store' do

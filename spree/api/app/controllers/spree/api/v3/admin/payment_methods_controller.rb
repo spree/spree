@@ -27,12 +27,7 @@ module Spree
               name.safe_constantize&.api_type
             end
             available = model_class.subclasses_with_preference_schema.reject do |entry|
-              next true if installed_shorthands.include?(entry[:type])
-
-              klass = model_class.find_by_api_type(entry[:type])
-              next false unless klass
-
-              !provider_show_in_admin?(klass)
+              installed_shorthands.include?(entry[:type])
             end
 
             render json: { data: available }
@@ -77,14 +72,6 @@ module Spree
           # New payment methods are created through the current store.
           def build_subclassed_resource(klass, attrs)
             current_store.payment_methods.build(attrs.merge(type: klass.sti_name))
-          end
-
-          # Some gateways (e.g. CustomPaymentSourceMethod) exist for extensions
-          # and tests — not for merchants to install from the provider picker.
-          def provider_show_in_admin?(klass)
-            klass.new.show_in_admin?
-          rescue StandardError
-            true
           end
         end
       end
