@@ -150,7 +150,12 @@ test.describe('integrations', () => {
       )
       releaseFirstSave()
       await expect.poll(() => saves, { timeout: 15_000 }).toBe(2)
-      await listRefetched
+      // Let the refetched list reach the card before checking it; while the
+      // second save is held, a card that dropped the latest choice stays off.
+      await (await listRefetched).finished()
+      await page.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+      )
       await expect(toggle).toBeChecked()
 
       releaseSecondSave()
