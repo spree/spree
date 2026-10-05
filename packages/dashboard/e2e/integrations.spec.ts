@@ -109,4 +109,45 @@ test.describe('integrations', () => {
       await deletePaymentMethod(page, creds.store_id, creds.accessToken, id)
     }
   })
+
+  // A second click while the first save is still open must win, even though
+  // the first save finishes later — otherwise the older value overwrites it.
+  test('saves the last choice when the switch is clicked again during a save', async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Racing Toggle PM ${Date.now()}`
+    const id = await seedPaymentMethod(page, creds.store_id, creds.accessToken, name)
+
+    try {
+      await page.goto(`${INTEGRATIONS_PATH(creds.store_id)}?tab=payments`)
+      const { toggle } = paymentMethodCard(page, name)
+      await expect(toggle).toBeChecked({ timeout: 15_000 })
+
+      let releaseFirstSave: () => void = () => {}
+      const firstSaveHeld = new Promise<void>((resolve) => {
+        releaseFirstSave = resolve
+      })
+      let saves = 0
+      await page.route(`**/api/v3/admin/payment_methods/${id}`, async (route) => {
+        if (route.request().method() !== 'PATCH') return route.fallback()
+        saves += 1
+        if (saves === 1) await firstSaveHeld
+        await route.fallback()
+      })
+
+      await toggle.click()
+      await expect(toggle).not.toBeChecked()
+      await toggle.click()
+      await expect(toggle).toBeChecked()
+
+      releaseFirstSave()
+      await expect.poll(() => saves, { timeout: 15_000 }).toBe(2)
+
+      await page.unrouteAll({ behavior: 'wait' })
+      await page.reload()
+      await expect(toggle).toBeChecked({ timeout: 15_000 })
+    } finally {
+      await page.unrouteAll({ behavior: 'ignoreErrors' })
+      await deletePaymentMethod(page, creds.store_id, creds.accessToken, id)
+    }
+  })
 })

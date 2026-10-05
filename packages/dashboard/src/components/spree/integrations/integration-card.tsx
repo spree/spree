@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@spree/dashboard-ui'
 import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 export type IntegrationCardStatus = 'active' | 'inactive' | 'not_connected'
 
@@ -69,14 +69,42 @@ export function IntegrationCard({
   const displayedStatus: IntegrationCardStatus =
     optimisticChecked === null ? status : optimisticChecked ? 'active' : 'inactive'
 
-  function handleCheckedChange(checked: boolean) {
-    const save = toggle?.onCheckedChange(checked)
-    if (!save) return
-    setOptimisticChecked(checked)
-    save.then(
-      (kept) => kept !== checked && setOptimisticChecked(null),
-      () => setOptimisticChecked(null),
+  // One save at a time, so saves cannot land out of order. Clicks made while
+  // one is in flight only move the switch; the latest of them is saved when
+  // it settles, unless the server already holds that value.
+  const saveInFlight = useRef(false)
+  const queuedChecked = useRef<boolean | null>(null)
+
+  function save(checked: boolean, request: Promise<boolean>) {
+    saveInFlight.current = true
+    request.then(
+      (kept) => settle(checked, kept),
+      () => settle(checked, null),
     )
+  }
+
+  function settle(requested: boolean, kept: boolean | null) {
+    saveInFlight.current = false
+    const next = queuedChecked.current
+    queuedChecked.current = null
+    if (next !== null && next !== kept) {
+      const request = toggle?.onCheckedChange(next)
+      if (request) return save(next, request)
+    }
+    if (next === null && kept === requested) return
+    if (next === null || next !== kept) setOptimisticChecked(null)
+  }
+
+  function handleCheckedChange(checked: boolean) {
+    if (saveInFlight.current) {
+      queuedChecked.current = checked
+      setOptimisticChecked(checked)
+      return
+    }
+    const request = toggle?.onCheckedChange(checked)
+    if (!request) return
+    setOptimisticChecked(checked)
+    save(checked, request)
   }
 
   return (

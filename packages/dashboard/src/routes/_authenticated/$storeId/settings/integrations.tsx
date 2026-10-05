@@ -80,7 +80,9 @@ function IntegrationsPage() {
   const { data: paymentMethodsResponse, isLoading: loadingPaymentMethods } = usePaymentMethods({
     enabled: canReadPayments,
   })
-  const { data: paymentTypesResponse } = usePaymentMethodTypes({ enabled: canCreatePayments })
+  const { data: paymentTypesResponse, isLoading: loadingPaymentTypes } = usePaymentMethodTypes({
+    enabled: canCreatePayments,
+  })
 
   const types = useMemo(() => typesResponse?.data ?? [], [typesResponse])
   const integrationsByType = useMemo(
@@ -137,7 +139,11 @@ function IntegrationsPage() {
   const addingPaymentType = availablePaymentTypes.find(
     (type) => type.type === search.add_payment_method,
   )
-  const loading = loadingTypes || (canReadPayments && loadingPaymentMethods)
+  // Every list feeding the gallery has to land before it can be called empty.
+  const loading =
+    loadingTypes ||
+    (canReadPayments && loadingPaymentMethods) ||
+    (canCreatePayments && loadingPaymentTypes)
 
   return (
     <div className="flex flex-col gap-6">
