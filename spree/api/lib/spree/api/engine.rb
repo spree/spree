@@ -28,6 +28,13 @@ module Spree
         Spree::Api::Oauth.configure!
       end
 
+      # Extensions register their permission scopes from config initializers,
+      # which run after the configuration above — so the grantable list is
+      # re-read once they have.
+      config.after_initialize do
+        Spree::Api::Oauth.refresh_scopes!
+      end
+
       initializer 'spree.api.request_size_limit' do |app|
         require_relative 'middleware/request_size_limit'
         app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit

@@ -1,5 +1,4 @@
 import type {
-  OauthApplication,
   OauthAuthorizationParams,
   OauthAuthorizationRequest,
   OauthRedirect,
@@ -41,7 +40,7 @@ export function useDenyOauthAuthorization() {
 }
 
 export function useOauthApplications() {
-  return useQuery<OauthApplication[]>({
+  return useQuery({
     queryKey: useResourceKey('oauth-applications'),
     queryFn: () => adminClient.oauth.applications.list(),
   })
@@ -52,6 +51,7 @@ export function useRevokeOauthApplication() {
     mutationFn: (id) => adminClient.oauth.applications.revoke(id),
     invalidate: [['oauth-applications']],
     successMessage: false,
-    errorMessage: false,
+    // A failed revoke has no inline form to report into, and the row simply
+    // staying put reads as success — so this one does toast.
   })
 }
