@@ -319,6 +319,19 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response.body).not_to include('SECRETKEY123')
     end
 
+    it 'exposes the logo and setup guide a provider declares' do
+      allow(Spree::Gateway::Bogus).to receive_messages(
+        logo_url: 'https://example.com/bogus.png',
+        docs_url: 'https://example.com/docs/bogus'
+      )
+
+      get :types, as: :json
+
+      bogus = json_response['data'].find { |entry| entry['type'] == 'bogus' }
+      expect(bogus).to include('logo_url' => 'https://example.com/bogus.png',
+                               'docs_url' => 'https://example.com/docs/bogus')
+    end
+
     context 'with provider gems that ship a top-level Gateway class' do
       # Reproduces the duplicate-key bug from the admin SPA: two providers
       # whose demodulized leaf is `"Gateway"` must still get unique `type`

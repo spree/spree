@@ -14,6 +14,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::CaptureMethod
+    include Spree::ProviderListing
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end

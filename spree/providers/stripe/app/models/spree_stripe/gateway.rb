@@ -22,6 +22,14 @@ module SpreeStripe
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
 
+    def self.logo_url
+      'https://spreecommerce.org/docs/images/integrations/logos/stripe.png'
+    end
+
+    def self.docs_url
+      'https://spreecommerce.org/docs/integrations/payments/stripe'
+    end
+
     def provider_class
       self.class
     end
