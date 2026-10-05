@@ -17,6 +17,13 @@ module Spree
         class AuthorizationsController < ActionController::Base
           include Spree::Core::ControllerHelpers::Store
 
+          # The authorization endpoint is reached by a cross-site GET on
+          # purpose — a client sends the browser here — so a forgery token
+          # cannot be required. It is safe to leave open because the action
+          # only redirects: nothing is granted until the merchant submits
+          # consent to the Admin API, which does carry its own session.
+          protect_from_forgery with: :null_session
+
           # Carried across to the dashboard. Everything else is dropped, so a
           # crafted link cannot smuggle extra parameters into the consent page.
           FORWARDED_PARAMETERS = %w[

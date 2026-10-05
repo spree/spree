@@ -35,7 +35,12 @@ module Spree
           rows: import.rows_status_counts,
           # The reasons, not the rows: a merchant fixes a spreadsheet by
           # learning "12 rows have no SKU", not by reading 12 rows back.
-          failure_reasons: failure_reasons(import)
+          #
+          # Gated on the write scope rather than the read one, because a
+          # validation message quotes the value that failed ("Sku 'X' has
+          # already been taken") — so it can carry uploaded data that was
+          # never persisted, which reading the resource does not cover.
+          failure_reasons: (failure_reasons(import) if may_read_failures?(import))
         }.compact
       end
 
@@ -44,6 +49,14 @@ module Spree
       end
 
       private
+
+      # @return [Boolean]
+      def may_read_failures?(import)
+        scope = import.class.try(:required_scope)
+        return true if scope.blank?
+
+        context.holds?("write_#{scope}")
+      end
 
       # Grouped so the assistant can say "12 rows failed because the SKU was
       # missing" rather than reciting every row.
