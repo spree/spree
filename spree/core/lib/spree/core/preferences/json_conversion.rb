@@ -106,10 +106,12 @@ module Spree
 
         rows.count do |row|
           preferences, already_json = read(row[source], table, row['id'])
-          next false if already_json && source == target
-
           type = row['type'] if typed
-          reshape_tiers(preferences, model_for(type))
+          # A tiered calculator whose class was not loaded when the migration
+          # ran keeps its hash, so a JSON row is still reshaped when it has one.
+          reshaped = reshape_tiers(preferences, model_for(type))
+          next false if already_json && source == target && !reshaped
+
           secrets = secrets_column ? extract_secrets(preferences, type, table, row['id']) : {}
 
           assignments = { target => JSON.generate(preferences) }

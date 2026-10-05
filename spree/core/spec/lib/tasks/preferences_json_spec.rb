@@ -128,6 +128,15 @@ describe 'preferences stored as JSON' do
 
         expect(conversion.convert_table(table_name, source: 'preferences_json', target: 'preferences_json')).to eq(0)
       end
+
+      it 'still reshapes tiers left as a hash, as when the calculator was not loaded during the migration' do
+        id = insert_row(nil, type: 'Spree::Calculator::TieredPercent')
+        connection.exec_update("UPDATE #{quoted_table} SET preferences_json = #{connection.quote({ tiers: { '100.0' => '15.0' } }.to_json)} WHERE id = #{id}")
+
+        conversion.convert_table(table_name, source: 'preferences_json', target: 'preferences_json')
+
+        expect(column(id, 'preferences_json')['tiers']).to eq([{ 'threshold' => '100.0', 'value' => '15.0' }])
+      end
     end
   end
 

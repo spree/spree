@@ -496,6 +496,14 @@ describe Spree::PaymentMethod, type: :model do
       expect(gateway.preferred_dummy_secret_key).to eq('sk_from_hash')
     end
 
+    it 'moves a secret assigned in a plain hash with string keys, as JSON or form parameters arrive' do
+      gateway.update!(preferences: { 'dummy_secret_key' => 'sk_from_json' })
+      gateway.update!(preferred_dummy_secret_key: 'sk_rotated')
+
+      expect(gateway.reload.preferences).not_to have_key('dummy_secret_key')
+      expect(gateway.preferred_dummy_secret_key).to eq('sk_rotated')
+    end
+
     it 'reads a secret assigned with the whole hash before the save moves it' do
       gateway.update!(preferred_dummy_secret_key: 'sk_old')
       gateway.preferences = gateway.preferences.merge(dummy_secret_key: 'sk_new')
