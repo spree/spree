@@ -36,19 +36,20 @@ module Spree
 
       # Whether the caller may see this import's contents.
       #
-      # An import holds the uploaded file: its headings, a sample row of real
-      # customer or product data, and the rows that failed. Reading that is
-      # reading the resource being imported, so it takes that resource's own
-      # scope rather than a generic settings key — the same per-import rule
-      # the write path applies, because `read_settings` is not permission to
-      # read a customer list someone uploaded.
+      # Gated on the imported resource's **write** scope, which is what the
+      # Admin API's own ImportsController requires for every import action
+      # including its reads. An import is not the resource: it is whatever
+      # someone staged, so a sample row is a real customer's name and address
+      # that may never be saved, and a failure reason quotes the value that
+      # failed. Reading a customer list is not permission to read a file
+      # somebody uploaded, and `read_settings` certainly is not.
       #
       # @param import [Spree::Import]
       # @return [Hash, nil] an error result to return, or nil when allowed
       def unauthorized_import(import)
         scope = import.class.try(:required_scope)
         return if scope.blank?
-        return if context.holds?("read_#{scope}")
+        return if context.holds?("write_#{scope}")
 
         { error: "You do not have permission to read a #{import_kind(import)} import." }
       end
