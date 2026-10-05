@@ -95,6 +95,33 @@ RSpec.describe 'assistant import tools' do
       expect(result[:number]).to eq(import.number)
       expect(result[:status]).to eq('mapping')
     end
+
+    # A validation message quotes the value that failed — "Sku 'ABC' has
+    # already been taken" — so the failure reasons can carry uploaded data
+    # that was never persisted. Counting rows is reading the resource;
+    # reading back what someone typed into a spreadsheet is not.
+    context 'when the caller may read the resource but not write it' do
+      let(:ability) do
+        Class.new do
+          include CanCan::Ability
+          def initialize = can(:manage, :all)
+          def permission_keys = %w[read_products read_customers]
+        end.new
+      end
+
+      it 'still reports the counts' do
+        result = described_class.new(context).call(id: import.prefixed_id)
+
+        expect(result[:error]).to be_nil
+        expect(result[:status]).to be_present
+      end
+
+      it 'withholds the failure reasons' do
+        result = described_class.new(context).call(id: import.prefixed_id)
+
+        expect(result).not_to have_key(:failure_reasons)
+      end
+    end
   end
 
   # An import holds the uploaded file — its headings, a real sample row, the
