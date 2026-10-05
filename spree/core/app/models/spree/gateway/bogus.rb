@@ -16,10 +16,6 @@ module Spree
       self.class
     end
 
-    def show_in_admin?
-      false
-    end
-
     def create_profile(payment)
       return if payment.source.has_payment_profile?
 
