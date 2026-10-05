@@ -44,7 +44,7 @@ erDiagram
 | `currency` | ISO 4217 currency code | `USD` |
 | `default_locale` | Default language for this market | `en` |
 | `supported_locales` | All locales available in this market | `["en", "es"]` |
-| `tax_inclusive` | Whether prices include tax (affects display and checkout calculation) | `false` |
+| `tax_inclusive` | Whether prices include tax, for tax providers that read it (see [Tax Behavior](#tax-behavior)) | `false` |
 | `default` | Whether this is the fallback market when no country match is found | `true` |
 | `country_codes` | Countries in this market, as ISO codes | `["US", "CA"]` |
 
@@ -61,9 +61,21 @@ The resolution chain:
 1. Customer's country is detected (from URL, geolocation, `X-Spree-Country` header, or manual selection)
 2. Spree finds the market containing that country
 3. The market's currency and locale become the defaults for the session
-4. The market's tax setting determines whether prices are shown with or without tax
+4. The market's tax provider determines whether prices are shown with or without tax
 
 If no market matches the customer's country, the store's **default market** is used.
+
+## Shipping addresses
+
+A market sells only to its own countries, and the default market is no exception. A cart takes its market from the country when it is created, and its shipping address must be in one of that market's countries. A cart created without a country is in the default market, so it can only ship to the default market's countries.
+
+- **An address outside the market is refused** with a `422` that names the market and the country. To sell to that country, start the cart with that country, or move the cart to the market that covers it by updating its `market_id`.
+- **Moving a cart to another market drops an address that market doesn't sell to.** This includes a move made by changing the cart's currency.
+- **Completion checks again.** If a country is removed from a market while a cart is in checkout, completion is refused with the `ship_address_outside_market` requirement (see [Checkout requirements](/developer/core-concepts/carts)).
+
+Delivery zones are separate from markets. A delivery method that covers many countries, such as an "International" rate, can serve several markets, but it doesn't let a market sell to countries it doesn't list.
+
+[Draft orders](/developer/core-concepts/orders) created by staff have no storefront country, so a draft moves to the market that covers its shipping address and takes that market's currency, and its lines are re-priced when the currency changes. A market given explicitly as `market_id` takes precedence. Once an order is placed, a new shipping address no longer moves it, and an address outside its market is refused.
 
 ## Listing Markets
 
@@ -216,10 +228,12 @@ See [Localization](/api-reference/store-api/localization) for details on how to 
 
 ## Tax Behavior
 
-The `tax_inclusive` flag on a market controls how prices are displayed and calculated:
+Whether a market's prices include tax is decided by its [tax provider](/developer/core-concepts/taxes#connecting-a-tax-service):
 
-- **`tax_inclusive: true`** (common in Europe) — the price shown to the customer already includes tax
-- **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the displayed price
+- **Spree's own tax rates** decide it per rate, through each rate's `included_in_price` setting. The market's `tax_inclusive` flag has no effect, and the dashboard hides it.
+- **A tax service that declares it reads the flag** uses `tax_inclusive` on the market:
+  - **`tax_inclusive: true`** (common in Europe) — the price shown to the customer already includes tax
+  - **`tax_inclusive: false`** (common in the US) — tax is added at checkout on top of the displayed price
 
 This matters because prices are shown long before anyone knows where the shopper lives. The market's own country supplies the assumed rate for browsing; once a shipping address is entered at checkout, that address takes over and the real rate applies.
 

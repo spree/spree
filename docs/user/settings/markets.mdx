@@ -18,7 +18,7 @@ Each row shows:
 - **Name** - What the market is called. The countries it covers are listed beneath.
 - **Currency** - The currency all prices in this market are held in.
 - **Default locale** - The language shoppers in this market see first.
-- **Tax** - Whether prices in this market include tax or have it added at checkout.
+- **Tax** - Whether prices in this market include tax or have it added at checkout. A dash means the market's tax engine doesn't use this setting; with Spree's built-in engine, your tax rates decide instead.
 - **Default** - The market shown to shoppers whose country is unknown.
 
 This list is dragged into order rather than sorted, so use the handle on any row to move it.
@@ -33,14 +33,16 @@ Click **Add market**.
 - **Currency** - The currency used for all prices in this market.
 - **Default locale** - The storefront language shoppers in this market see first.
 - **Supported locales** - Additional languages shoppers can switch to. The default locale is always included.
-- **Countries** - The countries this market covers. Search for each one and add it.
+- **Countries** - The countries this market covers. Search for each one and add it. Shoppers in this market can only ship to these countries.
 - **Tax engine** - Which engine calculates tax for orders in this market. Leave this as it is unless another engine has been installed for your store.
-- **Tax-inclusive pricing** - Display prices with tax included. Common in EU markets.
+- **Tax-inclusive pricing** - Display prices with tax included. Common in EU markets. Shown only when the market's tax engine uses it. Spree's built-in engine does not: each tax rate's **Included in Price** setting decides instead (see [<u>Tax Rates</u>](/user/settings/tax-rates)).
 - **Default market** - Shoppers without a known country see this market. Only one can be default per store.
 
 Click **Create market** when you are done.
 
 <Warning>Each country can belong to at most one market per store. A country already claimed by another market cannot be added to a second one, so plan your coverage before creating several markets.</Warning>
+
+<Note>A market sells only to its own countries, and the default market is no exception. Checkout refuses a shipping address in any other country, and a draft order you create moves to the market that covers its shipping address. A delivery method that covers many countries, such as International shipping, does not add those countries to a market: add each country you sell to a market.</Note>
 
 ### What the built-in tax engine does not calculate
 
