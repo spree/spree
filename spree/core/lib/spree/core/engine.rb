@@ -597,7 +597,14 @@ module Spree
           :verification_value,
           :client_id,
           :client_secret,
-          :refresh_token
+          :refresh_token,
+          # The OAuth token exchange posts these. The code is single-use and
+          # spent the moment it is logged, but the verifier beside it is what
+          # PKCE relies on — logging both hands anyone who can read the log
+          # everything they need to race the exchange.
+          :code,
+          :code_verifier,
+          :code_challenge
         ]
       end
 

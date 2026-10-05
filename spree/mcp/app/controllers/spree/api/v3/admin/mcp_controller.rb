@@ -47,7 +47,11 @@ module Spree
           # is the assurance `require_store_membership!` gives a JWT.
           def authenticate_admin!
             owner = oauth_resource_owner
-            return false if owner.nil?
+            # A `before_action` halts on a render, not on a falsy return, so
+            # refusing has to render. The grant's owner is an admin in every
+            # path that exists today; a customer-owned token would otherwise
+            # reach the action and die as a confusing 422 further in.
+            return refuse_unauthenticated if owner.nil?
 
             @current_api_key = nil
             @current_user = owner
@@ -175,6 +179,10 @@ module Spree
           def require_oauth_token!
             return if current_oauth_token.present?
 
+            refuse_unauthenticated
+          end
+
+          def refuse_unauthenticated
             response.headers['WWW-Authenticate'] = oauth_challenge
 
             render json: {
