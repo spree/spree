@@ -4075,6 +4075,21 @@
           "admission_description": "Turning either of these on removes a human decision. Fine for an invite-only marketplace where you already know every seller; risky for one anyone can join.",
           "communication_title": "Communication",
           "commission_tax_title": "Commission tax"
+        },
+        "connected_apps": {
+          "title": "Connected apps",
+          "subtitle": "Agents and applications a team member has given access to this store. Revoking takes effect immediately.",
+          "empty": "No applications have been connected yet.",
+          "revoke": "Revoke access",
+          "table": {
+            "name": "Application",
+            "access": "Access",
+            "last_used": "Last used"
+          },
+          "revoke_confirm": {
+            "title": "Revoke access?",
+            "message": "{{name}} will stop working immediately. Anyone using it will need to connect again."
+          }
         }
       },
       "staff": {
@@ -4125,6 +4140,18 @@
         },
         "total": "Total",
         "translated": "Translated"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Authorize application",
+          "subtitle": "Review what this application is asking for before you allow it.",
+          "intro": "{{client}} wants access to this store on your behalf. It will be able to do only what you allow below, and never more than your own permissions allow.",
+          "permissions_heading": "This will allow it to",
+          "revoke_hint": "You can revoke this at any time under Settings → Connected apps.",
+          "approve": "Allow access",
+          "deny": "Cancel",
+          "invalid_request": "This authorization request is not valid. Start again from the application that sent you here."
+        }
       }
     },
     "payment_methods": {
@@ -5115,7 +5142,8 @@
         "webhooks": "Endpoints notified when events happen",
         "package_types": "Boxes, cartons, pallets and containers",
         "suppliers": "Who you buy stock from, and how to reach them",
-        "marketplace": "Seller payouts, seller approval, seller emails and commission tax"
+        "marketplace": "Seller payouts, seller approval, seller emails and commission tax",
+        "connected_apps": "Agents and applications with access to this store"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5181,8 @@
         "webhooks": "Webhooks",
         "package_types": "Package types",
         "suppliers": "Suppliers",
-        "marketplace": "Settings"
+        "marketplace": "Settings",
+        "connected_apps": "Connected apps"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

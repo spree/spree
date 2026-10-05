@@ -4075,6 +4075,21 @@
           "admission_description": "Wenn Sie eine dieser Optionen aktivieren, entfällt eine menschliche Entscheidung. Für einen Marktplatz nur auf Einladung in Ordnung, für einen offenen riskant.",
           "communication_title": "Kommunikation",
           "commission_tax_title": "Steuer auf Provision"
+        },
+        "connected_apps": {
+          "title": "Verbundene Apps",
+          "subtitle": "Agenten und Anwendungen, denen ein Teammitglied Zugriff auf diesen Shop gegeben hat. Ein Widerruf wirkt sofort.",
+          "empty": "Es wurden noch keine Anwendungen verbunden.",
+          "revoke": "Zugriff widerrufen",
+          "table": {
+            "name": "Anwendung",
+            "access": "Zugriff",
+            "last_used": "Zuletzt verwendet"
+          },
+          "revoke_confirm": {
+            "title": "Zugriff widerrufen?",
+            "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
+          }
         }
       },
       "staff": {
@@ -4125,6 +4140,18 @@
         },
         "total": "Gesamt",
         "translated": "Übersetzt"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Anwendung autorisieren",
+          "subtitle": "Prüfen Sie, was diese Anwendung anfordert, bevor Sie sie zulassen.",
+          "intro": "{{client}} möchte in Ihrem Namen auf diesen Shop zugreifen. Die Anwendung kann nur das tun, was Sie unten zulassen, und niemals mehr als Ihre eigenen Berechtigungen erlauben.",
+          "permissions_heading": "Damit darf die Anwendung",
+          "revoke_hint": "Sie können dies jederzeit unter Einstellungen → Verbundene Apps widerrufen.",
+          "approve": "Zugriff erlauben",
+          "deny": "Abbrechen",
+          "invalid_request": "Diese Autorisierungsanfrage ist ungültig. Beginnen Sie erneut in der Anwendung, die Sie hierher geschickt hat."
+        }
       }
     },
     "payment_methods": {
@@ -5115,7 +5142,8 @@
         "webhooks": "Endpunkte, die bei Ereignissen benachrichtigt werden",
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
-        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision"
+        "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
+        "connected_apps": "Agenten und Anwendungen mit Zugriff auf diesen Shop"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5181,8 @@
         "webhooks": "Webhooks",
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
-        "marketplace": "Einstellungen"
+        "marketplace": "Einstellungen",
+        "connected_apps": "Verbundene Apps"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"

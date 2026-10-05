@@ -4129,6 +4129,21 @@
           "admission_description": "Włączenie którejkolwiek z tych opcji usuwa decyzję człowieka. To w porządku na marketplace tylko na zaproszenie, ale ryzykowne tam, gdzie dołączyć może każdy.",
           "communication_title": "Komunikacja",
           "commission_tax_title": "Podatek od prowizji"
+        },
+        "connected_apps": {
+          "title": "Połączone aplikacje",
+          "subtitle": "Agenci i aplikacje, którym członek zespołu dał dostęp do tego sklepu. Odebranie dostępu działa natychmiast.",
+          "empty": "Nie połączono jeszcze żadnej aplikacji.",
+          "revoke": "Odbierz dostęp",
+          "table": {
+            "name": "Aplikacja",
+            "access": "Dostęp",
+            "last_used": "Ostatnio użyta"
+          },
+          "revoke_confirm": {
+            "title": "Odebrać dostęp?",
+            "message": "{{name}} przestanie działać natychmiast. Każdy, kto z niej korzysta, będzie musiał połączyć się ponownie."
+          }
         }
       },
       "staff": {
@@ -4179,6 +4194,18 @@
         },
         "total": "Łącznie",
         "translated": "Przetłumaczone"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autoryzuj aplikację",
+          "subtitle": "Sprawdź, o co prosi ta aplikacja, przed udzieleniem zgody.",
+          "intro": "{{client}} chce uzyskać dostęp do tego sklepu w Twoim imieniu. Będzie mogła robić tylko to, na co zezwolisz poniżej, i nigdy więcej, niż pozwalają Twoje własne uprawnienia.",
+          "permissions_heading": "Pozwoli jej to",
+          "revoke_hint": "Możesz odebrać dostęp w dowolnym momencie w Ustawienia → Połączone aplikacje.",
+          "approve": "Zezwól na dostęp",
+          "deny": "Anuluj",
+          "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała."
+        }
       }
     },
     "payment_methods": {
@@ -5179,7 +5206,8 @@
         "webhooks": "Adresy powiadamiane o zdarzeniach",
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
-        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji"
+        "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
+        "connected_apps": "Agenci i aplikacje z dostępem do tego sklepu"
       },
       "groups": {
         "audit": "Audyt",
@@ -5217,7 +5245,8 @@
         "webhooks": "Webhooki",
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
-        "marketplace": "Ustawienia"
+        "marketplace": "Ustawienia",
+        "connected_apps": "Połączone aplikacje"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
