@@ -13,10 +13,14 @@ module Spree
           # Doorkeeper's own controller is not used: it renders HTML and runs
           # its own login, and the dashboard already knows who is signed in.
           class AuthorizationsController < Spree::Api::V3::Admin::BaseController
-            # Consent is a person's decision about their own authority, so it
-            # is JWT-only by construction: a secret key has no human behind
-            # it and must never be able to mint a token for one.
-            skip_scope_check!(jwt_only: true)
+            # Consent is a person's decision about their own authority, and a
+            # secret key has no human behind it, so there is no scope that
+            # could make this callable with one — `require_signed_in_admin!`
+            # refuses a key outright. Skipped for every principal rather than
+            # JWT-only, because leaving the key path in the scope machinery
+            # asks this controller for a `scoped_resource` it cannot
+            # meaningfully name.
+            skip_scope_check!
 
             before_action :require_signed_in_admin!
             before_action :require_client_of_this_store!

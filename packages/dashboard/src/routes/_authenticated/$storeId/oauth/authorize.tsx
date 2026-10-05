@@ -35,6 +35,7 @@ function OauthAuthorizePage() {
   const { t } = useTranslation()
   const search = Route.useSearch()
   const { data, isLoading, error } = useOauthAuthorization(search)
+  const errorDetail = error instanceof Error ? error.message : undefined
   const { data: catalog } = usePermissionCatalog()
   const approve = useApproveOauthAuthorization()
   const deny = useDenyOauthAuthorization()
@@ -54,75 +55,88 @@ function OauthAuthorizePage() {
         description={t('admin.pages.oauth.authorize.subtitle')}
       />
 
+      {/* The server says what is actually wrong — a missing code challenge,
+          an unknown client, a redirect that does not match. Showing only
+          "not valid" leaves a merchant with nothing to act on, and the card
+          below would skeleton forever behind it. */}
       {error ? (
         <Alert variant="destructive">
-          <AlertDescription>{t('admin.pages.oauth.authorize.invalid_request')}</AlertDescription>
+          <AlertDescription>
+            {t('admin.pages.oauth.authorize.invalid_request')}
+            {errorDetail ? (
+              <span className="mt-1 block text-xs opacity-80">{errorDetail}</span>
+            ) : null}
+          </AlertDescription>
         </Alert>
       ) : null}
 
-      <Card>
-        <CardContent className="flex flex-col gap-6 pt-6">
-          {isLoading || !data ? (
-            <div className="flex flex-col gap-3">
-              <Skeleton className="h-5 w-48" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
-          ) : (
-            <>
-              <div className="flex items-start gap-3">
-                <ShieldIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-                <p className="text-sm">
-                  {t('admin.pages.oauth.authorize.intro', { client: data.client_name })}
-                </p>
-              </div>
-
+      {error ? null : (
+        <Card>
+          <CardContent className="flex flex-col gap-6 pt-6">
+            {isLoading || !data ? (
               <div className="flex flex-col gap-3">
-                <h2 className="font-medium text-sm">
-                  {t('admin.pages.oauth.authorize.permissions_heading')}
-                </h2>
-                <ul className="flex flex-col gap-2">
-                  {data.scopes.map((key) => (
-                    <li key={key} className="flex items-start gap-2 text-sm">
-                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                      {/* Labelled client-side so the one screen that tells a
+                <Skeleton className="h-5 w-48" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            ) : (
+              <>
+                <div className="flex items-start gap-3">
+                  <ShieldIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
+                  <p className="text-sm">
+                    {t('admin.pages.oauth.authorize.intro', { client: data.client_name })}
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <h2 className="font-medium text-sm">
+                    {t('admin.pages.oauth.authorize.permissions_heading')}
+                  </h2>
+                  <ul className="flex flex-col gap-2">
+                    {data.scopes.map((key) => (
+                      <li key={key} className="flex items-start gap-2 text-sm">
+                        <CheckIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                        {/* Labelled client-side so the one screen that tells a
                           merchant what they are granting follows their own
                           language, not the server's. */}
-                      <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                        <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              <Alert>
-                <AlertDescription>{t('admin.pages.oauth.authorize.revoke_hint')}</AlertDescription>
-              </Alert>
+                <Alert>
+                  <AlertDescription>
+                    {t('admin.pages.oauth.authorize.revoke_hint')}
+                  </AlertDescription>
+                </Alert>
 
-              <div className="flex gap-3">
-                <Button
-                  disabled={pending}
-                  onClick={async () => {
-                    const result = await approve.mutateAsync(search)
-                    leaveTo(result.redirect_uri)
-                  }}
-                >
-                  {t('admin.pages.oauth.authorize.approve')}
-                </Button>
-                <Button
-                  variant="outline"
-                  disabled={pending}
-                  onClick={async () => {
-                    const result = await deny.mutateAsync(search)
-                    leaveTo(result.redirect_uri)
-                  }}
-                >
-                  {t('admin.pages.oauth.authorize.deny')}
-                </Button>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                <div className="flex gap-3">
+                  <Button
+                    disabled={pending}
+                    onClick={async () => {
+                      const result = await approve.mutateAsync(search)
+                      leaveTo(result.redirect_uri)
+                    }}
+                  >
+                    {t('admin.pages.oauth.authorize.approve')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={pending}
+                    onClick={async () => {
+                      const result = await deny.mutateAsync(search)
+                      leaveTo(result.redirect_uri)
+                    }}
+                  >
+                    {t('admin.pages.oauth.authorize.deny')}
+                  </Button>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
