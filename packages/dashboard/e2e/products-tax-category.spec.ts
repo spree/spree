@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { login, rowButton } from './helpers'
+import { login, rowButton, waitForToastsToClear } from './helpers'
 import {
   addOptionToVariants,
   createProduct,
@@ -21,6 +21,15 @@ function taxCard(page: Page) {
   return page.locator('[data-slot="card"]').filter({
     has: page.getByText(/^tax$/i),
   })
+}
+
+// The Save button is disabled while the form is submitting, which happens
+// before the request resolves — only the success toast confirms the save
+// landed. Clear it afterwards so the next save's toast is unambiguous.
+async function saveProduct(page: Page) {
+  await page.getByRole('button', { name: /save product/i }).click()
+  await expect(page.getByText(/product saved/i)).toBeVisible({ timeout: 30_000 })
+  await waitForToastsToClear(page)
 }
 
 async function selectProductTaxCategory(page: Page, categoryName: string) {
@@ -66,19 +75,13 @@ test.describe('product tax category', () => {
 
     await selectProductTaxCategory(page, productCategory)
     await expect(applyToVariantsNotice).toBeVisible()
-    await page.getByRole('button', { name: /save product/i }).click()
-    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
-      timeout: 30_000,
-    })
+    await saveProduct(page)
 
     await expect(page.getByText(/variants with their own tax category/i)).toBeVisible()
     await page.getByRole('button', { name: /use product category/i }).click()
     await expect(page.getByText(/variants with their own tax category/i)).toHaveCount(0)
 
-    await page.getByRole('button', { name: /save product/i }).click()
-    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
-      timeout: 30_000,
-    })
+    await saveProduct(page)
 
     await page.reload()
     await expect(variantsCard.getByRole('button', { name: /^edit .*\bred$/i })).toBeVisible({
