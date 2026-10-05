@@ -7,7 +7,6 @@ module Spree
       class DiscountSerializer < BaseSerializer
         typelize label: :string, kind: [:string, enum: Spree::Discount::KINDS], code: [:string, nullable: true],
                  value: [:string, nullable: true], value_type: [:string, nullable: true],
-                 amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  promotion_id: [:string, nullable: true], line_item_id: [:string, nullable: true],
                  fulfillment_id: [:string, nullable: true]
 
@@ -17,17 +16,7 @@ module Spree
           record.value&.to_s
         end
 
-        attribute :promotion_id do |record|
-          record.promotion&.prefixed_id
-        end
-
-        attribute :line_item_id do |record|
-          record.line_item&.prefixed_id
-        end
-
-        attribute :fulfillment_id do |record|
-          record.fulfillment&.prefixed_id
-        end
+        prefixed_id_attributes :promotion, :line_item, :fulfillment
 
         money_attributes :amount, :display_amount
       end

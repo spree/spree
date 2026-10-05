@@ -19,9 +19,7 @@ module Spree
                      issued_at: :iso8601, expires_at: :iso8601, verified_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :company_id do |certificate|
-            certificate.company&.prefixed_id
-          end
+          prefixed_id_attributes :company
 
           # The jurisdiction the certificate holds in, in the same vocabulary the
           # tax lines use.
@@ -33,14 +31,10 @@ module Spree
             certificate.verified? && !certificate.lapsed?
           end
 
-          attribute :lapsed do |certificate|
-            certificate.lapsed?
-          end
+          attribute :lapsed, &:lapsed?
 
           # Lets the dashboard hide a delete the model will refuse.
-          attribute :can_be_deleted do |certificate|
-            certificate.can_be_deleted?
-          end
+          attribute :can_be_deleted, &:can_be_deleted?
 
           attribute :document_filename do |certificate|
             certificate.document.blob&.filename&.to_s if certificate.document.attached?

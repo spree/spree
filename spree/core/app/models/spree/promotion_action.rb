@@ -66,9 +66,9 @@ module Spree
       when :line_item
         %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateLineItems]
       when :fulfillment
-        %w[Spree::Promotion::Actions::FreeShipping Spree::Promotion::Actions::FreeShipping]
+        %w[Spree::Promotion::Actions::FreeShipping]
       when :order
-        %w[Spree::Promotion::Actions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
+        %w[Spree::Promotion::Actions::CreateAdjustment]
       else
         []
       end

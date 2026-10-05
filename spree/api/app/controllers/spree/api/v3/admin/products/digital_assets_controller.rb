@@ -70,10 +70,6 @@ module Spree
               authorize!(:show, @parent)
             end
 
-            def parent_association
-              :digital_assets
-            end
-
             # The parent association reaches assets through `variants`, which
             # carries an ORDER BY on the variants table. Combined with the
             # collection's DISTINCT, PostgreSQL rejects the query outright

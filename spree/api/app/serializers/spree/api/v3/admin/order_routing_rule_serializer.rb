@@ -22,9 +22,7 @@ module Spree
             rule.class.api_type
           end
 
-          attribute :channel_id do |rule|
-            rule.channel&.prefixed_id
-          end
+          prefixed_id_attributes :channel
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema

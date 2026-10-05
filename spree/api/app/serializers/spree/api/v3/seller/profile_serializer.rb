@@ -40,13 +40,9 @@ module Spree
                resource: proc { Spree.api.seller_policy_serializer },
                if: proc { expand?('policies') }
 
-          attribute :on_holiday do |seller|
-            seller.on_holiday?
-          end
+          attribute :on_holiday, &:on_holiday?
 
-          attribute :sellable do |seller|
-            seller.sellable?
-          end
+          attribute :sellable, &:sellable?
 
           # What this seller prices in. Theirs by way of the marketplace: a
           # seller has no currency of their own, so the store's is the answer

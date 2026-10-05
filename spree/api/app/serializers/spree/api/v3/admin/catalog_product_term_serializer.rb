@@ -28,9 +28,7 @@ module Spree
           # True when the product's variants carry different terms, so the
           # editor shows "mixed" rather than claiming one variant's pair is
           # the product's.
-          attribute :mixed do |term|
-            term.mixed?
-          end
+          attribute :mixed, &:mixed?
         end
       end
     end

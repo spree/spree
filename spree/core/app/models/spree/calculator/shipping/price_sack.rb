@@ -1,5 +1,3 @@
-require_dependency 'spree/shipping_calculator'
-
 module Spree
   module Calculator::Shipping
     class PriceSack < ShippingCalculator

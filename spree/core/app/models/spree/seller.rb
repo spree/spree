@@ -62,7 +62,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     # The address knows it is a seller's from its owner, so it is read back
     # with the business rules — no personal name insisted on, the company line
     # required. Not `dependent: :destroy`: a seller is paranoid, so destroy is

@@ -17,9 +17,7 @@ module Spree
                  purchase_unit: [:string, enum: Spree::Variant::PURCHASE_UNITS], units_per_carton: ['number | null'],
                  seller_id: [:string, nullable: true]
 
-        attribute :product_id do |variant|
-          variant.product&.prefixed_id
-        end
+        prefixed_id_attributes :product
 
         attributes :sku, :options_text, :track_inventory, :media_count
 
@@ -34,21 +32,13 @@ module Spree
           image_url_for(variant.primary_media)
         end
 
-        attribute :purchasable do |variant|
-          variant.purchasable?
-        end
+        attribute :purchasable, &:purchasable?
 
-        attribute :in_stock do |variant|
-          variant.in_stock?
-        end
+        attribute :in_stock, &:in_stock?
 
-        attribute :backorderable do |variant|
-          variant.backorderable?
-        end
+        attribute :backorderable, &:backorderable?
 
-        attribute :preorder do |variant|
-          variant.preorder?
-        end
+        attribute :preorder, &:preorder?
 
         attribute :weight do |variant|
           variant.weight&.to_f
@@ -93,9 +83,7 @@ module Spree
           variant.purchase_unit.presence || 'unit'
         end
 
-        attribute :units_per_carton do |variant|
-          variant.units_per_carton
-        end
+        attributes :units_per_carton
 
         # Price object - calculated price with price list resolution
         attribute :price do |variant|
@@ -119,9 +107,7 @@ module Spree
         # listing) or the row itself (a master shared by several sellers). Nil
         # is first-party. Shoppers comparing offers on one page group by this,
         # so it is a plain attribute rather than an expand.
-        attribute :seller_id do |variant|
-          variant.resolved_seller&.prefixed_id
-        end
+        prefixed_id_attributes seller_id: :resolved_seller
 
         one :seller,
             resource: proc { Spree.api.seller_serializer },

@@ -40,13 +40,9 @@ module Spree
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preorderable do |variant|
-            variant.preorderable?
-          end
+          attribute :preorderable, &:preorderable?
 
-          attribute :tax_category_id do |variant|
-            variant.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :tax_category
 
           # Encoded from the foreign key: loading the carton row just to
           # re-encode its id is a query per variant on the product listing.
@@ -82,9 +78,7 @@ module Spree
           # seller's row ships; on an owned product the write is a no-op, since
           # every variant ships as the product does. The dashboard need not
           # know which.
-          attribute :delivery_profile_id do |variant|
-            variant.resolved_delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes delivery_profile_id: :resolved_delivery_profile
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },

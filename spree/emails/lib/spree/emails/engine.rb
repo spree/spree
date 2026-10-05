@@ -6,9 +6,6 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_emails'
 
-      # Add app/subscribers to autoload paths
-      config.paths.add 'app/subscribers', eager_load: true
-
       # Register bundled ActionMailer previews so they show up at /rails/mailers
       # without the host app having to copy any files.
       initializer 'spree_emails.mailer_previews' do |app|

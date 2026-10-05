@@ -6,7 +6,6 @@ module Spree
       # back (`credit`) or charges on an exchange's replacement.
       class TaxLineSerializer < BaseSerializer
         typelize label: :string, rate: :string, included: :boolean, credit: :boolean,
-                 amount: [:string, nullable: true], display_amount: [:string, nullable: true],
                  tax_rate_id: [:string, nullable: true], line_item_id: [:string, nullable: true],
                  fulfillment_id: [:string, nullable: true], fee_id: [:string, nullable: true],
                  return_line_item_id: [:string, nullable: true], claim_line_item_id: [:string, nullable: true],
@@ -18,33 +17,8 @@ module Spree
           record.rate&.to_s
         end
 
-        attribute :tax_rate_id do |record|
-          record.tax_rate&.prefixed_id
-        end
-
-        attribute :line_item_id do |record|
-          record.line_item&.prefixed_id
-        end
-
-        attribute :fulfillment_id do |record|
-          record.fulfillment&.prefixed_id
-        end
-
-        attribute :fee_id do |record|
-          record.fee&.prefixed_id
-        end
-
-        attribute :return_line_item_id do |record|
-          record.return_line_item&.prefixed_id
-        end
-
-        attribute :claim_line_item_id do |record|
-          record.claim_line_item&.prefixed_id
-        end
-
-        attribute :exchange_line_item_id do |record|
-          record.exchange_line_item&.prefixed_id
-        end
+        prefixed_id_attributes :tax_rate, :line_item, :fulfillment, :fee, :return_line_item, :claim_line_item,
+                               :exchange_line_item
 
         money_attributes :amount, :display_amount
       end

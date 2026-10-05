@@ -24,9 +24,7 @@ module Spree
             rule.class.api_type
           end
 
-          attribute :commission_rate_id do |rule|
-            rule.commission_rate&.prefixed_id
-          end
+          prefixed_id_attributes :commission_rate
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema

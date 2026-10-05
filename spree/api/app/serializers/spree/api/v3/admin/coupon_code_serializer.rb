@@ -16,13 +16,7 @@ module Spree
           attributes :code, :state,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :promotion_id do |coupon|
-            coupon.promotion&.prefixed_id
-          end
-
-          attribute :order_id do |coupon|
-            coupon.order&.prefixed_id
-          end
+          prefixed_id_attributes :promotion, :order
         end
       end
     end

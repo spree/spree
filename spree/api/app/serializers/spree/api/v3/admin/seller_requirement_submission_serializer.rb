@@ -21,13 +21,7 @@ module Spree
                      created_at: :iso8601,
                      updated_at: :iso8601
 
-          attribute :seller_id do |submission|
-            submission.seller&.prefixed_id
-          end
-
-          attribute :requirement_id do |submission|
-            submission.requirement&.prefixed_id
-          end
+          prefixed_id_attributes :seller, :requirement
 
           # The reviewer is looking at a queue of these and needs to know what
           # each one answers without fetching the requirement.

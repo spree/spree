@@ -17,9 +17,7 @@ module Spree
                    store_owner_notification_delivered: :boolean,
                    created_at: :string, updated_at: :string
 
-          attribute :customer_id do |group|
-            group.customer&.prefixed_id
-          end
+          prefixed_id_attributes :customer
 
           attribute :cart_id do |group|
             Spree::Cart.prefixed_id_for(group.cart_id)
@@ -28,13 +26,9 @@ module Spree
           # How many sellers this checkout reached — the operator's headline
           # question about a group, and cheaper than counting the orders client
           # side once a group is large.
-          attribute :seller_count do |group|
-            group.seller_count
-          end
+          attributes :seller_count
 
-          attribute :includes_first_party do |group|
-            group.includes_first_party?
-          end
+          attribute :includes_first_party, &:includes_first_party?
 
           # A split checkout is confirmed once, from here — every child order
           # places silently, so their own flags are false and only the group

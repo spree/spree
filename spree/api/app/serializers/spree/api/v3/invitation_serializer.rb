@@ -14,10 +14,7 @@ module Spree
         attributes :email,
                    created_at: :iso8601, updated_at: :iso8601
 
-        attribute :status do |invitation|
-          invitation.status.to_s
-        end
-
+        attributes status: :string
         # `"store"` / `"admin_user"`, not the polymorphic class names.
         attribute :resource_type do |invitation|
           Spree::Base.polymorphic_api_type(invitation.resource_type)
@@ -31,21 +28,7 @@ module Spree
           Spree::Base.polymorphic_api_type(invitation.invitee_type)
         end
 
-        attribute :resource_id do |invitation|
-          invitation.resource&.prefixed_id
-        end
-
-        attribute :inviter_id do |invitation|
-          invitation.inviter&.prefixed_id
-        end
-
-        attribute :invitee_id do |invitation|
-          invitation.invitee&.prefixed_id
-        end
-
-        attribute :role_id do |invitation|
-          invitation.role&.prefixed_id
-        end
+        prefixed_id_attributes :resource, :inviter, :invitee, :role
 
         attribute :expires_at do |invitation|
           invitation.expires_at&.iso8601

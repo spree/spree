@@ -14,23 +14,13 @@ module Spree
           refund.amount&.to_s
         end
 
-        attribute :payment_id do |refund|
-          refund.payment&.prefixed_id
-        end
-
-        attribute :refund_reason_id do |refund|
-          refund.reason&.prefixed_id
-        end
+        prefixed_id_attributes :payment, refund_reason_id: :reason
 
         # What triggered this refund — a Return, Exchange or Claim; nil for a
         # manual refund.
-        attribute :originator_id do |refund|
-          refund.originator&.prefixed_id
-        end
+        prefixed_id_attributes :originator
 
-        attribute :originator_type do |refund|
-          refund.originator_type
-        end
+        attributes :originator_type
       end
     end
   end

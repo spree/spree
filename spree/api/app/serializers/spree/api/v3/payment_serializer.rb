@@ -2,15 +2,12 @@ module Spree
   module Api
     module V3
       class PaymentSerializer < BaseSerializer
-        typelize status: [:string, enum: Spree::Payment.statuses, enum_type_name: 'PaymentStatus'], payment_method_id: :string, response_code: [:string, nullable: true],
-                 number: :string, amount: [:string, nullable: true], display_amount: [:string, nullable: true],
+        typelize status: [:string, enum: Spree::Payment.statuses, enum_type_name: 'PaymentStatus'],
+                 payment_method_id: :string, response_code: [:string, nullable: true], number: :string,
                  source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source]],
-                 source_id: [:string, nullable: true],
-                 source: 'CreditCard | StoreCredit | PaymentSource | null'
+                 source_id: [:string, nullable: true], source: 'CreditCard | StoreCredit | PaymentSource | null'
 
-        attribute :payment_method_id do |payment|
-          payment.payment_method&.prefixed_id
-        end
+        prefixed_id_attributes :payment_method
 
         attributes :response_code, :number, :status
 
@@ -31,9 +28,7 @@ module Spree
           end
         end
 
-        attribute :source_id do |payment|
-          payment.source&.prefixed_id
-        end
+        prefixed_id_attributes :source
 
         attribute :source do |payment|
           next nil if payment.source.blank?

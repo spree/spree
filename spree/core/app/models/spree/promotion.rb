@@ -262,7 +262,7 @@ module Spree
     end
 
     def products
-      rules.where(type: %w[Spree::Promotion::Rules::Product Spree::Promotion::Rules::Product]).map(&:products).flatten.uniq
+      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)

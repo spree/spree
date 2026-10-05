@@ -24,27 +24,17 @@ module Spree
                    :variant_count,
                    available_on: :iso8601, preorder_ships_at: :iso8601
 
-        attribute :purchasable do |product|
-          product.purchasable?
-        end
+        attribute :purchasable, &:purchasable?
 
         # True when this product is currently offered as a pre-order on the
         # requesting channel.
-        attribute :preorder do |product|
-          product.preorder?
-        end
+        attribute :preorder, &:preorder?
 
-        attribute :in_stock do |product|
-          product.in_stock?
-        end
+        attribute :in_stock, &:in_stock?
 
-        attribute :backorderable do |product|
-          product.backorderable?
-        end
+        attribute :backorderable, &:backorderable?
 
-        attribute :available do |product|
-          product.available?
-        end
+        attribute :available, &:available?
 
         attribute :description do |product|
           next if product.description.blank?
@@ -60,9 +50,7 @@ module Spree
         # buy-box winner: that moves with price and stock, and a client that
         # cached or linked this id must not find it pointing at a different
         # row tomorrow. On a single-seller catalog the two coincide anyway.
-        attribute :default_variant_id do |product|
-          product.default_variant&.prefixed_id
-        end
+        prefixed_id_attributes :default_variant
 
         # The offer a storefront should lead with when several sellers share
         # the listing — the buy-box winner in the request's currency. Nil when
@@ -109,9 +97,7 @@ module Spree
         # Nil on the marketplace's own first-party products. The id is always
         # present so a storefront can group or link by seller without paying
         # for the expand; `?expand=seller` adds the public profile.
-        attribute :seller_id do |product|
-          product.seller&.prefixed_id
-        end
+        prefixed_id_attributes :seller
 
         # Conditional associations
         one :seller,

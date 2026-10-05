@@ -23,13 +23,7 @@ module Spree
           attributes :metadata, :adjustment_total, :pre_tax_amount,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :order_id do |fulfillment|
-            fulfillment.order&.prefixed_id
-          end
-
-          attribute :stock_location_id do |fulfillment|
-            fulfillment.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :order, :stock_location
 
           # Customs forms and other paperwork the provider produced beside the
           # label; the labels themselves are listed under +labels+.

@@ -1,5 +1,3 @@
-require 'ostruct'
-
 module Spree
   class Fulfillment < Spree.base_class
     has_prefix_id :ful

@@ -50,10 +50,6 @@ module Spree
 
             protected
 
-            def parent_association
-              :addresses
-            end
-
             def model_class
               Spree::Address
             end

@@ -50,10 +50,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :payment_setup_sessions
-            end
-
             def model_class
               Spree::PaymentSetupSession
             end

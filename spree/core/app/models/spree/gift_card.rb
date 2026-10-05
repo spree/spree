@@ -35,7 +35,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true

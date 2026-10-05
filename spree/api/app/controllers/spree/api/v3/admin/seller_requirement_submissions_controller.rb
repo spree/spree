@@ -30,11 +30,7 @@ module Spree
               review_note: params[:review_note]
             )
 
-            if result.success?
-              render json: serialize_resource(result.value), status: :created
-            else
-              render_result_error(result)
-            end
+            render_result(result, status: :created)
           end
 
           # PATCH /api/v3/admin/sellers/:seller_id/requirement_submissions/:id/accept
@@ -126,11 +122,7 @@ module Spree
               review_note: params[:review_note]
             )
 
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
+            render_result(result)
           end
         end
       end

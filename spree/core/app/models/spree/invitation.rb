@@ -32,8 +32,6 @@ module Spree
     #
     # Scopes
     #
-    scope :pending, -> { where(status: 'pending') }
-    scope :accepted, -> { where(status: 'accepted') }
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
     #

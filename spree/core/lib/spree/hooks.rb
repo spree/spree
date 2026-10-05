@@ -98,23 +98,6 @@ module Spree
       @handlers.clear
     end
 
-    # Introspection facade: Spree.hooks.carts => { 'carts.add_item' => [...] }
-    def method_missing(name, *args, &block)
-      prefix = "#{name}."
-      matching = @workflows.keys.select { |workflow_key| workflow_key.start_with?(prefix) || workflow_key == name.to_s }
-      return super if matching.empty? && !@workflows.keys.any? { |k| k.start_with?(prefix) }
-
-      matching.index_with do |workflow_key|
-        workflow = @workflows[workflow_key]&.safe_constantize
-        workflow ? workflow.declared_hooks : []
-      end
-    end
-
-    def respond_to_missing?(name, include_private = false)
-      prefix = "#{name}."
-      @workflows.keys.any? { |workflow_key| workflow_key.start_with?(prefix) } || super
-    end
-
     private
 
     # Last writer wins on a collision, which is only defensible if it's
