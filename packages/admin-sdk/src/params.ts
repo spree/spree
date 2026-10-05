@@ -2407,12 +2407,14 @@ export interface PaymentMethodUpdateParams {
 /**
  * One entry returned by `GET /payment_methods/types` — the registered list
  * of available STI subclasses, with their per-provider preference schemas
- * for the universal configuration form.
- *
- * @deprecated Prefer `ResourceTypeDefinition`; this alias remains for
- * naming-symmetry with the controller. They are structurally identical.
+ * for the universal configuration form and their gallery listing.
  */
-export type PaymentMethodType = ResourceTypeDefinition
+export interface PaymentMethodType extends ResourceTypeDefinition {
+  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI. Render with a fallback. */
+  logo_url: string | null
+  /** Absolute URL of the provider's setup guide. */
+  docs_url: string | null
+}
 
 /**
  * One entry returned by `GET /integrations/types` — every registered
@@ -2433,6 +2435,8 @@ export interface IntegrationTypeDefinition {
   description: string | null
   /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
   logo_url: string | null
+  /** Absolute URL of the integration's setup guide. */
+  docs_url: string | null
   preference_schema: { key: string; type: string; default: unknown }[]
 }
 

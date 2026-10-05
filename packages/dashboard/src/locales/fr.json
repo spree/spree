@@ -2423,7 +2423,7 @@
       "configure_cta": "Configurer",
       "connect_cta": "Connecter",
       "connect_description": "Saisissez les identifiants de ce fournisseur. L'enregistrement les stocke ; l'activation vérifie la connexion.",
-      "description": "Connectez des services fournisseurs à cette boutique. Les identifiants sont stockés par boutique et utilisés par les fournisseurs de livraison, de taxes et autres.",
+      "description": "Connectez des prestataires de paiement et d’autres services à cette boutique. Les identifiants sont enregistrés par boutique et utilisés par le paiement, la livraison, les taxes et les autres prestataires.",
       "disconnect": "Déconnecter",
       "disconnect_confirm": {
         "message": "Déconnecter {{name}} ? Ses identifiants stockés seront supprimés et les fournisseurs qui les utilisent cesseront de fonctionner.",
@@ -2436,18 +2436,24 @@
       },
       "groups": {
         "other": "Autres",
+        "payments": "Paiements",
         "shipping": "Livraison",
         "tax": "Taxes"
       },
+      "manage_payment_methods": "Gérer les moyens de paiement",
       "messages": {
         "connected": "Intégration connectée",
         "disconnected": "Intégration déconnectée",
         "updated": "Intégration mise à jour"
       },
+      "setup_guide": "Guide de configuration",
       "status": {
         "active": "Active",
         "connected_inactive": "Connectée (inactive)",
         "not_connected": "Non connectée"
+      },
+      "tabs": {
+        "all": "Toutes"
       },
       "test": {
         "failure": "Échec de la connexion.",
@@ -2456,7 +2462,9 @@
         "success": "Connexion réussie.",
         "testing": "Test en cours…"
       },
+      "test_mode": "Mode test",
       "title": "Intégrations",
+      "toggle_label": "Activer ou désactiver {{name}}",
       "view_cta": "Voir"
     },
     "invitation": {

@@ -2418,7 +2418,7 @@
       "configure_cta": "配置",
       "connect_cta": "连接",
       "connect_description": "输入此提供方的凭据。保存即存储;启用时会验证连接。",
-      "description": "将服务提供方连接到此商店。凭据按商店存储，供配送、税务及其他提供方使用。",
+      "description": "将支付服务商和其他服务连接到此店铺。凭据按店铺存储，供结账、配送、税费和其他服务商使用。",
       "disconnect": "断开连接",
       "disconnect_confirm": {
         "message": "断开 {{name}}?其存储的凭据将被删除,使用它的提供方将停止工作。",
@@ -2431,18 +2431,24 @@
       },
       "groups": {
         "other": "其他",
+        "payments": "支付",
         "shipping": "配送",
         "tax": "税务"
       },
+      "manage_payment_methods": "管理支付方式",
       "messages": {
         "connected": "集成已连接",
         "disconnected": "集成已断开",
         "updated": "集成已更新"
       },
+      "setup_guide": "设置指南",
       "status": {
         "active": "已启用",
         "connected_inactive": "已连接(未启用)",
         "not_connected": "未连接"
+      },
+      "tabs": {
+        "all": "全部"
       },
       "test": {
         "failure": "连接失败。",
@@ -2451,7 +2457,9 @@
         "success": "连接成功。",
         "testing": "正在测试…"
       },
+      "test_mode": "测试模式",
       "title": "集成",
+      "toggle_label": "开启或关闭 {{name}}",
       "view_cta": "查看"
     },
     "invitation": {

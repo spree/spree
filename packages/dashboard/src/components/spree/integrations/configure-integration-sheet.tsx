@@ -29,11 +29,14 @@ import {
 export function ConfigureIntegrationSheet({
   type,
   integration,
+  defaultActive = false,
   open,
   onOpenChange,
 }: {
   type: IntegrationTypeDefinition
   integration?: Integration
+  /** Starting value of the Active switch when connecting a new integration. */
+  defaultActive?: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -51,7 +54,7 @@ export function ConfigureIntegrationSheet({
       ? ((integration.preferences as Record<string, unknown>) ?? {})
       : defaultPreferences(type.preference_schema),
   )
-  const [active, setActive] = useState(integration?.active ?? false)
+  const [active, setActive] = useState(integration?.active ?? defaultActive)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const saving = createMutation.isPending || updateMutation.isPending

@@ -216,6 +216,9 @@ module Spree
           # their wire shape byte-identical. Pickers stop offering a
           # superseded kind; existing rows still render and match.
           entry[:superseded] = true if klass.respond_to?(:superseded?) && klass.superseded?
+          # Provider families (payment methods) add their gallery logo and
+          # setup guide; other families keep their wire shape unchanged.
+          entry.merge!(klass.provider_listing) if klass.respond_to?(:provider_listing)
           entry
         end.sort_by { |entry| entry[:label] }
       end

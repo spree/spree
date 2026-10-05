@@ -5018,7 +5018,7 @@
       "configure_cta": "Configurar",
       "connect_cta": "Conectar",
       "connect_description": "Ingresá las credenciales de este proveedor. Guardar las almacena; pasarla a activa verifica la conexión.",
-      "description": "Conectá servicios de proveedores a esta tienda. Las credenciales se guardan por tienda y las usan los proveedores de envío, impuestos y otros.",
+      "description": "Conecta proveedores de pago y otros servicios a esta tienda. Las credenciales se guardan por tienda y las usan el checkout, los envíos, los impuestos y otros proveedores.",
       "disconnect": "Desconectar",
       "disconnect_confirm": {
         "message": "¿Desconectar {{name}}? Sus credenciales guardadas se eliminan y los proveedores que la usan dejan de funcionar.",
@@ -5031,18 +5031,24 @@
       },
       "groups": {
         "other": "Otro",
+        "payments": "Pagos",
         "shipping": "Envío",
         "tax": "Impuestos"
       },
+      "manage_payment_methods": "Gestionar métodos de pago",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
         "updated": "Integración actualizada"
       },
+      "setup_guide": "Guía de configuración",
       "status": {
         "active": "Activa",
         "connected_inactive": "Conectada (inactiva)",
         "not_connected": "No conectada"
+      },
+      "tabs": {
+        "all": "Todas"
       },
       "test": {
         "failure": "La conexión falló.",
@@ -5051,7 +5057,9 @@
         "success": "Conexión exitosa.",
         "testing": "Probando…"
       },
+      "test_mode": "Modo de prueba",
       "title": "Integraciones",
+      "toggle_label": "Activar o desactivar {{name}}",
       "view_cta": "Ver"
     },
     "tax_identifiers": {

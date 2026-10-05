@@ -43,6 +43,24 @@ end
 
 After restarting your server, you can select "MyGateway" when creating a new payment method in the admin panel under **Settings > Payments**.
 
+### Show a logo and setup guide (optional)
+
+Payment providers also appear in the admin dashboard under **Settings > Integrations**. Declare a logo and a link to your setup guide so merchants recognise the provider and know how to connect it:
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  def self.logo_url
+    'https://my-gateway.example.com/logo.svg'
+  end
+
+  def self.docs_url
+    'https://my-gateway.example.com/docs/spree'
+  end
+end
+```
+
+`logo_url` accepts anything an image tag accepts, including a `data:` URI if you don't want to host the file. Both are optional: without a logo the card shows the provider's first letter, and without a guide the link is hidden. Integrations declare the same two methods — see [custom delivery rate providers](/developer/how-to/custom-delivery-rate-provider).
+
 ## Step 3: Add Payment Session Support
 
 Payment Sessions are the modern, PCI-compliant way to handle payments. Your gateway creates a session with the provider, the frontend collects payment details using the provider's SDK, and Spree records the result.

@@ -2423,7 +2423,7 @@
       "configure_cta": "Konfigurieren",
       "connect_cta": "Verbinden",
       "connect_description": "Geben Sie die Zugangsdaten für diesen Anbieter ein. Speichern legt sie ab; das Aktivieren prüft die Verbindung.",
-      "description": "Verbinden Sie Anbieterdienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Versand-, Steuer- und anderen Anbietern genutzt.",
+      "description": "Verbinden Sie Zahlungsanbieter und andere Dienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Checkout, Versand, Steuern und anderen Anbietern verwendet.",
       "disconnect": "Trennen",
       "disconnect_confirm": {
         "message": "{{name}} trennen? Die gespeicherten Zugangsdaten werden gelöscht und Anbieter, die sie nutzen, funktionieren nicht mehr.",
@@ -2436,18 +2436,24 @@
       },
       "groups": {
         "other": "Sonstige",
+        "payments": "Zahlungen",
         "shipping": "Versand",
         "tax": "Steuern"
       },
+      "manage_payment_methods": "Zahlungsmethoden verwalten",
       "messages": {
         "connected": "Integration verbunden",
         "disconnected": "Integration getrennt",
         "updated": "Integration aktualisiert"
       },
+      "setup_guide": "Einrichtungsanleitung",
       "status": {
         "active": "Aktiv",
         "connected_inactive": "Verbunden (inaktiv)",
         "not_connected": "Nicht verbunden"
+      },
+      "tabs": {
+        "all": "Alle"
       },
       "test": {
         "failure": "Verbindung fehlgeschlagen.",
@@ -2456,7 +2462,9 @@
         "success": "Verbindung erfolgreich.",
         "testing": "Wird getestet…"
       },
+      "test_mode": "Testmodus",
       "title": "Integrationen",
+      "toggle_label": "{{name}} ein- oder ausschalten",
       "view_cta": "Ansehen"
     },
     "invitation": {
