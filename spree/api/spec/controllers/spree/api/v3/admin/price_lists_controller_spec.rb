@@ -82,15 +82,23 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       expect(owned.reload.price_adjustment_tiers).to be_empty
     end
 
-    # Bands are the same percentage asked at a quantity, so a standalone list
-    # is refused them for the same reason it is refused the column.
-    it 'refuses bands on a standalone list' do
+    # A band applies only from a quantity up, so unlike the column it is a
+    # deliberate store-wide volume discount on a standalone list.
+    it 'accepts bands on a standalone list' do
       patch :update,
             params: { id: price_list.prefixed_id, price_adjustment_tiers: [{ min_quantity: 10, percentage: '-10.0' }] },
             as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(price_list.reload.price_adjustment_tiers).to be_empty
+      expect(response).to have_http_status(:ok)
+      expect(price_list.reload.price_adjustment_tiers.map(&:min_quantity)).to eq([10])
+      expect(json_response['automatic_pricing']).to be true
+
+      post :create,
+           params: { name: 'Volume discount', price_adjustment_tiers: [{ min_quantity: 10, percentage: '-10.0' }] },
+           as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(store.price_lists.find_by(name: 'Volume discount').price_adjustment_tiers.map(&:min_quantity)).to eq([10])
     end
   end
 

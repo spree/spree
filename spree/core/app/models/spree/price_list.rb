@@ -466,14 +466,17 @@ module Spree
     # the list is asked about. Owned by a catalog, the assortment draws that
     # line; standalone, nothing does, and a rule-less list would put the
     # whole store on sale while its product list changed nothing. So the
-    # feature exists only inside an agreement.
+    # flat percentage exists only inside an agreement.
+    #
+    # Bands are allowed on a standalone list: they only apply once a line
+    # reaches a quantity, so "10% off from ten units" across a market is a
+    # deliberate store-wide volume discount rather than an accidental sale,
+    # and deriving it from base prices keeps it from going stale the way
+    # per-variant rows do (docs/plans/6.0-volume-pricing.md).
     def percentage_requires_catalog
       return if catalog_id.present?
 
-      # Bands are the same percentage asked at a quantity, so they are refused
-      # on a standalone list for the same reason the column is.
       errors.add(:price_adjustment_percentage, :requires_catalog) if price_adjustment_percentage.present?
-      errors.add(:price_adjustment_tiers, :requires_catalog) if price_adjustment_tiers.any?
     end
 
     def starts_at_before_ends_at

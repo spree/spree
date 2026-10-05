@@ -95,6 +95,8 @@ import {
   useRemovePriceListProducts,
 } from '../../../hooks/use-price-lists'
 import {
+  ADJUSTMENT_DIRECTIONS,
+  adjustmentTiersFormValues,
   MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
   type PriceListFormValues,
@@ -105,6 +107,7 @@ import {
   ruleDraftFromRule,
   ruleDraftFromType,
 } from '../../../schemas/price-list'
+import { AdjustmentTierFields } from '../adjustment-tier-fields'
 import { EditorShell } from '../promotion-editors/editor-shell'
 import { type PriceRuleEditorContext, ruleFormSlot } from './types'
 
@@ -184,6 +187,7 @@ export function PriceListForm({
       ends_at: priceList.ends_at,
       match_policy: (priceList.match_policy as 'all' | 'any') ?? 'all',
       rules: initialRules.map(ruleDraftFromRule),
+      ...adjustmentTiersFormValues(priceList.price_adjustment_tiers),
       staged_products: { adds: [], removes: [] },
       ...extensionFormValues('price_list', priceList),
     })
@@ -306,6 +310,7 @@ export function PriceListForm({
                   </p>
                 )}
                 <RulesCard form={form} rulesArray={rulesArray} />
+                <QuantityDiscountCard form={form} canEdit={canEdit} />
                 {mode === 'edit' && priceList && (
                   <DeferredProductMembershipCard
                     parentId={priceList.id}
@@ -454,6 +459,79 @@ function ScheduleCard({ form }: { form: UseFormReturn<PriceListFormValues> }) {
             </p>
             <FieldError errors={[errors.ends_at]} />
           </Field>
+        </FieldGroup>
+      </CardContent>
+    </Card>
+  )
+}
+
+// =============================================================================
+// Main column — Quantity discount
+// =============================================================================
+
+/**
+ * Percentage bands derived from base prices, so a market-wide "10% off from
+ * ten units" never goes stale when base prices move. A standalone list takes
+ * no flat percentage — only bands, which start from a quantity
+ * (docs/plans/6.0-volume-pricing.md).
+ */
+function QuantityDiscountCard({
+  form,
+  canEdit,
+}: {
+  form: UseFormReturn<PriceListFormValues>
+  canEdit: boolean
+}) {
+  const { t } = useTranslation()
+  const directionItems = ADJUSTMENT_DIRECTIONS.map((value) => ({
+    value,
+    label: t(`admin.fields.price_list.adjustment_direction.${value}`),
+  }))
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.pages.products.price_lists.quantity_discount_section')}</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.pages.products.price_lists.quantity_discount_help')}
+        </p>
+      </CardHeader>
+      <CardContent>
+        <FieldGroup>
+          <Field className="w-48">
+            <FieldLabel htmlFor="pl-adjustment-direction">
+              {t('admin.fields.price_list.adjustment_direction.label')}
+            </FieldLabel>
+            <Controller
+              control={form.control}
+              name="adjustment_direction"
+              render={({ field }) => (
+                <Select
+                  items={directionItems as never}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={!canEdit}
+                >
+                  <SelectTrigger id="pl-adjustment-direction">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {directionItems.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+          <AdjustmentTierFields
+            form={form}
+            canEdit={canEdit}
+            emptyLabel={t('admin.pages.products.price_lists.quantity_discount_empty')}
+            hint={t('admin.pages.products.price_lists.quantity_discount_tiers_help')}
+          />
         </FieldGroup>
       </CardContent>
     </Card>

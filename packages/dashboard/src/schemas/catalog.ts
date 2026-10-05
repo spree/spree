@@ -6,10 +6,16 @@ import { z } from 'zod/v4'
 import type { ProductMembershipStagingValue } from '../components/spree/product-membership-staging'
 import {
   ADJUSTMENT_DIRECTIONS,
+  type AdjustmentTierValue,
   adjustmentFormValues,
+  adjustmentTierSchema,
+  adjustmentTiersAreWellFormed,
+  adjustmentTiersFormValues,
+  adjustmentTiersPayload,
   PRICING_MODES,
   parseMinimumQuantity,
   parsePercentage,
+  tierPercentageIsUsable,
 } from './price-list'
 
 /**
@@ -21,17 +27,6 @@ import {
  */
 export const CATALOG_PRICING_MODES = ['base', ...PRICING_MODES] as const
 
-/**
- * One quantity band as the form edits it: strings, so an unusable entry can
- * be reported rather than silently coerced. Declared here rather than read
- * off `CatalogFormValues` — the validators below take it as a parameter, and
- * inferring it from the schema they belong to would make the schema's own
- * type circular (docs/plans/6.0-volume-pricing.md).
- */
-export interface AdjustmentTierValue {
-  min_quantity: string
-  percentage: string
-}
 export type CatalogPricingMode = (typeof CATALOG_PRICING_MODES)[number]
 
 /** Validation for the catalog create sheet and the agreement editor. */
@@ -68,9 +63,7 @@ export const catalogFormSchema = z
      * an unusable entry can be reported rather than silently coerced
      * (docs/plans/6.0-volume-pricing.md).
      */
-    adjustment_tiers: z
-      .array(z.object({ min_quantity: z.string().trim(), percentage: z.string().trim() }))
-      .default([]),
+    adjustment_tiers: adjustmentTierSchema,
     /**
      * The catalog-wide quantity terms — the middle of the three levels a
      * buyer's rules resolve through. Blank means this agreement is silent,
@@ -340,50 +333,6 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
   return previousMode === 'fixed' ? { ...withRule, prices: [] } : withRule
 }
 
-/**
- * Bands as the API takes them: signed percentages, matching the direction
- * chosen for the list's own figure. A band a merchant enters as "20" under
- * "decrease" is -20, exactly like the magnitude above it — one control for
- * direction, so a ladder cannot half-discount and half-mark-up.
- */
-function adjustmentTiersPayload(
-  tiers: AdjustmentTierValue[],
-  direction: (typeof ADJUSTMENT_DIRECTIONS)[number],
-) {
-  return tiers.flatMap((tier) => {
-    const quantity = parseMinimumQuantity(tier.min_quantity)
-    const magnitude = parsePercentage(tier.percentage)
-    if (quantity === null || quantity < 2 || magnitude === null) return []
-
-    return [
-      {
-        min_quantity: quantity,
-        percentage: String(direction === 'decrease' ? -magnitude : magnitude),
-      },
-    ]
-  })
-}
-
-/** Every band above one unit, and no quantity used twice. */
-function adjustmentTiersAreWellFormed(tiers: AdjustmentTierValue[]): boolean {
-  const quantities = tiers.map((tier) => parseMinimumQuantity(tier.min_quantity))
-  if (quantities.some((quantity) => quantity === null || quantity < 2)) return false
-
-  return new Set(quantities).size === quantities.length
-}
-
-// A discount past 100% would price below zero; a markup has no ceiling short
-// of what the column holds. The same bound the list's own figure carries.
-function tierPercentageIsUsable(
-  tier: AdjustmentTierValue,
-  direction: (typeof ADJUSTMENT_DIRECTIONS)[number],
-): boolean {
-  const magnitude = parsePercentage(tier.percentage)
-  if (magnitude === null) return false
-
-  return direction === 'increase' || magnitude < 100
-}
-
 function volumeRulePayload(minimumQuantity: string | undefined) {
   const quantity = parseMinimumQuantity(minimumQuantity)
   // A threshold of 1 gates nothing, which is exactly what blank means, so
@@ -427,7 +376,7 @@ export function catalogPricingValues(
     }
   }
 
-  const bands = priceList.price_adjustment_tiers ?? []
+  const bands = adjustmentTiersFormValues(priceList.price_adjustment_tiers)
   const { pricing_mode, adjustment_direction, adjustment_magnitude } = adjustmentFormValues(
     priceList.price_adjustment_percentage,
   )
@@ -437,26 +386,17 @@ export function catalogPricingValues(
   // list would hide the bands behind a card that cannot show them, and the
   // next Save would clear terms the merchant never saw
   // (docs/plans/6.0-volume-pricing.md).
-  const bandsOnly = pricing_mode !== 'automatic' && bands.length > 0
-  // The shallowest band decides the whole ladder's direction: the form offers
-  // one increase/decrease control, and the magnitudes below are read through
-  // it.
-  const bandDirection = Number(bands[0]?.percentage) > 0 ? 'increase' : 'decrease'
+  const bandsOnly = pricing_mode !== 'automatic' && bands.adjustment_tiers.length > 0
 
   return {
     pricing_mode: bandsOnly ? 'automatic' : pricing_mode,
     // With no percentage of its own the direction comes from the bands, so
     // the magnitudes below read as the discounts they are.
-    adjustment_direction: bandsOnly ? bandDirection : adjustment_direction,
+    adjustment_direction: bandsOnly ? bands.adjustment_direction : adjustment_direction,
     adjustment_magnitude,
     adjust_compare_at: priceList.adjust_compare_at ?? false,
     minimum_quantity: minimumQuantityOf(priceList.price_rules),
-    // Shown as magnitudes, like the list's own figure: the direction select
-    // above them carries the sign for the whole ladder.
-    adjustment_tiers: bands.map((tier) => ({
-      min_quantity: String(tier.min_quantity),
-      percentage: String(Math.abs(Number(tier.percentage))),
-    })),
+    adjustment_tiers: bands.adjustment_tiers,
   }
 }
 

@@ -177,6 +177,45 @@ spree api patch /price_lists/pl_xxx/activate
 
 </CodeGroup>
 
+### Quantity Discounts
+
+A price list can take a percentage off the base price once an order line reaches a quantity — "10% off from ten units, 20% from fifty" — with no per-variant rows to maintain. Because the discount is worked out from the base price each time, it stays correct when base prices change.
+
+Each tier applies to every product wherever the list's [rules](#price-rules) match, not only to the products added to the list. A price entered for a product on the list still wins over the tier. Each tier is taken off the base price, never off the tier below it, and a list can hold up to ten tiers. Send the whole ladder on every write: a tier left out is removed, and an empty array clears them all.
+
+<CodeGroup>
+
+```typescript Admin SDK
+const priceList = await client.priceLists.create({
+  name: 'EU volume discount',
+  rules: [
+    { type: 'market_rule', preferences: { market_ids: ['mkt_xxx'] } },
+  ],
+  price_adjustment_tiers: [
+    { min_quantity: 10, percentage: '-10' },
+    { min_quantity: 50, percentage: '-20' },
+  ],
+})
+
+await client.priceLists.activate(priceList.id)
+```
+
+```bash CLI
+spree api post /price_lists -d '{
+  "name": "EU volume discount",
+  "rules": [{ "type": "market_rule", "preferences": { "market_ids": ["mkt_xxx"] } }],
+  "price_adjustment_tiers": [
+    { "min_quantity": 10, "percentage": "-10" },
+    { "min_quantity": 50, "percentage": "-20" }
+  ]
+}'
+spree api patch /price_lists/pl_xxx/activate
+```
+
+</CodeGroup>
+
+A negative percentage is a discount and a positive one is a markup. A flat percentage at every quantity (`price_adjustment_percentage`) is only available on a price list a [catalog](/developer/core-concepts/catalogs) owns, because without a catalog's assortment it would discount the whole store. For quantity discounts on specific SKUs, use quantity breaks (`prices` with `min_quantity`) instead.
+
 ## Price Rules
 
 Price Rules define conditions that must be met for a Price List to apply. Rules describe the *context* of a purchase — where, through what, how much:

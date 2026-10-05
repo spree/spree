@@ -569,6 +569,38 @@ describe Spree::PricingProvider::Internal::Resolution do
       end
     end
 
+    # A market-wide "10% off from ten units": no catalog, no per-variant rows,
+    # derived from base prices so it cannot go stale.
+    context 'with quantity bands on a standalone price list' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+
+      before do
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 100.00)
+        create(:price_adjustment_tier, price_list: price_list, min_quantity: 10, percentage: -10)
+      end
+
+      def price_at(quantity)
+        described_class.new(
+          Spree::Pricing::Context.new(variant: variant, currency: currency, store: store, quantity: quantity)
+        ).resolve
+      end
+
+      it 'charges the base price below the first band and the band from it up' do
+        expect(price_at(9).amount).to eq(100.00)
+        expect(price_at(9).price_list_id).to be_nil
+        expect(price_at(10).amount).to eq(90.00)
+        expect(price_at(10).price_list_id).to eq(price_list.id)
+      end
+
+      it 'stays dormant when its own rules do not match' do
+        create(:customer_group_price_rule, price_list: price_list,
+                                           customer_group_ids: [create(:customer_group, store: store).id])
+        price_list.reload
+
+        expect(price_at(10).amount).to eq(100.00)
+      end
+    end
+
     context 'with price list from different store' do
       let(:other_store) { create(:store) }
       let!(:other_store_list) { create(:price_list, :active, store: other_store) }

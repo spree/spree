@@ -3683,7 +3683,11 @@
           "unschedule_confirm": {
             "message": "„{{name}}” nie będzie już aktywowany w zaplanowanej dacie. Możesz go później ponownie zaplanować lub aktywować ręcznie.",
             "title": "Anulować harmonogram cennika?"
-          }
+          },
+          "quantity_discount_section": "Rabat ilościowy",
+          "quantity_discount_help": "Zmienia cenę bazową o procent, gdy pozycja zamówienia osiągnie daną ilość — dla każdego produktu, wszędzie tam, gdzie pasują reguły tej listy. Ceny wpisane dla produktu na tej liście nadal mają pierwszeństwo.",
+          "quantity_discount_empty": "Brak progów — ta lista nalicza tylko ceny wpisane dla jej produktów.",
+          "quantity_discount_tiers_help": "Od każdej ilości ten procent stosuje się do ceny bazowej, nigdy do progu poniżej."
         },
         "publishing": {
           "caption_hidden_after": "Zniknie {{date}}",

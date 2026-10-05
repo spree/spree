@@ -174,14 +174,14 @@ describe Spree::PriceList, type: :model do
       end
     end
 
-    # Bands are the same percentage asked at a quantity, so a standalone list
-    # is refused them for the same reason it is refused the column.
-    it 'is only valid on a list a catalog owns' do
+    # Unlike the column, a band only applies from a quantity up, so a
+    # standalone list may carry them as a store-wide volume discount.
+    it 'is valid on a standalone list' do
       standalone = create(:price_list, store: @default_store)
       standalone.price_adjustment_tiers.build(min_quantity: 10, percentage: -10)
 
-      expect(standalone).not_to be_valid
-      expect(standalone.errors.messages[:price_adjustment_tiers]).to be_present
+      expect(standalone).to be_valid
+      expect(standalone).to be_automatic_pricing
     end
   end
 

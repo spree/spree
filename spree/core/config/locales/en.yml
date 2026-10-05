@@ -387,8 +387,6 @@ en:
               must_be_after_starts_at: must be after starts at
             price_adjustment_percentage:
               requires_catalog: can only be set on a price list a catalog owns
-            price_adjustment_tiers:
-              requires_catalog: can only be set on a price list a catalog owns
         spree/product:
           attributes:
             base:
