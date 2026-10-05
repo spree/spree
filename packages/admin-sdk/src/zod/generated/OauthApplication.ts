@@ -7,6 +7,7 @@ export const OauthApplicationSchema = z.object({
   redirect_uri: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  client_id: z.string(),
   scopes: z.array(z.string()),
   last_used_at: z.string().nullable(),
   authorized_at: z.string().nullable(),

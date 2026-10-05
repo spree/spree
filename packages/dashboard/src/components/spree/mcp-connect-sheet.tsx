@@ -19,7 +19,7 @@ import {
 import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCreateApiKey } from '../../hooks/use-api-keys'
-import { useStoreSettings } from '../../hooks/use-store-settings'
+import { useOauthApplications } from '../../hooks/use-oauth'
 
 type McpConnectSheetProps = {
   open: boolean
@@ -34,7 +34,7 @@ type McpConnectSheetProps = {
  */
 export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const { t } = useTranslation()
-  const { data: store } = useStoreSettings()
+  const { data: applications } = useOauthApplications()
   const createKey = useCreateApiKey()
   const { permissions } = usePermissions()
   const [minted, setMinted] = useState<ApiKey | null>(null)
@@ -42,7 +42,16 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const [mintError, setMintError] = useState<string | null>(null)
   const writableId = useId()
 
-  const endpoint = store ? `${store.api_url}/v3/admin/mcp` : ''
+  // Where this dashboard's own API calls go — either a configured origin or
+  // the page's own, which is what a proxied or multi-hostname deployment
+  // actually answers on. The store record's URL describes the storefront and
+  // is frequently neither.
+  const apiOrigin = import.meta.env.VITE_SPREE_API_URL || window.location.origin
+  const endpoint = `${apiOrigin}/api/v3/admin/mcp`
+  const clientIds = (applications?.data ?? []).map((application) => ({
+    name: application.name,
+    clientId: application.client_id,
+  }))
   const token = minted?.plaintext_token ?? 'YOUR_SECRET_KEY'
   const canMint = permissions.can('create', Subject.ApiKey)
 
@@ -189,6 +198,30 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
                 value={endpoint}
               />
             </div>
+            {/* A connector that asks for a client id needs this store's own:
+                the id is issued per store, so it cannot be published in
+                documentation. */}
+            {clientIds.length > 0 ? (
+              <div className="flex flex-col gap-1">
+                <p className="text-muted-foreground text-xs">
+                  {t('admin.mcp_connect.client_id_help')}
+                </p>
+                {clientIds.map(({ name, clientId }) => (
+                  <div key={clientId} className="relative">
+                    <pre className="overflow-x-auto rounded-md bg-muted p-3 pr-12 text-xs">
+                      <code>
+                        {name}: {clientId}
+                      </code>
+                    </pre>
+                    <CopyToClipboardButton
+                      aria-label={t('admin.actions.copy')}
+                      className="absolute top-1.5 right-2"
+                      value={clientId}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
       </SheetContent>

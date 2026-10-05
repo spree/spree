@@ -21,11 +21,12 @@ module Spree
              foreign_key: :application_id,
              dependent: :destroy
 
-    # Tokens that still work. A revoked or expired one says nothing about
-    # what a merchant has granted, and showing its scopes after a revoke
-    # reads as if the revoke did not take.
+    # Tokens that still work. Doorkeeper's own scope, so expiry counts as
+    # well as revocation: an application whose tokens have all run out can no
+    # longer call the store, and listing it as connected with its old scopes
+    # intact misstates what has access.
     has_many :live_access_tokens,
-             -> { where(revoked_at: nil) },
+             -> { not_expired },
              class_name: 'Spree::OauthAccessToken',
              foreign_key: :application_id,
              inverse_of: :application,
