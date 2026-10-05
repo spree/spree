@@ -129,10 +129,18 @@ module Spree::Preferences::Preferable
   # saved never reads as missing and the raw `preferences` hash always holds
   # every value. Secrets are left out: their defaults are read through the
   # `preferred_*` reader, never copied into storage.
+  #
+  # Filling in a default is not a change to a stored record: a loaded record
+  # stays clean, so `with_lock` still accepts it, and the defaults are written
+  # with its next real save.
   def backfill_default_preferences
     secrets = self.class.secret_preference_names
     missing = defined_preferences.reject { |name| preferences.key?(name) || secrets.include?(name) }
-    self.preferences = preferences.merge(missing.index_with { |name| preference_default(name) }) if missing.any?
+    return if missing.empty?
+
+    already_changed = attribute_changed?(:preferences)
+    self.preferences = preferences.merge(missing.index_with { |name| preference_default(name) })
+    clear_attribute_change(:preferences) if persisted? && !already_changed
   end
 
   # Names of the preferences the last save changed, secrets included.
