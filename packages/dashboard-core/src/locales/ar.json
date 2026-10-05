@@ -1575,6 +1575,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "Select tax category",
+      "tax": {
+        "apply_to_variants_help": "تنطبق هذه الفئة على كل متغير ليس له فئة ضريبة خاصة به. عند الحفظ، تستخدم هذه المتغيرات هذا الإعداد.",
+        "variant_overrides_heading": "متغيرات لها فئة ضريبة خاصة بها",
+        "variant_overrides_description": "تحتفظ هذه المتغيرات بفئتها حتى تزيل الاستثناء. تتبع بقية المتغيرات فئة المنتج أعلاه.",
+        "clear_variant_override": "استخدام فئة المنتج"
+      },
       "transfers": {
         "create_description": "انقل المخزون بين المواقع، أو استلم مخزونًا جديدًا من مورّد خارجي.",
         "delete_confirm": {

@@ -1578,6 +1578,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "Select tax category",
+      "tax": {
+        "apply_to_variants_help": "This category applies to every variant that does not have its own tax category. When you save, those variants use this setting.",
+        "variant_overrides_heading": "Variants with their own tax category",
+        "variant_overrides_description": "These variants keep their category until you clear the override. All other variants follow the product category above.",
+        "clear_variant_override": "Use product category"
+      },
       "transfers": {
         "create_description": "Move stock between locations, or receive new stock from an external supplier.",
         "delete_confirm": {

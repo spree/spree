@@ -13,6 +13,7 @@ import {
   PageHeader,
   PricesCard,
   type ProductFormValues,
+  prepareVariantsTaxForProductSave,
   productFormSchema,
   SEOCard,
   StatusCard,
@@ -108,9 +109,13 @@ function NewProductPage() {
     //   field — including prices — so we MUST NOT also ship top-level
     //   `prices` (would double-record the price on both the default variant
     //   and the inline variant).
-    const isSingleOptionlessVariant = meaningful.length === 1 && meaningful[0].options.length === 0
+    const productTaxCategoryId = rest.tax_category_id as string | null | undefined
+    const meaningfulForTax = prepareVariantsTaxForProductSave(meaningful, productTaxCategoryId)
+
+    const isSingleOptionlessVariant =
+      meaningfulForTax.length === 1 && meaningfulForTax[0].options.length === 0
     if (isSingleOptionlessVariant) {
-      const v = meaningful[0]
+      const v = meaningfulForTax[0]
       // Mirrors isPlaceholderDefaultVariant — any variant-only field the
       // merchant edited should ride inline so the backend's apply_variants
       // upserts onto the default variant rather than leaving the field at its
@@ -149,9 +154,9 @@ function NewProductPage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(payload as any).prices = v.prices.filter((p) => p.currency != null)
       }
-    } else if (meaningful.length > 0) {
+    } else if (meaningfulForTax.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(payload as any).variants = meaningful.map((v, i) => variantToWirePayload(v, i))
+      ;(payload as any).variants = meaningfulForTax.map((v, i) => variantToWirePayload(v, i))
     }
 
     try {
