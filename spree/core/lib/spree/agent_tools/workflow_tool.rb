@@ -306,8 +306,40 @@ module Spree
         'The workflow refused the change.'
       end
 
+      # Who acted, for the workflow keywords that record it.
+      #
+      # Only where the record can actually hold this principal. Several
+      # models still declare `created_by` / `reviewed_by` as a plain
+      # `belongs_to` on the admin-user class rather than through `acted_by`,
+      # and handing those an API key raises AssociationTypeMismatch deep
+      # inside the workflow — a protocol-level failure where the honest
+      # outcome is simply an unattributed record.
       def principal_arguments
-        schema.principal_parameters.index_with { context.principal }
+        principal = context.principal
+        schema.principal_parameters.
+          select { |name| principal_storable?(name, principal) }.
+          index_with { principal }
+      end
+
+      # @return [Boolean]
+      def principal_storable?(name, principal)
+        association = subject_model&.reflect_on_association(name)
+        return true if association.nil? || association.polymorphic?
+
+        expected = association.klass
+        principal.is_a?(expected)
+      rescue NameError
+        true
+      end
+
+      # The model this workflow writes, for checking what its associations
+      # will accept. Nil when the key names nothing resolvable.
+      def subject_model
+        return @subject_model if defined?(@subject_model)
+
+        @subject_model = created_model
+      rescue StandardError
+        @subject_model = nil
       end
 
       # Tenancy comes from the credential, never from a parameter.
@@ -334,12 +366,61 @@ module Spree
             return { error: "No #{parameter[:model_name].demodulize.underscore.humanize.downcase} found for #{name} #{value.inspect}." } if record.nil?
 
             resolved[name] = record
+          elsif parameter[:item_type] == 'object'
+            rows, refusal = resolve_rows(name, value)
+            return refusal if refusal
+
+            resolved[name] = rows
           else
             resolved[name] = value
           end
         end
 
         resolved
+      end
+
+      # A list of hashes — a purchase order's or stock transfer's `items:` —
+      # names records by prefixed id inside each row, and the workflow builds
+      # associations from them. Without resolving those the association is
+      # handed a string and the record fails validation with "must exist",
+      # which reads to the model as a bad id rather than a missing step.
+      #
+      # @return [Array(Array<Hash>, nil), Array(nil, Hash)]
+      def resolve_rows(name, value)
+        rows = Array(value).map do |row|
+          next row unless row.is_a?(Hash)
+
+          resolved_row = {}
+          row.each do |field, field_value|
+            model_name = nested_model_name(field)
+
+            if model_name && field_value.is_a?(String)
+              record = find_record(model_name, field_value)
+              if record.nil?
+                return [nil, { error: "No #{field} found for #{field_value.inspect} in #{name}." }]
+              end
+
+              resolved_row[field.to_sym] = record
+            else
+              resolved_row[field.to_sym] = field_value
+            end
+          end
+          resolved_row
+        end
+
+        [rows, nil]
+      end
+
+      # Which model a row's field names, taken from the resource map so only
+      # something the caller may already read can be referenced.
+      #
+      # @return [String, nil]
+      def nested_model_name(field)
+        entry = Spree::AgentTools::ResourceMap.find(field.to_s.pluralize)
+        return unless entry
+        return unless context.permitted?(entry.permission)
+
+        entry.model_class.name
       end
 
       # Resolves a prefixed id within the caller's store, through the resource

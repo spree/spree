@@ -48,10 +48,10 @@ module Spree
         [entry, nil]
       end
 
-      # A resource with a workflow is not written here — the tool that does it
-      # is named, so the model retries correctly instead of giving up. Which
-      # tool depends on what was asked for: creating names the create
-      # workflow, changing and deleting name the update one.
+      # A resource with a workflow is not written here — the tool that does
+      # it is named, so the model retries correctly instead of giving up.
+      # Which tool depends on what was asked for, so each subclass names its
+      # own.
       def refusal_for(entry)
         workflow_key = preferred_workflow_key(entry)
 
