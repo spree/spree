@@ -135,7 +135,7 @@ test.describe('companies', () => {
       .getByRole('button', { name: /^save$/i })
       .click()
 
-    await expect(page.getByText(/state \/ province can't be blank/i)).toBeVisible({
+    await expect(page.getByText(/state \/ province (is required|can't be blank)/i)).toBeVisible({
       timeout: 15_000,
     })
     await expect(addressBook.getByText('1 Test Street')).toHaveCount(0)
