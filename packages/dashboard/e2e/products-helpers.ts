@@ -185,3 +185,29 @@ export const customFieldsCard = (page: Page) => card(page, /^Custom fields$/)
 export const inventoryCard = (page: Page) => card(page, /^Inventory$/)
 export const pricesCard = (page: Page) => card(page, /^Prices$/)
 export const publishingCard = (page: Page) => card(page, /^Publishing$/)
+export const categorizationCard = (page: Page) => card(page, /^Categorization$/)
+
+function productCategoriesCombobox(page: Page) {
+  return categorizationCard(page)
+    .getByRole('group')
+    .filter({ has: page.getByText('Categories', { exact: true }) })
+    .getByRole('combobox')
+}
+
+/** Add a category chip on the product form's Categorization card. */
+export async function addProductCategory(page: Page, categoryName: string): Promise<void> {
+  await productCategoriesCombobox(page).fill(categoryName)
+  await page
+    .getByRole('option', { name: new RegExp(`^${categoryName}$`, 'i') })
+    .first()
+    .click()
+}
+
+/** Remove a category chip from the product form's Categorization card. */
+export async function removeProductCategory(page: Page, categoryName: string): Promise<void> {
+  const card = categorizationCard(page)
+  await card
+    .locator('[data-slot="combobox-chip"]', { hasText: categoryName })
+    .locator('[data-slot="combobox-chip-remove"]')
+    .click()
+}
