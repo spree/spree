@@ -2,9 +2,10 @@ import type { OauthApplication } from '@spree/admin-sdk'
 import { PageHeader, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
-  Button,
   Card,
   CardContent,
+  RelativeTime,
+  RowActions,
   Skeleton,
   Table,
   TableBody,
@@ -23,17 +24,14 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/connecte
 })
 
 function ConnectedAppsSettingsPage() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const confirm = useConfirm()
   const { data, isLoading } = useOauthApplications()
   const revoke = useRevokeOauthApplication()
   const { permissions } = usePermissions()
 
-  const applications = data ?? []
+  const applications = data?.data ?? []
   const canRevoke = permissions.can('update', Subject.Store)
-
-  const formatDate = (value: string | null) =>
-    value ? new Date(value).toLocaleDateString(i18n.language) : '—'
 
   async function handleRevoke(application: OauthApplication) {
     const ok = await confirm({
@@ -95,19 +93,21 @@ function ConnectedAppsSettingsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {formatDate(application.last_used_at)}
+                      <RelativeTime iso={application.last_used_at} />
                     </TableCell>
                     <TableCell className="text-right">
-                      {canRevoke ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={revoke.isPending}
-                          onClick={() => handleRevoke(application)}
-                        >
-                          {t('admin.pages.settings.connected_apps.revoke')}
-                        </Button>
-                      ) : null}
+                      <RowActions
+                        actions={[
+                          {
+                            key: 'revoke',
+                            label: t('admin.pages.settings.connected_apps.revoke'),
+                            destructive: true,
+                            visible: canRevoke,
+                            disabled: revoke.isPending,
+                            onSelect: () => handleRevoke(application),
+                          },
+                        ]}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
