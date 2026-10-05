@@ -61,6 +61,15 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
       it { is_expected.to eq 22.5 }
     end
+
+    context 'when an unsaved tier is not a number' do
+      before do
+        calculator.preferred_tiers += [{ threshold: 'abc', value: 30 }]
+        allow(line_item).to receive_messages(amount: 150)
+      end
+
+      it('skips it') { is_expected.to eq 22.5 }
+    end
   end
 
   context 'when saved and loaded again' do

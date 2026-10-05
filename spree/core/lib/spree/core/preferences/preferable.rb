@@ -98,14 +98,13 @@ module Spree::Preferences::Preferable
   end
 
   # Every preference value, secrets included — what `preferences` alone held
-  # before secrets moved to their own column. Secrets read through their
-  # `preferred_*` reader, so a default applies.
+  # before secrets moved to their own column. Declared preferences read
+  # through their `preferred_*` reader, so a default applies and decimals and
+  # times come back typed rather than in the string form JSON stores.
   #
   # @return [ActiveSupport::HashWithIndifferentAccess]
   def preference_values
-    (preferences || {}).to_h.with_indifferent_access.merge(
-      self.class.secret_preference_names.index_with { |name| get_preference(name) }
-    )
+    (preferences || {}).to_h.with_indifferent_access.merge(defined_preferences.index_with { |name| get_preference(name) })
   end
 
   # The stored value of a preference, before its default applies. A secret

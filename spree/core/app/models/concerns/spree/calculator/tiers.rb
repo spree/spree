@@ -42,9 +42,13 @@ module Spree
 
       private
 
+      # Tiers that are not numbers are skipped: validation refuses them on
+      # save, but an unsaved calculator can still be asked to compute.
+      #
       # @return [Array<Array(BigDecimal, BigDecimal)>] threshold and value, lowest threshold first
       def tier_pairs
-        preferred_tiers.map { |tier| [Tiers.decimal(tier['threshold']), Tiers.decimal(tier['value'])] }.sort_by(&:first)
+        pairs = preferred_tiers.map { |tier| [Tiers.decimal(tier['threshold']), Tiers.decimal(tier['value'])] }
+        pairs.select(&:all?).sort_by(&:first)
       end
 
       def preferred_tiers_content
