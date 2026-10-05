@@ -25,6 +25,20 @@ module Spree
           { error: record.errors.full_messages.to_sentence.presence || "#{label} could not be deleted." }
         end
       end
+      protected
+
+      # A delete has no workflow key of its own in the map, so naming the
+      # update workflow would send the model to a tool that cannot delete.
+      # The refusal points at the resource's workflow family instead and
+      # lets `describe_resource` list what is actually callable.
+      def refusal_for(entry)
+        family = entry.update_workflow_key.presence || entry.create_workflow_key
+        return super if family.blank?
+
+        "#{entry.key} is written through workflows — call describe_resource to see " \
+          "which #{family.split('.').first}_* tool removes one."
+      end
+
     end
   end
 end
