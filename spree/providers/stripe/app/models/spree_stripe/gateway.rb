@@ -82,25 +82,30 @@ module SpreeStripe
       "https://dashboard.stripe.com/payments/#{payment.transaction_id}"
     end
 
-    # Called by core when a session-created payment moves to pending. The intent
-    # is already confirmed client-side in the session flow, so this reads back the
-    # intent rather than initiating a charge.
+    # Called by core when a payment moves to pending. A session-created intent is
+    # already confirmed client-side, so this reads it back rather than initiating
+    # a charge. A payment staff added to an order has no intent yet, so its saved
+    # card is charged off-session.
     #
     # @param amount_in_cents [Integer]
     # @param payment_source [Spree::PaymentSource, Spree::CreditCard]
     # @param gateway_options [Hash] Spree::Payment::GatewayOptions#to_hash
     # @return [Spree::PaymentResponse]
     def authorize(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options, capture: false)
     end
 
-    # @see #authorize — capture vs authorize is decided by the intent's capture
-    #   method, so both resolve the same way.
+    # @see #authorize — an existing intent's capture method decides whether it
+    #   was captured, so both resolve it the same way.
     def purchase(amount_in_cents, payment_source, gateway_options = {})
-      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options)
+      handle_authorize_or_purchase(amount_in_cents, payment_source, gateway_options, capture: true)
     end
 
-    def capture(amount_in_cents, payment_intent_id, _gateway_options = {})
+    def capture(amount_in_cents, payment_intent_id, gateway_options = {})
+      if payment_intent_id.blank?
+        return handle_authorize_or_purchase(amount_in_cents, nil, gateway_options, capture: true)
+      end
+
       protect_from_error do
         stripe_payment_intent = retrieve_payment_intent(payment_intent_id)
 
@@ -253,8 +258,12 @@ module SpreeStripe
     end
 
     def create_profile(payment)
+      # A saved card's payment method is attached to the Stripe customer it was
+      # saved under, and charging it under any other is refused.
+      return if payment.source.blank? || payment.source.gateway_customer_profile_id.present?
+
       gateway_customer = fetch_or_create_customer(order: payment.order)
-      return if payment.source.blank? || gateway_customer.blank?
+      return if gateway_customer.blank?
 
       payment.source.update(gateway_customer_profile_id: gateway_customer.profile_id)
     end
@@ -269,7 +278,7 @@ module SpreeStripe
 
     private
 
-    def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options)
+    def handle_authorize_or_purchase(amount_in_cents, _payment_source, gateway_options, capture:)
       # Scoped through this gateway's own payments — a cart-owned payment
       # (checkout is still in flight) has no order to join through, and the
       # payment method already belongs to exactly one store. Found by the
@@ -286,7 +295,10 @@ module SpreeStripe
         payment = payments.find_by(number: payment_number)
       end
       return failure('Payment not found') if payment.blank?
-      return failure('Payment is missing a payment intent') if payment.response_code.blank?
+
+      if payment.response_code.blank?
+        return charge_saved_payment_method(payment, amount_in_cents, capture: capture)
+      end
 
       protect_from_error do
         stripe_payment_intent = retrieve_payment_intent(payment.response_code)
@@ -299,6 +311,47 @@ module SpreeStripe
                    end
 
         success(response.id, response)
+      end
+    end
+
+    # The customer is not there to authenticate or follow a redirect, so the
+    # intent is confirmed at once and a bank asking for either declines it.
+    def charge_saved_payment_method(payment, amount_in_cents, capture:)
+      source = payment.source
+      if source.try(:gateway_payment_profile_id).blank? || source.try(:gateway_customer_profile_id).blank?
+        return failure(Spree.t('stripe.payment_errors.saved_payment_method_required'))
+      end
+
+      payload = payment_intent_payload(
+        amount_in_cents, payment.owner,
+        payment_method_id: source.gateway_payment_profile_id,
+        customer_profile_id: source.gateway_customer_profile_id,
+        capture: capture
+      ).merge(
+        off_session: true,
+        confirm: true,
+        automatic_payment_methods: { enabled: true, allow_redirects: 'never' },
+        expand: ['payment_method']
+      )
+      # Payment ids repeat across databases sharing one Stripe account, and
+      # Stripe refuses a key reused with different parameters, so the key also
+      # names the card and the verb.
+      idempotency_key = [
+        "spree-#{payment.prefixed_id}", source.gateway_payment_profile_id, capture ? 'capture' : 'authorize'
+      ].join('-')
+
+      protect_from_error do
+        stripe_payment_intent = send_request do |opts|
+          Stripe::PaymentIntent.create(payload, opts.merge(idempotency_key: idempotency_key))
+        end
+
+        if payment_intent_accepted?(stripe_payment_intent)
+          success(stripe_payment_intent.id, stripe_payment_intent)
+        else
+          failure("Payment intent status is #{stripe_payment_intent.status}")
+        end
+      rescue Stripe::CardError => error
+        failure(error.message)
       end
     end
 

@@ -274,14 +274,26 @@ module SpreeStripe
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentResponse]
       def create_payment_intent(amount_in_cents, order, payment_method_id: nil, customer_profile_id: nil)
+        # Stripe knows only "charge now" or "authorize now, capture later",
+        # so both on_dispatch and manual map to its manual capture.
+        payload = payment_intent_payload(amount_in_cents, order, payment_method_id: payment_method_id,
+                                                                 customer_profile_id: customer_profile_id,
+                                                                 capture: capture_at_checkout?)
+
+        protect_from_error do
+          response = send_request { |opts| Stripe::PaymentIntent.create(payload, opts) }
+
+          success(response.id, response)
+        end
+      end
+
+      def payment_intent_payload(amount_in_cents, order, payment_method_id:, customer_profile_id:, capture:)
         payload = {
           amount: amount_in_cents,
           currency: order.currency,
           customer: customer_profile_id,
           payment_method: payment_method_id,
-          # Stripe knows only "charge now" or "authorize now, capture later",
-          # so both on_dispatch and manual map to its manual capture.
-          capture_method: (MANUAL_CAPTURE_METHOD unless capture_at_checkout?),
+          capture_method: (MANUAL_CAPTURE_METHOD unless capture),
           statement_descriptor_suffix: statement_descriptor_suffix_for(order),
           automatic_payment_methods: { enabled: true },
           transfer_group: order.number,
@@ -296,11 +308,7 @@ module SpreeStripe
           sepa_debit: { setup_future_usage: SETUP_FUTURE_USAGE }
         } if payment_method_id.blank?
 
-        protect_from_error do
-          response = send_request { |opts| Stripe::PaymentIntent.create(payload, opts) }
-
-          success(response.id, response)
-        end
+        payload
       end
 
       # Only the fields that can legitimately change while a session is pending.
