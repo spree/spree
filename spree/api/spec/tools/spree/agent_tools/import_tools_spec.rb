@@ -57,6 +57,20 @@ RSpec.describe 'assistant import tools' do
       expect(result[:still_missing]).to contain_exactly('slug', 'price')
     end
 
+    # A pair naming a field that does not exist is dropped rather than
+    # refusing the whole proposal — a model that misspelled one heading
+    # should not have to resend forty. What matters is that it is told,
+    # so it never reports a column as handled when it was not.
+    it 'applies the valid pairs and names the ones it dropped' do
+      result = tool.call(id: import.prefixed_id,
+                         mapping: { 'name' => 'Product Title', 'not_a_field' => 'Item Code' })
+
+      expect(result[:ok]).to be(true)
+      expect(result[:mapped]).to include('name')
+      expect(result[:rejected]).to contain_exactly('not_a_field')
+      expect(import.mappings.find_by(schema_field: 'name').file_column).to eq('Product Title')
+    end
+
     it 'starts the import once every required field is mapped' do
       import.update!(preferred_inline: true)
 
@@ -96,10 +110,11 @@ RSpec.describe 'assistant import tools' do
       expect(result[:status]).to eq('mapping')
     end
 
-    # A validation message quotes the value that failed — "Sku 'ABC' has
-    # already been taken" — so the failure reasons can carry uploaded data
-    # that was never persisted. Counting rows is reading the resource;
-    # reading back what someone typed into a spreadsheet is not.
+    # An import is not the resource: it is whatever someone staged. A sample
+    # row is a real customer's name and address that may never be saved, and
+    # a failure reason quotes the value that failed. So reading one takes the
+    # imported resource's write scope, which is what the Admin API's own
+    # ImportsController requires for every import action including its reads.
     context 'when the caller may read the resource but not write it' do
       let(:ability) do
         Class.new do
@@ -109,17 +124,12 @@ RSpec.describe 'assistant import tools' do
         end.new
       end
 
-      it 'still reports the counts' do
+      it 'refuses the import entirely' do
         result = described_class.new(context).call(id: import.prefixed_id)
 
-        expect(result[:error]).to be_nil
-        expect(result[:status]).to be_present
-      end
-
-      it 'withholds the failure reasons' do
-        result = described_class.new(context).call(id: import.prefixed_id)
-
+        expect(result[:error]).to be_present
         expect(result).not_to have_key(:failure_reasons)
+        expect(result).not_to have_key(:rows)
       end
     end
   end
