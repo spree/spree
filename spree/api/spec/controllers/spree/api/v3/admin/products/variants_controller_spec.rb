@@ -39,6 +39,28 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
       expect(json_response['id']).to eq(variant.prefixed_id)
       expect(json_response['sku']).to eq(variant.sku)
     end
+
+    it 'returns a nil tax_category_id when the variant inherits from the product' do
+      books = create(:tax_category, name: 'Books')
+      product.update!(tax_category: books)
+      variant.update_columns(tax_category_id: nil)
+
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['tax_category_id']).to be_nil
+      expect(variant.tax_category).to eq(books)
+    end
+
+    it 'returns the stored tax_category_id when the variant overrides the product' do
+      default_category = create(:tax_category, name: 'Default')
+      books = create(:tax_category, name: 'Books')
+      product.update!(tax_category: default_category)
+      variant.update!(tax_category: books)
+
+      get :show, params: { product_id: product.prefixed_id, id: variant.prefixed_id }, as: :json
+
+      expect(json_response['tax_category_id']).to eq(books.prefixed_id)
+    end
   end
 
   describe 'POST #create' do

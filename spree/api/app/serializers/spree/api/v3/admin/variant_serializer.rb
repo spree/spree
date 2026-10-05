@@ -42,7 +42,12 @@ module Spree
 
           attribute :preorderable, &:preorderable?
 
-          prefixed_id_attributes :tax_category
+          # Stored on the row only — nil means inherit from the product. The
+          # model's +tax_category+ reader resolves the effective category for
+          # tax; the admin form needs the raw column to tell override from inherit.
+          attribute :tax_category_id do |variant|
+            Spree::TaxCategory.prefixed_id_for(variant[:tax_category_id])
+          end
 
           # Encoded from the foreign key: loading the carton row just to
           # re-encode its id is a query per variant on the product listing.
