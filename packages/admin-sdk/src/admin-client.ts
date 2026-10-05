@@ -474,6 +474,10 @@ import type {
   MediaUpdateParams,
   MediaUsageReference,
   MeUpdateParams,
+  OauthApplication,
+  OauthAuthorizationParams,
+  OauthAuthorizationRequest,
+  OauthRedirect,
   OptionTypeCreateParams,
   OptionTypeUpdateParams,
   OrderCancelParams,
@@ -5856,6 +5860,49 @@ export class AdminClient {
   // ============================================
   // API Keys (publishable + secret)
   // ============================================
+
+  /**
+   * OAuth 2.1 consent, for the screen a merchant approves when an agent or an
+   * app asks for access to the store.
+   *
+   * `authorization` describes what is being asked for; `approve` and `deny`
+   * both answer with the `redirect_uri` the browser should then be sent to.
+   * These require a signed-in admin: a secret key authenticates but is not a
+   * person, so it can never grant authority on someone's behalf.
+   */
+  readonly oauth = {
+    authorization: (
+      params: OauthAuthorizationParams,
+      options?: RequestOptions,
+    ): Promise<OauthAuthorizationRequest> =>
+      this.request<OauthAuthorizationRequest>('GET', '/oauth/authorize', {
+        ...options,
+        // The authorization request is a flat set of strings by construction,
+        // so it travels as query params untouched — no Ransack wrapping, and
+        // nothing re-derived on the way.
+        params: { ...params } as Record<string, string | undefined>,
+      }),
+
+    approve: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('POST', '/oauth/authorize', { ...options, body: params }),
+
+    deny: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
+      this.request<OauthRedirect>('DELETE', '/oauth/authorize', { ...options, body: params }),
+
+    /** Applications a merchant has connected, for the revoke screen. */
+    applications: {
+      list: (options?: RequestOptions): Promise<OauthApplication[]> =>
+        this.request<OauthApplication[]>('GET', '/oauth/applications', options ?? {}),
+
+      /**
+       * Revokes every live token and grant an application holds. The
+       * registration itself is kept, so a merchant can reconnect without the
+       * client being re-registered.
+       */
+      revoke: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
+    },
+  }
 
   readonly apiKeys = {
     list: (
