@@ -35,12 +35,18 @@ module Spree
       # @param api_key [Spree::ApiKey, nil] a secret key
       # @param ability [Spree::Ability, nil] defaults to the user's ability for
       #   this store — abilities are store-scoped, so the store must be passed
-      def initialize(store:, user: nil, api_key: nil, ability: nil)
+      # @param granted_scopes [Array<String>, nil] when the caller acts for a
+      #   user through a delegated grant (an OAuth token), the scopes that
+      #   grant carries. They *narrow* the user's own authority and can never
+      #   widen it, so a merchant who consented to reading products does not
+      #   hand over everything their role could do.
+      def initialize(store:, user: nil, api_key: nil, ability: nil, granted_scopes: nil)
         raise ArgumentError, 'Spree::AgentTools::Context needs a user or an api_key' if user.nil? && api_key.nil?
 
         @store = store
         @user = user
         @api_key = api_key
+        @granted_scopes = granted_scopes
         @ability = ability || (Spree::Dependencies.ability_class.constantize.new(user, store: store) if user)
       end
 
@@ -91,8 +97,29 @@ module Spree
       # @return [Boolean]
       def can?(action, record)
         return true unless user_principal?
+        # A delegated grant narrows what the user may do here, so a record
+        # check has to honour it too: being offered a tool is not permission
+        # to use it on a record the grant does not cover.
+        return false unless granted_for?(action, record)
 
         ability.can?(action, record)
+      end
+
+      # Whether the grant covers an action on this record's resource. A
+      # context without a grant is the user acting directly and is unlimited
+      # by this; a grant that names no scope for the resource refuses.
+      #
+      # @return [Boolean]
+      def granted_for?(action, record)
+        return true if @granted_scopes.nil?
+
+        scope = Spree.permissions.scope_for_resource(record.is_a?(Class) ? record : record.class)
+        return true if scope.nil?
+
+        write = !%i[read show index].include?(action.to_sym)
+        key = "#{write ? 'write' : 'read'}_#{scope.name}"
+        permission_keys.include?(key) ||
+          (!write && permission_keys.include?("write_#{scope.name}"))
       end
 
       # Whether the caller holds a permission a tool *declares*.
@@ -145,7 +172,8 @@ module Spree
       def permission_keys
         @permission_keys ||=
           if user_principal?
-            ability.respond_to?(:permission_keys) ? Array(ability.permission_keys).map(&:to_s) : []
+            held = ability.respond_to?(:permission_keys) ? Array(ability.permission_keys).map(&:to_s) : []
+            @granted_scopes.nil? ? held : held & Spree.permissions.expand_keys(@granted_scopes)
           else
             Spree.permissions.expand_keys(api_key.scopes)
           end
