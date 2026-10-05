@@ -337,6 +337,7 @@ module Spree
     has_many :catalogs, class_name: 'Spree::Catalog', dependent: :destroy, inverse_of: :store
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
+    has_many :oauth_applications, class_name: 'Spree::OauthApplication', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 
     #
