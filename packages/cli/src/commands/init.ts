@@ -199,7 +199,11 @@ export async function runFirstRunSetup(flags: {
         pc.bold('Admin Dashboard'),
         `  ${pc.cyan(`http://localhost:${ctx.port}/dashboard`)}`,
         ...credentialLines,
-        `  ${pc.dim(`Built-in dashboard — run ${pc.bold('spree add dashboard')} to customize it`)}`,
+        `  ${pc.dim(
+          hasDashboardApp(ctx.projectDir)
+            ? 'Built-in dashboard — apps/dashboard/ runs once its dependencies are installed'
+            : `Built-in dashboard — run ${pc.bold('spree add dashboard')} to customize it`,
+        )}`,
       ]
 
   // The wholesale demo needs both the storefront env opt-in and the seeded
@@ -251,16 +255,14 @@ export async function runFirstRunSetup(flags: {
     if (flags.open) {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
-      // one there's no admin to open in development, so fall back to the
-      // store itself.
-      const dashboardUrl = dashboard ? await dashboard.url : null
+      // one, open the built-in dashboard the summary names.
+      const dashboardUrl = dashboard ? await dashboard.url : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.
-      const target =
-        setupToken && dashboardUrl
-          ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
-          : (dashboardUrl ?? `http://localhost:${ctx.port}`)
+      const target = setupToken
+        ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
+        : dashboardUrl
       await openBrowser(target)
     }
 
