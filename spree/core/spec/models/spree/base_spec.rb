@@ -105,14 +105,16 @@ describe Spree::Base do
   end
 
   describe 'preference defaults on load' do
-    let(:store) { Spree::Store.default }
+    let(:store) { create(:store) }
 
-    it 'backfills preferences added since the record was last saved' do
-      store.update_column(:preferences, store.preferences.except(:timezone))
+    it 'backfills preferences added since the record was last saved, without marking the record changed' do
+      store.update_column(:preferences, store.preferences.except(:timezone, :install_id))
 
       loaded = Spree::Store.find(store.id)
 
       expect(loaded.preferences[:timezone]).to eq(loaded.preference_default(:timezone))
+      expect(loaded).not_to be_changed
+      expect { loaded.with_lock { nil } }.not_to raise_error
     end
 
     # `preferences` is a YAML-serialized Hash, so the dirty check compares the

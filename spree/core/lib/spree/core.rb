@@ -221,20 +221,12 @@ module Spree
     ->(locale) { locale.name == Spree::Current.content_locale }
   end
 
-  # Stable anonymous identifier for this Spree installation. Generated once,
-  # persisted in the preferences store and reused afterwards. It identifies the
-  # installation only
+  # Stable anonymous identifier for this Spree installation, kept on the
+  # default store, which generates it when it is first saved.
   #
-  # Deliberately not memoized: the persisted preference is the single source
-  # of truth, so processes that race to generate the first value converge on
-  # the winning row at the next read instead of each holding a different id
-  # for their lifetime.
-  #
-  # @return [String] UUID
+  # @return [String, nil] UUID, or nil before the default store exists
   def self.install_id
-    store = Spree::Preferences::Store.instance
-    store.get('spree/install_id') { nil }.presence ||
-      SecureRandom.uuid.tap { |id| store.set('spree/install_id', id) }
+    Spree::Store.default&.preferred_install_id
   end
 
   # Used to configure Spree.
@@ -639,9 +631,9 @@ require 'spree/checkout/requirements'
 
 require 'spree/core/controller_helpers/store'
 
-require 'spree/core/preferences/store'
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/masking'
+require 'spree/core/preferences/json_conversion'
 
 require 'spree/core/permission_configuration'
 require 'spree/core/ransack_configuration'

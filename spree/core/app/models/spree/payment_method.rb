@@ -13,6 +13,7 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SecretPreferences
     include Spree::CaptureMethod
     include Spree::ProviderListing
     if defined?(Spree::Security::PaymentMethods)
@@ -303,9 +304,7 @@ module Spree
     end
 
     def public_preferences
-      public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = preferences[key]
-      end
+      public_preference_keys.index_with { |key| get_preference(key) }
     end
 
     # @deprecated Use {#storefront_visible?}; removed in 6.1.

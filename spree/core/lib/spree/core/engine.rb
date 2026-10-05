@@ -83,8 +83,6 @@ module Spree
         app.config.spree.promotions = PromoEnvironment.new([])
         app.config.spree.pricing = PricingEnvironment.new([])
 
-        app.config.active_record.yaml_column_permitted_classes ||= []
-        app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time])
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')

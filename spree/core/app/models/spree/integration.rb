@@ -10,7 +10,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::PreferenceSchema
+    include Spree::SecretPreferences
     include Spree::ProviderListing
+
 
     # Spree::Current.integrations snapshots the active set for the request;
     # connecting or deactivating one mid-request (the activate-and-verify

@@ -93,11 +93,9 @@ module Spree
                      :preferred_inventory_provider_failure_policy,
                      :preferred_payout_provider,
                      :preferred_default_payouts_schedule_interval,
-                     :preferred_default_minimum_payout_amount,
                      :preferred_auto_approve_sellers,
                      :preferred_auto_approve_seller_products,
                      :preferred_send_seller_transactional_emails,
-                     :preferred_default_commission_tax_rate,
                      :preferred_document_number_format,
                      :preferred_order_number_prefix,
                      :preferred_order_number_suffix,
@@ -113,6 +111,14 @@ module Spree
           # value that does nothing.
           attribute :order_number_sequence_started do |store|
             Spree::NumberSequence.started?(store: store)
+          end
+
+          attribute :preferred_default_minimum_payout_amount do |store|
+            store.preferred_default_minimum_payout_amount&.to_f
+          end
+
+          attribute :preferred_default_commission_tax_rate do |store|
+            store.preferred_default_commission_tax_rate&.to_f
           end
 
           attribute :url, &:storefront_url

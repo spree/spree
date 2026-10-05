@@ -93,17 +93,6 @@ module Spree
                                       .freeze
       end
 
-      # Declared order first, so a form reads the way its author grouped the
-      # fields; anything the macro did not record (an association writer that
-      # looks like a preference) keeps its existing place at the end.
-      def ordered_preferences(instance)
-        defined = instance.defined_preferences
-        return defined unless respond_to?(:declared_preference_order)
-
-        declared = declared_preference_order & defined
-        declared + (defined - declared)
-      end
-
       def compute_preference_schema
         # Only instantiation is guarded. `new` touches the database to read
         # the column list, so it fails whenever the schema is asked for before
@@ -121,7 +110,7 @@ module Spree
           return nil
         end
 
-        ordered_preferences(instance).filter_map do |pref|
+        instance.defined_preferences.filter_map do |pref|
           next if instance.preference_deprecated(pref)
           # Written by Spree, not supplied by the operator — a value a
           # provider hands back after we register something with it. Offering

@@ -18,11 +18,6 @@ module Spree
         yield(config) if block_given?
       end
 
-      def assert_preference_unset(preference)
-        find("#preferences_#{preference}")['checked'].should be false
-        Spree::Config[preference].should be false
-      end
-
       # Stubs store-scoped commerce settings for the duration of one example.
       #
       #   stub_store_preferences(track_inventory_levels: false)

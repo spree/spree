@@ -45,6 +45,9 @@ module Spree
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
+    # Anonymous identifier of this installation, kept on the default store
+    # (see Spree.install_id). Written by Spree, never by the operator.
+    preference :install_id, :string, internal: true, nullable: true
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
     # Sellers are a different audience from shoppers, with their own reasons to
@@ -384,6 +387,7 @@ module Spree
     before_validation :set_default_code, on: :create
     before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
+    before_save :set_install_id
     after_create :create_default_policies
     after_create :create_default_delivery_profile
 
@@ -712,6 +716,10 @@ module Spree
     def translate_with_store_locale_fallback(key)
       locale = default_locale.presence&.to_sym || :en
       I18n.t(key, locale: locale, default: I18n.t(key, locale: :en))
+    end
+
+    def set_install_id
+      self.preferred_install_id = SecureRandom.uuid if preferred_install_id.blank?
     end
 
     def ensure_default_exists_and_is_unique
