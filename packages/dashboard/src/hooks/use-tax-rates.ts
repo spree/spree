@@ -49,15 +49,42 @@ export function useDeleteTaxRate() {
   })
 }
 
+/** One entry from `GET /tax_providers` — classes registered in code, not rows. */
+export interface TaxProviderOption {
+  id: string
+  name: string
+  available: boolean
+  default: boolean
+  uses_market_tax_inclusive: boolean
+  unsupported_capabilities?: Array<{ key: string; label: string; description?: string }>
+}
+
 /**
  * The tax engines this installation can use, each declaring what it cannot
  * handle. Registered in code rather than stored, so this never changes within
  * a session.
  */
 export function useTaxProviders() {
-  return useQuery({
+  const query = useQuery({
     queryKey: useResourceKey('tax-providers'),
     queryFn: () => adminClient.taxProviders.list(),
     staleTime: Number.POSITIVE_INFINITY,
   })
+  const providers = (query.data?.data ?? []) as unknown as TaxProviderOption[]
+
+  return { ...query, providers }
+}
+
+/**
+ * The engine a market computes with: the one it names, else the installation
+ * default. Undefined until the providers have loaded.
+ */
+export function effectiveTaxProvider(
+  providers: TaxProviderOption[],
+  providerId: string | null | undefined,
+): TaxProviderOption | undefined {
+  return (
+    providers.find((provider) => provider.id === providerId) ??
+    providers.find((provider) => provider.default)
+  )
 }
