@@ -6223,6 +6223,7 @@
         "customized": "Dostosowany",
         "default": "Domyślny",
         "draft": "Szkic",
+        "other_languages": "Dostosowano też: {{languages}}",
         "default_updated": "Zaktualizowany przez Spree",
         "unsaved": "Niezapisane zmiany",
         "showing_draft": "Szkic – klienci otrzymują opublikowaną wersję",

@@ -70,12 +70,15 @@ module Spree
         @resolver ||= Spree::Emails::TemplateResolver.for_mailers(store: @store, locale: language, drafts: drafts)
       end
 
+      # An unsaved subject or body sent alone is previewed with the other half
+      # customers currently get.
       def drafts
-        return {} if @body.nil?
+        return {} if @subject.nil? && @body.nil?
 
-        # A body sent alone keeps the subject customers currently get.
-        subject = @subject.nil? ? Spree::Emails::TemplateResolver.for_mailers(store: @store, locale: language).find(@key)&.subject : @subject
-        { @key => Spree::Emails::Template.new(key: @key, subject: subject, body: @body) }
+        current = Spree::Emails::TemplateResolver.for_mailers(store: @store, locale: language).find(@key)
+        subject = @subject.nil? ? current&.subject : @subject
+        body = @body.nil? ? current&.body : @body
+        { @key => Spree::Emails::Template.new(key: @key, subject: subject, body: body) }
       end
 
       def language

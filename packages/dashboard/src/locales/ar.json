@@ -6195,6 +6195,7 @@
         "customized": "مخصص",
         "default": "افتراضي",
         "draft": "مسودة",
+        "other_languages": "مخصص أيضًا: {{languages}}",
         "default_updated": "حدّثه Spree",
         "unsaved": "تغييرات غير محفوظة",
         "showing_draft": "مسودة — يتلقى العملاء النسخة المنشورة",

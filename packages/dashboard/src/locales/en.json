@@ -6155,6 +6155,7 @@
         "customized": "Customized",
         "default": "Default",
         "draft": "Draft",
+        "other_languages": "Also customized: {{languages}}",
         "default_updated": "Updated by Spree",
         "unsaved": "Unsaved changes",
         "showing_draft": "Draft — customers receive the published version",

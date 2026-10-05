@@ -6155,6 +6155,7 @@
         "customized": "Angepasst",
         "default": "Standard",
         "draft": "Entwurf",
+        "other_languages": "Auch angepasst: {{languages}}",
         "default_updated": "Von Spree aktualisiert",
         "unsaved": "Ungespeicherte Änderungen",
         "showing_draft": "Entwurf – Kunden erhalten die veröffentlichte Version",

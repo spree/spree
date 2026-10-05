@@ -13,10 +13,12 @@ module Spree
     # translation, a value it does not recognize) is left as it was, so the
     # template still renders the same.
     class TranslationInliner
-      KEY = /'([a-z0-9_.]+)'/
-      ARGUMENTS = /(?:\s*:\s*([^|}%]+?))?/
-      OUTPUT = /\{\{-?\s*#{KEY}\s*\|\s*t#{ARGUMENTS}\s*(\|[^}]*?)?\s*-?\}\}/
-      ASSIGN = /\{%-?\s*assign\s+(\w+)\s*=\s*#{KEY}\s*\|\s*t#{ARGUMENTS}\s*-?%\}/
+      # Tags are found with simple patterns and read with string handling, so
+      # matching stays linear on any input a merchant pastes in.
+      OUTPUT_TAG = /\{\{([^{}]*)\}\}/
+      ASSIGN_TAG = /\{%([^{}%]*)%\}/
+      TRANSLATED = /\A'([a-z0-9_.]+)'\s*\|\s*t\b/
+      ASSIGNED = /\Aassign\s+(\w+)\s*=\s*/
       INTERPOLATION = /%\{(\w+)\}/
 
       # @param source [String, nil] a template's subject or body
@@ -37,29 +39,55 @@ module Spree
         return source if source.blank?
 
         source.
-          gsub(ASSIGN) { inline_assign(Regexp.last_match) || Regexp.last_match[0] }.
-          gsub(OUTPUT) { inline_output(Regexp.last_match) || Regexp.last_match[0] }
+          gsub(ASSIGN_TAG) { |tag| inline_assign(markup(Regexp.last_match[1])) || tag }.
+          gsub(OUTPUT_TAG) { |tag| inline_output(markup(Regexp.last_match[1])) || tag }
       end
 
       private
 
-      def inline_output(match)
-        _, key, arguments, filters = match.to_a
-        text = translation(key)
+      # A tag's content without whitespace control dashes or padding.
+      def markup(content)
+        content.delete_prefix('-').delete_suffix('-').strip
+      end
+
+      # `'key' | t`, `'key' | t: name: value` and `'key' | t | filter`, split into
+      # the key, its arguments and the filters after it.
+      def translation_call(markup)
+        match = TRANSLATED.match(markup)
+        return unless match
+
+        rest = match.post_match.strip
+        if rest.start_with?(':')
+          arguments, filters = rest.delete_prefix(':').split('|', 2)
+          [match[1], arguments.strip, filters&.strip]
+        elsif rest.start_with?('|')
+          [match[1], nil, rest.delete_prefix('|').strip]
+        elsif rest.empty?
+          [match[1], nil, nil]
+        end
+      end
+
+      def inline_output(markup)
+        key, arguments, filters = translation_call(markup)
+        text = key && translation(key)
         return unless text
 
         if filters.present?
           return if arguments.present? || text.include?("'")
 
-          "{{ '#{text}' #{filters.strip} }}"
+          "{{ '#{text}' | #{filters} }}"
         else
           interpolate(text, arguments) { |literal| literal_text(literal) }
         end
       end
 
-      def inline_assign(match)
-        _, variable, key, arguments = match.to_a
-        text = translation(key)
+      def inline_assign(markup)
+        assigned = ASSIGNED.match(markup)
+        return unless assigned
+
+        variable = assigned[1]
+        key, arguments, filters = translation_call(assigned.post_match)
+        text = key && filters.nil? && translation(key)
         return unless text
 
         if arguments.blank? && text.exclude?("'") && text !~ INTERPOLATION

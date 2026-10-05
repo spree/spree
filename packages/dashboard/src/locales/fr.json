@@ -6155,6 +6155,7 @@
         "customized": "Personnalisé",
         "default": "Par défaut",
         "draft": "Brouillon",
+        "other_languages": "Aussi personnalisé : {{languages}}",
         "default_updated": "Mis à jour par Spree",
         "unsaved": "Modifications non enregistrées",
         "showing_draft": "Brouillon – les clients reçoivent la version publiée",

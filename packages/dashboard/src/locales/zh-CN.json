@@ -6142,6 +6142,7 @@
         "customized": "已自定义",
         "default": "默认",
         "draft": "草稿",
+        "other_languages": "其他已自定义语言：{{languages}}",
         "default_updated": "Spree 已更新",
         "unsaved": "未保存的更改",
         "showing_draft": "草稿 — 客户收到的是已发布版本",

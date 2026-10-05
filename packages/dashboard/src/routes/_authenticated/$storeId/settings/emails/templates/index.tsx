@@ -1,5 +1,11 @@
 import type { EmailTemplate } from '@spree/admin-sdk'
-import { PageHeader, Subject, usePermissions, useStore } from '@spree/dashboard-core'
+import {
+  PageHeader,
+  Subject,
+  useDisplayName,
+  usePermissions,
+  useStore,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -124,6 +130,12 @@ function TemplateGroup({
 
 function TemplateBadges({ template }: { template: EmailTemplate }) {
   const { t } = useTranslation()
+  const { defaultLocale: language } = useStore()
+  const languageName = useDisplayName('language')
+  // The list reads one language; versions in the others would otherwise look missing.
+  const otherLanguages = template.customized_languages
+    .filter((code) => code !== language && code !== 'any')
+    .map((code) => languageName(code) ?? code)
 
   return (
     <div className="flex flex-wrap justify-end gap-1">
@@ -131,6 +143,13 @@ function TemplateBadges({ template }: { template: EmailTemplate }) {
         <Badge variant="warning">{t('admin.email_templates.badges.default_updated')}</Badge>
       )}
       {template.draft && <Badge variant="info">{t('admin.email_templates.badges.draft')}</Badge>}
+      {otherLanguages.length > 0 && (
+        <Badge variant="outline">
+          {t('admin.email_templates.badges.other_languages', {
+            languages: otherLanguages.join(', '),
+          })}
+        </Badge>
+      )}
       {template.customized ? (
         <Badge variant="success">{t('admin.email_templates.badges.customized')}</Badge>
       ) : (

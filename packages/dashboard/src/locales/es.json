@@ -6155,6 +6155,7 @@
         "customized": "Personalizada",
         "default": "Predeterminada",
         "draft": "Borrador",
+        "other_languages": "También personalizada: {{languages}}",
         "default_updated": "Actualizada por Spree",
         "unsaved": "Cambios sin guardar",
         "showing_draft": "Borrador: los clientes reciben la versión publicada",

@@ -30,4 +30,11 @@ describe Spree::EmailTemplates::Preview do
 
     expect(email.subject).to be_present
   end
+
+  it 'previews an unsaved subject sent alone, with the current body' do
+    email = described_class.new(store: store, key: editable_key, subject: 'Only the subject changed').call
+
+    expect(email.subject).to eq('Only the subject changed')
+    expect(email.html).to include(store.name)
+  end
 end
