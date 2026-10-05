@@ -116,10 +116,17 @@ module Spree
             access_grant_class 'Spree::OauthAccessGrant'
             access_token_class 'Spree::OauthAccessToken'
 
-            # The consent controller signs the user in before Doorkeeper runs,
-            # so the authorization server never needs to know how
-            # authentication works.
-            resource_owner_authenticator { send(:current_oauth_resource_owner) }
+            # Consent is Spree's own, at
+            # `Spree::Api::V3::Admin::Oauth::AuthorizationsController`, and
+            # Doorkeeper's authorization controllers are not mounted — so
+            # this is only reached if a host app mounts them. Failing loudly
+            # beats a NoMethodError inside a before_action, which
+            # `handle_auth_errors :raise` would turn into a 500 on an
+            # authorization endpoint.
+            resource_owner_authenticator do
+              raise "Doorkeeper's own consent screens are not mounted in Spree. " \
+                    'Consent is served by the Admin API at /api/v3/admin/oauth/authorize.'
+            end
 
             # An admin user today, a customer when a storefront client needs
             # one — recorded polymorphically so either can own a grant.
@@ -155,7 +162,10 @@ module Spree
             # One live token per authorization, so re-consenting does not
             # leave the previous one usable.
             revoke_previous_authorization_code_token
-            hash_token_secrets fallback: :plain
+            # No `fallback: :plain`: every token this server writes is
+            # hashed, so a plaintext lookup could never match and keeping
+            # the path alive only invites a future migration to rely on it.
+            hash_token_secrets
             access_token_expires_in 2.hours
             # Refresh rotation with replay detection comes from the
             # `previous_refresh_token` column the migration adds — Doorkeeper

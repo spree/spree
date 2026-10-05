@@ -40,12 +40,18 @@ module Spree
               }
             end
 
-            # The merchant may approve less than the client asked for. Doing
-            # so narrows the grant, not the request: Doorkeeper records
-            # whatever scope reaches it here, so a trimmed list becomes the
-            # token's authority.
+            # The merchant may approve less than the client asked for, and
+            # never more than they themselves hold.
+            #
+            # The ceiling is applied here rather than trusted from the
+            # request. Doorkeeper validates a requested scope against the
+            # catalog, not against the person, so a crafted POST naming
+            # `write_settings` would otherwise be recorded verbatim on a
+            # staffer who holds only `read_products` — and a grant is a
+            # standing ceiling, so it would widen on its own the day that
+            # person is promoted.
             def create
-              render json: { redirect_uri: code_request.authorize.redirect_uri }
+              render json: { redirect_uri: granted_code_request.authorize.redirect_uri }
             end
 
             def destroy
@@ -141,6 +147,31 @@ module Spree
             # which is exactly the work the gem is here to do.
             def code_request
               @code_request ||= ::Doorkeeper::OAuth::CodeRequest.new(@pre_auth, current_actor)
+            end
+
+            # The same thing, over a pre-authorization whose scope has been
+            # cut to what this person can actually hand over. Rebuilt rather
+            # than mutated, because the scope is read in several places on
+            # the way to the grant.
+            def granted_code_request
+              bounded = ::Doorkeeper::OAuth::PreAuthorization.new(
+                ::Doorkeeper.config,
+                pre_authorization_params.merge(scope: grantable_scopes.join(' ')),
+                current_actor
+              )
+
+              # Validation is what resolves `client`, and the grant is written
+              # from `pre_auth.client.id` — an unvalidated pre-authorization
+              # carries a nil client and fails deep inside the gem.
+              unless bounded.authorizable?
+                return render_error(
+                  code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
+                  message: bounded.error_response.body[:error_description].to_s,
+                  status: :unprocessable_content
+                )
+              end
+
+              ::Doorkeeper::OAuth::CodeRequest.new(bounded, current_actor)
             end
           end
         end

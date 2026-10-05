@@ -85,7 +85,7 @@ RSpec.describe 'Admin connected applications', type: :request do
 
   describe 'revoking' do
     it 'stops the application working without deleting its registration' do
-      raw = token_for(admin).token
+      raw = token_for(admin).plaintext_token
 
       delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}",
              headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
