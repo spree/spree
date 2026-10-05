@@ -4065,6 +4065,21 @@
           "admission_description": "开启其中任一项都会取消一次人工判断。仅限邀请的平台没问题，但对人人可加入的平台有风险。",
           "communication_title": "沟通",
           "commission_tax_title": "佣金税"
+        },
+        "connected_apps": {
+          "title": "已连接的应用",
+          "subtitle": "团队成员授予此店铺访问权限的代理和应用。撤销将立即生效。",
+          "empty": "尚未连接任何应用。",
+          "revoke": "撤销访问权限",
+          "table": {
+            "name": "应用",
+            "access": "访问权限",
+            "last_used": "上次使用"
+          },
+          "revoke_confirm": {
+            "title": "撤销访问权限？",
+            "message": "{{name}} 将立即停止工作。使用它的人需要重新连接。"
+          }
         }
       },
       "staff": {
@@ -4115,6 +4130,18 @@
         },
         "total": "总计",
         "translated": "已翻译"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "授权应用",
+          "subtitle": "在允许之前，请查看此应用请求的权限。",
+          "intro": "{{client}} 希望代表您访问此店铺。它只能执行您在下方允许的操作，且绝不会超出您自己的权限范围。",
+          "permissions_heading": "这将允许它",
+          "revoke_hint": "您可以随时在“设置 → 已连接的应用”中撤销。",
+          "approve": "允许访问",
+          "deny": "取消",
+          "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。"
+        }
       }
     },
     "payment_methods": {
@@ -5104,7 +5131,8 @@
         "webhooks": "事件发生时接收通知的端点",
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
-        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税"
+        "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
+        "connected_apps": "可访问此店铺的代理和应用"
       },
       "groups": {
         "audit": "审计",
@@ -5142,7 +5170,8 @@
         "webhooks": "Webhooks",
         "package_types": "包装类型",
         "suppliers": "供应商",
-        "marketplace": "设置"
+        "marketplace": "设置",
+        "connected_apps": "已连接的应用"
       },
       "breadcrumbs": {
         "marketplace": "平台"

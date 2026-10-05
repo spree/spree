@@ -4075,6 +4075,21 @@
           "admission_description": "Activer l’une de ces options supprime une décision humaine. Acceptable sur une marketplace sur invitation, risqué sur une marketplace ouverte à tous.",
           "communication_title": "Communication",
           "commission_tax_title": "Taxe sur la commission"
+        },
+        "connected_apps": {
+          "title": "Applications connectées",
+          "subtitle": "Agents et applications auxquels un membre de l’équipe a donné accès à cette boutique. La révocation prend effet immédiatement.",
+          "empty": "Aucune application n’a encore été connectée.",
+          "revoke": "Révoquer l’accès",
+          "table": {
+            "name": "Application",
+            "access": "Accès",
+            "last_used": "Dernière utilisation"
+          },
+          "revoke_confirm": {
+            "title": "Révoquer l’accès ?",
+            "message": "{{name}} cessera de fonctionner immédiatement. Toute personne qui l’utilise devra se connecter à nouveau."
+          }
         }
       },
       "staff": {
@@ -4125,6 +4140,18 @@
         },
         "total": "Total",
         "translated": "Traduit"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autoriser l’application",
+          "subtitle": "Vérifiez ce que cette application demande avant de l’autoriser.",
+          "intro": "{{client}} souhaite accéder à cette boutique en votre nom. Elle ne pourra faire que ce que vous autorisez ci-dessous, et jamais plus que vos propres autorisations ne le permettent.",
+          "permissions_heading": "Cela lui permettra de",
+          "revoke_hint": "Vous pouvez révoquer cet accès à tout moment dans Paramètres → Applications connectées.",
+          "approve": "Autoriser l’accès",
+          "deny": "Annuler",
+          "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici."
+        }
       }
     },
     "payment_methods": {
@@ -5115,7 +5142,8 @@
         "webhooks": "Points de terminaison notifiés lors d'événements",
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
-        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission"
+        "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
+        "connected_apps": "Agents et applications ayant accès à cette boutique"
       },
       "groups": {
         "audit": "Audit",
@@ -5153,7 +5181,8 @@
         "webhooks": "Webhooks",
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
-        "marketplace": "Paramètres"
+        "marketplace": "Paramètres",
+        "connected_apps": "Applications connectées"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

@@ -720,6 +720,21 @@
           "admission_description": "Activar cualquiera de estas opciones elimina una decisión humana. Está bien en un marketplace solo por invitación; es arriesgado en uno abierto a cualquiera.",
           "communication_title": "Comunicación",
           "commission_tax_title": "Impuesto sobre la comisión"
+        },
+        "connected_apps": {
+          "title": "Aplicaciones conectadas",
+          "subtitle": "Agentes y aplicaciones a los que un miembro del equipo ha dado acceso a esta tienda. La revocación surte efecto de inmediato.",
+          "empty": "Todavía no se ha conectado ninguna aplicación.",
+          "revoke": "Revocar acceso",
+          "table": {
+            "name": "Aplicación",
+            "access": "Acceso",
+            "last_used": "Último uso"
+          },
+          "revoke_confirm": {
+            "title": "¿Revocar el acceso?",
+            "message": "{{name}} dejará de funcionar de inmediato. Quien lo use tendrá que conectarse de nuevo."
+          }
         }
       },
       "staff": {
@@ -1036,6 +1051,18 @@
         "variants_empty": "Todavía no hay variantes.",
         "variants_one": "{{count}} variante",
         "variants_other": "{{count}} variantes"
+      },
+      "oauth": {
+        "authorize": {
+          "title": "Autorizar aplicación",
+          "subtitle": "Revise lo que pide esta aplicación antes de permitirla.",
+          "intro": "{{client}} quiere acceder a esta tienda en su nombre. Solo podrá hacer lo que usted permita a continuación, y nunca más de lo que permitan sus propios permisos.",
+          "permissions_heading": "Esto le permitirá",
+          "revoke_hint": "Puede revocarlo en cualquier momento en Configuración → Aplicaciones conectadas.",
+          "approve": "Permitir acceso",
+          "deny": "Cancelar",
+          "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí."
+        }
       }
     },
     "fields": {
@@ -4186,7 +4213,8 @@
         "webhooks": "Endpoints notificados cuando ocurren eventos",
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
-        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión"
+        "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
+        "connected_apps": "Agentes y aplicaciones con acceso a esta tienda"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4224,7 +4252,8 @@
         "webhooks": "Webhooks",
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
-        "marketplace": "Configuración"
+        "marketplace": "Configuración",
+        "connected_apps": "Aplicaciones conectadas"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
