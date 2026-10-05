@@ -969,13 +969,31 @@ export function CategorizationCard({ form }: FormCardProps) {
       .filter(Boolean)
   }, [selectedProductType?.option_type_labels, selectedProductType?.option_type_ids, optionTypes])
 
+  // Seed type categories only when the merchant picks or changes the product
+  // type — not when an existing product opens and the type record loads async.
+  const previousProductTypeIdRef = useRef<string | null | undefined>(undefined)
+
   useEffect(() => {
     // Only where the panel files products at all: a seller's client registers
     // no categories, so seeding them would dirty the form with ids their API
     // drops on save — an unsaved-changes prompt over a field they cannot see.
     if (!client.categories) return
 
-    const categoryIds = selectedProductType?.category_ids
+    const currentTypeId = selectedProductTypeId ?? null
+
+    if (previousProductTypeIdRef.current === undefined) {
+      previousProductTypeIdRef.current = currentTypeId
+      return
+    }
+
+    if (!currentTypeId || selectedProductType?.id !== currentTypeId) return
+
+    const typeChanged = previousProductTypeIdRef.current !== currentTypeId
+    if (!typeChanged) return
+
+    previousProductTypeIdRef.current = currentTypeId
+
+    const categoryIds = selectedProductType.category_ids
     if (!categoryIds?.length) return
 
     const current = (form.getValues('category_ids') as string[] | undefined) ?? []
@@ -983,7 +1001,7 @@ export function CategorizationCard({ form }: FormCardProps) {
     if (missing.length === 0) return
 
     form.setValue('category_ids', [...current, ...missing], { shouldDirty: true })
-  }, [selectedProductType, form, client.categories])
+  }, [selectedProductTypeId, selectedProductType, form, client.categories])
   // Automatic collections rebuild their members from rules, so a hand-picked
   // membership would be dropped on the next regeneration — offer manual only.
   // Memoized: `initialItems` feeds a useEffect + useMemo inside
