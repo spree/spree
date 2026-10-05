@@ -131,6 +131,22 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
         end
       end
 
+      context 'when the source was saved by another payment method' do
+        let(:other_card) { create(:credit_card, customer: customer, payment_method: create(:credit_card_payment_method)) }
+
+        it 'returns 404' do
+          post :create, params: {
+            order_id: order.prefixed_id,
+            payment_method_id: credit_card_method.prefixed_id,
+            source_id: other_card.prefixed_id,
+            amount: order.total
+          }, as: :json
+
+          expect(response).to have_http_status(:not_found)
+          expect(order.reload.payments.count).to eq(0)
+        end
+      end
+
       context 'with invalid source prefix id' do
         it 'returns 404' do
           post :create, params: {

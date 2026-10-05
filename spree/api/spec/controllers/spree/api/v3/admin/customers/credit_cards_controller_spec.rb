@@ -20,6 +20,17 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
       expect(json_response['data'].map { |c| c['id'] }).to include(credit_card.prefixed_id)
     end
 
+    context 'when filtered by payment method' do
+      let!(:other_card) { create(:credit_card, customer: customer, payment_method: create(:credit_card_payment_method)) }
+
+      it 'returns only the cards that payment method saved' do
+        get :index, params: { customer_id: customer.prefixed_id, q: { payment_method_id_eq: payment_method.prefixed_id } },
+                    as: :json
+
+        expect(json_response['data'].map { |c| c['id'] }).to eq([credit_card.prefixed_id])
+      end
+    end
+
     context 'when customer has no cards' do
       let(:customer) { create(:user) }
       let!(:credit_card) { nil }
