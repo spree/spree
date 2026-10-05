@@ -22,7 +22,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     Spree::OauthAccessToken.create!(
       application: application, resource_owner: owner,
       scopes: Array(scopes).join(' '), expires_in: 2.hours.to_i, resource: audience
-    ).token
+    ).plaintext_token
   end
 
   def post_rpc(method, params = nil, headers: {}, id: 1)
@@ -186,7 +186,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       raw = Spree::OauthAccessToken.create!(
         application: application, resource_owner: admin, scopes: 'read_products',
         expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:mcp)
-      ).token
+      ).plaintext_token
 
       body = post_with_token(raw)
 
