@@ -7,11 +7,7 @@ require 'spec_helper'
 RSpec.describe 'OAuth discovery', type: :request do
   let(:store) { @default_store }
 
-  before do
-    Spree::Api::Oauth.register_resource(:mcp) do |registered_store|
-      "#{registered_store.formatted_url}/api/v3/admin/mcp"
-    end
-  end
+  before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
 
   describe 'GET /.well-known/oauth-authorization-server' do
     subject(:document) do
@@ -50,7 +46,11 @@ RSpec.describe 'OAuth discovery', type: :request do
 
       expect(response).to have_http_status(:ok)
       body = JSON.parse(response.body)
-      expect(body['resource']).to eq(Spree::Api::Oauth.resource_identifier(:mcp, store))
+      # Built from the request rather than from anything configured, so a
+      # deployment behind a proxy or reachable at several hostnames still
+      # hands a client an identifier matching the URL it used.
+      expect(body['resource']).to end_with('/api/v3/admin/mcp')
+      expect(URI.parse(body['resource']).origin).to eq(URI.parse(response.request.base_url).origin)
       expect(body['authorization_servers']).to be_present
       expect(body['bearer_methods_supported']).to eq(['header'])
     end

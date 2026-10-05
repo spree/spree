@@ -1332,14 +1332,6 @@ export interface OauthRedirect {
   redirect_uri: string
 }
 
-export interface OauthApplication {
-  id: string
-  name: string
-  scopes: string[]
-  last_used_at: string | null
-  created_at: string
-}
-
 export interface ApiKeyCreateParams {
   name: string
   key_type: 'publishable' | 'secret'

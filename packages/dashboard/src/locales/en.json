@@ -6310,7 +6310,11 @@
       "tab_other": "Anything else",
       "cursor_path": "Save as .cursor/mcp.json in your project, or ~/.cursor/mcp.json for yourself.",
       "vscode_path": "Save as .vscode/mcp.json in your project.",
-      "consumer_note": "Claude Desktop, claude.ai and ChatGPT connect by signing in instead — paste the store URL into the client and approve the request."
+      "consumer_note": "These connect by signing in rather than with a key. Add a connector in the client, paste this URL, and approve the request here.",
+      "allow_writes": "Let this agent make changes",
+      "allow_writes_help": "Leave off for an agent that only reads. A key that can change things can also cancel orders and issue refunds.",
+      "mint_failed": "The key could not be created.",
+      "consumer_title": "Claude Desktop, claude.ai and ChatGPT"
     }
   }
 }

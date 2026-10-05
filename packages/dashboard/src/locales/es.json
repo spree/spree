@@ -6310,7 +6310,11 @@
       "tab_other": "Otra cosa",
       "cursor_path": "Guárdelo como .cursor/mcp.json en su proyecto, o ~/.cursor/mcp.json para usted.",
       "vscode_path": "Guárdelo como .vscode/mcp.json en su proyecto.",
-      "consumer_note": "Claude Desktop, claude.ai y ChatGPT se conectan iniciando sesión: pegue la URL de la tienda en el cliente y apruebe la solicitud."
+      "consumer_note": "Estos se conectan iniciando sesión en lugar de con una clave. Añada un conector en el cliente, pegue esta URL y apruebe la solicitud aquí.",
+      "allow_writes": "Permitir que este agente haga cambios",
+      "allow_writes_help": "Déjelo desactivado para un agente que solo lee. Una clave que puede cambiar cosas también puede cancelar pedidos y emitir reembolsos.",
+      "mint_failed": "No se pudo crear la clave.",
+      "consumer_title": "Claude Desktop, claude.ai y ChatGPT"
     }
   }
 }

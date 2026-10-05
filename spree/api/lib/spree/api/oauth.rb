@@ -15,37 +15,55 @@ module Spree
     # which is why this lives in `spree_api` rather than in any one gem that
     # happens to need it.
     module Oauth
-      # Protected resources, each registered by the surface that owns it.
+      # Protected resources, each registered by the surface that owns it as a
+      # path relative to this application's own origin.
       #
-      # A resource identifier must equal the URL the client was pointed at,
-      # path included, or a consumer client refuses the connection — so the
-      # owning surface supplies it rather than this module guessing.
+      #   Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp')
       #
-      #   Spree.api.oauth.register_resource(:mcp) do |store|
-      #     "#{store.formatted_url}/api/v3/admin/mcp"
-      #   end
+      # A path rather than a full URL because the identifier must equal the
+      # URL the client was actually pointed at: the origin comes from the
+      # request where there is one, and from the application's configured
+      # URL options otherwise. A store's own `url` column is deliberately not
+      # consulted — it describes the storefront, which is frequently neither
+      # the host nor the scheme the Admin API answers on.
       mattr_accessor :resources, default: {}
 
       class << self
         # @param key [Symbol]
-        # @yieldparam store [Spree::Store]
-        # @yieldreturn [String] the resource identifier for that store
-        def register_resource(key, &identifier)
-          resources[key.to_sym] = identifier
+        # @param path [String] absolute path this resource answers on
+        def register_resource(key, path)
+          resources[key.to_sym] = path
         end
 
-        # @param store [Spree::Store]
+        # @param origin [String, nil] scheme and host the client used
         # @return [Array<String>] every resource identifier this installation
-        #   serves for the store
-        def resource_identifiers(store)
-          resources.values.map { |identifier| identifier.call(store) }
+        #   serves
+        def resource_identifiers(origin = nil)
+          base = origin.presence || application_origin
+          resources.values.map { |path| "#{base}#{path}" }
         end
 
         # @param key [Symbol]
-        # @param store [Spree::Store]
+        # @param origin [String, nil] scheme and host the client used
         # @return [String, nil]
-        def resource_identifier(key, store)
-          resources[key.to_sym]&.call(store)
+        def resource_identifier(key, origin = nil)
+          path = resources[key.to_sym]
+          return if path.nil?
+
+          "#{origin.presence || application_origin}#{path}"
+        end
+
+        # Where this application answers, from the URL options a deployment
+        # already has to set for mailer links to work.
+        #
+        # @return [String]
+        def application_origin
+          options = Rails.application.routes.default_url_options
+          host = options[:host]
+          return '' if host.blank?
+
+          origin = "#{options[:protocol].presence || 'https'}://#{host}"
+          options[:port].present? ? "#{origin}:#{options[:port]}" : origin
         end
 
         # The grantable scope list, re-read after host and extension
@@ -68,24 +86,26 @@ module Spree
           Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE)
         end
 
-        # Whether every requested audience belongs to the client's own store.
+        # Whether every requested audience names a resource this application
+        # actually serves.
         #
-        # Asked of the client rather than of every store: a client is
-        # registered to one store, so that store's resources are the only ones
-        # a grant for it could legitimately name, and the application is
-        # already loaded to validate the client id.
+        # Compared by path rather than by full URL: the origin a client used
+        # is whatever it was pointed at, and a deployment behind a proxy or
+        # reachable at several hostnames would otherwise refuse its own
+        # tokens.
         #
         # @param requested [Array<String>] the `resource` values asked for
-        # @param client [Object] Doorkeeper's client wrapper
         # @return [Boolean]
-        def indicators_valid?(requested, client)
+        def indicators_valid?(requested, _client = nil)
           return false if requested.blank?
 
-          store = client.try(:application)&.store
-          return false if store.nil?
-
-          allowed = resource_identifiers(store)
-          requested.all? { |indicator| allowed.include?(indicator) }
+          paths = resources.values
+          requested.all? do |indicator|
+            path = URI.parse(indicator.to_s).path
+            paths.include?(path)
+          rescue URI::InvalidURIError
+            false
+          end
         end
 
         def configure!
@@ -121,8 +141,8 @@ module Spree
             # RFC 8707. Registering the validator is what binds an audience
             # into the token; left nil, the `resource` parameter is ignored
             # and a token minted for another service would be accepted.
-            resource_indicator_validator(lambda do |requested, client|
-              Spree::Api::Oauth.indicators_valid?(requested, client)
+            resource_indicator_validator(lambda do |requested, _client|
+              Spree::Api::Oauth.indicators_valid?(requested)
             end)
 
             # Spree's own permission catalog is the scope vocabulary, so a

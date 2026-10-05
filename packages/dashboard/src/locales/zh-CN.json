@@ -6297,7 +6297,11 @@
       "tab_other": "其他",
       "cursor_path": "保存为项目中的 .cursor/mcp.json，或保存为您个人的 ~/.cursor/mcp.json。",
       "vscode_path": "保存为项目中的 .vscode/mcp.json。",
-      "consumer_note": "Claude Desktop、claude.ai 和 ChatGPT 改为通过登录连接——将店铺网址粘贴到客户端并批准请求。"
+      "consumer_note": "它们通过登录而非密钥连接。在客户端中添加连接器，粘贴此网址，然后在此处批准请求。",
+      "allow_writes": "允许此代理进行更改",
+      "allow_writes_help": "仅读取的代理请保持关闭。可更改数据的密钥同样可以取消订单和发起退款。",
+      "mint_failed": "无法创建密钥。",
+      "consumer_title": "Claude Desktop、claude.ai 和 ChatGPT"
     }
   }
 }

@@ -114,7 +114,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
   # do, and a token issued for some other resource cannot be replayed here.
   describe 'OAuth authentication' do
     let(:admin) { create(:admin_user) }
-    let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp, store) }
+    let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp) }
     let(:application) do
       store.oauth_applications.create!(
         name: 'Probe', redirect_uri: 'https://example.test/callback', confidential: false
@@ -181,9 +181,8 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     end
 
     # An MCP client sends a URL and a bearer token and nothing else, so the
-    # token has to select its own store: measured against the default store's
-    # resource identifier, every other store's token would fail its audience
-    # check and the endpoint would be single-store in practice.
+    # token has to select its own store — otherwise the endpoint would serve
+    # the default store whatever the grant said.
     it 'serves the store its application belongs to, with no store header' do
       other = create(:store, code: "other-#{SecureRandom.hex(4)}")
       application = other.oauth_applications.create!(
@@ -191,7 +190,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       )
       raw = Spree::OauthAccessToken.create!(
         application: application, resource_owner: admin, scopes: 'read_products',
-        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:mcp, other)
+        expires_in: 2.hours.to_i, resource: Spree::Api::Oauth.resource_identifier(:mcp)
       ).token
 
       body = post_with_token(raw)

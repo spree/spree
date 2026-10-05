@@ -474,7 +474,6 @@ import type {
   MediaUpdateParams,
   MediaUsageReference,
   MeUpdateParams,
-  OauthApplication,
   OauthAuthorizationParams,
   OauthAuthorizationRequest,
   OauthRedirect,
@@ -631,6 +630,7 @@ import type {
   Locale,
   Market,
   Media,
+  OauthApplication,
   OptionType,
   Order,
   OrderCancellationReason,
@@ -5891,8 +5891,14 @@ export class AdminClient {
 
     /** Applications a merchant has connected, for the revoke screen. */
     applications: {
-      list: (options?: RequestOptions): Promise<{ data: OauthApplication[] }> =>
-        this.request<{ data: OauthApplication[] }>('GET', '/oauth/applications', options ?? {}),
+      list: (
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OauthApplication>> =>
+        this.request<PaginatedResponse<OauthApplication>>('GET', '/oauth/applications', {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
 
       /**
        * Revokes every live token and grant an application holds. The
