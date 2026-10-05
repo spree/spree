@@ -6328,6 +6328,23 @@
       "empty": "Estás al día.",
       "view_on_github": "Ver en GitHub",
       "release_notes_unavailable": "No se pudieron cargar las notas de la versión. Léelas en GitHub."
+    },
+    "mcp_connect": {
+      "open_cta": "Conectar un agente",
+      "title": "Conectar un agente",
+      "subtitle": "Dé a un asistente de IA acceso a esta tienda. Copie la configuración de su cliente y péguela.",
+      "mint_help": "Se crea una clave de solo lectura para el agente. Para que pueda hacer cambios, cree una clave con los permisos que desee en la página de Claves API.",
+      "mint_cta": "Crear una clave",
+      "mint_denied": "No tiene permiso para crear claves API.",
+      "token_shown_once": "Copie la configuración ahora: la clave se muestra solo esta vez.",
+      "tab_other": "Otra cosa",
+      "cursor_path": "Guárdelo como .cursor/mcp.json en su proyecto, o ~/.cursor/mcp.json para usted.",
+      "vscode_path": "Guárdelo como .vscode/mcp.json en su proyecto.",
+      "consumer_note": "Estos se conectan iniciando sesión en lugar de con una clave. Añada un conector en el cliente, pegue esta URL y apruebe la solicitud aquí.",
+      "allow_writes": "Permitir que este agente haga cambios",
+      "allow_writes_help": "Déjelo desactivado para un agente que solo lee. Una clave que puede cambiar cosas también puede cancelar pedidos y emitir reembolsos.",
+      "mint_failed": "No se pudo crear la clave.",
+      "consumer_title": "Claude Desktop, claude.ai y ChatGPT"
     }
   }
 }

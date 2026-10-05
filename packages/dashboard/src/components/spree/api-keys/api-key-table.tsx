@@ -316,7 +316,7 @@ function ApiKeyRow({
 // usual table widths.
 const SCOPE_PREVIEW_COUNT = 3
 
-function ScopeList({ scopes }: { scopes: string[] }) {
+export function ScopeList({ scopes }: { scopes: string[] }) {
   const { t } = useTranslation()
   if (scopes.includes('write_all')) {
     return <Badge>{t('admin.pages.settings.api_keys.scope_badge.full_access')}</Badge>
