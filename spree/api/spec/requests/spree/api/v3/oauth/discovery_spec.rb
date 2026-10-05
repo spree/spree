@@ -62,6 +62,27 @@ RSpec.describe 'OAuth discovery', type: :request do
     end
   end
 
+  # The client id names the store, not the hostname. An installation serving
+  # several stores from one API origin would otherwise send every consent to
+  # whichever store that host resolves as, and a merchant would approve on
+  # the wrong one.
+  describe 'GET /oauth/authorize for another store\'s client' do
+    it 'sends the browser to the store the client belongs to' do
+      other = create(:store, code: "other-#{SecureRandom.hex(4)}")
+      application = other.oauth_applications.create!(
+        name: 'Other store client', redirect_uri: 'https://example.test/cb', confidential: false
+      )
+
+      get '/oauth/authorize', params: {
+        client_id: application.uid, redirect_uri: 'https://example.test/cb', response_type: 'code'
+      }
+
+      expect(response).to have_http_status(:found)
+      expect(response.location).to include(other.prefixed_id)
+      expect(response.location).not_to include(store.prefixed_id)
+    end
+  end
+
   # The endpoint exists so the metadata document can name it; it renders
   # nothing itself and hands the browser to the dashboard.
   describe 'GET /oauth/authorize' do

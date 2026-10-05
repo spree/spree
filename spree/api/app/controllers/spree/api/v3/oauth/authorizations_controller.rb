@@ -38,11 +38,21 @@ module Spree
 
           private
 
+          # The client id names the store, not the hostname. An installation
+          # serving several stores from one API origin would otherwise send
+          # every consent to whichever store that host happens to resolve as,
+          # and the merchant would approve on the wrong one.
           def consent_url
             query = params.permit(*FORWARDED_PARAMETERS).to_h.compact_blank.to_query
-            base = Spree::Stores::DashboardUrl.call(store: current_store)
+            base = Spree::Stores::DashboardUrl.call(store: consent_store)
 
-            "#{base}/#{current_store.prefixed_id}/oauth/authorize?#{query}"
+            "#{base}/#{consent_store.prefixed_id}/oauth/authorize?#{query}"
+          end
+
+          # @return [Spree::Store]
+          def consent_store
+            @consent_store ||=
+              Spree::OauthApplication.find_by(uid: params[:client_id])&.store || current_store
           end
         end
       end

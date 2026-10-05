@@ -45,6 +45,23 @@ RSpec.describe 'Admin connected applications', type: :request do
       to be_within(2.seconds).of(first.created_at)
   end
 
+  # A refresh token outlives the access token beside it, so a client whose
+  # access has lapsed can mint another at will. Dropping it from the list
+  # would leave a merchant unable to revoke something that still works —
+  # the opposite of what this screen is for.
+  it 'still lists an application whose access expired but can refresh' do
+    token = token_for(admin)
+    token.update_columns(created_at: 3.hours.ago, refresh_token: SecureRandom.hex(16))
+
+    expect(list['data'].map { |row| row['name'] }).to include('Claude')
+  end
+
+  it 'drops it once revoked' do
+    token_for(admin).update!(revoked_at: Time.current)
+
+    expect(list['data']).to be_empty
+  end
+
   it 'lists only applications somebody actually connected' do
     store.oauth_applications.create!(
       name: 'Never connected', redirect_uri: 'https://example.test/cb', confidential: false
