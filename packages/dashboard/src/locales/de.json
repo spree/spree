@@ -6311,7 +6311,9 @@
       "step_sign_in": "Sie werden zur Anmeldung hierher geschickt.",
       "step_approve": "Geben Sie frei, was der Agent tun darf. Sie können dies jederzeit auf dieser Seite zurücknehmen.",
       "scope_note": "Ein Agent erhält nie mehr, als Sie selbst haben, und nur das, was Sie freigeben. Eine Freigabe für Produkte schließt Bestellungen nicht ein.",
-      "cli_note": "Für Skripte, CI oder alles, was sich nicht anmelden kann, verwenden Sie die Spree CLI mit einem API-Schlüssel — hier werden API-Schlüssel nicht akzeptiert."
+      "cli_note": "Für Skripte, CI oder alles, was sich nicht anmelden kann, verwenden Sie die Spree CLI mit einem API-Schlüssel — hier werden API-Schlüssel nicht akzeptiert.",
+      "client_id_label": "Client-ID",
+      "client_id_help": "Manche Clients fragen danach, bevor sie starten. Sie wird pro Shop vergeben — verwenden Sie die für den Client, den Sie verbinden."
     }
   }
 }

@@ -6311,7 +6311,9 @@
       "step_sign_in": "It sends you here to sign in.",
       "step_approve": "Approve what the agent may do. You can take it back at any time on this page.",
       "scope_note": "An agent never gets more than you have, and only what you approve. Approving product access does not include orders.",
-      "cli_note": "For scripts, CI or anything that cannot sign in, use the Spree CLI with an API key instead — API keys are not accepted here."
+      "cli_note": "For scripts, CI or anything that cannot sign in, use the Spree CLI with an API key instead — API keys are not accepted here.",
+      "client_id_label": "Client ID",
+      "client_id_help": "Some clients ask for this before they will start. It is issued per store, so use the one for the client you are connecting."
     }
   }
 }

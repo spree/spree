@@ -6379,7 +6379,9 @@
       "step_sign_in": "Odeśle Cię tutaj, abyś się zalogował.",
       "step_approve": "Zatwierdź, co agent może robić. Możesz to cofnąć w dowolnej chwili na tej stronie.",
       "scope_note": "Agent nigdy nie dostaje więcej niż Ty i tylko to, co zatwierdzisz. Zgoda na produkty nie obejmuje zamówień.",
-      "cli_note": "Do skryptów, CI i wszystkiego, co nie może się zalogować, użyj Spree CLI z kluczem API — tutaj klucze API nie są akceptowane."
+      "cli_note": "Do skryptów, CI i wszystkiego, co nie może się zalogować, użyj Spree CLI z kluczem API — tutaj klucze API nie są akceptowane.",
+      "client_id_label": "Identyfikator klienta",
+      "client_id_help": "Niektórzy klienci proszą o niego przed startem. Jest wydawany osobno dla każdego sklepu — użyj tego dla łączonego klienta."
     }
   }
 }

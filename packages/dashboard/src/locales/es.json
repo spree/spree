@@ -6311,7 +6311,9 @@
       "step_sign_in": "Le enviará aquí para iniciar sesión.",
       "step_approve": "Apruebe lo que puede hacer el agente. Puede retirarlo en cualquier momento en esta página.",
       "scope_note": "Un agente nunca obtiene más de lo que usted tiene, y solo lo que apruebe. Aprobar el acceso a productos no incluye los pedidos.",
-      "cli_note": "Para scripts, CI o cualquier cosa que no pueda iniciar sesión, use la CLI de Spree con una clave API: aquí no se aceptan claves API."
+      "cli_note": "Para scripts, CI o cualquier cosa que no pueda iniciar sesión, use la CLI de Spree con una clave API: aquí no se aceptan claves API.",
+      "client_id_label": "ID de cliente",
+      "client_id_help": "Algunos clientes lo piden antes de empezar. Se emite por tienda, así que use el del cliente que está conectando."
     }
   }
 }

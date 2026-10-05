@@ -6311,7 +6311,9 @@
       "step_sign_in": "Il vous renvoie ici pour vous connecter.",
       "step_approve": "Approuvez ce que l’agent peut faire. Vous pouvez le retirer à tout moment sur cette page.",
       "scope_note": "Un agent n’obtient jamais plus que vous, et uniquement ce que vous approuvez. Approuver l’accès aux produits n’inclut pas les commandes.",
-      "cli_note": "Pour les scripts, la CI ou tout ce qui ne peut pas se connecter, utilisez la CLI Spree avec une clé API — les clés API ne sont pas acceptées ici."
+      "cli_note": "Pour les scripts, la CI ou tout ce qui ne peut pas se connecter, utilisez la CLI Spree avec une clé API — les clés API ne sont pas acceptées ici.",
+      "client_id_label": "Identifiant client",
+      "client_id_help": "Certains clients le demandent avant de démarrer. Il est émis par boutique : utilisez celui du client que vous connectez."
     }
   }
 }
