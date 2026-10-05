@@ -5891,8 +5891,8 @@ export class AdminClient {
 
     /** Applications a merchant has connected, for the revoke screen. */
     applications: {
-      list: (options?: RequestOptions): Promise<OauthApplication[]> =>
-        this.request<OauthApplication[]>('GET', '/oauth/applications', options ?? {}),
+      list: (options?: RequestOptions): Promise<{ data: OauthApplication[] }> =>
+        this.request<{ data: OauthApplication[] }>('GET', '/oauth/applications', options ?? {}),
 
       /**
        * Revokes every live token and grant an application holds. The

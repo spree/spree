@@ -16,10 +16,10 @@ module Spree
 
             def index
               applications = current_store.oauth_applications.
-                             where(id: connected_application_ids).
+                             where(id: live_tokens_by_application.keys).
                              order(:name)
 
-              render json: applications.map { |application| serialize(application) }
+              render json: { data: applications.map { |application| serialize(application) } }
             end
 
             def destroy
@@ -34,14 +34,6 @@ module Spree
             end
 
             private
-
-            # Only applications somebody actually authorized — a registered
-            # client nobody connected is not a connection.
-            def connected_application_ids
-              Spree::OauthAccessToken.where(revoked_at: nil).
-                where(resource_owner_type: Spree.admin_user_class.name).
-                select(:application_id)
-            end
 
             # Scopes come from the live tokens, not the registration: a
             # client is registered once and granted per consent, so the
@@ -59,10 +51,15 @@ module Spree
               }
             end
 
+            # The live tokens for this store's applications, which answer both
+            # which clients are connected and what each was granted. Scoped to
+            # the store so a multi-store installation does not load every
+            # token it holds to render one page.
             def live_tokens_by_application
               @live_tokens_by_application ||=
-                Spree::OauthAccessToken.where(revoked_at: nil).
-                where(resource_owner_type: Spree.admin_user_class.name).
+                Spree::OauthAccessToken.
+                where(revoked_at: nil, resource_owner_type: Spree.admin_user_class.name).
+                where(application_id: current_store.oauth_applications.select(:id)).
                 group_by(&:application_id)
             end
           end

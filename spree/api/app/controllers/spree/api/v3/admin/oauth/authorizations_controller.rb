@@ -92,17 +92,15 @@ module Spree
             def pre_authorization_params
               params.permit(
                 :client_id, :redirect_uri, :response_type, :state, :scope,
-                :code_challenge, :code_challenge_method, :response_mode,
-                resource: []
-              ).to_h.symbolize_keys.tap do |permitted|
-                scalar = params[:resource]
-                permitted[:resource] = scalar if scalar.is_a?(String) && scalar.present?
-              end
+                :code_challenge, :code_challenge_method, :response_mode
+              ).to_h.symbolize_keys.
+                # Carried through raw: RFC 8707 allows one value or several,
+                # and Doorkeeper's own validator normalizes both shapes.
+                merge(resource: params[:resource])
             end
 
             def requested_resource
-              resource = @pre_auth.try(:resource)
-              Array(resource).first
+              @pre_auth.resource_indicators&.first
             end
 
             # Every capability the requested scopes imply, so a merchant sees

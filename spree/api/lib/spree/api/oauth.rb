@@ -48,6 +48,46 @@ module Spree
           resources[key.to_sym]&.call(store)
         end
 
+        # The grantable scope list, re-read after host and extension
+        # initializers have run.
+        #
+        # `optional_scopes` builds its value eagerly, and an extension
+        # registers its scopes from a config initializer — which runs after
+        # {.configure!}, because a host's own `doorkeeper.rb` has to be able
+        # to win. Without this second pass the vocabulary would be whatever
+        # core shipped, and an extension's keys could never be granted.
+        def refresh_scopes!
+          ::Doorkeeper.config.instance_variable_set(
+            :@optional_scopes,
+            ::Doorkeeper::OAuth::Scopes.from_array(staff_scope_keys)
+          )
+        end
+
+        # @return [Array<String>]
+        def staff_scope_keys
+          Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE)
+        end
+
+        # Whether every requested audience belongs to the client's own store.
+        #
+        # Asked of the client rather than of every store: a client is
+        # registered to one store, so that store's resources are the only ones
+        # a grant for it could legitimately name, and the application is
+        # already loaded to validate the client id.
+        #
+        # @param requested [Array<String>] the `resource` values asked for
+        # @param client [Object] Doorkeeper's client wrapper
+        # @return [Boolean]
+        def indicators_valid?(requested, client)
+          return false if requested.blank?
+
+          store = client.try(:application)&.store
+          return false if store.nil?
+
+          allowed = resource_identifiers(store)
+          requested.all? { |indicator| allowed.include?(indicator) }
+        end
+
         def configure!
           ::Doorkeeper.configure do
             orm :active_record
@@ -81,21 +121,15 @@ module Spree
             # RFC 8707. Registering the validator is what binds an audience
             # into the token; left nil, the `resource` parameter is ignored
             # and a token minted for another service would be accepted.
-            resource_indicator_validator(lambda do |requested, _client|
-              allowed = Spree::Store.all.flat_map do |store|
-                Spree::Api::Oauth.resource_identifiers(store)
-              end
-              requested.any? && requested.all? { |indicator| allowed.include?(indicator) }
+            resource_indicator_validator(lambda do |requested, client|
+              Spree::Api::Oauth.indicators_valid?(requested, client)
             end)
 
             # Spree's own permission catalog is the scope vocabulary, so a
             # grant carries the same keys an API key would and the tool
-            # registry needs no translation. Resolved at configuration time
-            # from the catalog rather than hardcoded, so a scope an extension
-            # registers is grantable without touching this.
-            optional_scopes(*Spree.permissions.grantable_keys(
-              Spree::PermissionConfiguration::STAFF_AUDIENCE
-            ))
+            # registry needs no translation. Seeded here and re-read in
+            # `refresh_scopes!` once extensions have registered theirs.
+            optional_scopes(*Spree::Api::Oauth.staff_scope_keys)
 
             use_refresh_token
             # One live token per authorization, so re-consenting does not

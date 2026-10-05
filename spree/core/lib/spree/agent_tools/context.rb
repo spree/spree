@@ -116,10 +116,10 @@ module Spree
         scope = Spree.permissions.scope_for_resource(record.is_a?(Class) ? record : record.class)
         return true if scope.nil?
 
-        write = !%i[read show index].include?(action.to_sym)
-        key = "#{write ? 'write' : 'read'}_#{scope.name}"
-        permission_keys.include?(key) ||
-          (!write && permission_keys.include?("write_#{scope.name}"))
+        # A write key always expands to its read key, so checking the one the
+        # action needs is the whole answer.
+        kind = %i[read show index].include?(action.to_sym) ? 'read' : 'write'
+        permission_keys.include?("#{kind}_#{scope.name}")
       end
 
       # Whether the caller holds a permission a tool *declares*.

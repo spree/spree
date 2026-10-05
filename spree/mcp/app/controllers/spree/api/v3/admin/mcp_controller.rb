@@ -47,7 +47,7 @@ module Spree
           # confirmed it was issued for this store's endpoint, which is the
           # same assurance `require_store_membership!` gives a JWT.
           def authenticate_admin!
-            return super if oauth_token.blank?
+            return super if current_oauth_token.blank?
 
             owner = oauth_resource_owner
             return false if owner.nil?
@@ -95,11 +95,11 @@ module Spree
           # is its scopes; a token's is the admin user's own permissions,
           # resolved fresh here rather than frozen when the token was issued.
           def agent_context
-            if oauth_token.present?
+            if current_oauth_token.present?
               Spree::AgentTools::Context.new(
                 store: current_store,
                 user: oauth_resource_owner,
-                granted_scopes: oauth_token.scopes.to_a
+                granted_scopes: current_oauth_token.scopes.to_a
               )
             else
               Spree::AgentTools::Context.new(store: current_store, api_key: current_api_key)
@@ -109,35 +109,25 @@ module Spree
           # RFC 6750: the challenge names where to discover the authorization
           # server, which is how a consumer client starts its own sign-in.
           #
-          # The metadata URL is derived from the resource identifier rather
-          # than from route helpers, so both carry the same scheme and host.
-          # A client compares them, and http-versus-https is enough for it to
-          # decide the document describes a different resource and stop.
+          # Both URLs are built from the store, so they carry the same scheme
+          # and host by construction. A client compares their origins, and
+          # http-versus-https is enough for it to decide the document
+          # describes a different resource and stop.
           #
           # No `scope`: it is a SHOULD, and listing every grantable key makes
           # a header several kilobytes long. A client reads the real list from
           # the metadata document.
           def oauth_challenge
-            resource = Spree::Api::Oauth.resource_identifier(:mcp, current_store)
-            base = resource.sub(%r{/api/v3/admin/mcp\z}, '')
-
             format(
               'Bearer realm="%<realm>s", resource_metadata="%<metadata>s"',
-              realm: resource,
-              metadata: "#{base}/api/v3/oauth/protected-resource/mcp"
+              realm: Spree::Api::Oauth.resource_identifier(:mcp, current_store),
+              metadata: "#{current_store.formatted_url}/api/v3/oauth/protected-resource/mcp"
             )
           end
 
           # A token issued for another resource must not work here, whatever
           # its scopes say. Doorkeeper binds the audience at issue; this is
           # the check that it matches.
-          # The hook ScopedAuthorization reads, so a grant narrows this
-          # request's authority through the same path every admin endpoint
-          # uses rather than only here.
-          def current_oauth_token
-            oauth_token
-          end
-
           # A token selects its own store, the way a secret key does.
           #
           # An MCP client sends a URL and a bearer token and nothing else — it
@@ -146,28 +136,34 @@ module Spree
           # would be measured against the default store's resource identifier
           # and always fail its audience check.
           def resolve_admin_store
-            application_store || super
+            bearer_access_token&.application&.store || super
           end
 
-          def application_store
-            return if bearer_value.blank?
-            return if bearer_value.start_with?(Spree::ApiKey::PREFIXES['secret'])
+          # The token the bearer header names, before any check of whether it
+          # may be used here. Resolving the store needs it, and the audience
+          # check needs the store, so the lookup has to come first — and it is
+          # memoized because three callers want the same row.
+          def bearer_access_token
+            return @bearer_access_token if defined?(@bearer_access_token)
 
-            Spree::OauthAccessToken.by_token(bearer_value)&.application&.store
-          end
-
-          def oauth_token
-            return @oauth_token if defined?(@oauth_token)
-
-            @oauth_token = begin
-              raw = bearer_value
+            raw = bearer_value
+            @bearer_access_token =
               if raw.blank? || raw.start_with?(Spree::ApiKey::PREFIXES['secret'])
                 nil
               else
-                token = Spree::OauthAccessToken.by_token(raw)
-                token if token&.accessible? && audience_matches?(token)
+                Spree::OauthAccessToken.by_token(raw)
               end
-            end
+          end
+
+          # The token this request may actually act on: live, and issued for
+          # this endpoint. Named for the hook ScopedAuthorization reads, so a
+          # grant narrows authority through the same path every admin
+          # endpoint uses rather than only here.
+          def current_oauth_token
+            return @current_oauth_token if defined?(@current_oauth_token)
+
+            token = bearer_access_token
+            @current_oauth_token = token if token&.accessible? && audience_matches?(token)
           end
 
           # Deliberately stricter than Doorkeeper's own
@@ -184,7 +180,7 @@ module Spree
           end
 
           def oauth_resource_owner
-            owner = oauth_token.resource_owner
+            owner = current_oauth_token.resource_owner
             owner if owner.is_a?(Spree.admin_user_class)
           end
 
@@ -196,7 +192,7 @@ module Spree
           # a consumer client that arrives with nothing discovers how to sign
           # in rather than simply failing.
           def require_agent_credential!
-            return if secret_api_key.present? || oauth_token.present?
+            return if secret_api_key.present? || current_oauth_token.present?
 
             response.headers['WWW-Authenticate'] = oauth_challenge
 

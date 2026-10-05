@@ -4,6 +4,7 @@ import { CheckIcon, ShieldIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
+import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
 import {
   useApproveOauthAuthorization,
   useDenyOauthAuthorization,
@@ -44,7 +45,6 @@ function OauthAuthorizePage() {
     window.location.href = redirectUri
   }
 
-  const describe = (key: string) => catalog?.data.find((permission) => permission.key === key)
   const pending = approve.isPending || deny.isPending
 
   return (
@@ -82,23 +82,15 @@ function OauthAuthorizePage() {
                   {t('admin.pages.oauth.authorize.permissions_heading')}
                 </h2>
                 <ul className="flex flex-col gap-2">
-                  {data.scopes.map((key) => {
-                    const permission = describe(key)
-
-                    return (
-                      <li key={key} className="flex items-start gap-2 text-sm">
-                        <CheckIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                        <span>
-                          {permission?.label ?? key}
-                          {permission?.description ? (
-                            <span className="block text-muted-foreground text-xs">
-                              {permission.description}
-                            </span>
-                          ) : null}
-                        </span>
-                      </li>
-                    )
-                  })}
+                  {data.scopes.map((key) => (
+                    <li key={key} className="flex items-start gap-2 text-sm">
+                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                      {/* Labelled client-side so the one screen that tells a
+                          merchant what they are granting follows their own
+                          language, not the server's. */}
+                      <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
