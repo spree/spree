@@ -73,7 +73,9 @@ module Spree
       def drafts
         return {} if @body.nil?
 
-        { @key => Spree::Emails::Template.new(key: @key, subject: @subject, body: @body) }
+        # A body sent alone keeps the subject customers currently get.
+        subject = @subject.nil? ? Spree::Emails::TemplateResolver.for_mailers(store: @store, locale: language).find(@key)&.subject : @subject
+        { @key => Spree::Emails::Template.new(key: @key, subject: subject, body: @body) }
       end
 
       def language

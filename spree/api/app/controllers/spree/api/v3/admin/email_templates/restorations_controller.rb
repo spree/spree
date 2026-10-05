@@ -21,7 +21,8 @@ module Spree
               ).find_by_prefix_id!(params[:revision_id])
 
               result = Spree.email_template_restore_revision_workflow.call(
-                revision: revision, actor: current_actor, lock_version: params[:lock_version], locale: language
+                revision: revision, actor: current_actor, locale: language,
+                draft_version: params.key?(:lock_version) ? { lock_version: params[:lock_version] } : {}
               )
               render_email_template_result(result, status: :created)
             end

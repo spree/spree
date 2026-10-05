@@ -75,6 +75,13 @@ describe Spree::EmailTemplates::SaveDraft do
     expect(save({ body: 'mine', lock_version: 3 }).error.value).to eq(:stale)
   end
 
+  it 'refuses a first save when someone else started a draft since the caller saw none' do
+    save({ body: 'theirs' })
+
+    expect(save({ body: 'mine', lock_version: nil }).error.value).to eq(:stale)
+    expect(store.email_template_drafts.sole.body).to eq('theirs')
+  end
+
   it 'refuses a template merchants may not edit' do
     result = described_class.new.call(store: store, key: 'spree/webhook_mailer/endpoint_disabled', attributes: { body: 'x' })
 

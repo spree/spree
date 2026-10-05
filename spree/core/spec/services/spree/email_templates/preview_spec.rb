@@ -23,4 +23,11 @@ describe Spree::EmailTemplates::Preview do
 
     expect(email.html).to include('LAYOUT DRAFT')
   end
+
+  it 'keeps the current subject when only a body is sent' do
+    email = described_class.new(store: store, key: editable_key,
+                                body: '<mj-section><mj-column><mj-text>Body only</mj-text></mj-column></mj-section>').call
+
+    expect(email.subject).to be_present
+  end
 end

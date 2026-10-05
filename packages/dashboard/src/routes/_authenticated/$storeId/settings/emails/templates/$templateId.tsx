@@ -237,7 +237,8 @@ function EmailTemplateEditor({
         language,
         body: version.body,
         ...(isEmail ? { subject: version.subject } : {}),
-        lock_version: 'lockVersion' in extra ? extra.lockVersion : lockVersion,
+        // null says this editor saw no draft, so one someone saved since is not overwritten.
+        lock_version: ('lockVersion' in extra ? extra.lockVersion : lockVersion) ?? null,
         rebase: extra.rebase,
       })
       // Keep what is being typed: only the saved copy moves on.
@@ -319,7 +320,7 @@ function EmailTemplateEditor({
       },
       () =>
         // Restored into this language's draft, even from the shared version's history.
-        restore.mutateAsync({ revisionId, language, lock_version: lockVersion }),
+        restore.mutateAsync({ revisionId, language, lock_version: lockVersion ?? null }),
     )
     if (restored) setHistoryOpen(false)
   }

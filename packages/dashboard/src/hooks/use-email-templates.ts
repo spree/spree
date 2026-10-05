@@ -95,7 +95,7 @@ export function useRestoreEmailTemplateRevision(id: string) {
   return useResourceMutation<
     EmailTemplate,
     Error,
-    { revisionId: string; language: string; lock_version?: number }
+    { revisionId: string; language: string; lock_version?: number | null }
   >({
     mutationFn: ({ revisionId, ...params }) =>
       adminClient.emailTemplates.revisions.restore(id, revisionId, params),

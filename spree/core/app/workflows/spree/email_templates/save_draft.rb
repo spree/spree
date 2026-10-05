@@ -29,12 +29,18 @@ module Spree
         failure(nil, :not_editable) unless Spree.editable_email_templates.include?(key)
       end
 
+      # Without `lock_version` nothing is checked. `nil` says the caller saw no
+      # draft, so one saved since is refused rather than overwritten.
       def ensure_current
-        expected = attributes[:lock_version]
-        return if expected.nil?
+        return unless attributes.key?(:lock_version)
 
-        # A draft that is gone was published or discarded since it was loaded.
-        failure(nil, :stale) if draft.new_record? || expected.to_i != draft.lock_version
+        expected = attributes[:lock_version]
+        if expected.nil?
+          failure(nil, :stale) if draft.persisted?
+        elsif draft.new_record? || expected.to_i != draft.lock_version
+          # A draft that is gone was published or discarded since it was loaded.
+          failure(nil, :stale)
+        end
       end
 
       def save

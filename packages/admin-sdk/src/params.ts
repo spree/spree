@@ -3161,8 +3161,12 @@ export type EmailTemplateVersionParams = EmailTemplateLanguageParams & {
 export interface EmailTemplateDraftParams extends EmailTemplateLanguageParams {
   subject?: string | null
   body?: string
-  /** The `lock_version` the draft was loaded with. A save from an older copy is refused with 409. */
-  lock_version?: number
+  /**
+   * The `lock_version` the draft was loaded with, or `null` when there was no
+   * draft; a save from an older copy is refused with 409. Omit it to save
+   * without checking.
+   */
+  lock_version?: number | null
   /** Marks the draft as based on Spree's current default, after reviewing what changed in it. */
   rebase?: boolean
 }
@@ -3188,6 +3192,6 @@ export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams 
 }
 
 export interface EmailTemplateRestoreParams extends EmailTemplateLanguageParams {
-  /** The open draft's `lock_version`, when there is one. */
-  lock_version?: number
+  /** The open draft's `lock_version`, or `null` when there is none; checked as when saving. */
+  lock_version?: number | null
 }
