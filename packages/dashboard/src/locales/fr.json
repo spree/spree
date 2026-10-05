@@ -6304,20 +6304,13 @@
     "mcp_connect": {
       "open_cta": "Connecter un agent",
       "title": "Connecter un agent",
-      "subtitle": "Donnez à un assistant IA accès à cette boutique. Copiez la configuration de votre client et collez-la.",
-      "mint_help": "Une clé en lecture seule est créée pour l’agent. Pour qu’il puisse apporter des modifications, créez plutôt une clé avec les autorisations voulues sur la page Clés API.",
-      "mint_cta": "Créer une clé",
-      "mint_denied": "Vous n’avez pas l’autorisation de créer des clés API.",
-      "token_shown_once": "Copiez la configuration maintenant — la clé n’est affichée qu’une seule fois.",
-      "tab_other": "Autre chose",
-      "cursor_path": "Enregistrez sous .cursor/mcp.json dans votre projet, ou ~/.cursor/mcp.json pour vous.",
-      "vscode_path": "Enregistrez sous .vscode/mcp.json dans votre projet.",
-      "consumer_note": "Ceux-ci se connectent en se connectant à votre compte plutôt qu’avec une clé. Ajoutez un connecteur dans le client, collez cette URL et approuvez la demande ici.",
-      "allow_writes": "Autoriser cet agent à apporter des modifications",
-      "allow_writes_help": "Laissez désactivé pour un agent qui ne fait que lire. Une clé qui peut modifier peut aussi annuler des commandes et émettre des remboursements.",
-      "mint_failed": "La clé n’a pas pu être créée.",
-      "consumer_title": "Claude Desktop, claude.ai et ChatGPT",
-      "client_id_help": "Si le connecteur demande un identifiant client, utilisez celui de votre client — ils sont émis par boutique."
+      "subtitle": "Dirigez un assistant IA vers cette boutique. Il vous renverra ici pour approuver ce qu’il peut faire.",
+      "url_label": "L’adresse MCP de votre boutique",
+      "step_paste": "Collez cette adresse dans le connecteur ou les réglages MCP de votre client.",
+      "step_sign_in": "Il vous renvoie ici pour vous connecter.",
+      "step_approve": "Approuvez ce que l’agent peut faire. Vous pouvez le retirer à tout moment sur cette page.",
+      "scope_note": "Un agent n’obtient jamais plus que vous, et uniquement ce que vous approuvez. Approuver l’accès aux produits n’inclut pas les commandes.",
+      "cli_note": "Pour les scripts, la CI ou tout ce qui ne peut pas se connecter, utilisez la CLI Spree avec une clé API — les clés API ne sont pas acceptées ici."
     }
   }
 }

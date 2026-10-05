@@ -6372,20 +6372,13 @@
     "mcp_connect": {
       "open_cta": "Połącz agenta",
       "title": "Połącz agenta",
-      "subtitle": "Daj asystentowi AI dostęp do tego sklepu. Skopiuj konfigurację dla swojego klienta i wklej ją.",
-      "mint_help": "Dla agenta tworzony jest klucz tylko do odczytu. Aby mógł wprowadzać zmiany, utwórz klucz z wybranymi uprawnieniami na stronie Klucze API.",
-      "mint_cta": "Utwórz klucz",
-      "mint_denied": "Nie masz uprawnień do tworzenia kluczy API.",
-      "token_shown_once": "Skopiuj konfigurację teraz — klucz jest pokazywany tylko ten jeden raz.",
-      "tab_other": "Coś innego",
-      "cursor_path": "Zapisz jako .cursor/mcp.json w projekcie lub ~/.cursor/mcp.json dla siebie.",
-      "vscode_path": "Zapisz jako .vscode/mcp.json w projekcie.",
-      "consumer_note": "Łączą się przez zalogowanie, a nie kluczem. Dodaj konektor w kliencie, wklej ten adres i zatwierdź prośbę tutaj.",
-      "allow_writes": "Pozwól temu agentowi wprowadzać zmiany",
-      "allow_writes_help": "Zostaw wyłączone dla agenta, który tylko czyta. Klucz, który może zmieniać dane, może też anulować zamówienia i wystawiać zwroty.",
-      "mint_failed": "Nie udało się utworzyć klucza.",
-      "consumer_title": "Claude Desktop, claude.ai i ChatGPT",
-      "client_id_help": "Jeśli konektor poprosi o identyfikator klienta, użyj tego dla swojego klienta — są wydawane osobno dla każdego sklepu."
+      "subtitle": "Wskaż asystentowi AI ten sklep. Odeśle Cię tutaj, abyś zatwierdził, co może robić.",
+      "url_label": "Adres MCP Twojego sklepu",
+      "step_paste": "Wklej ten adres w konektorze lub ustawieniach MCP swojego klienta.",
+      "step_sign_in": "Odeśle Cię tutaj, abyś się zalogował.",
+      "step_approve": "Zatwierdź, co agent może robić. Możesz to cofnąć w dowolnej chwili na tej stronie.",
+      "scope_note": "Agent nigdy nie dostaje więcej niż Ty i tylko to, co zatwierdzisz. Zgoda na produkty nie obejmuje zamówień.",
+      "cli_note": "Do skryptów, CI i wszystkiego, co nie może się zalogować, użyj Spree CLI z kluczem API — tutaj klucze API nie są akceptowane."
     }
   }
 }

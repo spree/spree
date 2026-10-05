@@ -6304,20 +6304,13 @@
     "mcp_connect": {
       "open_cta": "Connect an agent",
       "title": "Connect an agent",
-      "subtitle": "Give an AI assistant access to this store. Copy the setup for your client and paste it in.",
-      "mint_help": "A read-only key is created for the agent. To let it make changes, create a key with the scopes you want on the API keys page instead.",
-      "mint_cta": "Create a key",
-      "mint_denied": "You do not have permission to create API keys.",
-      "token_shown_once": "Copy the setup below now — the key is shown only this once.",
-      "tab_other": "Anything else",
-      "cursor_path": "Save as .cursor/mcp.json in your project, or ~/.cursor/mcp.json for yourself.",
-      "vscode_path": "Save as .vscode/mcp.json in your project.",
-      "consumer_note": "These connect by signing in rather than with a key. Add a connector in the client, paste this URL, and approve the request here.",
-      "allow_writes": "Let this agent make changes",
-      "allow_writes_help": "Leave off for an agent that only reads. A key that can change things can also cancel orders and issue refunds.",
-      "mint_failed": "The key could not be created.",
-      "consumer_title": "Claude Desktop, claude.ai and ChatGPT",
-      "client_id_help": "If the connector asks for a client ID, use the one for your client — these are issued per store."
+      "subtitle": "Point an AI assistant at this store. It will send you back here to approve what it may do.",
+      "url_label": "Your store’s MCP address",
+      "step_paste": "Paste this address into your client’s connector or MCP settings.",
+      "step_sign_in": "It sends you here to sign in.",
+      "step_approve": "Approve what the agent may do. You can take it back at any time on this page.",
+      "scope_note": "An agent never gets more than you have, and only what you approve. Approving product access does not include orders.",
+      "cli_note": "For scripts, CI or anything that cannot sign in, use the Spree CLI with an API key instead — API keys are not accepted here."
     }
   }
 }

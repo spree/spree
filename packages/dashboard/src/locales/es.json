@@ -6304,20 +6304,13 @@
     "mcp_connect": {
       "open_cta": "Conectar un agente",
       "title": "Conectar un agente",
-      "subtitle": "Dé a un asistente de IA acceso a esta tienda. Copie la configuración de su cliente y péguela.",
-      "mint_help": "Se crea una clave de solo lectura para el agente. Para que pueda hacer cambios, cree una clave con los permisos que desee en la página de Claves API.",
-      "mint_cta": "Crear una clave",
-      "mint_denied": "No tiene permiso para crear claves API.",
-      "token_shown_once": "Copie la configuración ahora: la clave se muestra solo esta vez.",
-      "tab_other": "Otra cosa",
-      "cursor_path": "Guárdelo como .cursor/mcp.json en su proyecto, o ~/.cursor/mcp.json para usted.",
-      "vscode_path": "Guárdelo como .vscode/mcp.json en su proyecto.",
-      "consumer_note": "Estos se conectan iniciando sesión en lugar de con una clave. Añada un conector en el cliente, pegue esta URL y apruebe la solicitud aquí.",
-      "allow_writes": "Permitir que este agente haga cambios",
-      "allow_writes_help": "Déjelo desactivado para un agente que solo lee. Una clave que puede cambiar cosas también puede cancelar pedidos y emitir reembolsos.",
-      "mint_failed": "No se pudo crear la clave.",
-      "consumer_title": "Claude Desktop, claude.ai y ChatGPT",
-      "client_id_help": "Si el conector pide un ID de cliente, use el de su cliente: se emiten por tienda."
+      "subtitle": "Apunte un asistente de IA a esta tienda. Le enviará de vuelta aquí para aprobar lo que puede hacer.",
+      "url_label": "La dirección MCP de su tienda",
+      "step_paste": "Pegue esta dirección en el conector o la configuración MCP de su cliente.",
+      "step_sign_in": "Le enviará aquí para iniciar sesión.",
+      "step_approve": "Apruebe lo que puede hacer el agente. Puede retirarlo en cualquier momento en esta página.",
+      "scope_note": "Un agente nunca obtiene más de lo que usted tiene, y solo lo que apruebe. Aprobar el acceso a productos no incluye los pedidos.",
+      "cli_note": "Para scripts, CI o cualquier cosa que no pueda iniciar sesión, use la CLI de Spree con una clave API: aquí no se aceptan claves API."
     }
   }
 }

@@ -6,9 +6,24 @@ require 'benchmark'
 # store it selects, and a JSON-RPC body that never touches a view.
 RSpec.describe 'Admin MCP endpoint', type: :request do
   let(:store) { @default_store }
-  let(:api_key) { create(:api_key, :secret, store: store, scopes: scopes) }
-  let(:scopes) { ['write_all'] }
-  let(:token) { api_key.plaintext_token }
+  let(:admin) { create(:admin_user) }
+  let(:scopes) { 'write_all' }
+  let(:application) do
+    store.oauth_applications.create!(
+      name: 'Probe', redirect_uri: 'https://example.test/callback', confidential: false
+    )
+  end
+  let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp) }
+  let(:token) { oauth_token(scopes: scopes) }
+
+  before { Spree::Api::Oauth.register_resource(:mcp, '/api/v3/admin/mcp') }
+
+  def oauth_token(scopes:, audience: resource, owner: admin, application: self.application)
+    Spree::OauthAccessToken.create!(
+      application: application, resource_owner: owner,
+      scopes: Array(scopes).join(' '), expires_in: 2.hours.to_i, resource: audience
+    ).token
+  end
 
   def post_rpc(method, params = nil, headers: {}, id: 1)
     message = { jsonrpc: '2.0', id: id, method: method }
@@ -19,21 +34,36 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     JSON.parse(response.body)
   end
 
+  def post_with_token(raw_token, method = 'tools/list', params = nil)
+    post_rpc(method, params, headers: { 'Authorization' => "Bearer #{raw_token}" })
+  end
+
+  # An agent acts for a person, so the only credential this endpoint takes is
+  # that person's grant. A secret key authenticates the rest of the Admin API
+  # and the CLI; here it would be a standing credential with nobody behind
+  # it, naming neither who approved the agent nor what they allowed.
   describe 'authentication' do
-    it 'accepts the Admin API header' do
-      body = post_rpc('tools/list', headers: { 'X-Spree-API-Key' => token })
+    it 'accepts an OAuth token' do
+      body = post_with_token(token)
 
       expect(response).to have_http_status(:ok)
       expect(body['result']['tools']).to be_present
     end
 
-    # Several MCP clients offer a bearer-token field and no custom header, so
-    # the same key is accepted there.
-    it 'accepts the key as a bearer token' do
-      body = post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{token}" })
+    it 'refuses a secret API key in the Admin API header' do
+      api_key = create(:api_key, :secret, store: store, scopes: ['write_all'])
 
-      expect(response).to have_http_status(:ok)
-      expect(body['result']['tools']).to be_present
+      post_rpc('tools/list', headers: { 'X-Spree-API-Key' => api_key.plaintext_token })
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'refuses a secret API key as a bearer token' do
+      api_key = create(:api_key, :secret, store: store, scopes: ['write_all'])
+
+      post_with_token(api_key.plaintext_token)
+
+      expect(response).to have_http_status(:unauthorized)
     end
 
     # Parsing the bearer header must not backtrack: this header arrives
@@ -47,35 +77,19 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
       expect(elapsed).to be < 1.0
     end
 
-    it 'accepts a bearer key with extra whitespace' do
+    it 'accepts a bearer token with extra whitespace' do
       post_rpc('tools/list', headers: { 'Authorization' => "Bearer    #{token}" })
 
       expect(response).to have_http_status(:ok)
     end
 
-    it 'refuses a request with no key, naming the header to set' do
+    # The message is what a person reads when their client is misconfigured,
+    # so it has to say what to do rather than only that something failed.
+    it 'refuses an anonymous request, pointing at signing in' do
       body = post_rpc('tools/list')
 
       expect(response).to have_http_status(:unauthorized)
-      expect(body.dig('error', 'message')).to include('X-Spree-API-Key')
-    end
-
-    it 'refuses a publishable key' do
-      publishable = create(:api_key, :publishable, store: store)
-
-      post_rpc('tools/list', headers: { 'X-Spree-API-Key' => publishable.token })
-
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it 'refuses a revoked key' do
-      revoked = create(:api_key, :secret, store: store)
-      plaintext = revoked.plaintext_token
-      revoked.revoke!
-
-      post_rpc('tools/list', headers: { 'X-Spree-API-Key' => plaintext })
-
-      expect(response).to have_http_status(:unauthorized)
+      expect(body.dig('error', 'message')).to include('Sign in')
     end
 
     # This is a machine surface: a browser session belongs to the dashboard
@@ -112,26 +126,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
   # A merchant grants part of their own authority to a client. Two properties
   # carry the whole arrangement: the grant can only narrow what the user may
   # do, and a token issued for some other resource cannot be replayed here.
-  describe 'OAuth authentication' do
-    let(:admin) { create(:admin_user) }
-    let(:resource) { Spree::Api::Oauth.resource_identifier(:mcp) }
-    let(:application) do
-      store.oauth_applications.create!(
-        name: 'Probe', redirect_uri: 'https://example.test/callback', confidential: false
-      )
-    end
-
-    def oauth_token(scopes:, audience: resource, owner: admin)
-      Spree::OauthAccessToken.create!(
-        application: application, resource_owner: owner,
-        scopes: Array(scopes).join(' '), expires_in: 2.hours.to_i, resource: audience
-      ).token
-    end
-
-    def post_with_token(raw_token, method = 'tools/list')
-      post_rpc(method, headers: { 'Authorization' => "Bearer #{raw_token}" })
-    end
-
+  describe 'the grant' do
     it 'authenticates a token and acts as its owner' do
       body = post_with_token(oauth_token(scopes: 'read_products'))
 
@@ -141,9 +136,9 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
 
     it 'narrows the catalog to what the merchant consented to' do
       granted = post_with_token(oauth_token(scopes: 'read_products'))['result']['tools']
-      key_offers = post_rpc('tools/list', headers: { 'X-Spree-API-Key' => token })['result']['tools']
+      everything = post_with_token(oauth_token(scopes: 'write_all'))['result']['tools']
 
-      expect(granted.size).to be < key_offers.size
+      expect(granted.size).to be < everything.size
       expect(granted.map { |tool| tool['name'] }).not_to include('orders_cancel')
     end
 
@@ -204,22 +199,27 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     it 'serves the key\'s own store when the header agrees' do
       body = post_rpc('tools/call',
                       { name: 'search_resources', arguments: { 'resource' => 'products' } },
-                      headers: { 'X-Spree-API-Key' => token, 'X-Spree-Store-Id' => store.prefixed_id })
+                      headers: { 'Authorization' => "Bearer #{token}", 'X-Spree-Store-Id' => store.prefixed_id })
 
       expect(response).to have_http_status(:ok)
       expect(body.dig('result', 'isError')).to be(false)
     end
 
-    # The key selects the store; a header naming a different one is refused
-    # outright rather than quietly served the key's own store.
-    it 'refuses a header naming another store' do
+    # The grant selects the store, through the application it was issued
+    # for. A header naming another store cannot widen that: the audience the
+    # token carries is the whole answer, so the header is simply not
+    # consulted.
+    it 'ignores a header naming another store' do
       other_store = create(:store, code: "other-#{SecureRandom.hex(4)}")
+      other_product = create(:product, store: other_store)
 
-      post_rpc('tools/call',
-               { name: 'search_resources', arguments: { 'resource' => 'products' } },
-               headers: { 'X-Spree-API-Key' => token, 'X-Spree-Store-Id' => other_store.prefixed_id })
+      body = post_rpc('tools/call',
+                      { name: 'get_resource',
+                        arguments: { 'resource' => 'products', 'id' => other_product.prefixed_id } },
+                      headers: { 'Authorization' => "Bearer #{token}",
+                                 'X-Spree-Store-Id' => other_store.prefixed_id })
 
-      expect(response).to have_http_status(:forbidden)
+      expect(body.dig('result', 'isError')).to be(true)
     end
 
     it 'does not find another store\'s record' do
@@ -227,7 +227,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
 
       body = post_rpc('tools/call',
                       { name: 'get_resource', arguments: { 'resource' => 'products', 'id' => other_product.prefixed_id } },
-                      headers: { 'X-Spree-API-Key' => token })
+                      headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(true)
     end
@@ -242,29 +242,32 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
 
       body = post_rpc('tools/call',
                       { name: 'fulfillments_mark_delivered', arguments: { 'fulfillment' => fulfillment.prefixed_id } },
-                      headers: { 'X-Spree-API-Key' => token })
+                      headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(false)
       expect(fulfillment.reload.status).to eq('delivered')
     end
 
-    it 'records the API key as the actor when it cancels an order' do
+    # The grant names a person, so that is who the timeline records — an
+    # audit later shows which admin's agent did it, not an anonymous
+    # credential.
+    it 'records the approving admin as the actor when it cancels an order' do
       reason = create(:order_cancellation_reason, store: store)
 
       body = post_rpc('tools/call',
                       { name: 'orders_cancel',
                         arguments: { 'order' => order.prefixed_id, 'reason' => reason.prefixed_id } },
-                      headers: { 'X-Spree-API-Key' => token })
+                      headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(false)
       expect(order.reload.status).to eq('canceled')
-      expect(order.canceler).to eq(api_key)
+      expect(order.canceler).to eq(admin)
     end
 
     it 'carries the workflow\'s own refusal back as a tool error' do
       body = post_rpc('tools/call',
                       { name: 'orders_cancel', arguments: { 'order' => 'order_nope' } },
-                      headers: { 'X-Spree-API-Key' => token })
+                      headers: { 'Authorization' => "Bearer #{token}" })
 
       expect(body.dig('result', 'isError')).to be(true)
       expect(body.dig('result', 'content').first['text']).to include('order')
@@ -275,7 +278,7 @@ RSpec.describe 'Admin MCP endpoint', type: :request do
     let(:scopes) { ['read_orders'] }
 
     it 'offers only what the key\'s scopes permit' do
-      body = post_rpc('tools/list', headers: { 'X-Spree-API-Key' => token })
+      body = post_rpc('tools/list', headers: { 'Authorization' => "Bearer #{token}" })
       names = body.dig('result', 'tools').map { |tool| tool['name'] }
 
       expect(names).to include('search_resources')

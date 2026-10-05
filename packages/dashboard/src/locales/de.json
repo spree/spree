@@ -6304,20 +6304,13 @@
     "mcp_connect": {
       "open_cta": "Agent verbinden",
       "title": "Agent verbinden",
-      "subtitle": "Geben Sie einem KI-Assistenten Zugriff auf diesen Shop. Kopieren Sie die Einrichtung für Ihren Client und fügen Sie sie ein.",
-      "mint_help": "Für den Agenten wird ein Schlüssel nur zum Lesen erstellt. Damit er Änderungen vornehmen darf, erstellen Sie stattdessen auf der Seite API-Schlüssel einen Schlüssel mit den gewünschten Berechtigungen.",
-      "mint_cta": "Schlüssel erstellen",
-      "mint_denied": "Sie haben keine Berechtigung, API-Schlüssel zu erstellen.",
-      "token_shown_once": "Kopieren Sie die Einrichtung jetzt — der Schlüssel wird nur dieses eine Mal angezeigt.",
-      "tab_other": "Etwas anderes",
-      "cursor_path": "Als .cursor/mcp.json im Projekt speichern oder als ~/.cursor/mcp.json für Sie persönlich.",
-      "vscode_path": "Als .vscode/mcp.json im Projekt speichern.",
-      "consumer_note": "Diese verbinden sich per Anmeldung statt mit einem Schlüssel. Fügen Sie im Client einen Connector hinzu, fügen Sie diese URL ein und bestätigen Sie die Anfrage hier.",
-      "allow_writes": "Diesem Agenten Änderungen erlauben",
-      "allow_writes_help": "Für einen Agenten, der nur liest, ausgeschaltet lassen. Ein Schlüssel mit Schreibrechten kann auch Bestellungen stornieren und Rückerstattungen auslösen.",
-      "mint_failed": "Der Schlüssel konnte nicht erstellt werden.",
-      "consumer_title": "Claude Desktop, claude.ai und ChatGPT",
-      "client_id_help": "Falls der Connector eine Client-ID verlangt, verwenden Sie die für Ihren Client — diese werden pro Shop vergeben."
+      "subtitle": "Richten Sie einen KI-Assistenten auf diesen Shop. Er schickt Sie hierher zurück, um die Freigabe zu erteilen.",
+      "url_label": "Die MCP-Adresse Ihres Shops",
+      "step_paste": "Fügen Sie diese Adresse in den Connector oder die MCP-Einstellungen Ihres Clients ein.",
+      "step_sign_in": "Sie werden zur Anmeldung hierher geschickt.",
+      "step_approve": "Geben Sie frei, was der Agent tun darf. Sie können dies jederzeit auf dieser Seite zurücknehmen.",
+      "scope_note": "Ein Agent erhält nie mehr, als Sie selbst haben, und nur das, was Sie freigeben. Eine Freigabe für Produkte schließt Bestellungen nicht ein.",
+      "cli_note": "Für Skripte, CI oder alles, was sich nicht anmelden kann, verwenden Sie die Spree CLI mit einem API-Schlüssel — hier werden API-Schlüssel nicht akzeptiert."
     }
   }
 }
