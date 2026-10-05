@@ -4,6 +4,7 @@ require_relative 'dependencies'
 require_relative 'configuration'
 require_relative 'agent_write_schemas'
 require_relative 'agent_resource_map'
+require_relative 'oauth'
 
 module Spree
   module Api
@@ -14,6 +15,13 @@ module Spree
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::Api::Configuration.new
         Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
+      end
+
+      # Applied from the engine so an installation gets a correct, locked-down
+      # authorization server by adding the gem. A host that needs to change
+      # something calls `Doorkeeper.configure` afterwards, which wins.
+      initializer 'spree.api.oauth', after: :load_config_initializers do |_app|
+        Spree::Api::Oauth.configure!
       end
 
       initializer 'spree.api.request_size_limit' do |app|

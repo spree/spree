@@ -238,6 +238,17 @@ Spree::Core::Engine.add_routes do
         post 'auth/password_resets', to: 'password_resets#create'
         patch 'auth/password_resets/:id', to: 'password_resets#update'
 
+        # OAuth 2.1 consent, read and decided by the dashboard. The admin's
+        # own session authorizes it: a secret key may authenticate here but
+        # can never grant authority on a person's behalf.
+        namespace :oauth do
+          get 'authorize', to: 'authorizations#show'
+          post 'authorize', to: 'authorizations#create'
+          delete 'authorize', to: 'authorizations#destroy'
+
+          resources :applications, only: %i[index destroy]
+        end
+
         # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)
         namespace :reporting do
           post :query
@@ -1050,6 +1061,14 @@ Spree::Core::Engine.add_routes do
         end
       end
 
+      # RFC 9728 Protected Resource Metadata. One document per protected
+      # resource, named by the surface that registered it, so a client
+      # discovers which authorization server guards the URL it was given.
+      # Unauthenticated: a client has no credential at the point it asks.
+      get 'oauth/protected-resource/:resource_key',
+          to: 'oauth/metadata#show',
+          as: :oauth_protected_resource
+
       # Webhooks (outside of store namespace — no API key authentication)
       namespace :webhooks do
         post 'payments/:payment_method_id', to: 'payments#create', as: :payment_webhook
@@ -1063,5 +1082,17 @@ Spree::Core::Engine.add_routes do
         post 'payouts/:payment_method_id', to: 'payouts#create', as: :payout_webhook
       end
     end
+  end
+
+  # The authorization server's own endpoints: /oauth/token, /oauth/revoke and
+  # RFC 8414 metadata. Outside the versioned API namespace — the OAuth
+  # protocol is not a Spree API resource and its paths are fixed by the spec
+  # and by what clients expect to find.
+  #
+  # The authorization and application controllers are skipped: consent is
+  # rendered by the dashboard against the JSON endpoints under
+  # /api/v3/admin/oauth, so Doorkeeper's HTML screens are never reached.
+  use_doorkeeper scope: 'oauth' do
+    skip_controllers :authorizations, :applications, :authorized_applications
   end
 end
