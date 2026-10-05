@@ -15,6 +15,10 @@ require 'alba'
 require 'acts-as-taggable-on'
 require 'awesome_nested_set'
 require 'cancan'
+# The OAuth models include Doorkeeper's mixins, so the gem has to be loaded
+# before they are autoloaded — core owns the tables, api owns the server
+# configuration.
+require 'doorkeeper'
 require 'countries/global'
 require 'friendly_id'
 require 'json_schemer'
