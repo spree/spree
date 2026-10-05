@@ -1323,6 +1323,12 @@ export interface OauthAuthorizationRequest {
    * lists what is actually being granted rather than the shorthand asked for.
    */
   scopes: string[]
+  /**
+   * Of those, the ones this person can actually hand over. A grant only ever
+   * narrows the approver's own authority, so anything they do not hold is
+   * not offered.
+   */
+  grantable_scopes: string[]
   resource: string | null
   redirect_uri: string
 }

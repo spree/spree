@@ -36,6 +36,19 @@ module Spree
               }
             end
 
+            # Every client registered for this store, connected or not — a
+            # merchant needs the id of one they have not connected yet, which
+            # is precisely what `index` leaves out.
+            def registrations
+              applications = current_store.oauth_applications.
+                             includes(live_access_tokens: :resource_owner).
+                             order(:name)
+
+              render json: {
+                data: Spree.api.admin_oauth_application_serializer.new(applications).serializable_hash
+              }
+            end
+
             def destroy
               application = current_store.oauth_applications.find_by_prefix_id!(params[:id])
 

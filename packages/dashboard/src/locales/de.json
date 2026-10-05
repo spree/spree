@@ -4152,7 +4152,8 @@
           "approve": "Zugriff erlauben",
           "deny": "Abbrechen",
           "invalid_request": "Diese Autorisierungsanfrage ist ungültig. Beginnen Sie erneut in der Anwendung, die Sie hierher geschickt hat.",
-          "decision_failed": "Die Entscheidung konnte nicht gespeichert werden. Versuchen Sie es erneut."
+          "decision_failed": "Die Entscheidung konnte nicht gespeichert werden. Versuchen Sie es erneut.",
+          "withheld": "Nicht angeboten, da Ihre eigene Rolle Folgendes nicht umfasst: {{permissions}}"
         }
       }
     },

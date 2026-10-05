@@ -246,7 +246,9 @@ Spree::Core::Engine.add_routes do
           post 'authorize', to: 'authorizations#create'
           delete 'authorize', to: 'authorizations#destroy'
 
-          resources :applications, only: %i[index destroy]
+          resources :applications, only: %i[index destroy] do
+            get :registrations, on: :collection
+          end
         end
 
         # Semantic reporting (docs/plans/6.0-analytics-semantic-layer.md)

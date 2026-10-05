@@ -30,11 +30,20 @@ module Spree
               render json: {
                 client_name: client_name,
                 scopes: requested_permissions,
+                # What the merchant may hand over, which is the intersection
+                # of what the client asked for and what they themselves hold.
+                # A grant can only ever narrow their own authority, so
+                # offering more than they have would be offering a refusal.
+                grantable_scopes: grantable_scopes,
                 resource: requested_resource,
                 redirect_uri: @pre_auth.redirect_uri
               }
             end
 
+            # The merchant may approve less than the client asked for. Doing
+            # so narrows the grant, not the request: Doorkeeper records
+            # whatever scope reaches it here, so a trimmed list becomes the
+            # token's authority.
             def create
               render json: { redirect_uri: code_request.authorize.redirect_uri }
             end
@@ -86,6 +95,17 @@ module Spree
                 message: @pre_auth.error_response.body[:error_description].to_s,
                 status: :unprocessable_content
               )
+            end
+
+            # What this person can actually grant: the requested scopes minus
+            # anything their own role does not carry.
+            #
+            # @return [Array<String>]
+            def grantable_scopes
+              held = current_ability.try(:permission_keys)&.map(&:to_s) || []
+              requested = Spree.permissions.expand_keys(@pre_auth.scopes.to_a)
+
+              (requested & held).sort
             end
 
             # Symbol keys: PreAuthorization reads them that way, and a hash of

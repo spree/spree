@@ -4152,7 +4152,8 @@
           "approve": "Autoriser l’accès",
           "deny": "Annuler",
           "invalid_request": "Cette demande d’autorisation n’est pas valide. Recommencez depuis l’application qui vous a envoyé ici.",
-          "decision_failed": "La décision n’a pas pu être enregistrée. Réessayez."
+          "decision_failed": "La décision n’a pas pu être enregistrée. Réessayez.",
+          "withheld": "Non proposé, car votre propre rôle ne comprend pas : {{permissions}}"
         }
       }
     },

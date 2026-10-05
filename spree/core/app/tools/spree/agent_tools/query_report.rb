@@ -93,8 +93,14 @@ module Spree
 
       # Totals first: most reporting questions are answered by them alone,
       # and the rows are what fills a context window.
+      #
+      # Dimension keys are hydrated the same way the Admin API hydrates them.
+      # A grouped row holds a raw primary key, and handing a model
+      # `{"product": 3}` answers "which products sell best" with a number it
+      # cannot read — the label is the answer.
       def shape(result)
-        rows = Array(result.rows)
+        hydration = Spree::Reporting::Hydration.new(result, store: context.store)
+        rows = Array(result.rows).map { |row| hydrate_row(row, hydration) }
 
         {
           totals: result.totals,
@@ -102,6 +108,18 @@ module Spree
           row_count: rows.length,
           meta: result.meta
         }.compact
+      end
+
+      # Only the label and the id: the API's shape also carries slugs and
+      # thumbnail URLs, which cost context and answer nothing a report was
+      # asked.
+      def hydrate_row(row, hydration)
+        dimensions = (row[:dimensions] || {}).to_h do |name, raw|
+          value = hydration.value(name, raw)
+          [name, value.is_a?(Hash) ? value.values_at(:label, :id).compact.first : value]
+        end
+
+        row.merge(dimensions: dimensions)
       end
 
     end

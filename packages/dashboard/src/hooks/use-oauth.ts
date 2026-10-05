@@ -39,6 +39,18 @@ export function useDenyOauthAuthorization() {
   })
 }
 
+/**
+ * Every registered client, for the setup panel — unlike the connected list,
+ * which answers what to revoke.
+ */
+export function useOauthRegistrations() {
+  return useQuery({
+    queryKey: useResourceKey('oauth-registrations'),
+    queryFn: () => adminClient.oauth.applications.registrations(),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
 export function useOauthApplications() {
   return useQuery({
     queryKey: useResourceKey('oauth-applications'),

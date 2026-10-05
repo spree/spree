@@ -4142,7 +4142,8 @@
           "approve": "允许访问",
           "deny": "取消",
           "invalid_request": "此授权请求无效。请从引导您来此的应用重新开始。",
-          "decision_failed": "无法记录此决定，请重试。"
+          "decision_failed": "无法记录此决定，请重试。",
+          "withheld": "未提供，因为您自己的角色不包含：{{permissions}}"
         }
       }
     },

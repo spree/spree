@@ -4206,7 +4206,8 @@
           "approve": "Zezwól na dostęp",
           "deny": "Anuluj",
           "invalid_request": "To żądanie autoryzacji jest nieprawidłowe. Zacznij ponownie z aplikacji, która Cię tu skierowała.",
-          "decision_failed": "Nie udało się zapisać decyzji. Spróbuj ponownie."
+          "decision_failed": "Nie udało się zapisać decyzji. Spróbuj ponownie.",
+          "withheld": "Niedostępne, ponieważ Twoja rola nie obejmuje: {{permissions}}"
         }
       }
     },

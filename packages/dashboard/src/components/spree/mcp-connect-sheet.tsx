@@ -9,6 +9,7 @@ import {
   SheetTitle,
 } from '@spree/dashboard-ui'
 import { useTranslation } from 'react-i18next'
+import { useOauthRegistrations } from '../../hooks/use-oauth'
 
 type McpConnectSheetProps = {
   open: boolean
@@ -25,12 +26,14 @@ type McpConnectSheetProps = {
  */
 export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
   const { t } = useTranslation()
+  const { data: registrations } = useOauthRegistrations()
 
   // Where this dashboard's own API calls go — either a configured origin or
   // the page's own, which is what a proxied or multi-hostname deployment
   // actually answers on.
   const apiOrigin = import.meta.env.VITE_SPREE_API_URL || window.location.origin
   const endpoint = `${apiOrigin}/api/v3/admin/mcp`
+  const clients = registrations?.data ?? []
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -60,6 +63,33 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
             <li>{t('admin.mcp_connect.step_sign_in')}</li>
             <li>{t('admin.mcp_connect.step_approve')}</li>
           </ol>
+
+          {/* Some clients ask for a client ID before they will start the
+              sign-in flow. It is issued per store, so it cannot be published
+              anywhere — a merchant has to be able to read this store's own. */}
+          {clients.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <p className="font-medium text-sm">{t('admin.mcp_connect.client_id_label')}</p>
+              <p className="text-muted-foreground text-xs">
+                {t('admin.mcp_connect.client_id_help')}
+              </p>
+              {clients.map((client) => (
+                <div key={client.id} className="flex flex-col gap-1">
+                  <p className="text-xs">{client.name}</p>
+                  <div className="relative">
+                    <pre className="overflow-x-auto rounded-md bg-muted p-3 pr-12 text-xs">
+                      <code>{client.client_id}</code>
+                    </pre>
+                    <CopyToClipboardButton
+                      aria-label={t('admin.actions.copy')}
+                      className="absolute top-1.5 right-2"
+                      value={client.client_id}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
 
           <Alert>
             <AlertDescription>{t('admin.mcp_connect.scope_note')}</AlertDescription>

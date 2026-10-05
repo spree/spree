@@ -1,8 +1,16 @@
 import { PageHeader } from '@spree/dashboard-core'
-import { Alert, AlertDescription, Button, Card, CardContent, Skeleton } from '@spree/dashboard-ui'
-import { CheckIcon, ShieldIcon } from '@spree/dashboard-ui/icons'
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Card,
+  CardContent,
+  Checkbox,
+  Skeleton,
+} from '@spree/dashboard-ui'
+import { ShieldIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
@@ -38,6 +46,22 @@ function OauthAuthorizePage() {
   const { data, isLoading, error } = useOauthAuthorization(search)
   const errorDetail = error instanceof Error ? error.message : undefined
   const [decisionError, setDecisionError] = useState<string | null>(null)
+  // Null until the request loads, then every permission this person could
+  // hand over — pre-ticked, because the client asked for them and declining
+  // one should be a deliberate act rather than the default.
+  const [granted, setGranted] = useState<string[] | null>(null)
+  const scopeFieldId = useId()
+
+  const grantable = data?.grantable_scopes ?? []
+  const withheld = (data?.scopes ?? []).filter((key) => !grantable.includes(key))
+  const selected = granted ?? grantable
+
+  const toggle = (key: string) =>
+    setSelected(selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key])
+
+  function setSelected(next: string[]) {
+    setGranted(next)
+  }
   const { data: catalog } = usePermissionCatalog()
   const approve = useApproveOauthAuthorization()
   const deny = useDenyOauthAuthorization()
@@ -51,7 +75,10 @@ function OauthAuthorizePage() {
     setDecisionError(null)
 
     try {
-      const result = await mutation.mutateAsync(search)
+      // The scope the merchant settled on, not the one the client asked
+      // for — Doorkeeper records whatever reaches it, so a trimmed list
+      // becomes the token's authority.
+      const result = await mutation.mutateAsync({ ...search, scope: selected.join(' ') })
       window.location.href = result.redirect_uri
     } catch (failure) {
       setDecisionError(
@@ -108,17 +135,40 @@ function OauthAuthorizePage() {
                   <h2 className="font-medium text-sm">
                     {t('admin.pages.oauth.authorize.permissions_heading')}
                   </h2>
+                  {/* Each one is a choice, not a notice: a merchant can hand
+                      over less than the client asked for, and the grant is
+                      whatever they leave ticked. Labelled client-side so the
+                      one screen that says what is being granted follows the
+                      merchant's own language, not the server's. */}
                   <ul className="flex flex-col gap-2">
-                    {data.scopes.map((key) => (
-                      <li key={key} className="flex items-start gap-2 text-sm">
-                        <CheckIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                        {/* Labelled client-side so the one screen that tells a
-                          merchant what they are granting follows their own
-                          language, not the server's. */}
-                        <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
+                    {grantable.map((key) => (
+                      <li key={key}>
+                        <label
+                          htmlFor={`${scopeFieldId}-${key}`}
+                          className="flex cursor-pointer items-start gap-2 text-sm"
+                        >
+                          <Checkbox
+                            id={`${scopeFieldId}-${key}`}
+                            checked={selected.includes(key)}
+                            onCheckedChange={() => toggle(key)}
+                          />
+                          <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
+                        </label>
                       </li>
                     ))}
                   </ul>
+                  {/* Asked for but not this person's to give — saying so is
+                      better than silently dropping it, because the agent will
+                      behave as though it has them. */}
+                  {withheld.length > 0 ? (
+                    <p className="text-muted-foreground text-xs">
+                      {t('admin.pages.oauth.authorize.withheld', {
+                        permissions: withheld
+                          .map((key) => permissionKeyLabel(t, catalog?.data, key))
+                          .join(', '),
+                      })}
+                    </p>
+                  ) : null}
                 </div>
 
                 <Alert>

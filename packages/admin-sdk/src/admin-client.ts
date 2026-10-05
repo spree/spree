@@ -5891,6 +5891,18 @@ export class AdminClient {
 
     /** Applications a merchant has connected, for the revoke screen. */
     applications: {
+      /**
+       * Every client registered for this store, connected or not. A merchant
+       * needs the id of one they have not connected yet, which is exactly
+       * what `list` leaves out.
+       */
+      registrations: (options?: RequestOptions): Promise<{ data: OauthApplication[] }> =>
+        this.request<{ data: OauthApplication[] }>(
+          'GET',
+          '/oauth/applications/registrations',
+          options ?? {},
+        ),
+
       list: (
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,

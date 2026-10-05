@@ -1063,7 +1063,8 @@
           "approve": "Permitir acceso",
           "deny": "Cancelar",
           "invalid_request": "Esta solicitud de autorización no es válida. Vuelva a empezar desde la aplicación que le envió aquí.",
-          "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo."
+          "decision_failed": "No se pudo registrar la decisión. Inténtelo de nuevo.",
+          "withheld": "No se ofrece porque su propio rol no incluye: {{permissions}}"
         }
       }
     },

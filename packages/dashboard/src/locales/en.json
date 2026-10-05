@@ -4152,7 +4152,8 @@
           "approve": "Allow access",
           "deny": "Cancel",
           "invalid_request": "This authorization request is not valid. Start again from the application that sent you here.",
-          "decision_failed": "The decision could not be recorded. Try again."
+          "decision_failed": "The decision could not be recorded. Try again.",
+          "withheld": "Not offered, because your own role does not include: {{permissions}}"
         }
       }
     },
