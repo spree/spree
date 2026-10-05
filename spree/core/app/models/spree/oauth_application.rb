@@ -48,5 +48,29 @@ module Spree
     def last_used_at
       live_access_tokens.map(&:created_at).max
     end
+
+    # Who approved this application's access, and when.
+    #
+    # Read from the oldest live token, because that is the consent still in
+    # force — a later token refreshes an existing grant rather than replacing
+    # who gave it. On the screen that decides whether to revoke, "Claude can
+    # read your orders" is only half the story without the person who allowed
+    # it.
+    #
+    # @return [Object, nil] a {Spree.admin_user_class} record
+    def authorized_by
+      oldest_live_token&.resource_owner
+    end
+
+    # @return [ActiveSupport::TimeWithZone, nil]
+    def authorized_at
+      oldest_live_token&.created_at
+    end
+
+    private
+
+    def oldest_live_token
+      live_access_tokens.min_by(&:created_at)
+    end
   end
 end
