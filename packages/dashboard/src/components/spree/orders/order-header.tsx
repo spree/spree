@@ -47,6 +47,8 @@ export function OrderHeader({ order }: { order: Order }) {
   const completeMutation = useResourceMutation({
     mutationFn: () => adminClient.orders.complete(orderId),
     invalidate: [orderQueryKey(orderId)],
+    // A payment the gateway refused is recorded as failed.
+    refreshOnError: true,
     // Announced here instead, because what to say depends on whether the order
     // divided.
     successMessage: false,

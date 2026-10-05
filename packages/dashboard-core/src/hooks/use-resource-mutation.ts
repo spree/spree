@@ -35,6 +35,11 @@ interface UseResourceMutationOptions<TData, TError, TVariables>
    * state arrives.
    */
   doNotInvalidate?: string[]
+  /**
+   * Invalidate `invalidate` after a failure too. For actions whose refusal
+   * still changes the record — a declined charge leaves the payment failed.
+   */
+  refreshOnError?: boolean
   /** Toast on success. Pass `false` to disable. Default `'Saved'`. */
   successMessage?: string | false
   /**
@@ -81,6 +86,7 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
   const {
     invalidate,
     doNotInvalidate,
+    refreshOnError = false,
     successMessage = i18n.t('admin.messages.saved'),
     errorMessage = i18n.t('admin.errors.generic'),
     showValidationErrors = false,
@@ -89,26 +95,28 @@ export function useResourceMutation<TData = unknown, TError = Error, TVariables 
     ...rest
   } = options
 
+  function invalidateQueries() {
+    for (const key of invalidate ?? []) {
+      queryClient.invalidateQueries({
+        queryKey: withStoreScope(key, tenantId),
+        predicate: doNotInvalidate?.length
+          ? (query) => !query.queryKey.some((part) => doNotInvalidate.includes(part as string))
+          : undefined,
+      })
+    }
+  }
+
   return useMutation<TData, TError, TVariables>({
     ...rest,
     onSuccess: (data, variables, onMutateResult, ctx) => {
-      if (invalidate) {
-        for (const key of invalidate) {
-          const scoped = withStoreScope(key, tenantId)
-          queryClient.invalidateQueries({
-            queryKey: scoped,
-            predicate: doNotInvalidate?.length
-              ? (query) => !query.queryKey.some((part) => doNotInvalidate.includes(part as string))
-              : undefined,
-          })
-        }
-      }
+      invalidateQueries()
       if (successMessage !== false) {
         toastManager.add({ type: 'success', title: successMessage })
       }
       return onSuccess?.(data, variables, onMutateResult, ctx)
     },
     onError: (error, variables, onMutateResult, ctx) => {
+      if (refreshOnError) invalidateQueries()
       if (errorMessage !== false && showValidationErrors && isValidationError(error)) {
         toastManager.add({ type: 'error', title: fieldMessages(error) ?? errorMessage })
       } else if (errorMessage !== false && !isValidationError(error)) {

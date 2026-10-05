@@ -57,6 +57,24 @@ export function useOrderMutation<TParams>(
 }
 
 /**
+ * An order mutation that moves money. The gateway's refusal is toasted, and
+ * the order refreshes either way, since a refused charge still leaves the
+ * payment failed.
+ */
+export function useOrderPaymentMutation<TData, TVariables = void>(
+  orderId: string,
+  mutationFn: (variables: TVariables) => Promise<TData>,
+) {
+  return useResourceMutation<TData, Error, TVariables>({
+    mutationFn,
+    invalidate: [orderQueryKey(orderId)],
+    refreshOnError: true,
+    successMessage: false,
+    showValidationErrors: true,
+  })
+}
+
+/**
  * Bare logical key for an order — pass to `useResourceMutation`'s
  * `invalidate:` and the storeId will be auto-injected at position 1.
  */

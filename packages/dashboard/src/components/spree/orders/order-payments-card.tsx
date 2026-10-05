@@ -52,7 +52,7 @@ import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 import { type FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOrderMutation } from '../../../hooks/use-order'
+import { useOrderPaymentMutation } from '../../../hooks/use-order'
 import { useOrderGroup } from '../../../hooks/use-seller-ledger'
 
 export function PaymentsCard({ order }: { order: Order }) {
@@ -78,10 +78,10 @@ export function PaymentsCard({ order }: { order: Order }) {
   const awaitingGroup = grouped && groupPending
   const splits = order.payment_splits ?? []
 
-  const captureMutation = useOrderMutation(orderId, (paymentId: string) =>
+  const captureMutation = useOrderPaymentMutation(orderId, (paymentId: string) =>
     adminClient.orders.payments.capture(orderId, paymentId, {}),
   )
-  const voidMutation = useOrderMutation(orderId, (paymentId: string) =>
+  const voidMutation = useOrderPaymentMutation(orderId, (paymentId: string) =>
     adminClient.orders.payments.void(orderId, paymentId, {}),
   )
 
@@ -268,10 +268,14 @@ function AddPaymentDialog({
   const sourceRequired = (selectedMethod?.source_required ?? false) && !isStoreCredit
 
   const { data: cardsData } = useQuery({
-    queryKey: ['customer-credit-cards', customerId],
+    queryKey: ['customer-credit-cards', customerId, paymentMethodId],
     queryFn: () =>
       customerId
-        ? adminClient.customers.creditCards.list(customerId, { limit: 50 })
+        ? adminClient.customers.creditCards.list(customerId, {
+            limit: 50,
+            // A card can only be charged by the payment method that saved it.
+            payment_method_id_eq: paymentMethodId,
+          })
         : Promise.resolve(null),
     enabled: open && Boolean(customerId) && sourceRequired,
     staleTime: 30_000,
@@ -279,7 +283,7 @@ function AddPaymentDialog({
   const savedCards = cardsData?.data ?? []
   const canSubmit = Boolean(paymentMethodId) && (!sourceRequired || Boolean(sourceId))
 
-  const mutation = useOrderMutation(orderId, () =>
+  const mutation = useOrderPaymentMutation<unknown>(orderId, () =>
     isStoreCredit
       ? adminClient.orders.storeCredits.apply(orderId, amount ? { amount } : {})
       : adminClient.orders.payments.create(orderId, {
@@ -291,7 +295,7 @@ function AddPaymentDialog({
         }),
   )
 
-  const captureMutation = useOrderMutation(orderId, (paymentId: string) =>
+  const captureMutation = useOrderPaymentMutation(orderId, (paymentId: string) =>
     adminClient.orders.payments.capture(orderId, paymentId, {}),
   )
 
@@ -311,8 +315,10 @@ function AddPaymentDialog({
       // is no payment id to capture — and no gateway to capture it at.
       onSuccess: (payment) => {
         if (capture && !isStoreCredit && payment && (payment as { id?: string }).id) {
+          // Closed even when the capture is refused: the payment exists by
+          // then, and submitting again would add a second one.
           captureMutation.mutate((payment as { id: string }).id, {
-            onSuccess: () => {
+            onSettled: () => {
               onOpenChange(false)
               reset()
             },
