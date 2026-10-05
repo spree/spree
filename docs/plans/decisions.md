@@ -6323,3 +6323,27 @@ their products' stock held in marketplace locations.
 **Plans amended:** `5.6-admin-spa-csv-import.md` (stock is per location),
 `6.0-stock-reservations.md` and `6.0-typed-stock-movements.md` (the "read
 availability, never the shelf" constraints name the write-back exception).
+
+## 2026-10-05 — MCP takes a grant, the CLI takes a key
+
+The MCP endpoint accepted a secret API key as well as an OAuth token, which
+made it the one surface with two ways in. The key path is now removed: a
+request without a grant is refused with the discovery challenge, whatever
+credential it carried.
+
+The reasoning is what each credential can say. A grant names the person who
+approved the agent and the subset of their permissions they allowed, and both
+are re-read on every call — narrowing a role or deleting the user takes effect
+immediately. A key says neither: it is a standing credential with nobody
+behind it, and it outlives whoever created it. For an agent acting on
+someone's behalf that is the wrong shape, however convenient.
+
+Keys keep their place on every other Admin API surface and in the `spree api`
+CLI, which is what scripted callers that cannot open a browser should use.
+
+**Consequences for other work.** A workflow run through MCP now records the
+approving admin as the actor rather than an API key, so anything asserting a
+key principal there is wrong. The store comes from the token's application,
+so `X-Spree-Store-Id` is not consulted on this endpoint. `Spree::AgentTools::
+Context` keeps its `api_key:` principal — the dashboard assistant and any
+other adapter may still use it; only the MCP transport refuses one.
