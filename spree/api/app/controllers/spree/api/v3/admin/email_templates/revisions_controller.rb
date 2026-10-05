@@ -8,6 +8,8 @@ module Spree
           class RevisionsController < ResourceController
             include Spree::Api::V3::Admin::EmailTemplateLookup
 
+            before_action { authorize! :read, Spree::EmailTemplate }
+
             protected
 
             def model_class

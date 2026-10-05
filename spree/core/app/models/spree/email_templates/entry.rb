@@ -73,7 +73,7 @@ module Spree
 
       # What customers receive now.
       def subject
-        readable(customized? ? published.subject : default&.subject)
+        readable(customized? ? published.subject : default&.subject, escape: false)
       end
 
       def body
@@ -81,7 +81,7 @@ module Spree
       end
 
       def default_subject
-        readable(default&.subject)
+        readable(default&.subject, escape: false)
       end
 
       def default_body
@@ -89,7 +89,7 @@ module Spree
       end
 
       def base_subject
-        readable(outdated_version&.base_subject)
+        readable(outdated_version&.base_subject, escape: false)
       end
 
       def base_body
@@ -101,15 +101,17 @@ module Spree
       #
       # @return [Spree::EmailTemplate, Spree::EmailTemplateDraft, nil]
       def outdated_version
-        [draft, published].compact.find { |version| version.default_changed?(default) }
+        # An open draft is what gets published next, so it alone decides.
+        version = draft || published
+        version if version&.default_changed?(default)
       end
 
       private
 
-      def readable(text)
+      def readable(text, escape: true)
         return text if locale == Spree::EmailTemplate::ANY_LOCALE
 
-        Spree::Emails::TranslationInliner.call(text, locale: locale)
+        Spree::Emails::TranslationInliner.call(text, locale: locale, escape: escape)
       end
     end
   end

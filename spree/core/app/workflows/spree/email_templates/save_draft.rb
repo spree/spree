@@ -60,7 +60,7 @@ module Spree
         published = store.email_templates.published.where(key: key, locale: [draft.locale, Spree::EmailTemplate::ANY_LOCALE]).
                     min_by { |template| template.locale == draft.locale ? 0 : 1 }
 
-        draft.subject = readable(published&.subject || default&.subject)
+        draft.subject = readable(published&.subject || default&.subject, escape: false)
         draft.body = readable(published&.body || default&.body)
         draft.base_subject = published ? published.base_subject : default&.subject
         draft.base_body = published ? published.base_body : default&.body
@@ -71,10 +71,10 @@ module Spree
         draft.base_body = default&.body
       end
 
-      def readable(text)
+      def readable(text, escape: true)
         return text if draft.locale == Spree::EmailTemplate::ANY_LOCALE
 
-        Spree::Emails::TranslationInliner.call(text, locale: draft.locale)
+        Spree::Emails::TranslationInliner.call(text, locale: draft.locale, escape: escape)
       end
 
       def default

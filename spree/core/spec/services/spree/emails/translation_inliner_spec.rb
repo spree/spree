@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Emails::TranslationInliner do
-  def inline(source, locale: :en)
-    described_class.call(source, locale: locale)
+  def inline(source, locale: :en, escape: true)
+    described_class.call(source, locale: locale, escape: escape)
   end
 
   around do |example|
@@ -29,6 +29,10 @@ describe Spree::Emails::TranslationInliner do
 
   it 'escapes the text, since the filter output was escaped' do
     expect(inline("{{ 'inliner_spec.markup' | t }}")).to eq('Tom &amp; Jerry &lt;shop&gt;')
+  end
+
+  it 'leaves text unescaped for a subject, which renders as a plain mail header' do
+    expect(inline("{{ 'inliner_spec.quoted' | t }} & more", escape: false)).to eq("Don't wait & more")
   end
 
   it 'keeps later filters on text without values' do

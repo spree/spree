@@ -23,4 +23,23 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplates::RevisionsController, type:
     expect(json_response['data'].map { |revision| revision['id'] }).to eq([newer.prefixed_id, older.prefixed_id])
     expect(json_response['data'].last['published_by_type']).to eq('admin_user')
   end
+
+  context 'as a staffer without the email templates permission' do
+    let(:staffer) do
+      create(:admin_user, :without_admin_role).tap do |user|
+        create(:role_user, user: user, role: create(:role, name: 'orders_only', permissions: %w[write_orders]))
+      end
+    end
+    let(:headers) do
+      { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+    end
+
+    it 'cannot read the history' do
+      create(:email_template_revision, email_template: template)
+
+      get :index, params: { email_template_id: id }, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
 end

@@ -301,13 +301,17 @@ function EmailTemplateEditor({
         confirmLabel: t('admin.email_templates.actions.revert'),
         variant: 'destructive',
       },
-      // The shared version has no draft anyone edits here, so there is no copy
-      // to check against; this language's draft is not the one it affects.
-      () =>
-        revert.mutateAsync({
-          language: versionLanguage,
-          lock_version: forEveryLanguage ? undefined : lockVersion,
-        }),
+      async () => {
+        if (!forEveryLanguage) return revert.mutateAsync({ language, lock_version: lockVersion })
+
+        // The shared version has no draft anyone edits here, so there is no
+        // copy to check; its answer is for every language, so this language's
+        // own state (and its draft) is read again instead.
+        await revert.mutateAsync({ language: versionLanguage })
+        const latest = await onFetchLatest()
+        if (!latest) throw new Error(t('admin.errors.failed_to_load'))
+        return latest
+      },
     )
 
   const handleRestore = async (revisionId: string) => {

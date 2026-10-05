@@ -52,6 +52,17 @@ RSpec.describe Spree::Api::V3::Admin::EmailTemplatesController, type: :controlle
       expect(json_response).to include('body' => 'For everyone', 'customized' => true, 'published_language' => 'any')
     end
 
+    it 'stops reporting a changed default once the draft keeps its own version against the new one' do
+      create(:email_template, store: store, key: editable_key, body: 'Published', base_body: 'An older default')
+      current = Spree::Emails::TemplateResolver.for_mailers.find_default(editable_key)
+      create(:email_template_draft, store: store, key: editable_key, body: 'Mine',
+                                    base_subject: current.subject, base_body: current.body)
+
+      get :show, params: { id: id }, as: :json
+
+      expect(json_response).to include('default_changed' => false, 'base_body' => nil)
+    end
+
     it 'reads the version for the language asked for' do
       create(:email_template, store: store, key: editable_key, locale: 'de', body: 'German')
 

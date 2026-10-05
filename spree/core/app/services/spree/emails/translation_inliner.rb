@@ -21,13 +21,16 @@ module Spree
 
       # @param source [String, nil] a template's subject or body
       # @param locale [String, Symbol] the language to write the text in
+      # @param escape [Boolean] whether the text is HTML: false for a subject,
+      #   which renders unescaped as a mail header
       # @return [String, nil]
-      def self.call(source, locale:)
-        new(locale).call(source)
+      def self.call(source, locale:, escape: true)
+        new(locale, escape).call(source)
       end
 
-      def initialize(locale)
+      def initialize(locale, escape = true)
         @locale = locale
+        @escape = escape
       end
 
       def call(source)
@@ -50,7 +53,7 @@ module Spree
 
           "{{ '#{text}' #{filters.strip} }}"
         else
-          interpolate(text, arguments) { |literal| ERB::Util.html_escape(literal) }
+          interpolate(text, arguments) { |literal| literal_text(literal) }
         end
       end
 
@@ -62,7 +65,7 @@ module Spree
         if arguments.blank? && text.exclude?("'") && text !~ INTERPOLATION
           "{% assign #{variable} = '#{text}' %}"
         else
-          body = interpolate(text, arguments) { |literal| ERB::Util.html_escape(literal) }
+          body = interpolate(text, arguments) { |literal| literal_text(literal) }
           body && "{% capture #{variable} %}#{body}{% endcapture %}"
         end
       end
@@ -77,6 +80,10 @@ module Spree
         text.split(INTERPOLATION).each_with_index.map do |part, index|
           index.odd? ? "{{ #{values[part]} }}" : yield(part)
         end.join
+      end
+
+      def literal_text(literal)
+        @escape ? ERB::Util.html_escape(literal) : literal
       end
 
       def parse_arguments(arguments)
