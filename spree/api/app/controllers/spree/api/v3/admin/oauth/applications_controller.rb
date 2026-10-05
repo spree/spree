@@ -16,12 +16,12 @@ module Spree
 
             def index
               # Only applications somebody actually authorized — a registered
-              # client nobody connected is not a connection. Tokens are
-              # preloaded because the serializer reads each application's
-              # scopes and last use from them.
+              # client nobody connected is not a connection. Tokens and their
+              # owners are preloaded because the serializer reads each
+              # application's scopes, last use and who approved it from them.
               scope = current_store.oauth_applications.
                       where(id: connected_application_ids).
-                      includes(:live_access_tokens).
+                      includes(live_access_tokens: :resource_owner).
                       order(:name)
 
               @pagy, applications = pagy(scope, limit: params[:limit] || 25)

@@ -24,6 +24,22 @@ defineTable<OauthApplication>('oauth-applications', {
       render: (application) => <ScopeList scopes={application.scopes} />,
     },
     {
+      key: 'authorized_by',
+      label: i18n.t('admin.pages.settings.connected_apps.table.authorized_by'),
+      default: true,
+      render: (application) =>
+        application.authorized_by ? (
+          <span className="flex flex-col">
+            <span>{application.authorized_by}</span>
+            <span className="text-muted-foreground text-xs">
+              <RelativeTime iso={application.authorized_at} />
+            </span>
+          </span>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
+    {
       key: 'last_used_at',
       label: i18n.t('admin.pages.settings.connected_apps.table.last_used'),
       default: true,
