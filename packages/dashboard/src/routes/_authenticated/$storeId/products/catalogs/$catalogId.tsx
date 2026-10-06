@@ -120,10 +120,10 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
-  // The mode as last saved, not as currently selected: switching away from
-  // hand-entered prices has to clear them, and the warning has to know a
-  // switch is what is about to happen.
-  const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
+  // The pricing as last saved, not as currently selected: switching away from
+  // hand-entered prices has to clear them, and an untouched ladder must not
+  // be resent.
+  const savedPricing = catalogPricingValues(catalog.price_list)
   // Owned here so the pricing card and the assortment rows open the same
   // spreadsheet — pricing an assortment is an action on those rows too.
   const [priceEditorOpen, setPriceEditorOpen] = useState(false)
@@ -225,7 +225,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       )
 
       await saveMutation.mutateAsync({
-        attributes: { ...catalogValuesToParams(values, savedPricingMode), ...extensionValues },
+        attributes: { ...catalogValuesToParams(values, savedPricing), ...extensionValues },
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
         quantityRules: stagedTermsToParams(terms),

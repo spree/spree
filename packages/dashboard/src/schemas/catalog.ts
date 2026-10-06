@@ -252,11 +252,16 @@ export const CATALOG_DEFAULTS: CatalogFormValues = {
  * an object stands the list up or updates it, and an explicit null detaches
  * — which is a deliberate act, since a released list starts matching by its
  * own rules again.
+ *
+ * @param values the form values being saved
+ * @param loaded the pricing as last loaded from the catalog's owned list
+ *   (`catalogPricingValues`), so a mode switch can be told from a plain save
+ *   and an untouched ladder is left alone. Absent on create.
+ * @return the catalog create/update payload
  */
 export function catalogValuesToParams(
   values: CatalogFormValues,
-  /** The mode the catalog was saved in, so a switch can be told from a plain save. */
-  previousMode?: CatalogPricingMode,
+  loaded?: CatalogPricingValues,
 ): CatalogParams {
   return {
     name: values.name,
@@ -282,11 +287,11 @@ export function catalogValuesToParams(
       currency: row.currency,
       amount: row.amount,
     })),
-    price_list: priceListPayload(values, previousMode),
+    price_list: priceListPayload(values, loaded),
   }
 }
 
-function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPricingMode) {
+function priceListPayload(values: CatalogFormValues, loaded?: CatalogPricingValues) {
   if (values.pricing_mode === 'base') return null
 
   if (values.pricing_mode === 'fixed') {
@@ -323,21 +328,42 @@ function priceListPayload(values: CatalogFormValues, previousMode?: CatalogPrici
   // A minimum quantity rides as the list's volume rule; dropping it from the
   // list of rules is what clears it, so removing the threshold is a real
   // edit rather than a silent no-op.
+  // The payload is the whole ladder, so a band the merchant deleted is a
+  // band absent from this array rather than one marked for removal.
+  const tiers = adjustmentTiersPayload(values.adjustment_tiers, values.adjustment_direction)
   const withRule = {
     ...base,
     rules: volumeRulePayload(values.minimum_quantity),
-    // The payload is the whole ladder, so a band the merchant deleted is a
-    // band absent from this array rather than one marked for removal.
-    price_adjustment_tiers: adjustmentTiersPayload(
-      values.adjustment_tiers,
-      values.adjustment_direction,
-    ),
+    // Left out when untouched: the form reads every band through one
+    // direction, so a ladder the API holds with mixed signs would come back
+    // with its markups turned into discounts on an unrelated save.
+    ...(ladderUnchanged(tiers, loaded) ? {} : { price_adjustment_tiers: tiers }),
   }
 
   // Switching away from hand-entered prices clears them. An explicit amount
   // beats the adjustment by design, so leaving the old rows behind would
   // keep charging them while the card claims a percentage is in effect.
-  return previousMode === 'fixed' ? { ...withRule, prices: [] } : withRule
+  return loaded?.pricing_mode === 'fixed' ? { ...withRule, prices: [] } : withRule
+}
+
+// Compared as payloads, so the direction is part of the comparison: flipping
+// it re-signs every band and is an edit, as is any band added, removed or
+// retyped.
+function ladderUnchanged(
+  tiers: ReturnType<typeof adjustmentTiersPayload>,
+  loaded: CatalogPricingValues | undefined,
+): boolean {
+  if (loaded?.pricing_mode !== 'automatic') return false
+
+  const loadedTiers = adjustmentTiersPayload(loaded.adjustment_tiers, loaded.adjustment_direction)
+  return (
+    tiers.length === loadedTiers.length &&
+    tiers.every(
+      (tier, index) =>
+        tier.min_quantity === loadedTiers[index].min_quantity &&
+        tier.percentage === loadedTiers[index].percentage,
+    )
+  )
 }
 
 /**
@@ -393,6 +419,16 @@ function volumeRulePayload(minimumQuantity: string | undefined) {
   return [{ type: 'volume_rule', preferences: { min_quantity: quantity } }]
 }
 
+/** The pricing fields of the catalog form, as read off its owned list. */
+export interface CatalogPricingValues {
+  pricing_mode: CatalogPricingMode
+  adjustment_direction: CatalogFormValues['adjustment_direction']
+  adjustment_magnitude: string
+  adjust_compare_at: boolean
+  minimum_quantity: string
+  adjustment_tiers: AdjustmentTierValue[]
+}
+
 /**
  * Splits a catalog's owned list back into the edited fields. No list means
  * the catalog prices at base.
@@ -408,14 +444,7 @@ export function catalogPricingValues(
       >
     | null
     | undefined,
-): {
-  pricing_mode: CatalogPricingMode
-  adjustment_direction: CatalogFormValues['adjustment_direction']
-  adjustment_magnitude: string
-  adjust_compare_at: boolean
-  minimum_quantity: string
-  adjustment_tiers: AdjustmentTierValue[]
-} {
+): CatalogPricingValues {
   if (!priceList) {
     return {
       pricing_mode: 'base',
