@@ -53,6 +53,16 @@ RSpec.describe 'Admin OAuth consent', type: :request do
       expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to contain_exactly('read_products')
     end
 
+    # Asking only for what this person cannot grant leaves nothing to grant.
+    # Minting a token then would tell the client it had connected while the
+    # merchant sees an application listed as connected that can do nothing.
+    it 'leaves nothing to grant, and the request is refused' do
+      expect { approve(staffer, scope: 'write_orders write_settings') }.
+        not_to change(Spree::OauthAccessGrant, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'is not offered on the consent screen either' do
       get '/api/v3/admin/oauth/authorize',
           params: authorize_params(scope: 'write_orders read_products'),

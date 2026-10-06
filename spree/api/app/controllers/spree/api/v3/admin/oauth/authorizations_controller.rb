@@ -22,9 +22,24 @@ module Spree
             # meaningfully name.
             skip_scope_check!
 
+            # Raised when Doorkeeper refuses the bounded pre-authorization.
+            # An exception rather than a render, because the refusal happens
+            # inside a helper the action reads a value from — returning there
+            # would hand the action a rendered body to call methods on.
+            class InvalidAuthorization < StandardError; end
+
+            rescue_from InvalidAuthorization do |error|
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
+                message: error.message,
+                status: :unprocessable_content
+              )
+            end
+
             before_action :require_signed_in_admin!
             before_action :require_client_of_this_store!
             before_action :load_pre_authorization
+            before_action :require_something_to_grant!, only: :create
 
             def show
               render json: {
@@ -153,6 +168,22 @@ module Spree
             # cut to what this person can actually hand over. Rebuilt rather
             # than mutated, because the scope is read in several places on
             # the way to the grant.
+            # A grant that carries nothing is not a grant. It happens when the
+            # merchant clears every box, or when the client asks only for
+            # permissions this person does not hold, and it would otherwise
+            # mint a token that authorizes nothing while the client reports a
+            # successful connection and the merchant sees the application
+            # listed as connected.
+            def require_something_to_grant!
+              return if grantable_scopes.any?
+
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
+                message: 'Select at least one permission to grant.',
+                status: :unprocessable_content
+              )
+            end
+
             def granted_code_request
               bounded = ::Doorkeeper::OAuth::PreAuthorization.new(
                 ::Doorkeeper.config,
@@ -163,13 +194,8 @@ module Spree
               # Validation is what resolves `client`, and the grant is written
               # from `pre_auth.client.id` — an unvalidated pre-authorization
               # carries a nil client and fails deep inside the gem.
-              unless bounded.authorizable?
-                return render_error(
-                  code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
-                  message: bounded.error_response.body[:error_description].to_s,
-                  status: :unprocessable_content
-                )
-              end
+              raise InvalidAuthorization, bounded.error_response.body[:error_description].to_s unless
+                bounded.authorizable?
 
               ::Doorkeeper::OAuth::CodeRequest.new(bounded, current_actor)
             end

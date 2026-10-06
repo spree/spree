@@ -184,7 +184,10 @@ function OauthAuthorizePage() {
                 ) : null}
 
                 <div className="flex gap-3">
-                  <Button disabled={pending} onClick={() => decide(approve)}>
+                  <Button
+                    disabled={pending || selected.length === 0}
+                    onClick={() => decide(approve)}
+                  >
                     {t('admin.pages.oauth.authorize.approve')}
                   </Button>
                   <Button variant="outline" disabled={pending} onClick={() => decide(deny)}>
