@@ -1058,7 +1058,7 @@
           "title": "Autorizar aplicación",
           "subtitle": "Revise lo que pide esta aplicación antes de permitirla.",
           "intro": "{{client}} quiere acceder a esta tienda en su nombre. Solo podrá hacer lo que usted permita a continuación, y nunca más de lo que permitan sus propios permisos.",
-          "permissions_heading": "Esto le permitirá",
+          "permissions_heading": "Permisos",
           "revoke_hint": "Puede revocarlo en cualquier momento en Configuración → Aplicaciones conectadas.",
           "approve": "Permitir acceso",
           "deny": "Cancelar",

@@ -4201,7 +4201,7 @@
           "title": "Autoryzuj aplikację",
           "subtitle": "Sprawdź, o co prosi ta aplikacja, przed udzieleniem zgody.",
           "intro": "{{client}} chce uzyskać dostęp do tego sklepu w Twoim imieniu. Będzie mogła robić tylko to, na co zezwolisz poniżej, i nigdy więcej, niż pozwalają Twoje własne uprawnienia.",
-          "permissions_heading": "Pozwoli jej to",
+          "permissions_heading": "Uprawnienia",
           "revoke_hint": "Możesz odebrać dostęp w dowolnym momencie w Ustawienia → Połączone aplikacje.",
           "approve": "Zezwól na dostęp",
           "deny": "Anuluj",

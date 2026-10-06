@@ -4147,7 +4147,7 @@
           "title": "Autoriser l’application",
           "subtitle": "Vérifiez ce que cette application demande avant de l’autoriser.",
           "intro": "{{client}} souhaite accéder à cette boutique en votre nom. Elle ne pourra faire que ce que vous autorisez ci-dessous, et jamais plus que vos propres autorisations ne le permettent.",
-          "permissions_heading": "Cela lui permettra de",
+          "permissions_heading": "Autorisations",
           "revoke_hint": "Vous pouvez révoquer cet accès à tout moment dans Paramètres → Applications connectées.",
           "approve": "Autoriser l’accès",
           "deny": "Annuler",

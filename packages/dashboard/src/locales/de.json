@@ -4147,7 +4147,7 @@
           "title": "Anwendung autorisieren",
           "subtitle": "Prüfen Sie, was diese Anwendung anfordert, bevor Sie sie zulassen.",
           "intro": "{{client}} möchte in Ihrem Namen auf diesen Shop zugreifen. Die Anwendung kann nur das tun, was Sie unten zulassen, und niemals mehr als Ihre eigenen Berechtigungen erlauben.",
-          "permissions_heading": "Damit darf die Anwendung",
+          "permissions_heading": "Berechtigungen",
           "revoke_hint": "Sie können dies jederzeit unter Einstellungen → Verbundene Apps widerrufen.",
           "approve": "Zugriff erlauben",
           "deny": "Abbrechen",

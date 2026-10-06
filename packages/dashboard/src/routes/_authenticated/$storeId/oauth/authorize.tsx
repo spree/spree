@@ -5,15 +5,18 @@ import {
   Button,
   Card,
   CardContent,
-  Checkbox,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  ScrollArea,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { ShieldIcon } from '@spree/dashboard-ui/icons'
 import { createFileRoute } from '@tanstack/react-router'
-import { useId, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
-import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
+import { PermissionGrid, permissionKeyLabel } from '../../../../components/spree/permission-picker'
 import {
   useApproveOauthAuthorization,
   useDenyOauthAuthorization,
@@ -50,19 +53,28 @@ function OauthAuthorizePage() {
   // hand over — pre-ticked, because the client asked for them and declining
   // one should be a deliberate act rather than the default.
   const [granted, setGranted] = useState<string[] | null>(null)
-  const scopeFieldId = useId()
 
   const grantable = data?.grantable_scopes ?? []
   const withheld = (data?.scopes ?? []).filter((key) => !grantable.includes(key))
   const selected = granted ?? grantable
 
-  const toggle = (key: string) =>
-    setSelected(selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key])
-
   function setSelected(next: string[]) {
     setGranted(next)
   }
   const { data: catalog } = usePermissionCatalog()
+
+  // Only the resources this request touches. The grid builds its rows from
+  // whatever catalog entries it is handed, so narrowing the entries narrows
+  // the screen — the merchant sees what was asked for, not the whole catalog.
+  const requestedEntries = useMemo(() => {
+    const requested = new Set(data?.scopes ?? [])
+    return (catalog?.data ?? []).filter((entry) => requested.has(entry.key))
+  }, [catalog?.data, data?.scopes])
+
+  // Asked for but not this person's to give. Rendered disabled rather than
+  // hidden, so the merchant can see the client wanted it and that they could
+  // not hand it over.
+  const withheldKeys = useMemo(() => new Set(withheld), [withheld])
   const approve = useApproveOauthAuthorization()
   const deny = useDenyOauthAuthorization()
 
@@ -115,7 +127,15 @@ function OauthAuthorizePage() {
 
       {error ? null : (
         <Card>
-          <CardContent className="flex flex-col gap-6 pt-6">
+          {isLoading || !data ? null : (
+            <CardHeader>
+              <CardTitle>{t('admin.pages.oauth.authorize.permissions_heading')}</CardTitle>
+              <CardDescription>
+                {t('admin.pages.oauth.authorize.intro', { client: data.client_name })}
+              </CardDescription>
+            </CardHeader>
+          )}
+          <CardContent className="flex flex-col gap-4">
             {isLoading || !data ? (
               <div className="flex flex-col gap-3">
                 <Skeleton className="h-5 w-48" />
@@ -124,39 +144,25 @@ function OauthAuthorizePage() {
               </div>
             ) : (
               <>
-                <div className="flex items-start gap-3">
-                  <ShieldIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-                  <p className="text-sm">
-                    {t('admin.pages.oauth.authorize.intro', { client: data.client_name })}
-                  </p>
-                </div>
-
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-medium text-sm">
-                    {t('admin.pages.oauth.authorize.permissions_heading')}
-                  </h2>
-                  {/* Each one is a choice, not a notice: a merchant can hand
-                      over less than the client asked for, and the grant is
-                      whatever they leave ticked. Labelled client-side so the
-                      one screen that says what is being granted follows the
-                      merchant's own language, not the server's. */}
-                  <ul className="flex flex-col gap-2">
-                    {grantable.map((key) => (
-                      <li key={key}>
-                        <label
-                          htmlFor={`${scopeFieldId}-${key}`}
-                          className="flex cursor-pointer items-start gap-2 text-sm"
-                        >
-                          <Checkbox
-                            id={`${scopeFieldId}-${key}`}
-                            checked={selected.includes(key)}
-                            onCheckedChange={() => toggle(key)}
-                          />
-                          <span>{permissionKeyLabel(t, catalog?.data, key)}</span>
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* The same grid the role editor and API-key picker use, so
+                      a merchant reads one layout everywhere permissions are
+                      granted. Narrowed to what the client asked for: showing
+                      the whole catalog would invite ticking a permission the
+                      client never requested, which the server would then cut
+                      from the grant anyway.
+
+                      Capped in height so the decision buttons stay in view
+                      however much was asked for. */}
+                  <ScrollArea className="-mx-6 max-h-96 border-border border-y px-6 [&_[data-slot=scroll-area-scrollbar]]:opacity-100">
+                    <PermissionGrid
+                      entries={requestedEntries}
+                      value={selected}
+                      onChange={setSelected}
+                      disabledKeys={withheldKeys}
+                      bare
+                    />
+                  </ScrollArea>
                   {/* Asked for but not this person's to give — saying so is
                       better than silently dropping it, because the agent will
                       behave as though it has them. */}
@@ -171,7 +177,7 @@ function OauthAuthorizePage() {
                   ) : null}
                 </div>
 
-                <Alert>
+                <Alert variant="info">
                   <AlertDescription>
                     {t('admin.pages.oauth.authorize.revoke_hint')}
                   </AlertDescription>
@@ -182,21 +188,19 @@ function OauthAuthorizePage() {
                     <AlertDescription>{decisionError}</AlertDescription>
                   </Alert>
                 ) : null}
-
-                <div className="flex gap-3">
-                  <Button
-                    disabled={pending || selected.length === 0}
-                    onClick={() => decide(approve)}
-                  >
-                    {t('admin.pages.oauth.authorize.approve')}
-                  </Button>
-                  <Button variant="outline" disabled={pending} onClick={() => decide(deny)}>
-                    {t('admin.pages.oauth.authorize.deny')}
-                  </Button>
-                </div>
               </>
             )}
           </CardContent>
+          {isLoading || !data ? null : (
+            <CardFooter className="gap-3">
+              <Button disabled={pending || selected.length === 0} onClick={() => decide(approve)}>
+                {t('admin.pages.oauth.authorize.approve')}
+              </Button>
+              <Button variant="outline" disabled={pending} onClick={() => decide(deny)}>
+                {t('admin.pages.oauth.authorize.deny')}
+              </Button>
+            </CardFooter>
+          )}
         </Card>
       )}
     </div>

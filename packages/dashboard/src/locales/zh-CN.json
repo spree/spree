@@ -4137,7 +4137,7 @@
           "title": "授权应用",
           "subtitle": "在允许之前，请查看此应用请求的权限。",
           "intro": "{{client}} 希望代表您访问此店铺。它只能执行您在下方允许的操作，且绝不会超出您自己的权限范围。",
-          "permissions_heading": "这将允许它",
+          "permissions_heading": "权限",
           "revoke_hint": "您可以随时在“设置 → 已连接的应用”中撤销。",
           "approve": "允许访问",
           "deny": "取消",

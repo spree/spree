@@ -4147,7 +4147,7 @@
           "title": "Authorize application",
           "subtitle": "Review what this application is asking for before you allow it.",
           "intro": "{{client}} wants access to this store on your behalf. It will be able to do only what you allow below, and never more than your own permissions allow.",
-          "permissions_heading": "This will allow it to",
+          "permissions_heading": "Permissions",
           "revoke_hint": "You can revoke this at any time under Settings → Connected apps.",
           "approve": "Allow access",
           "deny": "Cancel",
