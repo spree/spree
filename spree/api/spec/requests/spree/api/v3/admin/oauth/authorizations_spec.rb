@@ -74,6 +74,27 @@ RSpec.describe 'Admin OAuth consent', type: :request do
     end
   end
 
+  # A grant that enumerates every key is frozen at the moment it was given.
+  # Ship a feature with new permissions and an agent the merchant gave full
+  # access silently cannot use the new tools, with nothing to say why.
+  describe 'a grant of everything the approver holds' do
+    it 'is recorded as the alias, not as the keys it stands for today' do
+      admin = create(:admin_user)
+
+      approve(admin, scope: 'write_all')
+
+      expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to eq(['write_all'])
+    end
+
+    it 'still cannot exceed what the approver holds' do
+      approve(staffer, scope: 'write_all')
+
+      # The staffer holds read_products alone, so "everything" is that one
+      # key — an alias must never widen a grant beyond its grantor.
+      expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to contain_exactly('read_products')
+    end
+  end
+
   # The merchant may hand over less than was asked for; that choice has to
   # survive, or the checkboxes are decoration.
   it 'honours a narrower selection than the client requested' do
