@@ -3645,7 +3645,11 @@
           "unschedule_confirm": {
             "message": "\"{{name}}\" will no longer activate on its scheduled date. You can re-schedule or activate it manually later.",
             "title": "Unschedule price list?"
-          }
+          },
+          "quantity_discount_section": "Quantity discount",
+          "quantity_discount_help": "Takes a percentage off the base price once an order line reaches a quantity, for every product wherever this list's rules match. Prices entered for a product on this list still win.",
+          "quantity_discount_empty": "No tiers — this list charges only the prices entered for its products.",
+          "quantity_discount_tiers_help": "From each quantity up, this percentage is applied to the base price, never to the tier below it."
         },
         "publishing": {
           "caption_hidden_after": "Comes down {{date}}",

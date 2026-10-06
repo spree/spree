@@ -3635,7 +3635,11 @@
           "unschedule_confirm": {
             "message": "\"{{name}}\" 将不再在其排定的日期激活。您可以稍后重新排期或手动激活它。",
             "title": "取消价格表的排期？"
-          }
+          },
+          "quantity_discount_section": "数量折扣",
+          "quantity_discount_help": "当订单行达到某个数量时，按百分比调整基础价格，适用于此列表规则匹配范围内的所有商品。在此列表中为商品单独填写的价格仍然优先。",
+          "quantity_discount_empty": "没有阶梯 — 此列表仅收取为其商品填写的价格。",
+          "quantity_discount_tiers_help": "达到每个数量门槛后，此百分比均以基础价格为基准计算，而不是在较低数量阶梯的调整后价格上继续计算。"
         },
         "publishing": {
           "caption_hidden_after": "将于 {{date}} 下架",

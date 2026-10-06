@@ -971,7 +971,11 @@
             "from": "Desde cantidad",
             "quantity": "Desde la cantidad",
             "remove_short": "Quitar este corte de cantidad"
-          }
+          },
+          "quantity_discount_section": "Descuento por cantidad",
+          "quantity_discount_help": "Ajusta el precio base en un porcentaje cuando una línea del pedido alcanza una cantidad, para todos los productos siempre que coincidan las reglas de esta lista. Los precios introducidos para un producto de esta lista siguen teniendo prioridad.",
+          "quantity_discount_empty": "Sin tramos: esta lista solo cobra los precios introducidos para sus productos.",
+          "quantity_discount_tiers_help": "A partir de cada cantidad, este porcentaje se aplica al precio base, nunca al tramo anterior."
         },
         "publishing": {
           "caption_hidden_after": "Se retira el {{date}}",

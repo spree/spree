@@ -1,3 +1,12 @@
+## 2026-10-05: Standalone price lists accept quantity bands, but not a flat percentage
+
+**Context:** A market-wide "10% off from ten units" could only be written as one quantity break per variant on a standalone list, and those rows go stale whenever base prices change. Bands (`price_adjustment_tiers`) derive from base prices instead, but the 2026-08-31 rule refused them on standalone lists along with the flat `price_adjustment_percentage`, because a percentage has no product scope of its own. The server already returned bands on every list; only the write was blocked.
+
+**Decision:** A standalone list may carry bands. The flat percentage stays catalog-only. A band applies only once an order line reaches its quantity, so it cannot put the whole store on sale by accident the way a rule-less flat percentage did; a store-wide volume discount is exactly what the merchant is asking for. The list's own rules (market, channel, schedule) still decide where it applies, and an explicit price row on the list still wins over the band. Detaching a catalog deletes its list rather than releasing it, so a catalog's bands never become store-wide. The dashboard's standalone price list page gains a Quantity discount card with one direction and the tier editor the catalog page already used.
+
+**Consequences:** A standalone list with bands derives a price for every variant that reaches a band wherever its rules match, not only for the products added to the list. The products card still controls which variants have explicit prices. Bands are measured against the base price, never against another list's price.
+
+**Plans amended:** `6.0-price-list-automatic-pricing.md` (the catalog-owned-only bullet now covers the flat percentage only), `6.0-volume-pricing.md` (banded adjustment lives on both pages).
 ## 2026-10-04: Creating a payment session always opens a new one
 
 **Context:** Handing back the cart's open Stripe session and re-pricing it (2026-09-30) drifts from the intent Stripe actually holds. The amount, the saved card, the customer and the ephemeral key are each updated on their own, and a failure partway through leaves Spree and Stripe describing different sessions. The storefront asks for a session every time the payment step loads, so that drift is the common path.

@@ -3645,7 +3645,11 @@
           "unschedule_confirm": {
             "message": "« {{name}} » ne s'activera plus à sa date planifiée. Vous pourrez la replanifier ou l'activer manuellement plus tard.",
             "title": "Déplanifier la liste de prix ?"
-          }
+          },
+          "quantity_discount_section": "Remise sur quantité",
+          "quantity_discount_help": "Ajuste le prix de base d'un pourcentage dès qu'une ligne de commande atteint une quantité, pour chaque produit partout où les règles de cette liste s'appliquent. Les prix saisis pour un produit de cette liste restent prioritaires.",
+          "quantity_discount_empty": "Aucun palier — cette liste applique uniquement les prix saisis pour ses produits.",
+          "quantity_discount_tiers_help": "À partir de chaque quantité, ce pourcentage s'applique au prix de base, jamais au palier inférieur."
         },
         "publishing": {
           "caption_hidden_after": "Retiré le {{date}}",

@@ -3645,7 +3645,11 @@
           "unschedule_confirm": {
             "message": "\"{{name}}\" wird am geplanten Datum nicht mehr aktiviert. Sie können sie später erneut planen oder manuell aktivieren.",
             "title": "Planung der Preisliste aufheben?"
-          }
+          },
+          "quantity_discount_section": "Mengenrabatt",
+          "quantity_discount_help": "Ändert den Grundpreis um einen Prozentsatz, sobald eine Bestellposition eine Menge erreicht – für jedes Produkt, überall dort, wo die Regeln dieser Liste zutreffen. Für ein Produkt in dieser Liste eingegebene Preise haben weiterhin Vorrang.",
+          "quantity_discount_empty": "Keine Staffeln – diese Liste berechnet nur die für ihre Produkte eingegebenen Preise.",
+          "quantity_discount_tiers_help": "Ab jeder Menge wird dieser Prozentsatz auf den Grundpreis angewendet, nie auf die Staffel darunter."
         },
         "publishing": {
           "caption_hidden_after": "Wird am {{date}} ausgeblendet",

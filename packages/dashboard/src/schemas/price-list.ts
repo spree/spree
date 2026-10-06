@@ -1,5 +1,6 @@
 import type {
   PreferenceField,
+  PriceList,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceRule,
@@ -36,6 +37,27 @@ export const ADJUSTMENT_DIRECTIONS = ['decrease', 'increase'] as const
  */
 export const MAXIMUM_QUANTITY_TIERS = 10
 export type AdjustmentDirection = (typeof ADJUSTMENT_DIRECTIONS)[number]
+
+/**
+ * One quantity band as the form edits it: strings, so an unusable entry can
+ * be reported rather than silently coerced. Declared rather than inferred —
+ * the validators below take it as a parameter, and inferring it from the
+ * schemas they belong to would make those schemas' types circular
+ * (docs/plans/6.0-volume-pricing.md).
+ */
+export interface AdjustmentTierValue {
+  min_quantity: string
+  percentage: string
+}
+
+/**
+ * Quantity bands on a list's percentage: "10% from ten, 20% from fifty" as
+ * one ladder. Shared by the catalog's pricing card and the standalone price
+ * list page.
+ */
+export const adjustmentTierSchema = z
+  .array(z.object({ min_quantity: z.string().trim(), percentage: z.string().trim() }))
+  .default([])
 
 /**
  * Form-state row for a price rule. Carries `preference_schema` for the
@@ -108,6 +130,15 @@ export const priceListFormSchema = z
     match_policy: z.enum(MATCH_POLICIES).default('all'),
     rules: z.array(priceRuleDraftSchema).default([]),
     /**
+     * Quantity discounts derived from base prices: one direction for the
+     * whole ladder, and the bands as magnitudes. A standalone list carries no
+     * percentage of its own, only bands — a band applies from a quantity up,
+     * so it cannot put the whole store on sale by accident
+     * (docs/plans/6.0-volume-pricing.md).
+     */
+    adjustment_direction: z.enum(ADJUSTMENT_DIRECTIONS).default('decrease'),
+    adjustment_tiers: adjustmentTierSchema,
+    /**
      * Staged product membership, applied on Save through the nested products
      * endpoints. Opaque by design — it holds SDK `Product` records so a staged
      * addition can render before it exists server-side, and RHF's `Path<T>`
@@ -126,12 +157,22 @@ export const priceListFormSchema = z
       error: () => i18n.t('admin.products.price_lists.validation.ends_after_starts'),
     },
   )
+  .refine((v) => adjustmentTiersAreWellFormed(v.adjustment_tiers), {
+    path: ['adjustment_tiers'],
+    error: () => i18n.t('admin.products.price_lists.validation.tier_quantity_invalid'),
+  })
+  .refine(
+    (v) => v.adjustment_tiers.every((tier) => tierPercentageIsUsable(tier, v.adjustment_direction)),
+    {
+      path: ['adjustment_tiers'],
+      error: () => i18n.t('admin.products.price_lists.validation.tier_percentage_invalid'),
+    },
+  )
 
 /**
- * A positive percentage, or null when absent or unparseable. Lives here
- * with the other percentage helpers, though only the catalog form uses them
- * now: a percentage adjustment is valid only on a list a catalog owns, so
- * the standalone editor no longer offers it.
+ * A positive percentage, or null when absent or unparseable. The flat
+ * percentage is valid only on a list a catalog owns, so the standalone editor
+ * offers only its quantity bands.
  */
 export function parsePercentage(value: string | undefined): number | null {
   if (!value?.trim()) return null
@@ -161,12 +202,29 @@ export const PRICE_LIST_DEFAULTS: PriceListFormValues = {
   ends_at: null,
   match_policy: 'all',
   rules: [],
+  adjustment_direction: 'decrease',
+  adjustment_tiers: [],
   staged_products: { adds: [], removes: [] },
 }
 
 export function priceListValuesToParams(
   v: PriceListFormValues,
+  /**
+   * The ladder as it was loaded. When the merchant left it untouched it is
+   * not sent: the form edits one direction for the whole ladder, so
+   * re-sending a stored ladder that mixes discounts and markups would flip
+   * the minority rows on a save that never concerned them.
+   */
+  loaded?: Pick<PriceListFormValues, 'adjustment_tiers' | 'adjustment_direction'>,
 ): PriceListCreateParams & PriceListUpdateParams {
+  // The payload is the whole ladder, so a band the merchant deleted is a
+  // band absent from this array rather than one marked for removal.
+  const tiers = adjustmentTiersPayload(v.adjustment_tiers, v.adjustment_direction)
+  const tiersUnchanged =
+    loaded !== undefined &&
+    JSON.stringify(tiers) ===
+      JSON.stringify(adjustmentTiersPayload(loaded.adjustment_tiers, loaded.adjustment_direction))
+
   return {
     name: v.name,
     description: blankToNull(v.description),
@@ -174,6 +232,72 @@ export function priceListValuesToParams(
     ends_at: v.ends_at || null,
     match_policy: v.match_policy,
     rules: v.rules.map(ruleDraftToPayload),
+    ...(tiersUnchanged ? {} : { price_adjustment_tiers: tiers }),
+  }
+}
+
+/**
+ * Bands as the API takes them: signed percentages, matching the one
+ * direction chosen for the list. A band a merchant enters as "20" under
+ * "decrease" is -20 — one control for direction, so a ladder cannot
+ * half-discount and half-mark-up.
+ */
+export function adjustmentTiersPayload(
+  tiers: AdjustmentTierValue[],
+  direction: AdjustmentDirection,
+) {
+  return tiers.flatMap((tier) => {
+    const quantity = parseMinimumQuantity(tier.min_quantity)
+    const magnitude = parsePercentage(tier.percentage)
+    if (quantity === null || quantity < 2 || magnitude === null) return []
+
+    return [
+      {
+        min_quantity: quantity,
+        percentage: String(direction === 'decrease' ? -magnitude : magnitude),
+      },
+    ]
+  })
+}
+
+/** Every band above one unit, and no quantity used twice. */
+export function adjustmentTiersAreWellFormed(tiers: AdjustmentTierValue[]): boolean {
+  const quantities = tiers.map((tier) => parseMinimumQuantity(tier.min_quantity))
+  if (quantities.some((quantity) => quantity === null || quantity < 2)) return false
+
+  return new Set(quantities).size === quantities.length
+}
+
+/**
+ * A discount past 100% would price below zero; a markup has no ceiling short
+ * of what the column holds. The same bound the list's own figure carries.
+ */
+export function tierPercentageIsUsable(
+  tier: AdjustmentTierValue,
+  direction: AdjustmentDirection,
+): boolean {
+  const magnitude = parsePercentage(tier.percentage)
+  if (magnitude === null) return false
+
+  return direction === 'increase' || magnitude < 100
+}
+
+/**
+ * Splits stored signed bands back into the edited direction and magnitudes.
+ * The shallowest band decides the ladder's direction: the form offers one
+ * increase/decrease control, and the magnitudes are read through it.
+ */
+export function adjustmentTiersFormValues(bands: PriceList['price_adjustment_tiers']): {
+  adjustment_direction: AdjustmentDirection
+  adjustment_tiers: AdjustmentTierValue[]
+} {
+  const rows = bands ?? []
+  return {
+    adjustment_direction: Number(rows[0]?.percentage) > 0 ? 'increase' : 'decrease',
+    adjustment_tiers: rows.map((tier) => ({
+      min_quantity: String(tier.min_quantity),
+      percentage: String(Math.abs(Number(tier.percentage))),
+    })),
   }
 }
 
