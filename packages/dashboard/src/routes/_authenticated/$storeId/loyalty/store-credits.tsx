@@ -96,8 +96,8 @@ function StoreCreditsPage() {
   useRowClickBridge('data-store-credit-id', openCredit)
 
   async function handleDelete(credit: StoreCredit) {
-    if (credit.id === search.credit) closeSheet()
-    await deleteCredit(credit)
+    const deleted = await deleteCredit(credit)
+    if (deleted && credit.id === search.credit) closeSheet()
   }
 
   return (
@@ -205,17 +205,19 @@ function useStoreCreditActions() {
     Number(credit.amount_used) === 0 &&
     permissions.can('destroy', Subject.StoreCredit)
 
+  /** Resolves to whether the credit was deleted, so a cancel keeps the panel open. */
   async function deleteCredit(credit: StoreCredit) {
-    if (!credit.customer_id) return
+    if (!credit.customer_id) return false
     const ok = await confirm({
       message: t('admin.customers.detail.store_credit.delete_confirm_message'),
       variant: 'destructive',
       confirmLabel: t('admin.actions.delete'),
     })
-    if (!ok) return
-    await deleteMutation
-      .mutateAsync({ customerId: credit.customer_id, id: credit.id })
-      .catch(() => undefined)
+    if (!ok) return false
+    return deleteMutation.mutateAsync({ customerId: credit.customer_id, id: credit.id }).then(
+      () => true,
+      () => false,
+    )
   }
 
   return { canEdit, canDelete, deleteCredit, deletePending: deleteMutation.isPending }
