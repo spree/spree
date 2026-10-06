@@ -48,6 +48,20 @@ RSpec.describe Spree::AgentTools::ResourceMap do
   # resource that used to be a hand-written slice of another (draft orders
   # among orders) is now reached by filtering the model's own entry. The
   # `scope_name` mechanism stays for a registration that needs it.
+  # A delivery carries the whole event body — the customer's email, name and
+  # address — and its serializer only redacts that when the caller passes a
+  # permission gate. Withholding the endpoint while exposing its deliveries
+  # would hand a `read_webhooks` grant the customer data that scope exists to
+  # stay clear of.
+  describe 'resources that carry another scope\'s data' do
+    it 'withholds webhook deliveries along with their endpoint' do
+      keys = described_class.all.map(&:key)
+
+      expect(keys).not_to include('webhook_deliveries')
+      expect(keys).not_to include('webhook_endpoints')
+    end
+  end
+
   describe 'a resource narrowed by a scope' do
     it 'narrows through its scope when one is registered' do
       described_class.register(key: 'draft_orders', model_name: 'Spree::Order', scope_name: :drafts,
