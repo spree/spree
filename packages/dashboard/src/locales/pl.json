@@ -4154,17 +4154,27 @@
           "revoke_confirm": {
             "title": "Odebrać dostęp?",
             "message": "{{name}} przestanie działać natychmiast. Każdy, kto z niej korzysta, będzie musiał połączyć się ponownie."
-          },
+          }
+        },
+        "oauth_clients": {
+          "title": "Klienci OAuth",
+          "subtitle": "Klienci OAuth zarejestrowani w tym sklepie. Połączenie nawiązuje się w Połączonych agentach.",
+          "empty": "Nie zarejestrowano jeszcze żadnego klienta.",
           "register": "Zarejestruj klienta",
+          "table": {
+            "client_id": "Identyfikator klienta",
+            "created": "Zarejestrowano"
+          },
+          "delete_confirm": {
+            "title": "Usunąć tego klienta?",
+            "message": "{{name}} przestanie działać natychmiast, a jego rejestracja zostanie usunięta."
+          },
           "form": {
             "create_title": "Zarejestruj klienta",
             "edit_title": "Edytuj klienta",
             "description": "Zarejestruj klienta OAuth, aby można go było połączyć z tym sklepem."
           },
-          "delete_confirm": {
-            "title": "Usunąć tego klienta?",
-            "message": "{{name}} przestanie działać natychmiast, a jego rejestracja zostanie usunięta."
-          }
+          "copy_client_id": "Kopiuj identyfikator klienta"
         }
       },
       "staff": {
@@ -5232,7 +5242,8 @@
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
         "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
-        "connected_apps": "Agenty AI z dostępem do tego sklepu"
+        "connected_apps": "Agenty AI z dostępem do tego sklepu",
+        "oauth_clients": "Rejestrowanie i konfiguracja klientów OAuth"
       },
       "groups": {
         "audit": "Audyt",
@@ -5271,7 +5282,8 @@
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
         "marketplace": "Ustawienia",
-        "connected_apps": "Połączone agenty"
+        "connected_apps": "Połączone agenty",
+        "oauth_clients": "Klienci OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

@@ -4100,17 +4100,27 @@
           "revoke_confirm": {
             "title": "Révoquer l’accès ?",
             "message": "{{name}} cessera de fonctionner immédiatement. Toute personne qui l’utilise devra se connecter à nouveau."
-          },
+          }
+        },
+        "oauth_clients": {
+          "title": "Clients OAuth",
+          "subtitle": "Les clients OAuth enregistrés pour cette boutique. La connexion se fait depuis Agents connectés.",
+          "empty": "Aucun client enregistré.",
           "register": "Enregistrer un client",
+          "table": {
+            "client_id": "Identifiant client",
+            "created": "Enregistré"
+          },
+          "delete_confirm": {
+            "title": "Supprimer ce client ?",
+            "message": "{{name}} cessera de fonctionner immédiatement et son enregistrement sera supprimé."
+          },
           "form": {
             "create_title": "Enregistrer un client",
             "edit_title": "Modifier le client",
             "description": "Enregistrez un client OAuth pour pouvoir le connecter à cette boutique."
           },
-          "delete_confirm": {
-            "title": "Supprimer ce client ?",
-            "message": "{{name}} cessera de fonctionner immédiatement et son enregistrement sera supprimé."
-          }
+          "copy_client_id": "Copier l'identifiant client"
         }
       },
       "staff": {
@@ -5168,7 +5178,8 @@
         "package_types": "Cartons, palettes et conteneurs",
         "suppliers": "À qui vous achetez votre stock, et comment les joindre",
         "marketplace": "Paiements, validation des vendeurs, e-mails vendeurs et taxe sur la commission",
-        "connected_apps": "Agents IA ayant accès à cette boutique"
+        "connected_apps": "Agents IA ayant accès à cette boutique",
+        "oauth_clients": "Enregistrer et configurer des clients OAuth"
       },
       "groups": {
         "audit": "Audit",
@@ -5207,7 +5218,8 @@
         "package_types": "Types d'emballage",
         "suppliers": "Fournisseurs",
         "marketplace": "Paramètres",
-        "connected_apps": "Agents connectés"
+        "connected_apps": "Agents connectés",
+        "oauth_clients": "Clients OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

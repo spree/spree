@@ -356,6 +356,17 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.oauth_clients',
+  labelKey: 'admin.settings_nav.items.oauth_clients',
+  descriptionKey: 'admin.settings_nav.descriptions.oauth_clients',
+  path: '/oauth-clients',
+  icon: KeyRoundIcon,
+  group: 'developer',
+  position: 151,
+  subject: Subject.OauthApplication,
+})
+
+settingsNav.add({
   key: 'settings.webhooks',
   labelKey: 'admin.settings_nav.items.webhooks',
   descriptionKey: 'admin.settings_nav.descriptions.webhooks',

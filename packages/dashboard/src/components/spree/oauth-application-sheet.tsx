@@ -77,11 +77,11 @@ export function OauthApplicationSheet({
         <SheetHeader>
           <SheetTitle>
             {application
-              ? t('admin.pages.settings.connected_apps.form.edit_title')
-              : t('admin.pages.settings.connected_apps.form.create_title')}
+              ? t('admin.pages.settings.oauth_clients.form.edit_title')
+              : t('admin.pages.settings.oauth_clients.form.create_title')}
           </SheetTitle>
           <SheetDescription>
-            {t('admin.pages.settings.connected_apps.form.description')}
+            {t('admin.pages.settings.oauth_clients.form.description')}
           </SheetDescription>
         </SheetHeader>
 
