@@ -31,7 +31,7 @@ module Spree
         # @param context [Spree::AgentTools::Context] who is asking, and where
         # @return [MCP::Server]
         def for(context)
-          ::MCP::Server.new(
+          server = ::MCP::Server.new(
             name: 'spree-admin',
             title: "#{context.store.name} (Spree admin)",
             version: Spree.version,
@@ -39,6 +39,35 @@ module Spree
             tools: tools_for(context),
             server_context: { store_id: context.store.id }
           )
+
+          register_exports(server, context)
+          server
+        end
+
+        # Finished exports, as resources the client may fetch.
+        #
+        # A tool result has to fit the model's context; an export does not, so
+        # `create_export` hands back an id rather than a file. Resources are
+        # the protocol's answer: the client sees what exists and fetches a
+        # body only when it decides to.
+        #
+        # Handlers rather than a fixed list, because what exists depends on
+        # the store and on what this grant may read — both known only per
+        # request. The closure carries the caller, so a resource one
+        # credential can see is never offered to another.
+        def register_exports(server, context)
+          server.resources_list_handler { Exports.list(context) }
+
+          server.resources_read_handler do |params|
+            uri = params[:uri] || params['uri']
+            contents = Exports.read(context, uri)
+            # An export another store owns, or one this grant may not read, is
+            # indistinguishable from one that does not exist — the same answer
+            # the tools give, so a probe learns nothing either way.
+            raise ::MCP::Server::ResourceNotFoundError.new(uri, params) if contents.nil?
+
+            contents
+          end
         end
 
         # The tools this caller may use, as MCP definitions.
