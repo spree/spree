@@ -4131,12 +4131,12 @@
           "commission_tax_title": "Podatek od prowizji"
         },
         "connected_apps": {
-          "title": "Połączone aplikacje",
-          "subtitle": "Agenci i aplikacje, którym członek zespołu dał dostęp do tego sklepu. Odebranie dostępu działa natychmiast.",
-          "empty": "Nie połączono jeszcze żadnej aplikacji.",
+          "title": "Połączone agenty",
+          "subtitle": "Agenty AI, którym członek zespołu dał dostęp do tego sklepu. Cofnięcie dostępu działa natychmiast.",
+          "empty": "Nie połączono jeszcze żadnego agenta.",
           "revoke": "Odbierz dostęp",
           "table": {
-            "name": "Aplikacja",
+            "name": "Agent",
             "access": "Dostęp",
             "authorized_by": "Zatwierdzone przez",
             "last_authorized": "Ostatnia autoryzacja"
@@ -5210,7 +5210,7 @@
         "package_types": "Kartony, palety i kontenery",
         "suppliers": "Od kogo kupujesz towar i jak się z nimi skontaktować",
         "marketplace": "Wypłaty, zatwierdzanie sprzedawców, e-maile do sprzedawców i podatek od prowizji",
-        "connected_apps": "Agenci i aplikacje z dostępem do tego sklepu"
+        "connected_apps": "Agenty AI z dostępem do tego sklepu"
       },
       "groups": {
         "audit": "Audyt",
@@ -5249,7 +5249,7 @@
         "package_types": "Rodzaje opakowań",
         "suppliers": "Dostawcy",
         "marketplace": "Ustawienia",
-        "connected_apps": "Połączone aplikacje"
+        "connected_apps": "Połączone agenty"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"

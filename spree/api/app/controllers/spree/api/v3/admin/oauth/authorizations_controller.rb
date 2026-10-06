@@ -122,11 +122,60 @@ module Spree
             # anything their own role does not carry.
             #
             # @return [Array<String>]
+            # Every individual permission the merchant could hand over, which
+            # is what the consent screen draws a row for.
             def grantable_scopes
               held = current_ability.try(:permission_keys)&.map(&:to_s) || []
               requested = Spree.permissions.expand_keys(@pre_auth.scopes.to_a)
 
               (requested & held).sort
+            end
+
+            # What the grant records, given what the merchant left ticked.
+            #
+            # An untouched "everything" stays an alias rather than becoming a
+            # list. Enumerating would freeze it: ship a feature with new
+            # permissions and the grant does not name them, so an agent the
+            # merchant gave full access silently cannot use the new tools and
+            # nothing says why. A narrowed selection is a deliberate list and
+            # stays one.
+            def recorded_scopes
+              granted = selected_scopes
+              return granted unless granted.sort == grantable_scopes.sort
+              return granted unless records_as_alias?
+
+              requested = @pre_auth.scopes.to_a
+              return ['write_all'] if requested.include?('write_all')
+
+              ['read_all']
+            end
+
+            # An alias is only safe for someone who holds everything it
+            # stands for.
+            #
+            # It is resolved against the token owner's ability at each
+            # request, so recording it for a limited staffer would widen the
+            # grant the day they are promoted — the standing-ceiling problem
+            # the intersection exists to prevent. A partial holder gets the
+            # list their authority actually covers.
+            def records_as_alias?
+              requested = @pre_auth.scopes.to_a
+              return false unless requested.intersect?(Spree::Api::Oauth::ALIAS_SCOPES)
+
+              held = current_ability.try(:permission_keys)&.map(&:to_s) || []
+              catalog = Spree.permissions.grantable_keys(
+                Spree::PermissionConfiguration::STAFF_AUDIENCE
+              ).map(&:to_s)
+
+              (catalog - held).empty?
+            end
+
+            # What the merchant left ticked, bounded by what they may give.
+            def selected_scopes
+              submitted = Spree.permissions.expand_keys(params[:scope].to_s.split)
+              return grantable_scopes if submitted.empty?
+
+              (submitted & grantable_scopes).sort
             end
 
             # Symbol keys: PreAuthorization reads them that way, and a hash of
@@ -175,7 +224,7 @@ module Spree
             # successful connection and the merchant sees the application
             # listed as connected.
             def require_something_to_grant!
-              return if grantable_scopes.any?
+              return if selected_scopes.any?
 
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
@@ -187,7 +236,7 @@ module Spree
             def granted_code_request
               bounded = ::Doorkeeper::OAuth::PreAuthorization.new(
                 ::Doorkeeper.config,
-                pre_authorization_params.merge(scope: grantable_scopes.join(' ')),
+                pre_authorization_params.merge(scope: recorded_scopes.join(' ')),
                 current_actor
               )
 
