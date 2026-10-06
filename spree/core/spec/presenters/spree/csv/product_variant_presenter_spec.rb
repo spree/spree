@@ -57,9 +57,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[36]).to eq nil
     end
 
-    context 'when index is not zero' do
-      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
-
+    context 'when the variant has option values' do
       let!(:color_option) { create(:option_type, name: 'Color', label: 'Color', products: [product]) }
       let!(:size_option) { create(:option_type, name: 'Size', label: 'Size', products: [product]) }
 
@@ -68,22 +66,39 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       let(:red_color) { create(:option_value, name: 'red', label: 'Red', option_type: color_option) }
       let(:small_size) { create(:option_value, name: 'small', label: 'Small', option_type: size_option) }
 
-      it 'returns nil for product-level fields' do
-        expect(subject[2]).to be_nil # name
-        expect(subject[4]).to be_nil # status
-        expect(subject[5]).to be_nil # seller_name
+      context 'when index is zero' do
+        it 'returns the options alongside the product-level fields' do
+          expect(subject[2]).to eq product.name
+          expect(subject[1]).to eq variant.sku
+          expect(subject[31]).to eq 'Color'
+          expect(subject[32]).to eq 'Red'
+          expect(subject[33]).to eq 'Size'
+          expect(subject[34]).to eq 'Small'
+          expect(subject[35]).to eq nil
+          expect(subject[36]).to eq nil
+        end
       end
 
-      it 'returns variant specific fields' do
-        expect(subject[1]).to eq variant.sku
-        expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
-        expect(subject[23]).to eq false
-        expect(subject[31]).to eq 'Color'
-        expect(subject[32]).to eq 'Red'
-        expect(subject[33]).to eq 'Size'
-        expect(subject[34]).to eq 'Small'
-        expect(subject[35]).to eq nil
-        expect(subject[36]).to eq nil
+      context 'when index is not zero' do
+        let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
+
+        it 'returns nil for product-level fields' do
+          expect(subject[2]).to be_nil # name
+          expect(subject[4]).to be_nil # status
+          expect(subject[5]).to be_nil # seller_name
+        end
+
+        it 'returns variant specific fields' do
+          expect(subject[1]).to eq variant.sku
+          expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
+          expect(subject[23]).to eq false
+          expect(subject[31]).to eq 'Color'
+          expect(subject[32]).to eq 'Red'
+          expect(subject[33]).to eq 'Size'
+          expect(subject[34]).to eq 'Small'
+          expect(subject[35]).to eq nil
+          expect(subject[36]).to eq nil
+        end
       end
     end
 

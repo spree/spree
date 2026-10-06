@@ -111,12 +111,12 @@ module Spree
           spree_image_url(variant.images[0], image_url_options),
           spree_image_url(variant.images[1], image_url_options),
           spree_image_url(variant.images[2], image_url_options),
-          index.positive? ? option_type(0)&.label : nil,
-          index.positive? ? option_value(option_type(0)) : nil,
-          index.positive? ? option_type(1)&.label : nil,
-          index.positive? ? option_value(option_type(1)) : nil,
-          index.positive? ? option_type(2)&.label : nil,
-          index.positive? ? option_value(option_type(2)) : nil
+          option_type(0)&.label,
+          option_value(option_type(0)),
+          option_type(1)&.label,
+          option_value(option_type(1)),
+          option_type(2)&.label,
+          option_value(option_type(2))
         ]
 
         if index.zero?

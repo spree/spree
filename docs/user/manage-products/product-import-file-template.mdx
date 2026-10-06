@@ -9,6 +9,8 @@ For an example of **how to structure multi-variant products**, please download t
 
 <Note>You don’t need to follow the field naming conventions in this template exactly. Field names can be mapped manually during the import process.</Note>
 
+<Note>A product with several variants takes one row per variant. The product's own details (name, description, status, categories) can either sit on a row of their own above the variants, or on the first variant's row — the layout Shopify exports use. Rows for the same product are matched by their shared **slug**.</Note>
+
 <Warning>The **slug** field acts as the unique identifier for the product in Spree - no two products can share the same slug. When updating products via CSV import, the slug must exactly match an existing record to avoid creating duplicates.</Warning>
 
 | Field                   | Description |

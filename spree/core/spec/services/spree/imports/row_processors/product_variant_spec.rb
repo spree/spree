@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
+  include ActiveJob::TestHelper
+
   subject { described_class.new(row) }
 
   let(:store) { Spree::Store.default }
@@ -303,6 +305,32 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(size_option_type.option_values.find_by(label: 'XS')).to be_present
     end
 
+    context 'when an existing option value contains the imported one as a substring' do
+      let(:color) { Spree::OptionType.find_by!(name: 'color') }
+      let!(:black_and_red) { create(:option_value, name: 'black-and-red', label: 'Black and Red', option_type: color) }
+      let!(:red) { create(:option_value, name: 'red', label: 'Red', option_type: color) }
+
+      let(:row_data) { super().merge('option1_value' => 'Red') }
+
+      it 'picks the exactly matching option value' do
+        expect(variant.option_values).to include(red)
+        expect(variant.option_values).not_to include(black_and_red)
+      end
+
+      it 'does not create a duplicate option value' do
+        expect { subject.process! }.not_to change { color.option_values.count }
+      end
+    end
+
+    context 'when an existing option type contains the imported one as a substring' do
+      let!(:color_family) { create(:option_type, name: 'color-family', label: 'Color Family', store: store) }
+
+      it 'picks the exactly matching option type' do
+        expect(variant.option_values.map(&:option_type)).not_to include(color_family)
+        expect(variant.option_values.map { |ov| ov.option_type.label }).to include('Color')
+      end
+    end
+
     context 'when another store has an option type with the same name' do
       let!(:foreign_fabric) { create(:option_type, name: 'fabric', label: 'Fabric', store: create(:store)) }
       let(:row_data) { super().merge('option3_name' => 'Fabric', 'option3_value' => 'Cotton') }
@@ -317,13 +345,13 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     context 'when a concurrent worker has already created the option type/value' do
       # Simulates two Sidekiq workers racing on the same option name during a CSV import.
-      # Force search_by_name to miss on the initial lookup so create! runs, then return
+      # Force with_name to miss on the initial lookup so create! runs, then return
       # real results on retry so the rescue path can find the peer's record.
-      # Option values don't need stubbing — they don't exist yet, so search_by_name
+      # Option values don't need stubbing — they don't exist yet, so with_name
       # naturally misses and create! succeeds.
       before do
         seen_option_types = Set.new
-        allow(Spree::OptionType).to receive(:search_by_name).and_wrap_original do |original, query|
+        allow(Spree::OptionType).to receive(:with_name).and_wrap_original do |original, query|
           seen_option_types.add?(query) ? Spree::OptionType.none : original.call(query)
         end
       end
@@ -338,8 +366,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       context 'when the create! reaches the DB and the unique index rejects it' do
         # Mirrors the production race: validator passed (peer not committed yet) but
         # the INSERT collides at the DB once the peer commits. Pre-create the peer rows
-        # so find_by!/search_by_name can locate them on retry.
-        # Option values are pre-created, so search_by_name naturally finds them.
+        # so find_by!/with_name can locate them on retry.
+        # Option values are pre-created, so with_name naturally finds them.
         let!(:color_blue) { create(:option_value, name: 'Blue', label: 'Blue', option_type: Spree::OptionType.find_by(name: 'color')) }
         let!(:size_xs) { create(:option_value, name: 'XS', label: 'XS', option_type: Spree::OptionType.find_by(name: 'size')) }
 
@@ -631,6 +659,36 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
     end
 
+    context 'when the file has no category columns' do
+      let!(:category) { create(:category, store: store) }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue'
+        )
+      end
+
+      before do
+        product.categories = [category]
+        import.mappings.where(schema_field: %w[category1 category2 category3]).update_all(file_column: nil)
+      end
+
+      it 'does not enqueue CreateCategoriesJob' do
+        expect {
+          subject.process!
+        }.not_to have_enqueued_job(Spree::Imports::CreateCategoriesJob)
+      end
+
+      it 'leaves the existing categories in place' do
+        perform_enqueued_jobs { subject.process! }
+
+        expect(product.reload.categories).to contain_exactly(category)
+      end
+    end
+
     context 'when importing a variant row' do
       let(:row_data) do
         csv_row_hash(
@@ -708,6 +766,79 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
     it 'raises ActiveRecord::RecordNotFound' do
       expect { subject.process! }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  # How a Spree export and a Shopify export both write a multi-variant product:
+  # the product's own attributes sit on its first variant's row.
+  context 'when importing a row carrying both product attributes and options' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'linen-shirt',
+        'sku' => 'LINEN-SHIRT-BLUE',
+        'name' => 'Linen Shirt',
+        'status' => 'active',
+        'description' => 'Breathable linen.',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'product_type' => 'Apparel',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue'
+      )
+    end
+
+    it 'creates the product and the option variant from the one row' do
+      variant = subject.process!
+      product = variant.product
+
+      expect(product.slug).to eq 'linen-shirt'
+      expect(product.name).to eq 'Linen Shirt'
+      expect(product.status).to eq 'active'
+      expect(product.description).to eq 'Breathable linen.'
+      expect(product.product_type.name).to eq 'Apparel'
+
+      expect(variant.sku).to eq 'LINEN-SHIRT-BLUE'
+      expect(variant.option_values.map(&:label)).to eq ['Blue']
+      expect(variant.price_in('USD').amount.to_f).to eq 62.99
+    end
+
+    it 'leaves no option-less placeholder variant behind' do
+      product = subject.process!.product
+
+      expect(product.variants.reload.count).to eq 1
+      expect(product.default_variant.option_values.map(&:label)).to eq ['Blue']
+    end
+
+    context 'when the product already exists' do
+      let!(:existing_product) { create(:product, slug: 'linen-shirt', name: 'Old Name', status: 'draft') }
+
+      it 'updates the product-level fields' do
+        product = subject.process!.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.name).to eq 'Linen Shirt'
+        expect(product.status).to eq 'active'
+      end
+    end
+
+    context 'followed by the product\'s remaining variant rows' do
+      let(:second_row) do
+        create(:import_row, import: import, data: csv_row_hash(
+          'slug' => 'linen-shirt',
+          'sku' => 'LINEN-SHIRT-RED',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'option1_name' => 'Color',
+          'option1_value' => 'Red'
+        ).to_json)
+      end
+
+      it 'keeps every variant' do
+        product = subject.process!.product
+        described_class.new(second_row).process!
+
+        expect(product.variants.reload.flat_map { |v| v.option_values.map(&:label) }).to contain_exactly('Blue', 'Red')
+      end
     end
   end
 

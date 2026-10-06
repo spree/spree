@@ -3,6 +3,7 @@ module Spree
     module RowProcessors
       class ProductVariant < Base
         OPTION_TYPES_COUNT = 3
+        CATEGORY_FIELDS = %w[category1 category2 category3].freeze
 
         def initialize(row, **)
           super
@@ -91,9 +92,17 @@ module Spree
           product.update_column(:default_variant_id, product.variants.reload.first&.id)
         end
 
+        # Whether this row carries the product itself, as opposed to only one of
+        # its variants. A row is a product row when it has no options at all, or
+        # when it names the product alongside them — an export (and Shopify's
+        # own CSV) writes the product's attributes on its first variant's row,
+        # so that row has to both create the product and create a variant.
+        def product_row?
+          options.empty? || has_product_attributes?
+        end
+
         def ensure_product_exists
-          if options.empty?
-            # For product/header rows (no options), create or update the product
+          if product_row?
             product = Spree::Product.new
             if attributes['slug'].present?
               existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
@@ -167,9 +176,12 @@ module Spree
         end
 
         def assign_attributes_to_product(product)
-          # set the SKU on a product/header row so process! updates the default variant instead of creating a new one
           if product.new_record?
             product.slug = attributes['slug']
+            # Only an option-less row's SKU belongs to the product's own variant,
+            # so process! updates that variant instead of creating a second one.
+            # On a row that also carries options the SKU identifies that option
+            # variant, which process! creates for itself.
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
             product.store = store
             # A seller's import creates the seller's products. Without this the
@@ -197,11 +209,9 @@ module Spree
             product.status = to_spree_status(attributes['status'])
           end
 
-          if options.empty?
-            if attributes['product_type'].present?
-              product_type = prepare_product_type
-              product.product_type = product_type if product_type.present?
-            end
+          if attributes['product_type'].present?
+            product_type = prepare_product_type
+            product.product_type = product_type if product_type.present?
           end
 
           product
@@ -304,11 +314,11 @@ module Spree
         def find_or_create_option_type!(label)
           cached_lookup(:option_type, label) do
             begin
-              store_option_types.search_by_name(label).first || store_option_types.create!(label: label)
+              store_option_types.with_name(label).first || store_option_types.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              store_option_types.search_by_name(label).first!
+              store_option_types.with_name(label).first!
             end
           end
         end
@@ -320,11 +330,11 @@ module Spree
         def find_or_create_option_value!(option_type, label)
           cached_lookup(:option_value, option_type.id, label) do
             begin
-              option_type.option_values.search_by_name(label).first || option_type.option_values.create!(label: label)
+              option_type.option_values.with_name(label).first || option_type.option_values.create!(label: label)
             rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
               raise unless uniqueness_conflict?(e, :name)
 
-              option_type.option_values.search_by_name(label).first!
+              option_type.option_values.with_name(label).first!
             end
           end
         end
@@ -375,7 +385,7 @@ module Spree
         end
 
         def has_product_attributes?
-          %w[name status description category1 category2 category3].any? { |key| attributes[key].present? }
+          (%w[name status description] + CATEGORY_FIELDS).any? { |key| attributes[key].present? }
         end
 
         def handle_custom_fields(product)
@@ -442,6 +452,7 @@ module Spree
         # seller audience in the permission catalog at all.
         def handle_categories(product)
           return if seller.present?
+          return unless category_columns_mapped?
 
           names = prepare_taxon_pretty_names
           return Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, names) if import.preferred_inline
@@ -450,11 +461,19 @@ module Spree
         end
 
         def prepare_taxon_pretty_names
-          [
-            attributes['category1'],
-            attributes['category2'],
-            attributes['category3']
-          ].compact_blank.map(&:strip).uniq
+          CATEGORY_FIELDS.map { |field| attributes[field] }.compact_blank.map(&:strip).uniq
+        end
+
+        # A blank category cell means "file this product under nothing", and
+        # CreateCategoriesJob assigns the list wholesale to honour that. A file
+        # that carries no category columns at all means something different —
+        # it simply doesn't speak about categories — so without this a Shopify
+        # export, or any spreadsheet that omits them, would unfile every
+        # product it touched.
+        def category_columns_mapped?
+          cached_lookup(:category_columns_mapped) do
+            import.mappings.mapped.any? { |mapping| CATEGORY_FIELDS.include?(mapping.schema_field) }
+          end
         end
 
         def to_spree_status(status)
