@@ -12,6 +12,8 @@ module Spree
 
     has_status :published, :reverted, default: :published
 
+    publishes_events :published, :reverted
+
     acted_by :published_by
     acted_by :reverted_by
 

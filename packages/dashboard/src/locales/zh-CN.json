@@ -3962,6 +3962,7 @@
             "digital": "数字内容",
             "digital_asset": "数字资产",
             "digital_link": "数字链接",
+            "email_template": "邮件模板",
             "exchange": "换货",
             "export": "导出",
             "fulfillment": "履约",
