@@ -2398,6 +2398,16 @@
           "label": "Standardverpackung",
           "help": "Die Verpackung, auf der Ihre Paketangebote basieren. Nur eine Standardverpackung gleichzeitig."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Callback-URL",
+          "help": "Aus der Dokumentation des Clients. Autorisierungscodes werden hierhin geliefert, daher muss es die vom Client veröffentlichte Adresse sein."
+        }
       }
     },
     "gift_cards": {
@@ -4090,6 +4100,16 @@
           "revoke_confirm": {
             "title": "Zugriff widerrufen?",
             "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
+          },
+          "register": "Client registrieren",
+          "form": {
+            "create_title": "Client registrieren",
+            "edit_title": "Client bearbeiten",
+            "description": "Registrieren Sie einen OAuth-Client, damit er mit diesem Shop verbunden werden kann."
+          },
+          "delete_confirm": {
+            "title": "Diesen Client löschen?",
+            "message": "{{name}} funktioniert sofort nicht mehr und die Registrierung wird entfernt."
           }
         }
       },

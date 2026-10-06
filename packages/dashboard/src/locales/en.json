@@ -2398,6 +2398,16 @@
           "label": "Default box",
           "help": "The packaging your parcel quotes are built on. One default at a time."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Callback URL",
+          "help": "From the client’s own documentation. Authorization codes are delivered here, so it must be the address the client publishes."
+        }
       }
     },
     "gift_cards": {
@@ -4090,6 +4100,16 @@
           "revoke_confirm": {
             "title": "Revoke access?",
             "message": "{{name}} will stop working immediately. Anyone using it will need to connect again."
+          },
+          "register": "Register a client",
+          "form": {
+            "create_title": "Register a client",
+            "edit_title": "Edit client",
+            "description": "Register an OAuth client so it can be connected to this store."
+          },
+          "delete_confirm": {
+            "title": "Delete this client?",
+            "message": "{{name}} will stop working immediately and its registration will be removed."
           }
         }
       },

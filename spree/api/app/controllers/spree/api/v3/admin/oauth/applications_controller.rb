@@ -10,72 +10,38 @@ module Spree
           # every live token and grant rather than deleting the registration,
           # so a client that still holds a token stops working on its next
           # call.
-          class ApplicationsController < Spree::Api::V3::Admin::BaseController
+          class ApplicationsController < Spree::Api::V3::Admin::ResourceController
             # Its own permission rather than store configuration: a standing
             # credential to the back office is not the same kind of thing as
             # a delivery zone.
             scoped_resource :agents
 
-            def index
-              # Only applications somebody actually authorized — a registered
-              # client nobody connected is not a connection. Tokens and their
-              # owners are preloaded because the serializer reads each
-              # application's scopes, last use and who approved it from them.
-              scope = current_store.oauth_applications.
-                      where(id: connected_application_ids).
-                      includes(live_access_tokens: :resource_owner).
-                      order(:name)
+            protected
 
-              @pagy, applications = pagy(scope, limit: params[:limit] || 25)
-
-              render json: {
-                data: Spree.api.admin_oauth_application_serializer.new(applications).serializable_hash,
-                meta: {
-                  page: @pagy.page, limit: @pagy.limit, count: @pagy.count,
-                  pages: @pagy.pages, from: @pagy.from, to: @pagy.to,
-                  in: @pagy.in, previous: @pagy.previous, next: @pagy.next
-                }
-              }
+            def model_class
+              Spree::OauthApplication
             end
 
-            # Every client registered for this store, connected or not — a
-            # merchant needs the id of one they have not connected yet, which
-            # is precisely what `index` leaves out.
-            def registrations
-              applications = current_store.oauth_applications.
-                             includes(live_access_tokens: :resource_owner).
-                             order(:name)
-
-              render json: {
-                data: Spree.api.admin_oauth_application_serializer.new(applications).serializable_hash
-              }
+            def serializer_class
+              Spree.api.admin_oauth_application_serializer
             end
 
-            def destroy
-              application = current_store.oauth_applications.find_by_prefix_id!(params[:id])
-
-              authorize! :update, Spree::OauthApplication
-
-              application.access_tokens.where(revoked_at: nil).update_all(revoked_at: Time.current)
-              application.access_grants.where(revoked_at: nil).update_all(revoked_at: Time.current)
-
-              head :no_content
+            def scope
+              super.order(:name)
             end
 
-            private
+            # The serializer reads each application's scopes, last
+            # authorization and who approved it from the live tokens.
+            def collection_includes
+              { live_access_tokens: :resource_owner }
+            end
 
-            # Applications that can still reach the store, as a subquery so
-            # nothing is loaded just to be counted.
-            #
-            # Revocation, not expiry, is the test: a refresh token outlives
-            # the access token beside it, so an application whose access has
-            # lapsed can mint more. Hiding it here would leave a merchant
-            # unable to revoke something that still works.
-            def connected_application_ids
-              Spree::OauthAccessToken.
-                where(revoked_at: nil, resource_owner_type: Spree.admin_user_class.name).
-                where(application_id: current_store.oauth_applications.select(:id)).
-                select(:application_id)
+            # `confidential` is not writable: these are hosted connectors that
+            # cannot keep a secret, which is why PKCE is mandatory. `scopes`
+            # is not writable either — what a client may do is granted by the
+            # merchant at consent, not fixed at registration.
+            def resource_permitted_attributes
+              %i[name redirect_uri]
             end
           end
         end

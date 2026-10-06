@@ -2416,6 +2416,16 @@
           "label": "Domyślne opakowanie",
           "help": "Opakowanie, na którym opierają się wyceny Twoich przesyłek. Tylko jedno domyślne naraz."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nazwa",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "Adres zwrotny",
+          "help": "Z dokumentacji samego klienta. Tu trafiają kody autoryzacyjne, więc musi to być adres publikowany przez klienta."
+        }
       }
     },
     "gift_cards": {
@@ -4144,6 +4154,16 @@
           "revoke_confirm": {
             "title": "Odebrać dostęp?",
             "message": "{{name}} przestanie działać natychmiast. Każdy, kto z niej korzysta, będzie musiał połączyć się ponownie."
+          },
+          "register": "Zarejestruj klienta",
+          "form": {
+            "create_title": "Zarejestruj klienta",
+            "edit_title": "Edytuj klienta",
+            "description": "Zarejestruj klienta OAuth, aby można go było połączyć z tym sklepem."
+          },
+          "delete_confirm": {
+            "title": "Usunąć tego klienta?",
+            "message": "{{name}} przestanie działać natychmiast, a jego rejestracja zostanie usunięta."
           }
         }
       },
