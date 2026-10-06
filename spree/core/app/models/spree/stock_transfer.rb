@@ -36,6 +36,8 @@ module Spree
     acts_as_paranoid
 
     publishes_lifecycle_events
+    publishes_events :canceled, :draft, :partially_received, :over_received, :ready_to_ship,
+                     :received, :shipped
 
     has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :over_received, :canceled,
                default: :draft

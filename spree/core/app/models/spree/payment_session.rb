@@ -9,6 +9,7 @@ module Spree
     self.event_prefix = 'payment_session'
 
     publishes_lifecycle_events
+    publishes_events :canceled, :completed, :expired, :failed, :processing
 
     belongs_to :order, class_name: 'Spree::Order', optional: true
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :payment_sessions

@@ -499,6 +499,7 @@ import type {
   Variant,
   WebhookDelivery,
   WebhookEndpoint,
+  WebhookEvent,
 } from './types'
 
 /**
@@ -5752,6 +5753,21 @@ export class AdminClient {
   // ============================================
   // Webhook Endpoints + Deliveries
   // ============================================
+
+  /**
+   * The events a webhook endpoint can subscribe to, including those installed
+   * extensions declare. A `credential` event carries a live credential and
+   * needs `credential_permission` to subscribe to; a `deprecated` one names the
+   * event that replaces it in `replaced_by`.
+   */
+  readonly webhookEvents = {
+    list: (options?: RequestOptions): Promise<{ data: WebhookEvent[]; meta: { count: number } }> =>
+      this.request<{ data: WebhookEvent[]; meta: { count: number } }>(
+        'GET',
+        '/webhook_events',
+        options,
+      ),
+  }
 
   /**
    * Outbound webhook subscriptions: each endpoint receives a signed POST when

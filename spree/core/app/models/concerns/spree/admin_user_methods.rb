@@ -10,6 +10,14 @@ module Spree
     included do
       has_prefix_id :adm
 
+      publishes_events 'admin_user.password_reset', 'seller_user.password_reset'
+      # Carry a live reset token and have no external consumer: core sends
+      # these emails itself, so no webhook endpoint ever receives them.
+      publishes_event 'admin_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', webhook: false
+      publishes_event 'seller_user.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', webhook: false
+
       has_person_name
 
       normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }

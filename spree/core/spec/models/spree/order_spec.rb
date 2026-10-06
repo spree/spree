@@ -324,7 +324,7 @@ describe Spree::Order, type: :model do
       it 'publishes order.canceled event' do
         allow(Spree::Events).to receive(:publish)
         order.canceled_by(admin_user)
-        expect(Spree::Events).to have_received(:publish).with('order.canceled', hash_including(:notify_customer), any_args)
+        expect(Spree::Events).to have_received(:publish).with('order.canceled', kind_of(Hash), hash_including(:notify_customer))
       end
     end
   end

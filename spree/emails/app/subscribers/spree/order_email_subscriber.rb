@@ -20,7 +20,7 @@ module Spree
 
     def send_customer_confirmation(order, event)
       return if order.confirmation_delivered?
-      return if event.payload['notify_customer'] == false
+      return if event.metadata['notify_customer'] == false
       return unless order.store.prefers_send_consumer_transactional_emails?
 
       OrderMailer.confirm_email(order.id).deliver_later
@@ -46,7 +46,7 @@ module Spree
     def send_cancel_email(event)
       order = find_order(event)
       return unless order
-      return if event.payload['notify_customer'] == false
+      return if event.metadata['notify_customer'] == false
 
       store = order.store
       return unless store.prefers_send_consumer_transactional_emails?

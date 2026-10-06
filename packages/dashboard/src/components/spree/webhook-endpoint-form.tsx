@@ -12,10 +12,9 @@ import {
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import {
-  WEBHOOK_EVENT_GROUPS,
-  type WebhookEndpointFormValues,
-} from '../../schemas/webhook-endpoint'
+import { useWebhookEventCatalog } from '../../hooks/use-webhook-endpoints'
+import { translatedLabel } from '../../lib/translated-label'
+import type { WebhookEndpointFormValues } from '../../schemas/webhook-endpoint'
 
 /**
  * The webhook endpoint form fields — Name / URL / Active toggle / Events
@@ -103,8 +102,21 @@ export function WebhookEndpointFormFields({
 function EventPicker({ value, onChange }: { value: string[]; onChange: (next: string[]) => void }) {
   const { t } = useTranslation()
   const [customEvent, setCustomEvent] = useState('')
-  const allBuiltIn = WEBHOOK_EVENT_GROUPS.flatMap((g) => g.events)
-  const customEvents = value.filter((e) => !allBuiltIn.includes(e))
+  const { data: catalog, isPending, isError, refetch } = useWebhookEventCatalog()
+  const events = catalog?.data ?? []
+  const subscribed = new Set(value)
+  const declared = new Set(events.map((event) => event.name))
+  const customEvents = value.filter((event) => !declared.has(event))
+
+  // A deprecated event is offered only to an endpoint still subscribed to it,
+  // so it can be swapped for its replacement but never newly picked.
+  const groups = new Map<string, typeof events>()
+  for (const event of events) {
+    if (event.deprecated && !subscribed.has(event.name)) continue
+    const group = groups.get(event.group)
+    if (group) group.push(event)
+    else groups.set(event.group, [event])
+  }
 
   function toggle(event: string) {
     onChange(value.includes(event) ? value.filter((e) => e !== event) : [...value, event])
@@ -125,26 +137,49 @@ function EventPicker({ value, onChange }: { value: string[]; onChange: (next: st
           : t('admin.pages.settings.webhooks.events_count', { count: value.length })}
       </div>
       <div className="flex max-h-72 flex-col gap-4 overflow-y-auto p-3">
-        {WEBHOOK_EVENT_GROUPS.map((group) => (
-          <div key={group.labelKey} className="flex flex-col gap-1">
+        {isPending && <p className="text-xs text-muted-foreground">{t('admin.common.loading')}</p>}
+        {isError && (
+          <div className="flex items-center justify-between gap-2" role="alert">
+            <p className="text-xs text-destructive">
+              {t('admin.pages.settings.webhooks.events_load_failed')}
+            </p>
+            <Button type="button" variant="outline" size="sm" onClick={() => refetch()}>
+              {t('admin.common.retry')}
+            </Button>
+          </div>
+        )}
+        {[...groups].map(([group, groupEvents]) => (
+          <div key={group} className="flex flex-col gap-1">
             <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              {t(group.labelKey)}
+              {translatedLabel('admin.pages.settings.webhooks.event_groups', group)}
             </span>
             <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-              {group.events.map((event) => {
-                const checkboxId = `webhook-event-${event.replace(/[^a-z0-9]/gi, '-')}`
+              {groupEvents.map((event) => {
+                const checkboxId = `webhook-event-${event.name.replace(/[^a-z0-9]/gi, '-')}`
                 return (
                   <label
-                    key={event}
+                    key={event.name}
                     htmlFor={checkboxId}
                     className="flex cursor-pointer items-center gap-2 rounded p-1 text-sm hover:bg-accent"
                   >
                     <Checkbox
                       id={checkboxId}
-                      checked={value.includes(event)}
-                      onCheckedChange={() => toggle(event)}
+                      checked={subscribed.has(event.name)}
+                      onCheckedChange={() => toggle(event.name)}
                     />
-                    <span className="font-mono text-xs">{event}</span>
+                    <span className="font-mono text-xs">{event.name}</span>
+                    {event.credential && (
+                      <Badge variant="outline">
+                        {t('admin.pages.settings.webhooks.events_credential')}
+                      </Badge>
+                    )}
+                    {event.deprecated && (
+                      <Badge variant="secondary">
+                        {t('admin.pages.settings.webhooks.events_deprecated', {
+                          event: event.replaced_by,
+                        })}
+                      </Badge>
+                    )}
                   </label>
                 )
               })}

@@ -16,6 +16,7 @@ module Spree
     has_prefix_id :selsub
 
     publishes_lifecycle_events
+    publishes_events :accepted, :created, :rejected, :waived
 
     # `waived` is the operator excusing one seller from something the store
     # asks of everyone — a requirement they have already satisfied off the

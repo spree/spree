@@ -145,6 +145,7 @@ export type { default as TaxRate } from './generated/TaxRate'
 export type { default as Variant } from './generated/Variant'
 export type { default as WebhookDelivery } from './generated/WebhookDelivery'
 export type { default as WebhookEndpoint } from './generated/WebhookEndpoint'
+export type { default as WebhookEvent } from './generated/WebhookEvent'
 // Hand-written translation-management types (controller-shaped, not generated)
 export type {
   Locale,

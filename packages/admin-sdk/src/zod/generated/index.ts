@@ -137,3 +137,4 @@ export { TaxRateSchema, type TaxRate } from './TaxRate';
 export { VariantSchema, type Variant } from './Variant';
 export { WebhookDeliverySchema, type WebhookDelivery } from './WebhookDelivery';
 export { WebhookEndpointSchema, type WebhookEndpoint } from './WebhookEndpoint';
+export { WebhookEventSchema, type WebhookEvent } from './WebhookEvent';
