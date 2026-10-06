@@ -69,7 +69,7 @@ function ConnectedAppsSettingsPage() {
                 key: 'revoke',
                 label: t('admin.pages.settings.connected_apps.revoke'),
                 destructive: true,
-                visible: permissions.can('update', Subject.Store),
+                visible: permissions.can('update', Subject.OauthApplication),
                 disabled: revoke.isPending,
                 onSelect: () => handleRevoke(application),
               },

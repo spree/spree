@@ -20,6 +20,7 @@ export {
   BarChart3Icon as AnalyticsIcon,
   BoldIcon,
   BookOpenIcon,
+  BotIcon,
   BoxesIcon,
   BracesIcon,
   Building2Icon,

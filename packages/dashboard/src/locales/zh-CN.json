@@ -4205,7 +4205,8 @@
         "staff": "团队成员、邀请、角色及其权限",
         "stock": "库存水平、仓库、变动与调拨",
         "store_credits": "客户店铺余额",
-        "webhooks": "Webhook 端点与投递记录"
+        "webhooks": "Webhook 端点与投递记录",
+        "agents": "连接到此店铺的 AI 代理"
       },
       "grid": {
         "read_aria": "查看{{resource}}",
@@ -4257,7 +4258,8 @@
         "staff": "团队与角色",
         "stock": "库存",
         "store_credits": "店铺信用",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "agents": "代理"
       }
     },
     "policies": {

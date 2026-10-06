@@ -20,6 +20,7 @@ export const Subject = {
   CustomerGroup: 'customer_group',
   AdminUser: 'admin_user',
   ApiKey: 'api_key',
+  OauthApplication: 'oauth_application',
   AllowedOrigin: 'allowed_origin',
   Store: 'store',
   // The store's packaging vocabulary: the box it ships parcels in, and the

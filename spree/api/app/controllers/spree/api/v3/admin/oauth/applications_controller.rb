@@ -11,8 +11,10 @@ module Spree
           # so a client that still holds a token stops working on its next
           # call.
           class ApplicationsController < Spree::Api::V3::Admin::BaseController
-            # Listing and revoking connected apps is store configuration.
-            scoped_resource :settings
+            # Its own permission rather than store configuration: a standing
+            # credential to the back office is not the same kind of thing as
+            # a delivery zone.
+            scoped_resource :agents
 
             def index
               # Only applications somebody actually authorized — a registered
@@ -52,7 +54,7 @@ module Spree
             def destroy
               application = current_store.oauth_applications.find_by_prefix_id!(params[:id])
 
-              authorize! :update, Spree::Store
+              authorize! :update, Spree::OauthApplication
 
               application.access_tokens.where(revoked_at: nil).update_all(revoked_at: Time.current)
               application.access_grants.where(revoked_at: nil).update_all(revoked_at: Time.current)
