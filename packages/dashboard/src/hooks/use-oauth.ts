@@ -40,21 +40,30 @@ export function useDenyOauthAuthorization() {
 }
 
 /**
- * Every registered client, for the setup panel — unlike the connected list,
- * which answers what to revoke.
+ * Every client registered against this store. The connected ones are those
+ * carrying live scopes, which the row renders from.
  */
-export function useOauthRegistrations() {
-  return useQuery({
-    queryKey: useResourceKey('oauth-registrations'),
-    queryFn: () => adminClient.oauth.applications.registrations(),
-    staleTime: 30 * 60 * 1000,
-  })
-}
-
 export function useOauthApplications() {
   return useQuery({
     queryKey: useResourceKey('oauth-applications'),
     queryFn: () => adminClient.oauth.applications.list(),
+  })
+}
+
+/** Kept for the connect panel, which only needs the client ids. */
+export function useOauthRegistrations() {
+  return useQuery({
+    queryKey: useResourceKey('oauth-applications'),
+    queryFn: () => adminClient.oauth.applications.list(),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
+/** Removes the registration, and every grant and token with it. */
+export function useDeleteOauthApplication() {
+  return useResourceMutation<void, Error, string>({
+    mutationFn: (id) => adminClient.oauth.applications.delete(id),
+    invalidate: [['oauth-applications']],
   })
 }
 

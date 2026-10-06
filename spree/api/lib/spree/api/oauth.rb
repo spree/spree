@@ -145,6 +145,12 @@ module Spree
             # nothing against an intercepted code.
             pkce_code_challenge_methods %w[S256]
 
+            # A redirect URI is where authorization codes are delivered, so a
+            # plain-http one hands them to anyone on the path. Off in
+            # development, where a local client has no certificate and the
+            # traffic never leaves the machine.
+            force_ssl_in_redirect_uri !Rails.env.development?
+
             # RFC 8707. Registering the validator is what binds an audience
             # into the token; left nil, the `resource` parameter is ignored
             # and a token minted for another service would be accepted.

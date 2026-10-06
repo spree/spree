@@ -56,19 +56,23 @@ RSpec.describe 'Admin connected applications', type: :request do
     expect(list['data'].map { |row| row['name'] }).to include('Claude')
   end
 
-  it 'drops it once revoked' do
-    token_for(admin).update!(revoked_at: Time.current)
-
-    expect(list['data']).to be_empty
-  end
-
-  it 'lists only applications somebody actually connected' do
+  # The listing is every registered client, connected or not — a merchant
+  # needs the one they have not connected yet as much as the one they have.
+  # Whether a row is connected is what its live scopes say.
+  it 'lists a registration nobody has connected' do
     store.oauth_applications.create!(
       name: 'Never connected', redirect_uri: 'https://example.test/cb', confidential: false
     )
     token_for(admin)
 
-    expect(list['data'].map { |row| row['name'] }).to contain_exactly('Claude')
+    expect(list['data'].map { |row| row['name'] }).to include('Claude', 'Never connected')
+  end
+
+  it 'reports no scopes for one whose access was revoked' do
+    token_for(admin).update!(revoked_at: Time.current)
+
+    row = list['data'].find { |candidate| candidate['name'] == 'Claude' }
+    expect(row['scopes']).to be_empty
   end
 
   it 'reports what the live tokens grant, not the registration' do
@@ -83,16 +87,39 @@ RSpec.describe 'Admin connected applications', type: :request do
     expect(list['meta']).to include('page', 'count', 'pages')
   end
 
+  # Revoking and deleting are different operations on different things, which
+  # is why revoking is the nested tokens resource: it deletes the credentials,
+  # not the client.
   describe 'revoking' do
     it 'stops the application working without deleting its registration' do
       raw = token_for(admin).plaintext_token
 
-      delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}",
+      delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}/tokens",
              headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
 
       expect(response).to have_http_status(:no_content)
       expect(Spree::OauthAccessToken.by_token(raw)).not_to be_accessible
       expect(store.oauth_applications.find_by(name: 'Claude')).to be_present
+    end
+  end
+
+  describe 'registering a client' do
+    it 'creates one from a name and a callback' do
+      post '/api/v3/admin/oauth/applications',
+           params: { name: 'Cursor', redirect_uri: 'https://cursor.com/oauth/callback' },
+           headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
+
+      expect(response).to have_http_status(:created)
+      expect(store.oauth_applications.find_by(name: 'Cursor')).to be_present
+    end
+
+    # Deleting the client takes its credentials with it, unlike revoking.
+    it 'deletes the registration itself' do
+      delete "/api/v3/admin/oauth/applications/#{application.prefixed_id}",
+             headers: { 'X-Spree-API-Key' => api_key.plaintext_token }
+
+      expect(response).to have_http_status(:no_content)
+      expect(store.oauth_applications.find_by(name: 'Claude')).to be_nil
     end
   end
 end

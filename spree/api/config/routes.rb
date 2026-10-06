@@ -246,8 +246,11 @@ Spree::Core::Engine.add_routes do
           post 'authorize', to: 'authorizations#create'
           delete 'authorize', to: 'authorizations#destroy'
 
-          resources :applications, only: %i[index destroy] do
-            get :registrations, on: :collection
+          # The OAuth clients registered against this store. Deleting one
+          # removes the registration; revoking a connection is the nested
+          # `tokens` resource, because that is what revoking deletes.
+          resources :applications do
+            resource :tokens, only: :destroy, controller: 'application_tokens'
           end
         end
 
