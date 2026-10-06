@@ -26,6 +26,13 @@ module Spree
       # file wins, which is what "configure it yourself" has to mean.
       initializer 'spree.api.oauth', before: :load_config_initializers do |_app|
         Spree::Api::Oauth.configure!
+
+        # The Admin API as a whole, for an app that works across it rather
+        # than through one endpoint. A token naming this audience is accepted
+        # on every admin controller; one naming a narrower resource — the MCP
+        # endpoint, say — is not, so a token taken from an MCP client cannot
+        # be replayed against the rest of the API.
+        Spree::Api::Oauth.register_resource(:admin, '/api/v3/admin')
       end
 
       # Extensions register their permission scopes from config initializers,

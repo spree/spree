@@ -60,6 +60,13 @@ module Spree
           def resolve_admin_store
             return secret_api_key.store if secret_api_key
 
+            # An OAuth client is registered for one store and consented to on
+            # that store, so its token names the tenancy as surely as a secret
+            # key does. Reading the header instead would let a client name
+            # another merchant's store on a grant that never covered it.
+            oauth_store = respond_to?(:admin_oauth_token, true) && admin_oauth_token&.application&.store
+            return oauth_store if oauth_store
+
             if store_id_header
               Spree::Store.find_by_prefix_id(store_id_header)
             else
