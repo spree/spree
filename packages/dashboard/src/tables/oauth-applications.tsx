@@ -40,10 +40,10 @@ defineTable<OauthApplication>('oauth-applications', {
         ),
     },
     {
-      key: 'last_used_at',
-      label: i18n.t('admin.pages.settings.connected_apps.table.last_used'),
+      key: 'last_authorized_at',
+      label: i18n.t('admin.pages.settings.connected_apps.table.last_authorized'),
       default: true,
-      render: (application) => <RelativeTime iso={application.last_used_at} />,
+      render: (application) => <RelativeTime iso={application.last_authorized_at} />,
     },
   ],
 })

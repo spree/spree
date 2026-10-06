@@ -9,14 +9,14 @@ module Spree
         # secret is null here anyway, because every MCP client is a public
         # client that proves itself with PKCE instead.
         #
-        # `scopes` and `last_used_at` come from the live tokens rather than
+        # `scopes` and `last_authorized_at` come from the live tokens rather than
         # the registration — a client is registered once and granted per
         # consent, so what the merchant approved lives on the token.
         class OauthApplicationSerializer < V3::BaseSerializer
           typelize name: :string,
                    client_id: :string,
                    scopes: [:string, multi: true],
-                   last_used_at: [:string, nullable: true],
+                   last_authorized_at: [:string, nullable: true],
                    authorized_at: [:string, nullable: true],
                    authorized_by: [:string, nullable: true],
                    redirect_uri: [:string, nullable: true]
@@ -29,8 +29,8 @@ module Spree
             application.live_token_scopes
           end
 
-          attribute :last_used_at do |application|
-            application.last_used_at&.iso8601
+          attribute :last_authorized_at do |application|
+            application.last_authorized_at&.iso8601
           end
 
           attribute :authorized_at do |application|

@@ -46,10 +46,15 @@ module Spree
       live_access_tokens.flat_map { |token| token.scopes.to_a }.uniq.sort
     end
 
-    # When this application was last granted a token that still works.
+    # When this application last obtained a token that still works.
+    #
+    # Not the last call it made: a token is minted once and then used for
+    # hours, and nothing records a call. Reporting this as "last used" would
+    # let a merchant read an actively running agent as idle, which is the
+    # opposite of what the connected-apps screen is for.
     #
     # @return [ActiveSupport::TimeWithZone, nil]
-    def last_used_at
+    def last_authorized_at
       live_access_tokens.map(&:created_at).max
     end
 
