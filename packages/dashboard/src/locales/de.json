@@ -4233,7 +4233,8 @@
         "staff": "Teammitglieder, Einladungen, Rollen und ihre Berechtigungen",
         "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
         "store_credits": "Guthaben der Kunden",
-        "webhooks": "Webhook-Endpunkte und Zustellungen"
+        "webhooks": "Webhook-Endpunkte und Zustellungen",
+        "agents": "Mit diesem Shop verbundene KI-Agenten"
       },
       "grid": {
         "read_aria": "{{resource}} ansehen",
@@ -4285,7 +4286,8 @@
         "staff": "Team & Rollen",
         "stock": "Bestand",
         "store_credits": "Guthaben",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "agents": "Agenten"
       }
     },
     "policies": {

@@ -83,6 +83,7 @@ module Spree
       #                   belong on a read surface an agent drives.
       WITHHELD_MODELS = %w[
         Spree::ApiKey
+        Spree::OauthApplication
         Spree::Integration
         Spree::WebhookEndpoint
         Spree::WebhookDelivery

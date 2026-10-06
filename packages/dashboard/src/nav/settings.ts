@@ -1,5 +1,6 @@
 import { Subject, settingsNav } from '@spree/dashboard-core'
 import {
+  BotIcon,
   Building2Icon,
   ClipboardCheckIcon,
   CreditCardIcon,
@@ -348,10 +349,10 @@ settingsNav.add({
   descriptionKey: 'admin.settings_nav.descriptions.connected_apps',
   keywords: ['oauth', 'agents', 'mcp', 'integrations', 'revoke'],
   path: '/connected-apps',
-  icon: PlugIcon,
+  icon: BotIcon,
   group: 'developer',
   position: 150,
-  subject: Subject.Store,
+  subject: Subject.OauthApplication,
 })
 
 settingsNav.add({
