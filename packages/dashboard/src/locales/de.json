@@ -4077,12 +4077,12 @@
           "commission_tax_title": "Steuer auf Provision"
         },
         "connected_apps": {
-          "title": "Verbundene Apps",
-          "subtitle": "Agenten und Anwendungen, denen ein Teammitglied Zugriff auf diesen Shop gegeben hat. Ein Widerruf wirkt sofort.",
-          "empty": "Es wurden noch keine Anwendungen verbunden.",
+          "title": "Verbundene Agenten",
+          "subtitle": "KI-Agenten, denen ein Teammitglied Zugriff auf diesen Shop gegeben hat. Der Widerruf gilt sofort.",
+          "empty": "Es wurden noch keine Agenten verbunden.",
           "revoke": "Zugriff widerrufen",
           "table": {
-            "name": "Anwendung",
+            "name": "Agent",
             "access": "Zugriff",
             "authorized_by": "Genehmigt von",
             "last_authorized": "Letzte Autorisierung"
@@ -5146,7 +5146,7 @@
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
-        "connected_apps": "Agenten und Anwendungen mit Zugriff auf diesen Shop"
+        "connected_apps": "KI-Agenten mit Zugriff auf diesen Shop"
       },
       "groups": {
         "audit": "Audit",
@@ -5185,7 +5185,7 @@
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
         "marketplace": "Einstellungen",
-        "connected_apps": "Verbundene Apps"
+        "connected_apps": "Verbundene Agenten"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"

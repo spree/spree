@@ -4067,12 +4067,12 @@
           "commission_tax_title": "佣金税"
         },
         "connected_apps": {
-          "title": "已连接的应用",
-          "subtitle": "团队成员授予此店铺访问权限的代理和应用。撤销将立即生效。",
-          "empty": "尚未连接任何应用。",
+          "title": "已连接的代理",
+          "subtitle": "团队成员授予此店铺访问权限的 AI 代理。撤销立即生效。",
+          "empty": "尚未连接任何代理。",
           "revoke": "撤销访问权限",
           "table": {
-            "name": "应用",
+            "name": "代理",
             "access": "访问权限",
             "authorized_by": "批准人",
             "last_authorized": "最后授权时间"
@@ -5135,7 +5135,7 @@
         "package_types": "纸箱、外箱、托盘与集装箱",
         "suppliers": "你从谁那里采购库存，以及如何联系他们",
         "marketplace": "卖家付款、卖家审核、卖家邮件与佣金税",
-        "connected_apps": "可访问此店铺的代理和应用"
+        "connected_apps": "有权访问此店铺的 AI 代理"
       },
       "groups": {
         "audit": "审计",
@@ -5174,7 +5174,7 @@
         "package_types": "包装类型",
         "suppliers": "供应商",
         "marketplace": "设置",
-        "connected_apps": "已连接的应用"
+        "connected_apps": "已连接的代理"
       },
       "breadcrumbs": {
         "marketplace": "平台"

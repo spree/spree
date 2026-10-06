@@ -722,12 +722,12 @@
           "commission_tax_title": "Impuesto sobre la comisión"
         },
         "connected_apps": {
-          "title": "Aplicaciones conectadas",
-          "subtitle": "Agentes y aplicaciones a los que un miembro del equipo ha dado acceso a esta tienda. La revocación surte efecto de inmediato.",
-          "empty": "Todavía no se ha conectado ninguna aplicación.",
+          "title": "Agentes conectados",
+          "subtitle": "Agentes de IA a los que un miembro del equipo ha dado acceso a esta tienda. La revocación surte efecto de inmediato.",
+          "empty": "Aún no se ha conectado ningún agente.",
           "revoke": "Revocar acceso",
           "table": {
-            "name": "Aplicación",
+            "name": "Agente",
             "access": "Acceso",
             "authorized_by": "Aprobado por",
             "last_authorized": "Última autorización"
@@ -4217,7 +4217,7 @@
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
-        "connected_apps": "Agentes y aplicaciones con acceso a esta tienda"
+        "connected_apps": "Agentes de IA con acceso a esta tienda"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4256,7 +4256,7 @@
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
         "marketplace": "Configuración",
-        "connected_apps": "Aplicaciones conectadas"
+        "connected_apps": "Agentes conectados"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
