@@ -42,19 +42,88 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         (variant.discontinue_on || default_publication.unpublished_at)&.strftime('%Y-%m-%d %H:%M:%S')
       )
       expect(subject[23]).to eq variant.track_inventory?
-      expect(subject[24]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
-      expect(subject[25]).to eq variant.backorderable?
-      expect(subject[26]).to eq variant.tax_category&.name
-      expect(subject[27]).to eq product.product_type&.name
-      expect(subject[28]).to end_with(variant.images[0].filename.to_s)
-      expect(subject[29]).to end_with(variant.images[1].filename.to_s)
-      expect(subject[30]).to end_with(variant.images[2].filename.to_s)
-      expect(subject[31]).to eq nil
+      default_level = variant.stock_levels.find_by(stock_location: store.default_stock_location)
+      expect(subject[24]).to eq default_level&.count_on_hand
+      expect(subject[25]).to eq default_level&.backorderable
+      expect(subject[26]).to eq nil
+      expect(subject[27]).to eq variant.tax_category&.name
+      expect(subject[28]).to eq product.product_type&.name
+      expect(subject[29]).to end_with(variant.images[0].filename.to_s)
+      expect(subject[30]).to end_with(variant.images[1].filename.to_s)
+      expect(subject[31]).to end_with(variant.images[2].filename.to_s)
       expect(subject[32]).to eq nil
       expect(subject[33]).to eq nil
       expect(subject[34]).to eq nil
       expect(subject[35]).to eq nil
       expect(subject[36]).to eq nil
+      expect(subject[37]).to eq nil
+    end
+
+    context 'when units are promised to an order and held by a cart' do
+      let(:stock_location) { create(:stock_location) }
+      let(:presenter) { described_class.new(product, variant, 0, [], [], store, [], default_stock_location: stock_location) }
+      let(:stock_level) { variant.stock_levels.find_by!(stock_location: stock_location) }
+      let(:cart) { create(:cart, store: store) }
+
+      before do
+        stub_store_preferences(stock_reservations_enabled: true)
+        variant.update!(track_inventory: true)
+        variant.set_stock(12, false, stock_location)
+        stock_level.update_columns(allocated_count: 3)
+        create(
+          :stock_reservation,
+          stock_level: stock_level,
+          line_item: create(:line_item, order: cart, variant: variant),
+          cart: cart,
+          quantity: 1
+        )
+      end
+
+      it 'exports the shelf count as inventory_count' do
+        expect(variant.total_on_hand).to eq 8
+        expect(subject[described_class::CSV_HEADERS.index('inventory_count')]).to eq 12
+      end
+    end
+
+    context 'with stock at several locations' do
+      let(:default_location) { create(:stock_location, name: 'Main') }
+      let(:other_location) { create(:stock_location, name: 'Warehouse B') }
+      let(:presenter) { described_class.new(product, variant, 0, [], [], store, [], default_stock_location: default_location) }
+
+      before do
+        variant.update!(track_inventory: true)
+        variant.set_stock(12, false, default_location)
+        variant.set_stock(5, true, other_location)
+      end
+
+      it 'carries only the given location on the full row' do
+        expect(subject[described_class::CSV_HEADERS.index('inventory_count')]).to eq 12
+        expect(subject[described_class::CSV_HEADERS.index('inventory_backorderable')]).to be false
+        expect(subject[described_class::CSV_HEADERS.index('stock_location')]).to be_nil
+      end
+
+      it 'leaves the inventory columns blank when the given location holds no stock' do
+        row = described_class.new(product, variant, 0, [], [], store, [], default_stock_location: create(:stock_location)).call
+
+        expect(row.values_at(described_class::CSV_HEADERS.index('inventory_count'),
+                             described_class::CSV_HEADERS.index('inventory_backorderable'))).to eq [nil, nil]
+      end
+
+      it 'writes a stock-only row naming any other location' do
+        stock_level = variant.stock_levels.find_by!(stock_location: other_location)
+        row = described_class.new(product, variant, 0, [], [], store, stock_level: stock_level).call
+
+        expect(row.size).to eq described_class::CSV_HEADERS.size
+        expect(row.compact).to contain_exactly(variant.sku, product.slug, 5, true, 'Warehouse B')
+      end
+    end
+
+    context 'when the variant does not track inventory' do
+      before { variant.update!(track_inventory: false) }
+
+      it 'exports inventory_count as unlimited' do
+        expect(subject[described_class::CSV_HEADERS.index('inventory_count')]).to eq '∞'
+      end
     end
 
     context 'when the variant has option values' do
@@ -70,12 +139,12 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         it 'returns the options alongside the product-level fields' do
           expect(subject[2]).to eq product.name
           expect(subject[1]).to eq variant.sku
-          expect(subject[31]).to eq 'Color'
-          expect(subject[32]).to eq 'Red'
-          expect(subject[33]).to eq 'Size'
-          expect(subject[34]).to eq 'Small'
-          expect(subject[35]).to eq nil
+          expect(subject[32]).to eq 'Color'
+          expect(subject[33]).to eq 'Red'
+          expect(subject[34]).to eq 'Size'
+          expect(subject[35]).to eq 'Small'
           expect(subject[36]).to eq nil
+          expect(subject[37]).to eq nil
         end
       end
 
@@ -92,12 +161,12 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
           expect(subject[1]).to eq variant.sku
           expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
           expect(subject[23]).to eq false
-          expect(subject[31]).to eq 'Color'
-          expect(subject[32]).to eq 'Red'
-          expect(subject[33]).to eq 'Size'
-          expect(subject[34]).to eq 'Small'
-          expect(subject[35]).to eq nil
+          expect(subject[32]).to eq 'Color'
+          expect(subject[33]).to eq 'Red'
+          expect(subject[34]).to eq 'Size'
+          expect(subject[35]).to eq 'Small'
           expect(subject[36]).to eq nil
+          expect(subject[37]).to eq nil
         end
       end
     end
@@ -109,9 +178,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         end
 
         it 'returns images with default host' do
-          expect(subject[28]).to start_with('http://test.host')
           expect(subject[29]).to start_with('http://test.host')
           expect(subject[30]).to start_with('http://test.host')
+          expect(subject[31]).to start_with('http://test.host')
         end
       end
 
@@ -121,9 +190,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         end
 
         it 'returns images with the store url' do
-          expect(subject[28]).to start_with("http://#{store.url}")
           expect(subject[29]).to start_with("http://#{store.url}")
           expect(subject[30]).to start_with("http://#{store.url}")
+          expect(subject[31]).to start_with("http://#{store.url}")
         end
 
       end
@@ -227,7 +296,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'exports the product type name' do
         result = presenter.call
-        expect(result[27]).to eq 'Digital'
+        expect(result[28]).to eq 'Digital'
       end
     end
 
@@ -236,7 +305,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'exports a blank column' do
         result = presenter.call
-        expect(result[27]).to be_nil
+        expect(result[28]).to be_nil
       end
     end
   end

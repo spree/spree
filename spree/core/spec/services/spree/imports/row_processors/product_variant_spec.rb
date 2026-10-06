@@ -540,6 +540,86 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  context 'when importing stock-only rows for a named location' do
+    let!(:product) { create(:product, slug: 'mug', name: 'Mug') }
+    let!(:existing_variant) { product.default_variant.tap { |variant| variant.update!(sku: 'MUG', track_inventory: true) } }
+    let!(:warehouse) { create(:stock_location, store: store, name: 'Warehouse B') }
+    let(:location_name) { '  warehouse   b ' }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'mug',
+        'sku' => 'MUG',
+        'inventory_count' => '5',
+        'inventory_backorderable' => 'true',
+        'stock_location' => location_name
+      )
+    end
+
+    before do
+      %w[inventory_count inventory_backorderable stock_location].each do |field|
+        import.mappings.find_by(schema_field: field)&.update(file_column: field)
+      end
+      existing_variant.set_stock(12, false, store.default_stock_location)
+    end
+
+    def count_at(location)
+      existing_variant.stock_levels.find_by(stock_location: location)&.count_on_hand
+    end
+
+    it 'sets the stock at that location only, matching the name as the location stores it' do
+      subject.process!
+
+      expect(count_at(warehouse)).to eq 5
+      expect(existing_variant.stock_levels.find_by(stock_location: warehouse).backorderable).to be true
+      expect(count_at(store.default_stock_location)).to eq 12
+    end
+
+    context 'when no location has that name' do
+      let(:row_data) do
+        csv_row_hash('slug' => 'mug', 'name' => 'Renamed Mug', 'sku' => 'MUG', 'price' => '99.00',
+                     'inventory_count' => '5', 'stock_location' => 'Nowhere')
+      end
+
+      before { import.mappings.find_by(schema_field: 'name')&.update(file_column: 'name') }
+
+      it 'fails the row before writing anything' do
+        expect { subject.process! }.to raise_error(ArgumentError, 'You have no stock location named Nowhere.')
+        expect(product.reload.name).to eq 'Mug'
+        expect(existing_variant.reload.price_in(store.default_currency).amount.to_f).not_to eq 99.0
+      end
+    end
+
+    # The split cartons use: an operator's file names the marketplace's
+    # locations, a seller's names their own, so a shared name is never ambiguous.
+    context "when the name is a seller's location" do
+      let(:seller) { create(:seller, store: store) }
+      let!(:warehouse) { create(:stock_location, store: store, seller: seller, name: 'Warehouse B') }
+
+      it "does not reach it for a marketplace product" do
+        expect { subject.process! }.to raise_error(ArgumentError, 'You have no stock location named warehouse b.')
+      end
+
+      context "and the product is that seller's" do
+        # Created first, so only the ordering keeps it from winning the lookup.
+        let!(:marketplace_namesake) { create(:stock_location, store: store, name: 'Warehouse B') }
+        let!(:warehouse) do
+          marketplace_namesake
+          create(:stock_location, store: store, seller: seller, name: 'Warehouse B')
+        end
+
+        before { product.update!(seller: seller) }
+
+        it "writes to the seller's own location, which wins over the marketplace's namesake as with cartons" do
+          subject.process!
+
+          expect(count_at(warehouse)).to eq 5
+          expect(count_at(marketplace_namesake)).to be_nil
+        end
+      end
+    end
+  end
+
   context 'when importing a variant row with a new option type/value' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
