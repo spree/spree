@@ -56,7 +56,12 @@ module Spree
           ok: true,
           id: export.prefixed_id,
           resource: resource.to_s,
-          message: 'The export is being prepared; it will appear under Settings → Exports.'
+          # Generation is a background job, so there is no file yet. Naming
+          # the tool that finishes the job keeps the model from sending the
+          # merchant to the dashboard for something it can fetch itself.
+          message: 'The export is being prepared. Read it back with get_resource ' \
+                   "(resource: \"exports\", id: \"#{export.prefixed_id}\"); once the file is ready " \
+                   'the record carries a download_url, which is a path on this API.'
         }
       end
 

@@ -54,6 +54,18 @@ module Spree
         acceptance_url download_url
       ].freeze
 
+      # Attributes a named resource may keep, because on that resource the
+      # value is an ordinary authenticated path rather than a link that
+      # authenticates on itself.
+      #
+      # An export's download endpoint runs the Admin API's own scope check
+      # and `authorize_resource!`, so the link grants nothing on its own and
+      # withholding it only sends the merchant to the dashboard for a file
+      # the agent just made for them. Keyed per attribute rather than per
+      # resource: exempting a whole record would also release any other
+      # credential-shaped field it later gains.
+      LINK_SAFE_ATTRIBUTES = { 'exports' => %w[download_url].freeze }.freeze
+
       class << self
         # Strips credential-shaped keys from a serialized record.
         #
@@ -68,14 +80,20 @@ module Spree
         #
         # @param attributes [Hash]
         # @return [Hash]
-        def sanitize(value)
+        def sanitize(value, resource = nil)
           case value
           when Hash
-            value.to_h.stringify_keys.each_with_object({}) do |(key, nested), result|
-              next if key.match?(SECRET_PATTERN) || SECRET_ASSOCIATIONS.include?(key)
-              next if SECRET_ATTRIBUTES.include?(key)
-              next if credential_value?(nested)
+            exempt = LINK_SAFE_ATTRIBUTES.fetch(resource.to_s, [])
 
+            value.to_h.stringify_keys.each_with_object({}) do |(key, nested), result|
+              link_safe = exempt.include?(key)
+
+              next if key.match?(SECRET_PATTERN) || SECRET_ASSOCIATIONS.include?(key)
+              next if SECRET_ATTRIBUTES.include?(key) && !link_safe
+              next if credential_value?(nested) && !link_safe
+
+              # Only the record's own keys are exempt. A nested association
+              # carries its own rules, so recursion drops the exemption.
               result[key] = sanitize(nested)
             end
           when Array
