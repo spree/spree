@@ -25,6 +25,18 @@ curl -X POST https://api.mystore.com/api/v3/store/carts/cart_xxx/items \
 
 If the client retries this exact request with the same idempotency key, the API returns the original response with an `Idempotent-Replayed: true` header — without adding the item again.
 
+## Who A Cached Response Belongs To
+
+A cached response is only ever returned to the caller that produced it, so the request has to say who that caller is. One of these identifies them:
+
+- the **customer's access token** (`Authorization: Bearer ...`), for a signed-in shopper
+- the **cart token** (`X-Spree-Token`), for a guest working on a cart they already hold
+- a **secret key** (`sk_...`), for a server-to-server caller on the Admin API
+
+Your publishable key (`pk_...`) does not count. Every visitor to your storefront sends the same one, so a key value that two shoppers happen to share — `checkout-1`, an order number, a timestamp — would hand one shopper the other's response, cart token included.
+
+A request that carries none of the credentials above still runs exactly as it always has — it is simply never cached, so the `Idempotency-Key` header has no effect on it. Guests are not second-class here: a guest holds a cart token from the moment their cart exists, which covers the whole of checkout, including the steps where a duplicate costs money.
+
 ## Supported Endpoints
 
 | Endpoint | Actions |
@@ -38,13 +50,15 @@ If the client retries this exact request with the same idempotency key, the API 
 | `POST /carts/:id/coupon_codes` | Applying coupon codes |
 | `POST /carts/:id/store_credits` | Applying store credits |
 
+Every one of these is replayable for a guest as well as for a signed-in shopper, because every one of them is reached with the cart's token. The exception is creating the cart itself: there is no cart yet, so a guest has no token to present and the key is ignored — a retry may leave behind a second, empty cart. Sign the shopper in, or accept the spare cart.
+
 Idempotency keys are ignored on `GET`, `DELETE`, and other non-supported actions.
 
 ## Key Requirements
 
 - Must be a string of **255 characters or less**
 - Should be unique per distinct operation (UUIDs are recommended)
-- Keys are scoped per API key — different API keys can use the same idempotency key without conflict
+- Keys are scoped to the caller and the store, so two callers can use the same key value without conflict
 - Cached responses expire after **24 hours**
 
 ## Response Headers

@@ -21,6 +21,8 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
     describe 'idempotency' do
       let(:idempotency_key) { SecureRandom.uuid }
 
+      before { request.headers['Authorization'] = "Bearer #{jwt_token}" }
+
       it 'processes normally without Idempotency-Key header' do
         expect { post :create }.to change(Spree::Cart, :count).by(1)
         expect(response).to have_http_status(:created)
@@ -59,14 +61,13 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         expect { post :create }.to change(Spree::Cart, :count).by(1)
       end
 
-      it 'scopes cache by API key' do
+      it 'scopes the cache to the caller, not to the shared publishable key' do
         request.headers['Idempotency-Key'] = idempotency_key
         post :create
         first_response = json_response
 
-        other_api_key = create(:api_key, :publishable, store: store)
-        request.headers['X-Spree-Api-Key'] = other_api_key.token
-        request.headers['Idempotency-Key'] = idempotency_key
+        other_customer = create(:user)
+        request.headers['Authorization'] = "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(other_customer)}"
 
         expect { post :create }.to change(Spree::Cart, :count).by(1)
         expect(response.headers['Idempotent-Replayed']).to be_nil
@@ -92,6 +93,36 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         get :show, params: { id: cart.prefixed_id }
         expect(response).to have_http_status(:ok)
         expect(response.headers['Idempotent-Replayed']).to be_nil
+      end
+    end
+
+    describe 'callers that share a publishable key' do
+      let(:idempotency_key) { 'checkout-1' }
+
+      before { request.headers['Idempotency-Key'] = idempotency_key }
+
+      it 'gives two guests their own cart rather than replaying the first one' do
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
+        expect(response).to have_http_status(:created)
+        first_response = json_response
+
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
+        expect(response).to have_http_status(:created)
+        expect(response.headers['Idempotent-Replayed']).to be_nil
+        expect(json_response['id']).not_to eq(first_response['id'])
+        expect(json_response['token']).not_to eq(first_response['token'])
+      end
+
+      it 'replays for a guest that holds the cart token' do
+        cart = create(:cart, store: store)
+        request.headers['x-spree-token'] = cart.token
+
+        patch :update, params: { id: cart.prefixed_id, email: 'guest@example.com' }
+        expect(response).to have_http_status(:ok)
+
+        patch :update, params: { id: cart.prefixed_id, email: 'guest@example.com' }
+        expect(response).to have_http_status(:ok)
+        expect(response.headers['Idempotent-Replayed']).to eq('true')
       end
     end
   end
