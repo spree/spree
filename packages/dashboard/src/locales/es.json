@@ -735,6 +735,16 @@
           "revoke_confirm": {
             "title": "¿Revocar el acceso?",
             "message": "{{name}} dejará de funcionar de inmediato. Quien lo use tendrá que conectarse de nuevo."
+          },
+          "register": "Registrar un cliente",
+          "form": {
+            "create_title": "Registrar un cliente",
+            "edit_title": "Editar cliente",
+            "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
+          },
+          "delete_confirm": {
+            "title": "¿Eliminar este cliente?",
+            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
           }
         }
       },
@@ -2467,6 +2477,16 @@
         "default": {
           "label": "Caja predeterminada",
           "help": "El empaque sobre el que se calculan tus cotizaciones de paquetería. Solo una predeterminada a la vez."
+        }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de retorno",
+          "help": "De la documentación del propio cliente. Los códigos de autorización se entregan aquí, así que debe ser la dirección que el cliente publica."
         }
       }
     },

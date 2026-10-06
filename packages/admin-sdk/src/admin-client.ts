@@ -5889,20 +5889,8 @@ export class AdminClient {
     deny: (params: OauthAuthorizationParams, options?: RequestOptions): Promise<OauthRedirect> =>
       this.request<OauthRedirect>('DELETE', '/oauth/authorize', { ...options, body: params }),
 
-    /** Applications a merchant has connected, for the revoke screen. */
+    /** The OAuth clients registered against this store. */
     applications: {
-      /**
-       * Every client registered for this store, connected or not. A merchant
-       * needs the id of one they have not connected yet, which is exactly
-       * what `list` leaves out.
-       */
-      registrations: (options?: RequestOptions): Promise<{ data: OauthApplication[] }> =>
-        this.request<{ data: OauthApplication[] }>(
-          'GET',
-          '/oauth/applications/registrations',
-          options ?? {},
-        ),
-
       list: (
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
@@ -5912,13 +5900,38 @@ export class AdminClient {
           params: params ? transformListParams(params) : undefined,
         }),
 
+      get: (id: string, options?: RequestOptions): Promise<OauthApplication> =>
+        this.request<OauthApplication>('GET', `/oauth/applications/${id}`, options ?? {}),
+
+      create: (
+        params: { name: string; redirect_uri: string },
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('POST', '/oauth/applications', {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        id: string,
+        params: Partial<{ name: string; redirect_uri: string }>,
+        options?: RequestOptions,
+      ): Promise<OauthApplication> =>
+        this.request<OauthApplication>('PATCH', `/oauth/applications/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Removes the registration, and every grant and token with it. */
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
+
       /**
-       * Revokes every live token and grant an application holds. The
-       * registration itself is kept, so a merchant can reconnect without the
-       * client being re-registered.
+       * Revokes every live token and grant an application holds, keeping the
+       * registration so a merchant can connect the same client again.
        */
       revoke: (id: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/oauth/applications/${id}`, options ?? {}),
+        this.request<void>('DELETE', `/oauth/applications/${id}/tokens`, options ?? {}),
     },
   }
 

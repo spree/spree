@@ -2393,6 +2393,16 @@
           "label": "默认包装",
           "help": "您的包裹报价所依据的包装。同一时间只能有一个默认包装。"
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "名称",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "回调地址",
+          "help": "来自客户端自己的文档。授权码会发送到这里，因此必须是客户端公布的地址。"
+        }
       }
     },
     "gift_cards": {
@@ -4080,6 +4090,16 @@
           "revoke_confirm": {
             "title": "撤销访问权限？",
             "message": "{{name}} 将立即停止工作。使用它的人需要重新连接。"
+          },
+          "register": "注册客户端",
+          "form": {
+            "create_title": "注册客户端",
+            "edit_title": "编辑客户端",
+            "description": "注册 OAuth 客户端后即可将其连接到此店铺。"
+          },
+          "delete_confirm": {
+            "title": "删除此客户端？",
+            "message": "{{name}} 将立即停止工作，其注册记录也会被删除。"
           }
         }
       },

@@ -2398,6 +2398,16 @@
           "label": "Emballage par défaut",
           "help": "L'emballage sur lequel vos tarifs de colis sont calculés. Un seul par défaut à la fois."
         }
+      },
+      "oauth_application": {
+        "name": {
+          "label": "Nom",
+          "placeholder": "Cursor"
+        },
+        "redirect_uri": {
+          "label": "URL de rappel",
+          "help": "Issue de la documentation du client. Les codes d'autorisation y sont livrés : ce doit être l'adresse publiée par le client."
+        }
       }
     },
     "gift_cards": {
@@ -4090,6 +4100,16 @@
           "revoke_confirm": {
             "title": "Révoquer l’accès ?",
             "message": "{{name}} cessera de fonctionner immédiatement. Toute personne qui l’utilise devra se connecter à nouveau."
+          },
+          "register": "Enregistrer un client",
+          "form": {
+            "create_title": "Enregistrer un client",
+            "edit_title": "Modifier le client",
+            "description": "Enregistrez un client OAuth pour pouvoir le connecter à cette boutique."
+          },
+          "delete_confirm": {
+            "title": "Supprimer ce client ?",
+            "message": "{{name}} cessera de fonctionner immédiatement et son enregistrement sera supprimé."
           }
         }
       },
