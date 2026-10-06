@@ -6104,3 +6104,46 @@ endpoint that names it, and naming it needs `write_customers`. The staff and
 seller reset requests are declared `webhook: false` and never reach any
 webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
 subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.
+
+## 2026-10-06 — The products CSV carries each location's shelf count
+
+**Context:** The products export filled `inventory_count` from
+`Variant#total_on_hand`, which since stock reservations and allocation means
+what a customer can still buy: the shelf, minus units promised to placed
+orders, minus units held by checkouts, summed over every active location. The
+import writes the same column back through `Variant#set_stock`, which sets the
+shelf at a single location. Exporting and re-importing an unchanged file
+therefore took every promised and held unit off the shelf, once per round trip
+(V-3697), and moved stock from every other location onto the default one. Both
+stock plans told readers to go through the availability figure and never the
+shelf, and neither listed the export as a reader.
+
+**Decision:** `inventory_count` is the shelf count at one location, and
+`inventory_backorderable` that location's setting. A new `stock_location`
+column names the location; blank means the owner's default, so existing files
+keep their meaning. The export writes the default location on the full row and
+a stock-only row for each further location holding stock — the shape the
+price-only rows for extra currencies already have. Locations are named, not
+referenced by id, as the purchase-order import's `destination` is. An
+operator's file covers the marketplace's locations and, for a seller's
+product, that seller's; on import the seller's own location wins when both
+owners use the name, as with cartons. That misroutes only a seller's product
+stocked in a marketplace location named like one of the seller's own — rare
+enough that failing every shared name was the worse trade, since it would
+fail ordinary rows. A seller's file and import cover only their own locations:
+a seller never sets the marketplace's shelf. Rejected: keeping the
+sellable figure and having the import add held units back (holds change
+between export and import); one column per location (headers change when a
+location is renamed); exporting the default location alone (stock elsewhere
+disappears from the file).
+
+**Consequences:** A reader whose figure is written back to the shelf
+(`set_stock`, a stock adjustment, a file meant to be re-imported) reads the
+stock level's own `count_on_hand`; every availability reader still reads
+`total_on_hand`. Renaming a location between export and import fails that
+location's rows rather than writing elsewhere. A seller's export leaves out
+their products' stock held in marketplace locations.
+
+**Plans amended:** `5.6-admin-spa-csv-import.md` (stock is per location),
+`6.0-stock-reservations.md` and `6.0-typed-stock-movements.md` (the "read
+availability, never the shelf" constraints name the write-back exception).
