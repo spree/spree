@@ -4100,17 +4100,27 @@
           "revoke_confirm": {
             "title": "Zugriff widerrufen?",
             "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
-          },
+          }
+        },
+        "oauth_clients": {
+          "title": "OAuth-Clients",
+          "subtitle": "Die für diesen Shop registrierten OAuth-Clients. Verbunden werden sie unter „Verbundene Agenten“.",
+          "empty": "Noch keine Clients registriert.",
           "register": "Client registrieren",
+          "table": {
+            "client_id": "Client-ID",
+            "created": "Registriert"
+          },
+          "delete_confirm": {
+            "title": "Diesen Client löschen?",
+            "message": "{{name}} funktioniert sofort nicht mehr und die Registrierung wird entfernt."
+          },
           "form": {
             "create_title": "Client registrieren",
             "edit_title": "Client bearbeiten",
             "description": "Registrieren Sie einen OAuth-Client, damit er mit diesem Shop verbunden werden kann."
           },
-          "delete_confirm": {
-            "title": "Diesen Client löschen?",
-            "message": "{{name}} funktioniert sofort nicht mehr und die Registrierung wird entfernt."
-          }
+          "copy_client_id": "Client-ID kopieren"
         }
       },
       "staff": {
@@ -5168,7 +5178,8 @@
         "package_types": "Kartons, Paletten und Container",
         "suppliers": "Von wem Sie Ware einkaufen und wie Sie sie erreichen",
         "marketplace": "Auszahlungen, Verkäuferfreigabe, Verkäufer-E-Mails und Steuer auf Provision",
-        "connected_apps": "KI-Agenten mit Zugriff auf diesen Shop"
+        "connected_apps": "KI-Agenten mit Zugriff auf diesen Shop",
+        "oauth_clients": "OAuth-Clients registrieren und konfigurieren"
       },
       "groups": {
         "audit": "Audit",
@@ -5207,7 +5218,8 @@
         "package_types": "Verpackungsarten",
         "suppliers": "Lieferanten",
         "marketplace": "Einstellungen",
-        "connected_apps": "Verbundene Agenten"
+        "connected_apps": "Verbundene Agenten",
+        "oauth_clients": "OAuth-Clients"
       },
       "breadcrumbs": {
         "marketplace": "Marktplatz"

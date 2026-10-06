@@ -735,17 +735,27 @@
           "revoke_confirm": {
             "title": "¿Revocar el acceso?",
             "message": "{{name}} dejará de funcionar de inmediato. Quien lo use tendrá que conectarse de nuevo."
-          },
+          }
+        },
+        "oauth_clients": {
+          "title": "Clientes OAuth",
+          "subtitle": "Los clientes OAuth registrados en esta tienda. La conexión se hace desde Agentes conectados.",
+          "empty": "Aún no hay clientes registrados.",
           "register": "Registrar un cliente",
+          "table": {
+            "client_id": "ID de cliente",
+            "created": "Registrado"
+          },
+          "delete_confirm": {
+            "title": "¿Eliminar este cliente?",
+            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
+          },
           "form": {
             "create_title": "Registrar un cliente",
             "edit_title": "Editar cliente",
             "description": "Registre un cliente OAuth para poder conectarlo a esta tienda."
           },
-          "delete_confirm": {
-            "title": "¿Eliminar este cliente?",
-            "message": "{{name}} dejará de funcionar de inmediato y se eliminará su registro."
-          }
+          "copy_client_id": "Copiar ID de cliente"
         }
       },
       "staff": {
@@ -4239,7 +4249,8 @@
         "package_types": "Cajas, cajones, palets y contenedores",
         "suppliers": "A quién le comprás stock y cómo contactarlos",
         "marketplace": "Pagos a vendedores, aprobación de vendedores, correos a vendedores e impuesto sobre la comisión",
-        "connected_apps": "Agentes de IA con acceso a esta tienda"
+        "connected_apps": "Agentes de IA con acceso a esta tienda",
+        "oauth_clients": "Registrar y configurar clientes OAuth"
       },
       "groups": {
         "audit": "Auditoría",
@@ -4278,7 +4289,8 @@
         "package_types": "Tipos de empaque",
         "suppliers": "Proveedores",
         "marketplace": "Configuración",
-        "connected_apps": "Agentes conectados"
+        "connected_apps": "Agentes conectados",
+        "oauth_clients": "Clientes OAuth"
       },
       "breadcrumbs": {
         "marketplace": "Marketplace"
