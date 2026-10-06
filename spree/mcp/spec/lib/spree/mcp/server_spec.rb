@@ -139,19 +139,18 @@ RSpec.describe Spree::Mcp::Server do
       expect(response.dig('result', 'isError')).to be(false)
     end
 
-    # A result travels as structured content; repeating it as text would put
-    # every record into the model's context twice, on exactly the payloads
-    # the design requires to stay compact.
-    it 'does not repeat the payload as text' do
+    # Claude reads the text block, so a payload that travels only as
+    # structured content reaches the model as nothing. This shipped the other
+    # way round once: a search answered "Found 1 match." with the match
+    # stripped out, and the model could not name what it had just found.
+    it 'carries the records in the text, not only in structured content' do
       create(:product, store: store, name: 'Context Budget')
 
       response = call('tools/call', name: 'search_resources', arguments: { 'resource' => 'products' })
       text = response.dig('result', 'content', 0, 'text').to_s
-      structured = JSON.generate(response.dig('result', 'structuredContent'))
 
-      expect(structured).to include('Context Budget')
-      expect(text).not_to include('Context Budget')
-      expect(text.length).to be < structured.length
+      expect(text).to include('Context Budget')
+      expect(JSON.generate(response.dig('result', 'structuredContent'))).to include('Context Budget')
     end
 
     # The other half of the rule. A client may render the structured half,
@@ -167,12 +166,17 @@ RSpec.describe Spree::Mcp::Server do
       expect(JSON.parse(text)).to include('families')
     end
 
-    it 'says what a payload holds when the tool offers no summary' do
+    # A count describes an answer rather than being one. An empty result may
+    # say so in a sentence, but a result holding records has to hand them
+    # over — the model cannot act on "Found 2 matches."
+    it 'never reduces a page of records to a count' do
       create_list(:product, 2, store: store)
 
       response = call('tools/call', name: 'search_resources', arguments: { 'resource' => 'products' })
+      text = response.dig('result', 'content', 0, 'text').to_s
 
-      expect(response.dig('result', 'content', 0, 'text')).to match(/Found \d+ match/)
+      expect(text).not_to match(/\AFound \d+ match(es)?\.\z/)
+      expect(JSON.parse(text)['records'].size).to eq(2)
     end
 
     it 'returns structured content from a read tool' do

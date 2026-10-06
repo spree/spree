@@ -53,6 +53,34 @@ RSpec.describe Spree::AgentTools::RecordSummary do
   # serializers expose a link whose path or query string IS the secret, and the
   # endpoint it addresses authenticates on the link alone. Matching the key
   # name cannot catch those.
+  # An export's download endpoint authenticates like any other admin route,
+  # so the link grants nothing on its own. Withholding it only sent the
+  # merchant to the dashboard for a file the agent had just made.
+  describe 'a link that is not a bearer instrument' do
+    let(:links) do
+      { 'download_url' => '/api/v3/admin/exports/exp_1/download',
+        'acceptance_url' => 'https://example.test/accept-invitation/SECRET' }
+    end
+
+    it "keeps an export's download link" do
+      expect(described_class.sanitize(links, 'exports')).to eq(
+        'download_url' => '/api/v3/admin/exports/exp_1/download'
+      )
+    end
+
+    it 'keeps it for no other resource' do
+      expect(described_class.sanitize(links, 'invitations')).to be_empty
+      expect(described_class.sanitize(links)).to be_empty
+    end
+
+    # The exemption belongs to the record, not to anything hanging off it.
+    it 'does not reach a nested association' do
+      result = described_class.sanitize({ 'nested' => links }, 'exports')
+
+      expect(result['nested']).to be_empty
+    end
+  end
+
   describe 'a credential carried in a value' do
     it 'drops an invitation acceptance link' do
       cleaned = described_class.sanitize(
