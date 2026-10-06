@@ -534,6 +534,11 @@ module Spree
     def normalize_state
       return if country_code.blank?
 
+      # A code carried over from the country the address just moved off can
+      # name a subdivision there too (NY is Nyíregyháza in Hungary), so a
+      # state_name sent with the move decides instead.
+      self[:state_code] = nil if state_name.present? && country_code_changed? && !state_code_changed?
+
       submitted_abbr = self[:state_code].presence
 
       if submitted_abbr.present?

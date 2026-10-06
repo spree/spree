@@ -203,6 +203,14 @@ describe Spree::Address, type: :model do
       expect(address.state_abbr).to be_nil
     end
 
+    it 'lets a state_name sent with a country change replace a code that is valid in both countries' do
+      address = create(:address, country_code: 'US', state_code: 'NY')
+      address.update!(country_code: 'HU', state_name: 'Budapest', postal_code: '1011')
+
+      expect(address.reload.state_code).to eq('BU')
+      expect(address.state_name).to be_nil
+    end
+
     it 'both state and state_name are entered and country does contain the state' do
       address.state_code = state.abbr
       address.state_name = 'maryland'
