@@ -23,6 +23,7 @@ const amountField = z
   })
 
 export const issueStoreCreditFormSchema = z.object({
+  customer_id: z.string().min(1, { error: requiredMessage('customer_id') }),
   amount: amountField,
   currency: z.string().min(1, { error: requiredMessage('currency') }),
   memo: z.string(),

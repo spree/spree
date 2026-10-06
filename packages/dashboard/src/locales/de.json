@@ -6033,8 +6033,9 @@
       },
       "table": {
         "search_placeholder": "Notizen durchsuchen…",
-        "empty": "Noch kein Guthaben. Stellen Sie eines im Kundenprofil aus."
+        "empty": "Noch kein Guthaben."
       },
+      "issue_description": "Wählen Sie einen Kunden und den Betrag, der seinem Konto gutgeschrieben wird.",
       "no_customer": "Kein Kunde",
       "page": {
         "subtitle": "Was der Shop an Guthaben schuldet, über alle Kunden hinweg."
