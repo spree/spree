@@ -120,10 +120,12 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
 
   const canEdit = permissions.can('update', Subject.Catalog)
 
-  // The mode as last saved, not as currently selected: switching away from
-  // hand-entered prices has to clear them, and the warning has to know a
-  // switch is what is about to happen.
-  const savedPricingMode = catalogPricingValues(catalog.price_list).pricing_mode
+  // The pricing as last saved, not as currently selected: switching away from
+  // hand-entered prices has to clear them, and an untouched ladder must not
+  // be resent. Advanced on every successful save rather than only when the
+  // refetch lands, so a second save made before it arrives is not compared
+  // against a ladder the server no longer holds.
+  const [savedPricing, setSavedPricing] = useState(() => catalogPricingValues(catalog.price_list))
   // Owned here so the pricing card and the assortment rows open the same
   // spreadsheet — pricing an assortment is an action on those rows too.
   const [priceEditorOpen, setPriceEditorOpen] = useState(false)
@@ -144,6 +146,8 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
   // catalog mid-edit, and an unguarded reset would drop both the settings
   // being typed and any staged product changes.
   useEffect(() => {
+    const loadedPricing = catalogPricingValues(catalog.price_list)
+    setSavedPricing(loadedPricing)
     if (form.formState.isDirty) return
     form.reset({
       name: catalog.name,
@@ -161,7 +165,7 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
         currency: minimum.currency,
         amount: minimum.amount,
       })),
-      ...catalogPricingValues(catalog.price_list),
+      ...loadedPricing,
       staged_products: { adds: [], removes: [] },
       // Not seeded from the server: terms arrive on the assortment rows, a
       // page at a time, so the form holds only what the merchant edits. A
@@ -225,10 +229,18 @@ function CatalogBody({ catalog }: { catalog: Catalog }) {
       )
 
       await saveMutation.mutateAsync({
-        attributes: { ...catalogValuesToParams(values, savedPricingMode), ...extensionValues },
+        attributes: { ...catalogValuesToParams(values, savedPricing), ...extensionValues },
         addProductIds: values.staged_products.adds.map((product) => product.id),
         removeProductIds: values.staged_products.removes,
         quantityRules: stagedTermsToParams(terms),
+      })
+      setSavedPricing({
+        pricing_mode: values.pricing_mode,
+        adjustment_direction: values.adjustment_direction,
+        adjustment_magnitude: values.adjustment_magnitude ?? '',
+        adjust_compare_at: values.adjust_compare_at,
+        minimum_quantity: values.minimum_quantity ?? '',
+        adjustment_tiers: values.adjustment_tiers,
       })
       form.reset({ ...values, ...extensionValues, staged_products: { adds: [], removes: [] } })
     } catch (err) {
