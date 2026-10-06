@@ -579,6 +579,18 @@
     {
       "source": "/developer/tutorial/dashboard-plugin",
       "destination": "/developer/tutorial/dashboard"
+    },
+    {
+      "source": "/user/settings/users",
+      "destination": "/user/settings/staff"
+    },
+    {
+      "source": "/user/settings/tax",
+      "destination": "/user/settings/tax-rates"
+    },
+    {
+      "source": "/user/settings/returns-configuration",
+      "destination": "/user/settings/returns-and-reasons"
     }
   ],
   "contextual": {
