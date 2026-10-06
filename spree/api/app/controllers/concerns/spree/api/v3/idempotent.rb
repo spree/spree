@@ -29,10 +29,9 @@ module Spree
             return
           end
 
-          caller_identity = idempotency_caller
           return yield if caller_identity.nil?
 
-          cache_key = idempotency_cache_key(caller_identity, key)
+          cache_key = idempotency_cache_key(key)
           cached = Rails.cache.read(cache_key)
 
           if cached
@@ -69,26 +68,29 @@ module Spree
           MUTATING_METHODS.include?(request.method)
         end
 
-        def idempotency_caller
-          return ['secret_key', Spree::ApiKey.compute_token_digest(extract_api_key)] if secret_key_request?
+        def caller_identity
+          return @caller_identity if defined?(@caller_identity)
+
+          credentials = []
+
+          credentials << ['secret_key', Spree::ApiKey.compute_token_digest(extract_api_key)] if secret_key_request?
 
           bearer_token = extract_token
-          return ['bearer', Digest::SHA256.hexdigest(bearer_token)] if bearer_token.present?
+          credentials << ['bearer', Digest::SHA256.hexdigest(bearer_token)] if bearer_token.present?
 
-          return ['order_token', Digest::SHA256.hexdigest(order_token)] if order_token.present?
+          credentials << ['order_token', Digest::SHA256.hexdigest(order_token)] if order_token.present?
 
-          nil
+          @caller_identity = credentials.presence
         end
 
-        def idempotency_cache_key(caller_identity, key)
-          kind, credential = caller_identity
+        def idempotency_cache_key(key)
           # The resolved store partitions the namespace: a staff JWT spans
           # stores, and replaying one store's cached response for a request
           # aimed at another would cross store boundaries. The resolved
           # store — not the raw header — so a header naming the default store
           # and no header at all land in the same partition, as they resolve
           # to the same store.
-          digest = Digest::SHA256.hexdigest("#{kind}\0#{credential}\0#{current_store&.id}\0#{key}")
+          digest = Digest::SHA256.hexdigest([*caller_identity.flatten, current_store&.id, key].join("\0"))
           "spree:idempotency:#{digest}"
         end
 

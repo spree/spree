@@ -124,6 +124,21 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(response.headers['Idempotent-Replayed']).to eq('true')
       end
+
+      it 'does not replay once the cart token that authorized the write is gone' do
+        cart = create(:cart, store: store)
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+        request.headers['x-spree-token'] = cart.token
+
+        patch :update, params: { id: cart.prefixed_id, email: 'customer@example.com' }
+        expect(response).to have_http_status(:ok)
+
+        request.headers['x-spree-token'] = nil
+        patch :update, params: { id: cart.prefixed_id, email: 'customer@example.com' }
+
+        expect(response.headers['Idempotent-Replayed']).to be_nil
+        expect(response).not_to have_http_status(:ok)
+      end
     end
   end
 end

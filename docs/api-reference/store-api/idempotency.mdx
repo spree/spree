@@ -33,6 +33,8 @@ A cached response is only ever returned to the caller that produced it, so the r
 - the **cart token** (`X-Spree-Token`), for a guest working on a cart they already hold
 - a **secret key** (`sk_...`), for a server-to-server caller on the Admin API
 
+Retry with the same credentials you sent the first time. A replay answers from the cache without running the request again, so it never re-checks your access — a retry that drops or swaps a credential is treated as a different caller and runs for real.
+
 Your publishable key (`pk_...`) does not count. Every visitor to your storefront sends the same one, so a key value that two shoppers happen to share — `checkout-1`, an order number, a timestamp — would hand one shopper the other's response, cart token included.
 
 A request that carries none of the credentials above still runs exactly as it always has — it is simply never cached, so the `Idempotency-Key` header has no effect on it. Guests are not second-class here: a guest holds a cart token from the moment their cart exists, which covers the whole of checkout, including the steps where a duplicate costs money.
