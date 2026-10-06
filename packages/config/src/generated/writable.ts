@@ -146,6 +146,30 @@ export const WRITABLE = {
         "preferred_send_consumer_transactional_emails": {
           "type": "boolean"
         },
+        "preferred_email_accent_color": {
+          "type": "string",
+          "nullable": true
+        },
+        "preferred_email_background_color": {
+          "type": "string",
+          "nullable": true
+        },
+        "preferred_email_card_color": {
+          "type": "string",
+          "nullable": true
+        },
+        "preferred_email_text_color": {
+          "type": "string",
+          "nullable": true
+        },
+        "preferred_email_heading_color": {
+          "type": "string",
+          "nullable": true
+        },
+        "preferred_email_font": {
+          "type": "string",
+          "nullable": true
+        },
         "preferred_default_commission_tax_rate": {
           "type": "number"
         },
