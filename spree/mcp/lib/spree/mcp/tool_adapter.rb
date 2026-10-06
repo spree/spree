@@ -97,28 +97,23 @@ module Spree
 
         # A line the client can show beside its confirmation prompt, and the
         # model can read without parsing the structured payload.
-        #
-        # The payload itself is NOT repeated here: it already travels as
-        # structured content, and a client that renders both would put every
-        # record into the model's context twice — on exactly the results the
-        # design requires to stay compact. Without a summary this says what
-        # came back, and the structured half carries it.
         # What the model reads.
         #
         # A client may render the structured half, the text half, or both —
         # the protocol does not say — so the text has to carry the answer
-        # rather than point at it. Naming the keys and trusting the client to
-        # look elsewhere leaves a model with nothing to work from.
+        # rather than point at it. Claude reads the text, so a payload that
+        # travels only as structured content reaches the model as nothing:
+        # a search answered "Found 1 match." with the match itself stripped,
+        # and the model could not name what it had just found.
         #
-        # The exception is a list of records: those already carry a summary
-        # line, and repeating every row would put the payload into the
-        # model's context twice on exactly the results meant to stay compact.
+        # A count is a description of an answer, never the answer. The only
+        # text that may stand in for a payload is one the tool wrote itself.
         def text_for(result)
           return result.to_s unless result.is_a?(Hash)
 
           summary = result[:summary].presence
+          return "#{summary}\n#{JSON.generate(result)}" if summary && record_list?(result)
           return summary if summary
-          return describe(result) if record_list?(result)
 
           JSON.generate(result)
         end
@@ -131,22 +126,6 @@ module Spree
         # for the numbers.
         def record_list?(result)
           result.key?(:records)
-        end
-
-        # A sentence about a payload that carries no summary of its own: what
-        # it holds, so the model knows whether to read the structured content
-        # rather than having to.
-        def describe(result)
-          count = result[:count] || result[:row_count] || Array(result[:records] || result[:rows]).size
-          total = result[:total]
-
-          if total && count
-            "Found #{total} #{'match'.pluralize(total)}#{", returning #{count}" if total != count}."
-          elsif count.to_i.positive?
-            "Returned #{count} #{'result'.pluralize(count)}."
-          else
-            "Returned #{result.keys.map(&:to_s).to_sentence}."
-          end
         end
       end
     end

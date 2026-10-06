@@ -58,7 +58,7 @@ module Spree
       # can act on, not a protocol failure — the same guard RecordSummary
       # applies to the summary row.
       def serialize(entry, record)
-        Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h)
+        Spree::AgentTools::RecordSummary.sanitize(entry.serializer_class.new(record).to_h, entry.key)
       rescue StandardError => e
         Rails.logger.warn("[Spree] #{entry.key} serializer failed: #{e.class}: #{e.message}")
         nil
