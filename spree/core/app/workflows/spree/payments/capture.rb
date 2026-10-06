@@ -48,12 +48,15 @@ module Spree
       # capture is naturally idempotent and double-submitted admin actions
       # must not surface as errors. A failed payment is capturable — the
       # failure may have been a gateway outage, and retrying is running
-      # this workflow again.
+      # this workflow again. The amount is capped here because a gateway
+      # charging a saved card has no authorization to cap it.
       def ensure_capturable
         halt!(payment) if payment.completed?
-        return if payment.pending? || payment.checkout? || payment.processing? || payment.failed?
+        unless payment.pending? || payment.checkout? || payment.processing? || payment.failed?
+          failure(payment, :payment_not_capturable)
+        end
 
-        failure(payment, :payment_not_capturable)
+        failure(payment, :capture_amount_exceeds_payment) if @amount > payment.money.amount_in_cents
       end
 
       def claim

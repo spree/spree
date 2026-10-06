@@ -712,6 +712,7 @@ en:
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
     capture: Capture
+    capture_amount_exceeds_payment: Cannot capture more than the payment amount.
     capture_events: Capture events
     cart: Cart
     cart_already_updated: The cart has already been updated.
