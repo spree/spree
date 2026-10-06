@@ -74,6 +74,9 @@ module Spree
           # Export errors
           export_not_ready: 'export_not_ready',
 
+          # Webhook errors
+          webhook_delivery_not_redeliverable: 'webhook_delivery_not_redeliverable',
+
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 

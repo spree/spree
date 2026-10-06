@@ -132,6 +132,12 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
       description <<~DESC
         Creates a new delivery row with the same payload + event_name and
         queues it. The original row is preserved for audit history.
+
+        A delivery whose payload carried credentials (a password reset token,
+        a payment session client secret, a cart token, a gift card code) is
+        refused with `webhook_delivery_not_redeliverable`: those values are
+        redacted from the delivery log, so the resent payload would carry
+        `[REDACTED]` in their place.
       DESC
       admin_scope :write, :webhooks
 
@@ -154,6 +160,28 @@ RSpec.describe 'Admin Webhook Deliveries API', type: :request, swagger_doc: 'api
           data = JSON.parse(response.body)
           expect(data['id']).not_to eq(failed_delivery.prefixed_id)
           expect(data['event_name']).to eq(failed_delivery.event_name)
+        end
+      end
+
+      response '422', 'payload had credentials redacted' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:webhook_endpoint_id) { webhook_endpoint.prefixed_id }
+        let(:id) { failed_delivery.prefixed_id }
+
+        before do
+          failed_delivery.update_columns(
+            event_name: 'customer.password_reset_requested',
+            payload: {
+              'name' => 'customer.password_reset_requested',
+              'data' => { 'reset_token' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER }
+            }
+          )
+        end
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          expect(JSON.parse(response.body).dig('error', 'code')).to eq('webhook_delivery_not_redeliverable')
         end
       end
     end

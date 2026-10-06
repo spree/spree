@@ -279,6 +279,12 @@ Any response other than 2xx — including a timeout or a connection error — ma
 
 Every attempt carries the same event `id`, so use it to ignore an event your receiver has already processed. To send a delivery again after the retries run out, re-send it from the delivery log (see below).
 
+### Credentials in Payloads
+
+Some events carry a live credential the receiver needs — a password reset token, a payment session client secret, a guest cart token, a gift card code. Spree sends these over the wire but never stores them: the delivery log keeps `[REDACTED]` in their place. Automatic retries still send the real values, since they are held with the queued job.
+
+A re-sent delivery is built from the log, so a delivery whose payload had credentials redacted can't be re-sent — the request is refused with `422` and the error code `webhook_delivery_not_redeliverable`, and the dashboard shows the reason. These credentials are single-use or short-lived anyway: repeat the action that raised the event (for example, request a new password reset) to send a fresh one.
+
 If an endpoint fails 15 deliveries in a row, Spree disables it and emails the store staff. Fix the endpoint, then turn it back on by marking it active again.
 
 ### Checking Delivery Status
@@ -315,7 +321,7 @@ curl -X POST 'https://api.mystore.com/api/v3/admin/webhook_endpoints/whe_xxx/del
 | Attribute | Description |
 |-----------|-------------|
 | `event_name` | Name of the event delivered |
-| `payload` | Complete webhook payload sent |
+| `payload` | Webhook payload sent, with credentials shown as `[REDACTED]` |
 | `response_code` | HTTP status code (nil if pending) |
 | `success` | Boolean indicating 2xx response |
 | `execution_time` | Delivery time in milliseconds |

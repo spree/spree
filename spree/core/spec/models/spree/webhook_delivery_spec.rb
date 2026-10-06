@@ -234,5 +234,64 @@ describe Spree::WebhookDelivery, type: :model do
       new_delivery = delivery.redeliver!
       expect(new_delivery.event_id).to be_nil
     end
+
+    # The credentials never reached the database, so a resend would deliver
+    # the placeholder in place of the token the receiver needs.
+    context 'when the payload had credentials redacted' do
+      let(:delivery) do
+        create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint,
+                                           event_name: 'customer.password_reset_requested',
+                                           payload: {
+                                             'name' => 'customer.password_reset_requested',
+                                             'data' => { 'reset_token' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER }
+                                           })
+      end
+
+      it 'is not redeliverable' do
+        expect(delivery).not_to be_redeliverable
+      end
+
+      it 'raises and creates no delivery' do
+        delivery
+
+        expect { delivery.redeliver! }.
+          to raise_error(described_class::RedeliveryNotAllowed, Spree.t(:webhook_delivery_redacted_payload_not_redeliverable))
+        expect(described_class.count).to eq(1)
+      end
+    end
+
+    # Rows written before redaction shipped still hold live credentials.
+    context 'when the stored payload predates redaction' do
+      let(:delivery) do
+        create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint,
+                                           event_name: 'customer.password_reset_requested',
+                                           payload: {
+                                             'name' => 'customer.password_reset_requested',
+                                             'data' => { 'email' => 'jane@example.com', 'reset_token' => 'live-token' }
+                                           })
+      end
+
+      it 'stores the new delivery redacted and sends the credential with the job' do
+        allow_any_instance_of(described_class).to receive(:queue_for_delivery!).and_call_original
+        job = class_double('Spree::WebhookDeliveryJob', perform_later: true).as_stubbed_const
+
+        new_delivery = delivery.redeliver!
+
+        expect(new_delivery.payload['data']['reset_token']).to eq(Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER)
+        expect(job).to have_received(:perform_later).with(new_delivery.id, payload_secrets: { 'data.reset_token' => 'live-token' })
+      end
+    end
+  end
+
+  describe '#redeliverable?' do
+    it 'is true for a payload with nothing redacted' do
+      expect(build(:webhook_delivery, payload: { 'name' => 'order.placed', 'data' => { 'id' => 'or_1' } })).to be_redeliverable
+    end
+
+    it 'is true when a non-credential field happens to read the placeholder' do
+      payload = { 'name' => 'order.placed', 'data' => { 'id' => 'or_1', 'note' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER } }
+
+      expect(build(:webhook_delivery, payload: payload)).to be_redeliverable
+    end
   end
 end

@@ -128,8 +128,8 @@ Spree::Core::Engine.add_routes do
         resources :companies, only: [:show, :update] do
           resources :addresses, only: [:index, :create, :update, :destroy],
                                 controller: 'companies/addresses'
-          # POST takes customer_email — a membership for an existing customer,
-          # an invitation otherwise.
+          # POST takes customer_email and always sends an invitation, even to
+          # an existing customer — the invitee accepts with the emailed token.
           resources :members, only: [:index, :create, :destroy], controller: 'companies/members'
           # DELETE revokes the invitation rather than erasing the record.
           resources :invitations, only: [:index, :destroy], controller: 'companies/invitations'

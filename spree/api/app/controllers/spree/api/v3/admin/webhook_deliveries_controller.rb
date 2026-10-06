@@ -13,6 +13,10 @@ module Spree
           # Creates a new delivery row with the same payload + event_name and
           # queues it. The original row is preserved for audit history.
           #
+          # A delivery whose payload had credentials redacted from the log is
+          # refused with 422 — resending it would deliver `[REDACTED]` in
+          # place of the token the receiver needs.
+          #
           # @return [Hash] the serialized newly-queued {Spree::WebhookDelivery},
           #   HTTP 201.
           def redeliver
@@ -21,6 +25,12 @@ module Spree
 
             new_delivery = @resource.redeliver!
             render json: serialize_resource(new_delivery), status: :created
+          rescue Spree::WebhookDelivery::RedeliveryNotAllowed => e
+            render_error(
+              code: ERROR_CODES[:webhook_delivery_not_redeliverable],
+              message: e.message,
+              status: :unprocessable_content
+            )
           end
 
           protected

@@ -27531,6 +27531,12 @@ paths:
         Creates a new delivery row with the same payload + event_name and
         queues it. The original row is preserved for audit history.
 
+        A delivery whose payload carried credentials (a password reset token,
+        a payment session client secret, a cart token, a gift card code) is
+        refused with `webhook_delivery_not_redeliverable`: those values are
+        redacted from the delivery log, so the resent payload would carry
+        `[REDACTED]` in their place.
+
 
         **Required scope:** `write_webhooks` (for API-key authentication).
       x-codeSamples:
@@ -27587,6 +27593,19 @@ paths:
                     id: 1
                 webhook_endpoint_id: whe_UkLWZg9DAJ
                 webhook_endpoint_url: https://shop.example.com/webhooks
+        '422':
+          description: payload had credentials redacted
+          content:
+            application/json:
+              example:
+                error:
+                  code: webhook_delivery_not_redeliverable
+                  message: This delivery can't be sent again because its payload
+                    carried credentials (such as a password reset token or payment
+                    secret) that are not kept in the delivery log. Trigger the action
+                    again to send a new event.
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/webhook_endpoints":
     get:
       summary: List webhook endpoints

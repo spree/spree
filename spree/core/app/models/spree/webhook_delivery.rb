@@ -4,6 +4,9 @@ module Spree
   class WebhookDelivery < Spree.base_class
     has_prefix_id :whd
 
+    # Raised by {#redeliver!} for a delivery that cannot be sent again.
+    class RedeliveryNotAllowed < StandardError; end
+
     belongs_to :webhook_endpoint, class_name: 'Spree::WebhookEndpoint'
     delegate :url, to: :webhook_endpoint
 
@@ -99,40 +102,62 @@ module Spree
 
     # Payload as it should be sent over the wire.
     #
-    # Re-attaches any credentials withheld from the persisted column. Once this
-    # record has been reloaded from the database those secrets are gone for
-    # good, so a redelivery sends the redacted placeholder — single-use tokens
-    # are not replayable anyway.
+    # Re-attaches any credentials withheld from the persisted column. Automatic
+    # retries of the same delivery keep them, because they travel with the job
+    # arguments. Once the job is gone those secrets are gone for good, so a
+    # delivery whose payload was redacted cannot be redelivered by hand — see
+    # {#redeliverable?}.
     #
     # This is deliberate: keeping a recoverable copy would put the credential
-    # back at rest, which is what redaction exists to prevent. If a delivery is
-    # lost (worker crash between creation and delivery), the customer requests
-    # a new reset, which mints a fresh token.
+    # back at rest, which is what redaction exists to prevent. The credentials
+    # are single-use or short-lived anyway (a password reset token, a payment
+    # session client secret); the customer requests a new reset or starts a
+    # new payment, which mints a fresh one and a fresh event.
     #
     # @return [Hash]
     def deliverable_payload
       Spree::WebhookPayloadRedaction.merge(payload, payload_secrets)
     end
 
+    # Whether {#redeliver!} can send this delivery again. False when the
+    # payload had credentials withheld from the log: resending it would hand
+    # the endpoint `[REDACTED]` in place of a usable token.
+    #
+    # @return [Boolean]
+    def redeliverable?
+      !Spree::WebhookPayloadRedaction.redacted?(payload)
+    end
+
     # Create a new delivery with the same payload and queue it.
     # Used to retry failed deliveries manually.
     #
+    # @raise [RedeliveryNotAllowed] when the payload had credentials redacted
     # @return [Spree::WebhookDelivery] the new delivery
     def redeliver!
+      raise RedeliveryNotAllowed, Spree.t(:webhook_delivery_redacted_payload_not_redeliverable) unless redeliverable?
+
+      # A delivery written before payload redaction shipped still holds its
+      # credentials in the column. Split them off so the new row is stored
+      # redacted, and send them with the job like any fresh delivery.
+      persisted_payload, secrets = Spree::WebhookPayloadRedaction.split(payload)
+
       new_delivery = webhook_endpoint.webhook_deliveries.create!(
         event_name: event_name,
         event_id: nil, # new delivery, not a duplicate
-        payload: payload
+        payload: persisted_payload
       )
 
-      new_delivery.queue_for_delivery!
+      new_delivery.queue_for_delivery!(payload_secrets: secrets)
       new_delivery
     end
 
     # Queue this delivery for processing.
     # Resolves the job class dynamically since it lives in the api gem.
-    def queue_for_delivery!
-      'Spree::WebhookDeliveryJob'.constantize.perform_later(id)
+    #
+    # @param payload_secrets [Hash, nil] credentials withheld from the payload
+    def queue_for_delivery!(payload_secrets: nil)
+      job = 'Spree::WebhookDeliveryJob'.constantize
+      payload_secrets.present? ? job.perform_later(id, payload_secrets: payload_secrets) : job.perform_later(id)
     end
   end
 end
