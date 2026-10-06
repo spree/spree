@@ -4138,8 +4138,8 @@
           "table": {
             "name": "Aplikacja",
             "access": "Dostęp",
-            "last_used": "Ostatnio użyta",
-            "authorized_by": "Zatwierdzone przez"
+            "authorized_by": "Zatwierdzone przez",
+            "last_authorized": "Ostatnia autoryzacja"
           },
           "revoke_confirm": {
             "title": "Odebrać dostęp?",
