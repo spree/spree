@@ -110,6 +110,18 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       expect(line_item.gifted_quantity).to eq(0)
     end
 
+    it 'takes the gift back from the line holding it when the product sits on two lines' do
+      own_line = cart.line_items.create!(variant: mug, quantity: 1, currency: cart.currency)
+      gift_line = cart.line_items.create!(variant: mug, quantity: 2, currency: cart.currency)
+      create(:line_item_gift, line_item: gift_line, promotion_action: action, quantity: 2)
+      comparer = ->(line_item:, **) { Spree::ServiceModule::Result.new(true, line_item == own_line, nil) }
+      allow(Spree).to receive(:cart_compare_line_items_service).and_return(comparer)
+
+      expect(action.remove_gifts(cart.reload)).to be(true)
+      expect(own_line.reload.quantity).to eq(1)
+      expect(Spree::LineItem.exists?(gift_line.id)).to be(false)
+    end
+
     it 'trims the gift when the merchant lowers it, and takes back one the list no longer names' do
       promotion.activate(order: cart)
       action.promotion_action_line_items.first.update!(quantity: 1)

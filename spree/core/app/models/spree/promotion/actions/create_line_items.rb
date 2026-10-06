@@ -156,7 +156,7 @@ module Spree
             units = [yield(line_item, given), given].min
             next false unless units.positive?
 
-            call_item_service(order, Spree.cart_remove_item_service, Spree.order_remove_item_service, line_item.variant, units)
+            call_item_service(order, Spree.cart_remove_item_service, Spree.order_remove_item_service, line_item.variant, units, line_item: line_item)
             true
           end.any?
         end
@@ -192,11 +192,11 @@ module Spree
           added_results.any?
         end
 
-        def call_item_service(order, cart_service, order_service, variant, quantity)
+        def call_item_service(order, cart_service, order_service, variant, quantity, **target_line)
           if order.is_a?(Spree::Cart)
-            cart_service.call(cart: order, variant: variant, quantity: quantity, gift: self)
+            cart_service.call(cart: order, variant: variant, quantity: quantity, gift: self, **target_line)
           else
-            order_service.call(order: order, variant: variant, quantity: quantity, gift: self)
+            order_service.call(order: order, variant: variant, quantity: quantity, gift: self, **target_line)
           end
         end
 
