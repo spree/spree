@@ -54,7 +54,7 @@ Open the row menu and choose **Edit**. Renaming a category is safe, because prod
 
 Open the row menu and choose **Delete**.
 
-<Warning>Deleting a category does not leave goods untaxed, it moves them quietly onto a different rate. A variant pointing at a deleted category falls back to its product's, and a product without one falls back to the store's default. Check what that fallback charges before removing a category, because nothing on screen flags the change.</Warning>
+<Warning>Deleting a category moves its goods onto a fallback. A variant falls back to its product's category, and a product without one falls back to the store's default. Check that the fallback has a rate covering everywhere you sell before deleting, because goods landing on a category with no applicable rate will be taxed nothing.</Warning>
 
 ## Further Reading
 
