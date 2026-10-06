@@ -110,6 +110,8 @@ export interface WebhookEventMap {
   'digital_link.deleted': DigitalLink
   'digital_link.downloaded': DigitalLink
   'digital_link.updated': DigitalLink
+  'email_template.published': WebhookRecordReference
+  'email_template.reverted': WebhookRecordReference
   'exchange.approved': Exchange
   'exchange.canceled': Exchange
   'exchange.created': Exchange

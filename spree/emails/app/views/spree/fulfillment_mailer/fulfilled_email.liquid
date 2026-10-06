@@ -1,5 +1,5 @@
 ---
-subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'fulfillment_mailer.fulfilled_email.subject' | t }} #{{ order.number }}"
+subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 'fulfillment_mailer.fulfilled_email.subject' | t }} #{{ order.number }}"
 ---
 {% assign heading = 'fulfillment_mailer.fulfilled_email.fulfillment_summary' | t %}
 <mj-section>

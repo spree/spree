@@ -32,7 +32,7 @@ Rails.application.config.after_initialize do
       c.output_dir = api_root.join('../../packages/sdk/src/types/generated')
       c.reject_class = ->(serializer:) {
         name = serializer.name.to_s
-        name.include?('::Admin::') || name.include?('::Seller::') ||
+        !name.start_with?('Spree::Api::V3::') || name.include?('::Admin::') || name.include?('::Seller::') ||
           store_excluded.include?(name.sub(/\ASpree::Api::V3::/, '').sub(/Serializer\z/, ''))
       }
       c.serializer_name_mapper = ->(serializer) {

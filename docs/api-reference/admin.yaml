@@ -7345,6 +7345,1400 @@ paths:
                     type: string
                   example:
                   - vip
+  "/api/v3/admin/email_templates":
+    get:
+      summary: List email templates
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns every email template merchants may edit: the emails customers
+        receive, the email layout and the shared partials. Each shows what
+        customers receive now (the store's published version, else Spree's
+        default) and any draft in progress. Staff emails are not editable.
+
+
+        **Required scope:** `read_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const templates = await client.emailTemplates.list()
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: A language code, or `any` (the default) for the version every
+          language uses
+        schema:
+          type: string
+      responses:
+        '200':
+          description: email templates found
+          content:
+            application/json:
+              example:
+                data:
+                - id: spree.order_mailer.confirm_email
+                  key: spree/order_mailer/confirm_email
+                  subject: Order {{ order.number }} confirmed
+                  body: "<mj-section><mj-column><mj-text>Thanks for your order, {{
+                    order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                  language: any
+                  customized_languages: []
+                  kind: email
+                  customized: false
+                  published_at:
+                  default_subject: Order {{ order.number }} confirmed
+                  default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                    {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                  published_language:
+                  default_changed: false
+                  base_subject:
+                  base_body:
+                  draft:
+                - id: layouts.spree.base_mailer
+                  key: layouts/spree/base_mailer
+                  subject:
+                  body: |
+                    {% assign brand = store.branding %}<mjml lang="{{ locale }}">
+                      <mj-head>
+                        <mj-title>{{ subject }}</mj-title>
+                        {% if brand.font_url %}<mj-font name="{{ brand.font_family | split: ',' | first }}" href="{{ brand.font_url }}" />{% endif %}
+                        <mj-attributes>
+                          <mj-all font-family="{{ brand.font_family }}" />
+                          <mj-section padding="0" />
+                          <mj-column padding="0" />
+                          <mj-text padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" align="center" />
+                          <mj-button background-color="{{ brand.button_color }}" border="{{ brand.button_border }}" border-radius="8px" color="{{ brand.button_text_color }}" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
+                          <mj-table padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" />
+                          <mj-class name="heading" font-family="{{ brand.heading_font_family }}" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="{{ brand.heading_color }}" css-class="heading" />
+                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="{{ brand.heading_color }}" />
+                          <mj-class name="lead" padding="12px 0 0" />
+                          <mj-class name="note" padding="24px 0 0" font-size="13px" css-class="note" />
+                          <mj-class name="section-heading" padding="48px 0 16px" font-family="{{ brand.heading_font_family }}" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
+                          <mj-class name="body" padding="16px 0 0" align="left" />
+                          <mj-class name="footer" padding="12px 0 0" font-size="11px" line-height="1.5" />
+                        </mj-attributes>
+                        <mj-style>
+                          {% if brand.font == 'inter' %}
+                          @font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
+                          {% endif %}
+                          a { color: {{ brand.link_color }}; }
+                          .hero > table { max-width: 420px; margin: 0 auto; }
+                          .note a { color: {{ brand.text_color }}; word-break: break-all; }
+                          .footer a { color: {{ brand.text_color }}; }
+                          .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
+                          .item_image { padding: 8px; width: 96px; }
+                          .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
+                          .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
+                          .item_info { padding: 8px 16px 8px 8px; }
+                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; text-decoration: none; }
+                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
+                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: {{ brand.text_color }}; }
+                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: {{ brand.heading_color }}; }
+                          .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
+                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary_total .summary_value { font-weight: 600; }
+                          .mailer_hero h1 { margin: 0; font-family: {{ brand.heading_font_family }}; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: {{ brand.heading_color }}; }
+                          .mailer_hero p { margin: 12px 0 0; }
+                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .mailer_hero .sub { margin-top: 24px; font-size: 13px; }
+                          @media only screen and (max-width: 600px) {
+                            .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
+                          }
+                        </mj-style>
+                      </mj-head>
+                      <mj-body background-color="{{ brand.background_color }}" width="640px">
+                        <mj-wrapper background-color="{{ brand.card_color }}" padding="56px 24px">
+                          <mj-section padding="0 0 32px">
+                            <mj-column>
+                              {% if store.logo_url and store.logo_width %}
+                                <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" width="{{ store.logo_width }}px" height="32px" padding="0" />
+                              {% elsif store.logo_url %}
+                                <mj-text><a href="{{ store.url }}"><img src="{{ store.logo_url }}" alt="{{ store.name }}" height="32" style="height: 32px; width: auto; border: 0;" /></a></mj-text>
+                              {% else %}
+                                <mj-text font-size="22px" font-weight="700" color="{{ brand.heading_color }}" text-transform="uppercase"><a href="{{ store.url }}" style="color: {{ brand.heading_color }}; text-decoration: none;">{{ store.name }}</a></mj-text>
+                              {% endif %}
+                            </mj-column>
+                          </mj-section>
+                          {{ content_for_layout }}
+                        </mj-wrapper>
+                        <mj-section padding="64px 24px">
+                          <mj-column>
+                            <mj-text font-size="13px" line-height="1.5" css-class="footer"><a href="{{ store.url }}" style="font-weight: 500; text-decoration: none;">{{ store.name }}</a></mj-text>
+                            {% if store.address != blank %}<mj-text mj-class="footer">{{ store.address }}</mj-text>{% endif %}
+                            {% if store.support_email != blank %}<mj-text mj-class="footer" css-class="footer"><a href="mailto:{{ store.support_email }}">{{ store.support_email }}</a></mj-text>{% endif %}
+                            <mj-text mj-class="footer" padding="20px 0 0">&copy; {{ 'now' | date: '%Y' }} {{ store.name }}</mj-text>
+                          </mj-column>
+                        </mj-section>
+                      </mj-body>
+                    </mjml>
+                  language: any
+                  customized_languages: []
+                  kind: layout
+                  customized: false
+                  published_at:
+                  default_subject:
+                  default_body: |
+                    {% assign brand = store.branding %}<mjml lang="{{ locale }}">
+                      <mj-head>
+                        <mj-title>{{ subject }}</mj-title>
+                        {% if brand.font_url %}<mj-font name="{{ brand.font_family | split: ',' | first }}" href="{{ brand.font_url }}" />{% endif %}
+                        <mj-attributes>
+                          <mj-all font-family="{{ brand.font_family }}" />
+                          <mj-section padding="0" />
+                          <mj-column padding="0" />
+                          <mj-text padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" align="center" />
+                          <mj-button background-color="{{ brand.button_color }}" border="{{ brand.button_border }}" border-radius="8px" color="{{ brand.button_text_color }}" font-size="15px" font-weight="500" line-height="1.6" inner-padding="12px 20px" padding="32px 0 0" />
+                          <mj-table padding="0" color="{{ brand.text_color }}" font-size="14px" line-height="1.6" />
+                          <mj-class name="heading" font-family="{{ brand.heading_font_family }}" font-size="40px" font-weight="700" line-height="1.2" letter-spacing="-0.8px" color="{{ brand.heading_color }}" css-class="heading" />
+                          <mj-class name="greeting" padding="24px 0 0" font-size="15px" font-weight="500" color="{{ brand.heading_color }}" />
+                          <mj-class name="lead" padding="12px 0 0" />
+                          <mj-class name="note" padding="24px 0 0" font-size="13px" css-class="note" />
+                          <mj-class name="section-heading" padding="48px 0 16px" font-family="{{ brand.heading_font_family }}" font-size="16px" font-weight="500" letter-spacing="-0.16px" align="left" />
+                          <mj-class name="body" padding="16px 0 0" align="left" />
+                          <mj-class name="footer" padding="12px 0 0" font-size="11px" line-height="1.5" />
+                        </mj-attributes>
+                        <mj-style>
+                          {% if brand.font == 'inter' %}
+                          @font-face { font-family: "Geist"; font-style: normal; font-weight: 500 700; src: url("https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2") format("woff2"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 450; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf") format("truetype"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 500; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf") format("truetype"); }
+                          @font-face { font-family: "Inter"; font-style: normal; font-weight: 600; src: url("https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf") format("truetype"); }
+                          {% endif %}
+                          a { color: {{ brand.link_color }}; }
+                          .hero > table { max-width: 420px; margin: 0 auto; }
+                          .note a { color: {{ brand.text_color }}; word-break: break-all; }
+                          .footer a { color: {{ brand.text_color }}; }
+                          .item { width: 100%; background-color: #F0F0F0; border-radius: 16px; margin: 0 0 8px; }
+                          .item_image { padding: 8px; width: 96px; }
+                          .item_thumb { display: block; width: 80px; height: auto; border-radius: 12px; }
+                          .item_thumb_placeholder { width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; }
+                          .item_info { padding: 8px 16px 8px 8px; }
+                          .item_name { font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; text-decoration: none; }
+                          .item_meta { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_amount { padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap; }
+                          .item_qty { margin: 0; font-size: 13px; line-height: 1.5; color: {{ brand.text_color }}; }
+                          .item_price { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: {{ brand.text_color }}; }
+                          .summary_value { font-size: 15px; font-weight: 500; text-align: right; white-space: nowrap; color: {{ brand.heading_color }}; }
+                          .summary_sub { display: block; font-size: 13px; line-height: 1.5; }
+                          .summary_total td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .summary_total .summary_value { font-weight: 600; }
+                          .mailer_hero h1 { margin: 0; font-family: {{ brand.heading_font_family }}; font-size: 40px; line-height: 1.2; letter-spacing: -0.8px; font-weight: 700; color: {{ brand.heading_color }}; }
+                          .mailer_hero p { margin: 12px 0 0; }
+                          .mailer_hero .greeting { margin-top: 24px; font-size: 15px; font-weight: 500; color: {{ brand.heading_color }}; }
+                          .mailer_hero .sub { margin-top: 24px; font-size: 13px; }
+                          @media only screen and (max-width: 600px) {
+                            .heading div { font-size: 32px !important; letter-spacing: -0.64px !important; }
+                          }
+                        </mj-style>
+                      </mj-head>
+                      <mj-body background-color="{{ brand.background_color }}" width="640px">
+                        <mj-wrapper background-color="{{ brand.card_color }}" padding="56px 24px">
+                          <mj-section padding="0 0 32px">
+                            <mj-column>
+                              {% if store.logo_url and store.logo_width %}
+                                <mj-image src="{{ store.logo_url }}" href="{{ store.url }}" alt="{{ store.name }}" width="{{ store.logo_width }}px" height="32px" padding="0" />
+                              {% elsif store.logo_url %}
+                                <mj-text><a href="{{ store.url }}"><img src="{{ store.logo_url }}" alt="{{ store.name }}" height="32" style="height: 32px; width: auto; border: 0;" /></a></mj-text>
+                              {% else %}
+                                <mj-text font-size="22px" font-weight="700" color="{{ brand.heading_color }}" text-transform="uppercase"><a href="{{ store.url }}" style="color: {{ brand.heading_color }}; text-decoration: none;">{{ store.name }}</a></mj-text>
+                              {% endif %}
+                            </mj-column>
+                          </mj-section>
+                          {{ content_for_layout }}
+                        </mj-wrapper>
+                        <mj-section padding="64px 24px">
+                          <mj-column>
+                            <mj-text font-size="13px" line-height="1.5" css-class="footer"><a href="{{ store.url }}" style="font-weight: 500; text-decoration: none;">{{ store.name }}</a></mj-text>
+                            {% if store.address != blank %}<mj-text mj-class="footer">{{ store.address }}</mj-text>{% endif %}
+                            {% if store.support_email != blank %}<mj-text mj-class="footer" css-class="footer"><a href="mailto:{{ store.support_email }}">{{ store.support_email }}</a></mj-text>{% endif %}
+                            <mj-text mj-class="footer" padding="20px 0 0">&copy; {{ 'now' | date: '%Y' }} {{ store.name }}</mj-text>
+                          </mj-column>
+                        </mj-section>
+                      </mj-body>
+                    </mjml>
+                  published_language:
+                  default_changed: false
+                  base_subject:
+                  base_body:
+                  draft:
+                meta: {}
+  "/api/v3/admin/email_templates/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: The template key with dots, e.g. `spree.order_mailer.confirm_email`
+      schema:
+        type: string
+    get:
+      summary: Get an email template
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Returns the template for one language: what customers receive now,
+        Spree's default, and the draft with its `lock_version`. When Spree's
+        default changed since the store's version started from it,
+        `default_changed` is true and `base_body` holds the default it
+        started from, to compare with `default_body`.
+
+
+        **Required scope:** `read_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const template = await client.emailTemplates.get('spree.order_mailer.confirm_email', {
+            language: 'de',
+            expand: ['draft.updated_by'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates/{id} -d '{"language":"de","expand":["draft.updated_by"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: A language code, or `any` (the default)
+        schema:
+          type: string
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`draft.updated_by`)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: email template found
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
+                language: any
+                customized_languages: []
+                kind: email
+                customized: false
+                published_at:
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
+                default_changed: true
+                base_subject: Reset {{ store.name }}
+                base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
+                draft:
+                  id: etdr_UkLWZg9DAJ
+                  subject: Reset {{ store.name }}
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
+                  lock_version: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_by_id: adm_UkLWZg9DAJ
+                  updated_by_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+        '404':
+          description: not an editable template
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: record not found
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    delete:
+      summary: Revert an email template to Spree's default
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Goes back to Spree's default for one language and discards the draft.
+        The store's published versions are kept, so one can still be restored.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Goes back to Spree's default. Published versions stay in the history.
+          const template = await client.emailTemplates.revert('spree.order_mailer.confirm_email')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /email_templates/{id}
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: A language code, or `any` (the default)
+        schema:
+          type: string
+      - name: lock_version
+        in: query
+        required: false
+        description: The draft's `lock_version` as last seen; a draft saved since
+          is refused with 409
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: email template reverted
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
+                language: any
+                customized_languages: []
+                kind: email
+                customized: false
+                published_at:
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
+                default_changed: false
+                base_subject:
+                base_body:
+                draft:
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+  "/api/v3/admin/email_templates/{email_template_id}/draft":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    put:
+      summary: Save an email template draft
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Saves the draft, in any state; customers keep receiving the published
+        version until it is published. Send the `lock_version` the draft was
+        loaded with: a save made from an older copy is refused with 409,
+        naming who saved last. The first save starts from what is published,
+        else Spree's default.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Pass the lock_version the draft was loaded with: a save made from an
+          // older copy is refused with 409, naming who saved last.
+          const template = await client.emailTemplates.draft.update('spree.order_mailer.confirm_email', {
+            subject: 'Your order {{ order.number }} is confirmed',
+            body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
+            lock_version: 0,
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api put /email_templates/{email_template_id}/draft -d '{"subject":"Your
+          order {{ order.number }} is confirmed","body":"<mj-section><mj-column><mj-text>Thanks,
+          {{ order.customer_name }}!</mj-text></mj-column></mj-section>","lock_version":0}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: draft saved
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
+                language: any
+                customized_languages: []
+                kind: email
+                customized: false
+                published_at:
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
+                default_changed: false
+                base_subject:
+                base_body:
+                draft:
+                  id: etdr_UkLWZg9DAJ
+                  subject: Your order {{ order.number }} is confirmed
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
+                  lock_version: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_by_id: adm_UkLWZg9DAJ
+                  updated_by_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+        '409':
+          description: saved by someone else since it was loaded
+          content:
+            application/json:
+              example:
+                error:
+                  code: email_template_stale
+                  message: Mirta Hamill saved this draft after you opened it. Reload
+                    to see their changes before saving yours.
+                  details:
+                    updated_by: Mirta Hamill
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  example: any
+                subject:
+                  type: string
+                  example: Your order {{ order.number }} is confirmed
+                body:
+                  type: string
+                  example: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
+                lock_version:
+                  type: integer
+                  example: 0
+                rebase:
+                  type: boolean
+                  description: Marks the draft as based on Spree's current default,
+                    after reviewing what changed in it
+    delete:
+      summary: Discard an email template draft
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: "**Required scope:** `write_email_templates` (for API-key authentication)."
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const template = await client.emailTemplates.draft.delete('spree.order_mailer.confirm_email')
+      - lang: bash
+        label: Spree CLI
+        source: spree api delete /email_templates/{email_template_id}/draft
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: A language code, or `any` (the default)
+        schema:
+          type: string
+      - name: lock_version
+        in: query
+        required: false
+        description: The draft's `lock_version` as last seen; a draft saved since
+          is refused with 409
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: draft discarded
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Order {{ order.number }} confirmed
+                body: "<mj-section><mj-column><mj-text>Thanks for your order, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>\n"
+                language: any
+                customized_languages: []
+                kind: email
+                customized: false
+                published_at:
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language:
+                default_changed: false
+                base_subject:
+                base_body:
+                draft:
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+  "/api/v3/admin/email_templates/{email_template_id}/publication":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    post:
+      summary: Publish an email template draft
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Makes the draft what customers receive. The draft is first rendered
+        with sample data; one that does not render (for the layout or a
+        partial: in any email using it) is refused with 422, listing each
+        problem with its email and line.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Refused with 422 and each problem's email and line when the draft does not render.
+          const template = await client.emailTemplates.publish('spree.order_mailer.confirm_email')
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /email_templates/{email_template_id}/publication -d
+          '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: draft published
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Reset {{ store.name }}
+                body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                  }}!</mj-text></mj-column></mj-section>"
+                language: any
+                customized_languages:
+                - any
+                kind: email
+                customized: true
+                published_at: '2026-01-15T12:00:00Z'
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language: any
+                default_changed: true
+                base_subject: Reset {{ store.name }}
+                base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
+                draft:
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+        '422':
+          description: the draft does not render
+          content:
+            application/json:
+              example:
+                error:
+                  code: email_template_invalid
+                  message: 'Liquid error (line 1): undefined variable nubmer'
+                  details:
+                    problems:
+                    - email: spree.order_mailer.confirm_email
+                      locale: any
+                      message: 'Liquid error (line 1): undefined variable nubmer'
+                      line: 1
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  example: any
+                lock_version:
+                  type: integer
+                  description: The draft's `lock_version` as reviewed; a draft saved
+                    since is refused with 409
+  "/api/v3/admin/email_templates/{email_template_id}/preview":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    post:
+      summary: Preview an email template
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Renders the template with sample data built from the store's latest
+        matching record, or the one `record_id` names, and returns the email
+        with the variables it was rendered with. An unsaved `subject` and
+        `body` take the place of the current version. The layout and partials
+        render inside an email, `email_key` or the first one. `branding`
+        previews colors and a font before they are saved to the store.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const preview = await client.emailTemplates.preview('spree.order_mailer.confirm_email', {
+            body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
+            record_id: 'or_m3Rp9wXz',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /email_templates/{email_template_id}/preview -d '{"body":"<mj-section><mj-column><mj-text>Thanks,
+          {{ order.customer_name }}!</mj-text></mj-column></mj-section>","record_id":"or_m3Rp9wXz"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: email template rendered
+          content:
+            application/json:
+              example:
+                id:
+                subject: ''
+                html: "<!doctype html><html lang=\"en\" dir=\"auto\" xmlns=\"http://www.w3.org/1999/xhtml\"
+                  xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><title></title><!--[if
+                  !mso]><!--><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><!--<![endif]--><meta
+                  http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta
+                  name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<style
+                  type=\"text/css\">\n#outlook a { padding: 0; }\nbody { margin: 0;
+                  padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust:
+                  100%; }\ntable, td { border-collapse: collapse; mso-table-lspace:
+                  0pt; mso-table-rspace: 0pt; }\nimg { border: 0; height: auto; line-height:
+                  100%; outline: none; text-decoration: none; -ms-interpolation-mode:
+                  bicubic; }\np { display: block; margin: 13px 0; }\n</style>\n<!--[if
+                  mso]>\n<noscript>\n<xml>\n<o:OfficeDocumentSettings>\n  <o:AllowPNG/>\n
+                  \ <o:PixelsPerInch>96</o:PixelsPerInch>\n</o:OfficeDocumentSettings>\n</xml>\n</noscript>\n<![endif]-->\n<!--[if
+                  lte mso 11]>\n<style type=\"text/css\">\n.mj-outlook-group-fix {
+                  width:100% !important; }\n</style>\n<![endif]-->\n<style type=\"text/css\">@media
+                  only screen and (min-width:480px) { .mj-column-per-100 { width:100%
+                  !important; max-width:100%; }  }</style><style media=\"screen and
+                  (min-width:480px)\">.moz-text-html .mj-column-per-100 { width:100%
+                  !important; max-width:100%; } </style><style type=\"text/css\">@font-face
+                  { font-family: \"Geist\"; font-style: normal; font-weight: 500 700;
+                  src: url(\"https://fonts.gstatic.com/s/geist/v4/gyByhwUxId8gMEwcGFU.woff2\")
+                  format(\"woff2\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 400 450; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf\")
+                  format(\"truetype\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 500; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf\")
+                  format(\"truetype\"); }\n      @font-face { font-family: \"Inter\";
+                  font-style: normal; font-weight: 600; src: url(\"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf\")
+                  format(\"truetype\"); }\n      \n      a { color: #332C2C; }\n      .hero
+                  > table { max-width: 420px; margin: 0 auto; }\n      .note a { color:
+                  #726A6A; word-break: break-all; }\n      .footer a { color: #726A6A;
+                  }\n      .item { width: 100%; background-color: #F0F0F0; border-radius:
+                  16px; margin: 0 0 8px; }\n      .item_image { padding: 8px; width:
+                  96px; }\n      .item_thumb { display: block; width: 80px; height:
+                  auto; border-radius: 12px; }\n      .item_thumb_placeholder { width:
+                  80px; height: 80px; background-color: #E4E4E4; border-radius: 12px;
+                  }\n      .item_info { padding: 8px 16px 8px 8px; }\n      .item_name
+                  { font-size: 15px; line-height: 1.5; font-weight: 500; color: #332C2C;
+                  text-decoration: none; }\n      .item_meta { margin: 2px 0 0; font-size:
+                  13px; line-height: 1.5; color: #726A6A; }\n      .item_amount {
+                  padding: 8px 16px 8px 8px; text-align: right; white-space: nowrap;
+                  }\n      .item_qty { margin: 0; font-size: 13px; line-height: 1.5;
+                  color: #726A6A; }\n      .item_price { margin: 2px 0 0; font-size:
+                  15px; line-height: 1.5; font-weight: 500; color: #332C2C; }\n      .summary
+                  td { padding: 6px 0; font-size: 14px; line-height: 1.6; color: #726A6A;
+                  }\n      .summary_value { font-size: 15px; font-weight: 500; text-align:
+                  right; white-space: nowrap; color: #332C2C; }\n      .summary_sub
+                  { display: block; font-size: 13px; line-height: 1.5; }\n      .summary_total
+                  td { padding: 14px 0 0; border-top: 1px solid #E8E9E9; font-weight:
+                  500; color: #332C2C; }\n      .summary_total .summary_value { font-weight:
+                  600; }\n      .mailer_hero h1 { margin: 0; font-family: Geist, Inter,
+                  Helvetica, Arial, sans-serif; font-size: 40px; line-height: 1.2;
+                  letter-spacing: -0.8px; font-weight: 700; color: #332C2C; }\n      .mailer_hero
+                  p { margin: 12px 0 0; }\n      .mailer_hero .greeting { margin-top:
+                  24px; font-size: 15px; font-weight: 500; color: #332C2C; }\n      .mailer_hero
+                  .sub { margin-top: 24px; font-size: 13px; }\n      @media only screen
+                  and (max-width: 600px) {\n        .heading div { font-size: 32px
+                  !important; letter-spacing: -0.64px !important; }\n      }</style></head><body
+                  style=\"word-spacing:normal;background-color:#FFFFFF;\"><div lang=\"en\"
+                  dir=\"auto\" style=\"background-color:#FFFFFF;\"><!--[if mso | IE]><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  bgcolor=\"#F6F6F6\" align=\"center\" width=\"640\" style=\"width:640px;\"><tr><td
+                  style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"background:#F6F6F6;background-color:#F6F6F6;margin:0px auto;max-width:640px;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  align=\"center\" style=\"background:#F6F6F6;background-color:#F6F6F6;width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:56px 24px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><td width=\"640px\"><![endif]--><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\" align=\"center\" width=\"592\" style=\"width:592px;\"><tr><td
+                  style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:592px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:0 0 32px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:592px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" style=\"font-size:0px;padding:0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:22px;font-weight:700;line-height:1.6;text-align:center;text-transform:uppercase;color:#332C2C;\"><a
+                  href=\"http://www.example.com:3000\" style=\"color: #332C2C; text-decoration:
+                  none;\">Spree Test Store</a></div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr><tr><td
+                  width=\"640px\"><![endif]--><!--[if mso | IE]><table border=\"0\"
+                  cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\" align=\"center\"
+                  width=\"592\" style=\"width:592px;\"><tr><td style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:592px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:0;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:592px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" style=\"font-size:0px;padding:0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.6;text-align:center;color:#726A6A;\">Thanks,
+                  Ann Lee!</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]></td></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--><!--[if mso | IE]><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  align=\"center\" width=\"640\" style=\"width:640px;\"><tr><td style=\"line-height:0px;font-size:0px;mso-line-height-rule:exactly;\"><![endif]--><div
+                  style=\"margin:0px auto;max-width:640px;\"><table border=\"0\" cellpadding=\"0\"
+                  cellspacing=\"0\" role=\"presentation\" align=\"center\" style=\"width:100%;\"><tbody><tr><td
+                  style=\"direction:ltr;font-size:0px;padding:64px 24px;text-align:center;\"><!--[if
+                  mso | IE]><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"
+                  role=\"presentation\"><tr><![endif]--><!--[if mso | IE]><td style=\"vertical-align:top;width:640px;\"><![endif]--><div
+                  class=\"mj-outlook-group-fix mj-column-per-100\" style=\"font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td style=\"vertical-align:top;padding:0;\"><table
+                  border=\"0\" cellpadding=\"0\" cellspacing=\"0\" role=\"presentation\"
+                  width=\"100%\"><tbody><tr><td align=\"center\" class=\"footer\"
+                  style=\"font-size:0px;padding:0;word-break:break-word;\"><div style=\"font-family:Inter,
+                  Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;text-align:center;color:#726A6A;\"><a
+                  href=\"http://www.example.com:3000\" style=\"font-weight: 500; text-decoration:
+                  none;\">Spree Test Store</a></div></td></tr><tr><td align=\"center\"
+                  class=\"footer\" style=\"font-size:0px;padding:12px 0 0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;\"><a
+                  href=\"mailto:support@example.com\">support@example.com</a></div></td></tr><tr><td
+                  align=\"center\" style=\"font-size:0px;padding:20px 0 0;word-break:break-word;\"><div
+                  style=\"font-family:Inter, Helvetica, Arial, sans-serif;font-size:11px;line-height:1.5;text-align:center;color:#726A6A;\">&copy;
+                  2026 Spree Test Store</div></td></tr></tbody></table></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td><![endif]--><!--[if mso | IE]></tr></table><![endif]--></td></tr></tbody></table></div><!--[if
+                  mso | IE]></td></tr></table><![endif]--></div></body></html>"
+                text: |
+                  Spree Test Store (http://www.example.com:3000)
+
+                  Thanks, Ann Lee!
+
+                  Spree Test Store (http://www.example.com:3000)
+
+                  support@example.com
+
+                  © 2026 Spree Test Store
+                email_key: spree.order_mailer.confirm_email
+                variables:
+                  store:
+                    id: store_UkLWZg9DAJ
+                    name: Spree Test Store
+                    address:
+                    mail_from_address: no-reply@example.com
+                    default_currency: USD
+                    default_locale: en
+                    url: http://www.example.com:3000
+                    support_email: support@example.com
+                    logo_url:
+                    logo_width:
+                    branding:
+                      background_color: "#FFFFFF"
+                      card_color: "#F6F6F6"
+                      text_color: "#726A6A"
+                      heading_color: "#332C2C"
+                      accent_color:
+                      link_color: "#332C2C"
+                      button_color: "#FFFFFF"
+                      button_text_color: "#1F2222"
+                      button_border: '1px solid #E8E9E9'
+                      font: inter
+                      font_family: Inter, Helvetica, Arial, sans-serif
+                      heading_font_family: Geist, Inter, Helvetica, Arial, sans-serif
+                      font_url:
+                  locale: en
+                  user:
+                    first_name: Ann
+                    email: ann@example.com
+                  order:
+                    number: R123456789
+                    customer_name: Ann Lee
+                  reset_url: http://www.example.com:3000/reset-password?token=preview
+              schema:
+                "$ref": "#/components/schemas/EmailTemplatePreview"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  example: any
+                subject:
+                  type: string
+                  example: Your order {{ order.number }} is confirmed
+                body:
+                  type: string
+                  example: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
+                record_id:
+                  type: string
+                  example: or_m3Rp9wXz
+                  description: The record to build sample data from
+                email_key:
+                  type: string
+                  example: spree.order_mailer.confirm_email
+                  description: For the layout or a partial, the email to show it in
+                branding:
+                  type: object
+                  description: Unsaved colors and font to preview, named like the
+                    store's `preferred_email_*` settings without the prefix
+                  properties:
+                    accent_color:
+                      type: string
+                      example: "#FF5500"
+                    background_color:
+                      type: string
+                    card_color:
+                      type: string
+                    text_color:
+                      type: string
+                    heading_color:
+                      type: string
+                    font:
+                      type: string
+                      enum:
+                      - inter
+                      - system
+                      - helvetica
+                      - georgia
+                      - roboto
+                      - lato
+                      - merriweather
+  "/api/v3/admin/email_templates/{email_template_id}/test_email":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    post:
+      summary: Send a test email
+      tags:
+      - Email Templates
+      security:
+      - bearer_auth: []
+      description: |
+        Sends the template, rendered as the preview renders it, to the
+        signed-in admin, and never to another address: the sample data comes
+        from a real customer's records. Takes the same body as the preview.
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            jwtToken: 'eyJhbGciOi...',
+          })
+
+          // Sent to the signed-in admin, so this needs a client created with `jwtToken`;
+          // a secret key has no inbox and is refused.
+          const { sent_to } = await client.emailTemplates.sendTest('spree.order_mailer.confirm_email', {
+            body: '<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name }}!</mj-text></mj-column></mj-section>',
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /email_templates/{email_template_id}/test_email -d
+          '{"body":"<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+          }}!</mj-text></mj-column></mj-section>"}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '202':
+          description: test email queued
+          content:
+            application/json:
+              example:
+                sent_to: luba@oberbrunner.com
+              schema:
+                type: object
+                properties:
+                  sent_to:
+                    type: string
+                required:
+                - sent_to
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  example: any
+                subject:
+                  type: string
+                body:
+                  type: string
+                record_id:
+                  type: string
+                email_key:
+                  type: string
+  "/api/v3/admin/email_templates/{email_template_id}/revisions":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    get:
+      summary: List email template revisions
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Every version of the template published in one language, newest
+        first. Reverting to Spree's default keeps them.
+
+
+        **Required scope:** `read_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          const revisions = await client.emailTemplates.revisions.list('spree.order_mailer.confirm_email', {
+            expand: ['published_by'],
+          })
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates/{email_template_id}/revisions -d '{"expand":["published_by"]}'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: language
+        in: query
+        required: false
+        description: A language code, or `any` (the default)
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        required: false
+        description: Number of records per page
+        schema:
+          type: integer
+      - name: expand
+        in: query
+        required: false
+        description: Comma-separated associations to expand (`published_by`)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: revisions found
+          content:
+            application/json:
+              example:
+                data:
+                - id: etrv_UkLWZg9DAJ
+                  subject: Reset {{ store.name }}
+                  body: "<mj-section><mj-column><mj-text>Hello</mj-text></mj-column></mj-section>"
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  published_by_id: adm_UkLWZg9DAJ
+                  published_by_type: admin_user
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+  "/api/v3/admin/email_templates/{email_template_id}/revisions/{revision_id}/restoration":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    - name: revision_id
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Restore an email template revision
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Copies the revision into the draft, to be published like any change.
+        Send the draft's `lock_version` when one is open, as when saving it.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // Copies the revision into the draft, to publish like any change.
+          const template = await client.emailTemplates.revisions.restore(
+            'spree.order_mailer.confirm_email',
+            'etrv_k5nR8xLq',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api post /email_templates/{email_template_id}/revisions/{revision_id}/restoration
+          -d '{ ... }'
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: revision copied into the draft
+          content:
+            application/json:
+              example:
+                id: spree.order_mailer.confirm_email
+                key: spree/order_mailer/confirm_email
+                subject: Reset {{ store.name }}
+                body: "<mj-section><mj-column><mj-text>Hello</mj-text></mj-column></mj-section>"
+                language: any
+                customized_languages:
+                - any
+                kind: email
+                customized: true
+                published_at: '2026-01-15T12:00:00Z'
+                default_subject: Order {{ order.number }} confirmed
+                default_body: "<mj-section><mj-column><mj-text>Thanks for your order,
+                  {{ order.customer_name }}!</mj-text></mj-column></mj-section>\n"
+                published_language: any
+                default_changed: true
+                base_subject: Reset {{ store.name }}
+                base_body: "<mj-section><mj-column><mj-text>Default</mj-text></mj-column></mj-section>"
+                draft:
+                  id: etdr_UkLWZg9DAJ
+                  subject: Reset {{ store.name }}
+                  body: "<mj-section><mj-column><mj-text>Thanks, {{ order.customer_name
+                    }}!</mj-text></mj-column></mj-section>"
+                  lock_version: 0
+                  created_at: '2026-01-15T12:00:00.000Z'
+                  updated_at: '2026-01-15T12:00:00.000Z'
+                  updated_by_id: adm_UkLWZg9DAJ
+                  updated_by_type: admin_user
+              schema:
+                "$ref": "#/components/schemas/EmailTemplate"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                language:
+                  type: string
+                  example: any
+                lock_version:
+                  type: integer
+  "/api/v3/admin/email_templates/{email_template_id}/sample_records":
+    parameters:
+    - name: email_template_id
+      in: path
+      required: true
+      description: The template key with dots
+      schema:
+        type: string
+    get:
+      summary: List records to preview an email template with
+      tags:
+      - Email Templates
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        The store's five latest records the template can be previewed with,
+        newest first, to pass as `record_id` to the preview. For the layout
+        and partials, those of the email `email_key` names. Empty for an
+        email that needs no record.
+
+
+        **Required scope:** `write_email_templates` (for API-key authentication).
+      x-codeSamples:
+      - lang: javascript
+        label: Spree Admin SDK
+        source: |-
+          import { createAdminClient } from '@spree/admin-sdk'
+
+          const client = createAdminClient({
+            baseUrl: 'https://your-store.com',
+            secretKey: 'sk_xxx',
+          })
+
+          // The latest orders to preview the order confirmation with; pass one's id as `record_id`.
+          const { data: records } = await client.emailTemplates.sampleRecords.list(
+            'spree.order_mailer.confirm_email',
+          )
+      - lang: bash
+        label: Spree CLI
+        source: spree api get /email_templates/{email_template_id}/sample_records
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: email_key
+        in: query
+        required: false
+        description: For the layout or a partial, the email to show it in
+        schema:
+          type: string
+      responses:
+        '200':
+          description: records found
+          content:
+            application/json:
+              example:
+                data:
+                - id: or_UkLWZg9DAJ
+                  label: R1001
+                  created_at: '2026-01-15T12:00:00.000Z'
   "/api/v3/admin/exports":
     get:
       summary: List exports
@@ -22744,6 +24138,12 @@ paths:
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 preferred_send_consumer_transactional_emails: true
+                preferred_email_accent_color:
+                preferred_email_background_color:
+                preferred_email_card_color:
+                preferred_email_text_color:
+                preferred_email_heading_color:
+                preferred_email_font:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
@@ -23077,6 +24477,12 @@ paths:
                 customer_support_email: support@example.com
                 new_order_notifications_email: store-owner@example.com
                 preferred_send_consumer_transactional_emails: true
+                preferred_email_accent_color:
+                preferred_email_background_color:
+                preferred_email_card_color:
+                preferred_email_text_color:
+                preferred_email_heading_color:
+                preferred_email_font:
                 preferred_admin_locale:
                 preferred_timezone: UTC
                 preferred_weight_unit: lb
@@ -41740,6 +43146,9 @@ tags:
     by pricing and promotions
 - name: Customers
   description: Customer profiles, addresses, credit cards, and store credits
+- name: Email Templates
+  description: 'Customer email templates, the email layout and shared partials: drafts,
+    previews, publishing and history'
 - name: Exports
   description: Async CSV exports of admin resources
 - name: Fulfillments
@@ -49964,6 +51373,32 @@ components:
           nullable: true
         preferred_send_consumer_transactional_emails:
           type: boolean
+        preferred_email_accent_color:
+          type: string
+          nullable: true
+        preferred_email_background_color:
+          type: string
+          nullable: true
+        preferred_email_card_color:
+          type: string
+          nullable: true
+        preferred_email_text_color:
+          type: string
+          nullable: true
+        preferred_email_heading_color:
+          type: string
+          nullable: true
+        preferred_email_font:
+          type: string
+          nullable: true
+          enum:
+          - inter
+          - system
+          - helvetica
+          - georgia
+          - roboto
+          - lato
+          - merriweather
         preferred_admin_locale:
           type: string
           nullable: true
@@ -50092,6 +51527,12 @@ components:
       - customer_support_email
       - new_order_notifications_email
       - preferred_send_consumer_transactional_emails
+      - preferred_email_accent_color
+      - preferred_email_background_color
+      - preferred_email_card_color
+      - preferred_email_text_color
+      - preferred_email_heading_color
+      - preferred_email_font
       - preferred_admin_locale
       - preferred_timezone
       - preferred_weight_unit
@@ -50897,4 +52338,184 @@ components:
       - credential
       - deprecated
       - replaced_by
+    EmailTemplateDraft:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        lock_version:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        updated_by_id:
+          type: string
+          nullable: true
+        updated_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        updated_by:
+          "$ref": "#/components/schemas/Actor"
+      required:
+      - id
+      - subject
+      - body
+      - lock_version
+      - created_at
+      - updated_at
+      - updated_by_id
+      - updated_by_type
+      x-typelizer: true
+    EmailTemplatePreview:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        subject:
+          type: string
+        html:
+          type: string
+        text:
+          type: string
+        email_key:
+          type: string
+        variables:
+          type: object
+      required:
+      - id
+      - subject
+      - html
+      - text
+      - email_key
+      - variables
+      x-typelizer: true
+    EmailTemplateRevision:
+      type: object
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        created_at:
+          type: string
+        published_by_id:
+          type: string
+          nullable: true
+        published_by_type:
+          anyOf:
+          - type: string
+            enum:
+            - admin_user
+            - api_key
+          - type: string
+          nullable: true
+          description: The values listed are the built-in ones; extensions may add
+            more.
+        published_by:
+          "$ref": "#/components/schemas/Actor"
+      required:
+      - id
+      - subject
+      - body
+      - created_at
+      - published_by_id
+      - published_by_type
+      x-typelizer: true
+    EmailTemplateSampleRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        created_at:
+          type: string
+      required:
+      - id
+      - label
+      - created_at
+      x-typelizer: true
+    EmailTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+        language:
+          type: string
+        customized_languages:
+          type: array
+          items:
+            type: string
+        kind:
+          type: string
+          enum:
+          - email
+          - layout
+          - partial
+        customized:
+          type: boolean
+        published_at:
+          type: string
+          nullable: true
+        default_subject:
+          type: string
+          nullable: true
+        default_body:
+          type: string
+        published_language:
+          type: string
+          nullable: true
+        default_changed:
+          type: boolean
+        base_subject:
+          type: string
+          nullable: true
+        base_body:
+          type: string
+          nullable: true
+        draft:
+          allOf:
+          - "$ref": "#/components/schemas/EmailTemplateDraft"
+          nullable: true
+      required:
+      - id
+      - key
+      - subject
+      - body
+      - language
+      - customized_languages
+      - kind
+      - customized
+      - published_at
+      - default_subject
+      - default_body
+      - published_language
+      - default_changed
+      - base_subject
+      - base_body
+      - draft
       x-typelizer: true

@@ -7,6 +7,8 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
+        typelize customer_name: :string, display_total_minus_store_credits: :string
+
         attribute :customer_name do |purchase|
           purchase.name.presence || Spree.t(:customer)
         end
@@ -16,6 +18,8 @@ module Spree
         end
 
         many :line_items, key: :items, resource: Spree::Emails::LineItemSerializer
+        one :billing_address, resource: Spree::Emails::AddressSerializer
+        one :shipping_address, resource: Spree::Emails::AddressSerializer
 
         many :promotion_discounts,
              source: proc { Spree::Emails::AmountLine.group(discounts.promotion, currency: currency) },

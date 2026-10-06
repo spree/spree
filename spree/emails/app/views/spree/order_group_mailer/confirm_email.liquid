@@ -1,5 +1,5 @@
 ---
-subject: "{% if resend %}[{{ 'resend' | t | upcase }}] {% endif %}{{ store.name }} {{ 'order_group_mailer.confirm_email.subject' | t }} #{{ order_group.number }}"
+subject: "{% if resend %}[{{ 'resend' | t }}] {% endif %}{{ store.name }} {{ 'order_group_mailer.confirm_email.subject' | t }} #{{ order_group.number }}"
 ---
 {% assign parcel_count = order_group.fulfillment_groups.size %}
 <mj-section>

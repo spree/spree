@@ -1,11 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store, type StoreUpdateParams } from '@spree/admin-sdk'
-import { ImageUploadField, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  ImageUploadField,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
+  ColorPicker,
   ErrorState,
   Field,
   FieldDescription,
@@ -15,18 +23,36 @@ import {
   FormActions,
   Input,
   ResourceLayout,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Skeleton,
   Switch,
   toastManager,
+  useDebouncedValue,
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { Controller, useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
-import { type StoreEmailsFormValues, storeEmailsFormSchema } from '../../../../schemas/store-emails'
+import { EmailPreviewFrame } from '../../../../../components/spree/email-templates/email-preview-frame'
+import { EmailsTabs } from '../../../../../components/spree/email-templates/emails-tabs'
+import { PREVIEW_DELAY_MS } from '../../../../../components/spree/email-templates/preview-card'
+import { useEmailTemplatePreview } from '../../../../../hooks/use-email-templates'
+import { useStoreSettings, useUpdateStoreSettings } from '../../../../../hooks/use-store-settings'
+import {
+  EMAIL_BRANDING_COLORS,
+  EMAIL_FONTS,
+  type StoreEmailsFormValues,
+  storeEmailsFormSchema,
+} from '../../../../../schemas/store-emails'
 
-export const Route = createFileRoute('/_authenticated/$storeId/settings/emails')({
+const BRANDING_PREVIEW_TEMPLATE = 'spree.order_mailer.confirm_email'
+
+export const Route = createFileRoute('/_authenticated/$storeId/settings/emails/')({
   component: EmailSettingsPage,
 })
 
@@ -37,6 +63,12 @@ function storeToFormValues(store: Store): StoreEmailsFormValues {
     new_order_notifications_email: store.new_order_notifications_email ?? '',
     preferred_send_consumer_transactional_emails:
       store.preferred_send_consumer_transactional_emails,
+    preferred_email_accent_color: store.preferred_email_accent_color ?? '',
+    preferred_email_background_color: store.preferred_email_background_color ?? '',
+    preferred_email_card_color: store.preferred_email_card_color ?? '',
+    preferred_email_text_color: store.preferred_email_text_color ?? '',
+    preferred_email_heading_color: store.preferred_email_heading_color ?? '',
+    preferred_email_font: store.preferred_email_font ?? 'inter',
     mailer_logo_signed_id: null,
     mailer_logo_preview_url: null,
     mailer_logo_cleared: false,
@@ -50,6 +82,12 @@ function formValuesToApiParams(values: StoreEmailsFormValues): StoreUpdateParams
     new_order_notifications_email: values.new_order_notifications_email?.trim() || null,
     preferred_send_consumer_transactional_emails:
       values.preferred_send_consumer_transactional_emails,
+    preferred_email_accent_color: values.preferred_email_accent_color || null,
+    preferred_email_background_color: values.preferred_email_background_color || null,
+    preferred_email_card_color: values.preferred_email_card_color || null,
+    preferred_email_text_color: values.preferred_email_text_color || null,
+    preferred_email_heading_color: values.preferred_email_heading_color || null,
+    preferred_email_font: values.preferred_email_font,
   }
   // Three states for the logo: untouched (omit), uploaded (send signed_id),
   // explicitly cleared (send null). Sending an empty value would be ambiguous.
@@ -143,6 +181,8 @@ function EmailSettingsForm({ store }: { store: Store }) {
         }
         main={
           <>
+            <EmailsTabs current="settings" />
+
             {errors.root?.message && (
               <p className="text-sm text-destructive" role="alert">
                 {errors.root.message}
@@ -252,6 +292,8 @@ function EmailSettingsForm({ store }: { store: Store }) {
                     <LogoField form={form} initialLogoUrl={store.mailer_logo_url} />
                   </CardContent>
                 </Card>
+
+                <BrandingCard form={form} />
               </>
             )}
           </>
@@ -291,4 +333,125 @@ function LogoField({
       }}
     />
   )
+}
+
+function BrandingCard({ form }: { form: ReturnType<typeof useForm<StoreEmailsFormValues>> }) {
+  const { t } = useTranslation()
+  const { permissions } = usePermissions()
+  const { errors } = form.formState
+  const fontOptions = EMAIL_FONTS.map((font) => ({
+    value: font,
+    label: t(`admin.pages.settings.emails.branding.fonts.${font}`),
+  }))
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.pages.settings.emails.branding.title')}</CardTitle>
+        <CardDescription>{t('admin.pages.settings.emails.branding.description')}</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-6 lg:grid-cols-2">
+        <FieldGroup>
+          {EMAIL_BRANDING_COLORS.map((color) => {
+            const name = `preferred_email_${color}` as const
+            return (
+              <Field key={color}>
+                <FieldLabel htmlFor={`store-email-${color}`}>
+                  {t(`admin.fields.store.${name}.label`)}
+                </FieldLabel>
+                <Controller
+                  name={name}
+                  control={form.control}
+                  render={({ field }) => (
+                    <ColorPicker
+                      id={`store-email-${color}`}
+                      value={field.value}
+                      onChange={(value) => field.onChange(value ?? '')}
+                      placeholder={t('admin.pages.settings.emails.branding.default_color')}
+                      aria-invalid={!!errors[name] || undefined}
+                    />
+                  )}
+                />
+                <FieldError errors={[errors[name]]} />
+              </Field>
+            )
+          })}
+          <Field>
+            <FieldLabel htmlFor="store-email-font">
+              {t('admin.fields.store.preferred_email_font.label')}
+            </FieldLabel>
+            <Controller
+              name="preferred_email_font"
+              control={form.control}
+              render={({ field }) => (
+                <Select
+                  items={fontOptions}
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value)}
+                >
+                  <SelectTrigger id="store-email-font">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fontOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <FieldDescription>{t('admin.fields.store.preferred_email_font.help')}</FieldDescription>
+          </Field>
+        </FieldGroup>
+        {permissions.can('update', Subject.EmailTemplate) && <BrandingPreview form={form} />}
+      </CardContent>
+    </Card>
+  )
+}
+
+function BrandingPreview({ form }: { form: ReturnType<typeof useForm<StoreEmailsFormValues>> }) {
+  const { t } = useTranslation()
+  const preview = useEmailTemplatePreview(BRANDING_PREVIEW_TEMPLATE)
+  const [accent, background, card, text, heading, font] = useWatch({
+    control: form.control,
+    name: [
+      'preferred_email_accent_color',
+      'preferred_email_background_color',
+      'preferred_email_card_color',
+      'preferred_email_text_color',
+      'preferred_email_heading_color',
+      'preferred_email_font',
+    ],
+  })
+  const branding = useDebouncedValue(
+    JSON.stringify({
+      accent_color: accent,
+      background_color: background,
+      card_color: card,
+      text_color: text,
+      heading_color: heading,
+      font,
+    }),
+    PREVIEW_DELAY_MS,
+  )
+  const { mutate } = preview
+
+  useEffect(() => {
+    mutate({ branding: JSON.parse(branding) })
+  }, [branding, mutate])
+
+  // No customer emails installed, so there is nothing to preview.
+  if (preview.error instanceof SpreeError && preview.error.status === 404) return null
+
+  if (preview.error) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {preview.error.message || t('admin.email_templates.preview.unavailable')}
+      </p>
+    )
+  }
+
+  return <EmailPreviewFrame html={preview.data?.html} className="h-[32rem]" />
 }

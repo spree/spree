@@ -469,7 +469,21 @@
           "section_delivery": "Entrega",
           "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
-          "title": "Configuración de email"
+          "title": "Configuración de email",
+          "branding": {
+            "title": "Marca",
+            "description": "Colores y fuente de cada correo para clientes. Deja un color vacío para mantener el predeterminado.",
+            "default_color": "Predeterminado",
+            "fonts": {
+              "inter": "Inter (predeterminada)",
+              "system": "Fuente del sistema",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -603,6 +617,7 @@
             "digital": "Digital",
             "digital_asset": "Recurso digital",
             "digital_link": "Enlace digital",
+            "email_template": "Plantillas de correo",
             "exchange": "Cambio",
             "export": "Exportación",
             "fulfillment": "Cumplimiento",
@@ -2168,6 +2183,25 @@
           "label": "Impuesto predeterminado sobre la comisión",
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Color de acento"
+        },
+        "preferred_email_background_color": {
+          "label": "Color de fondo"
+        },
+        "preferred_email_card_color": {
+          "label": "Color de la tarjeta"
+        },
+        "preferred_email_text_color": {
+          "label": "Color del texto"
+        },
+        "preferred_email_heading_color": {
+          "label": "Color de los títulos"
+        },
+        "preferred_email_font": {
+          "label": "Fuente",
+          "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
         }
       },
       "store_credit": {
@@ -4051,6 +4085,7 @@
         "customers": "Cuentas, direcciones, tarjetas y grupos de clientes",
         "dashboard": "Análisis de ventas y rendimiento",
         "delivery_methods": "Opciones de envío, tarifas y las reglas que las controlan",
+        "email_templates": "Plantillas de correo para clientes y el diseño del correo",
         "fulfillments": "Armar, despachar y rastrear cumplimientos de pedidos",
         "gift_cards": "Tarjetas de regalo y lotes de tarjetas",
         "integrations": "Credenciales y conexiones de proveedores",
@@ -4102,6 +4137,7 @@
         "customers": "Clientes",
         "dashboard": "Dashboard",
         "delivery_methods": "Métodos de entrega",
+        "email_templates": "Plantillas de correo",
         "fulfillments": "Cumplimientos",
         "gift_cards": "Tarjetas de regalo",
         "integrations": "Integraciones",
@@ -6073,6 +6109,166 @@
     },
     "jurisdiction": {
       "everywhere": "En todos lados"
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Ajustes",
+        "templates": "Plantillas"
+      },
+      "list": {
+        "description": "Edita los correos que reciben los clientes. Los cambios se guardan como borrador y solo llegan a los clientes cuando los publicas.",
+        "groups": {
+          "email": {
+            "title": "Correos para clientes",
+            "description": "Cada correo que un cliente puede recibir de tu tienda."
+          },
+          "layout": {
+            "title": "Diseño",
+            "description": "El encabezado, el pie y los estilos de cada correo para clientes."
+          },
+          "partial": {
+            "title": "Bloques compartidos",
+            "description": "Piezas que usan varios correos, como la lista de artículos y los totales."
+          }
+        },
+        "empty": "Aquí no hay plantillas de correo editables. Las plantillas de correo para clientes vienen con el paquete de correos de Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Confirmación del pedido",
+        "order_mailer_cancel_email": "Pedido cancelado",
+        "order_mailer_payment_link_email": "Enlace de pago",
+        "order_group_mailer_confirm_email": "Confirmación de pedido con varios vendedores",
+        "fulfillment_mailer_fulfilled_email": "Pedido enviado",
+        "return_mailer_refunded_email": "Devolución reembolsada",
+        "digital_asset_mailer_files_ready_email": "Descargas listas",
+        "customer_mailer_password_reset_email": "Restablecer contraseña",
+        "customer_mailer_data_export_email": "Exportación de datos personales lista",
+        "newsletter_mailer_email_confirmation": "Confirmación del boletín",
+        "company_mailer_invitation_email": "Invitación de empresa",
+        "spree_base_mailer": "Diseño del correo",
+        "shared_line_item": "Artículo",
+        "shared_order_summary": "Resumen del pedido",
+        "shared_purchase_totals": "Totales",
+        "shared_fulfillment_group": "Envío",
+        "shared_summary_row": "Fila de resumen"
+      },
+      "badges": {
+        "customized": "Personalizada",
+        "default": "Predeterminada",
+        "draft": "Borrador",
+        "other_languages": "También personalizada: {{languages}}",
+        "default_updated": "Actualizada por Spree",
+        "unsaved": "Cambios sin guardar",
+        "showing_draft": "Borrador: los clientes reciben la versión publicada",
+        "showing_published": "Publicada: lo que reciben los clientes",
+        "showing_default": "Predeterminada de Spree: lo que reciben los clientes"
+      },
+      "actions": {
+        "save_draft": "Guardar borrador",
+        "publish": "Publicar",
+        "discard_draft": "Descartar borrador",
+        "revert": "Volver a la predeterminada",
+        "send_test": "Enviar correo de prueba",
+        "history": "Historial"
+      },
+      "confirm": {
+        "discard_title": "¿Descartar este borrador?",
+        "discard_message": "Se eliminan tus cambios sin publicar. Los clientes siguen recibiendo la versión publicada.",
+        "revert_title": "¿Volver a la versión predeterminada de Spree?",
+        "revert_message": "A partir de ahora los clientes reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde.",
+        "restore_title": "¿Restaurar esta versión?",
+        "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes.",
+        "leave_title": "¿Salir sin guardar?",
+        "leave_message": "Se perderán los cambios sin guardar de esta plantilla.",
+        "leave": "Salir",
+        "revert_every_language_message": "A partir de ahora los clientes de todos los idiomas reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde."
+      },
+      "editor": {
+        "title": "Plantilla",
+        "subject": "Asunto",
+        "body": "Código de la plantilla",
+        "language": "Idioma"
+      },
+      "preview": {
+        "title": "Vista previa",
+        "frame_title": "Vista previa del correo",
+        "subject": "Asunto: {{subject}}",
+        "html": "Correo",
+        "text": "Texto sin formato",
+        "desktop": "Ancho de escritorio",
+        "mobile": "Ancho móvil",
+        "shown_in": "Mostrar dentro de",
+        "record": "Vista previa con registro",
+        "unavailable": "No se pudo mostrar la vista previa.",
+        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo.",
+        "latest_record": "El más reciente"
+      },
+      "problems": {
+        "title": "Esta plantilla no se puede mostrar",
+        "on_line": "Línea {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Actualizada por Spree",
+        "description": "Spree cambió su versión predeterminada de esta plantilla desde que se creó la tuya. Compara ambas antes de decidir.",
+        "compare": "Comparar",
+        "dialog_title": "Qué cambió en la versión predeterminada de Spree",
+        "dialog_description": "A la izquierda, la predeterminada de la que partió tu versión. A la derecha, la predeterminada actual.",
+        "before": "Tu versión partió de",
+        "after": "Predeterminada actual de Spree",
+        "keep_mine": "Conservar mi versión",
+        "start_over": "Empezar desde la nueva predeterminada"
+      },
+      "history": {
+        "title": "Historial",
+        "description": "Cada versión publicada en este idioma, de la más reciente a la más antigua.",
+        "empty": "Aún no se ha publicado nada.",
+        "latest": "Más reciente",
+        "version": "Versión {{number}}",
+        "restore": "Restaurar"
+      },
+      "conflict": {
+        "title": "Otra persona guardó este borrador",
+        "keep_editing": "Seguir editando",
+        "reload": "Cargar su versión",
+        "overwrite": "Guardar la mía encima"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Datos que puede mostrar este correo. Empieza a escribir una variable en el código para ver todos sus campos.",
+        "order": "El pedido, con sus artículos, direcciones y totales.",
+        "resend": "Si es una copia enviada de nuevo.",
+        "payment_url": "El enlace donde paga el cliente.",
+        "order_group": "Un pedido repartido entre varios vendedores.",
+        "fulfillment": "El envío, con su seguimiento.",
+        "return": "La devolución y lo reembolsado.",
+        "downloads": "Los archivos que puede descargar el cliente.",
+        "customer": "El cliente que recibe el correo.",
+        "reset_url": "El enlace para elegir una nueva contraseña.",
+        "download_url": "El enlace para descargar la exportación.",
+        "expires_at": "Cuándo deja de funcionar el enlace.",
+        "confirmation_url": "El enlace que confirma la suscripción.",
+        "company": "La empresa a la que se invita al cliente.",
+        "accept_url": "El enlace que acepta la invitación.",
+        "store": "Tu tienda: nombre, enlaces, logotipo y marca.",
+        "locale": "El idioma en que se envía el correo.",
+        "insert": "Insertar {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Borrador guardado",
+        "draft_discarded": "Borrador descartado",
+        "published": "Publicada. Los clientes reciben esta versión a partir de ahora.",
+        "reverted": "Se volvió a la versión predeterminada de Spree",
+        "restored": "Versión restaurada en el borrador",
+        "test_sent": "Correo de prueba enviado a {{email}}"
+      },
+      "errors": {
+        "load_failed": "No se pudieron cargar las plantillas de correo",
+        "not_allowed": "No tienes permiso para ver las plantillas de correo",
+        "test_email_failed": "No se pudo enviar el correo de prueba"
+      },
+      "every_language": {
+        "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
+      }
     }
   }
 }

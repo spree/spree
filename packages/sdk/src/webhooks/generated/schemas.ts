@@ -101,6 +101,8 @@ type WebhookEventName =
   | 'digital_link.deleted'
   | 'digital_link.downloaded'
   | 'digital_link.updated'
+  | 'email_template.published'
+  | 'email_template.reverted'
   | 'exchange.approved'
   | 'exchange.canceled'
   | 'exchange.created'
@@ -353,6 +355,8 @@ export const webhookEventSchemas: Readonly<Record<WebhookEventName, z.ZodType>> 
   'digital_link.deleted': DigitalLinkSchema,
   'digital_link.downloaded': DigitalLinkSchema,
   'digital_link.updated': DigitalLinkSchema,
+  'email_template.published': WebhookRecordReferenceSchema,
+  'email_template.reverted': WebhookRecordReferenceSchema,
   'exchange.approved': ExchangeSchema,
   'exchange.canceled': ExchangeSchema,
   'exchange.created': ExchangeSchema,
