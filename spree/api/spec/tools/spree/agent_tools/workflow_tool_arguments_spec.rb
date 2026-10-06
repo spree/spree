@@ -47,6 +47,35 @@ RSpec.describe 'agent workflow tool arguments' do
   # admin-user class rather than through `acted_by`. Handing one an API key
   # raises inside the workflow, where the honest outcome is an unattributed
   # record.
+  # A workflow assigns the attributes hash it is handed, and some assign it
+  # after setting tenancy. The tool is the trust boundary, so an attribute the
+  # Admin API would not permit must never reach the workflow.
+  describe 'an attribute the Admin API does not permit' do
+    let(:other_store) { create(:store) }
+
+    it 'is refused by name on create rather than written' do
+      result = tool('products_create').call(
+        attributes: { 'name' => 'Tenancy probe', 'store_id' => other_store.id }
+      )
+
+      expect(result[:error]).to include('store_id')
+      expect(Spree::Product.where(name: 'Tenancy probe')).to be_empty
+    end
+
+    # Worse than a create: this would move an existing product out of the
+    # store that owns it, which the owning merchant sees as data loss.
+    it 'cannot move an existing record to another store' do
+      product = create(:product, store: store)
+
+      result = tool('products_update').call(
+        product: product.prefixed_id, attributes: { 'store_id' => other_store.id }
+      )
+
+      expect(result[:error]).to include('store_id')
+      expect(product.reload.store_id).to eq(store.id)
+    end
+  end
+
   describe 'an actor the record cannot hold' do
     let(:supplier) { create(:supplier, store: store) }
     let(:stock_location) { store.stock_locations.first || create(:stock_location, store: store) }
