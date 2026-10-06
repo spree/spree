@@ -251,9 +251,19 @@ module Spree
           Spree.permissions.expand_keys(token.scopes.to_a)
         end
 
+        # The delegated credential this request arrived on.
+        #
+        # Resolved here rather than overridden per controller: this module is
+        # included after the authentication concerns, so an override in one of
+        # them loses to this definition and the narrowing silently stops
+        # happening — which is how a token scoped to `read_products` once
+        # created one.
+        #
         # @return [Spree::OauthAccessToken, nil]
         def current_oauth_token
-          nil
+          return nil unless respond_to?(:admin_oauth_token, true)
+
+          admin_oauth_token
         end
       end
     end
