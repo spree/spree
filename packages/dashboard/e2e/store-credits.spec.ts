@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { escapeRegex, FIXTURE_PROMO_CUSTOMER_EMAIL, login } from './helpers'
+import { escapeRegex, FIXTURE_PROMO_CUSTOMER_EMAIL, login, openRowMenu } from './helpers'
 
 const STORE_CREDITS_PATH = (storeId: string) => `/${storeId}/loyalty/store-credits`
 
@@ -107,5 +107,34 @@ test.describe('store credits', () => {
     await sheet.getByRole('link', { name: /open customer profile/i }).click()
     await expect(page).toHaveURL(/\/customers\/cust_/, { timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible()
+  })
+
+  test('edits and deletes a credit from the list', async ({ page }) => {
+    const creds = await login(page)
+    const memo = `E2E credit to change ${Date.now()}`
+    const editedMemo = `${memo} edited`
+    await issueStoreCredit(page, creds.accessToken, memo)
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await page.getByRole('searchbox').fill(memo)
+    await expect(page.locator('tr').filter({ hasText: memo })).toHaveCount(1, { timeout: 15_000 })
+
+    await openRowMenu(page, memo)
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('heading', { name: /edit store credit/i })).toBeVisible()
+    await dialog.getByLabel(/memo/i).fill(editedMemo)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.locator('tr').filter({ hasText: editedMemo })).toHaveCount(1, {
+      timeout: 15_000,
+    })
+
+    await openRowMenu(page, editedMemo)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await expect(page.locator('tr').filter({ hasText: memo })).toHaveCount(0, { timeout: 15_000 })
   })
 })
