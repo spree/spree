@@ -199,9 +199,24 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
         expect(cart.reload.total).to eq(15)
       end
 
-      # The gift stops being free the moment it is the only thing qualifying,
-      # and is not re-added, so the shopper can take it out themselves.
-      it 'stops paying for the gift when the qualifying line goes' do
+      it 'gives the free one back when the shopper lowers the line to it, and takes back only that one with the code' do
+        Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
+        promotion.reload
+        promotion.activate(order: cart)
+
+        Spree.cart_upsert_items_workflow.call(cart: cart, items: [{ variant_id: gift.id, quantity: 1 }])
+
+        expect([gift_line_item.quantity, gift_line_item.gifted_quantity]).to eq([2, 1])
+        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+
+        Spree::PromotionHandler::Coupon.new(cart.reload).remove(promotion.code)
+
+        expect([gift_line_item.quantity, gift_line_item.gifted_quantity]).to eq([1, 0])
+      end
+
+      # The rules count the gift's own product, so the gift left behind is the
+      # shopper's mug and the offer applies to it.
+      it 'applies the offer to the gift product left once the qualifying line goes' do
         qualifying = create(:variant, price: 20)
         promotion.promotion_rules.first.products << qualifying.product
         Spree.cart_add_item_workflow.call(cart: cart, variant: qualifying, quantity: 1)
@@ -211,9 +226,25 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
 
         Spree.cart_remove_item_service.call(cart: cart, variant: qualifying, quantity: 1)
 
-        expect(gift_line_item.discounts).to be_empty
+        expect([gift_line_item.quantity, gift_line_item.gifted_quantity]).to eq([2, 1])
+        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
         expect(cart.reload.total).to eq(15)
       end
+    end
+
+    it 'takes back a gift of another product once nothing the shopper chose qualifies' do
+      qualifying = create(:variant, price: 20)
+      create(:promotion_rule_product, promotion: promotion).products << qualifying.product
+      Spree.cart_add_item_workflow.call(cart: cart, variant: qualifying, quantity: 1)
+      promotion.reload
+      promotion.activate(order: cart)
+      expect(gift_line_item.quantity).to eq(1)
+
+      create(:line_item_gift, line_item: cart.line_items.reload.find_by(variant_id: qualifying.id))
+      cart.line_items.reload
+      promotion.reload.activate(order: cart)
+
+      expect(gift_line_item).to be_nil
     end
 
     it 'adds the gift on top of the copies the shopper chose and leaves those paid for' do

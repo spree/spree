@@ -60,7 +60,7 @@ module Spree
         def perform(options = {})
           order = options[:order]
           return unless eligible? order
-          return unless qualifies_beyond_the_gift?(order)
+          return unless qualifies_beyond_the_gift?(order) || settle_gifts_left_qualifying(order)
 
           # A gift list edited while carts hold the old gift trims them to it.
           take_back_gifts(order) { |line_item, given| given - promised_quantity_of(line_item) }
@@ -141,6 +141,22 @@ module Spree
             promotion.line_item_actionable?(order, line_item, options) &&
               line_item.gifted_quantity < line_item.quantity
           end
+        end
+
+        # Eligible on its own gift alone: a "buy one, get one" line lowered to
+        # the gift, or the item that earned it removed. Gift units of a product
+        # the rules count become the shopper's, so the offer applies to them
+        # again; a gift of anything else is taken back.
+        def settle_gifts_left_qualifying(order)
+          holding = line_items_with_gifts(order).select { |line_item| line_item.gifted_quantity_by(self).positive? }
+          counted, others = holding.partition { |line_item| promotion.line_item_actionable?(order, line_item) }
+
+          counted.each do |line_item|
+            line_item.gifts.destroy(line_item.gifts.detect { |gift| gift.promotion_action_id == id })
+          end
+          take_back_gifts(order) { |_line_item, given| given } if others.any?
+
+          counted.any? && qualifies_beyond_the_gift?(order)
         end
 
         def promised_quantity_of(line_item)
