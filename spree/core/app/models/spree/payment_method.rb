@@ -75,6 +75,20 @@ module Spree
     # `providers`; declaring it keeps subclass resolution to a single rule.
     registers_subclasses_via { providers }
 
+    # Whether this method is backed by an external payment provider (Stripe,
+    # Adyen…) rather than handled by the store itself (check, store credit).
+    # Only third-party methods are listed under Settings → Integrations.
+    #
+    # @return [Boolean]
+    def self.third_party?
+      false
+    end
+
+    # @return [Hash] the listing attributes, plus whether the method is third-party
+    def self.provider_listing
+      super.merge(third_party: third_party?)
+    end
+
     def provider_class
       raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
     end

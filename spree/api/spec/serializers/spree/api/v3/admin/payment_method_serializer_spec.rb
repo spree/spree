@@ -49,4 +49,18 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodSerializer do
       expect(payload['preference_schema']).not_to include(have_key(:key_string))
     end
   end
+
+  describe 'third_party' do
+    it 'is true for a gateway backed by an external provider' do
+      payload = described_class.new(create(:bogus_payment_method), params: base_params).to_h
+
+      expect(payload['third_party']).to be(true)
+    end
+
+    it 'is false for a method the store handles itself' do
+      payload = described_class.new(create(:check_payment_method), params: base_params).to_h
+
+      expect(payload['third_party']).to be(false)
+    end
+  end
 end

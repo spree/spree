@@ -45,7 +45,7 @@ After restarting your server, you can select "MyGateway" when creating a new pay
 
 ### Show a logo and setup guide (optional)
 
-Payment providers also appear in the admin dashboard under **Settings > Integrations**. Declare a logo and a link to your setup guide so merchants recognise the provider and know how to connect it:
+Payment methods backed by an external provider also appear in the admin dashboard under **Settings > Integrations**, next to other connected services. A method is listed there when it inherits from `Spree::Gateway`, or when its class defines `self.third_party?` to return `true`. Declare a logo and a link to your setup guide so merchants recognise the provider and know how to connect it:
 
 ```ruby app/models/my_gateway.rb
 class MyGateway < Spree::PaymentMethod

@@ -27,6 +27,7 @@ import {
   paymentMethodValuesToCreateParams,
   paymentMethodValuesToUpdateParams,
 } from '../../../schemas/payment-method'
+import { SetupGuideLink } from '../integrations/setup-guide-link'
 import { PaymentMethodForm } from './payment-method-form'
 import type { PaymentMethodFormValues } from './types'
 
@@ -111,7 +112,14 @@ export function CreatePaymentMethodSheet({
       <SheetContent>
         <SheetHeader>
           <SheetTitle>{t('admin.pages.settings.payment_methods.add_sheet_title')}</SheetTitle>
-          <SheetDescription>{t('admin.payment_methods.create_description')}</SheetDescription>
+          <SheetDescription>
+            {initialType
+              ? t('admin.payment_methods.provider_description', { provider: initialType.label })
+              : t('admin.payment_methods.create_description')}
+          </SheetDescription>
+          <SetupGuideLink
+            url={providerTypes.find((entry) => entry.type === providerType)?.docs_url}
+          />
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
@@ -131,6 +139,7 @@ export function CreatePaymentMethodSheet({
               preferences={preferences}
               onPreferencesChange={setPreferences}
               onProviderTypeChange={handleProviderTypeChange}
+              providerLocked={!!initialType}
             />
           </div>
           <SheetFooter>
@@ -231,6 +240,7 @@ export function EditPaymentMethodSheet({
               ? t('admin.payment_methods.provider_description', { provider: providerLabel })
               : t('admin.payment_methods.edit_description')}
           </SheetDescription>
+          <SetupGuideLink url={paymentMethod?.docs_url} />
         </SheetHeader>
         {isLoading ? (
           <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>

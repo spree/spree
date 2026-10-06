@@ -2414,6 +2414,8 @@ export interface PaymentMethodType extends ResourceTypeDefinition {
   logo_url: string | null
   /** Absolute URL of the provider's setup guide. */
   docs_url: string | null
+  /** Backed by an external payment provider rather than handled by the store itself. */
+  third_party: boolean
 }
 
 /**

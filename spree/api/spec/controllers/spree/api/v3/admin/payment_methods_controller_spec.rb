@@ -319,6 +319,13 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(response.body).not_to include('SECRETKEY123')
     end
 
+    it 'flags providers backed by a third-party gateway' do
+      get :types, as: :json
+
+      third_party = json_response['data'].to_h { |entry| [entry['type'], entry['third_party']] }
+      expect(third_party).to include('bogus' => true, 'store_credit' => false, 'custom_payment_source_method' => false)
+    end
+
     it 'exposes the logo and setup guide a provider declares' do
       allow(Spree::Gateway::Bogus).to receive_messages(
         logo_url: 'https://example.com/bogus.png',

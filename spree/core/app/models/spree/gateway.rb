@@ -31,6 +31,10 @@ module Spree
       outer ? outer.underscore : leaf
     end
 
+    def self.third_party?
+      true
+    end
+
     def payment_source_class
       CreditCard
     end

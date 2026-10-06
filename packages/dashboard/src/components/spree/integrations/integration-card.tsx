@@ -9,8 +9,8 @@ import {
   cn,
   Switch,
 } from '@spree/dashboard-ui'
-import { ExternalLinkIcon } from '@spree/dashboard-ui/icons'
 import { type ReactNode, useEffect, useRef, useState } from 'react'
+import { SetupGuideLink } from './setup-guide-link'
 
 export type IntegrationCardStatus = 'active' | 'inactive' | 'not_connected'
 
@@ -28,7 +28,6 @@ export function IntegrationCard({
   tags,
   toggle,
   docsUrl,
-  docsLabel,
   actionLabel,
   onAction,
 }: {
@@ -50,9 +49,8 @@ export function IntegrationCard({
      */
     onCheckedChange: (checked: boolean) => Promise<boolean> | undefined
   }
-  /** Setup guide, opened in a new tab. Only absolute http(s) URLs are linked. */
+  /** Setup guide linked from the footer. */
   docsUrl?: string | null
-  docsLabel: string
   actionLabel: string
   onAction: () => void
 }) {
@@ -145,21 +143,10 @@ export function IntegrationCard({
         {tags && <div className="mt-auto flex flex-wrap gap-1.5">{tags}</div>}
       </CardContent>
       <CardFooter className="justify-between gap-2 bg-muted/40 px-4 py-2">
-        {docsUrl && /^https?:\/\//.test(docsUrl) ? (
-          <a
-            href={docsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link inline-flex items-center gap-1 text-sm"
-          >
-            {docsLabel}
-            <ExternalLinkIcon className="size-3.5" />
-          </a>
-        ) : (
-          <span />
-        )}
+        <SetupGuideLink url={docsUrl} />
         <Button
           size="sm"
+          className="ml-auto"
           variant={status === 'not_connected' ? 'default' : 'ghost'}
           onClick={onAction}
         >
@@ -175,7 +162,14 @@ export function IntegrationCard({
 // unreachable URLs alike — same pattern as the store switcher.
 function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
   return (
-    <Avatar className="size-10 shrink-0 rounded-lg bg-background p-1.5 after:rounded-lg after:border-border-subtle">
+    // Brand logos are drawn for a light background, so the tile behind one
+    // stays white in dark mode too; the letter fallback follows the theme.
+    <Avatar
+      className={cn(
+        'size-10 shrink-0 rounded-lg p-1.5 after:rounded-lg after:border-border-subtle',
+        logoUrl ? 'bg-white' : 'bg-background',
+      )}
+    >
       {logoUrl && <AvatarImage src={logoUrl} className="rounded-none object-contain" />}
       <AvatarFallback className="rounded-md bg-transparent font-semibold">
         {name.charAt(0).toUpperCase()}
