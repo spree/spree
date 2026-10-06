@@ -318,7 +318,10 @@ module SpreeStripe
     # intent is confirmed at once and a bank asking for either declines it.
     def charge_saved_payment_method(payment, amount_in_cents, capture:)
       source = payment.source
-      if source.try(:gateway_payment_profile_id).blank? || source.try(:gateway_customer_profile_id).blank?
+      # Checked again here, not only when the payment was added: the order's
+      # customer can change after that.
+      if source.try(:gateway_payment_profile_id).blank? || source.try(:gateway_customer_profile_id).blank? ||
+         source.customer_id.blank? || source.customer_id != payment.owner.customer_id
         return failure(Spree.t('stripe.payment_errors.saved_payment_method_required'))
       end
 

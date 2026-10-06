@@ -704,8 +704,21 @@ RSpec.describe SpreeStripe::Gateway do
 
       context 'when the saved card has no Stripe customer' do
         let!(:credit_card) do
-          create(:credit_card, gateway_payment_profile_id: payment_method_id, gateway_customer_profile_id: nil,
-                               payment_method: gateway)
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: nil, payment_method: gateway)
+        end
+
+        it 'returns failure without calling Stripe' do
+          expect(subject.success?).to be(false)
+          expect(subject.message).to eq(Spree.t('stripe.payment_errors.saved_payment_method_required'))
+        end
+      end
+
+      # The order's customer was changed after the payment was added.
+      context "when the card belongs to another customer" do
+        let!(:credit_card) do
+          create(:credit_card, customer: create(:customer), gateway_payment_profile_id: payment_method_id,
+                               gateway_customer_profile_id: 'cus_saved', payment_method: gateway)
         end
 
         it 'returns failure without calling Stripe' do
@@ -724,7 +737,7 @@ RSpec.describe SpreeStripe::Gateway do
           Stripe::PaymentMethod.attach(stripe_test_card, { customer: stripe_customer_id }, gateway.api_options).id
         end
         let!(:credit_card) do
-          create(:credit_card, gateway_payment_profile_id: payment_method_id,
+          create(:credit_card, customer: order.customer, gateway_payment_profile_id: payment_method_id,
                                gateway_customer_profile_id: stripe_customer_id, payment_method: gateway)
         end
 
