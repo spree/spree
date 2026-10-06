@@ -116,6 +116,15 @@ describe Spree::LineItem, type: :model do
         expect(line_item.reload.gifts).to contain_exactly(older_gift)
         expect(line_item.gifted_quantity).to eq(1)
       end
+
+      it 'keeps a gift given back before the save that would have deleted it' do
+        line_item.reload
+        line_item.change_gift(newer_gift.promotion_action, -1)
+        line_item.change_gift(newer_gift.promotion_action, 1)
+        line_item.save!
+
+        expect(line_item.reload.gifts).to contain_exactly(older_gift, newer_gift)
+      end
     end
   end
 

@@ -248,13 +248,17 @@ module Spree
     # @param quantity [Integer]
     def change_gift(promotion_action, quantity)
       gift = gifts.detect { |record| record.promotion_action_id == promotion_action.id }
-      if gift.nil?
-        gifts.build(promotion_action: promotion_action, quantity: quantity) if quantity.positive?
-        return
-      end
+      remaining = gifted_quantity_by(promotion_action) + quantity
 
-      gift.quantity += quantity
-      gift.mark_for_destruction unless gift.quantity.positive?
+      if gift.nil?
+        gifts.build(promotion_action: promotion_action, quantity: remaining) if remaining.positive?
+      elsif !remaining.positive?
+        gift.new_record? ? gifts.target.delete(gift) : gift.mark_for_destruction
+      else
+        # Given back before the save that would have deleted it.
+        gift.reload if gift.marked_for_destruction?
+        gift.quantity = remaining
+      end
     end
 
     # Folds another line of the same variant into this one. A line carries one
