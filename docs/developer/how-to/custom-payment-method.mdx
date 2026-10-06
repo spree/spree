@@ -49,6 +49,12 @@ Payment methods backed by an external provider also appear in the admin dashboar
 
 ```ruby app/models/my_gateway.rb
 class MyGateway < Spree::PaymentMethod
+  # Lists MyGateway under Settings > Integrations. Not needed when the class
+  # inherits from Spree::Gateway.
+  def self.third_party?
+    true
+  end
+
   def self.logo_url
     'https://my-gateway.example.com/logo.svg'
   end
