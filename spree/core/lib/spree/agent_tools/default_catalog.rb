@@ -102,7 +102,20 @@ module Spree
       # Workflows an admin controller invokes that are deliberately NOT tools,
       # each with the reason. The contract spec reads this list, so a workflow
       # can never be quietly dropped: it is exposed, or it is here.
+      # The email template editor is a draft-and-publish surface: its steps
+      # move a draft through revisions against a live preview, and they mean
+      # nothing outside that screen. Publishing one sends real mail in the
+      # merchant's name, which is not a conversational action.
+      EMAIL_TEMPLATE_EDITOR_REASON =
+        'A step of the dashboard\'s email template editor, which drafts and previews against a ' \
+        'live rendering. Publishing sends real mail in the merchant\'s name.'.freeze
+
       EXCLUDED_WORKFLOWS = {
+        email_template_save_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        email_template_publish_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        email_template_discard_draft_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        email_template_revert_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
+        email_template_restore_revision_workflow: EMAIL_TEMPLATE_EDITOR_REASON,
         customer_anonymize_workflow:
           'Irreversible erasure of a person\'s data under GDPR Art. 17. A deletion no one can undo ' \
           'is not something to offer a model behind one confirmation prompt.',
