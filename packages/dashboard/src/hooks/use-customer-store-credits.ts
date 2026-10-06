@@ -26,10 +26,11 @@ export function useUpdateCustomerStoreCredit(customerId: string, creditId: strin
   })
 }
 
-export function useDeleteCustomerStoreCredit(customerId: string) {
+export function useDeleteCustomerStoreCredit() {
   return useResourceMutation({
-    mutationFn: (id: string) => adminClient.customers.storeCredits.delete(customerId, id),
-    invalidate: [['customers', customerId], ['store-credits']],
+    mutationFn: ({ customerId, id }: { customerId: string; id: string }) =>
+      adminClient.customers.storeCredits.delete(customerId, id),
+    invalidate: [['customers'], ['store-credits']],
     successMessage: i18n.t('admin.messages.store_credit_removed'),
   })
 }
