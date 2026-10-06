@@ -26,16 +26,6 @@ module Spree
       # URL options otherwise. A store's own `url` column is deliberately not
       # consulted — it describes the storefront, which is frequently neither
       # the host nor the scheme the Admin API answers on.
-      # The aliases, offered alongside the individual keys.
-      #
-      # A grant that enumerates every key is frozen at the moment it was
-      # given: ship a feature with new permissions and every existing
-      # connection silently lacks them, with nothing to tell the merchant why
-      # its agent stopped seeing the new tools. `write_all` keeps meaning
-      # "everything" as the catalog grows, which is what a merchant who
-      # ticked "Full access" believed they were agreeing to.
-      ALIAS_SCOPES = %w[read_all write_all].freeze
-
       mattr_accessor :resources, default: {}
 
       class << self
@@ -93,7 +83,7 @@ module Spree
 
         # @return [Array<String>]
         def staff_scope_keys
-          ALIAS_SCOPES + Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE)
+          Spree.permissions.grantable_keys(Spree::PermissionConfiguration::STAFF_AUDIENCE)
         end
 
         # Whether every requested audience names a resource this application

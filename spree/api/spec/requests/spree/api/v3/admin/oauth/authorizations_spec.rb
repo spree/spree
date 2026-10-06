@@ -13,10 +13,21 @@ RSpec.describe 'Admin OAuth consent', type: :request do
   end
   let(:challenge) { Base64.urlsafe_encode64(Digest::SHA256.digest('v' * 64), padding: false) }
 
-  # Products only — nothing this role could cancel, refund or configure.
+  # May connect an agent, and holds products beyond that. Nothing this role
+  # could cancel, refund or configure — which is what a grant must refuse to
+  # hand over however broadly the client asked.
   let(:staffer) do
     create(:admin_user, :without_admin_role).tap do |user|
       role = create(:role, name: "products-only-#{SecureRandom.hex(4)}",
+                           permissions: %w[write_agents read_products], resource: store)
+      create(:role_user, user: user, role: role)
+    end
+  end
+
+  # Holds products but not the right to connect anything.
+  let(:staffer_without_agents) do
+    create(:admin_user, :without_admin_role).tap do |user|
+      role = create(:role, name: "no-agents-#{SecureRandom.hex(4)}",
                            permissions: %w[read_products], resource: store)
       create(:role_user, user: user, role: role)
     end
@@ -74,25 +85,13 @@ RSpec.describe 'Admin OAuth consent', type: :request do
     end
   end
 
-  # A grant that enumerates every key is frozen at the moment it was given.
-  # Ship a feature with new permissions and an agent the merchant gave full
-  # access silently cannot use the new tools, with nothing to say why.
-  describe 'a grant of everything the approver holds' do
-    it 'is recorded as the alias, not as the keys it stands for today' do
-      admin = create(:admin_user)
+  # Handing a third party a standing credential to the store is its own
+  # permission. A staffer who cannot revoke an agent cannot connect one.
+  it 'refuses a staffer who may not connect agents' do
+    expect { approve(staffer_without_agents, scope: 'read_products') }.
+      not_to change(Spree::OauthAccessGrant, :count)
 
-      approve(admin, scope: 'write_all')
-
-      expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to eq(['write_all'])
-    end
-
-    it 'still cannot exceed what the approver holds' do
-      approve(staffer, scope: 'write_all')
-
-      # The staffer holds read_products alone, so "everything" is that one
-      # key — an alias must never widen a grant beyond its grantor.
-      expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to contain_exactly('read_products')
-    end
+    expect(response).to have_http_status(:forbidden)
   end
 
   # The merchant may hand over less than was asked for; that choice has to

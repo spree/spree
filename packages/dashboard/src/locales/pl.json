@@ -4269,7 +4269,8 @@
         "staff": "Członkowie zespołu, zaproszenia, role i ich uprawnienia",
         "stock": "Stany magazynowe, lokalizacje, ruchy i transfery",
         "store_credits": "Salda środków sklepowych klientów",
-        "webhooks": "Punkty końcowe i dostarczenia webhooków"
+        "webhooks": "Punkty końcowe i dostarczenia webhooków",
+        "agents": "Agenty AI połączone z tym sklepem"
       },
       "grid": {
         "read_aria": "Podgląd: {{resource}}",
@@ -4321,7 +4322,8 @@
         "staff": "Zespół i role",
         "stock": "Stan magazynowy",
         "store_credits": "Środki w sklepie",
-        "webhooks": "Webhooki"
+        "webhooks": "Webhooki",
+        "agents": "Agenty"
       }
     },
     "policies": {

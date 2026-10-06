@@ -37,6 +37,7 @@ module Spree
             end
 
             before_action :require_signed_in_admin!
+            before_action :require_connect_permission!
             before_action :require_client_of_this_store!
             before_action :load_pre_authorization
             before_action :require_something_to_grant!, only: :create
@@ -77,6 +78,23 @@ module Spree
 
             # A secret key authenticates but is not a person; `current_actor`
             # returns the key in that case, and a grant must belong to a user.
+            # Connecting an agent is store configuration, like the screen that
+            # lists what is connected and the button that revokes one.
+            #
+            # Narrowing a grant to the approver's own permissions bounds what
+            # the agent may do; it does not answer who may hand a third party
+            # a standing credential at all. A staffer who cannot revoke an
+            # agent should not be able to connect one.
+            def require_connect_permission!
+              return if current_ability.can?(:update, Spree::OauthApplication)
+
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+                message: 'You do not have permission to connect an agent to this store.',
+                status: :forbidden
+              )
+            end
+
             def require_signed_in_admin!
               return if current_actor.is_a?(Spree.admin_user_class)
 
@@ -131,52 +149,8 @@ module Spree
               (requested & held).sort
             end
 
-            # What the grant records, given what the merchant left ticked.
-            #
-            # An untouched "everything" stays an alias rather than becoming a
-            # list. Enumerating would freeze it: ship a feature with new
-            # permissions and the grant does not name them, so an agent the
-            # merchant gave full access silently cannot use the new tools and
-            # nothing says why. A narrowed selection is a deliberate list and
-            # stays one.
-            def recorded_scopes
-              granted = selected_scopes
-              return granted unless granted.sort == grantable_scopes.sort
-              return granted unless records_as_alias?
 
-              requested = @pre_auth.scopes.to_a
-              return ['write_all'] if requested.include?('write_all')
 
-              ['read_all']
-            end
-
-            # An alias is only safe for someone who holds everything it
-            # stands for.
-            #
-            # It is resolved against the token owner's ability at each
-            # request, so recording it for a limited staffer would widen the
-            # grant the day they are promoted — the standing-ceiling problem
-            # the intersection exists to prevent. A partial holder gets the
-            # list their authority actually covers.
-            def records_as_alias?
-              requested = @pre_auth.scopes.to_a
-              return false unless requested.intersect?(Spree::Api::Oauth::ALIAS_SCOPES)
-
-              held = current_ability.try(:permission_keys)&.map(&:to_s) || []
-              catalog = Spree.permissions.grantable_keys(
-                Spree::PermissionConfiguration::STAFF_AUDIENCE
-              ).map(&:to_s)
-
-              (catalog - held).empty?
-            end
-
-            # What the merchant left ticked, bounded by what they may give.
-            def selected_scopes
-              submitted = Spree.permissions.expand_keys(params[:scope].to_s.split)
-              return grantable_scopes if submitted.empty?
-
-              (submitted & grantable_scopes).sort
-            end
 
             # Symbol keys: PreAuthorization reads them that way, and a hash of
             # strings silently produces an unauthorizable request.
@@ -224,7 +198,7 @@ module Spree
             # successful connection and the merchant sees the application
             # listed as connected.
             def require_something_to_grant!
-              return if selected_scopes.any?
+              return if grantable_scopes.any?
 
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
@@ -236,7 +210,7 @@ module Spree
             def granted_code_request
               bounded = ::Doorkeeper::OAuth::PreAuthorization.new(
                 ::Doorkeeper.config,
-                pre_authorization_params.merge(scope: recorded_scopes.join(' ')),
+                pre_authorization_params.merge(scope: grantable_scopes.join(' ')),
                 current_actor
               )
 

@@ -4215,7 +4215,8 @@
         "staff": "Membres de l’équipe, invitations, rôles et leurs permissions",
         "stock": "Niveaux de stock, emplacements, mouvements et transferts",
         "store_credits": "Avoirs des clients",
-        "webhooks": "Points de terminaison et livraisons de webhooks"
+        "webhooks": "Points de terminaison et livraisons de webhooks",
+        "agents": "Agents IA connectés à cette boutique"
       },
       "grid": {
         "read_aria": "Voir {{resource}}",
@@ -4267,7 +4268,8 @@
         "staff": "Équipe et rôles",
         "stock": "Stock",
         "store_credits": "Avoirs en boutique",
-        "webhooks": "Webhooks"
+        "webhooks": "Webhooks",
+        "agents": "Agents"
       }
     },
     "policies": {
