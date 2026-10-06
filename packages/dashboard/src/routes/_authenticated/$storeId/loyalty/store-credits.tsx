@@ -170,6 +170,7 @@ function StoreCreditsPage() {
           onOpenChange={(open) => !open && closeSheet()}
           canEdit={canEdit}
           canDelete={canDelete}
+          deletePending={deletePending}
           onEdit={setEditing}
           onDelete={handleDelete}
         />
@@ -280,6 +281,7 @@ function StoreCreditSheet({
   onOpenChange,
   canEdit,
   canDelete,
+  deletePending,
   onEdit,
   onDelete,
 }: {
@@ -287,6 +289,7 @@ function StoreCreditSheet({
   onOpenChange: (open: boolean) => void
   canEdit: (credit: StoreCredit) => boolean
   canDelete: (credit: StoreCredit) => boolean
+  deletePending: boolean
   onEdit: (credit: StoreCredit) => void
   onDelete: (credit: StoreCredit) => void
 }) {
@@ -404,7 +407,12 @@ function StoreCreditSheet({
 
         <SheetFooter>
           {credit && canDelete(credit) && (
-            <Button variant="destructive" className="mr-auto" onClick={() => onDelete(credit)}>
+            <Button
+              variant="destructive"
+              className="mr-auto"
+              disabled={deletePending}
+              onClick={() => onDelete(credit)}
+            >
               <TrashIcon className="size-4" />
               {t('admin.actions.delete')}
             </Button>
