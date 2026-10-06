@@ -19,6 +19,7 @@ import {
   useTestIntegration,
   useUpdateIntegration,
 } from '../../../hooks/use-integrations'
+import { SetupGuideLink } from './setup-guide-link'
 
 /**
  * Connect/configure sheet for one integration type. Shared between the
@@ -98,6 +99,7 @@ export function ConfigureIntegrationSheet({
               ? t('admin.integrations.edit_description')
               : t('admin.integrations.connect_description')}
           </SheetDescription>
+          <SetupGuideLink url={type.docs_url} />
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

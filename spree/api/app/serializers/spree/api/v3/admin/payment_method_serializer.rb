@@ -13,7 +13,8 @@ module Spree
                    preferences: 'Record<string, unknown>',
                    preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
                    logo_url: [:string, nullable: true],
-                   docs_url: [:string, nullable: true]
+                   docs_url: [:string, nullable: true],
+                   third_party: :boolean
 
           # Null capture_method means the method inherits from its store;
           # resolved_capture_method is what actually applies, so the dashboard
@@ -26,6 +27,7 @@ module Spree
           attribute :preference_schema, &:serialized_preference_schema
           attribute(:logo_url) { |payment_method| payment_method.class.logo_url }
           attribute(:docs_url) { |payment_method| payment_method.class.docs_url }
+          attribute(:third_party) { |payment_method| payment_method.class.third_party? }
         end
       end
     end

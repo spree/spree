@@ -89,14 +89,19 @@ function IntegrationsPage() {
     () => new Map((integrationsResponse?.data ?? []).map((record) => [record.type, record])),
     [integrationsResponse],
   )
+  // Only methods backed by an external provider belong with integrations;
+  // checks, store credit and the like stay on the Payment methods page.
   const paymentMethods = useMemo(
-    () => (canReadPayments ? (paymentMethodsResponse?.data ?? []) : []),
+    () =>
+      canReadPayments
+        ? (paymentMethodsResponse?.data ?? []).filter((method) => method.third_party)
+        : [],
     [canReadPayments, paymentMethodsResponse],
   )
   // The server already leaves out providers installed on this store, so
   // these are only the ones still to set up.
   const availablePaymentTypes = useMemo(
-    () => (paymentTypesResponse?.data ?? []).filter((type) => !type.superseded),
+    () => (paymentTypesResponse?.data ?? []).filter((type) => type.third_party && !type.superseded),
     [paymentTypesResponse],
   )
 
@@ -309,7 +314,6 @@ function ServiceIntegrationCard({
       name={type.name}
       logoUrl={type.logo_url}
       docsUrl={type.docs_url}
-      docsLabel={t('admin.integrations.setup_guide')}
       status={status}
       statusLabels={{
         active: t('admin.integrations.status.active'),
@@ -373,7 +377,6 @@ function PaymentMethodCard({
       name={paymentMethod.name}
       logoUrl={paymentMethod.logo_url}
       docsUrl={paymentMethod.docs_url}
-      docsLabel={t('admin.integrations.setup_guide')}
       status={paymentMethod.active ? 'active' : 'inactive'}
       statusLabels={paymentStatusLabels(t)}
       description={
@@ -412,7 +415,6 @@ function PaymentProviderCard({ type, onSetUp }: { type: PaymentMethodType; onSet
       name={type.label}
       logoUrl={type.logo_url}
       docsUrl={type.docs_url}
-      docsLabel={t('admin.integrations.setup_guide')}
       status="not_connected"
       statusLabels={paymentStatusLabels(t)}
       description={type.description ?? undefined}

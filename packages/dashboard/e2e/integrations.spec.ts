@@ -3,13 +3,15 @@ import { login } from './helpers'
 
 const INTEGRATIONS_PATH = (storeId: string) => `/${storeId}/settings/integrations`
 
-// Seeds its own payment method rather than toggling a shared one. The custom
-// payment source type is hidden from the add-provider picker, so creating it
-// cannot starve payment-methods.spec.ts of a provider it installs.
+// Seeds its own payment method rather than toggling a shared one. Bogus is the
+// only third-party gateway the test app ships, and only third-party methods
+// are listed here. payment-methods.spec.ts installs Bogus through its picker
+// too, so every test deletes the one it seeded — a deleted method no longer
+// counts as installed.
 async function seedPaymentMethod(page: Page, storeId: string, accessToken: string, name: string) {
   const res = await page.request.post('/api/v3/admin/payment_methods', {
     headers: { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` },
-    data: { type: 'custom_payment_source_method', name, active: true },
+    data: { type: 'bogus', name, active: true },
   })
   if (!res.ok()) {
     throw new Error(`Failed to seed payment method "${name}": ${res.status()} ${await res.text()}`)
@@ -29,9 +31,10 @@ function paymentMethodCard(page: Page, name: string) {
 }
 
 test.describe('integrations', () => {
-  // The test app installs no provider gems, but payment providers ship with
-  // core — so the gallery always lists them next to any service integrations.
-  test('lists payment providers alongside integrations', async ({ page }) => {
+  // The test app installs no provider gems, but core ships a third-party
+  // gateway (Bogus), so the gallery always has a Payments section. Methods
+  // the store handles itself, like store credit, stay off it.
+  test('lists third-party payment providers alongside integrations', async ({ page }) => {
     const creds = await login(page)
     await page.goto(INTEGRATIONS_PATH(creds.store_id))
 
@@ -40,6 +43,24 @@ test.describe('integrations', () => {
     })
     await expect(page.getByRole('heading', { name: /^payments$/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /manage payment methods/i })).toBeVisible()
+    await expect(page.getByRole('switch', { name: /store credit/i })).toHaveCount(0)
+  })
+
+  // Setting up a provider from its card already says which provider, so the
+  // add sheet skips the provider picker.
+  test('opens the add sheet for the chosen provider without a provider picker', async ({
+    page,
+  }) => {
+    const creds = await login(page)
+    await page.goto(`${INTEGRATIONS_PATH(creds.store_id)}?add_payment_method=bogus`)
+
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByRole('heading', { name: /add payment method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(sheet.getByText(/provider: bogus/i)).toBeVisible()
+    await expect(sheet.locator('#type')).toHaveCount(0)
+    await expect(sheet.locator('#name')).toHaveValue('Bogus')
   })
 
   test('switches a payment method off and back on from its card', async ({ page }) => {
