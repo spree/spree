@@ -417,7 +417,7 @@ A gift also no longer counts toward spend thresholds or toward the amount a perc
 | `order_complete_service` | `order_complete_workflow` | `Spree::Orders::Complete` |
 | `shipment_update_service`, `fulfillment_update_service` | `fulfillment_update_workflow` | `Spree::Fulfillments::Update` |
 
-A replacement registered for `cart_add_item_workflow`, `order_add_item_service`, `cart_remove_item_service` or `order_remove_item_service` must accept a `gift:` keyword: free-gift promotions pass the promotion action giving the gift when they add or take it back, and the line records those units as given by it.
+A replacement registered for `cart_add_item_workflow`, `order_add_item_service`, `cart_remove_item_service` or `order_remove_item_service` must accept a `gift:` keyword: free-gift promotions pass the promotion action giving the gift when they add or take it back, and the line records those units as given by it. The two remove services must also accept `line_item:`, the line a gift is taken back from, so the units come off the line that holds them rather than another line of the same variant.
 
 New seams with no legacy counterpart:
 
