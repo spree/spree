@@ -58,6 +58,35 @@ test.describe('store credits', () => {
     await expect(sheet.getByText('$15.00').first()).toBeVisible()
   })
 
+  test('offers a customer created after the picker last searched', async ({ page }) => {
+    const creds = await login(page)
+    const email = `e2e-fresh-${Date.now()}@example.com`
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByPlaceholder(/search customers/i).fill(email)
+    await expect(page.getByText(/no customers match/i)).toBeVisible({ timeout: 15_000 })
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+
+    const created = await page.request.post('/api/v3/admin/customers', {
+      headers: { Authorization: `Bearer ${creds.accessToken}` },
+      data: { email },
+    })
+    expect(created.status(), await created.text()).toBe(201)
+
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByPlaceholder(/search customers/i)
+      .fill(email)
+    await expect(page.getByRole('option', { name: new RegExp(escapeRegex(email)) })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('opens a credit and follows it to the customer', async ({ page }) => {
     const creds = await login(page)
     const memo = `E2E refund credit ${Date.now()}`
