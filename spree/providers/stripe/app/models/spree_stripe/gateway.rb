@@ -259,13 +259,15 @@ module SpreeStripe
 
     def create_profile(payment)
       # A saved card's payment method is attached to the Stripe customer it was
-      # saved under, and charging it under any other is refused.
-      return if payment.source.blank? || payment.source.gateway_customer_profile_id.present?
+      # saved under, or to none, and charging it under any other is refused.
+      source = payment.source
+      return if source.blank?
+      return if source.gateway_customer_profile_id.present? || source.gateway_payment_profile_id.present?
 
       gateway_customer = fetch_or_create_customer(order: payment.order)
       return if gateway_customer.blank?
 
-      payment.source.update(gateway_customer_profile_id: gateway_customer.profile_id)
+      source.update(gateway_customer_profile_id: gateway_customer.profile_id)
     end
 
     def api_options

@@ -793,6 +793,18 @@ RSpec.describe SpreeStripe::Gateway do
       expect { gateway.create_profile(payment) }.not_to change(Spree::GatewayCustomer, :count)
       expect(credit_card.reload.gateway_customer_profile_id).to eq('cus_saved')
     end
+
+    context 'when the saved card has no Stripe customer' do
+      let(:credit_card) do
+        create(:credit_card, payment_method: gateway, gateway_payment_profile_id: 'pm_saved',
+                             gateway_customer_profile_id: nil)
+      end
+
+      it 'leaves it without one, so the charge is refused rather than sent under the wrong customer' do
+        expect { gateway.create_profile(payment) }.not_to change(Spree::GatewayCustomer, :count)
+        expect(credit_card.reload.gateway_customer_profile_id).to be_nil
+      end
+    end
   end
 
   describe '#fetch_or_create_customer' do
