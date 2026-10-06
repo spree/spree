@@ -14,12 +14,15 @@ module Spree
       # @param price [BigDecimal, String, nil] negotiated unit price — stamps the
       #   line +price_source: 'manual'+ so repricing leaves it alone. Admin
       #   surface only (draft orders); refused once the order is placed.
-      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil)
+      # @param gift [Spree::PromotionAction, nil] the promotion action giving
+      #   these units away, recorded on the line so it pays for them and never
+      #   for the shopper's own
+      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {}, price: nil, gift: nil)
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
         end
-        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price)
+        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options, price: price, gift: gift)
 
         step :parse_manual_price unless price.nil?
 
@@ -123,6 +126,10 @@ module Spree
         else
           @line_item.quantity += requested_quantity.to_i
         end
+
+        # In the same save, because the recalculation below runs the gift
+        # promotion again and must find these units already counted as given.
+        @line_item.change_gift(gift, requested_quantity.to_i) if gift
 
         # Pins inventory placement to a specific fulfillment (admin
         # post-placement adds); :shipment is the legacy option key.

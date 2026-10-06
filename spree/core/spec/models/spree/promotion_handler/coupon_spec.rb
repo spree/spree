@@ -301,6 +301,20 @@ module Spree
             expect(subject.success).to be_present
             expect(order.line_items.pluck(:variant_id)).to include(variant.id)
           end
+
+          it "takes back only the gift when the code is removed, and gives it again when re-entered" do
+            Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 1)
+            subject.apply
+            expect(order.line_items.reload.find_by(variant_id: variant.id).quantity).to eq(2)
+
+            Coupon.new(order.reload).remove('10off')
+            line_item = order.line_items.reload.find_by(variant_id: variant.id)
+            expect([line_item.quantity, line_item.gifted_quantity]).to eq([1, 0])
+
+            Coupon.new(order.reload).apply
+            line_item = order.line_items.reload.find_by(variant_id: variant.id)
+            expect([line_item.quantity, line_item.gifted_quantity]).to eq([2, 1])
+          end
         end
       end
 

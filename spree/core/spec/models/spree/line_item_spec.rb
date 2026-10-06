@@ -103,6 +103,20 @@ describe Spree::LineItem, type: :model do
 
       it { expect(line_item.quantity).to eq(original_quantity) }
     end
+
+    context 'when the line holds gifts' do
+      let!(:older_gift) { create(:line_item_gift, line_item: line_item, created_at: 1.hour.ago) }
+      let!(:newer_gift) { create(:line_item_gift, line_item: line_item) }
+
+      before { line_item.update_column(:quantity, 3) }
+
+      it "gives up the shopper's own units first, then the newest gift" do
+        line_item.reload.update!(quantity: 1)
+
+        expect(line_item.reload.gifts).to contain_exactly(older_gift)
+        expect(line_item.gifted_quantity).to eq(1)
+      end
+    end
   end
 
   context '#save' do

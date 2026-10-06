@@ -5,8 +5,8 @@ module Spree
     class RemoveItem
       prepend Spree::ServiceModule::Base
 
-      def call(order:, variant:, quantity: nil, options: {})
-        Spree::Carts::RemoveItem.call(cart: order, variant: variant, quantity: quantity, options: options)
+      def call(order:, variant:, quantity: nil, options: {}, gift: nil)
+        Spree::Carts::RemoveItem.call(cart: order, variant: variant, quantity: quantity, options: options, gift: gift)
       end
     end
   end

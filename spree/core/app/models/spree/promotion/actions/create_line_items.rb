@@ -35,9 +35,8 @@ module Spree
           gifted_item?(line_item) && qualifies_beyond_the_gift?(order)
         end
 
-        # Covers the gifted units of the line at their own price, leaving any
-        # further units of the same variant the shopper bought themselves to be
-        # paid for.
+        # Covers the gifted units of the line at their own price, leaving the
+        # units of the same variant the shopper chose themselves to be paid for.
         #
         # @param line_item [Spree::LineItem]
         # @return [BigDecimal] never positive
@@ -45,7 +44,8 @@ module Spree
           line_item.price * gifted_quantity_of(line_item) * -1
         end
 
-        # Tops the order up to the promised quantity and discounts it.
+        # Adds the promised quantity on top of anything the shopper chose and
+        # discounts it.
         #
         # This doesn't play right with Add to Cart events because at the moment
         # the item was added to cart the promo may not be eligible. However it
@@ -57,41 +57,34 @@ module Spree
         #   - This action shouldn't perform because the order is not eligible
         #   - Customer increases item quantity to 5 (order total goes to $50)
         #   - Now the order is eligible for the promo and the action should perform
-        #
-        # A shopper who already has the gift variant is given theirs free rather
-        # than a duplicate, so the promotion still applies when it has nothing
-        # to add.
         def perform(options = {})
           order = options[:order]
           return unless eligible? order
           return unless qualifies_beyond_the_gift?(order)
 
+          # A gift list edited while carts hold the old gift trims them to it.
+          take_back_gifts(order) { |line_item, given| given - promised_quantity_of(line_item) }
           added = add_missing_line_items(order)
 
           apply_via_adjuster(options) || added
         end
 
         # Called by promotion handler when a promotion is removed
-        # This will find any line item matching the ones defined in the PromotionAction
-        # and remove the same quantity as was added by the PromotionAction.
         def revert(options = {})
           order = options[:order]
           return if eligible?(order)
           return unless order.promotions.include?(promotion)
 
-          action_taken = false
-          promotion_action_line_items.each do |item|
-            line_item = order.find_line_item_by_variant(item.variant)
-            next unless line_item.present?
+          remove_gifts(order)
+        end
 
-            remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
-            remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
-                                                variant: item.variant,
-                                                quantity: (item.quantity || 1))
-            action_taken = true
-          end
-
-          action_taken
+        # Takes back every unit this action recorded as given, leaving the ones
+        # the shopper chose, including a gift its list no longer names.
+        #
+        # @param order [Spree::Order, Spree::Cart]
+        # @return [Boolean] whether anything was removed
+        def remove_gifts(order)
+          take_back_gifts(order) { |_line_item, given| given }
         end
 
         # Checks that there's enough stock to add the line item to the order
@@ -114,19 +107,19 @@ module Spree
           promotion.eligible?(order, own_gift_only: true) && qualifies_beyond_the_gift?(order, own_gift_only: true)
         end
 
-        # How many units of this line the promotion pays for — never more than
-        # the line holds, so a shopper buying three of a variant gifted once
-        # still pays for two. `quantity` is nullable and written by `upsert_all`,
+        # How many units of this line the promotion pays for — only units added
+        # as a gift, never the ones the shopper chose, and never more than the
+        # promotion promises. `quantity` is nullable and written by `upsert_all`,
         # which skips validation, so a missing or negative one gifts nothing
         # rather than raising or turning the discount into a surcharge.
         #
         # @param line_item [Spree::LineItem]
         # @return [Integer]
         def gifted_quantity_of(line_item)
-          gifted = promotion_action_line_items.detect { |item| item.variant_id == line_item.variant_id }
-          return 0 if gifted.nil?
+          promised = promised_quantity_of(line_item)
+          return 0 unless promised.positive?
 
-          [[line_item.quantity, gifted.quantity.to_i].min, 0].max
+          [[line_item.quantity, line_item.gifted_quantity_by(self), promised].min, 0].max
         end
 
         private
@@ -136,36 +129,75 @@ module Spree
           gifted_quantity_of(line_item).positive?
         end
 
-        # A gift cannot be the thing that qualifies the order for the promotion
-        # giving it away: a rule naming the gift's own product would otherwise
-        # hand the item over to anyone who put it in their cart. The order has
-        # to hold a line the rules count with units this action is not already
-        # covering. A promotion with no rules qualifies on anything, so there is
-        # nothing for the gift to stand in for.
+        # A gift cannot be the thing that qualifies the order for a promotion,
+        # or a rule naming the gift's own product would keep the offer alive on
+        # its own gift. The order has to hold a line the rules count with units
+        # the shopper chose. A promotion with no rules
+        # qualifies on anything, so there is nothing for the gift to stand in for.
         def qualifies_beyond_the_gift?(order, options = {})
           return true if promotion.promotion_rules.empty?
 
-          order.line_items.any? do |line_item|
+          line_items_with_gifts(order).any? do |line_item|
             promotion.line_item_actionable?(order, line_item, options) &&
-              gifted_quantity_of(line_item) < line_item.quantity
+              line_item.gifted_quantity < line_item.quantity
           end
         end
 
+        def promised_quantity_of(line_item)
+          promotion_action_line_items.detect { |item| item.variant_id == line_item.variant_id }&.quantity.to_i
+        end
+
+        # Removes from each line holding this action's gift the units the block
+        # returns, never more than were given.
+        def take_back_gifts(order)
+          holding = line_items_with_gifts(order).select { |line_item| line_item.gifted_quantity_by(self).positive? }
+          holding.map do |line_item|
+            given = line_item.gifted_quantity_by(self)
+            units = [yield(line_item, given), given].min
+            next false unless units.positive?
+
+            call_item_service(order, Spree.cart_remove_item_service, Spree.order_remove_item_service, line_item.variant, units)
+            true
+          end.any?
+        end
+
+        # Loaded once for the cart rather than once per line, leaving lines
+        # whose gifts are already in memory untouched.
+        def line_items_with_gifts(order)
+          line_items = order.line_items.to_a
+          unloaded = line_items.reject { |line_item| line_item.association(:gifts).loaded? }
+          ActiveRecord::Associations::Preloader.new(records: unloaded, associations: :gifts).call if unloaded.any?
+          line_items
+        end
+
         def add_missing_line_items(order)
+          attempted = false
           added_results = promotion_action_line_items.map do |item|
-            missing = item.quantity.to_i - order.quantity_of(item.variant)
+            line_item = order.find_line_item_by_variant(item.variant)
+            # A line carries one promotion discount, so a second promotion's
+            # gift beside another's would leave one of them charged.
+            next false if line_item && line_item.gifted_quantity > line_item.gifted_quantity_by(self)
+
+            missing = item.quantity.to_i - (line_item ? gifted_quantity_of(line_item) : 0)
             next false unless missing.positive? && item_available?(item, missing)
 
-            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_workflow : Spree.order_add_item_service
-            result = add_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
-                                      variant: item.variant,
-                                      quantity: missing)
-            result.success?
+            attempted = true
+            call_item_service(order, Spree.cart_add_item_workflow, Spree.order_add_item_service, item.variant, missing).success?
           end
 
-          order.line_items.reload if added_results.any?
+          # A refused add leaves its raised quantity and unsaved gift on the
+          # line in memory, where the discount would read them.
+          order.line_items.reload if attempted
 
           added_results.any?
+        end
+
+        def call_item_service(order, cart_service, order_service, variant, quantity)
+          if order.is_a?(Spree::Cart)
+            cart_service.call(cart: order, variant: variant, quantity: quantity, gift: self)
+          else
+            order_service.call(order: order, variant: variant, quantity: quantity, gift: self)
+          end
         end
 
         def promotion_variants_scope

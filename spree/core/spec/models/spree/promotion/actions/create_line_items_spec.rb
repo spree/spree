@@ -39,20 +39,17 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
         expect(line_item.quantity).to eq(1)
       end
 
-      it 'only adds the delta of quantity to an order' do
-        Spree::Orders::AddItem.call(order: order, variant: shirt)
-        action.perform(payload)
-        line_item = order.line_items.find_by(variant_id: shirt.id)
-        expect(line_item).not_to be_nil
-        expect(line_item.quantity).to eq(2)
-      end
-
-      it "doesn't add if the quantity is greater" do
+      it 'adds the gift on top of the units the shopper chose' do
         Spree::Orders::AddItem.call(order: order, variant: shirt, quantity: 3)
         action.perform(payload)
         line_item = order.line_items.find_by(variant_id: shirt.id)
-        expect(line_item).not_to be_nil
-        expect(line_item.quantity).to eq(3)
+        expect(line_item.quantity).to eq(5)
+        expect(line_item.gifted_quantity).to eq(2)
+      end
+
+      it 'adds the gift once' do
+        2.times { action.perform(payload) }
+        expect(order.line_items.find_by(variant_id: shirt.id).quantity).to eq(2)
       end
 
       it "doesn't try to add an item if it's out of stock" do
@@ -87,6 +84,41 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       promotion.reload
 
       expect(action.revert(order: cart)).to be(true)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id)).to be_nil
+    end
+
+    it 'takes the gift back after it sells out' do
+      promotion.activate(order: cart)
+      empty_stock(mug)
+      create(:promotion_rule_product, promotion: promotion).products << create(:variant).product
+      promotion.reload
+
+      expect(action.revert(order: cart)).to be(true)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id)).to be_nil
+    end
+
+    it 'leaves the units the shopper chose when it takes the gift back' do
+      Spree.cart_add_item_workflow.call(cart: cart, variant: mug, quantity: 1)
+      promotion.activate(order: cart)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id).quantity).to eq(3)
+      create(:promotion_rule_product, promotion: promotion).products << create(:variant).product
+      promotion.reload
+
+      expect(action.revert(order: cart)).to be(true)
+      line_item = cart.line_items.reload.find_by(variant_id: mug.id)
+      expect(line_item.quantity).to eq(1)
+      expect(line_item.gifted_quantity).to eq(0)
+    end
+
+    it 'trims the gift when the merchant lowers it, and takes back one the list no longer names' do
+      promotion.activate(order: cart)
+      action.promotion_action_line_items.first.update!(quantity: 1)
+
+      action.reload.perform(order: cart)
+      expect(cart.line_items.reload.find_by(variant_id: mug.id).quantity).to eq(1)
+
+      action.promotion_action_line_items.first.update!(variant: shirt)
+      expect(action.reload.remove_gifts(cart)).to be(true)
       expect(cart.line_items.reload.find_by(variant_id: mug.id)).to be_nil
     end
 
@@ -143,12 +175,15 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
     context 'when the rules name the gift\'s own product' do
       before { create(:promotion_rule_product, promotion: promotion).products << gift.product }
 
-      it 'refuses the gift when the only qualifying line is the gift itself' do
+      it 'gives a second one to a shopper who chose one' do
         Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
         promotion.reload
 
-        expect(promotion.activate(order: cart)).to be(false)
-        expect(gift_line_item.discounts).to be_empty
+        expect(promotion.activate(order: cart)).to be(true)
+        Spree.cart_recalculate_totals_workflow.call(cart: cart)
+
+        expect(gift_line_item.quantity).to eq(2)
+        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
         expect(cart.reload.total).to eq(15)
       end
 
@@ -167,39 +202,39 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
         expect(gift_line_item.discounts).to be_empty
         expect(cart.reload.total).to eq(15)
       end
-
-      it 'gifts one once the shopper holds more than the gift covers' do
-        Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 3)
-        promotion.reload
-
-        promotion.activate(order: cart)
-        Spree.cart_recalculate_totals_workflow.call(cart: cart)
-
-        expect(gift_line_item.quantity).to eq(3)
-        expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
-
-        cart.reload
-        expect(cart.item_total).to eq(45)
-        expect(cart.discount_total).to eq(-15)
-        expect(cart.total).to eq(30)
-      end
     end
 
-    it "discounts the shopper's own copy instead of adding a second one" do
-      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 1)
+    it 'adds the gift on top of the copies the shopper chose and leaves those paid for' do
+      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 3)
 
       expect(promotion.activate(order: cart)).to be(true)
-      expect(gift_line_item.quantity).to eq(1)
+      Spree.cart_recalculate_totals_workflow.call(cart: cart)
+
+      expect(gift_line_item.quantity).to eq(4)
       expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+      expect(cart.reload.total).to eq(45)
     end
 
-    it 'leaves units beyond the gifted quantity paid for' do
-      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 3)
+    it "discounts none of the shopper's own units when stock refuses the gift" do
+      gift.stock_items.update_all(count_on_hand: 2, backorderable: false)
+      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 2)
 
       promotion.activate(order: cart)
 
-      expect(gift_line_item.quantity).to eq(3)
+      expect(gift_line_item.quantity).to eq(2)
+      expect(gift_line_item.gifts).to be_empty
+      expect(gift_line_item.discounts).to be_empty
+    end
+
+    it "takes the shopper's own units first when they lower the line" do
+      Spree.cart_add_item_workflow.call(cart: cart, variant: gift, quantity: 2)
+      promotion.activate(order: cart)
+
+      Spree.cart_upsert_items_workflow.call(cart: cart, items: [{ variant_id: gift.id, quantity: 2 }])
+
+      expect(gift_line_item.gifted_quantity).to eq(1)
       expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+      expect(cart.reload.total).to eq(15)
     end
 
     # A $20 order is inside a 15..25 range; the $15 gift takes the item total
@@ -291,11 +326,44 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
     end
 
+    it "does not let another promotion's gift qualify for a promotion naming it" do
+      gift_promotion_buying(blender.product)
+      second_promotion = automatic_promotion
+      create(:promotion_rule_product, promotion: second_promotion).products << gift.product
+      gift_with(second_promotion, create(:variant, price: 10))
+      add(blender, 1)
+
+      expect(second_promotion.reload.activate(order: cart)).to be(false)
+      expect(cart.line_items.reload.map(&:variant_id)).to contain_exactly(blender.id, gift.id)
+    end
+
+    it "does not add its gift to a line holding another promotion's gift of the same product" do
+      gift_promotion_buying(blender.product)
+      second_promotion = automatic_promotion
+      gift_with(second_promotion)
+      add(blender, 1)
+
+      expect(gift_line_item.quantity).to eq(1)
+      expect(gift_line_item.discounts.sum(&:amount)).to eq(-15)
+      expect(second_promotion.reload.activate(order: cart)).not_to be(true)
+      expect(gift_line_item.quantity).to eq(1)
+    end
+
     it 'counts a copy of the gift the shopper pays for' do
       gift_promotion_buying(create(:product))
       add(blender, 2)
       add(gift, 1)
 
+      expect(discount_from(ten_percent_over_50)).to eq(-5.5)
+      expect(cart.total).to eq(49.5)
+    end
+
+    it 'counts the copy the shopper chose beside the gift' do
+      gift_promotion_buying(blender.product)
+      add(blender, 2)
+      add(gift, 1)
+
+      expect(gift_line_item.quantity).to eq(2)
       expect(discount_from(ten_percent_over_50)).to eq(-5.5)
       expect(cart.total).to eq(49.5)
     end

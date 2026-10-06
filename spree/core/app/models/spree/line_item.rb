@@ -38,6 +38,7 @@ module Spree
     has_many :shipments, through: :fulfillment_items, source: :fulfillment, deprecated: true
     has_many :digital_links, dependent: :destroy
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
+    has_many :gifts, class_name: 'Spree::LineItemGift', inverse_of: :line_item, dependent: :delete_all, autosave: true
 
     # Set by Spree::Carts::PriceItems when a workflow has already resolved
     # this line's price outside the transaction. The quantity-change callback
@@ -225,6 +226,59 @@ module Spree
       return price if quantity.zero?
 
       price - (discount_total.abs / quantity)
+    end
+
+    # @return [Integer] the units of this line promotions gave away
+    def gifted_quantity
+      gifts.reject(&:marked_for_destruction?).sum(&:quantity)
+    end
+
+    # @param promotion_action [Spree::PromotionAction]
+    # @return [Integer] the units of this line that action gave away
+    def gifted_quantity_by(promotion_action)
+      gift = gifts.detect { |record| record.promotion_action_id == promotion_action.id }
+      gift.nil? || gift.marked_for_destruction? ? 0 : gift.quantity
+    end
+
+    # Counts units as given, or no longer given when negative, by a promotion
+    # action. Saved with the line, so a recalculation inside the same save
+    # already sees it.
+    #
+    # @param promotion_action [Spree::PromotionAction]
+    # @param quantity [Integer]
+    def change_gift(promotion_action, quantity)
+      gift = gifts.detect { |record| record.promotion_action_id == promotion_action.id }
+      if gift.nil?
+        gifts.build(promotion_action: promotion_action, quantity: quantity) if quantity.positive?
+        return
+      end
+
+      gift.quantity += quantity
+      gift.mark_for_destruction unless gift.quantity.positive?
+    end
+
+    # Folds another line of the same variant into this one. A line carries one
+    # promotion's gift, so the other line's gift is dropped rather than carried
+    # when this one already holds a gift, and merging two carts that both
+    # received one does not charge for a copy.
+    #
+    # @param other [Spree::LineItem]
+    def absorb(other)
+      self.quantity += other.quantity
+      other.gifts.each do |gift|
+        if gifted_quantity.positive?
+          self.quantity -= gift.quantity
+        else
+          change_gift(gift.promotion_action, gift.quantity)
+        end
+      end
+    end
+
+    # Copies another line's gifts onto this copy of it, before it is saved.
+    #
+    # @param other [Spree::LineItem]
+    def copy_gifts_from(other)
+      other.gifts.each { |gift| gifts.build(promotion_action_id: gift.promotion_action_id, quantity: gift.quantity) }
     end
 
     # Returns the amount (price * quantity) of the line item
@@ -422,6 +476,24 @@ module Spree
 
     def ensure_valid_quantity
       self.quantity = 0 if quantity.nil? || quantity < 0
+      release_gifts_beyond_quantity
+    end
+
+    # A shopper lowering a line that holds a gift gives up their own units
+    # first, then the most recent gift's.
+    def release_gifts_beyond_quantity
+      return unless persisted? && quantity < quantity_in_database.to_i
+
+      excess = gifted_quantity - quantity
+      gifts.sort_by { |gift| gift.created_at || Time.current }.reverse_each do |gift|
+        break unless excess.positive?
+        next if gift.marked_for_destruction?
+
+        released = [gift.quantity, excess].min
+        gift.quantity -= released
+        gift.mark_for_destruction unless gift.quantity.positive?
+        excess -= released
+      end
     end
 
     def update_price_from_modifier(currency, opts)

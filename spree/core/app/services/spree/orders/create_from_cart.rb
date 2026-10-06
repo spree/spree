@@ -63,6 +63,7 @@ module Spree
       def copy_line_items(cart, order)
         cart.line_items.each do |cart_line_item|
           line_item = order.line_items.new(cart_line_item.attributes.slice(*LINE_ITEM_COPIED_ATTRIBUTES))
+          line_item.copy_gifts_from(cart_line_item)
           # Estimated once for the batch below, not once per line.
           line_item.skip_tax_estimation = true
           line_item.save!
