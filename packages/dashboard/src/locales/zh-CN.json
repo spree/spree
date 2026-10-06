@@ -4074,8 +4074,8 @@
           "table": {
             "name": "应用",
             "access": "访问权限",
-            "last_used": "上次使用",
-            "authorized_by": "批准人"
+            "authorized_by": "批准人",
+            "last_authorized": "最后授权时间"
           },
           "revoke_confirm": {
             "title": "撤销访问权限？",

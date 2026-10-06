@@ -729,8 +729,8 @@
           "table": {
             "name": "Aplicación",
             "access": "Acceso",
-            "last_used": "Último uso",
-            "authorized_by": "Aprobado por"
+            "authorized_by": "Aprobado por",
+            "last_authorized": "Última autorización"
           },
           "revoke_confirm": {
             "title": "¿Revocar el acceso?",

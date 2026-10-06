@@ -4112,8 +4112,8 @@
           "table": {
             "name": "التطبيق",
             "access": "الوصول",
-            "last_used": "آخر استخدام",
-            "authorized_by": "وافق عليه"
+            "authorized_by": "وافق عليه",
+            "last_authorized": "آخر تفويض"
           },
           "revoke_confirm": {
             "title": "إلغاء الوصول؟",

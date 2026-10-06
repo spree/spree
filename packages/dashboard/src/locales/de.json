@@ -4084,8 +4084,8 @@
           "table": {
             "name": "Anwendung",
             "access": "Zugriff",
-            "last_used": "Zuletzt verwendet",
-            "authorized_by": "Genehmigt von"
+            "authorized_by": "Genehmigt von",
+            "last_authorized": "Letzte Autorisierung"
           },
           "revoke_confirm": {
             "title": "Zugriff widerrufen?",
