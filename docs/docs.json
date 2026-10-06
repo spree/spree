@@ -591,6 +591,22 @@
     {
       "source": "/user/settings/returns-configuration",
       "destination": "/user/settings/returns-and-reasons"
+    },
+    {
+      "source": "/user/settings/metafields",
+      "destination": "/user/settings/custom-fields"
+    },
+    {
+      "source": "/user/settings/shipping-methods",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/settings/zones",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/manage-products/product-metafields",
+      "destination": "/user/manage-products/custom-product-fields"
     }
   ],
   "contextual": {
