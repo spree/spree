@@ -85,6 +85,7 @@ module Spree
         Spree::ApiKey
         Spree::Integration
         Spree::WebhookEndpoint
+        Spree::WebhookDelivery
         Spree::GiftCard
         Spree::Invitation
       ].freeze

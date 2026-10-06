@@ -371,12 +371,61 @@ module Spree
             return refusal if refusal
 
             resolved[name] = rows
+          elsif parameter[:json_type] == 'object'
+            filtered, refusal = permitted_attributes(value)
+            return refusal if refusal
+
+            resolved[name] = filtered
           else
             resolved[name] = value
           end
         end
 
         resolved
+      end
+
+      # Only the attributes the Admin API itself would accept for the record
+      # this workflow writes.
+      #
+      # A workflow is an internal service that has always trusted its caller,
+      # so it assigns the hash it is handed. The REST controllers filter first
+      # — `permitted_params` is a fixed list that never includes a tenancy
+      # key — and a tool must do the same before a workflow sees the payload.
+      # Without it a caller naming `store_id` writes into another merchant's
+      # store, since the workflow assigns the hash after setting tenancy.
+      #
+      # Unknown keys are named back rather than dropped, matching
+      # `ResourceWrite` so a model that guessed a field learns the real one.
+      #
+      # @return [Array(Hash, nil), Array(nil, Hash)]
+      def permitted_attributes(attributes)
+        return [attributes, nil] unless attributes.is_a?(Hash)
+
+        entry = subject_entry
+        return [attributes, nil] if entry.nil?
+
+        attributes = attributes.transform_keys(&:to_s)
+        allowed = entry.writable_attribute_names
+        return [attributes, nil] if allowed.blank?
+
+        rejected = attributes.keys - allowed
+        return [attributes, nil] if rejected.empty?
+
+        [nil, { error: "#{entry.key} does not accept #{rejected.to_sentence}. " \
+                       "Accepted attributes: #{allowed.to_sentence}." }]
+      end
+
+      # The map entry for what this workflow writes, which owns the list of
+      # attributes the Admin API accepts for it.
+      #
+      # @return [ResourceMap::Entry, nil]
+      def subject_entry
+        return @subject_entry if defined?(@subject_entry)
+
+        model = created_model || subject_model
+        @subject_entry = model && ResourceMap.all.find { |candidate| candidate.model_name == model.name }
+      rescue StandardError
+        @subject_entry = nil
       end
 
       # A list of hashes — a purchase order's or stock transfer's `items:` —
