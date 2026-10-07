@@ -86,8 +86,8 @@ module Spree
           next if known_names(report[:key]).intersect?(existing)
 
           store.saved_reports.create!(
-            name: I18n.t("spree.reporting.seeds.#{report[:key]}.name"),
-            description: I18n.t("spree.reporting.seeds.#{report[:key]}.description"),
+            name: Spree.t("reporting.seeds.#{report[:key]}.name"),
+            description: Spree.t("reporting.seeds.#{report[:key]}.description"),
             query: report[:query],
             seeded: true
           )
@@ -97,7 +97,9 @@ module Spree
       # The downcased name this report carries in every locale core ships.
       def known_names(key)
         @known_names ||= {}
-        @known_names[key] ||= Spree.translations_of("spree.reporting.seeds.#{key}.name").to_set(&:downcase)
+        @known_names[key] ||= Spree.available_locales.filter_map do |locale|
+          Spree.t("reporting.seeds.#{key}.name", locale: locale, default: nil)&.downcase
+        end.to_set
       end
     end
   end

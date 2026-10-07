@@ -31,15 +31,6 @@ describe 'i18n' do
     end
   end
 
-  describe '.translations_of' do
-    it 'returns the key in every available locale' do
-      I18n.backend.store_translations(:de, spree: { foo: 'Balken' })
-      allow(Spree).to receive(:available_locales).and_return(%i[en de])
-
-      expect(Spree.translations_of('spree.foo')).to contain_exactly('bar', 'Balken')
-    end
-  end
-
   describe '.t' do
     it 'translates within the spree scope' do
       expect(Spree.t(:foo)).to eq('bar')

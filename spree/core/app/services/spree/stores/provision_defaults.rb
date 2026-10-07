@@ -116,12 +116,11 @@ module Spree
       end
 
       # Match on identity alone: folding the other attributes into the finder
-      # made re-running fail once anything edited them.
+      # made re-running fail once anything edited them. The default flag is
+      # that identity; the name is translated and may have been edited.
       def provision_stock_location
-        # first_party, so a seller who happened to name a location the same
-        # thing is never adopted as the store's own.
-        location = store.stock_locations.first_party.
-                   where(name: Spree.translations_of('spree.default_stock_location_name')).
+        # first_party, so a seller's location is never adopted as the store's own.
+        location = store.stock_locations.first_party.where(default: true).
                    first_or_initialize(name: I18n.t('spree.default_stock_location_name'))
         location.propagate_all_variants = false if location.new_record?
         location.country_code = country.iso
@@ -236,11 +235,12 @@ module Spree
         end
         return if store.stock_locations.first_party.where(pickup_enabled: true).none?
 
-        delivery_method = store.delivery_methods.where(name: Spree.translations_of('spree.pickup.store_pickup')).
+        # Matched by its provider, not its translated (and editable) name.
+        delivery_method = store.delivery_methods.first_party.
+                          where(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup').
                           first_or_initialize(name: I18n.t('spree.pickup.store_pickup'))
         delivery_method.delivery_profile = profile
         delivery_method.storefront_visible = true
-        delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Pickup'
         delivery_method.calculator ||= Spree::Calculator::Shipping::FlatRate.new
         delivery_method.calculator.preferences = { amount: 0, currency: currency }
         delivery_method.save!

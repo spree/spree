@@ -37,14 +37,5 @@ module Spree
     def available_languages
       available_locales.map(&:to_s).reject { |locale| locale.include?('-') }
     end
-
-    # Every translation of a key across {available_locales}, e.g. to recognize
-    # a record seeded under another language.
-    #
-    # @param key [String] full translation key
-    # @return [Array<String>]
-    def translations_of(key)
-      available_locales.filter_map { |locale| I18n.t(key, locale: locale, default: nil) }.uniq
-    end
   end
 end
