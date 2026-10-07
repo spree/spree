@@ -19,22 +19,9 @@ module Spree
 
         attributes :number, :status, :resolution
 
-        attribute :order_id do |claim|
-          claim.order&.prefixed_id
-        end
+        prefixed_id_attributes :order, :reason
 
-        attribute :reason_id do |claim|
-          claim.reason&.prefixed_id
-        end
-
-        attribute :refund_total do |claim|
-          claim.refund_total.to_s
-        end
-
-        attribute :display_refund_total do |claim|
-          claim.display_refund_total.to_s
-        end
-
+        attributes refund_total: :string, display_refund_total: :string
         attribute :approved_at do |claim|
           claim.approved_at&.iso8601
         end

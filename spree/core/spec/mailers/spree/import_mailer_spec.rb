@@ -15,7 +15,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('import_mailer.import_done.subject', import_number: import.number)
+        I18n.t('spree.import_mailer.import_done.subject', import_number: import.number)
       )
     end
 
@@ -24,8 +24,8 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
     end
 
     it 'includes the completed row count' do
-      expect(mail.body.encoded).to include(
-        Spree.t('import_mailer.import_done.message', completed_count: 1)
+      expect(email_body(mail)).to include(
+        I18n.t('spree.import_mailer.import_done.message', completed_count: 1)
       )
     end
 
@@ -35,8 +35,8 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
       end
 
       it 'calls out the failed row count' do
-        expect(mail.body.encoded).to include(
-          Spree.t('import_mailer.import_done.failed_message', failed_count: 1)
+        expect(email_body(mail)).to include(
+          I18n.t('spree.import_mailer.import_done.failed_message', failed_count: 1)
         )
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
       end
 
       it 'links to the wizard with the import param appended' do
-        expect(mail.body.encoded).to include(
+        expect(email_body(mail)).to include(
           "https://admin.example.com/store_abc/settings/imports?import=#{import.prefixed_id}"
         )
       end
@@ -55,8 +55,8 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
 
     context 'without a results_url' do
       it 'renders no results button' do
-        expect(mail.body.encoded).not_to include(
-          Spree.t('import_mailer.import_done.view_results')
+        expect(email_body(mail)).not_to include(
+          I18n.t('spree.import_mailer.import_done.view_results')
         )
       end
     end

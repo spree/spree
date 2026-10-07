@@ -11,9 +11,7 @@ module Spree
 
           attributes updated_at: :iso8601
 
-          attribute :store_credit_id do |event|
-            event.store_credit&.prefixed_id
-          end
+          prefixed_id_attributes :store_credit
 
           attribute :originator_type do |event|
             Spree::Base.polymorphic_api_type(event.originator_type)

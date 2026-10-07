@@ -46,7 +46,7 @@ module Spree
       def ensure_receivable
         return if stock_transfer.in_flight?
 
-        failure(stock_transfer, Spree.t('stock_transfer.errors.not_in_transit'))
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_in_transit'))
       end
 
       def line_belongs?(line)

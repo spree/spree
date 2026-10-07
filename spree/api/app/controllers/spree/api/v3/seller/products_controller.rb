@@ -107,7 +107,7 @@ module Spree
             if resolve_workflow.nil?
               return render_error(
                 code: 'invalid_status',
-                message: Spree.t(:invalid_status, scope: 'errors.messages', default: 'Invalid status'),
+                message: I18n.t('spree.errors.messages.invalid_status'),
                 status: :unprocessable_content
               )
             end
@@ -166,6 +166,7 @@ module Spree
 
           def permitted_params
             attrs = params.permit(
+              *model_class.additional_seller_permitted_attributes,
               :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
               :product_type_id, :delivery_profile_id,

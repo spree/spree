@@ -46,10 +46,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :data_requests
-            end
-
             # A person sees their own requests and no one else's. The store
             # narrowing is restated because the parent branch of the base scope
             # replaces `for_store` with the association, and a customer is
@@ -69,7 +65,6 @@ module Spree
             def erasure?
               params[:kind].to_s == Spree::DataRequest::ERASURE
             end
-
           end
         end
       end

@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe Spree::Shipment, type: :model do
+describe Spree::Fulfillment, type: :model do
   it_behaves_like 'lifecycle events'
 
-  let(:inventory_units) { create_list(:inventory_unit, 2) }
+  let(:inventory_units) { create_list(:fulfillment_item, 2) }
   let(:variant) { line_item.variant }
   let!(:line_item) { create(:line_item) }
   let(:shipment) do
-    create(:shipment, number: 'H21265865494', cost: 1, state: 'unfulfilled', stock_location: create(:stock_location)).tap do |shipment|
+    create(:fulfillment, number: 'H21265865494', cost: 1, state: 'unfulfilled', stock_location: create(:stock_location)).tap do |shipment|
       allow(shipment).to receive_messages order: order
       allow(shipment).to receive_messages(delivery_method: shipping_method, shipping_method: shipping_method)
     end
   end
-  let(:shipping_method) { create(:shipping_method, name: 'UPS') }
+  let(:shipping_method) { create(:delivery_method, name: 'UPS') }
   let!(:order) { create(:order, number: 'S12345', store: store) }
   let(:store) { @default_store }
 
@@ -65,7 +65,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'when the shipment is not tracked' do
-      let(:shipment) { build(:shipment, number: nil, tracking: nil) }
+      let(:shipment) { build(:fulfillment, number: nil, tracking: nil) }
 
       it 'returns false' do
         expect(shipment.tracked?).to eq(false)
@@ -76,7 +76,7 @@ describe Spree::Shipment, type: :model do
   describe '#partial?' do
     subject { shipment.partial? }
 
-    let(:shipment) { create(:shipment, order: order) }
+    let(:shipment) { create(:fulfillment, order: order) }
 
     let!(:line_item) { create(:line_item, quantity: 5, order: order) }
     let(:order) { create(:order) }
@@ -96,7 +96,7 @@ describe Spree::Shipment, type: :model do
 
   # Regression test for #4063
   context 'number generation' do
-    let(:shipment) { create(:shipment, stock_location: create(:stock_location)) }
+    let(:shipment) { create(:fulfillment, stock_location: create(:stock_location)) }
 
     before do
       allow(order).to receive :recalculate_totals!
@@ -114,7 +114,7 @@ describe Spree::Shipment, type: :model do
 
   describe 'status' do
     it 'starts unfulfilled' do
-      expect(create(:shipment).status).to eq('unfulfilled')
+      expect(create(:fulfillment).status).to eq('unfulfilled')
     end
 
     it 'rejects a status outside the vocabulary' do
@@ -257,7 +257,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'equals line items final amount with tax' do
-      shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
+      shipment = create(:fulfillment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
       shipment.order.line_items.first.update_columns(adjustment_total: 2.0, additional_tax_total: 2.0)
       # update_columns writes behind the loaded associations, so the manifest
       # has to re-read the line items to see the tax.
@@ -272,7 +272,7 @@ describe Spree::Shipment, type: :model do
       variant2 = create(:variant)
       create(:line_item, order: order, variant: variant1, quantity: 3)
       create(:line_item, order: order, variant: variant2, quantity: 2)
-      shipment = create(:shipment, order: order)
+      shipment = create(:fulfillment, order: order)
       expect(shipment.item_quantity).to eq(5)
     end
 
@@ -282,7 +282,7 @@ describe Spree::Shipment, type: :model do
       variant2 = create(:variant)
       create(:line_item, order: order, variant: variant1, quantity: 1)
       create(:line_item, order: order, variant: variant2, quantity: 1)
-      shipment = create(:shipment, order: order)
+      shipment = create(:fulfillment, order: order)
       expect(shipment.item_quantity).to eq(2)
     end
 
@@ -294,12 +294,12 @@ describe Spree::Shipment, type: :model do
       line_item2 = create(:line_item, order: order, variant: variant2, quantity: 4)
 
       # First shipment for line_item1
-      shipment1 = create(:shipment, order: order)
+      shipment1 = create(:fulfillment, order: order)
       shipment1.inventory_units.delete_all
       shipment1.set_up_inventory('on_hand', variant1, order, line_item1, 2)
 
       # Second shipment for line_item2
-      shipment2 = create(:shipment, order: order)
+      shipment2 = create(:fulfillment, order: order)
       shipment2.inventory_units.delete_all
       shipment2.set_up_inventory('on_hand', variant2, order, line_item2, 4)
 
@@ -308,7 +308,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'returns 0 if there are no items in the shipment' do
-      shipment = create(:shipment)
+      shipment = create(:fulfillment)
       expect(shipment.item_quantity).to eq(0)
     end
   end
@@ -318,7 +318,7 @@ describe Spree::Shipment, type: :model do
       order = create(:order)
       variant = create(:variant, weight: 10)
       line_item = create(:line_item, order: order, variant: variant, quantity: 2)
-      shipment = create(:shipment, order: order)
+      shipment = create(:fulfillment, order: order)
       expect(shipment.item_weight).to eq(20.0)
     end
   end
@@ -328,20 +328,20 @@ describe Spree::Shipment, type: :model do
       order = create(:order)
       variant = create(:variant, weight: 10, weight_unit: 'kg')
       line_item = create(:line_item, order: order, variant: variant, quantity: 2)
-      shipment = create(:shipment, order: order)
+      shipment = create(:fulfillment, order: order)
       expect(shipment.weight_unit).to eq('kg')
     end
   end
 
   it '#discounted_cost' do
-    shipment = create(:shipment)
+    shipment = create(:fulfillment)
     shipment.cost = 10
     shipment.promo_total = -1
     expect(shipment.discounted_cost).to eq(9)
   end
 
   describe '#taxable_basis' do
-    let(:shipment) { create(:shipment).tap { |s| s.cost = 10 } }
+    let(:shipment) { create(:fulfillment).tap { |s| s.cost = 10 } }
 
     it 'is the discounted cost' do
       shipment.promo_total = -1
@@ -355,21 +355,21 @@ describe Spree::Shipment, type: :model do
   end
 
   it '#tax_total with included taxes' do
-    shipment = Spree::Shipment.new
+    shipment = Spree::Fulfillment.new
     expect(shipment.tax_total).to eq(0)
     shipment.included_tax_total = 10
     expect(shipment.tax_total).to eq(10)
   end
 
   it '#tax_total with additional taxes' do
-    shipment = Spree::Shipment.new
+    shipment = Spree::Fulfillment.new
     expect(shipment.tax_total).to eq(0)
     shipment.additional_tax_total = 10
     expect(shipment.tax_total).to eq(10)
   end
 
   it '#final_price' do
-    shipment = Spree::Shipment.new
+    shipment = Spree::Fulfillment.new
     shipment.cost = 10
     shipment.adjustment_total = -2
     shipment.included_tax_total = 1
@@ -378,7 +378,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#free?' do
     let!(:order) { create(:order) }
-    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let!(:shipment) { create(:fulfillment, cost: 10, order: order) }
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
 
     it 'returns true if final_price is equal to 0' do
@@ -396,7 +396,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#with_free_shipping_promotion?' do
     let!(:order) { create(:order) }
-    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let!(:shipment) { create(:fulfillment, cost: 10, order: order) }
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
 
     it 'returns true when Free Shipping promotion is applied' do
@@ -414,7 +414,7 @@ describe Spree::Shipment, type: :model do
   describe '#store' do
     let(:store) { @default_store }
     let!(:order) { create(:order, store: store) }
-    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let!(:shipment) { create(:fulfillment, cost: 10, order: order) }
 
     it 'return order store' do
       expect(shipment.store).to eq(store)
@@ -423,7 +423,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#currency' do
     let!(:order) { create(:order, currency: 'EUR') }
-    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let!(:shipment) { create(:fulfillment, cost: 10, order: order) }
 
     it 'return order currency' do
       expect(shipment.currency).to eq('EUR')
@@ -478,7 +478,7 @@ describe Spree::Shipment, type: :model do
   end
 
   describe '#can_get_rates?' do
-    let(:digital_shipping_method) { create(:digital_shipping_method) }
+    let(:digital_shipping_method) { create(:digital_delivery_method) }
     let(:digital_product) { create(:digital_product) }
     let(:digital_line_item) { create(:line_item, variant: create(:variant, product: digital_product)) }
 
@@ -519,13 +519,13 @@ describe Spree::Shipment, type: :model do
   end
 
   context 'shipping_rates' do
-    let(:shipment) { create(:shipment) }
-    let(:shipping_method1) { create(:shipping_method) }
-    let(:shipping_method2) { create(:shipping_method) }
+    let(:shipment) { create(:fulfillment) }
+    let(:shipping_method1) { create(:delivery_method) }
+    let(:shipping_method2) { create(:delivery_method) }
     let(:shipping_rates) do
       [
-        Spree::ShippingRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
-        Spree::ShippingRate.new(shipping_method: shipping_method2, cost: 20.00)
+        Spree::DeliveryRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
+        Spree::DeliveryRate.new(shipping_method: shipping_method2, cost: 20.00)
       ]
     end
 
@@ -536,7 +536,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'carry_over_selection' do
-      let(:digital_method) { create(:shipping_method) }
+      let(:digital_method) { create(:delivery_method) }
 
       def proposal(*rates)
         Spree::Fulfillment.new(delivery_rates: rates.map { |method, cost, selected| Spree::DeliveryRate.new(delivery_method: method, cost: cost, selected: selected) })
@@ -593,7 +593,7 @@ describe Spree::Shipment, type: :model do
       # change, eligibility rule, zone edit). The fulfillment must fall back to
       # the estimator's own pick rather than end up with nothing selected.
       it 'falls back to the estimator default when the original method is no longer quoted' do
-        dropped_method = create(:shipping_method)
+        dropped_method = create(:delivery_method)
         expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(mock_estimator)
         allow(shipment).to receive_messages(delivery_method: dropped_method)
 
@@ -641,8 +641,8 @@ describe Spree::Shipment, type: :model do
 
       context 'to_package' do
         let(:inventory_units) do
-          [build(:inventory_unit, line_item: line_item, variant: variant, state: 'on_hand'),
-           build(:inventory_unit, line_item: line_item, variant: variant, state: 'backordered')]
+          [build(:fulfillment_item, line_item: line_item, variant: variant, state: 'on_hand'),
+           build(:fulfillment_item, line_item: line_item, variant: variant, state: 'backordered')]
         end
 
         before do
@@ -684,7 +684,7 @@ describe Spree::Shipment, type: :model do
       before { stub_store_preferences(track_inventory_levels: true) }
 
       it 'validates with inventory' do
-        shipment.inventory_units = [create(:inventory_unit)]
+        shipment.inventory_units = [create(:fulfillment_item)]
         expect(shipment.valid?).to be true
       end
     end
@@ -699,7 +699,7 @@ describe Spree::Shipment, type: :model do
   end
 
   describe '#cancel' do
-    let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
+    let(:inventory_unit) { create(:fulfillment_item, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
     # Restocking is no longer a transition callback — it belongs to
     # Spree::Fulfillments::Cancel, so the event only moves the status.
@@ -763,7 +763,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#ship' do
     context 'when the shipment is canceled' do
-      let(:shipment_with_inventory_units) { create(:shipment, order: create(:order_with_line_items), state: 'canceled') }
+      let(:shipment_with_inventory_units) { create(:fulfillment, order: create(:order_with_line_items), state: 'canceled') }
       let(:subject) { shipment_with_inventory_units.update!(status: 'fulfilled') }
 
       before do
@@ -803,7 +803,7 @@ describe Spree::Shipment, type: :model do
 
 
   context 'updates cost when selected shipping rate is present' do
-    let(:shipment) { create(:shipment) }
+    let(:shipment) { create(:fulfillment) }
 
     before { allow(shipment).to receive_message_chain :selected_delivery_rate, cost: 5 }
 
@@ -861,10 +861,10 @@ describe Spree::Shipment, type: :model do
       )
     end
 
-    let(:shipment) { Spree::Shipment.create order_id: order.id, stock_location: create(:stock_location) }
+    let(:shipment) { Spree::Fulfillment.create order_id: order.id, stock_location: create(:stock_location) }
 
     let(:shipping_rate) do
-      Spree::ShippingRate.create shipment_id: shipment.id, cost: 10,
+      Spree::DeliveryRate.create shipment_id: shipment.id, cost: 10,
                                  delivery_method: create(:delivery_method)
     end
 
@@ -886,13 +886,13 @@ describe Spree::Shipment, type: :model do
   describe '#selected_shipping_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let(:shipment) { order.fulfillments.first }
-    let(:shipping_method_1) { create(:shipping_method) }
-    let(:shipping_method_2) { create(:shipping_method) }
+    let(:shipping_method_1) { create(:delivery_method) }
+    let(:shipping_method_2) { create(:delivery_method) }
 
     before do
       shipment.shipping_rates.delete_all
-      create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_1, cost: 10, selected: true)
-      create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_2, cost: 20, selected: false)
+      create(:delivery_rate, shipment: shipment, shipping_method: shipping_method_1, cost: 10, selected: true)
+      create(:delivery_rate, shipment: shipment, shipping_method: shipping_method_2, cost: 20, selected: false)
       shipment.reload
       order.set_fulfillments_cost
     end
@@ -918,18 +918,18 @@ describe Spree::Shipment, type: :model do
 
   describe '#cost=' do
     it 'parses well-formed decimal strings' do
-      shipment = build(:shipment, order: nil, stock_location: nil, cost: '7.42')
+      shipment = build(:fulfillment, order: nil, stock_location: nil, cost: '7.42')
 
       expect(shipment.cost).to eq(BigDecimal('7.42'))
     end
 
     it 'raises on malformed strings instead of truncating them' do
-      expect { build(:shipment, order: nil, stock_location: nil, cost: '12 boxes') }.
+      expect { build(:fulfillment, order: nil, stock_location: nil, cost: '12 boxes') }.
         to raise_error(ArgumentError)
     end
 
     it 'casts blank strings to the zero default' do
-      shipment = build(:shipment, order: nil, stock_location: nil, cost: '')
+      shipment = build(:fulfillment, order: nil, stock_location: nil, cost: '')
       shipment.valid?
 
       expect(shipment.cost).to eq(0)
@@ -940,7 +940,7 @@ describe Spree::Shipment, type: :model do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let(:fulfillment) { order.fulfillments.first }
     let(:reduced_rate_category) { create(:tax_category, name: "Reduced #{Time.current.to_f}") }
-    let(:delivery_method) { create(:shipping_method, tax_category: reduced_rate_category) }
+    let(:delivery_method) { create(:delivery_method, tax_category: reduced_rate_category) }
 
     def select_rate(method)
       fulfillment.delivery_rates.destroy_all
@@ -967,7 +967,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'is nil when the delivery method carries no classification' do
-      select_rate(create(:shipping_method, tax_category: nil))
+      select_rate(create(:delivery_method, tax_category: nil))
 
       expect(fulfillment.tax_category).to be_nil
       expect(fulfillment.tax_category_id).to be_nil
@@ -977,7 +977,7 @@ describe Spree::Shipment, type: :model do
   describe '#selected_delivery_rate_id / #selected_delivery_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let(:shipment) { order.fulfillments.first }
-    let(:rate) { create(:shipping_rate, shipment: shipment, cost: 20, selected: false) }
+    let(:rate) { create(:delivery_rate, shipment: shipment, cost: 20, selected: false) }
 
     it 'selects a rate by its prefixed ID and reads back the prefixed ID' do
       shipment.selected_delivery_rate_id = rate.prefixed_id
@@ -993,7 +993,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it "raises for a rate that doesn't belong to the shipment" do
-      foreign_rate = create(:shipping_rate)
+      foreign_rate = create(:delivery_rate)
 
       expect { shipment.selected_delivery_rate_id = foreign_rate.prefixed_id }.
         to raise_error(ActiveRecord::RecordNotFound)
@@ -1036,7 +1036,7 @@ describe Spree::Shipment, type: :model do
 
   context 'nil costs' do
     it 'sets cost to 0' do
-      shipment = Spree::Shipment.new
+      shipment = Spree::Fulfillment.new
       shipment.valid?
       expect(shipment.cost).to eq 0
     end
@@ -1151,8 +1151,8 @@ describe Spree::Shipment, type: :model do
   describe '.unfulfilled' do
     subject { described_class.unfulfilled }
 
-    let!(:unfulfilled_shipments) { create_list(:shipment, 2, status: 'unfulfilled') }
-    let!(:fulfilled_shipments) { create_list(:shipment, 2, status: 'fulfilled') }
+    let!(:unfulfilled_shipments) { create_list(:fulfillment, 2, status: 'unfulfilled') }
+    let!(:fulfilled_shipments) { create_list(:fulfillment, 2, status: 'fulfilled') }
 
     it 'returns shipments nobody has handed over yet' do
       expect(subject).to include(*unfulfilled_shipments)

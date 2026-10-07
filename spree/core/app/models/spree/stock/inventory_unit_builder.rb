@@ -14,7 +14,7 @@ module Spree
         @order.line_items.map do |line_item|
           # They go through multiple splits, avoid loading the
           # association to order until needed.
-          Spree::InventoryUnit.new(
+          Spree::FulfillmentItem.new(
             pending: true,
             line_item_id: line_item.id,
             variant_id: line_item.variant_id,

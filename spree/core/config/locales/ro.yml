@@ -1,0 +1,750 @@
+---
+ro:
+  activemodel:
+    errors:
+      messages:
+        blank: nu poate fi gol
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adresă
+        address2: Adresă (continuare)
+        city: Localitate
+        company: Companie
+        country: Țara
+        label: Numele adresei
+        phone: Telefon
+        state: Județ / Regiune
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Denumire ISO
+        name: Nume
+        numcode: Cod ISO
+      spree/credit_card:
+        base: Bază
+        cc_type: Tip
+        month: Luna
+        number: Număr
+        verification_value: Cod de verificare
+        year: An
+      spree/customer_group:
+        description: Descriere
+        name: Nume
+      spree/gift_card:
+        amount_used: Sumă utilizată
+        expires_at: Expiră la
+      spree/import:
+        preferred_delimiter: Delimitator
+      spree/import_mapping:
+        file_column: Coloană fișier
+        schema_field: Câmp schemă
+      spree/import_row:
+        row_number: Număr
+      spree/inventory_unit:
+        state: Județ / Regiune
+      spree/invitation:
+        inviter: Invitator
+      spree/line_item:
+        price: Preț
+        quantity: Cantitate
+      spree/option_type:
+        filterable: Filtrabil
+        kind: Tip
+        name: Nume
+      spree/option_value:
+        color_code: Cod de culoare
+        image: Imagine mostră
+      spree/order:
+        checkout_complete: Comandă finalizată
+        completed_at: Finalizată la
+        coupon_code: Cod Cupon
+        created_at: Data comenzii
+        email: E-Mail Client
+        internal_note: Notă internă
+        ip_address: Adresa IP
+        item_count: Articole
+        item_total: Total articole
+        number: Număr
+        payment_state: Stare Plată
+        shipment_state: Stare Livrare
+        special_instructions: Instrucțiuni speciale
+        state: Județ / Regiune
+        total: Total
+      spree/order/bill_address:
+        address1: Strada adresă de facturare
+        city: Oraș adresă de facturare
+        phone: Telefon adresă de facturare
+        state: Județ adresă de facturare
+      spree/order/ship_address:
+        address1: Stradă adresă de livrare
+        city: Oraș adresă de livrare
+        phone: Telefon adresă de livrare
+        state: Județ adresă de livrare
+      spree/payment:
+        amount: Valoare
+        number: Număr
+      spree/payment_method:
+        name: Nume
+      spree/policy:
+        body: Conținut
+        owner: Politică pentru
+      spree/price_list:
+        description: Descriere
+        ends_at: Se termină la
+        match_policy: Politică de potrivire
+        name: Nume
+        priority: Prioritate
+        starts_at: Începe la
+        status: Stare
+      spree/price_rule:
+        priority: Prioritate
+        type: Tip
+      spree/product:
+        available_on: Disponibil de la
+        cost_currency: Valută preț de cost
+        cost_price: Preț de cost
+        description: Descriere
+        discontinue_on: Întrerupt la
+        less_than: Mai puțin de
+        make_active_at: Activează la
+        master_price: Preț de bază
+        more_than: Mai mult de
+        name: Nume
+        on_hand: În stoc
+        tax_category: Categorie taxă
+      spree/promotion:
+        advertise: Promovează
+        code: Cod
+        description: Descriere
+        event_name: Nume eveniment
+        expires_at: Expiră la
+        generate_code: Generează cod cupon
+        name: Nume
+        path: Cale
+        promotion_category: Categorie de promoție
+        starts_at: Începe la
+        usage_limit: Limită de folosire
+      spree/promotion_category:
+        code: Cod
+      spree/property:
+        name: Nume
+        presentation: Descriere
+      spree/role:
+        name: Nume
+      spree/shipment:
+        number: Număr
+      spree/state:
+        abbr: Prescurtare
+        name: Nume
+      spree/store:
+        address: Adresă
+        contact_phone: Telefon de contact
+        preferred_digital_asset_authorized_clicks: Limită clicuri de descărcare
+        preferred_digital_asset_authorized_days: Limită zile de descărcare
+        preferred_limit_digital_download_count: Limitează numărul de descărcări ale linkurilor digitale
+        preferred_limit_digital_download_days: Limitează zilele de descărcare ale linkurilor digitale
+        seo_robots: Roboți SEO
+        storefront_custom_code_body_end: Cod personalizat înainte de eticheta de închidere body
+        storefront_custom_code_body_start: Cod personalizat după eticheta de deschidere body
+        storefront_custom_code_head: Cod personalizat în head-ul paginii
+      spree/store_credit:
+        amount_used: Sumă utilizată
+      spree/tax_category:
+        description: Descriere
+        name: Nume
+      spree/tax_rate:
+        amount: Tarif
+        included_in_price: Inclus în preț
+        show_rate_in_label: Afișează cursul în etichetă
+      spree/taxon:
+        name: Nume
+        permalink: Permalink
+        position: Poziție
+        sort_order: Ordine de sortare
+      spree/taxonomy:
+        name: Nume
+      spree/user:
+        avatar: Avatar
+        email: Email
+        password: Parolă
+        password_confirmation: Confirmare parolă
+      spree/variant:
+        cost_currency: Valută preț de cost
+        cost_price: Preț de cost
+        depth: Adâncime
+        height: Înălțime
+        price: Preț
+        sku: Cod produs
+        weight: Greutate
+        width: Lățime
+      spree/zone:
+        description: Descriere
+        name: Naume
+      user:
+        current_sign_in: Autentificarea curentă la
+        last_sign_in: Ultima autentificare la
+        sign_in_count: Număr de autentificări
+    errors:
+      messages:
+        blank: nu poate fi gol
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: trebuie să fie o origine (schemă și gazdă) fără cale, interogare sau fragment
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Cartela a expirat
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Nu se poate șterge un card cadou utilizat
+        spree/import:
+          attributes:
+            attachment:
+              content_type: are un tip de conținut nepermis
+            type:
+              inclusion: nu este inclus în lista tipurilor permise
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Nu se poate șterge piața implicită.
+              cannot_destroy_last_market: Nu se poate șterge singura piață.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: este deja atribuită altei piețe din acest magazin
+              not_in_shipping_zone: nu este acoperită de nicio zonă de livrare. Vă rugăm să configurați mai întâi o zonă de livrare.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: este mai mare decât suma maximă permisă de %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: trebuie să fie după data de început
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Nu se pot șterge produsele care sunt adăugate la comenzi plasate. În astfel de cazuri, vă rugăm să le întrerupeți.
+            discontinue_on:
+              invalid_date_range: trebuie să fie ulterioară datei de disponibilitate
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: trebuie să fie ulterioară datei de publicare
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: trebuie să fie ulterioară datei de început
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Nu se poate șterge singurul magazin.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Depășește totalul creditelor.
+            amount_used:
+              cannot_be_greater_than_amount: Nu poate fi mai mare decât suma.
+              greater_than_zero_restrict_delete: este mai mare decât zero. Nu se poate șterge creditul de magazin.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: aparține altui utilizator
+              deprecated_in_completed_order: este învechit într-o comandă finalizată
+            ship_address_id:
+              belongs_to_other_user: aparține altui utilizator
+              deprecated_in_completed_order: este învechit într-o comandă finalizată
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Nu se pot șterge variantele care sunt adăugate la comenzi plasate. În astfel de cazuri, vă rugăm să le întrerupeți.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: nu trebuie să indice către o adresă de rețea internă sau privată
+    models:
+      spree/address:
+        one: Adresă
+        other: Adrese
+      spree/classification:
+        one: Clasificare
+        other: Clasificări
+      spree/country:
+        one: Țara
+        other: Țări
+      spree/credit_card:
+        one: Card de credit
+        other: Carduri de credit
+      spree/customer_group:
+        one: Grup de clienți
+        other: Grupuri de clienți
+      spree/customer_group_user:
+        one: Utilizator grup de clienți
+        other: Utilizatori grup de clienți
+      spree/export:
+        one: Export
+        other: Exporturi
+      spree/integration:
+        one: Integrare
+        other: Integrări
+      spree/inventory_unit:
+        one: Unitatea de inventar
+        other: Unități de inventar
+      spree/line_item:
+        one: Element
+        other: Elemente
+      spree/option_type:
+        one: Tip de opțiune
+        other: Tipuri de opțiuni
+      spree/option_value:
+        one: Valoare de opțiune
+        other: Valori de opțiuni
+      spree/order:
+        one: Comandă
+        other: Comenzi
+      spree/payment:
+        one: Plată
+        other: Plăți
+      spree/payment_method:
+        one: Metodă de plată
+        other: Metode de plată
+      spree/price:
+        one: Preț
+        other: Prețuri
+      spree/price_list:
+        one: Listă de prețuri
+        other: Liste de prețuri
+      spree/price_rule:
+        one: Regulă de preț
+        other: Reguli de preț
+      spree/product:
+        one: Produs
+        other: Produse
+      spree/promotion:
+        one: Promoție
+        other: Promoții
+      spree/promotion_category:
+        one: Categorie de promoție
+        other: Categorii de promoție
+      spree/property:
+        one: Proprietate
+        other: Proprietăți
+      spree/refund_reason:
+        one: Motiv de rambursare
+        other: Motive de rambursare
+      spree/role:
+        one: Roluri
+        other: Roluri
+      spree/shipment:
+        one: Expediție
+        other: Expediții
+      spree/shipping_method:
+        one: Metodă de livrare
+        other: Metode de livrare
+      spree/state:
+        one: Județ / Regiune
+        other: Județe / Regiuni
+      spree/stock_location:
+        one: Locație de stoc
+        other: Locații de stoc
+      spree/stock_movement:
+        one: Mișcare de stoc
+        other: Mișcări de stoc
+      spree/stock_transfer:
+        one: Transfer de stoc
+        other: Transferuri de stoc
+      spree/store:
+        one: Magazin
+        other: Magazine
+      spree/store_credit:
+        one: Credit de magazin
+        other: Credite de magazin
+      spree/tax_category:
+        one: Categorie de taxare
+        other: Categorii de taxare
+      spree/tax_rate:
+        one: Tarif taxă
+        other: Tarife taxe
+      spree/taxon:
+        one: Clasificare
+        other: Clasificări
+      spree/taxonomy:
+        one: Clasificare
+        other: Clasificări
+      spree/user:
+        one: Utilizator
+        other: Utilizatori
+      spree/variant:
+        one: Variantă
+        other: Variante
+      spree/zone:
+        one: Zonă
+        other: Zone
+  errors:
+    messages:
+      already_confirmed: a fost deja confirmat
+      not_found: nu a fost găsit
+      not_locked: nu a fost blocat
+      not_saved:
+        one: 'o eroare a împiedicat acest %{resource} să fie salvat:'
+        other: "%{count} erori au împiedicat acest %{resource} să fie salvat:"
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accepts_email_marketing: Acceptă marketing prin e-mail
+    account: Cont
+    active: Activ
+    address: Adresă
+    address1: Adresă
+    address2: Adresă (continuare)
+    adjustment: Re-evaluare
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Inclus în preț)"
+    adjustments_deleted: Ajustări șterse
+    all: Toate
+    amount: Suma
+    api_key_no_current_key: Nicio cheie API nu a autentificat această solicitare
+    api_key_scopes_immutable: nu poate fi modificat după crearea cheii; creați o cheie nouă cu domeniile de care aveți nevoie și revocați-o pe aceasta
+    availability: disponibilitate
+    backorderable: Permite comenzi în așteptare
+    bill_address: Adresă de facturare
+    billing_address: Adresă facturare
+    calculator: Calculator
+    canceled: Anulat
+    cannot_be_destroyed: Comanda nu poate fi ștearsă.
+    capture: Înregistrare
+    cart: Coșul meu
+    cart_already_updated: Coșul a fost deja actualizat.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} nu poate fi livrat la adresa selectată"
+      discontinued: "%{li_name} a fost eliminat deoarece a fost întrerupt"
+      out_of_stock: "%{li_name} a fost eliminat deoarece s-a epuizat"
+    categories: Categorii
+    category: Categorie
+    channel: Canal de vânzare
+    channels: Canale de vânzare
+    checkout: Efectuați plata
+    checkout_requirements:
+      email_required: Adresa de e-mail este obligatorie
+      line_items_required: Adăugați cel puțin un articol în coș
+      payment_required: Adăugați o metodă de plată
+      ship_address_required: Adresa de livrare este obligatorie
+    city: Oraș / Localitate
+    color_code: Cod de culoare
+    company: Firma
+    compare_at_amount: Sumă de comparație
+    compare_at_price: Preț de comparație
+    complete: complet
+    confirm: Confirmă
+    cost_price: Preț de cost
+    count_on_hand: Valoare stoc
+    country: Țara
+    coupon_code: Cod cupon
+    coupon_code_already_applied: Codul voucher a fost deja aplicat acestei comenzi
+    coupon_code_applied: Codul voucher a fost aplicat cu succes comenzii dumneavoastră.
+    coupon_code_better_exists: Cuponul aplicat mai devreme reprezintă un avantaj client mai bun
+    coupon_code_expired: Codul voucher a expirat
+    coupon_code_max_usage: Limita de utilizare a acestui voucher a fost depășită
+    coupon_code_not_eligible: Acest cod voucher nu este eligibil pentru această comandă
+    coupon_code_not_found: Codoul voucherului introdus nu există. Încercați din nou.
+    coupon_code_used: Codul cuponului introdus a fost deja utilizat. Vă rugăm să încercați din nou.
+    created_at: Creat la
+    credit_card: Card de credit
+    currency: Valuta
+    currency_not_supported_by_store: nu este acceptată de acest magazin
+    customer: Client
+    customers: Clienți
+    default: Standard
+    default_stock_location_name: Locația magazinului
+    default_wishlist_name: Listă de dorințe
+    delivery: Livrare
+    depth: Adâncime
+    description: Descriere
+    destination: Destinație
+    destroy: Șterge
+    digital:
+      digital_delivery: Livrare digitală
+    digital_assets: Active digitale
+    discontinued: Întrerupt
+    discontinued_variants_present: Unele articole din această comandă conțin produse care nu mai sunt disponibile.
+    display_delivery_range: Livrare în %{delivery_range} zile lucrătoare
+    draft: Ciornă
+    eligibility_errors:
+      messages:
+        no_matching_channel: Acest cod de cupon nu este valabil pentru acest canal de vânzare.
+        no_matching_market: Acest cod de cupon nu este valabil pe piața dumneavoastră.
+        wrong_country: Acest cod cupon nu este eligibil în țara dvs.
+    email: Email
+    error: eroare
+    error_user_destroy_with_orders: Utilizatorul asociat cu comenzi nu poate fi șters
+    error_user_does_not_have_any_store_credits: Utilizatorul nu are credite de magazin disponibile
+    errors:
+      messages:
+        cannot_delete_default_channel: Canalul implicit nu poate fi șters. Promovați mai întâi un alt canal ca implicit.
+        channel_store_mismatch: trebuie să aparțină aceluiași magazin
+        invalid_order_routing_rule: nu este o regulă de rutare a comenzilor înregistrată
+        invalid_order_routing_strategy: nu este o strategie de rutare a comenzilor înregistrată
+        store_association_can_not_be_changed: Asocierea magazinului nu poate fi modificată
+        store_is_already_set: Magazinul este deja setat
+    expired: Expirat
+    export_mailer:
+      export_done:
+        message: Bună treabă, exportul dvs. este gata! Vă rugăm să folosiți linkul de mai jos pentru a-l descărca.
+        subject: Exportul dvs. %{export_number} a fost procesat cu succes!
+      greeting: Bună %{user_name},
+    field: Câmp
+    first_name: Prenume
+    flat_percent: Procentaj net
+    flat_rate_per_order: Procentaj net (pe comandă)
+    flexible_rate: Rată flexibilă
+    free: Gratuit
+    gateway: Metodă de plată
+    gateway_error: Eroare metodă de plată
+    gift_card: Card cadou
+    gift_card_already_redeemed: Cardul cadou a fost deja folosit.
+    gift_card_applied: Cardul cadou a fost aplicat cu succes comenzii dvs.!
+    gift_card_customer_not_logged_in: Cardul cadou nu poate fi aplicat de un utilizator invitat.
+    gift_card_expired: Cardul cadou a expirat.
+    gift_card_mismatched_currency: Cardul cadou nu poate fi aplicat cu moneda curentă.
+    gift_card_mismatched_customer: Acest card cadou este asociat cu un alt utilizator.
+    gift_card_not_found: Cardul cadou nu a fost găsit.
+    gift_card_removed: Cardul cadou a fost eliminat cu succes din comanda dvs.
+    gift_card_using_store_credit_error: Nu puteți aplica cardul cadou după ce ați aplicat creditul de magazin.
+    height: Înălțime
+    i18n:
+      this_file_language: Romanian (RO)
+    idempotency_key_reused: Această cheie de idempotență a fost deja utilizată cu parametri de solicitare diferiți.
+    image: Imagine
+    import: Import
+    in_stock: În stoc
+    internal_note: Notă internă
+    inventory: Inventar
+    invitation_mailer:
+      greeting: Bună %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} a acceptat invitația dvs. de a se alătura %{resource_name}"
+        subject: "%{invitee_name} a acceptat invitația dvs. de a se alătura %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} v-a invitat să vă alăturați %{resource_name}"
+        link_description: 'Pentru a accepta această invitație, vă rugăm să faceți clic pe linkul de mai jos:'
+        subject: Invitație de a vă alătura %{resource_name}
+    iso: ISO Alpha-2
+    item: Articol
+    items_cannot_be_shipped: Itemii nu pot fi cumpărați
+    key: Cheie
+    kind: Tip
+    label: Etichetă
+    last_name: Nume
+    line_item: Articol de comandă
+    line_items: Articole de comandă
+    link: Link
+    locale: Limbă
+    locale_not_supported_by_store: nu este acceptată de acest magazin
+    manual: Manual
+    market: Piață
+    me_no_current_user: Niciun utilizator administrator nu a autentificat această solicitare
+    media: Media
+    meta_description: Descriere meta
+    meta_keywords: Cuvinte cheie meta
+    metadata: Metadate
+    min_quantity: Cantitate minimă
+    month: Luna
+    name: Nume
+    new_variant: Variantă nouă
+    no_cc_type: N/A
+    none: Niciuna
+    number: Număr
+    on_hand: Pe stoc
+    only_active_products_can_be_added_to_cart: Produsele în ciornă și arhivate nu pot fi adăugate în coș, vă rugăm să marcați produsul ca activ înainte.
+    open: Deschis
+    option_name: Nume opțiune
+    option_type: Tip opțiune
+    option_value: Valoarea opțiune
+    options: Opțiuni
+    or: sau
+    order: Comanda
+    order_routing:
+      strategies:
+        legacy: Moștenit
+        rules: Reguli (ordonate)
+    order_summary: Sumarul comenzii
+    orders: Comenzi
+    out_of_stock: Nu mai este pe stoc
+    password: Parola
+    path: Rută
+    payment: Plată
+    payment_method: Metodă de plată
+    payment_methods: Metode de plată
+    payment_processing_failed: Plata nu a putut fi procesată, te rugăm verifică dacă datele introduse sunt corecte
+    payment_source: Sursă de plată
+    percent: Procent
+    percent_per_item: Procent per articol
+    phone: Telefon
+    price: Preț
+    price_range: Gamă de preț
+    price_rules:
+      channel_rule:
+        description: Aplică prețuri în funcție de canalul de vânzare
+      customer_group_rule:
+        description: Aplică prețuri pentru grupuri specifice de clienți
+    price_sack: Sac de preț
+    prices: Prețuri
+    privacy_policy: Politica de confidențialitate
+    processing: Se procesează
+    product: Produs
+    product_translations: Traduceri produse
+    products: Produse
+    products_cannot_be_shipped: Nu putem livra %{product_names} la locația dvs. curentă în acest moment. Vă rugăm să schimbați adresa de livrare sau să eliminați %{product_names} din coș.
+    promotion: Promoție
+    promotion_action_types:
+      create_adjustment:
+        description: Crează o ajustare de credit promoțională la comandă
+        name: Crează ajustare
+      create_line_items:
+        description: Populează coșul cu cantitatea specificată a variantei
+        name: Adaugă articole la comandă
+    promotion_actions: Acțiuni
+    promotion_already_used: Nu puteți șterge o promoție care a fost deja aplicată
+    promotion_label: Promoție (%{name})
+    promotion_rule_types:
+      category:
+        description: Comanda include produse din categoriile specificate
+        name: Categorii
+      channel:
+        description: Limitează la comenzile plasate prin canalul (canalele) specificat(e)
+        name: Canal(e)
+      country:
+        description: Limitează la comenzile cu adresă de livrare într-o anumită țară
+        name: Țară
+      currency:
+        description: Limitează la comenzile într-o anumită monedă
+        name: Monedă
+      customer:
+        description: Disponibil doar pentru clienții specificați
+        name: Clienți
+      customer_group:
+        description: Disponibil doar pentru clienții din grupul/grupurile de clienți specificate
+        name: Grup(uri) de clienți
+      customer_logged_in:
+        description: Disponibil doar pentru clienții autentificați
+        name: Doar clienții autentificați
+      first_order:
+        description: Trebui să fie prima comandă a clientului
+        name: Prima comandă
+      item_total:
+        description: Totalul comenzii îndeplinește aceste criterii
+        name: Total articole
+      market:
+        description: Limitează la comenzile plasate pe piața (piețele) specificată(e)
+        name: Piață (Piețe)
+      product:
+        description: Comanda include produsul / produsele specificate
+        name: Produs(e)
+    promotions: Promoții
+    quantity: Cantitate
+    query: Interogare
+    reason: Motiv
+    received: Primit
+    reference: Referință
+    refund: Restituire
+    refund_amount: Sumă de rambursare
+    registration: Înregistrare
+    remove: Șterge
+    remove_gift_card_on_completed_order_error: Nu puteți elimina cardul cadou după ce comanda a fost plasată
+    resellable: Revândabil
+    resend: Trimite din nou
+    response_code: Cod răspuns
+    return: retur
+    returned: Returnat
+    returns_policy: Politica de retur
+    row: Rând
+    rules: Reguli
+    say_no: Nu
+    say_yes: Da
+    scope: Gamă
+    selected_quantity_not_available: selectat din %{item} nu este disponibil.
+    ship: livrează
+    ship_address: Adresa de livrare
+    shipment: Livrare
+    shipped: Livrare
+    shipping: Livrare
+    shipping_address: Adresă livrare
+    shipping_flat_rate_per_item: Rată fixă per articol din pachet
+    shipping_flat_rate_per_order: Rată fixă
+    shipping_flexible_rate: Rată flexibilă per articol din pachet
+    shipping_policy: Politica de livrare
+    shipping_price_sack: Sac de preț
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
+    sku: Cod produs
+    source: Sursa
+    status: Status
+    stock_location: Locație stoc
+    stock_locations: Locații stoc
+    stock_transfer:
+      errors:
+        must_have_variant: Trebuie să adăugați cel puțin o variantă
+        same_location: nu poate fi aceeași cu locația de destinație
+        variants_unavailable: Unele variante nu sunt disponibile la %{stock}
+    store: Magazin
+    store_credit:
+      allocated: Adăugat
+      authorized: Autorizat
+      captured: Utilizat
+      credit: Credit
+      eligible: Eligibil
+    store_credit_name: Credit de magazin
+    store_credit_payment_method:
+      currency_mismatch: Moneda creditului de magazin nu se potrivește cu moneda comenzii
+      insufficient_authorized_amount: Nu se poate captura mai mult decât suma autorizată
+      insufficient_funds: Suma rămasă de credit de magazin nu este suficientă
+      successful_action: Credit de magazin %{action} cu succes
+      unable_to_credit: 'Nu se poate credita codul: %{auth_code}'
+      unable_to_find: Nu s-a putut găsi creditul de magazin
+      unable_to_find_for_action: 'Nu s-a putut găsi creditul de magazin pentru codul de autorizare: %{auth_code} pentru acțiunea: %{action}'
+      unable_to_void: 'Nu se poate anula codul: %{auth_code}'
+    tags: Etichete
+    tax: Taxe
+    tax_category: Categorie Taxe
+    terms_of_service: Termeni și condiții
+    total: Total
+    tracking: Tracking
+    tracking_number: Număr de tracking
+    tracking_url: URL de tracking
+    type: Tastează
+    unable_to_connect_to_gateway: Nu se poate conecta la procesator de plăți.
+    updated_at: Actualizat la
+    url: URL
+    user: Utilizator
+    validation:
+      must_be_int: trebuie să fie indivizibil
+    value: Valoare
+    variant: Variantă
+    variants: Variante
+    verified: Verificat
+    void: Void
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Dezactivat la
+        heading: Punct final webhook dezactivat
+        instructions: Vă rugăm să verificați adresa URL a punctului final și serviciul, apoi reactivați-l în Setări → Dezvoltatori → Webhook-uri.
+        message: Punctul final webhook „%{endpoint_name}” a fost dezactivat automat după eșecuri repetate de livrare.
+        name_label: Nume
+        reason_label: Motiv
+        subject: 'Punct final webhook dezactivat: %{endpoint_name}'
+        url_label: URL
+    weight: Greutate
+    weight_unit: Unitate de greutate
+    width: Lățime
+    year: An
+    zip: Cod poștal

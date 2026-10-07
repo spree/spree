@@ -14,10 +14,6 @@ module Spree
                      scope: ->(rule) { rule.promotion.store.channels }
                    )
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def channels
           return Spree::Channel.none if preferred_channel_ids.blank?
 

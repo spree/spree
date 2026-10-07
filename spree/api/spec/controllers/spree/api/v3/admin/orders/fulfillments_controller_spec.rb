@@ -47,7 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(json_response['tracking']).to eq('INPOST-123')
       expect(json_response['items'].sum { |item| item['quantity'] }).to eq(order.line_items.sum(:quantity))
       expect(order.reload.shipments.count).to eq(1)
-      expect(Spree::Shipment.exists?(shipment.id)).to be(false)
+      expect(Spree::Fulfillment.exists?(shipment.id)).to be(false)
     end
 
     it 'creates a fulfillment for explicit items, keeping the source shipment' do
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'attaches the delivery method as the selected rate' do
-      delivery_method = create(:shipping_method)
+      delivery_method = create(:delivery_method)
 
       post :create, params: {
         order_id: order.prefixed_id,
@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
     end
 
     it 'returns 422 when the requested quantity exceeds the unfulfilled quantity' do
@@ -147,6 +147,36 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 're-sends a canceled replacement fulfillment named as the source' do
+      line_item = order.line_items.first
+      replacement_variant = create(:variant, product: line_item.product)
+      canceled = order.fulfillments.create!(stock_location: shipment.stock_location, cost: 0, status: 'canceled')
+      canceled.fulfillment_items.create!(order: order, line_item: line_item, variant: replacement_variant, quantity: 1, status: 'on_hand', replacement: true)
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: canceled.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:created), response.body
+      expect(json_response['items']).to contain_exactly(include('variant_id' => replacement_variant.prefixed_id, 'quantity' => 1))
+      expect(shipment.reload.fulfillment_items.where(line_item: line_item).sum(:quantity)).to eq(line_item.quantity)
+    end
+
+    it 'returns 404 for a source fulfillment belonging to another order' do
+      foreign_fulfillment = create(:order_ready_to_ship, store: store).fulfillments.first
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        stock_location_id: shipment.stock_location.prefixed_id,
+        source_fulfillment_id: foreign_fulfillment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(foreign_fulfillment.reload.fulfillment_items).to be_present
     end
   end
 
@@ -222,7 +252,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
     end
 
     it 'selects a delivery rate by prefixed ID' do
-      new_rate = create(:shipping_rate, shipment: shipment, cost: 20, selected: false)
+      new_rate = create(:delivery_rate, shipment: shipment, cost: 20, selected: false)
 
       patch :update, params: {
         order_id: order.prefixed_id,
@@ -271,7 +301,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
         patch_cost(cost: 'free')
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
         expect(shipment.reload.cost_source).to be_nil
       end
 

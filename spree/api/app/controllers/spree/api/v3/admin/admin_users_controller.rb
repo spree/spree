@@ -14,11 +14,6 @@ module Spree
           # grantable separately from store configuration (6.0-admin-rbac.md).
           scoped_resource :staff
 
-          # POST is not exposed — staff are created via invitations.
-          def create
-            head :method_not_allowed
-          end
-
           # DELETE /api/v3/admin/admin_users/:id
           # Removes role assignments for the current store rather than deleting
           # the account globally. The user keeps access to any other stores.

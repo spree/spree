@@ -12,10 +12,6 @@ module Spree
         OPERATORS_MIN = ['gt', 'gte']
         OPERATORS_MAX = ['lt', 'lte']
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible?(order, options = {})
           item_total = order.item_total - order.gift_amount(promotion: promotion, own_gift_only: options.fetch(:own_gift_only, false))
 
@@ -43,7 +39,7 @@ module Spree
           if preferred_amount_max.present?
             Spree::Money.new(preferred_amount_max, currency: order.currency).to_s
           else
-            Spree.t('no_maximum')
+            I18n.t('spree.no_maximum')
           end
         end
 

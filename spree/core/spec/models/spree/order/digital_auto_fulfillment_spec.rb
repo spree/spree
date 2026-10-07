@@ -9,7 +9,7 @@ describe 'Digital auto-fulfillment on order completion', type: :model do
   before do
     # Route the fulfillment through a digital delivery method so the provider
     # strategy resolves to Digital.
-    digital_method = create(:digital_shipping_method)
+    digital_method = create(:digital_delivery_method)
     order.fulfillments.each do |fulfillment|
       rate = fulfillment.delivery_rates.create!(delivery_method: digital_method, cost: 0, selected: false)
       fulfillment.delivery_rates.where.not(id: rate.id).update_all(selected: false)

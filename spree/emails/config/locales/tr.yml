@@ -1,0 +1,38 @@
+---
+tr:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Parolayı Sıfırla
+        expiry_notice: Bu parola sıfırlama bağlantısının süresi kısa süre içinde dolacaktır. Bu isteği siz yapmadıysanız herhangi bir işlem yapmanıza gerek yoktur.
+        greeting: Merhaba %{name},
+        ignore_notice: Parola sıfırlama talebinde bulunmadıysanız bu e-postayı güvenle yok sayabilirsiniz. Parolanız değiştirilmeyecektir.
+        instructions: Parolanızı sıfırlamak için bir talep aldık. Yeni bir parola seçmek için aşağıdaki düğmeye tıklayın.
+        subject: Parola Sıfırlama Talimatları
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Merhaba,
+        ignore_disclaimer: Bunu siz talep etmediyseniz lütfen bu e-postayı yok sayın.
+        instructions: E-posta adresinizi doğrulamak için lütfen aşağıdaki düğmeye tıklayın.
+        message_copy_link: 'Düğme çalışmıyorsa lütfen aşağıdaki bağlantıyı kopyalayıp tarayıcınıza yapıştırın:'
+        subject: E-posta adresinizi doğrulayın
+        verify_email_address_link: E-posta adresini doğrula
+    order_mailer:
+      cancel_email:
+        instructions: Siparişiniz iptal edilmiştir. Kayıtlarınız için lütfen iptal etme işleminin bilgilerini saklayınız.
+        subject: Sipariş İptal Etme
+      confirm_email:
+        instructions: Lütfen aşağıdaki sipariş bilgilerini gözden geçiriniz ve kayıtlarınız için saklayınız.
+        subject: Sipariş Onayı
+      payment_link_email:
+        message: Siparişinizin ödemesini yapmak için lütfen aşağıdaki düğmeye tıklayın.
+        message_copy_link: 'Düğme çalışmıyorsa lütfen aşağıdaki bağlantıyı kopyalayıp tarayıcınıza yapıştırın:'
+        pay_for_order: Siparişin ödemesini yap
+        subject: "#%{number} numaralı sipariş için ödeme bağlantısı"
+      store_owner_notification_email:
+        heading: Yeni Sipariş Alındı
+        instructions: Yeni bir sipariş aldınız.
+        order_summary: "%{number} Numaralı Sipariş Özeti"
+        subject: "%{store_name} yeni bir sipariş aldı"
+      subtotal: 'Ara Toplam:'
+      total: 'Sipariş Toplamı:'

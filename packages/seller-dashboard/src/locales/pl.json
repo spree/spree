@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "Przyjmij pozycje",
-              "refund": "Zwrot pieniędzy"
+              "refund": "Zwrot pieniędzy",
+              "complete": "Zakończ zwrot"
             },
             "create_title": "Nowy zwrot",
             "location": "Zwrot do",
@@ -147,12 +148,15 @@
             "receive_title": "Przyjmij zwrócone pozycje",
             "received_quantity": "Przyjęto",
             "refund_amount": "Kwota",
+            "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwrot na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
               "store_credit": "Kredyt sklepowy"
             },
             "refund_title": "Zwrot pieniędzy za zwrot",
+            "complete_title": "Zakończ zwrot",
+            "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "resellable": "Do ponownej sprzedaży"
           }
         }
@@ -518,6 +522,7 @@
         "cancel_message": "Klient dostanie informację, że sprawa nie będzie kontynuowana.",
         "cancel_title": "Anulować tę wymianę?",
         "fulfill": "Wyślij wymianę",
+        "balance_due_confirm": "Zamiennik kosztuje więcej niż zwrócony towar. Jego wysłanie doda różnicę do zamówienia jako kwotę do zapłaty. Nic nie zostanie pobrane automatycznie.",
         "price_difference": "Różnica w cenie: {{amount}}",
         "receive": "Przyjmij",
         "title": "Wymiany"
@@ -533,6 +538,8 @@
         "receive": "Przyjmij",
         "refund": "Zwrot pieniędzy",
         "refund_total": "Łączny zwrot: {{amount}}",
+        "refunded": "Zwrócono: {{amount}}",
+        "refunded_of": "Zwrócono: {{amount}} z {{total}}",
         "title": "Zwroty"
       },
       "statuses": {

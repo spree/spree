@@ -18,9 +18,7 @@ module Spree
                  large_url: [:string, nullable: true], xlarge_url: [:string, nullable: true],
                  og_image_url: [:string, nullable: true]
 
-        attribute :product_id do |asset|
-          asset.product&.prefixed_id
-        end
+        prefixed_id_attributes :product
 
         # Returns prefixed IDs of variants this media is associated with.
         # Two paths coexist in 5.5:

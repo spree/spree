@@ -11,6 +11,12 @@ module Spree
       LEGACY_EVENT_PREFIX = 'wished_item'
       LEGACY_EVENT_SUFFIXES = %w[created updated deleted].freeze
 
+      def self.included(base)
+        LEGACY_EVENT_SUFFIXES.each do |suffix|
+          base.publishes_event("#{LEGACY_EVENT_PREFIX}.#{suffix}", deprecated_alias_of: "#{base.event_prefix}.#{suffix}")
+        end
+      end
+
       # Wraps publishing rather than the three callbacks that call it, so the
       # decisions Publishable makes — whether events are enabled at all,
       # whether a touch-only update is worth announcing — are made once and the

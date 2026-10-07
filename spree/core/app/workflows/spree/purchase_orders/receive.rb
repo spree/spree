@@ -50,7 +50,7 @@ module Spree
       def ensure_receivable
         return if purchase_order.ordered? || purchase_order.partially_received?
 
-        failure(purchase_order, Spree.t('purchase_order.errors.not_ordered'))
+        failure(purchase_order, I18n.t('spree.purchase_order.errors.not_ordered'))
       end
 
       def line_belongs?(line)

@@ -33,6 +33,20 @@ module Spree
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
     validate :order_is_covered_by_payment, on: :create
 
+    # Refunds for goods that came back, which settle what the customer owed
+    # for them rather than leaving it owed again.
+    scope :for_returned_items, -> { where(originator_type: returned_item_originators) }
+
+    # @return [Array<String>]
+    def self.returned_item_originators
+      [Spree::Return, Spree::Claim, Spree::Exchange].map(&:polymorphic_name)
+    end
+
+    # @return [Boolean]
+    def for_returned_items?
+      self.class.returned_item_originators.include?(originator_type)
+    end
+
     attr_reader :response
 
     delegate :currency, to: :payment
@@ -74,6 +88,17 @@ module Spree
       return {} unless originator.respond_to?(:refunded_line_amounts)
 
       originator.refunded_line_amounts
+    end
+
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is known.
+    # A line opened before returns and claims carried tax is absent: its amount
+    # says nothing about how much of it was tax.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      return {} unless originator.respond_to?(:refunded_line_taxes)
+
+      originator.refunded_line_taxes
     end
 
     # Returns true if the refund is editable.
@@ -155,15 +180,15 @@ module Spree
       if response.success?
         track_order_as_refunded(refund_total_in_cents)
       else
-        Rails.logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
+        Rails.logger.error(I18n.t('spree.gateway_error') + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
         raise Core::GatewayError, text
       end
 
       response
     rescue Spree::PaymentConnectionError => e
-      Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
-      raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
+      Rails.logger.error(I18n.t('spree.gateway_error') + "  #{e.inspect}")
+      raise Core::GatewayError, I18n.t('spree.unable_to_connect_to_gateway')
     end
 
     def calculate_refund_amount(credit_cents)

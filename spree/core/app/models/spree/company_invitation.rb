@@ -15,6 +15,7 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
+    publishes_events :accepted, :revoked
 
     EXPIRY = 30.days
 

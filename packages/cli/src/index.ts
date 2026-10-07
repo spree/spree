@@ -29,7 +29,6 @@ import { registerSeedCommand } from './commands/seed.js'
 import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
-import { registerUpdateCommand } from './commands/update.js'
 import { registerUpgradeCommand } from './commands/upgrade.js'
 import { registerUserCommand } from './commands/user.js'
 import { VERSION } from './version.js'
@@ -68,7 +67,6 @@ registerAddCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
 registerRestartCommand(program)
-registerUpdateCommand(program)
 registerLogsCommand(program)
 registerEjectCommand(program)
 registerBuildCommand(program)

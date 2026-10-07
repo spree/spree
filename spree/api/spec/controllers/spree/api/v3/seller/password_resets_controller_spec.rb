@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
       expect(response).to have_http_status(:accepted)
       expect(Spree::Events).to have_received(:publish).with(
         'seller_user.password_reset_requested',
-        hash_including(reset_token: an_instance_of(String), email: seller_user.email, store_id: store.prefixed_id),
+        hash_including('reset_token' => an_instance_of(String), 'email' => seller_user.email, 'store_id' => store.prefixed_id),
         anything
       )
     end
@@ -49,7 +49,7 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
       post :create, params: { email: seller_user.email, redirect_url: 'https://evil.example.com' }, as: :json
 
       expect(Spree::Events).to have_received(:publish).
-        with('seller_user.password_reset_requested', hash_excluding(:redirect_url), anything)
+        with('seller_user.password_reset_requested', hash_excluding('redirect_url'), anything)
     end
 
     it 'ignores a redirect_url outside the store allowed origins' do
@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
       post :create, params: { email: seller_user.email, redirect_url: 'https://evil.example.com' }, as: :json
 
       expect(Spree::Events).to have_received(:publish).
-        with('seller_user.password_reset_requested', hash_excluding(:redirect_url), anything)
+        with('seller_user.password_reset_requested', hash_excluding('redirect_url'), anything)
     end
 
     # The store follows the seller, never `current_store` — which on this
@@ -88,7 +88,7 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
              as: :json
 
         expect(Spree::Events).to have_received(:publish).
-          with('seller_user.password_reset_requested', hash_excluding(:redirect_url), anything)
+          with('seller_user.password_reset_requested', hash_excluding('redirect_url'), anything)
       end
 
       it "keeps a redirect_url the seller's own store has vouched for" do
@@ -101,8 +101,8 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
         expect(Spree::Events).to have_received(:publish).with(
           'seller_user.password_reset_requested',
           hash_including(
-            redirect_url: 'https://sellers.other-store.test/reset-password',
-            store_id: other_store.prefixed_id
+            'redirect_url' => 'https://sellers.other-store.test/reset-password',
+            'store_id' => other_store.prefixed_id
           ),
           anything
         )
@@ -118,7 +118,7 @@ RSpec.describe Spree::Api::V3::Seller::PasswordResetsController, type: :controll
 
       expect(Spree::Events).to have_received(:publish).with(
         'seller_user.password_reset_requested',
-        hash_including(redirect_url: 'https://sellers.example.com/reset-password'),
+        hash_including('redirect_url' => 'https://sellers.example.com/reset-password'),
         anything
       )
     end

@@ -21,13 +21,7 @@ module Spree
           attributes :name, :selected, :cost, :total,
                      :carrier, :service_level, :estimated_delivery_date
 
-          attribute :display_cost do |delivery_rate|
-            delivery_rate.display_cost.to_s
-          end
-
-          attribute :display_total do |delivery_rate|
-            delivery_rate.display_total.to_s
-          end
+          attributes display_cost: :string, display_total: :string
         end
       end
     end

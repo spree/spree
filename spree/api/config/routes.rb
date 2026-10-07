@@ -1,6 +1,7 @@
 Spree::Core::Engine.add_routes do
   namespace :api, defaults: { format: 'json' } do
-    namespace :v3 do
+    # A JSON API has no form pages, so no resource gets `new` or `edit` routes.
+    namespace :v3, except: [:new, :edit] do
       namespace :store do
         # Authentication
         post 'auth/login', to: 'auth#create'
@@ -9,9 +10,7 @@ Spree::Core::Engine.add_routes do
 
         # Markets
         resources :markets, only: [:index, :show] do
-          collection do
-            get :resolve
-          end
+          get :resolve, on: :collection
           resources :countries, only: [:index, :show], controller: 'markets/countries'
         end
 
@@ -50,9 +49,7 @@ Spree::Core::Engine.add_routes do
           resources :fulfillments, only: [:update], controller: 'carts/fulfillments'
           resources :payments, only: [:create], controller: 'carts/payments'
           resources :payment_sessions, only: [:create, :show, :update], controller: 'carts/payment_sessions' do
-            member do
-              patch :complete
-            end
+            patch :complete, on: :member
           end
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
@@ -72,9 +69,7 @@ Spree::Core::Engine.add_routes do
           # Customer self-service returns — opening and viewing only; the
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns' do
-            member do
-              get :label
-            end
+            get :label, on: :member
           end
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
           # Read-only — the registration frozen onto the order at completion.
@@ -121,9 +116,7 @@ Spree::Core::Engine.add_routes do
           # of their data, or its erasure.
           resources :data_requests, only: [:index, :show, :create]
           resources :payment_setup_sessions, only: [:create, :show] do
-            member do
-              patch :complete
-            end
+            patch :complete, on: :member
           end
         end
 
@@ -270,20 +263,15 @@ Spree::Core::Engine.add_routes do
         # Staff & access (invitations, admin users, roles, API keys)
         resources :admin_users, only: [:index, :show, :update, :destroy]
         resources :invitations, only: [:index, :show, :create, :destroy] do
-          member do
-            patch :resend
-          end
+          patch :resend, on: :member
           resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
         resources :api_keys, only: [:index, :show, :create, :update, :destroy] do
-          collection do
-            get :current
-          end
-          member do
-            patch :revoke
-          end
+          get :current, on: :collection
+          patch :revoke, on: :member
         end
         resources :allowed_origins
+        resources :webhook_events, only: [:index]
         resources :webhook_endpoints do
           member do
             post :send_test
@@ -291,8 +279,20 @@ Spree::Core::Engine.add_routes do
             patch :disable
           end
           resources :deliveries, controller: 'webhook_deliveries', only: [:index, :show] do
-            member do
-              post :redeliver
+            post :redeliver, on: :member
+          end
+        end
+        # Addressed by template key with dots (`spree.order_mailer.confirm_email`).
+        resources :email_templates, only: [:index, :show, :destroy], format: false,
+                                    constraints: { id: /[a-z0-9_.]+/, email_template_id: /[a-z0-9_.]+/ } do
+          scope module: :email_templates do
+            resource :draft, only: [:update, :destroy]
+            resource :publication, only: [:create]
+            resource :preview, only: [:create]
+            resource :test_email, only: [:create]
+            resources :sample_records, only: [:index]
+            resources :revisions, only: [:index], constraints: { id: %r{[^/]+} } do
+              resource :restoration, only: [:create]
             end
           end
         end
@@ -304,9 +304,7 @@ Spree::Core::Engine.add_routes do
 
         # CSV Exports — see docs/plans/5.5-admin-spa-csv-export.md
         resources :exports, only: [:index, :show, :create, :destroy] do
-          member do
-            get :download
-          end
+          get :download, on: :member
         end
 
         # CSV Imports — see docs/plans/5.6-admin-spa-csv-import.md
@@ -325,9 +323,7 @@ Spree::Core::Engine.add_routes do
 
         # Products
         resources :product_types do
-          member do
-            post :apply_to_products
-          end
+          post :apply_to_products, on: :member
         end
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
@@ -355,34 +351,26 @@ Spree::Core::Engine.add_routes do
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           resources :digital_assets, controller: 'products/digital_assets',
                                      only: [:index, :create, :show, :update, :destroy] do
-            collection do
-              get :providers
-            end
+            get :providers, on: :collection
           end
         end
 
         # Digital download grants — read and reset only; they are created by
         # order completion, never by hand.
         resources :digital_links, only: [:index, :show] do
-          member do
-            patch :reset
-          end
+          patch :reset, on: :member
         end
 
         # Media library — every file in the store, placed or not. Files are put
         # ON a product through the nested media routes above; this is where they
         # are uploaded, browsed and deleted.
         resources :media, controller: 'media_library', only: [:index, :show, :create, :update, :destroy] do
-          member do
-            get :usage
-          end
+          get :usage, on: :member
         end
 
         # Categories
         resources :categories, concerns: [:custom_fieldable, :translatable] do
-          member do
-            patch :reposition
-          end
+          patch :reposition, on: :member
 
           # Manual product membership + ordering within the category.
           concerns :product_membership, controller: 'categories/products', positioned: true
@@ -432,9 +420,7 @@ Spree::Core::Engine.add_routes do
         resources :stock_locations
         resources :stock_reservations, only: [:index, :show]
         resources :stock_levels, only: [:index, :show, :update, :destroy] do
-          collection do
-            post :bulk_upsert
-          end
+          post :bulk_upsert, on: :collection
         end
         resources :stock_movements, only: [:index, :show]
         resources :stock_transfers do
@@ -471,34 +457,24 @@ Spree::Core::Engine.add_routes do
         end
         resources :tracking_carriers, only: [:index]
         resources :delivery_method_rules, only: [] do
-          collection do
-            get :types
-          end
+          get :types, on: :collection
         end
         resources :delivery_zones
         resources :package_types
 
         resources :delivery_profiles do
-          collection do
-            get :kinds
-          end
+          get :kinds, on: :collection
           resources :origin_groups, controller: 'delivery_profiles/origin_groups',
                                     only: [:index, :show, :create, :update, :destroy]
         end
 
         resources :payment_methods do
-          collection do
-            get :types
-          end
+          get :types, on: :collection
         end
 
         resources :integrations do
-          collection do
-            get :types
-          end
-          member do
-            post :test
-          end
+          get :types, on: :collection
+          post :test, on: :member
         end
 
         # Promotions, with nested actions/rules/coupon codes.
@@ -531,9 +507,7 @@ Spree::Core::Engine.add_routes do
           resources :credit_cards, controller: 'customers/credit_cards', only: [:index, :show, :destroy]
           resources :store_credits, controller: 'customers/store_credits'
           resources :tax_identifiers, controller: 'customers/tax_identifiers' do
-            member do
-              post :validate
-            end
+            post :validate, on: :member
           end
 
           member do
@@ -588,9 +562,7 @@ Spree::Core::Engine.add_routes do
           # has locked itself out, which the seller's own panel cannot do.
           resources :team, only: [:index, :destroy], controller: 'sellers/team'
           resources :invitations, only: [:index, :destroy], controller: 'sellers/invitations' do
-            member do
-              patch :resend
-            end
+            patch :resend, on: :member
             resource :acceptance_link, only: [:show], controller: 'sellers/invitations/acceptance_links'
           end
 
@@ -611,18 +583,14 @@ Spree::Core::Engine.add_routes do
         # trade. Configuration, so it hangs off the store rather than a
         # seller.
         resources :seller_requirements do
-          collection do
-            get :types
-          end
+          get :types, on: :collection
         end
 
         # Commissions — what the marketplace charges its sellers. Rates are
         # configuration; lines are the record of what was charged, so they are
         # read-only.
         resources :commission_rates do
-          collection do
-            get :rule_types
-          end
+          get :rule_types, on: :collection
         end
         resources :commission_lines, only: [:index, :show]
 
@@ -633,9 +601,7 @@ Spree::Core::Engine.add_routes do
         # records what to send and waits to be told it went.
         resources :seller_transfers, only: [:index, :show]
         resources :seller_payouts, only: [:index, :show] do
-          member do
-            patch :complete
-          end
+          patch :complete, on: :member
         end
 
         # What one checkout produced when it reached several sellers. Read-only:
@@ -660,9 +626,7 @@ Spree::Core::Engine.add_routes do
           # The business's own registration — the number on its invoices, which
           # outranks the buyer's own. Same shape as the customer's.
           resources :tax_identifiers, controller: 'companies/tax_identifiers' do
-            member do
-              post :validate
-            end
+            post :validate, on: :member
           end
 
           # Exemption evidence. Accepting or withdrawing one is its own action —
@@ -713,9 +677,7 @@ Spree::Core::Engine.add_routes do
 
         # Price lists
         resources :price_lists do
-          collection do
-            get :price_rule_types
-          end
+          get :price_rule_types, on: :collection
           member do
             patch :activate
             patch :deactivate
@@ -799,9 +761,7 @@ Spree::Core::Engine.add_routes do
               end
             end
             resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy] do
-              member do
-                patch :mark_delivered
-              end
+              patch :mark_delivered, on: :member
             end
           end
           resources :returns, controller: 'orders/returns', only: [:index, :show, :create, :update] do
@@ -889,9 +849,7 @@ Spree::Core::Engine.add_routes do
         # business trading in several regimes holds one in each.
         resources :tax_identifiers, only: [:index, :create, :update, :destroy],
                                     controller: 'tax_identifiers' do
-          member do
-            post :validate
-          end
+          post :validate, on: :member
         end
 
         resources :team, only: [:index, :create, :destroy], controller: 'team'
@@ -899,9 +857,7 @@ Spree::Core::Engine.add_routes do
         # Creating an invitation is hiring, so it lives on `team`; chasing or
         # withdrawing one is bookkeeping on the offer.
         resources :invitations, only: [:index, :destroy], controller: 'invitations' do
-          member do
-            patch :resend
-          end
+          patch :resend, on: :member
           resource :acceptance_link, only: [:show], controller: 'invitations/acceptance_links'
         end
 
@@ -958,9 +914,7 @@ Spree::Core::Engine.add_routes do
             # fulfillment because that is what actually travels.
             resources :deliveries, controller: 'orders/deliveries', only: [:index, :show, :create, :update, :destroy]
             resources :labels, controller: 'orders/labels', only: [:index, :show, :create, :destroy] do
-              member do
-                get :download
-              end
+              get :download, on: :member
             end
           end
 
@@ -1013,9 +967,7 @@ Spree::Core::Engine.add_routes do
         # and downloaded — no index, since a seller has no history page to
         # list, and no destroy, since retention is the marketplace's business.
         resources :exports, only: [:create, :show] do
-          member do
-            get :download
-          end
+          get :download, on: :member
         end
 
         # Bulk-listing a catalog by CSV. The operator's pipeline, narrowed to
@@ -1094,9 +1046,7 @@ Spree::Core::Engine.add_routes do
           resources :submissions, only: [:create], controller: 'requirement_submissions'
         end
         resources :requirement_submissions, only: [] do
-          member do
-            get :download
-          end
+          get :download, on: :member
         end
       end
 

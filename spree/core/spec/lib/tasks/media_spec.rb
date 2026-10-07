@@ -21,8 +21,8 @@ describe 'spree:media:migrate_master_images_to_product_media' do
     let!(:product_with_variant_image) { create(:product) }
     let!(:variant)                    { create(:variant, product: product_with_variant_image) }
     let!(:clean_product)              { create(:product) }
-    let!(:master_image)  { create(:image, viewable: product_with_master_image.default_variant) }
-    let!(:variant_image) { create(:image, viewable: variant) }
+    let!(:master_image)  { create(:media, viewable: product_with_master_image.default_variant) }
+    let!(:variant_image) { create(:media, viewable: variant) }
 
     it 'enqueues a job for each product with variant-pinned assets' do
       expect { subject.invoke }.to have_enqueued_job(Spree::Images::MigrateProductMediaJob)
@@ -50,7 +50,7 @@ describe 'spree:media:migrate_master_images_to_product_media' do
   context 'when run twice' do
     let!(:product) { create(:product) }
     let!(:variant) { create(:variant, product: product) }
-    let!(:asset)   { create(:image, viewable: variant) }
+    let!(:asset)   { create(:media, viewable: variant) }
 
     it 'still enqueues for products that have not been processed yet' do
       # First invocation enqueues but doesn't run inline; the asset is still

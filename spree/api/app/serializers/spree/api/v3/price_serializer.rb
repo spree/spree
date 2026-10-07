@@ -25,9 +25,7 @@ module Spree
           price.display_compare_at_amount&.to_s
         end
 
-        attribute :price_list_id do |price|
-          price.price_list&.prefixed_id
-        end
+        prefixed_id_attributes :price_list
       end
     end
   end

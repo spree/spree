@@ -9,13 +9,7 @@ module Spree
 
         attributes :count_on_hand, :backorderable
 
-        attribute :stock_location_id do |stock_level|
-          stock_level.stock_location&.prefixed_id
-        end
-
-        attribute :variant_id do |stock_level|
-          stock_level.variant&.prefixed_id
-        end
+        prefixed_id_attributes :stock_location, :variant
       end
     end
   end

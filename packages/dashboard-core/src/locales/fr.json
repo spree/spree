@@ -1401,7 +1401,7 @@
       "create_description": "Ajoutez un entrepôt, un magasin ou un point de retrait pour traiter les commandes.",
       "create_label": "Créer un emplacement de stock",
       "delete_confirm": {
-        "message": "{{name}} sera supprimé. Les articles en stock à cet emplacement ne sont pas supprimés.",
+        "message": "{{name}} sera supprimé. Les niveaux de stock à cet emplacement seront également supprimés.",
         "title": "Supprimer l'emplacement de stock ?"
       },
       "edit_description": "Mettez à jour le nom, l'adresse, le retrait ou les politiques de stock.",
@@ -1576,6 +1576,12 @@
         "slug_placeholder": "url-du-produit"
       },
       "tax_category_placeholder": "Sélectionner une catégorie de taxe",
+      "tax": {
+        "apply_to_variants_help": "Cette catégorie s'applique à chaque variante qui n'a pas sa propre catégorie de taxe. À l'enregistrement, ces variantes utilisent ce réglage.",
+        "variant_overrides_heading": "Variantes avec leur propre catégorie de taxe",
+        "variant_overrides_description": "Ces variantes conservent leur catégorie jusqu'à ce que vous supprimiez l'exception. Les autres variantes suivent la catégorie du produit ci-dessus.",
+        "clear_variant_override": "Utiliser la catégorie du produit"
+      },
       "transfers": {
         "create_description": "Déplacer du stock entre les emplacements, ou recevoir du nouveau stock d’un fournisseur externe.",
         "delete_confirm": {

@@ -13,7 +13,6 @@ module Spree
 
     encrypts :secret_key, deterministic: true if Rails.configuration.active_record.encryption.include?(:primary_key)
 
-    belongs_to :store, class_name: 'Spree::Store'
     has_many :webhook_deliveries, class_name: 'Spree::WebhookDelivery', dependent: :destroy_async
 
     validates :url, presence: true
@@ -50,18 +49,16 @@ module Spree
     # Number of consecutive failed deliveries before auto-disabling
     AUTO_DISABLE_THRESHOLD = 15
 
-    # Events whose payload carries a live customer credential (a password
-    # reset token). Receiving one is as good as holding the customer's account,
-    # so they reach only an endpoint that names them — never through `*` or a
-    # pattern — and the API asks for customer write access to point one at them.
-    CREDENTIAL_EVENTS = %w[customer.password_reset_requested].freeze
-
-    # Check if this endpoint is subscribed to a specific event
+    # Check if this endpoint is subscribed to a specific event.
+    #
+    # Events whose payload carries a live credential (a password reset token)
+    # reach only an endpoint that names them — never through `*` or a pattern —
+    # since receiving one is as good as holding the account.
     #
     # @param event_name [String] the event name to check
     # @return [Boolean]
     def subscribed_to?(event_name)
-      return subscriptions.to_a.include?(event_name) if CREDENTIAL_EVENTS.include?(event_name)
+      return subscriptions.to_a.include?(event_name) if Spree::Events.catalog.credential?(event_name)
       return true if subscriptions.blank? || subscriptions.include?('*')
 
       subscriptions.any? do |subscription|
@@ -74,11 +71,11 @@ module Spree
       end
     end
 
-    # Whether this endpoint receives customer credentials.
+    # The credential-carrying events this endpoint names.
     #
-    # @return [Boolean]
-    def receives_credentials?
-      (subscriptions.to_a & CREDENTIAL_EVENTS).any?
+    # @return [Array<Spree::Events::Catalog::Entry>]
+    def credential_subscriptions
+      Spree::Events.catalog.credential_events(subscriptions.to_a)
     end
 
     # Returns all events this endpoint is subscribed to

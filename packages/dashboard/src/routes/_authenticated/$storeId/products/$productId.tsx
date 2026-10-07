@@ -13,6 +13,7 @@ import {
   PageHeader,
   PricesCard,
   type ProductFormValues,
+  prepareVariantsTaxForProductSave,
   productFormSchema,
   productToFormValues,
   SEOCard,
@@ -165,7 +166,11 @@ function ProductForm({ product }: { product: Product }) {
     const payload: Record<string, unknown> = { ...rest, ...extensionValues }
 
     if (variants && variants.length > 0) {
-      payload.variants = variants.map((v, i) => variantToWirePayload(v, i))
+      const variantsForSave = prepareVariantsTaxForProductSave(
+        variants,
+        rest.tax_category_id as string | null | undefined,
+      )
+      payload.variants = variantsForSave.map((v, i) => variantToWirePayload(v, i))
     }
 
     // Strip UI-only fields and ship media inline. The server upserts by id

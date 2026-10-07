@@ -24,7 +24,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   end
 
   describe '#available?' do
-    let(:digital_shipping_method) { create(:digital_shipping_method) }
+    let(:digital_shipping_method) { create(:digital_delivery_method) }
     let(:digital_product) { create(:digital_product) }
 
     let(:digital_order) do

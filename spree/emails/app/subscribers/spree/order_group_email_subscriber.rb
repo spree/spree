@@ -27,7 +27,7 @@ module Spree
     # about the sale.
     def send_customer_confirmation(order_group, event)
       return if order_group.confirmation_delivered?
-      return if event.payload['notify_customer'] == false
+      return if event.metadata['notify_customer'] == false
       return unless order_group.store.prefers_send_consumer_transactional_emails?
 
       OrderGroupMailer.confirm_email(order_group.id).deliver_later

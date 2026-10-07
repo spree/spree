@@ -45,7 +45,7 @@ RSpec.describe Spree::Api::V3::Admin::IntegrationsController, type: :controller 
     end
 
     describe 'gallery metadata' do
-      it 'serves the class description and no logo by default' do
+      it 'serves the class description and no logo or setup guide by default' do
         allow(TestIntegrations::Carrier).to receive(:description).and_return('Ships things')
 
         get :types, as: :json
@@ -53,15 +53,20 @@ RSpec.describe Spree::Api::V3::Admin::IntegrationsController, type: :controller 
         entry = json_response['data'].find { |row| row['type'] == 'carrier' }
         expect(entry['description']).to eq('Ships things')
         expect(entry['logo_url']).to be_nil
+        expect(entry['docs_url']).to be_nil
       end
 
-      it 'serves the declared logo url untouched' do
-        allow(TestIntegrations::Carrier).to receive(:logo_url).and_return('https://cdn.example.com/logo.svg')
+      it 'serves the declared logo and setup guide urls untouched' do
+        allow(TestIntegrations::Carrier).to receive_messages(
+          logo_url: 'https://cdn.example.com/logo.svg',
+          docs_url: 'https://docs.example.com/carrier'
+        )
 
         get :types, as: :json
 
         entry = json_response['data'].find { |row| row['type'] == 'carrier' }
         expect(entry['logo_url']).to eq('https://cdn.example.com/logo.svg')
+        expect(entry['docs_url']).to eq('https://docs.example.com/carrier')
       end
     end
   end

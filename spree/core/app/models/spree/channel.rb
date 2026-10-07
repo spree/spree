@@ -16,7 +16,6 @@ module Spree
     # Empty -> falls back to the Store-level preference.
     preference :order_routing_strategy, :string, default: nil
 
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :orders, class_name: 'Spree::Order', inverse_of: :channel, dependent: :nullify
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
@@ -163,7 +162,7 @@ module Spree
       return unless default?
       return if destroyed_by_association.present?
 
-      errors.add(:base, :cannot_delete_default_channel, message: Spree.t('errors.messages.cannot_delete_default_channel'))
+      errors.add(:base, :cannot_delete_default_channel, message: I18n.t('spree.errors.messages.cannot_delete_default_channel'))
       throw :abort
     end
 
@@ -176,7 +175,7 @@ module Spree
       return unless api_keys.active.exists?
       return if destroyed_by_association.present?
 
-      errors.add(:base, :cannot_delete_channel_with_active_api_keys, message: Spree.t('errors.messages.cannot_delete_channel_with_active_api_keys'))
+      errors.add(:base, :cannot_delete_channel_with_active_api_keys, message: I18n.t('spree.errors.messages.cannot_delete_channel_with_active_api_keys'))
       throw :abort
     end
 

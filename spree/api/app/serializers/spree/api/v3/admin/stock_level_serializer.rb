@@ -27,9 +27,7 @@ module Spree
             stock_level.stock_location&.name
           end
 
-          attribute :product_id do |stock_level|
-            stock_level.product&.prefixed_id
-          end
+          prefixed_id_attributes :product
 
           attribute :options_text do |stock_level|
             stock_level.variant&.options_text.presence

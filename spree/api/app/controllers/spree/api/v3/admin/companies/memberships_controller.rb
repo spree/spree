@@ -47,10 +47,6 @@ module Spree
               @parent.memberships
             end
 
-            def parent_association
-              :memberships
-            end
-
             def collection_includes
               [:customer]
             end

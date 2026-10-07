@@ -160,7 +160,7 @@ RSpec.describe Spree::Fulfillments::Update do
         result = update(cost: value, fulfillment_attributes: { tracking: 'DPD-2' })
 
         expect(result).not_to be_success, "expected #{value.inspect} to be refused"
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       expect(fulfillment.reload.cost_source).to be_nil

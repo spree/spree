@@ -48,7 +48,7 @@ module Spree
         end
         cart.warnings |= warnings if warnings.present?
 
-        failure(cart, Spree.t('cart_line_item.pricing_unavailable'))
+        failure(cart, I18n.t('spree.cart_line_item.pricing_unavailable'))
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -110,7 +110,7 @@ module Spree
           cart.po_document.attach(value)
         end
       rescue ActiveStorage::FileNotFoundError
-        cart.errors.add(:po_document, :po_document_upload_incomplete, message: Spree.t(:po_document_upload_incomplete))
+        cart.errors.add(:po_document, :po_document_upload_incomplete, message: I18n.t('spree.po_document_upload_incomplete'))
         raise ActiveRecord::RecordInvalid, cart
       end
 
@@ -187,7 +187,9 @@ module Spree
       def process_items
         return unless params[:items].is_a?(Array)
 
-        result = Spree.cart_upsert_items_workflow.call(cart: cart, items: params[:items])
+        # Resolved after the save, so a company named in the same request
+        # decides which catalogs the items are checked against.
+        result = Spree.cart_upsert_items_workflow.call(cart: cart, items: params[:items], orderable_variants: cart.orderable_variants)
 
         raise StandardError, result.error.to_s if result.failure?
       end

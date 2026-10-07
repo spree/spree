@@ -83,7 +83,7 @@ module Spree
     def violation_message(name, quantity)
       return nil if satisfied_by?(quantity)
 
-      Spree.t('cart_line_item.quantity_rule_violated',
+      I18n.t('spree.cart_line_item.quantity_rule_violated',
               li_name: name, quantities: nearest_valid(quantity).to_sentence)
     end
 

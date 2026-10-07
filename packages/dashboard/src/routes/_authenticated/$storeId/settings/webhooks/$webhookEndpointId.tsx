@@ -12,6 +12,7 @@ import {
   type ResourceSearch,
   ResourceTable,
   resourceSearchSchema,
+  Slot,
   Subject,
 } from '@spree/dashboard-core'
 import {
@@ -272,7 +273,12 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
             />
           </>
         }
-        sidebar={<DetailsCard endpoint={endpoint} />}
+        sidebar={
+          <>
+            <DetailsCard endpoint={endpoint} />
+            <Slot name="webhook_endpoint.form_sidebar" context={{ endpoint }} />
+          </>
+        }
       />
       <EditEndpointSheet
         endpoint={endpoint}

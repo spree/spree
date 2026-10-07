@@ -117,6 +117,10 @@ module Spree
       payment_session.complete
     end
 
+    def cancel_payment_session(payment_session:)
+      payment_session.cancel
+    end
+
     def setup_session_supported?
       true
     end

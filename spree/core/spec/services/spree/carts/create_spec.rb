@@ -20,6 +20,14 @@ module Spree
         expect(value).to eq expected
         expect(expected.token).to be_present
       end
+
+      it 'applies the remaining params through the configured carts update service' do
+        custom_service = Class.new(Spree::Carts::Update)
+        allow(Spree).to receive(:carts_update_service).and_return(custom_service)
+        expect(custom_service).to receive(:call).and_call_original
+
+        expect(execute).to be_success
+      end
     end
 
     context 'create an order with store currency' do

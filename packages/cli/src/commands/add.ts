@@ -204,7 +204,7 @@ function resolveBundledTemplate(app: AppSpec): string {
  * Vite config runs the same generator, with the same extensions, without
  * starting a server, so that first start finds nothing to change.
  */
-async function generateRouteTree(appDir: string): Promise<void> {
+export async function generateRouteTree(appDir: string): Promise<void> {
   // Best effort: the dev server generates the file on start regardless.
   await execa(
     'node',

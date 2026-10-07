@@ -58,7 +58,14 @@ test.describe('post-sale', () => {
       .getByRole('dialog')
       .getByRole('button', { name: /^refund$/i })
       .click()
-    await expect(returns.getByText(/^refunded$/i)).toBeVisible({ timeout: 15_000 })
+    // The status badge, and the footer naming what went back rather than what
+    // was owed.
+    await expect(
+      returns.locator('[data-slot="status-badge"]').filter({ hasText: /^refunded$/i }),
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(
+      returns.locator('[data-slot="card-footer"]').getByText(/^refunded$/i),
+    ).toBeVisible()
 
     // The cross-order list is where the team sees what is still in flight.
     await page.goto(`/${creds.store_id}/returns`)

@@ -8,7 +8,6 @@ module Spree
     # 2026-03-16 "Consolidate metadata") — write-only developer escape hatch.
     attribute :metadata, default: -> { {} }
 
-    belongs_to :store, class_name: 'Spree::Store'
     # Zones are destination sets owned by a delivery profile; within it they
     # hang off an origin group, so the same profile can quote different
     # tables per warehouse. The profile's methods bind to at most one zone.

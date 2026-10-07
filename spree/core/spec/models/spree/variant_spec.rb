@@ -1454,7 +1454,7 @@ describe Spree::Variant, type: :model do
     let(:variant) { create(:variant) }
 
     context 'when variant has images' do
-      let!(:image) { create(:image, position: 1, viewable: variant) }
+      let!(:image) { create(:media, position: 1, viewable: variant) }
 
       it 'returns the first image' do
         expect(variant.reload.primary_media).to eq(image)
@@ -1472,8 +1472,8 @@ describe Spree::Variant, type: :model do
     let(:variant) { create(:variant) }
 
     context 'with images pinned to the variant' do
-      let!(:image1) { create(:image, position: 1, viewable: variant) }
-      let!(:image2) { create(:image, position: 2, viewable: variant) }
+      let!(:image1) { create(:media, position: 1, viewable: variant) }
+      let!(:image2) { create(:media, position: 2, viewable: variant) }
 
       it 'returns the second image' do
         expect(variant.secondary_image).to eq(image2)
@@ -1481,8 +1481,8 @@ describe Spree::Variant, type: :model do
     end
 
     context 'with product-level media linked to the variant' do
-      let!(:image1) { create(:image, position: 1, viewable: variant.product) }
-      let!(:image2) { create(:image, position: 2, viewable: variant.product) }
+      let!(:image1) { create(:media, position: 1, viewable: variant.product) }
+      let!(:image2) { create(:media, position: 2, viewable: variant.product) }
 
       before { variant.associated_media = [image1, image2] }
 
@@ -1494,9 +1494,9 @@ describe Spree::Variant, type: :model do
 
   describe '#additional_images' do
     let(:variant) { create(:variant) }
-    let!(:image1) { create(:image, position: 1, viewable: variant) }
-    let!(:image2) { create(:image, position: 2, viewable: variant) }
-    let!(:image3) { create(:image, position: 3, viewable: variant) }
+    let!(:image1) { create(:media, position: 1, viewable: variant) }
+    let!(:image2) { create(:media, position: 2, viewable: variant) }
+    let!(:image3) { create(:media, position: 3, viewable: variant) }
 
     it 'returns all images except the default' do
       expect(variant.additional_images).to eq([image2, image3])
@@ -1513,7 +1513,7 @@ describe Spree::Variant, type: :model do
     end
 
     context 'when variant has images' do
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it 'returns true' do
         expect(variant.reload.has_images?).to be true
@@ -1521,7 +1521,7 @@ describe Spree::Variant, type: :model do
     end
 
     context 'when images are preloaded' do
-      let!(:image) { create(:image, viewable: variant) }
+      let!(:image) { create(:media, viewable: variant) }
 
       it 'uses loaded association' do
         loaded_variant = Spree::Variant.includes(:images).find(variant.id)

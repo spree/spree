@@ -43,6 +43,30 @@ end
 
 After restarting your server, you can select "MyGateway" when creating a new payment method in the admin panel under **Settings > Payments**.
 
+### Show a logo and setup guide (optional)
+
+Payment methods backed by an external provider also appear in the admin dashboard under **Settings > Integrations**, next to other connected services. A method is listed there when it inherits from `Spree::Gateway`, or when its class defines `self.third_party?` to return `true`. Declare a logo and a link to your setup guide so merchants recognise the provider and know how to connect it:
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  # Lists MyGateway under Settings > Integrations. Not needed when the class
+  # inherits from Spree::Gateway.
+  def self.third_party?
+    true
+  end
+
+  def self.logo_url
+    'https://my-gateway.example.com/logo.svg'
+  end
+
+  def self.docs_url
+    'https://my-gateway.example.com/docs/spree'
+  end
+end
+```
+
+`logo_url` accepts anything an image tag accepts, including a `data:` URI if you don't want to host the file. Both are optional: without a logo the card shows the provider's first letter, and without a guide the link is hidden. Integrations declare the same two methods — see [custom delivery rate providers](/developer/how-to/custom-delivery-rate-provider).
+
 ## Step 3: Add Payment Session Support
 
 Payment Sessions are the modern, PCI-compliant way to handle payments. Your gateway creates a session with the provider, the frontend collects payment details using the provider's SDK, and Spree records the result.
@@ -158,11 +182,23 @@ class MyGateway < Spree::PaymentMethod
     payment_session
   end
 
+  # Cancel a session the customer left behind, so it can no longer be paid.
+  # Spree calls this from a background job, once the order is placed, for
+  # every session still pending with nothing paid through it.
+  def cancel_payment_session(payment_session:)
+    MyProvider::Client.new(preferred_api_key).cancel_session(payment_session.external_id)
+    payment_session.cancel
+  end
+
   def payment_icon_name
     'my-gateway'
   end
 end
 ```
+
+<Warning>
+If your provider lets each open session be paid on its own (as Stripe does with PaymentIntents), a customer with two open sessions can be charged twice — for example, with checkout open in two tabs. Have `create_payment_session` cancel the cart's open sessions for your gateway before opening a new one, and implement `cancel_payment_session`. Leave a session the provider has already accepted, and do not open another. The built-in Stripe gateway does both. If you leave out `cancel_payment_session`, sessions still pending when the order is placed stay open at your provider.
+</Warning>
 
 ### How the Frontend Uses It
 
@@ -195,7 +231,7 @@ const order = await client.carts.complete(cart.id, options)
 ```
 
 <Info>
-**Important:** Always create the payment session **after** shipping is selected. If the order total changes (shipping rate change, coupon applied), create a new payment session with the updated amount. The `complete` call in step 5 only handles payment — step 6 finalizes the order.
+**Important:** Always create the payment session **after** shipping is selected. If the order total changes (shipping rate change, coupon applied), update the session with the new amount (`client.carts.paymentSessions.update`) rather than creating another one. The `complete` call in step 5 only handles payment — step 6 finalizes the order.
 </Info>
 
 ## Step 4: Handle Webhooks (Recommended)

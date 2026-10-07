@@ -8,9 +8,7 @@ module Spree
                  filename: [:string, nullable: true],
                  content_type: [:string, nullable: true]
 
-        attribute :variant_id do |digital_asset|
-          digital_asset.variant&.prefixed_id
-        end
+        prefixed_id_attributes :variant
 
         attribute :filename do |digital_asset|
           digital_asset.filename&.to_s

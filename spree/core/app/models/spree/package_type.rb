@@ -18,7 +18,6 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Metadata
 
-    belongs_to :store, class_name: 'Spree::Store'
 
     # Whose packaging this is. Nil is the marketplace's own row — the shared
     # vocabulary every seller may pack into — and a seller's rows are theirs
@@ -150,7 +149,7 @@ module Spree
       return unless default?
       return if destroyed_by_association.present?
 
-      errors.add(:base, Spree.t('errors.messages.cannot_delete_default_package_type'))
+      errors.add(:base, I18n.t('spree.errors.messages.cannot_delete_default_package_type'))
       throw(:abort)
     end
 

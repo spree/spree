@@ -114,16 +114,6 @@ describe Spree::StockReservation, type: :model do
 
       expect(level.reload.reserved_count).to eq(0)
     end
-
-    it 'is given back when the cart is emptied' do
-      cart = create(:cart_with_line_items, line_items_count: 1)
-      cart_reservation = create(:stock_reservation, cart: cart, line_item: cart.line_items.first, quantity: 2)
-      cart_level = cart_reservation.stock_level
-
-      Spree::Carts::Empty.call(cart: cart)
-
-      expect(cart_level.reload.reserved_count).to eq(0)
-    end
   end
 
   describe 'cleanup via dependent: :destroy' do

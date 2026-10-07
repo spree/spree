@@ -1,5 +1,3 @@
-require_dependency 'spree/shipping_calculator'
-
 module Spree
   module Calculator::Shipping
     class DigitalDelivery < ShippingCalculator
@@ -9,7 +7,7 @@ module Spree
       preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
       def self.description
-        Spree.t('digital.digital_delivery')
+        I18n.t('spree.digital.digital_delivery')
       end
 
       def compute_package(package = nil)

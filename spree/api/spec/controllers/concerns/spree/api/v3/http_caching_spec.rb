@@ -19,7 +19,28 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         it 'sets Vary header for CDN caching' do
           get :index
 
-          expect(response.headers['Vary']).to eq('Accept, x-spree-currency, x-spree-locale, x-spree-channel')
+          expect(response.headers['Vary']).to eq(
+            'Accept, X-Spree-Api-Key, Authorization, X-Spree-Country, X-Spree-Currency, X-Spree-Locale, X-Spree-Channel'
+          )
+        end
+
+        # Every header that changes the body must be in Vary, or a shared
+        # cache serves one market's/store's/customer's response to another.
+        %w[
+          X-Spree-Country X-Spree-Currency X-Spree-Locale X-Spree-Channel X-Spree-Api-Key Authorization
+        ].each do |header|
+          it "varies on #{header}" do
+            get :index
+
+            vary = response.headers['Vary'].split(',').map { |h| h.strip.downcase }
+            expect(vary).to include(header.downcase)
+          end
+        end
+
+        it 'sets Vary on show responses too' do
+          get :show, params: { id: product.prefixed_id }
+
+          expect(response.headers['Vary']).to include('X-Spree-Country')
         end
       end
 
@@ -136,6 +157,26 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           eur_etag = response.headers['ETag']
 
           expect(eur_etag).not_to eq(original_etag)
+        end
+
+        # Two markets sharing a currency and locale — the market (tax display,
+        # availability) is the only dimension that differs.
+        context 'when the country resolves a different market' do
+          let!(:germany) { create(:country, iso: 'DE', name: 'Germany') }
+          let!(:de_market) do
+            create(:market, store: store, currency: store.default_currency, default_locale: store.default_locale,
+                            tax_inclusive: true, countries: [germany])
+          end
+
+          it 'changes ETag when the resolved market changes' do
+            get :index
+            default_etag = response.headers['ETag']
+
+            request.headers['x-spree-country'] = 'DE'
+            get :index
+
+            expect(response.headers['ETag']).not_to eq(default_etag)
+          end
         end
 
         # Publish the same products on both channels so the identical collection

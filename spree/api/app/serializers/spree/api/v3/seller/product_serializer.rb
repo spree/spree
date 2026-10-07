@@ -20,13 +20,7 @@ module Spree
 
           attributes :status, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :product_type_id do |product|
-            product.product_type&.prefixed_id
-          end
-
-          attribute :delivery_profile_id do |product|
-            product.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :product_type, :delivery_profile
 
           many :variants,
                resource: proc { Spree.api.seller_variant_serializer },

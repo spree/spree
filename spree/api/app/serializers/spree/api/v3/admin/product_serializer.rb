@@ -24,9 +24,7 @@ module Spree
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :delivery_profile_id do |product|
-            product.delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile
 
           # The live row in the review trail: who submitted, who decided,
           # when, and what the seller was told. Expanded rather than always
@@ -47,13 +45,7 @@ module Spree
               resource: proc { Spree.api.admin_seller_serializer },
               if: proc { expand?('seller') }
 
-          attribute :product_type_id do |product|
-            product.product_type&.prefixed_id
-          end
-
-          attribute :tax_category_id do |product|
-            product.tax_category&.prefixed_id
-          end
+          prefixed_id_attributes :product_type, :tax_category
 
           attribute :price do |product|
             price = price_for(product.default_variant)

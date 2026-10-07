@@ -40,12 +40,13 @@ module Spree
                      preorder_ships_at: :iso8601, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preorderable do |variant|
-            variant.preorderable?
-          end
+          attribute :preorderable, &:preorderable?
 
+          # Stored on the row only — nil means inherit from the product. The
+          # model's +tax_category+ reader resolves the effective category for
+          # tax; the admin form needs the raw column to tell override from inherit.
           attribute :tax_category_id do |variant|
-            variant.tax_category&.prefixed_id
+            Spree::TaxCategory.prefixed_id_for(variant[:tax_category_id])
           end
 
           # Encoded from the foreign key: loading the carton row just to
@@ -82,9 +83,7 @@ module Spree
           # seller's row ships; on an owned product the write is a no-op, since
           # every variant ships as the product does. The dashboard need not
           # know which.
-          attribute :delivery_profile_id do |variant|
-            variant.resolved_delivery_profile&.prefixed_id
-          end
+          prefixed_id_attributes delivery_profile_id: :resolved_delivery_profile
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },

@@ -642,12 +642,12 @@ module Spree
           end.to_h
         end
 
-        # Both periods span the same number of days, so their bucket counts
-        # differ by at most one partial edge. Pairing runs from the start —
-        # the nth bucket of this period with the nth of the previous — because
-        # the ranges share a start offset: a range beginning mid-month pairs
-        # its partial first bucket with the previous period's partial first
-        # bucket. A bucket past the end of the previous list has no
+        # Both periods span the same number of days (or of whole months), so
+        # their bucket counts differ by at most one partial edge. Pairing runs
+        # from the start — the nth bucket of this period with the nth of the
+        # previous — because the ranges share a start offset: a range
+        # beginning mid-month pairs its partial first bucket with the previous
+        # period's partial first bucket. A bucket past the end of the previous list has no
         # counterpart and pairs with nothing rather than wrapping around.
         #
         # The one exception: an equal-day shift can carry the previous period's

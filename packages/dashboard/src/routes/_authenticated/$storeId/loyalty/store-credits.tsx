@@ -1,5 +1,12 @@
 import type { StoreCredit, StoreCreditCurrencyTotal } from '@spree/admin-sdk'
-import { PageHeader, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
+import {
+  Can,
+  PageHeader,
+  ResourceTable,
+  resourceSearchSchema,
+  Subject,
+  usePermissions,
+} from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -8,6 +15,7 @@ import {
   cn,
   Pagination,
   RelativeTime,
+  RowActions,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -15,13 +23,18 @@ import {
   SheetHeader,
   SheetTitle,
   Skeleton,
+  useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { PencilIcon, PlusIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import { useIsFetching } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { EditStoreCreditDialog } from '../../../../components/spree/store-credits/edit-store-credit-dialog'
+import { IssueStoreCreditDialog } from '../../../../components/spree/store-credits/issue-store-credit-dialog'
+import { useDeleteCustomerStoreCredit } from '../../../../hooks/use-customer-store-credits'
 import {
   listStoreCredits,
   useStoreCredit,
@@ -44,16 +57,17 @@ export const Route = createFileRoute('/_authenticated/$storeId/loyalty/store-cre
 const LIST_EXPAND = ['customer', 'created_by']
 
 /**
- * What the store owes in prepaid balances, across every customer.
- *
- * Read-only: a credit belongs to one customer and is issued, edited and
- * deleted on that customer's profile. This page answers how much is owed, to
- * whom, and why.
+ * What the store owes in prepaid balances, across every customer, and where a
+ * credit can be issued, edited or deleted. This page answers how much is owed,
+ * to whom, and why.
  */
 function StoreCreditsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch()
   const navigate = useNavigate()
+  const [issueOpen, setIssueOpen] = useState(false)
+  const [editing, setEditing] = useState<StoreCredit | null>(null)
+  const { canEdit, canDelete, deleteCredit, deletePending } = useStoreCreditActions()
   // Mirrored from the list response rather than fetched separately, so the
   // cards always describe the same filtered set as the rows. `queryFn` only
   // runs on an actual fetch, so the last totals are kept across a cached
@@ -81,13 +95,27 @@ function StoreCreditsPage() {
 
   useRowClickBridge('data-store-credit-id', openCredit)
 
+  async function handleDelete(credit: StoreCredit) {
+    const deleted = await deleteCredit(credit)
+    if (deleted && credit.id === search.credit) closeSheet()
+  }
+
   return (
     <>
       <div className="flex flex-col gap-6">
         <PageHeader
           title={t('admin.nav.store_credits')}
-          subtitle={t('admin.store_credits.page.subtitle')}
+          description={t('admin.store_credits.page.subtitle')}
+          docsPath="loyalty/store-credits-list"
           sticky={false}
+          actions={
+            <Can I="create" a={Subject.StoreCredit}>
+              <Button onClick={() => setIssueOpen(true)}>
+                <PlusIcon className="size-4" />
+                {t('admin.pages.customers.detail.issue_credit')}
+              </Button>
+            </Can>
+          }
         />
 
         <OutstandingTotals totals={totals} stale={refetching} />
@@ -103,11 +131,35 @@ function StoreCreditsPage() {
           }}
           searchParams={search}
           defaultParams={{ expand: LIST_EXPAND }}
+          rowActions={(credit) => (
+            <RowActions
+              actions={[
+                {
+                  key: 'edit',
+                  visible: canEdit(credit),
+                  onSelect: () => setEditing(credit),
+                },
+                {
+                  key: 'delete',
+                  destructive: true,
+                  visible: canDelete(credit),
+                  disabled: deletePending,
+                  onSelect: () => handleDelete(credit),
+                },
+              ]}
+            />
+          )}
           // The page mounts its own header so the totals can sit between the
           // title and the list; without this the table renders a second one.
           hideHeader
         />
       </div>
+
+      <IssueStoreCreditDialog
+        open={issueOpen}
+        onOpenChange={setIssueOpen}
+        onIssued={(credit) => openCredit(credit.id)}
+      />
 
       {search.credit && (
         // Keyed by the credit so a deep link from one credit to another
@@ -116,10 +168,60 @@ function StoreCreditsPage() {
           key={search.credit}
           id={search.credit}
           onOpenChange={(open) => !open && closeSheet()}
+          canEdit={canEdit}
+          canDelete={canDelete}
+          deletePending={deletePending}
+          onEdit={setEditing}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {editing?.customer_id && (
+        <EditStoreCreditDialog
+          customerId={editing.customer_id}
+          credit={editing}
+          onOpenChange={(open) => !open && setEditing(null)}
         />
       )}
     </>
   )
+}
+
+/**
+ * Edit and delete go through the customer that holds the credit, so a credit
+ * without one offers neither. A credit with any of its balance used can no
+ * longer be deleted; the server refuses it, so the action is not offered.
+ */
+function useStoreCreditActions() {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+  const { permissions } = usePermissions()
+  const deleteMutation = useDeleteCustomerStoreCredit()
+
+  const canEdit = (credit: StoreCredit) =>
+    !!credit.customer_id && permissions.can('update', Subject.StoreCredit)
+
+  const canDelete = (credit: StoreCredit) =>
+    !!credit.customer_id &&
+    Number(credit.amount_used) === 0 &&
+    permissions.can('destroy', Subject.StoreCredit)
+
+  /** Resolves to whether the credit was deleted, so a cancel keeps the panel open. */
+  async function deleteCredit(credit: StoreCredit) {
+    if (!credit.customer_id) return false
+    const ok = await confirm({
+      message: t('admin.customers.detail.store_credit.delete_confirm_message'),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return false
+    return deleteMutation.mutateAsync({ customerId: credit.customer_id, id: credit.id }).then(
+      () => true,
+      () => false,
+    )
+  }
+
+  return { canEdit, canDelete, deleteCredit, deletePending: deleteMutation.isPending }
 }
 
 /**
@@ -173,16 +275,23 @@ function OutstandingTotals({
   )
 }
 
-/**
- * The credit's details and its ledger. Read-only — editing a credit happens
- * on the customer profile, which the footer links to.
- */
+/** The credit's details and its ledger. */
 function StoreCreditSheet({
   id,
   onOpenChange,
+  canEdit,
+  canDelete,
+  deletePending,
+  onEdit,
+  onDelete,
 }: {
   id: string
   onOpenChange: (open: boolean) => void
+  canEdit: (credit: StoreCredit) => boolean
+  canDelete: (credit: StoreCredit) => boolean
+  deletePending: boolean
+  onEdit: (credit: StoreCredit) => void
+  onDelete: (credit: StoreCredit) => void
 }) {
   const { t } = useTranslation()
   const [ledgerPage, setLedgerPage] = useState(1)
@@ -297,6 +406,17 @@ function StoreCreditSheet({
         </div>
 
         <SheetFooter>
+          {credit && canDelete(credit) && (
+            <Button
+              variant="destructive"
+              className="mr-auto"
+              disabled={deletePending}
+              onClick={() => onDelete(credit)}
+            >
+              <TrashIcon className="size-4" />
+              {t('admin.actions.delete')}
+            </Button>
+          )}
           {credit?.customer_id && (
             <Button asChild variant="outline">
               <Link
@@ -305,6 +425,12 @@ function StoreCreditSheet({
               >
                 {t('admin.store_credits.sheet.open_customer')}
               </Link>
+            </Button>
+          )}
+          {credit && canEdit(credit) && (
+            <Button onClick={() => onEdit(credit)}>
+              <PencilIcon className="size-4" />
+              {t('admin.actions.edit')}
             </Button>
           )}
         </SheetFooter>

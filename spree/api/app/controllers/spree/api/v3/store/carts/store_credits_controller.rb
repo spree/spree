@@ -19,6 +19,7 @@ module Spree
                 )
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart
                 else
                   render_service_error(result.error)
@@ -32,6 +33,7 @@ module Spree
                 result = Spree.store_credit_remove_service.call(order: @cart)
 
                 if result.success?
+                  sweep_unavailable_coupon_code!
                   render_cart
                 else
                   render_service_error(result.error)

@@ -12,24 +12,16 @@ module Spree
                    created_by_id: [:string, nullable: true],
                    created_by_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
                    refunded_total: :string,
+                   display_refunded_total: :string,
                    refundable_total: :string
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :stock_location_id do |return_record|
-            return_record.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           actor_attributes :created_by
 
-          attribute :refunded_total do |return_record|
-            return_record.refunded_total.to_s
-          end
-
-          attribute :refundable_total do |return_record|
-            return_record.refundable_total.to_s
-          end
-
+          attributes refunded_total: :string, display_refunded_total: :string, refundable_total: :string
           many :return_line_items,
                resource: proc { Spree.api.admin_return_line_item_serializer },
                if: proc { expand?('return_line_items') }

@@ -76,6 +76,7 @@ describe Spree::StockLevel, type: :model do
     end
 
     it 'leaves events this model does not own alone' do
+      Spree::Events.catalog.declare(Spree::StockLevel, :custom)
       received = []
       Spree::Events.subscribe('stock_item.custom', async: false) { |event| received << event.name }
       Spree::Events.activate!

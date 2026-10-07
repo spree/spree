@@ -9,15 +9,6 @@ module Spree
 
             before_action :find_cart!
 
-            # GET /api/v3/store/carts/:cart_id/fulfillments
-            def index
-              fulfillments = @cart.fulfillments.includes(delivery_rates: :delivery_method)
-              render json: {
-                data: fulfillments.map { |s| Spree.api.fulfillment_serializer.new(s, params: serializer_params).to_h },
-                meta: { count: fulfillments.size }
-              }
-            end
-
             # PATCH /api/v3/store/carts/:cart_id/fulfillments/:id
             # Selects a delivery rate, and for pickup_point methods a concrete
             # pickup point (validated against the provider, then frozen into
@@ -36,6 +27,7 @@ module Spree
 
                 recalculate
 
+                sweep_unavailable_coupon_code!
                 render_cart
               end
             end
@@ -62,7 +54,7 @@ module Spree
               if provider.nil?
                 render_error(
                   code: ERROR_CODES[:validation_error],
-                  message: Spree.t('errors.messages.no_pickup_point_provider'),
+                  message: I18n.t('spree.errors.messages.no_pickup_point_provider'),
                   status: :unprocessable_entity
                 )
                 return false
@@ -72,7 +64,7 @@ module Spree
               if point.nil?
                 render_error(
                   code: ERROR_CODES[:record_not_found],
-                  message: Spree.t('errors.messages.pickup_point_not_found'),
+                  message: I18n.t('spree.errors.messages.pickup_point_not_found'),
                   status: :not_found
                 )
                 return false

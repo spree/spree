@@ -5,6 +5,8 @@ module Spree
     # No goods come back — that is the point of a claim — so there is nothing
     # to receive and nothing to restock.
     class Create < Spree::Workflow
+      include Spree::Refunds::TaxCredit
+
       hooks :validate, :after_create
 
       attr_reader :claim
@@ -24,6 +26,8 @@ module Spree
 
         ApplicationRecord.transaction do
           step :build_claim
+          step :calculate_tax
+          step :ensure_refunds_within_paid
         end
 
         run_hooks :after_create
@@ -106,6 +110,17 @@ module Spree
         end
 
         failure(@claim) unless @claim.save
+      end
+
+      def calculate_tax
+        with_tax_provider(claim) { claim.calculate_tax! }
+      end
+
+      # Checked once the tax is known, because a line's refund is entered tax
+      # included and what it may not exceed includes the tax charged on it.
+      def ensure_refunds_within_paid
+        over = claim.claim_line_items.any? { |line| line.refund_amount.to_d > line.paid_amount }
+        failure(claim, :refund_exceeds_paid) if over
       end
     end
   end

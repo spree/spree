@@ -61,18 +61,16 @@ vi.mock('../src/storefront', async (importOriginal) => {
   const mod = await importOriginal<typeof import('../src/storefront')>()
   return {
     ...mod,
-    downloadStorefront: vi.fn(),
     installRootDeps: vi.fn(),
-    installStorefrontDeps: vi.fn(),
-    writeStorefrontEnv: vi.fn(),
+    scaffoldStorefront: vi.fn(),
   }
 })
 
 vi.mock('../src/dashboard', () => ({
   // The real implementation shells out to the project-local
-  // `npx spree add dashboard` — its behavior is covered by @spree/cli's own
+  // `npx spree add <app>` — its behavior is covered by @spree/cli's own
   // tests. Here we only assert the delegation happens (or doesn't).
-  scaffoldDashboard: vi.fn(),
+  scaffoldApp: vi.fn(),
 }))
 
 // `spree init` is shelled out to; the scaffold only decides its arguments.
@@ -251,45 +249,104 @@ describe('scaffold (no-start)', () => {
     expect(pkg.scripts.eject).toBe('spree eject')
   })
 
-  it('delegates dashboard scaffolding to the project-local CLI when included', async () => {
-    const { scaffoldDashboard } = await import('../src/dashboard')
+  it('scaffolds the dashboard, then the seller panel, then the storefront', async () => {
+    const { scaffoldApp } = await import('../src/dashboard')
+    const { scaffoldStorefront } = await import('../src/storefront')
+    const order: string[] = []
+    vi.mocked(scaffoldApp).mockImplementation(async (_dir, app) => {
+      order.push(app)
+    })
+    vi.mocked(scaffoldStorefront).mockImplementation(async () => {
+      order.push('storefront')
+    })
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: true,
+      dashboard: true,
+      sellerDashboard: true,
+      start: false,
+      packageManager: 'npm',
+      port: 4567,
+    })
+
+    expect(order).toEqual(['dashboard', 'seller-dashboard', 'storefront'])
+    expect(scaffoldApp).toHaveBeenCalledWith(projectDir, 'dashboard', {
+      install: true,
+      packageManager: 'npm',
+    })
+    const readme = fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')
+    expect(readme).toContain('### The Admin Dashboard')
+    expect(readme).toContain('Seller Panel')
+  })
+
+  it('skips the seller panel when not chosen', async () => {
+    const { scaffoldApp } = await import('../src/dashboard')
+    vi.mocked(scaffoldApp).mockReset()
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: false,
       dashboard: true,
+      sellerDashboard: false,
       start: false,
       packageManager: 'npm',
-      port: 4567,
+      port: 3000,
     })
 
-    expect(scaffoldDashboard).toHaveBeenCalledWith(projectDir, {
-      install: true,
-      packageManager: 'npm',
-    })
-    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).toContain(
-      'React Dashboard',
+    expect(vi.mocked(scaffoldApp).mock.calls.map(([, app]) => app)).toEqual(['dashboard'])
+    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).not.toContain(
+      'Seller Panel',
     )
   })
 
+  // A failed seller panel must not take the working dashboard down with it.
+  it('keeps the dashboard when only the seller panel fails', async () => {
+    const { scaffoldApp } = await import('../src/dashboard')
+    vi.mocked(scaffoldApp).mockReset()
+    vi.mocked(scaffoldApp).mockImplementation(async (dir, app) => {
+      fs.mkdirSync(path.join(dir, 'apps', app), { recursive: true })
+      if (app === 'seller-dashboard') throw new Error('spree add seller-dashboard failed')
+    })
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: true,
+      sellerDashboard: true,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(fs.existsSync(path.join(projectDir, 'apps', 'dashboard'))).toBe(true)
+    expect(fs.existsSync(path.join(projectDir, 'apps', 'seller-dashboard'))).toBe(false)
+    const readme = fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')
+    expect(readme).toContain('### The Admin Dashboard')
+    expect(readme).not.toContain('Seller Panel')
+  })
+
   it('skips the dashboard when not included', async () => {
-    const { scaffoldDashboard } = await import('../src/dashboard')
-    vi.mocked(scaffoldDashboard).mockClear()
+    const { scaffoldApp } = await import('../src/dashboard')
+    vi.mocked(scaffoldApp).mockReset()
     const projectDir = getTempProjectDir()
 
     await scaffold({
       directory: projectDir,
       storefront: false,
       dashboard: false,
+      sellerDashboard: false,
       start: false,
       packageManager: 'npm',
       port: 3000,
     })
 
-    expect(scaffoldDashboard).not.toHaveBeenCalled()
+    expect(scaffoldApp).not.toHaveBeenCalled()
     expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).not.toContain(
-      'React Dashboard',
+      '### The Admin Dashboard',
     )
   })
 

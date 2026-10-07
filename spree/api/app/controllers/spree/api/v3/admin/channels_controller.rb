@@ -60,10 +60,6 @@ module Spree
             Spree.api.admin_channel_serializer
           end
 
-          def scope
-            super.for_store(current_store)
-          end
-
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :code, :active, :default, :preferred_order_routing_strategy,
                           :preferred_storefront_access, :preferred_guest_checkout,

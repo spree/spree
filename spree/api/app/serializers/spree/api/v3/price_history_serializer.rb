@@ -12,9 +12,7 @@ module Spree
 
         attributes :amount, :amount_in_cents, :currency
 
-        attribute :display_amount do |price_history|
-          price_history.display_amount
-        end
+        attributes :display_amount
 
         attribute :recorded_at do |price_history|
           price_history.recorded_at&.iso8601

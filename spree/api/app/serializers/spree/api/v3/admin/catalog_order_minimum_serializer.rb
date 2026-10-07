@@ -9,13 +9,7 @@ module Spree
 
           attributes :currency, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :amount do |minimum|
-            minimum.amount.to_s
-          end
-
-          attribute :display_amount do |minimum|
-            minimum.display_amount.to_s
-          end
+          attributes amount: :string, display_amount: :string
         end
       end
     end

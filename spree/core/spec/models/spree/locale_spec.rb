@@ -6,11 +6,15 @@ RSpec.describe Spree::Locale, type: :model do
       expect(described_class.new(code: 'en').name).to eq('English')
     end
 
+    it "uses the language's own name when Spree ships no translations for it" do
+      expect(described_class.new(code: 'sq').name).to eq('Shqip')
+    end
+
     it 'falls back to the code for an unknown locale' do
       expect(described_class.new(code: 'xx').name).to eq('xx')
     end
 
-    it 'strips a trailing parenthetical from a Spree I18n label' do
+    it 'strips the trailing locale code from the name a locale file gives itself' do
       I18n.backend.store_translations(:de, spree: { i18n: { this_file_language: 'Deutsch (DE)' } })
       expect(described_class.new(code: 'de').name).to eq('Deutsch')
     end

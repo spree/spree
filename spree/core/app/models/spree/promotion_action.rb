@@ -66,20 +66,20 @@ module Spree
       when :line_item
         %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateLineItems]
       when :fulfillment
-        %w[Spree::Promotion::Actions::FreeShipping Spree::Promotion::Actions::FreeShipping]
+        %w[Spree::Promotion::Actions::FreeShipping]
       when :order
-        %w[Spree::Promotion::Actions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
+        %w[Spree::Promotion::Actions::CreateAdjustment]
       else
         []
       end
     end
 
     def self.human_name
-      Spree.t("promotion_action_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.promotion_action_types.#{api_type}.name", default: api_type.titleize)
     end
 
     def self.human_description
-      Spree.t("promotion_action_types.#{api_type}.description", default: '')
+      I18n.t("spree.promotion_action_types.#{api_type}.description", default: '')
     end
 
     def human_name = self.class.human_name
@@ -109,7 +109,7 @@ module Spree
     end
 
     def label
-      Spree.t(:promotion_label, name: promotion.name)
+      I18n.t('spree.promotion_label', name: promotion.name)
     end
   end
 end

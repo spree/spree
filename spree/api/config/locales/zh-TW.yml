@@ -1,0 +1,15 @@
+---
+zh-TW:
+  spree:
+    api:
+      cannot_delete: "%{model} 無法刪除"
+      current_password_invalid: 目前的密碼無效或未提供
+      newsletter_verification_token_invalid: 電子報驗證權杖無效或已過期。
+      password_reset_requested: 若該電子郵件有對應的帳號，重設密碼的說明已寄出。
+      password_reset_token_invalid: 重設密碼權杖無效或已過期。
+      record_not_found: 找不到 %{model}
+      unauthorized: 您無權執行該動作。
+      v3:
+        payments:
+          method_unavailable: 此付款方式不適用於此訂單。
+          session_required: 此付款方式需要付款工作階段。請改用付款工作階段端點。

@@ -47,6 +47,7 @@ module Spree
 
         cart.with_lock do
           step :guard_concurrent_completion
+          step :guard_coupon_code
           step :recalculate_in_lock
           step :verify_expected_total
           step :validate_cart
@@ -92,7 +93,7 @@ module Spree
         halt!(result) if result.canceled?
 
         if !result.placed? && result.payment_required? && !payment_covered?(result)
-          failure(cart, code: 'payment_failed', message: Spree.t(:payment_processing_failed))
+          failure(cart, code: 'payment_failed', message: I18n.t('spree.payment_processing_failed'))
         end
 
         finalize!(cart, result)
@@ -111,6 +112,15 @@ module Spree
 
       def guard_concurrent_completion
         failure(cart, code: 'completion_in_progress') if cart.completion_claimed?
+      end
+
+      # A batch code this cart no longer holds no longer discounts it, so the
+      # shopper would be charged more than the total they last saw, and the
+      # order would name a code it never used.
+      def guard_coupon_code
+        return unless cart.coupon_code_unavailable?
+
+        failure(cart, code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable'))
       end
 
       # In-lock recalculation — the totals about to be charged are computed
@@ -165,7 +175,7 @@ module Spree
         return if payment_covered?(order)
 
         failure(cart, code: 'payment_failed',
-                      message: order.errors.full_messages.to_sentence.presence || Spree.t(:payment_processing_failed))
+                      message: order.errors.full_messages.to_sentence.presence || I18n.t('spree.payment_processing_failed'))
       rescue Spree::Core::GatewayError => e
         failure(cart, code: 'payment_failed', message: e.message)
       end

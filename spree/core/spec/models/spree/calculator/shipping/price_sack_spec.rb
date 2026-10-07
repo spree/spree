@@ -17,12 +17,12 @@ module Spree
       let(:inventory_unit1) {  }
 
       let(:normal_package) do
-        iu = build(:inventory_unit, quantity: 2, variant: variant, line_item: line_item)
+        iu = build(:fulfillment_item, quantity: 2, variant: variant, line_item: line_item)
         build(:stock_package, contents: [::Spree::Stock::ContentItem.new(iu)])
       end
 
       let(:discount_package) do
-        iu = build(:inventory_unit, quantity: 4, variant: variant, line_item: line_item)
+        iu = build(:fulfillment_item, quantity: 4, variant: variant, line_item: line_item)
         build(:stock_package, contents: [::Spree::Stock::ContentItem.new(iu)])
       end
 

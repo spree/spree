@@ -27,7 +27,7 @@ module Spree
 
         url = shipping_label.file_url
         if url.blank?
-          shipping_label.errors.add(:file, :no_file_url, message: Spree.t('shipping_labels.errors.no_file_url'))
+          shipping_label.errors.add(:file, :no_file_url, message: I18n.t('spree.shipping_labels.errors.no_file_url'))
           return failure(shipping_label)
         end
 
@@ -38,13 +38,13 @@ module Spree
           # ordinary outcome here, not an exception the caller should handle:
           # the purchase behind it is already a fact, and the job retries.
           shipping_label.errors.add(:file, :file_fetch_failed, status: e.message,
-                                    message: Spree.t('shipping_labels.errors.file_fetch_failed', status: e.message))
+                                    message: I18n.t('spree.shipping_labels.errors.file_fetch_failed', status: e.message))
           return failure(shipping_label)
         end
 
         unless response.is_a?(Net::HTTPSuccess)
           shipping_label.errors.add(:file, :file_fetch_failed, status: response.code,
-                                    message: Spree.t('shipping_labels.errors.file_fetch_failed', status: response.code))
+                                    message: I18n.t('spree.shipping_labels.errors.file_fetch_failed', status: response.code))
           return failure(shipping_label)
         end
 

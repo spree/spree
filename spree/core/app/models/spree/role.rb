@@ -150,7 +150,7 @@ module Spree
 
     def permissions_must_be_known
       unknown = permissions - Spree.permissions.catalog_keys
-      errors.add(:permissions, :role_permissions_unknown, message: Spree.t(:role_permissions_unknown, keys: unknown.join(', '))) if unknown.any?
+      errors.add(:permissions, :role_permissions_unknown, message: I18n.t('spree.role_permissions_unknown', keys: unknown.join(', '))) if unknown.any?
     end
 
     # Every role is bounded by the catalog: only resources registered as
@@ -164,26 +164,26 @@ module Spree
       return if ungrantable.none?
 
       errors.add(
-        :permissions, :role_permissions_not_grantable_for_audience, message: Spree.t(:role_permissions_not_grantable_for_audience, audience: audience, keys: ungrantable.join(', '))
+        :permissions, :role_permissions_not_grantable_for_audience, message: I18n.t('spree.role_permissions_not_grantable_for_audience', audience: audience, keys: ungrantable.join(', '))
       )
     end
 
     # Re-pointing the resource would move every existing assignment to another
     # panel — and, for a store, to another tenant.
     def resource_immutable
-      errors.add(:resource, :role_resource_immutable, message: Spree.t(:role_resource_immutable))
+      errors.add(:resource, :role_resource_immutable, message: I18n.t('spree.role_resource_immutable'))
     end
 
     def name_immutable
-      errors.add(:name, :role_immutable, message: Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
+      errors.add(:name, :role_immutable, message: I18n.t('spree.role_immutable')) unless mutable_was_and_not_admin?
     end
 
     def permissions_immutable
-      errors.add(:permissions, :role_immutable, message: Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
+      errors.add(:permissions, :role_immutable, message: I18n.t('spree.role_immutable')) unless mutable_was_and_not_admin?
     end
 
     def description_immutable
-      errors.add(:description, :role_immutable, message: Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
+      errors.add(:description, :role_immutable, message: I18n.t('spree.role_immutable')) unless mutable_was_and_not_admin?
     end
 
     # Guards compare against the persisted `mutable` so flipping it in the same
@@ -197,7 +197,7 @@ module Spree
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
-      errors.add(:base, :role_cannot_be_deleted, message: Spree.t(:role_cannot_be_deleted))
+      errors.add(:base, :role_cannot_be_deleted, message: I18n.t('spree.role_cannot_be_deleted'))
       throw :abort
     end
   end

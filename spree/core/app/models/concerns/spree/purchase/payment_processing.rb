@@ -75,7 +75,7 @@ module Spree
         # Don't run if there are authorized payments
         return if pending_payments.any? && unprocessed_payments.empty?
         # Never complete without a successfully processed payment.
-        raise Spree::Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
+        raise Spree::Core::GatewayError, I18n.t('spree.no_payment_found') if unprocessed_payments.empty?
 
         unprocessed_payments.each do |payment|
           break if settled_payment_total >= total

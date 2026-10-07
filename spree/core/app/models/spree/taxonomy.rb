@@ -12,7 +12,6 @@ module Spree
 
     has_many :taxons, class_name: 'Spree::Category', inverse_of: :taxonomy
     has_one :root, -> { where parent_id: nil }, class_name: 'Spree::Category', dependent: :destroy
-    belongs_to :store, class_name: 'Spree::Store'
 
     default_scope { order("#{table_name}.position, #{table_name}.created_at") }
   end

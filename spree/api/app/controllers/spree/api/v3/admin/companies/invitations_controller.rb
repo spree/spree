@@ -17,7 +17,7 @@ module Spree
               else
                 render_error(
                   code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                  message: Spree.t('company_invitations.not_pending'),
+                  message: I18n.t('spree.company_invitations.not_pending'),
                   status: :unprocessable_content
                 )
               end
@@ -43,10 +43,6 @@ module Spree
             # pending" rather than "no such invitation".
             def scope
               action_name == 'index' ? @parent.invitations.pending : @parent.invitations
-            end
-
-            def parent_association
-              :invitations
             end
           end
         end

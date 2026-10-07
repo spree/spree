@@ -40,9 +40,8 @@ module Spree
 
       return price if tax_rate.nil? || tax_amount.zero? || !tax_rate.show_rate_in_label
 
-      Spree.t(
-        tax_rate.included_in_price? ? :including_tax : :excluding_tax,
-        scope: 'shipping_rates.display_price',
+      I18n.t(
+        "spree.shipping_rates.display_price.#{tax_rate.included_in_price? ? :including_tax : :excluding_tax}",
         price: price,
         tax_amount: display_tax_amount,
         tax_rate_name: tax_rate.name
@@ -147,14 +146,14 @@ module Spree
     def display_delivery_range
       return unless delivery_range
 
-      Spree.t(:display_delivery_range, delivery_range: delivery_range)
+      I18n.t('spree.display_delivery_range', delivery_range: delivery_range)
     end
 
     private
 
     # What every money display on this rate reads instead of an amount.
     def quoted_after_review
-      Spree.t('delivery_rates.quoted_after_review')
+      I18n.t('spree.delivery_rates.quoted_after_review')
     end
 
     def discount_amount

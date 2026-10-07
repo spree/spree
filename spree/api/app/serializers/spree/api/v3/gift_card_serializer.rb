@@ -4,17 +4,9 @@ module Spree
       class GiftCardSerializer < BaseSerializer
         typelize code: :string,
                  status: [:string, enum: Spree::GiftCard::DISPLAY_STATUSES, enum_type_name: 'GiftCardStatus'],
-                 amount: [:string, nullable: true],
-                 amount_used: [:string, nullable: true],
-                 amount_authorized: [:string, nullable: true],
-                 amount_remaining: [:string, nullable: true],
-                 display_amount: [:string, nullable: true],
-                 display_amount_used: [:string, nullable: true],
-                 display_amount_remaining: [:string, nullable: true],
-                 currency: :string,
-                 expires_at: [:string, nullable: true],
-                 redeemed_at: [:string, nullable: true],
-                 expired: :boolean,
+                 display_amount: [:string, nullable: true], display_amount_used: [:string, nullable: true],
+                 display_amount_remaining: [:string, nullable: true], currency: :string,
+                 expires_at: [:string, nullable: true], redeemed_at: [:string, nullable: true], expired: :boolean,
                  active: :boolean
 
         # A bearer credential: masked when the order is shown to someone other
@@ -53,13 +45,9 @@ module Spree
           gift_card.redeemed_at&.iso8601
         end
 
-        attribute :expired do |gift_card|
-          gift_card.expired?
-        end
+        attribute :expired, &:expired?
 
-        attribute :active do |gift_card|
-          gift_card.active?
-        end
+        attribute :active, &:active?
 
       end
     end

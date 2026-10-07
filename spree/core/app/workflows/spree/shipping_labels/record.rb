@@ -41,15 +41,15 @@ module Spree
       private
 
       def ensure_recordable
-        failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
-        failure(owner, Spree.t('shipping_labels.errors.tracking_number_required')) if tracking_number.blank?
-        failure(owner, Spree.t('shipping_labels.errors.file_required')) if file.blank?
+        failure(owner, I18n.t('spree.shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+        failure(owner, I18n.t('spree.shipping_labels.errors.tracking_number_required')) if tracking_number.blank?
+        failure(owner, I18n.t('spree.shipping_labels.errors.file_required')) if file.blank?
 
         case owner
         when Spree::Fulfillment
-          failure(owner, Spree.t('fulfillments.errors.cannot_purchase_label')) if owner.canceled? || owner.delivered?
+          failure(owner, I18n.t('spree.fulfillments.errors.cannot_purchase_label')) if owner.canceled? || owner.delivered?
         when Spree::Return
-          failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
+          failure(owner, I18n.t('spree.shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
         end
       end
 

@@ -31,10 +31,6 @@ module Spree
               @parent.tax_identifiers
             end
 
-            def parent_association
-              :tax_identifiers
-            end
-
             def permitted_params
               params.permit(:kind, :value)
             end

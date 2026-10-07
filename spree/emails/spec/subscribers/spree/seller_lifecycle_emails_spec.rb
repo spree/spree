@@ -31,7 +31,7 @@ RSpec.describe 'seller lifecycle emails', events: true do
     end
 
     # The reason is an internal record, not something the seller is handed.
-    expect(ActionMailer::Base.deliveries.last.body.encoded).not_to include('Counterfeit goods')
+    expect(email_body(ActionMailer::Base.deliveries.last)).not_to include('Counterfeit goods')
   end
 
   it 'tells the applicant when they are rejected' do

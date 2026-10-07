@@ -9,13 +9,7 @@ module Spree
 
         attributes published_at: :iso8601, unpublished_at: :iso8601
 
-        attribute :product_id do |publication|
-          publication.product&.prefixed_id
-        end
-
-        attribute :channel_id do |publication|
-          publication.channel&.prefixed_id
-        end
+        prefixed_id_attributes :product, :channel
       end
     end
   end

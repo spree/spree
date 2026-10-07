@@ -13,9 +13,9 @@ module Spree
         amount = BigDecimal(value.is_a?(String) ? value.strip : value.to_s)
         return amount if amount.finite? && !amount.negative? && fits_cost_column?(amount)
 
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost'))
+        failure(nil, I18n.t('spree.fulfillments.errors.invalid_cost'))
       rescue ArgumentError
-        failure(nil, Spree.t('fulfillments.errors.invalid_cost'))
+        failure(nil, I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       def fits_cost_column?(amount)

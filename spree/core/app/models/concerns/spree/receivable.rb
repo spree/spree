@@ -97,7 +97,7 @@ module Spree
       variant_ids = items.reject(&:marked_for_destruction?).filter_map(&:variant_id)
       return if variant_ids.uniq.size == variant_ids.size
 
-      errors.add(:items, :duplicate_variant, message: Spree.t('errors.messages.duplicate_variant'))
+      errors.add(:items, :duplicate_variant, message: I18n.t('spree.errors.messages.duplicate_variant'))
     end
   end
 end

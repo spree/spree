@@ -157,9 +157,10 @@ module Spree
       end
 
       # Refunds — whatever triggered them — are netted out of payment_total by
-      # the totals workflow, so the money handed back reappears as balance the
-      # order no longer has covered. There is no separate reimbursement term.
-      it 'treats a refund issued for a return as reducing what was paid' do
+      # the totals workflow. One for goods that came back also settles what was
+      # owed for them, so it is added back; one for nothing in return is owed
+      # again.
+      it 'owes nothing after a refund issued for a return' do
         order = create(:completed_order_with_totals)
         calculator = order.fulfillments.first.delivery_method.calculator
 
@@ -172,10 +173,10 @@ module Spree
         create(:refund, amount: 10, payment: order.payments.first, originator: return_record)
         order.recalculate_totals!
 
-        expect(order.outstanding_balance).to eq 10
+        expect(order.outstanding_balance).to eq 0
       end
 
-      it 'treats a manual refund the same way' do
+      it 'owes again what a manual refund handed back' do
         order = create(:completed_order_with_totals)
         calculator = order.fulfillments.first.delivery_method.calculator
 

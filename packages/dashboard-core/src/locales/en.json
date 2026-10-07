@@ -1403,7 +1403,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location will be deleted as well.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
@@ -1578,6 +1578,12 @@
         "slug_placeholder": "product-url-handle"
       },
       "tax_category_placeholder": "Select tax category",
+      "tax": {
+        "apply_to_variants_help": "This category applies to every variant that does not have its own tax category. When you save, those variants use this setting.",
+        "variant_overrides_heading": "Variants with their own tax category",
+        "variant_overrides_description": "These variants keep their category until you clear the override. All other variants follow the product category above.",
+        "clear_variant_override": "Use product category"
+      },
       "transfers": {
         "create_description": "Move stock between locations, or receive new stock from an external supplier.",
         "delete_confirm": {

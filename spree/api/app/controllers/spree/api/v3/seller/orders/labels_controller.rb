@@ -27,7 +27,7 @@ module Spree
               if label_params[:file].blank?
                 return render_error(
                   code: ERROR_CODES[:validation_error],
-                  message: Spree.t('shipping_labels.errors.file_required'),
+                  message: I18n.t('spree.shipping_labels.errors.file_required'),
                   status: :unprocessable_content
                 )
               end

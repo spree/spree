@@ -2143,6 +2143,25 @@
           "label": "Default tax on commission",
           "help": "Charged on your commission when neither the commission rate nor your tax provider gives a rate of its own. Leave at 0 if you charge no tax on your fee.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Accent color"
+        },
+        "preferred_email_background_color": {
+          "label": "Background color"
+        },
+        "preferred_email_card_color": {
+          "label": "Card color"
+        },
+        "preferred_email_text_color": {
+          "label": "Text color"
+        },
+        "preferred_email_heading_color": {
+          "label": "Heading color"
+        },
+        "preferred_email_font": {
+          "label": "Font",
+          "help": "Email apps that can't load it fall back to a similar font."
         }
       },
       "store_credit": {
@@ -2423,7 +2442,7 @@
       "configure_cta": "Configure",
       "connect_cta": "Connect",
       "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
-      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "description": "Connect payment providers and other services to this store. Credentials are stored per store and used by checkout, delivery, tax and other providers.",
       "disconnect": "Disconnect",
       "disconnect_confirm": {
         "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working.",
@@ -2436,18 +2455,24 @@
       },
       "groups": {
         "other": "Other",
+        "payments": "Payments",
         "shipping": "Shipping",
         "tax": "Tax"
       },
+      "manage_payment_methods": "Manage payment methods",
       "messages": {
         "connected": "Integration connected",
         "disconnected": "Integration disconnected",
         "updated": "Integration updated"
       },
+      "setup_guide": "Setup guide",
       "status": {
         "active": "Active",
         "connected_inactive": "Connected (inactive)",
         "not_connected": "Not connected"
+      },
+      "tabs": {
+        "all": "All"
       },
       "test": {
         "failure": "Connection failed.",
@@ -2456,7 +2481,9 @@
         "success": "Connection successful.",
         "testing": "Testing…"
       },
+      "test_mode": "Test mode",
       "title": "Integrations",
+      "toggle_label": "Turn {{name}} on or off",
       "view_cta": "View"
     },
     "invitation": {
@@ -2666,6 +2693,7 @@
           "discounts_empty": "No discounts on this order yet.",
           "fee_kind_cod": "Cash on delivery",
           "fee_kind_duty": "Duty",
+          "fee_kind_exchange": "Exchange",
           "fee_kind_gift_wrap": "Gift wrap",
           "fee_kind_handling": "Handling",
           "fee_kind_payment": "Payment fee",
@@ -2832,7 +2860,15 @@
           "move_and_requote": "Move and re-quote",
           "no_rates": "No delivery methods are quoted for this fulfillment.",
           "out_of_stock": "Out of stock",
+          "packing_slip_discount": "Discount",
+          "packing_slip_footer": "Thank you for your order.",
+          "packing_slip_fulfillment": "Fulfillment #{{number}}",
+          "packing_slip_order": "Order #{{number}}",
+          "packing_slip_shipping": "Shipping",
+          "packing_slip_subtotal": "Subtotal",
+          "packing_slip_tax": "Tax",
           "packing_slip_title": "Packing slip — order {{number}}",
+          "packing_slip_total": "Total",
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",
           "rates_pending_origin": "Save the new origin to see the delivery methods it offers.",
@@ -3330,7 +3366,8 @@
             },
             "confirm": {
               "cancel_confirm": "Cancel exchange",
-              "cancel_dismiss": "Keep exchange"
+              "cancel_dismiss": "Keep exchange",
+              "balance_due": "The replacement costs more than what came back. Shipping it adds the difference to the order as a balance due, for you to collect. Nothing is charged automatically."
             },
             "create_title": "New exchange",
             "empty": "No exchanges for this order.",
@@ -3343,7 +3380,8 @@
               "approve": "Approve",
               "create": "New return",
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "complete": "Complete return"
             },
             "buy_label": "Buy return label",
             "buy_label_confirm": "Buy a prepaid return label? Your carrier account is charged as soon as the label is issued.",
@@ -3366,13 +3404,18 @@
             "received_of": "{{received}} of {{requested}} received",
             "received_quantity": "Received",
             "refund_amount": "Amount",
+            "refund_includes_tax": "The full amount includes {{tax}} of tax. A smaller amount gives back tax in the same proportion.",
             "refund_method": "Refund to",
             "refund_methods": {
               "original_payment": "Original payment",
               "store_credit": "Store credit"
             },
             "refund_title": "Refund return",
+            "complete_title": "Complete return",
+            "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_total": "Refund total",
+            "refunded": "Refunded",
+            "refunded_of": "{{amount}} of {{total}}",
             "resellable": "Resellable",
             "returning_to": "Returning to {{name}}"
           },
@@ -3786,7 +3829,21 @@
           "section_delivery": "Delivery",
           "section_logo": "Logo",
           "subtitle": "Sender addresses, notifications, and the logo embedded in transactional emails.",
-          "title": "Email settings"
+          "title": "Email settings",
+          "branding": {
+            "title": "Branding",
+            "description": "Colors and font for every customer email. Leave a color empty to keep the default.",
+            "default_color": "Default",
+            "fonts": {
+              "inter": "Inter (default)",
+              "system": "System font",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -3907,39 +3964,73 @@
           "empty_description": "Create an endpoint to receive a signed POST every time a subscribed event fires.",
           "empty_title": "No webhook endpoints yet",
           "event_groups": {
-            "asset": "Asset",
+            "admin_user": "Staff member",
+            "cart": "Cart",
+            "catalog": "Catalog",
+            "claim": "Claim",
+            "company": "Company",
+            "company_invitation": "Company invitation",
             "custom": "Custom",
             "customer": "Customer",
+            "data_request": "Data request",
+            "delivery": "Delivery",
             "digital": "Digital",
+            "digital_asset": "Digital asset",
+            "digital_link": "Digital link",
+            "email_template": "Email templates",
+            "exchange": "Exchange",
+            "export": "Export",
             "fulfillment": "Fulfillment",
             "gift_card": "Gift card",
             "gift_card_batch": "Gift card batch",
-            "import_export": "Import / Export",
+            "import": "Import",
+            "import_row": "Import row",
             "invitation": "Invitation",
             "line_item": "Line item",
+            "media": "Media",
             "newsletter_subscriber": "Newsletter subscriber",
             "order": "Order",
+            "order_group": "Order group",
             "payment": "Payment",
             "payment_session": "Payment session",
             "payment_setup_session": "Payment setup session",
             "price": "Price",
             "product": "Product",
+            "product_submission": "Product submission",
             "promotion": "Promotion",
+            "purchase_order": "Purchase order",
             "refund": "Refund",
-            "report": "Report",
             "return": "Return",
+            "saved_report": "Saved report",
+            "seller": "Seller",
+            "seller_payout": "Seller payout",
+            "seller_requirement_submission": "Seller requirement submission",
+            "seller_user": "Seller user",
+            "shipment": "Shipment",
+            "shipping_label": "Shipping label",
+            "stock_item": "Stock item",
             "stock_level": "Stock level",
             "stock_movement": "Stock movement",
+            "stock_receipt": "Stock receipt",
             "stock_reservation": "Stock reservation",
             "stock_transfer": "Stock transfer",
             "store_credit": "Store credit",
+            "supplier": "Supplier",
+            "tax_exemption_certificate": "Tax exemption certificate",
+            "tax_identifier": "Tax identifier",
+            "user": "Customer account",
             "variant": "Variant",
-            "wishlist": "Wishlist"
+            "wished_item": "Wished item",
+            "wishlist": "Wishlist",
+            "wishlist_item": "Wishlist item"
           },
           "events_all": "All events",
           "events_count_one": "{{count}} event",
           "events_count_other": "{{count}} events",
+          "events_credential": "Credential",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "Deprecated, use {{event}}",
+          "events_load_failed": "Couldn't load the list of events. You can still add an event by name below.",
           "events_remove_aria": "Remove {{event}}",
           "health": {
             "auto_disabled_alert": "This endpoint was automatically disabled after repeated delivery failures.",
@@ -4079,6 +4170,7 @@
         "customers": "Customer accounts, addresses, cards and groups",
         "dashboard": "Sales and performance analytics",
         "delivery_methods": "Shipping options, rates and the rules that gate them",
+        "email_templates": "Customer email templates and the email layout",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
         "integrations": "Provider credentials and connections",
@@ -4130,6 +4222,7 @@
         "customers": "Customers",
         "dashboard": "Dashboard",
         "delivery_methods": "Delivery methods",
+        "email_templates": "Email templates",
         "fulfillments": "Fulfillments",
         "gift_cards": "Gift cards",
         "integrations": "Integrations",
@@ -5214,7 +5307,7 @@
       "create_description": "Add a warehouse, store, or pickup point to fulfill orders from.",
       "create_label": "Create stock location",
       "delete_confirm": {
-        "message": "{{name}} will be removed. Stock levels at this location are not deleted.",
+        "message": "{{name}} will be removed. Stock levels at this location will be deleted as well.",
         "title": "Delete stock location?"
       },
       "edit_description": "Update name, address, pickup, or stock policies.",
@@ -6014,11 +6107,172 @@
       },
       "table": {
         "search_placeholder": "Search memos…",
-        "empty": "No store credits yet. Issue one from a customer profile."
+        "empty": "No store credits yet."
       },
+      "issue_description": "Choose a customer and the amount to add to their account.",
       "no_customer": "No customer",
       "page": {
         "subtitle": "What the store owes in prepaid balances, across every customer."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Settings",
+        "templates": "Templates"
+      },
+      "list": {
+        "description": "Edit the emails customers receive. Changes are saved as a draft and reach customers only when you publish them.",
+        "groups": {
+          "email": {
+            "title": "Customer emails",
+            "description": "Each email a customer can receive from your store."
+          },
+          "layout": {
+            "title": "Layout",
+            "description": "The header, footer and styles around every customer email."
+          },
+          "partial": {
+            "title": "Shared blocks",
+            "description": "Pieces used by several emails, such as the list of items and the totals."
+          }
+        },
+        "empty": "No email templates can be edited here. Customer email templates come with the Spree emails package."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Order confirmation",
+        "order_mailer_cancel_email": "Order canceled",
+        "order_mailer_payment_link_email": "Payment link",
+        "order_group_mailer_confirm_email": "Multi-seller order confirmation",
+        "fulfillment_mailer_fulfilled_email": "Order shipped",
+        "return_mailer_refunded_email": "Return refunded",
+        "digital_asset_mailer_files_ready_email": "Downloads ready",
+        "customer_mailer_password_reset_email": "Password reset",
+        "customer_mailer_data_export_email": "Personal data export ready",
+        "newsletter_mailer_email_confirmation": "Newsletter confirmation",
+        "company_mailer_invitation_email": "Company invitation",
+        "spree_base_mailer": "Email layout",
+        "shared_line_item": "Item",
+        "shared_order_summary": "Order summary",
+        "shared_purchase_totals": "Totals",
+        "shared_fulfillment_group": "Shipment",
+        "shared_summary_row": "Summary row"
+      },
+      "badges": {
+        "customized": "Customized",
+        "default": "Default",
+        "draft": "Draft",
+        "other_languages": "Also customized: {{languages}}",
+        "default_updated": "Updated by Spree",
+        "unsaved": "Unsaved changes",
+        "showing_draft": "Draft — customers receive the published version",
+        "showing_published": "Published — what customers receive",
+        "showing_default": "Spree's default — what customers receive"
+      },
+      "actions": {
+        "save_draft": "Save draft",
+        "publish": "Publish",
+        "discard_draft": "Discard draft",
+        "revert": "Revert to default",
+        "send_test": "Send test email",
+        "history": "History"
+      },
+      "confirm": {
+        "discard_title": "Discard this draft?",
+        "discard_message": "Your unpublished changes are deleted. Customers keep receiving the published version.",
+        "revert_title": "Revert to Spree's default?",
+        "revert_message": "Customers receive Spree's default email from now on and the draft is deleted. Published versions stay in the history, so you can restore one later.",
+        "restore_title": "Restore this version?",
+        "restore_message": "This version replaces the draft. Publish it for customers to receive it.",
+        "leave_title": "Leave without saving?",
+        "leave_message": "Your unsaved changes to this template will be lost.",
+        "leave": "Leave",
+        "revert_every_language_message": "Customers in every language receive Spree's default email from now on and the draft is deleted. Published versions stay in the history, so you can restore one later."
+      },
+      "editor": {
+        "title": "Template",
+        "subject": "Subject",
+        "body": "Template code",
+        "language": "Language"
+      },
+      "preview": {
+        "title": "Preview",
+        "frame_title": "Email preview",
+        "subject": "Subject: {{subject}}",
+        "html": "Email",
+        "text": "Plain text",
+        "desktop": "Desktop width",
+        "mobile": "Mobile width",
+        "shown_in": "Show inside",
+        "record": "Preview with record",
+        "unavailable": "The preview could not be shown.",
+        "needs_permission": "Previews are rendered for people who can edit email templates.",
+        "latest_record": "Latest"
+      },
+      "problems": {
+        "title": "This template does not render",
+        "on_line": "Line {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Updated by Spree",
+        "description": "Spree changed its default for this template since your version was made from it. Compare the two before you decide.",
+        "compare": "Compare",
+        "dialog_title": "What changed in Spree's default",
+        "dialog_description": "On the left, the default your version was made from. On the right, the default now.",
+        "before": "Your version started from",
+        "after": "Spree's default now",
+        "keep_mine": "Keep my version",
+        "start_over": "Start from the new default"
+      },
+      "history": {
+        "title": "History",
+        "description": "Every version published in this language, newest first.",
+        "empty": "Nothing has been published yet.",
+        "latest": "Latest",
+        "version": "Version {{number}}",
+        "restore": "Restore"
+      },
+      "conflict": {
+        "title": "Someone else saved this draft",
+        "keep_editing": "Keep editing",
+        "reload": "Load their version",
+        "overwrite": "Save mine over theirs"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Data this email can show. Start typing a variable in the code to see all of its fields.",
+        "order": "The order, with its items, addresses and totals.",
+        "resend": "Whether this is a copy sent again.",
+        "payment_url": "The link where the customer pays.",
+        "order_group": "An order split across several sellers.",
+        "fulfillment": "The shipment, with its tracking.",
+        "return": "The return and what was refunded.",
+        "downloads": "The files the customer can download.",
+        "customer": "The customer the email goes to.",
+        "reset_url": "The link to choose a new password.",
+        "download_url": "The link to download the export.",
+        "expires_at": "When the link stops working.",
+        "confirmation_url": "The link that confirms the subscription.",
+        "company": "The company the customer is invited to.",
+        "accept_url": "The link that accepts the invitation.",
+        "store": "Your store: name, links, logo and branding.",
+        "locale": "The language the email is sent in.",
+        "insert": "Insert {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Draft saved",
+        "draft_discarded": "Draft discarded",
+        "published": "Published. Customers receive this version from now on.",
+        "reverted": "Reverted to Spree's default",
+        "restored": "Version restored into the draft",
+        "test_sent": "Test email sent to {{email}}"
+      },
+      "errors": {
+        "load_failed": "Couldn't load email templates",
+        "not_allowed": "You don't have permission to view email templates",
+        "test_email_failed": "Couldn't send the test email"
+      },
+      "every_language": {
+        "notice": "Customers in every language receive this version until you publish one for {{language}}."
       }
     }
   }

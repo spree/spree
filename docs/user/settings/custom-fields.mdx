@@ -1,135 +1,133 @@
 ---
 title: "Custom Fields"
-description: "Define and manage custom fields in Spree to attach extra structured data to products, orders, customers and other records without code changes."
+description: "Learn how to add your own fields to products, orders, customers and other records in Spree Commerce, without writing any code."
 ---
 
-Custom fields in Spree allow you to attach extra data to nearly any record in your store — without needing to write a single line of code or modify the database.
+Custom fields let you store information Spree does not have a field for. A clothing store needs fabric composition, a food store needs allergens, a supplier-managed catalogue needs an internal margin tier. Rather than waiting on a developer to add a database column, you define the field once and your team fills it in.
 
-From product materials to internal order notes, custom fields give you the flexibility to store, manage, and display extra information that doesn't come out of the box. This reduces reliance on developer deployments, makes experimentation easier, and enables faster iteration directly from the admin dashboard.
+A definition says what the field is called, which records carry it, and what kind of value it holds. Once defined, it appears on every matching record for anyone to fill in.
 
-<Note>The screen heading reads **Custom field definitions** and the menu entry reads **Custom fields**. Both mean the same thing. Earlier versions of Spree called these *metafields*.</Note>
+To manage custom fields, navigate to **Settings → Custom fields**, under the **Store** group.
 
-## Creating a New Custom Field
+<Note>Earlier versions of Spree called these metafields. The dashboard says custom fields throughout.</Note>
 
-To create a custom field definition go to **Settings → Custom fields**, under the **Store** group.
+## Reviewing Your Custom Fields
 
-![Spree Commerce custom fields](/docs/images/user/settings/metafields/1-settings-metafields.png)
+![The Custom field definitions list](/docs/images/user/settings/custom-fields/1-custom-fields-overview.png)
 
-Here you'll see a list of all existing custom field definitions in your store. Each row shows the **Label** with its full key beneath it — such as `custom.warranty` — along with **Applies to**, **Type**, and **Storefront**.
+Each row shows:
 
-To add a new one, click **Add custom field** in the top right corner. The panel opens with the line *"Define a typed field your team can fill in on any matching record."*
+- **Label** - What the field is called, with its full key beneath, such as `custom.warranty`.
+- **Applies to** - Which kind of record carries this field.
+- **Type** - What kind of value it holds.
+- **Storefront** - Whether shoppers can see the value.
 
-![Creating custom fields in Spree](/docs/images/user/settings/metafields/2-create-a-metafield.png)
+Use the search box to find a definition by label, namespace or key.
 
-Fill out the form with the required details:
+## How to Create a Custom Field
 
-- **Label** - the display name for the field, shown in the dashboard and/or storefront, e.g. `Material`
-- **Namespace** - used to group custom fields and avoid naming conflicts. Pre-filled with `custom`
-  - Leave it on `custom` for internal or merchant-defined fields unless you have a reason to group fields separately
-  - Avoid using common Spree model names like product, order, or variant as these may conflict with existing integrations
-- **Key** - the unique identifier for the field, combined with the namespace
-  - e.g.: custom.material, custom.internal_note
-- **Applies to** - choose the record the custom field applies to (see full list below)
-- **Type** - the format of data the field should accept (see examples below)
-- **Visible on storefront** - a switch. Turn it on if shoppers should see the value
-- **Searchable** - *"Include values in storefront product text search (short text, long text, and number only)."*
-- **Sortable** - *"Allow storefront product listings to sort by this field (short text and number only)."*
+Click **Add custom field**.
 
-Then click **Create custom field**.
+![The Add custom field panel](/docs/images/user/settings/custom-fields/2-add-custom-field.png)
 
-<Warning>The **Searchable** and **Sortable** switches need a follow-up step your developers have to run: after enabling either one with Meilisearch, somebody must run `rake spree:search:reindex` so existing products are updated. Ask whoever maintains your store to do this — the switch alone does not update what is already there.</Warning>
+- **Label** - What your team reads on the form, such as `Warranty`.
+- **Namespace** - Groups fields and avoids naming collisions. Pre-filled with `custom`, which is right unless you have a reason to separate a set of fields.
+- **Key** - A short lower-case identifier, such as `warranty`. The namespace and key together make the full name shown in the list, `custom.warranty`.
+- **Applies to** - Which kind of record the field belongs to.
+- **Type** - What kind of value it holds. See below.
+- **Visible on storefront** - Whether shoppers see the value.
+- **Searchable** - Include values in storefront product text search. Short text, long text and number only.
+- **Sortable** - Allow storefront listings to sort by this field. Short text and number only.
 
-### Supported Records
+Click **Create custom field**.
 
-![Add a custom field definition in Spree](/docs/images/user/settings/metafields/3-metafield-resource.png)
+<Warning>Neither **Applies to** nor **Type** can be changed once values exist for a field. Changing the type would leave stored values misinterpreted, so decide both before your team starts filling it in.</Warning>
 
-You can define custom fields for nearly any record in Spree. **Applies to** offers 31:
+<Warning>**Searchable** and **Sortable** need a follow-up step. After enabling either one with Meilisearch, somebody has to run a reindex so existing products pick it up. Ask whoever maintains your store to do this, because the switch alone does not update what is already there.</Warning>
 
-- **Addresses** - e.g., delivery instructions
-- **Categories** - e.g., display badge ("New", "Sustainable")
-- **Claims**
-- **Collections**
-- **Credit Cards** - e.g., vault token
-- **Customers** - e.g., loyalty tier
-- **Delivery Methods** - e.g., carrier code
-- **Exchanges**
-- **Fulfillments** - e.g., fragile/handling notes
-- **Gift Cards** - e.g., personal message
-- **Line Items** - e.g., engraving or personalization notes
-- **Media** - e.g., alt text, copyright, or display priority
-- **Newsletter Subscribers** - e.g., subscription source
-- **Option Types** - e.g., an extended description for color choices
-- **Option Values** - e.g., color hex code
-- **Orders** - e.g., internal comment, PO number
-- **Payment Methods** - e.g., risk profile or processor ID
-- **Payment Sources** - e.g., metadata from payment gateway
-- **Payments** - e.g., external transaction reference
-- **Product Types**
-- **Products** - e.g., material, sustainability rating, care instructions
-- **Promotions** - e.g., campaign name
-- **Refunds** - e.g., refund reason detail
-- **Returns** - e.g., return reason detail
-- **Sellers** - e.g., seller profile details
-- **Stock Levels** - e.g., warehouse bin location
-- **Stock Transfers** - e.g., batch ID or receiving note
-- **Store Credits** - e.g., usage restrictions
-- **Stores** - e.g., store tagline or branding metadata
-- **Tax Rates** - e.g., compliance category
-- **Variants** - e.g., spec sheet URL, sizing details
+### Choosing a type
 
-### Supported Data Types
+| Type | What it holds |
+|---|---|
+| **Short text** | A single line, such as "100% Organic Cotton" |
+| **Long text** | Several lines without formatting, such as care instructions |
+| **Rich text** | Formatted content with headings, lists and links |
+| **Number** | Any numeric value, such as a rating or a capacity |
+| **Boolean** | True or false, such as whether an item is fragile |
+| **JSON** | Structured data holding several related values at once |
 
-![Spree Commerce custom field types](/docs/images/user/settings/metafields/4-metafield-type.png)
+Pick the narrowest type that fits. A number stored as short text still sorts, but alphabetically rather than numerically, so 10 comes before 9. Switching the type later means starting the field again.
 
-Each custom field must be assigned a **type**, which determines the format of the stored value. Choosing the right type helps keep data structured, valid, and useful across the storefront and admin.
+### What can carry a custom field
 
-- **Short Text** - for single-line strings, e.g., "Cotton" or "Blue"
-- **Long Text** -  multi-line content, e.g., care instructions
-- **Rich Text** - text with formatting options, e.g., marketing blocks
-- **Number** - any numeric value, e.g.,  4.5 (rating), 12 (inches)
-- **Boolean** - true/false flags, e.g., "Is this product fragile?" = true
-- **JSON** - for structured data or multiple related attributes
+**Applies to** offers 31 kinds of record, covering most of what your store holds.
 
-<Warning>Neither **Applies to** nor **Type** can be changed once values exist for a field. The edit panel says so: *"The type can't be changed once values exist — switching it would leave stored values misinterpreted."* Decide both before you start filling the field in.</Warning>
+| Record | What you might store on it |
+|---|---|
+| **Addresses** | Delivery instructions, such as a gate code |
+| **Categories** | A display badge, such as "New" or "Sustainable" |
+| **Claims** | The carrier's own claim reference |
+| **Collections** | The campaign or season a collection belongs to |
+| **Credit Cards** | A vault token from your payment provider |
+| **Customers** | Loyalty tier, or the account manager who looks after them |
+| **Delivery Methods** | The carrier's service code |
+| **Exchanges** | The tracking reference for the replacement |
+| **Fulfillments** | Handling notes, such as fragile or upright |
+| **Gift Cards** | The personal message printed on it |
+| **Line Items** | Engraving text or personalisation notes |
+| **Media** | Copyright holder, or display priority |
+| **Newsletter Subscribers** | Where the subscription came from |
+| **Option Types** | A longer description of what the option means |
+| **Option Values** | The hex code behind a colour swatch |
+| **Orders** | An internal comment, or a buyer's purchase order number |
+| **Payment Methods** | A risk profile or processor identifier |
+| **Payment Sources** | Metadata returned by the payment gateway |
+| **Payments** | An external transaction reference |
+| **Product Types** | The team responsible for products of this type |
+| **Products** | Material, care instructions, sustainability rating |
+| **Promotions** | The campaign a promotion belongs to |
+| **Refunds** | Detail behind the refund reason |
+| **Returns** | Detail behind the return reason |
+| **Sellers** | A seller's profile details or onboarding notes |
+| **Stock Levels** | The bin location within a warehouse |
+| **Stock Transfers** | A batch identifier or receiving note |
+| **Store Credits** | Restrictions on what the credit can be spent on |
+| **Stores** | A store tagline or branding detail |
+| **Tax Rates** | A compliance classification |
+| **Variants** | A spec sheet address, or detailed sizing |
 
-## Adding Custom Field Values
+## How to Fill In a Custom Field
 
-Once your custom field definition has been created, you can enter values in a few different ways:
+Open the record the field applies to. Products carry a **Custom fields** card showing every definition that applies to them.
 
-### Individually in the Admin Dashboard
+![The Custom fields card on a product](/docs/images/user/settings/custom-fields/3-custom-fields-on-product.png)
 
-First, navigate to the relevant record (e.g., Product, Order, Fulfillment).
+Enter the values and save the record.
 
-![Spree Commerce custom field values](/docs/images/user/settings/metafields/5-add-metafield-value.png)
+<Note>To have a field appear on a product automatically, add it to a [<u>product type</u>](/user/settings/product-types). Products carrying that type then show the field without anyone assigning it.</Note>
 
-Open the **Custom fields** card on the record, or use the **three-dot menu** in the top right corner.
+### Filling them in bulk
 
-![Adding custom field values in Spree](/docs/images/user/settings/metafields/6-select-metafields.png)
+Product custom fields can be set through the product CSV. Add a column named `custom_field.<namespace>.<key>`, such as `custom_field.custom.material`, and fill in a value for each product row.
 
-Enter the desired values in the form and click **Save** to finalize your changes.
+The import template generated for your store already ends with one column per custom field you have defined for products, so you may not need to add the columns by hand.
 
-![Product custom fields in Spree](/docs/images/user/settings/metafields/7-enter-metafield-values.png)
+<Warning>The column prefix is `custom_field.`. A file using the older `metafield.` prefix imports without its custom field values rather than failing, so the import looks successful and the values are silently missing.</Warning>
 
-This works for any individual record type and is perfect for adding or editing a few custom fields manually.
+## How to Edit a Custom Field
 
-<Note>To make a field appear on a product form automatically, add it to a [<u>product type</u>](/user/settings/product-types).</Note>
+Open the row menu and choose **Edit**. You can change the **Label**, the **Key** and the storefront switches at any time.
 
-### In Bulk (Products Only)
+**Applies to** and **Type** are fixed once values exist.
 
-Product custom fields can also be imported or updated in bulk by:
+## How to Delete a Custom Field
 
-1. Adding columns to your CSV file using this format: `custom_field.<namespace>.<key>` (e.g. `custom_field.custom.material`)
-2. Entering the desired values for each product row.
-3. Importing the file when uploading a new product catalog
+Open the row menu and choose **Delete**.
 
-You can also update your existing catalog by exporting the product file, updating it as described above, and then reimporting it to apply custom field updates.
+<Warning>Deleting a definition removes the values stored against it on every record. Export anything you need first, because there is no way to recover them afterwards.</Warning>
 
-This is ideal for large-scale changes across multiple products, especially when onboarding a large catalog.
+## Further Reading
 
-<Note>The import template you download is generated for your store, and already ends with one column per custom field you have defined for products. See [<u>Import File Template</u>](/user/manage-products/product-import-file-template).</Note>
-
-## Related
-
-- [<u>Settings → Product Types</u>](/user/settings/product-types)
-- [<u>Import Products</u>](/user/manage-products/import-products)
-- [<u>Import File Template</u>](/user/manage-products/product-import-file-template)
+- [<u>Product Types</u>](/user/settings/product-types) - Making a field appear on a product automatically
+- [<u>Custom Product Fields</u>](/user/manage-products/custom-product-fields) - Using custom fields on products specifically
+- [<u>Import Products</u>](/user/manage-products/import-products) - Setting values in bulk

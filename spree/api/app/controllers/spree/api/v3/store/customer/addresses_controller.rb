@@ -49,10 +49,6 @@ module Spree
               @parent = current_user
             end
 
-            def parent_association
-              :addresses
-            end
-
             def model_class
               Spree::Address
             end

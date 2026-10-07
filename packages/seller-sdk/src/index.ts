@@ -15,6 +15,7 @@ export type {
   DeliveryMethodRuleType,
   DeliveryPreferenceField,
   DeliveryZoneListParams,
+  MeResource,
   MeResponse,
   OnboardingResponse,
   OrderAddressParams,

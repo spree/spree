@@ -28,9 +28,7 @@ module Spree
             user.anonymized_at&.iso8601
           end
 
-          attribute :anonymized do |user|
-            user.anonymized?
-          end
+          attribute :anonymized, &:anonymized?
 
           attribute :tags do |user|
             user.tags.map(&:name) # not pluck as we preload tags
@@ -44,13 +42,7 @@ module Spree
             user.respond_to?(:internal_note) ? user.internal_note.presence : nil
           end
 
-          attribute :default_billing_address_id do |user|
-            user.bill_address&.prefixed_id
-          end
-
-          attribute :default_shipping_address_id do |user|
-            user.ship_address&.prefixed_id
-          end
+          prefixed_id_attributes default_billing_address_id: :bill_address, default_shipping_address_id: :ship_address
 
           # Order aggregates: prefer attributes precomputed on the scope (see
           # CustomersController#scope) to avoid N+1 on list endpoints. Fall

@@ -1,0 +1,38 @@
+---
+fr:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Réinitialiser le mot de passe
+        expiry_notice: Ce lien de réinitialisation du mot de passe expirera bientôt. Si vous n'en êtes pas à l'origine, aucune action n'est requise.
+        greeting: Bonjour %{name},
+        ignore_notice: Si vous n'avez pas demandé de réinitialisation de mot de passe, vous pouvez ignorer cet e-mail en toute sécurité. Votre mot de passe ne sera pas modifié.
+        instructions: Nous avons reçu une demande de réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe.
+        subject: Instructions de réinitialisation du mot de passe
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Bonjour,
+        ignore_disclaimer: Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet e-mail.
+        instructions: Veuillez cliquer sur le bouton ci-dessous pour vérifier votre adresse e-mail.
+        message_copy_link: 'Si le bouton ne fonctionne pas, veuillez copier et coller le lien suivant dans votre navigateur :'
+        subject: Vérifiez votre adresse e-mail
+        verify_email_address_link: Vérifier l'adresse e-mail
+    order_mailer:
+      cancel_email:
+        instructions: Votre commande a été ANNULÉE. Veuillez conserver les informations suivantes à propos de votre commande annulée.
+        subject: Annulation de la commande
+      confirm_email:
+        instructions: Veuillez vérifier et sauvegarder les informations suivantes à propos de votre commande.
+        subject: Confirmation de commande
+      payment_link_email:
+        message: Veuillez cliquer sur le bouton ci-dessous pour payer votre commande.
+        message_copy_link: 'Si le bouton ne fonctionne pas, veuillez copier et coller le lien suivant dans votre navigateur :'
+        pay_for_order: Payer la commande
+        subject: Lien de paiement pour la commande n°%{number}
+      store_owner_notification_email:
+        heading: Nouvelle commande reçue
+        instructions: Vous avez reçu une nouvelle commande.
+        order_summary: Récapitulatif de la commande %{number}
+        subject: "%{store_name} a reçu une nouvelle commande"
+      subtotal: 'Sous-total:'
+      total: 'Total:'

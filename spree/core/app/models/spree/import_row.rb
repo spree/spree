@@ -1,5 +1,7 @@
 module Spree
   class ImportRow < Spree.base_class
+    publishes_events :completed, :failed
+
     has_prefix_id :imrow
 
     # Set event prefix for ImportRow
@@ -41,8 +43,6 @@ module Spree
     # Scopes
     #
     scope :pending_and_failed, -> { where(status: %i[pending failed]) }
-    scope :completed, -> { where(status: :completed) }
-    scope :failed, -> { where(status: :failed) }
     scope :processed, -> { where(status: %i[completed failed]) }
     # Rows still legitimately blocking import completion: `pending` (not started) or
     # `processing` with a recent updated_at (worker still alive). Orphaned `processing`

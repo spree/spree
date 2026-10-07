@@ -50,6 +50,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
       security [{ api_key: [], bearer_auth: [] }]
       description 'Manually creates a fulfillment on a completed order, bypassing order routing — for example to mirror a shipment handled by an external carrier or 3PL. ' \
                   'Moves the requested line item quantities out of their current fulfillments; when `items` is omitted, every not-yet-shipped unit is moved. ' \
+                  'Exchange and claim replacements are moved only out of a named `source_fulfillment_id`, which is how a canceled replacement is sent again. ' \
                   "Pass `status: 'shipped'` to register an already-shipped fulfillment (fires shipped webhooks and freezes cost/carrier). " \
                   'When `delivery_method_id` is omitted, the fulfillment inherits the delivery method and cost of the source fulfillment(s) it fully drains — keeping the order total unchanged; ' \
                   'partially drained splits get no carrier when shipped, and pending fulfillments are otherwise (re)priced by the standard rate engine, which selects the lowest-cost available rate. ' \
@@ -69,6 +70,8 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         required: %w[stock_location_id],
         properties: {
           stock_location_id: { type: :string, description: 'Stock location the fulfillment ships from' },
+          source_fulfillment_id: { type: :string,
+                                   description: "The only fulfillment of this order to move units from, its exchange and claim replacements included. Omit to take the customer's bought units from every unshipped fulfillment" },
           tracking: { type: :string, example: 'INPOST-12345',
                       description: 'Carrier tracking number, or a full https:// tracking link — a full URL is served back as tracking_url unchanged instead of being templated into the delivery method tracking URL' },
           delivery_method_id: { type: :string,
@@ -119,7 +122,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+          expect(data['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
         end
       end
     end

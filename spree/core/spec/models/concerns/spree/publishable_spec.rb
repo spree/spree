@@ -29,6 +29,7 @@ RSpec.describe Spree::Publishable, events: true do
       self.table_name = 'spree_products'
 
       include Spree::Publishable
+      publishes_event :custom
     end
   end
 
@@ -73,6 +74,13 @@ RSpec.describe Spree::Publishable, events: true do
       end
 
       expect(received).to be false
+    end
+
+    it 'refuses an event no model declared, even while events are disabled' do
+      Spree::Events.disable do
+        expect { instance.publish_event('test_product.undeclared') }
+          .to raise_error(Spree::Events::UndeclaredEventError, /test_product\.undeclared/)
+      end
     end
   end
 
@@ -329,6 +337,8 @@ RSpec.describe Spree::Publishable, events: true do
 
     context 'within Spree::Events.disable_lifecycle' do
       let(:product) { create(:product) }
+
+      before { Spree::Events.catalog.declare(Spree::Product, :custom) }
 
       it 'suppresses lifecycle events but lets explicit events through' do
         lifecycle_received = false

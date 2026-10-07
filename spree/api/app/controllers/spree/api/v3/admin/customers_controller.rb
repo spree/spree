@@ -51,7 +51,7 @@ module Spree
           rescue Spree::Core::DestroyWithOrdersError => e
             render_error(
               code: 'customer_has_orders',
-              message: e.message.presence || Spree.t(:error_user_destroy_with_orders),
+              message: e.message.presence || I18n.t('spree.error_user_destroy_with_orders'),
               status: :unprocessable_content
             )
           end
@@ -108,7 +108,7 @@ module Spree
             if @resource.anonymized?
               return render_error(
                 code: ERROR_CODES[:validation_error],
-                message: Spree.t('data_request_errors.already_anonymized'),
+                message: I18n.t('spree.data_request_errors.already_anonymized'),
                 status: :unprocessable_content
               )
             end

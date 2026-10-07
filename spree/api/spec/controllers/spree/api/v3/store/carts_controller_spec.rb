@@ -144,6 +144,16 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   end
 
   describe 'POST #create' do
+    it 'creates the cart through the configured carts create service' do
+      custom_service = Class.new(Spree::Carts::Create)
+      allow(Spree).to receive(:carts_create_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).and_call_original
+
+      post :create
+
+      expect(response).to have_http_status(:created)
+    end
+
     it 'creates a new cart' do
       expect do
         post :create
@@ -288,6 +298,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('variant_not_found')
         expect(json_response['error']['message']).to eq('Variant not found')
+      end
+
+      it "refuses an item outside the buyer's catalogs" do
+        company = create(:company, store: store)
+        catalog = create(:catalog, store: store)
+        create(:catalog_product, catalog: catalog, product: product2)
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        create(:company_membership, company: company, customer: user)
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+        post :create, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] }
+
+        expect(response).to have_http_status(:not_found)
+        expect(Spree::LineItem.where(variant: variant)).to be_empty
       end
     end
 
@@ -504,6 +528,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(json_response['items'].length).to eq(original_item_count - 1)
       end
+
+      it 'drops a batch coupon code another cart has taken, with a warning' do
+        promotion = create(:promotion, :with_line_item_adjustment, code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store)
+        coupon_code = promotion.coupon_codes.first
+        coupon_code.update!(cart: create(:cart, store: store))
+        cart.update_columns(coupon_code: coupon_code.code)
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(json_response['coupon_code']).to be_nil
+        expect(json_response['warnings']).to contain_exactly(
+          'code' => 'coupon_code_unavailable', 'message' => I18n.t('spree.coupon_code_unavailable')
+        )
+      end
     end
 
     context 'auto-advance' do
@@ -512,7 +550,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       let(:country) { Spree::Country.by_iso('US') }
       let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
       let!(:zone) { create(:zone) }
-      let!(:shipping_method) { create(:shipping_method) }
+      let!(:shipping_method) { create(:delivery_method) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -530,6 +568,19 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['fulfillments']).to be_present
+      end
+
+      it 'advances through the configured checkout advance service' do
+        address = create(:address, customer: user, country: country, state: us_state)
+        cart.update!(email: 'customer@example.com', ship_address: address)
+        cart.fulfillments.delete_all
+        custom_service = Class.new(Spree::Checkout::Advance)
+        allow(Spree).to receive(:checkout_advance_service).and_return(custom_service)
+        expect(custom_service).to receive(:call).with(order: cart).and_call_original
+
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
       end
 
       it 'surfaces a delivery_unavailable warning when the cart cannot be delivered' do
@@ -598,10 +649,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     let(:country) { Spree::Country.by_iso('US') }
     let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
     let!(:zone) { create(:zone) }
-    let!(:shipping_method) { create(:shipping_method) }
+    let!(:shipping_method) { create(:delivery_method) }
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    it 'updates the cart through the configured carts update service' do
+      custom_service = Class.new(Spree::Carts::Update)
+      allow(Spree).to receive(:carts_update_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(hash_including(cart: order)).and_call_original
+
+      patch :update, params: { id: order.prefixed_id, po_number: 'PO-4471' }
+
+      expect(response).to have_http_status(:ok)
     end
 
     it 'accepts shipping_address_id to use an existing address' do
@@ -1071,7 +1132,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
-      create(:shipping_method) if Spree::DeliveryMethod.none?
+      create(:delivery_method) if Spree::DeliveryMethod.none?
     end
 
     it 'completes the checkout' do
@@ -1153,7 +1214,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'completes via spree token' do
-        create(:shipping_method) if Spree::DeliveryMethod.none?
+        create(:delivery_method) if Spree::DeliveryMethod.none?
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_order.token
 

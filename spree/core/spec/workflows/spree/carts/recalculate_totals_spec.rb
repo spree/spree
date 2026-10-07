@@ -61,6 +61,22 @@ module Spree
           .to change { order.reload.discount_total }.by(0).and change { order.reload.adjustment_total }.by(-3)
       end
 
+      # Tax given back on a return is not tax charged: claims and exchanges
+      # re-sum the order after settling, and a credit row counted here would
+      # raise the order's total by the very tax it refunded.
+      it 'leaves the tax a return gave back out of the order' do
+        line_item = order.line_items.first
+        create(:tax_line, order: order, line_item: line_item, amount: 3)
+        described_class.call(cart: order)
+        return_line = create(:return, order: order, store: order.store).return_line_items.first
+
+        expect do
+          create(:tax_line, order: order, line_item: nil, return_line_item: return_line, credit: true, amount: 3)
+          described_class.call(cart: order)
+        end.not_to(change { [order.reload.additional_tax_total, order.total, line_item.reload.additional_tax_total] })
+        expect(order.additional_tax_total).to eq(3)
+      end
+
       # A commission settles between the platform and the seller, so the
       # columns report it beside what the shopper owes and never inside it.
       # The fee and its tax stay apart because the tax is separately

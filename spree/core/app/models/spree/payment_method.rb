@@ -13,7 +13,9 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SecretPreferences
     include Spree::CaptureMethod
+    include Spree::ProviderListing
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
@@ -57,7 +59,6 @@ module Spree
     validates :storefront_visible, inclusion: { in: [true, false] }
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
@@ -73,6 +74,20 @@ module Spree
     # Gateways predate `registers_subclasses_via` and expose their registry as
     # `providers`; declaring it keeps subclass resolution to a single rule.
     registers_subclasses_via { providers }
+
+    # Whether this method is backed by an external payment provider (Stripe,
+    # Adyen…) rather than handled by the store itself (check, store credit).
+    # Only third-party methods are listed under Settings → Integrations.
+    #
+    # @return [Boolean]
+    def self.third_party?
+      false
+    end
+
+    # @return [Hash] the listing attributes, plus whether the method is third-party
+    def self.provider_listing
+      super.merge(third_party: third_party?)
+    end
 
     def provider_class
       raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
@@ -134,6 +149,25 @@ module Spree
     # (called by the frontend or by the webhook handler).
     def complete_payment_session(payment_session:, params: {})
       raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
+    end
+
+    # Cancels a session nobody is going to complete, so the provider can no
+    # longer take money against it. Called for the sessions left pending when
+    # an order is placed. The default leaves the session untouched: a
+    # gateway that cannot cancel at the provider must not report as canceled
+    # a session that can still be paid.
+    #
+    # Raise Spree::Core::GatewayError only for a refusal, such as a session
+    # that was already paid. A timeout, a rate limit, an outage, or rejected
+    # credentials is raised as itself. Callers that treat those as a refusal
+    # leave a session the buyer can still pay.
+    #
+    # @param payment_session [Spree::PaymentSession]
+    # @return [Boolean] whether the session was canceled
+    # @raise [Spree::Core::GatewayError] when the provider refuses, e.g. the
+    #   session has already been paid
+    def cancel_payment_session(payment_session:)
+      false
     end
 
     # Parses an incoming webhook payload from the payment provider.
@@ -284,9 +318,7 @@ module Spree
     end
 
     def public_preferences
-      public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = preferences[key]
-      end
+      public_preference_keys.index_with { |key| get_preference(key) }
     end
 
     # @deprecated Use {#storefront_visible?}; removed in 6.1.

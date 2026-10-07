@@ -14,9 +14,7 @@ module Spree
 
           attributes :memo
 
-          attribute :stock_location_id do |exchange|
-            exchange.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           many :exchange_line_items,
                resource: proc { Spree.api.seller_exchange_line_item_serializer },

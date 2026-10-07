@@ -6,7 +6,7 @@ RSpec.describe 'Admin Media Library API', type: :request, swagger_doc: 'api-refe
   include_context 'API v3 Admin'
 
   let!(:product) { create(:product, store: store) }
-  let!(:media) { create(:image, viewable: product, alt: 'Front view') }
+  let!(:media) { create(:media, viewable: product, alt: 'Front view') }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/media' do
