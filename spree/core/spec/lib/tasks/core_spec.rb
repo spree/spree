@@ -55,11 +55,19 @@ describe 'core:migrate_newsletter_subscribers' do
     expect(Spree::NewsletterSubscriber.verified.count).to eq(7)
     expect(Spree::NewsletterSubscriber.find_by(customer: user).attributes).to include(
       'email' => user.email,
+      'customer_id' => user.id,
       'verified_at' => user.updated_at,
       'verification_token' => nil,
       'updated_at' => kind_of(ActiveSupport::TimeWithZone),
       'created_at' => kind_of(ActiveSupport::TimeWithZone)
     )
+  end
+
+  it 'does not duplicate subscribers when run again' do
+    subject.invoke
+    subject.reenable
+
+    expect { subject.invoke }.not_to change(Spree::NewsletterSubscriber, :count)
   end
 end
 

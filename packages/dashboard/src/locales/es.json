@@ -272,7 +272,8 @@
             },
             "confirm": {
               "cancel_confirm": "Cancelar cambio",
-              "cancel_dismiss": "Mantener cambio"
+              "cancel_dismiss": "Mantener cambio",
+              "balance_due": "El reemplazo cuesta más que lo devuelto. Al enviarlo, la diferencia se añade al pedido como saldo pendiente para que lo cobres. No se cobra nada automáticamente."
             },
             "create_title": "Nuevo cambio",
             "empty": "Sin cambios para este pedido.",
@@ -285,7 +286,8 @@
               "approve": "Aprobar",
               "create": "Nueva devolución",
               "receive": "Recibir artículos",
-              "refund": "Reembolsar"
+              "refund": "Reembolsar",
+              "complete": "Completar devolución"
             },
             "buy_label": "Comprar etiqueta de devolución",
             "buy_label_confirm": "¿Comprar una etiqueta de devolución prepagada? Tu cuenta de transportista se cobra en cuanto se emite la etiqueta.",
@@ -308,13 +310,18 @@
             "received_of": "{{received}} de {{requested}} recibidos",
             "received_quantity": "Recibidos",
             "refund_amount": "Monto",
+            "refund_includes_tax": "El importe completo incluye {{tax}} de impuestos. Un importe menor devuelve los impuestos en la misma proporción.",
             "refund_method": "Reembolsar a",
             "refund_methods": {
               "original_payment": "Pago original",
               "store_credit": "Crédito de tienda"
             },
             "refund_title": "Reembolsar devolución",
+            "complete_title": "Completar devolución",
+            "nothing_owed": "No se debe nada en esta devolución, así que no se reembolsa dinero. Al completarla, la devolución se cierra.",
             "refund_total": "Total del reembolso",
+            "refunded": "Reembolsado",
+            "refunded_of": "{{amount}} de {{total}}",
             "resellable": "Revendible",
             "returning_to": "Devolviendo a {{name}}"
           },
@@ -462,7 +469,21 @@
           "section_delivery": "Entrega",
           "section_logo": "Logo",
           "subtitle": "Direcciones de remitente, notificaciones y el logo incorporado en los emails transaccionales.",
-          "title": "Configuración de email"
+          "title": "Configuración de email",
+          "branding": {
+            "title": "Marca",
+            "description": "Colores y fuente de cada correo para clientes. Deja un color vacío para mantener el predeterminado.",
+            "default_color": "Predeterminado",
+            "fonts": {
+              "inter": "Inter (predeterminada)",
+              "system": "Fuente del sistema",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -583,39 +604,73 @@
           "empty_description": "Creá un endpoint para recibir un POST firmado cada vez que se dispara un evento suscripto.",
           "empty_title": "Todavía no hay endpoints de webhook",
           "event_groups": {
-            "asset": "Recurso",
+            "admin_user": "Miembro del personal",
+            "cart": "Carrito",
+            "catalog": "Catálogo",
+            "claim": "Reclamación",
+            "company": "Empresa",
+            "company_invitation": "Invitación de empresa",
             "custom": "Personalizado",
             "customer": "Cliente",
+            "data_request": "Solicitud de datos",
+            "delivery": "Entrega",
             "digital": "Digital",
+            "digital_asset": "Recurso digital",
+            "digital_link": "Enlace digital",
+            "email_template": "Plantillas de correo",
+            "exchange": "Cambio",
+            "export": "Exportación",
             "fulfillment": "Cumplimiento",
             "gift_card": "Tarjeta de regalo",
             "gift_card_batch": "Lote de tarjetas de regalo",
-            "import_export": "Importar / Exportar",
+            "import": "Importación",
+            "import_row": "Fila de importación",
             "invitation": "Invitación",
             "line_item": "Línea de pedido",
+            "media": "Medios",
             "newsletter_subscriber": "Suscriptor de newsletter",
             "order": "Pedido",
+            "order_group": "Grupo de pedidos",
             "payment": "Pago",
             "payment_session": "Sesión de pago",
             "payment_setup_session": "Sesión de configuración de pago",
             "price": "Precio",
             "product": "Producto",
+            "product_submission": "Envío de producto",
             "promotion": "Promoción",
+            "purchase_order": "Orden de compra",
             "refund": "Reembolso",
-            "report": "Reporte",
             "return": "Devolución",
+            "saved_report": "Informe guardado",
+            "seller": "Vendedor",
+            "seller_payout": "Pago al vendedor",
+            "seller_requirement_submission": "Envío de requisito del vendedor",
+            "seller_user": "Usuario del vendedor",
+            "shipment": "Envío",
+            "shipping_label": "Etiqueta de envío",
+            "stock_item": "Artículo de inventario",
             "stock_level": "Nivel de stock",
             "stock_movement": "Movimiento de stock",
+            "stock_receipt": "Recepción de inventario",
             "stock_reservation": "Reserva de stock",
             "stock_transfer": "Transferencia de stock",
             "store_credit": "Crédito de tienda",
+            "supplier": "Proveedor",
+            "tax_exemption_certificate": "Certificado de exención fiscal",
+            "tax_identifier": "Identificador fiscal",
+            "user": "Cuenta de cliente",
             "variant": "Variante",
-            "wishlist": "Lista de deseos"
+            "wished_item": "Artículo deseado",
+            "wishlist": "Lista de deseos",
+            "wishlist_item": "Artículo de la lista de deseos"
           },
           "events_all": "Todos los eventos",
           "events_count_one": "{{count}} evento",
           "events_count_other": "{{count}} eventos",
+          "events_credential": "Credencial",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "Obsoleto, usa {{event}}",
+          "events_load_failed": "No se pudo cargar la lista de eventos. Aún puedes añadir un evento por su nombre abajo.",
           "events_remove_aria": "Quitar {{event}}",
           "health": {
             "auto_disabled_alert": "Este endpoint se deshabilitó automáticamente después de fallas repetidas de entrega.",
@@ -2128,6 +2183,25 @@
           "label": "Impuesto predeterminado sobre la comisión",
           "help": "Se aplica a tu comisión cuando ni la tarifa de comisión ni tu proveedor de impuestos indican una propia. Déjalo en 0 si tu comisión no lleva impuesto.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Color de acento"
+        },
+        "preferred_email_background_color": {
+          "label": "Color de fondo"
+        },
+        "preferred_email_card_color": {
+          "label": "Color de la tarjeta"
+        },
+        "preferred_email_text_color": {
+          "label": "Color del texto"
+        },
+        "preferred_email_heading_color": {
+          "label": "Color de los títulos"
+        },
+        "preferred_email_font": {
+          "label": "Fuente",
+          "help": "Las aplicaciones de correo que no puedan cargarla usarán una fuente similar."
         }
       },
       "store_credit": {
@@ -2406,6 +2480,7 @@
           "discounts_empty": "Todavía no hay descuentos en este pedido.",
           "fee_kind_cod": "Pago contra entrega",
           "fee_kind_duty": "Arancel",
+          "fee_kind_exchange": "Cambio",
           "fee_kind_gift_wrap": "Envoltura para regalo",
           "fee_kind_handling": "Gestión",
           "fee_kind_payment": "Cargo por pago",
@@ -2567,7 +2642,15 @@
           "move_and_requote": "Mover y recotizar",
           "no_rates": "No hay métodos de entrega cotizados para este cumplimiento.",
           "out_of_stock": "Sin stock",
+          "packing_slip_discount": "Descuento",
+          "packing_slip_footer": "Gracias por tu pedido.",
+          "packing_slip_fulfillment": "Entrega n.º {{number}}",
+          "packing_slip_order": "Pedido n.º {{number}}",
+          "packing_slip_shipping": "Envío",
+          "packing_slip_subtotal": "Subtotal",
+          "packing_slip_tax": "Impuestos",
           "packing_slip_title": "Nota de despacho — pedido {{number}}",
+          "packing_slip_total": "Total",
           "print_label": "Imprimir etiqueta",
           "print_packing_slip": "Imprimir nota de despacho",
           "rates_pending_origin": "Guardá el nuevo origen para ver los métodos de entrega que ofrece.",
@@ -4002,6 +4085,7 @@
         "customers": "Cuentas, direcciones, tarjetas y grupos de clientes",
         "dashboard": "Análisis de ventas y rendimiento",
         "delivery_methods": "Opciones de envío, tarifas y las reglas que las controlan",
+        "email_templates": "Plantillas de correo para clientes y el diseño del correo",
         "fulfillments": "Armar, despachar y rastrear cumplimientos de pedidos",
         "gift_cards": "Tarjetas de regalo y lotes de tarjetas",
         "integrations": "Credenciales y conexiones de proveedores",
@@ -4053,6 +4137,7 @@
         "customers": "Clientes",
         "dashboard": "Dashboard",
         "delivery_methods": "Métodos de entrega",
+        "email_templates": "Plantillas de correo",
         "fulfillments": "Cumplimientos",
         "gift_cards": "Tarjetas de regalo",
         "integrations": "Integraciones",
@@ -4783,7 +4868,7 @@
       "create_description": "Agregá un depósito, una tienda o un punto de retiro para cumplir pedidos desde ahí.",
       "create_label": "Crear ubicación de stock",
       "delete_confirm": {
-        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación no se borran.",
+        "message": "{{name}} se eliminará. Los niveles de stock de esta ubicación también se eliminarán.",
         "title": "¿Eliminar ubicación de stock?"
       },
       "edit_description": "Actualizá el nombre, la dirección, el retiro o las políticas de stock.",
@@ -4987,8 +5072,9 @@
       },
       "table": {
         "search_placeholder": "Buscar notas…",
-        "empty": "Todavía no hay créditos de tienda. Emití uno desde el perfil de un cliente."
+        "empty": "Todavía no hay créditos de tienda."
       },
+      "issue_description": "Elegí un cliente y el monto que querés sumar a su cuenta.",
       "no_customer": "Sin cliente",
       "page": {
         "subtitle": "Lo que la tienda debe en saldos prepagos, en todos los clientes."
@@ -5002,7 +5088,7 @@
       "configure_cta": "Configurar",
       "connect_cta": "Conectar",
       "connect_description": "Ingresá las credenciales de este proveedor. Guardar las almacena; pasarla a activa verifica la conexión.",
-      "description": "Conectá servicios de proveedores a esta tienda. Las credenciales se guardan por tienda y las usan los proveedores de envío, impuestos y otros.",
+      "description": "Conecta proveedores de pago y otros servicios a esta tienda. Las credenciales se guardan por tienda y las usan el checkout, los envíos, los impuestos y otros proveedores.",
       "disconnect": "Desconectar",
       "disconnect_confirm": {
         "message": "¿Desconectar {{name}}? Sus credenciales guardadas se eliminan y los proveedores que la usan dejan de funcionar.",
@@ -5015,18 +5101,24 @@
       },
       "groups": {
         "other": "Otro",
+        "payments": "Pagos",
         "shipping": "Envío",
         "tax": "Impuestos"
       },
+      "manage_payment_methods": "Gestionar métodos de pago",
       "messages": {
         "connected": "Integración conectada",
         "disconnected": "Integración desconectada",
         "updated": "Integración actualizada"
       },
+      "setup_guide": "Guía de configuración",
       "status": {
         "active": "Activa",
         "connected_inactive": "Conectada (inactiva)",
         "not_connected": "No conectada"
+      },
+      "tabs": {
+        "all": "Todas"
       },
       "test": {
         "failure": "La conexión falló.",
@@ -5035,7 +5127,9 @@
         "success": "Conexión exitosa.",
         "testing": "Probando…"
       },
+      "test_mode": "Modo de prueba",
       "title": "Integraciones",
+      "toggle_label": "Activar o desactivar {{name}}",
       "view_cta": "Ver"
     },
     "tax_identifiers": {
@@ -5695,7 +5789,11 @@
       "subtitle": "Creá tu cuenta de administrador y contanos sobre tu tienda. Todo esto se puede cambiar después.",
       "title": "Configurar Spree",
       "welcome_description": "Avanzá por la lista de control de abajo para abrir {{store}} al público.",
-      "welcome_title": "¡Bienvenido, tu tienda ya está lista!"
+      "welcome_title": "¡Bienvenido, tu tienda ya está lista!",
+      "rate_limited_title": "Demasiados intentos",
+      "rate_limited_message": "La configuración se ha consultado demasiadas veces en poco tiempo. Espera un minuto y vuelve a intentarlo.",
+      "check_failed_title": "No se pudo comprobar la configuración",
+      "check_failed_message": "No se pudo contactar con el servidor para comprobar si esta instalación necesita configurarse. Asegúrate de que está en marcha y vuelve a intentarlo."
     },
     "tax_rates": {
       "add_cta": "Agregar tasa de impuesto",
@@ -6011,6 +6109,166 @@
     },
     "jurisdiction": {
       "everywhere": "En todos lados"
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Ajustes",
+        "templates": "Plantillas"
+      },
+      "list": {
+        "description": "Edita los correos que reciben los clientes. Los cambios se guardan como borrador y solo llegan a los clientes cuando los publicas.",
+        "groups": {
+          "email": {
+            "title": "Correos para clientes",
+            "description": "Cada correo que un cliente puede recibir de tu tienda."
+          },
+          "layout": {
+            "title": "Diseño",
+            "description": "El encabezado, el pie y los estilos de cada correo para clientes."
+          },
+          "partial": {
+            "title": "Bloques compartidos",
+            "description": "Piezas que usan varios correos, como la lista de artículos y los totales."
+          }
+        },
+        "empty": "Aquí no hay plantillas de correo editables. Las plantillas de correo para clientes vienen con el paquete de correos de Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Confirmación del pedido",
+        "order_mailer_cancel_email": "Pedido cancelado",
+        "order_mailer_payment_link_email": "Enlace de pago",
+        "order_group_mailer_confirm_email": "Confirmación de pedido con varios vendedores",
+        "fulfillment_mailer_fulfilled_email": "Pedido enviado",
+        "return_mailer_refunded_email": "Devolución reembolsada",
+        "digital_asset_mailer_files_ready_email": "Descargas listas",
+        "customer_mailer_password_reset_email": "Restablecer contraseña",
+        "customer_mailer_data_export_email": "Exportación de datos personales lista",
+        "newsletter_mailer_email_confirmation": "Confirmación del boletín",
+        "company_mailer_invitation_email": "Invitación de empresa",
+        "spree_base_mailer": "Diseño del correo",
+        "shared_line_item": "Artículo",
+        "shared_order_summary": "Resumen del pedido",
+        "shared_purchase_totals": "Totales",
+        "shared_fulfillment_group": "Envío",
+        "shared_summary_row": "Fila de resumen"
+      },
+      "badges": {
+        "customized": "Personalizada",
+        "default": "Predeterminada",
+        "draft": "Borrador",
+        "other_languages": "También personalizada: {{languages}}",
+        "default_updated": "Actualizada por Spree",
+        "unsaved": "Cambios sin guardar",
+        "showing_draft": "Borrador: los clientes reciben la versión publicada",
+        "showing_published": "Publicada: lo que reciben los clientes",
+        "showing_default": "Predeterminada de Spree: lo que reciben los clientes"
+      },
+      "actions": {
+        "save_draft": "Guardar borrador",
+        "publish": "Publicar",
+        "discard_draft": "Descartar borrador",
+        "revert": "Volver a la predeterminada",
+        "send_test": "Enviar correo de prueba",
+        "history": "Historial"
+      },
+      "confirm": {
+        "discard_title": "¿Descartar este borrador?",
+        "discard_message": "Se eliminan tus cambios sin publicar. Los clientes siguen recibiendo la versión publicada.",
+        "revert_title": "¿Volver a la versión predeterminada de Spree?",
+        "revert_message": "A partir de ahora los clientes reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde.",
+        "restore_title": "¿Restaurar esta versión?",
+        "restore_message": "Esta versión reemplaza el borrador. Publícala para que la reciban los clientes.",
+        "leave_title": "¿Salir sin guardar?",
+        "leave_message": "Se perderán los cambios sin guardar de esta plantilla.",
+        "leave": "Salir",
+        "revert_every_language_message": "A partir de ahora los clientes de todos los idiomas reciben el correo predeterminado de Spree y se elimina el borrador. Las versiones publicadas quedan en el historial para restaurarlas más tarde."
+      },
+      "editor": {
+        "title": "Plantilla",
+        "subject": "Asunto",
+        "body": "Código de la plantilla",
+        "language": "Idioma"
+      },
+      "preview": {
+        "title": "Vista previa",
+        "frame_title": "Vista previa del correo",
+        "subject": "Asunto: {{subject}}",
+        "html": "Correo",
+        "text": "Texto sin formato",
+        "desktop": "Ancho de escritorio",
+        "mobile": "Ancho móvil",
+        "shown_in": "Mostrar dentro de",
+        "record": "Vista previa con registro",
+        "unavailable": "No se pudo mostrar la vista previa.",
+        "needs_permission": "Las vistas previas se generan para quienes pueden editar plantillas de correo.",
+        "latest_record": "El más reciente"
+      },
+      "problems": {
+        "title": "Esta plantilla no se puede mostrar",
+        "on_line": "Línea {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Actualizada por Spree",
+        "description": "Spree cambió su versión predeterminada de esta plantilla desde que se creó la tuya. Compara ambas antes de decidir.",
+        "compare": "Comparar",
+        "dialog_title": "Qué cambió en la versión predeterminada de Spree",
+        "dialog_description": "A la izquierda, la predeterminada de la que partió tu versión. A la derecha, la predeterminada actual.",
+        "before": "Tu versión partió de",
+        "after": "Predeterminada actual de Spree",
+        "keep_mine": "Conservar mi versión",
+        "start_over": "Empezar desde la nueva predeterminada"
+      },
+      "history": {
+        "title": "Historial",
+        "description": "Cada versión publicada en este idioma, de la más reciente a la más antigua.",
+        "empty": "Aún no se ha publicado nada.",
+        "latest": "Más reciente",
+        "version": "Versión {{number}}",
+        "restore": "Restaurar"
+      },
+      "conflict": {
+        "title": "Otra persona guardó este borrador",
+        "keep_editing": "Seguir editando",
+        "reload": "Cargar su versión",
+        "overwrite": "Guardar la mía encima"
+      },
+      "variables": {
+        "title": "Variables",
+        "description": "Datos que puede mostrar este correo. Empieza a escribir una variable en el código para ver todos sus campos.",
+        "order": "El pedido, con sus artículos, direcciones y totales.",
+        "resend": "Si es una copia enviada de nuevo.",
+        "payment_url": "El enlace donde paga el cliente.",
+        "order_group": "Un pedido repartido entre varios vendedores.",
+        "fulfillment": "El envío, con su seguimiento.",
+        "return": "La devolución y lo reembolsado.",
+        "downloads": "Los archivos que puede descargar el cliente.",
+        "customer": "El cliente que recibe el correo.",
+        "reset_url": "El enlace para elegir una nueva contraseña.",
+        "download_url": "El enlace para descargar la exportación.",
+        "expires_at": "Cuándo deja de funcionar el enlace.",
+        "confirmation_url": "El enlace que confirma la suscripción.",
+        "company": "La empresa a la que se invita al cliente.",
+        "accept_url": "El enlace que acepta la invitación.",
+        "store": "Tu tienda: nombre, enlaces, logotipo y marca.",
+        "locale": "El idioma en que se envía el correo.",
+        "insert": "Insertar {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Borrador guardado",
+        "draft_discarded": "Borrador descartado",
+        "published": "Publicada. Los clientes reciben esta versión a partir de ahora.",
+        "reverted": "Se volvió a la versión predeterminada de Spree",
+        "restored": "Versión restaurada en el borrador",
+        "test_sent": "Correo de prueba enviado a {{email}}"
+      },
+      "errors": {
+        "load_failed": "No se pudieron cargar las plantillas de correo",
+        "not_allowed": "No tienes permiso para ver las plantillas de correo",
+        "test_email_failed": "No se pudo enviar el correo de prueba"
+      },
+      "every_language": {
+        "notice": "Los clientes de todos los idiomas reciben esta versión hasta que publiques una para {{language}}."
+      }
     }
   }
 }

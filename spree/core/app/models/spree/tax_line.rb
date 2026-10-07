@@ -4,6 +4,11 @@ module Spree
   # per estimate. Snapshot columns (+rate+, +label+, +provider_id+) keep rows
   # self-describing after a TaxRate is deleted or when an external provider
   # computed them.
+  #
+  # Rows on a return, claim or exchange line are post-sale: the tax given back
+  # (+credit+), or the tax on an exchange's replacement. They are owned by the
+  # order like every other row but never count towards its totals — the order
+  # reads only {.sale} rows.
   class TaxLine < Spree.base_class
     include Spree::TypedAdjustmentLine
 
@@ -35,6 +40,13 @@ module Spree
     belongs_to :line_item, class_name: 'Spree::LineItem', optional: true
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment', optional: true
     belongs_to :fee, class_name: 'Spree::Fee', optional: true
+    belongs_to :return_line_item, class_name: 'Spree::ReturnLineItem', optional: true
+    belongs_to :claim_line_item, class_name: 'Spree::ClaimLineItem', optional: true
+    belongs_to :exchange_line_item, class_name: 'Spree::ExchangeLineItem', optional: true
+
+    # The sale row a credit gives back — what caps repeated credits against one
+    # line, and the original a credit note refers to.
+    belongs_to :original_tax_line, class_name: 'Spree::TaxLine', optional: true
 
     # Tax included in price vs additional. Per-row (mixed regimes on one order).
     attribute :included, :boolean, default: false
@@ -46,20 +58,50 @@ module Spree
               inclusion: { in: ->(tax_line) { tax_line.class.taxability_reasons } },
               allow_nil: true
     validate :exactly_one_adjustable
+    validate :post_sale_owned_by_order
 
     # Tax reporting is the reason the treatment columns exist — "which country's
     # tax was this, and which sales were reverse-charged" has to be answerable.
     self.whitelisted_ransackable_attributes = %w[taxability_reason country_code state_code included provider_id]
+
+    POST_SALE_KEYS = %i[return_line_item_id claim_line_item_id exchange_line_item_id].freeze
+
+    ADJUSTABLE_KEYS = {
+      'Spree::LineItem' => :line_item_id,
+      'Spree::Fulfillment' => :fulfillment_id,
+      'Spree::Fee' => :fee_id,
+      'Spree::ReturnLineItem' => :return_line_item_id,
+      'Spree::ClaimLineItem' => :claim_line_item_id,
+      'Spree::ExchangeLineItem' => :exchange_line_item_id
+    }.freeze
 
     scope :included_in_price, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
     scope :for_line_items, -> { where.not(line_item_id: nil) }
     scope :for_fulfillments, -> { where.not(fulfillment_id: nil) }
     scope :for_fees, -> { where.not(fee_id: nil) }
+    scope :sale, -> { where(POST_SALE_KEYS.index_with(nil)) }
+    scope :post_sale, -> { where.not(POST_SALE_KEYS.index_with(nil)) }
+    scope :credits, -> { where(credit: true) }
+    scope :charges, -> { where(credit: false) }
 
-    # @return [Spree::LineItem, Spree::Fulfillment, Spree::Fee, nil]
+    # The foreign key a row uses to point at an item of this class.
+    #
+    # @param klass [Class]
+    # @return [Symbol]
+    # @raise [ArgumentError] for a class that is not taxed
+    def self.adjustable_key_for(klass)
+      ADJUSTABLE_KEYS.fetch(klass.name) { raise ArgumentError, "#{klass} is not taxable" }
+    end
+
+    # @return [Spree::LineItem, Spree::Fulfillment, Spree::Fee, Spree::ReturnLineItem,
+    #   Spree::ClaimLineItem, Spree::ExchangeLineItem, nil]
     def adjustable
-      line_item || fulfillment || fee
+      line_item || fulfillment || fee || return_line_item || claim_line_item || exchange_line_item
+    end
+
+    def post_sale?
+      POST_SALE_KEYS.any? { |key| self[key].present? }
     end
 
     def included?
@@ -73,7 +115,15 @@ module Spree
     private
 
     def exactly_one_adjustable
-      errors.add(:base, :exactly_one_adjustable, message: Spree.t('errors.messages.exactly_one_adjustable')) unless [line_item, fulfillment, fee].compact.one?
+      adjustables = [line_item, fulfillment, fee, return_line_item, claim_line_item, exchange_line_item]
+      errors.add(:base, :exactly_one_adjustable, message: Spree.t('errors.messages.exactly_one_adjustable')) unless adjustables.compact.one?
+    end
+
+    # Returns, claims and exchanges only exist on placed orders.
+    def post_sale_owned_by_order
+      return unless post_sale? && order.nil?
+
+      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order'))
     end
   end
 end

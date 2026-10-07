@@ -23,7 +23,10 @@ module Spree
 
           rows = order.with_lock do
             created = line_item ? [line_item_row(order, line_item, label, value, value_type)].compact : distributed_rows(order, label, value, value_type)
-            Spree.order_recalculate_totals_workflow.call(order: order) if created.any?
+            if created.any?
+              Spree.order_recalculate_totals_workflow.call(order: order)
+              order.update_statuses!
+            end
             created
           end
 

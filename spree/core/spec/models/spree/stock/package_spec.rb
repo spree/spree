@@ -10,7 +10,7 @@ module Spree
       let(:order) { create(:order) }
 
       def build_inventory_unit
-        build(:inventory_unit, variant: variant, order: order)
+        build(:fulfillment_item, variant: variant, order: order)
       end
 
       # The regression this guards: during checkout a fulfillment belongs to a
@@ -21,7 +21,7 @@ module Spree
       describe '#owner' do
         it 'prefers the owner the fulfillment supplied' do
           cart = create(:cart, store: @default_store, ship_address: create(:address))
-          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+          fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
 
           package = fulfillment.to_package
 
@@ -31,7 +31,7 @@ module Spree
         it 'never returns a stranger order reachable through a unit' do
           stranger = create(:order)
           cart = create(:cart, store: @default_store)
-          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+          fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
           fulfillment.fulfillment_items.update_all(order_id: stranger.id)
 
           expect(fulfillment.to_package.owner).to eq(cart)
@@ -44,7 +44,7 @@ module Spree
           create(:package_type, store: @default_store, default: true, weight: 2.5, weight_unit: 'lb')
           cart = create(:cart, store: @default_store)
           create(:line_item, cart: cart, order: nil, variant: variant)
-          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+          fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
 
           expect(fulfillment.to_package.weight).to eq(27.5)
         end
@@ -236,8 +236,8 @@ module Spree
         it 'returns the methods of the items resolved profile' do
           variant1 = create(:product).default_variant
           variant2 = create(:product).default_variant
-          contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
-                      ContentItem.new(build(:inventory_unit, variant_id: variant2.id))]
+          contents = [ContentItem.new(build(:fulfillment_item, variant_id: variant1.id)),
+                      ContentItem.new(build(:fulfillment_item, variant_id: variant2.id))]
 
           package = Package.new(stock_location, contents)
           expect(package.eligible_delivery_methods).to eq([shipping_dm])
@@ -245,7 +245,7 @@ module Spree
 
         it 'returns the digital profile methods for a digital package' do
           digital = create(:digital_product).default_variant
-          contents = [ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
+          contents = [ContentItem.new(build(:fulfillment_item, variant_id: digital.id))]
 
           package = Package.new(stock_location, contents)
           expect(package.eligible_delivery_methods).to eq([digital_dm])
@@ -336,7 +336,7 @@ module Spree
         # error, which is why freight math never multiplies columns directly.
         it 'reports the packed volume in cubic meters' do
           variant = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'cm')
-          contents = [ContentItem.new(build(:inventory_unit, variant: variant, quantity: 2))]
+          contents = [ContentItem.new(build(:fulfillment_item, variant: variant, quantity: 2))]
           package = Package.new(stock_location, contents)
 
           expect(package.volume).to eq(BigDecimal('0.012'))
@@ -346,8 +346,8 @@ module Spree
           metric = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'cm')
           imperial = build(:variant, width: 10, height: 20, depth: 30, dimensions_unit: 'in')
 
-          metric_package = Package.new(stock_location, [ContentItem.new(build(:inventory_unit, variant: metric))])
-          imperial_package = Package.new(stock_location, [ContentItem.new(build(:inventory_unit, variant: imperial))])
+          metric_package = Package.new(stock_location, [ContentItem.new(build(:fulfillment_item, variant: metric))])
+          imperial_package = Package.new(stock_location, [ContentItem.new(build(:fulfillment_item, variant: imperial))])
 
           expect(imperial_package.volume).to be > metric_package.volume
         end
@@ -355,10 +355,10 @@ module Spree
 
       context '#dimension' do
         it 'calculates the sum of the dimension of all the items' do
-          contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant))),
-                      ContentItem.new(build(:inventory_unit, variant: build(:variant)))]
+          contents = [ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
+                      ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
+                      ContentItem.new(build(:fulfillment_item, variant: build(:variant))),
+                      ContentItem.new(build(:fulfillment_item, variant: build(:variant)))]
           package = Package.new(stock_location, contents)
           expect(package.dimension).to eq contents.sum(&:dimension)
         end

@@ -1,5 +1,7 @@
 module Spree
   class Invitation < Spree.base_class
+    publishes_events :accepted, :created, :resent
+
     has_prefix_id :inv
 
     has_secure_token
@@ -32,8 +34,6 @@ module Spree
     #
     # Scopes
     #
-    scope :pending, -> { where(status: 'pending') }
-    scope :accepted, -> { where(status: 'accepted') }
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
     #

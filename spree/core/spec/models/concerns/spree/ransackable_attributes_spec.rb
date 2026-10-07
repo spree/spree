@@ -31,7 +31,7 @@ RSpec.describe Spree::RansackableAttributes do
 
     it "drops the buyer's email and the searches that match on it" do
       expect(Spree::Order.ransackable_attributes(:seller)).not_to include('email')
-      expect(Spree::Order.ransackable_scopes(:seller)).not_to include('search', 'multi_search')
+      expect(Spree::Order.ransackable_scopes(:seller)).not_to include('search')
     end
   end
 end

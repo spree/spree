@@ -5,13 +5,28 @@ pre-commit:
       stage_fixed: true
       run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
     typelizer-and-zod:
-      glob: "spree/api/app/serializers/**/*.rb"
+      glob:
+        - "spree/api/app/serializers/**/*.rb"
+        - "spree/api/lib/spree/api/webhook_event_types.rb"
+        - "spree/emails/app/serializers/**/*.rb"
+        - "spree/core/app/serializers/spree/emails/**/*.rb"
+        - "spree/*/config/initializers/typelizer.rb"
       run: |
         echo "Serializer changes detected — regenerating TypeScript types and Zod schemas..."
         cd spree/api && bundle exec rake typelizer:generate && cd ../..
-        cd packages/sdk && pnpm generate:zod && cd ../..
-        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/
-        git add packages/admin-sdk/src/types/generated/
+        pnpm generate:zod
+        git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/ packages/sdk/src/webhooks/generated/
+        git add packages/admin-sdk/src/types/generated/ packages/admin-sdk/src/zod/generated/
+        git add packages/seller-sdk/src/types/generated/ packages/seller-sdk/src/zod/generated/
+    zod:
+      # Types regenerated or edited without a serializer change, and changes to
+      # the generator itself, still need fresh schemas.
+      glob:
+        - "packages/*/src/types/generated/*.ts"
+        - "packages/sdk-core/scripts/generate-zod.ts"
+      run: |
+        pnpm generate:zod
+        git add packages/sdk/src/zod/generated/ packages/admin-sdk/src/zod/generated/ packages/seller-sdk/src/zod/generated/
 
 pre-push:
   commands:

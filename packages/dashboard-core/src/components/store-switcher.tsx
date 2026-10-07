@@ -62,7 +62,7 @@ export function StoreSwitcher() {
     return (
       <SidebarMenu>
         <SidebarMenuItem className="h-rail-header-height flex items-center">
-          <div className="flex w-full items-center gap-2 p-1.5">{header}</div>
+          <div className="flex w-full items-center gap-2">{header}</div>
         </SidebarMenuItem>
       </SidebarMenu>
     )

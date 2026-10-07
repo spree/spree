@@ -30,7 +30,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     # Optional so secret-API-key callers (apps / server-to-server) can create
     # exports without a human user attached. The email notification is
     # skipped for these — apps poll instead.

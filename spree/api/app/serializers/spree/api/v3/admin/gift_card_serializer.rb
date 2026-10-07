@@ -24,13 +24,7 @@ module Spree
             params[:gift_card_codes] ? gift_card.display_code : gift_card.masked_code
           end
 
-          attribute :customer_id do |gift_card|
-            gift_card.customer&.prefixed_id
-          end
-
-          attribute :created_by_id do |gift_card|
-            gift_card.created_by&.prefixed_id
-          end
+          prefixed_id_attributes :customer, :created_by
 
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes

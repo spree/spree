@@ -6,6 +6,7 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
+    "generate:zod": "pnpm --recursive --filter \"./packages/*\" run generate:zod",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "turbo format",
@@ -52,7 +53,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@base-ui/react": "^1.4.1",
+    "@base-ui/react": "1.8.0",
     "@spree/cli": "workspace:*"
   }
 }

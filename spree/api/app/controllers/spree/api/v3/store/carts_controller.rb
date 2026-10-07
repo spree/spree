@@ -26,12 +26,13 @@ module Spree
             # with_order_lock, and a read must not 409 against the fence.
             if @cart.ship_address_id.present? && @cart.fulfillments.empty? && !@cart.completion_claimed?
               ActiveRecord::Base.connected_to(role: :writing) do
-                with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+                with_order_lock { Spree.checkout_advance_service.call(order: @cart) }
               end
             end
 
             # The customer is returning to a cart that may have sat for days.
             sweep_unbuyable_lines!
+            sweep_unavailable_coupon_code!
             render_cart
           end
 
@@ -39,9 +40,9 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree::Carts::Create.call(
+            result = Spree.carts_create_service.call(
               params: permitted_params.merge(
-                user: current_user,
+                customer: current_user,
                 store: current_store,
                 channel: current_channel,
                 currency: current_currency,
@@ -64,12 +65,13 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree::Carts::Update.call(
+              result = Spree.carts_update_service.call(
                 cart: @cart,
                 params: permitted_params
               )
 
               if result.success?
+                sweep_unavailable_coupon_code!
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
@@ -107,6 +109,7 @@ module Spree
             if result.success?
               # Signing in hands back a cart built earlier, possibly long ago.
               sweep_unbuyable_lines!
+              sweep_unavailable_coupon_code!
               render_cart
             else
               render_service_error(result.error.to_s)

@@ -67,6 +67,56 @@ async function submitCreate(page: Page, name: string) {
   await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
 }
 
+// Starts a whole-order adjustment on the Tiered Percent calculator and adds
+// one row per `[threshold, value]` pair, in the order given.
+async function addTieredPercentAction(page: Page, tiers: [string, string][]) {
+  await pickAction(page, /^create whole-order adjustment\b/i)
+  const calculatorSelect = page.locator('#calculator-type')
+  await expect(calculatorSelect).toBeEnabled({ timeout: 10_000 })
+  await calculatorSelect.click()
+  await page.getByRole('option', { name: /^tiered percent$/i }).click()
+
+  const dialog = page.getByRole('dialog')
+  for (const [index, [threshold, value]] of tiers.entries()) {
+    await dialog.getByRole('button', { name: /^add tier$/i }).click()
+    await dialog
+      .getByLabel(/^order total/i)
+      .nth(index)
+      .fill(threshold)
+    await dialog
+      .getByLabel(/^discount$/i)
+      .nth(index)
+      .fill(value)
+  }
+}
+
+async function openAdjustmentAction(page: Page, calculator: RegExp) {
+  await page
+    .locator('div.items-stretch')
+    .filter({ hasText: /create whole-order adjustment/i })
+    .first()
+    .getByRole('button')
+    .first()
+    .click()
+  await expect(page.getByRole('heading', { name: /^create whole-order adjustment$/i })).toBeVisible(
+    { timeout: 5_000 },
+  )
+  await expect(page.locator('#calculator-type')).toContainText(calculator, { timeout: 10_000 })
+}
+
+// The server keeps each number as an exact decimal, so 100 reads back as
+// "100.0"; compare the numbers rather than their text.
+const decimal = (n: string) => new RegExp(`^${n}(\\.0+)?$`)
+
+async function expectTiers(page: Page, tiers: [string, string][]) {
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByLabel(/^order total/i)).toHaveCount(tiers.length)
+  for (const [index, [threshold, value]] of tiers.entries()) {
+    await expect(dialog.getByLabel(/^order total/i).nth(index)).toHaveValue(decimal(threshold))
+    await expect(dialog.getByLabel(/^discount$/i).nth(index)).toHaveValue(decimal(value))
+  }
+}
+
 const PROMOTIONS_PATH = (storeId: string) => `/${storeId}/promotions`
 const CTA = /new promotion/i
 
@@ -337,17 +387,7 @@ test.describe('promotions', () => {
 
     await submitCreate(page, name)
 
-    await page
-      .locator('div.items-stretch')
-      .filter({ hasText: /create whole-order adjustment/i })
-      .first()
-      .getByRole('button')
-      .first()
-      .click()
-    await expect(
-      page.getByRole('heading', { name: /^create whole-order adjustment$/i }),
-    ).toBeVisible({ timeout: 5_000 })
-    await expect(calculatorSelect).toContainText(/flat rate/i, { timeout: 10_000 })
+    await openAdjustmentAction(page, /flat rate/i)
   })
 
   test('creates a promotion with a Create Adjustment action', async ({ page }) => {
@@ -370,6 +410,81 @@ test.describe('promotions', () => {
     await expect(page.getByText(/^create whole-order adjustment$/i).first()).toBeVisible()
 
     await submitCreate(page, name)
+  })
+
+  test('saves the tiers of a tiered calculator, lowest threshold first', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Promo ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+
+    // Entered out of order: the saved tiers come back sorted by threshold.
+    await addTieredPercentAction(page, [
+      ['250', '15'],
+      ['100', '10'],
+    ])
+    await saveEditor(page)
+    await expect(page.getByText(/tiered percent · tiers: 2/i).first()).toBeVisible({
+      timeout: 5_000,
+    })
+
+    await submitCreate(page, name)
+
+    await openAdjustmentAction(page, /tiered percent/i)
+    await expectTiers(page, [
+      ['100', '10'],
+      ['250', '15'],
+    ])
+  })
+
+  test('edits and removes tiers on a saved promotion', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Edit ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+    await addTieredPercentAction(page, [
+      ['100', '10'],
+      ['250', '15'],
+    ])
+    await saveEditor(page)
+    await submitCreate(page, name)
+
+    await openAdjustmentAction(page, /tiered percent/i)
+    const dialog = page.getByRole('dialog')
+    await dialog
+      .getByRole('button', { name: /^remove tier$/i })
+      .first()
+      .click()
+    await dialog
+      .getByLabel(/^discount$/i)
+      .first()
+      .fill('20')
+    await saveEditor(page)
+
+    await page.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.getByText(/promotion saved/i).first()).toBeVisible({ timeout: 15_000 })
+
+    // Read back from the server, not from the form's memory.
+    await page.reload()
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 15_000 })
+    await openAdjustmentAction(page, /tiered percent/i)
+    await expectTiers(page, [['250', '20']])
+  })
+
+  test('refuses a tier discount above 100 percent', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PROMOTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Tiers Invalid ${Date.now()}`
+    await startNewPromotion(page, creds.store_id, name)
+    await addTieredPercentAction(page, [['100', '150']])
+    await saveEditor(page)
+
+    await page.getByRole('button', { name: /^create promotion$/i }).click()
+    await expect(page.getByText(/between 0% and 100%/i).first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: /^new promotion$/i })).toBeVisible()
   })
 
   test('creates a promotion with a Create Item Adjustments action', async ({ page }) => {

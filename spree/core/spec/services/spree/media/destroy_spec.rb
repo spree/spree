@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Media::Destroy do
   let(:product) { create(:product) }
-  let(:media) { create(:image, viewable: product) }
+  let(:media) { create(:media, viewable: product) }
 
   it 'destroys the row' do
     described_class.call(media: media)
@@ -99,7 +99,7 @@ describe Spree::Media::Destroy do
   end
 
   it 'leaves unrelated files alone' do
-    unrelated = create(:image, viewable: create(:product))
+    unrelated = create(:media, viewable: create(:product))
 
     described_class.call(media: media)
 

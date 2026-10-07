@@ -2138,6 +2138,25 @@
           "label": "佣金默认税率",
           "help": "当佣金费率和税务服务商都未给出税率时，按此税率对佣金计税。若佣金不计税，保持为 0。",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "强调色"
+        },
+        "preferred_email_background_color": {
+          "label": "背景色"
+        },
+        "preferred_email_card_color": {
+          "label": "卡片颜色"
+        },
+        "preferred_email_text_color": {
+          "label": "文字颜色"
+        },
+        "preferred_email_heading_color": {
+          "label": "标题颜色"
+        },
+        "preferred_email_font": {
+          "label": "字体",
+          "help": "无法加载该字体的邮件应用会使用相近的字体。"
         }
       },
       "store_credit": {
@@ -2418,7 +2437,7 @@
       "configure_cta": "配置",
       "connect_cta": "连接",
       "connect_description": "输入此提供方的凭据。保存即存储;启用时会验证连接。",
-      "description": "将服务提供方连接到此商店。凭据按商店存储，供配送、税务及其他提供方使用。",
+      "description": "将支付服务商和其他服务连接到此店铺。凭据按店铺存储，供结账、配送、税费和其他服务商使用。",
       "disconnect": "断开连接",
       "disconnect_confirm": {
         "message": "断开 {{name}}?其存储的凭据将被删除,使用它的提供方将停止工作。",
@@ -2431,18 +2450,24 @@
       },
       "groups": {
         "other": "其他",
+        "payments": "支付",
         "shipping": "配送",
         "tax": "税务"
       },
+      "manage_payment_methods": "管理支付方式",
       "messages": {
         "connected": "集成已连接",
         "disconnected": "集成已断开",
         "updated": "集成已更新"
       },
+      "setup_guide": "设置指南",
       "status": {
         "active": "已启用",
         "connected_inactive": "已连接(未启用)",
         "not_connected": "未连接"
+      },
+      "tabs": {
+        "all": "全部"
       },
       "test": {
         "failure": "连接失败。",
@@ -2451,7 +2476,9 @@
         "success": "连接成功。",
         "testing": "正在测试…"
       },
+      "test_mode": "测试模式",
       "title": "集成",
+      "toggle_label": "开启或关闭 {{name}}",
       "view_cta": "查看"
     },
     "invitation": {
@@ -2659,6 +2686,7 @@
           "discounts_empty": "该订单暂无折扣。",
           "fee_kind_cod": "货到付款",
           "fee_kind_duty": "关税",
+          "fee_kind_exchange": "换货",
           "fee_kind_gift_wrap": "礼品包装",
           "fee_kind_handling": "手续费",
           "fee_kind_payment": "支付手续费",
@@ -2820,7 +2848,15 @@
           "move_and_requote": "移动并重新报价",
           "no_rates": "此发货单暂无可用的配送方式。",
           "out_of_stock": "无库存",
+          "packing_slip_discount": "折扣",
+          "packing_slip_footer": "感谢您的订购。",
+          "packing_slip_fulfillment": "履约单 #{{number}}",
+          "packing_slip_order": "订单 #{{number}}",
+          "packing_slip_shipping": "运费",
+          "packing_slip_subtotal": "小计",
+          "packing_slip_tax": "税费",
           "packing_slip_title": "装箱单 — 订单 {{number}}",
+          "packing_slip_total": "合计",
           "print_label": "打印面单",
           "print_packing_slip": "打印装箱单",
           "rates_pending_origin": "保存新的发货地后即可查看该地可用的配送方式。",
@@ -3315,7 +3351,8 @@
             },
             "confirm": {
               "cancel_confirm": "取消换货",
-              "cancel_dismiss": "保留换货"
+              "cancel_dismiss": "保留换货",
+              "balance_due": "替换商品比退回的商品更贵。发出替换商品会将差额作为待付余额添加到订单中，由您收取。不会自动扣款。"
             },
             "create_title": "新建换货",
             "empty": "此订单暂无换货。",
@@ -3328,7 +3365,8 @@
               "approve": "批准",
               "create": "新建退货",
               "receive": "接收商品",
-              "refund": "退款"
+              "refund": "退款",
+              "complete": "完成退货"
             },
             "buy_label": "购买退货面单",
             "buy_label_confirm": "购买预付退货面单？面单一经出具即从您的承运商账户扣款。",
@@ -3351,13 +3389,18 @@
             "received_of": "已收到 {{received}} / {{requested}}",
             "received_quantity": "已收到",
             "refund_amount": "金额",
+            "refund_includes_tax": "全额包含 {{tax}} 税费。退款金额较小时，税费按相同比例退还。",
             "refund_method": "退款至",
             "refund_methods": {
               "original_payment": "原支付方式",
               "store_credit": "商店积分"
             },
             "refund_title": "退货退款",
+            "complete_title": "完成退货",
+            "nothing_owed": "此退货没有应退金额，因此不会退款。完成后该退货将关闭。",
             "refund_total": "退款总额",
+            "refunded": "已退款",
+            "refunded_of": "{{amount}} / {{total}}",
             "resellable": "可再销售",
             "returning_to": "退回至 {{name}}"
           },
@@ -3771,7 +3814,21 @@
           "section_delivery": "发送",
           "section_logo": "徽标",
           "subtitle": "发件人地址、通知，以及嵌入在交易邮件中的徽标。",
-          "title": "邮件设置"
+          "title": "邮件设置",
+          "branding": {
+            "title": "品牌样式",
+            "description": "每封客户邮件的颜色和字体。颜色留空则使用默认值。",
+            "default_color": "默认",
+            "fonts": {
+              "inter": "Inter（默认）",
+              "system": "系统字体",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -3892,39 +3949,73 @@
           "empty_description": "创建一个端点，在订阅的事件触发时接收已签名的 POST 请求。",
           "empty_title": "暂无 Webhook 端点",
           "event_groups": {
-            "asset": "资源",
+            "admin_user": "员工",
+            "cart": "购物车",
+            "catalog": "目录",
+            "claim": "索赔",
+            "company": "公司",
+            "company_invitation": "公司邀请",
             "custom": "自定义",
             "customer": "客户",
+            "data_request": "数据请求",
+            "delivery": "配送",
             "digital": "数字内容",
+            "digital_asset": "数字资产",
+            "digital_link": "数字链接",
+            "email_template": "邮件模板",
+            "exchange": "换货",
+            "export": "导出",
             "fulfillment": "履约",
             "gift_card": "礼品卡",
             "gift_card_batch": "礼品卡批次",
-            "import_export": "导入 / 导出",
+            "import": "导入",
+            "import_row": "导入行",
             "invitation": "邀请",
             "line_item": "订单项",
+            "media": "媒体",
             "newsletter_subscriber": "邮件订阅者",
             "order": "订单",
+            "order_group": "订单组",
             "payment": "支付",
             "payment_session": "支付会话",
             "payment_setup_session": "支付设置会话",
             "price": "价格",
             "product": "商品",
+            "product_submission": "商品提交",
             "promotion": "优惠",
+            "purchase_order": "采购订单",
             "refund": "退款",
-            "report": "报表",
             "return": "退货",
+            "saved_report": "已保存的报告",
+            "seller": "卖家",
+            "seller_payout": "卖家付款",
+            "seller_requirement_submission": "卖家要求提交",
+            "seller_user": "卖家用户",
+            "shipment": "货件",
+            "shipping_label": "运单标签",
+            "stock_item": "库存项",
             "stock_level": "库存水平",
             "stock_movement": "库存变动",
+            "stock_receipt": "入库单",
             "stock_reservation": "库存预留",
             "stock_transfer": "库存调拨",
             "store_credit": "店铺积分",
+            "supplier": "供应商",
+            "tax_exemption_certificate": "免税证书",
+            "tax_identifier": "税号",
+            "user": "客户账户",
             "variant": "变体",
-            "wishlist": "心愿单"
+            "wished_item": "心愿商品",
+            "wishlist": "心愿单",
+            "wishlist_item": "心愿单商品"
           },
           "events_all": "所有事件",
           "events_count_one": "{{count}} 个事件",
           "events_count_other": "{{count}} 个事件",
+          "events_credential": "凭据",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "已弃用，请使用 {{event}}",
+          "events_load_failed": "无法加载事件列表。你仍可以在下方按名称添加事件。",
           "events_remove_aria": "移除 {{event}}",
           "health": {
             "auto_disabled_alert": "此端点因多次投递失败已被自动禁用。",
@@ -4064,6 +4155,7 @@
         "customers": "客户账户、地址、卡片与分组",
         "dashboard": "销售与业绩分析",
         "delivery_methods": "配送选项、费率及其适用规则",
+        "email_templates": "客户邮件模板和邮件布局",
         "fulfillments": "打包、发货并跟踪订单履约",
         "gift_cards": "礼品卡及其批次",
         "integrations": "服务商凭据与连接",
@@ -4115,6 +4207,7 @@
         "customers": "客户",
         "dashboard": "仪表盘",
         "delivery_methods": "配送方式",
+        "email_templates": "邮件模板",
         "fulfillments": "履约",
         "gift_cards": "礼品卡",
         "integrations": "集成",
@@ -5072,7 +5165,11 @@
       "subtitle": "创建您的管理员账户并介绍您的商店。此处的所有设置之后均可更改。",
       "title": "设置 Spree",
       "welcome_description": "完成下方清单即可让 {{store}} 正式开业。",
-      "welcome_title": "欢迎，您的商店已就绪！"
+      "welcome_title": "欢迎，您的商店已就绪！",
+      "rate_limited_title": "尝试次数过多",
+      "rate_limited_message": "短时间内检查设置的次数过多。请等待一分钟后重试。",
+      "check_failed_title": "无法检查设置",
+      "check_failed_message": "无法连接服务器以检查此安装是否需要设置。请确认服务器正在运行，然后重试。"
     },
     "staff": {
       "actions": {
@@ -5194,7 +5291,7 @@
       "create_description": "添加仓库、门店或自提点，用于履行订单。",
       "create_label": "创建库存地点",
       "delete_confirm": {
-        "message": "{{name}} 将被移除。此地点的库存项不会被删除。",
+        "message": "{{name}} 将被移除。此地点的库存水平也将被删除。",
         "title": "删除库存地点？"
       },
       "edit_description": "更新名称、地址、自提或库存策略。",
@@ -5992,11 +6089,172 @@
       },
       "table": {
         "search_placeholder": "搜索备注…",
-        "empty": "暂无店铺信用。可从客户资料中发放。"
+        "empty": "暂无店铺信用。"
       },
+      "issue_description": "选择客户以及要添加到其账户的金额。",
       "no_customer": "无客户",
       "page": {
         "subtitle": "店铺在所有客户中欠下的预付余额总额。"
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "设置",
+        "templates": "模板"
+      },
+      "list": {
+        "description": "编辑客户收到的邮件。更改会保存为草稿，发布后才会发送给客户。",
+        "groups": {
+          "email": {
+            "title": "客户邮件",
+            "description": "客户可能从您的店铺收到的每一封邮件。"
+          },
+          "layout": {
+            "title": "布局",
+            "description": "每封客户邮件周围的页眉、页脚和样式。"
+          },
+          "partial": {
+            "title": "共享模块",
+            "description": "多封邮件共用的部分，例如商品列表和合计。"
+          }
+        },
+        "empty": "这里没有可编辑的邮件模板。客户邮件模板随 Spree 邮件包提供。"
+      },
+      "names": {
+        "order_mailer_confirm_email": "订单确认",
+        "order_mailer_cancel_email": "订单已取消",
+        "order_mailer_payment_link_email": "付款链接",
+        "order_group_mailer_confirm_email": "多卖家订单确认",
+        "fulfillment_mailer_fulfilled_email": "订单已发货",
+        "return_mailer_refunded_email": "退货已退款",
+        "digital_asset_mailer_files_ready_email": "下载已就绪",
+        "customer_mailer_password_reset_email": "重置密码",
+        "customer_mailer_data_export_email": "个人数据导出已就绪",
+        "newsletter_mailer_email_confirmation": "订阅确认",
+        "company_mailer_invitation_email": "公司邀请",
+        "spree_base_mailer": "邮件布局",
+        "shared_line_item": "商品",
+        "shared_order_summary": "订单摘要",
+        "shared_purchase_totals": "合计",
+        "shared_fulfillment_group": "包裹",
+        "shared_summary_row": "摘要行"
+      },
+      "badges": {
+        "customized": "已自定义",
+        "default": "默认",
+        "draft": "草稿",
+        "other_languages": "其他已自定义语言：{{languages}}",
+        "default_updated": "Spree 已更新",
+        "unsaved": "未保存的更改",
+        "showing_draft": "草稿 — 客户收到的是已发布版本",
+        "showing_published": "已发布 — 客户收到的内容",
+        "showing_default": "Spree 默认 — 客户收到的内容"
+      },
+      "actions": {
+        "save_draft": "保存草稿",
+        "publish": "发布",
+        "discard_draft": "放弃草稿",
+        "revert": "恢复默认",
+        "send_test": "发送测试邮件",
+        "history": "历史记录"
+      },
+      "confirm": {
+        "discard_title": "放弃此草稿？",
+        "discard_message": "未发布的更改将被删除。客户仍会收到已发布的版本。",
+        "revert_title": "恢复为 Spree 默认？",
+        "revert_message": "从现在起客户将收到 Spree 的默认邮件，草稿将被删除。已发布的版本保留在历史记录中，以后可以恢复。",
+        "restore_title": "恢复此版本？",
+        "restore_message": "此版本将替换草稿。发布后客户才会收到。",
+        "leave_title": "不保存就离开？",
+        "leave_message": "您对此模板未保存的更改将会丢失。",
+        "leave": "离开",
+        "revert_every_language_message": "从现在起所有语言的客户都将收到 Spree 的默认邮件，草稿将被删除。已发布的版本保留在历史记录中，以后可以恢复。"
+      },
+      "editor": {
+        "title": "模板",
+        "subject": "主题",
+        "body": "模板代码",
+        "language": "语言"
+      },
+      "preview": {
+        "title": "预览",
+        "frame_title": "邮件预览",
+        "subject": "主题：{{subject}}",
+        "html": "邮件",
+        "text": "纯文本",
+        "desktop": "桌面宽度",
+        "mobile": "手机宽度",
+        "shown_in": "显示于",
+        "record": "使用记录预览",
+        "unavailable": "无法显示预览。",
+        "needs_permission": "只有可以编辑邮件模板的人才能生成预览。",
+        "latest_record": "最新"
+      },
+      "problems": {
+        "title": "此模板无法渲染",
+        "on_line": "第 {{line}} 行：{{message}}"
+      },
+      "default_update": {
+        "title": "Spree 已更新",
+        "description": "自您的版本创建以来，Spree 更改了此模板的默认内容。请先比较两者再做决定。",
+        "compare": "比较",
+        "dialog_title": "Spree 默认模板的变化",
+        "dialog_description": "左侧是您的版本所基于的默认模板，右侧是当前的默认模板。",
+        "before": "您的版本基于",
+        "after": "当前的 Spree 默认",
+        "keep_mine": "保留我的版本",
+        "start_over": "从新的默认开始"
+      },
+      "history": {
+        "title": "历史记录",
+        "description": "此语言下发布过的每个版本，最新的在前。",
+        "empty": "尚未发布任何内容。",
+        "latest": "最新",
+        "version": "版本 {{number}}",
+        "restore": "恢复"
+      },
+      "conflict": {
+        "title": "其他人保存了此草稿",
+        "keep_editing": "继续编辑",
+        "reload": "加载对方的版本",
+        "overwrite": "用我的版本覆盖"
+      },
+      "variables": {
+        "title": "变量",
+        "description": "此邮件可以显示的数据。在代码中开始输入变量即可看到它的所有字段。",
+        "order": "订单，包括商品、地址和合计。",
+        "resend": "是否为重新发送的副本。",
+        "payment_url": "客户付款的链接。",
+        "order_group": "分给多个卖家的订单。",
+        "fulfillment": "包裹及其物流跟踪。",
+        "return": "退货及退款金额。",
+        "downloads": "客户可以下载的文件。",
+        "customer": "邮件的收件客户。",
+        "reset_url": "设置新密码的链接。",
+        "download_url": "下载导出文件的链接。",
+        "expires_at": "链接失效的时间。",
+        "confirmation_url": "确认订阅的链接。",
+        "company": "邀请客户加入的公司。",
+        "accept_url": "接受邀请的链接。",
+        "store": "您的店铺：名称、链接、标志和品牌样式。",
+        "locale": "邮件发送所用的语言。",
+        "insert": "插入 {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "草稿已保存",
+        "draft_discarded": "草稿已放弃",
+        "published": "已发布。客户从现在起会收到此版本。",
+        "reverted": "已恢复为 Spree 默认",
+        "restored": "版本已恢复到草稿",
+        "test_sent": "测试邮件已发送至 {{email}}"
+      },
+      "errors": {
+        "load_failed": "无法加载邮件模板",
+        "not_allowed": "您没有查看邮件模板的权限",
+        "test_email_failed": "无法发送测试邮件"
+      },
+      "every_language": {
+        "notice": "在您为{{language}}发布版本之前，所有语言的客户都会收到此版本。"
       }
     }
   }

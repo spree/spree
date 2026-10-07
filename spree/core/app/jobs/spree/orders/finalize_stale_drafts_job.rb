@@ -10,11 +10,13 @@ module Spree
       STALE_AFTER = 10.minutes
 
       def perform
-        Spree::Order.drafts.
-          where.not(cart_id: nil).
-          where(completed_at: nil).
-          where(created_at: ...STALE_AFTER.ago).
-          find_each do |order|
+        stale_drafts = Spree::Order.drafts.
+                       where.not(cart_id: nil).
+                       where(completed_at: nil).
+                       where(created_at: ...STALE_AFTER.ago)
+
+        each_store_of(stale_drafts) do |orders|
+          orders.find_each do |order|
             cart = order.cart
             next if cart.nil? || cart.completed?
 
@@ -23,6 +25,7 @@ module Spree
           rescue StandardError => e
             Rails.logger.error("[Spree] Completion recovery raised for order #{order.number}: #{e.message}")
           end
+        end
       end
     end
   end

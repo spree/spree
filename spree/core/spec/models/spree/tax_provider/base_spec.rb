@@ -22,6 +22,7 @@ describe Spree::TaxProvider::Base, type: :model do
     it 'no-ops for a provider without a remote ledger' do
       expect(provider.commit(order)).to be_nil
       expect(provider.void(order)).to be_nil
+      expect(provider.commit_replacement(order, [])).to be_nil
       expect(provider.refund(order, [], amount: 10, tax_date: order.completed_at)).to be_nil
     end
 
@@ -33,6 +34,18 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(provider.method(:refund).parameters).to eq(
         [[:req, :order], [:req, :return_items], [:key, :amount], [:key, :tax_date]]
       )
+    end
+  end
+
+  describe '#estimate_refund' do
+    it 'is for each provider to implement' do
+      expect { provider.estimate_refund(order, []) }.to raise_error(NotImplementedError, /estimate_refund/)
+    end
+  end
+
+  describe '#estimate_replacement' do
+    it 'is for each provider to implement' do
+      expect { provider.estimate_replacement(order, []) }.to raise_error(NotImplementedError, /estimate_replacement/)
     end
   end
 

@@ -191,6 +191,7 @@ end
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
 - Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
+- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys; secrets are `:password` preferences, stored encrypted in a `secret_preferences` `text` column
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
@@ -423,6 +424,22 @@ end
 
 For new models, add `publishes_lifecycle_events` concern and create an event serializer.
 
+Webhook payloads use Store serializers only — never a hand-built hash, never an Admin serializer; extra facts go in `metadata`. Every event is being moved to a declared catalog (see `docs/plans/6.0-typed-webhook-events.md`).
+
+### Emails (Liquid + MJML)
+
+Every email renders from a Liquid template written in MJML, never ERB. See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.
+
+- **Template** lives at the mailer action's view path: `app/views/spree/<mailer>/<action>.liquid`. That path is its public key, so renaming a mailer or action is a breaking change. The subject goes in YAML front matter; the plain-text part is generated from the HTML (add `<action>.text.liquid` only to hand-write it). Layout is `layouts/spree/base_mailer.liquid`; shared blocks are `spree/shared/_*.liquid`, pulled in with `{% render 'spree/shared/line_item', item: item %}`.
+- **Mailer** inherits `Spree::BaseMailer`, sets `@current_store`, wraps the send in `with_store_locale(store, locale)`, and calls `mail_template({ order: email_data(@order, Spree::Emails::OrderSerializer), resend: resend }, to: ...)`. Keep the mailer's guards (recipients, status checks) as they are.
+- **Data comes from serializers, never models.** `email_data` turns a record into the JSON a template reads. Customer emails extend the Store API serializers (`spree/emails/app/serializers/spree/emails/`); staff emails use core ones (`spree/core/app/serializers/spree/emails/`) so they work without `spree_api`. Add email-only fields there, not to the public Store serializers. **Never serialize a token**: build reset, invitation, download and payment URLs in the mailer and pass them as their own variable.
+- **In templates**: output is HTML-escaped automatically (`| raw` only for HTML sanitized on write). Filters: `money`, `money_with_currency`, `date` (store time zone), `t` (Spree translation keys, so one template serves every language). An unknown variable raises in development and test.
+- **When you add or change an email**: if customers receive it, update `docs/developer/customization/email-variables.mdx` by hand with its variables, add it to `spree/emails/spec/mailers/spree/rendered_emails_spec.rb`, and give it a mailer preview (shown at `/rails/mailers` in development) in `spree/emails/lib/spree/emails/previews/` or, for staff emails, `spree/core/lib/spree/core/previews/`.
+- **Don't** add ERB email views, mailer view helpers, or model calls from templates. Apps' own mailers that call `mail` with ERB views still work: `layouts/spree/base_mailer.html.erb` wraps them in the Liquid layout.
+- **Merchants edit customer emails in the dashboard** (`docs/plans/6.0-email-template-editor.md`). A store's published version is found before the file, per language. A new **customer** email must be registered in `Spree.editable_email_templates` (in `spree/emails/lib/spree/emails/engine.rb`) with a sample builder in `spree/emails/app/services/spree/emails/samples/`, and added to the dashboard's variables manifest; never register staff, store-owner or seller emails. Changing a default template shows merchants who customized it an "updated by Spree" notice, so change defaults deliberately.
+- **Every record a customer email serializes has an email serializer of its own** in `spree/emails/app/serializers/spree/emails/` (a thin subclass of the Store API one is fine), and email serializers point their associations at those. The generated `Email*` types then describe exactly what templates receive, and the editor suggests variables from their Zod schemas; an association pointing at a Store API serializer leaks its types into the email ones.
+- **Colors and fonts come from `store.branding`**, never hard-coded in a customer template. Generate types with `cd spree/api && bundle exec rake typelizer:generate`, which runs inside `spree_emails` so the API and email serializers both load.
+
 ### API Authentication
 
 Four credential types, each with its own header and authorization model:
@@ -592,6 +609,8 @@ The starter is the canonical host — the same app `spree add dashboard` scaffol
 2. **Follow `docs/plans/6.0-admin-spa.md`** for the three extension points (table registry, navigation registry, component injection) and the shadcn copy-paste ownership model.
 3. **Wrap SDK calls in custom hooks** under `src/hooks/` (e.g. `useOrders`, `useProduct`) — never call `adminClient` directly from components.
 
+**Every detail page exposes slots.** A new or reworked resource detail page (admin dashboard and seller panel alike) renders `<Slot name="<resource>.form_sidebar">` at the end of its sidebar column — plus `<resource>.form_main` when the main column is where plugin cards belong — with the record in the context (`{ <resource> }`), and gets an entry in `docs/developer/dashboard/slots-catalog.mdx` in the same change. Seller panel slots are named `seller.<page>.<area>`. **A slot inside a page's form must be a host form:** wrap the form in `<FormProvider>`, seed `extensionFormValues('<resource>', record)` into its defaults and hydration reset, and merge `extensionSubmitValues('<resource>', form)` into the save payload (and the post-save reset), so fields a plugin binds with `useHostForm()` save with the page's Save button. The matching API controller must accept extension attributes — use `resource_permitted_attributes`, or splat `*model_additional_permitted_attributes` into a hand-written `permitted_params`. Seller API controllers splat `*model_class.additional_seller_permitted_attributes` instead, so an attribute opened to operators never becomes seller-writable by accident. Reference: `routes/_authenticated/$storeId/products/collections/$collectionId.tsx`.
+
 **Translations.** Every user-visible string in `@spree/dashboard` goes through i18next — page titles, headings, table column labels, button labels, empty states, toast messages, confirm dialog copy, select option labels, badges, status text, tooltips, helper text. Never hardcode English (or any language) into JSX, into table column definitions, or into dropdown option arrays. Keys live in `packages/dashboard/src/locales/en.json` (app-specific copy) or `packages/dashboard-core/src/locales/en.json` (cross-cutting: `admin.common.*`, `admin.fields.<attribute>.<facet>`). Reach for `i18n.t(...)` at module load (table definitions) and `useTranslation().t(...)` inside components. **Schemas in `src/schemas/` hold canonical values only — never label strings.** Build `{ value, label }` pairs at render time inside the component by mapping the canonical value list against translation keys. When adding a new translation key, ALWAYS add it to the all languages files in `packages/dashboard/src/locales/` and `packages/dashboard-core/src/locales/`.
 
 **Destructive actions need a confirm — unless a sheet already gates them.** Any action that destroys or detaches data and fires **straight from a click** must go through `useConfirm()` with `variant: 'destructive'` first: row-level delete/remove buttons, and every bulk action that runs immediately. Bulk actions that open a picker sheet or dialog (`BulkAction.form`, `ResourcePickerSheet`) already require an explicit submit — that IS the confirmation, so don't stack a second dialog on top. `BulkAction` takes a `confirm` option (`{n}` interpolates the count) for the immediate case.
@@ -670,17 +689,17 @@ When changing Alba serializers, run the full pipeline:
 
 ```bash
 cd spree/api && bundle exec rake typelizer:generate    # 1. TS types from serializers
-cd packages/sdk && pnpm generate:zod                     # 2. Zod schemas from TS types
+cd ../.. && pnpm generate:zod                           # 2. Zod schemas from TS types (Store, Admin, Seller SDKs)
 cd spree/api && bundle exec rspec spec/integration/     # 3. Integration tests
 bundle exec rake rswag:specs:swaggerize                 # 4. OpenAPI spec
 cd packages/sdk && pnpm test                             # 5. SDK tests
 ```
 
 - TypeScript types → `packages/sdk/src/types/generated/` (Store) and `packages/admin-sdk/src/types/generated/` (Admin)
-- Zod schemas → `packages/sdk/src/zod/generated/`
+- Zod schemas → `src/zod/generated/` in each SDK, exported as `@spree/sdk/zod`, `@spree/admin-sdk/zod` and `@spree/seller-sdk/zod`. Each SDK's `zod-schemas.test.ts` validates them against the responses recorded in `docs/api-reference/*.yaml`
 - Store types: `StoreProduct`, `StoreOrder`, etc. Admin types: `AdminProduct`, `AdminOrder`, etc.
 
-A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
+A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schemas automatically whenever `spree/api/app/serializers/**/*.rb` files are committed, then re-stages the generated output. You don't need to run steps 1 and 2 manually if you're committing serializer changes — the hook handles it. It also regenerates the Zod schemas when generated types or the generator change, and CI fails when committed schemas don't match the types. Steps 3–5 (integration tests, OpenAPI regen, SDK tests) still need to run locally before pushing — run step 3 as `pnpm test:rspec api spec/integration/` so it queues with the other sessions.
 
 ### Changesets & Versioning
 
@@ -735,6 +754,7 @@ Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
+- NEVER update or save the shared default store (`@default_store`) in specs — it outlives the example, so the change leaks into other specs. Stub what the code reads (`allow(Spree::Store).to receive(:default).and_return(build(:store, ...))`) or create a separate store
 - Don't over-engineer or repeat tests
 - Fold specs into the existing describe blocks, use context blocks for different scenarios, NEVER create new test files for a single new scenario unless it is a completely new feature
 

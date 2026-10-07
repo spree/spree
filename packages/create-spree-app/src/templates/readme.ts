@@ -14,6 +14,7 @@ export function readmeContent(
   port: number,
   hasDashboard = false,
   pm: PackageManager = 'pnpm',
+  hasSellerDashboard = hasDashboard,
 ): string {
   const run = runCommand(pm)
   let content = `# ${name}
@@ -41,9 +42,13 @@ Wait for the services to be healthy, then open:
 ${
   hasDashboard
     ? `- **Admin Dashboard:** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
-  - The first run opens a setup link where you create the admin account
-- **Seller Panel (marketplace):** http://localhost:${SELLER_DASHBOARD_PORT} — run it with \`cd apps/seller-dashboard && pnpm dev\``
-    : `- **Admin Dashboard:** run \`spree add dashboard\` to scaffold it`
+  - The first run opens a setup link where you create the admin account`
+    : `- **Admin Dashboard:** http://localhost:${port}/dashboard — run \`${run} spree add dashboard\` to get your own copy to customize`
+}${
+  hasSellerDashboard
+    ? `
+- **Seller Panel (marketplace):** http://localhost:${SELLER_DASHBOARD_PORT} — run it with \`cd apps/seller-dashboard && ${pm} run dev\``
+    : ''
 }
 - **Store API:** http://localhost:${port}/api/v3/store
 `
@@ -65,7 +70,7 @@ Open http://localhost:${STOREFRONT_PORT}
 
   if (hasDashboard) {
     content += `
-### The React Dashboard
+### The Admin Dashboard
 
 \`apps/dashboard/\` is your admin — a customizable React SPA (plugins, your
 own pages, table tweaks) with live reload. \`spree dev\` starts it
@@ -83,7 +88,7 @@ When you deploy, the production image builds your dashboard and serves it at
 \`/dashboard\` on the same origin as the API (\`${run} spree build --production\`).
 
 To learn how to add pages, tweak tables, or build plugins, see the
-[React Dashboard docs](https://spreecommerce.org/docs/developer/dashboard/overview).
+[Admin Dashboard docs](https://spreecommerce.org/docs/developer/dashboard/overview).
 `
   }
 
@@ -112,7 +117,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 |---------|-------------|
 | \`spree dev\` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop the API services |
-| \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
+| \`spree upgrade\` | Upgrade Spree — the server, database and \`@spree/*\` packages |
 | \`spree eject\` | Switch from prebuilt image to building from \`server/\` |
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |

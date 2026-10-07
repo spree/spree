@@ -10,7 +10,7 @@ module Spree
     let(:state)   { country.states.first || create(:state, country: country) }
     let!(:zone)   { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -183,6 +183,29 @@ module Spree
 
           # Customer-visible total is item_total only — free shipping nets out
           expect(order.total).to eq(order.item_total)
+        end
+      end
+
+      context 'with a batch coupon code the order does not qualify for yet' do
+        let!(:promotion) do
+          create(:promotion_with_item_total_rule, :with_order_adjustment,
+                 code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store,
+                 item_total_threshold_amount: 1_000)
+        end
+        let(:coupon_code) { promotion.coupon_codes.first }
+
+        let(:params) do
+          {
+            email: 'new@example.com',
+            items: [{ variant_id: variant.prefixed_id, quantity: 1 }],
+            coupon_code: coupon_code.code
+          }
+        end
+
+        it 'leaves the code free for others' do
+          expect(subject).to be_success
+          expect(subject.value.read_attribute(:coupon_code)).to be_nil
+          expect(coupon_code.reload.holder).to be_nil
         end
       end
 

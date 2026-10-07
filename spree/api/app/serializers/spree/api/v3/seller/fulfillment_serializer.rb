@@ -47,9 +47,7 @@ module Spree
 
           # The id as well as the name, so a seller moving the parcel to
           # another of their shelves can see which one it is on now.
-          attribute :stock_location_id do |fulfillment|
-            fulfillment.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           # Deliberately not `items`: the store's fulfillment answers with a
           # manifest under that name, and the shared OpenAPI patch rewrites it
@@ -60,9 +58,7 @@ module Spree
 
           # The consignments and labels on this parcel — what a seller adds
           # when they ship it themselves.
-          attribute :selected_delivery_rate_id do |fulfillment|
-            fulfillment.selected_delivery_rate&.prefixed_id
-          end
+          prefixed_id_attributes :selected_delivery_rate
 
           # What this parcel could be carried by from where it currently sits.
           many :delivery_rates, resource: proc { Spree.api.seller_delivery_rate_serializer }

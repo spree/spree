@@ -170,8 +170,8 @@ export function PreferenceField({
   }
 
   // `tiers` preference (Spree::Calculator::TieredPercent /
-  // TieredFlatRate) — a Hash<threshold, value> that the default
-  // hash-as-text input would render as `[object Object]`. Render a row
+  // TieredFlatRate) — a list of `{ threshold, value }` objects that the
+  // default array input would render as `[object Object]`. Render a row
   // editor so the merchant can add tier breakpoints directly.
   if (field.key === 'tiers') {
     return <TiersEditor value={value} onChange={onChange} />
@@ -366,6 +366,11 @@ function isMaxKey(key: string): boolean {
   return /(?:^|_)max(?:imum)?(?:_|$)/.test(key)
 }
 
+interface TierValue {
+  threshold: string
+  value: string
+}
+
 interface TierRowState {
   /** Stable across edits — used for React keys so input focus survives reorder. */
   uid: string
@@ -375,21 +380,21 @@ interface TierRowState {
 
 /**
  * Editor for `Spree::Calculator::TieredPercent` / `TieredFlatRate`
- * preferences. The underlying shape is `Hash<threshold, value>` — orders
- * at or above `threshold` get `value` (% or $ depending on the
- * calculator).
+ * preferences. The underlying shape is a list of `{ threshold, value }`
+ * objects — orders at or above `threshold` get `value` (% or $ depending
+ * on the calculator).
  *
  * Owns its row list locally so the user can add an empty row and fill
- * it in afterwards — projecting to the hash on every change would drop
+ * it in afterwards — projecting to the list on every change would drop
  * empty-threshold rows the moment they're added. Empty rows are
- * filtered when projecting to the parent's hash value.
+ * filtered when projecting to the parent's value.
  */
 function TiersEditor({
   value,
   onChange,
 }: {
   value: unknown
-  onChange: (next: Record<string, number>) => void
+  onChange: (next: TierValue[]) => void
 }) {
   const { t } = useTranslation()
   const idPrefix = useId()
@@ -402,14 +407,12 @@ function TiersEditor({
 
   function commit(next: TierRowState[]) {
     setRows(next)
-    const out: Record<string, number> = {}
-    for (const row of next) {
-      const t = row.threshold.trim()
-      if (!t) continue
-      const parsed = Number(row.value)
-      out[t] = Number.isFinite(parsed) ? parsed : 0
-    }
-    onChange(out)
+    // Sent as the strings typed, so the server stores the exact decimal.
+    onChange(
+      next
+        .filter((row) => row.threshold.trim())
+        .map((row) => ({ threshold: row.threshold.trim(), value: row.value.trim() || '0' })),
+    )
   }
 
   function updateRow(uid: string, patch: Partial<Pick<TierRowState, 'threshold' | 'value'>>) {
@@ -481,6 +484,7 @@ function TierRow({
         min={0}
         value={row.threshold}
         placeholder="100"
+        aria-label={t('admin.components.preferences_form.tiers.header_threshold')}
         onChange={(e) => onChange({ threshold: e.target.value })}
       />
       <Input
@@ -489,6 +493,7 @@ function TierRow({
         min={0}
         value={row.value}
         placeholder="10"
+        aria-label={t('admin.components.preferences_form.tiers.header_value')}
         onChange={(e) => onChange({ value: e.target.value })}
       />
       <Button
@@ -505,17 +510,20 @@ function TierRow({
 }
 
 /**
- * Normalize whatever shape the server sent — typically `Hash<number,
- * number>` but JSON serialization stringifies the keys, so we may
- * receive `{ "100": 10 }` or `{ 100: 10 }`. Either form converts to
- * `TierRowState[]` for editor state.
+ * Converts the server's list of `{ threshold, value }` objects into
+ * editor rows. A calculator saved before Spree 6.0 that the upgrade has
+ * not converted yet still sends a hash keyed by threshold, so that shape
+ * is read too.
  */
 function parseTiers(value: unknown, idPrefix: string): TierRowState[] {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return []
-  return Object.entries(value as Record<string, unknown>)
+  if (!value || typeof value !== 'object') return []
+  const pairs: [unknown, unknown][] = Array.isArray(value)
+    ? value.map((tier) => [tier?.threshold, tier?.value])
+    : Object.entries(value as Record<string, unknown>)
+  return pairs
     .map(([threshold, v], i) => ({
       uid: `${idPrefix}-seed-${i}`,
-      threshold: String(threshold),
+      threshold: threshold === null || threshold === undefined ? '' : String(threshold),
       value: v === null || v === undefined ? '' : String(v),
     }))
     .sort((a, b) => Number(a.threshold) - Number(b.threshold))

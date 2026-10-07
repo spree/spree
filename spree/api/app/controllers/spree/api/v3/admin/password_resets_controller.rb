@@ -20,11 +20,13 @@ module Spree
             user = Spree.admin_user_class.find_by(email: params[:email])
 
             if user
-              redirect_url = trusted_redirect_url(user)
-              token = user.generate_token_for(:password_reset)
-              event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
-              event_payload[:redirect_url] = redirect_url if redirect_url.present?
-              user.publish_event('admin_user.password_reset_requested', event_payload)
+              event_name = 'admin_user.password_reset_requested'
+              payload = user.event_payload_for(
+                event_name,
+                reset_token: user.generate_token_for(:password_reset), store: current_store,
+                redirect_url: trusted_redirect_url(user).presence
+              )
+              user.publish_event(event_name, payload)
             end
 
             # Always return 202 to prevent email enumeration

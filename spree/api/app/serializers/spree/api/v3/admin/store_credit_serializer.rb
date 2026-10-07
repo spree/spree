@@ -16,27 +16,13 @@ module Spree
           attributes :memo, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :amount_authorized do |store_credit|
-            store_credit.amount_authorized.to_s
-          end
-
+          attributes amount_authorized: :string
           # Answers the same question as the `outstanding` filter, so the row
           # and the filter cannot disagree.
-          attribute :outstanding do |store_credit|
-            store_credit.outstanding?
-          end
+          attribute :outstanding, &:outstanding?
 
-          attribute :display_amount_authorized do |store_credit|
-            store_credit.display_amount_authorized.to_s
-          end
-
-          attribute :customer_id do |store_credit|
-            store_credit.customer&.prefixed_id
-          end
-
-          attribute :created_by_id do |store_credit|
-            store_credit.created_by&.prefixed_id
-          end
+          attributes display_amount_authorized: :string
+          prefixed_id_attributes :customer, :created_by
 
           # Why the credit exists: the return, exchange, claim or gift card
           # that issued it, or null when an admin issued it by hand. The type

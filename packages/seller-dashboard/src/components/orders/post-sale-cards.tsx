@@ -109,7 +109,20 @@ export function ExchangesCard({ order }: { order: Order }) {
                       )}
                       {exchange.status === 'received' && (
                         <DropdownMenuItem
-                          onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
+                          onClick={async () => {
+                            // A dearer replacement leaves the customer owing the
+                            // difference, which fulfilling puts on the order.
+                            if (
+                              Number(exchange.price_difference) > 0 &&
+                              !(await confirm({
+                                message: t('orders.post_sale.exchanges.balance_due_confirm'),
+                                confirmLabel: t('orders.post_sale.exchanges.fulfill'),
+                              }))
+                            ) {
+                              return
+                            }
+                            fulfill.mutate({ exchangeId: exchange.id })
+                          }}
                         >
                           {t('orders.post_sale.exchanges.fulfill')}
                         </DropdownMenuItem>

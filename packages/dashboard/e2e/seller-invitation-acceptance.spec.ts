@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test'
-import { invitationAcceptancePath, login } from './helpers'
+import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
 
 // The seller panel is its own app on its own origin (see playwright.config.ts),
 // so this spec drives two: the operator's dashboard through `baseURL`, and the
 // panel by absolute URL.
-const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
 
 test.describe('seller invitation lifecycle', () => {
   test('an invited seller accepts and lands in their own panel', async ({ page, browser }) => {
@@ -80,7 +79,9 @@ test.describe('seller invitation lifecycle', () => {
       // panel has to carry too — keys defined only in the operator's bundle
       // render as their own name here.
       await inviteePage.goto(`${SELLER_PANEL}${new URL(inviteePage.url()).pathname}/settings`)
-      await expect(inviteePage.getByText('Settings').first()).toBeVisible({ timeout: 20_000 })
+      await expect(inviteePage.getByRole('heading', { name: /^settings$/i })).toBeVisible({
+        timeout: 20_000,
+      })
       await expect(inviteePage.getByText(/admin\.settings_page/)).toHaveCount(0)
     } finally {
       await inviteeContext.close()

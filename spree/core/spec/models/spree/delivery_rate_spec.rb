@@ -15,7 +15,7 @@ describe Spree::DeliveryRate, type: :model do
       expect(rate.name).to eq(delivery_method.name)
     end
   end
-  let(:shipment) { create(:shipment) }
+  let(:shipment) { create(:fulfillment) }
   let(:delivery_method) { create(:delivery_method) }
   let(:shipping_rate) do
     Spree::DeliveryRate.new shipment: shipment,
@@ -102,7 +102,7 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     context 'when the currency is JPY' do
-      let(:shipping_rate) { Spree::ShippingRate.new(cost: 205) }
+      let(:shipping_rate) { Spree::DeliveryRate.new(cost: 205) }
 
       before { allow(shipping_rate).to receive_messages(currency: 'JPY') }
 
@@ -231,18 +231,18 @@ describe Spree::DeliveryRate, type: :model do
     end
 
     it 'returns 0 if cost is lesser than the discount amount' do
-      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -20.0)
+      allow_any_instance_of(Spree::DeliveryRate).to receive_messages(discount_amount: -20.0)
       expect(shipping_rate.final_price).to eq(0.0)
     end
 
     it 'returns cost minus discount amount' do
-      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -5.0)
+      allow_any_instance_of(Spree::DeliveryRate).to receive_messages(discount_amount: -5.0)
       expect(shipping_rate.final_price).to eq(5.0)
     end
 
     it 'does not return 0 when shipment is free because of selected shipping rate' do
       shipment.shipping_rates.update_all(selected: false)
-      create(:shipping_rate, shipment: shipment, cost: 0, selected: true)
+      create(:delivery_rate, shipment: shipment, cost: 0, selected: true)
       shipment.reload.update_amounts
 
       expect(shipment.free?).to eq(true)
@@ -270,13 +270,13 @@ describe Spree::DeliveryRate, type: :model do
     subject { shipping_rate.free? }
 
     context 'when the shipping rate cost is 0' do
-      let(:shipping_rate) { create(:shipping_rate, cost: 0) }
+      let(:shipping_rate) { create(:delivery_rate, cost: 0) }
 
       it { is_expected.to be(true) }
     end
 
     context 'when the shipping rate cost is not 0' do
-      let(:shipping_rate) { create(:shipping_rate, cost: 10) }
+      let(:shipping_rate) { create(:delivery_rate, cost: 10) }
 
       let(:shipment) { shipping_rate.shipment }
       let(:order) { shipment.order }

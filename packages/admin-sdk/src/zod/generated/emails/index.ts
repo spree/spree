@@ -1,0 +1,23 @@
+// This file is auto-generated. Do not edit directly.
+export { EmailAddressSchema, type EmailAddress } from './EmailAddress';
+export { EmailAmountLineSchema, type EmailAmountLine } from './EmailAmountLine';
+export { EmailAppliedPromotionSchema, type EmailAppliedPromotion } from './EmailAppliedPromotion';
+export { EmailDeliverySchema, type EmailDelivery } from './EmailDelivery';
+export { EmailDeliveryMethodSchema, type EmailDeliveryMethod } from './EmailDeliveryMethod';
+export { EmailDeliveryRateSchema, type EmailDeliveryRate } from './EmailDeliveryRate';
+export { EmailFeeSchema, type EmailFee } from './EmailFee';
+export { EmailFreightSummarySchema, type EmailFreightSummary } from './EmailFreightSummary';
+export { EmailFulfillmentSchema, type EmailFulfillment } from './EmailFulfillment';
+export { EmailFulfillmentGroupSchema, type EmailFulfillmentGroup } from './EmailFulfillmentGroup';
+export { EmailGiftCardSchema, type EmailGiftCard } from './EmailGiftCard';
+export { EmailLineItemSchema, type EmailLineItem } from './EmailLineItem';
+export { EmailMarketSchema, type EmailMarket } from './EmailMarket';
+export { EmailOptionValueSchema, type EmailOptionValue } from './EmailOptionValue';
+export { EmailOrderSchema, type EmailOrder } from './EmailOrder';
+export { EmailOrderGroupSchema, type EmailOrderGroup } from './EmailOrderGroup';
+export { EmailParcelItemSchema, type EmailParcelItem } from './EmailParcelItem';
+export { EmailPaymentSchema, type EmailPayment } from './EmailPayment';
+export { EmailPaymentMethodSchema, type EmailPaymentMethod } from './EmailPaymentMethod';
+export { EmailReturnSchema, type EmailReturn } from './EmailReturn';
+export { EmailStockLocationSchema, type EmailStockLocation } from './EmailStockLocation';
+export { EmailStoreSchema, type EmailStore } from './EmailStore';

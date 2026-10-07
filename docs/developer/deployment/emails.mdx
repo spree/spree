@@ -13,7 +13,7 @@ Spree handles two categories of emails:
 
 ## Customer-Facing Emails
 
-By default, **Spree sends all customer transactional emails itself** — the `spree_emails` gem ships installed in every deployment. This works for every client of the API: mobile apps, custom frontends, POS integrations — no storefront required. Delivery uses the same [SMTP configuration](#configuration) as system emails.
+By default, **Spree sends all customer transactional emails itself**. This works for every client of the API: mobile apps, custom frontends, POS integrations — no storefront required. Delivery uses the same [SMTP configuration](#configuration) as system emails, and every email renders from a Liquid template you can override — see [Email Templates](/developer/customization/emails).
 
 Customer emails can be turned off in the admin under **Settings → Emails** — do this when your storefront takes over sending them (below), otherwise customers receive both.
 
@@ -91,9 +91,11 @@ Set the following environment variables on the **Spree backend** to enable email
 | `SMTP_USERNAME` | — | SMTP auth username |
 | `SMTP_PASSWORD` | — | SMTP auth password |
 | `SMTP_FROM_ADDRESS` | — | Default "from" email address (e.g., `admin@mystore.com`) |
-| `RAILS_HOST` | `example.com` | Public host used in email links and other [generated URLs](/developer/deployment/environment_variables#urls-and-hosts) — image/attachment URLs use `CDN_HOST` instead when set |
+| `SPREE_HOST` | `example.com` | Public host used in email links and other [generated URLs](/developer/deployment/environment_variables#urls-and-hosts) — image/attachment URLs use `CDN_HOST` instead when set |
 
 When `SMTP_HOST` is not set, emails are printed to the Rails log instead of being sent.
+
+Any SMTP provider works — there is nothing provider-specific to install. For how the configuration behaves and what to weigh when choosing between providers, see [Emails](/developer/providers/emails). Step-by-step setup for each one: [Resend](/integrations/email/resend), [Postmark](/integrations/email/postmark), [SendGrid](/integrations/email/sendgrid), [Mailgun](/integrations/email/mailgun) and [Amazon SES](/integrations/email/amazon-ses).
 
 ### Provider Examples
 

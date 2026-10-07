@@ -8,6 +8,7 @@ module Spree
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events
+    publishes_events :canceled, :partially_redeemed, :redeemed
 
     #
     # Status
@@ -35,7 +36,6 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
     include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
@@ -92,6 +92,17 @@ module Spree
     # @return [Decimal]
     def amount_remaining
       amount - amount_used - amount_authorized
+    end
+
+    # What the card can still give towards an order: nothing once it has
+    # expired, been redeemed or been cancelled, and never less than zero,
+    # since an admin can lower the amount below what is already in use.
+    #
+    # @return [BigDecimal]
+    def spendable_amount
+      return BigDecimal('0') if expired? || redeemed? || canceled?
+
+      [amount_remaining, 0].max
     end
 
     delegate :email, to: :customer, prefix: true, allow_nil: true

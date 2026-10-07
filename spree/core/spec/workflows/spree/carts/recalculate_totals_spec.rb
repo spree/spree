@@ -61,6 +61,22 @@ module Spree
           .to change { order.reload.discount_total }.by(0).and change { order.reload.adjustment_total }.by(-3)
       end
 
+      # Tax given back on a return is not tax charged: claims and exchanges
+      # re-sum the order after settling, and a credit row counted here would
+      # raise the order's total by the very tax it refunded.
+      it 'leaves the tax a return gave back out of the order' do
+        line_item = order.line_items.first
+        create(:tax_line, order: order, line_item: line_item, amount: 3)
+        described_class.call(cart: order)
+        return_line = create(:return, order: order, store: order.store).return_line_items.first
+
+        expect do
+          create(:tax_line, order: order, line_item: nil, return_line_item: return_line, credit: true, amount: 3)
+          described_class.call(cart: order)
+        end.not_to(change { [order.reload.additional_tax_total, order.total, line_item.reload.additional_tax_total] })
+        expect(order.additional_tax_total).to eq(3)
+      end
+
       # A commission settles between the platform and the seller, so the
       # columns report it beside what the shopper owes and never inside it.
       # The fee and its tax stay apart because the tax is separately
@@ -119,6 +135,77 @@ module Spree
 
         expect { described_class.call(cart: cart) }.not_to raise_error
         expect(described_class.call(cart: cart)).to be_success
+      end
+
+      # Totals move without the items changing (delivery, a coupon, tax), and
+      # nothing else resizes the card's payment to follow them.
+      context 'with a gift card paying towards it' do
+        let(:gift_card) { create(:gift_card, amount: 100, store: store) }
+        let(:line_item) { cart.line_items.first }
+        let(:gift_card_payment) { cart.reload.payments.store_credits.checkout.first }
+
+        before do
+          create(:store_credit_payment_method)
+          cart.apply_gift_card(gift_card)
+        end
+
+        it 'grows the gift card payment when the total rises' do
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.amount).to eq(cart.reload.total)
+          expect(gift_card.reload.amount_used).to eq(cart.total)
+        end
+
+        it 'shrinks it and returns the difference to the card when the total falls' do
+          line_item.update_column(:price, 5)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.amount).to eq(cart.reload.total)
+          expect(gift_card.reload.amount_used).to eq(cart.total)
+        end
+
+        it 'releases the card and restores its balance when nothing is left to pay' do
+          line_item.update_column(:price, 0)
+
+          described_class.call(cart: cart)
+
+          expect(cart.reload.gift_card).to be_nil
+          expect(cart.payments.store_credits.checkout).to be_empty
+          expect(gift_card.reload.amount_used).to eq(0)
+        end
+
+        it 'draws no more from a card that has expired since it was applied' do
+          paid = gift_card_payment.amount
+          gift_card.update_column(:expires_at, 1.day.ago)
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.reload.amount).to eq(paid)
+          expect(gift_card.reload.amount_used).to eq(paid)
+        end
+
+        it 'keeps what the card already pays when its amount is lowered below that' do
+          paid = gift_card_payment.amount
+          gift_card.update_column(:amount, 1)
+          line_item.update_column(:price, 25)
+
+          described_class.call(cart: cart)
+
+          expect(gift_card_payment.reload.amount).to eq(paid)
+        end
+
+        it 'leaves a resized payment that completion can still take' do
+          line_item.update_column(:price, 25)
+          described_class.call(cart: cart)
+
+          gift_card_payment.purchase!
+
+          expect(gift_card_payment.reload).to be_completed
+        end
       end
     end
   end

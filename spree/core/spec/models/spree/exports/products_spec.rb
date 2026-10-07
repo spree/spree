@@ -25,6 +25,27 @@ RSpec.describe Spree::Exports::Products, type: :model do
     end
   end
 
+  describe '#generate' do
+    let(:seller) { create(:seller, :approved, store: store) }
+    let(:product) { create(:product, store: store, seller: seller) }
+    let(:seller_location) { create(:stock_location, store: store, seller: seller, name: 'Seller Shed') }
+
+    before do
+      product.default_variant.update!(sku: 'SHED-MUG', track_inventory: true)
+      product.default_variant.set_stock(12, false, store.default_stock_location)
+      product.default_variant.set_stock(7, false, seller_location)
+    end
+
+    it "writes only a seller's own stock on the seller's export" do
+      export = described_class.new(store: store, seller: seller)
+      export.save!
+      export.generate
+
+      rows = CSV.parse(export.attachment.download, headers: true)
+      expect(rows.map { |row| row.values_at('sku', 'inventory_count', 'stock_location') }).to eq [['SHED-MUG', '7', nil]]
+    end
+  end
+
   describe '#csv_headers' do
     context 'when no custom_fields' do
       it 'returns product variant headers without properties' do
@@ -55,6 +76,7 @@ RSpec.describe Spree::Exports::Products, type: :model do
           'track_inventory',
           'inventory_count',
           'inventory_backorderable',
+          'stock_location',
           'tax_category',
           'product_type',
           'image1_src',
@@ -105,6 +127,7 @@ RSpec.describe Spree::Exports::Products, type: :model do
           'track_inventory',
           'inventory_count',
           'inventory_backorderable',
+          'stock_location',
           'tax_category',
           'product_type',
           'image1_src',

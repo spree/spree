@@ -258,7 +258,7 @@ describe Spree::LineItem, type: :model do
 
     context 'target_fulfillment is provided' do
       it 'verifies inventory' do
-        line_item.target_fulfillment = Spree::Shipment.new
+        line_item.target_fulfillment = Spree::Fulfillment.new
         expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
         line_item.save
       end
@@ -372,6 +372,28 @@ describe Spree::LineItem, type: :model do
       line_item.quantity = 2
       line_item.taxable_adjustment_total = -5
       expect(line_item.discounted_amount).to eq(15)
+    end
+  end
+
+  describe '#discounted_amount_for' do
+    before do
+      line_item.price = 10
+      line_item.quantity = 3
+      line_item.taxable_adjustment_total = -10
+    end
+
+    it 'rounds a share that does not divide evenly to the currency' do
+      expect(line_item.discounted_amount_for(1)).to eq(6.67)
+    end
+
+    it 'comes to the whole discounted line for every unit' do
+      expect(line_item.discounted_amount_for(3)).to eq(20)
+    end
+
+    it 'is never negative' do
+      line_item.taxable_adjustment_total = -40
+
+      expect(line_item.discounted_amount_for(1)).to eq(0)
     end
   end
 
@@ -569,8 +591,8 @@ describe Spree::LineItem, type: :model do
 
   describe '#shipments' do
     let(:line_item) { create(:line_item) }
-    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
-    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit]) }
+    let(:inventory_unit) { create(:fulfillment_item, line_item: line_item) }
+    let!(:shipment) { create(:fulfillment, inventory_units: [inventory_unit]) }
 
     it 'returns the shipments for the line item' do
       expect(line_item.shipments).to eq([shipment])
@@ -579,8 +601,8 @@ describe Spree::LineItem, type: :model do
 
   describe '#delivery_cost' do
     let(:line_item) { create(:line_item) }
-    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
-    let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+    let(:inventory_unit) { create(:fulfillment_item, line_item: line_item) }
+    let(:shipment) { create(:fulfillment, inventory_units: [inventory_unit], cost: 10) }
 
     it 'returns the shipping cost for the line item' do
       shipment
@@ -611,7 +633,7 @@ describe Spree::LineItem, type: :model do
       let(:line_item) { create(:line_item, quantity: 2) }
 
       it 'counts that fulfillment once, not once per unit' do
-        second_unit = create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        second_unit = create(:fulfillment_item, line_item: line_item, variant: inventory_unit.variant)
         shipment.fulfillment_items << second_unit
 
         expect(line_item.reload.delivery_cost).to eq(10)
@@ -626,8 +648,8 @@ describe Spree::LineItem, type: :model do
       it 'still charges the active fulfillment' do
         shipment.update_columns(cost: 10, status: 'canceled')
 
-        active = create(:shipment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
-        active.fulfillment_items << create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        active = create(:fulfillment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
+        active.fulfillment_items << create(:fulfillment_item, line_item: line_item, variant: inventory_unit.variant)
 
         line_item.reload
         expect(line_item.fulfillments.first).to eq(shipment)

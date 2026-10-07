@@ -25,6 +25,7 @@ module Spree
         { name: 'track_inventory', label: 'Track Inventory' },
         { name: 'inventory_count', label: 'Inventory Count' },
         { name: 'inventory_backorderable', label: 'Inventory Backorderable' },
+        { name: 'stock_location', label: 'Stock Location' },
         { name: 'tax_category', label: 'Tax Category' },
         { name: 'product_type', label: 'Product Type' },
         { name: 'hs_code', label: 'HS Code' },

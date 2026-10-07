@@ -64,7 +64,7 @@ export const OrderSchema = z.object({
   billing_address: AddressSchema.nullable(),
   shipping_address: AddressSchema.nullable(),
   gift_card: GiftCardSchema.nullable(),
-  market: z.lazy(() => MarketSchema).nullable(),
+  get market() { return MarketSchema.nullable(); },
 });
 
 export type Order = z.infer<typeof OrderSchema>;

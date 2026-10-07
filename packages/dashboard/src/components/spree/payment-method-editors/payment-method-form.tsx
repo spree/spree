@@ -53,6 +53,8 @@ interface PaymentMethodFormProps {
   onPreferencesChange: (next: Record<string, unknown>) => void
   /** Called when the user picks a different provider in the create dropdown. */
   onProviderTypeChange?: (next: string) => void
+  /** Create mode with the provider already chosen by the caller: no dropdown. */
+  providerLocked?: boolean
 }
 
 export function PaymentMethodForm({
@@ -66,6 +68,7 @@ export function PaymentMethodForm({
   preferences,
   onPreferencesChange,
   onProviderTypeChange,
+  providerLocked = false,
 }: PaymentMethodFormProps) {
   const { t } = useTranslation()
   // Per-provider slot lookups. If a plugin has registered a `form` slot
@@ -92,7 +95,7 @@ export function PaymentMethodForm({
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      {mode === 'create' && (
+      {mode === 'create' && !providerLocked && (
         <Field>
           <FieldLabel htmlFor="type">{t('admin.fields.payment_method.type.label')}</FieldLabel>
           <Controller

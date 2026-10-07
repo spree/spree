@@ -23,7 +23,7 @@ describe Spree::PromotionHandler::Coupon, type: :model do
       end
 
       context 'when the gift card is held by another open order' do
-        let(:old_order) { create(:order, store: store) }
+        let(:old_order) { create(:order_with_totals, store: store, line_items_price: 30) }
 
         before do
           old_order.update_column(:total, 30)

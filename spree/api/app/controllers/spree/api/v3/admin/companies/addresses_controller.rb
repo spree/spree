@@ -53,10 +53,6 @@ module Spree
             def scope
               @parent.addresses
             end
-
-            def parent_association
-              :addresses
-            end
           end
         end
       end

@@ -11,12 +11,11 @@ export function registerOpenCommand(program: Command): void {
     .description('Open the admin dashboard in the browser')
     .action(async () => {
       const ctx = detectProject()
-      // The React dashboard runs on its own Vite server (`spree dev`). Without
-      // one, open the store: /dashboard serves a production build and isn't a
-      // development target.
+      // A project's own dashboard runs on its Vite server (`spree dev`);
+      // without one, the API serves the built-in dashboard.
       const url = hasDashboardApp(ctx.projectDir)
         ? `http://localhost:${DASHBOARD_PORT}`
-        : `http://localhost:${ctx.port}`
+        : `http://localhost:${ctx.port}/dashboard`
       const os = platform()
       const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
       await execaCommand(`${cmd} ${url}`)

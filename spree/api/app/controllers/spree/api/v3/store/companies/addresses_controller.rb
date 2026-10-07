@@ -66,10 +66,6 @@ module Spree
               action_name == 'index' ? @parent.address_book : @parent.addresses
             end
 
-            def parent_association
-              :addresses
-            end
-
             def permitted_params
               params.permit(:label, *Spree::Api::V3::AddressParams::ADDRESS_KEYS)
             end

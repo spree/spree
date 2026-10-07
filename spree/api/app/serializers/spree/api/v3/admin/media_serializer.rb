@@ -57,9 +57,7 @@ module Spree
             asset.attachment_blob&.signed_id
           end
 
-          attribute :viewable_id do |asset|
-            asset.viewable&.prefixed_id
-          end
+          prefixed_id_attributes :viewable
 
           # Forces Content-Disposition: attachment so admins downloading from
           # cloud storage (S3) get a save-as instead of an inline view. Mirrors

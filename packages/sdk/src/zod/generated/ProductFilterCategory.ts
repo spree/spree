@@ -4,7 +4,7 @@ import { ProductFilterCategoryOptionSchema } from './ProductFilterCategoryOption
 
 export const ProductFilterCategorySchema = z.object({
   id: z.string(),
-  type: z.any(),
+  type: z.literal('category'),
   options: z.array(ProductFilterCategoryOptionSchema),
 });
 

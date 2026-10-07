@@ -7,8 +7,8 @@ RSpec.describe Spree::OrderEmailSubscriber do
   let(:order) { create(:completed_order_with_totals, store: store) }
   let(:subscriber) { described_class.new }
 
-  def mock_event(order, payload_extras = {})
-    double('Event', payload: { 'id' => order.prefixed_id }.merge(payload_extras.transform_keys(&:to_s)))
+  def mock_event(order, metadata = {})
+    double('Event', payload: { 'id' => order.prefixed_id }, metadata: metadata.transform_keys(&:to_s))
   end
 
   before do
@@ -93,7 +93,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
 
-    context 'when notify_customer is false in payload' do
+    context 'when notify_customer is false in metadata' do
       before { allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true)) }
 
       it 'does not send confirmation email' do
@@ -115,7 +115,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
 
-    context 'when notify_customer is true in payload' do
+    context 'when notify_customer is true in metadata' do
       it 'sends confirmation email' do
         expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return(double(deliver_later: true))
         allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true))
@@ -124,12 +124,53 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
 
-    context 'when notify_customer is absent from payload' do
+    context 'when notify_customer is absent from metadata' do
       it 'sends confirmation email (default behavior)' do
         expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return(double(deliver_later: true))
         allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true))
 
         subscriber.send(:send_confirmation_email, mock_event(order))
+      end
+    end
+  end
+
+  describe 'the store owner on a divided checkout' do
+    let(:group) { create(:order_group, store: store) }
+    let(:order) { create(:completed_order_with_totals, store: store, order_group: group) }
+
+    # Each child publishes its own order.placed, so without this the operator
+    # hears about one purchase once per seller. The group's own notification
+    # covers it.
+    it 'is left to the group rather than told per child' do
+      allow(Spree::OrderMailer).to receive(:confirm_email).and_return(double(deliver_later: true))
+
+      expect(Spree::OrderMailer).not_to receive(:store_owner_notification_email)
+
+      subscriber.send(:send_confirmation_email, mock_event(order))
+    end
+  end
+
+  describe 'order.resend_confirmation_email event' do
+    it 'sends the order confirmation again, marked as a re-send' do
+      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id, true).
+        and_return(double(deliver_later: true))
+
+      subscriber.send(:resend_confirmation_email, mock_event(order))
+    end
+
+    # An admin resends from an order because an order is what they are looking
+    # at, but on a split checkout the document is the purchase's — sending this
+    # child's would put back the partial confirmation the group email replaced.
+    context 'when the order came out of a split checkout' do
+      let(:group) { create(:order_group, store: store) }
+      let(:order) { create(:completed_order_with_totals, store: store, order_group: group) }
+
+      it 'hands the re-send to the purchase' do
+        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+        expect_any_instance_of(Spree::OrderGroup).to receive(:publish_event).
+          with('order_group.resend_confirmation_email')
+
+        subscriber.send(:resend_confirmation_email, mock_event(order))
       end
     end
   end
@@ -152,7 +193,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
         subscriber.send(:send_cancel_email, mock_event(order))
       end
 
-      it 'does not send cancel email even when notify_customer is true in payload' do
+      it 'does not send cancel email even when notify_customer is true in metadata' do
         expect(Spree::OrderMailer).not_to receive(:cancel_email)
 
         subscriber.send(:send_cancel_email, mock_event(order, notify_customer: true))
@@ -167,7 +208,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
 
-    context 'when notify_customer is false in payload' do
+    context 'when notify_customer is false in metadata' do
       it 'does not send cancel email' do
         expect(Spree::OrderMailer).not_to receive(:cancel_email)
 
@@ -175,7 +216,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
       end
     end
 
-    context 'when notify_customer is true in payload' do
+    context 'when notify_customer is true in metadata' do
       it 'sends cancel email' do
         expect(Spree::OrderMailer).to receive(:cancel_email).with(order.id).and_return(double(deliver_later: true))
 

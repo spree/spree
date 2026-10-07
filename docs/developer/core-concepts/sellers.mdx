@@ -287,6 +287,16 @@ curl -X PATCH https://your-store.com/api/v3/admin/orders/or_UkLWZg9DAJ/complete 
 
 </CodeGroup>
 
+### One confirmation, and it describes the purchase
+
+The customer made one purchase, so they get one confirmation email — sent from the group, not from any of its orders. Each child order is placed silently.
+
+If you replace the confirmation email, replace it at the group level too: the email a customer receives for a split checkout is `Spree::OrderGroupMailer`, reacting to the `order_group.completed` event, and a re-send from any child order in the admin sends the purchase's email rather than that child's. A checkout that doesn't split is unaffected and still sends the ordinary order confirmation.
+
+<Note>
+**Orders and deliveries are different counts.** Three seller orders do not mean three parcels. When several sellers' goods ship from one warehouse, the checkout quotes one delivery charge, and the split divides that charge between the orders rather than charging for it again — so one box arrives. Ask the group for `fulfillment_groups` to get the parcels that really ship; each one knows its delivery method, its cost, the goods it carries and who is sending it. Counting child orders instead promises the customer deliveries that will never arrive.
+</Note>
+
 ## Commission
 
 Commission is what the marketplace charges for the sale — configured as **rates**, and recorded per sale as immutable **commission lines**.
@@ -334,6 +344,8 @@ A seller earns on **fulfillment**, not on payment: the marketplace holds the mon
 The amount is payment-source-agnostic — store credit and gift cards are how the customer paid, which is the platform's funding concern, not the seller's.
 
 A refund never edits an earning. `refund.created` writes a second row of kind `refund_reversal` against the same order, so what a seller has earned is always the sum of their transfers, and a reversal that lands after a payout closed falls into the next period rather than rewriting a settlement that already happened.
+
+A reversal takes back only the seller's share of what was refunded. When a return or claim refunds goods and their tax, the goods come back less the commission charged on them; the tax comes back from the seller only if the seller collected it, and stays with the marketplace when the marketplace remits it.
 
 ### Payouts — what was sent
 

@@ -23,9 +23,7 @@ module Spree
             rule.class.api_type
           end
 
-          attribute :promotion_id do |rule|
-            rule.promotion&.prefixed_id
-          end
+          prefixed_id_attributes :promotion
 
           attribute :preferences, &:serialized_preferences
           attribute :preference_schema, &:serialized_preference_schema

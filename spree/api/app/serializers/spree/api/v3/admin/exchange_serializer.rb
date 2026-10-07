@@ -13,9 +13,7 @@ module Spree
 
           attributes :memo, :metadata, created_at: :iso8601, updated_at: :iso8601
 
-          attribute :stock_location_id do |exchange|
-            exchange.stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :stock_location
 
           actor_attributes :created_by
 

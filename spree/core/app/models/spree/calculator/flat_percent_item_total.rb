@@ -1,5 +1,3 @@
-require_dependency 'spree/calculator'
-
 module Spree
   class Calculator::FlatPercentItemTotal < Calculator
     preference :flat_percent, :decimal, default: 0

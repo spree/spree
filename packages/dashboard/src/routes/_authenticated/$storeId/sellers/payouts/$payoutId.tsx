@@ -2,6 +2,7 @@ import {
   adminClient,
   formatStoreDateTime,
   PageHeader,
+  Slot,
   Subject,
   usePermissions,
   useStore,
@@ -107,91 +108,97 @@ function PayoutDetailPage() {
           />
         }
         main={
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <HandCoinsIcon className="size-4" />
-                {/* The settlement's own count, not the rows this page
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <HandCoinsIcon className="size-4" />
+                  {/* The settlement's own count, not the rows this page
                     happened to load — the list is paged. */}
-                {t('admin.payouts.detail.covers', { count: payout.transfers_count })}
-              </CardTitle>
-            </CardHeader>
+                  {t('admin.payouts.detail.covers', { count: payout.transfers_count })}
+                </CardTitle>
+              </CardHeader>
 
-            {/* Only true once the earnings loaded: a pending or failed query
+              {/* Only true once the earnings loaded: a pending or failed query
                 says nothing about what this settlement covers. */}
-            {transfersPending ? (
-              <div className="px-6 pb-6">
-                <Skeleton className="h-16 w-full" />
-              </div>
-            ) : transfersFailed ? (
-              <p className="px-6 pb-6 text-sm text-destructive">
-                {t('admin.payouts.detail.covers_error')}
-              </p>
-            ) : rows.length === 0 ? (
-              <p className="px-6 pb-6 text-sm text-muted-foreground">
-                {t('admin.payouts.detail.covers_empty')}
-              </p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t('admin.payouts.columns.date')}</TableHead>
-                    <TableHead>{t('admin.payouts.columns.order')}</TableHead>
-                    <TableHead>{t('admin.payouts.columns.kind')}</TableHead>
-                    <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.map((transfer) => (
-                    <TableRow key={transfer.id}>
-                      <TableCell>{formatStoreDateTime(transfer.created_at, timezone)}</TableCell>
-                      <TableCell>
-                        {transfer.order_id ? (
-                          <Link
-                            to={'/$storeId/orders/$orderId' as string}
-                            params={{ orderId: transfer.order_id }}
-                            className="no-underline"
-                          >
-                            {transfer.order_number ?? transfer.order_id}
-                          </Link>
-                        ) : (
-                          '—'
-                        )}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {t(`admin.payouts.kinds.${transfer.kind}`, {
-                          defaultValue: transfer.kind,
-                        })}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {transfer.display_amount}
-                      </TableCell>
+              {transfersPending ? (
+                <div className="px-6 pb-6">
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              ) : transfersFailed ? (
+                <p className="px-6 pb-6 text-sm text-destructive">
+                  {t('admin.payouts.detail.covers_error')}
+                </p>
+              ) : rows.length === 0 ? (
+                <p className="px-6 pb-6 text-sm text-muted-foreground">
+                  {t('admin.payouts.detail.covers_empty')}
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('admin.payouts.columns.date')}</TableHead>
+                      <TableHead>{t('admin.payouts.columns.order')}</TableHead>
+                      <TableHead>{t('admin.payouts.columns.kind')}</TableHead>
+                      <TableHead className="text-right">{t('admin.fields.amount.label')}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-            {transfers?.meta && transfers.meta.pages > 1 && (
-              <Pagination meta={transfers.meta} onPageChange={setPage} />
-            )}
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {rows.map((transfer) => (
+                      <TableRow key={transfer.id}>
+                        <TableCell>{formatStoreDateTime(transfer.created_at, timezone)}</TableCell>
+                        <TableCell>
+                          {transfer.order_id ? (
+                            <Link
+                              to={'/$storeId/orders/$orderId' as string}
+                              params={{ orderId: transfer.order_id }}
+                              className="no-underline"
+                            >
+                              {transfer.order_number ?? transfer.order_id}
+                            </Link>
+                          ) : (
+                            '—'
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {t(`admin.payouts.kinds.${transfer.kind}`, {
+                            defaultValue: transfer.kind,
+                          })}
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums">
+                          {transfer.display_amount}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+              {transfers?.meta && transfers.meta.pages > 1 && (
+                <Pagination meta={transfers.meta} onPageChange={setPage} />
+              )}
+            </Card>
+            <Slot name="seller_payout.form_main" context={{ payout }} />
+          </>
         }
         sidebar={
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('admin.payouts.detail.settlement')}</CardTitle>
-            </CardHeader>
-            <div className="flex flex-col gap-3 px-6 pb-6">
-              <ReadRow label={t('admin.fields.amount.label')}>{payout.display_amount}</ReadRow>
-              <ReadRow label={t('admin.payouts.columns.reference')}>{payout.reference}</ReadRow>
-              <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
-              <ReadRow label={t('admin.payouts.detail.period')}>
-                {payout.period_start && payout.period_end
-                  ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
-                  : null}
-              </ReadRow>
-            </div>
-          </Card>
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.payouts.detail.settlement')}</CardTitle>
+              </CardHeader>
+              <div className="flex flex-col gap-3 px-6 pb-6">
+                <ReadRow label={t('admin.fields.amount.label')}>{payout.display_amount}</ReadRow>
+                <ReadRow label={t('admin.payouts.columns.reference')}>{payout.reference}</ReadRow>
+                <ReadRow label={t('admin.payouts.columns.provider')}>{payout.provider}</ReadRow>
+                <ReadRow label={t('admin.payouts.detail.period')}>
+                  {payout.period_start && payout.period_end
+                    ? `${formatStoreDateTime(payout.period_start, timezone)} – ${formatStoreDateTime(payout.period_end, timezone)}`
+                    : null}
+                </ReadRow>
+              </div>
+            </Card>
+            <Slot name="seller_payout.form_sidebar" context={{ payout }} />
+          </>
         }
       />
 

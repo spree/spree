@@ -5,6 +5,9 @@ module Spree
     has_prefix_id :dig
 
     publishes_lifecycle_events
+    publishes_event 'digital.created', deprecated_alias_of: 'digital_asset.created'
+    publishes_event 'digital.updated', deprecated_alias_of: 'digital_asset.updated'
+    publishes_event 'digital.deleted', deprecated_alias_of: 'digital_asset.deleted'
 
     # Provider config lives under one key in `metadata` so a provider owns its
     # own namespace without colliding with other developer metadata. The values

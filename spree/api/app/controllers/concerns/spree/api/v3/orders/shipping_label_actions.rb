@@ -104,11 +104,7 @@ module Spree
                 **label_permitted_keys.index_with { |key| label_params[key] }
               )
 
-              if result.success?
-                render json: serialize_resource(result.value), status: :created
-              else
-                render_result_error(result)
-              end
+              render_result(result, status: :created)
             end
           end
 

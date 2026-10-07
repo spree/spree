@@ -14,9 +14,7 @@ module Spree
                  unpriced: :boolean,
                  freight_summary: [:FreightSummary, nullable: true]
 
-        attribute :delivery_method_id do |deliver_rate|
-          deliver_rate.delivery_method&.prefixed_id
-        end
+        prefixed_id_attributes :delivery_method
 
         # Carrier, service level and delivery date come from the rate provider
         # and are what the customer chooses between; nil on calculator-priced
@@ -35,26 +33,8 @@ module Spree
         # froze it here when it quoted.
         one :freight_summary, resource: proc { Spree.api.freight_summary_serializer }
 
-        attribute :display_cost do |deliver_rate|
-          deliver_rate.display_cost.to_s
-        end
-
-        attribute :display_total do |deliver_rate|
-          deliver_rate.display_total.to_s
-        end
-
-        attribute :display_additional_tax_total do |deliver_rate|
-          deliver_rate.display_additional_tax_total.to_s
-        end
-
-        attribute :display_included_tax_total do |deliver_rate|
-          deliver_rate.display_included_tax_total.to_s
-        end
-
-        attribute :display_tax_total do |deliver_rate|
-          deliver_rate.display_tax_total.to_s
-        end
-
+        attributes display_cost: :string, display_total: :string, display_additional_tax_total: :string,
+                   display_included_tax_total: :string, display_tax_total: :string
         one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
       end
     end

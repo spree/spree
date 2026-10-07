@@ -7,11 +7,14 @@ module Spree
                    refund_reason_id: [:string, nullable: true],
                    refunder_id: [:string, nullable: true],
                    refunder_type: [:string, nullable: true, enum: Spree::Actor::BUILT_IN_KINDS, enum_type_name: 'ActorKind'],
-                   metadata: 'Record<string, unknown>'
+                   metadata: 'Record<string, unknown>',
+                   tax_amount: :string
 
           attributes :metadata,
                      created_at: :iso8601, updated_at: :iso8601
 
+          # The tax inside the amount, when what was refunded carried tax.
+          attributes tax_amount: :string
           # Who issued it — an admin user, or the API key an integration
           # refunded through.
           actor_attributes :refunder

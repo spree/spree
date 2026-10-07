@@ -47,10 +47,6 @@ module Spree
         #
         after_save :add_categories
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible_category_ids
           @eligible_category_ids ||= promotion_rule_categories.pluck(:category_id)
         end

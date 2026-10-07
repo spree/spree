@@ -158,7 +158,7 @@ module Spree
         it 'turns packages into shipments' do
           shipments = subject.shipments
           expect(shipments.count).to eq packages.count
-          expect(shipments).to all(be_a(Shipment))
+          expect(shipments).to all(be_a(Fulfillment))
         end
 
         it "puts the order's ship address on the shipments" do

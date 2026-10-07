@@ -18,7 +18,6 @@ module Spree
     AUTHORIZE_ACTION  = 'authorize'.freeze
     ALLOCATION_ACTION = 'allocation'.freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     # A gift card applied to a guest cart issues store credit with no customer
     # to attach it to.
     belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true

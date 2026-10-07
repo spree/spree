@@ -87,6 +87,18 @@ RSpec.describe Spree::Reporting::Query do
       expect(previous.first.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-06 00:00:00')
       expect(previous.last.in_time_zone('Europe/Warsaw').strftime('%F %T')).to eq('2026-03-19 23:59:59')
     end
+
+    it 'shifts a range of whole calendar months by the same number of months' do
+      query = described_class.new(store: store, params: { metrics: %w[orders], time_range: { since: '2026-07-01', until: '2026-09-30' } })
+
+      previous = query.previous_time_range
+      expect(previous.first.strftime('%F %T')).to eq('2026-04-01 00:00:00')
+      expect(previous.last.strftime('%F %T')).to eq('2026-06-30 23:59:59')
+
+      query = described_class.new(store: store, params: { metrics: %w[orders], time_range: { since: '2026-03-01', until: '2026-03-31' } })
+      expect(query.previous_time_range.first.to_date.to_s).to eq('2026-02-01')
+      expect(query.previous_time_range.last.to_date.to_s).to eq('2026-02-28')
+    end
   end
 
   describe 'time presets' do
@@ -176,6 +188,22 @@ RSpec.describe Spree::Reporting::Query do
 
       after_refund = run(metrics: %w[net_sales])
       expect(after_refund.totals[:net_sales][:value]).to eq((before_refund.totals[:net_sales][:value] - 12).round(2))
+    end
+
+    # A return gives back the tax with the goods. Netted from net sales whole,
+    # the tax would come off a figure that never contained it.
+    it 'nets the goods a refund gave back from net sales and its tax from taxes' do
+      order.line_items.each { |line| line.update_columns(pre_tax_amount: line.price * line.quantity) }
+      metrics = %w[net_sales taxes returns total_sales]
+      before_refund = run(metrics: metrics).totals.transform_values { |total| total[:value] }
+
+      create(:refund, amount: 11, tax_amount: 1, payment: create(:payment, order: order, amount: order.total), order: order)
+
+      after_refund = run(metrics: metrics).totals.transform_values { |total| total[:value] }
+      expect(after_refund[:net_sales]).to eq((before_refund[:net_sales] - 10).round(2))
+      expect(after_refund[:taxes]).to eq((before_refund[:taxes] - 1).round(2))
+      expect(after_refund[:returns]).to eq(10.0)
+      expect(after_refund[:total_sales]).to eq((before_refund[:total_sales] - 11).round(2))
     end
 
     it 'counts an order once however many refunds it carries' do
@@ -705,9 +733,12 @@ RSpec.describe Spree::Reporting::Query do
 
     context 'with a quarter-to-date style range at month grain' do
       # Range: the 1st of the month before last → today, spanning three
-      # calendar months with the current one partial. Each month bucket must
-      # compare with the month three back, never with a month inside the
-      # current period.
+      # calendar months. Each month bucket must compare with the month three
+      # back, never with a neighbour. Frozen on the last day of a quarter,
+      # where the range is three whole months and a plain day shift would
+      # start the previous period on March 31.
+      around { |example| Timecop.freeze(Time.zone.parse('2026-09-30 12:00')) { example.run } }
+
       let(:from) { 2.months.ago.beginning_of_month.to_date }
       let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: (from + 45).in_time_zone.change(hour: 12)) }
       let!(:previous_order) { create(:completed_order_with_totals, store: store, completed_at: ((from + 45) << 3).in_time_zone.change(hour: 12)) }

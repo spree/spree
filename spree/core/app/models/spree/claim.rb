@@ -16,8 +16,10 @@ module Spree
     include Spree::HasStatus
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::PostSale::Taxation
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :denied, :opened, :resolved
 
     has_status :open, :approved, :resolved, :denied, :canceled, default: :open
 
@@ -25,7 +27,6 @@ module Spree
     # stays closed — an unrecognised value would silently do nothing.
     RESOLUTIONS = %w[refund replacement refund_and_replacement].freeze
 
-    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :claims
     belongs_to :reason, class_name: 'Spree::ClaimReason', optional: true, inverse_of: :claims
     acted_by :created_by
@@ -59,12 +60,31 @@ module Spree
       end
     end
 
+    # The tax inside {#refunded_line_amounts}, for the lines whose tax is
+    # recorded: each line's refund carries its tax in proportion to what the
+    # customer paid for it.
+    #
+    # @return [Hash{Integer => BigDecimal}] line item id => tax
+    def refunded_line_taxes
+      claim_line_items.each_with_object(Hash.new(0)) do |line, taxes|
+        next unless line.settles_tax? && line.paid_amount.positive?
+
+        taxes[line.line_item_id] += Spree::Money::Rounding.to_currency(
+          line.tax_total * line.refund_amount.to_d / line.paid_amount, currency
+        )
+      end
+    end
+
     def display_refund_total
       Spree::Money.new(refund_total, currency: currency)
     end
 
     def replacement_line_items
       claim_line_items.select(&:send_replacement)
+    end
+
+    def taxed_lines
+      claim_line_items
     end
   end
 end

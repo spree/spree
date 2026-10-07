@@ -74,6 +74,11 @@ module Spree
           # Export errors
           export_not_ready: 'export_not_ready',
 
+          # Email template errors
+          email_template_stale: 'email_template_stale',
+          email_template_invalid: 'email_template_invalid',
+          email_template_no_sample: 'email_template_no_sample',
+
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 

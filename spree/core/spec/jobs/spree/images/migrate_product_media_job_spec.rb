@@ -6,7 +6,7 @@ RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
   describe '#perform' do
     context 'with master-pinned assets' do
       let!(:product) { create(:product) }
-      let!(:asset)   { create(:image, viewable: product.default_variant) }
+      let!(:asset)   { create(:media, viewable: product.default_variant) }
 
       it 'moves master-pinned assets to the product' do
         expect { subject }
@@ -33,7 +33,7 @@ RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
     context 'with non-master variant-pinned assets' do
       let!(:product) { create(:product) }
       let!(:variant) { create(:variant, product: product) }
-      let!(:asset)   { create(:image, viewable: variant) }
+      let!(:asset)   { create(:media, viewable: variant) }
 
       it 'moves the asset to the product and creates a VariantMedia row' do
         expect { subject }
@@ -46,7 +46,7 @@ RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
 
       it 'links each variant-pinned asset to its original variant' do
         other_variant = create(:variant, product: product)
-        other_asset   = create(:image, viewable: other_variant)
+        other_asset   = create(:media, viewable: other_variant)
 
         subject
 
@@ -71,8 +71,8 @@ RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
     context 'with mixed master + non-master assets' do
       let!(:product)        { create(:product) }
       let!(:variant)        { create(:variant, product: product) }
-      let!(:master_asset)   { create(:image, viewable: product.default_variant) }
-      let!(:variant_asset)  { create(:image, viewable: variant) }
+      let!(:master_asset)   { create(:media, viewable: product.default_variant) }
+      let!(:variant_asset)  { create(:media, viewable: variant) }
 
       it 'moves both, but only creates a join row for the non-master one' do
         expect { subject }
@@ -88,7 +88,7 @@ RSpec.describe Spree::Images::MigrateProductMediaJob, type: :job do
     context 'idempotency' do
       let!(:product) { create(:product) }
       let!(:variant) { create(:variant, product: product) }
-      let!(:asset)   { create(:image, viewable: variant) }
+      let!(:asset)   { create(:media, viewable: variant) }
 
       it 're-running the job is a no-op once everything is migrated' do
         described_class.perform_now(product.id)

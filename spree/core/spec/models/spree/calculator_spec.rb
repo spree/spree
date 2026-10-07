@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Calculator, type: :model do
   let(:order) { build(:order) }
   let(:line_item) { build(:line_item, order: order) }
-  let(:shipment) { build(:shipment, order: order) }
+  let(:shipment) { build(:fulfillment, order: order) }
 
   context 'with computable' do
     context 'and compute methods stubbed out' do
@@ -21,7 +21,7 @@ describe Spree::Calculator, type: :model do
         end
       end
 
-      context 'with a Spree::Shipment' do
+      context 'with a Spree::Fulfillment' do
         it 'calls compute_shipment' do
           expect(subject).to receive(:compute_shipment).with(shipment)
           subject.compute(shipment)
@@ -50,7 +50,7 @@ describe Spree::Calculator, type: :model do
         end
       end
 
-      context 'with a Spree::Shipment' do
+      context 'with a Spree::Fulfillment' do
         it 'raises NotImplementedError' do
           expect { subject.compute(shipment) }.to raise_error NotImplementedError, /Please implement \'compute_shipment\(shipment\)\' in your calculator/
         end

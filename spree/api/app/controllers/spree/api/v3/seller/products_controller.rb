@@ -166,6 +166,7 @@ module Spree
 
           def permitted_params
             attrs = params.permit(
+              *model_class.additional_seller_permitted_attributes,
               :name, :description, :slug,
               :meta_title, :meta_description, :meta_keywords,
               :product_type_id, :delivery_profile_id,

@@ -29,7 +29,7 @@ export const CartSchema = z.object({
   currency: z.string(),
   locale: z.string().nullable(),
   total_quantity: z.number(),
-  warnings: z.array(z.any()),
+  warnings: z.array(z.object({ code: z.string(), message: z.string(), line_item_id: z.string().optional(), variant_id: z.string().optional(), item_index: z.number().optional() })),
   coupon_code: z.string().nullable(),
   item_total: z.string().nullable(),
   display_item_total: z.string().nullable(),
@@ -73,7 +73,7 @@ export const CartSchema = z.object({
   shipping_address: AddressSchema.nullable(),
   payment_methods: z.array(PaymentMethodSchema),
   gift_card: GiftCardSchema.nullable(),
-  market: z.lazy(() => MarketSchema).nullable(),
+  get market() { return MarketSchema.nullable(); },
 });
 
 export type Cart = z.infer<typeof CartSchema>;

@@ -11,6 +11,7 @@ describe Spree::Gateway, type: :model do
     preference :publishable_preference1, :string
     preference :publishable_preference2, :string
     preference :private_preference, :string
+    preference :threshold_amount, :decimal, default: 9.99
 
     def provider_class
       Provider
@@ -21,6 +22,10 @@ describe Spree::Gateway, type: :model do
     def public_preference_keys
       [:publishable_preference1, :publishable_preference2]
     end
+  end
+
+  it 'hands the provider typed preference values' do
+    expect(TestGateway.new.options[:threshold_amount]).to eq(BigDecimal('9.99'))
   end
 
   it 'passes through all arguments on a method_missing call' do

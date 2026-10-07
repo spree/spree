@@ -25,13 +25,7 @@ module Spree
             item.line_type.demodulize.underscore
           end
 
-          attribute :line_id do |item|
-            item.line&.prefixed_id
-          end
-
-          attribute :variant_id do |item|
-            item.variant&.prefixed_id
-          end
+          prefixed_id_attributes :line, :variant
 
           # The product the line's variant belongs to, so a delivery's line
           # can link to the screen where that SKU's stock lives.

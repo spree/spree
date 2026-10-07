@@ -59,17 +59,17 @@ module Spree
 
         return false if preferred_stock_location_id.present?
 
-        # An address is needed when any item's profile ships to one —
-        # answered by the profile kind, resolved once per profile.
-        profile_requires_address = Hash.new do |cache, profile|
-          cache[profile] = profile.present? && profile.requires_shipping_address?
-        end
+        items_require_shipping_address?
+      end
 
-        # Both profile paths are preloaded: the variant's own override, and the
-        # product's for the variants that inherit it.
-        line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
-          profile_requires_address[line_item.variant&.resolved_delivery_profile]
-        end
+      # Whether delivery can be proposed yet: once there is a destination (a
+      # shipping address, or a pickup intent for a purchase that never gets
+      # one), or straight away when no item ships to an address. Quoted
+      # without a destination, only pickup qualifies.
+      #
+      # @return [Boolean]
+      def can_propose_deliveries?
+        ship_address.present? || preferred_stock_location_id.present? || !items_require_shipping_address?
       end
 
       # @deprecated The shipping address is canonical — use +use_shipping+ to
@@ -173,6 +173,19 @@ module Spree
       end
 
       private
+
+      def items_require_shipping_address?
+        # Answered by the profile kind, resolved once per profile.
+        profile_requires_address = Hash.new do |cache, profile|
+          cache[profile] = profile.present? && profile.requires_shipping_address?
+        end
+
+        # Both profile paths are preloaded: the variant's own override, and the
+        # product's for the variants that inherit it.
+        line_items.includes(variant: [:delivery_profile, { product: :delivery_profile }]).any? do |line_item|
+          profile_requires_address[line_item.variant&.resolved_delivery_profile]
+        end
+      end
 
       # The address behind an id a client may select, or nil when the id names
       # one this purchase has no business shipping to.

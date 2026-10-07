@@ -87,18 +87,9 @@ module Spree
             subscriber = Spree::NewsletterSubscriber.for_store(current_store).find_by(email: params[:email])
 
             if subscriber
-              payload = {
-                id: subscriber.prefixed_id,
-                email: subscriber.email,
-                unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
-                store_id: current_store.prefixed_id,
-                customer_id: subscriber.customer&.prefixed_id
-              }
-
-              redirect_url = validated_redirect_url
-              payload[:redirect_url] = redirect_url if redirect_url.present?
-
-              subscriber.publish_event('newsletter_subscriber.unsubscribe_requested', payload)
+              event_name = 'newsletter_subscriber.unsubscribe_requested'
+              payload = subscriber.event_payload_for(event_name, store: current_store, redirect_url: validated_redirect_url.presence)
+              subscriber.publish_event(event_name, payload)
             end
 
             head :accepted

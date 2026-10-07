@@ -29,7 +29,12 @@ FactoryBot.define do
   end
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
-    payment_method { create(:store_credit_payment_method, store: (order || cart).store) }
-    source { create(:store_credit, store: (order || cart).store, customer: (order || cart).customer) }
+    # An order group owns payments like a cart or an order does, and a split
+    # checkout paid with store credit is exactly where that matters.
+    payment_method { create(:store_credit_payment_method, store: (order || cart || order_group).store) }
+    source do
+      owner = order || cart || order_group
+      create(:store_credit, store: owner.store, customer: owner.customer)
+    end
   end
 end

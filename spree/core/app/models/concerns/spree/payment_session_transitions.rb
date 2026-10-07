@@ -24,8 +24,14 @@ module Spree
       pending?
     end
 
-    %w[complete fail cancel expire].each do |transition|
+    %w[complete fail expire].each do |transition|
       define_method(:"can_#{transition}?") { pending? || processing? }
+    end
+
+    # A failed confirm can leave the provider intent payable. Cancel is how
+    # placement retires it; the other transitions stay closed.
+    def can_cancel?
+      pending? || processing? || failed?
     end
 
     def process
@@ -50,7 +56,7 @@ module Spree
     end
 
     def cancel
-      return false unless transition_to('canceled', from: %w[pending processing])
+      return false unless transition_to('canceled', from: %w[pending processing failed])
 
       publish_canceled_event
       true

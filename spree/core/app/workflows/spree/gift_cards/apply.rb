@@ -185,7 +185,7 @@ module Spree
       end
 
       def amount
-        @amount ||= [gift_card.amount_remaining, order.total].min
+        @amount ||= [gift_card.spendable_amount, order.total].min
       end
 
       def issue_store_credit

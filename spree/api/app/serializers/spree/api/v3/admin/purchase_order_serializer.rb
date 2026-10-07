@@ -56,21 +56,8 @@ module Spree
 
           attribute :editable, &:editable?
 
-          attribute :subtotal do |purchase_order|
-            purchase_order.subtotal.to_s
-          end
-
-          attribute :display_subtotal do |purchase_order|
-            purchase_order.display_subtotal.to_s
-          end
-
-          attribute :supplier_id do |purchase_order|
-            purchase_order.supplier&.prefixed_id
-          end
-
-          attribute :destination_location_id do |purchase_order|
-            purchase_order.destination_location&.prefixed_id
-          end
+          attributes subtotal: :string, display_subtotal: :string
+          prefixed_id_attributes :supplier, :destination_location
 
           many :items,
                resource: proc { Spree.api.admin_purchase_order_item_serializer },

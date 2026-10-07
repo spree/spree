@@ -74,6 +74,28 @@ RSpec.describe Spree::Api::V3::Admin::SetupController, type: :controller do
     end
   end
 
+  describe 'rate limiting' do
+    before do
+      allow(Rails.cache).to receive(:increment).and_return(Spree::Api::Config[:rate_limit_login] + 1)
+    end
+
+    it 'keeps the status and countries reads off the login budget' do
+      get :show
+      expect(response).to have_http_status(:ok)
+
+      get :countries
+      expect(response).not_to have_http_status(:too_many_requests)
+    end
+
+    it 'holds token submissions to the login budget' do
+      post :create, params: { setup_token: 'guess' }
+
+      expect(response).to have_http_status(:too_many_requests)
+      expect(json_response[:error][:code]).to eq('rate_limit_exceeded')
+      expect(response.headers['X-RateLimit-Limit']).to eq(Spree::Api::Config[:rate_limit_login].to_s)
+    end
+  end
+
   describe 'POST #create' do
     # Read fresh, not through the memoized @default_store: the shared object
     # reloads in an after(:each) that runs inside the previous example's

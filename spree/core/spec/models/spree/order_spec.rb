@@ -199,8 +199,8 @@ describe Spree::Order, type: :model do
         order.update_columns(status: 'placed', completed_at: Time.current)
         order.fulfillments.delete_all
 
-        create(:shipment, order: order, state: 'canceled')
-        create(:shipment, order: order, state: 'unfulfilled')
+        create(:fulfillment, order: order, state: 'canceled')
+        create(:fulfillment, order: order, state: 'unfulfilled')
       end
 
       it 'returns true' do
@@ -222,7 +222,7 @@ describe Spree::Order, type: :model do
     let(:payment_method) { double }
 
     it 'marks the payments as void' do
-      allow_any_instance_of(Spree::Shipment).to receive(:refresh_rates).and_return(true)
+      allow_any_instance_of(Spree::Fulfillment).to receive(:refresh_rates).and_return(true)
       order.cancel
       order.reload
 
@@ -324,7 +324,7 @@ describe Spree::Order, type: :model do
       it 'publishes order.canceled event' do
         allow(Spree::Events).to receive(:publish)
         order.canceled_by(admin_user)
-        expect(Spree::Events).to have_received(:publish).with('order.canceled', hash_including(:notify_customer), any_args)
+        expect(Spree::Events).to have_received(:publish).with('order.canceled', kind_of(Hash), hash_including(:notify_customer))
       end
     end
   end
@@ -413,6 +413,42 @@ describe Spree::Order, type: :model do
     it 'is false' do
       allow(order).to receive(:restart_checkout_flow)
       expect(subject).to be_falsey
+    end
+  end
+
+  describe '#outstanding_balance' do
+    let(:order) { create(:shipped_order) }
+    let(:payment) { order.payments.completed.first }
+
+    def refund(**attributes)
+      create(:refund, payment: payment, amount: 25, **attributes)
+      # What RecalculateTotals persists: payments less their refunds.
+      order.update_columns(payment_total: order.total - 25)
+    end
+
+    # The customer was refunded for goods they sent back, so nothing is owed.
+    it 'owes nothing once a return is refunded' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(order.outstanding_balance).to eq(0)
+    end
+
+    it 'owes what was refunded for nothing in return' do
+      refund
+
+      expect(order.outstanding_balance).to eq(25)
+    end
+
+    it 'refuses a payment charging again for the goods that came back' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(build(:payment, order: order, amount: 25)).not_to be_valid
+    end
+
+    it 'reads the same from refunds a list already loaded' do
+      refund(originator: create(:return, order: order, store: order.store))
+
+      expect(Spree::Order.includes(:refunds).find(order.id).outstanding_balance).to eq(0)
     end
   end
 
@@ -507,8 +543,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   describe '#collect_frontend_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, store: store }
-    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, store: store }
+    let(:ok_method) { double :payment_method, store_credit?: false, available_for_order?: true, available_for_store?: true, store: store }
+    let(:no_method) { double :payment_method, store_credit?: false, available_for_order?: false, available_for_store?: true, store: store }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
     let(:order_from_different_store) { create(:order, customer: user, store: store_2) }
@@ -828,20 +864,36 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order_with_line_items) }
 
     context 'when order has shipments and is not completed' do
+      let(:express) do
+        create(:delivery_method, name: 'Express').tap do |method|
+          method.calculator.preferred_amount = 15
+          method.calculator.save
+        end
+      end
+
       before do
+        express
         order.rebuild_fulfillments!
+        fulfillment = order.fulfillments.first
+        fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
       end
 
-      it 'destroys all shipments' do
-        expect(order.shipments).to be_present
+      it 'rebuilds them, keeping the chosen rate and its price' do
+        previous_ids = order.fulfillments.ids
+
         order.ensure_updated_fulfillments
-        expect(order.reload.shipments).to be_empty
+
+        fulfillment = order.fulfillments.reload.first
+        expect(previous_ids).not_to include(fulfillment.id)
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(express)
+        expect(fulfillment.cost).to eq(15)
       end
 
-      it 'resets shipment_total to 0' do
-        order.update_column(:shipment_total, 10.0)
-        order.ensure_updated_fulfillments
-        expect(order.reload.shipment_total).to eq(0)
+      it 'keeps delivery when an item is added to the draft' do
+        Spree.order_add_item_service.call(order: order, variant: order.line_items.first.variant, quantity: 1)
+
+        expect(order.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(express)
+        expect(order.reload.delivery_total).to eq(15)
       end
 
       context 'events', :events do
@@ -1025,7 +1077,7 @@ describe Spree::Order, type: :model do
 
     before do
       line_item = create(:line_item, order: order, price: 10, quantity: 2)
-      shipment = create(:shipment, order: order, cost: 5)
+      shipment = create(:fulfillment, order: order, cost: 5)
 
       line_item.update(pre_tax_amount: 8.0)
       shipment.update(pre_tax_amount: 4.0)
@@ -1068,7 +1120,7 @@ describe Spree::Order, type: :model do
 
   describe '#rebuild_fulfillments!' do
     context 'has unassociated inventory units' do
-      let!(:inventory_unit) { create(:inventory_unit, order: subject) }
+      let!(:inventory_unit) { create(:fulfillment_item, order: subject) }
 
       before do
         inventory_unit.update_column(:shipment_id, nil)
@@ -1121,7 +1173,7 @@ describe Spree::Order, type: :model do
 
     it 'assigns the routing strategy returned packages, mapped to shipments' do
       package = instance_double(Spree::Stock::Package)
-      shipment = build(:shipment)
+      shipment = build(:fulfillment)
       allow(package).to receive(:to_fulfillment).and_return(shipment)
 
       strategy = instance_double(Spree::OrderRouting::Strategy::Rules)
@@ -1250,7 +1302,7 @@ describe Spree::Order, type: :model do
 
   describe '#fully_discounted?' do
     let(:line_item) { Spree::LineItem.new(price: 10, quantity: 1) }
-    let(:shipment) { Spree::Shipment.new(cost: 10) }
+    let(:shipment) { Spree::Fulfillment.new(cost: 10) }
     let(:payment) { Spree::Payment.new(amount: 10) }
 
     before do
@@ -1375,7 +1427,7 @@ describe Spree::Order, type: :model do
     before { allow(order).to receive(:tax_provider).and_return(provider) }
 
     context 'when order has shipments' do
-      let!(:shipment) { create(:shipment, order: order) }
+      let!(:shipment) { create(:fulfillment, order: order) }
 
       it 'estimates tax over the fulfillments' do
         expect(provider).to receive(:estimate).with(order, [shipment], hash_including(:tax_date))
@@ -1914,9 +1966,9 @@ describe Spree::Order, type: :model do
 
     let!(:shipments) do
       create_list(
-        :shipment, 2,
+        :fulfillment, 2,
         order: order,
-        shipping_methods: [create(:shipping_method)],
+        shipping_methods: [create(:delivery_method)],
         stock_location: build(:stock_location)
       )
     end
@@ -2170,7 +2222,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when order has shipments with shipping rates' do
-      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+      let!(:shipping_rate) { create(:delivery_rate, shipment: shipment) }
 
       it 'returns an empty array' do
         expect(subject).to eq([])
@@ -2220,7 +2272,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when order has shipments with shipping rates' do
-      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+      let!(:shipping_rate) { create(:delivery_rate, shipment: shipment) }
 
       it 'returns nil and does not add an error to the order' do
         expect(subject).to be_nil

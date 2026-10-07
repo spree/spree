@@ -25,11 +25,7 @@ module Spree
               with_order_lock do
                 result = Spree.shipping_label_purchase_workflow.call(owner: @parent)
 
-                if result.success?
-                  render json: serialize_resource(result.value), status: :created
-                else
-                  render_result_error(result)
-                end
+                render_result(result, status: :created)
               end
             end
 
@@ -38,11 +34,7 @@ module Spree
               with_order_lock do
                 result = Spree.shipping_label_refund_workflow.call(shipping_label: @resource)
 
-                if result.success?
-                  render json: serialize_resource(result.value)
-                else
-                  render_result_error(result)
-                end
+                render_result(result)
               end
             end
 

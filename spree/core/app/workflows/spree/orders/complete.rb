@@ -53,6 +53,7 @@ module Spree
 
         step :ensure_placed_status
         step :release_stock_reservations
+        step :cancel_unused_payment_sessions
         step :update_statuses
         step :publish_order_placed
         step :complete_sibling_orders
@@ -102,6 +103,10 @@ module Spree
         # carrying the caller's notify_customer, which a freshly loaded one
         # would not.
         @order_group = result.value
+        # No child order is the purchase, this one included, so the customer is
+        # confirmed from the group instead and every child places silently.
+        @notify_customer_of_purchase = order.notify_customer
+        order.notify_customer = false
         step :allocate_payment_splits
       end
 
@@ -216,6 +221,15 @@ module Spree
         Spree::StockReservations::Release.call(owner: order)
       end
 
+      # A session left behind by a switched method or a second tab could still
+      # be paid, charging the buyer twice. One provider call per session, so
+      # it runs in a job rather than holding up placement.
+      def cancel_unused_payment_sessions
+        return unless order.payment_sessions.unused.exists?
+
+        Spree::Payments::CancelUnusedSessionsJob.perform_later(order.id)
+      end
+
       def update_statuses
         Spree::Orders::UpdateStatuses.call(order: order)
       end
@@ -225,18 +239,19 @@ module Spree
       # order.completed is a one-release alias for 5.x webhook consumers;
       # wildcard subscribers dedupe on the metadata marker.
       def publish_order_placed
-        payload = order.event_payload.merge(notify_customer: order.notify_customer)
-        order.publish_event('order.placed', payload)
-        order.publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
+        metadata = { notify_customer: order.notify_customer }
+        payload = order.event_payload
+        order.publish_event('order.placed', payload, metadata)
+        order.publish_event('order.completed', payload, metadata.merge(deprecated_alias_of: 'order.placed'))
       end
 
       # Places the orders the division produced beside this one.
       #
       # They place without processing payments, because the money was taken
       # against the whole basket before the division and the group now holds
-      # it, and silently, because one purchase means one confirmation email.
-      # Only the ones still in draft, so a replay finishes an interrupted
-      # division instead of re-placing what already went out.
+      # it, and silently, as every child of a division does. Only the ones
+      # still in draft, so a replay finishes an interrupted division instead of
+      # re-placing what already went out.
       def complete_sibling_orders
         return if order_group.nil?
 
@@ -250,7 +265,7 @@ module Spree
 
         return unless order_group.orders.all?(&:placed?)
 
-        order_group.publish_event('order_group.completed')
+        order_group.publish_event('order_group.completed', nil, notify_customer: @notify_customer_of_purchase)
       end
 
       def place_sibling(sibling)

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Spree::Shipment, type: :model do
+describe Spree::Fulfillment, type: :model do
   let(:order) { create(:order) }
-  let(:shipping_method) { create(:shipping_method, name: 'UPS') }
-  let(:shipment) { create(:shipment, cost: 1, status: 'unfulfilled', stock_location: create(:stock_location), order: order) }
+  let(:shipping_method) { create(:delivery_method, name: 'UPS') }
+  let(:shipment) { create(:fulfillment, cost: 1, status: 'unfulfilled', stock_location: create(:stock_location), order: order) }
 
   before do
     allow(order).to receive_messages backordered?: false,

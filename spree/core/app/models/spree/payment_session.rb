@@ -9,6 +9,7 @@ module Spree
     self.event_prefix = 'payment_session'
 
     publishes_lifecycle_events
+    publishes_events :canceled, :completed, :expired, :failed, :processing
 
     belongs_to :order, class_name: 'Spree::Order', optional: true
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :payment_sessions
@@ -28,6 +29,9 @@ module Spree
 
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
     scope :active, -> { not_expired.where(status: %w[pending processing]) }
+    # A declined confirm marks the session failed while its intent can still
+    # be paid, so placement has to cancel those too.
+    scope :unused, -> { where(status: %w[pending failed]).where.missing(:payment) }
 
     before_validation :set_defaults_from_order, on: :create
 

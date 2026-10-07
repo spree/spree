@@ -63,7 +63,7 @@ module Spree
         external_step :void_tax
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
-        order.publish_event('order.canceled', order.event_payload.merge(notify_customer: notify_customer))
+        order.publish_event('order.canceled', nil, notify_customer: notify_customer)
         success(order.reload)
       rescue ActiveRecord::RecordInvalid
         failure(order)

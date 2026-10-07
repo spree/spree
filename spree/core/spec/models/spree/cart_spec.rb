@@ -230,6 +230,51 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#orderable_variants' do
+    let(:company) { create(:company, store: store) }
+    let(:catalog) { create(:catalog, store: store) }
+    let(:listed) { create(:product, store: store) }
+    let(:hidden) { create(:product, store: store) }
+    let(:cart) { create(:cart, store: store, customer: customer) }
+
+    before do
+      create(:catalog_product, catalog: catalog, product: listed)
+      create(:catalog_assignment, catalog: catalog, assignable: company)
+      create(:company_membership, company: company, customer: customer)
+    end
+
+    it "narrows to the catalogs of the buyer's company" do
+      expect(cart.orderable_variants).to include(listed.default_variant)
+      expect(cart.orderable_variants).not_to include(hidden.default_variant)
+    end
+
+    # A buyer in two companies has no sole standing, so only the company the
+    # cart names can say which agreement applies.
+    it 'answers from the company the cart is for' do
+      other_company = create(:company, store: store)
+      other_catalog = create(:catalog, store: store)
+      create(:catalog_product, catalog: other_catalog, product: hidden)
+      create(:catalog_assignment, catalog: other_catalog, assignable: other_company)
+      create(:company_membership, company: other_company, customer: customer)
+      cart.update!(company: other_company)
+
+      expect(cart.orderable_variants).to include(hidden.default_variant)
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a catalog product not published on the cart's channel" do
+      listed.product_publications.destroy_all
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+
+    it "leaves out a product whose publication on the cart's channel has ended" do
+      listed.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+      expect(cart.orderable_variants).not_to include(listed.default_variant)
+    end
+  end
+
   describe '#remove_out_of_stock_items!' do
     let(:cart) { create(:cart_with_line_items, store: store, customer: customer) }
 
@@ -273,6 +318,14 @@ describe Spree::Cart, type: :model do
         expect(cart.warnings.length).to eq(1)
         expect(cart.warnings.first[:code]).to eq('line_item_removed')
       end
+    end
+
+    it 'uses the configured remove out of stock items service' do
+      custom_service = Class.new(Spree::Carts::RemoveOutOfStockItems)
+      allow(Spree).to receive(:cart_remove_out_of_stock_items_service).and_return(custom_service)
+      expect(custom_service).to receive(:call).with(cart: cart).and_call_original
+
+      cart.remove_out_of_stock_items!
     end
 
     context 'when cart is empty' do
@@ -387,7 +440,7 @@ describe Spree::Cart, type: :model do
     let(:state) { country.states.first || create(:state, country: country) }
     let!(:zone) { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |method|
+      create(:delivery_method).tap do |method|
         method.calculator.preferred_amount = 5
         method.calculator.save
       end
@@ -395,6 +448,17 @@ describe Spree::Cart, type: :model do
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
     let(:ship_address) { create(:address, country: country, state: state) }
     let(:cart) { create(:cart_with_line_items, store: store, ship_address: ship_address, email: 'buyer@example.com') }
+    let(:express) do
+      create(:delivery_method, name: 'Express').tap do |method|
+        method.calculator.preferred_amount = 15
+        method.calculator.save
+      end
+    end
+
+    def choose(delivery_method)
+      fulfillment = cart.fulfillments.reload.first
+      fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: delivery_method).id
+    end
 
     describe '#rebuild_fulfillments!' do
       it 'builds cart-owned proposals from the current items and address' do
@@ -406,12 +470,82 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.first.delivery_rates).to be_present
       end
 
+      it 'prices each proposal at its selected rate' do
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.cost).to eq(5)
+        expect(fulfillment.reload.cost).to eq(5)
+      end
+
+      it 'keeps the delivery method the customer chose' do
+        express
+        cart.rebuild_fulfillments!
+        choose(express)
+
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(express)
+        expect(fulfillment.cost).to eq(15)
+      end
+
+      it 'falls back to the default when the chosen method is no longer offered' do
+        express
+        cart.rebuild_fulfillments!
+        choose(express)
+        express.destroy
+
+        cart.rebuild_fulfillments!
+
+        fulfillment = cart.fulfillments.first
+        expect(fulfillment.selected_delivery_rate.delivery_method).to eq(shipping_method)
+        expect(fulfillment.cost).to eq(5)
+      end
+
       it 'is idempotent and never touches a completed cart' do
         cart.rebuild_fulfillments!
         expect { cart.rebuild_fulfillments! }.not_to change { cart.fulfillments.count }
 
         cart.update_columns(completed_at: Time.current)
         expect(Spree::Cart.find(cart.id).rebuild_fulfillments!).to be_nil
+      end
+
+      context 'without a destination' do
+        let(:cart) { create(:cart_with_line_items, store: store, email: 'buyer@example.com') }
+        let!(:pickup_location) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any', store: store) }
+
+        before { create(:pickup_delivery_method, store: store) }
+
+        it 'proposes nothing rather than preselecting pickup' do
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_empty
+          expect(cart.shipping_address_required?).to be(true)
+        end
+
+        it 'proposes nothing when an item is added' do
+          Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+
+          expect(cart.fulfillments.reload).to be_empty
+        end
+
+        it 'proposes pickup once the customer chooses a pickup location' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments.first.selected_delivery_rate.delivery_method).to be_pickup
+        end
+
+        it 'proposes straight away when no item ships to an address' do
+          cart.line_items.first.update!(variant: create(:digital_product, store: store).default_variant)
+          create(:digital_delivery_method, store: store)
+
+          cart.rebuild_fulfillments!
+
+          expect(cart.fulfillments).to be_present
+        end
       end
     end
 
@@ -460,6 +594,46 @@ describe Spree::Cart, type: :model do
         expect(completed).not_to receive(:rebuild_fulfillments!)
         completed.ensure_updated_fulfillments
       end
+
+      it 'keeps the chosen delivery and its price when an item is added after the address' do
+        express
+        cart.recalculate_for_address_change!
+        choose(express)
+
+        Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+
+        expect(cart.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(express)
+        expect(cart.reload.delivery_total).to eq(15)
+      end
+
+      context 'with a discount code applied' do
+        def apply_code_and_add_item(promotion)
+          cart.recalculate_for_address_change!
+          cart.coupon_code = promotion.code
+          Spree::PromotionHandler::Coupon.new(cart).apply
+
+          Spree.cart_add_item_workflow.call(cart: cart, variant: cart.line_items.first.variant, quantity: 1)
+          cart.reload
+        end
+
+        it 'keeps both the order discount and the delivery charge' do
+          apply_code_and_add_item(create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10))
+
+          expect(cart.delivery_total).to eq(5)
+          expect(cart.discount_total).to eq(-10)
+          expect(cart.total).to eq(cart.item_total + 5 - 10)
+        end
+
+        # The rebuild deletes the old proposal's discount, so free shipping has
+        # to be written again against the new proposal's cost.
+        it 'keeps a free-shipping code covering the whole delivery charge' do
+          apply_code_and_add_item(create(:free_shipping_promotion))
+
+          expect(cart.delivery_total).to eq(5)
+          expect(cart.discount_total).to eq(-5)
+          expect(cart.total).to eq(cart.item_total)
+        end
+      end
     end
 
     describe '#recalculate_for_address_change!' do
@@ -469,6 +643,20 @@ describe Spree::Cart, type: :model do
         expect(cart.fulfillments.reload).to be_present
         expect(cart.reload.delivery_total).to be > 0
         expect(cart.total).to eq(cart.item_total + cart.delivery_total + cart.adjustment_total)
+      end
+
+      # A guest's address edit updates the row in place, so its id alone cannot
+      # tell a new destination from the old one.
+      it 'starts from the default rate when the address is edited in place' do
+        express
+        cart.recalculate_for_address_change!
+        choose(express)
+        cart.ship_address.update!(address1: '5 Edited Way')
+
+        cart.recalculate_for_address_change!
+
+        expect(cart.fulfillments.reload.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
+        expect(cart.reload.delivery_total).to eq(5)
       end
 
       # The re-price used to be computed into memory and dropped: nothing here

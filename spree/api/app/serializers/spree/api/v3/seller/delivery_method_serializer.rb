@@ -37,13 +37,7 @@ module Spree
             record.seller_id.present?
           end
 
-          attribute :delivery_profile_id do |record|
-            record.delivery_profile&.prefixed_id
-          end
-
-          attribute :delivery_zone_id do |record|
-            record.delivery_zone&.prefixed_id
-          end
+          prefixed_id_attributes :delivery_profile, :delivery_zone
 
           attribute :calculator_type do |record|
             record.calculator&.class&.api_type

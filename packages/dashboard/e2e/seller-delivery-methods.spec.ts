@@ -1,8 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { invitationAcceptancePath, login } from './helpers'
-
-// The seller panel is its own app on its own origin (see playwright.config.ts).
-const SELLER_PANEL = `http://localhost:${process.env.E2E_SELLER_VITE_PORT || '5175'}`
+import { invitationAcceptancePath, login, SELLER_PANEL } from './helpers'
 
 /**
  * Creates a seller, invites someone, and accepts on the panel — returning the

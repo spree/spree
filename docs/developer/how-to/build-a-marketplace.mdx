@@ -726,7 +726,7 @@ Import everything from `@spree/seller-dashboard` — it re-exports both the fram
 | Change wording | [Translations](/developer/dashboard/customization/translations) merged with `i18n.addResourceBundle` |
 | Install a third-party plugin | `npm add <plugin>` and restart — the Vite plugin picks it up from your dependencies |
 
-The seller panel currently exposes just two slots, both on its team page: `seller.team.actions` and `seller.team.after`. (`seller.form_main` and `seller.form_sidebar` sound related but belong to the *admin* dashboard's seller detail page — they are for the operator's view of a seller, not the seller's own.) See the [slots catalog](/developer/dashboard/slots-catalog) for their contexts. To put a widget anywhere else in the panel, add a route rather than looking for a slot that is not there yet.
+The seller panel exposes slots on its product, order, payout, profile, and team pages — `seller.product.form_sidebar`, `seller.order.form_sidebar`, `seller.payout.form_sidebar`, `seller.profile.form_main` and `seller.profile.form_sidebar`, plus `seller.team.actions` and `seller.team.after`. The operator's side has its own: `seller.form_main` and `seller.form_sidebar` on the admin dashboard's seller page, and `seller_payout.form_main` and `seller_payout.form_sidebar` on its payout page. See the [slots catalog](/developer/dashboard/slots-catalog#seller-panel-slots) for each one's context. To put a widget anywhere else in the panel, add a route.
 
 <Note>
 **White-labelling is theming and copy, not a branding config object.** There is no logo or brand-name setting to fill in. You restyle by owning the Tailwind layer in your host app, and you re-word by overriding translation keys. Both are real customization paths — there is simply no shortcut that skips them.
@@ -760,8 +760,17 @@ const tokens = await sellerClient.auth.login({
 sellerClient.setToken(tokens.token)
 
 // A user who runs several sellers picks which one they are acting as
-sellerClient.setSeller('sel_xxx')
+const { sellers } = await sellerClient.me.get()
+sellerClient.setSeller(sellers[0].id)
+
+// The signed-in person edits their own account (name, photo, panel language);
+// the seller business itself is `sellerClient.profile.update(...)`
+await sellerClient.me.update({ first_name: 'Ada', selected_locale: 'de' })
 ```
+
+<Note>
+`sellerClient.me` is an object with `get()` and `update()`. Code written against `@spree/seller-sdk` 1.0.0-beta.1 or beta.2 that calls `sellerClient.me()` directly keeps working, but that form is deprecated and logs a one-time warning — switch to `sellerClient.me.get()`.
+</Note>
 
 Authentication is JWT only. **There is deliberately no secret-key equivalent**: a key that acts as a seller without a seller signing in is exactly what the Seller API's design exists to prevent. Sign-in fails for a store staff member who runs no seller, even though staff share the same user class.
 

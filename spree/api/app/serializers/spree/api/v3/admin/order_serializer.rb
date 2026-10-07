@@ -74,9 +74,7 @@ module Spree
                      canceled_at: :iso8601, approved_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :preferred_stock_location_id do |order|
-            order.preferred_stock_location&.prefixed_id
-          end
+          prefixed_id_attributes :preferred_stock_location
 
           # Our own endpoint rather than a pre-signed storage URL: the
           # controller streams the bytes, so admin auth runs on every download
@@ -90,9 +88,7 @@ module Spree
           # Which company node the order is for, so the dashboard can show and
           # change it. Read back from the column rather than #resolved_company:
           # a placed order must report what it was stamped with.
-          attribute :company_id do |order|
-            order.company&.prefixed_id
-          end
+          prefixed_id_attributes :company
 
           attribute :company_name do |order|
             order.company&.name
@@ -100,9 +96,7 @@ module Spree
 
           # Whose sale this is — nil on the operator's own goods. The full
           # profile is `?expand=seller`.
-          attribute :seller_id do |order|
-            order.seller&.prefixed_id
-          end
+          prefixed_id_attributes :seller
 
           one :seller,
               resource: proc { Spree.api.admin_seller_serializer },
@@ -136,9 +130,7 @@ module Spree
           # secret key names the key.
           actor_attributes :approver, :canceler, :created_by
 
-          attribute :cancel_reason_id do |order|
-            order.cancel_reason&.prefixed_id
-          end
+          prefixed_id_attributes :cancel_reason
 
           # The reason's name alongside its id, so an order list can show why
           # each canceled order was called off without expanding a record per
@@ -147,9 +139,7 @@ module Spree
             order.cancel_reason&.name
           end
 
-          attribute :customer_id do |order|
-            order.customer&.prefixed_id
-          end
+          prefixed_id_attributes :customer
 
           # Override inherited associations to use admin serializers
           # Renamed from the store's `discounts` key: on the admin surface that

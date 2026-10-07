@@ -15,6 +15,18 @@ module SpreeStripe
       MANUAL_CAPTURE_METHOD = 'manual'.freeze
       SETUP_FUTURE_USAGE = 'off_session'.freeze
 
+      # Not a decision about the intent. A timeout and an outage may not have
+      # arrived; a rate limit was turned away before Stripe looked; a bad key
+      # or a missing permission never reached the intent. A refusal of the
+      # cancel itself is an InvalidRequestError and stays out of this list.
+      RETRYABLE_STRIPE_ERRORS = [
+        Stripe::APIConnectionError,
+        Stripe::RateLimitError,
+        Stripe::APIError,
+        Stripe::AuthenticationError,
+        Stripe::PermissionError
+      ].freeze
+
       def session_required?
         true
       end
@@ -23,16 +35,28 @@ module SpreeStripe
         Spree::PaymentSessions::Stripe
       end
 
+      # Opens a new session on every call. Each earlier session that can still
+      # be paid is canceled first: every open intent can be paid on its own,
+      # so a reloaded checkout would charge the buyer twice. A session Stripe
+      # has already accepted, a card charge still in flight, or one this cart
+      # has already completed is left as it is and the request fails, because
+      # that money is not dropped to make room for another session.
+      #
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentSessions::Stripe]
+      # @raise [Spree::Core::GatewayError] when a session has already been
+      #   paid, or an earlier one could not be canceled
       def create_payment_session(order:, amount: nil, external_data: {})
         total = amount.presence || order.total_minus_store_credits
         amount_in_cents = Spree::Money.new(total, currency: order.currency).cents
 
         raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.zero_amount') if amount_in_cents.zero?
 
-        gateway_customer = fetch_or_create_customer(order: order)
         stripe_payment_method_id = external_data[:stripe_payment_method_id] || external_data['stripe_payment_method_id']
+
+        replace_open_sessions(order)
+
+        gateway_customer = fetch_or_create_customer(order: order)
 
         response = create_payment_intent(
           amount_in_cents, order,
@@ -110,6 +134,29 @@ module SpreeStripe
         payment_session
       end
 
+      # Stripe refuses once money has moved, and that refusal is raised so the
+      # session is never shown as canceled while its money stands. An intent
+      # already canceled at Stripe, or unknown to the account the keys now
+      # reach, can no longer be paid, so its session is canceled all the same.
+      # A timeout, a rate limit, an outage, or rejected credentials is raised
+      # as Stripe's own error: wrapped as a refusal, the unused-session job
+      # would count the intent handled while the buyer can still pay it.
+      #
+      # @param payment_session [Spree::PaymentSessions::Stripe]
+      # @return [Boolean] whether the session was canceled
+      # @raise [Spree::Core::GatewayError] when Stripe refuses
+      # @raise [Stripe::StripeError] when Stripe could not be asked
+      def cancel_payment_session(payment_session:)
+        cancel_payment_intent(payment_session.external_id)
+        payment_session.cancel
+      rescue *RETRYABLE_STRIPE_ERRORS
+        raise
+      rescue Stripe::StripeError => error
+        raise Spree::Core::GatewayError, error.message unless payment_intent_unpayable?(payment_session.external_id)
+
+        payment_session.cancel
+      end
+
       def retrieve_payment_intent(payment_intent_id)
         send_request { |opts| Stripe::PaymentIntent.retrieve({ id: payment_intent_id, expand: ['payment_method'] }, opts) }
       end
@@ -169,6 +216,60 @@ module SpreeStripe
       end
 
       private
+
+      # Nothing is canceled until every still-payable intent has been read. A
+      # later one that Stripe has already accepted must not be reached after
+      # an earlier one was dropped. A completed session is the same refusal
+      # with no provider call: the cart already has its payment.
+      def replace_open_sessions(order)
+        sessions = order.payment_sessions.where(payment_method: self)
+        if sessions.exists?(status: 'completed')
+          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+        end
+
+        # A failed confirm leaves the intent payable. It is canceled with the
+        # open ones, unless its charge is still in flight.
+        open_sessions = sessions.active.order(:id).to_a + sessions.where(status: 'failed').order(:id).to_a
+        return if open_sessions.empty?
+
+        open_sessions.each do |payment_session|
+          payment_intent = find_payment_intent(payment_session.external_id)
+          next unless payment_intent && payment_intent_in_progress?(payment_intent)
+
+          raise Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.payment_in_progress')
+        end
+
+        open_sessions.each do |payment_session|
+          cancel_payment_session(payment_session: payment_session)
+        end
+      rescue *RETRYABLE_STRIPE_ERRORS => error
+        # Checkout speaks GatewayError. The unused-session job does not: it
+        # retries these, and has to see them unwrapped.
+        raise Spree::Core::GatewayError, error.message
+      end
+
+      # A card can sit in `processing` while its charge is in flight.
+      # `payment_intent_accepted?` does not record that yet, and canceling
+      # the intent can drop or refund the charge.
+      def payment_intent_in_progress?(payment_intent)
+        payment_intent.status == 'processing' || payment_intent_accepted?(payment_intent)
+      end
+
+      # nil when the account the keys now reach has no such intent.
+      def find_payment_intent(payment_intent_id)
+        retrieve_payment_intent(payment_intent_id)
+      rescue Stripe::InvalidRequestError => error
+        raise Spree::Core::GatewayError, error.message unless error.code == 'resource_missing'
+      rescue *RETRYABLE_STRIPE_ERRORS
+        raise
+      rescue Stripe::StripeError => error
+        raise Spree::Core::GatewayError, error.message
+      end
+
+      def payment_intent_unpayable?(payment_intent_id)
+        payment_intent = find_payment_intent(payment_intent_id)
+        payment_intent.nil? || payment_intent.status == 'canceled'
+      end
 
       # @param order [Spree::Cart, Spree::Order]
       # @return [Spree::PaymentResponse]

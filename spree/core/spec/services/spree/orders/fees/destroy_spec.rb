@@ -16,6 +16,19 @@ module Spree
           expect(result).to be_success
         end.to change { order.reload.total }.by(-4).and change { order.fees.count }.by(-1)
       end
+
+      context 'when the order has been paid in full' do
+        before do
+          create(:payment, amount: order.total, order: order, status: 'completed')
+          order.update_statuses!
+        end
+
+        it 'reads overcharged once the total falls below what was paid' do
+          expect do
+            described_class.call(order: order, fee: fee)
+          end.to change { order.reload.payment_status }.from('paid').to('overcharged')
+        end
+      end
     end
   end
 end

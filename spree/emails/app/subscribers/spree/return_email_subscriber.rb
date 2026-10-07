@@ -10,6 +10,8 @@ module Spree
 
       store = return_record.store
       return unless store.prefers_send_consumer_transactional_emails?
+      # A return owed nothing closes without a refund, so there is none to announce.
+      return if return_record.refunded_total.zero?
 
       ReturnMailer.refunded_email(return_record.id).deliver_later
     end

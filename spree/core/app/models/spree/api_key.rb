@@ -44,7 +44,6 @@ module Spree
       publishable? ? token : @plaintext_token
     end
 
-    belongs_to :store, class_name: 'Spree::Store'
     # Optional single-channel binding for publishable keys. A bound key
     # server-assigns the request's channel (see Api::V3::ChannelResolution),
     # making channel identity unforgeable instead of client-asserted via the

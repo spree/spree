@@ -9,8 +9,14 @@ module Spree
         store = @params.delete(:store)
         return failure(:store_is_required) if store.nil?
 
+        customer = @params.delete(:customer)
+        if @params.key?(:user)
+          Spree::Deprecation.warn('Passing user: to Spree::Carts::Create is deprecated and will be removed in Spree 6.1. Pass customer: instead.')
+          customer ||= @params.delete(:user)
+        end
+
         cart = store.carts.create!(
-          user: @params.delete(:user),
+          customer: customer,
           market: @params.delete(:market) || Spree::Current.market,
           channel: @params.delete(:channel) || Spree::Current.channel,
           currency: @params.delete(:currency) || store.default_currency,
@@ -19,7 +25,7 @@ module Spree
 
         # Delegate all attribute/address/item processing to Carts::Update
         if @params.present?
-          result = Spree::Carts::Update.call(cart: cart, params: @params)
+          result = Spree.carts_update_service.call(cart: cart, params: @params)
           return result if result.failure?
         end
 

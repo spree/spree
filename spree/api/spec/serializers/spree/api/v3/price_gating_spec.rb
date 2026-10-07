@@ -142,7 +142,7 @@ RSpec.describe 'v3 Store serializer price gating' do
     end
 
     describe Spree::Api::V3::FulfillmentSerializer do
-      let(:shipment) { create(:shipment) }
+      let(:shipment) { create(:fulfillment) }
 
       it 'nulls every money field for gated guests' do
         hash = serialize(described_class, shipment, hide: true)

@@ -45,7 +45,7 @@ FactoryBot.define do
       product { |p| p.association(:product) }
 
       factory :with_image_variant do
-        images { create_list(:image, 1) }
+        images { create_list(:media, 1) }
       end
 
       trait :with_no_price do

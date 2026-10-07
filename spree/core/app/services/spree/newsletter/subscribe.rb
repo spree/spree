@@ -26,7 +26,7 @@ module Spree
           end
         end
 
-        subscriber.publish_event('newsletter_subscriber.subscription_requested', subscription_requested_payload) unless subscriber.verified?
+        publish_subscription_requested unless subscriber.verified?
         subscriber
       end
 
@@ -34,17 +34,13 @@ module Spree
 
       attr_reader :email, :current_user, :current_store, :redirect_url
 
-      def subscription_requested_payload
-        payload = {
-          id: subscriber.prefixed_id,
-          email: subscriber.email,
-          verification_token: subscriber.verification_token,
-          unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
-          store_id: current_store.prefixed_id,
-          customer_id: subscriber.customer&.prefixed_id
-        }
-        payload[:redirect_url] = redirect_url if redirect_url.present?
-        payload
+      def publish_subscription_requested
+        event_name = 'newsletter_subscriber.subscription_requested'
+        payload = subscriber.event_payload_for(
+          event_name,
+          include_verification_token: true, store: current_store, redirect_url: redirect_url.presence
+        )
+        subscriber.publish_event(event_name, payload)
       end
 
       def upsert_subscriber

@@ -126,12 +126,20 @@ module Spree
       # year" means February to February, and an equal-day-count shift off a
       # 28-day February would land in January. ActiveSupport maps February 29
       # to February 28 in a non-leap year.
+      #
+      # A range of whole calendar months (a full quarter, `last_month`) shifts
+      # by the same number of months for the same reason: July – September is
+      # 92 days, and shifting it by days would start on March 31, putting a
+      # one-day March bucket at the front of the previous period.
       def previous_time_range
         first = time_range.first.in_time_zone(time_zone)
         last = time_range.last.in_time_zone(time_zone)
 
         if compare == 'previous_year'
           (first - 1.year)..(last - 1.year)
+        elsif first == first.beginning_of_month && last == last.end_of_month
+          months = (last.year * 12 + last.month) - (first.year * 12 + first.month) + 1
+          (first - months.months)..(last - months.months).end_of_month
         else
           days = (last.to_date - first.to_date).to_i + 1
           (first - days.days)..(last - days.days)

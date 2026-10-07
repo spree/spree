@@ -156,7 +156,7 @@ describe Spree::DeliveryMethod, type: :model do
   context '#shipments' do
     let!(:delivery_method) { create(:delivery_method) }
     let!(:shipment) do
-      shipment = create(:shipment)
+      shipment = create(:fulfillment)
       shipment.shipping_rates.create!(delivery_method: delivery_method)
       shipment
     end

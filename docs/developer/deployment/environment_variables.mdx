@@ -18,7 +18,7 @@ You'll almost always want to set [`RAILS_HOST`](#urls-and-hosts) too — without
 
 ## Active Record encryption
 
-Spree encrypts sensitive values at rest with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html): webhook endpoint signing secrets, payment gateway customer IDs, and the OAuth tokens stored on user identities. It does so only when encryption keys are configured — without them, these values are stored in plain text and a production app logs a warning at boot.
+Spree encrypts sensitive values at rest with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html): payment gateway and integration secrets (API keys and webhook signing secrets), webhook endpoint signing secrets, payment gateway customer IDs, and the OAuth tokens stored on user identities. It does so only when encryption keys are configured — without them, these values are stored in plain text and a production app logs a warning at boot.
 
 | Variable | Description |
 | --- | --- |

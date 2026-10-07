@@ -14,10 +14,6 @@ module Spree
                      scope: ->(rule) { rule.promotion.store.markets }
                    )
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def markets
           return Spree::Market.none if preferred_market_ids.blank?
 

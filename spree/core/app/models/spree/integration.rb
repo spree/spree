@@ -10,6 +10,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::PreferenceSchema
+    include Spree::SecretPreferences
+    include Spree::ProviderListing
+
 
     # Spree::Current.integrations snapshots the active set for the request;
     # connecting or deactivating one mid-request (the activate-and-verify
@@ -64,19 +67,6 @@ module Spree
       nil
     end
 
-    # Logo shown on the gallery card: an absolute URL to publicly hosted
-    # brand assets, or a `data:` URI for gems that want to be self-contained
-    # (works air-gapped, no CSP domain to allowlist). Anything an `<img src>`
-    # accepts. Deliberately not an asset-pipeline path — integration gems
-    # must not force an asset pipeline onto headless API hosts. Hosted logos
-    # are a courtesy, not a guarantee: the dashboard falls back to a letter
-    # avatar when unset or unreachable.
-    #
-    # @return [String, nil]
-    def self.logo_url
-      nil
-    end
-
     # One-line marketing description shown on the integration's gallery card.
     # Localize by shipping a Rails translation instead (or additionally):
     # `spree.integrations.<api_type>.description` wins over this fallback.
@@ -107,7 +97,7 @@ module Spree
           name: klass.integration_name,
           group: klass.integration_group,
           description: klass.human_description,
-          logo_url: klass.logo_url,
+          **klass.provider_listing,
           preference_schema: klass.serialized_preference_schema
         }
       end.sort_by { |entry| entry[:name] }

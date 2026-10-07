@@ -385,10 +385,6 @@
       "destination": "/v5/developer/customization/routes"
     },
     {
-      "source": "/developer/customization/emails",
-      "destination": "/v5/developer/customization/emails"
-    },
-    {
       "source": "/developer/core-concepts/adjustments",
       "destination": "/developer/core-concepts/fees"
     },
@@ -583,6 +579,34 @@
     {
       "source": "/developer/tutorial/dashboard-plugin",
       "destination": "/developer/tutorial/dashboard"
+    },
+    {
+      "source": "/user/settings/users",
+      "destination": "/user/settings/staff"
+    },
+    {
+      "source": "/user/settings/tax",
+      "destination": "/user/settings/tax-rates"
+    },
+    {
+      "source": "/user/settings/returns-configuration",
+      "destination": "/user/settings/returns-and-reasons"
+    },
+    {
+      "source": "/user/settings/metafields",
+      "destination": "/user/settings/custom-fields"
+    },
+    {
+      "source": "/user/settings/shipping-methods",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/settings/zones",
+      "destination": "/user/settings/delivery-profiles"
+    },
+    {
+      "source": "/user/manage-products/product-metafields",
+      "destination": "/user/manage-products/custom-product-fields"
     }
   ],
   "contextual": {
@@ -877,6 +901,17 @@
                           "integrations/analytics/google-tag-manager",
                           "integrations/marketing/klaviyo"
                         ]
+                      },
+                      {
+                        "group": "Emails",
+                        "pages": [
+                          "developer/providers/emails",
+                          "integrations/email/resend",
+                          "integrations/email/postmark",
+                          "integrations/email/sendgrid",
+                          "integrations/email/mailgun",
+                          "integrations/email/amazon-ses"
+                        ]
                       }
                     ],
                     "icon": "plug"
@@ -894,7 +929,9 @@
                       "developer/customization/model-preferences",
                       "developer/customization/metadata",
                       "developer/customization/permissions",
-                      "developer/customization/decorators"
+                      "developer/customization/decorators",
+                      "developer/customization/emails",
+                      "developer/customization/email-variables"
                     ],
                     "icon": "code"
                   },
@@ -1310,6 +1347,12 @@
                   }
                 ]
               }
+            ]
+          },
+          {
+            "tab": "Changelog",
+            "pages": [
+              "changelog"
             ]
           }
         ]

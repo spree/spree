@@ -4,6 +4,7 @@ module Spree
     # in their place.
     class Create < Spree::Workflow
       include Spree::Returns::ReturnableQuantity
+      include Spree::Refunds::TaxCredit
 
       hooks :validate, :after_create
 
@@ -24,6 +25,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :build_exchange
+          step :calculate_tax
         end
 
         run_hooks :after_create
@@ -90,6 +92,10 @@ module Spree
         end
 
         failure(@exchange) unless @exchange.save
+      end
+
+      def calculate_tax
+        with_tax_provider(exchange) { exchange.calculate_tax! }
       end
 
       def default_stock_location

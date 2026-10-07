@@ -11,6 +11,10 @@ export function formatStoreDateTime(iso: string, timezone: string) {
   return formatInTimeZone(parseISO(iso), timezone, 'PPP p')
 }
 
+export function formatStoreDate(iso: string, timezone: string) {
+  return formatInTimeZone(parseISO(iso), timezone, 'PP')
+}
+
 export function getInitials(fullName: string | null | undefined, fallback: string): string {
   const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return fallback.charAt(0)

@@ -77,6 +77,8 @@ const cart = await client.carts.giftCards.apply(cartId, 'GC-ABCD-1234', options)
 await client.carts.giftCards.remove(cartId, 'gc_abc123', options);
 ```
 
+A gift card pays as much of the total as its balance allows, and its share keeps up when delivery, discounts or tax change the total. A cart can use a gift card or store credit, not both.
+
 ### Fees and Duties
 
 A cart may carry charges that are neither a product price nor tax: gift wrapping, a handling charge, a cash-on-delivery surcharge, or an import duty on a cross-border order. Each is a [fee](/developer/core-concepts/fees) on the cart, and the storefront should show every one of them before the customer pays.
@@ -173,6 +175,8 @@ await client.carts.storeCredits.apply(cartId, 25.00, options);
 // Remove store credit from order
 await client.carts.storeCredits.remove(cartId, options);
 ```
+
+Store credit is a balance, not one of the cart's `payment_methods`: apply it here, then collect whatever `amount_due` is left with a payment method. It can't be combined with a gift card on the same cart.
 
 ### Totals
 

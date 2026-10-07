@@ -15,6 +15,7 @@ module Spree
           order.with_lock do
             discount.destroy!
             Spree.order_recalculate_totals_workflow.call(order: order)
+            order.update_statuses!
           end
 
           success(discount)

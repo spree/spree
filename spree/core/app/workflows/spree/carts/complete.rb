@@ -47,6 +47,7 @@ module Spree
 
         cart.with_lock do
           step :guard_concurrent_completion
+          step :guard_coupon_code
           step :recalculate_in_lock
           step :verify_expected_total
           step :validate_cart
@@ -118,6 +119,15 @@ module Spree
 
       def guard_concurrent_completion
         failure(cart, code: 'completion_in_progress') if cart.completion_claimed?
+      end
+
+      # A batch code this cart no longer holds no longer discounts it, so the
+      # shopper would be charged more than the total they last saw, and the
+      # order would name a code it never used.
+      def guard_coupon_code
+        return unless cart.coupon_code_unavailable?
+
+        failure(cart, code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable))
       end
 
       # In-lock recalculation — the totals about to be charged are computed
@@ -525,8 +535,8 @@ module Spree
       # that workflow can give both of them.
       #
       # It answers with the group when the basket divided, and the first of
-      # its children is the order this checkout carries on with: that is the
-      # one holding the confirmation email.
+      # its children is the order this checkout carries on with. No child holds
+      # the confirmation: the customer is confirmed from the group.
       def complete_orders
         result = Spree.order_complete_workflow.call(order: order, payment_pending: payment_pending)
         failure(cart, code: 'completion_failed', message: result.error) if result.failure?
@@ -562,7 +572,7 @@ module Spree
       # otherwise. The single answer to "which orders came out of here", so
       # placement and tax filing can never disagree about the set.
       def placed_orders
-        order_group.present? ? order_group.orders.to_a : [order]
+        order_group.present? ? order_group.orders.to_a.sort_by(&:id) : [order]
       end
 
       def complete_cart

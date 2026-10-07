@@ -16,7 +16,7 @@ describe Spree::AdminUserMailer, type: :mailer do
     it 'links with the reset token' do
       message = described_class.password_reset_email(admin_user, token, store)
 
-      expect(message.body.encoded).to include("token=#{token}")
+      expect(email_body(message)).to include("token=#{token}")
     end
 
     # The token must never land on a storefront, which is where the store URL
@@ -26,13 +26,54 @@ describe Spree::AdminUserMailer, type: :mailer do
 
       message = described_class.password_reset_email(admin_user, token, store)
 
-      expect(message.body.encoded).to include("https://admin.example.com/reset-password?token=#{token}")
+      expect(email_body(message)).to include("https://admin.example.com/reset-password?token=#{token}")
     end
 
     it 'prefers the redirect URL when the API validated one (dashboard SPA)' do
       message = described_class.password_reset_email(admin_user, token, store, redirect_url: 'https://admin.example.com/reset-password')
 
-      expect(message.body.encoded).to include("https://admin.example.com/reset-password?token=#{token}")
+      expect(email_body(message)).to include("https://admin.example.com/reset-password?token=#{token}")
+    end
+
+    context "with the store's published version, made editable for the example" do
+      include_context 'with an editable email template'
+
+      it 'sends the store version' do
+        create(:email_template, store: store, key: editable_key, subject: 'Store subject',
+                                body: '<mj-section><mj-column><mj-text>Store version</mj-text></mj-column></mj-section>')
+
+        message = described_class.password_reset_email(admin_user, token, store)
+
+        expect(message.subject).to eq('Store subject')
+        expect(email_body(message)).to include('Store version')
+      end
+
+      it "falls back to Spree's template when the store version fails on real data, reporting the error" do
+        create(:email_template, store: store, key: editable_key,
+                                body: '<mj-section><mj-column><mj-text>{{ 1 | divided_by: 0 }}</mj-text></mj-column></mj-section>')
+        allow(Rails.error).to receive(:report)
+
+        message = described_class.password_reset_email(admin_user, token, store)
+
+        expect(email_body(message)).to include("token=#{token}")
+        expect(Rails.error).to have_received(:report).with(an_instance_of(Liquid::ZeroDivisionError), anything)
+      end
+    end
+
+    context "when Spree's own template fails, with no store version" do
+      include_context 'with an editable email template'
+
+      it 'raises once, without reporting a store template failure' do
+        allow(Spree::Emails::Template).to receive(:new).and_wrap_original do |original, **arguments|
+          template = original.call(**arguments)
+          allow(template).to receive(:body).and_return('<mj-section><mj-column><mj-text>{{ 1 | divided_by: 0 }}</mj-text></mj-column></mj-section>') if arguments[:key] == editable_key
+          template
+        end
+        allow(Rails.error).to receive(:report)
+
+        expect { described_class.password_reset_email(admin_user, token, store).message }.to raise_error(Liquid::ZeroDivisionError)
+        expect(Rails.error).not_to have_received(:report)
+      end
     end
 
     context 'when the admin has a dashboard language set' do

@@ -8,11 +8,11 @@ export type { StoreCreditUpdateParams }
 // The `amount` arrives already normalized to canonical `"1234.56"` form — the
 // form converts the merchant's localized input client-side (see
 // docs/plans/5.5-client-side-money-normalization.md), so no request locale.
-export function useCreateCustomerStoreCredit(customerId: string) {
+export function useCreateCustomerStoreCredit() {
   return useResourceMutation({
-    mutationFn: (params: StoreCreditCreateParams) =>
+    mutationFn: ({ customerId, ...params }: StoreCreditCreateParams & { customerId: string }) =>
       adminClient.customers.storeCredits.create(customerId, params),
-    invalidate: [['customers', customerId]],
+    invalidate: [['customers'], ['store-credits']],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
   })
 }
@@ -21,15 +21,16 @@ export function useUpdateCustomerStoreCredit(customerId: string, creditId: strin
   return useResourceMutation({
     mutationFn: (params: StoreCreditUpdateParams) =>
       adminClient.customers.storeCredits.update(customerId, creditId, params),
-    invalidate: [['customers', customerId]],
+    invalidate: [['customers', customerId], ['store-credits']],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
   })
 }
 
-export function useDeleteCustomerStoreCredit(customerId: string) {
+export function useDeleteCustomerStoreCredit() {
   return useResourceMutation({
-    mutationFn: (id: string) => adminClient.customers.storeCredits.delete(customerId, id),
-    invalidate: [['customers', customerId]],
+    mutationFn: ({ customerId, id }: { customerId: string; id: string }) =>
+      adminClient.customers.storeCredits.delete(customerId, id),
+    invalidate: [['customers'], ['store-credits']],
     successMessage: i18n.t('admin.messages.store_credit_removed'),
   })
 }

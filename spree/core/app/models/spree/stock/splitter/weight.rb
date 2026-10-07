@@ -73,7 +73,7 @@ module Spree
           per_content_max_quantity = 1 if per_content_max_quantity.zero?
           content_items = [content_item]
           while content_item.quantity > per_content_max_quantity
-            split_inventory = InventoryUnit.split(content_item.inventory_unit, per_content_max_quantity)
+            split_inventory = FulfillmentItem.split(content_item.inventory_unit, per_content_max_quantity)
             content_items << ContentItem.new(split_inventory, content_item.state)
           end
           content_items

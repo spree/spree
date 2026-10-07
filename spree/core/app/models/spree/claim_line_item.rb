@@ -2,6 +2,8 @@ module Spree
   # One problem item on a {Spree::Claim}, and how it is being made right:
   # money back, a replacement, or both.
   class ClaimLineItem < Spree.base_class
+    include Spree::PostSale::TaxedLine
+
     has_prefix_id :cli
 
     belongs_to :claim, class_name: 'Spree::Claim', inverse_of: :claim_line_items
@@ -20,16 +22,45 @@ module Spree
 
     delegate :order, :currency, to: :claim
 
-    # What the customer paid for the affected units, after discounts — the
-    # ceiling for a refund on this line.
-    def paid_amount
-      return 0 if line_item.nil? || line_item.quantity.to_i.zero?
+    extend Spree::DisplayMoney
+    money_methods :refund_amount, :paid_amount, :pre_tax_amount, :included_tax_total,
+                  :additional_tax_total, :tax_total
 
-      (line_item.amount / line_item.quantity) * quantity.to_i
+    # What the customer paid for the affected units, after discounts and with
+    # the tax charged on top of the price — the ceiling for a refund on this
+    # line, which is entered tax included. A claim opened before claims
+    # carried tax has none, so its ceiling is unchanged.
+    #
+    # @return [BigDecimal]
+    def paid_amount
+      discounted_amount + additional_tax_total
     end
 
-    def display_refund_amount
-      Spree::Money.new(refund_amount, currency: currency)
+    # @return [BigDecimal] the affected units before tax
+    def pre_tax_amount
+      discounted_amount - included_tax_total
+    end
+
+    def tax_total
+      included_tax_total + additional_tax_total
+    end
+
+    # Nothing is given back on a claim that was denied or withdrawn.
+    #
+    # @return [Integer]
+    def credited_quantity
+      claim.denied? || claim.canceled? ? 0 : quantity.to_i
+    end
+
+    # @return [BigDecimal]
+    def credited_worth
+      paid_amount
+    end
+
+    # @return [void]
+    def fold_tax_lines!
+      included, additional = tax_totals_from(tax_lines.credits.reload)
+      update_columns(included_tax_total: included, additional_tax_total: additional)
     end
 
     # What actually ships when the claim is resolved with a replacement.
@@ -38,6 +69,10 @@ module Spree
     end
 
     private
+
+    def discounted_amount
+      line_item&.discounted_amount_for(quantity) || 0
+    end
 
     def set_variant_from_line_item
       self.variant ||= line_item&.variant

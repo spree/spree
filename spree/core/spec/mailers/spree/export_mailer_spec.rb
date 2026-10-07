@@ -29,17 +29,17 @@ RSpec.describe Spree::ExportMailer, type: :mailer do
       end
 
       it 'includes export attachment filename' do
-        expect(mail.body.encoded).to include(export.attachment.filename.to_s)
+        expect(email_body(mail)).to include(export.attachment.filename.to_s)
       end
 
       it 'includes the download link in the body' do
-        expect(mail.body.encoded).to include("/admin/exports/#{export.id}")
+        expect(email_body(mail)).to include("/admin/exports/#{export.id}")
       end
     end
 
     context 'without a results_url' do
       it 'renders no download button' do
-        expect(mail.body.encoded).not_to include(export.attachment.filename.to_s)
+        expect(email_body(mail)).not_to include(export.attachment.filename.to_s)
       end
     end
   end

@@ -33,8 +33,10 @@ module Spree
       #   amount negotiates the line (+price_source: 'manual'+), an explicit
       #   nil reverts a negotiated line to catalog pricing. Admin surface
       #   only (draft orders); refused once the order is placed.
+      # @param orderable_variants [ActiveRecord::Relation<Spree::Variant>, nil]
+      #   what an add may name; the store's variants when nil
       # @return [Spree::ServiceModule::Result] value is the cart
-      def perform(cart:, items:)
+      def perform(cart:, items:, orderable_variants: nil)
         super
         @warnings = []
 
@@ -355,8 +357,15 @@ module Spree
           cart.line_items.detect { |line_item| line_item.variant_id.to_s == variant_id.to_s }&.variant ||
             Spree::Variant.with_deleted.find_by_param(variant_id)
         else
-          store.variants.find_by_param(variant_id) ||
-            raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
+          variant = store.variants.find_by_param(variant_id)
+          # +orderable_variants+ narrows what a request may add. A line already
+          # in the cart is a quantity edit and resolves as before — checkout
+          # judges it — so one stale line cannot fail a whole cart's update.
+          if variant && orderable_variants && cart.line_items.none? { |line_item| line_item.variant_id == variant.id }
+            variant = orderable_variants.find_by(id: variant.id)
+          end
+
+          variant || raise(ActiveRecord::RecordNotFound.new("Variant '#{variant_id}' not found in this store", 'Spree::Variant', 'id', variant_id))
         end
       end
 

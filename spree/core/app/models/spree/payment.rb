@@ -1,5 +1,3 @@
-require_dependency 'spree/payment/processing'
-
 module Spree
   class Payment < Spree.base_class
     has_prefix_id :py  # Stripe: py_
@@ -18,6 +16,7 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
+    publishes_events :captured, :completed, :paid, :refunded, :voided
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -244,6 +243,9 @@ module Spree
       return amount if owner.nil?
 
       amount_from_order = owner.total - owner.payment_total
+      # A refund for returned goods settled what was owed for them; without
+      # this the order would accept a fresh charge for goods it took back.
+      amount_from_order -= owner.returned_items_refund_total if owner.respond_to?(:returned_items_refund_total)
 
       if payment_method&.store_credit?
         store_credits = owner.available_store_credits
@@ -261,6 +263,19 @@ module Spree
           number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
           number.to_d if number.present?
         end || amount
+    end
+
+    # Resizes a store credit payment that has not been taken yet. Completion
+    # takes it against the eligibility event recorded for its amount, so the
+    # new amount needs one of its own.
+    #
+    # @param new_amount [BigDecimal]
+    # @return [void]
+    def update_store_credit_amount!(new_amount)
+      return if amount == new_amount
+
+      update_column(:amount, new_amount)
+      create_eligible_credit_event
     end
 
     def offsets_total

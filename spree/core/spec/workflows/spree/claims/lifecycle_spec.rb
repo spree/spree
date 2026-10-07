@@ -174,6 +174,9 @@ RSpec.describe 'Spree::Claims workflows' do
 
       expect(result).to be_success
       expect(result.value).to be_resolved
+      # Flagged, and packed once — not also saved loose beside the packed copy.
+      expect(order.fulfillment_items.reload.where(replacement: true).sum(:quantity)).to eq(claim.claim_line_items.sum(:quantity))
+      expect(order.fulfillment_items.where(fulfillment_id: nil)).to be_empty
     end
   end
 
@@ -200,6 +203,82 @@ RSpec.describe 'Spree::Claims workflows' do
       Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
 
       expect(Spree::Claims::Cancel.call(claim: claim.reload)).to be_failure
+    end
+  end
+
+  # V-3725: a claim's refund left out the tax charged on top of the price.
+  describe 'giving back the tax the customer paid' do
+    let(:order) { create(:shipped_order, store: store, line_items_count: 1, line_items_price: 25) }
+
+    before do
+      create(:tax_line, order: order, line_item: line_item, amount: 2.5, rate: 0.1, label: 'Sales tax 10%')
+      order.payments.completed.first.update_column(:amount, 500)
+    end
+
+    def approved_claim(refund_amount:)
+      claim = Spree::Claims::Create.call(
+        order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: refund_amount }]
+      ).value
+      Spree::Claims::Approve.call(claim: claim)
+      claim.reload
+    end
+
+    it 'lets the refund reach the price and its tax' do
+      claim = approved_claim(refund_amount: 27.5)
+
+      expect(claim.claim_line_items.first.paid_amount).to eq(27.5)
+
+      Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
+
+      expect(Spree::StoreCredit.find_by(originator: claim).amount).to eq(27.5)
+      expect(claim.credited_tax_total).to eq(2.5)
+    end
+
+    it 'refuses a line refund beyond the price and its tax' do
+      result = Spree::Claims::Create.call(
+        order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: 27.51 }]
+      )
+
+      expect(result.error.value).to eq(:refund_exceeds_paid)
+    end
+
+    it 'gives back the tax in proportion to a part refund' do
+      claim = approved_claim(refund_amount: 13.75)
+      allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+
+      Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'original_payment')
+
+      expect(Spree::Refund.find_by(originator: claim)).to have_attributes(amount: 13.75, tax_amount: 1.25)
+    end
+
+    # A resolve that fails after settling must not leave the claim reading as
+    # one opened before claims carried tax.
+    it 'still gives the tax back after an attempt that failed' do
+      claim = approved_claim(refund_amount: 27.5)
+      expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')).to be_failure
+
+      Spree::Claims::Resolve.call(claim: claim.reload, resolution: 'refund')
+
+      expect(claim.credited_tax_total).to eq(2.5)
+    end
+
+    it 'gives no tax back when only a replacement goes out' do
+      claim = approved_claim(refund_amount: 0)
+      line_item.variant.stock_levels.first&.set_count_on_hand(10)
+
+      Spree::Claims::Resolve.call(claim: claim, resolution: 'replacement')
+
+      expect(claim.credited_tax_total).to eq(0)
+    end
+
+    it 'takes the credit back when the claim is denied' do
+      claim = Spree::Claims::Create.call(
+        order: order, items: [{ line_item: line_item, quantity: 1, refund_amount: 27.5 }]
+      ).value
+
+      Spree::Claims::Deny.call(claim: claim)
+
+      expect(claim.credited_tax_total).to eq(0)
     end
   end
 end

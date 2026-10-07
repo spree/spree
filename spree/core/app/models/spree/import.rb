@@ -17,6 +17,7 @@ module Spree
       'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
 
     publishes_lifecycle_events
+    publishes_events :completed, :progress
 
     # Set event prefix for all Import subclasses
     # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
@@ -189,12 +190,6 @@ module Spree
     def retry_failed_rows
       Spree::Deprecation.warn('Spree::Import#retry_failed_rows is deprecated and will be removed in Spree 6.1. Call Spree.import_retry_failed_rows_workflow instead.')
       Spree.import_retry_failed_rows_workflow.call(import: self).success?
-    end
-
-    # Returns true if the import is in mapping state
-    # @return [Boolean]
-    def mapping?
-      status == 'mapping'
     end
 
     # Returns true if the import is processing or completed mapping

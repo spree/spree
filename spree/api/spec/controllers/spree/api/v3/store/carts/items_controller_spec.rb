@@ -56,6 +56,19 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['total_quantity']).to eq(2)
     end
 
+    it 'drops a batch coupon code another cart has taken, with a warning' do
+      promotion = create(:promotion, :with_line_item_adjustment, code: nil, multi_codes: true, number_of_codes: 1, kind: :coupon_code, store: store)
+      coupon_code = promotion.coupon_codes.first
+      coupon_code.update!(cart: create(:cart, store: store))
+      order.update_columns(coupon_code: coupon_code.code)
+
+      post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['coupon_code']).to be_nil
+      expect(json_response['warnings'].map { |warning| warning['code'] }).to include('coupon_code_unavailable')
+    end
+
     it 'defaults quantity to 1' do
       post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
 
@@ -146,6 +159,40 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
     context 'validation errors' do
       it 'returns error for invalid variant' do
         post :create, params: { cart_id: order.prefixed_id, variant_id: 'invalid_0', quantity: 1 }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    # The same answer a product read gives: a variant the listing would not
+    # show this buyer reads as missing.
+    context 'with a variant the buyer cannot order' do
+      it "refuses a product outside the buyer's catalogs" do
+        company = create(:company, store: store)
+        catalog = create(:catalog, store: store)
+        create(:catalog_product, catalog: catalog, product: create(:product, store: store))
+        create(:catalog_assignment, catalog: catalog, assignable: company)
+        create(:company_membership, company: company, customer: user)
+
+        expect {
+          post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+        }.not_to change(Spree::LineItem, :count)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "refuses a product not published on the cart's channel" do
+        product.product_publications.destroy_all
+
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "refuses a product already unpublished from the cart's channel" do
+        product.product_publications.update_all(unpublished_at: 1.hour.ago)
+
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
       end

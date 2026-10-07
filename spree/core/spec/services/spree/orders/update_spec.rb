@@ -16,7 +16,7 @@ module Spree
     let!(:zone)   { create(:zone) }
     let!(:other_zone)  { create(:zone) }
     let!(:shipping_method) do
-      create(:shipping_method).tap do |sm|
+      create(:delivery_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -88,6 +88,14 @@ module Spree
           expect(subject).to be_failure
           expect(order.reload.email).not_to eq('gbp@example.com')
           expect(order.line_items.count).to eq(0)
+        end
+
+        it 'rolls back the entire update when the caller holds the order lock' do
+          result = nil
+          order.with_lock { result = described_class.call(order: order, params: params) }
+
+          expect(result).to be_failure
+          expect(order.reload.email).not_to eq('gbp@example.com')
         end
       end
 
@@ -199,6 +207,60 @@ module Spree
           end
         end
 
+        context 'when an admin chose a rate' do
+          let(:initial_address) { create(:address, customer: user, country: country, state: state) }
+          let!(:express) do
+            create(:delivery_method, name: 'Express').tap do |method|
+              method.calculator.preferred_amount = 15
+              method.calculator.save
+            end
+          end
+
+          before do
+            fulfillment = order.fulfillments.first
+            fulfillment.selected_delivery_rate_id = fulfillment.delivery_rates.find_by!(delivery_method: express).id
+          end
+
+          context 'and items change' do
+            let(:params) { { items: [{ variant_id: variant.prefixed_id, quantity: 3 }] } }
+
+            it 'keeps the chosen rate at its price' do
+              expect(subject).to be_success
+
+              expect(order.reload.fulfillments.first.selected_delivery_rate.delivery_method).to eq(express)
+              expect(order.delivery_total).to eq(15)
+            end
+          end
+
+          # An address edited in place keeps its id, yet it is a new destination.
+          context 'and the shipping address is edited in place' do
+            let(:params) { { shipping_address: { id: initial_address.id, address1: '5 Edited Way' } } }
+
+            it 'rebuilds from the default rate' do
+              expect(subject).to be_success
+
+              order.reload
+              expect(order.ship_address_id).to eq(initial_address.id)
+              expect(order.ship_address.address1).to eq('5 Edited Way')
+              expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(shipping_method)
+              expect(order.delivery_total).to eq(5)
+            end
+          end
+
+          context 'and only the recipient phone is edited' do
+            let(:params) { { shipping_address: { id: initial_address.id, phone: '555-0000' } } }
+
+            it 'keeps the chosen rate' do
+              expect(subject).to be_success
+
+              order.reload
+              expect(order.ship_address.phone).to eq('555-0000')
+              expect(order.fulfillments.first.selected_delivery_rate.delivery_method).to eq(express)
+              expect(order.delivery_total).to eq(15)
+            end
+          end
+        end
+
         # The admin controller sends the public names; the column names and the
         # Rails nested-attributes key stay accepted for existing callers.
         %i[shipping_address ship_address ship_address_attributes].each do |key|
@@ -306,6 +368,13 @@ module Spree
             order.reload
             expect(order.shipments.map(&:id)).to match_array(old_shipment_ids)
             expect(order.fulfillments.first.fulfillment_items.sum(:quantity)).to eq(3)
+          end
+
+          it 'measures what has been paid against the new total' do
+            create(:payment, amount: order.total, order: order, status: 'completed')
+            order.update_statuses!
+
+            expect { subject }.to change { order.reload.payment_status }.from('paid').to('partially_paid')
           end
         end
       end

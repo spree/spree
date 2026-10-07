@@ -56,6 +56,19 @@ RSpec.describe 'seller onboarding lifecycle' do
       expect(seller.reload).to be_onboarding
     end
 
+    it 'opens onboarding through the configured start onboarding workflow' do
+      seller = create(:seller, store: store, status: 'invited')
+      invitation = create(:invitation, resource: seller, role: seller.default_user_role)
+      custom_workflow = class_double(Spree::Sellers::StartOnboarding)
+      allow(Spree).to receive(:seller_start_onboarding_workflow).and_return(custom_workflow)
+      expect(custom_workflow).to receive(:call).with(seller: seller)
+
+      Spree::SellerOnboardingSubscriber.new.send(
+        :start_seller_onboarding,
+        instance_double(Spree::Event, payload: { 'id' => invitation.prefixed_id })
+      )
+    end
+
     # Through the real event bus, with the subscribers the engine registers:
     # calling the handler directly proves the handler, not that anything ever
     # calls it. This is the difference between the flow working in a spec and

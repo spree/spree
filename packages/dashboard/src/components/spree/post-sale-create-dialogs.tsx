@@ -304,7 +304,8 @@ export function CreateClaimDialog({
         id: item.id,
         label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
         quantity: item.quantity,
-        price: item.price,
+        discountedAmount: item.discounted_amount,
+        additionalTaxTotal: item.additional_tax_total,
       }))}
       currencySymbol={currencySymbol}
       reasonField={<ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />}

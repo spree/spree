@@ -53,24 +53,15 @@ RSpec.describe Spree::Preferences::Masking do
   end
 
   describe '.serialize' do
-    # A throwaway Preferable — keeps the test focused on the masking
-    # helper instead of coupling to whichever production model happens
-    # to expose a :password preference today. Provides its own
-    # `preferences` hash since Preferable is normally mixed into an
-    # ActiveRecord model that supplies the serialized column.
+    # A throwaway payment method — keeps the test focused on the masking
+    # helper instead of coupling to whichever production gateway happens to
+    # expose a :password preference today. A payment method can store secrets.
     let(:preferable_class) do
-      Class.new do
-        include Spree::Preferences::Preferable
-        include Spree::PreferenceSchema
-
+      Class.new(Spree::PaymentMethod) do
         preference :api_key,        :string,   default: 'PUBLIC123'
         preference :api_secret,     :password, default: 'SECRET456'
         preference :ratio,          :decimal,  default: 0.5
         preference :enabled,        :boolean,  default: true
-
-        def preferences
-          @preferences ||= {}
-        end
 
         def self.name
           'TestPreferable'
@@ -95,7 +86,7 @@ RSpec.describe Spree::Preferences::Masking do
       result = described_class.serialize(preferable)
 
       expect(result['api_key']).to eq('pk_live_visible')
-      expect(result['ratio']).to eq(0.25)
+      expect(result['ratio']).to eq('0.25')
       expect(result['enabled']).to be false
     end
 
