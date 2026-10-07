@@ -1440,6 +1440,41 @@ describe Spree::Product, type: :model do
         expect(eur_lines[0][Spree::CSV::ProductVariantPresenter::CSV_HEADERS.index('sku')]).to eq variant1.sku
       end
     end
+
+    context 'when stock sits at several locations' do
+      let(:headers) { Spree::CSV::ProductVariantPresenter::CSV_HEADERS }
+      let(:variant) { product.default_variant }
+      let(:seller) { create(:seller, store: store) }
+      let(:warehouse) { create(:stock_location, store: store, name: 'Warehouse B') }
+      let(:empty_location) { create(:stock_location, store: store, name: 'Empty') }
+      let(:seller_location) { create(:stock_location, store: store, seller: seller, name: 'Seller Shed') }
+
+      before do
+        variant.update!(sku: 'MUG', track_inventory: true)
+        variant.set_stock(12, false, store.default_stock_location)
+        variant.set_stock(5, true, warehouse)
+        variant.set_stock(0, false, empty_location)
+        variant.set_stock(7, false, seller_location)
+      end
+
+      def stock_rows(lines)
+        lines.map { |row| row.values_at(headers.index('inventory_count'), headers.index('stock_location')) }
+      end
+
+      it "covers the marketplace's locations, the default on the full row" do
+        expect(stock_rows(product.reload.to_csv(store))).to eq [[12, nil], [5, 'Warehouse B']]
+      end
+
+      it "also covers the seller's own locations for a seller's product" do
+        product.update!(seller: seller)
+
+        expect(stock_rows(product.reload.to_csv(store))).to eq [[12, nil], [5, 'Warehouse B'], [7, 'Seller Shed']]
+      end
+
+      it "covers only a seller's own locations on the seller's export" do
+        expect(stock_rows(product.reload.to_csv(store, seller: seller, default_stock_location: seller_location))).to eq [[7, nil]]
+      end
+    end
   end
 
   describe '#to_translation_csv' do

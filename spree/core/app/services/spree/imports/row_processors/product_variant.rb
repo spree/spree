@@ -9,10 +9,13 @@ module Spree
           super
           @store = row.store
           @seller = import.seller
+          # Before the product is saved: rows are not wrapped in a transaction,
+          # so an unknown location must fail the row with nothing written.
+          @stock_location = import_stock_location if attributes['inventory_count'].present?
           @product = ensure_product_exists
         end
 
-        attr_reader :product, :store, :seller
+        attr_reader :product, :store, :seller, :stock_location
 
         def process!
           variant = if attributes['sku'].present?
@@ -63,7 +66,7 @@ module Spree
             variant.set_stock(
               attributes['inventory_count'].to_i,
               attributes['inventory_backorderable']&.to_b,
-              import_stock_location
+              stock_location
             )
           end
 
@@ -253,23 +256,32 @@ module Spree
           end
         end
 
-        # Where an imported row's stock lands.
-        #
-        # Nil for an operator's import, which leaves `set_stock` to pick the
-        # store's default. A seller's stock belongs in their own warehouse:
-        # `Variant#default_stock_location` answers the *store's*, so without
-        # this a seller's `inventory_count` would deposit their goods in the
-        # marketplace's location — the same mistake the seller products
-        # endpoint narrows `stock_levels` to prevent.
-        #
-        # A seller with no location of their own falls back to the store's
-        # rather than dropping the count on the floor.
         def import_stock_location
-          return nil if seller.blank?
+          name = attributes['stock_location'].to_s.squish
 
-          cached_lookup(:seller_stock_location, seller.id) do
-            seller.stock_locations.active.order_default.first
+          if name.blank?
+            return cached_lookup(:default_stock_location) do
+              Spree::StockLocation.owned_by(store_id: store.id, seller_id: seller&.id).active.order_default.first ||
+                store.default_stock_location
+            end
           end
+
+          owner_ids = stock_location_owner_ids
+          name_column = Spree::StockLocation.arel_table[:name]
+          cached_lookup(:stock_location, owner_ids, name.downcase) do
+            store.stock_locations.where(seller_id: owner_ids).
+              order(Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END')).
+              find_by(name_column.lower.eq(Arel::Nodes::NamedFunction.new('LOWER', [Arel::Nodes.build_quoted(name)])))
+          end || raise(ArgumentError, Spree.t(:product_import_unknown_stock_location, name: name))
+        end
+
+        # A seller reaches only their own locations — never the marketplace's
+        # shelf. An operator reaches the marketplace's and, for a seller's
+        # product, that seller's, whose own wins on a shared name as with cartons.
+        def stock_location_owner_ids
+          return [seller.id] if seller.present?
+
+          [nil, product_scope.where(slug: attributes['slug'].to_s.strip.downcase).pick(:seller_id)].uniq
         end
 
         def prepare_option_value_variants

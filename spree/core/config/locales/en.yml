@@ -1379,6 +1379,7 @@ en:
     process: Process
     processing: Processing
     product: Product
+    product_import_unknown_stock_location: You have no stock location named %{name}.
     product_name: Product Name
     product_properties: Product Properties
     product_translations: Product Translations

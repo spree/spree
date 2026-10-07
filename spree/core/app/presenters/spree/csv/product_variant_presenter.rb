@@ -30,6 +30,7 @@ module Spree
         'track_inventory',
         'inventory_count',
         'inventory_backorderable',
+        'stock_location',
         'tax_category',
         'product_type',
         'image1_src',
@@ -46,7 +47,13 @@ module Spree
         'category3',
       ].freeze
 
-      def initialize(product, variant, index = 0, properties = [], categories = [], store = nil, custom_fields = [], currency = nil)
+      # @param default_stock_location [Spree::StockLocation, nil] where the full row's
+      #   inventory columns read from, blank when the variant has no stock
+      #   there; the store's default when nil
+      # @param stock_level [Spree::StockLevel, nil] turns the row into a
+      #   stock-only row for that level's location
+      def initialize(product, variant, index = 0, properties = [], categories = [], store = nil, custom_fields = [], currency = nil,
+                     default_stock_location: nil, stock_level: nil)
         @product = product
         @variant = variant
         @index = index
@@ -56,9 +63,12 @@ module Spree
         @currency = currency || @store.default_currency
         @price_only = @currency != @store.default_currency
         @custom_fields = custom_fields
+        @default_stock_location = default_stock_location
+        @stock_level = stock_level
       end
 
-      attr_accessor :product, :variant, :index, :properties, :categories, :store, :currency, :price_only, :custom_fields
+      attr_accessor :product, :variant, :index, :properties, :categories, :store, :currency, :price_only, :custom_fields,
+                    :default_stock_location, :stock_level
 
       ##
       # Generates an array representing a CSV row of product variant data.
@@ -73,8 +83,7 @@ module Spree
       # @return [Array] An array containing the combined product and variant CSV data.
       def call
         return price_only_row if price_only
-
-        total_on_hand = variant.total_on_hand
+        return stock_only_row if stock_level
 
         csv = [
           product.id,
@@ -104,8 +113,12 @@ module Spree
           publication_available_on&.strftime('%Y-%m-%d %H:%M:%S'),
           (variant.discontinue_on || publication_discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
           variant.track_inventory?,
-          total_on_hand == BigDecimal::INFINITY ? '∞' : total_on_hand,
-          variant.backorderable?,
+          # The shelf count at the one location the import writes this row
+          # back to, not what is left to sell: that would drop every unit held
+          # by a cart or promised to an order on each round trip.
+          variant.should_track_inventory? ? default_stock_level&.count_on_hand : '∞',
+          default_stock_level&.backorderable,
+          nil,
           variant.tax_category&.name,
           product.product_type&.name,
           spree_image_url(variant.images[0], image_url_options),
@@ -166,6 +179,23 @@ module Spree
         csv[CSV_HEADERS.index('compare_at_price')] = variant.compare_at_amount_in(currency)&.to_f
         csv[CSV_HEADERS.index('currency')] = currency
         csv
+      end
+
+      def stock_only_row
+        csv = Array.new(CSV_HEADERS.size)
+        csv[CSV_HEADERS.index('sku')] = variant.sku
+        csv[CSV_HEADERS.index('slug')] = product.slug
+        csv[CSV_HEADERS.index('inventory_count')] = stock_level.count_on_hand
+        csv[CSV_HEADERS.index('inventory_backorderable')] = stock_level.backorderable
+        csv[CSV_HEADERS.index('stock_location')] = stock_level.stock_location.name
+        csv
+      end
+
+      def default_stock_level
+        return @default_stock_level if defined?(@default_stock_level)
+
+        location = default_stock_location || store.default_stock_location
+        @default_stock_level = variant.stock_levels.find { |level| level.stock_location_id == location.id }
       end
 
       def image_url_options
