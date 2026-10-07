@@ -431,6 +431,8 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
+            owner:
+              must_be_legal_entity: must be the legal entity, not a division
             value:
               invalid: does not look like a valid %{kind} registration
         spree/user:
