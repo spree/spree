@@ -17,7 +17,7 @@ module Spree
         #
         # @return [String]
         def self.display_name
-          Spree.t(name.demodulize.underscore, scope: 'order_routing.strategies', default: name.demodulize.titleize)
+          I18n.t("spree.order_routing.strategies.#{name.demodulize.underscore}", default: name.demodulize.titleize)
         end
 
         def initialize(order:)
@@ -29,7 +29,7 @@ module Spree
           raise NotImplementedError, "#{self.class} must implement #for_allocation"
         end
 
-        # @param fulfillment [Spree::Shipment]
+        # @param fulfillment [Spree::Fulfillment]
         def for_sale(fulfillment:)
           raise NotImplementedError, "#{self.class} must implement #for_sale"
         end

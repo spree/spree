@@ -161,11 +161,13 @@ module Spree
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
     # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
-    # the current items/address; nothing here touches a completed cart.
+    # the current items/address; nothing here touches a completed cart. Until
+    # deliveries can be proposed the cart gets none: preselecting the pickup
+    # rate that is all a destination-less quote finds would choose pickup for
+    # a customer who had not been offered anything.
     #
     # @param keep_selection [Boolean] false when the destination changed: a
-    #   choice made for one address is not a choice for another, and before an
-    #   address is known the only rate on offer is a pickup default
+    #   choice made for one address is not a choice for another
     def rebuild_fulfillments!(keep_selection: true)
       return if completed?
 
@@ -179,6 +181,7 @@ module Spree
       DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
       fulfillments.delete_all
       fulfillment_items.reset
+      return fulfillments.reload unless can_propose_deliveries?
 
       # Appended rather than assigned: setting `cart` on each proposal already
       # files it under this cart's `fulfillments` (the association is
@@ -207,7 +210,7 @@ module Spree
       self.warnings |= affected_line_items.map do |line_item|
         {
           code: 'delivery_unavailable',
-          message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+          message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
           line_item_id: line_item.prefixed_id
         }
       end
@@ -215,7 +218,7 @@ module Spree
 
     def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
-        errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
+        errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))
         return false
       end
       true
@@ -272,16 +275,70 @@ module Spree
       reload
     end
 
+    # The variants this cart's buyer may order: the channel's live
+    # publications, narrowed to the catalogs the cart's company, customer
+    # group or channel resolve to. Status, stock and currency are left to the
+    # add and checkout checks, which explain a refusal rather than reading as
+    # not found.
+    #
+    # @return [ActiveRecord::Relation<Spree::Variant>]
+    def orderable_variants
+      products = Spree.products_for_context_service.call(
+        store: store, channel: channel, customer: customer, company: resolved_company,
+        base: store.products.not_discontinued_on(channel)
+      ).value
+
+      Spree::Variant.for_products(products)
+    end
+
     # Removes out-of-stock/discontinued items and populates warnings
     # (mirrors Order#remove_out_of_stock_items!).
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
+      result = Spree.cart_remove_out_of_stock_items_service.call(cart: self)
       return self unless result.success?
 
       cart, _messages, new_warnings = result.value
       cart.warnings = existing_warnings | (new_warnings || [])
       cart
+    end
+
+    # Whether this cart shows a batch coupon code it does not hold — used,
+    # taken by another cart or order, or given up by one — and so can never
+    # discount it.
+    #
+    # @return [Boolean]
+    def coupon_code_unavailable?
+      code = read_attribute(:coupon_code)
+      return false if code.blank?
+
+      record = Spree::CouponCode.where(promotion_id: store.promotions.select(:id)).find_by(code: code)
+      record.present? && record.cart_id != id
+    end
+
+    # Drops an entered batch coupon code this cart no longer holds, and warns
+    # the shopper, who otherwise sees the discount vanish.
+    #
+    # @return [Spree::Cart]
+    def remove_unavailable_coupon_code!
+      return self unless coupon_code_unavailable?
+
+      # The lock refuses unsaved attributes and reloads the cart, so this
+      # request's warnings are set aside and put back.
+      existing_warnings = warnings
+      clear_attribute_changes([:warnings])
+      removed = with_lock do
+        # Checked under the lock, as the completion claim itself is: a
+        # completing cart's code sits on its draft order while the payment
+        # runs, and a failed payment hands it back.
+        next false if completion_claimed? || !coupon_code_unavailable?
+
+        Spree.coupon_handler.new(self, enable_gift_cards: false).remove(read_attribute(:coupon_code))
+        true
+      end
+      self.warnings = existing_warnings
+      self.warnings |= [{ code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }] if removed
+      self
     end
 
   end

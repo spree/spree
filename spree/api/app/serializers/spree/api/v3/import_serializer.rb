@@ -21,19 +21,10 @@ module Spree
           Spree::Import.api_type_for(import.type)
         end
 
-        attribute :status do |import|
-          import.status.to_s
-        end
-
+        attributes status: :string
         # Which marketplace this import belongs to, and — when a seller ran it —
         # whose it is. A null `seller_id` means the operator's own.
-        attribute :store_id do |import|
-          import.store&.prefixed_id
-        end
-
-        attribute :seller_id do |import|
-          import.seller&.prefixed_id
-        end
+        prefixed_id_attributes :store, :seller
 
         # @deprecated Read `store_id` / `seller_id` — removed in 6.1. Emitted
         #   from the pair above rather than the dropped columns, so a client
@@ -46,9 +37,7 @@ module Spree
           (import.seller || import.store)&.prefixed_id
         end
 
-        attribute :user_id do |import|
-          import.user&.prefixed_id
-        end
+        prefixed_id_attributes :user
       end
     end
   end

@@ -23,24 +23,20 @@ class Spree::Base < ApplicationRecord
   # rather than assigning, so extensions don't clobber each other.
   class_attribute :additional_permitted_attributes, instance_writer: false, default: [].freeze
 
-  # Backfills preferences added to the class after this row was last saved, so
-  # a reader never sees nil for a newly defined preference. Assigning
-  # unconditionally would dirty every record on load: `preferences` is a
-  # YAML-serialized Hash, so the dirty check compares the serialized string and
-  # the merge reorders keys even when nothing changed — which is enough to make
-  # `with_lock` refuse the record ("unpersisted changes").
-  after_initialize do
-    if has_attribute?(:preferences) && !preferences.nil?
-      missing = default_preferences.except(*preferences.keys)
-      self.preferences = preferences.merge(missing) if missing.any?
-    end
-  end
+  # The Seller API's counterpart, kept separate because sellers write a
+  # narrower set than operators: an attribute an extension makes writable for
+  # admins stays admin-only unless it is also declared here.
+  #
+  #   Spree::Product.additional_seller_permitted_attributes += [:brand_id]
+  class_attribute :additional_seller_permitted_attributes, instance_writer: false, default: [].freeze
 
-  # only for backwards compatibility with Kaminari
-  if defined?(Kaminari) && Kaminari.config.page_method_name != :page
-    def self.page(num)
-      send Kaminari.config.page_method_name, num
-    end
+  # Backfills preferences added to the class after this row was last saved, so
+  # a reader never sees nil for a newly defined preference. Only missing keys
+  # are assigned: assigning unconditionally would dirty every record on load,
+  # which is enough to make `with_lock` refuse the record ("unpersisted
+  # changes").
+  after_initialize do
+    backfill_default_preferences if has_attribute?(:preferences) && !preferences.nil?
   end
 
   self.abstract_class = true

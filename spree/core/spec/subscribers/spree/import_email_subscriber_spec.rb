@@ -46,4 +46,17 @@ RSpec.describe Spree::ImportEmailSubscriber do
       subscriber.send_import_done_email(event_for(import.prefixed_id))
     end
   end
+
+  describe 'through the registered subscribers', events: true do
+    let(:import) { create(:product_import, store: @default_store, user: create(:admin_user), status: 'processing') }
+
+    it 'emails the owner when the import completes' do
+      perform_enqueued_jobs do
+        expect { Spree::Imports::Complete.call(import: import) }.
+          to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      expect(ActionMailer::Base.deliveries.last.to).to eq([import.user.email])
+    end
+  end
 end

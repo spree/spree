@@ -74,7 +74,7 @@ describe Spree::DeliveryMethodRule, type: :model do
 
       cart = create(:cart, store: store, channel: channel)
       line_item = create(:line_item, cart: cart, order: nil)
-      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
 
       expect(rule.eligible?(fulfillment.to_package)).to be(true)
     end
@@ -174,7 +174,7 @@ describe Spree::DeliveryMethodRule, type: :model do
       create(:company_membership, company: company, customer: customer)
       cart = create(:cart, store: store, user: customer, company: company)
       create(:line_item, cart: cart, order: nil)
-      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment = create(:fulfillment, cart: cart, order: nil, stock_location: create(:stock_location))
       fulfillment.to_package
     end
 

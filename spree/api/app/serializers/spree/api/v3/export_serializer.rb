@@ -18,9 +18,7 @@ module Spree
           Spree::Export.api_type_for(export.type)
         end
 
-        attribute :user_id do |export|
-          export.user&.prefixed_id
-        end
+        prefixed_id_attributes :user
       end
     end
   end

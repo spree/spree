@@ -22,10 +22,6 @@ module Spree
             @parent = current_store.promotions.accessible_by(current_ability, :show)
                                    .find_by_prefix_id!(params[:promotion_id])
           end
-
-          def parent_association
-            :coupon_codes
-          end
         end
       end
     end

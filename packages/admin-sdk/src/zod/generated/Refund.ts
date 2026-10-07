@@ -14,6 +14,7 @@ export const RefundSchema = z.object({
   metadata: z.record(z.string(), z.unknown()),
   created_at: z.string(),
   updated_at: z.string(),
+  tax_amount: z.string(),
   refunder_id: z.string().nullable(),
   refunder_type: z.string().nullable(),
   refunder: ActorSchema.optional(),

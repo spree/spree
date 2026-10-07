@@ -12,6 +12,7 @@
 // CSS lives at `@spree/dashboard-ui/styles.css` — import once from your Vite app.
 
 export * from './hooks/use-copy-to-clipboard'
+export * from './hooks/use-debounced-value'
 export { useIsMobile } from './hooks/use-mobile'
 export * from './hooks/use-prefers-reduced-motion'
 export * from './hooks/use-scrolled'
@@ -65,6 +66,8 @@ export * from './spree/return-dialogs'
 // `@spree/dashboard-ui/spree/json-preview-drawer` and
 // `@spree/dashboard-ui/spree/json-value-view`. Types are available the same
 // way — `import { type JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-preview-drawer'`.
+// CodeEditor (CodeMirror) is deep-imported for the same reason:
+// `@spree/dashboard-ui/ui/code-editor`.
 
 export * from './spree/external-link'
 export * from './spree/language-menu-items'

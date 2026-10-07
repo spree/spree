@@ -234,7 +234,7 @@ module Spree
       return if delivery_zone.delivery_origin_group_id == delivery_origin_group_id
 
       errors.add(:delivery_zone, :does_not_belong_to_origin_group,
-                 message: Spree.t('errors.messages.delivery_zone_not_in_origin_group'))
+                 message: I18n.t('spree.errors.messages.delivery_zone_not_in_origin_group'))
     end
 
     def pickup_point?
@@ -430,7 +430,7 @@ module Spree
 
         if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
           if calculator.preferred_amount == 0
-            Spree.t(:free)
+            I18n.t('spree.free')
           else
             Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
           end
@@ -500,7 +500,7 @@ module Spree
       return if delivery_zone.delivery_profile_id == delivery_profile_id
 
       errors.add(:delivery_zone, :does_not_belong_to_profile,
-                 message: Spree.t('errors.messages.delivery_zone_not_in_profile'))
+                 message: I18n.t('spree.errors.messages.delivery_zone_not_in_profile'))
     end
 
     def profile_must_accept_provider
@@ -513,7 +513,7 @@ module Spree
       errors.add(
         :fulfillment_provider, :profile_does_not_accept_provider,
         provider: provider_class.provider_name, profile: delivery_profile.name,
-        message: Spree.t('errors.messages.profile_does_not_accept_provider',
+        message: I18n.t('spree.errors.messages.profile_does_not_accept_provider',
                          provider: provider_class.provider_name, profile: delivery_profile.name)
       )
     end
@@ -527,7 +527,7 @@ module Spree
       errors.add(
         :rate_provider, :rate_provider_requires_shipping,
         provider: rate_provider_class.provider_name,
-        message: Spree.t('errors.messages.rate_provider_requires_shipping',
+        message: I18n.t('spree.errors.messages.rate_provider_requires_shipping',
                          provider: rate_provider_class.provider_name)
       )
     end
@@ -537,7 +537,7 @@ module Spree
       return unless Spree.delivery_rate_providers.map(&:to_s).include?(rate_provider)
       return if rate_provider_class.available_for_store?(store)
 
-      errors.add(:rate_provider, :rate_provider_unavailable, message: Spree.t('errors.messages.rate_provider_unavailable'))
+      errors.add(:rate_provider, :rate_provider_unavailable, message: I18n.t('spree.errors.messages.rate_provider_unavailable'))
     end
 
     def seller_must_belong_to_store
@@ -549,18 +549,18 @@ module Spree
 
     def seller_methods_use_own_providers
       unless rate_provider.blank? || rate_provider == DEFAULT_RATE_PROVIDER
-        errors.add(:rate_provider, :seller_delivery_method_provider, message: Spree.t('errors.messages.seller_delivery_method_provider'))
+        errors.add(:rate_provider, :seller_delivery_method_provider, message: I18n.t('spree.errors.messages.seller_delivery_method_provider'))
       end
 
       return if fulfillment_provider.blank? || fulfillment_provider == DEFAULT_FULFILLMENT_PROVIDER
 
-      errors.add(:fulfillment_provider, :seller_delivery_method_provider, message: Spree.t('errors.messages.seller_delivery_method_provider'))
+      errors.add(:fulfillment_provider, :seller_delivery_method_provider, message: I18n.t('spree.errors.messages.seller_delivery_method_provider'))
     end
 
     def only_marketplace_methods_are_shared
       return unless available_to_sellers? && seller_owned?
 
-      errors.add(:available_to_sellers, :seller_delivery_method_not_shareable, message: Spree.t('errors.messages.seller_delivery_method_not_shareable'))
+      errors.add(:available_to_sellers, :seller_delivery_method_not_shareable, message: I18n.t('spree.errors.messages.seller_delivery_method_not_shareable'))
     end
   end
 end

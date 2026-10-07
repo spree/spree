@@ -68,9 +68,7 @@ module Spree
             Spree::StockTransfer.prefixed_id_for(movement.stock_transfer_id)
           end
 
-          attribute :stock_receipt_id do |movement|
-            movement.stock_receipt&.prefixed_id
-          end
+          prefixed_id_attributes :stock_receipt
 
           attribute :purchase_order_id do |movement|
             Spree::PurchaseOrder.prefixed_id_for(movement.purchase_order_id)

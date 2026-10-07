@@ -5,7 +5,7 @@ module Spree
       preference :apply_only_on_full_priced_items, :boolean, default: false
 
       def self.description
-        Spree.t(:percent_per_item)
+        I18n.t('spree.percent_per_item')
       end
 
       def compute(object)

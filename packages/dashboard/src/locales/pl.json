@@ -2161,6 +2161,25 @@
           "label": "Domyślny podatek od prowizji",
           "help": "Naliczany od Twojej prowizji, gdy ani stawka prowizji, ani dostawca podatków nie podaje własnej stawki. Zostaw 0, jeśli Twoja prowizja nie jest opodatkowana.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Kolor akcentu"
+        },
+        "preferred_email_background_color": {
+          "label": "Kolor tła"
+        },
+        "preferred_email_card_color": {
+          "label": "Kolor karty"
+        },
+        "preferred_email_text_color": {
+          "label": "Kolor tekstu"
+        },
+        "preferred_email_heading_color": {
+          "label": "Kolor nagłówków"
+        },
+        "preferred_email_font": {
+          "label": "Czcionka",
+          "help": "Programy pocztowe, które nie mogą jej wczytać, użyją podobnej czcionki."
         }
       },
       "store_credit": {
@@ -2441,7 +2460,7 @@
       "configure_cta": "Konfiguruj",
       "connect_cta": "Połącz",
       "connect_description": "Wprowadź dane dostępowe tego dostawcy. Zapis je przechowuje; aktywacja weryfikuje połączenie.",
-      "description": "Połącz usługi dostawców z tym sklepem. Dane dostępowe są przechowywane per sklep i używane przez dostawców dostaw, podatków i innych.",
+      "description": "Połącz dostawców płatności i inne usługi z tym sklepem. Dane dostępowe są przechowywane osobno dla każdego sklepu i używane przez kasę, dostawę, podatki i innych dostawców.",
       "disconnect": "Rozłącz",
       "disconnect_confirm": {
         "message": "Rozłączyć {{name}}? Zapisane dane dostępowe zostaną usunięte, a korzystający z nich dostawcy przestaną działać.",
@@ -2454,18 +2473,24 @@
       },
       "groups": {
         "other": "Inne",
+        "payments": "Płatności",
         "shipping": "Dostawa",
         "tax": "Podatki"
       },
+      "manage_payment_methods": "Zarządzaj metodami płatności",
       "messages": {
         "connected": "Integracja połączona",
         "disconnected": "Integracja rozłączona",
         "updated": "Integracja zaktualizowana"
       },
+      "setup_guide": "Instrukcja konfiguracji",
       "status": {
         "active": "Aktywna",
         "connected_inactive": "Połączona (nieaktywna)",
         "not_connected": "Niepołączona"
+      },
+      "tabs": {
+        "all": "Wszystkie"
       },
       "test": {
         "failure": "Połączenie nieudane.",
@@ -2474,7 +2499,9 @@
         "success": "Połączenie udane.",
         "testing": "Testowanie…"
       },
+      "test_mode": "Tryb testowy",
       "title": "Integracje",
+      "toggle_label": "Włącz lub wyłącz {{name}}",
       "view_cta": "Zobacz"
     },
     "invitation": {
@@ -2690,6 +2717,7 @@
           "discounts_empty": "Brak rabatów dla tego zamówienia.",
           "fee_kind_cod": "Płatność przy odbiorze",
           "fee_kind_duty": "Cło",
+          "fee_kind_exchange": "Wymiana",
           "fee_kind_gift_wrap": "Pakowanie na prezent",
           "fee_kind_handling": "Koszt obsługi",
           "fee_kind_payment": "Opłata za płatność",
@@ -2851,7 +2879,15 @@
           "move_and_requote": "Przenieś i przelicz",
           "no_rates": "Dla tej przesyłki nie ma dostępnych sposobów dostawy.",
           "out_of_stock": "Brak w magazynie",
+          "packing_slip_discount": "Rabat",
+          "packing_slip_footer": "Dziękujemy za zamówienie.",
+          "packing_slip_fulfillment": "Realizacja #{{number}}",
+          "packing_slip_order": "Zamówienie #{{number}}",
+          "packing_slip_shipping": "Wysyłka",
+          "packing_slip_subtotal": "Suma częściowa",
+          "packing_slip_tax": "Podatek",
           "packing_slip_title": "List przewozowy — zamówienie {{number}}",
+          "packing_slip_total": "Razem",
           "print_label": "Drukuj etykietę",
           "print_packing_slip": "Drukuj list przewozowy",
           "rates_pending_origin": "Zapisz nowe miejsce wysyłki, aby zobaczyć dostępne dla niego sposoby dostawy.",
@@ -3363,7 +3399,8 @@
             },
             "confirm": {
               "cancel_confirm": "Anuluj wymianę",
-              "cancel_dismiss": "Zachowaj wymianę"
+              "cancel_dismiss": "Zachowaj wymianę",
+              "balance_due": "Zamiennik kosztuje więcej niż zwrócony towar. Jego wysłanie doda różnicę do zamówienia jako kwotę do zapłaty, którą pobierzesz. Nic nie zostanie pobrane automatycznie."
             },
             "create_title": "Nowa wymiana",
             "empty": "Brak wymian dla tego zamówienia.",
@@ -3376,7 +3413,8 @@
               "approve": "Zatwierdź",
               "create": "Nowy zwrot",
               "receive": "Przyjmij produkty",
-              "refund": "Zwróć płatność"
+              "refund": "Zwróć płatność",
+              "complete": "Zakończ zwrot"
             },
             "buy_label": "Kup etykietę zwrotną",
             "buy_label_confirm": "Kupić opłaconą etykietę zwrotną? Twoje konto zostanie obciążone w momencie jej wystawienia.",
@@ -3399,13 +3437,18 @@
             "received_of": "Otrzymano {{received}} z {{requested}}",
             "received_quantity": "Otrzymano",
             "refund_amount": "Kwota",
+            "refund_includes_tax": "Pełna kwota zawiera {{tax}} podatku. Przy mniejszej kwocie podatek zostanie zwrócony proporcjonalnie.",
             "refund_method": "Zwróć na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
               "store_credit": "Kredyt sklepowy"
             },
             "refund_title": "Zwrot płatności",
+            "complete_title": "Zakończ zwrot",
+            "nothing_owed": "Z tytułu tego zwrotu nic nie jest należne, więc pieniądze nie zostaną zwrócone. Zakończenie zamyka zwrot.",
             "refund_total": "Kwota zwrotu",
+            "refunded": "Zwrócono",
+            "refunded_of": "{{amount}} z {{total}}",
             "resellable": "Nadaje się do sprzedaży",
             "returning_to": "Zwrot do {{name}}"
           },
@@ -3829,7 +3872,21 @@
           "section_delivery": "Dostarczanie",
           "section_logo": "Logo",
           "subtitle": "Adresy nadawców, powiadomienia i logo umieszczane w e-mailach transakcyjnych.",
-          "title": "Ustawienia e-mail"
+          "title": "Ustawienia e-mail",
+          "branding": {
+            "title": "Wygląd marki",
+            "description": "Kolory i czcionka każdego e-maila do klienta. Zostaw kolor pusty, aby zachować domyślny.",
+            "default_color": "Domyślny",
+            "fonts": {
+              "inter": "Inter (domyślna)",
+              "system": "Czcionka systemowa",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -3950,41 +4007,75 @@
           "empty_description": "Utwórz punkt końcowy, aby otrzymywać podpisane żądanie POST za każdym razem, gdy wyzwalane jest subskrybowane zdarzenie.",
           "empty_title": "Brak punktów końcowych webhooków",
           "event_groups": {
-            "asset": "Zasób",
+            "admin_user": "Pracownik",
+            "cart": "Koszyk",
+            "catalog": "Katalog",
+            "claim": "Reklamacja",
+            "company": "Firma",
+            "company_invitation": "Zaproszenie do firmy",
             "custom": "Niestandardowe",
             "customer": "Klient",
+            "data_request": "Wniosek o dane",
+            "delivery": "Dostawa",
             "digital": "Cyfrowy",
+            "digital_asset": "Zasób cyfrowy",
+            "digital_link": "Link cyfrowy",
+            "email_template": "Szablony e-maili",
+            "exchange": "Wymiana",
+            "export": "Eksport",
             "fulfillment": "Realizacja",
             "gift_card": "Karta podarunkowa",
             "gift_card_batch": "Partia kart podarunkowych",
-            "import_export": "Import / Eksport",
+            "import": "Import",
+            "import_row": "Wiersz importu",
             "invitation": "Zaproszenie",
             "line_item": "Pozycja zamówienia",
+            "media": "Multimedia",
             "newsletter_subscriber": "Subskrybent newslettera",
             "order": "Zamówienie",
+            "order_group": "Grupa zamówień",
             "payment": "Płatność",
             "payment_session": "Sesja płatności",
             "payment_setup_session": "Sesja konfiguracji płatności",
             "price": "Cena",
             "product": "Produkt",
+            "product_submission": "Zgłoszenie produktu",
             "promotion": "Promocja",
+            "purchase_order": "Zamówienie zakupu",
             "refund": "Zwrot środków",
-            "report": "Raport",
             "return": "Zwrot",
+            "saved_report": "Zapisany raport",
+            "seller": "Sprzedawca",
+            "seller_payout": "Wypłata dla sprzedawcy",
+            "seller_requirement_submission": "Zgłoszenie wymagania sprzedawcy",
+            "seller_user": "Użytkownik sprzedawcy",
+            "shipment": "Przesyłka",
+            "shipping_label": "Etykieta wysyłkowa",
+            "stock_item": "Pozycja magazynowa",
             "stock_level": "Stan magazynowy",
             "stock_movement": "Ruch magazynowy",
+            "stock_receipt": "Przyjęcie towaru",
             "stock_reservation": "Rezerwacja magazynowa",
             "stock_transfer": "Transfer magazynowy",
             "store_credit": "Kredyt sklepowy",
+            "supplier": "Dostawca",
+            "tax_exemption_certificate": "Zaświadczenie o zwolnieniu z podatku",
+            "tax_identifier": "Identyfikator podatkowy",
+            "user": "Konto klienta",
             "variant": "Wariant",
-            "wishlist": "Lista życzeń"
+            "wished_item": "Pożądany produkt",
+            "wishlist": "Lista życzeń",
+            "wishlist_item": "Pozycja listy życzeń"
           },
           "events_all": "Wszystkie zdarzenia",
           "events_count_few": "{{count}} zdarzenia",
           "events_count_many": "{{count}} zdarzeń",
           "events_count_one": "{{count}} zdarzenie",
           "events_count_other": "{{count}} zdarzeń",
+          "events_credential": "Dane uwierzytelniające",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "Przestarzałe, użyj {{event}}",
+          "events_load_failed": "Nie udało się wczytać listy zdarzeń. Nadal możesz dodać zdarzenie po nazwie poniżej.",
           "events_remove_aria": "Usuń {{event}}",
           "health": {
             "auto_disabled_alert": "Ten punkt końcowy został automatycznie wyłączony po wielokrotnych niepowodzeniach dostarczenia.",
@@ -4128,6 +4219,7 @@
         "customers": "Konta klientów, adresy, karty i grupy",
         "dashboard": "Analizy sprzedaży i wyników",
         "delivery_methods": "Opcje wysyłki, stawki i reguły, które nimi sterują",
+        "email_templates": "Szablony e-maili do klientów i układ e-maili",
         "fulfillments": "Pakowanie, wysyłka i śledzenie realizacji",
         "gift_cards": "Karty podarunkowe i ich partie",
         "integrations": "Dane dostępowe i połączenia dostawców",
@@ -4179,6 +4271,7 @@
         "customers": "Klienci",
         "dashboard": "Panel",
         "delivery_methods": "Metody dostawy",
+        "email_templates": "Szablony e-maili",
         "fulfillments": "Realizacje",
         "gift_cards": "Karty podarunkowe",
         "integrations": "Integracje",
@@ -5273,7 +5366,7 @@
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",
       "create_label": "Utwórz lokalizację magazynową",
       "delete_confirm": {
-        "message": "{{name}} zostanie usunięta. Produkty na stanie w tej lokalizacji nie zostaną usunięte.",
+        "message": "{{name}} zostanie usunięta. Poziomy zapasów w tej lokalizacji również zostaną usunięte.",
         "title": "Usunąć lokalizację magazynową?"
       },
       "edit_description": "Zaktualizuj nazwę, adres, odbiór lub zasady dotyczące zapasów.",
@@ -6077,11 +6170,172 @@
       },
       "table": {
         "search_placeholder": "Szukaj w notatkach…",
-        "empty": "Brak środków. Wystaw je z profilu klienta."
+        "empty": "Brak środków."
       },
+      "issue_description": "Wybierz klienta i kwotę, którą chcesz dodać do jego konta.",
       "no_customer": "Brak klienta",
       "page": {
         "subtitle": "Ile sklep jest winien w środkach, w rozbiciu na wszystkich klientów."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Ustawienia",
+        "templates": "Szablony"
+      },
+      "list": {
+        "description": "Edytuj e-maile, które otrzymują klienci. Zmiany zapisują się jako szkic i docierają do klientów dopiero po opublikowaniu.",
+        "groups": {
+          "email": {
+            "title": "E-maile do klientów",
+            "description": "Każdy e-mail, który klient może otrzymać z Twojego sklepu."
+          },
+          "layout": {
+            "title": "Układ",
+            "description": "Nagłówek, stopka i style wokół każdego e-maila do klienta."
+          },
+          "partial": {
+            "title": "Wspólne bloki",
+            "description": "Elementy używane w kilku e-mailach, na przykład lista produktów i sumy."
+          }
+        },
+        "empty": "Nie ma tu szablonów e-maili do edycji. Szablony e-maili do klientów dostarcza pakiet e-maili Spree."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Potwierdzenie zamówienia",
+        "order_mailer_cancel_email": "Zamówienie anulowane",
+        "order_mailer_payment_link_email": "Link do płatności",
+        "order_group_mailer_confirm_email": "Potwierdzenie zamówienia od wielu sprzedawców",
+        "fulfillment_mailer_fulfilled_email": "Zamówienie wysłane",
+        "return_mailer_refunded_email": "Zwrot zrefundowany",
+        "digital_asset_mailer_files_ready_email": "Pliki gotowe do pobrania",
+        "customer_mailer_password_reset_email": "Reset hasła",
+        "customer_mailer_data_export_email": "Eksport danych osobowych gotowy",
+        "newsletter_mailer_email_confirmation": "Potwierdzenie newslettera",
+        "company_mailer_invitation_email": "Zaproszenie do firmy",
+        "spree_base_mailer": "Układ e-maili",
+        "shared_line_item": "Produkt",
+        "shared_order_summary": "Podsumowanie zamówienia",
+        "shared_purchase_totals": "Sumy",
+        "shared_fulfillment_group": "Przesyłka",
+        "shared_summary_row": "Wiersz podsumowania"
+      },
+      "badges": {
+        "customized": "Dostosowany",
+        "default": "Domyślny",
+        "draft": "Szkic",
+        "other_languages": "Dostosowano też: {{languages}}",
+        "default_updated": "Zaktualizowany przez Spree",
+        "unsaved": "Niezapisane zmiany",
+        "showing_draft": "Szkic – klienci otrzymują opublikowaną wersję",
+        "showing_published": "Opublikowany – to otrzymują klienci",
+        "showing_default": "Domyślny szablon Spree – to otrzymują klienci"
+      },
+      "actions": {
+        "save_draft": "Zapisz szkic",
+        "publish": "Opublikuj",
+        "discard_draft": "Odrzuć szkic",
+        "revert": "Przywróć domyślny",
+        "send_test": "Wyślij testowy e-mail",
+        "history": "Historia"
+      },
+      "confirm": {
+        "discard_title": "Odrzucić ten szkic?",
+        "discard_message": "Twoje nieopublikowane zmiany zostaną usunięte. Klienci nadal otrzymują opublikowaną wersję.",
+        "revert_title": "Przywrócić domyślny szablon Spree?",
+        "revert_message": "Od teraz klienci otrzymują domyślny e-mail Spree, a szkic zostanie usunięty. Opublikowane wersje zostają w historii, więc możesz później przywrócić jedną z nich.",
+        "restore_title": "Przywrócić tę wersję?",
+        "restore_message": "Ta wersja zastąpi szkic. Opublikuj ją, aby otrzymali ją klienci.",
+        "leave_title": "Wyjść bez zapisywania?",
+        "leave_message": "Niezapisane zmiany w tym szablonie zostaną utracone.",
+        "leave": "Wyjdź",
+        "revert_every_language_message": "Od teraz klienci we wszystkich językach otrzymują domyślny e-mail Spree, a szkic zostanie usunięty. Opublikowane wersje zostają w historii, więc możesz później przywrócić jedną z nich."
+      },
+      "editor": {
+        "title": "Szablon",
+        "subject": "Temat",
+        "body": "Kod szablonu",
+        "language": "Język"
+      },
+      "preview": {
+        "title": "Podgląd",
+        "frame_title": "Podgląd e-maila",
+        "subject": "Temat: {{subject}}",
+        "html": "E-mail",
+        "text": "Zwykły tekst",
+        "desktop": "Szerokość komputera",
+        "mobile": "Szerokość telefonu",
+        "shown_in": "Pokaż w",
+        "record": "Podgląd z rekordem",
+        "unavailable": "Nie udało się wyświetlić podglądu.",
+        "needs_permission": "Podgląd jest generowany dla osób, które mogą edytować szablony e-maili.",
+        "latest_record": "Najnowszy"
+      },
+      "problems": {
+        "title": "Tego szablonu nie da się wyświetlić",
+        "on_line": "Wiersz {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Zaktualizowany przez Spree",
+        "description": "Spree zmienił domyślną wersję tego szablonu, odkąd powstała Twoja wersja. Porównaj je, zanim zdecydujesz.",
+        "compare": "Porównaj",
+        "dialog_title": "Co zmieniło się w domyślnym szablonie Spree",
+        "dialog_description": "Po lewej domyślny szablon, z którego powstała Twoja wersja. Po prawej obecny domyślny.",
+        "before": "Twoja wersja powstała z",
+        "after": "Obecny domyślny szablon Spree",
+        "keep_mine": "Zachowaj moją wersję",
+        "start_over": "Zacznij od nowego domyślnego"
+      },
+      "history": {
+        "title": "Historia",
+        "description": "Każda wersja opublikowana w tym języku, od najnowszej.",
+        "empty": "Nic jeszcze nie opublikowano.",
+        "latest": "Najnowsza",
+        "version": "Wersja {{number}}",
+        "restore": "Przywróć"
+      },
+      "conflict": {
+        "title": "Ktoś inny zapisał ten szkic",
+        "keep_editing": "Edytuj dalej",
+        "reload": "Wczytaj jego wersję",
+        "overwrite": "Zapisz moją wersję zamiast jego"
+      },
+      "variables": {
+        "title": "Zmienne",
+        "description": "Dane, które ten e-mail może pokazać. Zacznij wpisywać zmienną w kodzie, aby zobaczyć wszystkie jej pola.",
+        "order": "Zamówienie z produktami, adresami i sumami.",
+        "resend": "Czy to ponownie wysłana kopia.",
+        "payment_url": "Link, pod którym klient płaci.",
+        "order_group": "Zamówienie podzielone między kilku sprzedawców.",
+        "fulfillment": "Przesyłka z numerem śledzenia.",
+        "return": "Zwrot i zwrócona kwota.",
+        "downloads": "Pliki, które klient może pobrać.",
+        "customer": "Klient, do którego trafia e-mail.",
+        "reset_url": "Link do ustawienia nowego hasła.",
+        "download_url": "Link do pobrania eksportu.",
+        "expires_at": "Kiedy link przestaje działać.",
+        "confirmation_url": "Link potwierdzający subskrypcję.",
+        "company": "Firma, do której zaproszono klienta.",
+        "accept_url": "Link przyjmujący zaproszenie.",
+        "store": "Twój sklep: nazwa, linki, logo i wygląd marki.",
+        "locale": "Język, w którym wysyłany jest e-mail.",
+        "insert": "Wstaw {{variable}}"
+      },
+      "messages": {
+        "draft_saved": "Szkic zapisany",
+        "draft_discarded": "Szkic odrzucony",
+        "published": "Opublikowano. Od teraz klienci otrzymują tę wersję.",
+        "reverted": "Przywrócono domyślny szablon Spree",
+        "restored": "Wersja przywrócona do szkicu",
+        "test_sent": "Testowy e-mail wysłany na {{email}}"
+      },
+      "errors": {
+        "load_failed": "Nie udało się wczytać szablonów e-maili",
+        "not_allowed": "Nie masz uprawnień do przeglądania szablonów e-maili",
+        "test_email_failed": "Nie udało się wysłać testowego e-maila"
+      },
+      "every_language": {
+        "notice": "Klienci we wszystkich językach otrzymują tę wersję, dopóki nie opublikujesz wersji dla języka {{language}}."
       }
     }
   }

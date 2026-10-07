@@ -41,7 +41,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.cannot_mark_delivered'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.cannot_mark_delivered'))
       end
 
       it 'refuses a canceled fulfillment' do

@@ -4,7 +4,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
   let(:store) { @default_store }
   let(:base_params) { { store: store, currency: store.default_currency } }
 
-  let(:shipment) { create(:shipment) }
+  let(:shipment) { create(:fulfillment) }
   let(:shipping_rate) { shipment.shipping_rates.first }
 
   subject { described_class.new(shipping_rate, params: base_params).to_h }

@@ -51,6 +51,9 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
+    publishes_events :approved, :canceled, :delivered, :fulfilled, :paid, :placed, :shipped,
+                     :resend_confirmation_email, :resend_digital_links_email
+    publishes_event :completed, deprecated_alias_of: 'order.placed'
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::HasExternalReferences
@@ -83,7 +86,7 @@ module Spree
       Spree::Deprecation.warn('Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.1. This method now works only on Spree::Cart objects')
 
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
+      result = Spree.cart_remove_out_of_stock_items_service.call(cart: self)
       return self unless result.success?
 
       order, _messages, new_warnings = result.value
@@ -150,7 +153,7 @@ module Spree
       total item_total total_quantity considered_risky channel_id currency coupon_code customer_id seller_id
       order_group_id po_number
     ]
-    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
+    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search]
     # A seller never sees the buyer's email, and a company member filtering the
     # company's orders must not learn a colleague's; the risk flag and coupon
     # are back-office data. `search` matches on the email too.
@@ -159,8 +162,8 @@ module Spree
       seller: %w[email considered_risky coupon_code]
     }
     self.private_ransackable_scopes = {
-      store: %w[search multi_search],
-      seller: %w[search multi_search]
+      store: %w[search],
+      seller: %w[search]
     }
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
@@ -234,7 +237,10 @@ module Spree
 
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
-    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    # Sale rows only: the order's totals are re-summed from this association,
+    # and tax given back on a return, claim or exchange is not tax charged.
+    has_many :tax_lines, -> { sale }, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :post_sale_tax_lines, -> { post_sale }, class_name: 'Spree::TaxLine', dependent: :destroy
     # delete, not destroy: the snapshot is readonly once written, and destroy
     # refuses readonly records. It has no dependents of its own.
     has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', as: :owner,
@@ -352,9 +358,6 @@ module Spree
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
     end
-
-    # Backward compatibility alias — remove in Spree 6.0
-    def self.multi_search(query) = search(query)
 
     # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
     # @param param [String] the prefixed ID, number, or integer id to search for
@@ -684,16 +687,29 @@ module Spree
       end
     end
 
-    # Refunds are already netted out of payment_total by
-    # Spree::Carts::RecalculateTotals, so returns and claims need no separate
-    # term here — the legacy reimbursement payout was the only one that sat
-    # outside that sum.
+    # Refunds are netted out of payment_total by Spree::Carts::RecalculateTotals,
+    # which is right for money handed back for nothing. A refund for goods that
+    # came back on a return, claim or exchange also settles what the customer
+    # owed for them, so it is added back here — the job the legacy
+    # reimbursement total did. Without it every refunded return read as a
+    # balance due, and the payment dialog offered to charge it again.
     def outstanding_balance
       if canceled?
         -1 * payment_total
       else
-        total - payment_total
+        total - payment_total - returned_items_refund_total
       end
+    end
+
+    # What refunds for returns, claims and exchanges have given back. Read off
+    # loaded refunds when a list preloaded them, as {#refunds_total} is, since
+    # every order serializer asks for it.
+    #
+    # @return [BigDecimal]
+    def returned_items_refund_total
+      return refunds.select(&:for_returned_items?).sum(0.to_d, &:amount) if refunds.loaded?
+
+      refunds.for_returned_items.sum(:amount)
     end
 
 
@@ -833,7 +849,7 @@ module Spree
     def ensure_line_item_variants_are_not_discontinued
       Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        errors.add(:base, :discontinued_variants_present, message: Spree.t(:discontinued_variants_present))
+        errors.add(:base, :discontinued_variants_present, message: I18n.t('spree.discontinued_variants_present'))
         false
       else
         true
@@ -846,7 +862,7 @@ module Spree
     def ensure_line_items_are_in_stock
       Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
-        errors.add(:base, :insufficient_stock_lines_present, message: Spree.t(:insufficient_stock_lines_present))
+        errors.add(:base, :insufficient_stock_lines_present, message: I18n.t('spree.insufficient_stock_lines_present'))
         false
       else
         true
@@ -1193,7 +1209,7 @@ module Spree
     def ensure_can_be_deleted
       return true if can_be_deleted?
 
-      errors.add(:base, :order_cannot_be_deleted, message: Spree.t(:order_cannot_be_deleted))
+      errors.add(:base, :order_cannot_be_deleted, message: I18n.t('spree.order_cannot_be_deleted'))
       throw :abort
     end
 
@@ -1222,7 +1238,7 @@ module Spree
 
     def ensure_line_items_present
       unless line_items.present?
-        errors.add(:base, :there_are_no_items_for_this_order, message: Spree.t(:there_are_no_items_for_this_order)) && (return false)
+        errors.add(:base, :there_are_no_items_for_this_order, message: I18n.t('spree.there_are_no_items_for_this_order')) && (return false)
       end
     end
 
@@ -1239,18 +1255,18 @@ module Spree
         if undeliverable_line_items.present?
           product_names = undeliverable_line_items.map(&:name).to_sentence
           errors.add(:base, :products_cannot_be_shipped, product_names: product_names,
-                     message: Spree.t(:products_cannot_be_shipped, product_names: product_names))
+                     message: I18n.t('spree.products_cannot_be_shipped', product_names: product_names))
           self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
-              message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+              message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
               line_item_id: line_item.prefixed_id,
               variant_id: line_item.variant&.prefixed_id
             }
           end
         else
-          errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
-          self.warnings |= [{ code: 'delivery_unavailable', message: Spree.t(:items_cannot_be_shipped) }]
+          errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))
+          self.warnings |= [{ code: 'delivery_unavailable', message: I18n.t('spree.items_cannot_be_shipped') }]
         end
 
         false

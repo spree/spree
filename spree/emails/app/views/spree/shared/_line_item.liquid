@@ -1,0 +1,29 @@
+{%- comment -%}
+  One purchased line as a tile: thumbnail, name, options, quantity and amount.
+  Arguments: item.
+{%- endcomment -%}
+<mj-table padding="0 0 8px">
+  <tr>
+    <td>
+      <table class="item" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="width: 100%; background-color: #F0F0F0; border-radius: 16px;">
+        <tr>
+          <td class="item_image" width="96" valign="middle" style="padding: 8px; width: 96px;">
+            {%- if item.image_url -%}
+              <a href="{{ item.url }}"><img src="{{ item.image_url }}" alt="{{ item.name }}" width="80" class="item_thumb" style="display: block; width: 80px; height: auto; border-radius: 12px;" /></a>
+            {%- else -%}
+              <a href="{{ item.url }}" aria-label="{{ item.name }}" style="display: block; width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px; text-decoration: none;">&#160;</a>
+            {%- endif -%}
+          </td>
+          <td class="item_info" valign="middle">
+            <a href="{{ item.url }}" class="item_name">{{ item.name }}</a>
+            {%- if item.options_text != blank -%}<p class="item_meta">{{ item.options_text }}</p>{%- endif -%}
+          </td>
+          <td class="item_amount" align="right" valign="middle">
+            <p class="item_qty">{{ item.quantity }} x {{ item.display_price }}</p>
+            <p class="item_price">{{ item.display_amount }}</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</mj-table>

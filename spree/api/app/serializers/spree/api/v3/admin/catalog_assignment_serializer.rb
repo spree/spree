@@ -18,9 +18,7 @@ module Spree
             assignment.assignable_type.demodulize.underscore
           end
 
-          attribute :assignable_id do |assignment|
-            assignment.assignable&.prefixed_id
-          end
+          prefixed_id_attributes :assignable
 
           attribute :assignable_name do |assignment|
             assignment.assignable.try(:name)

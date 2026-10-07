@@ -33,10 +33,6 @@ module Spree
         #
         after_save :add_users
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def eligible_user_ids
           @eligible_user_ids ||= promotion_rule_users.pluck(:customer_id)
         end

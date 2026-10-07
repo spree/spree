@@ -13,7 +13,13 @@ import { DropdownMenuItem, formatCalculatorSummary, useConfirm } from '@spree/da
 import { PlusIcon, SparklesIcon, TrashIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { useEffect, useState } from 'react'
-import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
+import {
+  Controller,
+  FormProvider,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { spreeJsonLinkResolver } from '../../../lib/json-link-resolver'
 import { EditorShell } from './editor-shell'
@@ -21,6 +27,8 @@ import './register'
 import {
   adminClient,
   ExportRecordButton,
+  extensionFormValues,
+  extensionSubmitValues,
   mapSpreeErrorsToForm,
   Slot,
   Subject,
@@ -175,7 +183,7 @@ export function PromotionForm({
   const form = useForm<PromotionFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(promotionFormSchema) as any,
-    defaultValues: PROMOTION_DEFAULTS,
+    defaultValues: { ...PROMOTION_DEFAULTS, ...extensionFormValues('promotion', null) },
   })
 
   const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
@@ -201,11 +209,15 @@ export function PromotionForm({
       match_policy: promotion.match_policy,
       rules: initialRules.map(ruleDraftFromRule),
       actions: initialActions.map(actionDraftFromAction),
+      ...extensionFormValues('promotion', promotion),
     })
   }, [mode, promotion, initialRules, initialActions])
 
   async function handleSubmit(values: PromotionFormValues) {
     const payload: PromotionFormPayload = {
+      // Raw form state, not `values`: the Zod parse strips keys the schema
+      // doesn't know, which is every field a slot widget registered.
+      ...extensionSubmitValues('promotion', form),
       name: values.name,
       description: values.description?.length ? values.description : null,
       starts_at: values.starts_at || null,
@@ -238,84 +250,93 @@ export function PromotionForm({
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)}>
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={
-              mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
-            }
-            backTo="promotions"
-            // Delete lives in the more-actions menu, not beside Save: a
-            // destructive action next to the primary one is easy to hit by
-            // mistake, and the menu is where every other record page puts it.
-            // `destructiveItems` rather than `onDelete`: the caller already runs
-            // its own confirm, naming the promotion being deleted, and
-            // `onDelete` would stack the header's generic prompt in front of it.
-            destructiveItems={
-              mode === 'edit' && onDelete && canDelete ? (
-                <DropdownMenuItem variant="destructive" disabled={deletePending} onClick={onDelete}>
-                  {t('admin.actions.delete')}
-                </DropdownMenuItem>
-              ) : undefined
-            }
-            jsonPreview={
-              mode === 'edit' && promotion
-                ? {
-                    title: `Promotion ${promotion.name}`,
-                    fetch: () => adminClient.promotions.get(promotion.id),
-                    endpoint: `/api/v3/admin/promotions/${promotion.id}`,
-                    resolveLink: spreeJsonLinkResolver(storeId),
-                  }
-                : undefined
-            }
-            actions={
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  disabled={
-                    form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
-                  }
-                >
-                  {form.formState.isSubmitting
-                    ? mode === 'create'
-                      ? t('admin.actions.creating')
-                      : t('admin.actions.saving')
-                    : mode === 'create'
-                      ? t('admin.pages.promotions.create_cta')
-                      : t('admin.actions.save')}
-                </Button>
-              </div>
-            }
-          />
-        }
-        main={
-          <>
-            {form.formState.errors.root?.message && (
-              <p
-                className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
-                role="alert"
-              >
-                {form.formState.errors.root.message}
-              </p>
-            )}
-            <RulesCard
-              form={form}
-              rulesArray={rulesArray}
-              matchPolicy={form.watch('match_policy')}
+    // FormProvider exposes the form to `promotion.form_sidebar` widgets, so
+    // inputs bound via `useHostForm()` save with this page.
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={
+                mode === 'create' ? t('admin.pages.promotions.new_title') : (promotion?.name ?? '')
+              }
+              backTo="promotions"
+              // Delete lives in the more-actions menu, not beside Save: a
+              // destructive action next to the primary one is easy to hit by
+              // mistake, and the menu is where every other record page puts it.
+              // `destructiveItems` rather than `onDelete`: the caller already runs
+              // its own confirm, naming the promotion being deleted, and
+              // `onDelete` would stack the header's generic prompt in front of it.
+              destructiveItems={
+                mode === 'edit' && onDelete && canDelete ? (
+                  <DropdownMenuItem
+                    variant="destructive"
+                    disabled={deletePending}
+                    onClick={onDelete}
+                  >
+                    {t('admin.actions.delete')}
+                  </DropdownMenuItem>
+                ) : undefined
+              }
+              jsonPreview={
+                mode === 'edit' && promotion
+                  ? {
+                      title: `Promotion ${promotion.name}`,
+                      fetch: () => adminClient.promotions.get(promotion.id),
+                      endpoint: `/api/v3/admin/promotions/${promotion.id}`,
+                      resolveLink: spreeJsonLinkResolver(storeId),
+                    }
+                  : undefined
+              }
+              actions={
+                <div className="flex gap-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      form.formState.isSubmitting || (mode === 'edit' && !form.formState.isDirty)
+                    }
+                  >
+                    {form.formState.isSubmitting
+                      ? mode === 'create'
+                        ? t('admin.actions.creating')
+                        : t('admin.actions.saving')
+                      : mode === 'create'
+                        ? t('admin.pages.promotions.create_cta')
+                        : t('admin.actions.save')}
+                  </Button>
+                </div>
+              }
             />
-            <ActionsCard form={form} actionsArray={actionsArray} />
-          </>
-        }
-        sidebar={
-          <>
-            <BasicsCard form={form} />
-            <TriggerCard mode={mode} form={form} promotion={promotion} />
-            <ScheduleCard form={form} />
-          </>
-        }
-      />
-    </form>
+          }
+          main={
+            <>
+              {form.formState.errors.root?.message && (
+                <p
+                  className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                  role="alert"
+                >
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              <RulesCard
+                form={form}
+                rulesArray={rulesArray}
+                matchPolicy={form.watch('match_policy')}
+              />
+              <ActionsCard form={form} actionsArray={actionsArray} />
+            </>
+          }
+          sidebar={
+            <>
+              <BasicsCard form={form} />
+              <TriggerCard mode={mode} form={form} promotion={promotion} />
+              <ScheduleCard form={form} />
+              <Slot name="promotion.form_sidebar" context={{ promotion, mode }} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
 

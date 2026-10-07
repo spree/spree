@@ -17,10 +17,6 @@ module Spree
             Spree.api.admin_customer_group_serializer
           end
 
-          def scope
-            super.for_store(current_store)
-          end
-
           def permitted_params
             params.permit(*model_additional_permitted_attributes, :name, :description, customer_ids: [])
           end

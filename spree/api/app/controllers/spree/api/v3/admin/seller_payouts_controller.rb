@@ -30,11 +30,7 @@ module Spree
               reference: params[:reference].to_s.presence
             )
 
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
+            render_result(result)
           end
 
           protected
@@ -45,10 +41,6 @@ module Spree
 
           def serializer_class
             Spree.api.admin_seller_payout_serializer
-          end
-
-          def scope
-            super.for_store(current_store)
           end
 
           # Deliberately without `transfers`: the serializer wants their number,

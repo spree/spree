@@ -192,7 +192,7 @@ describe Spree::Promotion, type: :model do
         promotion.destroy
 
         expect(promotion.reload.errors).to be_present
-        expect(promotion.errors.full_messages).to eq [Spree.t('promotion_already_used')]
+        expect(promotion.errors.full_messages).to eq [I18n.t('spree.promotion_already_used')]
       end
     end
   end
@@ -1154,6 +1154,18 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       expect(promotion.actions.size).to eq(1)
+    end
+
+    it 'reports an invalid action on the new promotion it was assigned to' do
+      promotion = build(:promotion)
+      promotion.actions = [{
+        type: 'create_adjustment',
+        calculator: { type: 'tiered_percent', preferences: { tiers: [{ threshold: '100', value: '150' }] } }
+      }]
+
+      expect(promotion.save).to be(false)
+      expect(promotion.errors[:base].join).to include('between 0% and 100%')
+      expect(promotion).not_to be_persisted
     end
   end
 end

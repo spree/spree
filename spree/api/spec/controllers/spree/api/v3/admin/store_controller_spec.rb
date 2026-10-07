@@ -300,6 +300,26 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with email branding params' do
+      let(:params) { { preferred_email_accent_color: '#FF5500', preferred_email_font: 'georgia' } }
+
+      it 'saves the colors and font customer emails use' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response).to include('preferred_email_accent_color' => '#FF5500', 'preferred_email_font' => 'georgia')
+      end
+
+      context 'with a value that is not a color' do
+        let(:params) { { preferred_email_accent_color: 'red' } }
+
+        it 'refuses it' do
+          subject
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(json_response['error']['details']).to have_key('preferred_email_accent_color')
+        end
+      end
+    end
+
     context 'with an invalid mail_from_address' do
       let(:params) { { mail_from_address: 'not-an-email' } }
 

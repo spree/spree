@@ -44,7 +44,6 @@ module Spree
       publishable? ? token : @plaintext_token
     end
 
-    belongs_to :store, class_name: 'Spree::Store'
     # Optional single-channel binding for publishable keys. A bound key
     # server-assigns the request's channel (see Api::V3::ChannelResolution),
     # making channel identity unforgeable instead of client-asserted via the
@@ -162,23 +161,23 @@ module Spree
       return if invalid.empty?
 
       errors.add(:scopes, :unknown_scopes, scopes: invalid.join(', '),
-                 message: Spree.t('errors.messages.unknown_scopes', scopes: invalid.join(', ')))
+                 message: I18n.t('spree.errors.messages.unknown_scopes', scopes: invalid.join(', ')))
     end
 
     def scopes_immutable
-      errors.add(:scopes, :api_key_scopes_immutable, message: Spree.t(:api_key_scopes_immutable))
+      errors.add(:scopes, :api_key_scopes_immutable, message: I18n.t('spree.api_key_scopes_immutable'))
     end
 
     def channel_binding_valid
       if secret?
-        errors.add(:channel, :api_key_channel_publishable_only, message: Spree.t(:api_key_channel_publishable_only))
+        errors.add(:channel, :api_key_channel_publishable_only, message: I18n.t('spree.api_key_channel_publishable_only'))
       elsif channel && channel.store_id != store_id
-        errors.add(:channel, :api_key_channel_must_belong_to_store, message: Spree.t(:api_key_channel_must_belong_to_store))
+        errors.add(:channel, :api_key_channel_must_belong_to_store, message: I18n.t('spree.api_key_channel_must_belong_to_store'))
       end
     end
 
     def channel_immutable
-      errors.add(:channel, :api_key_channel_immutable, message: Spree.t(:api_key_channel_immutable))
+      errors.add(:channel, :api_key_channel_immutable, message: I18n.t('spree.api_key_channel_immutable'))
     end
 
     # Generates the token on creation. For publishable keys, stores the raw token

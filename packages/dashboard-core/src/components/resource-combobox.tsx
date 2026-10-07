@@ -105,7 +105,10 @@ export function ResourceCombobox<T extends ComboboxOption>({
   const { data: searchData } = useQuery({
     queryKey: [queryKey, tenantId, 'search', trimmedQuery],
     queryFn: () => search(trimmedQuery),
-    staleTime: 30_000,
+    // The cache key is the picker's own, not the resource's, so a mutation
+    // elsewhere (a customer created on another page) never invalidates it.
+    // Every search refetches; cached rows for a repeated term still paint first.
+    staleTime: 0,
   })
 
   // Hydrate the currently selected ID into a record so the trigger shows

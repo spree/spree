@@ -19,9 +19,7 @@ module Spree
           batch.expires_at&.iso8601
         end
 
-        attribute :created_by_id do |batch|
-          batch.created_by&.prefixed_id
-        end
+        prefixed_id_attributes :created_by
       end
     end
   end

@@ -118,6 +118,29 @@ test.describe('companies', () => {
     await expect(members.getByText(email)).toHaveCount(0, { timeout: 15_000 })
   })
 
+  test('requires a state when saving a company address for the United States', async ({ page }) => {
+    const creds = await login(page)
+    await createCompany(page, creds.store_id, `E2E Austin ${Date.now()}`)
+
+    const addressBook = card(page, /^address book/i)
+    await addressBook.getByRole('button', { name: /add address/i }).click()
+    await expect(page.getByRole('heading', { name: /^new address$/i })).toBeVisible()
+    await fillAddressForm(page, {
+      address1: '1 Test Street',
+      city: 'Austin',
+      postalCode: '78701',
+    })
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
+    await expect(page.getByText(/state \/ province (is required|can't be blank)/i)).toBeVisible({
+      timeout: 15_000,
+    })
+    await expect(addressBook.getByText('1 Test Street')).toHaveCount(0)
+  })
+
   test('adds an address to the address book', async ({ page }) => {
     const creds = await login(page)
     await createCompany(page, creds.store_id, `E2E Depots ${Date.now()}`)

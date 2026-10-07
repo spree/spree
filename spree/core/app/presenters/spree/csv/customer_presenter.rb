@@ -35,7 +35,7 @@ module Spree
           customer.first_name,
           customer.last_name,
           customer.email,
-          customer.accepts_email_marketing ? Spree.t(:say_yes) : Spree.t(:say_no),
+          customer.accepts_email_marketing ? I18n.t('spree.say_yes') : I18n.t('spree.say_no'),
           customer.address&.company,
           customer.address&.address1,
           customer.address&.address2,

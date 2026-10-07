@@ -80,7 +80,7 @@ export function SellerSwitcher() {
     return (
       <SidebarMenu>
         <SidebarMenuItem className="flex h-rail-header-height items-center">
-          <div className="flex w-full items-center gap-2 p-1.5">{header}</div>
+          <div className="flex w-full items-center gap-2  ">{header}</div>
         </SidebarMenuItem>
       </SidebarMenu>
     )

@@ -38,7 +38,7 @@ module Spree
             unless @resource.draft?
               return render_error(
                 code: 'invalid_status',
-                message: Spree.t('stock_transfer.errors.only_draft_can_be_deleted'),
+                message: I18n.t('spree.stock_transfer.errors.only_draft_can_be_deleted'),
                 status: :unprocessable_content
               )
             end

@@ -207,6 +207,22 @@ describe('the summary banner', () => {
   })
 })
 
+describe('field aliases', () => {
+  it('maps a server attribute onto the form field the input is bound to', () => {
+    const setError = vi.fn()
+    mapSpreeErrorsToForm(
+      spreeError({ state: [{ code: 'blank', message: "can't be blank" }] }),
+      setError,
+      { fieldAliases: { state: 'state_code' } },
+    )
+
+    expect(setError).toHaveBeenCalledWith('state_code', {
+      type: 'server',
+      message: 'Required',
+    })
+  })
+})
+
 describe('the banner and the field agree', () => {
   it('uses a per-attribute key in both, even for a message the model worded', () => {
     // The banner used to bail on any `specific` entry while the field below it

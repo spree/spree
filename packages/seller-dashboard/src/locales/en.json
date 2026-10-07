@@ -155,10 +155,14 @@
             "resellable": "Resellable",
             "actions": {
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "complete": "Complete return"
             },
             "refund_title": "Refund return",
+            "complete_title": "Complete return",
+            "nothing_owed": "Nothing is owed on this return, so no money goes back. Completing it closes the return.",
             "refund_amount": "Amount",
+            "refund_includes_tax": "The full amount includes {{tax}} of tax. A smaller amount gives back tax in the same proportion.",
             "refund_method": "Refund to",
             "refund_methods": {
               "original_payment": "Original payment",
@@ -516,6 +520,7 @@
         "title": "Exchanges",
         "receive": "Receive",
         "fulfill": "Send replacement",
+        "balance_due_confirm": "The replacement costs more than what came back. Sending it adds the difference to the order as a balance due. Nothing is charged automatically.",
         "price_difference": "Price difference: {{amount}}",
         "cancel_title": "Cancel this exchange?",
         "cancel_message": "The customer is told it will not go ahead."
@@ -531,6 +536,8 @@
         "receive": "Receive",
         "refund": "Refund",
         "refund_total": "Refund total: {{amount}}",
+        "refunded": "Refunded: {{amount}}",
+        "refunded_of": "Refunded: {{amount}} of {{total}}",
         "title": "Returns"
       },
       "statuses": {

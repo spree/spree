@@ -36,6 +36,8 @@ module Spree
     acts_as_paranoid
 
     publishes_lifecycle_events
+    publishes_events :canceled, :draft, :partially_received, :over_received, :ready_to_ship,
+                     :received, :shipped
 
     has_status :draft, :ready_to_ship, :in_transit, :partially_received, :received, :over_received, :canceled,
                default: :draft
@@ -97,7 +99,7 @@ module Spree
       return if source_location_id.blank? || destination_location_id.blank?
       return if source_location_id != destination_location_id
 
-      errors.add(:source_location, :same_location, message: Spree.t('stock_transfer.errors.same_location'))
+      errors.add(:source_location, :same_location, message: I18n.t('spree.stock_transfer.errors.same_location'))
     end
 
     # A transfer moves a merchant's own stock between their own warehouses. Two
@@ -108,7 +110,7 @@ module Spree
       return if source_location.store_id == destination_location.store_id
 
       errors.add(:destination_location, :must_belong_to_same_store,
-                 message: Spree.t('stock_transfer.errors.locations_in_different_stores'))
+                 message: I18n.t('spree.stock_transfer.errors.locations_in_different_stores'))
     end
   end
 end

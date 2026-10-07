@@ -1,0 +1,17 @@
+{%- comment -%}
+  A headed list of purchased lines, with the purchase's totals unless the
+  lines are only part of it (one parcel's items, say).
+  Arguments: heading, purchase, items, totals.
+{%- endcomment -%}
+<mj-section padding="48px 0 0">
+  <mj-column>
+    <mj-text mj-class="section-heading" padding="0 0 16px">{{ heading }}</mj-text>
+    {%- if purchase.po_number != blank -%}
+      <mj-text mj-class="body" padding="0 0 16px">{{ 'order_mailer.po_number' | t: number: purchase.po_number }}</mj-text>
+    {%- endif -%}
+    {% render 'spree/shared/line_item' for items as item %}
+    {%- if totals -%}
+      {% render 'spree/shared/purchase_totals', purchase: purchase %}
+    {%- endif -%}
+  </mj-column>
+</mj-section>

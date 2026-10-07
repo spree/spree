@@ -29,12 +29,12 @@ module Spree
 
     # @return [String] localized display name for the rule kind, used by admin pickers
     def self.human_name
-      Spree.t("delivery_method_rule_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.delivery_method_rule_types.#{api_type}.name", default: api_type.titleize)
     end
 
     # @return [String] localized description for the rule kind
     def self.human_description
-      Spree.t("delivery_method_rule_types.#{api_type}.description", default: '')
+      I18n.t("spree.delivery_method_rule_types.#{api_type}.description", default: '')
     end
 
     # @param package [Spree::Stock::Package]
@@ -49,7 +49,7 @@ module Spree
       return if type.blank?
       return if Spree.delivery_method_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_delivery_method_rule, message: Spree.t(:invalid_delivery_method_rule, scope: [:errors, :messages], default: 'is not a registered delivery method rule'))
+      errors.add(:type, :invalid_delivery_method_rule, message: I18n.t('spree.errors.messages.invalid_delivery_method_rule'))
     end
   end
 end

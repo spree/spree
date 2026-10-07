@@ -26,6 +26,7 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
+    publishes_events :canceled, :draft, :ordered, :partially_received, :over_received, :received
 
     has_status :draft, :ordered, :partially_received, :received, :over_received, :canceled,
                default: :draft

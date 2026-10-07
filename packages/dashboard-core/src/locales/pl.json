@@ -1418,7 +1418,7 @@
       "create_description": "Dodaj magazyn, sklep lub punkt odbioru, z którego będą realizowane zamówienia.",
       "create_label": "Utwórz lokalizację magazynową",
       "delete_confirm": {
-        "message": "{{name}} zostanie usunięta. Produkty na stanie w tej lokalizacji nie zostaną usunięte.",
+        "message": "{{name}} zostanie usunięta. Poziomy zapasów w tej lokalizacji również zostaną usunięte.",
         "title": "Usunąć lokalizację magazynową?"
       },
       "edit_description": "Zaktualizuj nazwę, adres, odbiór lub zasady dotyczące zapasów.",
@@ -1597,6 +1597,12 @@
         "slug_placeholder": "adres-url-produktu"
       },
       "tax_category_placeholder": "Wybierz kategorię podatkową",
+      "tax": {
+        "apply_to_variants_help": "Ta kategoria dotyczy każdego wariantu bez własnej kategorii podatkowej. Po zapisaniu te warianty korzystają z tego ustawienia.",
+        "variant_overrides_heading": "Warianty z własną kategorią podatkową",
+        "variant_overrides_description": "Te warianty zachowują swoją kategorię, dopóki nie usuniesz wyjątku. Pozostałe warianty stosują kategorię produktu powyżej.",
+        "clear_variant_override": "Użyj kategorii produktu"
+      },
       "transfers": {
         "create_description": "Przenieś zapasy między lokalizacjami lub przyjmij nowy towar od zewnętrznego dostawcy.",
         "delete_confirm": {

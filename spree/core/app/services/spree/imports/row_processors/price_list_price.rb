@@ -22,7 +22,7 @@ module Spree
         #   the product's update either way
         def process!
           price_list = cached_lookup(:price_list_import_list) { import.price_list }
-          raise ArgumentError, Spree.t(:price_list_import_no_price_list) if price_list.nil?
+          raise ArgumentError, I18n.t('spree.price_list_import_no_price_list') if price_list.nil?
 
           variant = find_variant
           currency = currency_for(attributes['currency'])
@@ -62,15 +62,15 @@ module Spree
         # group is one SKU's rows and every rung would otherwise repeat the join.
         def find_variant
           sku = attributes['sku'].to_s.strip
-          raise ArgumentError, Spree.t(:price_list_import_sku_required) if sku.blank?
+          raise ArgumentError, I18n.t('spree.price_list_import_sku_required') if sku.blank?
 
           variants = cached_lookup(:price_list_import_variant, sku.downcase) do
             # Case-insensitive, as the product import matches SKUs and as the
             # uniqueness validation compares them.
             store.variants.where(Spree::Variant.arel_table[:sku].lower.eq(sku.downcase)).limit(2).to_a
           end
-          raise ArgumentError, Spree.t(:price_list_import_unknown_sku, sku: sku) if variants.empty?
-          raise ArgumentError, Spree.t(:price_list_import_ambiguous_sku, sku: sku) if variants.many?
+          raise ArgumentError, I18n.t('spree.price_list_import_unknown_sku', sku: sku) if variants.empty?
+          raise ArgumentError, I18n.t('spree.price_list_import_ambiguous_sku', sku: sku) if variants.many?
 
           variants.first
         end
@@ -82,7 +82,7 @@ module Spree
           currency = value.to_s.strip.upcase.presence || store.default_currency
           return currency if supported_currencies.include?(currency)
 
-          raise ArgumentError, Spree.t(:price_list_import_unsupported_currency, currency: currency)
+          raise ArgumentError, I18n.t('spree.price_list_import_unsupported_currency', currency: currency)
         end
 
         def supported_currencies
@@ -99,7 +99,7 @@ module Spree
         def amount_for(value, column)
           text = value.to_s.strip
           return nil if text.blank?
-          raise ArgumentError, Spree.t(:price_list_import_invalid_amount, column: column, value: text) unless text.match?(AMOUNT_FORMAT)
+          raise ArgumentError, I18n.t('spree.price_list_import_invalid_amount', column: column, value: text) unless text.match?(AMOUNT_FORMAT)
 
           BigDecimal(text)
         end
@@ -151,17 +151,17 @@ module Spree
           value = {} unless value.is_a?(Hash)
 
           if value[:over_cap].present?
-            Spree.t(:price_list_import_too_many_breaks, count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
+            I18n.t('spree.price_list_import_too_many_breaks', count: Spree::Price::MAXIMUM_BREAKS_PER_VARIANT)
           elsif value[:invalid_quantities].present?
-            Spree.t(:price_list_import_invalid_quantity, value: attributes['min_quantity'])
+            I18n.t('spree.price_list_import_invalid_quantity', value: attributes['min_quantity'])
           elsif (rising = value[:rising_ladders].presence)
             # Named rung and floor, like the sibling branches: a file is written
             # one rung per row, so the merchant needs to know which one and what
             # it had to beat.
-            Spree.t(:price_list_import_price_rises_with_quantity,
+            I18n.t('spree.price_list_import_price_rises_with_quantity',
                     quantity: rising.first[:min_quantity], floor: rising.first[:floor])
           else
-            result.error.to_s.presence || Spree.t(:price_list_import_failed)
+            result.error.to_s.presence || I18n.t('spree.price_list_import_failed')
           end
         end
       end

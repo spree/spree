@@ -229,4 +229,80 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(Spree::Exchanges::Cancel.call(exchange: received)).to be_failure
     end
   end
+
+  # V-3725: the swap credits the tax paid on what came back and taxes the
+  # replacement as a new sale, so the difference that settles includes tax.
+  describe 'settling the tax on both halves of the swap' do
+    let(:order) { create(:shipped_order, store: store, line_items_count: 1, line_items_price: 25) }
+    let(:line_item) { order.line_items.first }
+
+    before do
+      create(:tax_line, order: order, line_item: line_item, amount: 2.5, rate: 0.1, label: 'Sales tax 10%')
+      order.recalculate_totals!
+      create(:tax_rate, country_code: order.tax_address.country.iso, amount: 0.1,
+                        tax_category: replacement.tax_category, included_in_price: false)
+      order.payments.completed.first.update_column(:amount, 500)
+      replacement.stock_levels.first&.set_count_on_hand(10)
+      allow_any_instance_of(Spree::Refund).to receive(:perform!).and_return(true)
+    end
+
+    def received_exchange_at(price)
+      replacement.prices.first.update!(amount: price)
+      exchange = create_exchange.value
+      Spree::Exchanges::Approve.call(exchange: exchange)
+      Spree::Exchanges::Receive.call(exchange: exchange)
+      exchange.reload
+    end
+
+    it 'prices both halves with their tax' do
+      line = received_exchange_at(20).exchange_line_items.first
+
+      expect(line.original_price).to eq(27.5)
+      expect(line.new_variant_price).to eq(22)
+      expect(line.price_difference).to eq(-5.5)
+    end
+
+    it 'refunds a cheaper replacement’s difference with its tax' do
+      exchange = received_exchange_at(20)
+
+      Spree::Exchanges::Fulfill.call(exchange: exchange, refund_method: 'original_payment')
+
+      expect(Spree::Refund.find_by(originator: exchange)).to have_attributes(amount: 5.5, tax_amount: 0.5)
+    end
+
+    it 'puts what a dearer replacement costs on the order to collect' do
+      exchange = received_exchange_at(30)
+
+      expect { Spree::Exchanges::Fulfill.call(exchange: exchange) }.
+        to change { order.reload.total }.by(5.5)
+
+      fee = order.fees.sole
+      expect(fee).to have_attributes(kind: 'exchange', amount: 5.5, label: "Exchange #{exchange.number}")
+      expect(Spree::Refund.where(originator: exchange)).to be_empty
+      expect(Spree::StoreCredit.where(originator: exchange)).to be_empty
+    end
+
+    # The replacement keeps the deal the customer had on what it replaces.
+    it 'swaps a discounted item for one at the same price at no cost' do
+      order.discounts.create!(line_item: line_item, label: 'Coupon', amount: -2.5, kind: 'manual', value: 2.5, value_type: 'flat')
+      line_item.update_columns(taxable_adjustment_total: -2.5)
+      line_item.tax_lines.sole.update_columns(amount: 2.25)
+      exchange = received_exchange_at(25)
+
+      Spree::Exchanges::Fulfill.call(exchange: exchange)
+
+      expect(exchange.exchange_line_items.first.price_difference).to eq(0)
+      expect(order.fees.reload).to be_empty
+      expect(Spree::StoreCredit.where(originator: exchange)).to be_empty
+    end
+
+    it 'takes both halves’ tax back when the exchange is canceled' do
+      replacement.prices.first.update!(amount: 20)
+      exchange = create_exchange.value
+
+      Spree::Exchanges::Cancel.call(exchange: exchange)
+
+      expect(exchange.exchange_line_items.first.tax_lines.reload).to be_empty
+    end
+  end
 end

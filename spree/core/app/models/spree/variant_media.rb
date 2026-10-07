@@ -35,7 +35,7 @@ module Spree
       return if asset.product&.id == variant.product_id
 
       errors.add(:asset, :variant_product_mismatch,
-                 message: Spree.t('errors.messages.variant_product_mismatch'))
+                 message: I18n.t('spree.errors.messages.variant_product_mismatch'))
     end
 
     def refresh_variant_thumbnail

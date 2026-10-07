@@ -1,5 +1,3 @@
-require_dependency 'spree/payment/gateway_options'
-
 module Spree
   class Payment < Spree.base_class
     # Gateway mechanics shared by the payments workflows and the payment
@@ -144,11 +142,11 @@ module Spree
         text = if error.is_a? Spree::PaymentResponse
                  error.params['message'] || error.params['response_reason_text'] || error.message
                elsif error.is_a? Spree::PaymentConnectionError
-                 Spree.t(:unable_to_connect_to_gateway)
+                 I18n.t('spree.unable_to_connect_to_gateway')
                else
                  error.to_s
                end
-        Rails.logger.error(Spree.t(:gateway_error))
+        Rails.logger.error(I18n.t('spree.gateway_error'))
         Rails.logger.error("  #{error.to_yaml}")
         raise Core::GatewayError, text
       end

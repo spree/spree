@@ -60,6 +60,27 @@ module Spree
       end
     end
 
+    # A buyer who switched method, or checked out in a second tab, leaves a
+    # session behind that could still be paid after placement (V-3726).
+    describe 'payment sessions left unused' do
+      let(:draft) { create(:order_ready_to_ship, store: store) }
+      let!(:unused_session) { create(:bogus_payment_session, order: draft) }
+
+      before { draft.update_columns(status: 'draft', completed_at: nil) }
+
+      it 'queues their cancellation' do
+        expect { described_class.call(order: draft, payment_pending: true) }.
+          to have_enqueued_job(Spree::Payments::CancelUnusedSessionsJob).with(draft.id)
+      end
+
+      it 'queues nothing when every session settled a payment' do
+        draft.payments.first.update_columns(response_code: unused_session.external_id)
+
+        expect { described_class.call(order: draft, payment_pending: true) }.
+          not_to have_enqueued_job(Spree::Payments::CancelUnusedSessionsJob)
+      end
+    end
+
     it 'is idempotent — an already placed order halts successfully with no side effects' do
       order.update_columns(completed_at: Time.current, status: 'placed')
 
@@ -100,7 +121,7 @@ module Spree
     end
 
     it 'leaves the fulfillment unfulfilled until someone hands it over' do
-      Spree::Shipment.create(order: order, stock_location: create(:stock_location))
+      Spree::Fulfillment.create(order: order, stock_location: create(:stock_location))
       order.shipments.reload
 
       allow(order).to receive_messages(paid?: true, complete?: true)
@@ -112,7 +133,7 @@ module Spree
 
     it 'does not sell inventory units if track_inventory_levels is false' do
       stub_store_preferences(track_inventory_levels: false)
-      expect(Spree::InventoryUnit).not_to receive(:sell_units)
+      expect(Spree::FulfillmentItem).not_to receive(:sell_units)
       described_class.call(order: order)
     end
 
@@ -148,8 +169,8 @@ module Spree
       let(:order) { create(:order_with_line_items, store: store) }
 
       it 'publishes order.placed with the deprecated order.completed alias' do
-        expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer)).at_least(:once)
-        expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer), { deprecated_alias_of: 'order.placed' }).at_least(:once)
+        expect(order).to receive(:publish_event).with('order.placed', kind_of(Hash), hash_including(:notify_customer)).at_least(:once)
+        expect(order).to receive(:publish_event).with('order.completed', kind_of(Hash), hash_including(:notify_customer, deprecated_alias_of: 'order.placed')).at_least(:once)
         allow(order).to receive(:publish_event).with(anything)
         allow(order).to receive(:publish_event).with(anything, anything)
 
@@ -231,27 +252,27 @@ module Spree
       # completing a draft quietly must not be answered with an email.
       it 'carries a silent completion onto the group event', :events do
         draft = draft_for(seller, other_seller)
-        payloads = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          payloads << payload if name == 'order_group.completed'
+        metadatas = []
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          metadatas << metadata if name == 'order_group.completed'
         end
 
         described_class.call(order: draft, notify_customer: false)
 
-        expect(payloads.size).to eq(1)
-        expect(payloads.first[:notify_customer]).to be false
+        expect(metadatas.size).to eq(1)
+        expect(metadatas.first[:notify_customer]).to be false
       end
 
       it 'leaves an ordinary division free to confirm the purchase', :events do
         draft = draft_for(seller, other_seller)
-        payloads = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          payloads << payload if name == 'order_group.completed'
+        metadatas = []
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          metadatas << metadata if name == 'order_group.completed'
         end
 
         described_class.call(order: draft)
 
-        expect(payloads.first[:notify_customer]).to be_nil
+        expect(metadatas.first[:notify_customer]).to be_nil
       end
 
       it 'stamps a single seller onto the order' do

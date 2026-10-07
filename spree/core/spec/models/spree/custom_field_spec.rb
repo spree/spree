@@ -49,12 +49,12 @@ RSpec.describe Spree::CustomField, type: :model do
 
       it 'returns Yes for true values' do
         custom_field = Spree::CustomFields::Boolean.new(custom_field_definition: custom_field_definition, value: 'true')
-        expect(custom_field.csv_value).to eq(Spree.t(:say_yes))
+        expect(custom_field.csv_value).to eq(I18n.t('spree.say_yes'))
       end
 
       it 'returns No for false values' do
         custom_field = Spree::CustomFields::Boolean.new(custom_field_definition: custom_field_definition, value: 'false')
-        expect(custom_field.csv_value).to eq(Spree.t(:say_no))
+        expect(custom_field.csv_value).to eq(I18n.t('spree.say_no'))
       end
     end
 

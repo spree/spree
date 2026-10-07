@@ -49,7 +49,7 @@ module Spree
     describe 'moving all unfulfilled items (items omitted)' do
       it 'creates a fulfillment holding every unshipped unit and destroys the drained source' do
         expect(execute.success?).to eq(true)
-        expect(fulfillment).to be_kind_of(Spree::Shipment)
+        expect(fulfillment).to be_kind_of(Spree::Fulfillment)
         expect(order.reload.shipments).to contain_exactly(fulfillment)
         expect(fulfillment.inventory_units.sum(:quantity)).to eq(line_items.sum(&:quantity))
       end
@@ -96,6 +96,13 @@ module Spree
         expect(fulfillment.cost).to eq(fulfillment.selected_shipping_rate.cost)
       end
 
+      it 'leaves the cost of the shipment it took units from' do
+        source_shipment.update_column(:cost, 3)
+
+        expect(execute.success?).to eq(true)
+        expect(source_shipment.reload.cost).to eq(3)
+      end
+
       context 'with a quantity larger than a single unit' do
         let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
 
@@ -108,6 +115,73 @@ module Spree
           expect(fulfillment.inventory_units.sum(:quantity)).to eq(2)
           expect(source_shipment.reload.inventory_units.sum(:quantity)).to eq(1)
         end
+      end
+    end
+
+    # A replacement is filed under the line it replaces, so it sits among
+    # that line's units. The line's own unit is backordered here, which sorts
+    # the in-stock replacement ahead of it.
+    describe 'with an exchange replacement on the line' do
+      let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 1) }
+      let(:line_item) { line_items.first }
+      let(:params) { { order: order, stock_location: stock_location, items: [{ line_item: line_item, quantity: 1 }] } }
+      let!(:replacement_fulfillment) do
+        order.fulfillments.create!(stock_location: stock_location, cost: 0).tap do |parcel|
+          parcel.add_delivery_method(source_shipment.delivery_method, true)
+          parcel.fulfillment_items.create!(
+            order: order, line_item: line_item, variant: create(:variant, product: line_item.product),
+            quantity: 1, status: 'on_hand', replacement: true
+          )
+        end
+      end
+
+      before { line_item.fulfillment_items.where(replacement: false).update_all(status: 'backordered') }
+
+      it "fulfils the line's own unit and leaves the replacement as it was" do
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(
+          have_attributes(variant_id: line_item.variant_id, quantity: 1, replacement: false)
+        )
+        expect(replacement_fulfillment.reload.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+        expect(replacement_fulfillment.cost).to eq(0)
+      end
+
+      it 'does not count the replacement as a unit it can fulfil' do
+        params[:items] = [{ line_item: line_item, quantity: 2 }]
+
+        expect(execute.success?).to eq(false)
+        expect(execute.error.to_s).to eq(
+          I18n.t('spree.fulfillments.errors.insufficient_quantity', item: line_item.prefixed_id, requested: 2, available: 1)
+        )
+      end
+
+      it 'leaves the replacement where it is when items are omitted' do
+        params.delete(:items)
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(replacement: false))
+        expect(replacement_fulfillment.reload.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+      end
+
+      it "moves the replacement out of its own fulfillment when that one is named" do
+        params[:source_fulfillment] = replacement_fulfillment
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(replacement: true))
+        expect(source_shipment.reload.fulfillment_items.sum(:quantity)).to eq(1)
+      end
+
+      # The canceled parcel can never ship, so naming it is the only way to
+      # send the replacement again.
+      it 're-sends a canceled replacement fulfillment, promising its stock again' do
+        replacement_variant = replacement_fulfillment.fulfillment_items.first.variant
+        Spree.fulfillment_cancel_workflow.call(fulfillment: replacement_fulfillment)
+        params.merge!(source_fulfillment: replacement_fulfillment.reload, items: nil)
+
+        expect(replacement_fulfillment).to be_canceled
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(fulfillment.fulfillment_items).to contain_exactly(have_attributes(variant_id: replacement_variant.id, replacement: true))
+        expect(fulfillment.allocated_quantities[replacement_variant.id].to_i).to eq(1)
       end
     end
 
@@ -148,7 +222,7 @@ module Spree
     end
 
     describe 'delivery method' do
-      let(:delivery_method) { create(:shipping_method) }
+      let(:delivery_method) { create(:delivery_method) }
       let(:params) { { order: order, stock_location: stock_location, delivery_method: delivery_method } }
 
       it 'keeps the delivery method selected through the rate refresh' do
@@ -165,7 +239,7 @@ module Spree
       end
 
       it 'inherits the first non-nil method when draining sources with different carriers' do
-        other_method = create(:shipping_method)
+        other_method = create(:delivery_method)
         second_source = order.shipments.create!(stock_location: stock_location)
         second_source.add_shipping_method(other_method, true)
         line_items.last.inventory_units.update_all(shipment_id: second_source.id)
@@ -203,7 +277,7 @@ module Spree
       end
 
       it 'prices the carrier rate at the given cost' do
-        params[:delivery_method] = create(:shipping_method)
+        params[:delivery_method] = create(:delivery_method)
 
         expect(execute.success?).to eq(true)
         expect(fulfillment.selected_shipping_rate.cost).to eq(BigDecimal('7.42'))
@@ -266,21 +340,21 @@ module Spree
         params[:cost] = -5
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       it 'rejects a non-numeric cost' do
         params[:cost] = 'free'
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
 
       it 'rejects mixed alphanumeric garbage instead of stripping it' do
         params[:cost] = '12 boxes'
 
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_cost'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_cost'))
       end
     end
 
@@ -296,7 +370,7 @@ module Spree
       end
 
       it 'freezes the inherited cost and carrier, keeping the order total unchanged' do
-        delivery_method = create(:shipping_method)
+        delivery_method = create(:delivery_method)
         params[:delivery_method] = delivery_method
 
         # Settle factory-persisted totals before measuring invariance.
@@ -342,19 +416,19 @@ module Spree
         result = subject.call(order: incomplete, stock_location: stock_location)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
       end
 
       it 'rejects a canceled order' do
         order.update_columns(status: 'canceled', canceled_at: Time.current)
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.order_canceled'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_canceled'))
       end
 
       it 'rejects an unknown status' do
         params[:status] = 'ready'
         expect(execute.success?).to eq(false)
-        expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.invalid_status'))
+        expect(execute.error.to_s).to eq(I18n.t('spree.fulfillments.errors.invalid_status'))
       end
 
       it 'rejects a quantity above the unfulfilled quantity' do
@@ -377,7 +451,7 @@ module Spree
         result = subject.call(order: shipped, stock_location: shipped.shipments.first.stock_location)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.no_items_to_fulfill'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.no_items_to_fulfill'))
       end
     end
 

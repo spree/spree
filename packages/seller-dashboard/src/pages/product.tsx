@@ -1,6 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   CategorizationCard,
+  extensionFormValues,
+  extensionSubmitValues,
   GeneralCard,
   InventoryCard,
   MediaCard,
@@ -12,6 +14,7 @@ import {
   type ProductFormValues,
   productFormSchema,
   productToFormValues,
+  Slot,
   VariantsCard,
   variantToWirePayload,
 } from '@spree/dashboard-core'
@@ -88,7 +91,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     // The operator's defaults, which seed one placeholder variant — without
     // it the Prices and Inventory cards render no row, so a seller could not
     // price or stock a new listing at all.
-    defaultValues: newProductFormDefaults(),
+    defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('seller.product', null) },
   })
 
   // Reset once the record arrives, so the inputs show what was last saved
@@ -102,12 +105,22 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
     if (!product) return
     if (form.formState.isDirty) return
 
-    form.reset(productToFormValues(product as PanelProduct, product.media))
+    form.reset({
+      ...productToFormValues(product as PanelProduct, product.media),
+      ...extensionFormValues('seller.product', product),
+    })
   }, [product, form])
 
   const save = useMutation({
-    mutationFn: (values: ProductFormValues) => {
+    mutationFn: ({
+      values,
+      extensionValues,
+    }: {
+      values: ProductFormValues
+      extensionValues: Record<string, unknown>
+    }) => {
       const payload: ProductParams = {
+        ...extensionValues,
         name: values.name,
         description: values.description,
         slug: values.slug || undefined,
@@ -165,7 +178,12 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
 
   async function onSubmit(values: ProductFormValues) {
     try {
-      await save.mutateAsync(values)
+      // Raw form state, not `values`: the Zod parse strips keys the schema
+      // doesn't know, which is every field a slot widget registered.
+      await save.mutateAsync({
+        values,
+        extensionValues: extensionSubmitValues('seller.product', form),
+      })
     } catch (err) {
       if (!mapSpreeErrorsToForm(err, form.setError)) {
         toastManager.add({
@@ -241,6 +259,7 @@ export function ProductPage({ mode }: { mode: 'new' | 'edit' }) {
                 />
               )}
               <CategorizationCard form={form} />
+              <Slot name="seller.product.form_sidebar" context={{ product, mode }} />
             </>
           }
         />

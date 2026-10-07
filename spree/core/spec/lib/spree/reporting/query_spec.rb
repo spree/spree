@@ -190,6 +190,22 @@ RSpec.describe Spree::Reporting::Query do
       expect(after_refund.totals[:net_sales][:value]).to eq((before_refund.totals[:net_sales][:value] - 12).round(2))
     end
 
+    # A return gives back the tax with the goods. Netted from net sales whole,
+    # the tax would come off a figure that never contained it.
+    it 'nets the goods a refund gave back from net sales and its tax from taxes' do
+      order.line_items.each { |line| line.update_columns(pre_tax_amount: line.price * line.quantity) }
+      metrics = %w[net_sales taxes returns total_sales]
+      before_refund = run(metrics: metrics).totals.transform_values { |total| total[:value] }
+
+      create(:refund, amount: 11, tax_amount: 1, payment: create(:payment, order: order, amount: order.total), order: order)
+
+      after_refund = run(metrics: metrics).totals.transform_values { |total| total[:value] }
+      expect(after_refund[:net_sales]).to eq((before_refund[:net_sales] - 10).round(2))
+      expect(after_refund[:taxes]).to eq((before_refund[:taxes] - 1).round(2))
+      expect(after_refund[:returns]).to eq(10.0)
+      expect(after_refund[:total_sales]).to eq((before_refund[:total_sales] - 11).round(2))
+    end
+
     it 'counts an order once however many refunds it carries' do
       payment = create(:payment, order: order, amount: order.total)
       2.times { create(:refund, amount: 4, payment: payment, order: order) }

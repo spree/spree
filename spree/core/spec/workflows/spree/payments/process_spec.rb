@@ -65,7 +65,7 @@ RSpec.describe Spree::Payments::Process do
       result = described_class.call(payment: payment)
 
       expect(result).to be_failure
-      expect(result.error.value).to eq(Spree.t(:payment_processing_failed))
+      expect(result.error.value).to eq(I18n.t('spree.payment_processing_failed'))
     end
 
     it 'invalidates the payment when the card brand is not supported' do

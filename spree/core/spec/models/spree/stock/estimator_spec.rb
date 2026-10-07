@@ -5,7 +5,7 @@ module Spree
     describe Estimator, type: :model do
       subject { Estimator.new(order) }
 
-      let!(:shipping_method) { create(:shipping_method) }
+      let!(:shipping_method) { create(:delivery_method) }
       let(:package)          { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
       let(:ship_address)     { create(:ship_address) }
       let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
@@ -88,11 +88,11 @@ module Spree
 
       context '#shipping rates' do
         before do
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :supports_currency?) { |quoted| currency.blank? || quoted == currency }
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
+          allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :available?).and_return(true)
+          allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
+          allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
+          allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :supports_currency?) { |quoted| currency.blank? || quoted == currency }
+          allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
           allow(package).to receive_messages(eligible_delivery_methods: [shipping_method])
         end
@@ -154,7 +154,7 @@ module Spree
         end
 
         context 'when the calculator is not available for that order' do
-          before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
+          before { allow_any_instance_of(DeliveryMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
 
           it_behaves_like "shipping rate doesn't match"
         end
@@ -182,7 +182,7 @@ module Spree
         end
 
         it 'sorts shipping rates by cost' do
-          shipping_methods = Array.new(3) { create(:shipping_method) }
+          shipping_methods = Array.new(3) { create(:delivery_method) }
           allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
           allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
           allow(shipping_methods[2]).to receive_message_chain(:calculator, :compute).and_return(4.00)
@@ -193,7 +193,7 @@ module Spree
         end
 
         context 'general shipping methods' do
-          let(:shipping_methods) { Array.new(2) { create(:shipping_method) } }
+          let(:shipping_methods) { Array.new(2) { create(:delivery_method) } }
 
           it 'selects the most affordable shipping rate' do
             allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
@@ -215,8 +215,8 @@ module Spree
         end
 
         context 'involves backend only shipping methods' do
-          let(:backend_method) { create(:shipping_method, storefront_visible: false) }
-          let(:generic_method) { create(:shipping_method) }
+          let(:backend_method) { create(:delivery_method, storefront_visible: false) }
+          let(:generic_method) { create(:delivery_method) }
 
           before do
             allow(backend_method).to receive_message_chain(:calculator, :compute).and_return(0.00)
@@ -238,7 +238,7 @@ module Spree
           let!(:tax_rate) { create(:tax_rate, country_code: order.tax_address.country&.iso) }
 
           before do
-            Spree::ShippingMethod.all.each do |sm|
+            Spree::DeliveryMethod.all.each do |sm|
               sm.tax_category_id = tax_rate.tax_category_id
               sm.save
             end
@@ -253,7 +253,7 @@ module Spree
 
         context 'VAT price calculation' do
           let(:tax_category) { create :tax_category }
-          let!(:shipping_method) { create(:shipping_method, tax_category: tax_category) }
+          let!(:shipping_method) { create(:delivery_method, tax_category: tax_category) }
 
           # Shipping is priced including the home country's VAT.
           let(:home_country) { order.tax_address.country }
@@ -496,7 +496,7 @@ module Spree
 
           it 'says the price is coming rather than showing an amount' do
             expect(subject.delivery_rates(package).first.display_price).
-              to eq(Spree.t('delivery_rates.quoted_after_review'))
+              to eq(I18n.t('spree.delivery_rates.quoted_after_review'))
           end
         end
 
@@ -528,7 +528,7 @@ module Spree
           # rates are persisted and read back through the association, which
           # is what the storefront actually receives.
           it 'keeps the unpriced rate last when the rates are read back' do
-            fulfillment = create(:shipment)
+            fulfillment = create(:fulfillment)
             subject.delivery_rates(package).each do |rate|
               rate.update!(fulfillment: fulfillment)
             end

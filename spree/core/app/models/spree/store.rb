@@ -13,6 +13,7 @@ module Spree
     include Spree::Stores::Setup
     include Spree::Stores::Markets
     include Spree::Stores::Channels
+    include Spree::Stores::EmailBranding
     include Spree::StoreDataSources
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
@@ -45,6 +46,9 @@ module Spree
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
+    # Anonymous identifier of this installation, kept on the default store
+    # (see Spree.install_id). Written by Spree, never by the operator.
+    preference :install_id, :string, internal: true, nullable: true
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
     # Sellers are a different audience from shoppers, with their own reasons to
@@ -300,6 +304,8 @@ module Spree
     has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     has_many :webhook_endpoints, class_name: 'Spree::WebhookEndpoint', dependent: :destroy, inverse_of: :store
+    has_many :email_templates, class_name: 'Spree::EmailTemplate', dependent: :destroy, inverse_of: :store
+    has_many :email_template_drafts, class_name: 'Spree::EmailTemplateDraft', dependent: :destroy, inverse_of: :store
     has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
     has_many :channels, class_name: 'Spree::Channel', dependent: :destroy
@@ -384,6 +390,7 @@ module Spree
     before_validation :set_default_code, on: :create
     before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
+    before_save :set_install_id
     after_create :create_default_policies
     after_create :create_default_delivery_profile
 
@@ -543,6 +550,21 @@ module Spree
       allowed_origins.any? { |allowed_origin| allowed_origin.matches?(url) }
     end
 
+    # The logo emails show: the dedicated mailer logo, else the store logo.
+    #
+    # @return [ActiveStorage::Attached::One, nil] nil when neither is an image
+    def email_logo
+      logo = mailer_logo.attached? ? mailer_logo : self.logo
+      logo if logo.attached? && logo.variable?
+    end
+
+    # The address customers are told to write to: the support address, else the sender address.
+    #
+    # @return [String, nil]
+    def support_email_address
+      customer_support_email.presence || mail_from_address
+    end
+
     # Returns the states available for checkout for the store
     # @param country [Spree::Country] the country to get the states for
     # @return [Array<Spree::State>]
@@ -613,7 +635,7 @@ module Spree
       @default_stock_location ||= begin
         stock_location_scope = stock_locations.first_party.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
-          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
+          stock_location_scope.create(default: true, name: I18n.t('spree.default_stock_location_name'),
                                       country_code: default_country&.iso)
         end
       end
@@ -697,6 +719,10 @@ module Spree
     def translate_with_store_locale_fallback(key)
       locale = default_locale.presence&.to_sym || :en
       I18n.t(key, locale: locale, default: I18n.t(key, locale: :en))
+    end
+
+    def set_install_id
+      self.preferred_install_id = SecureRandom.uuid if preferred_install_id.blank?
     end
 
     def ensure_default_exists_and_is_unique

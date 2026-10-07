@@ -17,13 +17,8 @@ module Spree
           attributes :metadata, :avs_response, :cvv_response_code, :cvv_response_message,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :captured_amount do |payment|
-            payment.captured_amount.to_s
-          end
-
-          attribute :order_id do |payment|
-            payment.order&.prefixed_id
-          end
+          attributes captured_amount: :string
+          prefixed_id_attributes :order
 
           # Override inherited associations to use admin serializers
           one :payment_method, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_method') }

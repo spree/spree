@@ -1,5 +1,5 @@
+import { useDebouncedValue } from '@spree/dashboard-ui'
 import { useQueries } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { useAuth } from '../hooks/use-auth'
 import { type SearchEntry, useSearchEntries } from '../lib/search-registry'
 import { usePermissions } from '../providers/permission-provider'
@@ -65,15 +65,4 @@ export function useGlobalSearch(rawQuery: string) {
     isEnabled: enabled,
     hasResults: groups.length > 0,
   }
-}
-
-function useDebouncedValue<T>(value: T, delayMs: number): T {
-  const [debounced, setDebounced] = useState(value)
-
-  useEffect(() => {
-    const id = setTimeout(() => setDebounced(value), delayMs)
-    return () => clearTimeout(id)
-  }, [value, delayMs])
-
-  return debounced
 }

@@ -50,7 +50,7 @@ RSpec.describe Spree::Fulfillment::CustomEvents do
     end
 
     it 'does not publish order.fulfilled when other fulfillments are open' do
-      create(:shipment, order: order, state: 'unfulfilled')
+      create(:fulfillment, order: order, state: 'unfulfilled')
       order.reload
 
       Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment)

@@ -17,9 +17,9 @@ module Spree
 
         context 'with packages that can be reduced' do
           before do
-            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
-            package.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant))
-            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 2, :without_assoc, variant: heavy_variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 4, :without_assoc, variant: variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 2, :without_assoc, variant: heavy_variant))
           end
 
           it 'splits and keeps splitting until all packages are underweight' do
@@ -35,7 +35,7 @@ module Spree
           let(:variant) { build_stubbed(:base_variant, weight: 200) }
 
           before do
-            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 2, :without_assoc, variant: variant))
           end
 
           it 'handles packages that can not be reduced' do
@@ -49,11 +49,11 @@ module Spree
           let(:package1) { Package.new(packer.stock_location) }
 
           before do
-            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
-            package.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 2, :without_assoc, variant: heavy_variant))
+            package.add_multiple(build_stubbed_list(:fulfillment_item, 4, :without_assoc, variant: variant))
 
-            package1.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: variant))
-            package1.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: heavy_variant))
+            package1.add_multiple(build_stubbed_list(:fulfillment_item, 2, :without_assoc, variant: variant))
+            package1.add_multiple(build_stubbed_list(:fulfillment_item, 4, :without_assoc, variant: heavy_variant))
           end
 
           it 'splits and keeps splitting until all packages are underweight' do

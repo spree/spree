@@ -1,5 +1,7 @@
 module Spree
   class Invitation < Spree.base_class
+    publishes_events :accepted, :created, :resent
+
     has_prefix_id :inv
 
     has_secure_token
@@ -32,8 +34,6 @@ module Spree
     #
     # Scopes
     #
-    scope :pending, -> { where(status: 'pending') }
-    scope :accepted, -> { where(status: 'accepted') }
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
     #
@@ -144,7 +144,7 @@ module Spree
 
     def invitee_is_not_inviter
       if invitee == inviter
-        errors.add(:invitee, :same_as_inviter, message: Spree.t('errors.messages.same_as_inviter'))
+        errors.add(:invitee, :same_as_inviter, message: I18n.t('spree.errors.messages.same_as_inviter'))
       end
     end
 
@@ -154,7 +154,7 @@ module Spree
       return if role.blank? || resource.blank?
       return if role.resource == resource
 
-      errors.add(:role, :invitation_role_resource_mismatch, message: Spree.t(:invitation_role_resource_mismatch))
+      errors.add(:role, :invitation_role_resource_mismatch, message: I18n.t('spree.invitation_role_resource_mismatch'))
     end
 
     def invitee_already_exists
@@ -165,7 +165,7 @@ module Spree
       return if user_to_check.blank?
 
       if resource.role_users.exists?(user: user_to_check)
-        errors.add(:email, :already_a_member, message: Spree.t('errors.messages.already_a_member'))
+        errors.add(:email, :already_a_member, message: I18n.t('spree.errors.messages.already_a_member'))
       end
     end
 

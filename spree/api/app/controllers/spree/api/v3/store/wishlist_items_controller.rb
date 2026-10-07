@@ -16,10 +16,6 @@ module Spree
             authorize_storefront_write!(@parent)
           end
 
-          def parent_association
-            :wishlist_items
-          end
-
           def model_class
             Spree::WishlistItem
           end

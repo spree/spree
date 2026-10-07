@@ -2143,6 +2143,25 @@
           "label": "Standardsteuer auf Provision",
           "help": "Wird auf Ihre Provision berechnet, wenn weder der Provisionssatz noch Ihr Steueranbieter einen eigenen Satz nennt. Bei 0 belassen, wenn auf Ihre Gebühr keine Steuer anfällt.",
           "suffix": "%"
+        },
+        "preferred_email_accent_color": {
+          "label": "Akzentfarbe"
+        },
+        "preferred_email_background_color": {
+          "label": "Hintergrundfarbe"
+        },
+        "preferred_email_card_color": {
+          "label": "Kartenfarbe"
+        },
+        "preferred_email_text_color": {
+          "label": "Textfarbe"
+        },
+        "preferred_email_heading_color": {
+          "label": "Überschriftenfarbe"
+        },
+        "preferred_email_font": {
+          "label": "Schrift",
+          "help": "E-Mail-Programme, die sie nicht laden können, verwenden eine ähnliche Schrift."
         }
       },
       "store_credit": {
@@ -2423,7 +2442,7 @@
       "configure_cta": "Konfigurieren",
       "connect_cta": "Verbinden",
       "connect_description": "Geben Sie die Zugangsdaten für diesen Anbieter ein. Speichern legt sie ab; das Aktivieren prüft die Verbindung.",
-      "description": "Verbinden Sie Anbieterdienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Versand-, Steuer- und anderen Anbietern genutzt.",
+      "description": "Verbinden Sie Zahlungsanbieter und andere Dienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Checkout, Versand, Steuern und anderen Anbietern verwendet.",
       "disconnect": "Trennen",
       "disconnect_confirm": {
         "message": "{{name}} trennen? Die gespeicherten Zugangsdaten werden gelöscht und Anbieter, die sie nutzen, funktionieren nicht mehr.",
@@ -2436,18 +2455,24 @@
       },
       "groups": {
         "other": "Sonstige",
+        "payments": "Zahlungen",
         "shipping": "Versand",
         "tax": "Steuern"
       },
+      "manage_payment_methods": "Zahlungsmethoden verwalten",
       "messages": {
         "connected": "Integration verbunden",
         "disconnected": "Integration getrennt",
         "updated": "Integration aktualisiert"
       },
+      "setup_guide": "Einrichtungsanleitung",
       "status": {
         "active": "Aktiv",
         "connected_inactive": "Verbunden (inaktiv)",
         "not_connected": "Nicht verbunden"
+      },
+      "tabs": {
+        "all": "Alle"
       },
       "test": {
         "failure": "Verbindung fehlgeschlagen.",
@@ -2456,7 +2481,9 @@
         "success": "Verbindung erfolgreich.",
         "testing": "Wird getestet…"
       },
+      "test_mode": "Testmodus",
       "title": "Integrationen",
+      "toggle_label": "{{name}} ein- oder ausschalten",
       "view_cta": "Ansehen"
     },
     "invitation": {
@@ -2666,6 +2693,7 @@
           "discounts_empty": "Noch keine Rabatte für diese Bestellung.",
           "fee_kind_cod": "Nachnahme",
           "fee_kind_duty": "Zoll",
+          "fee_kind_exchange": "Umtausch",
           "fee_kind_gift_wrap": "Geschenkverpackung",
           "fee_kind_handling": "Bearbeitung",
           "fee_kind_payment": "Zahlungsgebühr",
@@ -2827,7 +2855,15 @@
           "move_and_requote": "Verschieben und neu berechnen",
           "no_rates": "Für diese Sendung liegen keine Versandarten vor.",
           "out_of_stock": "Nicht auf Lager",
+          "packing_slip_discount": "Rabatt",
+          "packing_slip_footer": "Vielen Dank für Ihre Bestellung.",
+          "packing_slip_fulfillment": "Sendung #{{number}}",
+          "packing_slip_order": "Bestellung #{{number}}",
+          "packing_slip_shipping": "Versand",
+          "packing_slip_subtotal": "Zwischensumme",
+          "packing_slip_tax": "Steuer",
           "packing_slip_title": "Lieferschein — Bestellung {{number}}",
+          "packing_slip_total": "Gesamt",
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
           "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
@@ -3325,7 +3361,8 @@
             },
             "confirm": {
               "cancel_confirm": "Umtausch stornieren",
-              "cancel_dismiss": "Umtausch behalten"
+              "cancel_dismiss": "Umtausch behalten",
+              "balance_due": "Der Ersatz kostet mehr als die zurückgesendete Ware. Beim Versand wird die Differenz der Bestellung als offener Betrag hinzugefügt, den Sie einziehen. Es wird nichts automatisch belastet."
             },
             "create_title": "Neuer Umtausch",
             "empty": "Kein Umtausch für diese Bestellung.",
@@ -3338,7 +3375,8 @@
               "approve": "Genehmigen",
               "create": "Neue Retoure",
               "receive": "Artikel annehmen",
-              "refund": "Erstatten"
+              "refund": "Erstatten",
+              "complete": "Retoure abschließen"
             },
             "buy_label": "Rücksendeetikett kaufen",
             "buy_label_confirm": "Ein vorfrankiertes Rücksendeetikett kaufen? Ihr Konto wird belastet, sobald das Etikett ausgestellt ist.",
@@ -3361,13 +3399,18 @@
             "received_of": "{{received}} von {{requested}} erhalten",
             "received_quantity": "Erhalten",
             "refund_amount": "Betrag",
+            "refund_includes_tax": "Der volle Betrag enthält {{tax}} Steuern. Bei einem kleineren Betrag wird die Steuer anteilig erstattet.",
             "refund_method": "Erstatten an",
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
               "store_credit": "Guthaben"
             },
             "refund_title": "Retoure erstatten",
+            "complete_title": "Retoure abschließen",
+            "nothing_owed": "Für diese Retoure ist nichts geschuldet, daher wird kein Geld erstattet. Mit dem Abschließen wird die Retoure geschlossen.",
             "refund_total": "Erstattungssumme",
+            "refunded": "Erstattet",
+            "refunded_of": "{{amount}} von {{total}}",
             "resellable": "Wiederverkäuflich",
             "returning_to": "Rücksendung an {{name}}"
           },
@@ -3781,7 +3824,21 @@
           "section_delivery": "Zustellung",
           "section_logo": "Logo",
           "subtitle": "Absenderadressen, Benachrichtigungen und das in Transaktions-E-Mails eingebettete Logo.",
-          "title": "E-Mail-Einstellungen"
+          "title": "E-Mail-Einstellungen",
+          "branding": {
+            "title": "Branding",
+            "description": "Farben und Schrift für jede Kunden-E-Mail. Lassen Sie eine Farbe leer, um den Standard zu behalten.",
+            "default_color": "Standard",
+            "fonts": {
+              "inter": "Inter (Standard)",
+              "system": "Systemschrift",
+              "helvetica": "Helvetica",
+              "georgia": "Georgia",
+              "roboto": "Roboto",
+              "lato": "Lato",
+              "merriweather": "Merriweather"
+            }
+          }
         },
         "imports": {
           "delete_confirm": {
@@ -3902,39 +3959,73 @@
           "empty_description": "Erstellen Sie einen Endpunkt, um bei jedem abonnierten Ereignis einen signierten POST zu erhalten.",
           "empty_title": "Noch keine Webhook-Endpunkte",
           "event_groups": {
-            "asset": "Asset",
+            "admin_user": "Mitarbeiter",
+            "cart": "Warenkorb",
+            "catalog": "Katalog",
+            "claim": "Reklamation",
+            "company": "Unternehmen",
+            "company_invitation": "Unternehmenseinladung",
             "custom": "Benutzerdefiniert",
             "customer": "Kunde",
+            "data_request": "Datenanfrage",
+            "delivery": "Lieferung",
             "digital": "Digital",
+            "digital_asset": "Digitales Asset",
+            "digital_link": "Digitaler Link",
+            "email_template": "E-Mail-Vorlagen",
+            "exchange": "Umtausch",
+            "export": "Export",
             "fulfillment": "Fulfillment",
             "gift_card": "Geschenkkarte",
             "gift_card_batch": "Geschenkkarten-Stapel",
-            "import_export": "Import / Export",
+            "import": "Import",
+            "import_row": "Importzeile",
             "invitation": "Einladung",
             "line_item": "Position",
+            "media": "Medien",
             "newsletter_subscriber": "Newsletter-Abonnent",
             "order": "Bestellung",
+            "order_group": "Bestellgruppe",
             "payment": "Zahlung",
             "payment_session": "Zahlungssitzung",
             "payment_setup_session": "Zahlungseinrichtungssitzung",
             "price": "Preis",
             "product": "Produkt",
+            "product_submission": "Produkteinreichung",
             "promotion": "Aktion",
+            "purchase_order": "Bestellung beim Lieferanten",
             "refund": "Erstattung",
-            "report": "Bericht",
             "return": "Rücksendung",
+            "saved_report": "Gespeicherter Bericht",
+            "seller": "Verkäufer",
+            "seller_payout": "Verkäuferauszahlung",
+            "seller_requirement_submission": "Einreichung einer Verkäuferanforderung",
+            "seller_user": "Verkäuferbenutzer",
+            "shipment": "Sendung",
+            "shipping_label": "Versandetikett",
+            "stock_item": "Lagerartikel",
             "stock_level": "Lagerbestand",
             "stock_movement": "Bestandsbewegung",
+            "stock_receipt": "Wareneingang",
             "stock_reservation": "Bestandsreservierung",
             "stock_transfer": "Bestandsübertragung",
             "store_credit": "Guthaben",
+            "supplier": "Lieferant",
+            "tax_exemption_certificate": "Steuerbefreiungsbescheinigung",
+            "tax_identifier": "Steuernummer",
+            "user": "Kundenkonto",
             "variant": "Variante",
-            "wishlist": "Wunschliste"
+            "wished_item": "Wunschartikel",
+            "wishlist": "Wunschliste",
+            "wishlist_item": "Wunschlistenartikel"
           },
           "events_all": "Alle Ereignisse",
           "events_count_one": "{{count}} Ereignis",
           "events_count_other": "{{count}} Ereignisse",
+          "events_credential": "Zugangsdaten",
           "events_custom_input_placeholder": "custom.event_name",
+          "events_deprecated": "Veraltet, {{event}} verwenden",
+          "events_load_failed": "Die Ereignisliste konnte nicht geladen werden. Du kannst unten trotzdem ein Ereignis per Namen hinzufügen.",
           "events_remove_aria": "{{event}} entfernen",
           "health": {
             "auto_disabled_alert": "Dieser Endpunkt wurde nach wiederholten Zustellfehlern automatisch deaktiviert.",
@@ -4074,6 +4165,7 @@
         "customers": "Kundenkonten, Adressen, Karten und Gruppen",
         "dashboard": "Umsatz- und Leistungsanalysen",
         "delivery_methods": "Versandoptionen, Tarife und die Regeln, die sie steuern",
+        "email_templates": "Kunden-E-Mail-Vorlagen und das E-Mail-Layout",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
         "integrations": "Anbieter-Zugangsdaten und Verbindungen",
@@ -4125,6 +4217,7 @@
         "customers": "Kunden",
         "dashboard": "Dashboard",
         "delivery_methods": "Versandarten",
+        "email_templates": "E-Mail-Vorlagen",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
         "integrations": "Integrationen",
@@ -5209,7 +5302,7 @@
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
       "create_label": "Lagerort erstellen",
       "delete_confirm": {
-        "message": "{{name}} wird entfernt. Bestandsartikel an diesem Standort werden nicht gelöscht.",
+        "message": "{{name}} wird entfernt. Bestände an diesem Standort werden ebenfalls gelöscht.",
         "title": "Lagerort löschen?"
       },
       "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
@@ -6009,11 +6102,172 @@
       },
       "table": {
         "search_placeholder": "Notizen durchsuchen…",
-        "empty": "Noch kein Guthaben. Stellen Sie eines im Kundenprofil aus."
+        "empty": "Noch kein Guthaben."
       },
+      "issue_description": "Wählen Sie einen Kunden und den Betrag, der seinem Konto gutgeschrieben wird.",
       "no_customer": "Kein Kunde",
       "page": {
         "subtitle": "Was der Shop an Guthaben schuldet, über alle Kunden hinweg."
+      }
+    },
+    "email_templates": {
+      "tabs": {
+        "settings": "Einstellungen",
+        "templates": "Vorlagen"
+      },
+      "list": {
+        "description": "Bearbeiten Sie die E-Mails, die Kunden erhalten. Änderungen werden als Entwurf gespeichert und erreichen Kunden erst nach dem Veröffentlichen.",
+        "groups": {
+          "email": {
+            "title": "Kunden-E-Mails",
+            "description": "Jede E-Mail, die ein Kunde von Ihrem Shop erhalten kann."
+          },
+          "layout": {
+            "title": "Layout",
+            "description": "Kopfzeile, Fußzeile und Stile rund um jede Kunden-E-Mail."
+          },
+          "partial": {
+            "title": "Gemeinsame Bausteine",
+            "description": "Teile, die mehrere E-Mails verwenden, etwa die Artikelliste und die Summen."
+          }
+        },
+        "empty": "Hier lassen sich keine E-Mail-Vorlagen bearbeiten. Kunden-E-Mail-Vorlagen kommen mit dem Spree-E-Mail-Paket."
+      },
+      "names": {
+        "order_mailer_confirm_email": "Bestellbestätigung",
+        "order_mailer_cancel_email": "Bestellung storniert",
+        "order_mailer_payment_link_email": "Zahlungslink",
+        "order_group_mailer_confirm_email": "Bestellbestätigung mit mehreren Verkäufern",
+        "fulfillment_mailer_fulfilled_email": "Bestellung versandt",
+        "return_mailer_refunded_email": "Rücksendung erstattet",
+        "digital_asset_mailer_files_ready_email": "Downloads bereit",
+        "customer_mailer_password_reset_email": "Passwort zurücksetzen",
+        "customer_mailer_data_export_email": "Export persönlicher Daten bereit",
+        "newsletter_mailer_email_confirmation": "Newsletter-Bestätigung",
+        "company_mailer_invitation_email": "Firmeneinladung",
+        "spree_base_mailer": "E-Mail-Layout",
+        "shared_line_item": "Artikel",
+        "shared_order_summary": "Bestellübersicht",
+        "shared_purchase_totals": "Summen",
+        "shared_fulfillment_group": "Sendung",
+        "shared_summary_row": "Übersichtszeile"
+      },
+      "badges": {
+        "customized": "Angepasst",
+        "default": "Standard",
+        "draft": "Entwurf",
+        "other_languages": "Auch angepasst: {{languages}}",
+        "default_updated": "Von Spree aktualisiert",
+        "unsaved": "Ungespeicherte Änderungen",
+        "showing_draft": "Entwurf – Kunden erhalten die veröffentlichte Version",
+        "showing_published": "Veröffentlicht – das erhalten Kunden",
+        "showing_default": "Spree-Standard – das erhalten Kunden"
+      },
+      "actions": {
+        "save_draft": "Entwurf speichern",
+        "publish": "Veröffentlichen",
+        "discard_draft": "Entwurf verwerfen",
+        "revert": "Auf Standard zurücksetzen",
+        "send_test": "Test-E-Mail senden",
+        "history": "Verlauf"
+      },
+      "confirm": {
+        "discard_title": "Diesen Entwurf verwerfen?",
+        "discard_message": "Ihre unveröffentlichten Änderungen werden gelöscht. Kunden erhalten weiterhin die veröffentlichte Version.",
+        "revert_title": "Auf den Spree-Standard zurücksetzen?",
+        "revert_message": "Kunden erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können.",
+        "restore_title": "Diese Version wiederherstellen?",
+        "restore_message": "Diese Version ersetzt den Entwurf. Veröffentlichen Sie sie, damit Kunden sie erhalten.",
+        "leave_title": "Ohne Speichern verlassen?",
+        "leave_message": "Ihre ungespeicherten Änderungen an dieser Vorlage gehen verloren.",
+        "leave": "Verlassen",
+        "revert_every_language_message": "Kunden in allen Sprachen erhalten ab sofort die Standard-E-Mail von Spree und der Entwurf wird gelöscht. Veröffentlichte Versionen bleiben im Verlauf, sodass Sie eine später wiederherstellen können."
+      },
+      "editor": {
+        "title": "Vorlage",
+        "subject": "Betreff",
+        "body": "Vorlagencode",
+        "language": "Sprache"
+      },
+      "preview": {
+        "title": "Vorschau",
+        "frame_title": "E-Mail-Vorschau",
+        "subject": "Betreff: {{subject}}",
+        "html": "E-Mail",
+        "text": "Nur Text",
+        "desktop": "Desktop-Breite",
+        "mobile": "Mobile Breite",
+        "shown_in": "Anzeigen in",
+        "record": "Vorschau mit Datensatz",
+        "unavailable": "Die Vorschau konnte nicht angezeigt werden.",
+        "needs_permission": "Vorschauen werden für Personen erstellt, die E-Mail-Vorlagen bearbeiten dürfen.",
+        "latest_record": "Neuester"
+      },
+      "problems": {
+        "title": "Diese Vorlage lässt sich nicht darstellen",
+        "on_line": "Zeile {{line}}: {{message}}"
+      },
+      "default_update": {
+        "title": "Von Spree aktualisiert",
+        "description": "Spree hat den Standard dieser Vorlage geändert, seit Ihre Version daraus entstanden ist. Vergleichen Sie beide, bevor Sie sich entscheiden.",
+        "compare": "Vergleichen",
+        "dialog_title": "Was sich am Spree-Standard geändert hat",
+        "dialog_description": "Links der Standard, aus dem Ihre Version entstanden ist. Rechts der aktuelle Standard.",
+        "before": "Ihre Version basiert auf",
+        "after": "Aktueller Spree-Standard",
+        "keep_mine": "Meine Version behalten",
+        "start_over": "Mit dem neuen Standard beginnen"
+      },
+      "history": {
+        "title": "Verlauf",
+        "description": "Jede in dieser Sprache veröffentlichte Version, die neueste zuerst.",
+        "empty": "Noch nichts veröffentlicht.",
+        "latest": "Neueste",
+        "version": "Version {{number}}",
+        "restore": "Wiederherstellen"
+      },
+      "conflict": {
+        "title": "Jemand anderes hat diesen Entwurf gespeichert",
+        "keep_editing": "Weiter bearbeiten",
+        "reload": "Deren Version laden",
+        "overwrite": "Meine Version darüber speichern"
+      },
+      "variables": {
+        "title": "Variablen",
+        "description": "Daten, die diese E-Mail anzeigen kann. Beginnen Sie im Code eine Variable zu tippen, um alle ihre Felder zu sehen.",
+        "order": "Die Bestellung mit Artikeln, Adressen und Summen.",
+        "resend": "Ob es sich um eine erneut gesendete Kopie handelt.",
+        "payment_url": "Der Link, über den der Kunde bezahlt.",
+        "order_group": "Eine auf mehrere Verkäufer aufgeteilte Bestellung.",
+        "fulfillment": "Die Sendung mit ihrer Sendungsverfolgung.",
+        "return": "Die Rücksendung und was erstattet wurde.",
+        "downloads": "Die Dateien, die der Kunde herunterladen kann.",
+        "customer": "Der Kunde, an den die E-Mail geht.",
+        "reset_url": "Der Link zum Festlegen eines neuen Passworts.",
+        "download_url": "Der Link zum Herunterladen des Exports.",
+        "expires_at": "Wann der Link nicht mehr funktioniert.",
+        "confirmation_url": "Der Link, der das Abonnement bestätigt.",
+        "company": "Die Firma, zu der der Kunde eingeladen ist.",
+        "accept_url": "Der Link, der die Einladung annimmt.",
+        "store": "Ihr Shop: Name, Links, Logo und Branding.",
+        "locale": "Die Sprache, in der die E-Mail gesendet wird.",
+        "insert": "{{variable}} einfügen"
+      },
+      "messages": {
+        "draft_saved": "Entwurf gespeichert",
+        "draft_discarded": "Entwurf verworfen",
+        "published": "Veröffentlicht. Kunden erhalten ab sofort diese Version.",
+        "reverted": "Auf den Spree-Standard zurückgesetzt",
+        "restored": "Version in den Entwurf übernommen",
+        "test_sent": "Test-E-Mail an {{email}} gesendet"
+      },
+      "errors": {
+        "load_failed": "E-Mail-Vorlagen konnten nicht geladen werden",
+        "not_allowed": "Sie dürfen E-Mail-Vorlagen nicht ansehen",
+        "test_email_failed": "Die Test-E-Mail konnte nicht gesendet werden"
+      },
+      "every_language": {
+        "notice": "Kunden in allen Sprachen erhalten diese Version, bis Sie eine für {{language}} veröffentlichen."
       }
     }
   }

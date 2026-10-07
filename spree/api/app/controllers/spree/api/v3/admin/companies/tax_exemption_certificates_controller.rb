@@ -24,11 +24,7 @@ module Spree
                 verified_by: try_spree_current_user
               )
 
-              if result.success?
-                render json: serialize_resource(result.value)
-              else
-                render_result_error(result)
-              end
+              render_result(result)
             end
 
             # PATCH .../:id/revoke — withdrawing evidence that was accepted.
@@ -86,10 +82,6 @@ module Spree
 
             def scope
               @parent.tax_exemption_certificates
-            end
-
-            def parent_association
-              :tax_exemption_certificates
             end
 
             def collection_includes

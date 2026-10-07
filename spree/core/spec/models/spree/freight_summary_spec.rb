@@ -16,7 +16,7 @@ RSpec.describe Spree::FreightSummary do
 
   def summary_for(pairs)
     contents = pairs.map do |variant, quantity|
-      Spree::Stock::ContentItem.new(build(:inventory_unit, variant: variant, quantity: quantity))
+      Spree::Stock::ContentItem.new(build(:fulfillment_item, variant: variant, quantity: quantity))
     end
 
     described_class.build(contents)

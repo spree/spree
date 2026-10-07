@@ -1,0 +1,15 @@
+---
+ko:
+  spree:
+    api:
+      cannot_delete: "%{model}을(를) 삭제할 수 없습니다"
+      current_password_invalid: 현재 비밀번호가 올바르지 않거나 입력되지 않았습니다
+      newsletter_verification_token_invalid: 뉴스레터 확인 토큰이 유효하지 않거나 만료되었습니다.
+      password_reset_requested: 해당 이메일로 등록된 계정이 있는 경우, 비밀번호 재설정 안내가 발송되었습니다.
+      password_reset_token_invalid: 비밀번호 재설정 토큰이 유효하지 않거나 만료되었습니다.
+      record_not_found: "%{model}을(를) 찾을 수 없습니다"
+      unauthorized: 해당 작업을 수행할 권한이 없습니다.
+      v3:
+        payments:
+          method_unavailable: 이 결제 수단은 이 주문에 사용할 수 없습니다.
+          session_required: 이 결제 수단에는 결제 세션이 필요합니다. 대신 결제 세션 엔드포인트를 사용하세요.

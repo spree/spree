@@ -1401,7 +1401,7 @@
       "create_description": "Fügen Sie ein Lager, ein Geschäft oder einen Abholpunkt hinzu, von dem aus Bestellungen abgewickelt werden.",
       "create_label": "Lagerort erstellen",
       "delete_confirm": {
-        "message": "{{name}} wird entfernt. Bestandsartikel an diesem Standort werden nicht gelöscht.",
+        "message": "{{name}} wird entfernt. Bestände an diesem Standort werden ebenfalls gelöscht.",
         "title": "Lagerort löschen?"
       },
       "edit_description": "Aktualisieren Sie Name, Adresse, Abholung oder Bestandsrichtlinien.",
@@ -1576,6 +1576,12 @@
         "slug_placeholder": "produkt-url-handle"
       },
       "tax_category_placeholder": "Steuerkategorie auswählen",
+      "tax": {
+        "apply_to_variants_help": "Diese Kategorie gilt für alle Varianten ohne eigene Steuerkategorie. Beim Speichern übernehmen diese Varianten diese Einstellung.",
+        "variant_overrides_heading": "Varianten mit eigener Steuerkategorie",
+        "variant_overrides_description": "Diese Varianten behalten ihre Kategorie, bis Sie die Ausnahme aufheben. Alle anderen Varianten folgen der Produktkategorie oben.",
+        "clear_variant_override": "Produktkategorie verwenden"
+      },
       "transfers": {
         "create_description": "Bestand zwischen Lagern bewegen oder neuen Bestand von einem externen Lieferanten annehmen.",
         "delete_confirm": {

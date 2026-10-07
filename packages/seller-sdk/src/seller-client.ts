@@ -140,22 +140,31 @@ export class SellerClient {
    *
    * `permission_keys` is empty until a seller is named — capability is per
    * seller, so there is no answer spanning all of them.
+   *
+   * Read it with `me.get()` and edit it with `me.update()`. Calling `me()`
+   * directly still works for code written against 1.0.0-beta.1/beta.2, but is
+   * deprecated and warns once per client.
    */
-  readonly me = {
-    get: (options?: RequestOptions): Promise<MeResponse> =>
-      this.request<MeResponse>('GET', '/me', options),
+  readonly me: MeResource = Object.assign(
+    (options?: RequestOptions): Promise<MeResponse> => {
+      if (!this.meCallDeprecationWarned) {
+        this.meCallDeprecationWarned = true
+        console.warn(
+          '[@spree/seller-sdk] `client.me()` is deprecated; use `client.me.get()` instead.',
+        )
+      }
+      return this.me.get(options)
+    },
+    {
+      get: (options?: RequestOptions): Promise<MeResponse> =>
+        this.request<MeResponse>('GET', '/me', options),
 
-    /**
-     * Edits the signed-in person's own account — the name and photo their
-     * team sees, and the panel's language. Not the seller business they act
-     * for: that is `profile.update`.
-     *
-     * `avatar` takes a direct-upload signed id to set the photo, or `null` to
-     * remove it; omitting it leaves the current one alone.
-     */
-    update: (params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
-      this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
-  }
+      update: (params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse> =>
+        this.request<MeResponse>('PATCH', '/me', { ...options, body: params }),
+    },
+  )
+
+  private meCallDeprecationWarned = false
 
   /** The seller's own record, as they maintain it. */
   readonly profile = {
@@ -1699,6 +1708,26 @@ export interface MeResponse {
   /** Empty until a seller is named — capability is per seller. */
   permissions: PermissionRule[]
   permission_keys: string[]
+}
+
+/**
+ * `client.me`: an object with `get` and `update`, which is also callable as
+ * `client.me()` — the 1.0.0-beta.1/beta.2 form — for backwards compatibility.
+ */
+export interface MeResource {
+  /** @deprecated Use `me.get()` instead. Calling `me()` directly will be removed in a future release. */
+  (options?: RequestOptions): Promise<MeResponse>
+  /** Reads the signed-in person, the sellers they may act for, and their permissions. */
+  get(options?: RequestOptions): Promise<MeResponse>
+  /**
+   * Edits the signed-in person's own account — the name and photo their
+   * team sees, and the panel's language. Not the seller business they act
+   * for: that is `profile.update`.
+   *
+   * `avatar` takes a direct-upload signed id to set the photo, or `null` to
+   * remove it; omitting it leaves the current one alone.
+   */
+  update(params: AccountUpdateParams, options?: RequestOptions): Promise<MeResponse>
 }
 
 /** What a seller may change on their own account. */

@@ -28,11 +28,7 @@ module Spree
           def run_workflow(workflow, **arguments)
             result = workflow.call(workflow_record_key => @resource, **arguments)
 
-            if result.success?
-              render json: serialize_resource(result.value)
-            else
-              render_result_error(result)
-            end
+            render_result(result)
           end
 
           # @return [Symbol] the keyword this entity's workflows take it under
@@ -63,11 +59,7 @@ module Spree
               **arguments
             )
 
-            if result.success?
-              render json: serialize_resource(result.value), status: :created
-            else
-              render_result_error(result)
-            end
+            render_result(result, status: :created)
           end
         end
       end

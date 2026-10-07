@@ -9,6 +9,8 @@ For an example of **how to structure multi-variant products**, please download t
 
 <Note>You don’t need to follow the field naming conventions in this template exactly. Field names can be mapped manually during the import process.</Note>
 
+<Note>A product with several variants takes one row per variant. The product's own details (name, description, status, categories) can either sit on a row of their own above the variants, or on the first variant's row — the layout Shopify exports use. Rows for the same product are matched by their shared **slug**.</Note>
+
 <Warning>The **slug** field acts as the unique identifier for the product in Spree - no two products can share the same slug. When updating products via CSV import, the slug must exactly match an existing record to avoid creating duplicates.</Warning>
 
 | Field                   | Description |
@@ -34,8 +36,9 @@ For an example of **how to structure multi-variant products**, please download t
 | available_on            | When the product should be made available for purchase                                      |
 | discontinue_on          | When the product should be discontinued and hidden from the storefront                      |
 | track_inventory         | Whether or not you track inventory levels for the product (TRUE/FALSE)                      |
-| inventory_count         | The stock quantity of the product/variant                                                   |
-| inventory_backorderable | Whether the product can be ordered when out of stock                                        |
+| inventory_count         | Units on the shelf at the row's stock location, including any held for checkouts or promised to unshipped orders |
+| inventory_backorderable | Whether the product can be ordered when out of stock at the row's stock location            |
+| stock_location          | The name of the stock location the two inventory fields apply to. Leave it blank for your default location |
 | tax_category            | The tax category the product should be assigned, e.g., Default, Non-taxable                 |
 | shipping_category       | The shipping category the product should be assigned, e.g., Default, Digital                |
 | image1_src              | A link to the primary image product/variant image                                           |

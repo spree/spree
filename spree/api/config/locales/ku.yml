@@ -1,0 +1,15 @@
+---
+ku:
+  spree:
+    api:
+      cannot_delete: "%{model} nayê jêbirin"
+      current_password_invalid: Şîfreya niha nederbasdar e an kêm e
+      newsletter_verification_token_invalid: Tokena piştrastkirina newsletterê nederbasdar e an qediyaye.
+      password_reset_requested: Heke ji bo wê e-nameyê hesabek hebe, talîmatên nûkirina şîfreyê hatin şandin.
+      password_reset_token_invalid: Tokena nûkirina şîfreyê nederbasdar e an qediyaye.
+      record_not_found: "%{model} nehat dîtin"
+      unauthorized: Tu ne destûrdar î ku wî karî bikî.
+      v3:
+        payments:
+          method_unavailable: Ev rêbaza tediyeyê ji bo vê siparîşê berdest nîn e.
+          session_required: Ev rêbaza tediyeyê danişînek tediyeyê hewce dike. Li şûna wê xala dawî ya danişînên tediyeyê bikar bîne.

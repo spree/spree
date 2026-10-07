@@ -22,8 +22,20 @@ module Spree
         # (product prices AND cart/order/line-item totals) is gated from one
         # place instead of per-attribute opt-in.
         def self.money_attributes(*names)
+          typelize(**names.index_with { [:string, nullable: true] })
+
           names.each do |name|
             attribute(name) { |object| object.public_send(name) unless params[:hide_prices] }
+          end
+        end
+
+        # Declares `<association>_id` attributes carrying the associated
+        # record's prefixed id, or nil when there is none. Pass
+        # `seller_id: :resolved_seller` when the attribute name and the
+        # association it reads differ.
+        def self.prefixed_id_attributes(*associations, **renamed)
+          associations.index_by { |association| :"#{association}_id" }.merge(renamed).each do |name, association|
+            attribute(name) { |object| object.public_send(association)&.prefixed_id }
           end
         end
 

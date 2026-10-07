@@ -11,23 +11,17 @@ module Spree
         # packing a box, and each of which would pull another serializer into
         # this branch's generated types.
         class OrderLineItemSerializer < V3::BaseSerializer
-          typelize name: :string,
-                   sku: [:string, nullable: true],
-                   options_text: [:string, nullable: true],
-                   quantity: :number,
-                   currency: :string,
-                   variant_id: [:string, nullable: true],
-                   thumbnail_url: [:string, nullable: true],
-                   price: [:string, nullable: true], display_price: [:string, nullable: true],
-                   total: [:string, nullable: true], display_total: [:string, nullable: true]
+          typelize name: :string, sku: [:string, nullable: true], options_text: [:string, nullable: true],
+                   quantity: :number, currency: :string, variant_id: [:string, nullable: true],
+                   thumbnail_url: [:string, nullable: true]
 
           attributes :name, :options_text, :quantity, :currency
 
-          money_attributes :price, :display_price, :total, :display_total
+          # The tax charged on top is what a claim refunds beside the goods.
+          money_attributes :price, :display_price, :discounted_amount, :display_discounted_amount,
+                           :additional_tax_total, :total, :display_total
 
-          attribute :variant_id do |line_item|
-            line_item.variant&.prefixed_id
-          end
+          prefixed_id_attributes :variant
 
           # How a seller finds the item on their own shelf.
           attribute :sku do |line_item|

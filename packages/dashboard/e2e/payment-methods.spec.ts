@@ -42,6 +42,32 @@ test.describe('payment methods', () => {
     await expect(page.getByText(/dummy secret key/i)).toHaveCount(0)
   })
 
+  // Runs before create/edit so Check is still in the picker. Custom payment
+  // source is hidden from the UI and store credit is seeded — Check is the
+  // spare installable provider for this lifecycle test.
+  test('deletes a payment method', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Delete PM ${Date.now()}`
+
+    await page.getByRole('button', { name: /add payment method/i }).click()
+    await selectProvider(page, 'Check')
+    await page.locator('#name').fill(name)
+    await page.getByRole('button', { name: /create payment method/i }).click()
+    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
+
+    await openRowMenu(page, name)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await expect(page.getByRole('heading', { name: /delete payment method\?/i })).toBeVisible()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+
+    await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
+  })
+
   test('creates a new payment method (Bogus provider)', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
@@ -80,29 +106,5 @@ test.describe('payment methods', () => {
     await page.getByRole('button', { name: /^save$/i }).click()
 
     await expect(rowButton(page, updated)).toBeVisible({ timeout: 15_000 })
-  })
-
-  test('deletes a payment method', async ({ page }) => {
-    const creds = await login(page)
-    await gotoIndex(page, PAYMENT_METHODS_PATH(creds.store_id), CTA)
-
-    const name = `E2E Delete PM ${Date.now()}`
-
-    await page.getByRole('button', { name: /add payment method/i }).click()
-    await selectProvider(page, 'Custom Payment Source Method')
-    await page.locator('#name').fill(name)
-    await page.getByRole('button', { name: /create payment method/i }).click()
-    await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })
-
-    // Delete now lives on the row-action kebab.
-    await openRowMenu(page, name)
-    await page.getByRole('menuitem', { name: /^delete$/i }).click()
-    await expect(page.getByRole('heading', { name: /delete payment method\?/i })).toBeVisible()
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^delete$/i })
-      .click()
-
-    await expect(rowButton(page, name)).toHaveCount(0, { timeout: 15_000 })
   })
 })

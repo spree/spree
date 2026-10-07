@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser"
+              "refund": "Rembourser",
+              "complete": "Clôturer le retour"
             },
             "create_title": "Nouveau retour",
             "location": "Retourner à",
@@ -147,12 +148,15 @@
             "receive_title": "Réceptionner les articles retournés",
             "received_quantity": "Reçu",
             "refund_amount": "Montant",
+            "refund_includes_tax": "Le montant total comprend {{tax}} de taxes. Un montant inférieur rembourse les taxes dans la même proportion.",
             "refund_method": "Rembourser sur",
             "refund_methods": {
               "original_payment": "Paiement d’origine",
               "store_credit": "Avoir"
             },
             "refund_title": "Rembourser le retour",
+            "complete_title": "Clôturer le retour",
+            "nothing_owed": "Rien n'est dû sur ce retour, donc aucun remboursement n'est effectué. Le clôturer ferme le retour.",
             "resellable": "Revendable"
           }
         }
@@ -516,6 +520,7 @@
         "cancel_message": "Le client est informé que cela n’aura pas lieu.",
         "cancel_title": "Annuler cet échange ?",
         "fulfill": "Envoyer le remplacement",
+        "balance_due_confirm": "Le remplacement coûte plus cher que l'article retourné. Son envoi ajoute la différence à la commande comme solde dû. Rien n'est débité automatiquement.",
         "price_difference": "Différence de prix : {{amount}}",
         "receive": "Réceptionner",
         "title": "Échanges"
@@ -531,6 +536,8 @@
         "receive": "Réceptionner",
         "refund": "Rembourser",
         "refund_total": "Total du remboursement : {{amount}}",
+        "refunded": "Remboursé : {{amount}}",
+        "refunded_of": "Remboursé : {{amount}} sur {{total}}",
         "title": "Retours"
       },
       "statuses": {

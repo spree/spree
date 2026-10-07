@@ -1,0 +1,823 @@
+---
+ne:
+  activemodel:
+    errors:
+      messages:
+        blank: खाली हुन सक्दैन
+  activerecord:
+    attributes:
+      spree/address:
+        address1: ठेगाना
+        address2: ठेगाना (जारी राख्नुहोस्)
+        city: शहर
+        company: कम्पनी
+        country: देश
+        label: ठेगानाको नाम
+        phone: फोन
+        state: राज्य
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: रुचाइएको आधार राशि
+        preferred_tiers: मनपर्दो स्तर
+      spree/calculator/tiered_percent:
+        preferred_base_percent: रुचाइएको आधार प्रतिशत
+        preferred_tiers: मनपर्दो स्तर
+      spree/country:
+        iso: आईएसओ
+        iso3: आईएसओ तीन
+        iso_name: आईएसओ नाम
+        name: नाम
+        numcode: आईएसओ कोड
+      spree/credit_card:
+        base: आधार
+        cc_type: प्रकार
+        month: महिना
+        name: नाम
+        number: संख्या
+        verification_value: प्रमाणिकरण मान
+        year: बर्ष
+      spree/customer_group:
+        description: विवरण
+        name: नाम
+      spree/gift_card:
+        amount_used: प्रयोग गरिएको रकम
+        expires_at: म्याद सकिने मिति
+      spree/import:
+        preferred_delimiter: डिलिमिटर
+      spree/import_mapping:
+        file_column: फाइल स्तम्भ
+        schema_field: स्किमा फिल्ड
+      spree/import_row:
+        row_number: नम्बर
+      spree/inventory_unit:
+        state: राज्य
+      spree/invitation:
+        inviter: निमन्त्रणा गर्ने
+      spree/line_item:
+        price: मूल्य
+        quantity: मात्रा
+      spree/option_type:
+        filterable: फिल्टर गर्न मिल्ने
+        kind: प्रकार
+        name: नाम
+      spree/option_value:
+        color_code: रङ कोड
+        image: स्वाच छवि
+      spree/order:
+        checkout_complete: चेकआउट पूरा भयो
+        completed_at: पूरा भएको मिति
+        considered_risky: जोखिमपूर्ण
+        coupon_code: कुपन कोड
+        created_at: अर्डर मिति
+        email: ग्राहक ईमेल
+        internal_note: आन्तरिक टिप्पणी
+        ip_address: आईपी ठेगाना
+        item_count: वस्तुहरू
+        item_total: कुल वस्तु
+        number: संख्या
+        payment_state: भुक्तानी अवस्था
+        shipment_state: ढुवानी अवस्था
+        special_instructions: विशेष निर्देशन
+        state: राज्य
+        total: कुल
+      spree/order/bill_address:
+        address1: बिल ठेगाना सडक
+        city: बिल ठेगाना शहर
+        phone: बिल ठेगाना फोन
+        state: बिल ठेगाना काउन्टी
+      spree/order/ship_address:
+        address1: शिपिंग ठेगाना सडक
+        city: शिपिंग ठेगाना शहर
+        phone: शिपिंग ठेगाना फोन
+        state: शिपिंग ठेगाना काउन्टी
+      spree/payment:
+        amount: रकम
+        number: नम्बर
+      spree/payment_method:
+        name: नाम
+      spree/policy:
+        body: मुख्य भाग
+        owner: का लागि नीति
+      spree/price_list:
+        description: विवरण
+        ends_at: समाप्त हुने मिति
+        match_policy: मिलान नीति
+        name: नाम
+        priority: प्राथमिकता
+        starts_at: सुरु हुने मिति
+        status: स्थिति
+      spree/price_rule:
+        priority: प्राथमिकता
+        type: प्रकार
+      spree/product:
+        available_on: उपलब्ध छ
+        cost_currency: लागत मुद्रा
+        cost_price: लागत मूल्य
+        description: वर्णन
+        discontinue_on: बन्द गर्ने मिति
+        less_than: भन्दा कम
+        make_active_at: सक्रिय बनाउने मिति
+        master_price: मास्टर मूल्य
+        more_than: भन्दा बढी
+        name: नाम
+        on_hand: हातमा
+        tax_category: कर कोटि
+      spree/promotion:
+        advertise: विज्ञापन गर्नुहोस्
+        code: कोड
+        description: वर्णन
+        event_name: घटना नाम
+        expires_at: म्याद समाप्त हुने दिन
+        generate_code: कुपन कोड सिर्जना गर्नुहोस्
+        name: नाम
+        path: बाटो
+        promotion_category: प्रोमोसन कोटि
+        starts_at: सुरू हुने दिन
+        usage_limit: उपयोग सीमा
+      spree/promotion_category:
+        code: कोड
+        name: नाम
+      spree/property:
+        name: नाम
+        presentation: प्रस्तुतिकरण
+      spree/role:
+        name: नाम
+      spree/shipment:
+        number: नम्बर
+      spree/state:
+        abbr: संक्षिप्त
+        name: नाम
+      spree/store:
+        address: ठेगाना
+        contact_phone: सम्पर्क फोन
+        mail_from_address: मेल आउने ठेगानाबाट
+        meta_description: मेटा विवरण
+        meta_keywords: मेटा कीवर्डहरू
+        name: नाम
+        preferred_digital_asset_authorized_clicks: डाउनलोड क्लिक सीमा
+        preferred_digital_asset_authorized_days: डाउनलोड दिन सीमा
+        preferred_limit_digital_download_count: डिजिटल लिंक डाउनलोड गणना सीमित गर्नुहोस्
+        preferred_limit_digital_download_days: डिजिटल लिंक डाउनलोड दिन सीमित गर्नुहोस्
+        seo_robots: SEO रोबोट्स
+        seo_title: एसईओ शीर्षक
+        storefront_custom_code_body_end: बडी ट्याग बन्द हुनुअघिको कस्टम कोड
+        storefront_custom_code_body_start: बडी ट्याग खुलेपछिको कस्टम कोड
+        storefront_custom_code_head: पृष्ठको हेडमा कस्टम कोड
+        url: यूआरयल
+      spree/store_credit:
+        amount_used: प्रयोग गरिएको रकम
+      spree/tax_category:
+        description: वर्णन
+        name: नाम
+      spree/tax_rate:
+        amount: दर
+        included_in_price: मूल्यमा समावेश
+        show_rate_in_label: लेबलमा दर देखाउनुहोस्
+      spree/taxon:
+        name: नाम
+        permalink: स्थायी लिंक
+        position: स्थान
+        sort_order: क्रमबद्ध क्रम
+      spree/taxonomy:
+        name: नाम
+      spree/user:
+        avatar: अवतार
+        email: ईमेल
+        password: पासवर्ड
+        password_confirmation: पासवर्ड पुष्टिकरण
+      spree/variant:
+        cost_currency: लागत मुद्रा
+        cost_price: लागत मूल्य
+        depth: गहिराई
+        height: उचाई
+        price: मूल्य
+        sku: यास.के.यु
+        weight: तौल
+        width: चौड़ाई
+      spree/zone:
+        description: वर्णन
+        name: नाम
+      user:
+        current_sign_in: हालको साइन इन मिति
+        last_sign_in: अन्तिम साइन इन मिति
+        sign_in_count: साइन इन गणना
+    errors:
+      messages:
+        blank: खाली हुन सक्दैन
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: पथ, क्वेरी वा फ्र्यागमेन्ट बिनाको एक अरिजिन (स्किम र होस्ट) हुनुपर्छ
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: पहिले नै लिंक गरिएको
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: कार्डको समयावधि सकियो
+              expiry_invalid: अवैध समयावधि
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: प्रयोग भइसकेको गिफ्ट कार्ड मेटाउन सकिँदैन
+        spree/import:
+          attributes:
+            attachment:
+              content_type: मा अनुमति नभएको सामग्री प्रकार छ
+            type:
+              inclusion: अनुमति दिइएका प्रकारहरूको सूचीमा समावेश छैन
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: अर्डर मुद्रासँग मेल खानुपर्दछ
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: पूर्वनिर्धारित मार्केट मेटाउन सकिँदैन।
+              cannot_destroy_last_market: एक मात्र मार्केट मेटाउन सकिँदैन।
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: यो स्टोरको अर्को मार्केटमा पहिले नै तोकिएको छ
+              not_in_shipping_zone: कुनै पनि शिपिङ क्षेत्रले समेटेको छैन। कृपया पहिले शिपिङ क्षेत्र सेटअप गर्नुहोस्।
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: अनुमति दिइएको अधिकतम रकम %{max_amount} भन्दा बढी छ
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: सुरु हुने मितिपछिको हुनुपर्छ
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: राखिएका अर्डरहरूमा थपिएका उत्पादनहरू मेटाउन सकिँदैन। यस्तो अवस्थामा, कृपया तिनलाई बन्द गर्नुहोस्।
+            discontinue_on:
+              invalid_date_range: उपलब्ध मितिभन्दा पछिको हुनुपर्छ
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: प्रकाशित मितिपछिको हुनुपर्छ
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: सुरु मितिभन्दा पछिको हुनुपर्छ
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: अनुमति भन्दा ठूलो
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: एक मात्र स्टोर मेटाउन सकिँदैन।
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: कुल क्रेडिट नाघ्छ।
+            amount_used:
+              cannot_be_greater_than_amount: रकमभन्दा बढी हुन सक्दैन।
+              greater_than_zero_restrict_delete: शून्यभन्दा बढी छ। स्टोर क्रेडिट मेटाउन सकिँदैन।
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: अर्को प्रयोगकर्ताको हो
+              deprecated_in_completed_order: पूरा भएको अर्डरमा अवमूल्यन गरिएको
+            ship_address_id:
+              belongs_to_other_user: अर्को प्रयोगकर्ताको हो
+              deprecated_in_completed_order: पूरा भएको अर्डरमा अवमूल्यन गरिएको
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: राखिएका अर्डरहरूमा थपिएका भेरियन्टहरू मेटाउन सकिँदैन। यस्तो अवस्थामा, कृपया तिनलाई बन्द गर्नुहोस्।
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: आन्तरिक वा निजी नेटवर्क ठेगानामा इंगित गर्नुहुँदैन
+    models:
+      spree/address:
+        one: ठेगाना
+        other: ठेगानाहरू
+      spree/classification:
+        one: वर्गीकरण
+        other: वर्गीकरणहरू
+      spree/country:
+        one: देश
+        other: देशहरू
+      spree/credit_card:
+        one: क्रेडिट कार्ड
+        other: क्रेडिट कार्डहरू
+      spree/customer_group:
+        one: ग्राहक समूह
+        other: ग्राहक समूहहरू
+      spree/customer_group_user:
+        one: ग्राहक समूह प्रयोगकर्ता
+        other: ग्राहक समूह प्रयोगकर्ताहरू
+      spree/export:
+        one: निर्यात
+        other: निर्यातहरू
+      spree/integration:
+        one: एकीकरण
+        other: एकीकरणहरू
+      spree/inventory_unit:
+        one: इन्भेन्टरी एकाई
+        other: इन्भेन्टरी एकाइहरू
+      spree/line_item:
+        one: लाइन आईटम
+        other: लाइन आईटमहरू
+      spree/option_type:
+        one: विकल्प प्रकार
+        other: विकल्प प्रकारहरू
+      spree/option_value:
+        one: विकल्प मान
+        other: विकल्प मानहरू
+      spree/order:
+        one: अर्डर
+        other: अर्डरहरू
+      spree/payment:
+        one: भुक्तानी
+        other: भुक्तानीहरू
+      spree/payment_method:
+        one: भुक्तानी विधि
+        other: भुक्तानी विधिहरू
+      spree/price:
+        one: मूल्य
+        other: मूल्यहरू
+      spree/price_list:
+        one: मूल्य सूची
+        other: मूल्य सूचीहरू
+      spree/price_rule:
+        one: मूल्य नियम
+        other: मूल्य नियमहरू
+      spree/product:
+        one: उत्पादन
+        other: उत्पादनहरू
+      spree/promotion:
+        one: प्रोमोसन
+        other: प्रोमोसनहरू
+      spree/promotion_category:
+        one: प्रोमोसन कोटि
+        other: प्रोमोसन कोटिहरू
+      spree/property:
+        one: गुण
+        other: गुणहरू
+      spree/refund_reason:
+        one: फिर्ता कारण
+        other: फिर्ता कारणहरू
+      spree/role:
+        one: भूमिकाहरू
+        other: भूमिकाहरू
+      spree/shipment:
+        one: ढुवानी
+        other: ढुवानीहरू
+      spree/shipping_method:
+        one: शिपिङ विधि
+        other: शिपिङ विधिहरू
+      spree/state:
+        one: काउन्टी
+        other: काउन्टीहरू
+      spree/stock_location:
+        one: स्टक स्थान
+        other: स्टक स्थानहरू
+      spree/stock_movement:
+        one: स्टक चाल
+        other: स्टक चालहरू
+      spree/stock_transfer:
+        one: स्टक स्थानान्तरण
+        other: स्टक स्थानान्तरणहरू
+      spree/store:
+        one: स्टोर
+        other: स्टोरहरू
+      spree/store_credit:
+        one: स्टोर क्रेडिट
+        other: स्टोर क्रेडिटहरू
+      spree/tax_category:
+        one: कर कोटि
+        other: कर कोटिहरू
+      spree/tax_rate:
+        one: कर दर
+        other: कर दरहरू
+      spree/taxon:
+        one: ट्याक्सन
+        other: ट्याक्सन
+      spree/taxonomy:
+        one: वर्गीकरण
+        other: वर्गीकरण
+      spree/user:
+        one: प्रयोगकर्ता
+        other: प्रयोगकर्ताहरू
+      spree/variant:
+        one: भेरियन्ट
+        other: भेरियन्ट्स
+      spree/zone:
+        one: क्षेत्र
+        other: क्षेत्रहरू
+  errors:
+    messages:
+      already_confirmed: पहिल्यै पुष्टि भइसकेको थियो
+      not_found: फेला परेन
+      not_locked: लक गरिएको थिएन
+      not_saved:
+        one: '१ त्रुटि %{resource} सँग संसाधन बचत हुनबाट रोकियो:'
+        other: "%{count} त्रुटिहरूले यस %{resource} लाई बचत गर्नबाट रोक्‍यो:"
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accept: स्वीकार्नुहोस्
+    accepted: स्वीकार गरियो
+    accepts_email_marketing: इमेल मार्केटिङ स्वीकार गर्छ
+    account: खाता
+    active: सक्रिय
+    address: ठेगाना
+    address1: ठेगाना
+    address2: ठेगाना (जारी)
+    adjustment: समायोजन
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (मूल्यमा समावेश)"
+    adjustments_deleted: समायोजनहरू मेटाइयो
+    all: सबै
+    amount: रकम
+    api_key_no_current_key: कुनै API कुञ्जीले यो अनुरोध प्रमाणीकरण गरेन
+    api_key_scopes_immutable: कुञ्जी सिर्जना भएपछि परिवर्तन गर्न सकिँदैन; तपाईंलाई चाहिने स्कोपहरूसहित नयाँ कुञ्जी सिर्जना गर्नुहोस् र यसलाई रद्द गर्नुहोस्
+    approver: स्वीकृत
+    authorized: अधिकृत
+    availability: उपलब्धता
+    backorderable: ब्याकर्डेरेबल
+    backordered: ब्याकआर्डर
+    bill_address: बिल ठेगाना
+    billing_address: बिल ठेगाना
+    calculator: क्यालकुलेटर
+    canceled: रद्द गरिएको
+    canceler: कर्क
+    cannot_be_destroyed: अर्डर मेटाउन सकिँदैन।
+    capture: क्याप्चर
+    cart: टोकरी
+    cart_already_updated: कार्ट पहिले नै अपडेट भइसकेको छ।
+    cart_line_item:
+      delivery_unavailable: "%{li_name} छानिएको ठेगानामा डेलिभर गर्न सकिँदैन"
+      discontinued: "%{li_name} बन्द गरिएकोले हटाइयो"
+      out_of_stock: "%{li_name} बिक्री भइसकेकोले हटाइयो"
+    categories: कोटिहरू
+    category: कोटि
+    channel: बिक्री च्यानल
+    channels: बिक्री च्यानलहरू
+    checkout: चेकआउट
+    checkout_requirements:
+      email_required: इमेल ठेगाना आवश्यक छ
+      line_items_required: आफ्नो कार्टमा कम्तीमा एउटा वस्तु थप्नुहोस्
+      payment_required: भुक्तानी विधि थप्नुहोस्
+      ship_address_required: शिपिङ ठेगाना आवश्यक छ
+    city: शहर / नगर
+    color_code: रङ कोड
+    company: कम्पनी
+    compare_at_amount: तुलना रकम
+    compare_at_price: तुलना मूल्य
+    complete: पूर्ण
+    confirm: पुष्टि गर्नुहोस्
+    cost_price: लागत मूल्य
+    count_on_hand: हातमा गणना गर्नुहोस्
+    country: देश
+    coupon_code: कुपन कोड
+    coupon_code_already_applied: कुपन कोड यस अर्डरमा पहिले नै लागू गरिएको छ
+    coupon_code_applied: कुपन कोड सफलतापूर्वक तपाईंको अर्डरमा लागू गरियो।
+    coupon_code_better_exists: पहिले लागू गरिएको कुपन कोडले राम्रो डिलमा परिणाम दिन्छ
+    coupon_code_expired: कुपन कोड समाप्त भयो
+    coupon_code_max_usage: कुपन कोड उपयोग सीमा पार भयो
+    coupon_code_not_eligible: यो कुपन कोड यस अर्डरको लागि योग्य छैन
+    coupon_code_not_found: तपाईंले प्रविष्ट गर्नुभएको कुपन कोड अवस्थित छैन। फेरि प्रयास गर्नुहोस।
+    coupon_code_unknown_error: कुपन कोड अज्ञात त्रुटि
+    coupon_code_used: तपाईंले प्रविष्ट गर्नुभएको कुपन कोड पहिले नै प्रयोग भइसकेको छ। कृपया फेरि प्रयास गर्नुहोस्।
+    created_at: सिर्जना गरिएको
+    credit_card: क्रेडिट कार्ड
+    currency: मुद्रा
+    currency_not_supported_by_store: यो स्टोरद्वारा समर्थित छैन
+    customer: ग्राहक
+    customers: ग्राहकहरू
+    default: पूर्वनिर्धारित
+    default_stock_location_name: पसल स्थान
+    default_wishlist_name: विशलिस्ट
+    delivery: डेलिभरी
+    depth: गहिराई
+    description: वर्णन
+    destination: गन्तव्य
+    destroy: नष्ट
+    details: विवरण
+    digital:
+      digital_delivery: डिजिटल डेलिभरी
+    digital_assets: डिजिटल सम्पत्तिहरू
+    discontinued: बन्द गरिएको
+    discontinued_variants_present: यस अर्डरका केही लाइन वस्तुहरूमा अब उपलब्ध नभएका उत्पादनहरू छन्।
+    display_delivery_range: "%{delivery_range} कार्य दिनमा डेलिभरी"
+    draft: मस्यौदा
+    eligibility_errors:
+      messages:
+        has_excluded_product: बहिष्कार गरिएको उत्पादनलाई हटाइएको छैन
+        limit_once_per_user: प्रति प्रयोगकर्ता एक पटक सीमित गर्नुहोस्
+        missing_product: हराइरहेको उत्पाद
+        missing_taxon: हराइरहेको ट्याक्सन
+        no_applicable_products: कुनै लागू उत्पादहरू छैनन्
+        no_matching_channel: यो कुपन कोड यस बिक्री च्यानलका लागि योग्य छैन।
+        no_matching_market: यो कुपन कोड तपाईंको मार्केटमा योग्य छैन।
+        no_matching_taxons: कुनै मेल खाने ट्याक्सनहरू
+        no_user_or_email_specified: कुनै प्रयोगकर्ता वा ईमेल निर्दिष्ट गरिएको छैन
+        no_user_specified: कुनै प्रयोगकर्ता निर्दिष्ट गरिएको छैन
+        not_first_order: पहिलो अर्डर छैन
+        wrong_country: यो कुपन कोड तपाईंको देशमा योग्य छैन
+    email: ईमेल
+    error: त्रुटि
+    error_user_destroy_with_orders: अर्डरहरूसँग सम्बन्धित प्रयोगकर्ता मेटाउन सकिँदैन
+    error_user_does_not_have_any_store_credits: प्रयोगकर्तासँग कुनै पनि स्टोर क्रेडिट उपलब्ध छैन
+    errors:
+      messages:
+        cannot_delete_default_channel: पूर्वनिर्धारित च्यानल मेटाउन सकिँदैन। पहिले अर्को च्यानललाई पूर्वनिर्धारित बनाउनुहोस्।
+        channel_store_mismatch: एउटै स्टोरको हुनुपर्छ
+        invalid_order_routing_rule: दर्ता गरिएको अर्डर राउटिङ नियम होइन
+        invalid_order_routing_strategy: दर्ता गरिएको अर्डर राउटिङ रणनीति होइन
+        store_association_can_not_be_changed: स्टोर सम्बन्ध परिवर्तन गर्न सकिँदैन
+        store_is_already_set: स्टोर पहिले नै सेट गरिएको छ
+    expired: म्याद सकिएको
+    export_mailer:
+      export_done:
+        message: राम्रो काम, तपाईंको निर्यात तयार छ! कृपया यसलाई डाउनलोड गर्न तलको लिंक प्रयोग गर्नुहोस्।
+        subject: तपाईंको निर्यात %{export_number} सफलतापूर्वक प्रक्रिया गरियो!
+      greeting: नमस्ते %{user_name},
+    field: फिल्ड
+    first_name: पहिलो नाम
+    flat_percent: फ्ल्याट प्रतिशत
+    flat_rate_per_order: समतल दर (प्रति अर्डर)
+    flexible_rate: लचिलो दर
+    free: नि:शुल्क
+    gateway: गेटवे
+    gateway_error: गेटवे त्रुटि
+    gift_card: गिफ्ट कार्ड
+    gift_card_already_redeemed: गिफ्ट कार्ड पहिले नै रिडिम भइसकेको छ।
+    gift_card_applied: गिफ्ट कार्ड तपाईंको अर्डरमा सफलतापूर्वक लागू गरियो!
+    gift_card_customer_not_logged_in: अतिथि प्रयोगकर्तासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
+    gift_card_expired: गिफ्ट कार्डको म्याद सकिएको छ।
+    gift_card_mismatched_currency: हालको मुद्रासँग गिफ्ट कार्ड लागू गर्न सकिँदैन।
+    gift_card_mismatched_customer: यो गिफ्ट कार्ड अर्को प्रयोगकर्तासँग सम्बन्धित छ।
+    gift_card_not_found: गिफ्ट कार्ड फेला परेन।
+    gift_card_removed: गिफ्ट कार्ड तपाईंको अर्डरबाट सफलतापूर्वक हटाइयो
+    gift_card_using_store_credit_error: स्टोर क्रेडिट लागू गरेपछि तपाईं गिफ्ट कार्ड लागू गर्न सक्नुहुन्न।
+    height: उचाई
+    i18n:
+      this_file_language: नेपाली (NE)
+    idempotency_key_reused: यो Idempotency-Key फरक अनुरोध प्यारामिटरहरूसँग पहिले नै प्रयोग भइसकेको छ।
+    image: छवि
+    import: आयात
+    in_stock: स्टकमा छ
+    inactive: निष्क्रिय
+    incomplete: अपूर्ण
+    insufficient_stock_lines_present: अपर्याप्त स्टक लाइनहरू उपस्थित छन्
+    internal_note: आन्तरिक टिप्पणी
+    inventory: सूची
+    invitation_mailer:
+      greeting: नमस्ते %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} ले %{resource_name} मा सामेल हुने तपाईंको निमन्त्रणा स्वीकार गर्नुभएको छ"
+        subject: "%{invitee_name} ले %{resource_name} मा सामेल हुने तपाईंको निमन्त्रणा स्वीकार गर्नुभएको छ"
+      invitation_email:
+        body: "%{inviter_name} ले तपाईंलाई %{resource_name} मा सामेल हुन निमन्त्रणा गर्नुभएको छ"
+        link_description: 'यो निमन्त्रणा स्वीकार गर्न, कृपया तलको लिंक क्लिक गर्नुहोस्:'
+        subject: "%{resource_name} मा सामेल हुन निमन्त्रणा"
+    iso: ISO Alpha-2
+    item: वस्तु
+    items_cannot_be_shipped: हामी तपाईंको शिपिंग ठेगानामा चयन गरिएका वस्तुहरू पठाउन असमर्थ छौं। कृपया अर्को शिपिंग ठेगाना छान्नुहोस्।
+    key: कुञ्जी
+    kind: प्रकार
+    label: लेबल
+    last_name: थर
+    line_item: लाइन वस्तु
+    line_items: लाइन वस्तुहरू
+    link: लिंक
+    locale: लोकेल
+    locale_not_supported_by_store: यो स्टोरद्वारा समर्थित छैन
+    manual: म्यानुअल
+    market: मार्केट
+    me_no_current_user: कुनै एडमिन प्रयोगकर्ताले यो अनुरोध प्रमाणीकरण गरेन
+    media: मिडिया
+    meta_description: मेटा विवरण
+    meta_keywords: मेटा किवर्डहरू
+    meta_title: मेटा शीर्षक
+    metadata: मेटाडाटा
+    min_quantity: न्यूनतम परिमाण
+    month: महिना
+    name: नाम
+    new_variant: नयाँ भेरियन्ट
+    no_cc_type: लागू हुँदैन
+    no_payment_found: कुनै भुक्तान भेटिएन
+    none: कुनै पनि होईन
+    number: नम्बर
+    on_hand: हातमा
+    only_active_products_can_be_added_to_cart: मस्यौदा र अभिलेखित उत्पादनहरू कार्टमा थप्न सकिँदैन, कृपया पहिले उत्पादनलाई सक्रिय रूपमा चिन्ह लगाउनुहोस्।
+    open: खोल्नुहोस्
+    option_name: विकल्प नाम
+    option_type: विकल्प प्रकार
+    option_value: विकल्प मान
+    options: विकल्पहरू
+    or: वा
+    order: अर्डर
+    order_canceled: अर्डर रद्द गरियो
+    order_routing:
+      strategies:
+        legacy: लिगेसी
+        rules: नियमहरू (क्रमबद्ध)
+    order_summary: अर्डर सारांश
+    orders: अर्डर
+    out_of_stock: स्टक बाहिर
+    password: पासवर्ड
+    path: बाटो
+    payment: भुक्तानी
+    payment_method: भुक्तानी विधि
+    payment_method_not_supported: भुक्तान विधि समर्थित छैन
+    payment_methods: भुक्तानी विधिहरू
+    payment_processing_failed: भुक्तानी प्रशोधन गर्न सकिदैन, कृपया तपाईंले प्रविष्ट गर्नुभएको विवरणहरू जाँच गर्नुहोस्
+    payment_source: भुक्तानी स्रोत
+    pending: पेन्डिंग
+    percent: प्रतिशत
+    percent_per_item: प्रति वस्तु प्रतिशत
+    phone: फोन
+    price: मूल्य
+    price_range: मूल्य दायरा
+    price_rules:
+      channel_rule:
+        description: बिक्री च्यानलको आधारमा मूल्य निर्धारण लागू गर्नुहोस्
+      customer_group_rule:
+        description: विशिष्ट ग्राहक समूहहरूमा मूल्य लागू गर्नुहोस्
+    price_sack: मूल्य बोरा
+    prices: मूल्यहरू
+    privacy_policy: गोपनीयता नीति
+    processing: प्रशोधन हुँदै
+    product: उत्पादन
+    product_translations: उत्पादन अनुवादहरू
+    products: उत्पादनहरू
+    products_cannot_be_shipped: हामी अहिले %{product_names} लाई तपाईंको हालको स्थानमा पठाउन सक्दैनौं। कृपया आफ्नो शिपिङ ठेगाना परिवर्तन गर्नुहोस् वा %{product_names} लाई आफ्नो कार्टबाट हटाउनुहोस्।
+    promotion: पदोन्नति
+    promotion_action_types:
+      create_adjustment:
+        description: अर्डरमा पदोन्नति क्रेडिट समायोजन सिर्जना गर्दछ
+        name: समायोजन सिर्जना गर्नुहोस्
+      create_item_adjustments:
+        description: वर्णन
+        name: नाम
+      create_line_items:
+        description: विचित्रको निर्दिष्ट मात्राको साथ कार्टलाई जनसंख्या दिन्छ
+        name: लाइन आईटमहरू सिर्जना गर्नुहोस्
+      free_shipping:
+        description: वर्णन
+        name: नाम
+    promotion_actions: कार्यहरू
+    promotion_already_used: पहिले नै लागू भइसकेको प्रोमोसन तपाईं मेटाउन सक्नुहुन्न
+    promotion_label: प्रोमोसन (%{name})
+    promotion_rule_types:
+      category:
+        description: अर्डरमा तोकिएका कोटिहरूका उत्पादनहरू समावेश छन्
+        name: कोटिहरू
+      channel:
+        description: तोकिएको च्यानल (हरू) मार्फत राखिएका अर्डरहरूमा सीमित गर्नुहोस्
+        name: च्यानल (हरू)
+      country:
+        description: विशिष्ट देशमा शिपिङ ठेगाना भएका अर्डरहरूमा मात्र सीमित
+        name: देश
+      currency:
+        description: विशिष्ट मुद्रामा अर्डरहरूमा मात्र सीमित
+        name: मुद्रा
+      customer:
+        description: तोकिएका ग्राहकहरूका लागि मात्र उपलब्ध
+        name: ग्राहकहरू
+      customer_group:
+        description: तोकिएका ग्राहक समूह(हरू)का ग्राहकहरूका लागि मात्र उपलब्ध
+        name: ग्राहक समूह(हरू)
+      customer_logged_in:
+        description: लग इन भएका ग्राहकहरूका लागि मात्र उपलब्ध
+        name: लग इन भएका ग्राहकहरू मात्र
+      first_order:
+        description: ग्राहकको पहिलो अर्डर हुनु पर्छ
+        name: पहिलो अर्डर
+      item_total:
+        description: अर्डर कुल यी मापदण्ड पूरा गर्दछ
+        name: कुल वस्तु
+      market:
+        description: तोकिएको मार्केट (हरू) मा राखिएका अर्डरहरूमा सीमित गर्नुहोस्
+        name: मार्केट (हरू)
+      one_use_per_user:
+        description: वर्णन
+        name: नाम
+      option_value:
+        description: वर्णन
+        name: नाम
+      product:
+        description: अर्डरले निर्दिष्ट उत्पाद (हरू) समावेश गर्दछ
+        name: उत्पादन (हरू)
+    promotions: पदोन्नतिहरु
+    quantity: मात्रा
+    query: क्वेरी
+    reason: कारण
+    received: प्राप्त भयो
+    reference: सन्दर्भ
+    refund: फिर्ती
+    refund_amount: फिर्ता रकम
+    refunds: फिर्ती
+    registration: दर्ता
+    rejected: अस्वीकृत
+    remove: हटाउनुहोस्
+    remove_gift_card_on_completed_order_error: अर्डर राखिएपछि तपाईं गिफ्ट कार्ड हटाउन सक्नुहुन्न
+    resellable: पुनर्बिक्री गर्न मिल्ने
+    resend: पुनःपठाउनुहोस्
+    response_code: प्रतिक्रिया कोड
+    return: फर्किनु
+    returned: फिर्ता
+    returns_policy: फिर्ता नीति
+    row: पंक्ति
+    rules: नियमहरू
+    say_no: गलत
+    say_yes: सत्य
+    scope: स्कोप
+    selected_quantity_not_available: "%{item} को चयन गरिएको उपलब्ध छैन।"
+    ship: सिप
+    ship_address: सिप ठेगाना
+    shipment: ढुवानी
+    shipped: ढुवानी गरियो
+    shipping: डेलिभरी
+    shipping_address: वितरण ठेगाना
+    shipping_flat_rate_per_item: प्याकेज आईटम प्रति फ्लैट दर
+    shipping_flat_rate_per_order: फ्लैट दर
+    shipping_flexible_rate: प्याकेज वस्तु प्रति लचिलो दर
+    shipping_policy: शिपिङ नीति
+    shipping_price_sack: मूल्य बोरा
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (समावेश %{tax_amount} %{tax_rate_name})"
+    sku: यास.के.यु
+    slug: स्लग
+    source: श्रोत
+    status: स्थिति
+    stock_location: स्टक स्थान
+    stock_locations: स्टक स्थानहरू
+    stock_transfer:
+      errors:
+        must_have_variant: तपाईंले कम्तीमा एउटा भेरियन्ट थप्नुपर्छ
+        same_location: गन्तव्य स्थान जस्तै हुन सक्दैन
+        variants_unavailable: केही भेरियन्टहरू %{stock} मा उपलब्ध छैनन्
+    store: स्टोर
+    store_credit:
+      allocated: थपिएको
+      authorized: अधिकृत
+      captured: प्रयोग गरिएको
+      credit: क्रेडिट
+      eligible: योग्य
+    store_credit_name: स्टोर क्रेडिट
+    store_credit_payment_method:
+      currency_mismatch: स्टोर क्रेडिट मुद्रा अर्डर मुद्रासँग मेल खाँदैन
+      insufficient_authorized_amount: अधिकृत रकमभन्दा बढी क्याप्चर गर्न असमर्थ
+      insufficient_funds: बाँकी स्टोर क्रेडिट रकम पर्याप्त छैन
+      successful_action: सफल स्टोर क्रेडिट %{action}
+      unable_to_credit: 'कोड क्रेडिट गर्न असमर्थ: %{auth_code}'
+      unable_to_find: स्टोर क्रेडिट फेला पार्न सकिएन
+      unable_to_find_for_action: "%{action} कार्यका लागि अथ कोड %{auth_code} को स्टोर क्रेडिट फेला पार्न सकिएन"
+      unable_to_void: 'कोड भोइड गर्न असमर्थ: %{auth_code}'
+    success: सफलता
+    tags: ट्यागहरू
+    tax: कर
+    tax_category: कर कोटि
+    terms_of_service: सेवाका सर्तहरू
+    there_are_no_items_for_this_order: यस अर्डरको लागि त्यहाँ कुनै आईटमहरू छैनन्। आदेश जारी गर्न एक वस्तु जोड्नुहोस्।
+    tiered_flat_rate: टायर्ड फ्लाट रेट
+    tiered_percent: टायर्ड प्रतिशत
+    total: कुल
+    track_inventory: ट्र्याक सूची
+    tracking: ट्र्याकिंग
+    tracking_number: ट्र्याकिंग नम्बर
+    tracking_url: ट्र्याकिंग युआरयाल
+    type: प्रकार
+    unable_to_connect_to_gateway: गेटवेमा जडान गर्न असमर्थ।
+    updated_at: अपडेट मिति
+    url: URL
+    user: प्रयोगकर्ता
+    validation:
+      must_be_int: पूर्णांक हुनुपर्दछ
+    value: मूल्य
+    variant: भेरियन्ट
+    variants: भेरियन्ट्स
+    verified: प्रमाणित
+    void: शून्य
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: अक्षम मिति
+        heading: वेबहुक एन्डपोइन्ट अक्षम गरियो
+        instructions: 'कृपया एन्डपोइन्ट URL र सेवा जाँच गर्नुहोस्, त्यसपछि यसलाई Settings → Developers → Webhooks मा पुन: सक्षम गर्नुहोस्।'
+        message: बारम्बार डेलिभरी असफल भएपछि वेबहुक एन्डपोइन्ट "%{endpoint_name}" स्वचालित रूपमा अक्षम गरिएको छ।
+        name_label: नाम
+        reason_label: कारण
+        subject: 'वेबहुक एन्डपोइन्ट अक्षम गरियो: %{endpoint_name}'
+        url_label: URL
+    weight: तौल
+    weight_unit: तौल एकाइ
+    width: चौड़ाई
+    year: बर्ष
+    zip: पोष्ट कोड

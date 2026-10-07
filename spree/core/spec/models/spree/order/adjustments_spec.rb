@@ -5,7 +5,7 @@ describe Spree::Order do
     let!(:persisted_order) { create(:order) }
     let!(:line_item) { create(:line_item) }
     let!(:shipping_method) do
-      sm = create(:shipping_method)
+      sm = create(:delivery_method)
       sm.calculator.preferred_amount = 10
       sm.save
       sm
@@ -42,7 +42,7 @@ describe Spree::Order do
       )
     }
     let!(:shipping_method) do
-      sm = create(:shipping_method, tax_category: tax_category)
+      sm = create(:delivery_method, tax_category: tax_category)
       sm.calculator.preferred_amount = 10
       sm.save
       sm

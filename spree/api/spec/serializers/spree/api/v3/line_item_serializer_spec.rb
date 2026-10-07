@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
 
   describe 'thumbnail_url' do
     context 'when variant has an image' do
-      let(:image) { create(:image) }
+      let(:image) { create(:media) }
       let(:variant) { create(:variant, product: product, images: [image]) }
 
       before do
@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     end
 
     context 'when variant has no image but product has an image' do
-      let(:image) { create(:image) }
+      let(:image) { create(:media) }
       let(:variant) { product.default_variant }
 
       before do

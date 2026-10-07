@@ -71,10 +71,6 @@ module Spree
                                    .find_by_prefix_id!(params[:promotion_id])
           end
 
-          def parent_association
-            :promotion_actions
-          end
-
           private
 
           def build_subclassed_resource(klass, attrs)

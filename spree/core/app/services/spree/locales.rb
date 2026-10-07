@@ -4,11 +4,10 @@ module Spree
     # (Mobility-backed content such as product names, descriptions, taxons,
     # option values, etc.).
     #
-    # This is deliberately **independent of the admin/storefront UI translation
-    # set** (`Spree.available_locales`, which reflects which `spree_i18n` UI
-    # bundles happen to be installed). In a headless setup the storefront ships
-    # its own UI translations, so the languages a merchant can store content in
-    # must not be constrained by which admin chrome translations exist.
+    # This is deliberately **independent of the languages Spree ships
+    # translations for** (`Spree.available_locales`). In a headless setup the
+    # storefront ships its own UI translations, so the languages a merchant can
+    # store content in must not be constrained by Spree's own translations.
     #
     # Codes follow BCP-47 casing (lowercase language, uppercase region —
     # `pt-BR`, `zh-CN`) so the browser's `Intl.DisplayNames` resolves a clean

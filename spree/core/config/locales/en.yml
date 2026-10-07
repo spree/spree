@@ -121,8 +121,6 @@ en:
         phone: Shipping address phone
         postal_code: Shipping address zip code
         state: Shipping address state
-      spree/page_link:
-        open_in_new_tab: Open in new tab
       spree/payment:
         amount: Amount
         number: Number
@@ -247,6 +245,7 @@ en:
         sign_in_count: Sign in count
     errors:
       messages:
+        already_linked: is already linked to this product
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
         must_belong_to_same_store: must belong to the same store
@@ -259,17 +258,18 @@ en:
               must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         spree/calculator/tiered_flat_rate:
           attributes:
-            base:
-              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
             preferred_tiers:
-              should_be_hash: should be a hash
+              should_be_list: should be a list of tiers, each with a threshold and a value
+              thresholds_should_be_positive_number: should all have a threshold larger than 0
+              thresholds_should_be_unique: should not repeat a threshold
+              values_should_be_number: should all have a value of 0 or more
         spree/calculator/tiered_percent:
           attributes:
-            base:
-              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
-              values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
-              should_be_hash: should be a hash
+              should_be_list: should be a list of tiers, each with a threshold and a value
+              thresholds_should_be_positive_number: should all have a threshold larger than 0
+              thresholds_should_be_unique: should not repeat a threshold
+              values_should_be_percent: should all have a value between 0% and 100%
         spree/catalog:
           attributes:
             base:
@@ -334,14 +334,6 @@ en:
               content_type: has not allowed content type
             type:
               inclusion: is not included in the list of allowed types
-        spree/legacy_user:
-          attributes:
-            bill_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
-            ship_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
         spree/line_item:
           attributes:
             currency:
@@ -439,12 +431,10 @@ en:
           attributes:
             company:
               must_be_legal_entity: must be a legal entity, not a division
+            owner:
+              must_be_legal_entity: must be the legal entity, not a division
             value:
               invalid: does not look like a valid %{kind} registration
-        spree/taxon_image:
-          attributes:
-            attachment:
-              not_allowed_content_type: has not allowed content type
         spree/user:
           attributes:
             bill_address_id:
@@ -479,12 +469,6 @@ en:
       spree/classification:
         one: Classification
         other: Classifications
-      spree/cms_page:
-        one: Page
-        other: Pages
-      spree/cms_section:
-        one: Section
-        other: Sections
       spree/country:
         one: Country
         other: Countries
@@ -521,18 +505,6 @@ en:
       spree/order:
         one: Order
         other: Orders
-      spree/page:
-        one: Page
-        other: Pages
-      spree/page_block:
-        one: Page Block
-        other: Page Blocks
-      spree/page_link:
-        one: Page Link
-        other: Page Links
-      spree/page_section:
-        one: Page Section
-        other: Page Sections
       spree/payment:
         one: Payment
         other: Payments
@@ -626,12 +598,6 @@ en:
       spree/taxonomy:
         one: Category
         other: Categories
-      spree/theme:
-        one: Theme
-        other: Themes
-      spree/tracker:
-        one: Tracker
-        other: Trackers
       spree/user:
         one: User
         other: Users
@@ -641,9 +607,6 @@ en:
       spree/zone:
         one: Zone
         other: Zones
-  address_book:
-    save: Save
-    successfully_created: New address has been successfully created
   errors:
     messages:
       already_confirmed: was already confirmed
@@ -666,48 +629,21 @@ en:
     percentage:
       format:
         precision: 1
-  pagination:
-    first: "&laquo;"
-    last: "&raquo;"
-    next: "&rsaquo;"
-    previous: "&lsaquo;"
-    truncate: "&hellip;"
   spree:
-    abbreviation: Abbreviation
     accept: Accept
-    acceptance_status: Acceptance status
     accepted: Accepted
     accepts_email_marketing: Accepts email marketing
     account: Account
-    action: Action
-    activate: Activate
     active: Active
-    add: Add
-    add_customers: Add Customers
-    add_product: Add Product
-    add_products: Add Products
-    add_store: New Store
-    add_store_credit: Add Store Credit
-    added_to_cart: Added to cart successfully!
-    additional_item: Additional Item
     address: Address
     address1: Address
     address2: Address (contd.)
-    address_book:
-      add_house_number: Add a house number if you have one
-    address_not_owned_by_user: The specified address does not belong to this user.
-    addresses: Addresses
-    adjustable: Adjustable
     adjustment: Adjustment
-    adjustment_amount: Amount
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Included in Price)"
-    adjustment_total: Adjustment Total
-    adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
-    admin_locale: Admin locale
     admin_user_mailer:
       password_reset_email:
         action: Reset Password
@@ -716,68 +652,26 @@ en:
         ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
         instructions: We received a request to reset the password for your %{store_name} admin account. Click the button below to choose a new password.
         subject: Password Reset Instructions
-    administration: Administration
-    advertise: Advertise
     all: All
-    all_products: All products
-    allowed_origin: Allowed Origin
-    allowed_origins: Allowed Origins
-    alternative_phone: Alternative Phone
     amount: Amount
-    analytics: Analytics
-    and: and
-    api_key: API Key
+    any: Any
     api_key_channel_immutable: cannot be changed after the key is created; create a new key bound to the channel you need and revoke this one
     api_key_channel_must_belong_to_store: must belong to the same store as the key
     api_key_channel_publishable_only: can only be set on publishable keys
     api_key_no_current_key: No API key authenticated this request
     api_key_scopes_immutable: cannot be changed after the key is created; create a new key with the scopes you need and revoke this one
-    api_keys: API Keys
-    apply: Apply
-    apply_only_on_full_priced_items: Apply only on full priced items
-    apply_store_credit: Apply Store Credit
-    approve: approve
-    approved_at: Approved at
     approver: Approver
-    assets: Media
-    at_symbol: "@"
-    attachments: Attachments
-    author: Author
     authorized: Authorized
-    auto_capture: Auto Capture
     availability: availability
-    available: Available
-    available_on: Available On
-    average_order_value: Average Order Value
-    avs_response: AVS Response
-    back: Back
-    back_end: Backend
     backorderable: Backorderable
-    backorderable_default: Backorderable default
     backordered: Backordered
-    balance: Balance
-    balance_due: Balance Due
-    barcode: Barcode
-    base_amount: Base Amount
-    base_percent: Base Percent
     bill_address: Bill Address
-    billing: Billing
     billing_address: Billing Address
-    both: Both
-    brand: Brand
     calculator: Calculator
-    cancel: cancel
     canceled: Canceled
-    canceled_at: Canceled at
     canceler: Canceler
     cannot_be_destroyed: Order cannot be destroyed.
-    cannot_empty: Cannot empty order.
-    cannot_empty_completed_order: Order has already been processed so it cannot be emptied
-    cannot_return_more_than_bought_quantity: Cannot return more than bought quantity.
     capture: Capture
-    capture_events: Capture events
-    card_code: Card Verification Code (CVC)
-    card_number: Card Number
     cart: Cart
     cart_already_updated: The cart has already been updated.
     cart_completion_in_progress: The cart is being completed. Please retry in a moment.
@@ -786,6 +680,7 @@ en:
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
       discontinued: "%{li_name} was removed because it was discontinued"
       invalid_price: Price must be a non-negative number
+      not_orderable: "%{li_name} is not available to order. Remove it to continue."
       out_of_stock: "%{li_name} was removed because it was sold out"
       price_override_not_allowed: Prices cannot be changed on a placed order — use fees or discounts instead
       pricing_unavailable: Prices could not be confirmed. Please try again.
@@ -796,11 +691,8 @@ en:
       product_not_in_store: One of those products belongs to another store.
     categories: Categories
     category: Category
-    change: Change
     channel: Sales channel
-    channel_ids: Sales channels
     channels: Sales channels
-    charged: Charged
     checkout: Checkout
     checkout_requirements:
       delivery_method_required: Select a delivery method for all fulfillments
@@ -810,15 +702,7 @@ en:
       payment_required: Add a payment method
       po_number_required: A purchase order number is required for this account
       ship_address_required: Shipping address is required
-    choose_currency: Choose Currency
     city: City
-    clear: Clear
-    clear_all: Clear all
-    clear_cache: Clear Cache
-    clone: Clone
-    close: Close
-    closed: Closed
-    code: Code
     collection_rule_types:
       available_on:
         description: Products published within the last N days
@@ -830,7 +714,6 @@ en:
         description: Products carrying a matching tag
         name: Tag
     color_code: Color Code
-    colors: Colors
     commission_rule_types:
       category_rule:
         description: Charges this rate only for products in the selected categories, and anything filed beneath them
@@ -844,36 +727,16 @@ en:
       seller_rule:
         description: Charges this rate only when the seller is one of the selected
         name: Seller
-    companies: Companies
     company: Company
     company_invitations:
-      email_mismatch: This invitation was sent to a different email address.
       not_pending: This invitation is no longer pending and cannot be revoked.
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
-    configuration: Configuration
-    configurations: Configurations
     confirm: Confirm
-    contact: Contact
-    contact_phone: Contact phone
-    content: Content
-    continue: Continue
-    continue_shopping: Continue shopping
-    copy: Copy
-    copy_link: Copy link
-    cost_currency: Cost Currency
     cost_price: Cost Price
     count_on_hand: Count On Hand
-    countries: Countries
     country: Country
-    country_name: Name
-    country_names:
-      CA: Canada
-      FRA: France
-      ITA: Italy
-      US: United States of America
-    coupon: Coupon
     coupon_code: Coupon code
     coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
@@ -882,60 +745,30 @@ en:
     coupon_code_max_usage: Coupon code usage limit exceeded
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+    coupon_code_unavailable: The coupon code on your cart is no longer available.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     coupon_code_used: The coupon code you entered has already been used. Please try again.
-    coupon_codes: Coupon codes
-    create: Create
-    create_new: Create new
     created_at: Created at
-    created_by: Created by
-    credit: Credit
-    credit_allowed: Credit allowed
     credit_card: Credit Card
-    credit_cards: Credit Cards
-    credit_owed: Credit Owed
-    credited: Credited
-    credits: Credits
-    currencies: Currencies
     currency: Currency
     currency_not_supported_by_store: is not supported by this store
-    current: Current
-    current_password: Current password
     custom_field_definitions: Custom Field Definitions
     custom_fields: Custom Fields
     customer: Customer
     customer_errors:
       anonymize_failed: The erasure could not be completed and nothing was changed
-    customer_group: Customer Group
-    customer_groups: Customer Groups
-    customer_support_email: Customer Support Email
     customers: Customers
-    cut: Cut
-    cvv: CVV
-    cvv_response: CVV Response
     data_request_errors:
       already_anonymized: This customer's personal data has already been erased
       download_unavailable: This download link has expired or is no longer valid
       not_pending: This request has already been processed
-    date: Date
-    date_range: Date Range
     default: Default
-    default_billing_address: Default billing address
-    default_country: Default Country
-    default_currency: Default currency
-    default_locale: Default locale
-    default_shipping_address: Default shipping address
     default_stock_location_name: Shop location
-    default_tax: Default Tax
-    default_tax_zone: Default Tax Zone
     default_wishlist_name: Wishlist
-    delete: Delete
-    deleted: Deleted
     deliveries:
       errors:
         delivered: This consignment has already arrived — its arrival is what the returns window counts from, so it cannot be deleted
         has_label: This delivery was created by a shipping label — refund the label instead of deleting the delivery
-        not_found: This fulfillment has no delivery to track yet
     delivery: Delivery
     delivery_method_rule_types:
       channel_rule:
@@ -963,27 +796,14 @@ en:
     destination: Destination
     destroy: Destroy
     details: Details
-    developers: Developers
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
     digital_assets_attachment_must_be_private: Upload the file to private storage before attaching it
-    discontinue_on: Discontinue On
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
-    discount: Discount
-    discount_amount: Discount Amount
-    discounts: Discounts
-    display: Display
     display_delivery_range: Delivery in %{delivery_range} business days
-    display_on: Display on
-    domain: Domain
-    done: Done
-    download: Download
     draft: Draft
-    duplicate: Duplicate
-    duplicating: Duplicating
-    edit: Edit
     eligibility_errors:
       messages:
         has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
@@ -1002,13 +822,15 @@ en:
         no_user_specified: You need to login before applying this coupon code.
         not_first_order: This coupon code can only be applied to your first order.
         wrong_country: This coupon code is not eligible in your country
+        wrong_currency: This coupon code is not eligible for orders in this currency.
     email: Email
-    email_marketing: Email marketing
-    emails: Emails
-    empty: Empty
-    end: End
-    ends_at: Ends at
-    enter: Enter
+    email_templates:
+      another_admin: another admin
+      no_sample_record: There is no %{record} in this store to preview this email with yet.
+      sample_needs_permission: Previewing this email shows your store's records, which needs the %{permissions} permission.
+      stale_draft: "%{name} saved this draft after you opened it. Reload to see their changes before saving yours."
+      test_email_needs_admin: A test email goes to the signed-in admin, so it needs one.
+      test_email_subject: "[Test] %{subject}"
     error: error
     error_user_destroy_with_orders: User associated with orders cannot be destroyed
     error_user_does_not_have_any_store_credits: User does not have any Store Credits available
@@ -1039,19 +861,19 @@ en:
         flat_fee_cannot_charge_delivery: is not available on a flat fee, which already charges for the sale the delivery belongs to — add a separate rate to charge delivery
         integration_connection_failed: could not connect with the saved credentials
         integration_type_not_registered: is not a registered integration
+        invalid_collection_rule: is not a registered collection rule
         invalid_commission_rule: is not a commission rule kind this store has
         invalid_commission_rule_type: "%{type} is not a commission rule kind this store has"
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_json: 'must be valid JSON: %{detail}'
-        invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_refund_method: must be one of original_payment, store_credit
         invalid_seller_requirement: is not a registered seller requirement
+        invalid_status: Invalid status
         invalid_storefront_access: is not a valid storefront access level
         items_not_a_list: items must be a list of objects
         must_be_greater_than_min_amount: must be greater than or equal to the minimum
-        must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
         not_cancellable: cannot be canceled once its goods have been dispatched
         oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
@@ -1064,7 +886,6 @@ en:
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
-        received_exceeds_expected: cannot be more than the %{expected} expected
         refund_amount_requires_shared_payment: can only be set when the payment is shared across a split checkout
         same_as_inviter: cannot be the same as the inviter
         seller_delivery_method_not_shareable: only the marketplace's own delivery methods can be shared with sellers
@@ -1077,47 +898,19 @@ en:
         unknown_scopes: 'contains unknown scopes: %{scopes}'
         unregistered_actor: is not a registered actor class
         variant_product_mismatch: must belong to the same product as the variant
-      services:
-        get_shipping_rates:
-          no_line_items: To generate Shipping Rates you need to add some Line Items to Order
-          no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
-    estimated_transit_business_days: Estimated transit business days
-    event: Event
-    excl: excl.
-    existing_address: Existing address
-    expiration: Expiration
+    exchange_fee_label: Exchange %{number}
     expired: Expired
-    expires_at: Expires at
-    export: Export
     export_mailer:
       export_done:
         message: Good work, your export is ready! Please use the link below to download it.
         subject: Your export %{export_number} was successfully processed!
       greeting: Hi %{user_name},
-      thanks: Thank you,
-    extension: Extension
-    facebook: Facebook
-    featured_image: Featured image
     field: Field
-    filename: Filename
-    filled: Filled
-    filter: Filter
-    filterable: Filterable
-    finalize: Finalize
-    finalized: Finalized
-    first_item: First Item
     first_name: First Name
-    firstname: First Name
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
-    fonts: Fonts
-    footer: Footer
-    forbidden: Access denied
     free: Free
-    free_shipping: Free Shipping
-    from: From
-    front_end: Front End
     fulfillments:
       errors:
         backordered_units: This fulfillment holds backordered units and cannot be handed over yet
@@ -1125,7 +918,6 @@ en:
         cannot_fulfill: This fulfillment cannot be fulfilled in its current status
         cannot_mark_delivered: Only a fulfilled shipment can be marked delivered
         cannot_purchase_label: Labels can only be bought before the fulfillment ships
-        cannot_resume: This fulfillment cannot be resumed in its current status
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
         insufficient_stock_on_hand: This dispatch needs %{requested} of %{item} but only %{on_hand} are on hand at this location — correct the stock count or force the dispatch
         invalid_cost: cost must be a non-negative number
@@ -1138,17 +930,13 @@ en:
         order_draft: Draft orders cannot be fulfilled — complete the order first
         order_not_completed: Fulfillments can only be created manually on completed orders
         order_not_paid: This order is not paid for yet
-        provider_has_no_labels: This delivery method's provider does not produce labels
         unknown_tracking_status: "%{status} is not a known tracking status"
     gateway: Gateway
     gateway_error: Gateway Error
-    general: General
-    generate_code: Generate coupon code
     gift_card: Gift Card
     gift_card_already_canceled: The Gift Card has already been canceled.
     gift_card_already_redeemed: The Gift Card has already been redeemed.
     gift_card_applied: The Gift Card was successfully applied to your order!
-    gift_card_batch: Gift Card Batch
     gift_card_canceled: The Gift Card has been canceled.
     gift_card_customer_not_logged_in: Gift Card cannot be applied with guest user.
     gift_card_expired: The Gift Card has expired.
@@ -1160,22 +948,12 @@ en:
     gift_card_not_found: The Gift Card was not found.
     gift_card_removed: The Gift Card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
-    gift_cards: Gift Cards
-    guest_checkout: Guest Checkout
     guest_checkout_not_allowed: You must be signed in to complete checkout.
-    has_no_shipped_units: has no shipped units
     height: Height
-    hide: Hide
-    home: Home
     i18n:
       this_file_language: English (US)
-    icon: Icon
     idempotency_key_reused: This Idempotency-Key has already been used with different request parameters.
     image: Image
-    images: Images
-    immediately: Immediately
-    implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
-    implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
     import_has_no_failed_rows: This import has no failed rows to retry.
     import_mailer:
@@ -1190,20 +968,12 @@ en:
     import_not_processing: This import is not processing.
     in_stock: In Stock
     inactive: Inactive
-    incl: incl.
-    included_in_price: Included in Price
     incomplete: Incomplete
-    instagram: Instagram
-    insufficient_stock: Insufficient stock available, only %{on_hand} remaining
+    insufficient_stock_for_reservation: "%{item} has only %{available} available"
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
-    integrations: Integrations
     internal_note: Internal Note
-    internationalization: Internationalization
-    invalid_credit_card: Invalid credit card.
-    invalid_exchange_variant: Invalid exchange variant.
     invalid_password: Invalid password.
     inventory: Inventory
-    invitation_accepted: Invitation accepted!
     invitation_already_accepted: This invitation has already been accepted.
     invitation_expired: This invitation has expired. Invite them again to send a new one.
     invitation_invitee_missing: This invitation has no invitee.
@@ -1216,117 +986,51 @@ en:
         body: "%{inviter_name} has invited you to join %{resource_name}"
         link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
-      thanks: Thank you,
     invitation_not_acceptable: Invitation not found, expired, or already accepted.
     invitation_role_resource_mismatch: must belong to the same store or seller as the invitation
-    invitations: Invitations
-    invited_by: Invited by
     iso: ISO Alpha-2
-    iso3: ISO Alpha-3
-    iso_name: ISO Name
     item: Item
-    item_description: Item Description
-    item_total: Item Total
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     key: Key
     kind: Kind
     label: Label
-    language: Language
     last_name: Last Name
-    lastname: Last Name
     line_item: Line Item
-    line_item_adjustments: Line item adjustments
     line_items: Line items
     link: Link
-    list: List
-    live: Live
-    loading: Loading
     locale: Locale
     locale_not_supported_by_store: is not supported by this store
-    location: Location
-    lock: Lock
-    logged_in_successfully: Logged in successfully
-    login: Login
-    logo: Logo
-    logout: Logout
-    logs: Logs
-    mail_from_address: Mail from address
-    mailer_logo: Mailer logo (JPG or PNG images only)
-    make_active_at: Make Active At
     manual: Manual
-    manual_intervention_required: Manual intervention required
     market: Market
-    market_ids: Markets
-    markets: Markets
-    master: Master
-    master_price: Master Price
-    max: Max
-    max_items: Max Items
-    max_quantity: Max Quantity
     me_no_current_user: No admin user authenticated this request
     media: Media
-    memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
     meta_title: Meta Title
     metadata: Metadata
-    min: Min
     min_quantity: Min Quantity
-    minimal_amount: Minimal Amount
     month: Month
-    more: More
-    move: Move
-    my_account: My Account
-    my_orders: My Orders
     name: Name
-    name_or_sku: Name or SKU (enter at least first 3 characters of product name)
-    navigation: Navigation
-    never: Never
-    new: New
-    new_address: New address
-    new_image: New Image
-    new_order: New Order
-    new_order_notifications_email: New Order Notifications Email
-    new_price_list: New Price List
-    new_product: New Product
-    new_promotion: New Promotion
-    new_state: New State
-    new_user: New User
     new_variant: New Variant
-    newsletter_subscribers: Newsletter Subscribers
-    next: Next
     no_cc_type: N/A
+    no_maximum: No maximum
     no_payment_found: No payment found
     no_refundable_payments: There is no payment left on this order to refund.
-    no_report_data: No report data
     none: None
-    normal_amount: Normal Amount
-    not: not
-    not_available: N/A
-    not_enough_stock: There is not enough inventory at the source location to complete this transfer.
-    not_found: "%{resource} is not found"
     not_received: This return cannot be refunded until its items are marked received.
-    note: Note
     nothing_to_refund: There is nothing left to refund on this return.
     number: Number
-    ok: OK
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
     open: Open
     option_name: Option name
     option_type: Option Type
-    option_types: Option Types
     option_value: Option Value
-    option_values: Option Values
-    optional: Optional
     options: Options
     or: or
     order: Order
     order_canceled: Order canceled
     order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
-    order_not_found: We couldn't find your order. Please try that action again.
-    order_number: Order %{number}
-    order_resumed: Order resumed
     order_routing:
       strategies:
         legacy: Legacy
@@ -1342,34 +1046,22 @@ en:
         description: Fulfill from the location pinned on the order, when one is set
         name: Preferred location
     order_summary: Order Summary
-    order_total: Order Total
     orders: Orders
-    origin: Origin
-    other: Other
     out_of_stock: Out of Stock
-    outstanding_balance: Outstanding Balance
     package_types:
       default_name: Shipping box
-    page: Page
-    pages: Pages
     password: Password
     password_required_to_create_account: Password is required to create your account.
     path: Path
-    pay: Pay
     payment: Payment
     payment_method: Payment Method
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
     payment_source: Payment source
-    payment_state: Payment State
-    payment_total: Payment Total
-    payments: Payments
     pending: Pending
     percent: Percent
     percent_per_item: Percent Per Item
-    permalink: Permalink
-    permissions: Permissions
     permissions_catalog:
       groups:
         access: Access
@@ -1401,6 +1093,9 @@ en:
         dashboard:
           description: Sales and performance analytics
           label: Analytics dashboard
+        email_templates:
+          description: Customer email templates and the email layout
+          label: Email templates
         fulfillments:
           description: Pack, ship and track order fulfillments
           label: Fulfillments
@@ -1448,13 +1143,6 @@ en:
     po_document_missing: This order has no attached purchase order document.
     po_document_too_large: is larger than %{size}.
     po_document_upload_incomplete: The purchase order document was not uploaded completely. Please try attaching it again.
-    policies: Policies
-    powered_by: Powered by
-    pre_tax_amount: Pre-Tax Amount
-    pre_tax_total: Pre-Tax Total
-    presentation: Presentation
-    preview: Preview
-    previous: Previous
     price: Price
     price_list_import_ambiguous_sku: More than one product in this store has the SKU %{sku}. Give each a SKU of its own before importing prices for it.
     price_list_import_failed: The price could not be written.
@@ -1466,7 +1154,6 @@ en:
     price_list_import_too_many_breaks: A variant can carry at most %{count} quantity breaks on one price list.
     price_list_import_unknown_sku: No product in this store has the SKU %{sku}.
     price_list_import_unsupported_currency: This store does not sell in %{currency}.
-    price_lists: Price Lists
     price_range: Price Range
     price_rules:
       channel_rule:
@@ -1475,19 +1162,14 @@ en:
         description: Apply pricing to specific customer groups
     price_sack: Price Sack
     prices: Prices
-    pricing: Pricing
     privacy_policy: Privacy Policy
-    process: Process
     processing: Processing
     product: Product
-    product_has_no_description: This product has no description
-    product_name: Product Name
-    product_properties: Product Properties
+    product_import_unknown_stock_location: You have no stock location named %{name}.
     product_translations: Product Translations
     products: Products
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
     promotion: Promotion
-    promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
         description: Creates a promotion credit adjustment on the order
@@ -1503,9 +1185,7 @@ en:
         name: Free shipping
     promotion_actions: Actions
     promotion_already_used: You can not destroy promotion that was already applied
-    promotion_category: Promotion Category
     promotion_label: Promotion (%{name})
-    promotion_rule: Promotion Rule
     promotion_rule_types:
       category:
         description: Order includes products in specified categories
@@ -1546,13 +1226,7 @@ en:
       product:
         description: Order includes specified product(s)
         name: Product(s)
-    promotionable: Promotable
     promotions: Promotions
-    propagate_all_variants: Propagate all variants
-    properties: Properties
-    property: Property
-    provider: Provider
-    published_at: Published at
     purchase_order:
       errors:
         already_closed: This purchase order has already been received or cancelled
@@ -1581,33 +1255,21 @@ en:
     purchase_order_import_unknown_sku: No product in this store has the SKU %{sku}.
     purchase_order_import_unknown_supplier: This store has no supplier named %{name}. Add them first.
     purchase_order_import_unsupported_currency: This store does not buy in %{currency}.
-    qty: Qty
     quantity: Quantity
     query: Query
-    rate: Rate
     reason: Reason
-    receive: receive
     received: Received
-    reception_status: Reception Status
     reference: Reference
     refund: Refund
     refund_amount: Refund Amount
+    refund_amount_negative: The refund amount cannot be negative.
+    refund_amount_required: Enter an amount greater than zero, because the customer is still owed money on this return.
     refund_exceeds_balance: That is more than the amount still refundable.
     refunds: Refunds
-    register: Register
     registration: Registration
-    reimburse: Reimburse
-    reimbursed: Reimbursed
-    reject: Reject
     rejected: Rejected
-    remember_me: Remember me
     remove: Remove
     remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
-    rename: Rename
-    report: Report
-    report_names:
-      products_performance: Products performance
-      sales_total: Sales total
     reporting:
       dimensions:
         cart_channel:
@@ -1914,46 +1576,24 @@ en:
           partially_refunded: Partially refunded
           refunded: Refunded
           voided: Voided
-    reports: Reports
-    required: "*"
-    required_fields: required fields
     resellable: Resellable
     resend: Resend
-    reset_password: Reset my password
-    resource: Resource
     response_code: Response Code
-    resume: resume
-    resumed: Resumed
     return: return
     return_errors:
       outside_window: This order is outside the %{days}-day return window
-    return_quantity: Return Quantity
     returned: Returned
-    returns: Returns
     returns_policy: Returns Policy
-    review: Review
-    risk: Risk
-    risky: Risky
     role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
-    role_id: Role ID
     role_immutable: cannot be changed on a protected role
     role_permissions_not_grantable_for_audience: 'cannot be granted to a %{audience} role: %{keys}'
     role_permissions_unknown: 'contains unknown permissions: %{keys}'
     role_resource_immutable: cannot be changed once the role exists
-    roles: Roles
     row: Row
     rules: Rules
-    safe: Safe
-    sale: Sale
-    sales_total: Sales Total
-    saving: Saving
     say_no: 'No'
     say_yes: 'Yes'
     scope: Scope
-    scopes: Scopes
-    search: Search
-    search_by: 'Search by:'
-    security: Security
     seed:
       commission_rates:
         marketplace_default: Marketplace default
@@ -1962,8 +1602,6 @@ en:
       product_types:
         default: Default
         digital: Digital
-    select: Select
-    select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
     seller: Seller
     seller_access_denied: You do not have access to this seller.
@@ -2007,9 +1645,10 @@ en:
         description: The address customer returns are sent to
         name: Returns address
     seller_requirements:
+      custom_field_not_for_sellers: must be a custom field defined for sellers
       file_required: A file is required for this requirement
-      file_type_not_accepted: This requirement accepts %{types}
       incomplete: "%{name} is not complete"
+      invalid_terms_effective_from: Terms effective from is not a date
     seller_submission_no_file: This submission has no attached file.
     seller_team_last_member: A seller needs at least one team member. Invite someone else before removing this one.
     seller_user_mailer:
@@ -2020,26 +1659,15 @@ en:
         ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
         instructions: We received a request to reset the password for your %{store_name} seller account. Click the button below to choose a new password.
         subject: Password Reset Instructions
-    send_consumer_transactional_emails: Send Customer Transactional Emails
-    seo: SEO
-    seo_title: SEO Title
-    server: Server
-    settings: Settings
     ship: Ship
     ship_address: Ship Address
-    ship_to: 'Shipping to:'
-    ship_total: Ship Total
     shipment: Shipment
-    shipment_adjustments: Shipment adjustments
-    shipment_state: Shipment State
-    shipments: Shipments
     shipped: Shipped
     shipping: Shipping
     shipping_address: Shipping Address
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
     shipping_flexible_rate: Flexible Rate per package item
-    shipping_instructions: Shipping Instructions
     shipping_labels:
       errors:
         already_purchased: This parcel already has an active shipping label
@@ -2054,44 +1682,20 @@ en:
         return_closed: A return label can only be bought while the return is open
         tracking_number_required: An uploaded label needs its tracking number
         uploaded_not_refundable: An uploaded label was not bought through Spree and cannot be refunded — delete it instead
-    shipping_method: Shipping Method
-    shipping_methods: Shipping Methods
     shipping_policy: Shipping Policy
     shipping_price_sack: Price sack
     shipping_rates:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_zone: Shipping Zone
-    shopping_cart: Shopping Cart
-    show: Show
-    show_deleted: Show Deleted
-    show_discontinued: Show Discontinued
-    show_only_complete_orders: Only show complete orders
-    show_rate_in_label: Show rate in label
-    sign_up: Sign Up
-    site_name: Site name
-    size: Size
     sku: SKU
-    skus: SKUs
     slug: Slug
-    social: Social
     sort_a_to_z: A-Z
-    sort_by: Sort by
     sort_high_to_low: high-low
     sort_low_to_high: low-high
     sort_z_to_a: Z-A
     source: Source
-    special_instructions: Special Instructions
-    split: Split
-    square_image: Square image
-    start: Start
-    starts_at: Starts at
-    state: State
-    states: States
-    states_required: States Required
     status: Status
-    stock: Stock
     stock_level:
       errors:
         adjustment_exclusive_with_count_on_hand: Send either a count on hand or an adjustment, not both
@@ -2111,20 +1715,13 @@ en:
         received: Received
         return_restock: Return restock
         theft_or_loss: Theft or loss
-    stock_movements: Stock Movements
     stock_receipt:
       errors:
         nothing_counted: A line on a delivery must count at least one unit, accepted or rejected
-      rejection_reasons:
-        damaged: Damaged
-        expired: Expired
-        other: Other
-        wrong_item: Wrong item
     stock_transfer:
       errors:
         already_closed: This transfer has already been completed or cancelled
         in_transit_resolution_required: Choose whether the units come back to the source warehouse or are written off
-        invalid_quantity: Every variant must move a quantity above zero
         invalid_receipt_quantity: The quantities for %{variant} cannot be negative
         item_not_on_document: One of the lines does not belong to this transfer
         locations_in_different_stores: must belong to the same store as the source location
@@ -2140,7 +1737,6 @@ en:
         repeated_item: "%{variant} was listed more than once. Send one entry per line, with what this delivery brought"
         same_location: cannot be the same as the destination location
         variants_unavailable: Some variants are not available on %{stock}
-    stop: Stop
     store: Store
     store_credit:
       allocated: Added
@@ -2148,7 +1744,6 @@ en:
       captured: Used
       credit: Credit
       eligible: Eligible
-    store_credit_events: Store Credit Events
     store_credit_name: Store Credit
     store_credit_payment_method:
       currency_mismatch: Store credit currency does not match order currency
@@ -2160,19 +1755,7 @@ en:
       unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
       unable_to_void: 'Unable to void code: %{auth_code}'
     store_credit_using_gift_card_error: You can't apply store credit after you applied a gift card.
-    store_credits: Store Credits
-    store_default: Default store
-    store_name: Store name
-    stores: Stores
-    street_address: Street Address
-    subscribed: Subscribed
-    subtotal: Subtotal
-    subtract: Subtract
     success: Success
-    summary: Summary
-    support: Support
-    supported_currencies: Supported Currencies
-    supported_locales: Supported Locales
     tags: Tags
     tax: Tax
     tax_capabilities:
@@ -2189,74 +1772,34 @@ en:
         description: County, city and district rates are not applied — only the rates configured per country or state. Sales into US states that levy local tax will be under-collected.
         label: US local tax
     tax_category: Tax Category
-    tax_code: Tax Code
     tax_identifier_kinds:
       au_abn: Australian Business Number
       ch_vat: Swiss VAT
       eu_vat: EU VAT
       gb_vat: UK VAT
       us_ein: US EIN
-    tax_inclusive: Tax inclusive
-    tax_rates: Tax Rates
-    taxes: Taxes
-    taxon: Taxon
-    taxonomies: Categories
-    taxonomy: Category
-    taxonomy_brands_name: Brands
-    taxonomy_categories_name: Categories
-    taxonomy_collections_name: Collections
-    taxons: Categories
+    tax_provider_unavailable: The tax service could not work out the tax to give back. Try again in a few minutes.
     terms_of_service: Terms of Service
-    test: Test
-    test_mode: Test Mode
-    theme: Theme
-    themes: Themes
     there_are_no_items_for_this_order: There are no items for this order
-    thumbnail: Thumbnail
     tiered_flat_rate: Tiered Flat Rate
     tiered_percent: Tiered Percent
-    tiers: Tiers
-    time: Time
-    timezone: Timezone
-    title: Title
-    to: To
     total: Total
     track_inventory: Track Inventory
     tracking: Tracking
     tracking_number: Tracking Number
     tracking_url: Tracking URL
-    transaction_id: Transaction ID
-    transfer_to_location: Transfer To
-    translations: Translations
-    tree: Tree
-    twitter: Twitter
     type: Type
     unable_to_connect_to_gateway: Unable to connect to gateway.
-    unit: Unit
-    unit_system: Unit system
-    unlimited: Unlimited
-    update: Update
     updated_at: Updated at
-    updating: Updating
     url: URL
-    usage_limit: Usage Limit
-    used: Used
     user: User
-    user_ids: Users
-    users: Users
     validation:
       must_be_int: must be an integer
-      unpaid_amount_not_zero: 'Amount was not fully reimbursed. Still due: %{amount}'
     value: Value
     variant: Variant
     variants: Variants
     verified: Verified
-    verified_at: Verified at
-    version: Version
-    view: View
-    visibility: Visibility
     void: Void
-    webhook_endpoints: Webhook Endpoints
     webhook_mailer:
       endpoint_disabled:
         disabled_at_label: Disabled at
@@ -2267,18 +1810,8 @@ en:
         reason_label: Reason
         subject: 'Webhook endpoint disabled: %{endpoint_name}'
         url_label: URL
-    webhooks: Webhooks
     weight: Weight
     weight_unit: Weight unit
     width: Width
-    wishlist: Wishlist
     year: Year
     zip: Zip
-    zipcode: Zip Code
-    zipcode_required: Zip Code Required
-    zone: Zone
-    zone_ids: Zones
-    zones: Zones
-  views:
-    pagination:
-      truncate: Truncate

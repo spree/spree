@@ -80,7 +80,7 @@ module Spree
         # which raises before the controller hook fires and yields 403.
         def destroy
           if @resource.respond_to?(:can_be_deleted?) && !@resource.can_be_deleted?
-            message = Spree.t(:cannot_delete, scope: 'api', model: @resource.class.model_name.human)
+            message = I18n.t('spree.api.cannot_delete', model: @resource.class.model_name.human)
             return render_error(
               code: ERROR_CODES[:validation_error],
               message: message,

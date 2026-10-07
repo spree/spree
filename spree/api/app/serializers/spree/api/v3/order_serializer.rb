@@ -4,40 +4,22 @@ module Spree
       # Store API Order Serializer
       # Post-purchase order data (completed orders)
       class OrderSerializer < BaseSerializer
-        typelize cart_id: [:string, nullable: true],
-                 number: :string, email: :string,
-                 customer_note: [:string, nullable: true],
-                 market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
-                 company_id: [:string, nullable: true], company_name: [:string, nullable: true],
-                 po_number: [:string, nullable: true],
-                 po_document_filename: [:string, nullable: true],
-                 po_document_byte_size: ['number | null'],
+        typelize cart_id: [:string, nullable: true], number: :string, email: :string,
+                 customer_note: [:string, nullable: true], market_id: [:string, nullable: true],
+                 channel_id: [:string, nullable: true], company_id: [:string, nullable: true],
+                 company_name: [:string, nullable: true], po_number: [:string, nullable: true],
+                 po_document_filename: [:string, nullable: true], po_document_byte_size: ['number | null'],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true, enum: Spree::Order::FULFILLMENT_STATUSES],
                  payment_status: [:string, nullable: true, enum: Spree::Order::PAYMENT_STATUSES],
-                 item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
-                 delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
-                 adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],
-                 discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
-                 tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
-                 included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
-                 additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
-                 fee_total: [:string, nullable: true], display_fee_total: [:string, nullable: true],
                  store_credit_total: [:string, nullable: true], display_store_credit_total: [:string, nullable: true],
-                 gift_card_total: [:string, nullable: true], display_gift_card_total: [:string, nullable: true],
-                 covered_by_store_credit: :boolean,
-                 total: [:string, nullable: true], display_total: [:string, nullable: true],
-                 amount_due: [:string, nullable: true], display_amount_due: [:string, nullable: true],
-                 completed_at: [:string, nullable: true],
-                 withdrawal_period_ends_at: [:string, nullable: true],
-                 within_withdrawal_period: :boolean,
+                 covered_by_store_credit: :boolean, completed_at: [:string, nullable: true],
+                 withdrawal_period_ends_at: [:string, nullable: true], within_withdrawal_period: :boolean,
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
-        attribute :market_id do |order|
-          order.market&.prefixed_id
-        end
+        prefixed_id_attributes :market
 
         # The EU cooling-off deadline. Customer-facing by design: a buyer
         # deciding whether they can still send something back should not have
@@ -46,9 +28,7 @@ module Spree
           order.withdrawal_period_ends_at&.iso8601
         end
 
-        attribute :within_withdrawal_period do |order|
-          order.within_withdrawal_period?
-        end
+        attribute :within_withdrawal_period, &:within_withdrawal_period?
 
         # The checkout handle this order was born from (nil for admin drafts).
         # Lets abandonment tooling match cart.* events to the conversion.
@@ -58,14 +38,10 @@ module Spree
           Spree::Cart.prefixed_id_for(order.cart_id)
         end
 
-        attribute :channel_id do |order|
-          order.channel&.prefixed_id
-        end
+        prefixed_id_attributes :channel
 
         # Which company node the order was placed for — frozen at completion.
-        attribute :company_id do |order|
-          order.company&.prefixed_id
-        end
+        prefixed_id_attributes :company
 
         attribute :company_name do |order|
           order.company&.name
@@ -106,9 +82,7 @@ module Spree
           order.display_total_applied_store_credit.to_s unless params[:hide_prices]
         end
 
-        attribute :covered_by_store_credit do |order|
-          order.covered_by_store_credit?
-        end
+        attribute :covered_by_store_credit, &:covered_by_store_credit?
 
         many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         # Itemized charges (duties, surcharges, COD, handling) — see the cart

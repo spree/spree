@@ -1,0 +1,39 @@
+---
+lv:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Atiestatīt paroli
+        expiry_notice: Šī paroles atiestatīšanas saite drīz beigsies. Ja jūs to nepieprasījāt, nekas nav jādara.
+        greeting: Sveiki, %{name}!
+        ignore_notice: Ja jūs nepieprasījāt paroles atiestatīšanu, varat droši ignorēt šo e-pastu. Jūsu parole netiks mainīta.
+        instructions: Mēs saņēmām pieprasījumu atiestatīt jūsu paroli. Noklikšķiniet uz zemāk esošās pogas, lai izvēlētos jaunu paroli.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Sveiki,
+        ignore_disclaimer: Ja jūs to nepieprasījāt, lūdzu, ignorējiet šo e-pastu.
+        instructions: Lūdzu, noklikšķiniet uz zemāk esošās pogas, lai apstiprinātu savu e-pasta adresi.
+        message_copy_link: 'Ja poga nedarbojas, lūdzu, kopējiet un ielīmējiet šo saiti savā pārlūkprogrammā:'
+        subject: Apstipriniet savu e-pasta adresi
+        verify_email_address_link: Apstiprināt e-pasta adresi
+    order_mailer:
+      cancel_email:
+        instructions: Jūsu pasūtījums tika atcelts. Lūdzu, saglabājiet šo atcelšanas informāciju par Jūsu pasūtījumu.
+        order_summary_canceled: Pasūtījuma %{number} kopsavilkums [ATCELTS]
+        subject: Pasūtījuma atcelšana
+      confirm_email:
+        instructions: Lūdzu, pārskatiet un saglabājiet informāciju par Jūsu pasūtījumu.
+        order_summary: Pasūtījuma %{number} kopsavilkums
+        subject: Pasūtījuma apstiprināšana
+      payment_link_email:
+        message: Lūdzu, noklikšķiniet uz zemāk esošās pogas, lai apmaksātu savu pasūtījumu.
+        message_copy_link: 'Ja poga nedarbojas, lūdzu, kopējiet un ielīmējiet šo saiti savā pārlūkprogrammā:'
+        pay_for_order: Apmaksāt pasūtījumu
+        subject: 'Maksājuma saite pasūtījumam #%{number}'
+      store_owner_notification_email:
+        heading: Saņemts jauns pasūtījums
+        instructions: Jūs esat saņēmis jaunu pasūtījumu.
+        order_summary: Pasūtījuma %{number} kopsavilkums
+        subject: "%{store_name} saņēma jaunu pasūtījumu"
+      subtotal: 'Starpsumma:'
+      total: 'Pasūtījuma kopsumma:'

@@ -100,6 +100,47 @@ module Spree
         expect(source.reload).to be_fulfilled
       end
 
+      it "ships part of an exchange replacement's own parcel" do
+        source.fulfillment_items.where(line_item: first_item).update_all(replacement: true)
+
+        shipped = execute.value
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(shipped.fulfillment_items).to contain_exactly(have_attributes(line_item_id: first_item.id, quantity: 1, replacement: true))
+      end
+
+      # The units are filed under the line but are another variant, so the
+      # shelf has to be checked for the variant that actually leaves. Run
+      # under the order lock, as the API runs it, so the refused split has an
+      # open transaction to be committed by.
+      it 'refuses a partial dispatch of replacements the shelf cannot cover' do
+        replacement_variant = create(:variant, product: first_item.product)
+        source.fulfillment_items.where(line_item: first_item).update_all(variant_id: replacement_variant.id, replacement: true)
+        source.stock_location.stock_level_or_create(replacement_variant).update_column(:count_on_hand, 0)
+        source.stock_location.allocate(replacement_variant, 2, source)
+
+        result = partial_order.with_lock { execute }
+
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to match(/only 0 are on hand/)
+        expect(partial_order.fulfillments.reload).to contain_exactly(source)
+        expect(source.reload.fulfillment_items.sum(:quantity)).to eq(4)
+      end
+
+      # The sibling's unit is the older one, which an order-wide pick reaches
+      # first.
+      it 'takes the units from this fulfillment, never from a sibling' do
+        sibling = partial_order.fulfillments.create!(stock_location: source.stock_location, cost: 0)
+        sibling.fulfillment_items.create!(order: partial_order, line_item: first_item, variant: first_item.variant, quantity: 1, status: 'on_hand')
+        own = source.fulfillment_items.find_by!(line_item: first_item)
+        source.fulfillment_items.create!(own.attributes.slice('order_id', 'line_item_id', 'variant_id', 'quantity', 'status'))
+        own.destroy!
+
+        expect(execute.success?).to eq(true), execute.error.to_s
+        expect(sibling.reload.fulfillment_items.sum(:quantity)).to eq(1)
+        expect(source.reload.fulfillment_items.where(line_item: first_item).sum(:quantity)).to eq(1)
+      end
+
       it 'treats zero quantities as no selection and fulfills everything' do
         result = subject.call(fulfillment: source, items: [{ line_item: first_item, quantity: 0 }])
 
@@ -138,7 +179,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment, force: true)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_draft'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.order_draft'))
         expect(fulfillment.reload).not_to be_fulfilled
       end
 
@@ -148,7 +189,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment)
 
         expect(result.success?).to eq(false)
-        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.cannot_fulfill'))
+        expect(result.error.to_s).to eq(I18n.t('spree.fulfillments.errors.cannot_fulfill'))
       end
 
       # Deliberately NOT rolled back: the label step sits between the split
@@ -381,7 +422,7 @@ module Spree
       end
 
       it 'does not buy twice when a label was bought beforehand' do
-        Spree.fulfillment_purchase_label_workflow.call(fulfillment: fulfillment)
+        Spree.shipping_label_purchase_workflow.call(owner: fulfillment)
 
         subject.call(fulfillment: fulfillment)
 
@@ -427,7 +468,7 @@ module Spree
         result = subject.call(fulfillment: fulfillment)
 
         expect(result).to be_failure
-        expect(result.error.value).to include(Spree.t('fulfillments.errors.order_not_paid'))
+        expect(result.error.value).to include(I18n.t('spree.fulfillments.errors.order_not_paid'))
       end
 
       # Gross capture is not the measure: a share given back is money the

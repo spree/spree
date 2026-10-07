@@ -17,11 +17,11 @@ module Spree
         if variant.available? || variant.preorder?
           line_item.errors.add(:quantity,
                                :selected_quantity_not_available,
-                               message: Spree.t(:selected_quantity_not_available, item: display_name.inspect))
+                               message: I18n.t('spree.selected_quantity_not_available', item: display_name.inspect))
         else
           line_item.errors.add(:base,
                                :only_active_products_can_be_added_to_cart,
-                               message: Spree.t(:only_active_products_can_be_added_to_cart))
+                               message: I18n.t('spree.only_active_products_can_be_added_to_cart'))
         end
       end
 

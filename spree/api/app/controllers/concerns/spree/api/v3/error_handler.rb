@@ -74,6 +74,11 @@ module Spree
           # Export errors
           export_not_ready: 'export_not_ready',
 
+          # Email template errors
+          email_template_stale: 'email_template_stale',
+          email_template_invalid: 'email_template_invalid',
+          email_template_no_sample: 'email_template_no_sample',
+
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 
@@ -155,7 +160,7 @@ module Spree
             # Workflows reject with a symbol naming the reason. Translate it,
             # falling back to the symbol so a missing key is visible rather
             # than silently blank.
-            render_error(code: code, message: Spree.t(error, default: error.to_s.humanize), status: status)
+            render_error(code: code, message: I18n.t("spree.#{error}", default: error.to_s.humanize), status: status)
           else
             render_error(code: code, message: error.to_s, status: status)
           end
@@ -311,7 +316,7 @@ module Spree
                     model_name&.humanize || 'record'
                   end
 
-          Spree.t(:record_not_found, scope: 'api', model: label)
+          I18n.t('spree.api.record_not_found', model: label)
         end
 
         # Extract clean model name from exception

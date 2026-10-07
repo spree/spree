@@ -15,10 +15,6 @@ module Spree
         preference :country_id, :integer # legacy single-country shortcut
         preference :country_code, :string # legacy ISO-based shortcut
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
-        end
-
         def countries
           isos = configured_country_codes.presence || [configured_country_code].compact_blank
           isos = [legacy_country_code(preferred_country_id)].compact_blank if isos.blank? && preferred_country_id.present?

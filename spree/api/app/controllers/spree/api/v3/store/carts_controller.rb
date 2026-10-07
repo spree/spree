@@ -26,12 +26,13 @@ module Spree
             # with_order_lock, and a read must not 409 against the fence.
             if @cart.ship_address_id.present? && @cart.fulfillments.empty? && !@cart.completion_claimed?
               ActiveRecord::Base.connected_to(role: :writing) do
-                with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
+                with_order_lock { Spree.checkout_advance_service.call(order: @cart) }
               end
             end
 
             # The customer is returning to a cart that may have sat for days.
             sweep_unbuyable_lines!
+            sweep_unavailable_coupon_code!
             render_cart
           end
 
@@ -39,7 +40,7 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            result = Spree::Carts::Create.call(
+            result = Spree.carts_create_service.call(
               params: permitted_params.merge(
                 customer: current_user,
                 store: current_store,
@@ -64,12 +65,13 @@ module Spree
             find_cart!
 
             with_order_lock do
-              result = Spree::Carts::Update.call(
+              result = Spree.carts_update_service.call(
                 cart: @cart,
                 params: permitted_params
               )
 
               if result.success?
+                sweep_unavailable_coupon_code!
                 render_cart
               else
                 render_service_error(result.error, code: ERROR_CODES[:validation_error])
@@ -107,6 +109,7 @@ module Spree
             if result.success?
               # Signing in hands back a cart built earlier, possibly long ago.
               sweep_unbuyable_lines!
+              sweep_unavailable_coupon_code!
               render_cart
             else
               render_service_error(result.error.to_s)
@@ -121,7 +124,7 @@ module Spree
             find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
-              return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
+              return render_authentication_required(I18n.t('spree.api.errors.guest_checkout_not_allowed'))
             end
 
             result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
@@ -184,7 +187,7 @@ module Spree
           def render_invalid_po_document
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: Spree.t(:po_document_invalid_signed_id),
+              message: I18n.t('spree.po_document_invalid_signed_id'),
               status: :unprocessable_content
             )
           end

@@ -63,7 +63,7 @@ module Spree
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
       in: 0..DB_INTEGER_MAX,
-      only_integer: true, message: Spree.t('validation.must_be_int')
+      only_integer: true, message: I18n.t('spree.validation.must_be_int')
     }
 
     validates :price, numericality: true
@@ -259,6 +259,17 @@ module Spree
 
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
+
+    # What +units+ of this line cost the customer after discounts. Multiplied
+    # before dividing, so all of a line's units together come to the whole line.
+    #
+    # @param units [Integer]
+    # @return [BigDecimal] rounded to the currency, never negative
+    def discounted_amount_for(units)
+      return BigDecimal(0) if quantity.to_i.zero?
+
+      Spree::Money::Rounding.to_currency([discounted_amount, 0].max * units.to_i / quantity, currency)
+    end
 
     # Returns the amount this line item is taxed on. Whole-order promotions
     # are distributed to line-item Discount rows at application time, so the
@@ -485,7 +496,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

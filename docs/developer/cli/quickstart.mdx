@@ -76,14 +76,6 @@ spree restart
 
 Not appropriate for Gemfile changes (use `spree bundle install`, then Ctrl+C and re-run `spree dev`), Dockerfile / `.ruby-version` changes (use `spree build`), or compose file changes (Ctrl+C and re-run `spree dev`).
 
-### `spree update`
-
-Pull the latest Spree Docker image and recreate containers. Migrations run automatically on startup.
-
-```bash
-spree update
-```
-
 ### `spree build`
 
 Rebuild the dev image after Dockerfile or `.ruby-version` changes. Only relevant after `spree eject`.
@@ -100,17 +92,29 @@ spree build --yes            # Skip confirmation prompts (for CI)
 
 ### `spree upgrade`
 
-Walk a Spree version upgrade end-to-end inside the dev stack. Runs `bundle update`, applies pending migrations, then walks the version-specific data backfills from the upgrade manifest.
+Upgrade your project to the latest Spree release in one go. It works for both kinds of project:
+
+1. **Update the server**
+   - On a project that runs the prebuilt image, it pulls the latest Spree image and recreates the containers. Database migrations run as the containers start.
+   - On an [ejected](#spree-eject) project, it updates the Spree gems with `bundle update`, applies pending migrations, and restarts the app so it loads the new gems.
+2. **Run data backfills** — the version-specific steps from the upgrade manifest that convert existing records.
+3. **Update the `@spree/*` packages** — `@spree/cli` in the project root, and the dashboard packages and Admin SDK in `apps/dashboard` and `apps/seller-dashboard`. Each package moves to the newest release its declared range in `package.json` allows, the same way `bundle update` respects your `Gemfile`. To move to a new major version, change the range in `package.json` first.
 
 ```bash
-spree upgrade                  # Detect target, run the full sequence interactively
-spree upgrade --plan           # Print the plan without executing (DRY_RUN=1)
-spree upgrade --to 5.5         # Cap the walk at a specific target version
-spree upgrade --step <id>      # Re-run a single step idempotently (skips bundle + migrate)
-spree upgrade --yes            # Skip the per-step prompts
+spree upgrade                  # Run every step, asking before each one
+spree upgrade --plan           # List the data backfills without running anything
+spree upgrade --to 6.1         # Set the target version for the data backfills
+spree upgrade --step <id>      # Re-run a single data backfill (runs nothing else)
+spree upgrade --yes            # Skip the prompts
 ```
 
-Production upgrades only need the third stage — `bundle install` and `db:migrate` happen in your deploy pipeline. The CLI runs all three for local development. See [Upgrades](/developer/upgrades) for the manual production path.
+Your storefront is your own code, so `spree upgrade` does not change it — it tells you which `@spree/sdk` version to move to.
+
+Production upgrades only need the data backfills — installing gems and migrating happen in your deploy pipeline. See [Upgrades](/developer/upgrades) for the manual production path.
+
+<Note>
+`spree update` is the old name for this command. It still works, prints a deprecation warning, and will be removed in a future release.
+</Note>
 
 ### `spree eject`
 
@@ -204,7 +208,7 @@ spree encryption init            # Add ACTIVE_RECORD_ENCRYPTION_* keys to the pr
 spree encryption init --print    # Print a fresh set without writing anything (e.g. for your hosting provider)
 ```
 
-It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment), and back the keys up in your secret manager.
+It never overwrites keys `.env` already sets, and there is no `--force`: changing the keys makes data encrypted with them unreadable. Afterwards, recreate the containers so they load the new `.env` (`spree dev` — `spree restart` keeps the old environment), and back the keys up in your secret manager.
 
 ### `spree api`
 

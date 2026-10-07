@@ -9,6 +9,7 @@ module Spree
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
       include Spree::Refunds::OrderPayments
+      include Spree::Refunds::TaxCredit
 
       hooks :validate, :before_refund, :after_refund
 
@@ -30,7 +31,13 @@ module Spree
         run_hooks :validate
         run_hooks :before_refund
 
-        if internal_refund?
+        step :settle_tax unless @amount_to_refund.zero?
+
+        # Nothing is owed (a free gift sent back), so the return closes
+        # without a refund row, store credit or tax credit.
+        if @amount_to_refund.zero?
+          step :mark_refunded
+        elsif internal_refund?
           ApplicationRecord.transaction do
             step :issue_store_credit
             step :mark_refunded
@@ -40,7 +47,7 @@ module Spree
           step :mark_refunded
         end
 
-        external_step :refund_tax
+        external_step :refund_tax unless @amount_to_refund.zero?
         run_hooks :after_refund
         return_record.publish_event('return.refunded')
         success(return_record.reload)
@@ -62,8 +69,20 @@ module Spree
         received = return_record.return_line_items.select { |line| line.refund_amount.positive? }
         return if received.empty?
 
-        order = return_record.order
-        order.tax_provider.refund(order, received, amount: @amount_to_refund, tax_date: order.completed_at)
+        file_tax_credit(return_record, received, @amount_to_refund)
+      end
+
+      # Rewrites the credit rows for what actually goes back — the units that
+      # arrived, and of those only the part of their worth being refunded —
+      # before any money moves, so the refund carries exactly the tax the rows
+      # record.
+      def settle_tax
+        lines = return_record.return_line_items.to_a
+        short = @amount_to_refund < return_record.refund_total
+        amounts = allocate_refund(@amount_to_refund, lines.index_with(&:refund_amount), return_record.currency) if short
+
+        with_tax_provider(return_record) { return_record.settle_tax!(amounts: amounts) }
+        @tax_amount = return_record.credited_tax_total
       end
 
       def internal_refund?
@@ -76,7 +95,7 @@ module Spree
           # attribute, and ActiveModel raises when an error names one that
           # does not exist on the record.
           return_record.errors.add(:base, :invalid_refund_method,
-                           message: Spree.t('errors.messages.invalid_refund_method'))
+                           message: I18n.t('spree.errors.messages.invalid_refund_method'))
           failure(return_record)
         end
         failure(return_record, :not_received) unless return_record.received?
@@ -85,12 +104,15 @@ module Spree
       # Only what actually came back is refundable — a customer who sent two of
       # three items gets two items' worth. One figure serves as both the
       # default and the ceiling, so a caller naming an amount cannot ask for
-      # more than a caller who names none would get.
+      # more than a caller who names none would get. Zero is accepted only when
+      # zero is owed, so a return the customer is owed money on cannot be
+      # closed without paying them.
       def resolve_amount
         refundable = return_record.refundable_total.to_d
         @amount_to_refund = amount ? amount.to_d : refundable
 
-        failure(return_record, :nothing_to_refund) unless @amount_to_refund.positive?
+        failure(return_record, :refund_amount_negative) if @amount_to_refund.negative?
+        failure(return_record, :refund_amount_required) if @amount_to_refund.zero? && refundable.positive?
         failure(return_record, :refund_exceeds_balance) if @amount_to_refund > refundable
       end
 
@@ -111,7 +133,8 @@ module Spree
           order: return_record.order,
           amount: @amount_to_refund,
           record: return_record,
-          refunder: refunder
+          refunder: refunder,
+          tax_amount: @tax_amount
         )
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?

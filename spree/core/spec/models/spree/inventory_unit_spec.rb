@@ -1,33 +1,33 @@
 require 'spec_helper'
 
-describe Spree::InventoryUnit, type: :model do
+describe Spree::FulfillmentItem, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
   let(:stock_level) { stock_location.stock_levels.order(:id).first }
 
   describe 'scopes' do
-    let!(:inventory_unit_1) { create(:inventory_unit, state: 'on_hand') }
-    let!(:inventory_unit_2) { create(:inventory_unit, state: 'backordered') }
-    let!(:inventory_unit_3) { create(:inventory_unit, state: 'shipped') }
-    let!(:inventory_unit_4) { create(:inventory_unit, state: 'returned') }
+    let!(:inventory_unit_1) { create(:fulfillment_item, state: 'on_hand') }
+    let!(:inventory_unit_2) { create(:fulfillment_item, state: 'backordered') }
+    let!(:inventory_unit_3) { create(:fulfillment_item, state: 'shipped') }
+    let!(:inventory_unit_4) { create(:fulfillment_item, state: 'returned') }
 
     describe '.backordered' do
-      it { expect(Spree::InventoryUnit.backordered).to eq([inventory_unit_2]) }
+      it { expect(Spree::FulfillmentItem.backordered).to eq([inventory_unit_2]) }
     end
 
     describe '.on_hand' do
-      it { expect(Spree::InventoryUnit.on_hand).to eq([inventory_unit_1]) }
+      it { expect(Spree::FulfillmentItem.on_hand).to eq([inventory_unit_1]) }
     end
 
     describe '.on_hand_or_backordered' do
-      it { expect(Spree::InventoryUnit.on_hand_or_backordered).to match_array([inventory_unit_1, inventory_unit_2]) }
+      it { expect(Spree::FulfillmentItem.on_hand_or_backordered).to match_array([inventory_unit_1, inventory_unit_2]) }
     end
 
     describe '.shipped' do
-      it { expect(Spree::InventoryUnit.shipped).to eq([inventory_unit_3]) }
+      it { expect(Spree::FulfillmentItem.shipped).to eq([inventory_unit_3]) }
     end
 
     describe '.returned' do
-      it { expect(Spree::InventoryUnit.returned).to eq([inventory_unit_4]) }
+      it { expect(Spree::FulfillmentItem.returned).to eq([inventory_unit_4]) }
     end
   end
 
@@ -35,7 +35,7 @@ describe Spree::InventoryUnit, type: :model do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
       order.completed_at = Time.current
-      create(:shipment, order: order, stock_location: stock_location)
+      create(:fulfillment, order: order, stock_location: stock_location)
       order.shipments.reload
       create(:line_item, order: order, variant: stock_level.variant)
       order.line_items.reload
@@ -64,12 +64,12 @@ describe Spree::InventoryUnit, type: :model do
 
     # Regression for #3066
     it 'returns modifiable objects' do
-      units = Spree::InventoryUnit.backordered_for_stock_level(stock_level)
+      units = Spree::FulfillmentItem.backordered_for_stock_level(stock_level)
       expect { units.first.save! }.not_to raise_error
     end
 
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
-      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).to match_array([unit])
+      expect(Spree::FulfillmentItem.backordered_for_stock_level(stock_level)).to match_array([unit])
     end
 
     it "does not find inventory units that aren't backordered" do
@@ -79,7 +79,7 @@ describe Spree::InventoryUnit, type: :model do
       on_hand_unit.line_item = order.line_items.first
       on_hand_unit.save!
 
-      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(on_hand_unit)
+      expect(Spree::FulfillmentItem.backordered_for_stock_level(stock_level)).not_to include(on_hand_unit)
     end
 
     it "does not find inventory units that don't match the stock item's variant" do
@@ -89,7 +89,7 @@ describe Spree::InventoryUnit, type: :model do
       other_variant_unit.line_item = order.line_items.first
       other_variant_unit.save!
 
-      expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(other_variant_unit)
+      expect(Spree::FulfillmentItem.backordered_for_stock_level(stock_level)).not_to include(other_variant_unit)
     end
 
     it 'does not change shipping cost when fulfilling the order' do
@@ -109,9 +109,9 @@ describe Spree::InventoryUnit, type: :model do
       end
 
       let(:other_shipment) do
-        shipment = Spree::Shipment.new
+        shipment = Spree::Fulfillment.new
         shipment.stock_location = stock_location
-        shipment.shipping_methods << create(:shipping_method)
+        shipment.shipping_methods << create(:delivery_method)
         shipment.order = other_order
         # We don't care about this in this test
         allow(shipment).to receive(:ensure_correct_adjustment)
@@ -128,7 +128,7 @@ describe Spree::InventoryUnit, type: :model do
       end
 
       it 'does not find inventory units belonging to incomplete orders' do
-        expect(Spree::InventoryUnit.backordered_for_stock_level(stock_level)).not_to include(other_unit)
+        expect(Spree::FulfillmentItem.backordered_for_stock_level(stock_level)).not_to include(other_unit)
       end
     end
   end
@@ -136,11 +136,11 @@ describe Spree::InventoryUnit, type: :model do
   describe '#finalize_units!' do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
-    let (:shipment) { create(:shipment) }
+    let (:shipment) { create(:fulfillment) }
     let(:inventory_units) do
       [
-        create(:inventory_unit, variant: variant),
-        create(:inventory_unit, variant: variant)
+        create(:fulfillment_item, variant: variant),
+        create(:fulfillment_item, variant: variant)
       ]
     end
 
@@ -156,7 +156,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#additional_tax_total' do
     subject do
-      build(:inventory_unit, line_item: line_item)
+      build(:fulfillment_item, line_item: line_item)
     end
 
     let(:quantity) { 2 }
@@ -173,7 +173,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#included_tax_total' do
     subject do
-      build(:inventory_unit, line_item: line_item)
+      build(:fulfillment_item, line_item: line_item)
     end
 
     let(:quantity) { 2 }
@@ -190,7 +190,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#additional_tax_total' do
     subject do
-      build(:inventory_unit, line_item: line_item)
+      build(:fulfillment_item, line_item: line_item)
     end
 
     let(:quantity) { 2 }
@@ -207,7 +207,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#included_tax_total' do
     subject do
-      build(:inventory_unit, line_item: line_item)
+      build(:fulfillment_item, line_item: line_item)
     end
 
     let(:quantity) { 2 }
@@ -223,7 +223,7 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#charged_amount' do
-    subject { build(:inventory_unit, line_item: line_item, quantity: 1) }
+    subject { build(:fulfillment_item, line_item: line_item, quantity: 1) }
 
     let(:quantity) { 2 }
     let(:line_item_pre_tax_amount) { 10.00 }

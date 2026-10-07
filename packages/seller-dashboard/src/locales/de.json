@@ -136,7 +136,8 @@
           "returns": {
             "actions": {
               "receive": "Artikel annehmen",
-              "refund": "Erstatten"
+              "refund": "Erstatten",
+              "complete": "Retoure abschließen"
             },
             "create_title": "Neue Rücksendung",
             "location": "Zurück an",
@@ -147,12 +148,15 @@
             "receive_title": "Rücksendung annehmen",
             "received_quantity": "Erhalten",
             "refund_amount": "Betrag",
+            "refund_includes_tax": "Der volle Betrag enthält {{tax}} Steuern. Bei einem kleineren Betrag wird die Steuer anteilig erstattet.",
             "refund_method": "Erstatten auf",
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
               "store_credit": "Guthaben"
             },
             "refund_title": "Rücksendung erstatten",
+            "complete_title": "Retoure abschließen",
+            "nothing_owed": "Für diese Retoure ist nichts geschuldet, daher wird kein Geld erstattet. Mit dem Abschließen wird die Retoure geschlossen.",
             "resellable": "Wiederverkäuflich"
           }
         }
@@ -516,6 +520,7 @@
         "cancel_message": "Der Kunde erfährt, dass es nicht weitergeht.",
         "cancel_title": "Diesen Umtausch abbrechen?",
         "fulfill": "Ersatz senden",
+        "balance_due_confirm": "Der Ersatz kostet mehr als die zurückgesendete Ware. Beim Versand wird die Differenz der Bestellung als offener Betrag hinzugefügt. Es wird nichts automatisch belastet.",
         "price_difference": "Preisdifferenz: {{amount}}",
         "receive": "Annehmen",
         "title": "Umtausch"
@@ -531,6 +536,8 @@
         "receive": "Annehmen",
         "refund": "Erstatten",
         "refund_total": "Erstattung gesamt: {{amount}}",
+        "refunded": "Erstattet: {{amount}}",
+        "refunded_of": "Erstattet: {{amount}} von {{total}}",
         "title": "Rücksendungen"
       },
       "statuses": {

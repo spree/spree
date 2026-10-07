@@ -11,6 +11,33 @@ module Spree
       module HttpCaching
         extend ActiveSupport::Concern
 
+        # Every request header that changes a publicly cacheable response.
+        # A shared cache (CDN, reverse proxy) keys stored responses on these,
+        # so a header missing here lets one visitor's response be served to
+        # another:
+        # - +Accept+ — response format
+        # - +X-Spree-Api-Key+ — the publishable key selects the store (and
+        #   may bind a channel)
+        # - +Authorization+ — a customer JWT turns the response private
+        #   (customer-group prices, gated catalog); without it a guest
+        #   response could be served to a signed-in customer
+        # - +X-Spree-Country+ — selects the market (currency, prices, tax
+        #   display, availability)
+        # - +X-Spree-Currency+ / +X-Spree-Locale+ — currency and language
+        # - +X-Spree-Channel+ — price hiding + channel-scoped visibility
+        #
+        # Query-param equivalents (+?country=+, +?currency=+, +?locale=+)
+        # are part of the URL and so already part of every cache key.
+        VARY_HEADERS = %w[
+          Accept
+          X-Spree-Api-Key
+          Authorization
+          X-Spree-Country
+          X-Spree-Currency
+          X-Spree-Locale
+          X-Spree-Channel
+        ].freeze
+
         included do
           after_action :set_vary_headers
         end
@@ -22,13 +49,11 @@ module Spree
           current_user.nil?
         end
 
-        # Set Vary headers to ensure proper CDN caching by currency/locale/channel.
-        # X-Spree-Channel is included because the resolved channel changes the
-        # serialized body (price hiding + channel-scoped visibility), so a shared
-        # cache must not serve one channel's guest response to another channel.
+        # Set Vary so a shared cache stores one guest response per
+        # store/market/currency/locale/channel combination (see VARY_HEADERS).
         def set_vary_headers
           if guest_user?
-            response.headers['Vary'] = 'Accept, x-spree-currency, x-spree-locale, x-spree-channel'
+            response.headers['Vary'] = VARY_HEADERS.join(', ')
           else
             response.headers['Cache-Control'] = 'private, no-store'
           end
@@ -70,12 +95,12 @@ module Spree
 
           expires_in expires_in, public: true
 
-          # Use Rails' stale? which handles ETag and Last-Modified. The channel
-          # is folded into the ETag so a shared cache never serves one channel's
-          # guest response to another; Last-Modified mirrors the resource's own
-          # timestamp as before.
+          # Use Rails' stale? which handles ETag and Last-Modified. The request
+          # context (currency, locale, market, channel) is folded into the ETag
+          # so a revalidation never 304s across contexts; Last-Modified mirrors
+          # the resource's own timestamp as before.
           stale?(
-            etag: [resource, cache_channel_fragment],
+            etag: [resource, current_currency, current_locale, cache_market_fragment, cache_channel_fragment],
             last_modified: resource.try(:updated_at),
             public: true
           )
@@ -84,7 +109,7 @@ module Spree
         private
 
         # Build a cache key for a collection
-        # Includes: latest updated_at, total count, query params, pagination, expand, currency, locale, channel
+        # Includes: latest updated_at, total count, query params, pagination, expand, currency, locale, market, channel
         def collection_cache_key(collection)
           # For ActiveRecord collections use updated_at, for plain arrays use store's updated_at as proxy
           latest_updated_at = if collection.first&.respond_to?(:updated_at)
@@ -103,10 +128,18 @@ module Spree
             params[:limit],
             current_currency,
             current_locale,
+            cache_market_fragment,
             cache_channel_fragment
           ]
 
           parts.compact.join('/')
+        end
+
+        # Identifies the resolved market (from X-Spree-Country / ?country=).
+        # The market drives tax display and availability as well as currency,
+        # so it is part of the guest cache identity.
+        def cache_market_fragment
+          Spree::Current.market&.id
         end
 
         # Identifies the resolved channel for cache-key purposes. The channel

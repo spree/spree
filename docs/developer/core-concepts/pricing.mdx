@@ -233,7 +233,7 @@ When resolving prices, Spree considers the full context of the request:
 The Store API automatically builds this context from the [request headers](/api-reference/store-api/localization) (`X-Spree-Currency`, `X-Spree-Country`) and authentication state. You don't need to construct it manually — just make API requests and the correct price is resolved.
 
 <Info>
-Price resolution runs per request — there is no in-process caching of resolved prices. The Store API instead relies on HTTP/CDN caching, with `Vary` headers keyed on the `X-Spree-Currency` and `X-Spree-Locale` request headers so each currency/locale combination is cached separately at the edge.
+Price resolution runs per request — there is no in-process caching of resolved prices. The Store API instead relies on HTTP/CDN caching, with `Vary` headers keyed on every request header that changes the price — `X-Spree-Country` (market), `X-Spree-Currency`, `X-Spree-Locale`, `X-Spree-Channel`, the publishable key and `Authorization` — so each combination is cached separately at the edge. See [HTTP caching](/developer/deployment/caching#http-caching-of-store-api-responses).
 </Info>
 
 ## Time-Based Pricing

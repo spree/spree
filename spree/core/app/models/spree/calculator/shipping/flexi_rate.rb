@@ -1,5 +1,3 @@
-require_dependency 'spree/shipping_calculator'
-
 module Spree
   module Calculator::Shipping
     class FlexiRate < ShippingCalculator
@@ -15,7 +13,7 @@ module Spree
       end
 
       def self.description
-        Spree.t(:shipping_flexible_rate)
+        I18n.t('spree.shipping_flexible_rate')
       end
 
       def compute_package(package)
