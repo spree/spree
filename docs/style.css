@@ -344,29 +344,31 @@ html:not(.dark) h4 {
 
 /* --- Changelog ------------------------------------------------------------ */
 /* The changelog runs in custom mode so it has no empty sidebar, and custom
-   mode drops Mintlify's article typography — these rules restore it. */
+   mode drops Mintlify's article typography — these rules restore it. The
+   <Update> entries must stay top-level in the MDX (the RSS feed skips nested
+   ones), so the page is styled through the container holding the header. */
 
-.changelog {
+:has(> .changelog-header) {
   max-width: 56rem;
   margin: 0 auto;
   padding: 4rem 1.25rem 6rem;
 }
 
-.changelog h1 {
+.changelog-header h1 {
   font-size: 2.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   margin-bottom: 0.75rem;
 }
 
-.changelog > p,
-.changelog > [data-as="p"] {
+.changelog-header > p,
+.changelog-header > [data-as="p"] {
   color: var(--spree-ink-muted);
   font-size: 1.0625rem;
   margin-bottom: 1.25rem;
 }
 
-.changelog .changelog-rss {
+.changelog-header .changelog-rss {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -379,40 +381,40 @@ html:not(.dark) h4 {
   text-decoration: none;
 }
 
-.changelog .changelog-rss:hover {
+.changelog-header .changelog-rss:hover {
   border-color: var(--spree-accent);
 }
 
-.changelog p,
-.changelog [data-as="p"] {
+:has(> .changelog-header) p,
+:has(> .changelog-header) [data-as="p"] {
   display: block !important;
   margin: 0 0 1rem;
   line-height: 1.7;
 }
 
-.changelog ul {
+:has(> .changelog-header) ul {
   list-style: disc;
   padding-left: 1.25rem;
   margin: 0 0 1rem;
 }
 
-.changelog li {
+:has(> .changelog-header) li {
   margin: 0.25rem 0;
   line-height: 1.65;
 }
 
-.changelog li::marker {
+:has(> .changelog-header) li::marker {
   color: var(--spree-neutral-400);
 }
 
-.changelog a {
+:has(> .changelog-header) a {
   color: var(--spree-accent);
 }
 
-.changelog a:hover {
+:has(> .changelog-header) a:hover {
   color: var(--spree-accent-strong);
 }
 
-.dark .changelog a {
+.dark :has(> .changelog-header) a {
   color: #4d9fff;
 }
