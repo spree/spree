@@ -691,7 +691,7 @@ module Spree
     # variant), reading preloaded associations to avoid an N+1.
     # @return [ActiveSupport::TimeWithZone, nil]
     def preorder_ships_at
-      candidates = has_variants? ? variants : [master]
+      candidates = has_variants? ? variants : [default_variant]
       candidates.select(&:preorder?).filter_map(&:preorder_ships_at).max
     end
 

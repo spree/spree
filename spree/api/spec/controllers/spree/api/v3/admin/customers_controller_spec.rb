@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       let(:headers) { { 'x-spree-api-key' => customers_key.plaintext_token } }
 
       it 'drops expansions into orders and store credits' do
-        create(:completed_order_with_totals, store: store, user: customer)
+        create(:completed_order_with_totals, store: store, customer: customer)
 
         get :show, params: { id: customer.prefixed_id, expand: 'orders.payments,store_credits' }, as: :json
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
     end
 
     it 'expands orders for a caller who can read them' do
-      create(:completed_order_with_totals, store: store, user: customer)
+      create(:completed_order_with_totals, store: store, customer: customer)
 
       get :show, params: { id: customer.prefixed_id, expand: 'orders' }, as: :json
 

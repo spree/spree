@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :refund, class: Spree::Refund do
     amount         { 100.00 }
     transaction_id { generate(:refund_transaction_id) }
-    association(:payment, state: 'completed')
+    association(:payment, status: 'completed')
     association(:reason, factory: :refund_reason)
   end
 

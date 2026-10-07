@@ -58,7 +58,7 @@ module Spree
           # are nested inside it.
           def complete
             with_order_lock do
-              result = Spree.order_complete_service.call(
+              result = Spree.order_complete_workflow.call(
                 order: @resource,
                 payment_pending: params[:payment_pending].to_b,
                 notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer])

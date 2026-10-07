@@ -338,7 +338,7 @@ module Spree
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
 
         cart.fulfillments.reload.each_with_object({}) do |cart_fulfillment, map|
-          attributes = cart_fulfillment.attributes.except('id', 'cart_id', 'number', 'created_at', 'updated_at')
+          attributes = cart_fulfillment.attributes.except('id', 'cart_id', 'number', 'tracking', 'created_at', 'updated_at')
           fulfillment = order.fulfillments.create!(attributes.merge('order_id' => order.id, 'address_id' => order.ship_address_id))
 
           if (selected = cart_fulfillment.selected_delivery_rate)
