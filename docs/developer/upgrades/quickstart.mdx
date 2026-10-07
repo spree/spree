@@ -9,6 +9,31 @@ The upgrade process is fairly easy and well described. Of course, it all boils d
 
 We strongly advise upgrading Spree incrementally, rather than in one big go.
 
+## How to upgrade
+
+An upgrade updates the server, migrates the database, runs the version's data backfills, and updates the `@spree/*` packages of your dashboard apps. Always read the guide for the version you're moving to first — it lists the behavior changes to review.
+
+<Tabs>
+  <Tab title="Spree CLI">
+    ```bash
+    spree upgrade
+    ```
+
+    One command for every project: it pulls the new image, or updates the Spree gems on an [ejected](/developer/cli/quickstart#spree-eject) project, then runs migrations, data backfills and the package updates. See [`spree upgrade`](/developer/cli/quickstart#spree-upgrade) for its options.
+  </Tab>
+  <Tab title="Without CLI">
+    ```bash
+    # server/
+    bundle update $(bundle list --name-only | grep ^spree)
+    bin/rails spree:install:migrations db:migrate
+    bin/rails spree:upgrade
+
+    # apps/dashboard and apps/seller-dashboard
+    pnpm update "@spree/*"
+    ```
+  </Tab>
+</Tabs>
+
 ## Support
 
 If you're stuck and would want to get some professional help, you can [contact us directly](https://spreecommerce.org/contact/) and request a quote for our consulting services.

@@ -236,7 +236,7 @@ bin/rails db:encryption:init    # prints a set; put it in env vars or encrypted 
 
 </CodeGroup>
 
-Recreate the containers so they pick up the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
+Recreate the containers so they pick up the new `.env` (`spree dev` — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
 
 <Warning>
 Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
