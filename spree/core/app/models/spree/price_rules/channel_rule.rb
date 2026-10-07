@@ -32,7 +32,7 @@ module Spree
       end
 
       def self.description
-        Spree.t('price_rules.channel_rule.description')
+        I18n.t('spree.price_rules.channel_rule.description')
       end
     end
   end

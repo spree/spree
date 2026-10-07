@@ -162,6 +162,27 @@ export function productToFormValues(
 // `index` is the variant's array position; we ship `index + 1` so
 // `acts_as_list` persists the 1-indexed order. Form state stays 0-indexed
 // (matches the React array), the API quirk lives only at this boundary.
+/** Variants with a non-null tax category id carry their own category on save. */
+export function variantHasTaxCategoryOverride(variant: VariantFormValues): boolean {
+  return variant.tax_category_id != null && variant.tax_category_id !== ''
+}
+
+/**
+ * Before PATCH, keep overrides as-is and leave inheriting variants at null so
+ * the product-level tax category applies through Variant#tax_category.
+ */
+export function prepareVariantsTaxForProductSave(
+  variants: VariantFormValues[],
+  _productTaxCategoryId: string | null | undefined,
+): VariantFormValues[] {
+  return variants.map((variant) => {
+    if (variantHasTaxCategoryOverride(variant)) {
+      return variant
+    }
+    return { ...variant, tax_category_id: null }
+  })
+}
+
 export function variantToWirePayload(v: VariantFormValues, index: number) {
   // DB columns `sku` and `weight` are NOT NULL with defaults ("", 0.0).
   // The other scalar fields (barcode, dimensions, weight_unit,

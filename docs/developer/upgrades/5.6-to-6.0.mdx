@@ -53,6 +53,26 @@ Re-running is safe — `bundle exec rake spree:upgrade` figures out what still n
 
 Reference material — the data backfills `bundle exec rake spree:upgrade` executes. Every task is idempotent.
 
+### Store preferences as JSON
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:upgrade:preferences_json
+spree rake spree:upgrade:encrypt_secret_preferences
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:upgrade:preferences_json
+bundle exec rake spree:upgrade:encrypt_secret_preferences
+```
+
+</CodeGroup>
+
+Preferences were stored as YAML; in 6.0 they are JSON. The migration converts every `preferences` column itself, and moves gateway and integration secrets (preferences declared as `:password`) into a new `secret_preferences` column. The first task is a safety net for anything the migration could not reach — a schema changed by hand, or an extension gem installed after the migration ran. The second encrypts the moved secrets; until it runs they stay readable and are encrypted the next time their payment method or integration is saved. It does nothing until [encryption keys](#enable-active-record-encryption) are configured.
+
+See [Preferences are stored as JSON](#preferences-are-stored-as-json) for what changes in your code.
+
 ### Convert incomplete orders into carts
 
 ```bash
@@ -187,7 +207,7 @@ Countries and states are no longer database records in 6.0. Addresses, delivery 
 
 ## Enable Active Record encryption
 
-Spree encrypts webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
+Spree encrypts payment gateway and integration secrets, webhook endpoint signing secrets, payment gateway customer IDs and the OAuth tokens on user identities with [Active Record encryption](https://guides.rubyonrails.org/active_record_encryption.html) — but only when encryption keys are configured. Without keys these values are stored in plain text. New 6.0 projects get keys at setup; upgraded applications need to add them.
 
 **1. Make the app read the keys.** Projects created from `spree-starter` read them from the `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY` and `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` env vars, falling back to the `active_record_encryption` entry in Rails credentials. If your `config/application.rb` predates this, add inside the `Application` class:
 
@@ -216,13 +236,37 @@ bin/rails db:encryption:init    # prints a set; put it in env vars or encrypted 
 
 </CodeGroup>
 
-Recreate the containers so they pick up the new `.env` (`spree update`, or `spree dev` for an ejected project — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
+Recreate the containers so they pick up the new `.env` (`spree dev` — `spree restart` keeps the old environment). Set the keys on your production host **before** deploying, and store them in your secret manager.
 
 <Warning>
 Never change or lose the keys once data is encrypted — the encrypted records become unreadable.
 </Warning>
 
-**3. Encrypt existing rows.** Rows written before the keys were set are plain text. OAuth tokens on user identities stay readable and are encrypted on their next write. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+**3. Encrypt existing rows.** Rows written before the keys were set are plain text. Gateway and integration secrets and the OAuth tokens on user identities stay readable and are encrypted on their next write; run `spree rake spree:upgrade:encrypt_secret_preferences` (`bundle exec rake spree:upgrade:encrypt_secret_preferences` without the Spree CLI) to encrypt every gateway and integration secret at once. Webhook endpoint secrets and gateway customer IDs can't be read in plain text once encryption is on — follow [Enabling encryption on an existing installation](/developer/deployment/environment_variables#enabling-encryption-on-an-existing-installation): turn on `support_unencrypted_data` and `extend_queries`, deploy with the keys, run `find_each(&:encrypt)` over `Spree::WebhookEndpoint`, `Spree::GatewayCustomer` and `Spree::UserIdentity`, then turn the two settings off again.
+
+## Preferences are stored as JSON
+
+Model preferences moved from YAML to JSON, and secrets moved out of them. Declarations do not change, and the `preferred_*` methods return the same values as before. What can affect your code:
+
+- **The raw `preferences` hash has string keys.** It still answers to symbols (`calculator.preferences[:amount]`), but `preferences.keys` returns strings. Decimals sit in it as exact strings (`"9.99"`); read them through `preferred_*`, which returns a `BigDecimal`.
+- **Secrets are not in `preferences`.** Preferences declared `:password` live in the encrypted `secret_preferences` column. Read them with `preferred_*` or `get_preference`. A secret you assign as part of a whole hash (`update(preferences: { secret_key: ... })`) is moved there when the record is saved. To declare a secret on a model other than a payment method or an integration, see [Secret preferences](/developer/customization/model-preferences#secret-preferences).
+- **Your own preference tables need a JSON column.** The migration converts every table a model storing Spree preferences reads, including your application's own; a table another library owns is left alone. A new table should use `t.jsonb :preferences` on PostgreSQL, the default database (`t.json` on MySQL or SQLite).
+- **Tiered calculators take a list of tiers.** `Spree::Calculator::TieredPercent` and `TieredFlatRate` store `tiers` as a list instead of a hash keyed by threshold, in Ruby and in the Admin API. The migration converts existing calculators.
+
+  ```json
+  // Before
+  { "tiers": { "100": 10, "250": 15 } }
+  // After
+  { "tiers": [{ "threshold": "100", "value": "10" }, { "threshold": "250", "value": "15" }] }
+  ```
+
+  `value` is a percentage for `TieredPercent` and an amount for `TieredFlatRate`.
+- **Spree no longer allows extra classes in YAML columns.** It used to add `Symbol`, `BigDecimal` and a few time classes to `config.active_record.yaml_column_permitted_classes`. If your application serializes its own columns as YAML with those classes, add them in `config/application.rb` yourself.
+- **Preference change methods follow Rails' naming.** Each preference is a Rails store accessor, so `preferred_<name>_changed?`, `preferred_<name>_change` and `preferred_<name>_was` work as before, while the after-save forms are Rails' own: `saved_change_to_preferred_<name>?` replaces `preferred_<name>_previously_changed?`, `saved_change_to_preferred_<name>` replaces `preferred_<name>_previous_change`, and `preferred_<name>_before_last_save` replaces `preferred_<name>_previously_was`.
+- **Per-preference helper methods are gone.** Use `preference_type(:name)`, `preference_default(:name)` and `preference_deprecated(:name)` instead of `preferred_<name>_type`, `preferred_<name>_default` and `preferred_<name>_deprecated`. `clear_preferences`, `restore_preferences_for`, `preferences_of_type`, the class methods `preference_getter_method`, `preference_setter_method` and `prefers_query_method`, `Spree::Preferences::ScopedStore`, `Spree::Preferences::Store` and the `Spree::Preference` model are removed.
+- **The `spree_preferences` table is dropped.** The installation id it held is not carried over: the default store generates a new one the next time it is saved. Rows an application wrote there itself are dropped with it: copy any you need before upgrading.
+- **Preferences live only on models.** `Spree::Preferences::Preferable` is included by `Spree::Base` and needs a `preferences` JSON column; including it in a plain Ruby class is no longer supported. A hash stored inside a preference comes back with string keys.
+- **A record whose preferences still hold YAML cannot be read.** The migration converts every row, so this only happens to rows written by older code after it ran. Run `spree rake spree:upgrade:preferences_json` (`bundle exec rake spree:upgrade:preferences_json` without the Spree CLI) to convert it.
 
 ## The Cart/Order split
 
@@ -264,7 +308,7 @@ Spree::Checkout::Registry.add_requirement(
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
-- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `Spree.t('checkout_requirements.shipping_method_required')` translation key was renamed to `checkout_requirements.delivery_method_required` — override it under the new key.
+- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `spree.checkout_requirements.shipping_method_required` translation key was renamed to `spree.checkout_requirements.delivery_method_required` — override it under the new key.
 - **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
 
 ## Statuses: derived, then persisted
@@ -470,6 +514,18 @@ Class-level `decode_prefixed_id` (for example `Spree::Product.decode_prefixed_id
 now returns `nil` for an ID with another model's prefix, the same as
 `find_by_prefix_id`. Call `Spree::PrefixedId.decode_prefixed_id` if you
 really need to decode any prefix.
+
+## Every event is declared
+
+Events are now declared on the model that publishes them (`publishes_event`, `publishes_events`), and `publish_event` raises in development and test for a name nobody declared. Extensions that publish their own events need one line each — see [Publishing your own events](/developer/core-concepts/events#publishing-your-own-events). In production an undeclared event is logged and still delivered.
+
+Some payloads changed so that every webhook carries the Store API shape and nothing more:
+
+- **`notify_customer` moved to `metadata`** on `order.placed`, `order.completed`, `order.canceled` and `order_group.completed`. Read `event.metadata['notify_customer']` in subscribers and `metadata.notify_customer` in webhook receivers.
+- **`customer.anonymized`** carries the customer record; the store and the requester moved to `metadata` (`store_id`, `requested_by_id`).
+- **Purchase order, stock receipt, supplier and shipping label events** carry a short payload — status, related record IDs and timestamps. Costs, notes, contact details and label files are read from the Admin API.
+- **`saved_report.*`** no longer includes the author's name.
+- **Subscribing an endpoint to `customer.password_reset_requested`** needs the permission to manage customers. The staff and seller reset events are still never sent to webhooks.
 
 ## Removed in 6.0
 
@@ -745,6 +801,18 @@ Other changes that come with it:
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
 - **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
 
+## Translations ship with Spree
+
+Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
+
+- **Remove `spree_i18n` from your Gemfile.** Its last release is empty and only warns. Older releases load their own, larger files over Spree's.
+- **Use `I18n.t` with the full key.** `Spree.t(:free)` becomes `I18n.t('spree.free')`, and `Spree.t(:x, scope: :api)` becomes `I18n.t('spree.api.x')`. `Spree.t` keeps working until 6.1 with a deprecation warning.
+- **A missing key is plain text.** `Spree.t` used to return a `<span class="translation_missing">` HTML element for a key it could not find. It now returns what `I18n.t` returns.
+- **Untranslated keys fall back to English.** Spree's translations are complete only in English. With `config.i18n.fallbacks = true`, as Rails generates for production, Spree adds English after your default locale. An app that sets its own fallback list or turns fallbacks off keeps its choice.
+- **`spree/testing_support/i18n` does nothing.** Set `config.i18n.raise_on_missing_translations = true` in your test environment to catch missing keys.
+- **Kaminari is no longer loaded.** It came in through `spree_i18n`. Spree paginates with Pagy, and the `Spree::Base.page` bridge for a custom Kaminari `page_method_name` is gone. Add `kaminari` to your Gemfile if your own code uses it.
+- **Translations for removed screens are gone.** Keys used only by the old admin and storefront, and by the v2 API, were removed. If your code reads one, copy it into your app's locale files.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
@@ -791,6 +859,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `metafields` / `public_metafields` associations | `custom_fields` / `storefront_custom_fields` |
 | `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
 | `Spree.metafields` | `Spree.custom_fields` |
+| `Spree.t`, `Spree.translate` | `I18n.t` with the full key, e.g. `I18n.t('spree.free')` |
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 | `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |

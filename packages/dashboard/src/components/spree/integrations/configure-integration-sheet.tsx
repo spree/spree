@@ -19,6 +19,7 @@ import {
   useTestIntegration,
   useUpdateIntegration,
 } from '../../../hooks/use-integrations'
+import { SetupGuideLink } from './setup-guide-link'
 
 /**
  * Connect/configure sheet for one integration type. Shared between the
@@ -29,11 +30,14 @@ import {
 export function ConfigureIntegrationSheet({
   type,
   integration,
+  defaultActive = false,
   open,
   onOpenChange,
 }: {
   type: IntegrationTypeDefinition
   integration?: Integration
+  /** Starting value of the Active switch when connecting a new integration. */
+  defaultActive?: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -51,7 +55,7 @@ export function ConfigureIntegrationSheet({
       ? ((integration.preferences as Record<string, unknown>) ?? {})
       : defaultPreferences(type.preference_schema),
   )
-  const [active, setActive] = useState(integration?.active ?? false)
+  const [active, setActive] = useState(integration?.active ?? defaultActive)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const saving = createMutation.isPending || updateMutation.isPending
@@ -95,6 +99,7 @@ export function ConfigureIntegrationSheet({
               ? t('admin.integrations.edit_description')
               : t('admin.integrations.connect_description')}
           </SheetDescription>
+          <SetupGuideLink url={type.docs_url} />
         </SheetHeader>
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">

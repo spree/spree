@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts'
-import { Command } from 'commander'
+import { Command, Option } from 'commander'
 import getPort, { portNumbers } from 'get-port'
 import pc from 'picocolors'
 import { DEFAULT_SPREE_PORT } from './constants.js'
@@ -12,11 +12,12 @@ const program = new Command()
   .name('create-spree-app')
   .description('Create a new Spree Commerce project')
   .argument('[directory]', 'project directory')
+  .option('--no-dashboard', 'skip the admin dashboard (the built-in one stays at /dashboard)')
+  .option('--no-seller-dashboard', 'skip the marketplace seller dashboard')
   .option('--no-storefront', 'skip Next.js storefront setup')
-  .option(
-    '--react-dashboard',
-    'no-op: the React Dashboard is always included (kept so existing scripts keep working)',
-  )
+  // Deprecated: the dashboard is included by default. Hidden, kept so
+  // existing scripts keep working.
+  .addOption(new Option('--react-dashboard').hideHelp())
   .option('--no-start', 'do not start Docker services')
   .option('--port <number>', 'port for the Spree server', String(DEFAULT_SPREE_PORT))
   .option('--use-npm', 'use npm as package manager')
@@ -39,7 +40,8 @@ const program = new Command()
       const options = await runPrompts({
         directory,
         noStorefront: flags.storefront === false ? true : undefined,
-        reactDashboard: flags.reactDashboard === true,
+        noSellerDashboard: flags.sellerDashboard === false ? true : undefined,
+        noDashboard: flags.dashboard === false,
         noStart: flags.start === false ? true : undefined,
         packageManager,
       })

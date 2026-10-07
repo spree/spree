@@ -58,10 +58,6 @@ module Spree
             # validations (docs/plans/6.0-volume-pricing.md). Each branch is
             # guarded on the key its own failure carries, so a failure mode the
             # service grows later is not reported under one of these names.
-            #
-            # `I18n.t` rather than `Spree.t` for these: the models raise them
-            # under `activerecord.errors`, and `Spree.t` would scope the lookup
-            # to `spree.` and miss the key.
             if (invalid = result.error&.value.try(:[], :invalid_quantities))
               return render_error(
                 code: 'invalid_min_quantity',

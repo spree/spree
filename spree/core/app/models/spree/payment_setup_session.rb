@@ -9,6 +9,7 @@ module Spree
     self.event_prefix = 'payment_setup_session'
 
     publishes_lifecycle_events
+    publishes_events :canceled, :completed, :expired, :failed, :processing
 
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'

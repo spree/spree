@@ -64,7 +64,7 @@ module Spree
             def attach_pending_coupon_warning
               @cart.warnings |= [{
                 code: coupon_handler.status_code.to_s,
-                message: coupon_handler.error.presence || Spree.t(:coupon_code_not_eligible)
+                message: coupon_handler.error.presence || I18n.t('spree.coupon_code_not_eligible')
               }]
             end
 

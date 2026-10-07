@@ -149,20 +149,12 @@ module Spree
           # would point a storefront at a language with nothing behind it.
           # English closes the gap for countries whose languages all fall
           # through, and is always offered alongside.
-          #
-          # Installs without spree_i18n only have English, and filtering
-          # against that would leave every country English-only. There the
-          # unfiltered list is the better answer: the merchant's own language
-          # is still the right default for their storefront, whether or not
-          # this install carries a translation bundle for it.
           def offerable_locales(country)
-            return country.official_locales if translated_locales.size <= 1
-
-            (country.official_locales & translated_locales).presence || ['en']
+            country.official_locales.filter_map { |language| Spree.locale_for_language(language, available_locales) }.presence || ['en']
           end
 
-          def translated_locales
-            @translated_locales ||= Spree.available_locales.map { |locale| locale.to_s.split('-').first }.uniq
+          def available_locales
+            @available_locales ||= Spree.available_locales
           end
 
           # Token mismatch, spent token, and already-set-up all render the

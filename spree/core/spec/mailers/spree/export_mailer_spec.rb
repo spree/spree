@@ -15,7 +15,7 @@ RSpec.describe Spree::ExportMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('export_mailer.export_done.subject', export_number: export.number)
+        I18n.t('spree.export_mailer.export_done.subject', export_number: export.number)
       )
     end
 

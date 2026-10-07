@@ -83,8 +83,6 @@ module Spree
         app.config.spree.promotions = PromoEnvironment.new([])
         app.config.spree.pricing = PricingEnvironment.new([])
 
-        app.config.active_record.yaml_column_permitted_classes ||= []
-        app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Time])
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
@@ -107,6 +105,34 @@ module Spree
       # per request by request_store's own middleware.
       initializer 'spree.locale_state_reset' do |app|
         app.middleware.use ::I18n::Middleware
+      end
+
+      # Spree's translations cover only part of the English keys in most
+      # languages, so the rest fall back to English, the one complete language.
+      # `true` (Rails' generated production.rb) falls back to the app's default
+      # locale only, so English is added after it. An app that configured its
+      # own fallback chain, or turned fallbacks off, keeps its choice.
+      initializer 'spree.i18n.fallbacks', before: :load_config_initializers do |app|
+        fallbacks = app.config.i18n.fallbacks
+        if fallbacks == true
+          app.config.i18n.fallbacks = [app.config.i18n.default_locale || :en, :en].uniq
+        elsif fallbacks.is_a?(ActiveSupport::OrderedOptions) && fallbacks.empty?
+          app.config.i18n.fallbacks = [:en]
+        end
+      end
+
+      # Spree's gems ship translations for dozens of languages. An app that
+      # limits `config.i18n.available_locales` loads only those (and English),
+      # instead of parsing every file at boot and discarding the rest.
+      initializer 'spree.i18n.locale_files', before: :load_config_initializers do |app|
+        allowed = Array(app.config.i18n.available_locales).map(&:to_s)
+        next if allowed.empty?
+
+        # A regional file (de-CH) holds only its differences from its base (de).
+        locales = allowed | allowed.map { |locale| locale.split('-').first } | ['en']
+        %w[Spree::Core::Engine Spree::Api::Engine Spree::Emails::Engine].filter_map(&:safe_constantize).each do |engine|
+          engine.config.paths['config/locales'].glob = "{#{locales.join(',')}}.yml"
+        end
       end
 
       # Seeded before application initializers so a host's
@@ -137,7 +163,7 @@ module Spree
       # populated while initializers are still running.
       config.after_initialize do
         ISO3166.configure do |iso_config|
-          iso_config.locales = (Spree.available_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
+          iso_config.locales = (Spree.configured_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
         end
 
         Spree::IsoData.reset!
@@ -572,11 +598,7 @@ module Spree
       end
 
       config.to_prepare do
-        I18n.load_path.unshift(*(Dir.glob(
-          File.join(
-            File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
-          )
-        ) - I18n.load_path))
+        I18n.load_path.unshift(*(Spree::Core::Engine.config.paths['config/locales'].existent - I18n.load_path))
 
         ActsAsTaggableOn::Tag.include(Spree::RansackableAttributes)
         ActsAsTaggableOn::Tag.whitelisted_ransackable_attributes = %w[id name]

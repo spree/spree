@@ -93,6 +93,12 @@ module Spree
       record.save! if record.changed?
 
       record.id
+    rescue ActiveRecord::RecordInvalid => e
+      # A row saved from the owner's `after_save` fails inside the owner's own
+      # save, and a plain `save` swallows the exception — so its errors are
+      # copied onto the owner, or the caller learns only that something failed.
+      e.record.errors.full_messages.each { |message| errors.add(:base, message) }
+      raise
     end
 
     # Decode `*_ids` array preferences (`customer_group_ids`, `user_ids`,

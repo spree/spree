@@ -13,7 +13,7 @@ module Spree
       end
 
       def self.description
-        Spree.t(:shipping_price_sack)
+        I18n.t('spree.shipping_price_sack')
       end
 
       def compute_package(package)

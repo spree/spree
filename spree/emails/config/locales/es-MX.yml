@@ -1,0 +1,26 @@
+---
+es-MX:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        expiry_notice: Este enlace para restablecer la contraseña vencerá pronto. Si no solicitaste esto, no necesitas hacer nada.
+        ignore_notice: Si no solicitaste restablecer tu contraseña, puedes ignorar este correo de forma segura. Tu contraseña no cambiará.
+        instructions: Recibimos una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para elegir una nueva contraseña.
+    newsletter_mailer:
+      email_confirmation:
+        ignore_disclaimer: Si no solicitaste esto, por favor ignora este correo.
+        instructions: Por favor haz clic en el botón de abajo para verificar tu correo electrónico.
+        message_copy_link: 'Si el botón no funciona, por favor copia y pega el siguiente enlace en tu navegador:'
+        subject: Verifica tu correo electrónico
+        verify_email_address_link: Verificar correo electrónico
+    order_mailer:
+      cancel_email:
+        instructions: Su orden ha sido CANCELADA. Por favor mantenga esta información de cancelación para sus registros
+      confirm_email:
+        instructions: Por favor revise y mantenga la siguiente información del pedido para sus registros
+        subject: Confirmación de pedido
+      payment_link_email:
+        message: Por favor haz clic en el botón de abajo para pagar tu pedido.
+        message_copy_link: 'Si el botón no funciona, por favor copia y pega el siguiente enlace en tu navegador:'
+        pay_for_order: Pagar pedido
+        subject: 'Enlace de pago para el pedido #%{number}'

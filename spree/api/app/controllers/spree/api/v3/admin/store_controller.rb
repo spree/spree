@@ -117,6 +117,12 @@ module Spree
               :customer_support_email,
               :new_order_notifications_email,
               :preferred_send_consumer_transactional_emails,
+              :preferred_email_accent_color,
+              :preferred_email_background_color,
+              :preferred_email_card_color,
+              :preferred_email_text_color,
+              :preferred_email_heading_color,
+              :preferred_email_font,
               :mailer_logo
             )
           end

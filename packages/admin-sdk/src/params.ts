@@ -106,6 +106,18 @@ export interface StoreUpdateParams {
   new_order_notifications_email?: string | null
   /** When false, transactional consumer emails (order confirmation, etc.) are suppressed. */
   preferred_send_consumer_transactional_emails?: boolean
+  /** Customer email buttons and links, as `#RRGGBB`. Blank keeps the outlined buttons emails ship with. */
+  preferred_email_accent_color?: string | null
+  /** Customer email page background, as `#RRGGBB`. */
+  preferred_email_background_color?: string | null
+  /** Customer email card behind the content, as `#RRGGBB`. */
+  preferred_email_card_color?: string | null
+  /** Customer email body text, as `#RRGGBB`. */
+  preferred_email_text_color?: string | null
+  /** Customer email headings and emphasized text, as `#RRGGBB`. */
+  preferred_email_heading_color?: string | null
+  /** Customer email font: `inter`, `system`, `helvetica`, `georgia`, `roboto`, `lato` or `merriweather`. */
+  preferred_email_font?: string | null
   /** Active Storage signed_id from a direct upload — the logo embedded in transactional emails. */
   mailer_logo?: string | null
   /** Where prices come from: a registered provider key, or `internal`. */
@@ -2407,12 +2419,16 @@ export interface PaymentMethodUpdateParams {
 /**
  * One entry returned by `GET /payment_methods/types` — the registered list
  * of available STI subclasses, with their per-provider preference schemas
- * for the universal configuration form.
- *
- * @deprecated Prefer `ResourceTypeDefinition`; this alias remains for
- * naming-symmetry with the controller. They are structurally identical.
+ * for the universal configuration form and their gallery listing.
  */
-export type PaymentMethodType = ResourceTypeDefinition
+export interface PaymentMethodType extends ResourceTypeDefinition {
+  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI. Render with a fallback. */
+  logo_url: string | null
+  /** Absolute URL of the provider's setup guide. */
+  docs_url: string | null
+  /** Backed by an external payment provider rather than handled by the store itself. */
+  third_party: boolean
+}
 
 /**
  * One entry returned by `GET /integrations/types` — every registered
@@ -2433,6 +2449,8 @@ export interface IntegrationTypeDefinition {
   description: string | null
   /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
   logo_url: string | null
+  /** Absolute URL of the integration's setup guide. */
+  docs_url: string | null
   preference_schema: { key: string; type: string; default: unknown }[]
 }
 
@@ -3128,4 +3146,52 @@ export interface StoreCreditListMeta extends PaginationMeta {
 export interface StoreCreditListResponse {
   data: StoreCredit[]
   meta: StoreCreditListMeta
+}
+
+export type EmailTemplateLanguageParams = {
+  /** A language code, or `any` (the default) for the version every language uses. */
+  language?: string
+}
+
+export type EmailTemplateVersionParams = EmailTemplateLanguageParams & {
+  /** The draft's `lock_version` as last seen. A draft saved since is refused with 409. */
+  lock_version?: number
+}
+
+export interface EmailTemplateDraftParams extends EmailTemplateLanguageParams {
+  subject?: string | null
+  body?: string
+  /**
+   * The `lock_version` the draft was loaded with, or `null` when there was no
+   * draft; a save from an older copy is refused with 409. Omit it to save
+   * without checking.
+   */
+  lock_version?: number | null
+  /** Marks the draft as based on Spree's current default, after reviewing what changed in it. */
+  rebase?: boolean
+}
+
+export interface EmailTemplatePreviewParams extends EmailTemplateLanguageParams {
+  /** An unsaved subject, in place of the current one. */
+  subject?: string | null
+  /** An unsaved body, in place of the current one. */
+  body?: string
+  /** The record to build sample data from; the store's latest matching record otherwise. */
+  record_id?: string
+  /** For the layout or a partial, the email to show it in. */
+  email_key?: string
+  /** Unsaved colors and font to preview, named like the store's `preferred_email_*` settings without the prefix. */
+  branding?: {
+    accent_color?: string | null
+    background_color?: string | null
+    card_color?: string | null
+    text_color?: string | null
+    heading_color?: string | null
+    font?: string | null
+  }
+}
+
+export interface EmailTemplateRestoreParams extends EmailTemplateLanguageParams {
+  /** The open draft's `lock_version`, or `null` when there is none; checked as when saving. */
+  lock_version?: number | null
 }

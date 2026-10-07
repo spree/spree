@@ -1,0 +1,15 @@
+---
+th:
+  spree:
+    api:
+      cannot_delete: ไม่สามารถลบ %{model} ได้
+      current_password_invalid: รหัสผ่านปัจจุบันไม่ถูกต้องหรือไม่ได้ระบุ
+      newsletter_verification_token_invalid: โทเค็นยืนยันจดหมายข่าวไม่ถูกต้องหรือหมดอายุแล้ว
+      password_reset_requested: หากมีบัญชีที่เชื่อมโยงกับอีเมลนั้น ได้ส่งคำแนะนำการตั้งรหัสผ่านใหม่ไปแล้ว
+      password_reset_token_invalid: โทเค็นการตั้งรหัสผ่านใหม่ไม่ถูกต้องหรือหมดอายุแล้ว
+      record_not_found: ไม่พบ %{model}
+      unauthorized: คุณไม่ได้รับอนุญาตให้ดำเนินการนั้น
+      v3:
+        payments:
+          method_unavailable: วิธีการชำระเงินนี้ไม่สามารถใช้ได้กับคำสั่งซื้อนี้
+          session_required: วิธีการชำระเงินนี้ต้องใช้เซสชันการชำระเงิน กรุณาใช้ปลายทาง payment sessions แทน

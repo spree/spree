@@ -1,6 +1,6 @@
 # create-spree-app
 
-Scaffold a new [Spree Commerce](https://spreecommerce.org) project with a single command — a full Rails backend (the Spree API) running via Docker, an optional Next.js storefront, the React Dashboard behind `--react-dashboard`, and the `spree` CLI for day-to-day work. Setup completes automatically: image pulled, database seeded, API keys configured.
+Scaffold a new [Spree Commerce](https://spreecommerce.org) project with a single command — a full Rails backend (the Spree API) running via Docker, an optional Next.js storefront, the Admin Dashboard and an optional marketplace seller panel, and the `spree` CLI for day-to-day work. Setup completes automatically: image pulled, database seeded, API keys configured.
 
 ## Quick Start
 
@@ -10,9 +10,9 @@ npx create-spree-app my-store
 
 | Flag | Description |
 |------|-------------|
-| `--react-dashboard` | Include the React Dashboard (Developer Preview — also available later via `spree add dashboard`) |
+| `--no-dashboard` | Skip the Admin Dashboard app — the API still serves the built-in one at `/dashboard` (add your own copy later via `spree add dashboard`) |
+| `--no-seller-dashboard` | Skip the marketplace seller panel (also available later via `spree add seller-dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
-| `--no-sample-data` | Skip loading sample products |
 | `--no-start` | Don't start Docker services (the first `dev` run completes setup instead) |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` / `--use-yarn` / `--use-pnpm` | Package manager (auto-detected from how you run the command) |

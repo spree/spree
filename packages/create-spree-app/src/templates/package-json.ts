@@ -19,7 +19,7 @@ export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'
       dev: 'spree dev',
       stop: 'spree stop',
       down: 'docker compose down',
-      update: 'spree update',
+      upgrade: 'spree upgrade',
       eject: 'spree eject',
       logs: 'spree logs',
       'logs:worker': 'spree logs worker',

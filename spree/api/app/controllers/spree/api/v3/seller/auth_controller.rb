@@ -48,7 +48,7 @@ module Spree
             # not enough: without a role on some seller there is no panel to
             # sign in to, and minting a token would hand out an audience the
             # holder can do nothing with.
-            return render_authentication_failed(Spree.t(:seller_membership_required)) unless user.seller_member?
+            return render_authentication_failed(I18n.t('spree.seller_membership_required')) unless user.seller_member?
 
             set_refresh_cookie(
               Spree::RefreshToken.create_for(
@@ -100,7 +100,7 @@ module Spree
               clear_refresh_cookie
               return render_error(
                 code: ErrorHandler::ERROR_CODES[:access_denied],
-                message: Spree.t(:seller_membership_required),
+                message: I18n.t('spree.seller_membership_required'),
                 status: :forbidden
               )
             end

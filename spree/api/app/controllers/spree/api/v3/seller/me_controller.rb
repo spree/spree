@@ -83,7 +83,7 @@ module Spree
 
             render_error(
               code: ErrorHandler::ERROR_CODES[:record_not_found],
-              message: Spree.t(:me_no_current_user),
+              message: I18n.t('spree.me_no_current_user'),
               status: :not_found
             )
             false

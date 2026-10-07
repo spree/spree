@@ -30,7 +30,7 @@ module Spree
       def ensure_returnable
         return if stock_transfer.ready_to_ship?
 
-        failure(stock_transfer, Spree.t('stock_transfer.errors.not_ready_to_ship'))
+        failure(stock_transfer, I18n.t('spree.stock_transfer.errors.not_ready_to_ship'))
       end
 
       def return_to_draft

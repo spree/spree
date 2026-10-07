@@ -114,7 +114,7 @@ module Spree
       return default_adjustment_reason if reason.blank?
       return reason.to_s unless ADJUSTMENT_REASONS.include?(reason.to_s)
 
-      Spree.t("stock_movement.reasons.#{reason}", locale: :en)
+      I18n.t("spree.stock_movement.reasons.#{reason}", locale: :en)
     end
 
     # A movement is an immutable audit row: once written, nothing may rewrite

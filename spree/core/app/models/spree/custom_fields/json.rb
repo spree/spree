@@ -31,7 +31,7 @@ module Spree
         JSON.parse(value)
       rescue JSON::ParserError => e
         errors.add(:value, :invalid_json, detail: e.message,
-                   message: Spree.t('errors.messages.invalid_json', detail: e.message))
+                   message: I18n.t('spree.errors.messages.invalid_json', detail: e.message))
       end
     end
   end

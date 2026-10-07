@@ -20,6 +20,7 @@ module Spree
     include Spree::Metadata
 
     publishes_lifecycle_events
+    publishes_events :purchased, :refunded
 
     has_status :purchased, :refund_requested, :refunded, default: :purchased
 

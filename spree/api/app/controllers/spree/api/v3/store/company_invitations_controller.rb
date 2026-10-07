@@ -52,7 +52,7 @@ module Spree
             else
               render_error(
                 code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-                message: Spree.t('company_invitations.not_pending'),
+                message: I18n.t('spree.company_invitations.not_pending'),
                 status: :unprocessable_content
               )
             end

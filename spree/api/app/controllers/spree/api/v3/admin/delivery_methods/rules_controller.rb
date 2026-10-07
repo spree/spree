@@ -16,7 +16,7 @@ module Spree
               if rule_class.nil?
                 return render_error(
                   code: ERROR_CODES[:validation_error],
-                  message: Spree.t('errors.messages.invalid_delivery_method_rule'),
+                  message: I18n.t('spree.errors.messages.invalid_delivery_method_rule'),
                   status: :unprocessable_entity
                 )
               end

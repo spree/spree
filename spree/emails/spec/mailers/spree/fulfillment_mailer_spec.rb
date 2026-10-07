@@ -38,7 +38,7 @@ describe Spree::FulfillmentMailer, type: :mailer do
   # would be misleading next to the fulfilled-items list.
   it "doesn't include order totals in the email body" do
     fulfillment_email = described_class.fulfilled_email(fulfillment)
-    expect(fulfillment_email).not_to have_body_text(Spree.t('order_mailer.total'))
+    expect(fulfillment_email).not_to have_body_text(I18n.t('spree.order_mailer.total'))
   end
 
   it 'accepts a fulfillment id as an alternative to a Fulfillment object' do

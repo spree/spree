@@ -18,7 +18,7 @@ The CLI walks you through an interactive setup:
 
 Once complete, your store is running at [http://localhost:3000](http://localhost:3000) — setup pulls the latest Spree image, seeds the database, and configures API keys, then prints a summary with your admin credentials and keys. If you skipped starting services, the first `pnpm dev` completes setup automatically.
 
-The **dashboard** and the marketplace **seller panel** are included in every project — there is no flag to add them.
+The **admin dashboard** is included in every project (skip it with `--no-dashboard` and the API still serves the built-in one at `/dashboard`). The installer asks whether to add the **seller panel** — a dedicated panel where marketplace vendors manage their products, orders and settings. Answer yes only if you run a marketplace; you can add it later with `spree add seller-dashboard`.
 
 ## Prerequisites
 
@@ -30,14 +30,14 @@ The **dashboard** and the marketplace **seller panel** are included in every pro
 All prompts can be skipped with flags for non-interactive (CI/CD) usage:
 
 ```bash
-npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
+npx create-spree-app@latest my-store --no-seller-dashboard --no-storefront --no-start
 ```
 
 | Flag | Description |
 |------|-------------|
-| `--react-dashboard` | No-op — the dashboard is always included. Kept so existing scripts keep working |
+| `--no-dashboard` | Skip the admin dashboard app — the API still serves the built-in one at `/dashboard` |
+| `--no-seller-dashboard` | Skip the marketplace seller panel |
 | `--no-storefront` | Skip Next.js storefront setup |
-| `--no-sample-data` | Skip loading sample products and categories |
 | `--no-start` | Don't start Docker services after scaffolding |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` | Use npm as package manager |
@@ -62,9 +62,9 @@ my-store/
 │   ├── Dockerfile            # Also builds the production image (API + dashboard)
 │   └── Gemfile
 ├── apps/
-│   ├── dashboard/            # Admin dashboard (React)
+│   ├── dashboard/            # Admin dashboard (unless --no-dashboard)
 │   │   └── .env.local        # Dev proxy target — no credentials
-│   ├── seller-dashboard/     # Seller panel, for marketplaces (React)
+│   ├── seller-dashboard/     # Seller panel, for marketplaces (unless --no-seller-dashboard)
 │   └── storefront/           # Next.js storefront (unless --no-storefront)
 │       └── .env.local        # API URL + publishable key
 ├── .env                      # SECRET_KEY_BASE, encryption keys, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
@@ -113,11 +113,12 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 
 | Command | Description |
 |---------|-------------|
-| `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the React Dashboard dev server when `apps/dashboard` exists |
+| `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists |
 | `spree stop` | Stop backend services |
-| `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
+| `spree upgrade` | Upgrade Spree — the server, database and `@spree/*` packages |
 | `spree eject` | Switch from prebuilt image to building from `server/` |
-| `spree add dashboard` | Add the React Dashboard to an existing project |
+| `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
+| `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |
 | `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree logs` | View backend logs |
 | `spree logs worker` | View background jobs logs |
@@ -151,10 +152,10 @@ Open [http://localhost:3001](http://localhost:3001) to see your store.
 To update to the latest Spree version:
 
 ```bash
-spree update
+spree upgrade
 ```
 
-This pulls the latest Docker image and recreates the containers. The entrypoint automatically runs database migrations.
+This updates the server (the Docker image, or the Spree gems on an ejected project), runs database migrations and data backfills, and updates the `@spree/*` packages of the project and its dashboard apps. See [`spree upgrade`](/developer/cli/quickstart#spree-upgrade) for details.
 
 To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
 
@@ -164,7 +165,7 @@ SPREE_VERSION_TAG=5.4
 
 ## Deployment
 
-The project deploys as **one image**: `server/Dockerfile` builds the Spree API together with your React Dashboard (when `apps/dashboard` exists), served same-origin at `/dashboard` — no CORS, no cookie configuration, no second service.
+The project deploys as **one image**: `server/Dockerfile` builds the Spree API together with your Admin Dashboard (when `apps/dashboard` exists), served same-origin at `/dashboard` — no CORS, no cookie configuration, no second service.
 
 - **Render** — the `render.yaml` at the project root is a ready Blueprint: one Docker service built straight from your repo, migrations run on boot.
 - **Anywhere else** — `spree build --production` builds the same image locally; push it to a registry and run it on any Docker host.

@@ -166,10 +166,10 @@ module SpreeEasyPost
 
       # Each of these is the merchant's to fix, so each says so rather than
       # failing as "check the carrier connection".
-      raise Spree::Core::LabelPurchaseRefused, Spree.t('easypost.errors.no_destination') if address.nil?
+      raise Spree::Core::LabelPurchaseRefused, I18n.t('spree.easypost.errors.no_destination') if address.nil?
 
       if selected&.carrier.blank? || selected.service_level.blank?
-        raise Spree::Core::LabelPurchaseRefused, Spree.t('easypost.errors.rate_not_quoted')
+        raise Spree::Core::LabelPurchaseRefused, I18n.t('spree.easypost.errors.rate_not_quoted')
       end
 
       shipment = integration.client.shipment.create(
@@ -185,7 +185,7 @@ module SpreeEasyPost
       # worse than no label, so this refuses and names the service.
       if rate.nil?
         raise Spree::Core::LabelPurchaseRefused,
-              Spree.t('easypost.errors.service_unavailable', service: "#{selected.carrier} #{selected.service_level}")
+              I18n.t('spree.easypost.errors.service_unavailable', service: "#{selected.carrier} #{selected.service_level}")
       end
 
       buy(integration, fulfillment.stock_location, fulfillment.store, shipment.id, rate.id)
@@ -234,7 +234,7 @@ module SpreeEasyPost
     rescue EasyPost::Errors::EasyPostError => e
       report(e, stock_location)
       raise Spree::Core::LabelPurchaseRefused,
-            Spree.t('easypost.errors.origin_address_refused',
+            I18n.t('spree.easypost.errors.origin_address_refused',
                     location: location_name(stock_location), reason: carrier_reason(e))
     end
 

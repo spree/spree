@@ -87,7 +87,7 @@ module Spree
             def render_promotion_row_error
               render_error(
                 code: ERROR_CODES[:discount_not_editable],
-                message: Spree.t('errors.messages.promotion_discount_not_editable'),
+                message: I18n.t('spree.errors.messages.promotion_discount_not_editable'),
                 status: :unprocessable_entity
               )
             end

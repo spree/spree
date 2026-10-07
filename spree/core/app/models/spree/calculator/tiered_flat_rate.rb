@@ -1,40 +1,25 @@
 module Spree
   class Calculator::TieredFlatRate < Calculator
+    include Spree::Calculator::Tiers
+
     preference :base_amount, :decimal, default: 0
     preference :currency, :string, default: -> { Spree::Store.default.default_currency }
-    preference :tiers, :hash, default: {}
-
-    before_validation do
-      # Convert tier values to decimals. Strings don't do us much good.
-      if preferred_tiers.is_a?(Hash)
-        self.preferred_tiers = Hash[*preferred_tiers.flatten.map(&:to_f)]
-      end
-    end
-
-    validate :preferred_tiers_content
 
     def self.description
-      Spree.t(:tiered_flat_rate)
+      I18n.t('spree.tiered_flat_rate')
     end
 
     def compute(object = nil)
       return 0 unless object&.currency.present?
       return 0 unless preferred_currency.casecmp(object.currency.upcase).zero?
 
-      base, amount = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
-      amount || preferred_base_amount
+      tier_value_for(object.amount) || preferred_base_amount
     end
 
     private
 
-    def preferred_tiers_content
-      if preferred_tiers.is_a? Hash
-        unless preferred_tiers.keys.all? { |k| k.is_a?(Numeric) && k > 0 }
-          errors.add(:base, :keys_should_be_positive_number)
-        end
-      else
-        errors.add(:preferred_tiers, :should_be_hash)
-      end
+    def validate_tier_values(values)
+      errors.add(:preferred_tiers, :values_should_be_number) unless values.all? { |value| value && value >= 0 }
     end
   end
 end

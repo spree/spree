@@ -24,6 +24,8 @@ import {
   useOptionalStore,
 } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardAction,
@@ -59,6 +61,7 @@ import {
   FolderTreeIcon,
   ImageIcon,
   ImagePlusIcon,
+  InfoIcon,
   LibraryIcon,
   Loader2Icon,
   PencilIcon,
@@ -69,12 +72,20 @@ import {
   WarehouseIcon,
 } from '@spree/dashboard-ui/icons'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type Control, Controller, type UseFormReturn, useWatch } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type UseFormReturn,
+  useFormState,
+  useWatch,
+} from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { AddVideoDialog } from './add-video-dialog'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
 import { ProductBulkPriceEditor } from './product-bulk-price-editor'
+import { variantHasTaxCategoryOverride } from './product-form-mapping'
+import type { VariantFormValues } from './product-schema'
 import type {
   PanelMedia as Media,
   PanelProduct as Product,
@@ -1167,6 +1178,27 @@ export function TaxCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const { data: taxCategoriesResponse } = useTaxCategories()
   const taxCategories = taxCategoriesResponse?.data ?? []
+  const variants = useWatch({ control: form.control, name: 'variants' }) ?? []
+  const { dirtyFields } = useFormState({ control: form.control, name: 'tax_category_id' })
+  const showApplyToVariantsNotice = Boolean(dirtyFields.tax_category_id) && variants.length > 1
+  const overrides = useMemo(
+    () =>
+      variants
+        .map((variant, index) => ({ variant, index }))
+        .filter(({ variant }) => variantHasTaxCategoryOverride(variant)),
+    [variants],
+  )
+
+  const clearVariantTaxOverride = (variantIndex: number) => {
+    form.setValue(`variants.${variantIndex}.tax_category_id`, null, { shouldDirty: true })
+  }
+
+  const labelForVariant = (variant: VariantFormValues) => {
+    if (variant.options.length > 0) {
+      return variant.options.map((option) => `${option.name}: ${option.value}`).join(', ')
+    }
+    return variant.sku?.trim() || t('admin.products.variants.default_variant')
+  }
 
   return (
     <Card>
@@ -1176,7 +1208,7 @@ export function TaxCard({ form }: FormCardProps) {
           {t('admin.fields.tax.label')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <Field>
           <FieldLabel>{t('admin.fields.tax_category_id.label')}</FieldLabel>
           <Controller
@@ -1203,6 +1235,48 @@ export function TaxCard({ form }: FormCardProps) {
             )}
           />
         </Field>
+
+        {showApplyToVariantsNotice && (
+          <Alert variant="info">
+            <InfoIcon />
+            <AlertDescription>{t('admin.products.tax.apply_to_variants_help')}</AlertDescription>
+          </Alert>
+        )}
+
+        {overrides.length > 0 && (
+          <div className="rounded-md border bg-muted/30 p-3 text-sm">
+            <p className="font-medium">{t('admin.products.tax.variant_overrides_heading')}</p>
+            <p className="text-muted-foreground mt-1">
+              {t('admin.products.tax.variant_overrides_description')}
+            </p>
+            <ul className="mt-3 space-y-2">
+              {overrides.map(({ variant, index }) => {
+                const categoryName =
+                  taxCategories.find((c) => c.id === variant.tax_category_id)?.name ??
+                  variant.tax_category_id
+                return (
+                  <li
+                    key={variant.id ?? `variant-tax-${index}`}
+                    className="flex flex-wrap items-center justify-between gap-2"
+                  >
+                    <span>
+                      {labelForVariant(variant)}
+                      <span className="text-muted-foreground"> — {categoryName}</span>
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => clearVariantTaxOverride(index)}
+                    >
+                      {t('admin.products.tax.clear_variant_override')}
+                    </Button>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

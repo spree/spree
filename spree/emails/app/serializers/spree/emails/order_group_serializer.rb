@@ -5,6 +5,11 @@ module Spree
     class OrderGroupSerializer < Spree::Api::V3::OrderGroupSerializer
       include Spree::Emails::PurchaseSummaryAttributes
 
+      typelize po_number: [:string, nullable: true], order_count: :number,
+               delivery_total: :string, display_delivery_total: :string,
+               additional_tax_total: :string, display_additional_tax_total: :string,
+               gift_card_total: :string, display_gift_card_total: :string
+
       attributes :po_number
 
       attribute :order_count do |group|

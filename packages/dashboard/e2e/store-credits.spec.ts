@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-import { escapeRegex, FIXTURE_PROMO_CUSTOMER_EMAIL, login } from './helpers'
+import { escapeRegex, FIXTURE_PROMO_CUSTOMER_EMAIL, login, openRowMenu } from './helpers'
 
 const STORE_CREDITS_PATH = (storeId: string) => `/${storeId}/loyalty/store-credits`
 
@@ -35,6 +35,58 @@ test.describe('store credits', () => {
     await expect(row.getByText('$40.00').first()).toBeVisible()
   })
 
+  test('issues a credit to a customer picked on the page', async ({ page }) => {
+    const creds = await login(page)
+    const memo = `E2E loyalty credit ${Date.now()}`
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await expect(page.getByRole('link', { name: /learn more/i })).toBeVisible({ timeout: 15_000 })
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await dialog.getByPlaceholder(/search customers/i).fill(FIXTURE_PROMO_CUSTOMER_EMAIL)
+    await page
+      .getByRole('option', { name: new RegExp(escapeRegex(FIXTURE_PROMO_CUSTOMER_EMAIL)) })
+      .first()
+      .click()
+    await dialog.getByLabel(/amount/i).fill('15')
+    await dialog.getByLabel(/memo/i).fill(memo)
+    await dialog.getByRole('button', { name: /^issue store credit$/i }).click()
+
+    const sheet = page.getByRole('dialog')
+    await expect(sheet.getByText(memo)).toBeVisible({ timeout: 15_000 })
+    await expect(sheet.getByText('$15.00').first()).toBeVisible()
+  })
+
+  test('offers a customer created after the picker last searched', async ({ page }) => {
+    const creds = await login(page)
+    const email = `e2e-fresh-${Date.now()}@example.com`
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    const dialog = page.getByRole('dialog')
+    await dialog.getByPlaceholder(/search customers/i).fill(email)
+    await expect(page.getByText(/no customers match/i)).toBeVisible({ timeout: 15_000 })
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+
+    const created = await page.request.post('/api/v3/admin/customers', {
+      headers: { Authorization: `Bearer ${creds.accessToken}` },
+      data: { email },
+    })
+    expect(created.status(), await created.text()).toBe(201)
+
+    await page.getByRole('button', { name: /issue store credit/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByPlaceholder(/search customers/i)
+      .fill(email)
+    await expect(page.getByRole('option', { name: new RegExp(escapeRegex(email)) })).toBeVisible({
+      timeout: 15_000,
+    })
+  })
+
   test('opens a credit and follows it to the customer', async ({ page }) => {
     const creds = await login(page)
     const memo = `E2E refund credit ${Date.now()}`
@@ -55,5 +107,34 @@ test.describe('store credits', () => {
     await sheet.getByRole('link', { name: /open customer profile/i }).click()
     await expect(page).toHaveURL(/\/customers\/cust_/, { timeout: 15_000 })
     await expect(page.getByText(FIXTURE_PROMO_CUSTOMER_EMAIL).first()).toBeVisible()
+  })
+
+  test('edits and deletes a credit from the list', async ({ page }) => {
+    const creds = await login(page)
+    const memo = `E2E credit to change ${Date.now()}`
+    const editedMemo = `${memo} edited`
+    await issueStoreCredit(page, creds.accessToken, memo)
+
+    await page.goto(STORE_CREDITS_PATH(creds.store_id))
+    await page.getByRole('searchbox').fill(memo)
+    await expect(page.locator('tr').filter({ hasText: memo })).toHaveCount(1, { timeout: 15_000 })
+
+    await openRowMenu(page, memo)
+    await page.getByRole('menuitem', { name: /^edit$/i }).click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('heading', { name: /edit store credit/i })).toBeVisible()
+    await dialog.getByLabel(/memo/i).fill(editedMemo)
+    await dialog.getByRole('button', { name: /^save$/i }).click()
+    await expect(page.locator('tr').filter({ hasText: editedMemo })).toHaveCount(1, {
+      timeout: 15_000,
+    })
+
+    await openRowMenu(page, editedMemo)
+    await page.getByRole('menuitem', { name: /^delete$/i }).click()
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^delete$/i })
+      .click()
+    await expect(page.locator('tr').filter({ hasText: memo })).toHaveCount(0, { timeout: 15_000 })
   })
 })

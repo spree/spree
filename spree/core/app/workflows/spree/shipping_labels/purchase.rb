@@ -51,15 +51,15 @@ module Spree
       end
 
       def ensure_purchasable
-        failure(owner, Spree.t('shipping_labels.errors.provider_has_no_labels')) unless provider.class.generates_labels?
-        failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+        failure(owner, I18n.t('spree.shipping_labels.errors.provider_has_no_labels')) unless provider.class.generates_labels?
+        failure(owner, I18n.t('spree.shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
 
         case owner
         when Spree::Fulfillment
-          failure(owner, Spree.t('fulfillments.errors.cannot_purchase_label')) unless owner.unfulfilled?
-          failure(owner, Spree.t('fulfillments.errors.order_draft')) if owner.order&.draft?
+          failure(owner, I18n.t('spree.fulfillments.errors.cannot_purchase_label')) unless owner.unfulfilled?
+          failure(owner, I18n.t('spree.fulfillments.errors.order_draft')) if owner.order&.draft?
         when Spree::Return
-          failure(owner, Spree.t('shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
+          failure(owner, I18n.t('spree.shipping_labels.errors.return_closed')) if owner.received? || owner.refunded? || owner.canceled?
         end
       end
 
@@ -71,7 +71,7 @@ module Spree
       # re-read inside it.
       def claim_purchase
         owner.with_lock do
-          failure(owner, Spree.t('shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
+          failure(owner, I18n.t('spree.shipping_labels.errors.already_purchased')) if owner.shipping_labels.active.exists?
 
           @shipping_label = owner.shipping_labels.create!(
             store: owner.store,
@@ -81,7 +81,7 @@ module Spree
           )
         end
       rescue ActiveRecord::RecordNotUnique
-        failure(owner, Spree.t('shipping_labels.errors.already_purchased'))
+        failure(owner, I18n.t('spree.shipping_labels.errors.already_purchased'))
       end
 
       # Undoes the claim when the carrier refuses, so a failed purchase does
@@ -105,7 +105,7 @@ module Spree
 
         return if @purchase.is_a?(Spree::LabelPurchase) && @purchase.valid?
 
-        failure(owner, Spree.t('fulfillments.errors.label_purchase_failed'))
+        failure(owner, I18n.t('spree.fulfillments.errors.label_purchase_failed'))
       rescue Spree::Core::LabelPurchaseRefused => e
         failure(owner, e.message)
       end

@@ -356,14 +356,14 @@ module Spree
     def flat_fee_does_not_charge_delivery
       return unless fixed? && include_shipping?
 
-      errors.add(:include_shipping, :flat_fee_cannot_charge_delivery, message: Spree.t('errors.messages.flat_fee_cannot_charge_delivery'))
+      errors.add(:include_shipping, :flat_fee_cannot_charge_delivery, message: I18n.t('spree.errors.messages.flat_fee_cannot_charge_delivery'))
     end
 
     def fixed_rate_states_an_amount
       return unless fixed?
       return if @pending_amounts.present? || commission_rate_values.any?
 
-      errors.add(:base, :commission_rate_needs_an_amount, message: Spree.t('errors.messages.commission_rate_needs_an_amount'))
+      errors.add(:base, :commission_rate_needs_an_amount, message: I18n.t('spree.errors.messages.commission_rate_needs_an_amount'))
     end
   end
 end

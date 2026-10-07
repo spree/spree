@@ -13,7 +13,9 @@ module Spree
     include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SecretPreferences
     include Spree::CaptureMethod
+    include Spree::ProviderListing
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
@@ -72,6 +74,20 @@ module Spree
     # Gateways predate `registers_subclasses_via` and expose their registry as
     # `providers`; declaring it keeps subclass resolution to a single rule.
     registers_subclasses_via { providers }
+
+    # Whether this method is backed by an external payment provider (Stripe,
+    # Adyen…) rather than handled by the store itself (check, store credit).
+    # Only third-party methods are listed under Settings → Integrations.
+    #
+    # @return [Boolean]
+    def self.third_party?
+      false
+    end
+
+    # @return [Hash] the listing attributes, plus whether the method is third-party
+    def self.provider_listing
+      super.merge(third_party: third_party?)
+    end
 
     def provider_class
       raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
@@ -302,9 +318,7 @@ module Spree
     end
 
     def public_preferences
-      public_preference_keys.each_with_object({}) do |key, hash|
-        hash[key] = preferences[key]
-      end
+      public_preference_keys.index_with { |key| get_preference(key) }
     end
 
     # @deprecated Use {#storefront_visible?}; removed in 6.1.

@@ -8,7 +8,7 @@ RSpec.describe Spree::OrderGroupEmailSubscriber do
   let(:subscriber) { described_class.new }
 
   def mock_event(order_group)
-    double('Event', payload: { 'id' => order_group.prefixed_id })
+    double('Event', payload: { 'id' => order_group.prefixed_id }, metadata: {})
   end
 
   before do
@@ -62,13 +62,13 @@ RSpec.describe Spree::OrderGroupEmailSubscriber do
         and_return(double(deliver_later: true))
 
       subscriber.send(:send_confirmation_email,
-                      double('Event', payload: { 'id' => group.prefixed_id, 'notify_customer' => false }))
+                      double('Event', payload: { 'id' => group.prefixed_id }, metadata: { 'notify_customer' => false }))
     end
 
     it 'ignores a group it cannot find' do
       expect(Spree::OrderGroupMailer).not_to receive(:confirm_email)
 
-      subscriber.send(:send_confirmation_email, double('Event', payload: { 'id' => 'ogrp_missing' }))
+      subscriber.send(:send_confirmation_email, double('Event', payload: { 'id' => 'ogrp_missing' }, metadata: {}))
     end
 
     describe 'the store owner' do

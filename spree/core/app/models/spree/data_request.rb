@@ -19,6 +19,7 @@ module Spree
     has_spree_number prefix: 'DSR'
 
     publishes_lifecycle_events
+    publishes_event :completed
 
     include Spree::HasStatus
     has_status :pending, :processing, :completed, :failed, default: :pending

@@ -39,8 +39,8 @@ module Spree
             unless detach_requested?
               return render_error(
                 code: ERROR_CODES[:resource_invalid],
-                message: Spree.t(
-                  'api.errors.media_in_use',
+                message: I18n.t(
+                  'spree.api.errors.media_in_use',
                   places: references.filter_map(&:name).uniq.first(5).to_sentence
                 ),
                 status: :unprocessable_content,
@@ -55,7 +55,7 @@ module Spree
             # render_service_error would produce an empty message.
             render_error(
               code: ERROR_CODES[:processing_error],
-              message: Spree.t('api.errors.media_not_deleted'),
+              message: I18n.t('spree.api.errors.media_not_deleted'),
               status: :unprocessable_content
             )
           end
@@ -145,7 +145,7 @@ module Spree
           def create_from_url
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:resource_invalid],
-              message: Spree.t('api.errors.media_url_import_requires_product'),
+              message: I18n.t('spree.api.errors.media_url_import_requires_product'),
               status: :unprocessable_content
             )
           end

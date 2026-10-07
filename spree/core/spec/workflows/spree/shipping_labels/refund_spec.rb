@@ -55,7 +55,7 @@ module Spree
       result = subject.call(shipping_label: label)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.refund_failed'))
+      expect(result.error.to_s).to eq(I18n.t('spree.shipping_labels.errors.refund_failed'))
       expect(label.reload).to be_purchased
     end
 
@@ -68,7 +68,7 @@ module Spree
       result = subject.call(shipping_label: uploaded)
 
       expect(result).to be_failure
-      expect(result.error.to_s).to eq(Spree.t('shipping_labels.errors.uploaded_not_refundable'))
+      expect(result.error.to_s).to eq(I18n.t('spree.shipping_labels.errors.uploaded_not_refundable'))
     end
 
     it 'refuses a label already refunded' do

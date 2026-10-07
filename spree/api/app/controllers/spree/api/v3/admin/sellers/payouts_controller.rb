@@ -47,7 +47,7 @@ module Spree
                 # than a success that produced no payout.
                 render_error(
                   code: ErrorHandler::ERROR_CODES[:validation_error],
-                  message: Spree.t(:seller_payout_nothing_to_settle),
+                  message: I18n.t('spree.seller_payout_nothing_to_settle'),
                   status: :unprocessable_content
                 )
               end

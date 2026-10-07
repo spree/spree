@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(json_response['error']['message']).to eq(Spree.t('fulfillments.errors.order_not_completed'))
+      expect(json_response['error']['message']).to eq(I18n.t('spree.fulfillments.errors.order_not_completed'))
     end
 
     it 'returns 422 when the requested quantity exceeds the unfulfilled quantity' do

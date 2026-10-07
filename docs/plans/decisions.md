@@ -1,3 +1,13 @@
+## 2026-10-07: Translations move into core, and `Spree.t` is deprecated for `I18n.t`
+
+**Context:** `Spree.t` ran through Rails' view translation helper, so it needed Action View and returned `<span class="translation_missing">` markup for a missing key, which leaked into JSON errors and dashboard notifications. Every language but English lived in `spree_i18n`: 6.5 MB of locale files, about 60% for the removed admin and storefront, plus `kaminari-i18n` (which requires the full `rails` gem), `i18n_data` (which swaps the global `I18n.backend`) and `spree_extension`.
+
+**Decision:** Core calls `I18n.t` with full keys (`I18n.t('spree.free')`). `Spree.t` stays until 6.1 as a deprecated one-line proxy onto `I18n.t`, with no Action View and no HTML. The translations still used by core, the API and emails move into those gems' `config/locales`, trimmed to keys English has, after dead English keys are pruned. `rails-i18n` becomes a `spree_core` dependency; `i18n_data`, `kaminari-i18n` and `spree_extension` are dropped. Untranslated keys fall back to English: core sets `[:en]` when the app configured nothing and appends English to Rails' generated `fallbacks = true`. Regional English is not shipped; other regional variants keep only their differences. Spree's own specs raise on a missing key. `spree_i18n` gets an empty 6.0.0 release that warns, then is archived.
+
+**Consequences:** Every install gets 43 languages besides English without an extra gem; regional English falls back to `en`. A missing key is plain text in production. Extensions calling `Spree.t` keep working with a warning. Removing a key the checker reports unused is a reviewed step: it cannot see keys passed around as strings or built from a value one level under `spree`.
+
+**Plan:** `6.0-translations-in-core.md`.
+
 ## 2026-10-04: Creating a payment session always opens a new one
 
 **Context:** Handing back the cart's open Stripe session and re-pricing it (2026-09-30) drifts from the intent Stripe actually holds. The amount, the saved card, the customer and the ephemeral key are each updated on their own, and a failure partway through leaves Spree and Stripe describing different sessions. The storefront asks for a session every time the payment step loads, so that drift is the common path.
@@ -7,6 +17,15 @@
 **Consequences:** A second request answers 201 with a new session, and the previous one is canceled. Checkout that reloads the payment step opens a new PaymentIntent each time. A buyer who already paid still gets `payment_in_progress` rather than a second charge.
 
 **Plans amended:** `6.0-payment-gateways-monorepo.md` (the one-open-session constraint now says the previous session is canceled, not handed back).
+
+## 2026-10-01: Preferences are stored as JSON, and secrets move to an encrypted column
+
+**Context:** Every `preferences` column is a YAML document written by one line in `Spree::Preferences::Preferable`. YAML loading is an attack surface Rails fences with a permitted-class list Spree has to inject; the columns cannot be queried; and the two 6.0 tables that declared `preferences` as JSON (delivery method rules, commission rules) actually hold a YAML document wrapped in a JSON string, because the shared coder still writes YAML.
+
+**Decision:** JSON replaces YAML for every preferences column, with no Spree-specific coder: the column type does the conversion, and the `metadata` columns' `HashSerializer` lets the loaded hash answer to symbol and string keys; the `preferred_*` readers restore decimals and times from their declared type, and every other value comes back as JSON stores it. Decimals are exact strings. The conversion runs inside the 6.0 migration, reading rows without models, because `spree:upgrade` runs after `db:migrate` and would find the YAML column gone. A row still holding YAML raises when read and the upgrade task converts it; a boot check was rejected because it would block the migration that repairs the data. The tiered promotion calculators move their tiers from a hash with number keys to a list of `{threshold, value}` objects. Preferences declared `:password` are stored in a separate `secret_preferences` column with Rails' `encrypts`, so `preferences` never holds a secret; the declaration DSL does not change. Encryption applies whenever keys are configured, as for Spree's other encrypted fields; new projects have keys from setup. The migration moves existing secrets across in plain text, they stay readable through `support_unencrypted_data`, and an upgrade task encrypts them. The `spree_preferences` key-value table, whose only live row was the installation id, is dropped without copying the id; the default store generates a new one in an internal preference. Rejected: encrypting values inside the JSON by hand, and a polymorphic credential model.
+
+**Consequences:** New `preferences` columns are JSON. Hash preferences must not use number keys. Every secret must be declared `:password`, the only type that is encrypted, and a table whose classes declare one needs a `secret_preferences` column. The tiered calculators' `tiers` value changes shape in the Admin API. See `6.0-json-preferences.md`.
+
 ## 2026-09-30: A cart keeps one open Stripe intent, and the ones left behind are canceled once the order is placed
 
 **Context:** Two Stripe payment sessions on one cart could both be paid (V-3726). Reproduced on `main`: a $55.00 cart, two `POST /carts/:id/payment_sessions` answering 201 with two $55.00 PaymentIntents, both confirmed through their own client secrets, and order R1001 placed with one $55.00 payment while Stripe held $110.00. Two concurrent requests are not needed, since the endpoint's cart lock already runs them one after the other: `SpreeStripe::Gateway#create_payment_session` opened a new intent on every call. The standalone gem reused the order's intent (`CreatePaymentIntent`, then `CreatePaymentSession`), but only its Rails checkout called that service, the port left the service with no callers, and it was deleted on 2026-08-12. The storefront creates a session every time the payment step loads, and whenever the buyer picks another saved card, so a second tab was enough. Switching payment method had the same result: a Stripe session followed by a Check payment placed order R1002, paid by check, and the abandoned intent could still be confirmed for $55.00 afterwards. Stripe's notification for the extra charge then fails the payment's cap on what is still owed, is reported, and records nothing.
@@ -99,6 +118,36 @@ Rejected:
 - Avalara (#14467) owes six follow-ups when it rebases, recorded in `6.0-tax-provider.md` under Phase 6: rebasing onto the error classes and new methods, dating the credit on the refund day rather than the original sale, building the credit from the rows rather than the stale list-price basis, implementing `estimate_refund` (reusing the recorded share or quoting), implementing the exchange methods, and keying documents to the return, claim or exchange.
 
 **Plans amended:** `6.0-tax-provider.md` (contract, Internal refund limit, "Post-sale tax", lifecycle integration points, Phase 6 follow-ups, Constraints on Current Work), `6.0-returns-exchanges-claims.md` (key decisions, ReturnLineItem, ExchangeLineItem and ClaimLineItem notes, refunding, exchange workflow, Constraints on Current Work, resolved question 7).
+
+## 2026-10-01: Merchants edit email templates one language at a time, in readable text
+
+**Context:** Spree's email templates print their text through translation keys (`{{ 'order_mailer.payment_link_email.message' | t: store_name: store.name }}`), so one file serves every language. In the dashboard editor a merchant cannot read those keys, and cannot change the text behind them. Other platforms with an email editor show merchants plain text and treat each language as its own copy.
+
+**Decision:** Spree's files keep their translation keys. When a merchant edits a template for a language, the editor writes the keys out as text in that language, in the subject and the body, with each value as the variable the template passed (`Dear {{ order.customer_name }},`); the edit is that language's version. A key that cannot be written out exactly (a plural form, a missing translation) is left as it was. The editor no longer offers "All languages"; the API keeps accepting `any`, and a version for every language published earlier still applies to languages without their own, which the editor says.
+
+**Consequences:** Languages nobody edited keep Spree's translated default, so an English edit never reaches French customers in English. The same change in several languages is made in each. Supersedes the "one template for every language" part of the 2026-09-30 entry for the dashboard.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
+## 2026-10-01: Building the email editor settled its API shape, branding and sample data
+
+**Context:** Implementing `6.0-email-template-editor.md` met details the design left loose: how the API names a template and its language, how the editor shows what an upgrade changed in a default, where branding is edited, what a new store previews, and whether the generated email types get Zod schemas.
+
+**Decision:** The API names a template by its key with dots (`spree.order_mailer.confirm_email`) and picks the version with a `language` parameter, because `locale` already sets the response's language. Templates and drafts store the default they started from as `base_subject` and `base_body`, so the editor can show what changed; reading a template returns the default and the base, with no separate diff endpoint, and saving a draft with `rebase` keeps the merchant's version as based on the new default. The editable registry is `Spree.editable_email_templates` in core, filled by `spree_emails`. Branding is six store preferences edited through the store settings endpoint under the settings permission; only `#RRGGBB` colors and fonts from a fixed list reach an email, and the preview takes unsaved values. Emails built from a record have no in-memory sample: a store with no such record is told there is nothing to preview with yet, and publishing such an email checks its syntax only. The `Email*` types are generated into their own folder of `@spree/admin-sdk` without Zod schemas, since the order email's schema is too large for TypeScript to emit and nothing validates email data at runtime.
+
+**Consequences:** Type generation for every SDK now runs from `spree_emails`, where both the API and email serializers load. A brand-new store cannot preview its order emails until it has an order. The earlier entry's Zod schemas for email types and the in-memory fallback for previews no longer apply.
+
+**Plans amended:** `6.0-email-template-editor.md`.
+
+## 2026-10-01: The email editor's variables come from generated types, and reverted templates keep their history
+
+**Context:** Building the email template editor (`6.0-email-template-editor.md`) left three details open: how autocomplete learns each email's variables, how two admins editing one draft avoid overwriting each other, and what reverting to the default does to a template's history.
+
+**Decision:** Typelizer is added to `spree_emails` and generates `Email*` TypeScript types for the email serializers into `@spree/admin-sdk`, turned into Zod schemas by the existing pipeline. A hand-written manifest in the dashboard maps each editable email to its variables and their schemas, and the preview response returns the data it rendered with for example values; there is no variables API. Drafts carry Rails' `lock_version` and `updated_by`, so a stale save is refused naming who changed it. Reverting marks the published row `reverted` (`has_status`) instead of deleting it; the lookup reads only `published` rows and a later publish reuses the row, so history survives.
+
+**Consequences:** Which variables each email receives is kept in step with its mailer by hand in the manifest; their fields cannot drift because they are generated. Extensions adding a customer email add a manifest entry through a dashboard plugin.
+
+**Plans amended:** `6.0-email-template-editor.md`.
 
 ## 2026-09-30: Merchants edit email templates in the dashboard, as drafts published per store
 
@@ -6038,3 +6087,83 @@ country picker or its own provisioning. `ProvisionDefaults` previously
 documented exactly two callers — that list grows as flows are added, but the
 rule it protects stands: never wire it to a settings screen, since re-running
 it against a configured store is a data reset.
+
+## 2026-09-29 — Webhook payloads stay on Store serializers; every event is declared
+
+Plan: `6.0-typed-webhook-events.md`.
+
+About 110 webhook events were string literals spread across models,
+workflows and controllers, the dashboard kept its own copy of the list, and
+`@spree/sdk/webhooks` typed every payload as `unknown`.
+
+**Decision.** Webhook payloads use the Store API serializers: the
+customer-facing shape already shipped, with no back-office fields.
+Integrations that need admin data fetch it from the Admin API by the IDs in
+the payload, under a scoped secret key, which is how Stripe's thin events and
+Medusa work and the same bound Saleor and Shopify reach by limiting payloads
+to what the receiver may read. Every event is declared on the model whose
+record is the payload (`publishes_events` / `publishes_event`), forming
+`Spree::Events.catalog`. That catalog generates the event types and Zod
+schemas in `@spree/sdk/webhooks` and serves the dashboard's picker. Hand-built
+payload hashes become event serializers. Publishing an undeclared event
+raises in development and test and warns in production. Rejected: Admin
+payloads (they push internal notes, IP addresses and card-check results to
+any endpoint), a central registry file (two places to edit per event),
+scoping webhook endpoints (left out deliberately, its own plan if revisited).
+
+**Consequences for other work.** A new event is declared with
+`publishes_event` in the same change that publishes it, and its payload is a
+record's Store serializer or a dedicated event serializer, never a hash.
+Facts that are not part of the record go in `metadata`. Webhook payloads must
+not switch to Admin serializers. `WEBHOOK_EVENT_GROUPS` in the dashboard is
+frozen until it is replaced by the catalog endpoint.
+
+**Addendum (2026-09-30).** Credential rules live in the catalog too.
+`customer.password_reset_requested` is a credential event: it reaches only an
+endpoint that names it, and naming it needs `write_customers`. The staff and
+seller reset requests are declared `webhook: false` and never reach any
+webhook endpoint, whatever it subscribes to — the rule 5.x kept in the
+subscriber's `NON_DELIVERABLE_EVENTS`, now read from the catalog.
+
+## 2026-10-06 — The products CSV carries each location's shelf count
+
+**Context:** The products export filled `inventory_count` from
+`Variant#total_on_hand`, which since stock reservations and allocation means
+what a customer can still buy: the shelf, minus units promised to placed
+orders, minus units held by checkouts, summed over every active location. The
+import writes the same column back through `Variant#set_stock`, which sets the
+shelf at a single location. Exporting and re-importing an unchanged file
+therefore took every promised and held unit off the shelf, once per round trip
+(V-3697), and moved stock from every other location onto the default one. Both
+stock plans told readers to go through the availability figure and never the
+shelf, and neither listed the export as a reader.
+
+**Decision:** `inventory_count` is the shelf count at one location, and
+`inventory_backorderable` that location's setting. A new `stock_location`
+column names the location; blank means the owner's default, so existing files
+keep their meaning. The export writes the default location on the full row and
+a stock-only row for each further location holding stock — the shape the
+price-only rows for extra currencies already have. Locations are named, not
+referenced by id, as the purchase-order import's `destination` is. An
+operator's file covers the marketplace's locations and, for a seller's
+product, that seller's; on import the seller's own location wins when both
+owners use the name, as with cartons. That misroutes only a seller's product
+stocked in a marketplace location named like one of the seller's own — rare
+enough that failing every shared name was the worse trade, since it would
+fail ordinary rows. A seller's file and import cover only their own locations:
+a seller never sets the marketplace's shelf. Rejected: keeping the
+sellable figure and having the import add held units back (holds change
+between export and import); one column per location (headers change when a
+location is renamed); exporting the default location alone (stock elsewhere
+disappears from the file).
+
+**Consequences:** A reader whose figure is written back to the shelf
+(`set_stock`, a stock adjustment, a file meant to be re-imported) reads the
+stock level's own `count_on_hand`; every availability reader still reads
+`total_on_hand`. Renaming a location between export and import fails that
+location's rows rather than writing elsewhere. A seller's export leaves out
+their products' stock held in marketplace locations.
+
+**Plans amended:** `5.6-admin-spa-csv-import.md` (stock is per location),
+`6.0-stock-reservations.md` and `6.0-typed-stock-movements.md` (the "read
+availability, never the shelf" constraints name the write-back exception).

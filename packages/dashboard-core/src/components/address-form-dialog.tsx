@@ -100,6 +100,11 @@ const businessSchema = z.object({
 
 type AddressFormValues = z.infer<typeof personalSchema>
 
+/** Address rows validate on `state`; every address form binds `state_code`. */
+const ADDRESS_SERVER_FIELD_ALIASES = { state: 'state_code' } as const satisfies Partial<
+  Record<string, keyof AddressFormValues>
+>
+
 /**
  * Just the fields this dialog reads.
  *
@@ -202,6 +207,9 @@ export function AddressFormDialog({
   })
   const { errors } = form.formState
 
+  const countryCode = form.watch('country_code')
+  const { states, statesRequired } = useCountryStates(countryCode)
+
   // The parent keys the dialog on the address id so a fresh instance mounts
   // for each open, but `address` can also stream in async (loaded after the
   // sheet mounts). Reset only when the *record identity* changes — otherwise a
@@ -225,14 +233,20 @@ export function AddressFormDialog({
     form.setValue('country_code', storeDefaultCountryCode)
   }, [address?.country_code, storeDefaultCountryCode, form])
 
-  const countryCode = form.watch('country_code')
-  const { states } = useCountryStates(countryCode)
   // Show the dropdown whenever the country enumerates subdivisions, not only
   // when it strictly requires one — so a country like Pakistan still lets the
   // user pick a province instead of typing a name that may not match.
   const useStateCombobox = states.length > 0
 
   async function onSubmit(values: AddressFormValues) {
+    if (statesRequired && !values.state_code.trim()) {
+      form.setError('state_code', {
+        type: 'manual',
+        message: requiredMessage('state_code')(),
+      })
+      return
+    }
+
     try {
       await onSave({
         first_name: values.first_name,
@@ -255,7 +269,8 @@ export function AddressFormDialog({
       // Surface server-side 422 validation errors on the matching fields so
       // the dialog reflects whatever the API rejected (e.g. "phone is too
       // short"). Non-validation errors bubble to the parent's toast.
-      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+      if (!mapSpreeErrorsToForm(err, form.setError, { fieldAliases: ADDRESS_SERVER_FIELD_ALIASES }))
+        throw err
     }
   }
 
@@ -284,6 +299,11 @@ export function AddressFormDialog({
           className="flex flex-col flex-1 overflow-hidden"
         >
           <div className="flex-1 overflow-y-auto p-4">
+            {errors.root?.message && (
+              <p className="mb-4 text-sm text-destructive" role="alert">
+                {errors.root.message}
+              </p>
+            )}
             <FieldGroup>
               {showLabel && (
                 <Field>

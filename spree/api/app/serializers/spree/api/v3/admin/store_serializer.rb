@@ -16,6 +16,12 @@ module Spree
                    customer_support_email: [:string, nullable: true],
                    new_order_notifications_email: [:string, nullable: true],
                    preferred_send_consumer_transactional_emails: :boolean,
+                   preferred_email_accent_color: [:string, nullable: true],
+                   preferred_email_background_color: [:string, nullable: true],
+                   preferred_email_card_color: [:string, nullable: true],
+                   preferred_email_text_color: [:string, nullable: true],
+                   preferred_email_heading_color: [:string, nullable: true],
+                   preferred_email_font: [:string, nullable: true, enum: Spree::Emails::Branding::FONTS.keys],
                    preferred_admin_locale: [:string, nullable: true],
                    preferred_timezone: :string,
                    preferred_weight_unit: [:string, enum: Spree::Variant::WEIGHT_UNITS],
@@ -68,6 +74,12 @@ module Spree
                      :customer_support_email,
                      :new_order_notifications_email,
                      :preferred_send_consumer_transactional_emails,
+                     :preferred_email_accent_color,
+                     :preferred_email_background_color,
+                     :preferred_email_card_color,
+                     :preferred_email_text_color,
+                     :preferred_email_heading_color,
+                     :preferred_email_font,
                      :preferred_admin_locale,
                      :preferred_timezone,
                      :preferred_weight_unit,
@@ -93,11 +105,9 @@ module Spree
                      :preferred_inventory_provider_failure_policy,
                      :preferred_payout_provider,
                      :preferred_default_payouts_schedule_interval,
-                     :preferred_default_minimum_payout_amount,
                      :preferred_auto_approve_sellers,
                      :preferred_auto_approve_seller_products,
                      :preferred_send_seller_transactional_emails,
-                     :preferred_default_commission_tax_rate,
                      :preferred_document_number_format,
                      :preferred_order_number_prefix,
                      :preferred_order_number_suffix,
@@ -113,6 +123,14 @@ module Spree
           # value that does nothing.
           attribute :order_number_sequence_started do |store|
             Spree::NumberSequence.started?(store: store)
+          end
+
+          attribute :preferred_default_minimum_payout_amount do |store|
+            store.preferred_default_minimum_payout_amount&.to_f
+          end
+
+          attribute :preferred_default_commission_tax_rate do |store|
+            store.preferred_default_commission_tax_rate&.to_f
           end
 
           attribute :url, &:storefront_url

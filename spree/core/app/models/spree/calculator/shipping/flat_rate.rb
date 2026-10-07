@@ -16,7 +16,7 @@ module Spree
       preference :maximum_weight, :decimal, default: nil, nullable: true, deprecated: 'Use a Spree::DeliveryMethodRules rule on the delivery method instead; removed in Spree 6.1.'
 
       def self.description
-        Spree.t(:shipping_flat_rate_per_order)
+        I18n.t('spree.shipping_flat_rate_per_order')
       end
 
       def compute_package(package)

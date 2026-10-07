@@ -24,7 +24,7 @@ describe Spree::Promotion::Rules::Country, type: :model do
       expect(rule).not_to be_eligible(order)
 
       expect(rule.eligibility_errors.count).to eq(1)
-      expect(rule.eligibility_errors.to_hash[:base]).to eq([Spree.t('eligibility_errors.messages.wrong_country')])
+      expect(rule.eligibility_errors.to_hash[:base]).to eq([I18n.t('spree.eligibility_errors.messages.wrong_country')])
     end
   end
 
@@ -46,7 +46,7 @@ describe Spree::Promotion::Rules::Country, type: :model do
       expect(rule).not_to be_eligible(order)
 
       expect(rule.eligibility_errors.count).to eq(1)
-      expect(rule.eligibility_errors.to_hash[:base]).to eq([Spree.t('eligibility_errors.messages.wrong_country')])
+      expect(rule.eligibility_errors.to_hash[:base]).to eq([I18n.t('spree.eligibility_errors.messages.wrong_country')])
     end
   end
 
@@ -65,7 +65,7 @@ describe Spree::Promotion::Rules::Country, type: :model do
       expect(rule).not_to be_eligible(order)
 
       expect(rule.eligibility_errors.count).to eq(1)
-      expect(rule.eligibility_errors.to_hash[:base]).to eq([Spree.t('eligibility_errors.messages.wrong_country')])
+      expect(rule.eligibility_errors.to_hash[:base]).to eq([I18n.t('spree.eligibility_errors.messages.wrong_country')])
     end
   end
 end
