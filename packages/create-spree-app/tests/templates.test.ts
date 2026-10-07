@@ -96,7 +96,7 @@ describe('rootPackageJsonContent', () => {
   it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.scripts.dev).toBe('spree dev')
-    expect(pkg.scripts.update).toBe('spree update')
+    expect(pkg.scripts.upgrade).toBe('spree upgrade')
     expect(pkg.scripts.eject).toBe('spree eject')
     expect(pkg.scripts.logs).toBe('spree logs')
     expect(pkg.scripts.console).toBe('spree console')
@@ -168,7 +168,7 @@ describe('readmeContent', () => {
     expect(content).toContain('`spree eject`')
     expect(content).toContain('`spree logs`')
     expect(content).toContain('`spree console`')
-    expect(content).toContain('`spree update`')
+    expect(content).toContain('`spree upgrade`')
     expect(content).toContain('`spree user create`')
     expect(content).toContain('`spree api-key create`')
   })

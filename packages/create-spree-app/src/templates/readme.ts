@@ -117,7 +117,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 |---------|-------------|
 | \`spree dev\` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop the API services |
-| \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
+| \`spree upgrade\` | Upgrade Spree — the server, database and \`@spree/*\` packages |
 | \`spree eject\` | Switch from prebuilt image to building from \`server/\` |
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |

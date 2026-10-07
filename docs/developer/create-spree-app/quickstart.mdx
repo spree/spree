@@ -115,7 +115,7 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 |---------|-------------|
 | `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the Admin Dashboard dev server when `apps/dashboard` exists |
 | `spree stop` | Stop backend services |
-| `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
+| `spree upgrade` | Upgrade Spree — the server, database and `@spree/*` packages |
 | `spree eject` | Switch from prebuilt image to building from `server/` |
 | `spree add dashboard` | Add the Admin Dashboard to an existing project, to customize it |
 | `spree add seller-dashboard` | Add the marketplace seller panel to an existing project |
@@ -152,10 +152,10 @@ Open [http://localhost:3001](http://localhost:3001) to see your store.
 To update to the latest Spree version:
 
 ```bash
-spree update
+spree upgrade
 ```
 
-This pulls the latest Docker image and recreates the containers. The entrypoint automatically runs database migrations.
+This updates the server (the Docker image, or the Spree gems on an ejected project), runs database migrations and data backfills, and updates the `@spree/*` packages of the project and its dashboard apps. See [`spree upgrade`](/developer/cli/quickstart#spree-upgrade) for details.
 
 To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
 
