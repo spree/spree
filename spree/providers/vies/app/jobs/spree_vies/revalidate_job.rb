@@ -5,9 +5,10 @@ module SpreeVies
   # Leaves each verdict as it is while its check is queued: the last answer is
   # still the best one there is, and marking the number pending would hide it.
   #
-  # Checks are spread out at {SpreeVies.revalidations_per_minute}, so a large
-  # backlog doesn't reach VIES all at once. The schedule is saved with the
-  # job's progress, so a run that is interrupted and resumed keeps to it.
+  # Checks are spread out evenly at {SpreeVies.revalidations_per_minute}, so a
+  # large backlog doesn't reach VIES all at once. The job's progress records the
+  # next number and when its check is due, so a run that is interrupted carries
+  # on after the checks it already queued, or from now if those are past.
   class RevalidateJob < Spree::BaseJob
     include ActiveJob::Continuable
 
@@ -19,19 +20,19 @@ module SpreeVies
 
     private
 
+    # The cursor is saved through the queue adapter's JSON, so it holds only an
+    # id and an epoch time: `[next_id, next_release_at]`.
     def queue_checks(step)
-      schedule = step.cursor || { next_id: nil, released: 0, started_at: Time.current }
+      next_id, next_release_at = step.cursor
+      release_at = [Time.current, next_release_at && Time.zone.at(next_release_at)].compact.max
+      interval = 60.0 / SpreeVies.revalidations_per_minute
 
-      SpreeVies::Validator.due_for_check.find_each(start: schedule[:next_id]) do |tax_identifier|
-        Spree::TaxIdentifiers::ValidateJob.set(wait_until: release_time(schedule)).perform_later(tax_identifier.id)
+      SpreeVies::Validator.due_for_check.find_each(start: next_id) do |tax_identifier|
+        Spree::TaxIdentifiers::ValidateJob.set(wait_until: release_at).perform_later(tax_identifier.id)
 
-        schedule = schedule.merge(next_id: tax_identifier.id.succ, released: schedule[:released] + 1)
-        step.set! schedule
+        release_at += interval
+        step.set! [tax_identifier.id.succ, release_at.to_f]
       end
-    end
-
-    def release_time(schedule)
-      schedule[:started_at] + (schedule[:released] / SpreeVies.revalidations_per_minute).minutes
     end
   end
 end
