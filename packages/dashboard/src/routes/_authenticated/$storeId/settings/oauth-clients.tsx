@@ -48,7 +48,7 @@ function OauthClientsSettingsPage() {
         name: client.name,
       }),
       variant: 'destructive',
-      confirmLabel: t('admin.common.delete'),
+      confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
 
@@ -89,13 +89,13 @@ function OauthClientsSettingsPage() {
             actions={[
               {
                 key: 'edit',
-                label: t('admin.common.edit'),
+                label: t('admin.actions.edit'),
                 visible: permissions.can('update', Subject.OauthApplication),
                 onSelect: () => openForm(client),
               },
               {
                 key: 'delete',
-                label: t('admin.common.delete'),
+                label: t('admin.actions.delete'),
                 destructive: true,
                 visible: permissions.can('destroy', Subject.OauthApplication),
                 disabled: remove.isPending,
