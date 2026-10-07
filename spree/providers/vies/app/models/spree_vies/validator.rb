@@ -24,6 +24,9 @@ module SpreeVies
     # only extends it.
     COOL_OFF = 10.minutes
     COOL_OFF_KEY = 'spree_vies/cool_off_until'.freeze
+    # A changed number is pending until the check queued for it runs. One still
+    # pending this long after its last update lost that check.
+    PENDING_GRACE = 1.hour
 
     # Everything that means nobody answered, as opposed to a registry saying no.
     # VIES faults arrive as Valvat::LookupError; the rest are the network's.
@@ -36,8 +39,9 @@ module SpreeVies
     end
 
     # EU VAT numbers that should be asked about again: never asked, answered
-    # longer ago than {SpreeVies.freshness}, or left unanswered after every
-    # retry of a day. Order snapshots are never re-checked.
+    # longer ago than {SpreeVies.freshness}, left unanswered after every retry
+    # of a day, or changed and still pending {PENDING_GRACE} later. Order
+    # snapshots are never re-checked.
     #
     # @return [ActiveRecord::Relation<Spree::TaxIdentifier>]
     def self.due_for_check
@@ -45,8 +49,9 @@ module SpreeVies
 
       answered = identifiers.where(validation_status: %w[verified unverified], validated_at: ...SpreeVies.freshness.ago)
       exhausted = identifiers.where(validation_status: 'unavailable', validated_at: ...1.day.ago)
+      stuck = identifiers.where(validation_status: 'pending', updated_at: ...PENDING_GRACE.ago)
 
-      identifiers.where(validation_status: nil).or(answered).or(exhausted)
+      identifiers.where(validation_status: nil).or(answered).or(exhausted).or(stuck)
     end
 
     # @param tax_identifier [Spree::TaxIdentifier]
@@ -57,7 +62,7 @@ module SpreeVies
         return answered(nil, message: 'Not a well-formed EU VAT number')
       end
       if cool_off_remaining.positive?
-        return unanswered('VIES asked for fewer concurrent requests; waiting before asking again')
+        return deferred('VIES asked for fewer concurrent requests; waiting before asking again')
       end
 
       details = Valvat::Lookup.validate(
@@ -110,7 +115,18 @@ module SpreeVies
     def unanswered(message)
       attempts = previous_evidence['attempts'].to_i + 1
       retry_later(attempts)
-      attempt = { 'registry' => REGISTRY, 'attempts' => attempts, 'unanswered_at' => Time.current.iso8601 }
+      not_answered(message, 'attempts' => attempts, 'unanswered_at' => Time.current.iso8601)
+    end
+
+    # Waiting out a cool-off is not an attempt: VIES was never asked, so the
+    # check is queued again without counting towards {MAX_ATTEMPTS}.
+    def deferred(message)
+      Spree::TaxIdentifiers::ValidateJob.set(wait: after_cool_off).perform_later(@tax_identifier.id)
+      not_answered(message, previous_evidence.slice('attempts', 'unanswered_at'))
+    end
+
+    def not_answered(message, attempt)
+      attempt = { 'registry' => REGISTRY }.merge(attempt)
 
       if @tax_identifier.validation_status.in?(%w[verified unverified])
         Spree::TaxIdentifiers::ValidationResult.new(
@@ -132,7 +148,15 @@ module SpreeVies
       return if attempts > MAX_ATTEMPTS
 
       wait = [FIRST_RETRY * (2**(attempts - 1)), LAST_RETRY].min
-      Spree::TaxIdentifiers::ValidateJob.set(wait: [wait, cool_off_remaining].max).perform_later(@tax_identifier.id)
+      wait = [wait, after_cool_off].max if cool_off_remaining.positive?
+      Spree::TaxIdentifiers::ValidateJob.set(wait: wait).perform_later(@tax_identifier.id)
+    end
+
+    # When to ask again after a cool-off: at a random point in the cool-off's
+    # length after it ends, so the checks it held back don't all reach VIES at
+    # the same moment and set it off again.
+    def after_cool_off
+      cool_off_remaining + rand(COOL_OFF.to_i).seconds
     end
 
     def cool_off_remaining

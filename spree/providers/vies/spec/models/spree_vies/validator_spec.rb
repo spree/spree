@@ -152,27 +152,51 @@ RSpec.describe SpreeVies::Validator do
       expect(a_request(:post, vies_url)).to have_been_made.once
       expect(other.reload.validation_status).to eq('unavailable')
     end
+
+    it 'does not count waiting out the cool-off as an attempt' do
+      validate
+      other = create(:tax_identifier, value: 'DE123456788')
+      other.update_columns(validation_evidence: { 'attempts' => 2 })
+
+      Spree::TaxIdentifiers::Validate.call(tax_identifier: other)
+
+      expect(other.reload.validation_evidence).to include('attempts' => 2)
+    end
+
+    it 'spreads the checks it holds back over the cool-off length after it ends' do
+      Timecop.freeze do
+        validate
+        other = create(:tax_identifier, value: 'DE123456788')
+        allow_any_instance_of(described_class).to receive(:rand).with(described_class::COOL_OFF.to_i).and_return(123)
+
+        expect { Spree::TaxIdentifiers::Validate.call(tax_identifier: other) }
+          .to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob).with(other.id)
+          .at(described_class::COOL_OFF.from_now + 123.seconds)
+      end
+    end
   end
 
   describe '.due_for_check' do
-    def identifier(status, validated_at, **attributes)
+    def identifier(status, validated_at, updated_at: Time.current, **attributes)
       # update_all, because an order's snapshot is read-only once saved
       create(:tax_identifier, **attributes).tap do |record|
-        Spree::TaxIdentifier.where(id: record.id).update_all(validation_status: status, validated_at: validated_at)
+        Spree::TaxIdentifier.where(id: record.id)
+                            .update_all(validation_status: status, validated_at: validated_at, updated_at: updated_at)
       end.reload
     end
 
-    it 'selects numbers never asked about, stale answers and exhausted retries' do
+    it 'selects numbers never asked about, stale answers, exhausted retries and lost checks' do
       never_asked = identifier(nil, nil)
       stale = identifier('verified', 91.days.ago)
       exhausted = identifier('unavailable', 2.days.ago)
+      lost_check = identifier('pending', nil, updated_at: 2.hours.ago)
       identifier('verified', 1.day.ago)
       identifier('unavailable', 1.hour.ago)
       identifier('pending', nil)
       identifier(nil, nil, kind: 'au_abn', value: '51824753556')
       identifier('verified', 91.days.ago, owner: create(:order), source: 'customer')
 
-      expect(described_class.due_for_check).to contain_exactly(never_asked, stale, exhausted)
+      expect(described_class.due_for_check).to contain_exactly(never_asked, stale, exhausted, lost_check)
     end
 
     it 'reads the freshness window from SpreeVies.freshness' do
