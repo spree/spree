@@ -8,7 +8,7 @@ export const PromotionActionSchema = z.object({
   type: z.string(),
   promotion_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.string()).optional() })),
+  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.object({ value: z.string(), label: z.string().optional() })).optional() })),
   calculator: z.object({ type: z.string(), preferences: z.record(z.string(), z.unknown()), preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown() })) }).nullable(),
   line_items: z.array(z.object({ variant_id: z.string(), quantity: z.number() })).nullable(),
 });

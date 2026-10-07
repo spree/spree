@@ -356,6 +356,12 @@ module Spree
   # @return [Class]
   singleton_class.delegate :password_validator, :password_validator=, to: :spree_config
 
+  # Exemption reason vocabularies, grouped by the provider that understands
+  # them: { 'Avalara AvaTax' => { 'G' => 'RESALE' } }. Empty in core — see the
+  # engine's note.
+  #
+  # @return [Hash{String => Hash}]
+  singleton_class.delegate :tax_exemption_reason_codes, :tax_exemption_reason_codes=, to: :spree_config
 
   # Commission rule kinds selectable on a commission rate.
   #
@@ -647,5 +653,6 @@ require 'spree/core/permission_configuration'
 require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/price_resolution'
+require 'spree/core/tax/provider_error'
 require 'spree/core/pricing/resolver'
 require 'spree/core/tax/provider_error'

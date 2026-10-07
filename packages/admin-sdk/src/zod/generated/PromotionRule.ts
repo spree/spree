@@ -16,7 +16,7 @@ export const PromotionRuleSchema = z.object({
   type: z.string(),
   promotion_id: z.string(),
   preferences: z.record(z.string(), z.unknown()),
-  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.string()).optional() })),
+  preference_schema: z.array(z.object({ key: z.string(), type: z.string(), default: z.unknown(), choices: z.array(z.object({ value: z.string(), label: z.string().optional() })).optional() })),
   product_ids: z.array(z.string()).nullable(),
   category_ids: z.array(z.string()).nullable(),
   customer_ids: z.array(z.string()).nullable(),

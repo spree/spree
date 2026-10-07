@@ -63,6 +63,9 @@ module Spree::Preferences
         # value a provider hands back, kept out of every admin form.
         internal: options[:internal],
         # The fixed set a value must come from; turns a text box into a picker.
+        # A list where each value reads for itself, or `{ value => label }`
+        # where it does not — an endpoint URL has no business being shown to
+        # whoever picks between "Sandbox" and "Production".
         choices: options[:in],
         nullable: options[:nullable],
         parse_on_set: options[:parse_on_set]

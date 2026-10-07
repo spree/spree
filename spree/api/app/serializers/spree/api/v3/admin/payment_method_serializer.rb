@@ -11,7 +11,7 @@ module Spree
                    position: :number,
                    metadata: 'Record<string, unknown>',
                    preferences: 'Record<string, unknown>',
-                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: string[] }>",
+                   preference_schema: "Array<{ key: string; type: string; default: unknown; choices?: { value: string; label?: string }[] }>",
                    logo_url: [:string, nullable: true],
                    docs_url: [:string, nullable: true],
                    third_party: :boolean

@@ -65,6 +65,10 @@ module Spree
       # The refunded amount goes with them, because it can be less than those
       # lines are worth — a restocking fee, or an agreed part-refund. Without it
       # a provider would credit the tax on goods whose value the merchant kept.
+      # Reported rather than raised, as filing and voiding are: the money has
+      # moved and the return is marked refunded by now, and `return.refunded`
+      # follows — so raising failed a refund that had gone through, and lost the
+      # event with it.
       def refund_tax
         received = return_record.return_line_items.select { |line| line.refund_amount.positive? }
         return if received.empty?

@@ -60,6 +60,7 @@ module Spree::Preferences::Preferable
     instance_exec(&preference_definition(name)[:default])
   end
 
+
   def preference_deprecated(name)
     preference_definition(name)[:deprecated]
   end
