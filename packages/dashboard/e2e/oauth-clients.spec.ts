@@ -25,6 +25,54 @@ async function connectKnownClient(page: Page) {
   return sheet
 }
 
+/**
+ * Removes every registration, so the screens show the state a store is in
+ * before anyone has connected anything. The suite runs serially and earlier
+ * specs register clients, so this cannot be left to ordering.
+ */
+async function clearRegistrations(page: Page, storeId: string, accessToken: string) {
+  const headers = { 'X-Spree-Store-Id': storeId, Authorization: `Bearer ${accessToken}` }
+  const res = await page.request.get('/api/v3/admin/oauth/applications?limit=100', { headers })
+  if (!res.ok()) throw new Error(`Listing clients failed: ${res.status()} ${await res.text()}`)
+
+  for (const client of (await res.json()).data ?? []) {
+    const deleted = await page.request.delete(`/api/v3/admin/oauth/applications/${client.id}`, {
+      headers,
+    })
+    if (!deleted.ok()) {
+      throw new Error(`Deleting ${client.id} failed: ${deleted.status()} ${await deleted.text()}`)
+    }
+  }
+}
+
+// Nothing is seeded, so a store that has never connected an agent carries no
+// registrations at all — the first thing a merchant sees.
+test.describe('before any agent has been connected', () => {
+  test('both screens say so rather than showing an empty table', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+    await expect(page.getByText(/no agents have been connected/i)).toBeVisible({ timeout: 15_000 })
+
+    await gotoIndex(page, CLIENTS_PATH(creds.store_id), REGISTER_CTA)
+    await expect(page.getByText(/no clients registered/i)).toBeVisible({ timeout: 15_000 })
+  })
+
+  // The whole point of dropping the seeds: connecting works from nothing.
+  test('connecting registers the first client', async ({ page }) => {
+    const creds = await login(page)
+    await clearRegistrations(page, creds.store_id, creds.accessToken)
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    const sheet = await connectKnownClient(page)
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+
+    await expect(page.getByRole('row', { name: /Claude/ })).toBeVisible({ timeout: 15_000 })
+  })
+})
+
 test.describe('connecting an agent', () => {
   test('registers the client and shows what to paste into it', async ({ page }) => {
     const creds = await login(page)
@@ -56,6 +104,40 @@ test.describe('connecting an agent', () => {
 
     // Registered but nobody has signed in through it yet.
     await expect(page.getByText(/not connected/i).first()).toBeVisible({ timeout: 15_000 })
+  })
+})
+
+test.describe('connecting a client we do not know', () => {
+  // A merchant picking Claude never types a callback. Choosing "Something
+  // else" is the developer's path, and it is the only one where the field
+  // that must be right is filled in by hand.
+  test('asks for a callback only once Something else is chosen', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, AGENTS_PATH(creds.store_id), CONNECT_CTA)
+
+    await page.getByRole('button', { name: CONNECT_CTA }).click()
+    const sheet = page.getByRole('dialog')
+
+    await expect(sheet.getByText(/callback url/i)).toHaveCount(0)
+
+    await sheet.getByText(/any other client that speaks mcp/i).click()
+    await expect(sheet.getByText(/callback url/i)).toBeVisible()
+
+    const name = `CI custom ${Date.now()}`
+    await sheet.locator('#mcp-other-name').fill(name)
+    await sheet.locator('#mcp-other-uri').fill('https://custom.example.com/oauth/callback')
+    await sheet.getByRole('button', { name: /^continue$/i }).click()
+
+    // Its own client id, and no CLI tab — we publish no command for a client
+    // we know nothing about.
+    await expect(sheet.getByText(/ready to connect/i)).toBeVisible({ timeout: 15_000 })
+    await expect(sheet.getByText(/client id/i)).toBeVisible()
+    await expect(sheet.getByRole('tab')).toHaveCount(0)
+
+    await sheet.getByRole('button', { name: /^done$/i }).click()
+    await expect(page.getByRole('row', { name: new RegExp(name) })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })
 
