@@ -85,5 +85,21 @@ RSpec.describe Spree::Api::V3::Admin::MarketsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(market.reload.tax_provider).to be_blank
     end
+
+    it 'names the main country among its own countries in the same request' do
+      patch :update, params: { id: market.prefixed_id, country_codes: %w[DE FR], default_country_code: 'de' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['default_country_code']).to eq('DE')
+      expect(market.reload.default_country.iso).to eq('DE')
+    end
+
+    it "refuses a main country outside the market's countries" do
+      patch :update, params: { id: market.prefixed_id, default_country_code: 'JP' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response.dig('error', 'details', 'default_country_code')).to be_present
+      expect(market.reload.default_country_code).to be_nil
+    end
   end
 end

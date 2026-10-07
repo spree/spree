@@ -89,6 +89,17 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
             example: %w[de en]
           },
           tax_inclusive: { type: :boolean, default: false, description: 'Display prices with tax included.' },
+          tax_display: {
+            type: :string, enum: Spree::Market::TAX_DISPLAYS, default: 'included',
+            description: "What a price means for an order shipping outside the home country. 'included' charges it " \
+                         "as entered; 'dynamic' takes the home country's tax out and puts the destination's in. " \
+                         'Whether a tax is inside the price or added on top is set on each tax rate.'
+          },
+          default_country_code: {
+            type: :string, nullable: true, example: 'DE',
+            description: "The market's main country, one of its country_codes. On the default market it is the " \
+                         "store's home country. When empty, the first of the market's countries by name."
+          },
           default: { type: :boolean, default: false, description: 'Setting to true demotes the previous default.' },
           position: { type: :integer, description: 'Sort order within the store; lower = first.' },
           country_codes: {
@@ -110,7 +121,9 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
             default_locale: 'fr',
             supported_locales: ['fr', 'en'],
             tax_inclusive: true,
-            country_codes: [other_country.iso]
+            tax_display: 'included',
+            country_codes: [other_country.iso],
+            default_country_code: other_country.iso
           }
         end
 
@@ -121,6 +134,8 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           expect(data['name']).to eq('France only')
           expect(data['currency']).to eq('EUR')
           expect(data['tax_inclusive']).to be true
+          expect(data['tax_display']).to eq('included')
+          expect(data['default_country_code']).to eq('FR')
           expect(data['supported_locales']).to match_array(%w[en fr])
           expect(data['country_codes']).to eq(['FR'])
         end
@@ -201,6 +216,8 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           default_locale: { type: :string },
           supported_locales: { type: :array, items: { type: :string } },
           tax_inclusive: { type: :boolean },
+          tax_display: { type: :string, enum: Spree::Market::TAX_DISPLAYS },
+          default_country_code: { type: :string, nullable: true },
           default: { type: :boolean },
           position: { type: :integer },
           country_codes: { type: :array, items: { type: :string } }
@@ -210,7 +227,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
       response '200', 'market updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { market.prefixed_id }
-        let(:body) { { name: 'European Union', tax_inclusive: true } }
+        let(:body) { { name: 'European Union', tax_inclusive: true, tax_display: 'dynamic' } }
 
         schema '$ref' => '#/components/schemas/Market'
 
@@ -218,6 +235,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
           data = JSON.parse(response.body)
           expect(data['name']).to eq('European Union')
           expect(data['tax_inclusive']).to be true
+          expect(data['tax_display']).to eq('dynamic')
         end
       end
 
