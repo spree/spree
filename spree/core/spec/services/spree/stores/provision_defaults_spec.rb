@@ -100,6 +100,15 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
     it 'does not create a second market' do
       expect { subject }.not_to change { store.reload.markets.count }
     end
+
+    it 'makes the chosen country the main country of the default market' do
+      store.default_market.update!(default_country_code: 'US')
+
+      subject
+
+      expect(store.reload.default_market.default_country_code).to eq('DE')
+      expect(store.default_country_code).to eq('DE')
+    end
   end
 
   # The storefront language and the back-office language are separate

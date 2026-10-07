@@ -15,7 +15,7 @@ describe Spree::VatPriceCalculation, type: :model do
   let(:home_market) { store.default_market }
 
   before do
-    home_market.update!(countries: [germany])
+    home_market.update!(countries: [germany], tax_display: 'dynamic')
     create(:tax_rate, name: 'DE 19% incl', amount: 0.19, tax_category: category,
                       country_code: germany&.iso, included_in_price: true, store: store)
   end
@@ -56,7 +56,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
       # Pinned country: the factory pool cycles real codes and can hand out
       # Germany, which the home market owns — one country, one market per store.
-      create(:market, store: store, name: "External #{Time.current.to_f}", currency: 'USD',
+      create(:market, store: store, tax_display: 'dynamic', name: "External #{Time.current.to_f}", currency: 'USD',
                       default_locale: 'en', tax_provider: 'SpecExternalTaxProvider',
                       country_codes: %w[US])
     end
@@ -75,12 +75,43 @@ describe Spree::VatPriceCalculation, type: :model do
     end
   end
 
+  # The price already includes the buyer's tax, so the destination's rate is
+  # backed out of the same figure rather than added on top (V-3662).
+  context 'when the market shows prices as included' do
+    let(:included_market) do
+      create(:market, store: store, tax_display: 'included', name: "France #{Time.current.to_f}",
+                      currency: 'USD', default_locale: 'en', countries: [france])
+    end
+
+    before do
+      create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
+                        country_code: france&.iso, included_in_price: true, store: store)
+    end
+
+    it 'charges the price as entered' do
+      expect(gross_for(france, market: included_market)).to eq(100.00)
+    end
+
+    it 'does not turn a rate-less destination into an export' do
+      expect(gross_for(japan, market: included_market)).to eq(100.00)
+    end
+
+    it 'takes the destination tax out of what a cart charges' do
+      cart = create(:cart, store: store, market: included_market, currency: 'USD')
+      Spree::Carts::AddItem.call(cart: cart, variant: variant, quantity: 1)
+
+      line_item = cart.line_items.reload.first
+      expect(line_item.price).to eq(100.00)
+      expect(line_item.pre_tax_amount).to be_within(0.01).of(83.33)
+    end
+  end
+
   # The provider estimates against tax_country, which falls back to the market's
   # own country, so a cart with no address is still taxed for its destination. The
   # price has to follow, or the merchant absorbs the rate difference silently.
   describe 'a cart with no shipping address yet' do
     let(:french_market) do
-      create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
+      create(:market, store: store, tax_display: 'dynamic', name: "France #{Time.current.to_f}", currency: 'USD',
                       default_locale: 'en', countries: [france])
     end
 
@@ -102,7 +133,7 @@ describe Spree::VatPriceCalculation, type: :model do
 
   describe 'a price the merchant set for the destination' do
     let(:french_market) do
-      create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
+      create(:market, store: store, tax_display: 'dynamic', name: "France #{Time.current.to_f}", currency: 'USD',
                       default_locale: 'en', countries: [france])
     end
 
@@ -139,7 +170,7 @@ describe Spree::VatPriceCalculation, type: :model do
   end
   describe 'geographic rules that do not actually narrow' do
     let(:french_market) do
-      create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
+      create(:market, store: store, tax_display: 'dynamic', name: "France #{Time.current.to_f}", currency: 'USD',
                       default_locale: 'en', countries: [france])
     end
 

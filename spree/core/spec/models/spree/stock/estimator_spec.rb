@@ -265,7 +265,7 @@ module Spree
                    tax_category: shipping_method.tax_category
           end
 
-          before { @default_store.default_market.update!(countries: [home_country]) }
+          before { @default_store.default_market.update!(countries: [home_country], tax_display: 'dynamic') }
 
           context 'when the order has no address to tax against' do
             before { allow(order).to receive(:tax_address).and_return nil }

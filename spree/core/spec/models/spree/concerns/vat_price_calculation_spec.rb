@@ -34,7 +34,7 @@ module Spree
       end
 
       context 'with a home country' do
-        before { @default_store.default_market.update!(countries: [home_country]) }
+        before { @default_store.default_market.update!(countries: [home_country], tax_display: 'dynamic') }
 
         context 'and no destination given' do
           let(:price_options) { { tax_category: tax_category } }

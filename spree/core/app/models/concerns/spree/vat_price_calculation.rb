@@ -1,6 +1,7 @@
 module Spree
   # Restates a VAT-inclusive price for a customer in another country: the
-  # home-country VAT comes out, the destination's goes on.
+  # home-country VAT comes out, the destination's goes in. Only for a market on
+  # dynamic tax display — under 'included' the price is charged as entered.
   module VatPriceCalculation
     # Cheapest test first: a domestic sale needs no restatement whatever the
     # provider is, so the provider lookup (a constantize and an instantiation) is
@@ -9,7 +10,10 @@ module Spree
     # not on every price read.
     def gross_amount(amount, price_options)
       return amount if amount.nil? || !outside_default_vat_zone?(price_options)
-      return amount unless restatement_available?(price_options)
+
+      market = price_options[:market] || Spree::Current.market
+      return amount unless market.nil? || market.dynamic_tax_display?
+      return amount unless restatement_available?(market)
 
       round_to_two_places(add_foreign_vat_for(amount, price_options))
     end
@@ -23,8 +27,7 @@ module Spree
     # computed by an engine that keeps no rows here". A market on such an engine
     # would see every foreign destination treated as a zero-rated export. It
     # states its destination prices through a geo-scoped price list instead.
-    def restatement_available?(price_options)
-      market = price_options[:market] || Spree::Current.market
+    def restatement_available?(market)
       provider = market&.tax_provider_instance || Spree.default_tax_provider.new
 
       provider.is_a?(Spree::TaxProvider::Internal)

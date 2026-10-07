@@ -33,13 +33,24 @@ namespace :spree do
           currency: iso_country&.currency_code || store.read_attribute(:default_currency) || 'USD',
           default_locale: iso_country&.languages_official&.first || store.read_attribute(:default_locale) || 'en',
           default: true,
-          countries: countries
+          countries: countries,
+          # 'included' is the default for new markets only; an upgraded store keeps restating prices abroad.
+          tax_display: 'dynamic'
         )
 
         store.update_column(:checkout_zone_id, nil) if checkout_zone_id
 
         puts "  Created market '#{market.name}' with #{countries.size} countries for store '#{store.name}' (#{store.code})"
       end
+    end
+
+    desc 'Set dynamic tax display on markets created before the setting existed'
+    task backfill_tax_display: :environment do
+      count = Spree::Market.with_deleted.where(tax_display: nil).in_batches.sum do |batch|
+        batch.update_all(tax_display: 'dynamic')
+      end
+
+      puts count.zero? ? '  Nothing to backfill.' : "  Set dynamic tax display on #{count} market(s)."
     end
   end
 end

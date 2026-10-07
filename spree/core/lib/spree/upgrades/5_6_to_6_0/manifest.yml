@@ -318,6 +318,21 @@ steps:
       store's default market to its orders. Idempotent: stores that already
       have a market are skipped.
 
+  - id: backfill_market_tax_display
+    name: "Keep existing markets restating prices for buyers abroad"
+    task: "spree:markets:backfill_tax_display"
+    notes: |
+      A market's tax display decides what its prices mean when an order ships
+      outside the home country. New markets default to "included": the price
+      is charged as entered. Markets that existed before the upgrade are set
+      to "dynamic", which keeps what they charged: the home country's tax
+      comes out of the price and the destination's goes in. Until it runs,
+      those markets have no tax display: they charge prices as entered and
+      cannot be saved.
+
+      Run after migrate_checkout_zones. Idempotent: a market that already has
+      a tax display is skipped.
+
   - id: migrate_promotion_option_value_rules
     name: "Rewrite Option Value promotion rules to stable option value ids"
     task: "spree:upgrade:migrate_promotion_option_value_rules"

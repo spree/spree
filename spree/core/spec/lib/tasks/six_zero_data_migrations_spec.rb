@@ -552,7 +552,27 @@ describe '6.0 data migration tasks' do
       market = legacy_store.markets.first
       expect(market).to be_default
       expect(market.country_codes).to eq(%w[DE FR])
+      expect(market.tax_display).to eq('dynamic')
       expect(legacy_store.read_attribute(:checkout_zone_id)).to be_nil
+    end
+  end
+
+  describe 'spree:markets:backfill_tax_display' do
+    it 'keeps a market that predates the setting on dynamic' do
+      market = create(:market, store: create(:store))
+      market.update_column(:tax_display, nil)
+
+      run_task('spree:markets:backfill_tax_display')
+
+      expect(market.reload.tax_display).to eq('dynamic')
+    end
+
+    it 'leaves a market that already has a tax display alone' do
+      market = create(:market, store: create(:store), tax_display: 'included')
+
+      run_task('spree:markets:backfill_tax_display')
+
+      expect(market.reload.tax_display).to eq('included')
     end
   end
 
