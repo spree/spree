@@ -31,7 +31,6 @@ module Spree
             SellerRequirements.call(store: store)
             # Binds to the wholesale channel that Channels creates above.
             ApiKeys.call(store: store)
-            OauthApplications.call(store: store)
             SavedReports.call(store: store)
             AllowedOrigins.call(store: store)
           end
