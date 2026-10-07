@@ -73,7 +73,8 @@ module Spree
     # Who pays this store's sellers. Blank means core's record-only provider,
     # so a marketplace that has connected nothing still keeps a correct ledger
     # and settles by hand.
-    preference :payout_provider, :string, default: nil
+    preference :payout_provider, :string, default: nil,
+                                          parse_on_set: ->(value) { Spree::ApiTyped.class_name_for(Spree.payout_providers, value) }
     # Refused at write time rather than silently falling back at read time: an
     # operator who mistypes a provider would otherwise get a bookkeeping-only
     # ledger and no indication anywhere that their choice was ignored.
@@ -155,7 +156,8 @@ module Spree
     preference :digital_asset_link_expire_time, :integer, default: 300
     # Class name of the Spree::OrderRouting::Strategy::Base subclass that
     # decides which StockLocation fulfills which items.
-    preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules'
+    preference :order_routing_strategy, :string, default: 'Spree::OrderRouting::Strategy::Rules',
+                                                 parse_on_set: ->(value) { Spree::ApiTyped.class_name_for(Spree.order_routing.strategies, value) }
 
     # Document numbering (docs/plans/6.0-document-numbers.md). The format
     # applies to every numbered document; prefix, suffix and starting value
@@ -482,14 +484,12 @@ module Spree
     #
     # @return [Class]
     def payout_provider_class
-      configured = preferred_payout_provider.presence
       # A name no longer in the registry — a typo, or a gem since removed —
       # would otherwise raise inside a subscriber on every fulfillment and stop
       # the ledger recording anything. The built-in provider keeps the books
       # until an operator fixes the setting.
-      configured = nil unless Spree.payout_providers.any? { |provider| provider.to_s == configured }
-
-      (configured || Spree.default_payout_provider.to_s).constantize
+      Spree::ApiTyped.registered_class(Spree.payout_providers, preferred_payout_provider) ||
+        Spree.default_payout_provider.to_s.constantize
     end
 
     def formatted_url

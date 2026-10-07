@@ -10,6 +10,8 @@ module Spree
       # Selected per Order via Spree::Order#order_routing_strategy.
       # See docs/plans/6.0-order-routing.md.
       class Base
+        extend Spree::ApiTyped
+
         attr_reader :order
 
         # Human label for admin strategy pickers. Override in a subclass or add

@@ -18,7 +18,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
       tags 'Custom Fields'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns all defined custom fields. Filter by `?q[resource_type_eq]=Spree::Product` to narrow to one parent type.'
+      description 'Returns all defined custom fields. Filter by `?q[resource_type_eq]=product` to narrow to one parent type.'
       admin_scope :read, :settings
 
       admin_sdk_example 'custom-field-definitions/list'
@@ -41,7 +41,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(item['namespace']).to eq('specs')
           expect(item['field_type']).to eq('short_text')
           expect(item['storefront_visible']).to eq(true)
-          expect(item['resource_type']).to eq('Spree::Product')
+          expect(item['resource_type']).to eq('product')
           expect(item['filter_key']).to eq('cf_specs_fabric')
         end
       end
@@ -71,7 +71,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           },
           resource_type: {
             type: :string,
-            description: 'Owner class, e.g. `Spree::Product`'
+            description: 'Shorthand of the owning resource, e.g. `product`'
           },
           storefront_visible: {
             type: :boolean,
@@ -96,7 +96,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
             key: 'origin',
             label: 'Country of Origin',
             field_type: 'short_text',
-            resource_type: 'Spree::Product',
+            resource_type: 'product',
             storefront_visible: true
           }
         end
@@ -212,9 +212,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
         that is not listed is refused on create.
 
         `resource_type` is the value to send; `name` is what a merchant calls
-        it. The two differ where a class has been renamed — categories are
-        stored under `Spree::Taxon` and shown as "Categories" — so send the
-        value back verbatim rather than deriving it from the name.
+        it — send the value back verbatim rather than deriving it from the name.
       DESC
       admin_scope :read, :settings
 
@@ -233,7 +231,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
                    items: {
                      type: :object,
                      properties: {
-                       resource_type: { type: :string, example: 'Spree::Seller' },
+                       resource_type: { type: :string, example: 'seller' },
                        name: { type: :string, example: 'Sellers' }
                      }
                    }

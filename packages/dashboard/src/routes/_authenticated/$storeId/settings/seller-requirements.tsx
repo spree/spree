@@ -428,7 +428,7 @@ function EditRequirementForm({
 // taught about still renders its preference schema.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ASSOCIATION_PICKERS: Record<string, (queryKey: string) => ResourceFilterConfig<any>> = {
-  custom_field_definition_ids: customFieldDefinitionAutocompleteProps('Spree::Seller'),
+  custom_field_definition_ids: customFieldDefinitionAutocompleteProps('seller'),
 }
 
 /**

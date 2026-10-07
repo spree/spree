@@ -6,7 +6,6 @@ export const SellerTransferSchema = z.object({
   kind: z.string(),
   status: z.string(),
   currency: z.string(),
-  provider: z.string(),
   reference: z.string().nullable(),
   metadata: z.unknown(),
   created_at: z.string(),
@@ -23,6 +22,7 @@ export const SellerTransferSchema = z.object({
   refund_id: z.string().nullable(),
   seller_name: z.string().nullable(),
   order_number: z.string().nullable(),
+  provider: z.string(),
 });
 
 export type SellerTransfer = z.infer<typeof SellerTransferSchema>;

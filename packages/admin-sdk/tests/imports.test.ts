@@ -11,7 +11,7 @@ const sampleImport = {
   rows_count: 0,
   completed_rows_count: 0,
   failed_rows_count: 0,
-  owner_type: 'Spree::Store',
+  owner_type: 'store',
   owner_id: 'store_1',
   user_id: 'usr_admin',
   processing_errors: null,

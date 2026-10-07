@@ -48,10 +48,10 @@ describe('exports', () => {
       const client = createTestClient()
       // Ransack predicates match the database column, so `type_eq` takes the
       // STI class name — unlike `type` on create/read, which is the shorthand.
-      await client.exports.list({ type_eq: 'Spree::Exports::Products' })
+      await client.exports.list({ type_eq: 'products' })
 
       // transformListParams wraps free predicates in q[...]
-      expect(url!.searchParams.get('q[type_eq]')).toBe('Spree::Exports::Products')
+      expect(url!.searchParams.get('q[type_eq]')).toBe('products')
     })
   })
 

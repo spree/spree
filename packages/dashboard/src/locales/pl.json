@@ -1116,8 +1116,7 @@
           "inherit": "Dziedzicz ze sklepu",
           "label": "Strategia routingu zamówień",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Starsza",
-            "Spree::OrderRouting::Strategy::Rules": "Reguły (uporządkowane)"
+            "rules": "Reguły (uporządkowane)"
           }
         },
         "storefront_access": {
@@ -1252,12 +1251,12 @@
         "resource_type": {
           "label": "Dotyczy",
           "options": {
-            "Spree::OptionType": "Typy opcji",
-            "Spree::Order": "Zamówienia",
-            "Spree::Product": "Produkty",
-            "Spree::Taxon": "Kategorie",
-            "Spree::Customer": "Klienci",
-            "Spree::Variant": "Warianty"
+            "option_type": "Typy opcji",
+            "order": "Zamówienia",
+            "product": "Produkty",
+            "category": "Kategorie",
+            "customer": "Klienci",
+            "variant": "Warianty"
           },
           "read_only_help": "Właściciela nie można zmienić, gdy istnieją już wartości dla tego pola."
         },

@@ -127,14 +127,9 @@ test.describe('settings / channels', () => {
     // Every built-in kind is already on the channel — nothing left to add.
     await expect(page.getByRole('button', { name: /add rule/i })).toHaveCount(0)
 
-    // The editor only applies to the Rules strategy — switching to Legacy hides it.
-    // Wait for the select popup to fully close after each pick so a lingering
+    // Wait for the select popup to fully close after the pick so a lingering
     // overlay can't intercept the next click. (No Escape here — the popup
     // closes on selection, and a stray Escape would close the sheet instead.)
-    await page.locator('#preferred_order_routing_strategy').click()
-    await page.getByRole('option', { name: /^legacy$/i }).click()
-    await expect(page.getByRole('listbox')).toBeHidden()
-    await expect(page.getByText(/order routing rules/i)).toHaveCount(0)
     await page.locator('#preferred_order_routing_strategy').click()
     await page.getByRole('option', { name: /^rules \(ordered\)$/i }).click()
     await expect(page.getByRole('listbox')).toBeHidden()

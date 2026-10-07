@@ -82,9 +82,9 @@ function OrderDetailPage() {
           <SellerTransfersCard order={order} />
           <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
-            ownerType="Spree::Order"
+            ownerType="order"
             ownerId={order.id}
-            resourceType="Spree::Order"
+            resourceType="order"
             resourceLabel={t('admin.nav.orders').toLowerCase()}
           >
             <CustomFieldsInlineCard />

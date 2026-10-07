@@ -89,6 +89,13 @@ RSpec.describe Spree::Channel, type: :model do
       expect(channel.reload.preferred_order_routing_strategy).to eq('CustomStrategy')
     end
 
+    it 'stores the class name of a strategy named by its shorthand' do
+      channel = described_class.new(store: store, name: 'POS', code: 'pos', preferred_order_routing_strategy: 'rules')
+
+      expect(channel.preferred_order_routing_strategy).to eq('Spree::OrderRouting::Strategy::Rules')
+      expect(channel).to be_valid
+    end
+
     it 'rejects an unregistered routing strategy override' do
       channel = described_class.new(
         store: store, name: 'POS', code: 'pos',

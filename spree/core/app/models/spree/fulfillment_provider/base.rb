@@ -6,6 +6,7 @@ module Spree
     # ShipmentHandler name-constantize mechanism.
     class Base
       include Spree::IntegrationBackedProvider
+      extend Spree::ApiTyped
 
       class << self
         # Behavior predicates — the class hierarchy IS the vocabulary.

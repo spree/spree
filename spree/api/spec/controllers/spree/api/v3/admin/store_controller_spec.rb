@@ -503,7 +503,7 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
 
       row = json_response['data']['pricing_providers'].find { |item| item['key'] == 'acme_erp' }
       expect(row['available']).to be(false)
-      expect(row['integration_class']).to eq('SpreeAcmeErp::Integration')
+      expect(row).not_to have_key('integration_class')
     ensure
       Spree.pricing_providers.delete(needs_credentials)
     end
@@ -521,6 +521,15 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['preferred_pricing_provider_failure_policy']).to eq('fallback')
       expect(store.reload.preferred_inventory_provider_failure_policy).to eq('strict')
+    end
+
+    it 'reads and writes the routing strategy and payout provider by their shorthand' do
+      patch :update, params: { preferred_order_routing_strategy: 'rules', preferred_payout_provider: 'system' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['preferred_order_routing_strategy']).to eq('rules')
+      expect(json_response['preferred_payout_provider']).to eq('system')
+      expect(store.reload.preferred_payout_provider).to eq('Spree::PayoutProvider::System')
     end
 
     it 'refuses a policy that is neither falling back nor strict' do

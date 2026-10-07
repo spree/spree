@@ -7,12 +7,10 @@
  * counter.
  */
 export interface FulfillmentProviderOption {
-  /** Ruby class name, e.g. `Spree::FulfillmentProvider::Pickup`. */
+  /** Provider shorthand, e.g. `pickup` — what a delivery method's `fulfillment_provider` takes. */
   type: string
   /** Human-readable name for display. */
   name: string
-  /** `Spree::Integration` subclass holding this provider's credentials, if any. */
-  integration_class: string | null
   /** Wire shorthand of the required integration (`easy_post`), matching `integrations.types()`; null when the provider needs no credentials. */
   integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
@@ -36,12 +34,10 @@ export interface FulfillmentProviderOption {
  * integration is not connected never appears.
  */
 export interface DeliveryRateProviderOption {
-  /** Ruby class name, e.g. `Spree::DeliveryRateProvider::Internal`. */
+  /** Provider shorthand, e.g. `internal` — what a delivery method's `rate_provider` takes. */
   type: string
   /** Human-readable name for display. */
   name: string
-  /** `Spree::Integration` subclass holding this provider's credentials, if any. */
-  integration_class: string | null
   /** Wire shorthand of the required integration (`easy_post`), matching `integrations.types()`; null when the provider needs no credentials. */
   integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */

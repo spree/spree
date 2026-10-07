@@ -21,7 +21,7 @@ module Spree
         end
 
         attribute :owner_type do |shipping_label|
-          shipping_label.owner_type == 'Spree::Return' ? 'return' : 'fulfillment'
+          Spree::Base.polymorphic_api_type(shipping_label.owner_type)
         end
       end
     end

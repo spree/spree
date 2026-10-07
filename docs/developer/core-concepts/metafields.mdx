@@ -74,7 +74,7 @@ Because the definition carries the type and the label, the dashboard can build a
 
 ```typescript Admin SDK
 const definition = await adminClient.customFieldDefinitions.create({
-  resource_type: 'Spree::Product',
+  resource_type: 'product',
   namespace: 'properties',
   key: 'material',
   label: 'Material',
@@ -86,7 +86,7 @@ const definition = await adminClient.customFieldDefinitions.create({
 
 ```bash CLI
 spree api post /custom_field_definitions -d '{
-  "resource_type": "Spree::Product",
+  "resource_type": "product",
   "namespace": "properties",
   "key": "material",
   "label": "Material",

@@ -14,16 +14,23 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:tagged_product) { create(:product, store: store, tag_list: ['summer']) }
 
       it 'returns matching tag names for the type' do
-        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+        get :index, params: { taggable_type: 'product' }, as: :json
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].map { |t| t['name'] }).to include('summer')
       end
 
       it 'rejects an unregistered taggable type' do
-        get :index, params: { taggable_type: 'Spree::Secret' }, as: :json
+        get :index, params: { taggable_type: 'secret' }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'rejects a Ruby class name' do
+        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['message']).to include('product')
       end
     end
 
@@ -35,7 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:foreign_order) { create(:order, store: other_store, tag_list: ['fraud-watch']) }
 
       it 'excludes another store\'s order tags' do
-        get :index, params: { taggable_type: 'Spree::Order' }, as: :json
+        get :index, params: { taggable_type: 'order' }, as: :json
 
         names = json_response['data'].map { |t| t['name'] }
         expect(names).to include('vip')
@@ -51,7 +58,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       let!(:foreign_product) { create(:product, store: other_store, tag_list: ['clearance']) }
 
       it 'excludes another store\'s product tags' do
-        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+        get :index, params: { taggable_type: 'product' }, as: :json
 
         names = json_response['data'].map { |t| t['name'] }
         expect(names).to include('bestseller')
@@ -67,7 +74,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_products']) }
 
         it 'forbids listing customer tags' do
-          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
 
           expect(response).to have_http_status(:forbidden)
           expect(json_response['error']['details']['required_scope']).to eq('read_customers')
@@ -78,7 +85,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_customers']) }
 
         it 'allows listing customer tags' do
-          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.api_type }, as: :json
 
           expect(response).to have_http_status(:ok)
           expect(json_response['data'].map { |t| t['name'] }).to include('vip')

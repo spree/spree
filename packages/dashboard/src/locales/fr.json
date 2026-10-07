@@ -1098,8 +1098,7 @@
           "inherit": "Hériter de la boutique",
           "label": "Stratégie d'acheminement des commandes",
           "options": {
-            "Spree::OrderRouting::Strategy::Legacy": "Héritée",
-            "Spree::OrderRouting::Strategy::Rules": "Règles (ordonnées)"
+            "rules": "Règles (ordonnées)"
           }
         },
         "storefront_access": {
@@ -1234,12 +1233,12 @@
         "resource_type": {
           "label": "S'applique à",
           "options": {
-            "Spree::OptionType": "Types d'options",
-            "Spree::Order": "Commandes",
-            "Spree::Product": "Produits",
-            "Spree::Taxon": "Catégories",
-            "Spree::Customer": "Clients",
-            "Spree::Variant": "Variantes"
+            "option_type": "Types d'options",
+            "order": "Commandes",
+            "product": "Produits",
+            "category": "Catégories",
+            "customer": "Clients",
+            "variant": "Variantes"
           },
           "read_only_help": "Le propriétaire ne peut pas être modifié une fois que des valeurs existent pour ce champ."
         },

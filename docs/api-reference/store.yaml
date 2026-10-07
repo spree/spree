@@ -8461,7 +8461,7 @@ paths:
                   client_secret: secret_123
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id: card_UkLWZg9DAJ
-                payment_source_type: Spree::CreditCard
+                payment_source_type: credit_card
                 customer_id: cust_UkLWZg9DAJ
                 payment_method:
                   id: pm_UkLWZg9DAJ

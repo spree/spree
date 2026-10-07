@@ -16,13 +16,13 @@ const samplePromotion = {
 
 const samplePromotionAction = {
   id: 'promoact_1',
-  type: 'Spree::Promotion::Actions::CreateItemAdjustments',
-  calculator_type: 'Spree::Calculator::FlatRate',
+  type: 'create_item_adjustments',
+  calculator_type: 'flat_rate',
 }
 
 const samplePromotionRule = {
   id: 'promorule_1',
-  type: 'Spree::Promotion::Rules::ItemTotal',
+  type: 'item_total',
 }
 
 const sampleCouponCode = { id: 'coupon_1', code: 'SUMMER10', state: 'pending' }
@@ -147,13 +147,13 @@ describe('promotions', () => {
       )
 
       await createTestClient().promotions.actions.create('promo_abc123', {
-        type: 'Spree::Promotion::Actions::CreateItemAdjustments',
-        calculator_type: 'Spree::Calculator::FlatRate',
+        type: 'create_item_adjustments',
+        calculator_type: 'flat_rate',
       })
 
       expect(body).toEqual({
-        type: 'Spree::Promotion::Actions::CreateItemAdjustments',
-        calculator_type: 'Spree::Calculator::FlatRate',
+        type: 'create_item_adjustments',
+        calculator_type: 'flat_rate',
       })
     })
 
@@ -194,10 +194,10 @@ describe('promotions', () => {
       )
 
       await createTestClient().promotions.rules.create('promo_abc123', {
-        type: 'Spree::Promotion::Rules::ItemTotal',
+        type: 'item_total',
       })
 
-      expect(body).toEqual({ type: 'Spree::Promotion::Rules::ItemTotal' })
+      expect(body).toEqual({ type: 'item_total' })
     })
 
     it('DELETEs a promotion rule', async () => {
@@ -249,7 +249,7 @@ describe('promotionActions', () => {
           HttpResponse.json({
             data: [
               {
-                type: 'Spree::Promotion::Actions::CreateItemAdjustments',
+                type: 'create_item_adjustments',
                 label: 'Create Item Adjustments',
               },
             ],
@@ -260,7 +260,7 @@ describe('promotionActions', () => {
       const res = await createTestClient().promotionActions.types()
 
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.type).toBe('Spree::Promotion::Actions::CreateItemAdjustments')
+      expect(res.data[0]?.type).toBe('create_item_adjustments')
     })
   })
 
@@ -276,11 +276,9 @@ describe('promotionActions', () => {
         }),
       )
 
-      const res = await createTestClient().promotionActions.calculators(
-        'Spree::Promotion::Actions::CreateItemAdjustments',
-      )
+      const res = await createTestClient().promotionActions.calculators('create_item_adjustments')
 
-      expect(url!.searchParams.get('type')).toBe('Spree::Promotion::Actions::CreateItemAdjustments')
+      expect(url!.searchParams.get('type')).toBe('create_item_adjustments')
       expect(res.data[0]?.type).toBe('flat_rate')
     })
   })
@@ -292,7 +290,7 @@ describe('promotionRules', () => {
       server.use(
         http.get(`${API_PREFIX}/promotion_rules/types`, () =>
           HttpResponse.json({
-            data: [{ type: 'Spree::Promotion::Rules::ItemTotal', label: 'Item Total' }],
+            data: [{ type: 'item_total', label: 'Item Total' }],
           }),
         ),
       )
@@ -300,7 +298,7 @@ describe('promotionRules', () => {
       const res = await createTestClient().promotionRules.types()
 
       expect(res.data).toHaveLength(1)
-      expect(res.data[0]?.type).toBe('Spree::Promotion::Rules::ItemTotal')
+      expect(res.data[0]?.type).toBe('item_total')
     })
   })
 })

@@ -91,10 +91,9 @@ export function CategoryMain({
           <CategoryProductsCard categoryId={category.id} />
           {/*
             Form-backed: custom field values ride along in the category form and
-            persist on the page's Save. Definitions are scoped to Spree::Taxon
-            (the category route maps to the Taxon class server-side).
+            persist on the page's Save.
           */}
-          <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Taxon">
+          <FormBackedCustomFieldsProvider form={form} resourceType="category">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
           <ResourceTranslationsCard resourceType="category" resourceId={category.id} />

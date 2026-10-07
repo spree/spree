@@ -45,7 +45,7 @@ module Spree
 
               data = Spree.digital_asset_providers.map do |provider_class|
                 {
-                  type: provider_class.to_s,
+                  type: provider_class.api_type,
                   name: provider_class.provider_name,
                   requires_attachment: provider_class.requires_attachment?,
                   settings_schema: provider_class.settings_schema

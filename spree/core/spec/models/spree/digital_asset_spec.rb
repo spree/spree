@@ -46,6 +46,11 @@ describe Spree::DigitalAsset, type: :model do
       expect(asset.provider_class).to eq(stub_provider)
     end
 
+    it 'stores the class name of a provider named by its shorthand' do
+      asset = described_class.new(provider_type: 'stub')
+      expect(asset.provider_type).to eq('Spree::DigitalAssetProvider::Stub')
+    end
+
     it 'requires no attachment for a provider that declares so' do
       asset = described_class.new(variant: variant, provider_type: 'Spree::DigitalAssetProvider::Stub')
       expect(asset).to be_valid

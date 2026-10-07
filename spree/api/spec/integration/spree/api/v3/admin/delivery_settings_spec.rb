@@ -49,7 +49,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           name: { type: :string, example: 'Express' },
           admin_name: { type: :string, nullable: true },
           code: { type: :string, nullable: true },
-          fulfillment_provider: { type: :string, nullable: true, example: 'Spree::FulfillmentProvider::Manual' },
+          fulfillment_provider: { type: :string, nullable: true, example: 'manual' },
           delivery_profile_id: { type: :string, nullable: true, example: 'fp_86Rf07xd4z' },
           storefront_visible: { type: :boolean, example: true },
           tracking_url: { type: :string, nullable: true },

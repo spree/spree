@@ -175,6 +175,7 @@ RSpec.describe Spree::Api::V3::Admin::MediaLibraryController, type: :controller 
       expect(response).to have_http_status(:ok)
       names = json_response['data'].map { |reference| reference['name'] }
       expect(names).to include('Also uses it')
+      expect(json_response['data'].map { |reference| reference['owner_type'] }).to include('product')
     end
 
     it 'reports nothing for a file used nowhere else' do
