@@ -8,6 +8,7 @@ export const OauthApplicationSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   client_id: z.string(),
+  connected: z.boolean(),
   scopes: z.array(z.string()),
   last_authorized_at: z.string().nullable(),
   authorized_at: z.string().nullable(),
