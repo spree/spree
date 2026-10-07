@@ -7,6 +7,9 @@ module Spree
   # See docs/plans/6.0-delivery-method-rules.md.
   class DeliveryMethodRule < Spree.base_class
     include Spree::PreferenceSchema
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.delivery_method_rule_types'
 
     has_prefix_id :dmrule
 
@@ -26,16 +29,6 @@ module Spree
     scope :active, -> { where(active: true) }
 
     registers_subclasses_via { Spree.delivery_method_rules }
-
-    # @return [String] localized display name for the rule kind, used by admin pickers
-    def self.human_name
-      I18n.t("spree.delivery_method_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] localized description for the rule kind
-    def self.human_description
-      I18n.t("spree.delivery_method_rule_types.#{api_type}.description", default: '')
-    end
 
     # @param package [Spree::Stock::Package]
     # @return [Boolean]

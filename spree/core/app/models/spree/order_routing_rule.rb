@@ -14,6 +14,10 @@ module Spree
   #
   # See docs/plans/6.0-order-routing.md.
   class OrderRoutingRule < Spree.base_class
+    include Spree::TypeLabels
+
+    self.type_labels_scope = 'spree.order_routing_rule_types'
+
     self.table_name = 'spree_order_routing_rules'
 
     # `rank` is integer (lower = better) when the rule has an opinion,
@@ -49,25 +53,6 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[type position active store_id channel_id]
 
     validate :type_must_be_registered
-
-    # @return [String] localized display name for the rule kind, used by admin pickers
-    def self.human_name
-      I18n.t("spree.order_routing_rule_types.#{api_type}.name", default: api_type.titleize)
-    end
-
-    # @return [String] localized description for the rule kind
-    def self.human_description
-      I18n.t("spree.order_routing_rule_types.#{api_type}.description", default: '')
-    end
-
-    # Feeds the `description` field of `subclasses_with_preference_schema`
-    # (the `/types` discovery payload), which only reads `.description`.
-    def self.description
-      human_description
-    end
-
-    def human_name = self.class.human_name
-    def human_description = self.class.human_description
 
     # Subclasses override. Returns an Array<LocationRanking> — one per location,
     # with rank=nil to abstain.
