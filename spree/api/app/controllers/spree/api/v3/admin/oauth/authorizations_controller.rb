@@ -159,9 +159,25 @@ module Spree
                 :client_id, :redirect_uri, :response_type, :state, :scope,
                 :code_challenge, :code_challenge_method, :response_mode
               ).to_h.symbolize_keys.
+                merge(scope: known_scopes).
                 # Carried through raw: RFC 8707 allows one value or several,
                 # and Doorkeeper's own validator normalizes both shapes.
                 merge(resource: params[:resource])
+            end
+
+            # The requested scopes this server knows, with the rest dropped.
+            #
+            # RFC 6749 §3.3 lets an authorization server ignore part of a
+            # requested scope, and the consent screen narrows to what the
+            # approver holds regardless. Refusing the whole request instead
+            # fails a client that cached an older catalogue — and the MCP
+            # spec tells a client to ask for everything it was once told
+            # about, so a scope we stop offering would lock out every client
+            # that discovered us before.
+            def known_scopes
+              accepted = Spree::Api::Oauth.staff_scope_keys.map(&:to_s)
+
+              params[:scope].to_s.split.select { |scope| accepted.include?(scope) }.join(' ')
             end
 
             def requested_resource
