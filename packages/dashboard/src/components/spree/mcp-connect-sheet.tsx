@@ -126,7 +126,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={reset}>
-      <SheetContent className="flex w-full flex-col sm:max-w-xl">
+      <SheetContent className="w-full sm:max-w-xl">
         <SheetHeader>
           <SheetTitle>
             {created
@@ -138,7 +138,7 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
           </SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4">
+        <div className="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
           {failure ? (
             <Alert variant="destructive">
               <AlertDescription>{failure}</AlertDescription>
@@ -210,11 +210,11 @@ export function McpConnectSheet({ open, onOpenChange }: McpConnectSheetProps) {
             <Button onClick={() => reset(false)}>{t('admin.common.done')}</Button>
           ) : (
             <>
-              <Button disabled={!canConnect} onClick={connect}>
-                {t('admin.mcp_connect.continue')}
-              </Button>
               <Button variant="outline" onClick={() => reset(false)}>
                 {t('admin.common.cancel')}
+              </Button>
+              <Button disabled={!canConnect} onClick={connect}>
+                {t('admin.mcp_connect.continue')}
               </Button>
             </>
           )}

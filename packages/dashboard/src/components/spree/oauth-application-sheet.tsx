@@ -85,49 +85,51 @@ export function OauthApplicationSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <form
-          className="flex flex-1 flex-col gap-4 overflow-y-auto px-4"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          {form.formState.errors.root && (
-            <p className="text-destructive text-sm">{form.formState.errors.root.message}</p>
-          )}
+        {/* The form wraps the footer so the submit button belongs to it, but
+            only the fields scroll — a footer inside the scroll area slides
+            out of reach on a short viewport. */}
+        <form className="flex min-h-0 flex-1 flex-col" onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root && (
+              <p className="text-destructive text-sm">{form.formState.errors.root.message}</p>
+            )}
 
-          <Field>
-            <Label htmlFor="oauth-application-name">
-              {t('admin.fields.oauth_application.name.label')}
-            </Label>
-            <Input
-              id="oauth-application-name"
-              {...form.register('name', { required: true })}
-              aria-invalid={Boolean(form.formState.errors.name)}
-              placeholder={t('admin.fields.oauth_application.name.placeholder')}
-            />
-            <FieldError>{form.formState.errors.name?.message}</FieldError>
-          </Field>
+            <Field>
+              <Label htmlFor="oauth-application-name">
+                {t('admin.fields.oauth_application.name.label')}
+              </Label>
+              <Input
+                id="oauth-application-name"
+                {...form.register('name', { required: true })}
+                aria-invalid={Boolean(form.formState.errors.name)}
+                placeholder={t('admin.fields.oauth_application.name.placeholder')}
+              />
+              <FieldError>{form.formState.errors.name?.message}</FieldError>
+            </Field>
 
-          <Field>
-            <Label htmlFor="oauth-application-redirect-uri">
-              {t('admin.fields.oauth_application.redirect_uri.label')}
-            </Label>
-            <Input
-              id="oauth-application-redirect-uri"
-              {...form.register('redirect_uri', { required: true })}
-              aria-invalid={Boolean(form.formState.errors.redirect_uri)}
-              placeholder="https://example.com/oauth/callback"
-            />
-            <p className="text-muted-foreground text-xs">
-              {t('admin.fields.oauth_application.redirect_uri.help')}
-            </p>
-            <FieldError>{form.formState.errors.redirect_uri?.message}</FieldError>
-          </Field>
+            <Field>
+              <Label htmlFor="oauth-application-redirect-uri">
+                {t('admin.fields.oauth_application.redirect_uri.label')}
+              </Label>
+              <Input
+                id="oauth-application-redirect-uri"
+                {...form.register('redirect_uri', { required: true })}
+                aria-invalid={Boolean(form.formState.errors.redirect_uri)}
+                placeholder="https://example.com/oauth/callback"
+              />
+              <p className="text-muted-foreground text-xs">
+                {t('admin.fields.oauth_application.redirect_uri.help')}
+              </p>
+              <FieldError>{form.formState.errors.redirect_uri?.message}</FieldError>
+            </Field>
+          </div>
 
-          <SheetFooter className="px-0">
-            <Button type="submit" disabled={save.isPending}>
-              {t('admin.common.save')}
-            </Button>
+          <SheetFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t('admin.common.cancel')}
+            </Button>
+            <Button type="submit" disabled={save.isPending}>
+              {t('admin.common.save')}
             </Button>
           </SheetFooter>
         </form>
