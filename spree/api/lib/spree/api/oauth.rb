@@ -26,6 +26,24 @@ module Spree
       # URL options otherwise. A store's own `url` column is deliberately not
       # consulted — it describes the storefront, which is frequently neither
       # the host nor the scheme the Admin API answers on.
+      # Whether a redirect URI points at the machine the client runs on.
+      #
+      # Decided by parsing the host as an address, the same way Doorkeeper
+      # does when it ignores the port of a loopback redirect — so `localhost`
+      # is deliberately not loopback here either, and a registration must use
+      # the IP literal for an ephemeral port to match.
+      #
+      # @param uri [URI, String]
+      # @return [Boolean]
+      def self.loopback_uri?(uri)
+        host = uri.respond_to?(:host) ? uri.host : URI.parse(uri.to_s).host
+        return false if host.blank?
+
+        IPAddr.new(host).loopback?
+      rescue StandardError
+        false
+      end
+
       mattr_accessor :resources, default: {}
 
       class << self
@@ -158,10 +176,19 @@ module Spree
             pkce_code_challenge_methods %w[S256]
 
             # A redirect URI is where authorization codes are delivered, so a
-            # plain-http one hands them to anyone on the path. Off in
-            # development, where a local client has no certificate and the
-            # traffic never leaves the machine.
-            force_ssl_in_redirect_uri !Rails.env.development?
+            # plain-http one hands them to anyone on the path — except a
+            # loopback one, which never leaves the machine. A terminal client
+            # listens on an ephemeral local port and has no certificate for
+            # it, so RFC 8252 §7.3 makes that the recommended shape, and
+            # refusing it would lock out Claude Code and Codex entirely.
+            #
+            # Passed as a callable so the exemption is per URI rather than
+            # per environment: everything else still has to be https.
+            force_ssl_in_redirect_uri do |uri|
+              next false if Rails.env.development?
+
+              !Spree::Api::Oauth.loopback_uri?(uri)
+            end
 
             # RFC 8707. Registering the validator is what binds an audience
             # into the token; left nil, the `resource` parameter is ignored
