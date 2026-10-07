@@ -1,6 +1,6 @@
 import type { OauthApplication } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import { PlugIcon } from '@spree/dashboard-ui/icons'
 import i18n from 'i18next'
 import { ScopeList } from '../components/spree/api-keys/api-key-table'
@@ -16,6 +16,28 @@ defineTable<OauthApplication>('oauth-applications', {
       label: i18n.t('admin.pages.settings.connected_apps.table.name'),
       default: true,
       render: (application) => <ResourceNameCell id={application.id} name={application.name} />,
+    },
+    {
+      key: 'connected',
+      label: i18n.t('admin.pages.settings.connected_apps.table.status'),
+      default: true,
+      // A registration nobody connected and one whose access was revoked
+      // both show no permissions, so without this the row looks unchanged
+      // after a merchant presses Revoke.
+      render: (application) =>
+        application.connected ? (
+          <StatusBadge
+            status="connected"
+            tone="success"
+            label={i18n.t('admin.pages.settings.connected_apps.status.connected')}
+          />
+        ) : (
+          <StatusBadge
+            status="not_connected"
+            tone="neutral"
+            label={i18n.t('admin.pages.settings.connected_apps.status.not_connected')}
+          />
+        ),
     },
     {
       key: 'scopes',

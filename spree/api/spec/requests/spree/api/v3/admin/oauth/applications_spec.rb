@@ -75,6 +75,21 @@ RSpec.describe 'Admin connected applications', type: :request do
     expect(row['scopes']).to be_empty
   end
 
+  # A registration nobody connected and one whose access was revoked both
+  # carry no scopes, so without a status the row looks unchanged after a
+  # merchant presses Revoke.
+  it 'says whether anything can still reach the store' do
+    token_for(admin)
+
+    row = list['data'].find { |candidate| candidate['name'] == 'Claude' }
+    expect(row['connected']).to be(true)
+
+    Spree::OauthAccessToken.last.update!(revoked_at: Time.current)
+
+    revoked = list['data'].find { |candidate| candidate['name'] == 'Claude' }
+    expect(revoked['connected']).to be(false)
+  end
+
   it 'reports what the live tokens grant, not the registration' do
     token_for(admin, scopes: 'read_products write_orders')
 

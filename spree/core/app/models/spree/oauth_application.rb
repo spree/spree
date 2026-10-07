@@ -35,6 +35,18 @@ module Spree
              inverse_of: :application,
              dependent: nil
 
+    # Whether anything can still reach the store with this registration.
+    #
+    # The screen lists every registered client, so a row with no live token
+    # may be one nobody has connected yet or one whose access was revoked —
+    # and an empty permission list reads the same either way. A merchant
+    # pressing Revoke has to see that it worked.
+    #
+    # @return [Boolean]
+    def connected?
+      live_access_tokens.any?
+    end
+
     # What this application may currently do, as permission keys.
     #
     # Read from the tokens rather than the registration: a client is

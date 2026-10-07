@@ -4085,11 +4085,16 @@
             "name": "代理",
             "access": "访问权限",
             "authorized_by": "批准人",
-            "last_authorized": "最后授权时间"
+            "last_authorized": "最后授权时间",
+            "status": "状态"
           },
           "revoke_confirm": {
             "title": "撤销访问权限？",
             "message": "{{name}} 将立即停止工作。使用它的人需要重新连接。"
+          },
+          "status": {
+            "connected": "已连接",
+            "not_connected": "未连接"
           }
         },
         "oauth_clients": {

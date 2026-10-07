@@ -730,11 +730,16 @@
             "name": "Agente",
             "access": "Acceso",
             "authorized_by": "Aprobado por",
-            "last_authorized": "Última autorización"
+            "last_authorized": "Última autorización",
+            "status": "Estado"
           },
           "revoke_confirm": {
             "title": "¿Revocar el acceso?",
             "message": "{{name}} dejará de funcionar de inmediato. Quien lo use tendrá que conectarse de nuevo."
+          },
+          "status": {
+            "connected": "Conectado",
+            "not_connected": "No conectado"
           }
         },
         "oauth_clients": {

@@ -69,7 +69,9 @@ function ConnectedAppsSettingsPage() {
                 key: 'revoke',
                 label: t('admin.pages.settings.connected_apps.revoke'),
                 destructive: true,
-                visible: permissions.can('update', Subject.OauthApplication),
+                // Nothing to revoke on a registration nobody has connected.
+                visible:
+                  application.connected && permissions.can('update', Subject.OauthApplication),
                 disabled: revoke.isPending,
                 onSelect: () => handleRevoke(application),
               },
