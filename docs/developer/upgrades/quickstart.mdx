@@ -31,12 +31,13 @@ An upgrade updates the server, migrates the database, runs the version's data ba
     bin/rails spree:upgrade
     cd ..
 
-    # Each dashboard app has its own package.json
+    # The project root and each dashboard app have their own package.json
+    pnpm update "@spree/*"
     (cd apps/dashboard && pnpm update "@spree/*")
     (cd apps/seller-dashboard && pnpm update "@spree/*")
     ```
 
-    On npm or Yarn, run `npm update` or `yarn upgrade` instead, naming each `@spree/*` package from that app's `package.json` (they do not accept the `"@spree/*"` pattern).
+    On npm or Yarn, run `npm update` or `yarn upgrade` instead, naming each `@spree/*` package from that `package.json` (they do not accept the `"@spree/*"` pattern).
   </Tab>
 </Tabs>
 
