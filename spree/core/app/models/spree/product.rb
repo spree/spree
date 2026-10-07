@@ -38,6 +38,7 @@ module Spree
     include Spree::StorePreferences
 
     publishes_lifecycle_events
+    publishes_events :activated, :approved, :archived, :back_in_stock, :drafted, :out_of_stock, :proposed, :rejected
 
     MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
@@ -814,7 +815,13 @@ module Spree
       Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
 
-    def to_csv(store = nil)
+    # @param seller [Spree::Seller, nil] the seller exporting their own
+    #   products, whose rows cover only their own locations; nil for the
+    #   operator, whose rows cover the marketplace's and the product's seller's
+    # @param default_stock_location [Spree::StockLocation, nil] the location
+    #   the full rows carry; further locations get stock-only rows. The
+    #   store's default when nil
+    def to_csv(store = nil, seller: nil, default_stock_location: nil)
       store ||= self.store
       properties_for_csv = if respond_to?(:product_properties) && Spree::Config.respond_to?(:product_properties_enabled) && Spree::Config[:product_properties_enabled]
                              Spree::Property.order(:position).flat_map do |property|
@@ -837,11 +844,12 @@ module Spree
       all_variants = variants.to_a
       default_currency = store.default_currency
       additional_currencies = store.supported_currencies_list.map(&:iso_code) - [default_currency]
+      default_stock_location ||= store.default_stock_location
 
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             custom_field_values).call
+                                                             custom_field_values, default_stock_location: default_stock_location).call
       end
 
       # Price-only rows for each additional currency
@@ -851,6 +859,25 @@ module Spree
 
           csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
                                                                [], currency).call
+        end
+      end
+
+      # Stock-only rows for every other location the importer can name back. A
+      # row the import cannot route to its variant is left out: with no SKU it
+      # would land on the default variant.
+      location_owner_ids = seller ? [seller.id] : [nil, seller_id].uniq
+      all_variants.each do |variant|
+        next unless variant.should_track_inventory?
+        next if variant.sku.blank? && variant != default_variant
+
+        variant.stock_levels.each do |stock_level|
+          location = stock_level.stock_location
+          next if location.nil? || location == default_stock_location
+          next unless location.store_id == store.id && location_owner_ids.include?(location.seller_id)
+          next if stock_level.count_on_hand.zero?
+
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, 0, [], [], store,
+                                                               stock_level: stock_level).call
         end
       end
 

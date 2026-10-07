@@ -249,6 +249,11 @@ module Spree
         seller_payout_complete_workflow: 'Spree::SellerPayouts::Complete',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
         payment_session_complete_workflow: 'Spree::PaymentSessions::Complete',
+        email_template_save_draft_workflow: 'Spree::EmailTemplates::SaveDraft',
+        email_template_publish_workflow: 'Spree::EmailTemplates::Publish',
+        email_template_revert_workflow: 'Spree::EmailTemplates::Revert',
+        email_template_discard_draft_workflow: 'Spree::EmailTemplates::DiscardDraft',
+        email_template_restore_revision_workflow: 'Spree::EmailTemplates::RestoreRevision',
 
         # finders
         current_store_finder: 'Spree::Stores::FindDefault',

@@ -61,19 +61,19 @@ module Spree
 
         return if @normalized_items.any?
 
-        failure(receivable, Spree.t("#{error_scope}.errors.no_items_received"))
+        failure(receivable, I18n.t("spree.#{error_scope}.errors.no_items_received"))
       end
 
       # A line the payload names but counts nothing on is left out rather than
       # refused: a receive screen submits every row, most of them untouched.
       def normalize_item(item)
         line = item[:item]
-        failure(receivable, Spree.t("#{error_scope}.errors.item_not_on_document")) unless line_belongs?(line)
+        failure(receivable, I18n.t("spree.#{error_scope}.errors.item_not_on_document")) unless line_belongs?(line)
 
         accepted = item[:quantity_accepted].to_i
         rejected = item[:quantity_rejected].to_i
         if accepted.negative? || rejected.negative?
-          failure(receivable, Spree.t("#{error_scope}.errors.invalid_receipt_quantity", variant: line.variant_name))
+          failure(receivable, I18n.t("spree.#{error_scope}.errors.invalid_receipt_quantity", variant: line.variant_name))
         end
         return nil if accepted.zero? && rejected.zero?
 
@@ -93,7 +93,7 @@ module Spree
         repeated = lines.group_by(&:id).values.find { |group| group.length > 1 }
         return if repeated.nil?
 
-        failure(receivable, Spree.t("#{error_scope}.errors.repeated_item", variant: repeated.first.variant_name))
+        failure(receivable, I18n.t("spree.#{error_scope}.errors.repeated_item", variant: repeated.first.variant_name))
       end
 
       def build_receipt

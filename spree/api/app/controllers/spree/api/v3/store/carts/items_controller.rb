@@ -42,7 +42,7 @@ module Spree
                   if permitted_params[:quantity].to_i < 1
                     return render_error(
                       code: ERROR_CODES[:invalid_quantity],
-                      message: Spree.t('cart_line_item.quantity_must_be_positive'),
+                      message: I18n.t('spree.cart_line_item.quantity_must_be_positive'),
                       status: :unprocessable_content
                     )
                   end

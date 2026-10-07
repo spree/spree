@@ -6,7 +6,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 vi.mock('execa', () => ({ execa: vi.fn() }))
 
 import { execa } from 'execa'
-import { detectSpreeGems, sdkAdvisory } from '../src/commands/upgrade'
+import {
+  detectSpreeGems,
+  detectSpreePackages,
+  packageUpdateArgs,
+  sdkAdvisory,
+} from '../src/commands/upgrade'
 
 describe('sdkAdvisory', () => {
   const tempDirs: string[] = []
@@ -114,5 +119,80 @@ describe('detectSpreeGems', () => {
     await expect(detectSpreeGems('/proj')).rejects.toThrow(
       /bundle looks out of sync|no such service/,
     )
+  })
+})
+
+describe('detectSpreePackages', () => {
+  const dirs: string[] = []
+  afterEach(() => {
+    for (const dir of dirs) fs.rmSync(dir, { recursive: true, force: true })
+    dirs.length = 0
+  })
+
+  function withPackageJson(pkg: object | string): string {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-packages-test-'))
+    dirs.push(dir)
+    fs.writeFileSync(
+      path.join(dir, 'package.json'),
+      typeof pkg === 'string' ? pkg : JSON.stringify(pkg),
+    )
+    return dir
+  }
+
+  it('lists registry-resolved @spree/* packages from both dependency groups', () => {
+    const dir = withPackageJson({
+      dependencies: { '@spree/dashboard': '^1.0.0-beta.8', react: '^19.2.6' },
+      devDependencies: { '@spree/cli': '~3.1.0', '@spree/docs': 'latest' },
+    })
+    expect(detectSpreePackages(dir)).toEqual(['@spree/dashboard', '@spree/cli', '@spree/docs'])
+  })
+
+  it('leaves local and git specs alone', () => {
+    const dir = withPackageJson({
+      dependencies: {
+        '@spree/dashboard': 'workspace:^',
+        '@spree/dashboard-core': 'file:../dashboard-core',
+        '@spree/admin-sdk': 'github:spree/spree#main',
+      },
+    })
+    expect(detectSpreePackages(dir)).toEqual([])
+  })
+
+  it('returns [] without a readable package.json', () => {
+    expect(detectSpreePackages(withPackageJson('{ not json'))).toEqual([])
+    expect(detectSpreePackages('/nonexistent')).toEqual([])
+  })
+})
+
+describe('packageUpdateArgs', () => {
+  it('uses update for pnpm and npm', () => {
+    expect(packageUpdateArgs('pnpm', ['@spree/cli'], '/proj', '/proj')).toEqual([
+      'update',
+      '@spree/cli',
+    ])
+    expect(packageUpdateArgs('npm', ['@spree/cli'], '/proj', '/proj')).toEqual([
+      'update',
+      '@spree/cli',
+    ])
+  })
+
+  it('keeps declared ranges on Yarn Classic and Yarn Berry', () => {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-cli-yarn-test-'))
+    const appDir = path.join(projectDir, 'apps', 'dashboard')
+    fs.mkdirSync(appDir, { recursive: true })
+    try {
+      expect(packageUpdateArgs('yarn', ['@spree/dashboard'], projectDir, appDir)).toEqual([
+        'upgrade',
+        '@spree/dashboard',
+      ])
+      fs.writeFileSync(path.join(projectDir, '.yarnrc.yml'), 'nodeLinker: node-modules\n')
+      expect(packageUpdateArgs('yarn', ['@spree/dashboard'], projectDir, appDir)).toEqual([
+        'up',
+        '-R',
+        '@spree/dashboard',
+      ])
+    } finally {
+      fs.rmSync(projectDir, { recursive: true, force: true })
+    }
   })
 })

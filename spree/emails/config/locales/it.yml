@@ -1,0 +1,38 @@
+---
+it:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Reimposta password
+        expiry_notice: Questo link per la reimpostazione della password scadrà a breve. Se non hai effettuato questa richiesta, non è necessaria alcuna azione.
+        greeting: Ciao %{name},
+        ignore_notice: Se non hai richiesto la reimpostazione della password, puoi ignorare tranquillamente questa email. La tua password non verrà modificata.
+        instructions: Abbiamo ricevuto una richiesta di reimpostazione della password. Fai clic sul pulsante qui sotto per scegliere una nuova password.
+        subject: Istruzioni per la reimpostazione della password
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Ciao,
+        ignore_disclaimer: Se non hai effettuato questa richiesta, ignora questa email.
+        instructions: Fai clic sul pulsante qui sotto per verificare il tuo indirizzo email.
+        message_copy_link: 'Se il pulsante non funziona, copia e incolla il seguente link nel tuo browser:'
+        subject: Verifica il tuo indirizzo email
+        verify_email_address_link: Verifica indirizzo email
+    order_mailer:
+      cancel_email:
+        instructions: Il tuo ordine è stato ANNULLATO. Per favore conserva queste informazioni per attestare l'annullamento.
+        subject: Annullamento Ordine
+      confirm_email:
+        instructions: Per favore rivedi queste informazioni e conservale come riferimento.
+        subject: Conferma Ordine
+      payment_link_email:
+        message: Fai clic sul pulsante qui sotto per pagare il tuo ordine.
+        message_copy_link: 'Se il pulsante non funziona, copia e incolla il seguente link nel tuo browser:'
+        pay_for_order: Paga l'ordine
+        subject: 'Link di pagamento per l''ordine #%{number}'
+      store_owner_notification_email:
+        heading: Nuovo ordine ricevuto
+        instructions: Hai ricevuto un nuovo ordine.
+        order_summary: Riepilogo dell'ordine %{number}
+        subject: "%{store_name} ha ricevuto un nuovo ordine"
+      subtotal: 'Subtotale:'
+      total: 'Totale ordine:'

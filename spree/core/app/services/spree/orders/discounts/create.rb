@@ -18,8 +18,8 @@ module Spree
         # @return [Spree::ServiceModule::Result] value is the created rows
         def call(order:, label:, value:, value_type: 'flat', line_item: nil)
           value = BigDecimal(value.to_s)
-          return failure(nil, Spree.t('errors.messages.discount_value_must_be_positive')) unless value.positive?
-          return failure(nil, Spree.t('errors.messages.discount_value_type_invalid')) unless %w[flat percent].include?(value_type)
+          return failure(nil, I18n.t('spree.errors.messages.discount_value_must_be_positive')) unless value.positive?
+          return failure(nil, I18n.t('spree.errors.messages.discount_value_type_invalid')) unless %w[flat percent].include?(value_type)
 
           rows = order.with_lock do
             created = line_item ? [line_item_row(order, line_item, label, value, value_type)].compact : distributed_rows(order, label, value, value_type)
@@ -30,7 +30,7 @@ module Spree
             created
           end
 
-          return failure(nil, Spree.t('errors.messages.discount_has_no_effect')) if rows.empty?
+          return failure(nil, I18n.t('spree.errors.messages.discount_has_no_effect')) if rows.empty?
 
           success(rows)
         end

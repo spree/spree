@@ -88,7 +88,7 @@ function SettingsCard({ entry, tenantId }: { entry: SettingsNavEntry; tenantId: 
   const description = resolveNavDescription(entry, t)
 
   return (
-    <Card className="p-0 transition-colors hover:bg-accent/80 hover:border-border">
+    <Card className="p-0 transition-colors border-border-subtle hover:bg-accent/80 hover:border-border">
       {/* The whole card is the target — a small title-only link would fail the
           44px minimum on touch and leaves most of the card dead to a click. */}
       {/* Paths come from a runtime registry plugins extend, so they can't be

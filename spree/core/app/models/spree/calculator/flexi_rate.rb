@@ -7,7 +7,7 @@ module Spree
     preference :apply_only_on_full_priced_items, :boolean, default: false
 
     def self.description
-      Spree.t(:flexible_rate)
+      I18n.t('spree.flexible_rate')
     end
 
     def self.available?(_object)

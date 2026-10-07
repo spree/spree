@@ -31,7 +31,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('invitation_mailer.invitation_email.subject', resource_name: store.name)
+        I18n.t('spree.invitation_mailer.invitation_email.subject', resource_name: store.name)
       )
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
 
       it 'uses spree.admin_invitation_url for the accept link' do
-        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(I18n.t('spree.accept'))
         expect(email_body(mail)).to include(legacy_admin_url)
         expect(email_body(mail)).not_to include(spa_acceptance_url)
       end
@@ -78,7 +78,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       end
 
       it 'uses the admin_invitation_acceptance helper for the accept link' do
-        expect(email_body(mail)).to include(Spree.t(:accept))
+        expect(email_body(mail)).to include(I18n.t('spree.accept'))
         expect(email_body(mail)).to include(spa_acceptance_url)
         expect(email_body(mail)).not_to include(legacy_admin_url)
       end
@@ -147,7 +147,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'renders the subject' do
       expect(mail.subject).to eq(
-        Spree.t('invitation_mailer.invitation_accepted.subject', invitee_name: invitee.name, resource_name: store.name)
+        I18n.t('spree.invitation_mailer.invitation_accepted.subject', invitee_name: invitee.name, resource_name: store.name)
       )
     end
 

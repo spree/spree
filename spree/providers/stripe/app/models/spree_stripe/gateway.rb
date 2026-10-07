@@ -22,6 +22,14 @@ module SpreeStripe
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
 
+    def self.logo_url
+      'https://spreecommerce.org/docs/images/integrations/logos/stripe.png'
+    end
+
+    def self.docs_url
+      'https://spreecommerce.org/docs/integrations/payments/stripe'
+    end
+
     def provider_class
       self.class
     end
@@ -50,12 +58,10 @@ module SpreeStripe
     #
     # @return [Boolean]
     def only_webhook_registration_changed?
-      before, after = saved_change_to_preferences
-      return false unless before.is_a?(Hash) && after.is_a?(Hash)
+      return false if previously_new_record?
 
-      changed = (before.keys | after.keys).reject { |key| before[key] == after[key] }
-
-      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key.to_sym) }
+      changed = previously_changed_preference_names
+      changed.any? && changed.all? { |key| WEBHOOK_REGISTRATION_PREFERENCES.include?(key) }
     end
 
     # Endpoints are registered per Stripe account, so a rotated key leaves the
@@ -67,10 +73,7 @@ module SpreeStripe
       # read as every key having changed.
       return false if previously_new_record?
 
-      # The preference macro's own reader rather than a hand-rolled diff: it
-      # reads the change through indifferent access, so it answers the same
-      # whether the serialized hash came back with symbol or string keys.
-      preferred_secret_key_previously_changed?
+      saved_change_to_preferred_secret_key?
     end
 
     def gateway_dashboard_payment_url(payment)
@@ -302,14 +305,14 @@ module SpreeStripe
     def validate_secret_key
       Stripe::Refund.list({ limit: 0 }, api_options)
     rescue Stripe::AuthenticationError
-      errors.add(:base, :secret_key_invalid, message: Spree.t('stripe.errors.secret_key_invalid'))
+      errors.add(:base, :secret_key_invalid, message: I18n.t('spree.stripe.errors.secret_key_invalid'))
     rescue Stripe::PermissionError => e
       return unless e.error&.code == 'secret_key_required'
 
       errors.add(:base, :publishable_key_provided,
-                 message: Spree.t('stripe.errors.publishable_key_provided'))
+                 message: I18n.t('spree.stripe.errors.publishable_key_provided'))
     rescue Stripe::StripeError
-      errors.add(:base, :stripe_unavailable, message: Spree.t('stripe.errors.stripe_unavailable'))
+      errors.add(:base, :stripe_unavailable, message: I18n.t('spree.stripe.errors.stripe_unavailable'))
     end
 
     def build_customer_payload(order: nil, customer: nil)

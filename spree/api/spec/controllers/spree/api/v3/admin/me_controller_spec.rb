@@ -178,7 +178,7 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
 
     # The admin-UI language is a client concern (the dashboard ships its own
     # locale bundles), so the API stores whatever code the client sends without
-    # validating it against the backend's Rails/SpreeI18n locales.
+    # validating it against the backend's Rails/Spree locales.
     context 'with a locale code' do
       let(:params) { { selected_locale: 'pl' } }
 

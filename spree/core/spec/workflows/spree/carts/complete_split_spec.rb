@@ -578,18 +578,18 @@ module Spree
     describe 'the confirmation' do
       let(:cart) { cart_for(nil, seller, other_seller) }
 
-      # Asserted on the payload rather than the records: notify_customer is an
+      # Asserted on the event metadata rather than the records: notify_customer is an
       # in-memory flag, and the group reloads its children after placing them.
       it 'places every child silently', :events do
         placements = []
-        allow(Spree::Events).to receive(:publish) do |name, payload, *|
-          placements << payload if name == 'order.placed'
+        allow(Spree::Events).to receive(:publish) do |name, _payload, metadata|
+          placements << metadata if name == 'order.placed'
         end
 
         described_class.call(cart: cart)
 
         expect(placements.size).to eq(3)
-        expect(placements.map { |payload| payload[:notify_customer] }).to all(be false)
+        expect(placements.map { |metadata| metadata[:notify_customer] }).to all(be false)
       end
 
       # The old shape marked the first child confirmed and left the customer

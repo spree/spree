@@ -16,6 +16,8 @@ module Spree
   # and leaves the operator to pay by bank, while a provider like Stripe
   # Connect performs the transfer itself.
   class SellerPayout < Spree.base_class
+    publishes_event :completed
+
     has_prefix_id :vpo
 
     include Spree::Metadata

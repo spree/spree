@@ -26,7 +26,7 @@ module Spree
         # and a second erasure has nothing to erase.
         if customer.anonymized?
           data_request = Spree::DataRequest.new(customer: customer)
-          data_request.errors.add(:base, Spree.t('data_request_errors.already_anonymized'))
+          data_request.errors.add(:base, I18n.t('spree.data_request_errors.already_anonymized'))
           return failure(data_request)
         end
 

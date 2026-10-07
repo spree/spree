@@ -11,7 +11,7 @@ the directory you are working in before changing anything there.
 ## Spree-specific agent skills
 
 For deeper Spree-specific guidance (API conventions, the data model, event system,
-testing patterns, security, deployment, the React dashboard, the Next.js
+testing patterns, security, deployment, the admin dashboard, the Next.js
 storefront, etc.), install the official skill set:
 
 \`\`\`bash
@@ -32,6 +32,7 @@ export function rootClaudeMdContent(
   hasStorefront: boolean,
   hasDashboard = false,
   pm: PackageManager = 'pnpm',
+  hasSellerDashboard = hasDashboard,
 ): string {
   const run = runCommand(pm)
   const lines = [
@@ -49,7 +50,10 @@ export function rootClaudeMdContent(
   }
 
   if (hasDashboard) {
-    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA |')
+    lines.push('| `apps/dashboard/` | Admin Dashboard — React SPA |')
+  }
+
+  if (hasSellerDashboard) {
     lines.push('| `apps/seller-dashboard/` | Seller Panel — marketplace seller SPA |')
   }
 
@@ -69,6 +73,11 @@ export function rootClaudeMdContent(
   if (hasDashboard) {
     lines.push(
       '- **Dashboard work** (admin SPA, React, TypeScript): See `apps/dashboard/AGENTS.md`',
+    )
+  }
+
+  if (hasSellerDashboard) {
+    lines.push(
       '- **Seller Panel work** (marketplace seller SPA): See `apps/seller-dashboard/AGENTS.md`',
     )
   }
@@ -84,7 +93,7 @@ export function rootClaudeMdContent(
     '├── developer/',
     '│   ├── core-concepts/     # Products, orders, payments, inventory, etc.',
     '│   ├── customization/     # Decorators, extensions, configuration, dependencies',
-    '│   ├── dashboard/         # React dashboard: customization, recipes, plugins',
+    '│   ├── dashboard/         # Admin dashboard: customization, recipes, plugins',
     '│   ├── storefront/        # Storefront building guides',
     '│   ├── sdk/               # TypeScript SDK documentation',
     '│   └── tutorial/          # Step-by-step tutorials',

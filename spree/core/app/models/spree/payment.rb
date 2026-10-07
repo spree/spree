@@ -16,6 +16,7 @@ module Spree
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
+    publishes_events :captured, :completed, :paid, :refunded, :voided
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -516,7 +517,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart, order_group].compact.one?
     end
 
     def set_amount
@@ -546,8 +547,8 @@ module Spree
     end
 
     def add_source_error(field, message)
-      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
+      field_name = source.class.human_attribute_name(field)
+      errors.add(source.class.model_name.human, "#{field_name} #{message}")
     end
 
 

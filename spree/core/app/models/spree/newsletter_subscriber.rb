@@ -6,6 +6,9 @@ module Spree
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events
+    publishes_event :verified
+    publishes_events :subscription_requested, :unsubscribe_requested,
+                     serializer: 'Spree::Api::V3::NewsletterSubscriberRequestEventSerializer'
 
     has_secure_token :verification_token
 

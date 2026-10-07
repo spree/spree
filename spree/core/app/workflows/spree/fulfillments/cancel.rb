@@ -45,7 +45,7 @@ module Spree
       def ensure_cancelable
         return if fulfillment.can_cancel?
 
-        failure(fulfillment, Spree.t('fulfillments.errors.cannot_cancel'))
+        failure(fulfillment, I18n.t('spree.fulfillments.errors.cannot_cancel'))
       end
 
       # Withdraws the promise this fulfillment held. Nothing physical comes

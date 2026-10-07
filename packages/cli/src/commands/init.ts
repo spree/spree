@@ -132,8 +132,9 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
-  await installAppDeps(ctx.projectDir, 'storefront')
-  await installAppDeps(ctx.projectDir, 'dashboard')
+  for (const app of ['dashboard', 'seller-dashboard', 'storefront']) {
+    await installAppDeps(ctx.projectDir, app)
+  }
   ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
   // Sample-data imports need an admin as their owner; without credentials
@@ -155,7 +156,7 @@ export async function runFirstRunSetup(flags: {
 
   writeProjectSetupMarker(ctx.projectDir)
 
-  // With the React Dashboard chosen, its dev server IS the admin — started
+  // With apps/dashboard present, its dev server IS the admin — started
   // below alongside the stack, so what the user customizes is what they use.
   // One admin block: the dev server is the only admin URL worth naming. (The
   // production image serves a built dashboard at /dashboard — a deployment
@@ -196,8 +197,13 @@ export async function runFirstRunSetup(flags: {
       ]
     : [
         pc.bold('Admin Dashboard'),
-        `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
+        `  ${pc.cyan(`http://localhost:${ctx.port}/dashboard`)}`,
         ...credentialLines,
+        `  ${pc.dim(
+          hasDashboardApp(ctx.projectDir)
+            ? 'Built-in dashboard — apps/dashboard/ runs once its dependencies are installed'
+            : `Built-in dashboard — run ${pc.bold('spree add dashboard')} to customize it`,
+        )}`,
       ]
 
   // The wholesale demo needs both the storefront env opt-in and the seeded
@@ -249,16 +255,14 @@ export async function runFirstRunSetup(flags: {
     if (flags.open) {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
       // port when 5173 is taken) so the browser opens the real URL. Without
-      // one there's no admin to open in development, so fall back to the
-      // store itself.
-      const dashboardUrl = dashboard ? await dashboard.url : null
+      // one, open the built-in dashboard the summary names.
+      const dashboardUrl = dashboard ? await dashboard.url : setupBase
       // No admin was seeded, so the dashboard would only show a login form
       // nobody can pass — open first-run setup instead and land the operator
       // on the account form directly.
-      const target =
-        setupToken && dashboardUrl
-          ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
-          : (dashboardUrl ?? `http://localhost:${ctx.port}`)
+      const target = setupToken
+        ? `${dashboardUrl.replace(/\/$/, '')}/setup?token=${setupToken}`
+        : dashboardUrl
       await openBrowser(target)
     }
 
@@ -275,17 +279,17 @@ export async function runFirstRunSetup(flags: {
 // create-spree-app's per-app install steps, so first-run setup leaves every
 // app runnable with `pnpm dev`. Best-effort: a registry hiccup shouldn't
 // fail backend setup.
-async function installAppDeps(projectDir: string, app: 'storefront' | 'dashboard'): Promise<void> {
+async function installAppDeps(projectDir: string, app: string): Promise<void> {
   const appDir = path.join(projectDir, 'apps', app)
   if (!fs.existsSync(path.join(appDir, 'package.json'))) return
   if (fs.existsSync(path.join(appDir, 'node_modules'))) return
 
   const pm = detectPackageManager(projectDir, appDir)
   const s = p.spinner()
-  s.start(`Installing ${app} dependencies with ${pm}...`)
+  s.start(`Installing apps/${app}/ dependencies with ${pm}...`)
   try {
     await execa(pm, ['install'], { cwd: appDir })
-    s.stop(`${app === 'dashboard' ? 'Dashboard' : 'Storefront'} dependencies installed.`)
+    s.stop(`apps/${app}/ dependencies installed.`)
   } catch (err) {
     s.stop(pc.yellow(`${pm} install failed — run it manually in apps/${app}/.`))
     p.log.warn(err instanceof Error ? err.message : String(err))

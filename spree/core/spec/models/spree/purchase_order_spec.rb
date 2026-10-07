@@ -31,7 +31,7 @@ module Spree
         ]
 
         expect(purchase_order).to be_invalid
-        expect(purchase_order.errors[:items]).to include(Spree.t('errors.messages.duplicate_variant'))
+        expect(purchase_order.errors[:items]).to include(I18n.t('spree.errors.messages.duplicate_variant'))
       end
 
       it 'allows an empty draft but not an empty placed order' do

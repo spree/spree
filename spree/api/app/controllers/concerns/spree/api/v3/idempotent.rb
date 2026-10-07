@@ -29,6 +29,8 @@ module Spree
             return
           end
 
+          return yield if caller_identity.nil?
+
           cache_key = idempotency_cache_key(key)
           cached = Rails.cache.read(cache_key)
 
@@ -36,7 +38,7 @@ module Spree
             if cached[:fingerprint] != request_fingerprint
               render_error(
                 code: ErrorHandler::ERROR_CODES[:idempotency_key_reused],
-                message: Spree.t(:idempotency_key_reused),
+                message: I18n.t('spree.idempotency_key_reused'),
                 status: :unprocessable_content
               )
               return
@@ -66,17 +68,30 @@ module Spree
           MUTATING_METHODS.include?(request.method)
         end
 
+        def caller_identity
+          return @caller_identity if defined?(@caller_identity)
+
+          credentials = []
+
+          credentials << ['secret_key', Spree::ApiKey.compute_token_digest(extract_api_key)] if secret_key_request?
+
+          bearer_token = extract_token
+          credentials << ['bearer', Digest::SHA256.hexdigest(bearer_token)] if bearer_token.present?
+
+          credentials << ['order_token', Digest::SHA256.hexdigest(order_token)] if order_token.present?
+
+          @caller_identity = credentials.presence
+        end
+
         def idempotency_cache_key(key)
-          credential = request.headers['X-Spree-Api-Key'].presence ||
-                       spree_current_user&.id ||
-                       request.remote_ip
           # The resolved store partitions the namespace: a staff JWT spans
           # stores, and replaying one store's cached response for a request
           # aimed at another would cross store boundaries. The resolved
           # store — not the raw header — so a header naming the default store
           # and no header at all land in the same partition, as they resolve
           # to the same store.
-          "spree:idempotency:#{Digest::SHA256.hexdigest("#{credential}\0#{current_store&.id}\0#{key}")}"
+          digest = Digest::SHA256.hexdigest([*caller_identity.flatten, current_store&.id, key].join("\0"))
+          "spree:idempotency:#{digest}"
         end
 
         def request_fingerprint

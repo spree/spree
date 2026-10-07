@@ -14,11 +14,13 @@ store.save
 
 To define a model preference, you need to add them to your model class.
 
-Make sure to generate a migration to add the `preferences` column to the table. This column will store the preferences in a serialized format.
+Make sure to generate a migration to add the `preferences` column to the table. This column stores the preferences as JSON.
 
 ```bash
-spree generate migration AddPreferencesToSpreeBrands preferences:text
+spree generate migration AddPreferencesToSpreeBrands preferences:jsonb
 ```
+
+`jsonb` is for PostgreSQL, the default database. On MySQL or SQLite use `preferences:json`.
 
 Run the migration.
 
@@ -92,7 +94,28 @@ You can get a hash of all stored preferences by accessing the `preferences` help
 brand.preferences # => { 'featured' => false, 'display_name' => 'Wilson' }
 ```
 
-This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored.
+This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored. Its keys are strings, and it can be read with either strings or symbols (`brand.preferences[:featured]`). Values are stored as JSON, so read typed values through the `preferred_*` methods: a `:decimal` preference comes back as a `BigDecimal` there, while the raw hash holds its exact string (`"9.99"`).
+
+`preferences` never holds secrets — see [Secret preferences](#secret-preferences).
+
+## Secret preferences
+
+Declare API keys, signing secrets and other credentials with the `:password` type:
+
+```ruby server/app/models/my_app/gateway.rb
+module MyApp
+  class Gateway < Spree::Gateway
+    preference :publishable_key, :string
+    preference :secret_key, :password
+  end
+end
+```
+
+A `:password` preference works like any other — `preferred_secret_key`, `preferred_secret_key = ...`, `get_preference(:secret_key)` — but it is stored apart from the other preferences, in an encrypted `secret_preferences` column, whenever [Active Record encryption keys](/developer/deployment/environment_variables#active-record-encryption) are configured. The Admin API returns it masked, showing only its last four characters.
+
+Payment methods and integrations already have that column. To declare a secret on another model, include `Spree::SecretPreferences` and add a `secret_preferences` text column to its table; Spree refuses a `:password` preference on a model that cannot encrypt it.
+
+Always declare a credential as `:password`. A secret declared as `:string`, or nested inside a `:hash` or `:array` preference, is stored in plain text.
 
 ## Models with preferences
 

@@ -31,7 +31,7 @@ module Spree
 
             render_error(
               code: 'invalid_status',
-              message: Spree.t('purchase_order.errors.only_draft_can_be_deleted'),
+              message: I18n.t('spree.purchase_order.errors.only_draft_can_be_deleted'),
               status: :unprocessable_content
             )
           end

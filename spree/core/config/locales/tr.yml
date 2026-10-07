@@ -1,0 +1,777 @@
+---
+tr:
+  activemodel:
+    errors:
+      messages:
+        blank: boş olamaz
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Adres
+        address2: Adres (Devamı)
+        city: Şehir
+        company: Şirket
+        country: Ülke
+        label: Adres adı
+        phone: Telefon
+        state: Eyalet
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount: Tercih edilen taban fiyat
+        preferred_tiers: Tercih edilen basamaklar
+      spree/calculator/tiered_percent:
+        preferred_base_percent: Tercih edilen yüzde
+        preferred_tiers: Tercih edilen basamaklar
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO İsmi
+        name: Ad
+        numcode: ISO Kodu
+      spree/credit_card:
+        cc_type: Tür
+        month: Ay
+        name: İsim Soyisim
+        number: Numara
+        verification_value: Doğrulama Kodu
+        year: Yıl
+      spree/customer_group:
+        description: Açıklama
+        name: Ad
+      spree/gift_card:
+        amount_used: Kullanılan tutar
+        expires_at: Son kullanma tarihi
+      spree/import:
+        preferred_delimiter: Ayırıcı
+      spree/import_mapping:
+        file_column: Dosya Sütunu
+        schema_field: Şema Alanı
+      spree/import_row:
+        row_number: Numara
+      spree/inventory_unit:
+        state: Eyalet
+      spree/invitation:
+        inviter: Davet eden
+      spree/line_item:
+        price: Fiyat
+        quantity: Miktar
+      spree/option_type:
+        filterable: Filtrelenebilir
+        kind: Tür
+        name: Ad
+      spree/option_value:
+        color_code: Renk Kodu
+        image: Örnek Görsel
+      spree/order:
+        checkout_complete: Ödeme Tamamlandı
+        completed_at: Tamamlanma zamanı
+        considered_risky: Riskli Olarak Belirtildi
+        coupon_code: Kupon Kodu
+        created_at: Sipariş Tarihi
+        email: Müşteri E-posta
+        internal_note: Dahili Not
+        ip_address: IP Adresi
+        item_count: Ürünler
+        item_total: Toplam Miktar
+        number: Numara
+        payment_state: Ödeme Bölgesi
+        shipment_state: Kargo Bölgesi
+        special_instructions: Özel Tanımlar
+        state: Bölge
+        total: Toplam
+      spree/order/bill_address:
+        address1: Fatura adresi, cadde
+        city: Fatura adresi, şehir
+        phone: Fatura adresi, telefon
+        state: Fatura adresi, bölge
+      spree/order/ship_address:
+        address1: Kargo adresi, cadde
+        city: Kargo adresi, şehir
+        phone: Kargo adresi, telefon
+        state: Kargo adresi, bölge
+      spree/payment:
+        amount: Miktar
+        number: Numara
+      spree/payment_method:
+        name: Ad
+      spree/policy:
+        body: İçerik
+        owner: Politika sahibi
+      spree/price_list:
+        description: Açıklama
+        ends_at: Bitiş Tarihi
+        match_policy: Eşleştirme Politikası
+        name: Ad
+        priority: Öncelik
+        starts_at: Başlangıç Tarihi
+        status: Durum
+      spree/price_rule:
+        priority: Öncelik
+        type: Tür
+      spree/product:
+        available_on: Stoğa Geliş Tarihi
+        cost_currency: Maliyet Kuru
+        cost_price: Maliyet Fiyatı
+        description: Açıklama
+        discontinue_on: Üretimden Kaldırma Tarihi
+        less_than: Şundan az
+        make_active_at: Aktifleştirme Tarihi
+        master_price: Asıl Fiyat
+        more_than: Şundan fazla
+        name: Ad
+        on_hand: Elde
+        tax_category: Vergi Türü
+      spree/promotion:
+        advertise: Duyuru
+        code: Kod
+        description: Açıklama
+        event_name: Olay Adı
+        expires_at: Bitiş Tarihi
+        generate_code: Kupon kodu oluştur
+        name: Ad
+        path: Yol
+        promotion_category: Promosyon Kategorisi
+        starts_at: Başlama Tarihi
+        usage_limit: Kullanım Limiti
+      spree/promotion_category:
+        code: Kod
+      spree/property:
+        name: Ad
+        presentation: Tanıtım
+      spree/role:
+        name: Ad
+      spree/shipment:
+        number: Numara
+      spree/state:
+        abbr: Kısaltma
+        name: Ad
+      spree/store:
+        address: Adres
+        contact_phone: İletişim Telefonu
+        preferred_digital_asset_authorized_clicks: İndirme tıklama sınırı
+        preferred_digital_asset_authorized_days: İndirme gün sınırı
+        preferred_limit_digital_download_count: Dijital bağlantı indirme sayısını sınırla
+        preferred_limit_digital_download_days: Dijital bağlantı indirme günlerini sınırla
+        seo_robots: SEO Robotları
+        storefront_custom_code_body_end: Body etiketi kapanmadan önceki Özel Kod
+        storefront_custom_code_body_start: Body etiketi açıldıktan sonraki Özel Kod
+        storefront_custom_code_head: Sayfa başlığındaki Özel Kod
+      spree/store_credit:
+        amount_used: Kullanılan tutar
+      spree/tax_category:
+        description: Açıklama
+        name: Ad
+      spree/tax_rate:
+        amount: Miktar
+        included_in_price: Fiyata Dahil
+        show_rate_in_label: Oranları etikette göster
+      spree/taxon:
+        name: Ad
+        permalink: Kalıcı Bağlantı
+        position: Konum
+        sort_order: Sıralama Düzeni
+      spree/taxonomy:
+        name: Ad
+      spree/user:
+        avatar: Avatar
+        email: E-posta
+        password: Şifre
+        password_confirmation: Şifre Tekrarı
+      spree/variant:
+        cost_currency: Maliyet Kuru
+        cost_price: Maliyet Fiyatı
+        depth: Derinlik
+        height: Yükseklik
+        price: Fiyat
+        sku: SKU
+        weight: Ağırlık
+        width: Genişlik
+      spree/zone:
+        description: Açıklama
+        name: Ad
+      user:
+        current_sign_in: Mevcut giriş zamanı
+        last_sign_in: Son giriş zamanı
+        sign_in_count: Giriş sayısı
+    errors:
+      messages:
+        blank: boş olamaz
+      models:
+        spree/allowed_origin:
+          attributes:
+            origin:
+              must_be_origin_only: yalnızca bir kaynak (şema ve ana bilgisayar) olmalıdır; yol, sorgu veya parça içermemelidir
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Kart süresi doldu
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Kullanılmış bir hediye kartı silinemez
+        spree/import:
+          attributes:
+            attachment:
+              content_type: izin verilmeyen bir içerik türüne sahip
+            type:
+              inclusion: izin verilen türler listesinde yer almıyor
+        spree/market:
+          attributes:
+            base:
+              cannot_destroy_default_market: Varsayılan pazar silinemez.
+              cannot_destroy_last_market: Tek pazar silinemez.
+        spree/market_country:
+          attributes:
+            country:
+              already_in_market: bu mağazada zaten başka bir pazara atanmış
+              not_in_shipping_zone: herhangi bir kargo bölgesi tarafından kapsanmıyor. Lütfen önce bir kargo bölgesi oluşturun.
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: izin verilen maksimum tutar olan %{max_amount} değerinden büyük
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: başlangıç tarihinden sonra olmalıdır
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Verilmiş Siparişlere eklenen Ürünler silinemez. Bu durumlarda lütfen onları üretimden kaldırın.
+            discontinue_on:
+              invalid_date_range: satışa sunulma tarihinden sonra olmalıdır
+        spree/product_publication:
+          attributes:
+            unpublished_at:
+              must_be_after_published_at: yayınlanma tarihinden sonra olmalıdır
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range: başlangıç tarihinden sonra olmalıdır
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_only_store: Tek Mağaza silinemez.
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits: Toplam krediyi aşıyor.
+            amount_used:
+              cannot_be_greater_than_amount: Tutardan büyük olamaz.
+              greater_than_zero_restrict_delete: sıfırdan büyük. Mağaza kredisi silinemez.
+        spree/user:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: başka bir kullanıcıya ait
+              deprecated_in_completed_order: tamamlanmış siparişte kullanımdan kaldırıldı
+            ship_address_id:
+              belongs_to_other_user: başka bir kullanıcıya ait
+              deprecated_in_completed_order: tamamlanmış siparişte kullanımdan kaldırıldı
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items: Verilmiş Siparişlere eklenen Çeşitler silinemez. Bu durumlarda lütfen onları üretimden kaldırın.
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: dahili veya özel bir ağ adresine işaret etmemelidir
+    models:
+      spree/address:
+        one: Adresler
+        other: Adresler
+      spree/classification:
+        one: Sınıflandırma
+        other: Sınıflandırmalar
+      spree/country:
+        one: Ülkeler
+        other: Ülkeler
+      spree/credit_card:
+        one: Kredi Kartları
+        other: Kredi Kartları
+      spree/customer_group:
+        one: Müşteri Grubu
+        other: Müşteri Grupları
+      spree/customer_group_user:
+        one: Müşteri Grubu Kullanıcısı
+        other: Müşteri Grubu Kullanıcıları
+      spree/export:
+        one: Dışa Aktarma
+        other: Dışa Aktarmalar
+      spree/integration:
+        one: Entegrasyon
+        other: Entegrasyonlar
+      spree/inventory_unit:
+        one: Stok Birimi
+        other: Envanter Birimleri
+      spree/line_item:
+        one: Kalem
+        other: Sipariş Kalemleri
+      spree/option_type:
+        one: Seçenek Türü
+        other: Seçenek Türleri
+      spree/option_value:
+        one: Seçenek Değeri
+        other: Seçenek Değerleri
+      spree/order:
+        one: Siparişler
+        other: Siparişler
+      spree/payment:
+        one: Ödemeler
+        other: Ödemeler
+      spree/payment_method:
+        one: Ödeme Yöntemi
+        other: Ödeme Yöntemleri
+      spree/price:
+        one: Fiyat
+        other: Fiyatlar
+      spree/price_list:
+        one: Fiyat Listesi
+        other: Fiyat Listeleri
+      spree/price_rule:
+        one: Fiyat Kuralı
+        other: Fiyat Kuralları
+      spree/product:
+        one: Ürünler
+        other: Ürünler
+      spree/promotion:
+        one: Promosyon
+        other: Promosyonlar
+      spree/promotion_category:
+        one: Promosyon Kategorisi
+        other: Promosyon Kategorileri
+      spree/property:
+        one: Özellikler
+        other: Özellikler
+      spree/refund_reason:
+        one: Geri ödeme sebebi
+        other: İade Nedenleri
+      spree/role:
+        one: Roller
+        other: Roller
+      spree/shipment:
+        one: Kargolar
+        other: Kargolar
+      spree/shipping_method:
+        one: Kargo Yöntemi
+        other: Kargo Yöntemleri
+      spree/state:
+        one: Bölgeler
+        other: İller
+      spree/stock_location:
+        one: Stok lokasyonu
+        other: Stok Konumları
+      spree/stock_movement:
+        one: Stok hareketi
+        other: Stok Hareketleri
+      spree/stock_transfer:
+        one: Stok transferi
+        other: Stok Transferleri
+      spree/store:
+        one: Mağaza
+        other: Mağazalar
+      spree/store_credit:
+        one: Mağaza Kredisi
+        other: Mağaza Kredileri
+      spree/tax_category:
+        one: Vergi Sınıfları
+        other: Vergi Kategorileri
+      spree/tax_rate:
+        one: Vergi Oranları
+        other: Vergi Oranları
+      spree/taxon:
+        one: Gruplar
+        other: Kategoriler
+      spree/taxonomy:
+        one: Gruplandırmalar
+        other: Kategoriler
+      spree/user:
+        one: Kullanıcılar
+        other: Kullanıcılar
+      spree/variant:
+        one: Çeşitler
+        other: Çeşitler
+      spree/zone:
+        one: Bölgeler
+        other: Bölgeler
+  errors:
+    messages:
+      already_confirmed: zaten onaylanmış
+      not_found: bulunamadı
+      not_locked: kilitli değil
+      not_saved:
+        one: '1 hata bu %{resource} kaydının kaydedilmesini engelledi:'
+        other: "%{count} hata bu %{resource} kaydının kaydedilmesini engelledi:"
+  number:
+    percentage:
+      format:
+        precision: 1
+  spree:
+    accepts_email_marketing: E-posta pazarlamasını kabul ediyor
+    account: Hesap
+    active: Etkin
+    address: Adres
+    address1: Adres
+    address2: Adres(Devamı)
+    adjustment: Fiyat ayarlamaları
+    adjustment_labels:
+      tax_rates:
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Fiyata Dahil)"
+    adjustments_deleted: Düzeltmeler Silindi
+    admin_user_mailer:
+      password_reset_email:
+        action: Parolayı Sıfırla
+        expiry_notice: Bu parola sıfırlama bağlantısının süresi yakında dolacak. Bu talebi siz göndermediyseniz herhangi bir işlem yapmanıza gerek yoktur.
+        greeting: Merhaba %{name},
+        ignore_notice: Parola sıfırlama talebinde bulunmadıysanız bu e-postayı güvenle yok sayabilirsiniz. Parolanız değiştirilmeyecektir.
+        instructions: "%{store_name} yönetici hesabınızın parolasını sıfırlamak için bir talep aldık. Yeni bir parola seçmek için aşağıdaki düğmeye tıklayın."
+        subject: Parola Sıfırlama Talimatları
+    all: Tümü
+    amount: Miktar
+    api_key_no_current_key: Bu isteğin kimliğini doğrulayan bir API anahtarı yok
+    api_key_scopes_immutable: anahtar oluşturulduktan sonra değiştirilemez; ihtiyacınız olan kapsamlarla yeni bir anahtar oluşturun ve bunu iptal edin
+    availability: uygunluk
+    backorderable: İade Edilebilir
+    bill_address: Fatura Adresi
+    billing_address: Fatura Adresi
+    calculator: Hesap Makinesi
+    canceled: İptal Edildi
+    cannot_be_destroyed: Sipariş silinemez.
+    capture: Yakala
+    cart: Sepet
+    cart_already_updated: Sepet zaten güncellendi.
+    cart_line_item:
+      delivery_unavailable: "%{li_name} seçilen adrese teslim edilemiyor"
+      discontinued: "%{li_name} üretimden kaldırıldığı için çıkarıldı"
+      out_of_stock: "%{li_name} stokta kalmadığı için çıkarıldı"
+    categories: Kategoriler
+    category: Kategori
+    channel: Satış kanalı
+    channels: Satış kanalları
+    checkout: Ödeme
+    checkout_requirements:
+      email_required: E-posta adresi gereklidir
+      line_items_required: Sepetinize en az bir ürün ekleyin
+      payment_required: Bir ödeme yöntemi ekleyin
+      ship_address_required: Kargo adresi gereklidir
+    city: Şehir
+    color_code: Renk Kodu
+    company: Şirket
+    compare_at_amount: Karşılaştırma tutarı
+    compare_at_price: Karşılaştırma fiyatı
+    complete: tamamı
+    confirm: Onay
+    cost_price: Maliyet Fiyatı
+    count_on_hand: Elde olan miktar
+    country: Ülke
+    coupon_code: Kupon kodu
+    coupon_code_already_applied: Girdiğiniz kupon kodu bu siparişe önceden uygulandı
+    coupon_code_applied: Kupon kodunuz siparişinize başarıyla uygulandı.
+    coupon_code_better_exists: Daha önce girdiğiniz kupon kodu daha kazançlıydı
+    coupon_code_expired: Kupon kodunun süresi geçmiş
+    coupon_code_max_usage: Kupon kodu kullanma limitine ulaşıldı
+    coupon_code_not_eligible: Kupon kodu bu siparişe uygulanabilir değil
+    coupon_code_not_found: Girdiğiniz kupon kodu bulunamadı. Lütfen tekrar deneyiniz.
+    coupon_code_used: Girdiğiniz kupon kodu zaten kullanılmış. Lütfen tekrar deneyin.
+    created_at: Oluşturulma zamanı
+    credit_card: Kredi Kartı
+    currency: Kur
+    currency_not_supported_by_store: bu mağaza tarafından desteklenmiyor
+    customer: Müşteri
+    customers: Müşteriler
+    default: Varsayılan
+    default_stock_location_name: Mağaza konumu
+    default_wishlist_name: İstek Listesi
+    delivery: Teslimat
+    depth: Derinlik
+    description: Açıklama
+    destination: Gideceği Yer
+    destroy: Sil
+    details: Ayrıntılar
+    digital:
+      digital_delivery: Dijital Teslimat
+    digital_assets: Dijital varlıklar
+    discontinued: Üretimden Kaldırıldı
+    discontinued_variants_present: Bu siparişteki bazı kalemlerde artık mevcut olmayan ürünler bulunuyor.
+    display_delivery_range: "%{delivery_range} iş günü içinde teslimat"
+    draft: Taslak
+    eligibility_errors:
+      messages:
+        missing_product: Ürün bulunamadı
+        missing_taxon: Sınıflandırma bulunamadı
+        no_matching_channel: Bu kupon kodu bu satış kanalı için geçerli değildir.
+        no_matching_market: Bu kupon kodu pazarınızda geçerli değildir.
+        no_matching_taxons: Eşleşen ürün yok
+        not_first_order: İlk sipariş değil
+        wrong_country: Bu kupon kodu ülkenizde geçerli değil
+    email: E-posta
+    error: hata
+    error_user_destroy_with_orders: Siparişlerle ilişkili kullanıcı silinemez
+    error_user_does_not_have_any_store_credits: Kullanıcının kullanılabilir Mağaza Kredisi yok
+    errors:
+      messages:
+        cannot_delete_default_channel: Varsayılan kanal silinemez. Önce başka bir kanalı varsayılan yapın.
+        channel_store_mismatch: aynı mağazaya ait olmalıdır
+        invalid_order_routing_rule: kayıtlı bir sipariş yönlendirme kuralı değil
+        invalid_order_routing_strategy: kayıtlı bir sipariş yönlendirme stratejisi değil
+        store_association_can_not_be_changed: Mağaza ilişkilendirmesi değiştirilemez
+        store_is_already_set: Mağaza zaten ayarlanmış
+    expired: Süresi doldu
+    export_mailer:
+      export_done:
+        message: İyi iş, dışa aktarmanız hazır! Lütfen indirmek için aşağıdaki bağlantıyı kullanın.
+        subject: "%{export_number} numaralı dışa aktarmanız başarıyla işlendi!"
+      greeting: Merhaba %{user_name},
+    field: Alan
+    first_name: İsim
+    flat_percent: Sabit Yüzde
+    flat_rate_per_order: Sabit Oran (sipariş bazlı)
+    flexible_rate: Esnek Oran
+    free: Ücretsiz
+    gateway: Yöntem
+    gateway_error: Yöntem Hatası
+    gift_card: Hediye Kartı
+    gift_card_already_redeemed: Hediye Kartı zaten kullanıldı.
+    gift_card_applied: Hediye Kartı siparişinize başarıyla uygulandı!
+    gift_card_customer_not_logged_in: Hediye Kartı misafir kullanıcıyla uygulanamaz.
+    gift_card_expired: Hediye Kartının süresi doldu.
+    gift_card_mismatched_currency: Hediye Kartı mevcut para birimiyle uygulanamaz.
+    gift_card_mismatched_customer: Bu hediye kartı başka bir kullanıcıyla ilişkilendirilmiş.
+    gift_card_not_found: Hediye Kartı bulunamadı.
+    gift_card_removed: Hediye Kartı siparişinizden başarıyla çıkarıldı
+    gift_card_using_store_credit_error: Mağaza kredisini uyguladıktan sonra Hediye Kartını uygulayamazsınız.
+    height: Yükseklik
+    i18n:
+      this_file_language: Türkçe (TR)
+    idempotency_key_reused: Bu Idempotency-Key farklı istek parametreleriyle zaten kullanıldı.
+    image: Resim
+    import: İçe Aktar
+    in_stock: Stokta
+    inactive: Pasif
+    incomplete: Tamamlanmamış
+    internal_note: Dahili Not
+    inventory: Stok
+    invitation_mailer:
+      greeting: Merhaba %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name}, %{resource_name} hesabına katılma davetinizi kabul etti"
+        subject: "%{invitee_name}, %{resource_name} hesabına katılma davetinizi kabul etti"
+      invitation_email:
+        body: "%{inviter_name} sizi %{resource_name} hesabına katılmaya davet etti"
+        link_description: 'Bu daveti kabul etmek için lütfen aşağıdaki bağlantıya tıklayın:'
+        subject: "%{resource_name} hesabına katılma daveti"
+    iso: ISO Alpha-2
+    item: Ürün
+    items_cannot_be_shipped: Seçtiğiniz ülkeye gönderim yapılamamaktadır
+    key: Anahtar
+    kind: Tür
+    label: Etiket
+    last_name: Soyisim
+    line_item: Sipariş Kalemi
+    line_items: Sipariş kalemleri
+    link: Bağlantı
+    locale: Dil
+    locale_not_supported_by_store: bu mağaza tarafından desteklenmiyor
+    manual: Manuel
+    market: Pazar
+    me_no_current_user: Bu isteğin kimliğini doğrulayan bir yönetici kullanıcısı yok
+    media: Medya
+    meta_description: Meta Açıklaması
+    meta_keywords: Meta Kelimeleri
+    meta_title: Meta Başlığı
+    metadata: Meta verisi
+    min_quantity: Min Miktar
+    month: Ay
+    name: İsim
+    new_variant: Yeni Değişken
+    no_cc_type: Yok
+    no_payment_found: Hiçbir ödeme bulunamadı
+    none: Hiçbiri
+    number: Numara
+    on_hand: Elde
+    only_active_products_can_be_added_to_cart: Taslak ve arşivlenmiş ürünler sepete eklenemez, lütfen önce ürünü aktif olarak işaretleyin.
+    open: Açık
+    option_name: Seçenek adı
+    option_type: Seçenek Tipi
+    option_value: Seçenek Değeri
+    options: Seçenekler
+    or: veya
+    order: Sipariş
+    order_routing:
+      strategies:
+        legacy: Eski
+        rules: Kurallar (sıralı)
+    order_summary: Sipariş Özeti
+    orders: Siparişler
+    out_of_stock: Stokta Yok
+    password: Şifre
+    path: Yol
+    payment: Ödeme
+    payment_method: Ödeme Yöntemi
+    payment_method_not_supported: Ödeme yöntemi desteklenmiyor
+    payment_methods: Ödeme Yöntemleri
+    payment_processing_failed: Ödeme gerçekleştirilemedi, lütfen girmiş olduğunuz bilgileri kontrol ediniz
+    payment_source: Ödeme kaynağı
+    percent: Yüzde
+    percent_per_item: Ürün Başına Yüzde
+    phone: Telefon
+    price: Fiyat
+    price_range: Fiyat Aralığı
+    price_rules:
+      channel_rule:
+        description: Satış kanalına göre fiyatlandırma uygulayın
+      customer_group_rule:
+        description: Belirli müşteri gruplarına fiyatlandırma uygula
+    price_sack: Fiyat Torbası
+    prices: Fiyatlar
+    privacy_policy: Gizlilik Politikası
+    processing: İşleniyor
+    product: Ürün
+    product_translations: Ürün Çevirileri
+    products: Ürünler
+    products_cannot_be_shipped: Şu anda %{product_names} ürününü mevcut konumunuza gönderemiyoruz. Lütfen kargo adresinizi değiştirin veya %{product_names} ürününü sepetinizden çıkarın.
+    promotion: Promosyon
+    promotion_action_types:
+      create_adjustment:
+        description: Sipariş için bir promosyon kredisi oluşturur
+        name: Kredi oluştur
+      create_line_items:
+        description: Sepeti tanımlanmış değişkenlerle doldurur
+        name: Sıralı ürünler oluştur
+    promotion_actions: Hareketler
+    promotion_already_used: Zaten uygulanmış bir promosyonu silemezsiniz
+    promotion_label: Promosyon (%{name})
+    promotion_rule_types:
+      category:
+        description: Sipariş belirtilen kategorilerdeki ürünleri içeriyor
+        name: Kategoriler
+      channel:
+        description: Belirtilen kanal(lar) üzerinden verilen siparişlerle sınırla
+        name: Kanal(lar)
+      country:
+        description: Belirli bir ülkede kargo adresi olan siparişlerle sınırla
+        name: Ülke
+      currency:
+        description: Belirli bir para birimindeki siparişlerle sınırla
+        name: Para Birimi
+      customer:
+        description: Yalnızca belirtilen müşteriler için kullanılabilir
+        name: Müşteriler
+      customer_group:
+        description: Yalnızca belirtilen müşteri grubundaki/gruplarındaki müşteriler için kullanılabilir
+        name: Müşteri Grubu/Grupları
+      customer_logged_in:
+        description: Yalnızca giriş yapmış müşteriler için kullanılabilir
+        name: Yalnızca giriş yapmış müşteriler
+      first_order:
+        description: Müşterinin ilk siparişi olmak zorundadır
+        name: İlk sipariş
+      item_total:
+        description: Sipariş toplamı bu şartları sağlamalıdır
+        name: Ürün toplamı
+      market:
+        description: Belirtilen pazar(lar)da verilen siparişlerle sınırla
+        name: Pazar(lar)
+      product:
+        description: Sipariş sadece tanımlanmış ürünleri içerir
+        name: Ürün(ler)
+    promotions: Promosyonlar
+    quantity: Miktar
+    query: Sorgu
+    reason: Sebep
+    received: Gelen
+    reference: Referans
+    refund: Geri Ödeme
+    refund_amount: İade Tutarı
+    registration: Kayıt
+    remove: Kaldır
+    remove_gift_card_on_completed_order_error: Sipariş verildikten sonra hediye kartını çıkaramazsınız
+    resellable: Yeniden satılabilir
+    resend: Tekrar Gönder
+    response_code: Yanıt Kodu
+    return: iade
+    returned: İade Edilmiş
+    returns_policy: İade Politikası
+    row: Satır
+    rules: Kurallar
+    say_no: Hayır
+    say_yes: Evet
+    scope: Kapsam
+    selected_quantity_not_available: seçilen miktar %{item} için mevcut değil.
+    ship: kargo
+    ship_address: Kargo Adresi
+    shipment: Kargo
+    shipped: Kargolanan
+    shipping: Kargolama
+    shipping_address: Kargo Adresi
+    shipping_flat_rate_per_item: Paketteki her bir ürün için sabit oran
+    shipping_flat_rate_per_order: Sabit oran
+    shipping_flexible_rate: Paketteki her bir ürün için değişken oran
+    shipping_policy: Kargo Politikası
+    shipping_price_sack: Fiyat pakedi
+    shipping_rates:
+      display_price:
+        excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (%{tax_amount} %{tax_rate_name} dahil)"
+    sku: Stok Kodu
+    slug: slug
+    source: Kaynak
+    status: Durum
+    stock_location: Stok Bölgesi
+    stock_locations: Stok Bölgeleri
+    stock_transfer:
+      errors:
+        must_have_variant: En az bir çeşit eklemelisiniz
+        same_location: hedef konumla aynı olamaz
+        variants_unavailable: Bazı çeşitler %{stock} konumunda mevcut değil
+    store: Mağaza
+    store_credit:
+      allocated: Eklendi
+      authorized: Yetkilendirildi
+      captured: Kullanıldı
+      credit: Kredi
+      eligible: Uygun
+    store_credit_name: Mağaza Kredisi
+    store_credit_payment_method:
+      currency_mismatch: Mağaza kredisi para birimi sipariş para birimiyle eşleşmiyor
+      insufficient_authorized_amount: Yetkilendirilen tutardan fazlası tahsil edilemez
+      insufficient_funds: Kalan mağaza kredisi tutarı yeterli değil
+      successful_action: Mağaza kredisi %{action} işlemi başarılı
+      unable_to_credit: 'Kod kredilendirilemedi: %{auth_code}'
+      unable_to_find: Mağaza kredisi bulunamadı
+      unable_to_find_for_action: "%{action} işlemi için %{auth_code} yetkilendirme kodlu mağaza kredisi bulunamadı"
+      unable_to_void: 'Kod iptal edilemedi: %{auth_code}'
+    tags: Etiketler
+    tax: Vergi
+    tax_category: Vergi Sınıfı
+    terms_of_service: Hizmet Şartları
+    total: Toplam
+    track_inventory: Stoğu takip et
+    tracking: Takip
+    tracking_number: Takip Numarası
+    tracking_url: Takip URL'si
+    type: Tip
+    unable_to_connect_to_gateway: Ödeme sağlayıcıya bağlanılamıyor.
+    updated_at: Güncellenme tarihi
+    url: URL
+    user: Kullanıcı
+    validation:
+      must_be_int: bir sayı olmak zorundadır
+    value: Değer
+    variant: Değişken
+    variants: Değişkenler
+    verified: Doğrulandı
+    void: Geçersiz
+    webhook_mailer:
+      endpoint_disabled:
+        disabled_at_label: Devre dışı bırakılma tarihi
+        heading: Webhook Uç Noktası Devre Dışı Bırakıldı
+        instructions: Lütfen uç nokta URL'sini ve hizmeti kontrol edin, ardından Ayarlar → Geliştiriciler → Webhook'lar bölümünden yeniden etkinleştirin.
+        message: '"%{endpoint_name}" webhook uç noktası, tekrarlanan teslimat hatalarının ardından otomatik olarak devre dışı bırakıldı.'
+        name_label: Ad
+        reason_label: Neden
+        subject: 'Webhook uç noktası devre dışı bırakıldı: %{endpoint_name}'
+        url_label: URL
+    weight: Ağırlık
+    weight_unit: Ağırlık birimi
+    width: Genişlik
+    year: Yıl
+    zip: Posta Kodu

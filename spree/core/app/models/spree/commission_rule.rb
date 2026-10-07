@@ -49,12 +49,12 @@ module Spree
 
     # @return [String] the name an operator picks this rule kind by
     def self.human_name
-      Spree.t("commission_rule_types.#{api_type}.name", default: name.demodulize.titleize)
+      I18n.t("spree.commission_rule_types.#{api_type}.name", default: name.demodulize.titleize)
     end
 
     # @return [String] what the rule does, shown beside the name in the picker
     def self.description
-      Spree.t("commission_rule_types.#{api_type}.description", default: '')
+      I18n.t("spree.commission_rule_types.#{api_type}.description", default: '')
     end
 
     # Whether this rule admits the sale.
@@ -71,7 +71,7 @@ module Spree
       return if type.blank?
       return if Spree.commission_rules.any? { |rule| rule.to_s == type }
 
-      errors.add(:type, :invalid_commission_rule, message: Spree.t('errors.messages.invalid_commission_rule'))
+      errors.add(:type, :invalid_commission_rule, message: I18n.t('spree.errors.messages.invalid_commission_rule'))
     end
   end
 end

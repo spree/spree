@@ -32,7 +32,7 @@ module Spree
         workflow.errors.add(
           :base,
           :outside_return_window,
-          message: Spree.t('return_errors.outside_window', days: window)
+          message: I18n.t('spree.return_errors.outside_window', days: window)
         )
         workflow.reject!
       end

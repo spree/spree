@@ -25,6 +25,8 @@ module Spree
     MEMOIZED_METHODS = %w[onboarding_requirements onboarding_progress products_count returns_location].freeze
 
     publishes_lifecycle_events
+    publishes_events :approved, :invited, :onboarding_reopened, :onboarding_started, :rejected,
+                     :submitted_for_review, :suspended
 
     # Where a seller is in its life on the marketplace. Transitions belong to
     # workflows (Spree::Sellers::Approve and friends) rather than a state

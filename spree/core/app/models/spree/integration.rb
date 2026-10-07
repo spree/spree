@@ -10,6 +10,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::PreferenceSchema
+    include Spree::SecretPreferences
+    include Spree::ProviderListing
+
 
     # Spree::Current.integrations snapshots the active set for the request;
     # connecting or deactivating one mid-request (the activate-and-verify
@@ -58,22 +61,9 @@ module Spree
     attr_accessor :connection_error_message
 
     # Associates the integration to a group.
-    # The name here will be used as Spree.t key to display the group name.
+    # The name is read as a translation key under +spree.+ to display the group name.
     # Leave blank to leave the integration ungrouped.
     def self.integration_group
-      nil
-    end
-
-    # Logo shown on the gallery card: an absolute URL to publicly hosted
-    # brand assets, or a `data:` URI for gems that want to be self-contained
-    # (works air-gapped, no CSP domain to allowlist). Anything an `<img src>`
-    # accepts. Deliberately not an asset-pipeline path — integration gems
-    # must not force an asset pipeline onto headless API hosts. Hosted logos
-    # are a courtesy, not a guarantee: the dashboard falls back to a letter
-    # avatar when unset or unreachable.
-    #
-    # @return [String, nil]
-    def self.logo_url
       nil
     end
 
@@ -92,7 +82,7 @@ module Spree
     #
     # @return [String, nil]
     def self.human_description
-      Spree.t("integrations.#{api_type}.description", default: description)
+      I18n.t("spree.integrations.#{api_type}.description", default: description)
     end
 
     # Wire entries for the admin types-discovery endpoint — every registered
@@ -107,7 +97,7 @@ module Spree
           name: klass.integration_name,
           group: klass.integration_group,
           description: klass.human_description,
-          logo_url: klass.logo_url,
+          **klass.provider_listing,
           preference_schema: klass.serialized_preference_schema
         }
       end.sort_by { |entry| entry[:name] }
@@ -172,7 +162,7 @@ module Spree
       return if Spree.integrations.empty?
       return if Spree.integrations.map(&:to_s).include?(type)
 
-      errors.add(:type, :integration_type_not_registered, message: Spree.t('errors.messages.integration_type_not_registered'))
+      errors.add(:type, :integration_type_not_registered, message: I18n.t('spree.errors.messages.integration_type_not_registered'))
     end
 
     # On :base, not :active — the seller's message ("This api key is no
@@ -182,7 +172,7 @@ module Spree
     def must_connect_when_activating
       return if can_connect?
 
-      errors.add(:base, connection_error_message.presence || Spree.t('errors.messages.integration_connection_failed'))
+      errors.add(:base, connection_error_message.presence || I18n.t('spree.errors.messages.integration_connection_failed'))
     end
   end
 end

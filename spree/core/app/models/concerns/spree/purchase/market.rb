@@ -63,8 +63,8 @@ module Spree
 
       # @return [String] what the buyer has to change, naming the country and the market
       def ship_address_outside_market_message
-        Spree.t('checkout_requirements.ship_address_outside_market',
-                country: ship_address.country_name || ship_address.country_code, market: market.name)
+        I18n.t('spree.checkout_requirements.ship_address_outside_market',
+               country: ship_address.country_name || ship_address.country_code, market: market.name)
       end
 
       private

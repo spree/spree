@@ -49,6 +49,11 @@ export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZon
 export { DigitalAssetSchema, type DigitalAsset } from './DigitalAsset';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';
+export { EmailTemplateSchema, type EmailTemplate } from './EmailTemplate';
+export { EmailTemplateDraftSchema, type EmailTemplateDraft } from './EmailTemplateDraft';
+export { EmailTemplatePreviewSchema, type EmailTemplatePreview } from './EmailTemplatePreview';
+export { EmailTemplateRevisionSchema, type EmailTemplateRevision } from './EmailTemplateRevision';
+export { EmailTemplateSampleRecordSchema, type EmailTemplateSampleRecord } from './EmailTemplateSampleRecord';
 export { ExchangeSchema, type Exchange } from './Exchange';
 export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { ExportSchema, type Export } from './Export';
@@ -137,3 +142,4 @@ export { TaxRateSchema, type TaxRate } from './TaxRate';
 export { VariantSchema, type Variant } from './Variant';
 export { WebhookDeliverySchema, type WebhookDelivery } from './WebhookDelivery';
 export { WebhookEndpointSchema, type WebhookEndpoint } from './WebhookEndpoint';
+export { WebhookEventSchema, type WebhookEvent } from './WebhookEvent';

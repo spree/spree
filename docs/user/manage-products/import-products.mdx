@@ -84,3 +84,5 @@ This is the safest and most efficient way to make large-scale updates to product
 
 <Note>If your store sells in multiple currencies, your exported file will include additional price-only rows for each currency. See [<u>Multi-Currency Import/Export</u>](https://spreecommerce.org/docs/user/manage-products/multi-currency-import-export) for details on how these rows work.</Note>
 
+<Note>If a product is stocked at more than one location, the first row carries the stock at your default location and the file includes an extra stock-only row for each other location, named in the **stock_location** column. Importing the file sets the stock at each named location. Keep the location names as they are: a row naming a location that no longer exists, for example after a rename, is reported as failed and changes nothing.</Note>
+

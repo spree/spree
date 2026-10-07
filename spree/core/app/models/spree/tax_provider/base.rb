@@ -59,8 +59,8 @@ module Spree
         unsupported_capabilities.map do |capability|
           {
             key: capability.to_s,
-            label: Spree.t("tax_capabilities.#{capability}.label", default: capability.to_s.humanize),
-            description: Spree.t("tax_capabilities.#{capability}.description", default: nil)
+            label: I18n.t("spree.tax_capabilities.#{capability}.label", default: capability.to_s.humanize),
+            description: I18n.t("spree.tax_capabilities.#{capability}.description", default: nil)
           }.compact
         end
       end

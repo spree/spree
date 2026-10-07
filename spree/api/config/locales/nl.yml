@@ -1,0 +1,15 @@
+---
+nl:
+  spree:
+    api:
+      cannot_delete: "%{model} kan niet worden verwijderd"
+      current_password_invalid: Huidig wachtwoord is ongeldig of ontbreekt
+      newsletter_verification_token_invalid: Het verificatietoken voor de nieuwsbrief is ongeldig of verlopen.
+      password_reset_requested: Als er een account voor dat e-mailadres bestaat, zijn er instructies om het wachtwoord te resetten verzonden.
+      password_reset_token_invalid: Het token om het wachtwoord te resetten is ongeldig of verlopen.
+      record_not_found: "%{model} niet gevonden"
+      unauthorized: Je bent niet bevoegd om die actie uit te voeren.
+      v3:
+        payments:
+          method_unavailable: Deze betaalmethode is niet beschikbaar voor deze bestelling.
+          session_required: Deze betaalmethode vereist een betaalsessie. Gebruik in plaats daarvan het endpoint voor betaalsessies.

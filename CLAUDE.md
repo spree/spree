@@ -190,6 +190,7 @@ end
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
 - Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
+- `preferences` columns are JSON, never `text` — YAML preferences are converted in 6.0 (see `docs/plans/6.0-json-preferences.md`); hash preferences never use number keys; secrets are `:password` preferences, stored encrypted in a `secret_preferences` `text` column
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
@@ -422,6 +423,8 @@ end
 
 For new models, add `publishes_lifecycle_events` concern and create an event serializer.
 
+Webhook payloads use Store serializers only — never a hand-built hash, never an Admin serializer; extra facts go in `metadata`. Every event is being moved to a declared catalog (see `docs/plans/6.0-typed-webhook-events.md`).
+
 ### Emails (Liquid + MJML)
 
 Every email renders from a Liquid template written in MJML, never ERB. See `docs/plans/6.0-liquid-mjml-emails.md` and `docs/developer/customization/emails.mdx`.
@@ -432,6 +435,9 @@ Every email renders from a Liquid template written in MJML, never ERB. See `docs
 - **In templates**: output is HTML-escaped automatically (`| raw` only for HTML sanitized on write). Filters: `money`, `money_with_currency`, `date` (store time zone), `t` (Spree translation keys, so one template serves every language). An unknown variable raises in development and test.
 - **When you add or change an email**: if customers receive it, update `docs/developer/customization/email-variables.mdx` by hand with its variables, add it to `spree/emails/spec/mailers/spree/rendered_emails_spec.rb`, and give it a mailer preview (shown at `/rails/mailers` in development) in `spree/emails/lib/spree/emails/previews/` or, for staff emails, `spree/core/lib/spree/core/previews/`.
 - **Don't** add ERB email views, mailer view helpers, or model calls from templates. Apps' own mailers that call `mail` with ERB views still work: `layouts/spree/base_mailer.html.erb` wraps them in the Liquid layout.
+- **Merchants edit customer emails in the dashboard** (`docs/plans/6.0-email-template-editor.md`). A store's published version is found before the file, per language. A new **customer** email must be registered in `Spree.editable_email_templates` (in `spree/emails/lib/spree/emails/engine.rb`) with a sample builder in `spree/emails/app/services/spree/emails/samples/`, and added to the dashboard's variables manifest; never register staff, store-owner or seller emails. Changing a default template shows merchants who customized it an "updated by Spree" notice, so change defaults deliberately.
+- **Every record a customer email serializes has an email serializer of its own** in `spree/emails/app/serializers/spree/emails/` (a thin subclass of the Store API one is fine), and email serializers point their associations at those. The generated `Email*` types then describe exactly what templates receive, and the editor suggests variables from their Zod schemas; an association pointing at a Store API serializer leaks its types into the email ones.
+- **Colors and fonts come from `store.branding`**, never hard-coded in a customer template. Generate types with `cd spree/api && bundle exec rake typelizer:generate`, which runs inside `spree_emails` so the API and email serializers both load.
 
 ### API Authentication
 
@@ -472,7 +478,8 @@ Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
 
 ### I18n
 
-- Use `Spree.t` for translations
+- Use `I18n.t('spree.<key>')` with the full key for translations — `Spree.t` is deprecated (see `docs/plans/6.0-translations-in-core.md`)
+- Before removing a translation key `i18n-tasks unused` reports, check it is not passed around as a string or built from a value (`"spree.#{name}"`) — the checker cannot see either
 - Keep translations in `config/locales/en.yml` — no duplication across files
 
 ### Time zones
@@ -747,6 +754,7 @@ Re-run `parallel_setup` after schema changes (`scripts/test/rspec <engine>` does
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
 - Time-based tests: use `Timecop`
+- NEVER update or save the shared default store (`@default_store`) in specs — it outlives the example, so the change leaks into other specs. Stub what the code reads (`allow(Spree::Store).to receive(:default).and_return(build(:store, ...))`) or create a separate store
 - Don't over-engineer or repeat tests
 - Fold specs into the existing describe blocks, use context blocks for different scenarios, NEVER create new test files for a single new scenario unless it is a completely new feature
 

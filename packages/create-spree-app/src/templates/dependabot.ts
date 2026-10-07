@@ -40,7 +40,11 @@ function ecosystemBlock({ comment, ecosystem, directory, group }: Ecosystem): st
  * toggle in the repo's Settings → Advanced Security; the config only groups
  * them.
  */
-export function dependabotContent(hasStorefront: boolean, hasDashboard = false): string {
+export function dependabotContent(
+  hasStorefront: boolean,
+  hasDashboard = false,
+  hasSellerDashboard = false,
+): string {
   const ecosystems: Ecosystem[] = [
     {
       comment: 'Root wrapper (@spree/cli, @spree/docs)',
@@ -73,10 +77,19 @@ export function dependabotContent(hasStorefront: boolean, hasDashboard = false):
 
   if (hasDashboard) {
     ecosystems.push({
-      comment: 'React Dashboard',
+      comment: 'Admin Dashboard',
       ecosystem: 'npm',
       directory: '/apps/dashboard',
       group: 'dashboard',
+    })
+  }
+
+  if (hasSellerDashboard) {
+    ecosystems.push({
+      comment: 'Seller Panel',
+      ecosystem: 'npm',
+      directory: '/apps/seller-dashboard',
+      group: 'seller-dashboard',
     })
   }
 

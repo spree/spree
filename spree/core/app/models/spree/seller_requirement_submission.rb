@@ -16,6 +16,7 @@ module Spree
     has_prefix_id :selsub
 
     publishes_lifecycle_events
+    publishes_events :accepted, :created, :rejected, :waived
 
     # `waived` is the operator excusing one seller from something the store
     # asks of everyone — a requirement they have already satisfied off the
@@ -84,8 +85,7 @@ module Spree
       return if seller.nil? || requirement.nil?
       return if seller.store_id == requirement.store_id
 
-      errors.add(:requirement, :seller_requirement_store_mismatch, message: Spree.t('errors.messages.seller_requirement_store_mismatch',
-                                       default: 'must belong to the same store as the seller'))
+      errors.add(:requirement, :seller_requirement_store_mismatch, message: I18n.t('spree.errors.messages.seller_requirement_store_mismatch'))
     end
   end
 end

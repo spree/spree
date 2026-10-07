@@ -134,6 +134,12 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       expect(location.country_code).to eq('DE')
       expect(location).to be_active
     end
+
+    it 'reuses the default location whatever it is called' do
+      store.default_stock_location.update!(name: 'Lager Berlin')
+
+      expect { subject }.not_to change { store.stock_locations.first_party.count }
+    end
   end
 
   describe 'the delivery zones' do
@@ -165,9 +171,17 @@ RSpec.describe Spree::Stores::ProvisionDefaults do
       store.reload
       expect(store.stock_locations.where(pickup_enabled: true)).to exist
 
-      pickup = store.delivery_methods.find_by(name: Spree.t('pickup.store_pickup'))
+      pickup = store.delivery_methods.find_by(name: I18n.t('spree.pickup.store_pickup'))
       expect(pickup.fulfillment_provider).to eq('Spree::FulfillmentProvider::Pickup')
       expect(pickup.calculator.preferred_currency).to eq('EUR')
+    end
+
+    it 'reuses the pickup method whatever it is called' do
+      subject
+      store.delivery_methods.find_by(fulfillment_provider: 'Spree::FulfillmentProvider::Pickup').update!(name: 'Abholung')
+
+      expect { described_class.call(store: store, country: country, locale: locale) }.
+        not_to change { store.delivery_methods.count }
     end
   end
 

@@ -17,6 +17,7 @@ module Spree
       'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
 
     publishes_lifecycle_events
+    publishes_events :completed, :progress
 
     # Set event prefix for all Import subclasses
     # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
@@ -325,7 +326,7 @@ module Spree
     # Returns the display name for the import
     # @return [String]
     def display_name
-      "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
+      "#{self.class.model_name.human(count: 2)} #{number}"
     end
 
     # Returns the headers of the csv file

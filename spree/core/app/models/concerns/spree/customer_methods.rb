@@ -20,8 +20,10 @@ module Spree
       # 2026-03-16 "Consolidate metadata") — no public/private split.
       attribute :metadata, default: -> { {} }
 
-      # Enable lifecycle events for user models
       publishes_lifecycle_events
+      publishes_events 'customer.password_reset', 'customer.anonymized'
+      publishes_event 'customer.password_reset_requested',
+                      serializer: 'Spree::Api::V3::PasswordResetRequestedEventSerializer', credential: 'write_customers'
 
       # Password reset token (Rails 7.1+ signed token, no DB column needed)
       # Token auto-invalidates when password changes (salt changes)
@@ -275,6 +277,16 @@ module Spree
       end
     end
 
+    class_methods do
+      # Customer lifecycle events are `user.*`; an installation whose staff
+      # class shares these methods publishes theirs as `admin.*`.
+      #
+      # @return [String]
+      def event_prefix
+        self == Spree.admin_user_class && Spree.admin_user_class != Spree.customer_class ? 'admin' : 'user'
+      end
+    end
+
     # Returns the last incomplete spree order for the current store
     # @deprecated Carts are {Spree::Cart} since 6.0, so an incomplete order is
     #   a backoffice draft rather than the customer's cart. Use
@@ -334,7 +346,7 @@ module Spree
     # @return [Spree::Wishlist]
     def default_wishlist_for_store(current_store)
       wishlists.find_by(is_default: true, store_id: current_store.id) || ActiveRecord::Base.connected_to(role: :writing) do
-        wishlists.create!(store: current_store, is_default: true, name: Spree.t(:default_wishlist_name))
+        wishlists.create!(store: current_store, is_default: true, name: I18n.t('spree.default_wishlist_name'))
       end
     end
 
@@ -363,14 +375,6 @@ module Spree
 
     def event_serializer_class
       'Spree::Api::V3::CustomerSerializer'.safe_constantize
-    end
-
-    def event_prefix
-      if self.class == Spree.admin_user_class && Spree.admin_user_class != Spree.customer_class
-        'admin'
-      else
-        'user'
-      end
     end
 
     # @param store [Spree::Store] store to scope the lookup to; defaults to the current store

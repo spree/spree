@@ -127,7 +127,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
 
     # Only a quantity change moves units between counters, so re-pointing a
@@ -135,7 +135,7 @@ module Spree
     # missing from the new. A hold that belongs elsewhere is released and
     # taken again, never moved.
     def stock_level_unchanged
-      errors.add(:stock_level_id, :immutable, message: Spree.t('errors.messages.stock_level_immutable')) if stock_level_id_changed?
+      errors.add(:stock_level_id, :immutable, message: I18n.t('spree.errors.messages.stock_level_immutable')) if stock_level_id_changed?
     end
   end
 end

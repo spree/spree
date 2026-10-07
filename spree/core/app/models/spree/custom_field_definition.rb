@@ -174,7 +174,7 @@ module Spree
 
       tokens = Spree::CustomField::TYPE_TOKENS.keys.join(', ')
       errors.add(:field_type, :unknown_custom_field_type, types: tokens,
-                 message: Spree.t('errors.messages.unknown_custom_field_type', types: tokens))
+                 message: I18n.t('spree.errors.messages.unknown_custom_field_type', types: tokens))
     end
 
     # Validates the stored class name, not the token the reader returns.

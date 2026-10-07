@@ -1,0 +1,15 @@
+---
+ca:
+  spree:
+    api:
+      cannot_delete: No es pot eliminar %{model}
+      current_password_invalid: La contrasenya actual no és vàlida o falta
+      newsletter_verification_token_invalid: El token de verificació del butlletí no és vàlid o ha caducat.
+      password_reset_requested: Si existeix un compte per a aquest correu electrònic, s'han enviat les instruccions per restablir la contrasenya.
+      password_reset_token_invalid: El token de restabliment de contrasenya no és vàlid o ha caducat.
+      record_not_found: No s'ha trobat %{model}
+      unauthorized: No teniu autorització per dur a terme aquesta acció.
+      v3:
+        payments:
+          method_unavailable: Aquest mètode de pagament no està disponible per a aquesta comanda.
+          session_required: Aquest mètode de pagament requereix una sessió de pagament. Utilitzeu el punt de connexió de sessions de pagament.
