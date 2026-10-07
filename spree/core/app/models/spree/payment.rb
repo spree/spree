@@ -547,7 +547,7 @@ module Spree
     end
 
     def add_source_error(field, message)
-      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+      field_name = source.class.human_attribute_name(field)
       errors.add(I18n.t("spree.#{source.class.to_s.demodulize.underscore}"), "#{field_name} #{message}")
     end
 
