@@ -94,6 +94,21 @@ RSpec.describe 'Admin OAuth consent', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  # A scope governing credentials rather than commerce is not offered, and
+  # the MCP spec tells a client to request everything it was once told
+  # about — so refusing the whole request would lock out any client that
+  # discovered the catalogue before a scope was withdrawn.
+  describe 'a scope this server does not offer' do
+    it 'is dropped rather than failing the request' do
+      admin = create(:admin_user)
+
+      approve(admin, scope: 'read_products write_api_keys read_staff')
+
+      expect(response).to have_http_status(:ok)
+      expect(Spree::OauthAccessGrant.order(:id).last.scopes.to_a).to contain_exactly('read_products')
+    end
+  end
+
   # The merchant may hand over less than was asked for; that choice has to
   # survive, or the checkboxes are decoration.
   it 'honours a narrower selection than the client requested' do

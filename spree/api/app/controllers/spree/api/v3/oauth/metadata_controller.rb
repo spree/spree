@@ -29,11 +29,14 @@ module Spree
             render json: {
               resource: resource,
               authorization_servers: [issuer],
-              # Staff keys only: a grant acts for an admin user, so a
-              # seller-only key could never be exercised through it.
-              scopes_supported: Spree.permissions.grantable_keys(
-                Spree::PermissionConfiguration::STAFF_AUDIENCE
-              ),
+              # Exactly what the authorization server will accept.
+              #
+              # The spec tells a client with no scope challenge to request
+              # everything advertised here, and Doorkeeper refuses a request
+              # naming a scope it does not know — so advertising one more
+              # than it accepts turns every connection into "The requested
+              # scope is invalid".
+              scopes_supported: Spree::Api::Oauth.staff_scope_keys,
               bearer_methods_supported: ['header'],
               resource_documentation: 'https://spreecommerce.org/docs/developer/agentic/admin-mcp'
             }
