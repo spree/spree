@@ -4095,11 +4095,16 @@
             "name": "Agent",
             "access": "Zugriff",
             "authorized_by": "Genehmigt von",
-            "last_authorized": "Letzte Autorisierung"
+            "last_authorized": "Letzte Autorisierung",
+            "status": "Status"
           },
           "revoke_confirm": {
             "title": "Zugriff widerrufen?",
             "message": "{{name}} funktioniert ab sofort nicht mehr. Wer es nutzt, muss sich erneut verbinden."
+          },
+          "status": {
+            "connected": "Verbunden",
+            "not_connected": "Nicht verbunden"
           }
         },
         "oauth_clients": {

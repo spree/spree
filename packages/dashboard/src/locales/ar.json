@@ -4123,11 +4123,16 @@
             "name": "الوكيل",
             "access": "الوصول",
             "authorized_by": "وافق عليه",
-            "last_authorized": "آخر تفويض"
+            "last_authorized": "آخر تفويض",
+            "status": "الحالة"
           },
           "revoke_confirm": {
             "title": "إلغاء الوصول؟",
             "message": "سيتوقف {{name}} عن العمل فورًا. وسيحتاج أي شخص يستخدمه إلى الاتصال من جديد."
+          },
+          "status": {
+            "connected": "متصل",
+            "not_connected": "غير متصل"
           }
         },
         "oauth_clients": {

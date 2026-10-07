@@ -15,6 +15,7 @@ module Spree
         class OauthApplicationSerializer < V3::BaseSerializer
           typelize name: :string,
                    client_id: :string,
+                   connected: :boolean,
                    scopes: [:string, multi: true],
                    last_authorized_at: [:string, nullable: true],
                    authorized_at: [:string, nullable: true],
@@ -24,6 +25,11 @@ module Spree
           attributes :name, :redirect_uri, created_at: :iso8601, updated_at: :iso8601
 
           attribute :client_id, &:uid
+
+          # A registration nobody has connected and one whose access was
+          # revoked both carry no scopes, so the list alone cannot tell them
+          # apart — and a merchant pressing Revoke has to see that it worked.
+          attribute :connected, &:connected?
 
           attribute :scopes do |application|
             application.live_token_scopes
