@@ -19,4 +19,8 @@ search:
     - 'lib'
 
 # The PatternMapper for Spree.t
-<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>
+# Email templates translate Spree keys with Liquid's `t` filter, and shared
+# partials take a key to translate (`label: 'some.key', translate: true`).
+<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
+      only: %w(*.liquid),
+      patterns: [['%{key}\s*\|\s*t\b', 'spree.%{key}'], ['\blabel:\s*%{key}', 'spree.%{key}']] %>
