@@ -272,7 +272,7 @@ module Spree
             store.stock_locations.where(seller_id: owner_ids).
               order(Arel.sql('CASE WHEN seller_id IS NULL THEN 1 ELSE 0 END')).
               find_by(name_column.lower.eq(Arel::Nodes::NamedFunction.new('LOWER', [Arel::Nodes.build_quoted(name)])))
-          end || raise(ArgumentError, Spree.t(:product_import_unknown_stock_location, name: name))
+          end || raise(ArgumentError, I18n.t('spree.product_import_unknown_stock_location', name: name))
         end
 
         # A seller reaches only their own locations — never the marketplace's

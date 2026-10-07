@@ -48,7 +48,7 @@ module Spree
         end
         cart.warnings |= warnings if warnings.present?
 
-        failure(cart, Spree.t('cart_line_item.pricing_unavailable'))
+        failure(cart, I18n.t('spree.cart_line_item.pricing_unavailable'))
       rescue ActiveRecord::RecordInvalid => e
         failure(cart, e.record.errors.full_messages.to_sentence)
       rescue StandardError => e
@@ -110,7 +110,7 @@ module Spree
           cart.po_document.attach(value)
         end
       rescue ActiveStorage::FileNotFoundError
-        cart.errors.add(:po_document, :po_document_upload_incomplete, message: Spree.t(:po_document_upload_incomplete))
+        cart.errors.add(:po_document, :po_document_upload_incomplete, message: I18n.t('spree.po_document_upload_incomplete'))
         raise ActiveRecord::RecordInvalid, cart
       end
 

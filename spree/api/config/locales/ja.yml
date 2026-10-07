@@ -1,0 +1,15 @@
+---
+ja:
+  spree:
+    api:
+      cannot_delete: "%{model}を削除できません"
+      current_password_invalid: 現在のパスワードが無効か、入力されていません
+      newsletter_verification_token_invalid: ニュースレターの確認トークンが無効か、有効期限が切れています。
+      password_reset_requested: そのメールアドレスのアカウントが存在する場合、パスワードリセットの手順を送信しました。
+      password_reset_token_invalid: パスワードリセットのトークンが無効か、有効期限が切れています。
+      record_not_found: "%{model}が見つかりません"
+      unauthorized: その操作を実行する権限がありません。
+      v3:
+        payments:
+          method_unavailable: この支払い方法はこの注文では利用できません。
+          session_required: この支払い方法には支払いセッションが必要です。代わりに支払いセッションのエンドポイントを使用してください。

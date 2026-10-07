@@ -91,7 +91,7 @@ module Spree
         # release gateway data, and hand back success, for a row that is still
         # fully identified.
         unless committed
-          return failure(customer, Spree.t('customer_errors.anonymize_failed'))
+          return failure(customer, I18n.t('spree.customer_errors.anonymize_failed'))
         end
 
         purge_collected_attachments

@@ -26,7 +26,7 @@ module Spree
       def ensure_closable
         return if receivable.partially_received?
 
-        failure(receivable, Spree.t("#{receivable.event_prefix}.errors.not_partially_received"))
+        failure(receivable, I18n.t("spree.#{receivable.event_prefix}.errors.not_partially_received"))
       end
 
       # The balance is not coming, so it leaves the destination's incoming

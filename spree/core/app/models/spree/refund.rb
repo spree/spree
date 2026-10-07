@@ -180,15 +180,15 @@ module Spree
       if response.success?
         track_order_as_refunded(refund_total_in_cents)
       else
-        Rails.logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
+        Rails.logger.error(I18n.t('spree.gateway_error') + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
         raise Core::GatewayError, text
       end
 
       response
     rescue Spree::PaymentConnectionError => e
-      Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
-      raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
+      Rails.logger.error(I18n.t('spree.gateway_error') + "  #{e.inspect}")
+      raise Core::GatewayError, I18n.t('spree.unable_to_connect_to_gateway')
     end
 
     def calculate_refund_amount(credit_cents)

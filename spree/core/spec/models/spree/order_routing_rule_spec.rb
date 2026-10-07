@@ -32,7 +32,7 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
       )
 
       expect(rule).not_to be_valid
-      expect(rule.errors[:channel]).to include(Spree.t('errors.messages.channel_store_mismatch'))
+      expect(rule.errors[:channel]).to include(I18n.t('spree.errors.messages.channel_store_mismatch'))
     end
 
     it 'rejects a present-but-unregistered STI type' do

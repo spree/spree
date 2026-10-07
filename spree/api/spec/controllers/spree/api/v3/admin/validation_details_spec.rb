@@ -21,7 +21,7 @@ class Spree::Api::V3::Admin::ValidationProbeController < Spree::Api::V3::Admin::
     # A Spree code: its copy lives under `spree.errors.messages`, where Rails
     # never looks for a default. The message is still that code's own text.
     probe.errors.add(:seller, :seller_delivery_method_provider,
-                     message: Spree.t('errors.messages.seller_delivery_method_provider'))
+                     message: I18n.t('spree.errors.messages.seller_delivery_method_provider'))
     # A Rails code whose default interpolates, added with a message but
     # without the value that default wants.
     probe.errors.add(:weight, :greater_than, message: 'must be more than zero')

@@ -181,9 +181,9 @@ module Spree
           def render_unsupported_type
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
-              message: Spree.t(
-                'api.errors.unsupported_export_type',
-                default: "Unsupported export type. Supported types: #{ALLOWED_TYPES.join(', ')}"
+              message: I18n.t(
+                'spree.api.errors.unsupported_export_type',
+                types: ALLOWED_TYPES.join(', ')
               ),
               status: :unprocessable_content
             )

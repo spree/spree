@@ -10,7 +10,7 @@ describe Spree::AdminUserMailer, type: :mailer do
       message = described_class.password_reset_email(admin_user, token, store)
 
       expect(message.to).to eq(['admin@example.com'])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}")
+      expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject')}")
     end
 
     it 'links with the reset token' do
@@ -80,15 +80,12 @@ describe Spree::AdminUserMailer, type: :mailer do
       around do |example|
         previous = I18n.available_locales
         I18n.available_locales = previous | [:pl]
-        I18n.backend.store_translations(
-          :pl,
-          spree: { admin_user_mailer: { password_reset_email: { subject: 'Instrukcja resetu hasła' } } }
-        )
         example.run
       ensure
         I18n.available_locales = previous
-        I18n.backend.reload!
       end
+
+      let(:polish_subject) { "#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject', locale: :pl)}" }
 
       # @default_store is shared across the suite — examples that set its
       # admin locale must put it back or they leak into later examples.
@@ -102,7 +99,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} Instrukcja resetu hasła")
+        expect(message.subject).to eq(polish_subject)
       end
 
       it 'falls back to the store admin locale when the admin has none' do
@@ -111,7 +108,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} Instrukcja resetu hasła")
+        expect(message.subject).to eq(polish_subject)
       end
 
       it 'prefers the admin selected locale over the store admin locale' do
@@ -121,7 +118,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject', locale: :en)}")
+        expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject', locale: :en)}")
       end
 
       it 'falls back to the store default locale for blank or unavailable values' do
@@ -129,7 +126,7 @@ describe Spree::AdminUserMailer, type: :mailer do
 
         message = described_class.password_reset_email(admin_user, token, store)
 
-        expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}")
+        expect(message.subject).to eq("#{store.name} #{I18n.t('spree.admin_user_mailer.password_reset_email.subject')}")
       end
     end
   end

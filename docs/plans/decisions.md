@@ -1,3 +1,13 @@
+## 2026-10-07: Translations move into core, and `Spree.t` is deprecated for `I18n.t`
+
+**Context:** `Spree.t` ran through Rails' view translation helper, so it needed Action View and returned `<span class="translation_missing">` markup for a missing key, which leaked into JSON errors and dashboard notifications. Every language but English lived in `spree_i18n`: 6.5 MB of locale files, about 60% for the removed admin and storefront, plus `kaminari-i18n` (which requires the full `rails` gem), `i18n_data` (which swaps the global `I18n.backend`) and `spree_extension`.
+
+**Decision:** Core calls `I18n.t` with full keys (`I18n.t('spree.free')`). `Spree.t` stays until 6.1 as a deprecated one-line proxy onto `I18n.t`, with no Action View and no HTML. The translations still used by core, the API and emails move into those gems' `config/locales`, trimmed to keys English has, after dead English keys are pruned. `rails-i18n` becomes a `spree_core` dependency; `i18n_data`, `kaminari-i18n` and `spree_extension` are dropped. Untranslated keys fall back to English: core sets `[:en]` when the app configured nothing and appends English to Rails' generated `fallbacks = true`. Regional English is not shipped; other regional variants keep only their differences. Spree's own specs raise on a missing key. `spree_i18n` gets an empty 6.0.0 release that warns, then is archived.
+
+**Consequences:** Every install gets 43 languages besides English without an extra gem; regional English falls back to `en`. A missing key is plain text in production. Extensions calling `Spree.t` keep working with a warning. Removing a key the checker reports unused is a reviewed step: it cannot see keys passed around as strings or built from a value one level under `spree`.
+
+**Plan:** `6.0-translations-in-core.md`.
+
 ## 2026-10-04: Creating a payment session always opens a new one
 
 **Context:** Handing back the cart's open Stripe session and re-pricing it (2026-09-30) drifts from the intent Stripe actually holds. The amount, the saved card, the customer and the ephemeral key are each updated on their own, and a failure partway through leaves Spree and Stripe describing different sessions. The storefront asks for a session every time the payment step loads, so that drift is the common path.

@@ -116,14 +116,14 @@ module Spree
 
     def exactly_one_adjustable
       adjustables = [line_item, fulfillment, fee, return_line_item, claim_line_item, exchange_line_item]
-      errors.add(:base, :exactly_one_adjustable, message: Spree.t('errors.messages.exactly_one_adjustable')) unless adjustables.compact.one?
+      errors.add(:base, :exactly_one_adjustable, message: I18n.t('spree.errors.messages.exactly_one_adjustable')) unless adjustables.compact.one?
     end
 
     # Returns, claims and exchanges only exist on placed orders.
     def post_sale_owned_by_order
       return unless post_sale? && order.nil?
 
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order'))
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order'))
     end
   end
 end

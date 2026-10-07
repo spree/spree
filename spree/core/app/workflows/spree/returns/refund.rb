@@ -95,7 +95,7 @@ module Spree
           # attribute, and ActiveModel raises when an error names one that
           # does not exist on the record.
           return_record.errors.add(:base, :invalid_refund_method,
-                           message: Spree.t('errors.messages.invalid_refund_method'))
+                           message: I18n.t('spree.errors.messages.invalid_refund_method'))
           failure(return_record)
         end
         failure(return_record, :not_received) unless return_record.received?

@@ -210,7 +210,7 @@ module Spree
       self.warnings |= affected_line_items.map do |line_item|
         {
           code: 'delivery_unavailable',
-          message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),
+          message: I18n.t('spree.cart_line_item.delivery_unavailable', li_name: line_item.name),
           line_item_id: line_item.prefixed_id
         }
       end
@@ -218,7 +218,7 @@ module Spree
 
     def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
-        errors.add(:base, :items_cannot_be_shipped, message: Spree.t(:items_cannot_be_shipped))
+        errors.add(:base, :items_cannot_be_shipped, message: I18n.t('spree.items_cannot_be_shipped'))
         return false
       end
       true
@@ -337,7 +337,7 @@ module Spree
         true
       end
       self.warnings = existing_warnings
-      self.warnings |= [{ code: 'coupon_code_unavailable', message: Spree.t(:coupon_code_unavailable) }] if removed
+      self.warnings |= [{ code: 'coupon_code_unavailable', message: I18n.t('spree.coupon_code_unavailable') }] if removed
       self
     end
 

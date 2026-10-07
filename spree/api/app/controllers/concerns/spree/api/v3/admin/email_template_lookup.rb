@@ -78,7 +78,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
-              message: Spree.t('email_templates.sample_needs_permission', permissions: missing.to_sentence),
+              message: I18n.t('spree.email_templates.sample_needs_permission', permissions: missing.to_sentence),
               status: :forbidden,
               details: { required_scope: missing.first }
             )
@@ -127,7 +127,7 @@ module Spree
 
             render_error(
               code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:email_template_stale],
-              message: Spree.t('email_templates.stale_draft', name: saved_by || Spree.t('email_templates.another_admin')),
+              message: I18n.t('spree.email_templates.stale_draft', name: saved_by || I18n.t('spree.email_templates.another_admin')),
               status: :conflict,
               details: { updated_by: saved_by }
             )

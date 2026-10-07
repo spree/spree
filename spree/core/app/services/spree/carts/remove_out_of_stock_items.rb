@@ -72,7 +72,7 @@ module Spree
       def valid_status?(line_item)
         product = line_item.product
         if !product.active? || product.deleted? || product.discontinued? || line_item.variant.discontinued?
-          message = Spree.t('cart_line_item.discontinued', li_name: line_item.name)
+          message = I18n.t('spree.cart_line_item.discontinued', li_name: line_item.name)
           @messages << message
           @warnings << {
             code: 'line_item_removed',
@@ -87,7 +87,7 @@ module Spree
 
       def stock_available?(line_item)
         if line_item.insufficient_stock?
-          message = Spree.t('cart_line_item.out_of_stock', li_name: line_item.name)
+          message = I18n.t('spree.cart_line_item.out_of_stock', li_name: line_item.name)
           @messages << message
           @warnings << {
             code: 'line_item_removed',

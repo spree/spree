@@ -1,0 +1,38 @@
+---
+zh-CN:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: 重置密码
+        expiry_notice: 此密码重置链接将很快过期。如果这不是您本人的操作，则无需理会。
+        greeting: 您好，%{name}：
+        ignore_notice: 如果您没有请求重置密码，可以放心忽略此邮件。您的密码不会被更改。
+        instructions: 我们收到了重置您密码的请求。请点击下方按钮设置新密码。
+        subject: 密码重置说明
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: 您好，
+        ignore_disclaimer: 如果这不是您本人的请求，请忽略此邮件。
+        instructions: 请点击下方按钮验证您的电子邮箱地址。
+        message_copy_link: 如果按钮无法使用，请复制以下链接并粘贴到您的浏览器中：
+        subject: 验证您的电子邮箱地址
+        verify_email_address_link: 验证电子邮箱地址
+    order_mailer:
+      cancel_email:
+        instructions: 您的订单已被取消。请保留此取消信息记录。
+        subject: 取消订单
+      confirm_email:
+        instructions: 请仔细阅读并保留以下订单信息记录。
+        subject: 订单确认
+      payment_link_email:
+        message: 请点击下方按钮支付您的订单。
+        message_copy_link: 如果按钮无法使用，请复制以下链接并粘贴到您的浏览器中：
+        pay_for_order: 支付订单
+        subject: '订单 #%{number} 的支付链接'
+      store_owner_notification_email:
+        heading: 收到新订单
+        instructions: 您收到了一个新订单。
+        order_summary: 订单 %{number} 摘要
+        subject: "%{store_name} 收到一个新订单"
+      subtotal: 小计：
+      total: 订单总额：

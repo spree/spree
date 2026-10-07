@@ -19,7 +19,7 @@ describe Spree::Promotion::Rules::Currency, type: :model do
       expect(rule).not_to be_eligible(order)
 
       expect(rule.eligibility_errors.count).to eq(1)
-      expect(rule.eligibility_errors.to_hash[:base]).to eq([Spree.t('eligibility_errors.messages.wrong_currency')])
+      expect(rule.eligibility_errors.to_hash[:base]).to eq([I18n.t('spree.eligibility_errors.messages.wrong_currency')])
     end
   end
 

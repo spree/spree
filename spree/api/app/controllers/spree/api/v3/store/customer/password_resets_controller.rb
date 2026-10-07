@@ -41,7 +41,7 @@ module Spree
               end
 
               # Always return 202 to prevent email enumeration
-              render json: { message: Spree.t(:password_reset_requested, scope: :api) }, status: :accepted
+              render json: { message: I18n.t('spree.api.password_reset_requested') }, status: :accepted
             end
 
             # PATCH /api/v3/store/password_resets/:id
@@ -51,7 +51,7 @@ module Spree
               unless user
                 return render_error(
                   code: ERROR_CODES[:password_reset_token_invalid],
-                  message: Spree.t(:password_reset_token_invalid, scope: :api),
+                  message: I18n.t('spree.api.password_reset_token_invalid'),
                   status: :unprocessable_content
                 )
               end

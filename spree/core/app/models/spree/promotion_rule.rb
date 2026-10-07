@@ -36,11 +36,11 @@ module Spree
     end
 
     def self.human_name
-      Spree.t("promotion_rule_types.#{api_type}.name", default: api_type.titleize)
+      I18n.t("spree.promotion_rule_types.#{api_type}.name", default: api_type.titleize)
     end
 
     def self.human_description
-      Spree.t("promotion_rule_types.#{api_type}.description", default: '')
+      I18n.t("spree.promotion_rule_types.#{api_type}.description", default: '')
     end
 
     def human_name = self.class.human_name
@@ -70,7 +70,7 @@ module Spree
     end
 
     def eligibility_error_message(key, options = {})
-      Spree.t(key, Hash[scope: [:eligibility_errors, :messages]].merge(options))
+      I18n.t("spree.eligibility_errors.messages.#{key}", **options)
     end
   end
 end

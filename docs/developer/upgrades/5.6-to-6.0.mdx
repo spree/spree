@@ -308,7 +308,7 @@ Spree::Checkout::Registry.add_requirement(
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
-- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `Spree.t('checkout_requirements.shipping_method_required')` translation key was renamed to `checkout_requirements.delivery_method_required` — override it under the new key.
+- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `spree.checkout_requirements.shipping_method_required` translation key was renamed to `spree.checkout_requirements.delivery_method_required` — override it under the new key.
 - **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
 
 ## Statuses: derived, then persisted
@@ -801,6 +801,18 @@ Other changes that come with it:
 - **Alba moved into `spree_core`**, with its configuration, so core's staff emails render in installations without `spree_api`.
 - **Your own mailers keep working.** A mailer that inherits `Spree::BaseMailer` and calls `mail` with its own ERB views is wrapped in the new email layout, and the `spree/shared/mailer_hero` and `mailer_button` partials remain for its views. See [Your own mailers](/developer/customization/emails#your-own-mailers).
 
+## Translations ship with Spree
+
+Spree's translations for emails, API messages and validation messages are now part of Spree itself, in 43 languages besides English. Regional English (`en-GB` and the like) now falls back to `en`. A key a language does not translate yet falls back to English, unless your app configured its own `config.i18n.fallbacks`. See [Translations](/developer/core-concepts/translations#translating-the-interface).
+
+- **Remove `spree_i18n` from your Gemfile.** Its last release is empty and only warns. Older releases load their own, larger files over Spree's.
+- **Use `I18n.t` with the full key.** `Spree.t(:free)` becomes `I18n.t('spree.free')`, and `Spree.t(:x, scope: :api)` becomes `I18n.t('spree.api.x')`. `Spree.t` keeps working until 6.1 with a deprecation warning.
+- **A missing key is plain text.** `Spree.t` used to return a `<span class="translation_missing">` HTML element for a key it could not find. It now returns what `I18n.t` returns.
+- **Untranslated keys fall back to English.** Spree's translations are complete only in English. With `config.i18n.fallbacks = true`, as Rails generates for production, Spree adds English after your default locale. An app that sets its own fallback list or turns fallbacks off keeps its choice.
+- **`spree/testing_support/i18n` does nothing.** Set `config.i18n.raise_on_missing_translations = true` in your test environment to catch missing keys.
+- **Kaminari is no longer loaded.** It came in through `spree_i18n`. Spree paginates with Pagy, and the `Spree::Base.page` bridge for a custom Kaminari `page_method_name` is gone. Add `kaminari` to your Gemfile if your own code uses it.
+- **Translations for removed screens are gone.** Keys used only by the old admin and storefront, and by the v2 API, were removed. If your code reads one, copy it into your app's locale files.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
@@ -847,6 +859,7 @@ Before 6.0 a cart was an incomplete order, so extensions written for 5.x (paymen
 | `metafields` / `public_metafields` associations | `custom_fields` / `storefront_custom_fields` |
 | `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
 | `Spree.metafields` | `Spree.custom_fields` |
+| `Spree.t`, `Spree.translate` | `I18n.t` with the full key, e.g. `I18n.t('spree.free')` |
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 | `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |

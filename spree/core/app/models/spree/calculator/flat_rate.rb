@@ -5,7 +5,7 @@ module Spree
     preference :apply_only_on_full_priced_items, :boolean, default: false
 
     def self.description
-      Spree.t(:flat_rate_per_order)
+      I18n.t('spree.flat_rate_per_order')
     end
 
     def compute(object = nil)

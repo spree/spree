@@ -14,11 +14,13 @@ data:
   # adapter: I18n::Tasks::Data::FileSystem
 
   # Locale files or `Dir.glob` patterns where translations are read from:
+  ## This one config checks every Spree gem: core's keys are used from all of
+  ## them, and their own keys from core.
   read:
-    ## Default:
-    # - config/locales/%{locale}.yml
-    ## More files:
-    # - config/locales/**/*.%{locale}.yml
+    - config/locales/%{locale}.yml
+<% %w[api emails].map { |gem| "../#{gem}" }.concat(Dir['../providers/*']).each do |gem| %>
+    - "<%= File.expand_path("#{gem}/config/locales", Dir.pwd) %>/%{locale}.yml"
+<% end %>
 
   # Locale files to write new keys to, based on a list of key pattern => file rules. Matched from top to bottom:
   # `i18n-tasks normalize -p` will force move the keys according to these rules
@@ -52,9 +54,14 @@ data:
 
 # Find translate calls
 search:
-  ## Paths or `Find.find` patterns to search in:
-  # paths:
-  #  - app/
+  ## Paths or `Find.find` patterns to search in. Core keys are read by every
+  ## Spree gem, so all of them are searched.
+  paths:
+    - app/
+    - lib/
+<% (%w[api emails dashboard opentelemetry].map { |gem| "../#{gem}" } + Dir['../providers/*']).product(%w[app lib]).each do |gem, folder| %>
+    - "<%= File.expand_path("#{gem}/#{folder}", Dir.pwd) %>"
+<% end %>
 
   ## Root directories for relative keys resolution.
   # relative_roots:
@@ -143,12 +150,16 @@ ignore_missing:
   - 'unauthorized.default'
 
 ## Consider these keys used:
-# ignore_unused:
-# - 'activerecord.attributes.*'
-# - '{devise,kaminari,will_paginate}.*'
-# - 'simple_form.{yes,no}'
-# - 'simple_form.{placeholders,hints,labels}.*'
-# - 'simple_form.{error_notification,required}.:'
+ignore_unused:
+  # Read by Rails itself (model names, attribute names, validation messages, formats).
+  - 'activerecord.*'
+  - 'activemodel.*'
+  - 'errors.*'
+  - 'number.*'
+  # Keys built with interpolation, which the scanner cannot follow.
+  - 'spree.reporting.*'
+  - 'spree.permissions_catalog.*'
+  - 'spree.i18n.this_file_language'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:
@@ -172,8 +183,9 @@ ignore_missing:
 # <%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
 #       only: %w(*.html.haml *.html.slim),
 #       patterns: [['= title\b', '.page_title']] %>
-#
-# The PatternMapper can also match key literals via a special %{key} interpolation, e.g.:
-#
-# <%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
-#       patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>
+
+# Email templates translate Spree keys with Liquid's `t` filter, and shared
+# partials take a key to translate (`label: 'some.key', translate: true`).
+<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
+      only: %w(*.liquid),
+      patterns: [['%{key}\s*\|\s*t\b', 'spree.%{key}'], ['\blabel:\s*%{key}', 'spree.%{key}']] %>

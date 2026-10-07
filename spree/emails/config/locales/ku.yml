@@ -1,0 +1,37 @@
+---
+ku:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Şîfreyê Nû Bike
+        expiry_notice: Ev lînka nûkirina şîfreyê dê di demek kurt de biqede. Heke te ev daxwaz nekiriye, tu kar pêwîst nake.
+        greeting: Silav %{name},
+        ignore_notice: Heke te nûkirina şîfreyê daxwaz nekiriye, tu dikarî bi ewlehî vê e-nameyê piştguh bikî. Şîfreya te nayê guhertin.
+        instructions: Me daxwazek ji bo nûkirina şîfreya te wergirt. Ji bo hilbijartina şîfreyek nû bişkoka jêrîn bitikîne.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Silav,
+        ignore_disclaimer: Heke te ev daxwaz nekiriye, ji kerema xwe vê e-nameyê piştguh bike.
+        instructions: Ji kerema xwe ji bo piştrastkirina navnîşana e-nameya xwe bişkoka jêrîn bitikîne.
+        message_copy_link: 'Heke bişkok naxebite ji kerema xwe lînka jêrîn jê bigire û li gerokê pê bike:'
+        subject: Navnîşana e-nameya xwe piştrast bike
+        verify_email_address_link: Navnîşana e-nameyê piştrast bike
+    order_mailer:
+      cancel_email:
+        instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
+        subject: Cancellation of Order
+      confirm_email:
+        instructions: Please review and retain the following order information for your records.
+        subject: Order Confirmation
+      payment_link_email:
+        message: Ji kerema xwe ji bo tediyekirina siparîşa xwe bişkoka jêrîn bitikîne.
+        message_copy_link: 'Heke bişkok naxebite ji kerema xwe lînka jêrîn jê bigire û li gerokê pê bike:'
+        pay_for_order: Ji bo siparîşê bide
+        subject: 'Lînka tediyeyê ji bo siparîşa #%{number}'
+      store_owner_notification_email:
+        heading: Siparîşek Nû Hat Wergirtin
+        instructions: Te siparîşek nû wergirtiye.
+        order_summary: Kurteya Siparîşa %{number}
+        subject: "%{store_name} siparîşek nû wergirt"
+      subtotal: 'Bin-tevahî:'
+      total: 'Tevahiya Siparîşê:'

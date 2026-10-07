@@ -7,7 +7,7 @@ module Spree
       preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
       def self.description
-        Spree.t(:shipping_flat_rate_per_item)
+        I18n.t('spree.shipping_flat_rate_per_item')
       end
 
       def compute_package(package)

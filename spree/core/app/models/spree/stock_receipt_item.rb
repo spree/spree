@@ -29,7 +29,7 @@ module Spree
     def counts_something
       return if quantity_counted.positive?
 
-      errors.add(:base, :nothing_counted, message: Spree.t('stock_receipt.errors.nothing_counted'))
+      errors.add(:base, :nothing_counted, message: I18n.t('spree.stock_receipt.errors.nothing_counted'))
     end
   end
 end

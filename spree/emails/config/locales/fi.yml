@@ -1,0 +1,37 @@
+---
+fi:
+  spree:
+    customer_mailer:
+      password_reset_email:
+        action: Nollaa salasana
+        expiry_notice: Tämä salasanan nollauslinkki vanhenee pian. Jos et pyytänyt tätä, mitään ei tarvitse tehdä.
+        greeting: Hei %{name},
+        ignore_notice: Jos et pyytänyt salasanan nollausta, voit jättää tämän sähköpostin huomiotta. Salasanaasi ei muuteta.
+        instructions: Saimme pyynnön nollata salasanasi. Napsauta alla olevaa painiketta valitaksesi uuden salasanan.
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hei,
+        ignore_disclaimer: Jos et pyytänyt tätä, jätä tämä sähköposti huomiotta.
+        instructions: Vahvista sähköpostiosoitteesi napsauttamalla alla olevaa painiketta.
+        message_copy_link: 'Jos painike ei toimi, kopioi ja liitä seuraava linkki selaimeesi:'
+        subject: Vahvista sähköpostiosoitteesi
+        verify_email_address_link: Vahvista sähköpostiosoite
+    order_mailer:
+      cancel_email:
+        instructions: Tilauksesi on PERUUTETTU. Ole hyvä ja pidä tämä peruutusvahvistus tallessa.
+        subject: Tilauksen peruutus
+      confirm_email:
+        instructions: Ole hyvä ja pidä tilauksen tiedot tallessa.
+        subject: Tilausvahvistus
+      payment_link_email:
+        message: Maksa tilauksesi napsauttamalla alla olevaa painiketta.
+        message_copy_link: 'Jos painike ei toimi, kopioi ja liitä seuraava linkki selaimeesi:'
+        pay_for_order: Maksa tilaus
+        subject: 'Maksulinkki tilaukselle #%{number}'
+      store_owner_notification_email:
+        heading: Uusi tilaus vastaanotettu
+        instructions: Olet vastaanottanut uuden tilauksen.
+        order_summary: Tilauksen %{number} yhteenveto
+        subject: "%{store_name} vastaanotti uuden tilauksen"
+      subtotal: 'Välisumma:'
+      total: 'Tilauksen loppusumma:'

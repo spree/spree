@@ -635,7 +635,7 @@ module Spree
       @default_stock_location ||= begin
         stock_location_scope = stock_locations.first_party.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
-          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
+          stock_location_scope.create(default: true, name: I18n.t('spree.default_stock_location_name'),
                                       country_code: default_country&.iso)
         end
       end

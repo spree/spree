@@ -192,7 +192,7 @@ describe Spree::Promotion, type: :model do
         promotion.destroy
 
         expect(promotion.reload.errors).to be_present
-        expect(promotion.errors.full_messages).to eq [Spree.t('promotion_already_used')]
+        expect(promotion.errors.full_messages).to eq [I18n.t('spree.promotion_already_used')]
       end
     end
   end

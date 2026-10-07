@@ -234,7 +234,7 @@ module Spree
     #
     # @return [String, Spree::Money]
     def display_cost(**options)
-      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+      return I18n.t('spree.delivery_rates.quoted_after_review') if unpriced?
 
       Spree::Money.new(cost, { currency: currency }.merge(options))
     end
@@ -351,7 +351,7 @@ module Spree
     #
     # @return [String, Spree::Money]
     def display_final_price(**options)
-      return Spree.t('delivery_rates.quoted_after_review') if unpriced?
+      return I18n.t('spree.delivery_rates.quoted_after_review') if unpriced?
 
       Spree::Money.new(final_price, { currency: currency }.merge(options))
     end
@@ -983,7 +983,7 @@ module Spree
     end
 
     def exactly_one_owner
-      errors.add(:base, :exactly_one_of_cart_or_order, message: Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+      errors.add(:base, :exactly_one_of_cart_or_order, message: I18n.t('spree.errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
 
     def update_adjustments

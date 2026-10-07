@@ -70,7 +70,7 @@ module Spree
             def render_completed_order_error
               render_error(
                 code: ERROR_CODES[:discount_not_editable],
-                message: Spree.t('errors.messages.coupon_code_frozen_after_completion'),
+                message: I18n.t('spree.errors.messages.coupon_code_frozen_after_completion'),
                 status: :unprocessable_content
               )
             end

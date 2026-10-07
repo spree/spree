@@ -121,7 +121,7 @@ module Spree
             unless @resource.po_document.attached?
               return render_error(
                 code: ERROR_CODES[:validation_error],
-                message: Spree.t(:po_document_missing),
+                message: I18n.t('spree.po_document_missing'),
                 status: :unprocessable_content
               )
             end
@@ -247,7 +247,7 @@ module Spree
           def render_invalid_po_document
             render_error(
               code: ERROR_CODES[:validation_error],
-              message: Spree.t(:po_document_invalid_signed_id),
+              message: I18n.t('spree.po_document_invalid_signed_id'),
               status: :unprocessable_content
             )
           end

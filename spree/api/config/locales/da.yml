@@ -1,0 +1,15 @@
+---
+da:
+  spree:
+    api:
+      cannot_delete: "%{model} kan ikke slettes"
+      current_password_invalid: Den nuværende adgangskode er ugyldig eller mangler
+      newsletter_verification_token_invalid: Bekræftelsestokenet for nyhedsbrevet er ugyldigt eller er udløbet.
+      password_reset_requested: Hvis der findes en konto for den e-mail, er instruktioner til nulstilling af adgangskode blevet sendt.
+      password_reset_token_invalid: Tokenet til nulstilling af adgangskode er ugyldigt eller er udløbet.
+      record_not_found: "%{model} blev ikke fundet"
+      unauthorized: Du har ikke tilladelse til at udføre denne handling.
+      v3:
+        payments:
+          method_unavailable: Denne betalingsmetode er ikke tilgængelig for denne ordre.
+          session_required: Denne betalingsmetode kræver en betalingssession. Brug i stedet endepunktet for betalingssessioner.
