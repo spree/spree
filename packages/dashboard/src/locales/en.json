@@ -6351,8 +6351,26 @@
       "copy_endpoint": "Copy address",
       "copy_client_id": "Copy client ID",
       "other_title": "Something else",
-      "other_cta": "Register and continue",
-      "bounded_note": "An agent never gets more than you have, and only what you approve."
+      "bounded_note": "An agent never gets more than you have, and only what you approve.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop and Claude Code",
+        "chatgpt": "ChatGPT and Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai & Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Any other client that speaks MCP",
+      "continue": "Continue",
+      "run_label": "Run this",
+      "copy_command": "Copy command",
+      "cli_then_sign_in": "It will open your browser to sign in and approve what the agent may do."
     }
   }
 }

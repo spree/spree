@@ -6391,8 +6391,26 @@
       "copy_endpoint": "نسخ العنوان",
       "copy_client_id": "نسخ معرّف العميل",
       "other_title": "شيء آخر",
-      "other_cta": "تسجيل ومتابعة",
-      "bounded_note": "لن يحصل الوكيل أبدًا على أكثر مما لديك، وفقط على ما توافق عليه."
+      "bounded_note": "لن يحصل الوكيل أبدًا على أكثر مما لديك، وفقط على ما توافق عليه.",
+      "clients": {
+        "claude": "claude.ai وClaude Desktop وClaude Code",
+        "chatgpt": "ChatGPT وCodex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai وتطبيق سطح المكتب",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "أي عميل آخر يدعم MCP",
+      "continue": "متابعة",
+      "run_label": "نفّذ هذا الأمر",
+      "copy_command": "نسخ الأمر",
+      "cli_then_sign_in": "سيفتح المتصفح لتسجيل الدخول والموافقة على ما يمكن للوكيل فعله."
     }
   }
 }

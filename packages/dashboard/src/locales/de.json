@@ -6351,8 +6351,26 @@
       "copy_endpoint": "Adresse kopieren",
       "copy_client_id": "Client-ID kopieren",
       "other_title": "Etwas anderes",
-      "other_cta": "Registrieren und fortfahren",
-      "bounded_note": "Ein Agent erhält nie mehr als Sie selbst haben, und nur das, was Sie genehmigen."
+      "bounded_note": "Ein Agent erhält nie mehr als Sie selbst haben, und nur das, was Sie genehmigen.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop und Claude Code",
+        "chatgpt": "ChatGPT und Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai & Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Jeder andere Client, der MCP spricht",
+      "continue": "Weiter",
+      "run_label": "Diesen Befehl ausführen",
+      "copy_command": "Befehl kopieren",
+      "cli_then_sign_in": "Es öffnet den Browser zum Anmelden und Genehmigen dessen, was der Agent tun darf."
     }
   }
 }

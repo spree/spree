@@ -6351,8 +6351,26 @@
       "copy_endpoint": "Copier l'adresse",
       "copy_client_id": "Copier l'identifiant client",
       "other_title": "Autre chose",
-      "other_cta": "Enregistrer et continuer",
-      "bounded_note": "Un agent n'obtient jamais plus que vous, et uniquement ce que vous approuvez."
+      "bounded_note": "Un agent n'obtient jamais plus que vous, et uniquement ce que vous approuvez.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop et Claude Code",
+        "chatgpt": "ChatGPT et Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai et Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Tout autre client parlant MCP",
+      "continue": "Continuer",
+      "run_label": "Exécutez ceci",
+      "copy_command": "Copier la commande",
+      "cli_then_sign_in": "Votre navigateur s'ouvrira pour vous connecter et approuver ce que l'agent peut faire."
     }
   }
 }

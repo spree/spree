@@ -6419,8 +6419,26 @@
       "copy_endpoint": "Kopiuj adres",
       "copy_client_id": "Kopiuj identyfikator klienta",
       "other_title": "Coś innego",
-      "other_cta": "Zarejestruj i kontynuuj",
-      "bounded_note": "Agent nigdy nie dostanie więcej niż masz Ty i tylko to, co zatwierdzisz."
+      "bounded_note": "Agent nigdy nie dostanie więcej niż masz Ty i tylko to, co zatwierdzisz.",
+      "clients": {
+        "claude": "claude.ai, Claude Desktop i Claude Code",
+        "chatgpt": "ChatGPT i Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai i Desktop",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "Dowolny inny klient obsługujący MCP",
+      "continue": "Dalej",
+      "run_label": "Uruchom to",
+      "copy_command": "Kopiuj polecenie",
+      "cli_then_sign_in": "Otworzy przeglądarkę, abyś mógł się zalogować i zatwierdzić uprawnienia agenta."
     }
   }
 }

@@ -6338,8 +6338,26 @@
       "copy_endpoint": "复制地址",
       "copy_client_id": "复制客户端 ID",
       "other_title": "其他",
-      "other_cta": "注册并继续",
-      "bounded_note": "代理获得的权限绝不会超过您自己的，且仅限于您批准的部分。"
+      "bounded_note": "代理获得的权限绝不会超过您自己的，且仅限于您批准的部分。",
+      "clients": {
+        "claude": "claude.ai、Claude Desktop 和 Claude Code",
+        "chatgpt": "ChatGPT 和 Codex"
+      },
+      "surfaces": {
+        "claude": {
+          "app": "Claude.ai 与桌面版",
+          "cli": "Claude Code"
+        },
+        "chatgpt": {
+          "app": "ChatGPT",
+          "cli": "Codex"
+        }
+      },
+      "other_help": "任何其他支持 MCP 的客户端",
+      "continue": "继续",
+      "run_label": "运行此命令",
+      "copy_command": "复制命令",
+      "cli_then_sign_in": "它会打开浏览器，让您登录并批准代理可以执行的操作。"
     }
   }
 }
